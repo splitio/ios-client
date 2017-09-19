@@ -17,5 +17,6 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.tvos.deployment_target = '9.0'
   s.source_files = 'Split/**/*'
   s.frameworks = 'Foundation'
+  s.dependency 'Alamofire', '4.5'
   s.source_files = 'Split/*.{swift}'
 end
