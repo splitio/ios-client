@@ -1,5 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Split'
+  s.module_name             = 'Split'
   s.version          = '0.1.0'
   s.summary          = 'iOS SDK for Split'
 
@@ -20,4 +21,21 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.dependency 'Alamofire', '4.5'
   s.dependency 'SwiftyJSON', '3.1.4'
   s.source_files = 'Split/*.{swift}'
+
+  s.subspec 'Domain' do |ss|
+    ss.source_files = 'Split/Domain/*'
+    ss.source_files = 'Split/Domain/**/*.{swift}'
+  end
+
+  s.subspec 'Extensions' do |ss|
+    ss.source_files = 'Split/Extensions/*'
+  end
+
+  s.subspec 'Infrastructure' do |ss|
+    ss.dependency 'Split/Domain'
+    ss.dependency 'Split/Extensions'
+    ss.source_files = 'Split/Infrastructure/*'
+    ss.source_files = 'Split/Infrastructure/**/*.{swift}'
+  end
+
 end

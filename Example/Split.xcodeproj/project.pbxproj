@@ -7,14 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		087AAC2E222B3A6A92D5DE18 /* Pods_Split_Example_Split_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E862A556841E8C60069A4B61 /* Pods_Split_Example_Split_Tests.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
-		81B34462B19ED946FC4CCC71 /* Pods_Split_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 382E3E34D54A1D485297F610 /* Pods_Split_Example.framework */; };
+		63921D5F780CE4DBD840F0D8 /* Pods_Split_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 441D254060332D10C49E0F46 /* Pods_Split_Example.framework */; };
+		6624CA25DEA2C8AE5899C1DC /* Pods_Split_Example_Split_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14946A7643C6298E66BB0478 /* Pods_Split_Example_Split_Tests.framework */; };
+		D39460CC1F71D09A000396FC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CA1F71D09A000396FC /* Nimble.framework */; };
+		D39460CD1F71D09A000396FC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CB1F71D09A000396FC /* Quick.framework */; };
+		D39460CE1F71D215000396FC /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460BB1F71C7F5000396FC /* Split.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,7 +31,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		382E3E34D54A1D485297F610 /* Pods_Split_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Split_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		14946A7643C6298E66BB0478 /* Pods_Split_Example_Split_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Split_Example_Split_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		441D254060332D10C49E0F46 /* Pods_Split_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Split_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		58CFD60B6F2902D3FC84E8C7 /* Pods-Split_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Example/Pods-Split_Example.release.xcconfig"; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* Split_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Split_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -46,7 +50,14 @@
 		91A0F086A5FB0C0B797E8F76 /* Pods-Split_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Tests/Pods-Split_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		9ED7384CAA90FDAC9C10386A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		9F0F3C55FDC0A4DBF30265DD /* Pods-Split_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Tests/Pods-Split_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		E862A556841E8C60069A4B61 /* Pods_Split_Example_Split_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Split_Example_Split_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D39460BB1F71C7F5000396FC /* Split.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Split.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Split/Split.framework"; sourceTree = "<group>"; };
+		D39460BD1F71C812000396FC /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
+		D39460BE1F71C812000396FC /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Nimble/Nimble.framework"; sourceTree = "<group>"; };
+		D39460BF1F71C812000396FC /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Quick/Quick.framework"; sourceTree = "<group>"; };
+		D39460C01F71C812000396FC /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/SwiftyJSON/SwiftyJSON.framework"; sourceTree = "<group>"; };
+		D39460C61F71CA72000396FC /* Pods_Split_Example.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_Split_Example.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Pods_Split_Example.framework"; sourceTree = "<group>"; };
+		D39460CA1F71D09A000396FC /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "Pods/../build/Debug-iphoneos/Nimble/Nimble.framework"; sourceTree = "<group>"; };
+		D39460CB1F71D09A000396FC /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = "Pods/../build/Debug-iphoneos/Quick/Quick.framework"; sourceTree = "<group>"; };
 		ECDBBDA20B47946E5EAFE113 /* Pods-Split_Example-Split_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Example-Split_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Example-Split_Tests/Pods-Split_Example-Split_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		F3DAE28ED41D8C8D9A711BC6 /* Split.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Split.podspec; path = ../Split.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -56,7 +67,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				81B34462B19ED946FC4CCC71 /* Pods_Split_Example.framework in Frameworks */,
+				D39460CE1F71D215000396FC /* Split.framework in Frameworks */,
+				63921D5F780CE4DBD840F0D8 /* Pods_Split_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,7 +76,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				087AAC2E222B3A6A92D5DE18 /* Pods_Split_Example_Split_Tests.framework in Frameworks */,
+				D39460CC1F71D09A000396FC /* Nimble.framework in Frameworks */,
+				D39460CD1F71D09A000396FC /* Quick.framework in Frameworks */,
+				6624CA25DEA2C8AE5899C1DC /* Pods_Split_Example_Split_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,8 +158,16 @@
 		7BE1D07F8D4AB1835B67B615 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				382E3E34D54A1D485297F610 /* Pods_Split_Example.framework */,
-				E862A556841E8C60069A4B61 /* Pods_Split_Example_Split_Tests.framework */,
+				D39460CA1F71D09A000396FC /* Nimble.framework */,
+				D39460CB1F71D09A000396FC /* Quick.framework */,
+				D39460C61F71CA72000396FC /* Pods_Split_Example.framework */,
+				D39460BD1F71C812000396FC /* Alamofire.framework */,
+				D39460BE1F71C812000396FC /* Nimble.framework */,
+				D39460BF1F71C812000396FC /* Quick.framework */,
+				D39460C01F71C812000396FC /* SwiftyJSON.framework */,
+				D39460BB1F71C7F5000396FC /* Split.framework */,
+				441D254060332D10C49E0F46 /* Pods_Split_Example.framework */,
+				14946A7643C6298E66BB0478 /* Pods_Split_Example_Split_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
