@@ -7,12 +7,18 @@
 //
 
 import UIKit
+import Split
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        let client = SplitClientImpl(splitFetcher: HttpSplitFetcher(), splitPersistence: PlistSplitPersistence(fileName: "splits"), keys: [Key(matchingKey: "test", trafficType: "user")])
+        debugPrint(client.getTreatment(forSplit: "Test"))
+        debugPrint(client.getTreatment(forSplit: "Test2"))
+        debugPrint(client.getTreatment(forSplit: "fsdfsdf"))
+        debugPrint(client.getTreatment(forSplit: "test-net"))
     }
 
     override func didReceiveMemoryWarning() {

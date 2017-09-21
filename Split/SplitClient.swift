@@ -9,5 +9,7 @@
 import Foundation
 
 @objc public protocol SplitClient {
-    // TODO: Start the magic.
+    
+    func getTreatment(forSplit split: String) -> String
+    
 }

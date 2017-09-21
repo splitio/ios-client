@@ -18,9 +18,4 @@ import SwiftyJSON
         self.name = json["splitName"].stringValue
         self.treatment = json["treatment"].stringValue
     }
-    
-    internal init(_ dict: [String : AnyObject]) {
-        self.name = dict["splitName"]!.stringValue
-        self.treatment = dict["treatment"]!.stringValue
-    }
 }

@@ -15,7 +15,7 @@ import SwiftyJSON
     let trafficType: String
     let bucketingKey: String?
 
-    init(matchingKey: String, trafficType: String, bucketingKey: String? = nil) {
+    public init(matchingKey: String, trafficType: String, bucketingKey: String? = nil) {
         self.matchingKey = matchingKey
         self.trafficType = trafficType
         self.bucketingKey = bucketingKey
