@@ -1,15 +1,42 @@
 //
-//  SplitClient.swift
+//  LocalSplitClient.swift
 //  Pods
 //
-//  Created by Brian Sztamfater on 18/9/17.
+//  Created by Brian Sztamfater on 20/9/17.
 //
 //
 
 import Foundation
 
-@objc public protocol SplitClient {
+@objc public final class SplitClient: NSObject, SplitClientProtocol {
     
-    func getTreatment(forSplit split: String) -> String
+    internal let fetcher: SplitFetcher
+    internal let persistence: SplitPersistence
+    internal var trafficType: TrafficType?
+    internal var initialized: Bool = false
+    internal var config: SplitClientConfig?
+    internal var featurePollTimer: DispatchSourceTimer?
+
+    public static let shared = SplitClient(splitFetcher: HttpSplitFetcher(), splitPersistence: PlistSplitPersistence(fileName: "splits"))
     
+    init(splitFetcher: SplitFetcher, splitPersistence: SplitPersistence) {
+        self.fetcher = splitFetcher
+        self.persistence = splitPersistence
+    }
+    
+    public func getTreatment(forSplit split: String) -> String {
+        guard let treatment = self.persistence.get(key: split) else {
+            return "control" // TODO: Move to a constant on another class
+        }
+        return treatment
+    }
+    
+    public func initialize(withConfig config: SplitClientConfig, andTrafficType trafficType: TrafficType) {
+        self.initialized = true
+        stopPollingForFeatures()
+        //clearFeatures()
+        self.config = config
+        self.trafficType = trafficType
+        startPollingForFeatures()
+    }
 }

@@ -12,6 +12,8 @@ import Foundation
     
     func save(key: String, value: String)
 
+    func saveAll(_ dict: [String : String])
+
     func get(key: String) -> String?
     
     func getAll() -> [String : String]

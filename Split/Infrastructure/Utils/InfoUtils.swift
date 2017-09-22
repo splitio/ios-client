@@ -1,9 +1,9 @@
 //
 //  InfoUtils.swift
-//  SwiftSeedProject
+//  Pods
 //
-//  Created by Brian Sztamfater on 21/4/17.
-//  Copyright © 2017 Making Sense. All rights reserved.
+//  Created by Brian Sztamfater on 18/9/17.
+//
 //
 
 import Foundation

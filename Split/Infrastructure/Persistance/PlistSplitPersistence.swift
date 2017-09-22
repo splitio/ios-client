@@ -20,6 +20,11 @@ import Foundation
         writeToFile(value, forKey: key)
     }
     
+    public func saveAll(_ dict: [String : String]) {
+        let data = NSMutableDictionary(dictionary: dict)
+        data.write(toFile: filePath(), atomically: true)
+    }
+    
     public func get(key: String) -> String? {
         return object(forKey: key) as? String
     }
