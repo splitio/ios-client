@@ -11,7 +11,7 @@ import Foundation
 extension SplitClient {
     
     func startPollingForFeatures() {
-        let queue = DispatchQueue.main
+        let queue = DispatchQueue(label: "split-timer-queue")
         featurePollTimer = DispatchSource.makeTimerSource(queue: queue)
         featurePollTimer!.scheduleRepeating(deadline: .now(), interval: .seconds(self.config!.pollForFeatureChangesInterval))
         featurePollTimer!.setEventHandler { [weak self] in
@@ -40,6 +40,10 @@ extension SplitClient {
             let dict = NSMutableDictionary()
             treatments.forEach { dict.setObject($0.treatment, forKey: $0.name as NSString) }
             strongSelf.persistence.saveAll(dict as! [String : String])
+            if let semaphore = strongSelf.semaphore {
+                semaphore.signal()
+                strongSelf.semaphore = nil
+            }
         }
     }
     

@@ -15,14 +15,16 @@ import Foundation
     var impressionsQueueSize: Int
     var connectionTimeout: Int
     var debugEnabled: Bool
+    var blockUntilReady: Int
     
     // TODO: Add pending parameters
-    public init(pollForFeatureChangesInterval: Int? = 30, impressionsRefreshRate: Int? = 30, impressionsQueueSize: Int? = 30000, connectionTimeout: Int? = 15000, debugEnabled: Bool? = false) {
+    public init(pollForFeatureChangesInterval: Int? = 30, impressionsRefreshRate: Int? = 30, impressionsQueueSize: Int? = 30000, connectionTimeout: Int? = 15000, debugEnabled: Bool? = false, blockUntilReady: Int? = -1) {
         self.pollForFeatureChangesInterval = pollForFeatureChangesInterval!
         self.impressionsRefreshRate = impressionsRefreshRate!
         self.impressionsQueueSize = impressionsQueueSize!
         self.connectionTimeout = connectionTimeout!
         self.debugEnabled = debugEnabled!
+        self.blockUntilReady = blockUntilReady!
     }
     
 }

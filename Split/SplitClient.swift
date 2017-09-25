@@ -16,7 +16,8 @@ import Foundation
     internal var initialized: Bool = false
     internal var config: SplitClientConfig?
     internal var featurePollTimer: DispatchSourceTimer?
-
+    internal var semaphore: DispatchSemaphore?
+    
     public static let shared = SplitClient(splitFetcher: HttpSplitFetcher(), splitPersistence: PlistSplitPersistence(fileName: "splits"))
     
     init(splitFetcher: SplitFetcher, splitPersistence: SplitPersistence) {
@@ -31,12 +32,20 @@ import Foundation
         return treatment
     }
     
-    public func initialize(withConfig config: SplitClientConfig, andTrafficType trafficType: TrafficType) {
-        self.initialized = true
-        stopPollingForFeatures()
-        //clearFeatures()
+    public func initialize(withConfig config: SplitClientConfig, andTrafficType trafficType: TrafficType) throws {
         self.config = config
         self.trafficType = trafficType
+        self.initialized = true
+        stopPollingForFeatures()
         startPollingForFeatures()
+        let blockUntilReady = self.config!.blockUntilReady
+        if blockUntilReady > -1 {
+            self.semaphore = DispatchSemaphore(value: 0)
+            let timeout = DispatchTime.now() + .milliseconds(blockUntilReady)
+            if self.semaphore!.wait(timeout: timeout) == .timedOut {
+                self.initialized = false
+                throw SplitError.timeout(reason: "SDK was not ready in \(blockUntilReady) milliseconds")
+            }
+        }
     }
 }

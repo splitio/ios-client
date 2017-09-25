@@ -10,7 +10,7 @@ import Foundation
 
 @objc public protocol SplitClientProtocol {
     
-    func initialize(withConfig config: SplitClientConfig, andTrafficType trafficType: TrafficType)
+    func initialize(withConfig config: SplitClientConfig, andTrafficType trafficType: TrafficType) throws
 
     func getTreatment(forSplit split: String) -> String
     

@@ -33,7 +33,7 @@ extension DataRequest: RestClientRequestProtocol {
         self.validate { request, response, data in
             return .success
         }
-        .response(responseSerializer: DataRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
+        .response(queue: DispatchQueue(label: "split-rest-queue"), responseSerializer: DataRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
             completionHandler(response)
         }
         return self;
