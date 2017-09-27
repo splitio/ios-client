@@ -13,15 +13,17 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
         let config = SplitClientConfig(pollForFeatureChangesInterval: 5, blockUntilReady: 5000)
-        let trafficType = TrafficType(matchingKey: "test", type: "user")
-        try? SplitClient.shared.initialize(withConfig: config, andTrafficType: trafficType)
+        guard let splitFactory = try? SplitFactory(apiToken: "", config: config) else {
+            return
+        }
+        let client = splitFactory.splitClient()
         
-        debugPrint(SplitClient.shared.getTreatment(forSplit: "Test"))
-        debugPrint(SplitClient.shared.getTreatment(forSplit: "Test2"))
-        debugPrint(SplitClient.shared.getTreatment(forSplit: "fsdfsdf"))
-        debugPrint(SplitClient.shared.getTreatment(forSplit: "test-net"))
+        debugPrint(client.getTreatment(forSplit: "Test"))
+        debugPrint(client.getTreatment(forSplit: "Test2"))
+        debugPrint(client.getTreatment(forSplit: "fsdfsdf"))
+        debugPrint(client.getTreatment(forSplit: "test-net"))
     }
 
     override func didReceiveMemoryWarning() {

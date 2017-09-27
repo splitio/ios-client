@@ -13,12 +13,12 @@ extension SplitClient {
     func startPollingForFeatures() {
         let queue = DispatchQueue(label: "split-timer-queue")
         featurePollTimer = DispatchSource.makeTimerSource(queue: queue)
-        featurePollTimer!.scheduleRepeating(deadline: .now(), interval: .seconds(self.config!.pollForFeatureChangesInterval))
+        featurePollTimer!.scheduleRepeating(deadline: .now(), interval: .seconds(self.config.pollForFeatureChangesInterval))
         featurePollTimer!.setEventHandler { [weak self] in
             guard let strongSelf = self else {
                 return
             }
-            guard strongSelf.initialized else {
+            guard strongSelf.initialized! else {
                 strongSelf.stopPollingForFeatures()
                 return
             }
@@ -33,7 +33,7 @@ extension SplitClient {
     }
     
     func pollForFeatures() {
-        fetcher.fetchAll(keys: [self.trafficType!.key], attributes: self.trafficType!.attributes) { [weak self] treatments in
+        fetcher.fetchAll(keys: [Key(matchingKey: "test", trafficType: "user")], attributes: [:]) { [weak self] treatments in
             guard let strongSelf = self else {
                 return
             }

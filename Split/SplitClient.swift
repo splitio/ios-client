@@ -12,17 +12,30 @@ import Foundation
     
     internal let fetcher: SplitFetcher
     internal let persistence: SplitPersistence
-    internal var trafficType: TrafficType?
-    internal var initialized: Bool = false
-    internal var config: SplitClientConfig?
+    internal let config: SplitClientConfig
+    
     internal var featurePollTimer: DispatchSourceTimer?
     internal var semaphore: DispatchSemaphore?
-    
-    public static let shared = SplitClient(splitFetcher: HttpSplitFetcher(), splitPersistence: PlistSplitPersistence(fileName: "splits"))
-    
-    init(splitFetcher: SplitFetcher, splitPersistence: SplitPersistence) {
-        self.fetcher = splitFetcher
-        self.persistence = splitPersistence
+    internal var initialized: Bool? = false
+
+    public init(fetcher: HttpSplitFetcher, persistence: SplitPersistence, config: SplitClientConfig) throws {
+        self.fetcher = fetcher
+        self.persistence = persistence
+        self.config = config
+        self.initialized = true
+        super.init()
+        stopPollingForFeatures()
+        startPollingForFeatures()
+        let blockUntilReady = self.config.blockUntilReady
+        if blockUntilReady > -1 {
+            self.semaphore = DispatchSemaphore(value: 0)
+            let timeout = DispatchTime.now() + .milliseconds(blockUntilReady)
+            if self.semaphore!.wait(timeout: timeout) == .timedOut {
+                self.initialized = false
+                debugPrint("SDK was not ready in \(blockUntilReady) milliseconds")
+                throw SplitError.Timeout
+            }
+        }
     }
     
     public func getTreatment(forSplit split: String) -> String {
@@ -30,22 +43,5 @@ import Foundation
             return "control" // TODO: Move to a constant on another class
         }
         return treatment
-    }
-    
-    public func initialize(withConfig config: SplitClientConfig, andTrafficType trafficType: TrafficType) throws {
-        self.config = config
-        self.trafficType = trafficType
-        self.initialized = true
-        stopPollingForFeatures()
-        startPollingForFeatures()
-        let blockUntilReady = self.config!.blockUntilReady
-        if blockUntilReady > -1 {
-            self.semaphore = DispatchSemaphore(value: 0)
-            let timeout = DispatchTime.now() + .milliseconds(blockUntilReady)
-            if self.semaphore!.wait(timeout: timeout) == .timedOut {
-                self.initialized = false
-                throw SplitError.timeout(reason: "SDK was not ready in \(blockUntilReady) milliseconds")
-            }
-        }
     }
 }

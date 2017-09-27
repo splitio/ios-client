@@ -8,6 +8,6 @@
 
 import Foundation
 
-enum SplitError: Error {
-    case timeout(reason: String)
+@objc public enum SplitError: Int, Error {
+    case Timeout
 }
