@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 import SwiftyJSON
 
-final class RestClient {
+@objc public final class RestClient: NSObject {
     // MARK: - Private Properties
     private let manager: RestClientManagerProtocol
     

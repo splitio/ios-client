@@ -10,22 +10,21 @@ import Foundation
 
 @objc public final class SplitClient: NSObject, SplitClientProtocol {
     
-    internal let fetcher: SplitFetcher
+    internal let fetcher: SplitChangeFetcher
     internal let persistence: SplitPersistence
     internal let config: SplitClientConfig
     
     internal var featurePollTimer: DispatchSourceTimer?
     internal var semaphore: DispatchSemaphore?
+
     internal var initialized: Bool? = false
 
-    public init(fetcher: HttpSplitFetcher, persistence: SplitPersistence, config: SplitClientConfig) throws {
+    public init(fetcher: SplitChangeFetcher, persistence: SplitPersistence, config: SplitClientConfig) throws {
         self.fetcher = fetcher
         self.persistence = persistence
         self.config = config
         self.initialized = true
         super.init()
-        stopPollingForFeatures()
-        startPollingForFeatures()
         let blockUntilReady = self.config.blockUntilReady
         if blockUntilReady > -1 {
             self.semaphore = DispatchSemaphore(value: 0)

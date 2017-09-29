@@ -10,29 +10,28 @@ import Foundation
 import Alamofire
 import SwiftyJSON
 
-enum CallhomeTarget: Target {
+enum StagingTarget: Target {
     
-    var baseUrl: URL { return URL(string: InfoUtils.valueForKey(key: "CALLHOME_URL"))! }
-    var apiKey: String? { return InfoUtils.valueForKey(key: "CALLHOME_API_KEY") }
+    var baseUrl: URL { return URL(string: "https://sdk-aws-staging.split.io/api")! }
+    var apiKey: String? { return "89d5uvpc1ktg9gdj1nrhk0coh6k5vsqj1uu4" } // TODO: Use the one provided on the Client
     // Insert your common headers here, for example, authorization token or accept.
     var commonHeaders: [String : String]? { return ["Authorization" : "Bearer \(apiKey!)"] }
     
-    case GetTreatments(keys: [Key], attributes: [String : Any]?)
+    case GetSplitChanges(since: Int64)
     
     // MARK: - Public Properties
     var method: HTTPMethod {
         switch self {
-            case .GetTreatments:
+            case .GetSplitChanges:
                 return .get
         }
     }
     
     var url: URL {
         switch self {
-            case .GetTreatments(let keys, let attributes):
-                let url = baseUrl.appendingPathComponent("get-treatments")
-                let keysJSON = keys.map { $0.toJSON() }
-                let params = "?keys=\(JSON(keysJSON).rawString(options:JSONSerialization.WritingOptions(rawValue: 0))!)&attributes=\(attributes != nil ? attributes!.toJSONString()! : "")"
+            case .GetSplitChanges(let since):
+                let url = baseUrl.appendingPathComponent("splitChanges")
+                let params = "?since=\(since)"
                 return URL(string: params.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!, relativeTo: url)!
         }
     }
