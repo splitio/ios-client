@@ -10,7 +10,7 @@ import Foundation
 
 @objc public final class SplitClient: NSObject, SplitClientProtocol {
     
-    internal let fetcher: SplitFetcher
+    internal let fetcher: SplitChangeFetcher
     internal let persistence: SplitPersistence
     internal var trafficType: TrafficType?
     internal var initialized: Bool = false
@@ -18,9 +18,9 @@ import Foundation
     internal var featurePollTimer: DispatchSourceTimer?
     internal var semaphore: DispatchSemaphore?
     
-    public static let shared = SplitClient(splitFetcher: HttpSplitFetcher(), splitPersistence: PlistSplitPersistence(fileName: "splits"))
+    public static let shared = SplitClient(splitFetcher: HttpSplitChangeFetcher(restClient: RestClient()), splitPersistence: PlistSplitPersistence(fileName: "splits"))
     
-    init(splitFetcher: SplitFetcher, splitPersistence: SplitPersistence) {
+    init(splitFetcher: SplitChangeFetcher, splitPersistence: SplitPersistence) {
         self.fetcher = splitFetcher
         self.persistence = splitPersistence
     }
@@ -36,8 +36,8 @@ import Foundation
         self.config = config
         self.trafficType = trafficType
         self.initialized = true
-        stopPollingForFeatures()
-        startPollingForFeatures()
+        stopPollingForSplitChanges()
+        startPollingForSplitChanges()
         let blockUntilReady = self.config!.blockUntilReady
         if blockUntilReady > -1 {
             self.semaphore = DispatchSemaphore(value: 0)
