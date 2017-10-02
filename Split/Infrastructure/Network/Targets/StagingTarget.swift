@@ -18,11 +18,14 @@ enum StagingTarget: Target {
     var commonHeaders: [String : String]? { return ["Authorization" : "Bearer \(apiKey!)"] }
     
     case GetSplitChanges(since: Int64)
+    case GetMySegments(user: String)
     
     // MARK: - Public Properties
     var method: HTTPMethod {
         switch self {
             case .GetSplitChanges:
+                return .get
+            case .GetMySegments:
                 return .get
         }
     }
@@ -33,6 +36,8 @@ enum StagingTarget: Target {
                 let url = baseUrl.appendingPathComponent("splitChanges")
                 let params = "?since=\(since)"
                 return URL(string: params.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!, relativeTo: url)!
+            case .GetMySegments(let user):
+                return baseUrl.appendingPathComponent("mySegments").appendingPathComponent(user)
         }
     }
     

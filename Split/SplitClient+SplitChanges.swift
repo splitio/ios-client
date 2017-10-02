@@ -11,9 +11,9 @@ import Foundation
 extension SplitClient {
     
     func startPollingForSplitChanges() {
-        let queue = DispatchQueue(label: "split-timer-queue")
+        let queue = DispatchQueue(label: "split-polling-queue")
         featurePollTimer = DispatchSource.makeTimerSource(queue: queue)
-        featurePollTimer!.scheduleRepeating(deadline: .now(), interval: .seconds(self.config!.pollForFeatureChangesInterval))
+        featurePollTimer!.scheduleRepeating(deadline: .now(), interval: .seconds(self.config!.featuresRefreshRate))
         featurePollTimer!.setEventHandler { [weak self] in
             guard let strongSelf = self else {
                 return
@@ -33,12 +33,24 @@ extension SplitClient {
     }
     
     func pollForSplitChanges() {
-        let splitChanges = try? fetcher.fetch(since: -1)
-        let dict = NSMutableDictionary()
-        dict.setValue(splitChanges, forKey: "splitChanges")
-        if let semaphore = self.semaphore {
-            semaphore.signal()
-            self.semaphore = nil
+        dispatchGroup?.enter()
+        let queue = DispatchQueue(label: "split-changes-queue")
+        queue.async { [weak self] in
+            guard let strongSelf = self, strongSelf.initialized else {
+                return
+            }
+            do {
+                // TODO: We need to set the last till value we have (if exists)
+                let splitChanges = try strongSelf.splitChangeFetcher.fetch(since: -1)
+                let dict = NSMutableDictionary()
+                dict.setValue(splitChanges, forKey: "splitChanges")
+                // TODO: We need to persist data in storage
+                strongSelf.dispatchGroup?.leave()
+            } catch let error {
+                if strongSelf.config!.debugEnabled {
+                    debugPrint("Problem fetching splitChanges: %@", error.localizedDescription)
+                }
+            }
         }
     }
 }

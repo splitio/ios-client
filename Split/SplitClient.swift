@@ -10,18 +10,22 @@ import Foundation
 
 @objc public final class SplitClient: NSObject, SplitClientProtocol {
     
-    internal let fetcher: SplitChangeFetcher
+    internal let splitChangeFetcher: SplitChangeFetcher
+    internal let mySegmentsFetcher: MySegmentsFetcher
     internal let persistence: SplitPersistence
     internal var trafficType: TrafficType?
     internal var initialized: Bool = false
     internal var config: SplitClientConfig?
     internal var featurePollTimer: DispatchSourceTimer?
+    internal var segmentsPollTimer: DispatchSourceTimer?
     internal var semaphore: DispatchSemaphore?
+    internal var dispatchGroup: DispatchGroup?
     
-    public static let shared = SplitClient(splitFetcher: HttpSplitChangeFetcher(restClient: RestClient()), splitPersistence: PlistSplitPersistence(fileName: "splits"))
+    public static let shared = SplitClient(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient()), mySegmentsFetcher: HttpMySegmentsFetcher(restClient: RestClient()), splitPersistence: PlistSplitPersistence(fileName: "splits"))
     
-    init(splitFetcher: SplitChangeFetcher, splitPersistence: SplitPersistence) {
-        self.fetcher = splitFetcher
+    init(splitChangeFetcher: SplitChangeFetcher, mySegmentsFetcher: MySegmentsFetcher, splitPersistence: SplitPersistence) {
+        self.splitChangeFetcher = splitChangeFetcher
+        self.mySegmentsFetcher = mySegmentsFetcher
         self.persistence = splitPersistence
     }
     
@@ -36,16 +40,29 @@ import Foundation
         self.config = config
         self.trafficType = trafficType
         self.initialized = true
-        stopPollingForSplitChanges()
-        startPollingForSplitChanges()
         let blockUntilReady = self.config!.blockUntilReady
         if blockUntilReady > -1 {
-            self.semaphore = DispatchSemaphore(value: 0)
+            self.dispatchGroup = DispatchGroup()
+            self.pollForSplitChanges()
+            self.pollForSegments()
             let timeout = DispatchTime.now() + .milliseconds(blockUntilReady)
-            if self.semaphore!.wait(timeout: timeout) == .timedOut {
+            if self.dispatchGroup!.wait(timeout: timeout) == .timedOut {
                 self.initialized = false
                 throw SplitError.timeout(reason: "SDK was not ready in \(blockUntilReady) milliseconds")
             }
         }
+        self.dispatchGroup = nil
+        stopPolling()
+        startPolling()
+    }
+    
+    private func startPolling() {
+        startPollingForSplitChanges()
+        startPollingForSegments()
+    }
+    
+    private func stopPolling() {
+        stopPollingForSplitChanges()
+        stopPollingForSegments()
     }
 }

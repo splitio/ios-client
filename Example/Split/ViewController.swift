@@ -14,7 +14,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        let config = SplitClientConfig(pollForFeatureChangesInterval: 5, blockUntilReady: 5000)
+        let config = SplitClientConfig(featuresRefreshRate: 5, segmentsRefreshRate: 5, blockUntilReady: 15000)
         let trafficType = TrafficType(matchingKey: "test", type: "user")
         try? SplitClient.shared.initialize(withConfig: config, andTrafficType: trafficType)
         
