@@ -15,7 +15,7 @@ import Foundation
     
     public init(apiToken: String, config: SplitClientConfig) throws {
         // TODO: Use apiKey, review and refactor client parameters
-        let client = try SplitClient(fetcher: HttpSplitChangeFetcher(restClient: RestClient()), persistence: PlistSplitPersistence(fileName: "splits"), config: config)
+        let client = try SplitClient(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient()), mySegmentsFetcher: HttpMySegmentsFetcher(restClient: RestClient()), config: config, trafficType: TrafficType(matchingKey: "test", type: "user"))
         _client = client
         _manager = SplitManager()
     }

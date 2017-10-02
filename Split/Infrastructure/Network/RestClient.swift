@@ -33,15 +33,11 @@ import SwiftyJSON
     }
     
     // MARK: - Internal Functions
-    internal func execute(target: Target, completion: @escaping (DataResult<Void>) -> Void, processResponse: @escaping (JSON) -> Void) {
+    internal func execute<T>(target: Target, completion: @escaping (DataResult<T>) -> Void, processResponse: @escaping (JSON) -> T?) {
         self.start(target: target, completion: completion, processResponse: processResponse)
     }
     
-    internal func execute<T: AnyObject>(target: Target, completion: @escaping (DataResult<T>) -> Void, processResponse: @escaping (JSON) -> T?) {
-        self.start(target: target, completion: completion, processResponse: processResponse)
-    }
-    
-    internal func execute<T: AnyObject>(target: Target, completion: @escaping (DataResult<[T]>) -> Void, processResponse: @escaping (JSON) -> [T]?) {
+    internal func execute<T>(target: Target, completion: @escaping (DataResult<[T]>) -> Void, processResponse: @escaping (JSON) -> [T]?) {
         self.start(target: target, completion: completion, processResponse: processResponse)
     }
 }

@@ -10,37 +10,33 @@ import Foundation
 
 @objc public final class SplitClient: NSObject, SplitClientProtocol {
     
-    internal let fetcher: SplitChangeFetcher
-    internal let persistence: SplitPersistence
+    internal let splitChangeFetcher: SplitChangeFetcher
+    internal let mySegmentsFetcher: MySegmentsFetcher
     internal let config: SplitClientConfig
-    
-    internal var featurePollTimer: DispatchSourceTimer?
-    internal var semaphore: DispatchSemaphore?
+    internal var dispatchGroup: DispatchGroup?
 
     internal var initialized: Bool? = false
 
-    public init(fetcher: SplitChangeFetcher, persistence: SplitPersistence, config: SplitClientConfig) throws {
-        self.fetcher = fetcher
-        self.persistence = persistence
+    public init(splitChangeFetcher: SplitChangeFetcher, mySegmentsFetcher: MySegmentsFetcher, config: SplitClientConfig, trafficType: TrafficType) throws {
+        self.splitChangeFetcher = splitChangeFetcher
+        self.mySegmentsFetcher = mySegmentsFetcher
         self.config = config
         self.initialized = true
         super.init()
         let blockUntilReady = self.config.blockUntilReady
         if blockUntilReady > -1 {
-            self.semaphore = DispatchSemaphore(value: 0)
+            self.dispatchGroup = DispatchGroup()
             let timeout = DispatchTime.now() + .milliseconds(blockUntilReady)
-            if self.semaphore!.wait(timeout: timeout) == .timedOut {
+            if self.dispatchGroup!.wait(timeout: timeout) == .timedOut {
                 self.initialized = false
                 debugPrint("SDK was not ready in \(blockUntilReady) milliseconds")
                 throw SplitError.Timeout
             }
         }
+        self.dispatchGroup = nil
     }
     
     public func getTreatment(forSplit split: String) -> String {
-        guard let treatment = self.persistence.get(key: split) else {
-            return "control" // TODO: Move to a constant on another class
-        }
-        return treatment
+        return "control" // TODO: Move to a constant on another class
     }
 }
