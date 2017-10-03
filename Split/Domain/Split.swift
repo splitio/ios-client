@@ -9,7 +9,7 @@
 import Foundation
 import SwiftyJSON
 
-@objc public class Split: NSObject {
+@objc public class Split: NSObject, SplitBase {
     
     var name: String?
     var seed: Int?
