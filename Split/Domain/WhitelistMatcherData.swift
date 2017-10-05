@@ -14,6 +14,6 @@ import SwiftyJSON
     var whitelist: [String]?
     
     public init(_ json: JSON) {
-        self.whitelist = json["whitelist"].arrayValue.map { $0.stringValue }
+        self.whitelist = json["whitelist"].array?.map { $0.stringValue }
     }
 }

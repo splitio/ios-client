@@ -16,6 +16,6 @@ import SwiftyJSON
     
     public init(_ json: JSON) {
         self.dataType = DataType.enumFromString(string: json["dataType"].stringValue)
-        self.value = json["value"].int64Value
+        self.value = json["value"].int64
     }
 }

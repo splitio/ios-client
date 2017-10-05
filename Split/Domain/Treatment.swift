@@ -15,7 +15,7 @@ import SwiftyJSON
     let treatment: String!
     
     internal init(_ json: JSON) {
-        self.name = json["splitName"].stringValue
-        self.treatment = json["treatment"].stringValue
+        self.name = json["splitName"].string
+        self.treatment = json["treatment"].string
     }
 }
