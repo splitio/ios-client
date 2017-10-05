@@ -18,6 +18,10 @@
 		D39460CD1F71D09A000396FC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CB1F71D09A000396FC /* Quick.framework */; };
 		D39460CE1F71D215000396FC /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460BB1F71C7F5000396FC /* Split.framework */; };
 		D3C8F0111F8425A200C2632D /* SplitChangeFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C8F00F1F84255F00C2632D /* SplitChangeFetcherTests.swift */; };
+		D3D5C57A1F85DBAD0088529F /* MySegmentsFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D5C5791F85DBAD0088529F /* MySegmentsFetcherTests.swift */; };
+		D3D5C57C1F85DD4A0088529F /* mysegments_1.json in Resources */ = {isa = PBXBuildFile; fileRef = D3D5C57B1F85DD4A0088529F /* mysegments_1.json */; };
+		D3D5C57E1F85DDC30088529F /* mysegments_2.json in Resources */ = {isa = PBXBuildFile; fileRef = D3D5C57D1F85DDC30088529F /* mysegments_2.json */; };
+		D3D5C5801F85E5750088529F /* mysegments_3.json in Resources */ = {isa = PBXBuildFile; fileRef = D3D5C57F1F85E5750088529F /* mysegments_3.json */; };
 		D3EEA1631F852A4C00D0B1B8 /* splitchanges_1.json in Resources */ = {isa = PBXBuildFile; fileRef = D3EEA1611F852A4700D0B1B8 /* splitchanges_1.json */; };
 		D3EEA1651F852EB000D0B1B8 /* splitchanges_2.json in Resources */ = {isa = PBXBuildFile; fileRef = D3EEA1641F852EB000D0B1B8 /* splitchanges_2.json */; };
 		D3EEA1671F8549E500D0B1B8 /* splitchanges_3.json in Resources */ = {isa = PBXBuildFile; fileRef = D3EEA1661F8549E500D0B1B8 /* splitchanges_3.json */; };
@@ -61,6 +65,10 @@
 		D39460CA1F71D09A000396FC /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "Pods/../build/Debug-iphoneos/Nimble/Nimble.framework"; sourceTree = "<group>"; };
 		D39460CB1F71D09A000396FC /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = "Pods/../build/Debug-iphoneos/Quick/Quick.framework"; sourceTree = "<group>"; };
 		D3C8F00F1F84255F00C2632D /* SplitChangeFetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangeFetcherTests.swift; sourceTree = "<group>"; };
+		D3D5C5791F85DBAD0088529F /* MySegmentsFetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentsFetcherTests.swift; sourceTree = "<group>"; };
+		D3D5C57B1F85DD4A0088529F /* mysegments_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mysegments_1.json; sourceTree = "<group>"; };
+		D3D5C57D1F85DDC30088529F /* mysegments_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mysegments_2.json; sourceTree = "<group>"; };
+		D3D5C57F1F85E5750088529F /* mysegments_3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mysegments_3.json; sourceTree = "<group>"; };
 		D3EEA1611F852A4700D0B1B8 /* splitchanges_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_1.json; sourceTree = "<group>"; };
 		D3EEA1641F852EB000D0B1B8 /* splitchanges_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_2.json; sourceTree = "<group>"; };
 		D3EEA1661F8549E500D0B1B8 /* splitchanges_3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_3.json; sourceTree = "<group>"; };
@@ -137,6 +145,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				D3D5C5791F85DBAD0088529F /* MySegmentsFetcherTests.swift */,
 				D3C8F00F1F84255F00C2632D /* SplitChangeFetcherTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
@@ -150,6 +159,9 @@
 				D3EEA1611F852A4700D0B1B8 /* splitchanges_1.json */,
 				D3EEA1641F852EB000D0B1B8 /* splitchanges_2.json */,
 				D3EEA1661F8549E500D0B1B8 /* splitchanges_3.json */,
+				D3D5C57B1F85DD4A0088529F /* mysegments_1.json */,
+				D3D5C57D1F85DDC30088529F /* mysegments_2.json */,
+				D3D5C57F1F85E5750088529F /* mysegments_3.json */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -294,8 +306,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D3EEA1651F852EB000D0B1B8 /* splitchanges_2.json in Resources */,
+				D3D5C5801F85E5750088529F /* mysegments_3.json in Resources */,
+				D3D5C57C1F85DD4A0088529F /* mysegments_1.json in Resources */,
 				D3EEA1631F852A4C00D0B1B8 /* splitchanges_1.json in Resources */,
 				D3EEA1671F8549E500D0B1B8 /* splitchanges_3.json in Resources */,
+				D3D5C57E1F85DDC30088529F /* mysegments_2.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,6 +424,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D3C8F0111F8425A200C2632D /* SplitChangeFetcherTests.swift in Sources */,
+				D3D5C57A1F85DBAD0088529F /* MySegmentsFetcherTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
