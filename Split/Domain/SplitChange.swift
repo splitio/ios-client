@@ -16,11 +16,11 @@ import SwiftyJSON
     var till: Int64?
 
     public init(_ json: JSON) {
-        self.splits = json["splits"].arrayValue.map { (json: JSON) -> Split in
+        self.splits = json["splits"].array?.map { (json: JSON) -> Split in
             return Split(json)
         }
-        self.since = json["since"].int64Value
-        self.till = json["till"].int64Value
+        self.since = json["since"].int64
+        self.till = json["till"].int64
     }
     
 }

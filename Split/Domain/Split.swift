@@ -24,18 +24,18 @@ import SwiftyJSON
     var algo: Int?
     
     public init(_ json: JSON) {
-        self.name = json["name"].stringValue
-        self.seed = json["seed"].intValue
+        self.name = json["name"].string
+        self.seed = json["seed"].int
         self.status = Status.enumFromString(string: json["status"].stringValue)
-        self.killed = json["killed"].boolValue
-        self.defaultTreatment = json["defaultTreatment"].stringValue
+        self.killed = json["killed"].bool
+        self.defaultTreatment = json["defaultTreatment"].string
         self.conditions = json["conditions"].arrayValue.map { (json: JSON) -> Condition in
             return Condition(json)
         }
-        self.trafficTypeName = json["trafficTypeName"].stringValue
-        self.changeNumber = json["changeNumber"].int64Value
-        self.trafficAllocation = json["trafficAllocation"].intValue
-        self.trafficAllocationSeed = json["trafficAllocationSeed"].intValue
-        self.algo = json["algo"].intValue
+        self.trafficTypeName = json["trafficTypeName"].string
+        self.changeNumber = json["changeNumber"].int64
+        self.trafficAllocation = json["trafficAllocation"].int
+        self.trafficAllocationSeed = json["trafficAllocationSeed"].int
+        self.algo = json["algo"].int
     }
 }

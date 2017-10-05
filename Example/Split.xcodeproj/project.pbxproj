@@ -12,12 +12,15 @@
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
-		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		63921D5F780CE4DBD840F0D8 /* Pods_Split_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 441D254060332D10C49E0F46 /* Pods_Split_Example.framework */; };
 		6624CA25DEA2C8AE5899C1DC /* Pods_Split_Example_Split_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14946A7643C6298E66BB0478 /* Pods_Split_Example_Split_Tests.framework */; };
 		D39460CC1F71D09A000396FC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CA1F71D09A000396FC /* Nimble.framework */; };
 		D39460CD1F71D09A000396FC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CB1F71D09A000396FC /* Quick.framework */; };
 		D39460CE1F71D215000396FC /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460BB1F71C7F5000396FC /* Split.framework */; };
+		D3C8F0111F8425A200C2632D /* SplitChangeFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C8F00F1F84255F00C2632D /* SplitChangeFetcherTests.swift */; };
+		D3EEA1631F852A4C00D0B1B8 /* splitchanges_1.json in Resources */ = {isa = PBXBuildFile; fileRef = D3EEA1611F852A4700D0B1B8 /* splitchanges_1.json */; };
+		D3EEA1651F852EB000D0B1B8 /* splitchanges_2.json in Resources */ = {isa = PBXBuildFile; fileRef = D3EEA1641F852EB000D0B1B8 /* splitchanges_2.json */; };
+		D3EEA1671F8549E500D0B1B8 /* splitchanges_3.json in Resources */ = {isa = PBXBuildFile; fileRef = D3EEA1661F8549E500D0B1B8 /* splitchanges_3.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,7 +46,6 @@
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		607FACE51AFB9204008FA782 /* Split_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Split_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		664B0712AEA1E445A6CBAA10 /* Pods-Split_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Example/Pods-Split_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		6D5C3D614270B2332FB40D25 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		8238DEAF1C3344A010BD5CE5 /* Pods-Split_Example-Split_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Example-Split_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Example-Split_Tests/Pods-Split_Example-Split_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -58,6 +60,10 @@
 		D39460C61F71CA72000396FC /* Pods_Split_Example.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_Split_Example.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Pods_Split_Example.framework"; sourceTree = "<group>"; };
 		D39460CA1F71D09A000396FC /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "Pods/../build/Debug-iphoneos/Nimble/Nimble.framework"; sourceTree = "<group>"; };
 		D39460CB1F71D09A000396FC /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = "Pods/../build/Debug-iphoneos/Quick/Quick.framework"; sourceTree = "<group>"; };
+		D3C8F00F1F84255F00C2632D /* SplitChangeFetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangeFetcherTests.swift; sourceTree = "<group>"; };
+		D3EEA1611F852A4700D0B1B8 /* splitchanges_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_1.json; sourceTree = "<group>"; };
+		D3EEA1641F852EB000D0B1B8 /* splitchanges_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_2.json; sourceTree = "<group>"; };
+		D3EEA1661F8549E500D0B1B8 /* splitchanges_3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_3.json; sourceTree = "<group>"; };
 		ECDBBDA20B47946E5EAFE113 /* Pods-Split_Example-Split_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Example-Split_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Example-Split_Tests/Pods-Split_Example-Split_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		F3DAE28ED41D8C8D9A711BC6 /* Split.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Split.podspec; path = ../Split.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -131,7 +137,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				607FACEB1AFB9204008FA782 /* Tests.swift */,
+				D3C8F00F1F84255F00C2632D /* SplitChangeFetcherTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -141,6 +147,9 @@
 			isa = PBXGroup;
 			children = (
 				607FACEA1AFB9204008FA782 /* Info.plist */,
+				D3EEA1611F852A4700D0B1B8 /* splitchanges_1.json */,
+				D3EEA1641F852EB000D0B1B8 /* splitchanges_2.json */,
+				D3EEA1661F8549E500D0B1B8 /* splitchanges_3.json */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -284,6 +293,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3EEA1651F852EB000D0B1B8 /* splitchanges_2.json in Resources */,
+				D3EEA1631F852A4C00D0B1B8 /* splitchanges_1.json in Resources */,
+				D3EEA1671F8549E500D0B1B8 /* splitchanges_3.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,7 +408,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
+				D3C8F0111F8425A200C2632D /* SplitChangeFetcherTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

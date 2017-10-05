@@ -15,8 +15,8 @@ import SwiftyJSON
     var size: Int?
     
     public init(_ json: JSON) {
-        self.treatment = json["treatment"].stringValue
-        self.size = json["size"].intValue
+        self.treatment = json["treatment"].string
+        self.size = json["size"].int
     }
     
 }

@@ -19,9 +19,9 @@ import SwiftyJSON
     public init(_ json: JSON) {
         self.conditionType = ConditionType.enumFromString(string: json["conditionType"].stringValue)
         self.matcherGroup = MatcherGroup(json["matcherGroup"])
-        self.partitions = json["partitions"].arrayValue.map { (json: JSON) -> Partition in
+        self.partitions = json["partitions"].array?.map { (json: JSON) -> Partition in
             return Partition(json)
         }
-        self.label = json["label"].stringValue
+        self.label = json["label"].string
     }
 }

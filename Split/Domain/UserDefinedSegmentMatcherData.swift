@@ -14,7 +14,7 @@ import SwiftyJSON
     var segmentName: String?
     
     public init(_ json: JSON) {
-        self.segmentName = json["segmentName"].stringValue
+        self.segmentName = json["segmentName"].string
     }
     
 }

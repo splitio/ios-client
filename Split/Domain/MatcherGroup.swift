@@ -16,7 +16,7 @@ import SwiftyJSON
     
     public init(_ json: JSON) {
         self.matcherCombiner = MatcherCombiner.enumFromString(string: json["combiner"].stringValue)
-        self.matchers = json["matchers"].arrayValue.map { (json: JSON) -> Matcher in
+        self.matchers = json["matchers"].array?.map { (json: JSON) -> Matcher in
             return Matcher(json)
         }
     }

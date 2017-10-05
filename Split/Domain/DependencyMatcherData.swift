@@ -15,8 +15,8 @@ import SwiftyJSON
     var treatments: [String]?
     
     public init(_ json: JSON) {
-        self.split = json["split"].stringValue
-        self.treatments = json["treatments"].arrayValue.map { return $0.stringValue }
+        self.split = json["split"].string
+        self.treatments = json["treatments"].array?.map { return $0.stringValue }
     }
     
 }
