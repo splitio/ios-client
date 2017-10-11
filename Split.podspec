@@ -20,7 +20,8 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.frameworks = 'Foundation'
   s.dependency 'Alamofire', '4.5'
   s.dependency 'SwiftyJSON', '3.1.4'
-  s.source_files = 'Split/*.{swift}'
+s.source_files = 'Split/*.{swift}'
+s.source_files = 'Split/**/*.{swift}'
 
   s.subspec 'Domain' do |ss|
     ss.source_files = 'Split/Domain/*'

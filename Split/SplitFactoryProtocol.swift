@@ -10,8 +10,8 @@ import Foundation
 
 @objc public protocol SplitFactoryProtocol {
     
-    func splitClient() -> SplitClientProtocol
+    func client() -> SplitClientProtocol
     
-    func splitManager() -> SplitManagerProtocol
+    func manager() -> SplitManagerProtocol
     
 }

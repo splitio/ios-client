@@ -18,7 +18,7 @@ class ViewController: UIViewController {
         guard let splitFactory = try? SplitFactory(apiToken: "", config: config) else {
             return
         }
-        let client = splitFactory.splitClient()
+        let client = splitFactory.client()
         
         debugPrint(client.getTreatment(forSplit: "Test"))
         debugPrint(client.getTreatment(forSplit: "Test2"))
