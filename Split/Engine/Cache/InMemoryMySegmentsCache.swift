@@ -10,42 +10,36 @@ import Foundation
 
 @objc public final class InMemoryMySegmentsCache: NSObject, MySegmentsCacheProtocol {
     
-    private let mySegments: NSMutableArray
+    private let mySegments = NSMutableDictionary()
     private var changeNumber: Int64
 
     public init(segments: [String] = [], changeNumber: Int64 = -1) {
-        self.mySegments = NSMutableArray(array: segments)
+        var dict = [String : String]()
+        for name in segments {
+            dict[name] = name
+        }
+        self.mySegments.addEntries(from: dict)
         self.changeNumber = changeNumber
     }
     
     public func addSegments(segmentNames: [String]) {
-        for segmentName in segmentNames {
-            if !isInSegment(segmentName: segmentName) {
-                self.mySegments.add(segmentName)
-            }
+        var dict = [String : String]()
+        for name in segmentNames {
+            dict[name] = name
         }
+        self.mySegments.addEntries(from: dict)
     }
     
     public func removeSegment(segmentName: String) {
-        for mySegment in mySegments as NSArray as! [String] {
-            if segmentName == mySegment {
-                self.mySegments.remove(segmentName)
-                return
-            }
-        }
+        self.mySegments.removeObject(forKey: segmentName)
     }
     
     public func getSegments() -> [String] {
-        return self.mySegments as! [String]
+        return self.mySegments.allKeys as! [String]
     }
     
     public func isInSegment(segmentName: String) -> Bool {
-        for mySegment in self.mySegments as NSArray as! [String] {
-            if segmentName == mySegment {
-                return true
-            }
-        }
-        return false
+        return self.mySegments.object(forKey: segmentName) != nil
     }
     
     public func setChangeNumber(_ changeNumber: Int64) {
