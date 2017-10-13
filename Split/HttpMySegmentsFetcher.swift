@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public final class HttpMySegmentsFetcher: NSObject, MySegmentsFetcher {
+@objc public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
 
     private let restClient: RestClient
     

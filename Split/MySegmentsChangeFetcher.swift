@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public protocol MySegmentsFetcher {
+@objc public protocol MySegmentsChangeFetcher {
     
     func fetch(user: String) throws -> [String]
     

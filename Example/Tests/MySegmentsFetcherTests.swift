@@ -20,7 +20,7 @@ class MySegmentsFetcherTests: QuickSpec {
         
         describe("SplitChangeFetcher") {
             
-            var mySegmentsFetcher: MySegmentsFetcher!
+            var mySegmentsFetcher: MySegmentsChangeFetcher!
             
             beforeEach {
                 mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient())
