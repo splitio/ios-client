@@ -13,7 +13,7 @@ import SwiftyJSON
 enum StagingTarget: Target {
     
     var baseUrl: URL { return URL(string: "https://sdk-aws-staging.split.io/api")! }
-    var apiKey: String? { return "89d5uvpc1ktg9gdj1nrhk0coh6k5vsqj1uu4" } // TODO: Use the one provided on the Client
+    var apiKey: String? { return "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq" } // TODO: Use the one provided on the Client
     // Insert your common headers here, for example, authorization token or accept.
     var commonHeaders: [String : String]? { return ["Authorization" : "Bearer \(apiKey!)"] }
     

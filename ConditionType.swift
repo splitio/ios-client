@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public enum ConditionType: Int {
+public enum ConditionType: Int {
     case Whitelist
     case Rollout
     
