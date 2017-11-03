@@ -37,6 +37,7 @@ enum StagingTarget: Target {
                 let params = "?since=\(since)"
                 return URL(string: params.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!, relativeTo: url)!
             case .GetMySegments(let user):
+                let a = baseUrl.appendingPathComponent("mySegments").appendingPathComponent(user)
                 return baseUrl.appendingPathComponent("mySegments").appendingPathComponent(user)
         }
     }

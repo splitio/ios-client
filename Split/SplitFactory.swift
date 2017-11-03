@@ -15,7 +15,7 @@ import Foundation
     
     public init(apiToken: String, config: SplitClientConfig) throws {
         // TODO: Use apiKey, review and refactor client parameters
-        let client = try SplitClient(config: config, trafficType: TrafficType(matchingKey: "test", type: "user"))
+        let client = try SplitClient(config: config, trafficType: TrafficType(matchingKey: "Mozi", type: "user"))
         _client = client
         _manager = SplitManager()
     }

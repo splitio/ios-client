@@ -43,6 +43,7 @@ import Foundation
         refreshableMySegmentsFetcher.start()
         self.splitFetcher = refreshableSplitFetcher
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
+        print("SEG")
     }
     
     public func getTreatment(forSplit split: String) -> String {
