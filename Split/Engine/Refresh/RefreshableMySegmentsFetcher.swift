@@ -46,7 +46,7 @@ import Foundation
     private func startPollingForMySegmentsChanges() {
         let queue = DispatchQueue(label: "split-polling-queue")
         pollTimer = DispatchSource.makeTimerSource(queue: queue)
-        pollTimer!.scheduleRepeating(deadline: .now(), interval: .seconds(self.interval))
+        pollTimer!.schedule(deadline: .now(), repeating: .seconds(self.interval))
         pollTimer!.setEventHandler { [weak self] in
             guard let strongSelf = self else {
                 return

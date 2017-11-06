@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
+public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
     
     private let splitChangeFetcher: SplitChangeFetcher
     private let interval: Int
@@ -50,7 +50,7 @@ import Foundation
     private func startPollingForSplitChanges() {
         let queue = DispatchQueue(label: "split-polling-queue")
         featurePollTimer = DispatchSource.makeTimerSource(queue: queue)
-        featurePollTimer!.scheduleRepeating(deadline: .now(), interval: .seconds(self.interval))
+        featurePollTimer!.schedule(deadline: .now(), repeating: .seconds(self.interval))
         featurePollTimer!.setEventHandler { [weak self] in
             guard let strongSelf = self else {
                 return

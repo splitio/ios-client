@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public final class SplitClient: NSObject, SplitClientProtocol {
+public final class SplitClient: NSObject, SplitClientProtocol {
     
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
@@ -46,8 +46,22 @@ import Foundation
         print("SEG")
     }
     
-    public func getTreatment(forSplit split: String) -> String {
+    public func getTreatment(key:String, split: String, atributtes:[String:Any]?) -> String {
         // TODO: Not implemented yet
         return "control" // TODO: Move to a constant on another class
     }
+    
+    public func getTreatment(key:String, split: String) -> String {
+        
+        
+        // TODO: Not implemented yet
+        return "control" // TODO: Move to a constant on another class
+    }
+    
+    public func getTreatment(key:Key, split: String, atributtes:[String:Any]?) -> String {
+        
+        return "control" // TODO: Move to a constant on another class
+        
+    }
+
 }

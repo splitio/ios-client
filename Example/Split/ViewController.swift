@@ -20,10 +20,10 @@ class ViewController: UIViewController {
         }
         let client = splitFactory.client()
         
-        debugPrint(client.getTreatment(forSplit: "mozilla-split"))
-        debugPrint(client.getTreatment(forSplit: "Test2"))
-        debugPrint(client.getTreatment(forSplit: "fsdfsdf"))
-        debugPrint(client.getTreatment(forSplit: "test-net"))
+        debugPrint(client.getTreatment(key: "Mozi",split: "mozilla-split"))
+        debugPrint(client.getTreatment(key: "Mozi",split: "mozilla-split"))
+        debugPrint(client.getTreatment(key: "Mozi",split: "mozilla-split"))
+        debugPrint(client.getTreatment(key: "nati",split: "natalia-split"))
     }
 
     override func didReceiveMemoryWarning() {
