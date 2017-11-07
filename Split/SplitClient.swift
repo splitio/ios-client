@@ -16,6 +16,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     internal var initialized: Bool = false
     internal var config: SplitClientConfig?
     internal var dispatchGroup: DispatchGroup?
+    public static let CONTROL : String = "control"
 
     public init(config: SplitClientConfig, trafficType: TrafficType) throws {
         self.config = config
@@ -46,28 +47,48 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         print("SEG")
     }
     
-    public func getTreatment(key:String, split: String, atributtes:[String:Any]?) -> String {
+    public func getTreatment(key: String, split: String, atributtes:[String:Any]?) -> String {
         // TODO: Not implemented yet
         
         
-        return "control" // TODO: Move to a constant on another class
+        return SplitClient.CONTROL // TODO: Move to a constant on another class
     }
     
     public func getTreatment(key:String, split: String) -> String {
         
         if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
             
-            print("SPLIT TREATED: \(splitTreated.name)")
+            print("SPLIT TREATED: \(String(describing: splitTreated.name))")
             
         }
         // TODO: Not implemented yet
-        return "control" // TODO: Move to a constant on another class
+        return SplitClient.CONTROL // TODO: Move to a constant on another class
     }
     
-    public func getTreatment(key:Key, split: String, atributtes:[String:Any]?) -> String {
+    public func getTreatment(key: Key, split: String, atributtes:[String:Any]?) -> String {
         
-        return "control" // TODO: Move to a constant on another class
+        return SplitClient.CONTROL  // TODO: Move to a constant on another class
         
+    }
+    
+    private func evalTreatment(key: String, bucketingKey: String , split: String, atributtes:[String:Any]?) -> String  {
+        
+        //TODO: Use the cache here
+        if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
+            
+            if let killed = splitTreated.killed, killed {
+                
+                return splitTreated.defaultTreatment!
+                
+            } else {
+                
+                
+            }
+            
+        }
+
+        return SplitClient.CONTROL
+
     }
 
 }
