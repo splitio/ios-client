@@ -48,12 +48,18 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     
     public func getTreatment(key:String, split: String, atributtes:[String:Any]?) -> String {
         // TODO: Not implemented yet
+        
+        
         return "control" // TODO: Move to a constant on another class
     }
     
     public func getTreatment(key:String, split: String) -> String {
         
-        
+        if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
+            
+            print("SPLIT TREATED: \(splitTreated.name)")
+            
+        }
         // TODO: Not implemented yet
         return "control" // TODO: Move to a constant on another class
     }

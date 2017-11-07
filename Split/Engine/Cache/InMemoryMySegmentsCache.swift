@@ -10,7 +10,7 @@ import Foundation
 
 @objc public final class InMemoryMySegmentsCache: NSObject, MySegmentsCacheProtocol {
     
-    private let mySegments = NSMutableDictionary()
+    private var mySegments: NSMutableDictionary = NSMutableDictionary()
     private var changeNumber: Int64
 
     public init(segments: [String] = [], changeNumber: Int64 = -1) {

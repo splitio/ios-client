@@ -10,16 +10,12 @@ import Foundation
 
 public class BaseMatcher : NSObject {
     
-    var bucketingKey: String?
-    var atributtes: [String:Any]?
     var splitClient: SplitClient?
     var negate: Bool?
     
     //--------------------------------------------------------------------------------------------------
-    public init(bucketingKey: String? = nil , atributtes: [String:Any]? = nil, splitClient: SplitClient? = nil, negate: Bool? = nil) {
-        
-        self.bucketingKey = bucketingKey
-        self.atributtes = atributtes
+    public init(splitClient: SplitClient? = nil, negate: Bool? = nil) {
+
         self.splitClient = splitClient
         self.negate = negate
         

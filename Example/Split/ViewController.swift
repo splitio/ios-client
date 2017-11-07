@@ -21,8 +21,8 @@ class ViewController: UIViewController {
         let client = splitFactory.client()
         
         debugPrint(client.getTreatment(key: "Mozi",split: "mozilla-split"))
-        debugPrint(client.getTreatment(key: "Mozi",split: "mozilla-split"))
-        debugPrint(client.getTreatment(key: "Mozi",split: "mozilla-split"))
+        debugPrint(client.getTreatment(key: "Mozi",split: "natalia-split"))
+        debugPrint(client.getTreatment(key: "Mozi",split: "natalia-split"))
         debugPrint(client.getTreatment(key: "nati",split: "natalia-split"))
     }
 

@@ -10,15 +10,15 @@ import Foundation
 
 @objc public final class InMemorySplitCache: NSObject, SplitCacheProtocol {
     
-    private var splits: [String: SplitBase]
+    private var splits: [String: Split]
     private var changeNumber: Int64
     
-    public init(splits: [String: SplitBase] = [:], changeNumber: Int64 = -1) {
+    public init(splits: [String: Split] = [:], changeNumber: Int64 = -1) {
         self.splits = splits
         self.changeNumber = changeNumber
     }
     
-    public func addSplit(splitName: String, split: SplitBase) {
+    public func addSplit(splitName: String, split: Split) {
         self.splits[splitName] = split
     }
     
@@ -34,11 +34,11 @@ import Foundation
         return self.changeNumber
     }
     
-    public func getSplit(splitName: String) -> SplitBase? {
+    public func getSplit(splitName: String) -> Split? {
         return self.splits[splitName]
     }
     
-    public func getAllSplits() -> [SplitBase] {
+    public func getAllSplits() -> [Split] {
         return Array(self.splits.values)
     }
     

@@ -10,6 +10,6 @@ import Foundation
 
 public protocol MatcherProtocol: NSObjectProtocol {
 
-    func match(matchValue: Any?) -> Bool
+    func match(matchValue: Any?, bucketingKey: String? ,atributtes: [String:Any]?) -> Bool
 
 }

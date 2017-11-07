@@ -16,11 +16,11 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
     //--------------------------------------------------------------------------------------------------
     public init(data:[String]?, negate: Bool) {
         
-        super.init(bucketingKey: nil, atributtes: nil, splitClient: nil, negate: negate)
+        super.init(splitClient: nil, negate: negate)
         self.data = data
     }
     //--------------------------------------------------------------------------------------------------
-    public func match(matchValue: Any?) -> Bool {
+    public func match(matchValue: Any?, bucketingKey: String? ,atributtes: [String:Any]?) -> Bool {
         
         guard let matchValueString = matchValue as? String, let dataElements = data else {
             
