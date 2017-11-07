@@ -8,6 +8,6 @@
 
 import Foundation
 
-@objc public class ParsedSplit: NSObject, SplitBase {
+@objc public class ParsedSplit: NSObject {
     
 }

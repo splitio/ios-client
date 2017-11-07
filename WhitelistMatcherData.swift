@@ -9,7 +9,7 @@
 import Foundation
 import SwiftyJSON
 
-@objc public class WhitelistMatcherData: NSObject {
+public class WhitelistMatcherData: NSObject {
 
     var whitelist: [String]?
     

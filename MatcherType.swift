@@ -8,7 +8,8 @@
 
 import Foundation
 
-@objc public enum MatcherType: Int {
+public enum MatcherType: Int {
+    
     case AllKeys
     case InSegment
     case Whitelist

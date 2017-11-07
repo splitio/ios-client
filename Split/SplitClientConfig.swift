@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public class SplitClientConfig: NSObject {
+public class SplitClientConfig: NSObject {
     
     var featuresRefreshRate: Int
     var segmentsRefreshRate: Int

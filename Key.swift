@@ -9,7 +9,8 @@
 import Foundation
 import SwiftyJSON
 
-@objc public class Key: NSObject {
+
+public class Key: NSObject {
     
     let matchingKey: String
     let trafficType: String

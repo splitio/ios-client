@@ -10,9 +10,9 @@ import Foundation
 
 @objc public protocol SplitFetcher {
     
-    func fetch(splitName: String) -> ParsedSplit
+    func fetch(splitName: String) -> Split?
     
-    func fetchAll() -> [ParsedSplit]
+    func fetchAll() -> [Split]?
     
     func forceRefresh()
     

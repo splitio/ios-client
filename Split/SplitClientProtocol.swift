@@ -8,8 +8,13 @@
 
 import Foundation
 
-@objc public protocol SplitClientProtocol {
+public protocol SplitClientProtocol {
     
-    func getTreatment(forSplit split: String) -> String
+    func getTreatment(key:String, split: String) -> String
     
+    func getTreatment(key:String, split: String, atributtes:[String:Any]?) -> String
+    
+    func getTreatment(key:Key, split: String, atributtes:[String:Any]?) -> String
+
+
 }

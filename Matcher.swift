@@ -34,4 +34,50 @@ import SwiftyJSON
         self.booleanMatcherData = json["booleanMatcherData"] != JSON.null ? json["booleanMatcherData"].boolValue : nil
         self.stringMatcherData = json["stringMatcherData"] != JSON.null ? json["stringMatcherData"].stringValue : nil
     }
+    //--------------------------------------------------------------------------------------------------
+    public func getMatcher() -> MatcherProtocol {
+        
+        switch self.matcherType! {
+            
+        case .AllKeys: return AllKeysMatcher()
+            
+        case .Between: return AllKeysMatcher()
+
+        case .ContainsAllOfSet: return AllKeysMatcher()
+            
+        case .ContainsString: return AllKeysMatcher()
+        
+        case .EndsWith: return AllKeysMatcher()
+            
+        case .EqualTo: return AllKeysMatcher()
+
+        case .EqualToBoolean: return AllKeysMatcher()
+
+        case .EqualToSet: return AllKeysMatcher()
+            
+        case .GreaterThanOrEqualTo: return AllKeysMatcher()
+        
+        case .InSegment: return AllKeysMatcher()
+            
+        case .InSplitTreatment: return AllKeysMatcher()
+            
+        case .LessThanOrEqualTo: return AllKeysMatcher()
+            
+        case .MatchesString: return AllKeysMatcher()
+        
+        case .PartOfSet: return AllKeysMatcher()
+            
+        case .StartsWith: return AllKeysMatcher()
+            
+        case .Whitelist: break
+
+        default:
+            return AllKeysMatcher()
+        }
+
+        return AllKeysMatcher()
+
+    }
+    //--------------------------------------------------------------------------------------------------
+
 }
