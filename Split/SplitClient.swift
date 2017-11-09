@@ -17,7 +17,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     internal var config: SplitClientConfig?
     internal var dispatchGroup: DispatchGroup?
     public static let CONTROL : String = "control"
-
+    
     public init(config: SplitClientConfig, trafficType: TrafficType) throws {
         self.config = config
         self.trafficType = trafficType
@@ -62,16 +62,10 @@ public final class SplitClient: NSObject, SplitClientProtocol {
             
         }
         // TODO: Not implemented yet
-        return SplitClient.CONTROL // TODO: Move to a constant on another class
+        return SplitClient.CONTROL 
     }
     
     public func getTreatment(key: Key, split: String, atributtes:[String:Any]?) -> String {
-        
-        return SplitClient.CONTROL  // TODO: Move to a constant on another class
-        
-    }
-    
-    private func evalTreatment(key: String, bucketingKey: String , split: String, atributtes:[String:Any]?) -> String  {
         
         //TODO: Use the cache here
         if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
@@ -82,13 +76,39 @@ public final class SplitClient: NSObject, SplitClientProtocol {
                 
             } else {
                 
+                let treatment =  Splitter.shared.getTreatment(key: key, seed: splitTreated.seed!, atributtes: nil, partions: splitTreated.conditions?.first?.partitions, algo: 1)
+                
+                return treatment
                 
             }
             
         }
-
+        
         return SplitClient.CONTROL
-
+        
     }
-
+    
+    public func evalTreatment(key: String, bucketingKey: String , split: String, atributtes:[String:Any]?) -> String  {
+        
+        //TODO: Use the cache here
+        if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
+            
+            if let killed = splitTreated.killed, killed {
+                
+                return splitTreated.defaultTreatment!
+                
+            } else {
+                
+           
+                
+            }
+            
+        }
+        
+        return SplitClient.CONTROL
+        
+    }
+    
+    
+    
 }

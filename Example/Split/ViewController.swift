@@ -24,6 +24,9 @@ class ViewController: UIViewController {
         debugPrint(client.getTreatment(key: "Mozi",split: "natalia-split"))
         debugPrint(client.getTreatment(key: "Mozi",split: "natalia-split"))
         debugPrint(client.getTreatment(key: "nati",split: "natalia-split"))
+        let key: Key = Key(matchingKey: "Mozi", trafficType: "user", bucketingKey: "lala")
+        let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
+
     }
 
     override func didReceiveMemoryWarning() {
