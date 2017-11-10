@@ -17,12 +17,16 @@ public protocol SplitterProtocol {
 
 public class Splitter: SplitterProtocol {
     
+    public static let ALGO_LEGACY: Int = 1
+    public static let ALGO_MURMUR: Int = 2
+    //------------------------------------------------------------------------------------------------------------------
+
     public static let shared: Splitter = {
         
         let instance = Splitter();
         return instance;
     }()
- 
+    //------------------------------------------------------------------------------------------------------------------
     public func getTreatment(key: Key, seed: Int, atributtes: [String : Any]?, partions: [Partition]?, algo: Int) -> String {
         
         var accumulatedSize: Int = 0
@@ -53,15 +57,34 @@ public class Splitter: SplitterProtocol {
         
         return SplitClient.CONTROL // should return control or nil here?
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func getBucket(seed: Int, key: String ,algo: Int) -> Int {
         
-        let hashCode = Murmur3Hash.hashString(key, UInt32(seed))
+        let hashCode: UInt32 = self.hashCode(seed: seed, key: key, algo: algo)
         
         let bucket = (hashCode  % 100) + 1
         
         return Int(bucket)
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
+    private func hashCode(seed: Int, key: String ,algo: Int) -> UInt32 {
+        
+        switch algo {
+            
+        case Splitter.ALGO_LEGACY:
+            
+            return LegacyHash.getHash(key, UInt32(seed))
+            
+        case Splitter.ALGO_MURMUR:
+            
+            return Murmur3Hash.hashString(key, UInt32(seed))
+            
+        default:
+            
+            return LegacyHash.getHash(key, UInt32(seed))
+        }
+        
+    }
+    //------------------------------------------------------------------------------------------------------------------
 }
