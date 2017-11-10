@@ -3,6 +3,8 @@
 //  Pods
 //
 //  Created by Brian Sztamfater on 20/9/17.
+//  Modified by Natalia Stele on 11/10/17.
+
 //
 //
 
@@ -46,13 +48,14 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
         print("SEG")
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func getTreatment(key: String, split: String, atributtes:[String:Any]?) -> String {
         // TODO: Not implemented yet
         
         
         return SplitClient.CONTROL // TODO: Move to a constant on another class
     }
+    //------------------------------------------------------------------------------------------------------------------
     
     public func getTreatment(key:String, split: String) -> String {
         
@@ -64,7 +67,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         // TODO: Not implemented yet
         return SplitClient.CONTROL 
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func getTreatment(key: Key, split: String, atributtes:[String:Any]?) -> String {
         
         //TODO: Use the cache here
@@ -87,7 +90,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         return SplitClient.CONTROL
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func evalTreatment(key: String, bucketingKey: String , split: String, atributtes:[String:Any]?) -> String  {
         
         //TODO: Use the cache here
@@ -99,7 +102,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
                 
             } else {
                 
-           
+                
                 
             }
             
@@ -108,6 +111,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         return SplitClient.CONTROL
         
     }
+    //------------------------------------------------------------------------------------------------------------------
     
     
     
