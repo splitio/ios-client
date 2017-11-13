@@ -14,13 +14,13 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
     var data: [String]?
     
     //--------------------------------------------------------------------------------------------------
-    public init(data:[String]?, negate: Bool) {
+    public init(data:[String]?, splitClient: SplitClient? = nil, negate: Bool? = nil, atributte: String? = nil , type: MatcherType? = nil) {
         
-        super.init(splitClient: nil, negate: negate)
+        super.init(splitClient: splitClient, negate: negate, atributte: atributte, type: type)
         self.data = data
     }
     //--------------------------------------------------------------------------------------------------
-    public func match(matchValue: Any?, bucketingKey: String? ,atributtes: [String:Any]?) -> Bool {
+    public func match(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) -> Bool {
         
         guard let matchValueString = matchValue as? String, let dataElements = data else {
             
@@ -28,16 +28,18 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
             
         }
         
+        var value: Bool = false
+        
         for element in dataElements {
             
             if element.contains(matchValueString) {
                 
-                return negate(value: true)
+               value = true
             }
             
         }
         
-        return negate(value: false)
+        return isNegate() ? !value : value
     }
     //--------------------------------------------------------------------------------------------------
 

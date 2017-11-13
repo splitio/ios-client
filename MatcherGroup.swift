@@ -11,8 +11,8 @@ import SwiftyJSON
 
 @objc public class MatcherGroup: NSObject {
     
-    var matcherCombiner: MatcherCombiner?
-    var matchers: [Matcher]?
+    public var matcherCombiner: MatcherCombiner?
+    public var matchers: [Matcher]?
     
     public init(_ json: JSON) {
         self.matcherCombiner = MatcherCombiner.enumFromString(string: json["combiner"].stringValue)
@@ -20,4 +20,7 @@ import SwiftyJSON
             return Matcher(json)
         }
     }
+    
+    
+    
 }

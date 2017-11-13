@@ -12,25 +12,35 @@ public class BaseMatcher : NSObject {
     
     var splitClient: SplitClient?
     var negate: Bool?
+    var atributte: String?
+    var type: MatcherType?
     
     //--------------------------------------------------------------------------------------------------
-    public init(splitClient: SplitClient? = nil, negate: Bool? = nil) {
+    public init(splitClient: SplitClient? = nil, negate: Bool? = nil, atributte: String? = nil , type: MatcherType? = nil) {
 
         self.splitClient = splitClient
         self.negate = negate
+        self.atributte = atributte
+        self.type = type
         
     }
     //--------------------------------------------------------------------------------------------------
-    public func negate(value: Bool) -> Bool {
+    public func isNegate() -> Bool {
         
-        if let negateValue = negate, negateValue {
-            
-            return !value
-        }
+        return self.negate!
+    }
+    //--------------------------------------------------------------------------------------------------
+    public func hasAttribute() -> Bool {
         
-        return value
+        return self.atributte != nil
+        
+    }
+    //--------------------------------------------------------------------------------------------------
+    public func getAttribute() -> String {
+        
+        return self.atributte!
+        
     }
     //--------------------------------------------------------------------------------------------------
 
- 
 }

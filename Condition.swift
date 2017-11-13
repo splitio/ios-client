@@ -11,10 +11,10 @@ import SwiftyJSON
 
 @objc public class Condition: NSObject {
     
-    var conditionType: ConditionType?
-    var matcherGroup: MatcherGroup?
-    var partitions: [Partition]?
-    var label: String?
+    public var conditionType: ConditionType?
+    public var matcherGroup: MatcherGroup?
+    public var partitions: [Partition]?
+    public var label: String?
     
     public init(_ json: JSON) {
         self.conditionType = ConditionType.enumFromString(string: json["conditionType"].stringValue)
@@ -24,4 +24,27 @@ import SwiftyJSON
         }
         self.label = json["label"].string
     }
+    
+    func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) -> Bool {
+        
+        if let matcherG = self.matcherGroup, let matchers = matcherG.matchers {
+            
+            for matcher in matchers {
+                
+                let matcherEvaluator = matcher.getMatcher()
+                
+                if matcherEvaluator.match(matchValue: matchValue, bucketingKey: bucketingKey, atributtes: atributtes) == false {
+                    
+                    return false
+                    
+                }
+                
+            }
+            
+            return true
+        }
+        
+        return false
+    }
+    
 }

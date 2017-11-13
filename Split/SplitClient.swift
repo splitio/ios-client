@@ -79,7 +79,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
                 
             } else {
                 
-                let treatment =  Splitter.shared.getTreatment(key: key, seed: splitTreated.seed!, atributtes: nil, partions: splitTreated.conditions?.first?.partitions, algo: 0)
+                let treatment =  Splitter.shared.getTreatment(key: key, seed: splitTreated.seed!, atributtes: nil, partions: splitTreated.conditions?.first?.partitions, algo: splitTreated.algo!)
                 
                 return treatment
                 
