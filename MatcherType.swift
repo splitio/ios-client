@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum MatcherType: Int {
+public enum MatcherType: String {
     
     case AllKeys
     case InSegment

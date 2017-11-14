@@ -10,7 +10,7 @@ import Foundation
 
 
 public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
-    
+
     var data: [String]?
     
     //--------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
         self.data = data
     }
     //--------------------------------------------------------------------------------------------------
-    public func match(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) -> Bool {
+    public func evaluate(matchValue: Any?) -> Bool {
         
         guard let matchValueString = matchValue as? String, let dataElements = data else {
             
@@ -34,13 +34,15 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
             
             if element.contains(matchValueString) {
                 
-               value = true
+                value = true
             }
             
         }
         
         return isNegate() ? !value : value
+        
     }
     //--------------------------------------------------------------------------------------------------
 
+    
 }

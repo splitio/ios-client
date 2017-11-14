@@ -36,9 +36,21 @@ public class BaseMatcher : NSObject {
         
     }
     //--------------------------------------------------------------------------------------------------
-    public func getAttribute() -> String {
+    public func getAttribute() -> String? {
         
-        return self.atributte!
+        return self.atributte
+        
+    }
+    //--------------------------------------------------------------------------------------------------
+    public func getMatcherType() -> MatcherType {
+        
+        return self.type!
+        
+    }
+    //--------------------------------------------------------------------------------------------------
+    public func matcherHasAttribute() -> Bool {
+        
+        return self.atributte != nil
         
     }
     //--------------------------------------------------------------------------------------------------

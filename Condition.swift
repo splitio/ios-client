@@ -25,26 +25,68 @@ import SwiftyJSON
         self.label = json["label"].string
     }
     
-    func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) -> Bool {
+    func match(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) -> Bool {
         
         if let matcherG = self.matcherGroup, let matchers = matcherG.matchers {
+            
+            var results: [Bool] = []
             
             for matcher in matchers {
                 
                 let matcherEvaluator = matcher.getMatcher()
+                var result: Bool = false
+
+                if matcherEvaluator.getMatcherType() != MatcherType.InSplitTreatment {
+                    
+                    // scenario 1: no attr in matcher
+                    // e.g. if user is in segment all then split 100:on
+                    if !matcherEvaluator.matcherHasAttribute() {
+                        
+                        result = matcherEvaluator.evaluate(matchValue: matchValue)
                 
-                if matcherEvaluator.match(matchValue: matchValue, bucketingKey: bucketingKey, atributtes: atributtes) == false {
+                    } else {
+                       
+                        // scenario 2: attribute provided but no attribute value provided. Matcher does not match
+                        // e.g. if user.age is >= 10 then split 100:on
+                        
+                        if atributtes == nil || atributtes![matcherEvaluator.getAttribute()!] == nil {
+                            
+                            result = false
+                
+                        } else {
+                            // instead of using the user id, we use the attribute value for evaluation
+
+                            let atributteValue = matcherEvaluator.getAttribute()
+                            result = matcherEvaluator.evaluate(matchValue: atributteValue)
+                        }
+                        
+                    }
                     
-                    return false
-                    
+                } else {
+                    //TODO:
+                    //Dependency treatment
                 }
                 
+                let lastEvaluation = matcherEvaluator.isNegate() ? !result : result
+                results.append(lastEvaluation)
             }
             
-            return true
+            switch matcherG.matcherCombiner {
+                
+                case .And?:
+                    return (matcherG.matcherCombiner?.combineAndResults(partialResults: results))!
+                
+                case .Or?:
+                    return (matcherG.matcherCombiner?.combineAndResults(partialResults: results))!
+                
+                case .none:
+                    return (matcherG.matcherCombiner?.combineAndResults(partialResults: results))!
+            }
+            
         }
         
         return false
+
     }
     
 }

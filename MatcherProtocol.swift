@@ -10,6 +10,10 @@ import Foundation
 
 public protocol MatcherProtocol: NSObjectProtocol {
 
-    func match(matchValue: Any?, bucketingKey: String? ,atributtes: [String:Any]?) -> Bool
-
+    func evaluate(matchValue: Any?) -> Bool
+    func getAttribute() -> String?
+    func getMatcherType() -> MatcherType
+    func matcherHasAttribute() -> Bool
+    func isNegate() -> Bool
+    
 }

@@ -8,14 +8,15 @@
 import Foundation
 
 public class AllKeysMatcher: BaseMatcher, MatcherProtocol {
- 
+    
     //--------------------------------------------------------------------------------------------------
      public init() {
         
         super.init()
     }
     //--------------------------------------------------------------------------------------------------
-    public func match(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) -> Bool {
+
+    public func evaluate(matchValue: Any?) -> Bool {
         
         if matchValue == nil {
             
@@ -24,6 +25,7 @@ public class AllKeysMatcher: BaseMatcher, MatcherProtocol {
         
         return true
     }
+    
     //--------------------------------------------------------------------------------------------------
 
 }
