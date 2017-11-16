@@ -7,16 +7,17 @@
 
 import Foundation
 
-public class AllKeysMatcher: BaseMatcher, MatcherProtocol {
+public class AllKeysMatcher: BaseMatcher, MatcherProtocol  {
     
+
     //--------------------------------------------------------------------------------------------------
-     public init() {
+     public init(negate: Bool? = false) {
         
-        super.init()
+        super.init(negate: negate, type: MatcherType.AllKeys)
+        
     }
     //--------------------------------------------------------------------------------------------------
-
-    public func evaluate(matchValue: Any?) -> Bool {
+    public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String : Any]?) -> Bool {
         
         if matchValue == nil {
             
@@ -25,7 +26,4 @@ public class AllKeysMatcher: BaseMatcher, MatcherProtocol {
         
         return true
     }
-    
-    //--------------------------------------------------------------------------------------------------
-
 }

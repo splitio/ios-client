@@ -13,10 +13,10 @@ import SwiftyJSON
 public class Key: NSObject {
     
     let matchingKey: String
-    let trafficType: String
+    let trafficType: String?
     let bucketingKey: String?
 
-    public init(matchingKey: String, trafficType: String, bucketingKey: String? = nil) {
+    public init(matchingKey: String, trafficType: String? = nil, bucketingKey: String? = nil) {
         self.matchingKey = matchingKey
         self.trafficType = trafficType
         self.bucketingKey = bucketingKey

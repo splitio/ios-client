@@ -36,13 +36,14 @@ import SwiftyJSON
                 let matcherEvaluator = matcher.getMatcher()
                 var result: Bool = false
 
-                if matcherEvaluator.getMatcherType() != MatcherType.InSplitTreatment {
+                if matcherEvaluator.getMatcherType() != MatcherType.Dependency {
                     
                     // scenario 1: no attr in matcher
                     // e.g. if user is in segment all then split 100:on
                     if !matcherEvaluator.matcherHasAttribute() {
                         
-                        result = matcherEvaluator.evaluate(matchValue: matchValue)
+                        //let matcherEv = matcherEvaluator2(matcher: matcherEvaluator)
+                        result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: nil, atributtes: nil)
                 
                     } else {
                        
@@ -57,14 +58,20 @@ import SwiftyJSON
                             // instead of using the user id, we use the attribute value for evaluation
 
                             let atributteValue = matcherEvaluator.getAttribute()
-                            result = matcherEvaluator.evaluate(matchValue: atributteValue)
+                            result = matcherEvaluator.evaluate(matchValue: atributteValue, bucketingKey: nil, atributtes: nil)
                         }
                         
                     }
                     
                 } else {
-                    //TODO:
-                    //Dependency treatment
+                    
+                    if matcherEvaluator.getMatcherType() == MatcherType.Dependency {
+                        
+                           result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: bucketingKey, atributtes: atributtes)
+                        
+                        
+                    }
+                 
                 }
                 
                 let lastEvaluation = matcherEvaluator.isNegate() ? !result : result
@@ -87,6 +94,12 @@ import SwiftyJSON
         
         return false
 
+    }
+    
+    func matcherEvaluator2(matcher: MatcherProtocol) -> MatcherProtocol {
+        
+        return matcher as! AllKeysMatcher
+        
     }
     
 }

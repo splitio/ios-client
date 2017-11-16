@@ -20,11 +20,12 @@ class ViewController: UIViewController {
         }
         let client = splitFactory.client()
         
-        debugPrint(client.getTreatment(key: "Mozi",split: "mozilla-split"))
-        debugPrint(client.getTreatment(key: "Mozi",split: "natalia-split"))
-        debugPrint(client.getTreatment(key: "Mozi",split: "natalia-split"))
-        debugPrint(client.getTreatment(key: "nati",split: "natalia-split"))
         let key: Key = Key(matchingKey: "Mozi", trafficType: "user", bucketingKey: "lala")
+
+        debugPrint(client.getTreatment(key: "Mozi",split: "mozilla-split"))
+        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
         let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
 
     }

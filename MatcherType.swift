@@ -36,7 +36,7 @@ public enum MatcherType: String {
     case EqualToBoolean
     
     /* Dependency Matcher */
-    case InSplitTreatment
+    case Dependency
     
     static func enumFromString(string: String) -> MatcherType? {
         switch string.lowercased() {
@@ -73,7 +73,7 @@ public enum MatcherType: String {
         case "equal_to_boolean":
             return MatcherType.EqualToBoolean
         case "in_split_treatment":
-            return MatcherType.InSplitTreatment
+            return MatcherType.Dependency
         default:
             return nil
         }

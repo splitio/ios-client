@@ -59,8 +59,6 @@ import SwiftyJSON
         
         case .InSegment: return AllKeysMatcher()
             
-        case .InSplitTreatment: return AllKeysMatcher()
-            
         case .LessThanOrEqualTo: return AllKeysMatcher()
             
         case .MatchesString: return AllKeysMatcher()
@@ -69,13 +67,14 @@ import SwiftyJSON
             
         case .StartsWith: return AllKeysMatcher()
             
-        case .Whitelist: break
+        case .Whitelist: return AllKeysMatcher()
+            
+        case .Dependency: return AllKeysMatcher()
+
 
         default:
             return AllKeysMatcher()
         }
-
-        return AllKeysMatcher()
 
     }
     //--------------------------------------------------------------------------------------------------

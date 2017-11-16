@@ -8,7 +8,7 @@
 import Foundation
 
 
-public class BaseMatcher : NSObject {
+public class BaseMatcher : NSObject  {
     
     var splitClient: SplitClient?
     var negate: Bool?

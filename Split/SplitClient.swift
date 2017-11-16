@@ -46,72 +46,23 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         refreshableMySegmentsFetcher.start()
         self.splitFetcher = refreshableSplitFetcher
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
-        print("SEG")
+        print("DEBUG")
     }
-    //------------------------------------------------------------------------------------------------------------------
-    public func getTreatment(key: String, split: String, atributtes:[String:Any]?) -> String {
-        // TODO: Not implemented yet
-        
-        
-        return SplitClient.CONTROL // TODO: Move to a constant on another class
-    }
-    //------------------------------------------------------------------------------------------------------------------
-    
-    public func getTreatment(key:String, split: String) -> String {
-        
-        if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
-            
-            print("SPLIT TREATED: \(String(describing: splitTreated.name))")
-            
-        }
-        // TODO: Not implemented yet
-        return SplitClient.CONTROL 
-    }
+   
     //------------------------------------------------------------------------------------------------------------------
     public func getTreatment(key: Key, split: String, atributtes:[String:Any]?) -> String {
         
-        //TODO: Use the cache here
-        if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
-            
-            if let killed = splitTreated.killed, killed {
-                
-                return splitTreated.defaultTreatment!
-                
-            } else {
-                
-                let treatment =  Splitter.shared.getTreatment(key: key, seed: splitTreated.seed!, atributtes: nil, partions: splitTreated.conditions?.first?.partitions, algo: splitTreated.algo!)
-                
-                return treatment
-                
-            }
-            
-        }
+        let evaluator: Evaluator = Evaluator.shared
+        evaluator.mySegmentsFetcher = self.mySegmentsFetcher
+        evaluator.splitFetcher = self.splitFetcher
         
-        return SplitClient.CONTROL
+        let result = Evaluator.shared.evalTreatment(key: key.matchingKey, bucketingKey: key.bucketingKey, split: split, atributtes: atributtes)
         
+        return result![Engine.EVALUATION_RESULT_TREATMENT] as! String
+    
     }
     //------------------------------------------------------------------------------------------------------------------
-    public func evalTreatment(key: String, bucketingKey: String , split: String, atributtes:[String:Any]?) -> String  {
-        
-        //TODO: Use the cache here
-        if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
-            
-            if let killed = splitTreated.killed, killed {
-                
-                return splitTreated.defaultTreatment!
-                
-            } else {
-                
-                
-                
-            }
-            
-        }
-        
-        return SplitClient.CONTROL
-        
-    }
-    //------------------------------------------------------------------------------------------------------------------
+ 
     
     
     

@@ -20,8 +20,8 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
         self.data = data
     }
     //--------------------------------------------------------------------------------------------------
-    public func evaluate(matchValue: Any?) -> Bool {
-        
+    public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String : Any]?) -> Bool {
+
         guard let matchValueString = matchValue as? String, let dataElements = data else {
             
             return false
@@ -39,7 +39,7 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
             
         }
         
-        return isNegate() ? !value : value
+        return value
         
     }
     //--------------------------------------------------------------------------------------------------
