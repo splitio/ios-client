@@ -8,7 +8,8 @@
 
 import Foundation
 
-@objc public enum MatcherType: Int {
+public enum MatcherType: String {
+    
     case AllKeys
     case InSegment
     case Whitelist
@@ -35,7 +36,7 @@ import Foundation
     case EqualToBoolean
     
     /* Dependency Matcher */
-    case InSplitTreatment
+    case Dependency
     
     static func enumFromString(string: String) -> MatcherType? {
         switch string.lowercased() {
@@ -72,7 +73,7 @@ import Foundation
         case "equal_to_boolean":
             return MatcherType.EqualToBoolean
         case "in_split_treatment":
-            return MatcherType.InSplitTreatment
+            return MatcherType.Dependency
         default:
             return nil
         }

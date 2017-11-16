@@ -24,6 +24,7 @@ import SwiftyJSON
     var algo: Int?
     
     public init(_ json: JSON) {
+        
         self.name = json["name"].string
         self.seed = json["seed"].int
         self.status = Status.enumFromString(string: json["status"].stringValue)

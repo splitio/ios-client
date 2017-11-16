@@ -14,6 +14,7 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		63921D5F780CE4DBD840F0D8 /* Pods_Split_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 441D254060332D10C49E0F46 /* Pods_Split_Example.framework */; };
 		6624CA25DEA2C8AE5899C1DC /* Pods_Split_Example_Split_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14946A7643C6298E66BB0478 /* Pods_Split_Example_Split_Tests.framework */; };
+		CCF2C9D81FB4A503000A885E /* HashingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2C9D61FB4A503000A885E /* HashingTest.swift */; };
 		D39460CC1F71D09A000396FC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CA1F71D09A000396FC /* Nimble.framework */; };
 		D39460CD1F71D09A000396FC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CB1F71D09A000396FC /* Quick.framework */; };
 		D39460CE1F71D215000396FC /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460BB1F71C7F5000396FC /* Split.framework */; };
@@ -58,6 +59,7 @@
 		91A0F086A5FB0C0B797E8F76 /* Pods-Split_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Tests/Pods-Split_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		9ED7384CAA90FDAC9C10386A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		9F0F3C55FDC0A4DBF30265DD /* Pods-Split_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Tests/Pods-Split_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		CCF2C9D61FB4A503000A885E /* HashingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashingTest.swift; sourceTree = "<group>"; };
 		D39460BB1F71C7F5000396FC /* Split.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Split.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Split/Split.framework"; sourceTree = "<group>"; };
 		D39460BD1F71C812000396FC /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
 		D39460BE1F71C812000396FC /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Nimble/Nimble.framework"; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				D3D5C58C1F8694870088529F /* InMemorySplitCacheTests.swift */,
+				CCF2C9D61FB4A503000A885E /* HashingTest.swift */,
 				D3D5C58E1F86A0B80088529F /* InMemoryMySegmentsCacheTests.swift */,
 				D3D5C5791F85DBAD0088529F /* MySegmentsFetcherTests.swift */,
 				D3C8F00F1F84255F00C2632D /* SplitChangeFetcherTests.swift */,
@@ -335,7 +338,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		3FB0BDDFA589140D7C231FDF /* [CP] Copy Pods Resources */ = {
@@ -380,7 +383,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		BE2F8898579A9CE966ADF6B6 /* [CP] Embed Pods Frameworks */ = {
@@ -433,6 +436,7 @@
 				D3C8F0111F8425A200C2632D /* SplitChangeFetcherTests.swift in Sources */,
 				D3D5C57A1F85DBAD0088529F /* MySegmentsFetcherTests.swift in Sources */,
 				D3D5C58D1F8694870088529F /* InMemorySplitCacheTests.swift in Sources */,
+				CCF2C9D81FB4A503000A885E /* HashingTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -558,6 +562,7 @@
 			baseConfigurationReference = 664B0712AEA1E445A6CBAA10 /* Pods-Split_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos/Split",
@@ -576,6 +581,7 @@
 			baseConfigurationReference = 58CFD60B6F2902D3FC84E8C7 /* Pods-Split_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos/Split",

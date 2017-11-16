@@ -14,16 +14,20 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let config = SplitClientConfig(featuresRefreshRate: 5, segmentsRefreshRate: 5, blockUntilReady: 5000)
-        guard let splitFactory = try? SplitFactory(apiToken: "", config: config) else {
+        let config = SplitClientConfig(featuresRefreshRate: 5, segmentsRefreshRate: 5, blockUntilReady: 50000)
+        guard let splitFactory = try? SplitFactory(apiToken: "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq", config: config) else {
             return
         }
         let client = splitFactory.client()
         
-        debugPrint(client.getTreatment(forSplit: "Test"))
-        debugPrint(client.getTreatment(forSplit: "Test2"))
-        debugPrint(client.getTreatment(forSplit: "fsdfsdf"))
-        debugPrint(client.getTreatment(forSplit: "test-net"))
+        let key: Key = Key(matchingKey: "Mozi", trafficType: "user", bucketingKey: "lala")
+
+        debugPrint(client.getTreatment(key: "Mozi",split: "mozilla-split"))
+        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+        let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
+
     }
 
     override func didReceiveMemoryWarning() {

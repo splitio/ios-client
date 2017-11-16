@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public enum DataType: Int {
+public enum DataType: Int {
     case Number
     case DateTime
     case String
@@ -24,6 +24,5 @@ import Foundation
         default:
             return nil
         }
-    }
-    
+    }   
 }

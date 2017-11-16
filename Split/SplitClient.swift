@@ -3,12 +3,14 @@
 //  Pods
 //
 //  Created by Brian Sztamfater on 20/9/17.
+//  Modified by Natalia Stele on 11/10/17.
+
 //
 //
 
 import Foundation
 
-@objc public final class SplitClient: NSObject, SplitClientProtocol {
+public final class SplitClient: NSObject, SplitClientProtocol {
     
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
@@ -16,7 +18,8 @@ import Foundation
     internal var initialized: Bool = false
     internal var config: SplitClientConfig?
     internal var dispatchGroup: DispatchGroup?
-
+    public static let CONTROL : String = "control"
+    
     public init(config: SplitClientConfig, trafficType: TrafficType) throws {
         self.config = config
         self.trafficType = trafficType
@@ -43,10 +46,24 @@ import Foundation
         refreshableMySegmentsFetcher.start()
         self.splitFetcher = refreshableSplitFetcher
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
+        print("DEBUG")
     }
+   
+    //------------------------------------------------------------------------------------------------------------------
+    public func getTreatment(key: Key, split: String, atributtes:[String:Any]?) -> String {
+        
+        let evaluator: Evaluator = Evaluator.shared
+        evaluator.mySegmentsFetcher = self.mySegmentsFetcher
+        evaluator.splitFetcher = self.splitFetcher
+        
+        let result = Evaluator.shared.evalTreatment(key: key.matchingKey, bucketingKey: key.bucketingKey, split: split, atributtes: atributtes)
+        
+        return result![Engine.EVALUATION_RESULT_TREATMENT] as! String
     
-    public func getTreatment(forSplit split: String) -> String {
-        // TODO: Not implemented yet
-        return "control" // TODO: Move to a constant on another class
     }
+    //------------------------------------------------------------------------------------------------------------------
+ 
+    
+    
+    
 }
