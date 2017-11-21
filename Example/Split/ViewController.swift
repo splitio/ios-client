@@ -9,7 +9,7 @@
 import UIKit
 import Split
 
-class ViewController: UIViewController {
+class ViewController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,12 +21,24 @@ class ViewController: UIViewController {
         let client = splitFactory.client()
         
         let key: Key = Key(matchingKey: "Mozi", trafficType: "user", bucketingKey: "lala")
+        let names: [String] = ["nati","Mozi","Guille"]
+        var attributes: [String:Any] = [:]
+        attributes["name"] = names
+       
+        if client.getTreatment(key: "Mozi",split: "natalia-split", atributtes: attributes) == "ViewLoginA" {
+           
+            self.selectedIndex = 0
 
-        debugPrint(client.getTreatment(key: "Mozi",split: "mozilla-split"))
-        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-        let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
+        } else {
+            
+            self.selectedIndex = 1
+
+        }
+        debugPrint()
+//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+//        let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
 
     }
 

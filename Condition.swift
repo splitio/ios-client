@@ -56,9 +56,8 @@ import SwiftyJSON
                 
                         } else {
                             // instead of using the user id, we use the attribute value for evaluation
-
-                            let atributteValue = matcherEvaluator.getAttribute()
-                            result = matcherEvaluator.evaluate(matchValue: atributteValue, bucketingKey: nil, atributtes: nil)
+                            
+                            result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: nil, atributtes: nil)
                         }
                         
                     }

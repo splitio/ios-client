@@ -42,7 +42,7 @@ public class Splitter: SplitterProtocol {
                 
                 print("PARTITION SIZE \(String(describing: partition.size)) PARTITION TREATMENT: \(String(describing: partition.treatment)) \n")
                 
-                accumulatedSize = partition.size!
+                accumulatedSize = accumulatedSize + partition.size!
                 
                 if bucket <= accumulatedSize {
                     

@@ -28,6 +28,8 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
             
         }
         
+        print("KEY: \(matchValueString)")
+        
         var value: Bool = false
         
         for element in dataElements {

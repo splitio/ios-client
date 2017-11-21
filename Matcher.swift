@@ -45,7 +45,9 @@ import SwiftyJSON
 
         case .ContainsAllOfSet: return AllKeysMatcher()
             
-        case .ContainsString: return AllKeysMatcher()
+        case .ContainsString:
+            
+            return ContainsStringMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType) 
         
         case .EndsWith: return AllKeysMatcher()
             

@@ -17,14 +17,3 @@ public protocol MatcherProtocol: NSObjectProtocol {
     func isNegate() -> Bool
     
 }
-
-
-//public extension MatcherProtocol {
-//    
-//    public func evaluate(matchValue: Any?, bucketingKey: String? = nil, atributtes: [String:Any]? = nil) -> Bool {
-//        
-//        return evaluate(matchValue: matchValue, bucketingKey: bucketingKey, atributtes: atributtes)
-//    }
-//
-//}
-
