@@ -26,7 +26,7 @@ public class DependencyMatcher: BaseMatcher, MatcherProtocol  {
         
         var composeKey: Key?
         
-        if let key = matchValue as? String, let splitName = dependencyData?.split{
+        if let key = matchValue as? String, let splitName = dependencyData?.split {
             
             if let bucketKey = bucketingKey {
                 

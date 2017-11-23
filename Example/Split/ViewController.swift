@@ -35,10 +35,10 @@ class ViewController: UITabBarController {
 
         }
         debugPrint()
-//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-//        let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
+        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+        let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
 
     }
 
