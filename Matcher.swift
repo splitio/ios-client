@@ -49,11 +49,13 @@ import SwiftyJSON
             
             return ContainsStringMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType) 
         
-        case .EndsWith: return AllKeysMatcher()
+        case .EndsWith: return EndsWithMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+            
+        case .StartsWith: return StartWithMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
         case .EqualTo: return AllKeysMatcher()
 
-        case .EqualToBoolean: return AllKeysMatcher()
+        case .EqualToBoolean: return EqualToBooleanMatcher(data: self.booleanMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
 
         case .EqualToSet: return AllKeysMatcher()
             
@@ -67,9 +69,8 @@ import SwiftyJSON
         
         case .PartOfSet: return AllKeysMatcher()
             
-        case .StartsWith: return AllKeysMatcher()
-            
-        case .Whitelist: return AllKeysMatcher()
+
+        case .Whitelist: return Whitelist(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
         case .Dependency: return AllKeysMatcher()
 

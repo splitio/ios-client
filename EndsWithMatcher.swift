@@ -1,16 +1,17 @@
 //
-//  ContainsStringMatcher.swift
+//  EndsWithMatcher.swift
 //  Split
 //
-//  Created by Natalia  Stele on 11/5/17.
+//  Created by Natalia  Stele on 11/22/17.
 //
+
 
 import Foundation
 
 
 
-public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
-
+public class EndsWithMatcher: BaseMatcher, MatcherProtocol {
+    
     var data: [String]?
     
     //--------------------------------------------------------------------------------------------------
@@ -21,7 +22,7 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
     }
     //--------------------------------------------------------------------------------------------------
     public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String : Any]?) -> Bool {
-
+        
         guard let matchValueString = matchValue as? String, let dataElements = data else {
             
             return false
@@ -32,7 +33,7 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
         
         for element in dataElements {
             
-            if matchValueString.contains(element) {
+            if matchValueString.hasSuffix(element) {
                 
                 return true
                 
@@ -44,6 +45,8 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
         
     }
     //--------------------------------------------------------------------------------------------------
-
+    
     
 }
+
+
