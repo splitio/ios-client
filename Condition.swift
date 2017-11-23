@@ -15,6 +15,7 @@ import SwiftyJSON
     public var matcherGroup: MatcherGroup?
     public var partitions: [Partition]?
     public var label: String?
+    public var client: SplitClient?
     
     public init(_ json: JSON) {
         self.conditionType = ConditionType.enumFromString(string: json["conditionType"].stringValue)

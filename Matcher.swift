@@ -21,6 +21,7 @@ import SwiftyJSON
     var dependencyMatcherData: DependencyMatcherData?
     var booleanMatcherData: Bool?
     var stringMatcherData: String?
+    public var client: SplitClient?
     
     public init(_ json: JSON) {
         self.keySelector = json["keySelector"] != JSON.null ? KeySelector(json["keySelector"]) : nil
@@ -53,7 +54,7 @@ import SwiftyJSON
             
         case .StartsWith: return StartWithMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
-        case .EqualTo: return AllKeysMatcher()
+        case .EqualTo: return EqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
 
         case .EqualToBoolean: return EqualToBooleanMatcher(data: self.booleanMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
 
@@ -65,15 +66,14 @@ import SwiftyJSON
             
         case .LessThanOrEqualTo: return AllKeysMatcher()
             
-        case .MatchesString: return AllKeysMatcher()
+        case .MatchesString: return MatchesStringMatcher(data: self.stringMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
         
         case .PartOfSet: return AllKeysMatcher()
             
 
         case .Whitelist: return Whitelist(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
-        case .Dependency: return AllKeysMatcher()
-
+        case .Dependency: return DependencyMatcher(splitClient: self.client, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType, dependencyData: self.dependencyMatcherData)
 
         default:
             return AllKeysMatcher()
