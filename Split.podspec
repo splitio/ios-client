@@ -28,6 +28,11 @@ s.source_files = 'Split/**/*.{swift}'
     ss.source_files = 'Split/Domain/**/*.{swift}'
   end
 
+  s.subspec 'Networking' do |ss|
+    ss.source_files = 'Split/Networking/*'
+    ss.source_files = 'Split/Networking/**/*.{swift}'
+  end
+
   s.subspec 'Extensions' do |ss|
     ss.source_files = 'Split/Extensions/*'
   end

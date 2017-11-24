@@ -13,6 +13,7 @@ public class Engine {
     //------------------------------------------------------------------------------------------------------------------
     public static let EVALUATION_RESULT_TREATMENT: String = "treatment"
     public static let EVALUATION_RESULT_LABEL: String = "label"
+    internal var splitClient: SplitClient?
     //------------------------------------------------------------------------------------------------------------------
     public static let shared: Engine = {
         
@@ -35,6 +36,8 @@ public class Engine {
         let conditions: [Condition] = (split?.conditions)!
         
         for condition in conditions {
+            
+            condition.client = self.splitClient
             
             if (!inRollOut && condition.conditionType == ConditionType.Rollout) {
                 

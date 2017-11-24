@@ -53,9 +53,8 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     public func getTreatment(key: Key, split: String, atributtes:[String:Any]?) -> String {
         
         let evaluator: Evaluator = Evaluator.shared
-        evaluator.mySegmentsFetcher = self.mySegmentsFetcher
-        evaluator.splitFetcher = self.splitFetcher
-        
+        evaluator.splitClient = self
+
         let result = Evaluator.shared.evalTreatment(key: key.matchingKey, bucketingKey: key.bucketingKey, split: split, atributtes: atributtes)
         
         return result![Engine.EVALUATION_RESULT_TREATMENT] as! String
