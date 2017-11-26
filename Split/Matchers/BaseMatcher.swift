@@ -10,7 +10,7 @@ import Foundation
 
 public class BaseMatcher : NSObject  {
     
-    var splitClient: SplitClient?
+    public var splitClient: SplitClient?
     var negate: Bool?
     var atributte: String?
     var type: MatcherType?

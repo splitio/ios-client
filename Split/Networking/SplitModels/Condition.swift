@@ -34,8 +34,9 @@ import SwiftyJSON
             
             for matcher in matchers {
                 
-                let matcherEvaluator = matcher.getMatcher()
                 matcher.client = self.client
+
+                let matcherEvaluator = matcher.getMatcher()
                 var result: Bool = false
 
                 if matcherEvaluator.getMatcherType() != MatcherType.Dependency {
@@ -83,10 +84,7 @@ import SwiftyJSON
                 
                 case .And?:
                     return (matcherG.matcherCombiner?.combineAndResults(partialResults: results))!
-                
-                case .Or?:
-                    return (matcherG.matcherCombiner?.combineAndResults(partialResults: results))!
-                
+  
                 case .none:
                     return (matcherG.matcherCombiner?.combineAndResults(partialResults: results))!
             }

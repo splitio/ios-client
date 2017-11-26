@@ -21,7 +21,7 @@ class ViewController: UITabBarController {
         let client = splitFactory.client()
         
         let key: Key = Key(matchingKey: "Mozi", trafficType: "user", bucketingKey: "lala")
-        let names: [String] = ["nati","Mozi","Guille"]
+        let names: [String] = ["nati","Mozi","Guille","mozi"]
         var attributes: [String:Any] = [:]
         attributes["name"] = names
        
@@ -35,10 +35,10 @@ class ViewController: UITabBarController {
 
         }
         debugPrint()
-        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-        let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
+//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+//        let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
 
     }
 
