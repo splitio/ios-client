@@ -96,10 +96,4 @@ import SwiftyJSON
 
     }
     
-    func matcherEvaluator2(matcher: MatcherProtocol) -> MatcherProtocol {
-        
-        return matcher as! AllKeysMatcher
-        
-    }
-    
 }
