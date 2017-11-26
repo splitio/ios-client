@@ -36,7 +36,7 @@ public class Evaluator {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    public func evalTreatment(key: String, bucketingKey: String? , split: String, atributtes:[String:Any]?) -> [String:Any]?  {
+    public func evalTreatment(key: String, bucketingKey: String? , split: String, atributtes:[String:Any]?) throws -> [String:Any]?  {
         
         var result: [String:Any] = [:]
         var impressions: [String: Any] = [:]
@@ -57,7 +57,7 @@ public class Evaluator {
                 let engine = Engine.shared
                 engine.splitClient = self.splitClient
                 
-                let evaluationResult = engine.getTreatment(matchingKey: key, bucketingKey: bucketingKey, split: splitTreated, atributtes: atributtes)
+                let evaluationResult = try engine.getTreatment(matchingKey: key, bucketingKey: bucketingKey, split: splitTreated, atributtes: atributtes)
                 
                 var treatment: String? = evaluationResult[Engine.EVALUATION_RESULT_TREATMENT]
                 var impressionLabel: String? = evaluationResult[Engine.EVALUATION_RESULT_LABEL]

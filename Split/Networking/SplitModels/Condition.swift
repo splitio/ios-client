@@ -26,7 +26,7 @@ import SwiftyJSON
         self.label = json["label"].string
     }
     
-    func match(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) -> Bool {
+    func match(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) throws -> Bool {
         
         if let matcherG = self.matcherGroup, let matchers = matcherG.matchers {
             
@@ -79,6 +79,7 @@ import SwiftyJSON
                 let lastEvaluation = matcherEvaluator.isNegate() ? !result : result
                 results.append(lastEvaluation)
             }
+            
             
             switch matcherG.matcherCombiner {
                 

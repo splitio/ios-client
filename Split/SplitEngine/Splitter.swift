@@ -55,7 +55,7 @@ public class Splitter: SplitterProtocol {
             
         }
         
-        return SplitClient.CONTROL // should return control or nil here?
+        return SplitConstants.CONTROL
     }
     //------------------------------------------------------------------------------------------------------------------
     public func getBucket(seed: Int, key: String ,algo: Int) -> Int {

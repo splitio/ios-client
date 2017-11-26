@@ -42,7 +42,15 @@ public class DependencyMatcher: BaseMatcher, MatcherProtocol  {
             
             if let keys = composeKey  {
                 
-                treatment = splitClient?.getTreatment(key: keys, split:splitName , atributtes: atributtes)
+                do {
+                    
+                    treatment = try splitClient?.getTreatment(key: keys, split:splitName , atributtes: atributtes)
+                
+                }
+                catch {
+                    
+                    treatment = SplitConstants.CONTROL
+                }
                 
             }
             

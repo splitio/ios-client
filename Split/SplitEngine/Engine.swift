@@ -21,7 +21,7 @@ public class Engine {
         return instance;
     }()
     //------------------------------------------------------------------------------------------------------------------
-    public func getTreatment(matchingKey: String?, bucketingKey: String?, split: Split?, atributtes: [String:Any]?) -> [String: String] {
+    public func getTreatment(matchingKey: String?, bucketingKey: String?, split: Split?, atributtes: [String:Any]?) throws -> [String: String] {
         
         var bucketKey: String?
         var inRollOut: Bool = false
@@ -57,7 +57,7 @@ public class Engine {
                 }
             }
             
-            if condition.match(matchValue: matchingKey, bucketingKey: bucketKey, atributtes: atributtes) {
+            if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, atributtes: atributtes) {
                 
                 var bucketKey: String? = bucketingKey
                 

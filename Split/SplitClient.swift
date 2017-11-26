@@ -18,7 +18,6 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     internal var initialized: Bool = false
     internal var config: SplitClientConfig?
     internal var dispatchGroup: DispatchGroup?
-    public static let CONTROL : String = "control"
     
     public init(config: SplitClientConfig, trafficType: TrafficType) throws {
         self.config = config
@@ -50,14 +49,22 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     }
    
     //------------------------------------------------------------------------------------------------------------------
-    public func getTreatment(key: Key, split: String, atributtes:[String:Any]?) -> String {
+    public func getTreatment(key: Key, split: String, atributtes:[String:Any]?) throws -> String {
         
         let evaluator: Evaluator = Evaluator.shared
         evaluator.splitClient = self
-
-        let result = Evaluator.shared.evalTreatment(key: key.matchingKey, bucketingKey: key.bucketingKey, split: split, atributtes: atributtes)
+        do {
+            let result = try Evaluator.shared.evalTreatment(key: key.matchingKey, bucketingKey: key.bucketingKey, split: split, atributtes: atributtes)
+            
+            return result![Engine.EVALUATION_RESULT_TREATMENT] as! String
+            
+        }
+        catch {
+            
+            return SplitConstants.CONTROL
+            
+        }
         
-        return result![Engine.EVALUATION_RESULT_TREATMENT] as! String
     
     }
     //------------------------------------------------------------------------------------------------------------------
