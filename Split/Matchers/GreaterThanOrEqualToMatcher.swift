@@ -1,13 +1,13 @@
 //
-//  EqualToMatcher.swift
+//  GreaterThanOrEqualToMatcher.swift
 //  Split
 //
-//  Created by Natalia  Stele on 11/23/17.
+//  Created by Natalia  Stele on 26/11/2017.
 //
 
 import Foundation
 
-public class EqualToMatcher: BaseMatcher, MatcherProtocol {
+public class GreaterThanOrEqualToMatcher: BaseMatcher, MatcherProtocol {
     
     var data: UnaryNumericMatcherData?
     
@@ -18,7 +18,6 @@ public class EqualToMatcher: BaseMatcher, MatcherProtocol {
         super.init(splitClient: splitClient, negate: negate, atributte: atributte, type: type)
         self.data = data
     }
-    
     //--------------------------------------------------------------------------------------------------
     public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String : Any]?) -> Bool {
         
@@ -35,18 +34,17 @@ public class EqualToMatcher: BaseMatcher, MatcherProtocol {
             let keyDate = Date.dateFromInt(number: keyValue)
             let atributteDate = Date.dateFromInt(number: value)
             
-            return keyDate == atributteDate
+            return keyDate >= atributteDate
             
         case DataType.Number:
             
-            return keyValue == value
-            
+            return keyValue >= value
             
         }
         
     }
     //--------------------------------------------------------------------------------------------------
     
-    
 }
+
 

@@ -1,28 +1,27 @@
 //
-//  EqualToMatcher.swift
+//  BetweenMatcher.swift
 //  Split
 //
-//  Created by Natalia  Stele on 11/23/17.
+//  Created by Natalia  Stele on 26/11/2017.
 //
 
 import Foundation
 
-public class EqualToMatcher: BaseMatcher, MatcherProtocol {
+public class BetweenMatcher: BaseMatcher, MatcherProtocol {
     
-    var data: UnaryNumericMatcherData?
+    var data: BetweenMatcherData?
     
     
     //--------------------------------------------------------------------------------------------------
-    public init(data: UnaryNumericMatcherData?, splitClient: SplitClient? = nil, negate: Bool? = nil, atributte: String? = nil , type: MatcherType? = nil) {
+    public init(data: BetweenMatcherData?, splitClient: SplitClient? = nil, negate: Bool? = nil, atributte: String? = nil , type: MatcherType? = nil) {
         
         super.init(splitClient: splitClient, negate: negate, atributte: atributte, type: type)
         self.data = data
     }
-    
     //--------------------------------------------------------------------------------------------------
     public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String : Any]?) -> Bool {
         
-        guard let matcherData = data, let dataType = matcherData.dataType, let value = matcherData.value , let keyValue = matchValue as? Int64 else {
+        guard let matcherData = data, let dataType = matcherData.dataType, let start = matcherData.start, let end = matcherData.end , let keyValue = matchValue as? Int64 else {
             
             return false
             
@@ -33,20 +32,20 @@ public class EqualToMatcher: BaseMatcher, MatcherProtocol {
         case DataType.DateTime:
             
             let keyDate = Date.dateFromInt(number: keyValue)
-            let atributteDate = Date.dateFromInt(number: value)
-            
-            return keyDate == atributteDate
+            let startDate = Date.dateFromInt(number: start)
+            let endDate = Date.dateFromInt(number: end)
+
+            return keyDate.isBetweeen(date: startDate, andDate: endDate)
             
         case DataType.Number:
             
-            return keyValue == value
-            
+            return keyValue >= start && keyValue <= end
             
         }
         
     }
     //--------------------------------------------------------------------------------------------------
     
-    
 }
+
 

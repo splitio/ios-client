@@ -44,9 +44,7 @@ import SwiftyJSON
             
         case .ContainsAllOfSet: return ContainsAllOfSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
-        case .ContainsString:
-            
-            return ContainsStringMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType) 
+        case .ContainsString: return ContainsStringMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
         case .EndsWith: return EndsWithMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
@@ -57,7 +55,6 @@ import SwiftyJSON
         case .EqualToBoolean: return EqualToBooleanMatcher(data: self.booleanMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
         case .EqualToSet: return EqualToSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
-            
             
         case .InSegment: return InSegmentMatcher(data: self.userDefinedSegmentMatcherData, splitClient: self.client, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
@@ -71,11 +68,11 @@ import SwiftyJSON
             
         case .PartOfSet: return PartOfSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
-        case .LessThanOrEqualTo: return AllKeysMatcher()
+        case .LessThanOrEqualTo: return LessThanOrEqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
-        case .GreaterThanOrEqualTo: return AllKeysMatcher()
+        case .GreaterThanOrEqualTo: return GreaterThanOrEqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
-        case .Between: return AllKeysMatcher()
+        case .Between: return BetweenMatcher(data: self.betweenMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
             
             
         }
