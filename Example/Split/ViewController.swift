@@ -9,24 +9,43 @@
 import UIKit
 import Split
 
-class ViewController: UIViewController {
+class ViewController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let config = SplitClientConfig(featuresRefreshRate: 5, segmentsRefreshRate: 5, blockUntilReady: 50000)
-        guard let splitFactory = try? SplitFactory(apiToken: "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq", config: config) else {
-            return
-        }
-        let client = splitFactory.client()
+        let authorizationKey = "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
         
         let key: Key = Key(matchingKey: "Mozi", trafficType: "user", bucketingKey: "lala")
+        
+        guard let splitFactory = try? SplitFactory(apiToken: authorizationKey, key: key, config: config) else {
+            return
+        }
+        
+        let client = splitFactory.client()
+        
+        
+        let names: [String] = ["nati","Mozi","Guille","mozi"]
+        var attributes: [String:Any] = [:]
+        attributes["name"] = names
+       
+        let treatment = try! client.getTreatment(split: "natalia-split", atributtes: attributes)
+        
+        if treatment == "ViewLoginA" {
+           
+            self.selectedIndex = 0
 
-        debugPrint(client.getTreatment(key: "Mozi",split: "mozilla-split"))
-        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-        let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
+        } else {
+            
+            self.selectedIndex = 1
+
+        }
+        debugPrint()
+//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+//        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
+//        let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
 
     }
 

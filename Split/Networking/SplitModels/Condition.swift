@@ -15,6 +15,7 @@ import SwiftyJSON
     public var matcherGroup: MatcherGroup?
     public var partitions: [Partition]?
     public var label: String?
+    public var client: SplitClient?
     
     public init(_ json: JSON) {
         self.conditionType = ConditionType.enumFromString(string: json["conditionType"].stringValue)
@@ -25,7 +26,7 @@ import SwiftyJSON
         self.label = json["label"].string
     }
     
-    func match(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) -> Bool {
+    func match(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) throws -> Bool {
         
         if let matcherG = self.matcherGroup, let matchers = matcherG.matchers {
             
@@ -33,6 +34,8 @@ import SwiftyJSON
             
             for matcher in matchers {
                 
+                matcher.client = self.client
+
                 let matcherEvaluator = matcher.getMatcher()
                 var result: Bool = false
 
@@ -56,9 +59,8 @@ import SwiftyJSON
                 
                         } else {
                             // instead of using the user id, we use the attribute value for evaluation
-
-                            let atributteValue = matcherEvaluator.getAttribute()
-                            result = matcherEvaluator.evaluate(matchValue: atributteValue, bucketingKey: nil, atributtes: nil)
+                            
+                            result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: nil, atributtes: nil)
                         }
                         
                     }
@@ -78,14 +80,12 @@ import SwiftyJSON
                 results.append(lastEvaluation)
             }
             
+            
             switch matcherG.matcherCombiner {
                 
                 case .And?:
                     return (matcherG.matcherCombiner?.combineAndResults(partialResults: results))!
-                
-                case .Or?:
-                    return (matcherG.matcherCombiner?.combineAndResults(partialResults: results))!
-                
+  
                 case .none:
                     return (matcherG.matcherCombiner?.combineAndResults(partialResults: results))!
             }
@@ -94,12 +94,6 @@ import SwiftyJSON
         
         return false
 
-    }
-    
-    func matcherEvaluator2(matcher: MatcherProtocol) -> MatcherProtocol {
-        
-        return matcher as! AllKeysMatcher
-        
     }
     
 }

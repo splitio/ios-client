@@ -11,7 +11,6 @@ import Foundation
 public enum DataType: Int {
     case Number
     case DateTime
-    case String
     
     static func enumFromString(string: String) -> DataType? {
         switch string.lowercased() {
@@ -19,8 +18,6 @@ public enum DataType: Int {
             return DataType.Number
         case "datetime":
             return DataType.DateTime
-        case "string":
-            return DataType.String
         default:
             return nil
         }

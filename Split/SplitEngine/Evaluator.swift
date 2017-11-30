@@ -12,6 +12,15 @@ public class Evaluator {
     //------------------------------------------------------------------------------------------------------------------
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
+    internal var splitClient: SplitClient?  {
+        
+        didSet {
+            
+            self.splitFetcher = self.splitClient?.splitFetcher
+            self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
+            
+        }
+    }
     //------------------------------------------------------------------------------------------------------------------
     public static let shared: Evaluator = {
         
@@ -19,14 +28,15 @@ public class Evaluator {
         return instance;
     }()
     //------------------------------------------------------------------------------------------------------------------
-    public init(splitFetcher: SplitFetcher? = nil, mySegmentsFetcher: MySegmentsFetcher? = nil) {
+    public init(splitClient: SplitClient? = nil) {
         
-        self.splitFetcher = splitFetcher
-        self.mySegmentsFetcher = mySegmentsFetcher
+        self.splitClient = splitClient
+        self.splitFetcher = self.splitClient?.splitFetcher
+        self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    public func evalTreatment(key: String, bucketingKey: String? , split: String, atributtes:[String:Any]?) -> [String:Any]?  {
+    public func evalTreatment(key: String, bucketingKey: String? , split: String, atributtes:[String:Any]?) throws -> [String:Any]?  {
         
         var result: [String:Any] = [:]
         var impressions: [String: Any] = [:]
@@ -43,8 +53,11 @@ public class Evaluator {
                 
                 
             } else {
+ 
+                let engine = Engine.shared
+                engine.splitClient = self.splitClient
                 
-                let evaluationResult = Engine.shared.getTreatment(matchingKey: key, bucketingKey: bucketingKey, split: splitTreated, atributtes: atributtes)
+                let evaluationResult = try engine.getTreatment(matchingKey: key, bucketingKey: bucketingKey, split: splitTreated, atributtes: atributtes)
                 
                 var treatment: String? = evaluationResult[Engine.EVALUATION_RESULT_TREATMENT]
                 var impressionLabel: String? = evaluationResult[Engine.EVALUATION_RESULT_LABEL]

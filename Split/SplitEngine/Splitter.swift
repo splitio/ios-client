@@ -42,7 +42,7 @@ public class Splitter: SplitterProtocol {
                 
                 print("PARTITION SIZE \(String(describing: partition.size)) PARTITION TREATMENT: \(String(describing: partition.treatment)) \n")
                 
-                accumulatedSize = partition.size!
+                accumulatedSize = accumulatedSize + partition.size!
                 
                 if bucket <= accumulatedSize {
                     
@@ -55,7 +55,7 @@ public class Splitter: SplitterProtocol {
             
         }
         
-        return SplitClient.CONTROL // should return control or nil here?
+        return SplitConstants.CONTROL
     }
     //------------------------------------------------------------------------------------------------------------------
     public func getBucket(seed: Int, key: String ,algo: Int) -> Int {

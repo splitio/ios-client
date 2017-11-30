@@ -13,6 +13,7 @@ public class Engine {
     //------------------------------------------------------------------------------------------------------------------
     public static let EVALUATION_RESULT_TREATMENT: String = "treatment"
     public static let EVALUATION_RESULT_LABEL: String = "label"
+    internal var splitClient: SplitClient?
     //------------------------------------------------------------------------------------------------------------------
     public static let shared: Engine = {
         
@@ -20,7 +21,7 @@ public class Engine {
         return instance;
     }()
     //------------------------------------------------------------------------------------------------------------------
-    public func getTreatment(matchingKey: String?, bucketingKey: String?, split: Split?, atributtes: [String:Any]?) -> [String: String] {
+    public func getTreatment(matchingKey: String?, bucketingKey: String?, split: Split?, atributtes: [String:Any]?) throws -> [String: String] {
         
         var bucketKey: String?
         var inRollOut: Bool = false
@@ -35,6 +36,8 @@ public class Engine {
         let conditions: [Condition] = (split?.conditions)!
         
         for condition in conditions {
+            
+            condition.client = self.splitClient
             
             if (!inRollOut && condition.conditionType == ConditionType.Rollout) {
                 
@@ -54,7 +57,7 @@ public class Engine {
                 }
             }
             
-            if condition.match(matchValue: matchingKey, bucketingKey: bucketKey, atributtes: atributtes) {
+            if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, atributtes: atributtes) {
                 
                 var bucketKey: String? = bucketingKey
                 

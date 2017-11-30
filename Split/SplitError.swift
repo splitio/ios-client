@@ -10,4 +10,6 @@ import Foundation
 
 @objc public enum SplitError: Int, Error {
     case Timeout
+    case matcherNoFound
+
 }
