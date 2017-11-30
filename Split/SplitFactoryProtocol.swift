@@ -10,7 +10,7 @@ import Foundation
 
 public protocol SplitFactoryProtocol {
     
-    func client() -> SplitClientProtocol
+    func client() -> SplitClientTreatmentProtocol
     
     func manager() -> SplitManagerProtocol
     

@@ -28,6 +28,7 @@ public extension SplitClientProtocol {
         let composeKey: Key = Key(matchingKey: key, trafficType: "user", bucketingKey: key)
         
         do {
+            
             return try getTreatment(key: composeKey, split: split, atributtes: atributtes)
             
         }

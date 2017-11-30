@@ -10,17 +10,17 @@ import Foundation
 
 @objc public class SplitFactory: NSObject, SplitFactoryProtocol {
     
-    let _client: SplitClientProtocol
+    let _client: SplitClientTreatmentProtocol
     let _manager: SplitManagerProtocol
     
-    public init(apiToken: String, config: SplitClientConfig) throws {
+    public init(apiToken: String, key: Key, config: SplitClientConfig) throws {
         // TODO: Use apiKey, review and refactor client parameters
-        let client = try SplitClient(config: config, trafficType: TrafficType(matchingKey: "Mozi", type: "user"))
-        _client = client
+        let client = try SplitClient(config: config, key: key)
+        _client = client 
         _manager = SplitManager()
     }
 
-    public func client() -> SplitClientProtocol {
+    public func client() -> SplitClientTreatmentProtocol {
         return _client
     }
     

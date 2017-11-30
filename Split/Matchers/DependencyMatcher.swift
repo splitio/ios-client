@@ -24,35 +24,20 @@ public class DependencyMatcher: BaseMatcher, MatcherProtocol  {
     //--------------------------------------------------------------------------------------------------
     public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) -> Bool {
         
-        var composeKey: Key?
-        
-        if let key = matchValue as? String, let splitName = dependencyData?.split {
-            
-            if let bucketKey = bucketingKey {
-                
-                composeKey = Key(matchingKey: key, bucketingKey: bucketKey)
-                
-            } else {
-                
-                composeKey = Key(matchingKey: key, bucketingKey: key)
-
-            }
+        if let splitName = dependencyData?.split {
             
             var treatment: String?
             
-            if let keys = composeKey  {
+            do {
                 
-                do {
-                    
-                    treatment = try splitClient?.getTreatment(key: keys, split:splitName , atributtes: atributtes)
-                
-                }
-                catch {
-                    
-                    treatment = SplitConstants.CONTROL
-                }
+                treatment = try splitClient?.getTreatment(split: splitName , atributtes: atributtes)
                 
             }
+            catch {
+                
+                treatment = SplitConstants.CONTROL
+            }
+            
             
             if let treatments = dependencyData?.treatments {
                 
