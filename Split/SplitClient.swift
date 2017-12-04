@@ -52,7 +52,7 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         refreshableMySegmentsFetcher.start()
         self.splitFetcher = refreshableSplitFetcher
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
-        print("DEBUG")
+
     }
     
     //------------------------------------------------------------------------------------------------------------------

@@ -31,9 +31,7 @@ public class PartOfSetMatcher: BaseMatcher, MatcherProtocol {
             return false
             
         }
-        
-        print("KEY: \(matchValueSet)")
-        
+                
         return matchValueSet.isSubset(of: dataElements)
         
     }

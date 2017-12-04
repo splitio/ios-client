@@ -30,8 +30,6 @@ public class Whitelist: BaseMatcher, MatcherProtocol {
             
         }
         
-        print("KEY: \(matchValueString)")
-   
         return dataElements.contains(matchValueString)
         
     }

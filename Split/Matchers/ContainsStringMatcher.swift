@@ -27,9 +27,7 @@ public class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
             return false
             
         }
-        
-        print("KEY: \(matchValueString)")
-        
+                
         for element in dataElements {
             
             if matchValueString.contains(element) {

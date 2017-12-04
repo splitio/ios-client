@@ -32,9 +32,7 @@ public class ContainsAnyOfSetMatcher: BaseMatcher, MatcherProtocol {
             return false
             
         }
-        
-        print("KEY: \(matchValueSet)")
-        
+                
         return dataElements.intersection(matchValueSet).count > 0
         
     }

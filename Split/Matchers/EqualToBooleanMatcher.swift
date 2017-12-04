@@ -25,9 +25,7 @@ public class EqualToBooleanMatcher: BaseMatcher, MatcherProtocol {
             return false
             
         }
-        
-        print("KEY: \(matchValueBool)")
-        
+                
         return matchValueBool == boolenData
         
     }
