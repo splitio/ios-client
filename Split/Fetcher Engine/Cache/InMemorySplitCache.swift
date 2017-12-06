@@ -18,16 +18,19 @@ import Foundation
         self.changeNumber = changeNumber
     }
     
-    public func addSplit(splitName: String, split: Split) {
+    public func addSplit(splitName: String, split: Split) -> Bool {
         self.splits[splitName] = split
+        return true
     }
     
-    public func removeSplit(splitName: String) {
+    public func removeSplit(splitName: String) -> Bool {
         self.splits.removeValue(forKey: splitName)
+        return true
     }
     
-    public func setChangeNumber(_ changeNumber: Int64) {
+    public func setChangeNumber(_ changeNumber: Int64) -> Bool {
         self.changeNumber = changeNumber
+        return true
     }
     
     public func getChangeNumber() -> Int64 {

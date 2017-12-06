@@ -10,11 +10,11 @@ import Foundation
 
 @objc public protocol SplitCacheProtocol {
     
-    func addSplit(splitName: String, split: Split)
+    func addSplit(splitName: String, split: Split) -> Bool
     
-    func removeSplit(splitName: String)
+    func removeSplit(splitName: String) -> Bool
     
-    func setChangeNumber(_ changeNumber: Int64)
+    func setChangeNumber(_ changeNumber: Int64) -> Bool
     
     func getChangeNumber() -> Int64
     
