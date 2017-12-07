@@ -30,8 +30,8 @@ import Foundation
         self.mySegments.addEntries(from: dict)
     }
     
-    public func removeSegment(segmentName: String) {
-        self.mySegments.removeObject(forKey: segmentName)
+    public func removeSegments() {
+        self.mySegments.removeAllObjects()
     }
     
     public func getSegments() -> [String] {

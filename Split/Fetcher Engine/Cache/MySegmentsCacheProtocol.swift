@@ -12,15 +12,11 @@ import Foundation
     
     func addSegments(segmentNames: [String])
     
-    func removeSegment(segmentName: String)
+    func removeSegments()
     
     func getSegments() -> [String]
     
     func isInSegment(segmentName: String) -> Bool
-    
-    func setChangeNumber(_ changeNumber: Int64)
-    
-    func getChangeNumber() -> Int64
     
     func clear()
 
