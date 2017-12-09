@@ -78,11 +78,7 @@ public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
             }
             do {
                 let splitChanges = try strongSelf.splitChangeFetcher.fetch(since: strongSelf.splitCache.getChangeNumber())
-                splitChanges.splits?.forEach { split in
-                    // TODO: We need to get a ParsedSplit object
-                    strongSelf.splitCache.addSplit(splitName: split.name!, split: split)
-                }
-                strongSelf.splitCache.setChangeNumber(splitChanges.till!)
+                
                 strongSelf.dispatchGroup?.leave()
             } catch let error {
                 debugPrint("Problem fetching splitChanges: %@", error.localizedDescription)
