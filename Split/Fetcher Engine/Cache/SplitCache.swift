@@ -48,7 +48,7 @@ public class SplitCache: SplitCacheProtocol {
 
     public func getChangeNumber() -> Int64 {
     
-        if let changeNumber = Int64(storage.read(elementId: getChangeNumberId())!) {
+        if let file = storage.read(elementId: getChangeNumberId()), let changeNumber = Int64(file) {
             
             return changeNumber
         }
