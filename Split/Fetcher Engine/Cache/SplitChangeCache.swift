@@ -14,13 +14,13 @@ public class  SplitChangeCache: SplitChangeCacheProtocol {
     public static let CHANGE_NUMBER_FILE_PREFIX: String = "SPLITIO.changeNumber"
     var splitCache: SplitCacheProtocol?
     
-    
+    //------------------------------------------------------------------------------------------------------------------
     init(storage: StorageProtocol) {
         
         self.splitCache = SplitCache(storage: storage)
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func addChange(splitChange: SplitChange) -> Bool {
         
         if splitCache == nil { return false }
@@ -39,7 +39,7 @@ public class  SplitChangeCache: SplitChangeCacheProtocol {
         return result
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func getChanges(since: Int64) -> SplitChange? {
         
         let changeNumber = splitCache?.getChangeNumber()
@@ -59,5 +59,5 @@ public class  SplitChangeCache: SplitChangeCacheProtocol {
         return splitChange
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
 }

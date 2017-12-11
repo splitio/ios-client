@@ -12,6 +12,7 @@ public class FileAndMemoryStorage: StorageProtocol {
     var memoryStorage = MemoryStorage()
     var fileStorage = FileStorage()
     
+    //------------------------------------------------------------------------------------------------------------------
     public func read(elementId: String) -> String? {
         
         if let result = memoryStorage.read(elementId: elementId) {
@@ -29,25 +30,25 @@ public class FileAndMemoryStorage: StorageProtocol {
         return nil
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func write(elementId: String, content: String?) {
         
        memoryStorage.write(elementId: elementId, content: content)
        fileStorage.write(elementId: elementId, content: content)
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func delete(elementId: String) {
         
         memoryStorage.delete(elementId: elementId)
         fileStorage.delete(elementId: elementId)
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func getAllIds() -> [String]? {
         
         return fileStorage.getAllIds()
         
     }
-
+    //------------------------------------------------------------------------------------------------------------------
 }

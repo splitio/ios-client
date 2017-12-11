@@ -18,7 +18,7 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
         
         self.storage = storage
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func addSegments(segmentNames: [String]) {
         
             let json: JSON = JSON(segmentNames)
@@ -27,13 +27,13 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
         storage.write(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX , content: jsonString)
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func removeSegments() {
         
         storage.delete(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX)
     
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func getSegments() -> [String] {
         
         let segments = storage.read(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX)
@@ -51,17 +51,17 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
         
         return []
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     public func isInSegment(segmentName: String) -> Bool {
         
         let segments = self.getSegments()
         return segments.contains(segmentName)
         
     }
-        
+    //------------------------------------------------------------------------------------------------------------------
     public func clear() {
         
     }
- 
+    //------------------------------------------------------------------------------------------------------------------
     
 }

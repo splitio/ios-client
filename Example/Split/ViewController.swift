@@ -14,7 +14,7 @@ class ViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let config = SplitClientConfig(featuresRefreshRate: 5, segmentsRefreshRate: 5, blockUntilReady: 50000)
+        let config = SplitClientConfig(featuresRefreshRate: 30, segmentsRefreshRate: 30, blockUntilReady: 50000)
         let authorizationKey = "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
         
         let key: Key = Key(matchingKey: "Mozi", trafficType: "user", bucketingKey: "lala")
