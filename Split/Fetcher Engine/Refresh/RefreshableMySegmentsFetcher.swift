@@ -75,7 +75,7 @@ import Foundation
             do {
                 
                 let segments = try strongSelf.mySegmentsChangeFetcher.fetch(user: strongSelf.matchingKey)
-
+                debugPrint(segments)
                 strongSelf.dispatchGroup?.leave()
                 
             } catch let error {

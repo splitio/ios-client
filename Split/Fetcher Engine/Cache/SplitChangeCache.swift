@@ -21,15 +21,14 @@ public class  SplitChangeCache: SplitChangeCacheProtocol {
         
     }
     
-    
-    
     public func addChange(splitChange: SplitChange) -> Bool {
         
         if splitCache == nil { return false }
         
         var result = true
         
-        self.splitCache?.setChangeNumber(splitChange.till!)
+        let _ = self.splitCache?.setChangeNumber(splitChange.till!)
+     
         
         for split in splitChange.splits! {
             
@@ -60,9 +59,5 @@ public class  SplitChangeCache: SplitChangeCacheProtocol {
         return splitChange
         
     }
- 
-    
-    
-
     
 }
