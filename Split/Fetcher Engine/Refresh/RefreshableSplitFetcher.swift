@@ -26,6 +26,8 @@ public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
     }
     
     public func forceRefresh() {
+        
+        let result = self.splitCache.setChangeNumber(-1)
         pollForSplitChanges()
     }
     

@@ -22,9 +22,11 @@ import SwiftyJSON
     var trafficAllocation: Int?
     var trafficAllocationSeed: Int?
     var algo: Int?
+    var splitJson: JSON?
     
     public init(_ json: JSON) {
         
+        self.splitJson = json
         self.name = json["name"].string
         self.seed = json["seed"].int
         self.status = Status.enumFromString(string: json["status"].stringValue)

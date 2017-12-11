@@ -21,15 +21,14 @@ public class SplitCache: SplitCacheProtocol {
     
     public func addSplit(splitName: String, split: Split) -> Bool {
         
-        let json: JSON = JSON(split)
-        let jsonString = json.rawString()
+        let jsonString = split.splitJson?.rawString()
         storage.write(elementId: getSplitId(splitName: splitName), content: jsonString)
         return true
         
     }
     
     public func removeSplit(splitName: String) -> Bool {
-        storage.delete(elementId: splitName)
+        storage.delete(elementId: getSplitId(splitName: splitName))
         return true
     }
     
@@ -58,8 +57,8 @@ public class SplitCache: SplitCacheProtocol {
     
     public func getSplit(splitName: String) -> Split? {
         
-        if let splitString = storage.read(elementId: splitName) {
-        let json: JSON = JSON(splitString)
+        if let splitString = storage.read(elementId: getSplitId(splitName: splitName)) {
+        let json: JSON = JSON(parseJSON: splitString)
         let split = Split(json)
             return split
             

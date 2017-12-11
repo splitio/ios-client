@@ -45,7 +45,7 @@ import Alamofire
                 semaphore.signal()
             }
             semaphore.wait()
-            let change = try requestResult!.unwrap()
+            let change: SplitChange = try requestResult!.unwrap()
             let result = self.splitChangeCache?.addChange(splitChange: change)
             print(result)
             return change
