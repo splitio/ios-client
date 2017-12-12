@@ -27,7 +27,7 @@ public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
         
         var reachable: Bool = true
         
-        if let reachabilityManager = Alamofire.NetworkReachabilityManager(host: "www.apple.com") {
+        if let reachabilityManager = Alamofire.NetworkReachabilityManager(host: "sdk.split.io") {
             
             if (!reachabilityManager.isReachable)  {
                 reachable = false
