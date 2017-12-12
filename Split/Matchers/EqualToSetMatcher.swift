@@ -33,9 +33,7 @@ public class EqualToSetMatcher: BaseMatcher, MatcherProtocol {
             return false
             
         }
-        
-        print("KEY: \(matchValueSet)")
-        
+                
         return dataElements == matchValueSet
         
     }

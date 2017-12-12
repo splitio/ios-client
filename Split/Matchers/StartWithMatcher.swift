@@ -27,9 +27,7 @@ public class StartWithMatcher: BaseMatcher, MatcherProtocol {
             return false
             
         }
-        
-        print("KEY: \(matchValueString)")
-        
+                
         for element in dataElements {
             
             if matchValueString.starts(with: element) {

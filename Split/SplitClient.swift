@@ -24,13 +24,17 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
     internal var initialized: Bool = false
     internal var config: SplitClientConfig?
     internal var dispatchGroup: DispatchGroup?
-    
+    var splitStorage = FileAndMemoryStorage()
+    var mySegmentStorage = FileAndMemoryStorage()
     
     public init(config: SplitClientConfig, key: Key) throws {
         self.config = config
         self.key = key
-        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient()), splitCache: InMemorySplitCache(), interval: self.config!.featuresRefreshRate)
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient()), mySegmentsCache: InMemoryMySegmentsCache(), interval: self.config!.segmentsRefreshRate)
+        
+        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.featuresRefreshRate)
+        
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.segmentsRefreshRate)
+        
         self.initialized = true
         super.init()
         let blockUntilReady = self.config!.blockUntilReady
@@ -52,7 +56,7 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         refreshableMySegmentsFetcher.start()
         self.splitFetcher = refreshableSplitFetcher
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
-        print("DEBUG")
+
     }
     
     //------------------------------------------------------------------------------------------------------------------

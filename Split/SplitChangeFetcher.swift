@@ -11,4 +11,5 @@ import Foundation
 @objc public protocol SplitChangeFetcher {
     
     func fetch(since: Int64) throws -> SplitChange
+    
 }

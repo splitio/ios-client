@@ -27,9 +27,7 @@ public class InSegmentMatcher: BaseMatcher, MatcherProtocol {
             return false
             
         }
-        
-        print("KEY: \(matchValueString)")
-        
+                
         let segment = self.splitClient?.mySegmentsFetcher as? RefreshableMySegmentsFetcher
         
         return (segment?.mySegmentsCache.isInSegment(segmentName: segmentName))! 

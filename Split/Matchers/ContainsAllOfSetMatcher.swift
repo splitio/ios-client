@@ -33,9 +33,7 @@ public class ContainsAllOfSetMatcher: BaseMatcher, MatcherProtocol {
             return false
             
         }
-        
-        print("KEY: \(matchValueSet)")
-        
+                
         return dataElements.isSubset(of: matchValueSet)
         
     }

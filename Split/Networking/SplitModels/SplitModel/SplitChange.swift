@@ -23,4 +23,8 @@ import SwiftyJSON
         self.till = json["till"].int64
     }
     
+    override init() {
+        
+    }
+    
 }

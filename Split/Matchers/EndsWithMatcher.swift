@@ -28,9 +28,7 @@ public class EndsWithMatcher: BaseMatcher, MatcherProtocol {
             return false
             
         }
-        
-        print("KEY: \(matchValueString)")
-        
+                
         for element in dataElements {
             
             if matchValueString.hasSuffix(element) {
