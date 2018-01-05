@@ -26,10 +26,10 @@ class ViewController: UIViewController {
         
         var bucketing: String?
         
-        let splitRate: String  = (splitRefreshRate?.text)!
+        let splitRate: String  = "30" //(splitRefreshRate?.text)!
         let sRate = Int(splitRate)
         
-        let mySegmentRate: String  = (mySegmentRefreshRate?.text)!
+        let mySegmentRate: String  = "30" //(mySegmentRefreshRate?.text)!
         let mySegRate = Int(mySegmentRate)
         
         let matchingKeyText: String = (matchingKey?.text)!
@@ -47,11 +47,13 @@ class ViewController: UIViewController {
   
         let config = SplitClientConfig(featuresRefreshRate: sRate, segmentsRefreshRate: mySegRate, blockUntilReady: 50000)
         
-        let authorizationKey = apiKey?.text //"k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
+        let authorizationKey = "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq" //apiKey?.text //"k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
         
-        let key: Key = Key(matchingKey: matchingKeyText, trafficType: "user", bucketingKey: bucketing)
+        //let key: Key = Key(matchingKey: matchingKeyText, trafficType: "user", bucketingKey: bucketing)
+        let key: Key = Key(matchingKey: "mozi", trafficType: "user", bucketingKey: "mozi")
+
         
-        guard let splitFactory = try? SplitFactory(apiToken: authorizationKey!, key: key, config: config) else {
+        guard let splitFactory = try? SplitFactory(apiToken: authorizationKey, key: key, config: config) else {
             return
         }
         
@@ -65,9 +67,7 @@ class ViewController: UIViewController {
 
         }
 
-       // let names: [String] = ["nati","Mozi","Guille","mozi"]
-       // attributes["name"] = names
-        
+     
         let treatment = try! client.getTreatment(split: "natalia-split", atributtes: attributes)
         
         treatmentResult?.text = treatment

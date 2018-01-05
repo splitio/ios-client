@@ -10,6 +10,7 @@ import Foundation
 public class Evaluator {
     
     //------------------------------------------------------------------------------------------------------------------
+    public var impressions: [ImpressionDTO] 
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
     internal var splitClient: SplitClient?  {
@@ -33,21 +34,18 @@ public class Evaluator {
         self.splitClient = splitClient
         self.splitFetcher = self.splitClient?.splitFetcher
         self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
-        
+        self.impressions = []
     }
     //------------------------------------------------------------------------------------------------------------------
     public func evalTreatment(key: String, bucketingKey: String? , split: String, atributtes:[String:Any]?) throws -> [String:Any]?  {
         
         var result: [String:Any] = [:]
-        var impressions: [String: Any] = [:]
 
         //TODO: Use the cache here
         if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
             
             if let killed = splitTreated.killed, killed {
-                
-                impressions["label"] = "KILLED"
-                impressions["changeNumber"] = splitTreated.changeNumber
+                                createImpression(label: "KILLED", changeNumber: splitTreated.changeNumber!, treatment: splitTreated.defaultTreatment!)
                 result[Engine.EVALUATION_RESULT_TREATMENT] = splitTreated.defaultTreatment!
                 result[Engine.EVALUATION_RESULT_LABEL] = impressions
                 
@@ -65,15 +63,15 @@ public class Evaluator {
                 if treatment == nil {
                     
                     treatment = splitTreated.defaultTreatment!
-                    impressionLabel = "NO_CONDITION_MATCHED"
+                    impressionLabel = ImpressionsConstants.NO_CONDITION_MATCHED
                     
                 }
                 
                 print("* Treatment for \(key) in \(String(describing: splitTreated.name)) is: \(String(describing: treatment))")
                 
                 result[Engine.EVALUATION_RESULT_TREATMENT] = treatment
-                impressions["label"] = impressionLabel
-                impressions["changeNumber"] = splitTreated.changeNumber
+                createImpression(label: impressionLabel!, changeNumber: splitTreated.changeNumber!, treatment: treatment!)
+
                 result[Engine.EVALUATION_RESULT_LABEL] = impressions
 
                 
@@ -89,5 +87,14 @@ public class Evaluator {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-
+    func createImpression(label: String, changeNumber: Int64, treatment: String) {
+        
+        let impression: ImpressionDTO = ImpressionDTO()
+        impression.keyName = splitClient?.key.matchingKey
+        impression.bucketingKey = splitClient?.key.bucketingKey
+        impression.changeNumber = changeNumber
+        impression.treatment = treatment
+        impression.time = Date().timeIntervalSince1970
+        ImpressionManager.shared.impressionStorage.append(impression)
+    }
 }

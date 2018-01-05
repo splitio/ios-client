@@ -69,8 +69,10 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
             verifyKey()
             
             let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: split, atributtes: atributtes)
-            
+           
+            ImpressionManager.shared.sendImpressions()
             return result![Engine.EVALUATION_RESULT_TREATMENT] as! String
+            
             
         }
         catch {
