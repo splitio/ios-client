@@ -94,7 +94,7 @@ public class Evaluator {
         impression.bucketingKey = splitClient?.key.bucketingKey
         impression.changeNumber = changeNumber
         impression.treatment = treatment
-        impression.time = Date().timeIntervalSince1970
+        impression.time = Int64(Date().timeIntervalSince1970 * 1000)
         ImpressionManager.shared.impressionStorage.append(impression)
     }
 }

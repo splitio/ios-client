@@ -32,24 +32,41 @@ public class ImpressionManager {
         
         let url: URL = URL(string: "https://events-aws-staging.split.io/api/testImpressions/bulk")!
         var headers: HTTPHeaders = [:]
-        headers["SplitSDKVersion"] = "go-0.0.1"
-        headers["SplitSDKMachineIP"] = "ip-123-123-343-122"
-        headers["Authorization"] = "Bearer k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
+        headers["splitsdkversion"] = "go-23.1.1"
+        headers["splitsdkmachineip"] = "123.123.123.123"
+        headers["splitsdkmachinename"] = "ip-127-0-0-1"
+        headers["authorization"] = "Bearer k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
+        headers["content-type"] = "application/json"
 
 
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.post.rawValue
+        request.allHTTPHeaderFields = headers
         
-       // let data = try? JSONSerialization.data(withJSONObject: impressionStorage, options: JSONSerialization.WritingOptions.prettyPrinted)
-       // let stringL = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
+
+        
+        let hit = ImpressionsHit()
+        
+        hit.keyImpressions = impressionStorage
+        hit.testName = "all_feature"
+        
+        var hits: [ImpressionsHit] = []
+        
+        hits.append(hit)
+        
+        let encodedData = try? JSONEncoder().encode(hits)
         
         
-        let json: JSON = JSON(impressionStorage)
-        print(json)
-        let jsonString = json.rawValue
+        let json = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)
+        if let json = json {
+            print(json)
+        }
+    
         
-        print(jsonString)
-       // request.httpBody = impressionStorage as? Data
+     
+        request.httpBody = encodedData
+        let params = request.allHTTPHeaderFields
+        print(params)
 
         Alamofire.request(request).validate(statusCode: 200..<300).response { response in
                 
