@@ -48,7 +48,7 @@ public class ImpressionManager {
         let hit = ImpressionsHit()
         
         hit.keyImpressions = impressionStorage
-        hit.testName = "all_feature"
+        hit.testName = "natalia-split"
         
         var hits: [ImpressionsHit] = []
         
