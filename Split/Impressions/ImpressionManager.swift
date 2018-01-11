@@ -14,7 +14,7 @@ public class ImpressionManager {
     private let interval: Int
     private var featurePollTimer: DispatchSourceTimer?
     public weak var dispatchGroup: DispatchGroup?
-    public var impressionStorage: [ImpressionDTO] = []
+    public var impressionStorage: [String:[ImpressionDTO]] = [:]
 
     
     public static let shared: ImpressionManager = {
@@ -44,26 +44,15 @@ public class ImpressionManager {
         request.allHTTPHeaderFields = headers
         
 
-        
-        let hit = ImpressionsHit()
-        
-        hit.keyImpressions = impressionStorage
-        hit.testName = "natalia-split"
-        
-        var hits: [ImpressionsHit] = []
-        
-        hits.append(hit)
-        
+        let hits: [ImpressionsHit] = createImpressionsBulk()
+
         let encodedData = try? JSONEncoder().encode(hits)
-        
         
         let json = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)
         if let json = json {
             print(json)
         }
     
-        
-     
         request.httpBody = encodedData
         let params = request.allHTTPHeaderFields
         print(params)
@@ -79,6 +68,45 @@ public class ImpressionManager {
                 
         }
         
+    }
+    
+    
+    public func appendImpressions(impression: ImpressionDTO, splitName: String) {
+        
+        
+        var impressionsArray = impressionStorage[splitName]
+        
+        if  impressionsArray != nil {
+        
+            impressionsArray?.append(impression)
+            
+        } else {
+            
+            impressionsArray = []
+            impressionsArray?.append(impression)
+            impressionStorage[splitName] = impressionsArray
+            
+        }
+        
+        
+    }
+    
+    public func createImpressionsBulk() -> [ImpressionsHit] {
+        
+        var hits: [ImpressionsHit] = []
+        
+        for key in impressionStorage.keys {
+            
+            let array = impressionStorage[key]
+
+            let hit = ImpressionsHit()
+            hit.keyImpressions = array
+            hit.testName = key
+            hits.append(hit)
+
+        }
+        
+        return hits
     }
     
 }

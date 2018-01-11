@@ -45,7 +45,7 @@ public class Evaluator {
         if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
             
             if let killed = splitTreated.killed, killed {
-                                createImpression(label: "KILLED", changeNumber: splitTreated.changeNumber!, treatment: splitTreated.defaultTreatment!)
+                createImpression(label: "KILLED", changeNumber: splitTreated.changeNumber!, treatment: splitTreated.defaultTreatment!, splitName: splitTreated.name!)
                 result[Engine.EVALUATION_RESULT_TREATMENT] = splitTreated.defaultTreatment!
                 result[Engine.EVALUATION_RESULT_LABEL] = impressions
                 
@@ -70,7 +70,7 @@ public class Evaluator {
                 print("* Treatment for \(key) in \(String(describing: splitTreated.name)) is: \(String(describing: treatment))")
                 
                 result[Engine.EVALUATION_RESULT_TREATMENT] = treatment
-                createImpression(label: impressionLabel!, changeNumber: splitTreated.changeNumber!, treatment: treatment!)
+                createImpression(label: impressionLabel!, changeNumber: splitTreated.changeNumber!, treatment: treatment!, splitName: splitTreated.name!)
 
                 result[Engine.EVALUATION_RESULT_LABEL] = impressions
 
@@ -87,7 +87,7 @@ public class Evaluator {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    func createImpression(label: String, changeNumber: Int64, treatment: String) {
+    func createImpression(label: String, changeNumber: Int64, treatment: String, splitName: String) {
         
         let impression: ImpressionDTO = ImpressionDTO()
         impression.keyName = splitClient?.key.matchingKey
@@ -95,6 +95,6 @@ public class Evaluator {
         impression.changeNumber = changeNumber
         impression.treatment = treatment
         impression.time = Int64(Date().timeIntervalSince1970 * 1000)
-        ImpressionManager.shared.impressionStorage.append(impression)
+        ImpressionManager.shared.appendImpressions(impression: impression, splitName: splitName)
     }
 }
