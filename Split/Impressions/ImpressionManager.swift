@@ -11,7 +11,7 @@ import SwiftyJSON
 
 public class ImpressionManager {
     
-    private let interval: Int
+    public var interval: Int
     private var featurePollTimer: DispatchSourceTimer?
     public weak var dispatchGroup: DispatchGroup?
     public var impressionStorage: [String:[ImpressionDTO]] = [:]
@@ -23,7 +23,7 @@ public class ImpressionManager {
         return instance;
     }()
     
-    public init(interval: Int = 30, dispatchGroup: DispatchGroup? = nil) {
+    public init(interval: Int = 10, dispatchGroup: DispatchGroup? = nil) {
         self.interval = interval
         self.dispatchGroup = dispatchGroup
     }
@@ -37,35 +37,41 @@ public class ImpressionManager {
         headers["splitsdkmachinename"] = "ip-127-0-0-1"
         headers["authorization"] = "Bearer k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
         headers["content-type"] = "application/json"
-
-
+        
+        
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.post.rawValue
         request.allHTTPHeaderFields = headers
         
-
+        
         let hits: [ImpressionsHit] = createImpressionsBulk()
-
+        
         let encodedData = try? JSONEncoder().encode(hits)
         
         let json = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)
         if let json = json {
             print(json)
         }
-    
+        
         request.httpBody = encodedData
-        let params = request.allHTTPHeaderFields
-        print(params)
-
-        Alamofire.request(request).validate(statusCode: 200..<300).response { response in
+      
+        Alamofire.request(request).validate(statusCode: 200..<300).response {  [weak self] response in
+            
+            guard let strongSelf = self else {
+                return
+            }
+            
+            if response.error != nil {
                 
-                if response.error != nil {
-                    
-                    print("[IMPRESSION] error : \(String(describing: response.error))")
-                }
+                print("[IMPRESSION] error : \(String(describing: response.error))")
+                
+            } else {
                 
                 print("[IMPRESSION FIRED]")
+                strongSelf.cleanImpressions()
                 
+            }
+            
         }
         
     }
@@ -109,4 +115,63 @@ public class ImpressionManager {
         return hits
     }
     
+    
+    
+    private func startPollingForImpressions() {
+        let queue = DispatchQueue(label: "split-polling-queue")
+        featurePollTimer = DispatchSource.makeTimerSource(queue: queue)
+        featurePollTimer!.schedule(deadline: .now(), repeating: .seconds(self.interval))
+        featurePollTimer!.setEventHandler { [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            guard strongSelf.featurePollTimer != nil else {
+                strongSelf.stopPollingForSendImpressions()
+                return
+            }
+            strongSelf.pollForSendImpressions()
+        }
+        featurePollTimer!.resume()
+    }
+    
+    private func stopPollingForSendImpressions() {
+        featurePollTimer?.cancel()
+        featurePollTimer = nil
+    }
+    
+    private func pollForSendImpressions() {
+        dispatchGroup?.enter()
+        let queue = DispatchQueue(label: "split-impressions-queue")
+        queue.async { [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            do {
+                
+                strongSelf.sendImpressions()
+                
+                strongSelf.dispatchGroup?.leave()
+                
+            } catch let error {
+                
+                //TODO: throw error when impressions fail
+                debugPrint("Problem fetching splitChanges: %@", error.localizedDescription)
+            }
+        }
+    }
+    
+    public func start() {
+        startPollingForImpressions()
+    }
+    
+    
+    public func stop() {
+        stopPollingForSendImpressions()
+    }
+    
+    private func cleanImpressions() {
+        
+        impressionStorage = [:]
+
+    }
 }

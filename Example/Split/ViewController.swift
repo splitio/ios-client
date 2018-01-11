@@ -79,6 +79,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        ImpressionManager.shared.start()
+
 //        let config = SplitClientConfig(featuresRefreshRate: 30, segmentsRefreshRate: 30, blockUntilReady: 50000)
 //        let authorizationKey = "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
 //
