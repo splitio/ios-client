@@ -9,13 +9,17 @@ import Foundation
 import Alamofire
 import SwiftyJSON
 
+typealias ImpressionsBulk = [ImpressionsHit]
+
 public class ImpressionManager {
     
     public var interval: Int
     private var featurePollTimer: DispatchSourceTimer?
     public weak var dispatchGroup: DispatchGroup?
     public var impressionStorage: [String:[ImpressionDTO]] = [:]
-
+    private var fileStorage = FileStorage()
+    private var impressionsFileStorage: ImpressionsFileStorage?
+    
     
     public static let shared: ImpressionManager = {
         
@@ -26,6 +30,7 @@ public class ImpressionManager {
     public init(interval: Int = 10, dispatchGroup: DispatchGroup? = nil) {
         self.interval = interval
         self.dispatchGroup = dispatchGroup
+        self.impressionsFileStorage = ImpressionsFileStorage(storage: self.fileStorage)
     }
     
     public func sendImpressions() {
@@ -35,7 +40,7 @@ public class ImpressionManager {
         headers["splitsdkversion"] = "go-23.1.1"
         headers["splitsdkmachineip"] = "123.123.123.123"
         headers["splitsdkmachinename"] = "ip-127-0-0-1"
-        headers["authorization"] = "Bearer k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
+       // headers["authorization"] = "Bearer k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
         headers["content-type"] = "application/json"
         
         
@@ -47,6 +52,15 @@ public class ImpressionManager {
         let hits: [ImpressionsHit] = createImpressionsBulk()
         
         let encodedData = try? JSONEncoder().encode(hits)
+        let encodedData2 = try? JSONEncoder().encode(hits.first)
+
+        
+        let decoder = JSONDecoder()
+        if encodedData != nil {
+            let jsonDec = try? decoder.decode(ImpressionsBulk.self, from: encodedData!)
+            print(jsonDec)
+        }
+        
         
         let json = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)
         if let json = json {
@@ -54,26 +68,31 @@ public class ImpressionManager {
         }
         
         request.httpBody = encodedData
-      
-        Alamofire.request(request).validate(statusCode: 200..<300).response {  [weak self] response in
-            
-            guard let strongSelf = self else {
-                return
-            }
-            
-            if response.error != nil {
-                
-                print("[IMPRESSION] error : \(String(describing: response.error))")
-                
-            } else {
-                
-                print("[IMPRESSION FIRED]")
-                strongSelf.cleanImpressions()
-                
-            }
-            
-        }
         
+        if json != "[]" {
+            
+            Alamofire.request(request).validate(statusCode: 200..<300).response {  [weak self] response in
+                
+                guard let strongSelf = self else {
+                    return
+                }
+                
+                if response.error != nil {
+                    
+                    strongSelf.impressionsFileStorage?.saveImpressions(impressions: json! as String)
+                    let imp = strongSelf.impressionsFileStorage?.readImpressions()
+                    
+                    print("[IMPRESSION] error : \(String(describing: response.error))")
+                    
+                } else {
+                    
+                    print("[IMPRESSION FIRED]")
+                    strongSelf.cleanImpressions()
+                    
+                }
+                
+            }
+        }
     }
     
     
@@ -85,6 +104,9 @@ public class ImpressionManager {
         if  impressionsArray != nil {
         
             impressionsArray?.append(impression)
+            
+            impressionStorage[splitName] = impressionsArray
+
             
         } else {
             
@@ -172,6 +194,7 @@ public class ImpressionManager {
     private func cleanImpressions() {
         
         impressionStorage = [:]
+        impressionsFileStorage?.deleteImpressions()
 
     }
 }
