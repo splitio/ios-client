@@ -22,7 +22,7 @@ public class ImpressionManager {
     private var impressionsFileStorage: ImpressionsFileStorage?
     public static let emptyJson: String = "[]"
     private var impressionAccum: Int = 0
-
+    
     
     public static let shared: ImpressionManager = {
         
@@ -37,6 +37,7 @@ public class ImpressionManager {
         self.impressionsChunkSize = impressionsChunkSize
     }
     
+    //------------------------------------------------------------------------------------------------------------------
     public func sendImpressions(fileContent: Data?) {
         
         let composeRequest = createRequest(content: fileContent)
@@ -61,8 +62,6 @@ public class ImpressionManager {
             
         } else {
             
-            //   if json != ImpressionManager.emptyJson {
-            
             Alamofire.request(request).validate(statusCode: 200..<300).response {  [weak self] response in
                 
                 guard let strongSelf = self else {
@@ -84,11 +83,8 @@ public class ImpressionManager {
             }
         }
         
-        //   }
-        
     }
-    
-    
+    //------------------------------------------------------------------------------------------------------------------
     
     public func createImpressionsBulk() -> ImpressionsBulk {
         
@@ -101,14 +97,13 @@ public class ImpressionManager {
             hit.keyImpressions = array
             hit.testName = key
             hits.append(hit)
-
+            
         }
         
         return hits
     }
     
-    
-    
+    //------------------------------------------------------------------------------------------------------------------
     private func startPollingForImpressions() {
         
         let queue = DispatchQueue(label: "split-polling-queue")
@@ -126,6 +121,8 @@ public class ImpressionManager {
         }
         featurePollTimer!.resume()
     }
+    //------------------------------------------------------------------------------------------------------------------
+    
     
     private func stopPollingForSendImpressions() {
         featurePollTimer?.cancel()
@@ -155,30 +152,34 @@ public class ImpressionManager {
         }
         
     }
+    //------------------------------------------------------------------------------------------------------------------
     
     public func start() {
         startPollingForImpressions()
     }
+    //------------------------------------------------------------------------------------------------------------------
     
     
     public func stop() {
         stopPollingForSendImpressions()
     }
+    //------------------------------------------------------------------------------------------------------------------
     
     private func cleanImpressions() {
         
         impressionStorage = [:]
         impressionsFileStorage?.deleteImpressions()
-
+        
     }
+    //------------------------------------------------------------------------------------------------------------------
     
     func saveImpressions(json: String) {
-
-        impressionStorage = [:]
+        
         impressionsFileStorage?.saveImpressions(impressions: json)
-
+        impressionStorage = [:]
+        
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     
     func createRequest(content: Data?) -> [String:Any] {
         
@@ -199,7 +200,7 @@ public class ImpressionManager {
         
         //Create json file with impressions
         let encodedData = content
-
+        
         request.httpBody = encodedData
         
         var composeRequest : [String:Any] = [:]
@@ -209,7 +210,7 @@ public class ImpressionManager {
         return composeRequest
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     
     
     func createEncodedImpressions() -> Data? {
@@ -222,6 +223,7 @@ public class ImpressionManager {
         
         return encodedData
     }
+    //------------------------------------------------------------------------------------------------------------------
     
     func createImpressionsJsonString() -> String {
         
@@ -239,6 +241,7 @@ public class ImpressionManager {
         }
         
     }
+    //------------------------------------------------------------------------------------------------------------------
     
     func sizeOfJsonString(impression: ImpressionDTO) -> Int {
         
@@ -249,12 +252,12 @@ public class ImpressionManager {
             
             return json.utf8.count
         }
-
+        
         
         return 0
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     
     public func appendImpressions(impression: ImpressionDTO, splitName: String) {
         
@@ -292,7 +295,7 @@ public class ImpressionManager {
         }
         
     }
-
+    //------------------------------------------------------------------------------------------------------------------
     
     func saveImpressionsToDisk() {
         
@@ -300,7 +303,7 @@ public class ImpressionManager {
         saveImpressions(json: jsonImpression)
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     
     func sendImpressionsFromFile() {
         
@@ -317,6 +320,7 @@ public class ImpressionManager {
             
         }
         
-
     }
+    //------------------------------------------------------------------------------------------------------------------
+    
 }

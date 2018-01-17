@@ -13,20 +13,19 @@ public class ImpressionsFileStorage {
     public static let IMPRESSIONS_FILE_PREFIX: String = "IMPRESSIONSIO.split.impressions";
     var storage: FileStorage
     
-    
+    //------------------------------------------------------------------------------------------------------------------
     init(storage: FileStorage) {
         
         self.storage = storage
         
     }
-    
-    
+    //------------------------------------------------------------------------------------------------------------------
     func saveImpressions(impressions: String) {
         
         let date = Date()
         
         let formatter = DateFormatter()
-
+        
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         // again convert your date to string
         let dateString = formatter.string(from: date)
@@ -35,8 +34,7 @@ public class ImpressionsFileStorage {
         storage.write(elementId: fileName, content: impressions)
         
     }
-    
-    
+    //------------------------------------------------------------------------------------------------------------------
     func readImpressions() -> [String] {
         
         var files: [String] = []
@@ -44,6 +42,8 @@ public class ImpressionsFileStorage {
         let fileNames = impressionFileNames()
         
         for impressionFileName in fileNames {
+            
+            print(impressionFileName)
             
             if let content = storage.readWithProperties(elementId: impressionFileName) {
                 
@@ -56,14 +56,14 @@ public class ImpressionsFileStorage {
         return files
         
     }
+    //------------------------------------------------------------------------------------------------------------------
     
     func deleteImpressions() {
         
         storage.delete(elementId: ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX)
         
     }
-    
-    
+    //------------------------------------------------------------------------------------------------------------------
     func impressionFileNames() -> [String] {
         
         var splitFileNames: [String] = []
@@ -80,9 +80,9 @@ public class ImpressionsFileStorage {
                     let fileName =  file.lastPathComponent
                     print(fileName)
                     splitFileNames.append(fileName)
-                    
+                    print(fileName)
                 }
- 
+                
                 let filtered = splitFileNames.filter { $0.contains(ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX) }
                 return filtered
                 
@@ -93,6 +93,6 @@ public class ImpressionsFileStorage {
         }
         
     }
-    
+    //------------------------------------------------------------------------------------------------------------------
     
 }

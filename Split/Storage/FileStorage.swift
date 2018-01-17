@@ -43,6 +43,11 @@ public class FileStorage: StorageProtocol {
             if let data = content {
                 
                 try data.write(to: fileURL, atomically: false, encoding: .utf8)
+               
+                let fileURL = documentDirectory.appendingPathComponent(elementId)
+                
+                let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
+                print(fileContent)
             }
             
         } catch {
@@ -96,15 +101,28 @@ public class FileStorage: StorageProtocol {
             
             let resources = try fileURL.resourceValues(forKeys: [.creationDateKey])
             let creationDate = resources.creationDate!
-            if creationDate < aDayAgo {
-                
-                return try String(contentsOf: fileURL, encoding: .utf8)
+            
+            if let diff = Calendar.current.dateComponents([.hour], from: creationDate, to: Date()).hour, diff > 24 {
+                //do something
+                delete(elementId: elementId)
+                return nil
                 
             } else {
                 
-                delete(elementId: elementId)
-                return nil
+                return try String(contentsOf: fileURL, encoding: .utf8)
+
+                
             }
+            
+//            if creationDate < aDayAgo {
+//
+//                return try String(contentsOf: fileURL, encoding: .utf8)
+//
+//            } else {
+//
+//                delete(elementId: elementId)
+//                return nil
+//            }
             
             
         } catch {
