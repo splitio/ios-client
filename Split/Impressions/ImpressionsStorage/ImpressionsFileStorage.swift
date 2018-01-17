@@ -23,19 +23,37 @@ public class ImpressionsFileStorage {
     
     func saveImpressions(impressions: String) {
         
-        storage.write(elementId: ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX, content: impressions)
+        let date = Date()
+        
+        let formatter = DateFormatter()
+
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        // again convert your date to string
+        let dateString = formatter.string(from: date)
+        
+        let fileName = ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX + dateString
+        storage.write(elementId: fileName, content: impressions)
         
     }
     
     
-    func readImpressions() -> String {
+    func readImpressions() -> [String] {
         
-        if let content = storage.read(elementId: ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX) {
+        var files: [String] = []
+        
+        let fileNames = impressionFileNames()
+        
+        for impressionFileName in fileNames {
             
-            return content
+            if let content = storage.readWithProperties(elementId: impressionFileName) {
+                
+                files.append(content)
+                
+            }
+            
         }
         
-        return " "
+        return files
         
     }
     
@@ -44,5 +62,37 @@ public class ImpressionsFileStorage {
         storage.delete(elementId: ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX)
         
     }
+    
+    
+    func impressionFileNames() -> [String] {
+        
+        var splitFileNames: [String] = []
+        
+        let fileManager = FileManager.default
+        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        do {
+            
+            if let fileURLs = try? fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil) {
+                // process files
+                
+                for file in fileURLs {
+                    
+                    let fileName =  file.lastPathComponent
+                    print(fileName)
+                    splitFileNames.append(fileName)
+                    
+                }
+ 
+                let filtered = splitFileNames.filter { $0.contains(ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX) }
+                return filtered
+                
+            }
+            
+            return splitFileNames
+            
+        }
+        
+    }
+    
     
 }
