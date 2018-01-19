@@ -38,11 +38,11 @@ public class ImpressionManager {
     }
     
     //------------------------------------------------------------------------------------------------------------------
-    public func sendImpressions(fileContent: Data?) {
+    public func sendImpressions(fileContent: Data?, fileName: String) {
         
-        let composeRequest = createRequest(content: fileContent)
+        let composeRequest = createRequest(content: fileContent, fileName: fileName)
         let request = composeRequest["request"] as! URLRequest
-        
+        let filename: String = composeRequest["fileName"] as! String
         var reachable: Bool = true
         
         if let reachabilityManager = Alamofire.NetworkReachabilityManager(host: "sdk.split.io/api/version") {
@@ -70,8 +70,12 @@ public class ImpressionManager {
                 
                 if response.error != nil {
                     
+                    
+
+                    strongSelf.impressionsFileStorage?.saveImpressions(fileName: filename)
                     let imp = strongSelf.impressionsFileStorage?.readImpressions()
                     print("[IMPRESSION] error : \(String(describing: response.error))")
+                    
                     
                 } else {
                     
@@ -181,7 +185,7 @@ public class ImpressionManager {
     }
     //------------------------------------------------------------------------------------------------------------------
     
-    func createRequest(content: Data?) -> [String:Any] {
+    func createRequest(content: Data?, fileName: String) -> [String:Any] {
         
         // Configure paramaters
         let url: URL = URL(string: "https://events-aws-staging.split.io/api/testImpressions/bulk")!
@@ -189,7 +193,7 @@ public class ImpressionManager {
         headers["splitsdkversion"] = "go-23.1.1"
         headers["splitsdkmachineip"] = "123.123.123.123"
         headers["splitsdkmachinename"] = "ip-127-0-0-1"
-        // headers["authorization"] = "Bearer k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
+        headers["authorization"] = "Bearer k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
         headers["content-type"] = "application/json"
         
         //Create new request
@@ -206,6 +210,7 @@ public class ImpressionManager {
         var composeRequest : [String:Any] = [:]
         
         composeRequest["request"] = request
+        composeRequest["fileName"] = fileName
         
         return composeRequest
         
@@ -309,11 +314,13 @@ public class ImpressionManager {
         
         if let impressionsFiles = impressionsFileStorage?.readImpressions() {
             
-            for file in impressionsFiles {
+            for fileName in impressionsFiles.keys {
                 
-                let encodedData = file.data(using: .utf8)
+                let file = impressionsFiles[fileName]
                 
-                sendImpressions(fileContent: encodedData)
+                let encodedData = file?.data(using: .utf8)
+                
+                sendImpressions(fileContent: encodedData,fileName: fileName)
                 
                 
             }

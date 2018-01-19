@@ -10,7 +10,7 @@ import Foundation
 
 public class ImpressionsFileStorage {
     
-    public static let IMPRESSIONS_FILE_PREFIX: String = "IMPRESSIONSIO.split.impressions";
+    public static let IMPRESSIONS_FILE_PREFIX: String = "impressions_";
     var storage: FileStorage
     
     //------------------------------------------------------------------------------------------------------------------
@@ -20,24 +20,46 @@ public class ImpressionsFileStorage {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    func saveImpressions(impressions: String) {
+    func saveImpressions(impressions: String? = nil, fileName: String? = nil) {
         
-        let date = Date()
-        
-        let formatter = DateFormatter()
-        
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        // again convert your date to string
-        let dateString = formatter.string(from: date)
-        
-        let fileName = ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX + dateString
-        storage.write(elementId: fileName, content: impressions)
-        
+        if fileName != nil {
+            
+            do {
+                
+                let fileComponents = parseFileName(fileName: fileName!)
+                let attemp = Int(fileComponents[2])! + 1
+                let attempString = String(attemp)
+                
+                if attemp > 3 {
+                    
+                    storage.delete(elementId: fileName!)
+                } else {
+                    
+                    let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                    let documentDirectory = URL(fileURLWithPath: path)
+                    let originPath = documentDirectory.appendingPathComponent(fileName!)
+                    let newFileName = fileComponents[0] + "_" + fileComponents[1] + "_" + attempString
+                    let destinationPath = documentDirectory.appendingPathComponent(newFileName)
+                    try FileManager.default.moveItem(at: originPath, to: destinationPath)
+                    
+                }
+            } catch {
+                print(error)
+            }
+            
+        } else {
+
+            let date2 = Int(Date().timeIntervalSince1970)
+            let stringDate = String(describing: date2)
+            let fileName = ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX + stringDate + "_0"
+            storage.write(elementId: fileName, content: impressions)
+            
+        }
     }
     //------------------------------------------------------------------------------------------------------------------
-    func readImpressions() -> [String] {
+    func readImpressions() -> [String:String] {
         
-        var files: [String] = []
+        var files: [String:String] = [:]
         
         let fileNames = impressionFileNames()
         
@@ -47,7 +69,7 @@ public class ImpressionsFileStorage {
             
             if let content = storage.readWithProperties(elementId: impressionFileName) {
                 
-                files.append(content)
+                files[impressionFileName] = content
                 
             }
             
@@ -94,5 +116,12 @@ public class ImpressionsFileStorage {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    
+    func parseFileName(fileName: String) -> [String] {
+        
+        let array = fileName.split{$0 == "_"}.map(String.init)
+        print(array)
+        
+        return array
+ 
+    }
 }
