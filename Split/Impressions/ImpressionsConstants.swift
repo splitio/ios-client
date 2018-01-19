@@ -11,5 +11,8 @@ public class ImpressionsConstants {
     
     public static let NO_CONDITION_MATCHED: String = "default rule"
     public static let SPLIT_NOT_FOUND: String = "definition not found"
-    
+    public static let IMPRESSIONS_MACHINE_NAME: String = "ip-127-0-0-1"
+    public static let SPLIT_SDK_VERSION: String = "ios-0.1.0"
+    public static let IMPRESSIONS_MACHINE_IP: String = "123.123.123.123"
+
 }

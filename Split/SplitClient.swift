@@ -10,6 +10,12 @@
 
 import Foundation
 
+
+public enum SplitEnvironment {
+    
+    case Production, Staging, Preprod
+}
+
 public protocol SplitClientTreatmentProtocol {
     
     func getTreatment(split: String, atributtes:[String:Any]?) throws -> String
@@ -26,6 +32,8 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
     internal var dispatchGroup: DispatchGroup?
     var splitStorage = FileAndMemoryStorage()
     var mySegmentStorage = FileAndMemoryStorage()
+    let splitImpressionManager = ImpressionManager.shared
+
     
     public init(config: SplitClientConfig, key: Key) throws {
         self.config = config
@@ -54,6 +62,7 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         self.dispatchGroup = nil
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()
+        configureImpressionManager()
         self.splitFetcher = refreshableSplitFetcher
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
 
@@ -134,7 +143,19 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    
+    func configureImpressionManager() {
+        
+        splitImpressionManager.environment = self.config?.environment
+        
+        splitImpressionManager.interval = (self.config?.impressionRefreshRate)!
+        
+        splitImpressionManager.impressionsChunkSize = (self.config?.impressionsChunkSize)!
+        
+        splitImpressionManager.start()
+ 
+    }
+    //------------------------------------------------------------------------------------------------------------------
+
 }
 
 

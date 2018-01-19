@@ -33,6 +33,7 @@ public class ImpressionsFileStorage {
                 if attemp > 3 {
                     
                     storage.delete(elementId: fileName!)
+                    
                 } else {
                     
                     let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
@@ -49,8 +50,8 @@ public class ImpressionsFileStorage {
             
         } else {
 
-            let date2 = Int(Date().timeIntervalSince1970)
-            let stringDate = String(describing: date2)
+            let dateTimestamp = Int(Date().timeIntervalSince1970)
+            let stringDate = String(describing: dateTimestamp)
             let fileName = ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX + stringDate + "_0"
             storage.write(elementId: fileName, content: impressions)
             
@@ -80,9 +81,9 @@ public class ImpressionsFileStorage {
     }
     //------------------------------------------------------------------------------------------------------------------
     
-    func deleteImpressions() {
+    func deleteImpressions(fileName: String) {
         
-        storage.delete(elementId: ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX)
+        storage.delete(elementId: fileName)
         
     }
     //------------------------------------------------------------------------------------------------------------------

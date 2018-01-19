@@ -21,8 +21,79 @@ class ViewController: UIViewController {
     @IBOutlet weak var treatmentResult: UILabel?
     @IBOutlet weak var param1: UITextField?
     @IBOutlet weak var param2: UITextField?
+    
+    var factory: SplitFactory?
+    var client: SplitClientTreatmentProtocol?
 
     @IBAction func evaluate(_ sender: Any) {
+        
+//        var bucketing: String?
+//
+//        let splitRate: String  = "30" //(splitRefreshRate?.text)!
+//        let sRate = Int(splitRate)
+//
+//        let mySegmentRate: String  = "30" //(mySegmentRefreshRate?.text)!
+//        let mySegRate = Int(mySegmentRate)
+//
+//        let matchingKeyText: String = (matchingKey?.text)!
+//
+//
+//        if let bucketingKeyTexy = bucketkey?.text {
+//
+//            bucketing = bucketingKeyTexy
+//
+//        } else {
+//
+//            bucketing = matchingKey?.text
+//
+//        }
+//
+//        let authorizationKey = "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq" //apiKey?.text //"k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
+//
+//        let config = SplitClientConfig(featuresRefreshRate: sRate, segmentsRefreshRate: mySegRate, blockUntilReady: 50000, environment: SplitEnvironment.Staging, apiKey: authorizationKey)
+//
+//
+//        //let key: Key = Key(matchingKey: matchingKeyText, trafficType: "user", bucketingKey: bucketing)
+//        let key: Key = Key(matchingKey: "mozi", trafficType: "user", bucketingKey: "mozi")
+//
+//
+//        guard let splitFactory = try? SplitFactory(key: key, config: config) else {
+//            return
+//        }
+//
+//        self.factory = splitFactory
+//
+//        self.client = splitFactory.client()
+//
+//        var attributes: [String:Any] = [:]
+//
+//        if let paramName = param1?.text, let paramValue = param2?.text {
+//
+//            attributes[paramName] = paramValue
+//
+//        }
+//
+//
+//        let treatment = try! client?.getTreatment(split: "natalia-split", atributtes: attributes)
+//
+//        treatmentResult?.text = treatment
+        
+        treatment()
+    }
+
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configure()
+    }
+    
+    func configure() {
         
         var bucketing: String?
         
@@ -42,84 +113,46 @@ class ViewController: UIViewController {
         } else {
             
             bucketing = matchingKey?.text
-
+            
         }
-  
-        let config = SplitClientConfig(featuresRefreshRate: sRate, segmentsRefreshRate: mySegRate, blockUntilReady: 50000)
         
         let authorizationKey = "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq" //apiKey?.text //"k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
         
+        let config = SplitClientConfig(featuresRefreshRate: sRate, segmentsRefreshRate: mySegRate, blockUntilReady: 50000, environment: SplitEnvironment.Staging, apiKey: authorizationKey)
+        
+        
         //let key: Key = Key(matchingKey: matchingKeyText, trafficType: "user", bucketingKey: bucketing)
         let key: Key = Key(matchingKey: "mozi", trafficType: "user", bucketingKey: "mozi")
-
         
-        guard let splitFactory = try? SplitFactory(apiToken: authorizationKey, key: key, config: config) else {
+        
+        guard let splitFactory = try? SplitFactory(key: key, config: config) else {
             return
         }
         
-        let client = splitFactory.client()
+        self.factory = splitFactory
+        
+        self.client = splitFactory.client()
+        
+    }
+    
+    
+    func treatment() {
+        
         
         var attributes: [String:Any] = [:]
-
+        
         if let paramName = param1?.text, let paramValue = param2?.text {
             
             attributes[paramName] = paramValue
-
+            
         }
-
-     
-        let treatment = try! client.getTreatment(split: "natalia-split", atributtes: attributes)
+        
+        let treatment = try! client?.getTreatment(split: "natalia-split", atributtes: attributes)
         
         treatmentResult?.text = treatment
-    }
-    
-
-
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
         
-        ImpressionManager.shared.start()
-
-//        let config = SplitClientConfig(featuresRefreshRate: 30, segmentsRefreshRate: 30, blockUntilReady: 50000)
-//        let authorizationKey = "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
-//
-//        let key: Key = Key(matchingKey: "Mozi", trafficType: "user", bucketingKey: "lala")
-//
-//        guard let splitFactory = try? SplitFactory(apiToken: authorizationKey, key: key, config: config) else {
-//            return
-//        }
-//
-//        let client = splitFactory.client()
-//
-//
-//        let names: [String] = ["nati","Mozi","Guille","mozi"]
-//        var attributes: [String:Any] = [:]
-//        attributes["name"] = names
-//
-//        let treatment = try! client.getTreatment(split: "natalia-split", atributtes: attributes)
-//
-////        if treatment == "ViewLoginA" {
-////
-////            self.selectedIndex = 0
-////
-////        } else {
-////
-////            self.selectedIndex = 1
-////
-////        }
-//        debugPrint()
-////        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-////        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-////        debugPrint(client.getTreatment(key: key,split: "natalia-split"))
-////        let result = client.getTreatment(key: key, split: "natalia-split", atributtes: nil)
-
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
+    
+    
 }
 

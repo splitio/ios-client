@@ -22,6 +22,7 @@ public class ImpressionManager {
     private var impressionsFileStorage: ImpressionsFileStorage?
     public static let emptyJson: String = "[]"
     private var impressionAccum: Int = 0
+    public var environment: SplitEnvironment?
     
     
     public static let shared: ImpressionManager = {
@@ -68,19 +69,16 @@ public class ImpressionManager {
                     return
                 }
                 
-                if response.error != nil {
+                if response.error != nil && reachable {
                     
-                    
-
                     strongSelf.impressionsFileStorage?.saveImpressions(fileName: filename)
-                    let imp = strongSelf.impressionsFileStorage?.readImpressions()
                     print("[IMPRESSION] error : \(String(describing: response.error))")
                     
                     
                 } else {
                     
                     print("[IMPRESSION FIRED]")
-                    strongSelf.cleanImpressions()
+                    strongSelf.cleanImpressions(fileName: filename)
                     
                 }
                 
@@ -169,10 +167,10 @@ public class ImpressionManager {
     }
     //------------------------------------------------------------------------------------------------------------------
     
-    private func cleanImpressions() {
+    private func cleanImpressions(fileName: String) {
         
         impressionStorage = [:]
-        impressionsFileStorage?.deleteImpressions()
+        impressionsFileStorage?.deleteImpressions(fileName: fileName)
         
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -188,12 +186,12 @@ public class ImpressionManager {
     func createRequest(content: Data?, fileName: String) -> [String:Any] {
         
         // Configure paramaters
-        let url: URL = URL(string: "https://events-aws-staging.split.io/api/testImpressions/bulk")!
+        let url: URL = StagingTarget.GetImpressions().url
         var headers: HTTPHeaders = [:]
-        headers["splitsdkversion"] = "go-23.1.1"
-        headers["splitsdkmachineip"] = "123.123.123.123"
-        headers["splitsdkmachinename"] = "ip-127-0-0-1"
-        headers["authorization"] = "Bearer k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
+        headers["splitsdkversion"] = ImpressionsConstants.SPLIT_SDK_VERSION
+        headers["splitsdkmachineip"] = ImpressionsConstants.IMPRESSIONS_MACHINE_IP
+        headers["splitsdkmachinename"] = ImpressionsConstants.IMPRESSIONS_MACHINE_NAME
+        headers["authorization"] = "Bearer " + StagingTarget.GetImpressions().apiKey!
         headers["content-type"] = "application/json"
         
         //Create new request

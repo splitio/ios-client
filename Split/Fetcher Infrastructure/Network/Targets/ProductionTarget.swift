@@ -1,52 +1,44 @@
 //
-//  NewsApiEndpoint.swift
-//  SwiftSeedProject
+//  ProductionTarget.swift
+//  Split
 //
-//  Created by Brian Sztamfater on 9/19/17.
-//  Copyright © 2017 Split Software. All rights reserved.
+//  Created by Natalia  Stele on 19/01/2018.
 //
 
 import Foundation
 import Alamofire
 import SwiftyJSON
 
-enum StagingTarget: Target {
+enum ProductionTarget: Target {
     
     var baseUrl: URL { return URL(string: "https://sdk-aws-staging.split.io/api")! }
-    public var impressionBaseURL: URL { return URL(string: "https://events-aws-staging.split.io/api/testImpressions/bulk")! }
-
+    var impressionBaseURL: URL { return URL(string: "https://events-aws-staging.split.io")! }
+    
     var apiKey: String? { return "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq" } // TODO: Use the one provided on the Client
     // Insert your common headers here, for example, authorization token or accept.
     var commonHeaders: [String : String]? { return ["Authorization" : "Bearer \(apiKey!)"] }
     
     case GetSplitChanges(since: Int64)
     case GetMySegments(user: String)
-    case GetImpressions()
     
     // MARK: - Public Properties
     var method: HTTPMethod {
         switch self {
-            case .GetSplitChanges:
-                return .get
-            case .GetMySegments:
-                return .get
-            case .GetImpressions:
-                return .post
-            
+        case .GetSplitChanges:
+            return .get
+        case .GetMySegments:
+            return .get
         }
     }
     
     var url: URL {
         switch self {
-            case .GetSplitChanges(let since):
-                let url = baseUrl.appendingPathComponent("splitChanges")
-                let params = "?since=\(since)"
-                return URL(string: params.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!, relativeTo: url)!
-            case .GetMySegments(let user):
-                return baseUrl.appendingPathComponent("mySegments").appendingPathComponent(user)
-            
-        case .GetImpressions():
-            return impressionBaseURL
+        case .GetSplitChanges(let since):
+            let url = baseUrl.appendingPathComponent("splitChanges")
+            let params = "?since=\(since)"
+            return URL(string: params.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!, relativeTo: url)!
+        case .GetMySegments(let user):
+            return baseUrl.appendingPathComponent("mySegments").appendingPathComponent(user)
         }
     }
     

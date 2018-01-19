@@ -93,37 +93,24 @@ public class FileStorage: StorageProtocol {
         
         do {
             
-            let calendar = Calendar.current
-            let aDayAgo = calendar.date(byAdding: .hour, value: -24, to: Date())!
-            
             let documentDirectory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
+            
             let fileURL = documentDirectory.appendingPathComponent(elementId)
             
             let resources = try fileURL.resourceValues(forKeys: [.creationDateKey])
             let creationDate = resources.creationDate!
             
             if let diff = Calendar.current.dateComponents([.hour], from: creationDate, to: Date()).hour, diff > 24 {
-                //do something
+
                 delete(elementId: elementId)
                 return nil
                 
             } else {
                 
                 return try String(contentsOf: fileURL, encoding: .utf8)
-
+                
                 
             }
-            
-//            if creationDate < aDayAgo {
-//
-//                return try String(contentsOf: fileURL, encoding: .utf8)
-//
-//            } else {
-//
-//                delete(elementId: elementId)
-//                return nil
-//            }
-            
             
         } catch {
             
