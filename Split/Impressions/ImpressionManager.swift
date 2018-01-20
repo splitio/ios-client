@@ -59,7 +59,7 @@ public class ImpressionManager {
         
         if !reachable {
             
-            print("SAVE IMPRESSIONS")
+            debugPrint("SAVE IMPRESSIONS TO DISK")
             saveImpressionsToDisk()
             
         } else {
@@ -73,17 +73,18 @@ public class ImpressionManager {
                 if response.error != nil && reachable {
                     
                     strongSelf.impressionsFileStorage?.saveImpressions(fileName: filename)
-                    print("[IMPRESSION] error : \(String(describing: response.error))")
+                    debugPrint("[IMPRESSION] error : \(String(describing: response.error))")
                     
                     
                 } else {
                     
-                    print("[IMPRESSION FIRED]")
+                    debugPrint("[IMPRESSION FIRED]")
                     strongSelf.cleanImpressions(fileName: filename)
                     
                 }
                 
             }
+            
         }
         
     }
@@ -191,8 +192,8 @@ public class ImpressionManager {
         var headers: HTTPHeaders = [:]
         headers["splitsdkversion"] = ImpressionsConstants.SPLIT_SDK_VERSION
         headers["splitsdkmachineip"] = ImpressionsConstants.IMPRESSIONS_MACHINE_IP
-        headers["splitsdkmachinename"] = ImpressionsConstants.IMPRESSIONS_MACHINE_NAME
-        headers["authorization"] = "Bearer " + StagingTarget.GetImpressions().apiKey!
+        headers["splitsdkmachinename"] = UIDevice.current.identifierForVendor!.uuidString
+        headers["authorization"] = "Bearer " + SecureDataStore.shared.getToken()!
         headers["content-type"] = "application/json"
         
         //Create new request
@@ -332,11 +333,10 @@ public class ImpressionManager {
         }
         
     }
-    
-    
     //------------------------------------------------------------------------------------------------------------------
     @objc func applicationDidEnterBackground(_ application: UIApplication) {
         
+        debugPrint("SAVE IMPRESSIONS TO DISK")
         saveImpressionsToDisk()
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -352,5 +352,4 @@ public class ImpressionManager {
 
     }
     //------------------------------------------------------------------------------------------------------------------
-
 }

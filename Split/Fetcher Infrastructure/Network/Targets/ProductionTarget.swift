@@ -12,11 +12,11 @@ import SwiftyJSON
 enum ProductionTarget: Target {
     
     var baseUrl: URL { return URL(string: "https://sdk-aws-staging.split.io/api")! }
-    var impressionBaseURL: URL { return URL(string: "https://events-aws-staging.split.io")! }
+    var impressionBaseURL: URL { return URL(string: "https://events-aws-staging.split.io/api/testImpressions/bulk")! }
     
-    var apiKey: String? { return "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq" } // TODO: Use the one provided on the Client
+    var apiKey: String? { return SecureDataStore.shared.getToken() } // TODO: Use the one provided on the Client
     // Insert your common headers here, for example, authorization token or accept.
-    var commonHeaders: [String : String]? { return ["Authorization" : "Bearer \(apiKey!)"] }
+    var commonHeaders: [String : String]? { return ["Authorization" : "Bearer \(SecureDataStore.shared.getToken()!)"] }
     
     case GetSplitChanges(since: Int64)
     case GetMySegments(user: String)

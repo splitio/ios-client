@@ -20,7 +20,7 @@ public class SplitClientConfig: NSObject {
     var debugEnabled: Bool
     var blockUntilReady: Int
     var environment: SplitEnvironment
-    var apiKey: String
+    var apiKey: String? { return SecureDataStore.shared.getToken() }
     
     // TODO: Add pending parameters
     public init(featuresRefreshRate: Int? = 30, segmentsRefreshRate: Int? = 30, impressionsRefreshRate: Int? = 30, impressionsQueueSize: Int? = 30000, connectionTimeout: Int? = 15000, debugEnabled: Bool? = false, blockUntilReady: Int? = -1, impressionRefreshRate: Int? = 30, impressionsChunkSize: Int64 = 100 , environment: SplitEnvironment, apiKey: String) {
@@ -33,8 +33,10 @@ public class SplitClientConfig: NSObject {
         self.blockUntilReady = blockUntilReady!
         self.impressionRefreshRate = impressionRefreshRate!
         self.environment = environment
-        self.apiKey = apiKey
+        SecureDataStore.shared.setToken(token: apiKey)
         self.impressionsChunkSize = impressionsChunkSize
     }
+    
+    
     
 }
