@@ -20,7 +20,7 @@ public class ImpressionManager {
     public var impressionStorage: [String:[ImpressionDTO]] = [:]
     private var fileStorage = FileStorage()
     private var impressionsFileStorage: ImpressionsFileStorage?
-    public static let emptyJson: String = "[]"
+    public static let EMPTY_JSON: String = "[]"
     private var impressionAccum: Int = 0
     public var environment: SplitEnvironment?
     
@@ -36,6 +36,7 @@ public class ImpressionManager {
         self.dispatchGroup = dispatchGroup
         self.impressionsFileStorage = ImpressionsFileStorage(storage: self.fileStorage)
         self.impressionsChunkSize = impressionsChunkSize
+        subscribeNotifications()
     }
     
     //------------------------------------------------------------------------------------------------------------------
@@ -303,7 +304,12 @@ public class ImpressionManager {
     func saveImpressionsToDisk() {
         
         let jsonImpression = createImpressionsJsonString()
-        saveImpressions(json: jsonImpression)
+        
+        if jsonImpression != ImpressionManager.EMPTY_JSON {
+            
+            saveImpressions(json: jsonImpression)
+            
+        }
         
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -326,6 +332,25 @@ public class ImpressionManager {
         }
         
     }
-    //------------------------------------------------------------------------------------------------------------------
     
+    
+    //------------------------------------------------------------------------------------------------------------------
+    @objc func applicationDidEnterBackground(_ application: UIApplication) {
+        
+        saveImpressionsToDisk()
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    func subscribeNotifications() {
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
+
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    deinit {
+        
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
+
+    }
+    //------------------------------------------------------------------------------------------------------------------
+
 }
