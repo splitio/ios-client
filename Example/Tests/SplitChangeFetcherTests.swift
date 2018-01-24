@@ -21,9 +21,10 @@ class SplitChangeFetcherTests: QuickSpec {
         describe("SplitChangeFetcher") {
             
             var splitChangeFetcher: SplitChangeFetcher!
-            
+            let storage = FileAndMemoryStorage()
+
             beforeEach {
-                splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient())
+                splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), storage: storage)
             }
             
             context("Test a Json that changes its structure and is deserialized without exception. Contains: a field renamed, a field removed and a field added.") {

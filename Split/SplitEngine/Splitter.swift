@@ -20,7 +20,7 @@ public class Splitter: SplitterProtocol {
     public static let ALGO_LEGACY: Int = 1
     public static let ALGO_MURMUR: Int = 2
     //------------------------------------------------------------------------------------------------------------------
-
+    
     public static let shared: Splitter = {
         
         let instance = Splitter();
@@ -78,7 +78,10 @@ public class Splitter: SplitterProtocol {
             
         case Splitter.ALGO_MURMUR:
             
+            
             return Murmur3Hash.hashString(key, UInt32(seed))
+            
+            
             
         default:
             
