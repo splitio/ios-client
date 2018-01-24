@@ -18,43 +18,36 @@ class HashingTest: QuickSpec {
     override func spec() {
         
         describe("HashingTest") {
-            
-            var data = readDataFromCSV(fileName: "murmur", fileType: "csv")
-            data = cleanRows(file: data!)
-            let csvRows = csv(data: data!)
-            print(csvRows[1][1]) //UXM n. 166/167.
-            
-            context("Murmur3 returns the bucket expected") {
-                
-                for row in csvRows {
+            let files: [String] = ["murmur3-sample-data-v2","murmur3-sample-data-non-alpha-numeric-v2"]
+            for file in files {
+                var data = readDataFromCSV(fileName: file, fileType: "csv")
+                data = cleanRows(file: data!)
+                let csvRows = csv(data: data!)
+
+                context("Murmur3 returns the bucket expected") {
                     
-                    
-                    let seed: Int = Int(row[0])!
-                    let key: String = row[1]
-                    let bucketExpected = Int(row[3])!
-                    
-                    if seed < 0 {
+                    for row in csvRows {
                         
+                        if row.count != 4 {
+                            continue
+                        }
+                        let seed: Int = Int(row[0])!
+                        let key: String = row[1]
+                        let bucketExpected = Int(row[3])!
                         
-                        print(seed)
+                        let bucket = Splitter.shared.getBucket(seed: seed, key: key, algo: 2)
                         
+                        expect(bucket).toNot(beNil())
+                        expect(bucket).to(equal(bucketExpected))
                     }
-                    
-                    let bucket = Splitter.shared.getBucket(seed: seed, key: key, algo: 2)
-                    
-                    expect(bucket).toNot(beNil())
-                    expect(bucket).to(equal(bucketExpected))
-                    
                 }
             }
-            
         }
-        
     }
     
     func readDataFromCSV(fileName:String, fileType: String)-> String! {
         
-        guard let filepath = Bundle(for: type(of: self)).path(forResource: "murmur", ofType: "csv") else {
+        guard let filepath = Bundle(for: type(of: self)).path(forResource: fileName, ofType: "csv") else {
             return nil
         }
         do {
