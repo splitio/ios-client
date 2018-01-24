@@ -20,7 +20,7 @@ class HashingTest: QuickSpec {
         describe("HashingTest") {
             let files: [String] = ["murmur3-sample-data-v2","murmur3-sample-data-non-alpha-numeric-v2"]
             for file in files {
-                var data = readDataFromCSV(fileName: file, fileType: "csv")
+                var data = readDataFromCSV(fileName: file)
                 data = cleanRows(file: data!)
                 let csvRows = csv(data: data!)
 
@@ -45,7 +45,7 @@ class HashingTest: QuickSpec {
         }
     }
     
-    func readDataFromCSV(fileName:String, fileType: String)-> String! {
+    func readDataFromCSV(fileName:String)-> String! {
         
         guard let filepath = Bundle(for: type(of: self)).path(forResource: fileName, ofType: "csv") else {
             return nil
