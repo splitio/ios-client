@@ -27,56 +27,7 @@ class ViewController: UIViewController {
 
     @IBAction func evaluate(_ sender: Any) {
         
-//        var bucketing: String?
-//
-//        let splitRate: String  = "30" //(splitRefreshRate?.text)!
-//        let sRate = Int(splitRate)
-//
-//        let mySegmentRate: String  = "30" //(mySegmentRefreshRate?.text)!
-//        let mySegRate = Int(mySegmentRate)
-//
-//        let matchingKeyText: String = (matchingKey?.text)!
-//
-//
-//        if let bucketingKeyTexy = bucketkey?.text {
-//
-//            bucketing = bucketingKeyTexy
-//
-//        } else {
-//
-//            bucketing = matchingKey?.text
-//
-//        }
-//
-//        let authorizationKey = "k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq" //apiKey?.text //"k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
-//
-//        let config = SplitClientConfig(featuresRefreshRate: sRate, segmentsRefreshRate: mySegRate, blockUntilReady: 50000, environment: SplitEnvironment.Staging, apiKey: authorizationKey)
-//
-//
-//        //let key: Key = Key(matchingKey: matchingKeyText, trafficType: "user", bucketingKey: bucketing)
-//        let key: Key = Key(matchingKey: "mozi", trafficType: "user", bucketingKey: "mozi")
-//
-//
-//        guard let splitFactory = try? SplitFactory(key: key, config: config) else {
-//            return
-//        }
-//
-//        self.factory = splitFactory
-//
-//        self.client = splitFactory.client()
-//
-//        var attributes: [String:Any] = [:]
-//
-//        if let paramName = param1?.text, let paramValue = param2?.text {
-//
-//            attributes[paramName] = paramValue
-//
-//        }
-//
-//
-//        let treatment = try! client?.getTreatment(split: "natalia-split", atributtes: attributes)
-//
-//        treatmentResult?.text = treatment
+
         configure()
         treatment()
 
@@ -97,11 +48,11 @@ class ViewController: UIViewController {
         
         var bucketing: String?
         
-        let splitRate: String  = (splitRefreshRate?.text)!
-        let sRate = Int(splitRate)
+       // let splitRate: String  = (splitRefreshRate?.text)!
+        let sRate = 30//Int(splitRate)
         
-        let mySegmentRate: String  = (mySegmentRefreshRate?.text)!
-        let mySegRate = Int(mySegmentRate)
+      //  let mySegmentRate: String  = (mySegmentRefreshRate?.text)!
+        let mySegRate = 30//Int(mySegmentRate)
         
         let matchingKeyText: String = (matchingKey?.text)!
         
@@ -116,15 +67,31 @@ class ViewController: UIViewController {
             
         }
         
-        let authorizationKey = apiKey?.text //"k6ogh4k721d4p671h6spc04n0pg1a6h1cmpq"
+        var myDict: NSDictionary?
+        var authorizationKey: String?
+        if let path = Bundle.main.path(forResource: "configuration", ofType: "plist") {
+            myDict = NSDictionary(contentsOfFile: path)
+        }
+        if let dict = myDict {
+           
+            for key in dict.allKeys {
+                
+                let value = dict[key] as? String
+                
+                authorizationKey = value
+              
+                debugPrint(value)
+                
+            }
+            
+        }
         
         let config = SplitClientConfig(featuresRefreshRate: sRate, segmentsRefreshRate: mySegRate, blockUntilReady: 50000, environment: SplitEnvironment.Staging, apiKey: authorizationKey!)
         
         
         let key: Key = Key(matchingKey: matchingKeyText, trafficType: "user", bucketingKey: bucketing)
-        //let key: Key = Key(matchingKey: "mozi", trafficType: "user", bucketingKey: "mozi")
-        
-        
+      
+    
         guard let splitFactory = try? SplitFactory(key: key, config: config) else {
             return
         }
@@ -137,17 +104,16 @@ class ViewController: UIViewController {
     
     
     func treatment() {
+
+//        var attributes: [String:Any] = [:]
+//
+//        if let paramName = param1?.text, let paramValue = param2?.text {
+//
+//            attributes[paramName] = paramValue
+//
+//        }
         
-        
-        var attributes: [String:Any] = [:]
-        
-        if let paramName = param1?.text, let paramValue = param2?.text {
-            
-            attributes[paramName] = paramValue
-            
-        }
-        
-        let treatment = try! client?.getTreatment(split: "natalia-split", atributtes: attributes)
+        let treatment = try! client?.getTreatment(split: (splitName?.text)!, atributtes: nil)
         
         treatmentResult?.text = treatment
         

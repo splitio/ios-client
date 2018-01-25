@@ -80,7 +80,8 @@ public class Evaluator {
         } else {
             
             print("The SPLIT definition for '$featureName' has not been found'");
-    
+            result[Engine.EVALUATION_RESULT_TREATMENT] = SplitConstants.CONTROL
+
         }
         
         return result
