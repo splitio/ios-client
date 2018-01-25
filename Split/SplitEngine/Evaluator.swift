@@ -70,6 +70,18 @@ public class Evaluator {
                 print("* Treatment for \(key) in \(String(describing: splitTreated.name)) is: \(String(describing: treatment))")
                 
                 result[Engine.EVALUATION_RESULT_TREATMENT] = treatment
+                
+                //TODO: ImpressionsLabel need to be fixed in Engine.getTreatment
+                
+                if let label = impressionLabel {
+                    
+                } else {
+                    
+                    impressionLabel = " "
+
+                }
+                //TODO: ImpressionsLabel need to be fixed in Engine.getTreatment
+
                 createImpression(label: impressionLabel!, changeNumber: splitTreated.changeNumber!, treatment: treatment!, splitName: splitTreated.name!)
 
                 result[Engine.EVALUATION_RESULT_LABEL] = impressions

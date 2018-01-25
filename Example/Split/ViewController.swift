@@ -104,21 +104,33 @@ class ViewController: UIViewController {
     
     
     func treatment() {
-
-//        var attributes: [String:Any] = [:]
-//
-//        if let paramName = param1?.text, let paramValue = param2?.text {
-//
-//            attributes[paramName] = paramValue
-//
-//        }
         
-        let treatment = try! client?.getTreatment(split: (splitName?.text)!, atributtes: nil)
+        var atributtes: [String:Any]?
+
+        if let json = param1?.text {
+
+           atributtes = convertToDictionary(text: json)
+           print(atributtes)
+ 
+        }
+        
+        let treatment = try! client?.getTreatment(split: (splitName?.text)!, atributtes: atributtes)
         
         treatmentResult?.text = treatment
         
     }
     
+    
+    func convertToDictionary(text: String) -> [String: Any]? {
+        if let data = text.data(using: .utf8) {
+            do {
+                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        return nil
+    }
     
 }
 
