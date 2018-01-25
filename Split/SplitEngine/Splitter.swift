@@ -79,7 +79,7 @@ public class Splitter: SplitterProtocol {
         case Splitter.ALGO_MURMUR:
             
             
-            return Murmur3Hash.hashString(key, UInt32(seed))
+            return Murmur3Hash.hashString(key, UInt32(truncatingIfNeeded: seed))
             
             
             
