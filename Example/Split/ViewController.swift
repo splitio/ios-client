@@ -57,7 +57,7 @@ class ViewController: UIViewController {
         let matchingKeyText: String = (matchingKey?.text)!
         
         
-        if let bucketingKeyTexy = bucketkey?.text {
+        if let bucketingKeyTexy = bucketkey?.text, bucketingKeyTexy != "" {
             
             bucketing = bucketingKeyTexy
             

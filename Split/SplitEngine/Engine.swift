@@ -39,6 +39,7 @@ public class Engine {
             
             condition.client = self.splitClient
             
+            
             if (!inRollOut && condition.conditionType == ConditionType.Rollout) {
                 
                 if let trafficAllocation = split?.trafficAllocation, trafficAllocation < 100  {
