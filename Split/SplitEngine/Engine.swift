@@ -27,10 +27,13 @@ public class Engine {
         var inRollOut: Bool = false
         var result: [String: String] = [:]
         
-        if bucketingKey == nil {
+        if bucketingKey == nil || bucketingKey == "" {
             
             bucketKey = matchingKey
             
+        } else {
+            
+            bucketKey = bucketingKey
         }
         
         let conditions: [Condition] = (split?.conditions)!

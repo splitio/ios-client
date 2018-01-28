@@ -123,7 +123,7 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         
         var composeKey: Key?
         
-        if let bucketKey = self.key.bucketingKey {
+        if let bucketKey = self.key.bucketingKey, bucketKey != "" {
             
             //TODO: Log the key as (matchingKey,bucketingKey)
             composeKey = Key(matchingKey: self.key.matchingKey , bucketingKey: bucketKey)
