@@ -52,15 +52,15 @@ import SwiftyJSON
                        
                         // scenario 2: attribute provided but no attribute value provided. Matcher does not match
                         // e.g. if user.age is >= 10 then split 100:on
-                        
-                        if atributtes == nil || atributtes![matcherEvaluator.getAttribute()!] == nil {
+                        let att = matcherEvaluator.getAttribute()!
+                        if atributtes == nil || atributtes![att] == nil {
                             
                             result = false
                 
                         } else {
                             // instead of using the user id, we use the attribute value for evaluation
                             
-                            result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: nil, atributtes: nil)
+                            result = matcherEvaluator.evaluate(matchValue: atributtes![att], bucketingKey: nil, atributtes: nil)
                         }
                         
                     }
