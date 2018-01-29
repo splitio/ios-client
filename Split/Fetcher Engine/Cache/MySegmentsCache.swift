@@ -40,9 +40,9 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
         if let segmentsStored = segments {
             
             let json: JSON = JSON(parseJSON: segmentsStored)
-            let array2 = json.arrayObject
+            let arrayParsed = json.arrayObject
             
-            if let array = array2 as? [String] {
+            if let array = arrayParsed as? [String] {
                 
                 return array
                 
