@@ -17,7 +17,10 @@ extension Date {
     
     public static func dateFromInt(number: Int64) -> Date {
         
-        return Date(timeIntervalSince1970: TimeInterval(number))
+        
+        let time = TimeInterval(number)
+        
+        return Date(timeIntervalSince1970: time)
         
     }
     
