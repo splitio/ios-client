@@ -21,7 +21,7 @@ public class BetweenMatcher: BaseMatcher, MatcherProtocol {
     //--------------------------------------------------------------------------------------------------
     public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String : Any]?) -> Bool {
         
-        guard let matcherData = data, let dataType = matcherData.dataType, let start = matcherData.start, let end = matcherData.end , let keyValue = matchValue as? Int64 else {
+        guard let matcherData = data, let dataType = matcherData.dataType, let start = matcherData.start, let end = matcherData.end else {
             
             return false
             
@@ -30,15 +30,19 @@ public class BetweenMatcher: BaseMatcher, MatcherProtocol {
         switch dataType {
             
         case DataType.DateTime:
+            guard let keyValue = matchValue as? TimeInterval else {return false}
+            let backendTimeIntervalStart = TimeInterval(start/1000)
+            let backendTimeIntervalEnd = TimeInterval(end/1000)
+            let attributeTimeInterval = keyValue
             
-            let keyDate = Date.dateFromInt(number: keyValue)
-            let startDate = Date.dateFromInt(number: start)
-            let endDate = Date.dateFromInt(number: end)
+            let attributeDate = DateTime.zeroOutSeconds(timestamp: attributeTimeInterval)
+            let backendDateStart = DateTime.zeroOutSeconds(timestamp: backendTimeIntervalStart)
+            let backendDateEnd = DateTime.zeroOutSeconds(timestamp: backendTimeIntervalEnd)
 
-            return keyDate.isBetweeen(date: startDate, andDate: endDate)
+            return attributeDate >= backendDateStart && attributeDate <= backendDateEnd
             
         case DataType.Number:
-            
+            guard let keyValue = matchValue as? Int64 else {return false}
             return keyValue >= start && keyValue <= end
             
         }
