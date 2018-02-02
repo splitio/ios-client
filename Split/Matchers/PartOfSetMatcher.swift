@@ -26,11 +26,25 @@ public class PartOfSetMatcher: BaseMatcher, MatcherProtocol {
     //--------------------------------------------------------------------------------------------------
     public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String : Any]?) -> Bool {
         
-        guard let matchValueSet = matchValue as? Set<String>, let dataElements = data else {
+        var setToCompare: Set<String>?
+        
+        if let dataElements = matchValue as? [String] {
+            
+            setToCompare = Set(dataElements.map { $0 })
+            
+            
+        } else {
             
             return false
             
         }
+        
+        guard let matchValueSet = setToCompare, let dataElements = data else {
+            
+            return false
+            
+        }
+        
                 
         return matchValueSet.isSubset(of: dataElements)
         
