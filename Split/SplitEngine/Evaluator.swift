@@ -42,7 +42,7 @@ public class Evaluator {
         var result: [String:Any] = [:]
 
         //TODO: Use the cache here
-        if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
+        if let splitTreated: Split = splitFetcher?.fetch(splitName: split), splitTreated.status != Status.Archived {
             
             if let killed = splitTreated.killed, killed {
                 createImpression(label: "KILLED", changeNumber: splitTreated.changeNumber!, treatment: splitTreated.defaultTreatment!, splitName: splitTreated.name!)
