@@ -28,7 +28,7 @@ public class PartOfSetMatcher: BaseMatcher, MatcherProtocol {
         
         var setToCompare: Set<String>?
         
-        if let dataElements = matchValue as? [String] {
+        if let dataElements = matchValue as? [String], !dataElements.isEmpty {
             
             setToCompare = Set(dataElements.map { $0 })
             
