@@ -61,7 +61,7 @@ public class Engine {
                 }
             }
             
-            if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, atributtes: atributtes) != nil {
+            if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, atributtes: atributtes) {
                 
                 var bucketKey: String? = bucketingKey
                 
