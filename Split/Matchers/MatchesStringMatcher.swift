@@ -33,9 +33,16 @@ public class MatchesStringMatcher: BaseMatcher, MatcherProtocol {
             return false
             
         }
-        
-        return matcherData == keyValue
-        
+        if keyValue.range(of: matcherData, options: .regularExpression, range: nil, locale: nil) != nil {
+            
+            return true
+            
+        } else {
+            
+            return false
+            
+        }
+  
     }
     //--------------------------------------------------------------------------------------------------
     
