@@ -71,18 +71,19 @@ public class Evaluator {
                 
                 result[Engine.EVALUATION_RESULT_TREATMENT] = treatment
                 
-                //TODO: ImpressionsLabel need to be fixed in Engine.getTreatment
+                var resultLabel: String?
                 
                 if let label = impressionLabel {
                     
+                    resultLabel = label
+                    
                 } else {
                     
-                    impressionLabel = " "
+                    resultLabel = " "
 
                 }
-                //TODO: ImpressionsLabel need to be fixed in Engine.getTreatment
 
-                createImpression(label: impressionLabel!, changeNumber: splitTreated.changeNumber!, treatment: treatment!, splitName: splitTreated.name!)
+                createImpression(label: resultLabel!, changeNumber: splitTreated.changeNumber!, treatment: treatment!, splitName: splitTreated.name!)
 
                 result[Engine.EVALUATION_RESULT_LABEL] = impressions
 
@@ -93,18 +94,21 @@ public class Evaluator {
             
             print("The SPLIT definition for '$featureName' has not been found'");
             result[Engine.EVALUATION_RESULT_TREATMENT] = SplitConstants.CONTROL
-
+            createImpression(label: ImpressionsConstants.SPLIT_NOT_FOUND, changeNumber: nil, treatment: SplitConstants.CONTROL, splitName: split)
+            result[Engine.EVALUATION_RESULT_LABEL] = impressions
+    
         }
         
         return result
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    func createImpression(label: String, changeNumber: Int64, treatment: String, splitName: String) {
+    func createImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String) {
         
         let impression: ImpressionDTO = ImpressionDTO()
         impression.keyName = splitClient?.key.matchingKey
         impression.bucketingKey = splitClient?.key.bucketingKey
+        impression.label = label
         impression.changeNumber = changeNumber
         impression.treatment = treatment
         impression.time = Int64(Date().timeIntervalSince1970 * 1000)
