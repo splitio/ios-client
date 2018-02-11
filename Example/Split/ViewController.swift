@@ -57,16 +57,17 @@ class ViewController: UIViewController {
         let matchingKeyText: String = (matchingKey?.text)!
         
         
-        if let bucketingKeyTexy = bucketkey?.text, bucketingKeyTexy != "" {
-            
-            bucketing = bucketingKeyTexy
-            
-        } else {
-            
-            bucketing = matchingKey?.text
-            
-        }
-        
+//        if let bucketingKeyTexy = bucketkey?.text, bucketingKeyTexy != "" {
+//
+//            bucketing = bucketingKeyTexy
+//
+//
+//        } else {
+//
+//            bucketing = matchingKey?.text
+//
+//        }
+        bucketing = bucketkey?.text
         var myDict: NSDictionary?
         var authorizationKey: String?
         if let path = Bundle.main.path(forResource: "configuration", ofType: "plist") {

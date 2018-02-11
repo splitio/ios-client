@@ -107,7 +107,8 @@ public class Evaluator {
         
         let impression: ImpressionDTO = ImpressionDTO()
         impression.keyName = splitClient?.key.matchingKey
-        impression.bucketingKey = splitClient?.key.bucketingKey
+        
+        impression.bucketingKey = (splitClient?.shouldSendBucketingKey)! ? splitClient?.key.bucketingKey : nil
         impression.label = label
         impression.changeNumber = changeNumber
         impression.treatment = treatment

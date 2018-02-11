@@ -33,6 +33,7 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
     var splitStorage = FileAndMemoryStorage()
     var mySegmentStorage = FileAndMemoryStorage()
     let splitImpressionManager = ImpressionManager.shared
+    public var shouldSendBucketingKey: Bool = false
 
     
     public init(config: SplitClientConfig, key: Key) throws {
@@ -125,14 +126,13 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         
         if let bucketKey = self.key.bucketingKey, bucketKey != "" {
             
-            //TODO: Log the key as (matchingKey,bucketingKey)
             composeKey = Key(matchingKey: self.key.matchingKey , bucketingKey: bucketKey)
-            
+            self.shouldSendBucketingKey = true
+
         } else {
             
-            //TODO: Log the key as (matchingKey,nil)
             composeKey = Key(matchingKey: self.key.matchingKey, bucketingKey: self.key.matchingKey)
-            
+            self.shouldSendBucketingKey = false
         }
         
         if let finalKey = composeKey {
