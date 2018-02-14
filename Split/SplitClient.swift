@@ -131,7 +131,7 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
 
         } else {
             
-            composeKey = Key(matchingKey: self.key.matchingKey, bucketingKey: self.key.matchingKey)
+            composeKey = Key(matchingKey: self.key.matchingKey, bucketingKey: nil)
             self.shouldSendBucketingKey = false
         }
         
