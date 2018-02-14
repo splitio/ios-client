@@ -45,7 +45,7 @@ public class Evaluator {
         if let splitTreated: Split = splitFetcher?.fetch(splitName: split), splitTreated.status != Status.Archived {
             
             if let killed = splitTreated.killed, killed {
-                createImpression(label: "KILLED", changeNumber: splitTreated.changeNumber!, treatment: splitTreated.defaultTreatment!, splitName: splitTreated.name!)
+                createImpression(label: ImpressionsConstants.KILLED, changeNumber: splitTreated.changeNumber!, treatment: splitTreated.defaultTreatment!, splitName: splitTreated.name!)
                 result[Engine.EVALUATION_RESULT_TREATMENT] = splitTreated.defaultTreatment!
                 result[Engine.EVALUATION_RESULT_LABEL] = impressions
                 
