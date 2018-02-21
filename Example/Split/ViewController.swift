@@ -26,11 +26,8 @@ class ViewController: UIViewController {
     var client: SplitClientTreatmentProtocol?
 
     @IBAction func evaluate(_ sender: Any) {
-        
-
         configure()
         treatment()
-
     }
 
 
@@ -45,28 +42,10 @@ class ViewController: UIViewController {
     }
     
     func configure() {
-        
         var bucketing: String?
-        
-       // let splitRate: String  = (splitRefreshRate?.text)!
-        let sRate = 30//Int(splitRate)
-        
-      //  let mySegmentRate: String  = (mySegmentRefreshRate?.text)!
-        let mySegRate = 30//Int(mySegmentRate)
-        
+        let sRate = 30
+        let mySegRate = 30
         let matchingKeyText: String = (matchingKey?.text)!
-        
-        
-//        if let bucketingKeyTexy = bucketkey?.text, bucketingKeyTexy != "" {
-//
-//            bucketing = bucketingKeyTexy
-//
-//
-//        } else {
-//
-//            bucketing = matchingKey?.text
-//
-//        }
         bucketing = bucketkey?.text
         var myDict: NSDictionary?
         var authorizationKey: String?
@@ -74,21 +53,13 @@ class ViewController: UIViewController {
             myDict = NSDictionary(contentsOfFile: path)
         }
         if let dict = myDict {
-           
             for key in dict.allKeys {
-                
                 let value = dict[key] as? String
-                
                 authorizationKey = value
-              
                 debugPrint(value)
-                
             }
-            
         }
-        
         let config = SplitClientConfig(featuresRefreshRate: sRate, segmentsRefreshRate: mySegRate, blockUntilReady: 50000, environment: SplitEnvironment.Staging, apiKey: authorizationKey!)
-        
         
         let key: Key = Key(matchingKey: matchingKeyText, trafficType: "user", bucketingKey: bucketing)
       
@@ -98,27 +69,20 @@ class ViewController: UIViewController {
         }
         
         self.factory = splitFactory
-        
         self.client = splitFactory.client()
-        
     }
     
     
     func treatment() {
         
         var atributtes: [String:Any]?
-
         if let json = param1?.text {
-
            atributtes = convertToDictionary(text: json)
            print(atributtes)
- 
         }
         
         let treatment = try! client?.getTreatment(split: (splitName?.text)!, atributtes: atributtes)
-        
         treatmentResult?.text = treatment
-        
     }
     
     

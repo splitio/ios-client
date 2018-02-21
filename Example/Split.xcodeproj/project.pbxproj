@@ -20,6 +20,8 @@
 		9FB85E1D2018E97500B9787B /* murmur3-sample-data-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */; };
 		CC2907E420180D5E000FD1A5 /* murmur.csv in Resources */ = {isa = PBXBuildFile; fileRef = CC2907E320180D5E000FD1A5 /* murmur.csv */; };
 		CC2AA28120188D8B00953CDC /* murmur.csv in Resources */ = {isa = PBXBuildFile; fileRef = CC2907E320180D5E000FD1A5 /* murmur.csv */; };
+		CC396707203C6E2100C1BFDD /* RegexTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC396705203C6DDF00C1BFDD /* RegexTest.swift */; };
+		CC39670A203C716500C1BFDD /* regex.csv in Resources */ = {isa = PBXBuildFile; fileRef = CC396708203C6FA400C1BFDD /* regex.csv */; };
 		CC5FFED1201638FA0012C3A9 /* configuration.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC5FFED0201638FA0012C3A9 /* configuration.plist */; };
 		CCF2C9D81FB4A503000A885E /* HashingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2C9D61FB4A503000A885E /* HashingTest.swift */; };
 		D39460CC1F71D09A000396FC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CA1F71D09A000396FC /* Nimble.framework */; };
@@ -69,6 +71,8 @@
 		9FB85E182018E97400B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-data-non-alpha-numeric-v2.csv"; sourceTree = "<group>"; };
 		9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-data-v2.csv"; sourceTree = "<group>"; };
 		CC2907E320180D5E000FD1A5 /* murmur.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = murmur.csv; sourceTree = "<group>"; };
+		CC396705203C6DDF00C1BFDD /* RegexTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegexTest.swift; sourceTree = "<group>"; };
+		CC396708203C6FA400C1BFDD /* regex.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = regex.csv; path = ../../../Desktop/regex.csv; sourceTree = "<group>"; };
 		CC5FFED0201638FA0012C3A9 /* configuration.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = configuration.plist; sourceTree = "<group>"; };
 		CCF2C9D61FB4A503000A885E /* HashingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashingTest.swift; sourceTree = "<group>"; };
 		D39460BB1F71C7F5000396FC /* Split.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Split.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Split/Split.framework"; sourceTree = "<group>"; };
@@ -163,6 +167,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CC396705203C6DDF00C1BFDD /* RegexTest.swift */,
 				D3D5C58C1F8694870088529F /* InMemorySplitCacheTests.swift */,
 				CCF2C9D61FB4A503000A885E /* HashingTest.swift */,
 				D3D5C58E1F86A0B80088529F /* InMemoryMySegmentsCacheTests.swift */,
@@ -176,6 +181,7 @@
 		607FACE91AFB9204008FA782 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				CC396708203C6FA400C1BFDD /* regex.csv */,
 				9FB85E182018E97400B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv */,
 				9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */,
 				CC2907E320180D5E000FD1A5 /* murmur.csv */,
@@ -336,6 +342,7 @@
 			files = (
 				9FB85E1D2018E97500B9787B /* murmur3-sample-data-v2.csv in Resources */,
 				D3EEA1651F852EB000D0B1B8 /* splitchanges_2.json in Resources */,
+				CC39670A203C716500C1BFDD /* regex.csv in Resources */,
 				D3D5C5801F85E5750088529F /* mysegments_3.json in Resources */,
 				D3D5C57C1F85DD4A0088529F /* mysegments_1.json in Resources */,
 				CC2AA28120188D8B00953CDC /* murmur.csv in Resources */,
@@ -488,6 +495,7 @@
 				D3D5C58F1F86A0B80088529F /* InMemoryMySegmentsCacheTests.swift in Sources */,
 				D3C8F0111F8425A200C2632D /* SplitChangeFetcherTests.swift in Sources */,
 				D3D5C57A1F85DBAD0088529F /* MySegmentsFetcherTests.swift in Sources */,
+				CC396707203C6E2100C1BFDD /* RegexTest.swift in Sources */,
 				D3D5C58D1F8694870088529F /* InMemorySplitCacheTests.swift in Sources */,
 				CCF2C9D81FB4A503000A885E /* HashingTest.swift in Sources */,
 			);
