@@ -18,6 +18,7 @@ import Foundation
         let client = try SplitClient(config: config, key: key)
         _client = client 
         _manager = SplitManager()
+        // TODO: add Initilized log message
     }
 
     public func client() -> SplitClientTreatmentProtocol {

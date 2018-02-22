@@ -14,6 +14,7 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		63921D5F780CE4DBD840F0D8 /* Pods_Split_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 441D254060332D10C49E0F46 /* Pods_Split_Example.framework */; };
 		6624CA25DEA2C8AE5899C1DC /* Pods_Split_Example_Split_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14946A7643C6298E66BB0478 /* Pods_Split_Example_Split_Tests.framework */; };
+		9F819038203E200D0058BAA8 /* LoggerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F819037203E200D0058BAA8 /* LoggerTest.swift */; };
 		9FB85E1A2018E97500B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 9FB85E182018E97400B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv */; };
 		9FB85E1B2018E97500B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 9FB85E182018E97400B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv */; };
 		9FB85E1C2018E97500B9787B /* murmur3-sample-data-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */; };
@@ -68,11 +69,12 @@
 		91A0F086A5FB0C0B797E8F76 /* Pods-Split_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Tests/Pods-Split_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		9ED7384CAA90FDAC9C10386A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		9F0F3C55FDC0A4DBF30265DD /* Pods-Split_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Tests/Pods-Split_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		9F819037203E200D0058BAA8 /* LoggerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerTest.swift; sourceTree = "<group>"; };
 		9FB85E182018E97400B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-data-non-alpha-numeric-v2.csv"; sourceTree = "<group>"; };
 		9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-data-v2.csv"; sourceTree = "<group>"; };
 		CC2907E320180D5E000FD1A5 /* murmur.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = murmur.csv; sourceTree = "<group>"; };
 		CC396705203C6DDF00C1BFDD /* RegexTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegexTest.swift; sourceTree = "<group>"; };
-		CC396708203C6FA400C1BFDD /* regex.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = regex.csv; path = ../../../Desktop/regex.csv; sourceTree = "<group>"; };
+		CC396708203C6FA400C1BFDD /* regex.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = regex.csv; sourceTree = "<group>"; };
 		CC5FFED0201638FA0012C3A9 /* configuration.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = configuration.plist; sourceTree = "<group>"; };
 		CCF2C9D61FB4A503000A885E /* HashingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashingTest.swift; sourceTree = "<group>"; };
 		D39460BB1F71C7F5000396FC /* Split.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Split.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Split/Split.framework"; sourceTree = "<group>"; };
@@ -167,6 +169,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				9F819037203E200D0058BAA8 /* LoggerTest.swift */,
 				CC396705203C6DDF00C1BFDD /* RegexTest.swift */,
 				D3D5C58C1F8694870088529F /* InMemorySplitCacheTests.swift */,
 				CCF2C9D61FB4A503000A885E /* HashingTest.swift */,
@@ -497,6 +500,7 @@
 				D3D5C57A1F85DBAD0088529F /* MySegmentsFetcherTests.swift in Sources */,
 				CC396707203C6E2100C1BFDD /* RegexTest.swift in Sources */,
 				D3D5C58D1F8694870088529F /* InMemorySplitCacheTests.swift in Sources */,
+				9F819038203E200D0058BAA8 /* LoggerTest.swift in Sources */,
 				CCF2C9D81FB4A503000A885E /* HashingTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
