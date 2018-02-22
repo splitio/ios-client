@@ -36,7 +36,7 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
     public var shouldSendBucketingKey: Bool = false
 
     
-    public init(config: SplitClientConfig, key: Key) throws {
+    public init(config: SplitClientConfig, key: Key) {
         self.config = config
         self.key = key
         
@@ -57,7 +57,6 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
             if self.dispatchGroup!.wait(timeout: timeout) == .timedOut {
                 self.initialized = false
                 Logger.d("SDK was not ready in \(blockUntilReady) milliseconds")
-                throw SplitError.Timeout
             }
         }
         self.dispatchGroup = nil

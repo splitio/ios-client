@@ -13,9 +13,9 @@ import Foundation
     let _client: SplitClientTreatmentProtocol
     let _manager: SplitManagerProtocol
     
-    public init(key: Key, config: SplitClientConfig) throws {
+    public init(key: Key, config: SplitClientConfig) {
         // TODO: Use apiKey, review and refactor client parameters
-        let client = try SplitClient(config: config, key: key)
+        let client = SplitClient(config: config, key: key)
         _client = client 
         _manager = SplitManager()
         
