@@ -56,7 +56,7 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
             let timeout = DispatchTime.now() + .milliseconds(blockUntilReady)
             if self.dispatchGroup!.wait(timeout: timeout) == .timedOut {
                 self.initialized = false
-                debugPrint("SDK was not ready in \(blockUntilReady) milliseconds")
+                Logger.d("SDK was not ready in \(blockUntilReady) milliseconds")
                 throw SplitError.Timeout
             }
         }

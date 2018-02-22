@@ -25,7 +25,7 @@ public extension SplitClientProtocol {
     
     func getTreatment(key: String, split: String, atributtes:[String:Any]? = nil) -> String {
         
-        let composeKey: Key = Key(matchingKey: key, trafficType: "user", bucketingKey: key)
+        let composeKey: Key = Key(matchingKey: key, bucketingKey: key)
         
         do {
             

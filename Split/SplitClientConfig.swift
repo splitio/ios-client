@@ -35,6 +35,10 @@ public class SplitClientConfig: NSObject {
         self.environment = environment
         SecureDataStore.shared.setToken(token: apiKey)
         self.impressionsChunkSize = impressionsChunkSize
+        
+        if (debugEnabled == true) {
+            Logger.shared.debugLevel(debug: true)
+        }
     }
     
     

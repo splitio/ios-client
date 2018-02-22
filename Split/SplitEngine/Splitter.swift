@@ -31,22 +31,22 @@ public class Splitter: SplitterProtocol {
         
         var accumulatedSize: Int = 0
         
-        print("Splitter evaluating partitions ... \n")
+        Logger.d("Splitter evaluating partitions ... \n")
         
         let bucket: Int = getBucket(seed: seed, key: key.bucketingKey! ,algo: algo)
-        debugPrint("BUCKET: \(bucket)")
+        Logger.d("BUCKET: \(bucket)")
         
         if let splitPartitions = partions {
             
             for partition in splitPartitions {
                 
-                print("PARTITION SIZE \(String(describing: partition.size)) PARTITION TREATMENT: \(String(describing: partition.treatment)) \n")
+                Logger.d("PARTITION SIZE \(String(describing: partition.size)) PARTITION TREATMENT: \(String(describing: partition.treatment)) \n")
                 
                 accumulatedSize = accumulatedSize + partition.size!
                 
                 if bucket <= accumulatedSize {
                     
-                    print("TREATMENT RETURNED:\(partition.treatment!)")
+                    Logger.d("TREATMENT RETURNED:\(partition.treatment!)")
                     return partition.treatment!
                     
                 }

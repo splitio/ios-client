@@ -58,10 +58,8 @@ public class ImpressionManager {
         }
         
         if !reachable {
-            
-            debugPrint("SAVE IMPRESSIONS TO DISK")
+            Logger.d("SAVE IMPRESSIONS TO DISK")
             saveImpressionsToDisk()
-            
         } else {
             
             Alamofire.request(request).validate(statusCode: 200..<300).response {  [weak self] response in
@@ -73,12 +71,12 @@ public class ImpressionManager {
                 if response.error != nil && reachable {
                     
                     strongSelf.impressionsFileStorage?.saveImpressions(fileName: filename)
-                    debugPrint("[IMPRESSION] error : \(String(describing: response.error))")
+                    Logger.e("[IMPRESSION] error : \(String(describing: response.error))")
                     
                     
                 } else {
                     
-                    debugPrint("[IMPRESSION FIRED]")
+                    Logger.d("[IMPRESSION FIRED]")
                     strongSelf.cleanImpressions(fileName: filename)
                     
                 }
@@ -142,15 +140,10 @@ public class ImpressionManager {
                 return
             }
             do {
-                
                 strongSelf.sendImpressionsFromFile()
-                
                 strongSelf.dispatchGroup?.leave()
-                
             } catch let error {
-                
-                //TODO: throw error when impressions fail
-                debugPrint("Problem fetching splitChanges: %@", error.localizedDescription)
+                Logger.e(String(format:"Problem fetching splitChanges: %@", error.localizedDescription))
             }
             
         }
@@ -335,8 +328,7 @@ public class ImpressionManager {
     }
     //------------------------------------------------------------------------------------------------------------------
     @objc func applicationDidEnterBackground(_ application: UIApplication) {
-        
-        debugPrint("SAVE IMPRESSIONS TO DISK")
+        Logger.d("SAVE IMPRESSIONS TO DISK")
         saveImpressionsToDisk()
     }
     //------------------------------------------------------------------------------------------------------------------

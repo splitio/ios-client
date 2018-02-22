@@ -28,12 +28,12 @@ public class SecureDataStore {
     public func setToken(token: String){
         
         if let token = getToken() {
-            print(token)
+            Logger.d(token)
             removeToken()
         }
         
         guard let valueData = token.data(using: String.Encoding.utf8) else {
-            print("Error saving text to Keychain")
+            Logger.e("Error saving text to Keychain")
             return
         }
         
@@ -48,11 +48,11 @@ public class SecureDataStore {
         
         if resultCode != noErr {
             
-            print("Error saving to Keychain: \(resultCode).")
+            Logger.e("Error saving to Keychain: \(resultCode).")
             
         } else {
             
-            print("Saved to keychain successfully.")
+            Logger.d("Saved to keychain successfully.")
             
         }
     }
@@ -102,11 +102,11 @@ public class SecureDataStore {
         
         if resultCodeDelete != noErr {
             
-            print("Error deleting from Keychain: \(resultCodeDelete)")
+            Logger.e("Error deleting from Keychain: \(resultCodeDelete)")
             
         } else {
             
-            print("Removed successfully from the keychain")
+            Logger.d("Removed successfully from the keychain")
             
         }
         
