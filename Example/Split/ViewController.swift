@@ -68,12 +68,16 @@ class ViewController: UIViewController {
                     debugPrint(value)
                 }
             }
-            let config = SplitClientConfig(featuresRefreshRate: sRate,
-                                           segmentsRefreshRate: mySegRate,
-                                           debugEnabled:true,
-                                           blockUntilReady: 15000,
-                                           environment: SplitEnvironment.Staging,
-                                           apiKey: authorizationKey!)
+           
+            let config = SplitClientConfig()
+                .apiKey(authorizationKey!)
+                .featuresRefreshRate(sRate)
+                .segmentsRefreshRate(mySegRate)
+                .debugEnabled(true)
+                .blockUntilReady(15000)
+                .environment(SplitEnvironment.Staging)
+            
+            
             
             let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
             let splitFactory = SplitFactory(key: key, config: config)

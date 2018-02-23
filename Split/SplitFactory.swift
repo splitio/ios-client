@@ -13,8 +13,9 @@ import Foundation
     let _client: SplitClientTreatmentProtocol
     let _manager: SplitManagerProtocol
     
+    //TODO Add API-KEY as first parameter and remove it from config class
     public init(key: Key, config: SplitClientConfig) {
-        // TODO: Use apiKey, review and refactor client parameters
+        
         let client = SplitClient(config: config, key: key)
         _client = client 
         _manager = SplitManager()

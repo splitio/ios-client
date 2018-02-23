@@ -12,6 +12,8 @@ import SwiftyJSON
 
 enum StagingTarget: Target {
     
+    //TODO: get url from configuration to prevent hardcode staging
+    
     var baseUrl: URL { return URL(string: "https://sdk-aws-staging.split.io/api")! }
     var impressionBaseURL: URL { return URL(string: "https://events-aws-staging.split.io/api/testImpressions/bulk")! }
 
