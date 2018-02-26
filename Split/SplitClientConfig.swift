@@ -17,8 +17,11 @@ public class SplitClientConfig: NSObject {
     private var impressionsQueueSize: Int = 30000
     private var connectionTimeout: Int = 15000
     private var debugEnabled: Bool = false
+    private var verboseEnabled: Bool = false
     private var blockUntilReady: Int = -1
-    private var environment: SplitEnvironment = SplitEnvironment.Production
+    private var sdkURL: String = "https://sdk.split.io/api"
+    private var eventsURL: String = "https://events.split.io/api"
+    
     private var apiKey: String? { return SecureDataStore.shared.getToken() }
     
     public func featuresRefreshRate(_ rr: Int) -> SplitClientConfig {
@@ -86,6 +89,16 @@ public class SplitClientConfig: NSObject {
         return self
     }
     
+    public func verboseEnabled(_ enabled: Bool) -> SplitClientConfig {
+        self.verboseEnabled = enabled
+        if (verboseEnabled == true) {
+            Logger.shared.verboseLevel(verbose: true)
+        } else {
+            Logger.shared.verboseLevel(verbose: false)
+        }
+        return self
+    }
+    
     public func blockUntilReady(_ bur: Int) -> SplitClientConfig {
         self.blockUntilReady = bur
         return self
@@ -95,13 +108,25 @@ public class SplitClientConfig: NSObject {
         return self.blockUntilReady
     }
     
-    public func environment(_ env: SplitEnvironment) -> SplitClientConfig {
-        self.environment = env
+    
+    public func sdkUrl(_ url: String) -> SplitClientConfig {
+        self.sdkURL = url
+        TargetConfiguration.sdkEndpoint(url: url)
         return self
     }
     
-    public func getEnvironment() -> SplitEnvironment {
-        return self.environment
+    public func getSdkUrl() -> String {
+        return self.sdkURL
+    }
+    
+    public func eventsUrl(_ url: String) -> SplitClientConfig {
+        self.eventsURL = url
+        TargetConfiguration.eventsEndpoint(url: url)
+        return self
+    }
+    
+    public func getEventsUrl() -> String {
+        return self.eventsURL
     }
     
     public func apiKey(_ k: String) -> SplitClientConfig {

@@ -65,22 +65,21 @@ class ViewController: UIViewController {
                 for key in dict.allKeys {
                     let value = dict[key] as? String
                     authorizationKey = value
-                    debugPrint(value)
                 }
             }
            
             let config = SplitClientConfig()
-                .apiKey(authorizationKey!)
                 .featuresRefreshRate(sRate)
                 .segmentsRefreshRate(mySegRate)
-                .debugEnabled(true)
+                .debugEnabled(false)
+                .verboseEnabled(false)
                 .blockUntilReady(15000)
-                .environment(SplitEnvironment.Staging)
-            
-            
+                .impressionRefreshRate(10)
+                .sdkUrl("https://sdk-aws-staging.split.io/api")
+                .eventsUrl("https://events-aws-staging.split.io/api")
             
             let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
-            let splitFactory = SplitFactory(key: key, config: config)
+            let splitFactory = SplitFactory(apiKey: authorizationKey!, key: key, config: config)
             
             
             self.factory = splitFactory

@@ -13,13 +13,15 @@ import Foundation
     let _client: SplitClientTreatmentProtocol
     let _manager: SplitManagerProtocol
     
-    //TODO Add API-KEY as first parameter and remove it from config class
-    public init(key: Key, config: SplitClientConfig) {
+    public init(apiKey:String, key: Key, config: SplitClientConfig) {
         
+        //Setting apikey into configuration class
+        _ = config.apiKey(apiKey)
+    
         let client = SplitClient(config: config, key: key)
-        _client = client 
+        _client = client
         _manager = SplitManager()
-        
+
         Logger.i("iOS SDK initialized!")
     }
 

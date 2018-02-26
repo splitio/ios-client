@@ -11,6 +11,15 @@ import SwiftyJSON
 
 public typealias ImpressionsBulk = [ImpressionsHit]
 
+extension Request {
+    public func debugLog() -> Self {
+        #if DEBUG
+            debugPrint(self)
+        #endif
+        return self
+    }
+}
+
 public class ImpressionManager {
     
     public var interval: Int
@@ -22,7 +31,6 @@ public class ImpressionManager {
     private var impressionsFileStorage: ImpressionsFileStorage?
     public static let EMPTY_JSON: String = "[]"
     private var impressionAccum: Int = 0
-    public var environment: SplitEnvironment?
     
     
     public static let shared: ImpressionManager = {
@@ -57,7 +65,11 @@ public class ImpressionManager {
             saveImpressionsToDisk()
         } else {
             
-            Alamofire.request(request).validate(statusCode: 200..<300).response {  [weak self] response in
+            Alamofire
+                .request(request)
+                .debugLog()
+                .validate(statusCode: 200..<500)
+                .response {  [weak self] response in
                 
                 guard let strongSelf = self else {
                     return
@@ -157,19 +169,9 @@ public class ImpressionManager {
     
     func createRequest(content: Data?, fileName: String) -> [String:Any] {
         let url: URL
+        url = ConfigurableTarget.GetImpressions().url
         
-        switch self.environment! {
-        case .Staging:
-            url = StagingTarget.GetImpressions().url
-            break
-        case .Production:
-            url = ProductionTarget.GetImpressions().url
-            break
-        default:
-            url = ProductionTarget.GetImpressions().url
-        }
-        
-        // Configure paramaters
+        //var headers: HTTPHeaders = TargetConfiguration.getCommonHeaders()
         var headers: HTTPHeaders = [:]
         headers["splitsdkversion"] = Version.toString()
         headers["authorization"] = "Bearer " + SecureDataStore.shared.getToken()!

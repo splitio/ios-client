@@ -20,6 +20,7 @@ class Logger {
     private let TAG:String = "SplitSDK";
     
     private var _debugOn:Bool = false;
+    private var _verboseOn:Bool = false;
     
     static let shared: Logger = {
         let instance = Logger()
@@ -35,9 +36,19 @@ class Logger {
         objc_sync_exit(self)
     }
     
+    public func verboseLevel(verbose:Bool){
+        objc_sync_enter(self)
+        _verboseOn = verbose
+        objc_sync_exit(self)
+    }
+    
     private func log(level:Logger.Level, msg:String, _ ctx:Any ...){
         
-        if(!_debugOn && (level == Logger.Level.VERBOSE || level == Logger.Level.DEBUG)){
+        if(!_debugOn && level == Logger.Level.DEBUG){
+            return
+        }
+        
+        if(!_verboseOn && level == Logger.Level.VERBOSE){
             return
         }
         
