@@ -71,7 +71,7 @@ public class Engine {
                 if  bucketKey == nil {
                     bucketKey = matchingKey
                 }
-                let key: Key = Key(matchingKey: matchingKey!, trafficType: "user", bucketingKey: bucketKey)
+                let key: Key = Key(matchingKey: matchingKey!, bucketingKey: bucketKey)
                 
                 result[Engine.EVALUATION_RESULT_TREATMENT] = Splitter.shared.getTreatment(key: key, seed: (split?.seed)!, atributtes: atributtes, partions: condition.partitions, algo: (split?.algo)!)
                 

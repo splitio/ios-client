@@ -39,7 +39,6 @@ public class ImpressionManager {
         subscribeNotifications()
     }
     
-    //------------------------------------------------------------------------------------------------------------------
     public func sendImpressions(fileContent: Data?, fileName: String) {
         
         let composeRequest = createRequest(content: fileContent, fileName: fileName)
@@ -48,20 +47,14 @@ public class ImpressionManager {
         var reachable: Bool = true
         
         if let reachabilityManager = Alamofire.NetworkReachabilityManager(host: "sdk.split.io/api/version") {
-            
             if (!reachabilityManager.isReachable)  {
-                
                 reachable = false
-                
             }
-            
         }
         
         if !reachable {
-            
-            debugPrint("SAVE IMPRESSIONS TO DISK")
+            Logger.d("SAVE IMPRESSIONS TO DISK")
             saveImpressionsToDisk()
-            
         } else {
             
             Alamofire.request(request).validate(statusCode: 200..<300).response {  [weak self] response in
@@ -71,24 +64,16 @@ public class ImpressionManager {
                 }
                 
                 if response.error != nil && reachable {
-                    
                     strongSelf.impressionsFileStorage?.saveImpressions(fileName: filename)
-                    debugPrint("[IMPRESSION] error : \(String(describing: response.error))")
-                    
-                    
+                    Logger.e("[IMPRESSION] error : \(String(describing: response.error))")
                 } else {
-                    
-                    debugPrint("[IMPRESSION FIRED]")
+                    Logger.d("[IMPRESSION FIRED]")
                     strongSelf.cleanImpressions(fileName: filename)
                     
                 }
-                
             }
-            
         }
-        
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     public func createImpressionsBulk() -> ImpressionsBulk {
         
@@ -106,8 +91,7 @@ public class ImpressionManager {
         
         return hits
     }
-    
-    //------------------------------------------------------------------------------------------------------------------
+
     private func startPollingForImpressions() {
         
         let queue = DispatchQueue(label: "split-polling-queue")
@@ -125,8 +109,6 @@ public class ImpressionManager {
         }
         featurePollTimer!.resume()
     }
-    //------------------------------------------------------------------------------------------------------------------
-    
     
     private func stopPollingForSendImpressions() {
         featurePollTimer?.cancel()
@@ -141,33 +123,22 @@ public class ImpressionManager {
             guard let strongSelf = self else {
                 return
             }
-            do {
-                
-                strongSelf.sendImpressionsFromFile()
-                
-                strongSelf.dispatchGroup?.leave()
-                
-            } catch let error {
-                
-                //TODO: throw error when impressions fail
-                debugPrint("Problem fetching splitChanges: %@", error.localizedDescription)
-            }
             
+            strongSelf.sendImpressionsFromFile()
+            strongSelf.dispatchGroup?.leave()
+        
         }
         
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     public func start() {
         startPollingForImpressions()
     }
-    //------------------------------------------------------------------------------------------------------------------
-    
     
     public func stop() {
         stopPollingForSendImpressions()
     }
-    //------------------------------------------------------------------------------------------------------------------
+    
     
     private func cleanImpressions(fileName: String) {
         
@@ -175,7 +146,6 @@ public class ImpressionManager {
         impressionsFileStorage?.deleteImpressions(fileName: fileName)
         
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     func saveImpressions(json: String) {
         
@@ -183,16 +153,25 @@ public class ImpressionManager {
         impressionStorage = [:]
         
     }
-    //------------------------------------------------------------------------------------------------------------------
+
     
     func createRequest(content: Data?, fileName: String) -> [String:Any] {
+        let url: URL
+        
+        switch self.environment! {
+        case .Staging:
+            url = StagingTarget.GetImpressions().url
+            break
+        case .Production:
+            url = ProductionTarget.GetImpressions().url
+            break
+        default:
+            url = ProductionTarget.GetImpressions().url
+        }
         
         // Configure paramaters
-        let url: URL = StagingTarget.GetImpressions().url
         var headers: HTTPHeaders = [:]
-        headers["splitsdkversion"] = ImpressionsConstants.SPLIT_SDK_VERSION
-      //  headers["splitsdkmachineip"] = ImpressionsConstants.IMPRESSIONS_MACHINE_IP
-      //  headers["splitsdkmachinename"] = UIDevice.current.identifierForVendor!.uuidString
+        headers["splitsdkversion"] = Version.toString()
         headers["authorization"] = "Bearer " + SecureDataStore.shared.getToken()!
         headers["content-type"] = "application/json"
         
@@ -215,7 +194,6 @@ public class ImpressionManager {
         return composeRequest
         
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     
     func createEncodedImpressions() -> Data? {
@@ -228,7 +206,7 @@ public class ImpressionManager {
         
         return encodedData
     }
-    //------------------------------------------------------------------------------------------------------------------
+
     
     func createImpressionsJsonString() -> String {
         
@@ -246,7 +224,7 @@ public class ImpressionManager {
         }
         
     }
-    //------------------------------------------------------------------------------------------------------------------
+    
     
     func sizeOfJsonString(impression: ImpressionDTO) -> Int {
         
@@ -262,7 +240,6 @@ public class ImpressionManager {
         return 0
         
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     public func appendImpressions(impression: ImpressionDTO, splitName: String) {
         
@@ -300,7 +277,7 @@ public class ImpressionManager {
         }
         
     }
-    //------------------------------------------------------------------------------------------------------------------
+
     
     func saveImpressionsToDisk() {
         
@@ -313,7 +290,7 @@ public class ImpressionManager {
         }
         
     }
-    //------------------------------------------------------------------------------------------------------------------
+
     
     func sendImpressionsFromFile() {
         
@@ -333,23 +310,22 @@ public class ImpressionManager {
         }
         
     }
-    //------------------------------------------------------------------------------------------------------------------
+
     @objc func applicationDidEnterBackground(_ application: UIApplication) {
-        
-        debugPrint("SAVE IMPRESSIONS TO DISK")
+        Logger.d("SAVE IMPRESSIONS TO DISK")
         saveImpressionsToDisk()
     }
-    //------------------------------------------------------------------------------------------------------------------
+
     func subscribeNotifications() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
 
     }
-    //------------------------------------------------------------------------------------------------------------------
+
     deinit {
         
         NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
 
     }
-    //------------------------------------------------------------------------------------------------------------------
+
 }

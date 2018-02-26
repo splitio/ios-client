@@ -11,6 +11,8 @@ import SwiftyJSON
 
 enum ProductionTarget: Target {
     
+    //TODO: get url from configuration to prevent hardcode staging
+    
     var baseUrl: URL { return URL(string: "https://sdk-aws-staging.split.io/api")! }
     var impressionBaseURL: URL { return URL(string: "https://events-aws-staging.split.io/api/testImpressions/bulk")! }
     
@@ -20,6 +22,7 @@ enum ProductionTarget: Target {
     
     case GetSplitChanges(since: Int64)
     case GetMySegments(user: String)
+    case GetImpressions()
     
     // MARK: - Public Properties
     var method: HTTPMethod {
@@ -28,6 +31,8 @@ enum ProductionTarget: Target {
             return .get
         case .GetMySegments:
             return .get
+        case .GetImpressions:
+            return .post
         }
     }
     
@@ -39,6 +44,8 @@ enum ProductionTarget: Target {
             return URL(string: params.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!, relativeTo: url)!
         case .GetMySegments(let user):
             return baseUrl.appendingPathComponent("mySegments").appendingPathComponent(user)
+        case .GetImpressions():
+            return impressionBaseURL
         }
     }
     
@@ -50,5 +57,13 @@ enum ProductionTarget: Target {
             }
             return .success(json)
         }
+    }
+    
+    public func sdkURL(){
+        
+    }
+    
+    public func eventsURL(){
+        
     }
 }

@@ -47,9 +47,10 @@ import Alamofire
             semaphore.wait()
             let change: SplitChange = try requestResult!.unwrap()
             let result = self.splitChangeCache?.addChange(splitChange: change)
-            print(result)
+            if(result)!{
+                Logger.d("Adding splitChange successfully")
+            }
             return change
-            
         }
     }
 }

@@ -24,7 +24,7 @@ public class FileStorage: StorageProtocol {
             
         } catch {
             
-            print(error)
+            Logger.e(error.localizedDescription)
             
         }
         
@@ -47,12 +47,12 @@ public class FileStorage: StorageProtocol {
                 let fileURL = documentDirectory.appendingPathComponent(elementId)
                 
                 let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
-                print(fileContent)
+                Logger.d(fileContent)
             }
             
         } catch {
             
-            print(error)
+            Logger.e(error.localizedDescription)
             
         }
         
@@ -71,7 +71,7 @@ public class FileStorage: StorageProtocol {
             
         }
         catch let error as NSError {
-            print("An error took place: \(error)")
+            Logger.e("An error took place: \(error)")
         }
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ public class FileStorage: StorageProtocol {
             
         } catch {
             
-            print(error)
+            Logger.e(error.localizedDescription)
             
         }
         

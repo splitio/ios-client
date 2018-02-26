@@ -24,6 +24,9 @@ class ViewController: UIViewController {
     
     var factory: SplitFactory?
     var client: SplitClientTreatmentProtocol?
+    
+    var previousMatchingKey: String?
+    var previousBucketingKey: String?
 
     @IBAction func evaluate(_ sender: Any) {
         configure()
@@ -47,29 +50,42 @@ class ViewController: UIViewController {
         let mySegRate = 30
         let matchingKeyText: String = (matchingKey?.text)!
         bucketing = bucketkey?.text
-        var myDict: NSDictionary?
-        var authorizationKey: String?
-        if let path = Bundle.main.path(forResource: "configuration", ofType: "plist") {
-            myDict = NSDictionary(contentsOfFile: path)
-        }
-        if let dict = myDict {
-            for key in dict.allKeys {
-                let value = dict[key] as? String
-                authorizationKey = value
-                debugPrint(value)
+        
+        if(matchingKeyText != previousMatchingKey || bucketing != previousBucketingKey){
+            
+            self.previousMatchingKey = matchingKeyText
+            self.previousBucketingKey = bucketing
+            
+            var myDict: NSDictionary?
+            var authorizationKey: String?
+            if let path = Bundle.main.path(forResource: "configuration", ofType: "plist") {
+                myDict = NSDictionary(contentsOfFile: path)
             }
+            if let dict = myDict {
+                for key in dict.allKeys {
+                    let value = dict[key] as? String
+                    authorizationKey = value
+                    debugPrint(value)
+                }
+            }
+           
+            let config = SplitClientConfig()
+                .apiKey(authorizationKey!)
+                .featuresRefreshRate(sRate)
+                .segmentsRefreshRate(mySegRate)
+                .debugEnabled(true)
+                .blockUntilReady(15000)
+                .environment(SplitEnvironment.Staging)
+            
+            
+            
+            let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
+            let splitFactory = SplitFactory(key: key, config: config)
+            
+            
+            self.factory = splitFactory
+            self.client = splitFactory.client()
         }
-        let config = SplitClientConfig(featuresRefreshRate: sRate, segmentsRefreshRate: mySegRate, blockUntilReady: 50000, environment: SplitEnvironment.Staging, apiKey: authorizationKey!)
-        
-        let key: Key = Key(matchingKey: matchingKeyText, trafficType: "user", bucketingKey: bucketing)
-      
-    
-        guard let splitFactory = try? SplitFactory(key: key, config: config) else {
-            return
-        }
-        
-        self.factory = splitFactory
-        self.client = splitFactory.client()
     }
     
     
