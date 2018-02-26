@@ -11,15 +11,6 @@ import SwiftyJSON
 
 public typealias ImpressionsBulk = [ImpressionsHit]
 
-extension Request {
-    public func debugLog() -> Self {
-        #if DEBUG
-            debugPrint(self)
-        #endif
-        return self
-    }
-}
-
 public class ImpressionManager {
     
     public var interval: Int
@@ -67,8 +58,7 @@ public class ImpressionManager {
             
             Alamofire
                 .request(request)
-                .debugLog()
-                .validate(statusCode: 200..<500)
+                .validate(statusCode: 200..<300)
                 .response {  [weak self] response in
                 
                 guard let strongSelf = self else {
