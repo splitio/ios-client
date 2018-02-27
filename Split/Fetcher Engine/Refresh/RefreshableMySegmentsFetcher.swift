@@ -75,11 +75,11 @@ import Foundation
             do {
                 
                 let segments = try strongSelf.mySegmentsChangeFetcher.fetch(user: strongSelf.matchingKey)
-                debugPrint(segments)
+                Logger.d("Fetched segments", segments)
                 strongSelf.dispatchGroup?.leave()
                 
             } catch let error {
-                debugPrint("Problem fetching mySegments: %@", error.localizedDescription)
+                Logger.e(String(format:"Problem fetching mySegments: %@", error.localizedDescription))
             }
         }
     }

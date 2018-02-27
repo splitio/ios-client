@@ -10,12 +10,6 @@
 
 import Foundation
 
-
-public enum SplitEnvironment {
-    
-    case Production, Staging, Preprod
-}
-
 public protocol SplitClientTreatmentProtocol {
     
     func getTreatment(split: String, atributtes:[String:Any]?) throws -> String
@@ -36,17 +30,17 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
     public var shouldSendBucketingKey: Bool = false
 
     
-    public init(config: SplitClientConfig, key: Key) throws {
+    public init(config: SplitClientConfig, key: Key) {
         self.config = config
         self.key = key
         
-        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.featuresRefreshRate)
+        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.getFeaturesRefreshRate())
         
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.segmentsRefreshRate)
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate())
         
         self.initialized = true
         super.init()
-        let blockUntilReady = self.config!.blockUntilReady
+        let blockUntilReady = self.config!.getBlockUntilReady()
         if blockUntilReady > -1 {
             self.dispatchGroup = DispatchGroup()
             refreshableSplitFetcher.dispatchGroup = self.dispatchGroup
@@ -56,8 +50,7 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
             let timeout = DispatchTime.now() + .milliseconds(blockUntilReady)
             if self.dispatchGroup!.wait(timeout: timeout) == .timedOut {
                 self.initialized = false
-                debugPrint("SDK was not ready in \(blockUntilReady) milliseconds")
-                throw SplitError.Timeout
+                Logger.d("SDK was not ready in \(blockUntilReady) milliseconds")
             }
         }
         self.dispatchGroup = nil
@@ -145,11 +138,9 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
     //------------------------------------------------------------------------------------------------------------------
     func configureImpressionManager() {
         
-        splitImpressionManager.environment = self.config?.environment
+        splitImpressionManager.interval = (self.config?.getImpressionRefreshRate())!
         
-        splitImpressionManager.interval = (self.config?.impressionRefreshRate)!
-        
-        splitImpressionManager.impressionsChunkSize = (self.config?.impressionsChunkSize)!
+        splitImpressionManager.impressionsChunkSize = (self.config?.getImpressionsChunkSize())!
         
         splitImpressionManager.start()
  

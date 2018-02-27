@@ -14,7 +14,7 @@ import Foundation
     let attributes: [String : Any]?
     
     public init(matchingKey: String, type: String, bucketingKey: String? = nil, attributes: [String : Any]? = nil) {
-        self.key = Key(matchingKey: matchingKey, trafficType: type, bucketingKey: bucketingKey)
+        self.key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
         self.attributes = attributes
     }
 }

@@ -45,7 +45,7 @@ public class ImpressionsFileStorage {
                     
                 }
             } catch {
-                print(error)
+                Logger.e(error.localizedDescription)
             }
             
         } else {
@@ -66,7 +66,7 @@ public class ImpressionsFileStorage {
         
         for impressionFileName in fileNames {
             
-            print(impressionFileName)
+            Logger.d(impressionFileName)
             
             if let content = storage.readWithProperties(elementId: impressionFileName) {
                 
@@ -101,9 +101,9 @@ public class ImpressionsFileStorage {
                 for file in fileURLs {
                     
                     let fileName =  file.lastPathComponent
-                    print(fileName)
+                    Logger.v(fileName)
                     splitFileNames.append(fileName)
-                    print(fileName)
+                    Logger.v(fileName)
                 }
                 
                 let filtered = splitFileNames.filter { $0.contains(ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX) }
@@ -120,7 +120,7 @@ public class ImpressionsFileStorage {
     func parseFileName(fileName: String) -> [String] {
         
         let array = fileName.split{$0 == "_"}.map(String.init)
-        print(array)
+        Logger.d("Parse file name:",array)
         
         return array
  
