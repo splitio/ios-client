@@ -39,9 +39,10 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
         let segments = storage.read(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX)
         if let segmentsStored = segments {
             
-            let json: JSON = JSON(segmentsStored)
+            let json: JSON = JSON(parseJSON: segmentsStored)
+            let arrayParsed = json.arrayObject
             
-            if let array = json.arrayObject as? [String] {
+            if let array = arrayParsed as? [String] {
                 
                 return array
                 

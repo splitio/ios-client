@@ -10,6 +10,7 @@ import Foundation
 public class Evaluator {
     
     //------------------------------------------------------------------------------------------------------------------
+    public var impressions: [ImpressionDTO] 
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
     internal var splitClient: SplitClient?  {
@@ -33,21 +34,18 @@ public class Evaluator {
         self.splitClient = splitClient
         self.splitFetcher = self.splitClient?.splitFetcher
         self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
-        
+        self.impressions = []
     }
     //------------------------------------------------------------------------------------------------------------------
     public func evalTreatment(key: String, bucketingKey: String? , split: String, atributtes:[String:Any]?) throws -> [String:Any]?  {
         
         var result: [String:Any] = [:]
-        var impressions: [String: Any] = [:]
 
         //TODO: Use the cache here
-        if let splitTreated: Split = splitFetcher?.fetch(splitName: split) {
+        if let splitTreated: Split = splitFetcher?.fetch(splitName: split), splitTreated.status != Status.Archived {
             
             if let killed = splitTreated.killed, killed {
-                
-                impressions["label"] = "KILLED"
-                impressions["changeNumber"] = splitTreated.changeNumber
+                createImpression(label: ImpressionsConstants.KILLED, changeNumber: splitTreated.changeNumber!, treatment: splitTreated.defaultTreatment!, splitName: splitTreated.name!)
                 result[Engine.EVALUATION_RESULT_TREATMENT] = splitTreated.defaultTreatment!
                 result[Engine.EVALUATION_RESULT_LABEL] = impressions
                 
@@ -65,15 +63,28 @@ public class Evaluator {
                 if treatment == nil {
                     
                     treatment = splitTreated.defaultTreatment!
-                    impressionLabel = "NO_CONDITION_MATCHED"
+                    impressionLabel = ImpressionsConstants.NO_CONDITION_MATCHED
                     
                 }
                 
-                print("* Treatment for \(key) in \(String(describing: splitTreated.name)) is: \(String(describing: treatment))")
+                Logger.d("* Treatment for \(key) in \(String(describing: splitTreated.name)) is: \(String(describing: treatment))")
                 
                 result[Engine.EVALUATION_RESULT_TREATMENT] = treatment
-                impressions["label"] = impressionLabel
-                impressions["changeNumber"] = splitTreated.changeNumber
+                
+                var resultLabel: String?
+                
+                if let label = impressionLabel {
+                    
+                    resultLabel = label
+                    
+                } else {
+                    
+                    resultLabel = " "
+
+                }
+
+                createImpression(label: resultLabel!, changeNumber: splitTreated.changeNumber!, treatment: treatment!, splitName: splitTreated.name!)
+
                 result[Engine.EVALUATION_RESULT_LABEL] = impressions
 
                 
@@ -81,7 +92,10 @@ public class Evaluator {
             
         } else {
             
-            print("The SPLIT definition for '$featureName' has not been found'");
+            Logger.d("The SPLIT definition for '$featureName' has not been found'");
+            result[Engine.EVALUATION_RESULT_TREATMENT] = SplitConstants.CONTROL
+            createImpression(label: ImpressionsConstants.SPLIT_NOT_FOUND, changeNumber: nil, treatment: SplitConstants.CONTROL, splitName: split)
+            result[Engine.EVALUATION_RESULT_LABEL] = impressions
     
         }
         
@@ -89,5 +103,16 @@ public class Evaluator {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-
+    func createImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String) {
+        
+        let impression: ImpressionDTO = ImpressionDTO()
+        impression.keyName = splitClient?.key.matchingKey
+        
+        impression.bucketingKey = (splitClient?.shouldSendBucketingKey)! ? splitClient?.key.bucketingKey : nil
+        impression.label = label
+        impression.changeNumber = changeNumber
+        impression.treatment = treatment
+        impression.time = Int64(Date().timeIntervalSince1970 * 1000)
+        ImpressionManager.shared.appendImpressions(impression: impression, splitName: splitName)
+    }
 }

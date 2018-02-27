@@ -26,18 +26,21 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
     internal var dispatchGroup: DispatchGroup?
     var splitStorage = FileAndMemoryStorage()
     var mySegmentStorage = FileAndMemoryStorage()
+    let splitImpressionManager = ImpressionManager.shared
+    public var shouldSendBucketingKey: Bool = false
+
     
-    public init(config: SplitClientConfig, key: Key) throws {
+    public init(config: SplitClientConfig, key: Key) {
         self.config = config
         self.key = key
         
-        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.featuresRefreshRate)
+        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.getFeaturesRefreshRate())
         
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.segmentsRefreshRate)
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate())
         
         self.initialized = true
         super.init()
-        let blockUntilReady = self.config!.blockUntilReady
+        let blockUntilReady = self.config!.getBlockUntilReady()
         if blockUntilReady > -1 {
             self.dispatchGroup = DispatchGroup()
             refreshableSplitFetcher.dispatchGroup = self.dispatchGroup
@@ -47,13 +50,13 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
             let timeout = DispatchTime.now() + .milliseconds(blockUntilReady)
             if self.dispatchGroup!.wait(timeout: timeout) == .timedOut {
                 self.initialized = false
-                debugPrint("SDK was not ready in \(blockUntilReady) milliseconds")
-                throw SplitError.Timeout
+                Logger.d("SDK was not ready in \(blockUntilReady) milliseconds")
             }
         }
         self.dispatchGroup = nil
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()
+        configureImpressionManager()
         self.splitFetcher = refreshableSplitFetcher
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
 
@@ -69,8 +72,9 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
             verifyKey()
             
             let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: split, atributtes: atributtes)
-            
+           
             return result![Engine.EVALUATION_RESULT_TREATMENT] as! String
+            
             
         }
         catch {
@@ -113,16 +117,15 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         
         var composeKey: Key?
         
-        if let bucketKey = self.key.bucketingKey {
+        if let bucketKey = self.key.bucketingKey, bucketKey != "" {
             
-            //TODO: Log the key as (matchingKey,bucketingKey)
             composeKey = Key(matchingKey: self.key.matchingKey , bucketingKey: bucketKey)
-            
+            self.shouldSendBucketingKey = true
+
         } else {
             
-            //TODO: Log the key as (matchingKey,nil)
-            composeKey = Key(matchingKey: self.key.matchingKey, bucketingKey: self.key.matchingKey)
-            
+            composeKey = Key(matchingKey: self.key.matchingKey, bucketingKey: nil)
+            self.shouldSendBucketingKey = false
         }
         
         if let finalKey = composeKey {
@@ -133,7 +136,17 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    
+    func configureImpressionManager() {
+        
+        splitImpressionManager.interval = (self.config?.getImpressionRefreshRate())!
+        
+        splitImpressionManager.impressionsChunkSize = (self.config?.getImpressionsChunkSize())!
+        
+        splitImpressionManager.start()
+ 
+    }
+    //------------------------------------------------------------------------------------------------------------------
+
 }
 
 

@@ -9,6 +9,7 @@
 import Foundation
 
 public enum DataType: Int {
+    
     case Number
     case DateTime
     

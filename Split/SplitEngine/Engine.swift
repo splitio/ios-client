@@ -27,10 +27,13 @@ public class Engine {
         var inRollOut: Bool = false
         var result: [String: String] = [:]
         
-        if bucketingKey == nil {
+        if bucketingKey == nil || bucketingKey == "" {
             
             bucketKey = matchingKey
             
+        } else {
+            
+            bucketKey = bucketingKey
         }
         
         let conditions: [Condition] = (split?.conditions)!
@@ -38,6 +41,7 @@ public class Engine {
         for condition in conditions {
             
             condition.client = self.splitClient
+            
             
             if (!inRollOut && condition.conditionType == ConditionType.Rollout) {
                 
@@ -48,6 +52,8 @@ public class Engine {
                     if bucket >= trafficAllocation {
                         
                         result[Engine.EVALUATION_RESULT_TREATMENT] = split?.defaultTreatment
+                        result[Engine.EVALUATION_RESULT_LABEL] = ImpressionsConstants.NOT_IN_SPLIT
+
                         return result
                         
                     }
@@ -57,6 +63,7 @@ public class Engine {
                 }
             }
             
+            //Return the first condition that match.
             if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, atributtes: atributtes) {
                 
                 var bucketKey: String? = bucketingKey
@@ -64,12 +71,11 @@ public class Engine {
                 if  bucketKey == nil {
                     bucketKey = matchingKey
                 }
-                let key: Key = Key(matchingKey: matchingKey!, trafficType: "user", bucketingKey: bucketKey)
+                let key: Key = Key(matchingKey: matchingKey!, bucketingKey: bucketKey)
                 
                 result[Engine.EVALUATION_RESULT_TREATMENT] = Splitter.shared.getTreatment(key: key, seed: (split?.seed)!, atributtes: atributtes, partions: condition.partitions, algo: (split?.algo)!)
                 
-                //Return the first condition that match.
-                
+                result[Engine.EVALUATION_RESULT_LABEL] = condition.label
                 return result
             }
             

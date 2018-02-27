@@ -24,7 +24,7 @@ public class FileStorage: StorageProtocol {
             
         } catch {
             
-            print(error)
+            Logger.e(error.localizedDescription)
             
         }
         
@@ -43,11 +43,16 @@ public class FileStorage: StorageProtocol {
             if let data = content {
                 
                 try data.write(to: fileURL, atomically: false, encoding: .utf8)
+               
+                let fileURL = documentDirectory.appendingPathComponent(elementId)
+                
+                let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
+                Logger.d(fileContent)
             }
             
         } catch {
             
-            print(error)
+            Logger.e(error.localizedDescription)
             
         }
         
@@ -66,7 +71,7 @@ public class FileStorage: StorageProtocol {
             
         }
         catch let error as NSError {
-            print("An error took place: \(error)")
+            Logger.e("An error took place: \(error)")
         }
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -82,5 +87,39 @@ public class FileStorage: StorageProtocol {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-  
+    public func readWithProperties(elementId: String) -> String? {
+        
+        let fileManager = FileManager.default
+        
+        do {
+            
+            let documentDirectory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
+            
+            let fileURL = documentDirectory.appendingPathComponent(elementId)
+            
+            let resources = try fileURL.resourceValues(forKeys: [.creationDateKey])
+            let creationDate = resources.creationDate!
+            
+            if let diff = Calendar.current.dateComponents([.hour], from: creationDate, to: Date()).hour, diff > 24 {
+
+                delete(elementId: elementId)
+                return nil
+                
+            } else {
+                
+                return try String(contentsOf: fileURL, encoding: .utf8)
+                
+                
+            }
+            
+        } catch {
+            
+            Logger.e(error.localizedDescription)
+            
+        }
+        
+        return nil
+    }
+    //------------------------------------------------------------------------------------------------------------------
+
 }

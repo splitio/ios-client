@@ -13,11 +13,16 @@ import Foundation
     let _client: SplitClientTreatmentProtocol
     let _manager: SplitManagerProtocol
     
-    public init(apiToken: String, key: Key, config: SplitClientConfig) throws {
-        // TODO: Use apiKey, review and refactor client parameters
-        let client = try SplitClient(config: config, key: key)
-        _client = client 
+    public init(apiKey:String, key: Key, config: SplitClientConfig) {
+        
+        //Setting apikey into configuration class
+        _ = config.apiKey(apiKey)
+    
+        let client = SplitClient(config: config, key: key)
+        _client = client
         _manager = SplitManager()
+
+        Logger.i("iOS SDK initialized!")
     }
 
     public func client() -> SplitClientTreatmentProtocol {

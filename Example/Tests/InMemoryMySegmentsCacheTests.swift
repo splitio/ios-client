@@ -45,7 +45,7 @@ class InMemoryMySegmentsCacheTests: QuickSpec {
             context("Test RemoveSegment") {
 
                 it("isInSegment should return false when passing segments2") {
-                    mySegmentsCache.removeSegment(segmentName: "segment2")
+                    mySegmentsCache.removeSegments()
                     expect(mySegmentsCache.isInSegment(segmentName: "segment2")).to(beFalse())
                 }
             }

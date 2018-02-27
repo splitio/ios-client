@@ -20,13 +20,28 @@ public class EqualToBooleanMatcher: BaseMatcher, MatcherProtocol {
     //--------------------------------------------------------------------------------------------------
     public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String : Any]?) -> Bool {
         
-        guard let matchValueBool = matchValue as? Bool, let boolenData = data else {
+        guard let matchValueBool = matchValue, let booleanData = data else {
             
             return false
             
         }
-                
-        return matchValueBool == boolenData
+        
+        if let newBooleanValue = matchValueBool as? Bool {
+            
+            return newBooleanValue == booleanData
+        }
+        
+        if let stringBoolean = matchValueBool as? String {
+            
+            let lowerCaseStringBoolean = stringBoolean.lowercased()
+            
+            let booleanValue = Bool(lowerCaseStringBoolean)
+            
+            return booleanValue == booleanData
+        }
+        
+        
+        return false
         
     }
     //--------------------------------------------------------------------------------------------------

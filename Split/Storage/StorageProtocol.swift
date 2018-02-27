@@ -14,5 +14,6 @@ public protocol StorageProtocol {
     func delete(elementId: String)
     func getAllIds() -> [String]?
     
+    
 }
 

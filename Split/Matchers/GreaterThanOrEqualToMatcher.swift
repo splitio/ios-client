@@ -21,25 +21,24 @@ public class GreaterThanOrEqualToMatcher: BaseMatcher, MatcherProtocol {
     //--------------------------------------------------------------------------------------------------
     public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String : Any]?) -> Bool {
         
-        guard let matcherData = data, let dataType = matcherData.dataType, let value = matcherData.value , let keyValue = matchValue as? Int64 else {
-            
+        guard let matcherData = data, let dataType = matcherData.dataType, let value = matcherData.value else {
             return false
-            
         }
         
         switch dataType {
+            case DataType.DateTime:
+                guard let keyValue = matchValue as? TimeInterval else {return false}
+                
+                let backendTimeInterval = TimeInterval(value/1000)
+                let attributeTimeInterval = keyValue
+                
+                let attributeDate = DateTime.zeroOutSeconds(timestamp: attributeTimeInterval)
+                let backendDate = DateTime.zeroOutSeconds(timestamp: backendTimeInterval)
+                return  attributeDate >= backendDate
             
-        case DataType.DateTime:
-            
-            let keyDate = Date.dateFromInt(number: keyValue)
-            let atributteDate = Date.dateFromInt(number: value)
-            
-            return keyDate >= atributteDate
-            
-        case DataType.Number:
-            
-            return keyValue >= value
-            
+            case DataType.Number:
+                guard let keyValue = matchValue as? Int64 else {return false}
+                return keyValue >= value
         }
         
     }
