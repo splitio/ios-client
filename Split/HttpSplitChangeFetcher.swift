@@ -9,6 +9,11 @@
 import Foundation
 import Alamofire
 
+public enum FecthingPolicy {
+    case cacheOnly
+    case networkAndCache
+}
+
 @objc public final class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
     
     private let restClient: RestClient
@@ -21,9 +26,15 @@ import Alamofire
         self.splitChangeCache = SplitChangeCache(storage: storage)
     }
     
-    public func fetch(since: Int64) throws -> SplitChange {
+    public func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange {
         
         var reachable: Bool = true
+
+        if policy == .cacheOnly {
+
+            return (self.splitChangeCache?.getChanges(since: -1))!
+
+        }
         
         if let reachabilityManager = Alamofire.NetworkReachabilityManager(host: "sdk.split.io/api/version") {
             
@@ -47,7 +58,6 @@ import Alamofire
             semaphore.wait()
             let change: SplitChange = try requestResult!.unwrap()
             let result = self.splitChangeCache?.addChange(splitChange: change)
-            print(result)
             return change
             
         }
