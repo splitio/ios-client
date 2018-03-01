@@ -59,7 +59,14 @@ class ViewController: UIViewController {
                 debugPrint(value)
             }
         }
-        let config = SplitClientConfig(featuresRefreshRate: sRate, segmentsRefreshRate: mySegRate, blockUntilReady: 50000, environment: SplitEnvironment.Staging, apiKey: authorizationKey!)
+        //let config = SplitClientConfig(featuresRefreshRate: sRate, segmentsRefreshRate: mySegRate, blockUntilReady: 50000, environment: SplitEnvironment.Staging, apiKey: authorizationKey!)
+        
+        let config = SplitClientConfig()
+            .apiKey(authorizationKey!)
+            .featuresRefreshRate(sRate)
+            .segmentsRefreshRate(mySegRate)
+            .blockUntilReady(-1)
+            .environment(SplitEnvironment.Staging)
         
         let key: Key = Key(matchingKey: matchingKeyText, trafficType: "user", bucketingKey: bucketing)
       

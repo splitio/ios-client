@@ -40,13 +40,13 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         self.config = config
         self.key = key
         
-        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.featuresRefreshRate)
+        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.getFeaturesRefreshRate())
         
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.segmentsRefreshRate)
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate())
         
         self.initialized = true
         super.init()
-        let blockUntilReady = self.config!.blockUntilReady
+        let blockUntilReady = self.config!.getBlockUntilReady()
         if blockUntilReady > -1 {
             self.dispatchGroup = DispatchGroup()
             refreshableSplitFetcher.dispatchGroup = self.dispatchGroup
@@ -145,11 +145,11 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
     //------------------------------------------------------------------------------------------------------------------
     func configureImpressionManager() {
         
-        splitImpressionManager.environment = self.config?.environment
+        splitImpressionManager.environment = self.config?.getEnvironment()
         
-        splitImpressionManager.interval = (self.config?.impressionRefreshRate)!
+        splitImpressionManager.interval = (self.config?.getImpressionRefreshRate())!
         
-        splitImpressionManager.impressionsChunkSize = (self.config?.impressionsChunkSize)!
+        splitImpressionManager.impressionsChunkSize = (self.config?.getImpressionsChunkSize())!
         
         splitImpressionManager.start()
  
