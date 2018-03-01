@@ -13,7 +13,8 @@ import Foundation
     let _client: SplitClientTreatmentProtocol
     let _manager: SplitManagerProtocol
     
-    public init(key: Key, config: SplitClientConfig) throws {
+    public init(apiKey: String, key: Key, config: SplitClientConfig) throws {
+        _ = config.apiKey(apiKey)
         // TODO: Use apiKey, review and refactor client parameters
         let client = try SplitClient(config: config, key: key)
         _client = client 

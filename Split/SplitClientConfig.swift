@@ -102,6 +102,4 @@ public class SplitClientConfig: NSObject {
     public func getApiKey() -> String {
         return self.apiKey!
     }
-    
-    
 }
