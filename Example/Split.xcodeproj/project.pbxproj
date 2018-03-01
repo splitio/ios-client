@@ -72,7 +72,7 @@
 		9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-data-v2.csv"; sourceTree = "<group>"; };
 		CC2907E320180D5E000FD1A5 /* murmur.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = murmur.csv; sourceTree = "<group>"; };
 		CC396705203C6DDF00C1BFDD /* RegexTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegexTest.swift; sourceTree = "<group>"; };
-		CC396708203C6FA400C1BFDD /* regex.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = regex.csv; path = ../../../Desktop/regex.csv; sourceTree = "<group>"; };
+		CC396708203C6FA400C1BFDD /* regex.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = regex.csv; sourceTree = "<group>"; };
 		CC5FFED0201638FA0012C3A9 /* configuration.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = configuration.plist; sourceTree = "<group>"; };
 		CCF2C9D61FB4A503000A885E /* HashingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashingTest.swift; sourceTree = "<group>"; };
 		D39460BB1F71C7F5000396FC /* Split.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Split.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Split/Split.framework"; sourceTree = "<group>"; };
