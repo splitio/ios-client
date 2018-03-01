@@ -190,9 +190,7 @@ public class ImpressionManager {
         // Configure paramaters
         let url: URL = StagingTarget.GetImpressions().url
         var headers: HTTPHeaders = [:]
-        headers["splitsdkversion"] = ImpressionsConstants.SPLIT_SDK_VERSION
-      //  headers["splitsdkmachineip"] = ImpressionsConstants.IMPRESSIONS_MACHINE_IP
-      //  headers["splitsdkmachinename"] = UIDevice.current.identifierForVendor!.uuidString
+        headers["splitsdkversion"] = Version.toString()
         headers["authorization"] = "Bearer " + SecureDataStore.shared.getToken()!
         headers["content-type"] = "application/json"
         
