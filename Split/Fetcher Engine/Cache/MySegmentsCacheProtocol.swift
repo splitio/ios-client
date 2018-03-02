@@ -8,16 +8,28 @@
 
 import Foundation
 
-@objc public protocol MySegmentsCacheProtocol {
+public protocol MySegmentsCacheProtocol {
     
-    func addSegments(segmentNames: [String])
+    func addSegments(segmentNames: [String], key: String)
     
     func removeSegments()
     
-    func getSegments() -> [String]
+    func getSegments(key: String) -> [String]
     
     func isInSegment(segmentName: String) -> Bool
     
     func clear()
+
+}
+
+public extension MySegmentsCacheProtocol {
+
+    func addSegments(segmentNames: [String], key: String = "") {
+        return addSegments(segmentNames: segmentNames, key: key)
+    }
+
+    func getSegments(key: String = "") -> [String] {
+        return getSegments(key: key)
+    }
 
 }
