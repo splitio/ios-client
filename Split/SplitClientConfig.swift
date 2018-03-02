@@ -21,36 +21,32 @@ public class SplitClientConfig: NSObject {
     private var environment: SplitEnvironment = SplitEnvironment.Production
     private var apiKey: String? { return SecureDataStore.shared.getToken() }
     
-    public func featuresRefreshRate(_ rr: Int) -> SplitClientConfig {
+    public func featuresRefreshRate(_ rr: Int) {
         self.featuresRefreshRate = rr
-        return self
     }
     
     public func getFeaturesRefreshRate() -> Int {
         return self.featuresRefreshRate
     }
     
-    public func segmentsRefreshRate(_ rr: Int) -> SplitClientConfig {
+    public func segmentsRefreshRate(_ rr: Int) {
         self.segmentsRefreshRate = rr
-        return self
     }
     
     public func getSegmentsRefreshRate() -> Int {
         return self.segmentsRefreshRate
     }
     
-    public func impressionRefreshRate(_ rr: Int) -> SplitClientConfig {
+    public func impressionRefreshRate(_ rr: Int){
         self.impressionRefreshRate = rr
-        return self
     }
     
     public func getImpressionRefreshRate() -> Int {
         return self.impressionRefreshRate
     }
     
-    public func impressionsChunkSize(_ cs: Int64) -> SplitClientConfig {
+    public func impressionsChunkSize(_ cs: Int64) {
         self.impressionsChunkSize = cs
-        return self
     }
     
     public func getImpressionsChunkSize() -> Int64 {
@@ -58,48 +54,59 @@ public class SplitClientConfig: NSObject {
     }
     
     
-    public func impressionsQueueSize(_ qs: Int) -> SplitClientConfig {
+    public func impressionsQueueSize(_ qs: Int) {
         self.impressionsQueueSize = qs
-        return self
     }
     
     public func getImpressionsQueueSize() -> Int {
         return self.impressionsQueueSize
     }
     
-    public func connectionTimeout(_ to: Int) -> SplitClientConfig {
+    public func connectionTimeout(_ to: Int) {
         self.connectionTimeout = to
-        return self
     }
     
     public func getConnectionTimeout() -> Int {
         return self.connectionTimeout
     }
     
-    public func blockUntilReady(_ bur: Int) -> SplitClientConfig {
+    public func blockUntilReady(_ bur: Int) {
         self.blockUntilReady = bur
-        return self
     }
     
     public func getBlockUntilReady() -> Int {
         return self.blockUntilReady
     }
     
-    public func environment(_ env: SplitEnvironment) -> SplitClientConfig {
+    public func environment(_ env: SplitEnvironment) {
         self.environment = env
-        return self
     }
     
     public func getEnvironment() -> SplitEnvironment {
         return self.environment
     }
     
-    public func apiKey(_ k: String) -> SplitClientConfig {
+    public func apiKey(_ k: String) {
         SecureDataStore.shared.setToken(token: k)
-        return self
     }
     
     public func getApiKey() -> String {
         return self.apiKey!
+    }
+    
+    public func sdkEndpoint(_ u: String) {
+        TargetConfiguration.shared.sdkEndpoint(url: u)
+    }
+    
+    public func eventsEndpoint(_ u: String) {
+        TargetConfiguration.shared.eventsEndpoint(url: u)
+    }
+    
+    public func getSdkEndpoint() -> URL {
+        return TargetConfiguration.shared.getSdkEndpoint()
+    }
+    
+    public func getEventsEndpoint() -> URL {
+        return TargetConfiguration.shared.getEventsEndpoint()
     }
 }

@@ -1,25 +1,27 @@
 //
-//  ProductionTarget.swift
+//  ConfigurableTarget.swift
 //  Split
 //
-//  Created by Natalia  Stele on 19/01/2018.
+//  Created by Sebastian Arrubia on 3/2/18.
 //
 
 import Foundation
 import Alamofire
 import SwiftyJSON
 
-enum ProductionTarget: Target {
+enum ConfigurableTarget: Target {
+    var sdkBaseUrl: URL { return TargetConfiguration.shared.getSdkEndpoint() }
+    var eventsBaseURL: URL { return TargetConfiguration.shared.getEventsEndpoint() }
     
-    var baseUrl: URL { return URL(string: "https://sdk-aws-staging.split.io/api")! }
-    var impressionBaseURL: URL { return URL(string: "https://events-aws-staging.split.io/api/testImpressions/bulk")! }
+    var apiKey: String? { return SecureDataStore.shared.getToken() }
     
-    var apiKey: String? { return SecureDataStore.shared.getToken() } // TODO: Use the one provided on the Client
-    // Insert your common headers here, for example, authorization token or accept.
-    var commonHeaders: [String : String]? { return ["Authorization" : "Bearer \(SecureDataStore.shared.getToken()!)"] }
+    var commonHeaders: [String : String]? {return TargetConfiguration.shared.getCommonHeaders()}
+    
     
     case GetSplitChanges(since: Int64)
     case GetMySegments(user: String)
+    case GetImpressions()
+    
     
     // MARK: - Public Properties
     var method: HTTPMethod {
@@ -28,23 +30,28 @@ enum ProductionTarget: Target {
             return .get
         case .GetMySegments:
             return .get
+        case .GetImpressions:
+            return .post
         }
     }
     
     var url: URL {
         switch self {
         case .GetSplitChanges(let since):
-            let url = baseUrl.appendingPathComponent("splitChanges")
+            let url = sdkBaseUrl.appendingPathComponent("splitChanges")
             let params = "?since=\(since)"
             return URL(string: params.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!, relativeTo: url)!
         case .GetMySegments(let user):
-            return baseUrl.appendingPathComponent("mySegments").appendingPathComponent(user)
+            return sdkBaseUrl.appendingPathComponent("mySegments").appendingPathComponent(user)
+            
+        case .GetImpressions():
+            return eventsBaseURL.appendingPathComponent("testImpressions").appendingPathComponent("bulk")
         }
     }
     
     var errorSanitizer: (JSON, Int) -> Result<JSON> {
         return { json, statusCode in
-            guard statusCode >= 200 && statusCode <= 203 else {
+            guard statusCode >= 200 && statusCode <= 203  else {
                 let error = NSError(domain: InfoUtils.bundleNameKey(), code: ErrorCode.Undefined, userInfo: nil)
                 return .failure(error)
             }

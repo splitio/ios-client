@@ -12,8 +12,8 @@ import SwiftyJSON
 
 protocol Target {
     
-    var baseUrl: URL { get }
-    var impressionBaseURL: URL { get }
+    var sdkBaseUrl: URL { get }
+    var eventsBaseURL: URL { get }
     var apiKey: String? { get }
     var commonHeaders: [String : String]? { get }
     var method: HTTPMethod { get }
