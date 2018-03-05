@@ -52,9 +52,9 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
         return []
     }
     //------------------------------------------------------------------------------------------------------------------
-    public func isInSegment(segmentName: String) -> Bool {
+    public func isInSegment(segmentName: String, key: String) -> Bool {
         
-        let segments = self.getSegments()
+        let segments = self.getSegments(key:key)
         return segments.contains(segmentName)
         
     }

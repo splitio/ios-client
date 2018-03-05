@@ -16,7 +16,7 @@ public protocol MySegmentsCacheProtocol {
     
     func getSegments(key: String) -> [String]
     
-    func isInSegment(segmentName: String) -> Bool
+    func isInSegment(segmentName: String, key:String) -> Bool
     
     func clear()
 
