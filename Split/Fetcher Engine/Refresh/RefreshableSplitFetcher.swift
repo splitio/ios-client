@@ -26,9 +26,7 @@ public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
     }
     
     public func forceRefresh() {
-        
         let result = self.splitCache.setChangeNumber(-1)
-        debugPrint(result)
         pollForSplitChanges()
     }
     
@@ -82,12 +80,11 @@ public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
             do {
                 
                 let splitChanges = try strongSelf.splitChangeFetcher.fetch(since: strongSelf.splitCache.getChangeNumber())
-                debugPrint(splitChanges)
+                Logger.d(splitChanges.debugDescription)
 
-                
                 strongSelf.dispatchGroup?.leave()
             } catch let error {
-                debugPrint("Problem fetching splitChanges: %@", error.localizedDescription)
+                Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
             }
         }
     }

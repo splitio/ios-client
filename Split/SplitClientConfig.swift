@@ -16,9 +16,16 @@ public class SplitClientConfig: NSObject {
     private var segmentsRefreshRate: Int = 1800
     private var impressionsQueueSize: Int = 30000
     private var connectionTimeout: Int = 15000
-    private var debugEnabled: Bool = false
     private var blockUntilReady: Int = -1
     private var apiKey: String? { return SecureDataStore.shared.getToken() }
+    
+    public func debug(_ d:Bool){
+        Logger.shared.debugLevel(debug: d)
+    }
+    
+    public func verbose(_ v:Bool){
+        Logger.shared.verboseLevel(verbose: v)
+    }
     
     public func featuresRefreshRate(_ rr: Int) {
         self.featuresRefreshRate = rr

@@ -67,7 +67,7 @@ public class Evaluator {
                     
                 }
                 
-                print("* Treatment for \(key) in \(String(describing: splitTreated.name)) is: \(String(describing: treatment))")
+                Logger.d("* Treatment for \(key) in \(String(describing: splitTreated.name)) is: \(String(describing: treatment))")
                 
                 result[Engine.EVALUATION_RESULT_TREATMENT] = treatment
                 
@@ -92,7 +92,7 @@ public class Evaluator {
             
         } else {
             
-            print("The SPLIT definition for '$featureName' has not been found'");
+            Logger.w("The SPLIT definition for '$featureName' has not been found");
             result[Engine.EVALUATION_RESULT_TREATMENT] = SplitConstants.CONTROL
             createImpression(label: ImpressionsConstants.SPLIT_NOT_FOUND, changeNumber: nil, treatment: SplitConstants.CONTROL, splitName: split)
             result[Engine.EVALUATION_RESULT_LABEL] = impressions

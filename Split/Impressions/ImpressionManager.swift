@@ -57,7 +57,7 @@ public class ImpressionManager {
         
         if !reachable {
             
-            debugPrint("SAVE IMPRESSIONS TO DISK")
+            Logger.v("SAVE IMPRESSIONS TO DISK")
             saveImpressionsToDisk()
             
         } else {
@@ -71,12 +71,12 @@ public class ImpressionManager {
                 if response.error != nil && reachable {
                     
                     strongSelf.impressionsFileStorage?.saveImpressions(fileName: filename)
-                    debugPrint("[IMPRESSION] error : \(String(describing: response.error))")
+                    Logger.e("[IMPRESSION] error : \(String(describing: response.error))")
                     
                     
                 } else {
                     
-                    debugPrint("[IMPRESSION FIRED]")
+                    Logger.d("[IMPRESSION FIRED]")
                     strongSelf.cleanImpressions(fileName: filename)
                     
                 }
@@ -148,7 +148,7 @@ public class ImpressionManager {
             } catch let error {
                 
                 //TODO: throw error when impressions fail
-                debugPrint("Problem fetching splitChanges: %@", error.localizedDescription)
+                Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
             }
             
         }
@@ -332,7 +332,7 @@ public class ImpressionManager {
     //------------------------------------------------------------------------------------------------------------------
     @objc func applicationDidEnterBackground(_ application: UIApplication) {
         
-        debugPrint("SAVE IMPRESSIONS TO DISK")
+        Logger.d("SAVE IMPRESSIONS TO DISK")
         saveImpressionsToDisk()
     }
     //------------------------------------------------------------------------------------------------------------------
