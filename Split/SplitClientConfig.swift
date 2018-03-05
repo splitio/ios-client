@@ -18,7 +18,6 @@ public class SplitClientConfig: NSObject {
     private var connectionTimeout: Int = 15000
     private var debugEnabled: Bool = false
     private var blockUntilReady: Int = -1
-    private var environment: SplitEnvironment = SplitEnvironment.Production
     private var apiKey: String? { return SecureDataStore.shared.getToken() }
     
     public func featuresRefreshRate(_ rr: Int) {
@@ -77,15 +76,7 @@ public class SplitClientConfig: NSObject {
     public func getBlockUntilReady() -> Int {
         return self.blockUntilReady
     }
-    
-    public func environment(_ env: SplitEnvironment) {
-        self.environment = env
-    }
-    
-    public func getEnvironment() -> SplitEnvironment {
-        return self.environment
-    }
-    
+
     public func apiKey(_ k: String) {
         SecureDataStore.shared.setToken(token: k)
     }
@@ -100,13 +91,5 @@ public class SplitClientConfig: NSObject {
     
     public func eventsEndpoint(_ u: String) {
         EnvironmentTargetManager.shared.eventsEndpoint(u)
-    }
-    
-    public func getSdkEndpoint() -> URL {
-        return TargetConfiguration.shared.getSdkEndpoint()
-    }
-    
-    public func getEventsEndpoint() -> URL {
-        return TargetConfiguration.shared.getEventsEndpoint()
     }
 }

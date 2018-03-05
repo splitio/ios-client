@@ -10,12 +10,6 @@
 
 import Foundation
 
-
-public enum SplitEnvironment {
-    
-    case Production, Staging, Preprod
-}
-
 public protocol SplitClientTreatmentProtocol {
     
     func getTreatment(split: String, atributtes:[String:Any]?) throws -> String
@@ -142,10 +136,8 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         }
         
     }
-    //------------------------------------------------------------------------------------------------------------------
+
     func configureImpressionManager() {
-        
-        splitImpressionManager.environment = self.config?.getEnvironment()
         
         splitImpressionManager.interval = (self.config?.getImpressionRefreshRate())!
         
@@ -154,8 +146,6 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         splitImpressionManager.start()
  
     }
-    //------------------------------------------------------------------------------------------------------------------
-
 }
 
 

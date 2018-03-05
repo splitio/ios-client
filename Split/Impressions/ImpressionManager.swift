@@ -22,9 +22,7 @@ public class ImpressionManager {
     private var impressionsFileStorage: ImpressionsFileStorage?
     public static let EMPTY_JSON: String = "[]"
     private var impressionAccum: Int = 0
-    public var environment: SplitEnvironment?
-    
-    
+
     public static let shared: ImpressionManager = {
         
         let instance = ImpressionManager()
