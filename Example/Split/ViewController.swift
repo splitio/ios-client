@@ -66,8 +66,8 @@ class ViewController: UIViewController {
         config.blockUntilReady(-1)
         config.environment(SplitEnvironment.Staging)
         config.impressionRefreshRate(30)
-        //config.sdkEndpoint("https://sdk-aws-staging.split.io/api")
-        //config.eventsEndpoint("https://events-aws-staging.split.io/api")
+        config.sdkEndpoint("https://sdk-aws-staging.split.io/api")
+        config.eventsEndpoint("https://events-aws-staging.split.io/api")
 
         
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)

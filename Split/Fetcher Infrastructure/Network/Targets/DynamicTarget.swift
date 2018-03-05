@@ -28,9 +28,9 @@ class DynamicTarget: Target {
     
     var commonHeaders: [String : String]?
     
-    public init(_ sdkBaseUrl:String, _ eventsBaseURL:String, _ status: DynamicTargetStatus ){
-        self.sdkBaseUrl = URL(string:sdkBaseUrl)!
-        self.eventsBaseURL = URL(string:eventsBaseURL)!
+    public init(_ sdkBaseUrl:URL, _ eventsBaseURL:URL, _ status: DynamicTargetStatus ){
+        self.sdkBaseUrl = sdkBaseUrl
+        self.eventsBaseURL = eventsBaseURL
         
         self.commonHeaders = [
             "authorization" : "Bearer " + SecureDataStore.shared.getToken()!,

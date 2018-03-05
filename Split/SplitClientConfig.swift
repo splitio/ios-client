@@ -95,11 +95,11 @@ public class SplitClientConfig: NSObject {
     }
     
     public func sdkEndpoint(_ u: String) {
-        TargetConfiguration.shared.sdkEndpoint(url: u)
+        EnvironmentTargetManager.shared.sdkEndpoint(u)
     }
     
     public func eventsEndpoint(_ u: String) {
-        TargetConfiguration.shared.eventsEndpoint(url: u)
+        EnvironmentTargetManager.shared.eventsEndpoint(u)
     }
     
     public func getSdkEndpoint() -> URL {

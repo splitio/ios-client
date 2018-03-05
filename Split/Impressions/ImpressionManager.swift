@@ -188,7 +188,7 @@ public class ImpressionManager {
     func createRequest(content: Data?, fileName: String) -> [String:Any] {
         
         // Configure paramaters
-        let url: URL = ConfigurableTarget.GetImpressions().url
+        let url: URL = EnvironmentTargetManager.GetImpressions().url
         var headers: HTTPHeaders = [:]
         headers["splitsdkversion"] = Version.toString()
         headers["authorization"] = "Bearer " + SecureDataStore.shared.getToken()!

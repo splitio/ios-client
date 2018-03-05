@@ -9,8 +9,8 @@ import Foundation
 
 class EnvironmentTargetManager {
     
-    var sdkBaseUrl: URL
-    var eventsBaseURL: URL
+    var sdkBaseUrl: URL = URL(string:"https://sdk.split.io/api")!
+    var eventsBaseURL: URL = URL(string:"https://events.split.io/api")!
     
     static let shared: EnvironmentTargetManager = {
         let instance = EnvironmentTargetManager()
@@ -20,16 +20,30 @@ class EnvironmentTargetManager {
     //Guarantee singleton instance
     private init(){}
     
+    public func sdkEndpoint(_ url: String) {
+        self.sdkBaseUrl = URL(string:url)!
+    }
+    
+    public func eventsEndpoint(_ url: String) {
+        self.eventsBaseURL = URL(string:url)!
+    }
+    
     public static func GetSplitChanges(since: Int64) -> Target {
-        return DynamicTarget("","",DynamicTarget.DynamicTargetStatus.GetSplitChanges(since: since)())
+        return DynamicTarget(shared.sdkBaseUrl,
+                             shared.eventsBaseURL,
+                             DynamicTarget.DynamicTargetStatus.GetSplitChanges(since: since))
     }
     
     public static func GetMySegments(user: String) -> Target {
-        return DynamicTarget("","",DynamicTarget.DynamicTargetStatus.GetMySegments(user: user))
+        return DynamicTarget(shared.sdkBaseUrl,
+                             shared.eventsBaseURL,
+                             DynamicTarget.DynamicTargetStatus.GetMySegments(user: user))
     }
     
     public static func GetImpressions() -> Target {
-        return DynamicTarget("","",DynamicTarget.DynamicTargetStatus.GetImpressions())
+        return DynamicTarget(shared.sdkBaseUrl,
+                             shared.eventsBaseURL,
+                             DynamicTarget.DynamicTargetStatus.GetImpressions())
     }
     
 }

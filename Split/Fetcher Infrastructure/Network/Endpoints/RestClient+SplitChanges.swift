@@ -12,7 +12,7 @@ import SwiftyJSON
 extension RestClient {
     
     func getSplitChanges(since: Int64, completion: @escaping (DataResult<SplitChange>) -> Void) {
-        self.execute(target: ConfigurableTarget.GetSplitChanges(since: since), completion: completion) { json in
+        self.execute(target: EnvironmentTargetManager.GetSplitChanges(since: since), completion: completion) { json in
             return SplitChange(json)
         }
     }

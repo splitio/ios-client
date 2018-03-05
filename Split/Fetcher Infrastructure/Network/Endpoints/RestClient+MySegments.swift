@@ -12,7 +12,7 @@ import SwiftyJSON
 extension RestClient {
     
     func getMySegments(user: String, completion: @escaping (DataResult<[String]>) -> Void) {
-        self.execute(target: ConfigurableTarget.GetMySegments(user: user), completion: completion) { json in
+        self.execute(target: EnvironmentTargetManager.GetMySegments(user: user), completion: completion) { json in
             return json["mySegments"].arrayValue
                 .filter{ $0["name"] != JSON.null }
                 .map { (json: JSON) -> String in
