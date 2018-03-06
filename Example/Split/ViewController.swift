@@ -74,9 +74,7 @@ class ViewController: UIViewController {
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
       
     
-        guard let splitFactory = try? SplitFactory(apiKey: authorizationKey!, key: key, config: config) else {
-            return
-        }
+        let splitFactory = SplitFactory(apiKey: authorizationKey!, key: key, config: config)
         
         self.factory = splitFactory
         self.client = splitFactory.client()
