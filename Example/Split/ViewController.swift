@@ -91,7 +91,7 @@ class ViewController: UIViewController {
            print(atributtes)
         }
         
-        let treatment = try! client?.getTreatment(split: (splitName?.text)!, atributtes: atributtes)
+        let treatment = client?.getTreatment(split: (splitName?.text)!, atributtes: atributtes)
         treatmentResult?.text = treatment
     }
     

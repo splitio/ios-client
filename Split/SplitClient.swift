@@ -12,7 +12,7 @@ import Foundation
 
 public protocol SplitClientTreatmentProtocol {
     
-    func getTreatment(split: String, atributtes:[String:Any]?) throws -> String
+    func getTreatment(split: String, atributtes:[String:Any]?) -> String
     
 }
 
@@ -65,7 +65,7 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
     }
     
     //------------------------------------------------------------------------------------------------------------------
-    public func getTreatment(split: String, atributtes:[String:Any]?) throws -> String {
+    public func getTreatment(split: String, atributtes:[String:Any]?) -> String {
         
         let evaluator: Evaluator = Evaluator.shared
         evaluator.splitClient = self
