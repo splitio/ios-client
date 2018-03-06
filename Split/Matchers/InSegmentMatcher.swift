@@ -30,7 +30,7 @@ public class InSegmentMatcher: BaseMatcher, MatcherProtocol {
                 
         let segment = self.splitClient?.mySegmentsFetcher as? RefreshableMySegmentsFetcher
         
-        return (segment?.mySegmentsCache.isInSegment(segmentName: segmentName))! 
+        return (segment?.mySegmentsCache.isInSegment(segmentName: segmentName, key:matchValueString))!
         
     }
     //--------------------------------------------------------------------------------------------------

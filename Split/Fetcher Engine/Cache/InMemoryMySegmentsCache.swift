@@ -38,7 +38,7 @@ import Foundation
         return self.mySegments.allKeys as! [String]
     }
     
-    public func isInSegment(segmentName: String) -> Bool {
+    public func isInSegment(segmentName: String, key:String) -> Bool {
         return self.mySegments.object(forKey: segmentName) != nil
     }
     

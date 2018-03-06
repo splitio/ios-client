@@ -19,43 +19,42 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
         self.storage = storage
     }
     //------------------------------------------------------------------------------------------------------------------
-    public func addSegments(segmentNames: [String]) {
-        
-            let json: JSON = JSON(segmentNames)
-            let jsonString = json.rawString()
+    public func addSegments(segmentNames: [String], key: String) {
+
+        let userDefaults: UserDefaults = UserDefaults.standard
+        userDefaults.set(key, forKey: "key")
+
+        let json: JSON = JSON(segmentNames)
+        let jsonString = json.rawString()
 
         storage.write(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX , content: jsonString)
         
     }
     //------------------------------------------------------------------------------------------------------------------
     public func removeSegments() {
-        
         storage.delete(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX)
-    
     }
     //------------------------------------------------------------------------------------------------------------------
-    public func getSegments() -> [String] {
-        
-        let segments = storage.read(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX)
-        if let segmentsStored = segments {
-            
-            let json: JSON = JSON(parseJSON: segmentsStored)
-            let arrayParsed = json.arrayObject
-            
-            if let array = arrayParsed as? [String] {
-                
-                return array
-                
+    public func getSegments(key: String) -> [String] {
+
+        let userDefaults: UserDefaults = UserDefaults.standard
+        if let savedKey = userDefaults.string(forKey: "key"), savedKey == key {
+            let segments = storage.read(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX)
+            if let segmentsStored = segments {
+                let json: JSON = JSON(parseJSON: segmentsStored)
+                let arrayParsed = json.arrayObject
+                if let array = arrayParsed as? [String] {
+                    return array
+                }
             }
-            
         }
         
         return []
     }
     //------------------------------------------------------------------------------------------------------------------
-    public func isInSegment(segmentName: String) -> Bool {
+    public func isInSegment(segmentName: String, key: String) -> Bool {
         
-        let segments = self.getSegments()
+        let segments = self.getSegments(key:key)
         return segments.contains(segmentName)
         
     }
