@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 import SwiftyJSON
+import UIKit
 
 public typealias ImpressionsBulk = [ImpressionsHit]
 
@@ -139,20 +140,9 @@ public class ImpressionManager {
             guard let strongSelf = self else {
                 return
             }
-            do {
-                
-                strongSelf.sendImpressionsFromFile()
-                
-                strongSelf.dispatchGroup?.leave()
-                
-            } catch let error {
-                
-                //TODO: throw error when impressions fail
-                Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
-            }
-            
+            strongSelf.sendImpressionsFromFile()
+            strongSelf.dispatchGroup?.leave()
         }
-        
     }
     //------------------------------------------------------------------------------------------------------------------
     

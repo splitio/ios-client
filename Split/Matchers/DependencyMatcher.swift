@@ -27,17 +27,7 @@ public class DependencyMatcher: BaseMatcher, MatcherProtocol  {
         if let splitName = dependencyData?.split {
             
             var treatment: String?
-            
-            do {
-                
-                treatment = try splitClient?.getTreatment(split: splitName , atributtes: atributtes)
-                
-            }
-            catch {
-                
-                treatment = SplitConstants.CONTROL
-            }
-            
+            treatment = splitClient?.getTreatment(split: splitName , atributtes: atributtes)
             
             if let treatments = dependencyData?.treatments {
                 

@@ -57,7 +57,7 @@ public enum FecthingPolicy {
             }
             semaphore.wait()
             let change: SplitChange = try requestResult!.unwrap()
-            let result = self.splitChangeCache?.addChange(splitChange: change)
+            _ = self.splitChangeCache?.addChange(splitChange: change)
             return change
             
         }
