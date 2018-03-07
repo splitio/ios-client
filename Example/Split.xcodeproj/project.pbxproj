@@ -22,7 +22,6 @@
 		CC2AA28120188D8B00953CDC /* murmur.csv in Resources */ = {isa = PBXBuildFile; fileRef = CC2907E320180D5E000FD1A5 /* murmur.csv */; };
 		CC396707203C6E2100C1BFDD /* RegexTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC396705203C6DDF00C1BFDD /* RegexTest.swift */; };
 		CC39670A203C716500C1BFDD /* regex.csv in Resources */ = {isa = PBXBuildFile; fileRef = CC396708203C6FA400C1BFDD /* regex.csv */; };
-		CC5FFED1201638FA0012C3A9 /* configuration.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC5FFED0201638FA0012C3A9 /* configuration.plist */; };
 		CCF2C9D81FB4A503000A885E /* HashingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2C9D61FB4A503000A885E /* HashingTest.swift */; };
 		D39460CC1F71D09A000396FC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CA1F71D09A000396FC /* Nimble.framework */; };
 		D39460CD1F71D09A000396FC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CB1F71D09A000396FC /* Quick.framework */; };
@@ -73,7 +72,6 @@
 		CC2907E320180D5E000FD1A5 /* murmur.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = murmur.csv; sourceTree = "<group>"; };
 		CC396705203C6DDF00C1BFDD /* RegexTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegexTest.swift; sourceTree = "<group>"; };
 		CC396708203C6FA400C1BFDD /* regex.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = regex.csv; sourceTree = "<group>"; };
-		CC5FFED0201638FA0012C3A9 /* configuration.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = configuration.plist; sourceTree = "<group>"; };
 		CCF2C9D61FB4A503000A885E /* HashingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashingTest.swift; sourceTree = "<group>"; };
 		D39460BB1F71C7F5000396FC /* Split.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Split.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Split/Split.framework"; sourceTree = "<group>"; };
 		D39460BD1F71C812000396FC /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Split-djpyfxmmdiklrzaobkgqhweqysyv/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
@@ -158,7 +156,6 @@
 		607FACD31AFB9204008FA782 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				CC5FFED0201638FA0012C3A9 /* configuration.plist */,
 				607FACD41AFB9204008FA782 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -328,7 +325,6 @@
 			files = (
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				9FB85E1A2018E97500B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
-				CC5FFED1201638FA0012C3A9 /* configuration.plist in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				9FB85E1C2018E97500B9787B /* murmur3-sample-data-v2.csv in Resources */,
 				CC2907E420180D5E000FD1A5 /* murmur.csv in Resources */,

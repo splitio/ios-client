@@ -28,4 +28,8 @@ import Foundation
         return _manager
     }
     
+    public func version() -> String {
+        return Version.toString()
+    }
+    
 }

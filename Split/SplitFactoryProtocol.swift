@@ -13,5 +13,6 @@ public protocol SplitFactoryProtocol {
     func client() -> SplitClientTreatmentProtocol
     
     func manager() -> SplitManagerProtocol
-    
+ 
+    func version() -> String
 }

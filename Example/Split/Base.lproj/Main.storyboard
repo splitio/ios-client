@@ -4,6 +4,7 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -111,6 +112,13 @@
                                     <action selector="evaluate:" destination="7rj-PQ-q3e" eventType="touchUpInside" id="lnh-UQ-ic8"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="SDK Version" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="GCo-uf-QxK">
+                                <rect key="frame" x="229" y="169" width="130" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
@@ -120,6 +128,7 @@
                         <outlet property="evaluteButton" destination="X9Y-TO-Zmz" id="sOb-ms-3wU"/>
                         <outlet property="matchingKey" destination="Zu0-nd-lHK" id="FcQ-K7-Dj8"/>
                         <outlet property="param1" destination="uPq-Ku-2wc" id="E4a-1K-tsf"/>
+                        <outlet property="sdkVersion" destination="GCo-uf-QxK" id="m0V-0w-jKD"/>
                         <outlet property="splitName" destination="IWA-T9-5AT" id="kaa-E5-Hrt"/>
                         <outlet property="treatmentResult" destination="gQM-MU-evj" id="37x-lu-Qcu"/>
                     </connections>

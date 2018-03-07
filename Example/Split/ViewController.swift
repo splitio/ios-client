@@ -10,17 +10,14 @@ import UIKit
 import Split
 
 class ViewController: UIViewController {
-  
-    @IBOutlet weak var splitRefreshRate: UITextField?
-    @IBOutlet weak var mySegmentRefreshRate: UITextField?
-    @IBOutlet weak var apiKey: UITextField?
+
     @IBOutlet weak var bucketkey: UITextField?
     @IBOutlet weak var splitName: UITextField?
     @IBOutlet weak var matchingKey: UITextField?
     @IBOutlet weak var evaluteButton: UIButton?
     @IBOutlet weak var treatmentResult: UILabel?
     @IBOutlet weak var param1: UITextField?
-    @IBOutlet weak var param2: UITextField?
+    @IBOutlet weak var sdkVersion: UILabel?
     
     var factory: SplitFactory?
     var client: SplitClientTreatmentProtocol?
@@ -42,42 +39,31 @@ class ViewController: UIViewController {
     }
     
     func configure() {
-        var bucketing: String?
-        let sRate = 30
-        let mySegRate = 30
+        
+        // Your Split API-KEY
+        let authorizationKey: String = "YOUR_API_KEY"
+        
+        //Provided keys from UI
         let matchingKeyText: String = (matchingKey?.text)!
-        bucketing = bucketkey?.text
-        var myDict: NSDictionary?
-        var authorizationKey: String?
-        if let path = Bundle.main.path(forResource: "configuration", ofType: "plist") {
-            myDict = NSDictionary(contentsOfFile: path)
-        }
-        if let dict = myDict {
-            for key in dict.allKeys {
-                let value = dict[key] as? String
-                authorizationKey = value
-                debugPrint(value)
-            }
-        }
+        let bucketing: String? = bucketkey?.text
         
+        //Split Configuration
         let config = SplitClientConfig()
-        config.featuresRefreshRate(sRate)
-        config.segmentsRefreshRate(mySegRate)
-        config.blockUntilReady(-1)
+        config.featuresRefreshRate(30)
+        config.segmentsRefreshRate(30)
         config.impressionRefreshRate(30)
-        config.sdkEndpoint("https://sdk-aws-staging.split.io/api")
-        config.eventsEndpoint("https://events-aws-staging.split.io/api")
-        config.debug(false)
-        config.verbose(false)
-
         
+        //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
       
-    
-        let splitFactory = SplitFactory(apiKey: authorizationKey!, key: key, config: config)
+        //Split Factory
+        self.factory = SplitFactory(apiKey: authorizationKey, key: key, config: config)
         
-        self.factory = splitFactory
-        self.client = splitFactory.client()
+        //Split Client
+        self.client = self.factory?.client()
+        
+        //Showing sdk version in UI
+        self.sdkVersion?.text = "SDK Version: \(self.factory?.version() ?? "unknown") "
     }
     
     
@@ -86,7 +72,6 @@ class ViewController: UIViewController {
         var atributtes: [String:Any]?
         if let json = param1?.text {
            atributtes = convertToDictionary(text: json)
-           print(atributtes)
         }
         
         let treatment = client?.getTreatment(split: (splitName?.text)!, atributtes: atributtes)
