@@ -6,3 +6,11 @@
 //
 
 import Foundation
+import Alamofire
+
+extension Request {
+    public func debugCurl() -> Self {
+        Logger.d(self.debugDescription)
+        return self
+    }
+}

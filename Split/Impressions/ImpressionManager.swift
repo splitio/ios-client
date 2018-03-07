@@ -63,7 +63,7 @@ public class ImpressionManager {
             
         } else {
             
-            Alamofire.request(request).validate(statusCode: 200..<300).response {  [weak self] response in
+            Alamofire.request(request).debugCurl().validate(statusCode: 200..<300).response {  [weak self] response in
                 
                 guard let strongSelf = self else {
                     return
