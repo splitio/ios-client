@@ -42,7 +42,11 @@ public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
     
     public func start() {
 
-        let _ = try? self.splitChangeFetcher.fetch(since: -1, policy: .cacheOnly)
+        if let _ = try? self.splitChangeFetcher.fetch(since: -1, policy: .cacheOnly) {
+            Logger.d("SplitChanges fetched from CACHE successfully")
+        } else {
+            Logger.e("Error trying to fetch SplitChanges from CACHE")
+        }
 
         startPollingForSplitChanges()
     }
