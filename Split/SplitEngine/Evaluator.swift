@@ -41,7 +41,6 @@ public class Evaluator {
         
         var result: [String:Any] = [:]
 
-        //TODO: Use the cache here
         if let splitTreated: Split = splitFetcher?.fetch(splitName: split), splitTreated.status != Status.Archived {
             
             if let killed = splitTreated.killed, killed {
@@ -92,7 +91,7 @@ public class Evaluator {
             
         } else {
             
-            Logger.w("The SPLIT definition for '$featureName' has not been found");
+            Logger.w("The SPLIT definition for '\(split)' has not been found");
             result[Engine.EVALUATION_RESULT_TREATMENT] = SplitConstants.CONTROL
             createImpression(label: ImpressionsConstants.SPLIT_NOT_FOUND, changeNumber: nil, treatment: SplitConstants.CONTROL, splitName: split)
             result[Engine.EVALUATION_RESULT_LABEL] = impressions

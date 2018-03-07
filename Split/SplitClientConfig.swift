@@ -16,7 +16,6 @@ public class SplitClientConfig: NSObject {
     private var segmentsRefreshRate: Int = 1800
     private var impressionsQueueSize: Int = 30000
     private var connectionTimeout: Int = 15000
-    private var blockUntilReady: Int = -1
     private var apiKey: String? { return SecureDataStore.shared.getToken() }
     
     public func debug(_ d:Bool){
@@ -74,14 +73,6 @@ public class SplitClientConfig: NSObject {
     
     public func getConnectionTimeout() -> Int {
         return self.connectionTimeout
-    }
-    
-    public func blockUntilReady(_ bur: Int) {
-        self.blockUntilReady = bur
-    }
-    
-    public func getBlockUntilReady() -> Int {
-        return self.blockUntilReady
     }
 
     public func apiKey(_ k: String) {

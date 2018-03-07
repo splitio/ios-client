@@ -35,9 +35,8 @@ public class ImpressionsFileStorage {
                 let attempString = String(attemp)
                 
                 if attemp > 3 {
-                    
-                    storage.delete(elementId: fileName!)
-                    
+                    Logger.d("Failed 3 attempts, deleting impressions from cache")
+                    deleteImpressions(fileName: fileName!)
                 } else {
                     
                     let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]

@@ -40,19 +40,7 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         
         self.initialized = true
         super.init()
-        let blockUntilReady = self.config!.getBlockUntilReady()
-        if blockUntilReady > -1 {
-            self.dispatchGroup = DispatchGroup()
-            refreshableSplitFetcher.dispatchGroup = self.dispatchGroup
-            refreshableSplitFetcher.forceRefresh()
-            refreshableMySegmentsFetcher.dispatchGroup = self.dispatchGroup
-            refreshableMySegmentsFetcher.forceRefresh()
-            let timeout = DispatchTime.now() + .milliseconds(blockUntilReady)
-            if self.dispatchGroup!.wait(timeout: timeout) == .timedOut {
-                self.initialized = false
-                Logger.d("SDK was not ready in \(blockUntilReady) milliseconds")
-            }
-        }
+
         self.dispatchGroup = nil
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()
@@ -81,7 +69,6 @@ public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
         catch {
             
             return SplitConstants.CONTROL
-            
         }
         
     }

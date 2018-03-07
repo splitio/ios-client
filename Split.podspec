@@ -10,7 +10,7 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
 
   s.homepage         = 'http://www.split.io'
   s.license          = { :type => 'Apache 2.0', :file => 'LICENSE' }
-  s.author           = { 'Patricio Echague' => 'pato@split.io', 'Sebastian Arrubia' => 'sebastian@split.io', 'Nicolás Zelaya' => 'nicolas.zelaya@split.io', 'Brian Sztamfater' => 'bsztamfater@makingsense.com' }
+  s.author           = { 'Patricio Echague' => 'pato@split.io', 'Sebastian Arrubia' => 'sebastian@split.io', 'Fernando Martin' => 'fernando@split.io'}
   s.source = { :git => 'https://github.com/splitio/ios-client.git', :tag => s.version.to_s }
   s.ios.deployment_target = '11.0'
 #s.osx.deployment_target = '10.10'

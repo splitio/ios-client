@@ -58,7 +58,7 @@ public class ImpressionManager {
         
         if !reachable {
             
-            Logger.v("SAVE IMPRESSIONS TO DISK")
+            Logger.v("Saving impressions")
             saveImpressionsToDisk()
             
         } else {
@@ -72,12 +72,12 @@ public class ImpressionManager {
                 if response.error != nil && reachable {
                     
                     strongSelf.impressionsFileStorage?.saveImpressions(fileName: filename)
-                    Logger.e("[IMPRESSION] error : \(String(describing: response.error))")
+                    Logger.e("Impressions error : \(String(describing: response.error))")
                     
                     
                 } else {
                     
-                    Logger.d("[IMPRESSION FIRED]")
+                    Logger.d("Impressions posted successfully")
                     strongSelf.cleanImpressions(fileName: filename)
                     
                 }
