@@ -22,6 +22,10 @@ public class ImpressionsFileStorage {
     //------------------------------------------------------------------------------------------------------------------
     func saveImpressions(impressions: String? = nil, fileName: String? = nil) {
         
+        if impressions == nil {
+            return
+        }
+        
         if fileName != nil {
             
             do {
@@ -106,7 +110,7 @@ public class ImpressionsFileStorage {
                     Logger.v(fileName)
                 }
                 
-                let filtered = splitFileNames.filter { $0.contains(ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX) }
+                let filtered = splitFileNames.filter { $0.starts(with:ImpressionsFileStorage.IMPRESSIONS_FILE_PREFIX) }
                 return filtered
                 
             }
