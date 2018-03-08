@@ -15,6 +15,6 @@ public protocol SplitChangeFetcher {
 
 public extension SplitChangeFetcher {
     func fetch(since: Int64, policy: FecthingPolicy = .networkAndCache) throws -> SplitChange {
-         return try! fetch(since: since, policy: policy)
+         return try fetch(since: since, policy: policy)
     }
 }
