@@ -10,13 +10,7 @@
 
 import Foundation
 
-public protocol SplitClientTreatmentProtocol {
-    
-    func getTreatment(split: String, atributtes:[String:Any]?) -> String
-    
-}
-
-public final class SplitClient: NSObject, SplitClientTreatmentProtocol {
+public final class SplitClient: NSObject, SplitClientProtocol {
     
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?

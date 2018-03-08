@@ -10,7 +10,7 @@ import Foundation
 
 @objc public class SplitFactory: NSObject, SplitFactoryProtocol {
     
-    let _client: SplitClientTreatmentProtocol
+    let _client: SplitClientProtocol
     let _manager: SplitManagerProtocol
     
     public init(apiKey: String, key: Key, config: SplitClientConfig) {
@@ -20,7 +20,7 @@ import Foundation
         _manager = SplitManager()
     }
 
-    public func client() -> SplitClientTreatmentProtocol {
+    public func client() -> SplitClientProtocol {
         return _client
     }
     

@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var sdkVersion: UILabel?
     
     var factory: SplitFactory?
-    var client: SplitClientTreatmentProtocol?
+    var client: SplitClientProtocol?
 
     @IBAction func evaluate(_ sender: Any) {
         configure()
