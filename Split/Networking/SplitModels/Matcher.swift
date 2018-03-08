@@ -36,7 +36,11 @@ import SwiftyJSON
         self.stringMatcherData = json["stringMatcherData"] != JSON.null ? json["stringMatcherData"].stringValue : nil
     }
     //--------------------------------------------------------------------------------------------------
-    public func getMatcher() -> MatcherProtocol {
+    public func getMatcher() throws -> MatcherProtocol {
+        
+        if self.matcherType == nil {
+            throw EngineError.MatcherNotFound
+        }
         
         switch self.matcherType! {
             

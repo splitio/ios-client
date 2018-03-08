@@ -13,6 +13,7 @@ public class Engine {
     //------------------------------------------------------------------------------------------------------------------
     public static let EVALUATION_RESULT_TREATMENT: String = "treatment"
     public static let EVALUATION_RESULT_LABEL: String = "label"
+    public static let EVALUATION_RESULT_SPLIT_VERSION: String = "splitChangeNumber"
     internal var splitClient: SplitClient?
     //------------------------------------------------------------------------------------------------------------------
     public static let shared: Engine = {

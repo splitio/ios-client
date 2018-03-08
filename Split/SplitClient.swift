@@ -56,15 +56,37 @@ public final class SplitClient: NSObject, SplitClientProtocol {
             
             let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: split, atributtes: atributtes)
            
-            return result![Engine.EVALUATION_RESULT_TREATMENT] as! String
+            let label = result![Engine.EVALUATION_RESULT_LABEL] as! String
+            let treatment = result![Engine.EVALUATION_RESULT_TREATMENT] as! String
             
+            if let val = result![Engine.EVALUATION_RESULT_SPLIT_VERSION] {
+                let splitVersion = val as! Int64
+                logImpression(label: label, changeNumber: splitVersion, treatment: treatment, splitName: split)
+            } else {
+                logImpression(label: label, treatment: treatment, splitName: split)
+            }
             
+            return treatment
         }
         catch {
-            
+            logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: split)
             return SplitConstants.CONTROL
         }
         
+    }
+    
+    
+    func logImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String) {
+        
+        let impression: ImpressionDTO = ImpressionDTO()
+        impression.keyName = self.key.matchingKey
+        
+        impression.bucketingKey = (self.shouldSendBucketingKey) ? self.key.bucketingKey : nil
+        impression.label = label
+        impression.changeNumber = changeNumber
+        impression.treatment = treatment
+        impression.time = Int64(Date().timeIntervalSince1970 * 1000)
+        ImpressionManager.shared.appendImpressions(impression: impression, splitName: splitName)
     }
     
     //------------------------------------------------------------------------------------------------------------------

@@ -36,7 +36,7 @@ import SwiftyJSON
                 
                 matcher.client = self.client
 
-                let matcherEvaluator = matcher.getMatcher()
+                let matcherEvaluator = try matcher.getMatcher()
                 var result: Bool = false
 
                 if matcherEvaluator.getMatcherType() != MatcherType.Dependency {
