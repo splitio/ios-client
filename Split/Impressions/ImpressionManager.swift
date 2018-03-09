@@ -322,7 +322,7 @@ public class ImpressionManager {
     //------------------------------------------------------------------------------------------------------------------
     @objc func applicationDidEnterBackground(_ application: UIApplication) {
         
-        Logger.d("SAVE IMPRESSIONS TO DISK")
+        Logger.d("Saving impressions to disk")
         saveImpressionsToDisk()
     }
     //------------------------------------------------------------------------------------------------------------------
