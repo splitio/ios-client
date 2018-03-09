@@ -31,8 +31,8 @@ public class BetweenMatcher: BaseMatcher, MatcherProtocol {
             
         case DataType.DateTime:
             guard let keyValue = matchValue as? TimeInterval else {return false}
-            let backendTimeIntervalStart = TimeInterval(start/1000)
-            let backendTimeIntervalEnd = TimeInterval(end/1000)
+            let backendTimeIntervalStart = TimeInterval(start/1000) //Backend is in millis
+            let backendTimeIntervalEnd = TimeInterval(end/1000) //Backend is in millis
             let attributeTimeInterval = keyValue
             
             let attributeDate = DateTime.zeroOutSeconds(timestamp: attributeTimeInterval)

@@ -28,7 +28,7 @@ public class LessThanOrEqualToMatcher: BaseMatcher, MatcherProtocol {
         switch dataType {
             case DataType.DateTime:
                 guard let keyValue = matchValue as? TimeInterval else {return false}
-                let backendTimeInterval = TimeInterval(value/1000)
+                let backendTimeInterval = TimeInterval(value/1000) //Backend is in millis
                 let attributeTimeInterval = keyValue
                 let attributeDate = DateTime.zeroOutSeconds(timestamp: attributeTimeInterval)
                 let backendDate = DateTime.zeroOutSeconds(timestamp: backendTimeInterval)
