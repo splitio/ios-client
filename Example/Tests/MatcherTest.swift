@@ -31,7 +31,7 @@ class MatcherTest: QuickSpec {
                 debugPrint("Exception")
             }
             
-            expect(expectedVal).to(equal(false))
+            
         }
     }
 }
