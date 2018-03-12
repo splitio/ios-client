@@ -36,7 +36,7 @@ public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
         
         if !reachable {
             
-            return (self.mySegmentCache?.getSegments())!
+            return (self.mySegmentCache?.getSegments(key: user))!
             
         } else {
             
@@ -49,7 +49,7 @@ public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
             semaphore.wait()
             
             let segments = try requestResult!.unwrap()
-            mySegmentCache?.addSegments(segmentNames: segments)
+            mySegmentCache?.addSegments(segmentNames: segments, key: user)
 
             return segments
             
