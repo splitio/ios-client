@@ -74,7 +74,7 @@ class ViewController: UIViewController {
            atributtes = convertToDictionary(text: json)
         }
         
-        let treatment = client?.getTreatment(split: (splitName?.text)!, atributtes: atributtes)
+        let treatment = client?.getTreatment((splitName?.text)!, atributtes)
         treatmentResult?.text = treatment
     }
     
