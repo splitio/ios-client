@@ -46,7 +46,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     }
     
     //------------------------------------------------------------------------------------------------------------------
-    public func getTreatment(_ split: String, _ attributtes:[String:Any]? = nil) -> String {
+    public func getTreatment(_ split: String, attributes:[String:Any]? = nil) -> String {
         
         let evaluator: Evaluator = Evaluator.shared
         evaluator.splitClient = self
@@ -54,7 +54,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
             
             verifyKey()
             
-            let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: split, attributes: attributtes)
+            let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: split, attributes: attributes)
            
             let label = result![Engine.EVALUATION_RESULT_LABEL] as! String
             let treatment = result![Engine.EVALUATION_RESULT_TREATMENT] as! String
