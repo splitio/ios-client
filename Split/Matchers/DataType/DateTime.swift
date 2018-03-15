@@ -9,7 +9,8 @@ import Foundation
 
 public class DateTime : NSObject  {
     static func zeroOutTime(timestamp: TimeInterval) -> Date {
-        let date = Date(timeIntervalSince1970: timestamp)
+        
+        let date = Date(timeIntervalSince1970: Double(Int64(timestamp)))
         let calendar = Calendar.current
         
         var dateComponents = calendar.dateComponents(in: TimeZone(identifier: "UTC")!, from: date)
@@ -22,7 +23,7 @@ public class DateTime : NSObject  {
     
     
     static func zeroOutSeconds(timestamp: TimeInterval) -> Date {
-        let date = Date(timeIntervalSince1970: timestamp)
+        let date = Date(timeIntervalSince1970: Double(Int64(timestamp)))
         let calendar = Calendar.current
         
         var dateComponents = calendar.dateComponents(in: TimeZone(identifier: "UTC")!, from: date)
