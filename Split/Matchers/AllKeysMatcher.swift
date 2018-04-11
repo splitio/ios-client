@@ -17,7 +17,7 @@ public class AllKeysMatcher: BaseMatcher, MatcherProtocol  {
         
     }
     //--------------------------------------------------------------------------------------------------
-    public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String : Any]?) -> Bool {
+    public func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String : Any]?) -> Bool {
         
         if matchValue == nil {
             

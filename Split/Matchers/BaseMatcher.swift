@@ -12,15 +12,15 @@ public class BaseMatcher : NSObject  {
     
     public var splitClient: SplitClient?
     var negate: Bool?
-    var atributte: String?
+    var attribute: String?
     var type: MatcherType?
     
     //--------------------------------------------------------------------------------------------------
-    public init(splitClient: SplitClient? = nil, negate: Bool? = nil, atributte: String? = nil , type: MatcherType? = nil) {
+    public init(splitClient: SplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
 
         self.splitClient = splitClient
         self.negate = negate
-        self.atributte = atributte
+        self.attribute = attribute
         self.type = type
         
     }
@@ -32,13 +32,13 @@ public class BaseMatcher : NSObject  {
     //--------------------------------------------------------------------------------------------------
     public func hasAttribute() -> Bool {
         
-        return self.atributte != nil
+        return self.attribute != nil
         
     }
     //--------------------------------------------------------------------------------------------------
     public func getAttribute() -> String? {
         
-        return self.atributte
+        return self.attribute
         
     }
     //--------------------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ public class BaseMatcher : NSObject  {
     //--------------------------------------------------------------------------------------------------
     public func matcherHasAttribute() -> Bool {
         
-        return self.atributte != nil
+        return self.attribute != nil
         
     }
     //--------------------------------------------------------------------------------------------------

@@ -26,7 +26,7 @@ import SwiftyJSON
         self.label = json["label"].string
     }
     
-    func match(matchValue: Any?, bucketingKey: String?, atributtes: [String:Any]?) throws -> Bool {
+    func match(matchValue: Any?, bucketingKey: String?, attributes: [String:Any]?) throws -> Bool {
         
         if let matcherG = self.matcherGroup, let matchers = matcherG.matchers {
             
@@ -46,21 +46,21 @@ import SwiftyJSON
                     if !matcherEvaluator.matcherHasAttribute() {
                         
                         //let matcherEv = matcherEvaluator2(matcher: matcherEvaluator)
-                        result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: nil, atributtes: nil)
+                        result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: nil, attributes: nil)
                 
                     } else {
                        
                         // scenario 2: attribute provided but no attribute value provided. Matcher does not match
                         // e.g. if user.age is >= 10 then split 100:on
                         let att = matcherEvaluator.getAttribute()!
-                        if atributtes == nil || atributtes![att] == nil {
+                        if attributes == nil || attributes![att] == nil {
                             
                             result = false
                 
                         } else {
                             // instead of using the user id, we use the attribute value for evaluation
                             
-                            result = matcherEvaluator.evaluate(matchValue: atributtes![att], bucketingKey: nil, atributtes: nil)
+                            result = matcherEvaluator.evaluate(matchValue: attributes![att], bucketingKey: nil, attributes: nil)
                         }
                         
                     }
@@ -69,7 +69,7 @@ import SwiftyJSON
                     
                     if matcherEvaluator.getMatcherType() == MatcherType.Dependency {
                         
-                           result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: bucketingKey, atributtes: atributtes)
+                           result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: bucketingKey, attributes: attributes)
                         
                         
                     }
