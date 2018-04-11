@@ -22,7 +22,7 @@ public class Engine {
         return instance;
     }()
     //------------------------------------------------------------------------------------------------------------------
-    public func getTreatment(matchingKey: String?, bucketingKey: String?, split: Split?, atributtes: [String:Any]?) throws -> [String: String] {
+    public func getTreatment(matchingKey: String?, bucketingKey: String?, split: Split?, attributes: [String:Any]?) throws -> [String: String] {
         
         var bucketKey: String?
         var inRollOut: Bool = false
@@ -65,7 +65,7 @@ public class Engine {
             }
             
             //Return the first condition that match.
-            if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, atributtes: atributtes) {
+            if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, attributes: attributes) {
                 
                 var bucketKey: String? = bucketingKey
                 
@@ -74,7 +74,7 @@ public class Engine {
                 }
                 let key: Key = Key(matchingKey: matchingKey!, bucketingKey: bucketKey)
 
-                result[Engine.EVALUATION_RESULT_TREATMENT] = Splitter.shared.getTreatment(key: key, seed: (split?.seed)!, atributtes: atributtes, partions: condition.partitions, algo: (split?.algo ?? Splitter.ALGO_LEGACY)!)
+                result[Engine.EVALUATION_RESULT_TREATMENT] = Splitter.shared.getTreatment(key: key, seed: (split?.seed)!, attributes: attributes, partions: condition.partitions, algo: (split?.algo ?? Splitter.ALGO_LEGACY)!)
                 
                 result[Engine.EVALUATION_RESULT_LABEL] = condition.label
                 return result

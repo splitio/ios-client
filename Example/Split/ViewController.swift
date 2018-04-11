@@ -69,12 +69,12 @@ class ViewController: UIViewController {
     
     func treatment() {
         
-        var atributtes: [String:Any]?
+        var attributes: [String:Any]?
         if let json = param1?.text {
-           atributtes = convertToDictionary(text: json)
+           attributes = convertToDictionary(text: json)
         }
         
-        let treatment = client?.getTreatment(split: (splitName?.text)!, atributtes: atributtes)
+        let treatment = client?.getTreatment((splitName?.text)!, attributes: attributes)
         treatmentResult?.text = treatment
     }
     

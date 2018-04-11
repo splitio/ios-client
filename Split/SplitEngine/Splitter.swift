@@ -9,7 +9,7 @@ import Foundation
 
 public protocol SplitterProtocol {
     
-    func getTreatment(key: Key, seed: Int, atributtes:[String:Any]?, partions: [Partition]?, algo: Int) -> String
+    func getTreatment(key: Key, seed: Int, attributes:[String:Any]?, partions: [Partition]?, algo: Int) -> String
     
     func getBucket(seed: Int,key: String ,algo: Int) -> Int
     
@@ -27,7 +27,7 @@ public class Splitter: SplitterProtocol {
         return instance;
     }()
     //------------------------------------------------------------------------------------------------------------------
-    public func getTreatment(key: Key, seed: Int, atributtes: [String : Any]?, partions: [Partition]?, algo: Int) -> String {
+    public func getTreatment(key: Key, seed: Int, attributes: [String : Any]?, partions: [Partition]?, algo: Int) -> String {
         
         var accumulatedSize: Int = 0
         
