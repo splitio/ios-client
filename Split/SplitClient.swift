@@ -23,6 +23,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     let splitImpressionManager = ImpressionManager.shared
     public var shouldSendBucketingKey: Bool = false
 
+    internal var onReadytask:SplitEventTask?
     
     public init(config: SplitClientConfig, key: Key) {
         self.config = config
@@ -43,6 +44,10 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
         
         Logger.i("iOS Split SDK initialized!")
+    }
+    
+    public func on(_ event:String, _ task:SplitEventTask) -> Void {
+        onReadytask = task
     }
     
     //------------------------------------------------------------------------------------------------------------------
