@@ -45,7 +45,7 @@ class RegexTest: QuickSpec {
                         let result: Bool = resultString.toBool()!
 
                         let matcher = MatchesStringMatcher(data: regex, negate: false)
-                        let resultEvaluation = matcher.evaluate(matchValue: key, bucketingKey: key, atributtes: nil)
+                        let resultEvaluation = matcher.evaluate(matchValue: key, bucketingKey: key, attributes: nil)
 
                         expect(resultEvaluation).to(equal(result))
 

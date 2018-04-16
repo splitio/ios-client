@@ -25,20 +25,63 @@ public final class SplitClient: NSObject, SplitClientProtocol {
 
     internal var onReadytask:SplitEventTask?
     
+    private var eventsManager: SplitEventsManager
+    
     public init(config: SplitClientConfig, key: Key) {
         self.config = config
         self.key = key
         
-        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.getFeaturesRefreshRate())
+        eventsManager = SplitEventsManager()
+        eventsManager.start()
         
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate())
+        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.getFeaturesRefreshRate(), eventsManager: eventsManager)
         
-        self.initialized = true
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate(), eventsManager: eventsManager)
+        
+        self.initialized = false
         super.init()
+        
+        
 
-        self.dispatchGroup = nil
-        refreshableSplitFetcher.start()
-        refreshableMySegmentsFetcher.start()
+        //___________________________________
+        
+        DispatchQueue.global().async {
+            // Background thread
+            [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            
+            strongSelf.dispatchGroup = DispatchGroup()
+            refreshableSplitFetcher.dispatchGroup = strongSelf.dispatchGroup
+            refreshableSplitFetcher.forceRefresh()
+            refreshableMySegmentsFetcher.dispatchGroup = strongSelf.dispatchGroup
+            refreshableMySegmentsFetcher.forceRefresh()
+            
+            let timeout = DispatchTime.now() + .milliseconds(30000)
+            if strongSelf.dispatchGroup!.wait(timeout: timeout) == .timedOut {
+                strongSelf.initialized = false
+                debugPrint("SDK was not ready in milliseconds")
+            }
+            
+            strongSelf.dispatchGroup!.wait()
+            strongSelf.initialized = true
+            DispatchQueue.main.async(execute: {
+                // UI Updates
+                // TRIGGER ON READY
+                //strongSelf.onReadyListeners[0].onPostExecution(cli: self!)
+                strongSelf.onReadytask?.onPostExecuteView(client: self! )
+            })
+            strongSelf.dispatchGroup = nil
+            refreshableSplitFetcher.start()
+            refreshableMySegmentsFetcher.start()
+        }
+        
+        //___________________________________
+        
+        //self.dispatchGroup = nil
+        //refreshableSplitFetcher.start()
+        //refreshableMySegmentsFetcher.start()
         configureImpressionManager()
         self.splitFetcher = refreshableSplitFetcher
         self.mySegmentsFetcher = refreshableMySegmentsFetcher

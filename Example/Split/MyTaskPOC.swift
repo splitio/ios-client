@@ -13,8 +13,8 @@ class MyTaskPOC: SplitEventTask {
     var _vc:ViewController
     
     public init(vc:ViewController){
-        super.init()
         _vc = vc
+        super.init()
     }
     
     override public func onPostExecuteView(client:SplitClientProtocol) -> Void {
@@ -25,6 +25,6 @@ class MyTaskPOC: SplitEventTask {
         }
         
         let treatment = client.getTreatment((_vc.splitName?.text)!, attributes: attributes)
-        _vc.treatmentResult?.text = treatment
+        _vc.treatmentResult?.text = treatment + " FROM TASK!"
     }
 }
