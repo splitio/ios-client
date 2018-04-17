@@ -23,28 +23,30 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     let splitImpressionManager = ImpressionManager.shared
     public var shouldSendBucketingKey: Bool = false
 
-    internal var onReadytask:SplitEventTask?
+    //internal var onReadytask:SplitEventTask?
     
-    private var eventsManager: SplitEventsManager
+    private var _eventsManager: SplitEventsManager
     
     public init(config: SplitClientConfig, key: Key) {
+        
         self.config = config
         self.key = key
         
-        eventsManager = SplitEventsManager()
-        eventsManager.start()
+        _eventsManager = SplitEventsManager(config: config)
+        _eventsManager.start()
         
-        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.getFeaturesRefreshRate(), eventsManager: eventsManager)
         
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate(), eventsManager: eventsManager)
+        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.getFeaturesRefreshRate(), eventsManager: _eventsManager)
+        
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate(), eventsManager: _eventsManager)
         
         self.initialized = false
-        super.init()
         
+        super.init()
         
 
         //___________________________________
-        
+        /*
         DispatchQueue.global().async {
             // Background thread
             [weak self] in
@@ -76,21 +78,23 @@ public final class SplitClient: NSObject, SplitClientProtocol {
             refreshableSplitFetcher.start()
             refreshableMySegmentsFetcher.start()
         }
-        
+        */
         //___________________________________
         
-        //self.dispatchGroup = nil
-        //refreshableSplitFetcher.start()
-        //refreshableMySegmentsFetcher.start()
+        self.dispatchGroup = nil
+        refreshableSplitFetcher.start()
+        refreshableMySegmentsFetcher.start()
         configureImpressionManager()
         self.splitFetcher = refreshableSplitFetcher
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
         
+        _eventsManager.getExecutorResources().setClient(client: self)
+        
         Logger.i("iOS Split SDK initialized!")
     }
     
-    public func on(_ event:String, _ task:SplitEventTask) -> Void {
-        onReadytask = task
+    public func on(_ event:SplitEvent, _ task:SplitEventTask) -> Void {
+        _eventsManager.register(event: event, task: task)
     }
     
     //------------------------------------------------------------------------------------------------------------------

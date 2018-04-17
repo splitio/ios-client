@@ -10,6 +10,7 @@ import Foundation
 
 public class SplitClientConfig: NSObject {
     
+    private var sdkReadyTimeOut: Int = -1
     private var featuresRefreshRate: Int = 3600
     private var impressionRefreshRate: Int = 1800
     private var impressionsChunkSize: Int64 = 100
@@ -17,6 +18,14 @@ public class SplitClientConfig: NSObject {
     private var impressionsQueueSize: Int = 30000
     private var connectionTimeout: Int = 15000
     private var apiKey: String? { return SecureDataStore.shared.getToken() }
+    
+    public func ready(readyInMillis: Int){
+        self.sdkReadyTimeOut = readyInMillis
+    }
+    
+    public func getReady() -> Int {
+        return self.sdkReadyTimeOut
+    }
     
     public func debug(_ d:Bool){
         Logger.shared.debugLevel(debug: d)

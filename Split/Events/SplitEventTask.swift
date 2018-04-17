@@ -12,10 +12,10 @@ open class SplitEventTask {
     public init(){}
     
     open func onPostExecute() -> Void {
-        print("**** ERROR running superclass.onPostExecute")
+        debugPrint("* running superclass.onPostExecute. This method should be override by developers")
     }
     
     open func onPostExecuteView(client:SplitClientProtocol) -> Void {
-        print("**** ERROR running superclass.onPostExecuteView")
+        print("* running superclass.onPostExecuteView. This method should be override by developers")
     }
 }

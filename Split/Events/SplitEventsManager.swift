@@ -9,53 +9,111 @@ import Foundation
 
 public class SplitEventsManager {
     private let _queue:SynchronizedArrayQueue<SplitInternalEvent>
-    private var _queueReadingPollTimer: DispatchSourceTimer?
+    private var _queueReadingTimer: DispatchSourceTimer?
     private let _queueReadingRefreshTime: Int
     
     private var _eventMySegmentsAreReady:Bool
     private var _eventSplitsAreReady:Bool
     
-    public init(){
+    private var _suscriptions = [SplitEvent:[SplitEventTask]]()
+    private let _executorResources: SplitEventExecutorResources?
+    private let _config:SplitClientConfig
+    
+    public init(config: SplitClientConfig){
         _queue = SynchronizedArrayQueue<SplitInternalEvent>()
         _queueReadingRefreshTime = 300
         _eventMySegmentsAreReady = false
         _eventSplitsAreReady = false
+        _executorResources = SplitEventExecutorResources()
+        _config = config
+        
+        if config.getReady() > 0 {
+            let readyTimedoutQueue = DispatchQueue(label: "io.Split.Event.TimedOut")
+            readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.getReady()), execute: {
+                self.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
+            })
+        }
+        
     }
     
-    public func notifyInternalEvent(_ event:SplitInternalEvent){
+    public func notifyInternalEvent(_ event:SplitInternalEvent) {
         _queue.append(event)
+    }
+    
+    public func getExecutorResources() -> SplitEventExecutorResources {
+        return _executorResources!
+    }
+    
+    public func register(event:SplitEvent, task:SplitEventTask) {
+        let queue = DispatchQueue(label: "io.Split.Register.SplitEventTask")
+        queue.async {
+            if self._suscriptions[event] != nil {
+                self._suscriptions[event]?.append(task)
+            } else {
+                self._suscriptions[event] = [task]
+            }
+        }
     }
     
     public func start(){
         let queue = DispatchQueue(label: "io.Split.Reading.Queue")
-        _queueReadingPollTimer = DispatchSource.makeTimerSource(queue: queue)
-        _queueReadingPollTimer!.schedule(deadline: .now(), repeating: .milliseconds(_queueReadingRefreshTime))
-        _queueReadingPollTimer!.setEventHandler { [weak self] in
+        _queueReadingTimer = DispatchSource.makeTimerSource(queue: queue)
+        _queueReadingTimer!.schedule(deadline: .now(), repeating: .milliseconds(_queueReadingRefreshTime))
+        _queueReadingTimer!.setEventHandler { [weak self] in
             guard let strongSelf = self else {
                 return
             }
-            guard strongSelf._queueReadingPollTimer != nil else {
+            guard strongSelf._queueReadingTimer != nil else {
                 //strongSelf.stopPollingForSplitChanges()
                 return
             }
-            //strongSelf.pollForSplitChanges()
-            //TAKE FROM QUEUE
-            strongSelf._queue.take(completion: {(element:SplitInternalEvent) -> Void in
-                switch element {
-                case .mySegmentsAreReady:
-                    print("****----->>>>> .mySegmentsAreReady")
-                case .splitsAreReady:
-                    print("****----->>>>> .splitsAreReady")
-                case .sdkReadyTimeoutReached:
-                    print("****----->>>>> .sdkReadyTimeoutReached")
-                case .mySegmentsAreUpdated:
-                    print("****----->>>>> .mySegmentsAreUpdated")
-                case .splitsAreUpdated:
-                    print("****----->>>>> .splitAreUpdated")
-                }
-            })
+            strongSelf.processEvents()
         }
-        _queueReadingPollTimer!.resume()
+        _queueReadingTimer!.resume()
+    }
+    
+    private func processEvents(){
+        self._queue.take(completion: {(element:SplitInternalEvent) -> Void in
+            switch element {
+            case .mySegmentsAreReady:
+                print("****----->>>>> .mySegmentsAreReady")
+                self._eventMySegmentsAreReady = true
+                if self._eventSplitsAreReady {
+                    self.trigger(event: SplitEvent.sdkReady)
+                }
+                break
+            case .splitsAreReady:
+                print("****----->>>>> .splitsAreReady")
+                self._eventSplitsAreReady = true
+                if self._eventMySegmentsAreReady {
+                    self.trigger(event: SplitEvent.sdkReady)
+                }
+                break
+            case .sdkReadyTimeoutReached:
+                print("****----->>>>> .sdkReadyTimeoutReached")
+                if !self._eventSplitsAreReady || !self._eventMySegmentsAreReady {
+                    self.trigger(event: SplitEvent.sdkReadyTimedOut)
+                }
+                break
+                
+            /*
+            Update events will be added soon
+            */
+            case .mySegmentsAreUpdated:
+                debugPrint(".mySegmentsAreUpdated")
+            case .splitsAreUpdated:
+                debugPrint(".splitAreUpdated")
+            }
+        })
+    }
+    
+    private func trigger(event:SplitEvent) {
+        if self._suscriptions[event] != nil {
+            for task in self._suscriptions[event]! {
+                let executor: SplitEventExecutorProtocol = SplitEventExecutorFactory.factory(event: event, task: task, resources: self._executorResources! )
+                executor.execute()
+            }
+        }
     }
     
 }
