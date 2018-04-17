@@ -12,7 +12,7 @@ public protocol SplitClientProtocol {
     
     func getTreatment(_ split: String, attributes:[String:Any]?) -> String
 
-    func on(_ event:String, _ task:SplitEventTask) -> Void
+    func on(_ event:SplitEvent, _ task:SplitEventTask) -> Void
 }
 
 public extension SplitClientProtocol {
