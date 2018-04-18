@@ -76,21 +76,18 @@ public class SplitEventsManager {
         self._queue.take(completion: {(element:SplitInternalEvent) -> Void in
             switch element {
             case .mySegmentsAreReady:
-                print("****----->>>>> .mySegmentsAreReady")
                 self._eventMySegmentsAreReady = true
                 if self._eventSplitsAreReady {
                     self.trigger(event: SplitEvent.sdkReady)
                 }
                 break
             case .splitsAreReady:
-                print("****----->>>>> .splitsAreReady")
                 self._eventSplitsAreReady = true
                 if self._eventMySegmentsAreReady {
                     self.trigger(event: SplitEvent.sdkReady)
                 }
                 break
             case .sdkReadyTimeoutReached:
-                print("****----->>>>> .sdkReadyTimeoutReached")
                 if !self._eventSplitsAreReady || !self._eventMySegmentsAreReady {
                     self.trigger(event: SplitEvent.sdkReadyTimedOut)
                 }
@@ -100,18 +97,15 @@ public class SplitEventsManager {
             Update events will be added soon
             */
             case .mySegmentsAreUpdated:
-                debugPrint(".mySegmentsAreUpdated")
+                break
             case .splitsAreUpdated:
-                debugPrint(".splitAreUpdated")
+                break
             }
         })
     }
     
     private func trigger(event:SplitEvent) {
-        
-        debugPrint(event)
-        debugPrint(self._suscriptions.keys.count)
-
+        //TODO: Add max execution per events
         if self._suscriptions[event] != nil {
             for task in self._suscriptions[event]! {
                 let executor: SplitEventExecutorProtocol = SplitEventExecutorFactory.factory(event: event, task: task, resources: self._executorResources! )
