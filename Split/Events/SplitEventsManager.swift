@@ -27,9 +27,9 @@ public class SplitEventsManager {
         _executorResources = SplitEventExecutorResources()
         _config = config
         
-        if config.getReady() > 0 {
+        if config.getReadyTimeOut() > 0 {
             let readyTimedoutQueue = DispatchQueue(label: "io.Split.Event.TimedOut")
-            readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.getReady()), execute: {
+            readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.getReadyTimeOut()), execute: {
                 self.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
             })
         }
@@ -46,7 +46,7 @@ public class SplitEventsManager {
     
     public func register(event:SplitEvent, task:SplitEventTask) {
         let queue = DispatchQueue(label: "io.Split.Register.SplitEventTask")
-        queue.async {
+        queue.sync {
             if self._suscriptions[event] != nil {
                 self._suscriptions[event]?.append(task)
             } else {
@@ -108,6 +108,10 @@ public class SplitEventsManager {
     }
     
     private func trigger(event:SplitEvent) {
+        
+        debugPrint(event)
+        debugPrint(self._suscriptions.keys.count)
+
         if self._suscriptions[event] != nil {
             for task in self._suscriptions[event]! {
                 let executor: SplitEventExecutorProtocol = SplitEventExecutorFactory.factory(event: event, task: task, resources: self._executorResources! )
