@@ -19,11 +19,11 @@ public class SplitClientConfig: NSObject {
     private var connectionTimeout: Int = 15000
     private var apiKey: String? { return SecureDataStore.shared.getToken() }
     
-    public func ready(readyInMillis: Int){
+    public func readyTimeOut(_ readyInMillis: Int){
         self.sdkReadyTimeOut = readyInMillis
     }
     
-    public func getReady() -> Int {
+    public func getReadyTimeOut() -> Int {
         return self.sdkReadyTimeOut
     }
     

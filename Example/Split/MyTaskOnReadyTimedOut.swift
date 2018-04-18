@@ -1,21 +1,21 @@
 //
-//  MyTaskPOC.swift
+//  MyTaskOnReadyTimedOut.swift
 //  Split_Example
 //
-//  Created by Sebastian Arrubia on 4/11/18.
+//  Created by Sebastian Arrubia on 4/18/18.
 //  Copyright © 2018 CocoaPods. All rights reserved.
 //
 
 import Foundation
 import Split
 
-class MyTaskPOC: SplitEventTask {
+class MyTaskOnReadyTimedOut: SplitEventTask {
     var _vc:ViewController
     var _d: String
     
     public init(vc:ViewController){
         _vc = vc
-        _d = " - INIT"
+        _d = " - INIT - TIMED OUT"
         super.init()
     }
     
@@ -25,7 +25,7 @@ class MyTaskPOC: SplitEventTask {
     
     override public func onPostExecuteView(client:SplitClientProtocol) -> Void {
         
-        debugPrint("----->>>> SDK_READY")
+        debugPrint("----->>>> SDK_READY_TIMED_OUT")
         
         var attributes: [String:Any]?
         if let json = _vc.param1?.text {
