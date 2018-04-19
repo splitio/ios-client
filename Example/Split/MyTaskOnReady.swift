@@ -9,7 +9,7 @@
 import Foundation
 import Split
 
-class MyTaskPOC: SplitEventTask {
+class MyTaskOnReady: SplitEventTask {
     var _vc:ViewController
     var _d: String
     
