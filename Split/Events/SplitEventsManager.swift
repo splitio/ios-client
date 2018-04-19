@@ -17,6 +17,7 @@ public class SplitEventsManager {
     
     private var _suscriptions = [SplitEvent:[SplitEventTask]]()
     private let _executorResources: SplitEventExecutorResources?
+    private var _executionTimes = [SplitEvent:Int]()
     private let _config:SplitClientConfig
     
     public init(config: SplitClientConfig){
@@ -26,6 +27,7 @@ public class SplitEventsManager {
         _eventSplitsAreReady = false
         _executorResources = SplitEventExecutorResources()
         _config = config
+        registerMaxAllowebExecutionTimesPerEvent()
         
         if config.getReadyTimeOut() > 0 {
             let readyTimedoutQueue = DispatchQueue(label: "io.Split.Event.TimedOut")
@@ -42,6 +44,15 @@ public class SplitEventsManager {
     
     public func getExecutorResources() -> SplitEventExecutorResources {
         return _executorResources!
+    }
+    
+    /**
+     * This method should registering the allowed maximum times of event trigger
+     * EXAMPLE: SDK_READY should be triggered only once
+     */
+    private func registerMaxAllowebExecutionTimesPerEvent() {
+        _executionTimes[SplitEvent.sdkReady] = 1
+        _executionTimes[SplitEvent.sdkReadyTimedOut] = 1
     }
     
     public func register(event:SplitEvent, task:SplitEventTask) {
@@ -105,7 +116,15 @@ public class SplitEventsManager {
     }
     
     private func trigger(event:SplitEvent) {
-        //TODO: Add max execution per events
+        
+        // If executionTimes is zero, maximum executions has been reached
+        if (self._executionTimes[event] == 0){
+            return;
+            // If executionTimes is grater than zero, maximum executions decrease 1
+        } else if (self._executionTimes[event]! > 0) {
+            self._executionTimes[event]! = self._executionTimes[event]! - 1
+        } //If executionTimes is lower than zero, execute it without limitation
+
         if self._suscriptions[event] != nil {
             for task in self._suscriptions[event]! {
                 let executor: SplitEventExecutorProtocol = SplitEventExecutorFactory.factory(event: event, task: task, resources: self._executorResources! )
