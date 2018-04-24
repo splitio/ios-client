@@ -22,6 +22,7 @@
 		9FB85E1B2018E97500B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 9FB85E182018E97400B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv */; };
 		9FB85E1C2018E97500B9787B /* murmur3-sample-data-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */; };
 		9FB85E1D2018E97500B9787B /* murmur3-sample-data-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */; };
+		9FCC1B71208F9F7A008564D4 /* SplitEventsManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC1B70208F9F7A008564D4 /* SplitEventsManagerTest.swift */; };
 		9FCD532C2088C3C2009C64A8 /* CHANGES.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9FCD532B2088C3C2009C64A8 /* CHANGES.txt */; };
 		CC2907E420180D5E000FD1A5 /* murmur.csv in Resources */ = {isa = PBXBuildFile; fileRef = CC2907E320180D5E000FD1A5 /* murmur.csv */; };
 		CC2AA28120188D8B00953CDC /* murmur.csv in Resources */ = {isa = PBXBuildFile; fileRef = CC2907E320180D5E000FD1A5 /* murmur.csv */; };
@@ -78,6 +79,7 @@
 		9FB4C7972087C9FC007456E1 /* MyTaskOnReadyTimedOut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTaskOnReadyTimedOut.swift; sourceTree = "<group>"; };
 		9FB85E182018E97400B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-data-non-alpha-numeric-v2.csv"; sourceTree = "<group>"; };
 		9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-data-v2.csv"; sourceTree = "<group>"; };
+		9FCC1B70208F9F7A008564D4 /* SplitEventsManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsManagerTest.swift; sourceTree = "<group>"; };
 		9FCD532B2088C3C2009C64A8 /* CHANGES.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = CHANGES.txt; path = ../CHANGES.txt; sourceTree = "<group>"; };
 		CC2907E320180D5E000FD1A5 /* murmur.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = murmur.csv; sourceTree = "<group>"; };
 		CC396705203C6DDF00C1BFDD /* RegexTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegexTest.swift; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				9FCC1B70208F9F7A008564D4 /* SplitEventsManagerTest.swift */,
 				9F9A2BD6207EA7A9002C2826 /* ArrayBlockingQueueTest.swift */,
 				CC396705203C6DDF00C1BFDD /* RegexTest.swift */,
 				D3D5C58C1F8694870088529F /* InMemorySplitCacheTests.swift */,
@@ -508,6 +511,7 @@
 			files = (
 				D3D5C58F1F86A0B80088529F /* InMemoryMySegmentsCacheTests.swift in Sources */,
 				D3C8F0111F8425A200C2632D /* SplitChangeFetcherTests.swift in Sources */,
+				9FCC1B71208F9F7A008564D4 /* SplitEventsManagerTest.swift in Sources */,
 				D3D5C57A1F85DBAD0088529F /* MySegmentsFetcherTests.swift in Sources */,
 				CC396707203C6E2100C1BFDD /* RegexTest.swift in Sources */,
 				9F9A2BD7207EA7A9002C2826 /* ArrayBlockingQueueTest.swift in Sources */,
