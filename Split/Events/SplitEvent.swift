@@ -10,4 +10,15 @@ import Foundation
 public enum SplitEvent {
     case sdkReady
     case sdkReadyTimedOut
+    
+    func toString() -> String {
+        switch self {
+        case .sdkReady:
+            return "SDK_READY"
+        case .sdkReadyTimedOut:
+            return "SDK_READY_TIMED_OUT"
+        default:
+            return "UNKNOWN"
+        }
+    }
 }

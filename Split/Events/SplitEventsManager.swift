@@ -17,7 +17,7 @@ public class SplitEventsManager {
     
     private var _suscriptions = [SplitEvent:[SplitEventTask]]()
     private let _executorResources: SplitEventExecutorResources?
-    private var _executionTimes = [SplitEvent:Int]()
+    private var _executionTimes: [String: Int]
     private let _config:SplitClientConfig
     
     public init(config: SplitClientConfig){
@@ -27,6 +27,7 @@ public class SplitEventsManager {
         _eventSplitsAreReady = false
         _executorResources = SplitEventExecutorResources()
         _config = config
+        _executionTimes = [String: Int]()
         registerMaxAllowebExecutionTimesPerEvent()
         
         if config.getReadyTimeOut() > 0 {
@@ -51,8 +52,9 @@ public class SplitEventsManager {
      * EXAMPLE: SDK_READY should be triggered only once
      */
     private func registerMaxAllowebExecutionTimesPerEvent() {
-        _executionTimes[SplitEvent.sdkReady] = 1
-        _executionTimes[SplitEvent.sdkReadyTimedOut] = 1
+        
+        _executionTimes = [SplitEvent.sdkReady.toString():1,
+                                SplitEvent.sdkReadyTimedOut.toString():1]
     }
     
     public func register(event:SplitEvent, task:SplitEventTask) {
@@ -115,14 +117,18 @@ public class SplitEventsManager {
         })
     }
     
+    public func getExecutionTimes() -> [String: Int] {
+        return _executionTimes
+    }
+    
     private func trigger(event:SplitEvent) {
         
         // If executionTimes is zero, maximum executions has been reached
-        if (self._executionTimes[event] == 0){
+        if (self._executionTimes[event.toString()] == 0){
             return;
             // If executionTimes is grater than zero, maximum executions decrease 1
-        } else if (self._executionTimes[event]! > 0) {
-            self._executionTimes[event]! = self._executionTimes[event]! - 1
+        } else if (self._executionTimes[event.toString()]! > 0) {
+            self._executionTimes[event.toString()]! = self._executionTimes[event.toString()]! - 1
         } //If executionTimes is lower than zero, execute it without limitation
 
         if self._suscriptions[event] != nil {
