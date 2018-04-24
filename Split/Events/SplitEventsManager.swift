@@ -60,6 +60,13 @@ public class SplitEventsManager {
     public func register(event:SplitEvent, task:SplitEventTask) {
         let queue = DispatchQueue(label: "io.Split.Register.SplitEventTask")
         queue.sync {
+            
+            // If event is already triggered, execute the task
+            if self._executionTimes[event.toString()] != nil && self._executionTimes[event.toString()] == 0 {
+                executeTask(event: event, task: task);
+                return;
+            }
+            
             if self._suscriptions[event] != nil {
                 self._suscriptions[event]?.append(task)
             } else {
@@ -133,10 +140,14 @@ public class SplitEventsManager {
 
         if self._suscriptions[event] != nil {
             for task in self._suscriptions[event]! {
-                let executor: SplitEventExecutorProtocol = SplitEventExecutorFactory.factory(event: event, task: task, resources: self._executorResources! )
-                executor.execute()
+                executeTask(event: event, task: task)
             }
         }
+    }
+    
+    private func executeTask(event:SplitEvent, task:SplitEventTask) {
+        let executor: SplitEventExecutorProtocol = SplitEventExecutorFactory.factory(event: event, task: task, resources: self._executorResources! )
+        executor.execute()
     }
     
 }
