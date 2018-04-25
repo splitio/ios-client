@@ -84,12 +84,17 @@ public class SplitEventsManager {
                 return
             }
             guard strongSelf._queueReadingTimer != nil else {
-                //strongSelf.stopPollingForSplitChanges()
+                strongSelf.stopReadingQueue()
                 return
             }
             strongSelf.processEvents()
         }
         _queueReadingTimer!.resume()
+    }
+    
+    private func stopReadingQueue() {
+        _queueReadingTimer?.cancel()
+        _queueReadingTimer = nil
     }
     
     private func processEvents(){
