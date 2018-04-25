@@ -1,5 +1,5 @@
-0.2.0: (Apr 19, 2018)
-- Events listener has been added. Available events: SDK_READY, SDK_READY_TIMEOUT
+0.2.0: (Apr 25, 2018)
+- Events listener has been added. Available events: SplitEvent.sdkReady and SplitEvent.sdkReadyTimedOut
 0.1.5: (Mar 19, 2018)
 - Adding first load from cache
 
