@@ -15,10 +15,15 @@
 		63921D5F780CE4DBD840F0D8 /* Pods_Split_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 441D254060332D10C49E0F46 /* Pods_Split_Example.framework */; };
 		6624CA25DEA2C8AE5899C1DC /* Pods_Split_Example_Split_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14946A7643C6298E66BB0478 /* Pods_Split_Example_Split_Tests.framework */; };
 		9F28C13220517ED200DA27C6 /* MatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F28C13020517EC900DA27C6 /* MatcherTest.swift */; };
+		9F9A2BCC207E7862002C2826 /* MyTaskOnReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A2BCB207E7862002C2826 /* MyTaskOnReady.swift */; };
+		9F9A2BD7207EA7A9002C2826 /* ArrayBlockingQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A2BD6207EA7A9002C2826 /* ArrayBlockingQueueTest.swift */; };
+		9FB4C7982087C9FC007456E1 /* MyTaskOnReadyTimedOut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4C7972087C9FC007456E1 /* MyTaskOnReadyTimedOut.swift */; };
 		9FB85E1A2018E97500B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 9FB85E182018E97400B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv */; };
 		9FB85E1B2018E97500B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 9FB85E182018E97400B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv */; };
 		9FB85E1C2018E97500B9787B /* murmur3-sample-data-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */; };
 		9FB85E1D2018E97500B9787B /* murmur3-sample-data-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */; };
+		9FCC1B71208F9F7A008564D4 /* SplitEventsManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC1B70208F9F7A008564D4 /* SplitEventsManagerTest.swift */; };
+		9FCD532C2088C3C2009C64A8 /* CHANGES.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9FCD532B2088C3C2009C64A8 /* CHANGES.txt */; };
 		CC2907E420180D5E000FD1A5 /* murmur.csv in Resources */ = {isa = PBXBuildFile; fileRef = CC2907E320180D5E000FD1A5 /* murmur.csv */; };
 		CC2AA28120188D8B00953CDC /* murmur.csv in Resources */ = {isa = PBXBuildFile; fileRef = CC2907E320180D5E000FD1A5 /* murmur.csv */; };
 		CC396707203C6E2100C1BFDD /* RegexTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC396705203C6DDF00C1BFDD /* RegexTest.swift */; };
@@ -69,8 +74,13 @@
 		9ED7384CAA90FDAC9C10386A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		9F0F3C55FDC0A4DBF30265DD /* Pods-Split_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Tests/Pods-Split_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		9F28C13020517EC900DA27C6 /* MatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatcherTest.swift; sourceTree = "<group>"; };
+		9F9A2BCB207E7862002C2826 /* MyTaskOnReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTaskOnReady.swift; sourceTree = "<group>"; };
+		9F9A2BD6207EA7A9002C2826 /* ArrayBlockingQueueTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayBlockingQueueTest.swift; sourceTree = "<group>"; };
+		9FB4C7972087C9FC007456E1 /* MyTaskOnReadyTimedOut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTaskOnReadyTimedOut.swift; sourceTree = "<group>"; };
 		9FB85E182018E97400B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-data-non-alpha-numeric-v2.csv"; sourceTree = "<group>"; };
 		9FB85E192018E97400B9787B /* murmur3-sample-data-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-data-v2.csv"; sourceTree = "<group>"; };
+		9FCC1B70208F9F7A008564D4 /* SplitEventsManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsManagerTest.swift; sourceTree = "<group>"; };
+		9FCD532B2088C3C2009C64A8 /* CHANGES.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = CHANGES.txt; path = ../CHANGES.txt; sourceTree = "<group>"; };
 		CC2907E320180D5E000FD1A5 /* murmur.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = murmur.csv; sourceTree = "<group>"; };
 		CC396705203C6DDF00C1BFDD /* RegexTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegexTest.swift; sourceTree = "<group>"; };
 		CC396708203C6FA400C1BFDD /* regex.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = regex.csv; sourceTree = "<group>"; };
@@ -150,6 +160,8 @@
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
+				9F9A2BCB207E7862002C2826 /* MyTaskOnReady.swift */,
+				9FB4C7972087C9FC007456E1 /* MyTaskOnReadyTimedOut.swift */,
 			);
 			name = "Example for Split";
 			path = Split;
@@ -166,6 +178,8 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				9FCC1B70208F9F7A008564D4 /* SplitEventsManagerTest.swift */,
+				9F9A2BD6207EA7A9002C2826 /* ArrayBlockingQueueTest.swift */,
 				CC396705203C6DDF00C1BFDD /* RegexTest.swift */,
 				D3D5C58C1F8694870088529F /* InMemorySplitCacheTests.swift */,
 				CCF2C9D61FB4A503000A885E /* HashingTest.swift */,
@@ -202,6 +216,7 @@
 				F3DAE28ED41D8C8D9A711BC6 /* Split.podspec */,
 				6D5C3D614270B2332FB40D25 /* README.md */,
 				9ED7384CAA90FDAC9C10386A /* LICENSE */,
+				9FCD532B2088C3C2009C64A8 /* CHANGES.txt */,
 			);
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
@@ -326,6 +341,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FCD532C2088C3C2009C64A8 /* CHANGES.txt in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				9FB85E1A2018E97500B9787B /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
@@ -482,7 +498,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FB4C7982087C9FC007456E1 /* MyTaskOnReadyTimedOut.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				9F9A2BCC207E7862002C2826 /* MyTaskOnReady.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -493,8 +511,10 @@
 			files = (
 				D3D5C58F1F86A0B80088529F /* InMemoryMySegmentsCacheTests.swift in Sources */,
 				D3C8F0111F8425A200C2632D /* SplitChangeFetcherTests.swift in Sources */,
+				9FCC1B71208F9F7A008564D4 /* SplitEventsManagerTest.swift in Sources */,
 				D3D5C57A1F85DBAD0088529F /* MySegmentsFetcherTests.swift in Sources */,
 				CC396707203C6E2100C1BFDD /* RegexTest.swift in Sources */,
+				9F9A2BD7207EA7A9002C2826 /* ArrayBlockingQueueTest.swift in Sources */,
 				9F28C13220517ED200DA27C6 /* MatcherTest.swift in Sources */,
 				D3D5C58D1F8694870088529F /* InMemorySplitCacheTests.swift in Sources */,
 				CCF2C9D81FB4A503000A885E /* HashingTest.swift in Sources */,
