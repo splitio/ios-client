@@ -23,7 +23,6 @@ class SplitEventsManagerTest: QuickSpec {
             let eventManager:SplitEventsManager = SplitEventsManager(config: config)
             eventManager.start()
             
-            //eventManager.register(event: SplitEvent.sdkReady, task: SplitEventTask())
             eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreReady)
             eventManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
             eventManager.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
