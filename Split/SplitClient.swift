@@ -23,8 +23,6 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     let splitImpressionManager = ImpressionManager.shared
     public var shouldSendBucketingKey: Bool = false
 
-    //internal var onReadytask:SplitEventTask?
-    
     private var _eventsManager: SplitEventsManager
     
     public init(config: SplitClientConfig, key: Key) {
@@ -44,43 +42,6 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         
         super.init()
         
-
-        //___________________________________
-        /*
-        DispatchQueue.global().async {
-            // Background thread
-            [weak self] in
-            guard let strongSelf = self else {
-                return
-            }
-            
-            strongSelf.dispatchGroup = DispatchGroup()
-            refreshableSplitFetcher.dispatchGroup = strongSelf.dispatchGroup
-            refreshableSplitFetcher.forceRefresh()
-            refreshableMySegmentsFetcher.dispatchGroup = strongSelf.dispatchGroup
-            refreshableMySegmentsFetcher.forceRefresh()
-            
-            let timeout = DispatchTime.now() + .milliseconds(30000)
-            if strongSelf.dispatchGroup!.wait(timeout: timeout) == .timedOut {
-                strongSelf.initialized = false
-                debugPrint("SDK was not ready in milliseconds")
-            }
-            
-            strongSelf.dispatchGroup!.wait()
-            strongSelf.initialized = true
-            DispatchQueue.main.async(execute: {
-                // UI Updates
-                // TRIGGER ON READY
-                //strongSelf.onReadyListeners[0].onPostExecution(cli: self!)
-                strongSelf.onReadytask?.onPostExecuteView(client: self! )
-            })
-            strongSelf.dispatchGroup = nil
-            refreshableSplitFetcher.start()
-            refreshableMySegmentsFetcher.start()
-        }
-        */
-        //___________________________________
-        
         self.dispatchGroup = nil
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()
@@ -97,7 +58,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         _eventsManager.register(event: event, task: task)
     }
     
-    //------------------------------------------------------------------------------------------------------------------
+    
     public func getTreatment(_ split: String, attributes:[String:Any]? = nil) -> String {
         
         let evaluator: Evaluator = Evaluator.shared
@@ -141,7 +102,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         ImpressionManager.shared.appendImpressions(impression: impression, splitName: splitName)
     }
     
-    //------------------------------------------------------------------------------------------------------------------
+    
     public func getTreatments(splits: [String], atributtes:[String:Any]?) throws ->  [String:String] {
         
         let evaluator: Evaluator = Evaluator.shared
@@ -168,7 +129,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         
         return results
     }
-    //------------------------------------------------------------------------------------------------------------------
+    
     public func verifyKey() {
         
         var composeKey: Key?
