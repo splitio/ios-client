@@ -22,6 +22,12 @@ class MyTaskOnReadyTimedOut: SplitEventTask {
     }
     
     override public func onPostExecuteView(client:SplitClientProtocol) -> Void {
-        _vc.treatmentResult?.text = "SDK_TIMEOUT"
+        var attributes: [String:Any]?
+        if let json = _vc.param1?.text {
+            attributes = _vc.convertToDictionary(text: json)
+        }
+        
+        let treatment = client.getTreatment((_vc.splitName?.text)!, attributes: attributes)
+        _vc.treatmentResult?.text = treatment
     }
 }
