@@ -10,6 +10,15 @@ import Foundation
 
 public protocol SplitClientProtocol {
     
-    func getTreatment(split: String, atributtes:[String:Any]?) -> String
+    func getTreatment(_ split: String, attributes:[String:Any]?) -> String
 
+    func on(_ event:SplitEvent, _ task:SplitEventTask) -> Void
+}
+
+public extension SplitClientProtocol {
+    
+    func getTreatment(_ split: String, attributes:[String:Any]? = nil) -> String {
+        return getTreatment(split, attributes: attributes)
+    }
+    
 }
