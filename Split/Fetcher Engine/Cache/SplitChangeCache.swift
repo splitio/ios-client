@@ -10,6 +10,7 @@ import SwiftyJSON
 
 public class  SplitChangeCache: SplitChangeCacheProtocol {
     
+    private let _queue = DispatchQueue(label: "io.Split.FetcherEngine.Cache.SplitChangeCache.SyncQueue")
     public static let SPLIT_FILE_PREFIX: String = "SPLITIO.split."
     public static let CHANGE_NUMBER_FILE_PREFIX: String = "SPLITIO.changeNumber"
     var splitCache: SplitCacheProtocol?
@@ -26,14 +27,13 @@ public class  SplitChangeCache: SplitChangeCacheProtocol {
         if splitCache == nil { return false }
         
         var result = true
-        
-        let _ = self.splitCache?.setChangeNumber(splitChange.till!)
-     
-        
-        for split in splitChange.splits! {
+        _queue.sync {
             
-            result = result && (splitCache?.addSplit(splitName: split.name!, split: split))!
+            let _ = self.splitCache?.setChangeNumber(splitChange.till!)
             
+            for split in splitChange.splits! {
+                result = result && (self.splitCache?.addSplit(splitName: split.name!, split: split))!
+            }
         }
         
         return result
@@ -42,18 +42,18 @@ public class  SplitChangeCache: SplitChangeCacheProtocol {
     //------------------------------------------------------------------------------------------------------------------
     public func getChanges(since: Int64) -> SplitChange? {
         
-        let changeNumber = splitCache?.getChangeNumber()
-        
         let splitChange: SplitChange = SplitChange()
         
-        splitChange.since = changeNumber
-        splitChange.till = changeNumber
-        splitChange.splits = []
-        
-        if splitChange.since! == -1  || splitChange.since! < splitChange.till! {
+        _queue.sync {
+            let changeNumber = self.splitCache?.getChangeNumber()
             
-            splitChange.splits = splitCache?.getAllSplits()
+            splitChange.since = changeNumber
+            splitChange.till = changeNumber
+            splitChange.splits = []
             
+            if splitChange.since! == -1  || splitChange.since! < splitChange.till! {
+                splitChange.splits = self.splitCache?.getAllSplits()
+            }
         }
         
         return splitChange

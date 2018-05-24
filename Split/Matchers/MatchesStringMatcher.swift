@@ -13,9 +13,9 @@ public class MatchesStringMatcher: BaseMatcher, MatcherProtocol {
     var data: String?
 
     //--------------------------------------------------------------------------------------------------
-    public init(data: String?, splitClient: SplitClient? = nil, negate: Bool? = nil, atributte: String? = nil , type: MatcherType? = nil) {
+    public init(data: String?, splitClient: SplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
         
-        super.init(splitClient: splitClient, negate: negate, atributte: atributte, type: type)
+        super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.data = data
     }
     //--------------------------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ public class MatchesStringMatcher: BaseMatcher, MatcherProtocol {
         
     }
     //--------------------------------------------------------------------------------------------------
-    public func evaluate(matchValue: Any?, bucketingKey: String?, atributtes: [String : Any]?) -> Bool {
+    public func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String : Any]?) -> Bool {
         
         guard let matcherData = data, let keyValue = matchValue as? String else {
             

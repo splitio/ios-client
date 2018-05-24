@@ -46,37 +46,37 @@ import SwiftyJSON
             
         case .AllKeys: return AllKeysMatcher()
             
-        case .ContainsAllOfSet: return ContainsAllOfSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .ContainsAllOfSet: return ContainsAllOfSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .ContainsString: return ContainsStringMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .ContainsString: return ContainsStringMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .EndsWith: return EndsWithMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .EndsWith: return EndsWithMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .StartsWith: return StartWithMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .StartsWith: return StartWithMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .EqualTo: return EqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .EqualTo: return EqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .EqualToBoolean: return EqualToBooleanMatcher(data: self.booleanMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .EqualToBoolean: return EqualToBooleanMatcher(data: self.booleanMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .EqualToSet: return EqualToSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .EqualToSet: return EqualToSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .InSegment: return InSegmentMatcher(data: self.userDefinedSegmentMatcherData, splitClient: self.client, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .InSegment: return InSegmentMatcher(data: self.userDefinedSegmentMatcherData, splitClient: self.client, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .MatchesString: return MatchesStringMatcher(data: self.stringMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .MatchesString: return MatchesStringMatcher(data: self.stringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .Whitelist: return Whitelist(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .Whitelist: return Whitelist(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .Dependency: return DependencyMatcher(splitClient: self.client, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType, dependencyData: self.dependencyMatcherData)
+        case .Dependency: return DependencyMatcher(splitClient: self.client, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType, dependencyData: self.dependencyMatcherData)
             
-        case .ContainsAnyOfSet: return ContainsAnyOfSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .ContainsAnyOfSet: return ContainsAnyOfSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .PartOfSet: return PartOfSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .PartOfSet: return PartOfSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .LessThanOrEqualTo: return LessThanOrEqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .LessThanOrEqualTo: return LessThanOrEqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .GreaterThanOrEqualTo: return GreaterThanOrEqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .GreaterThanOrEqualTo: return GreaterThanOrEqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
-        case .Between: return BetweenMatcher(data: self.betweenMatcherData, negate: self.negate, atributte: self.keySelector?.attribute, type: self.matcherType)
+        case .Between: return BetweenMatcher(data: self.betweenMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
             
             
         }

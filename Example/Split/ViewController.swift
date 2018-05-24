@@ -24,7 +24,6 @@ class ViewController: UIViewController {
 
     @IBAction func evaluate(_ sender: Any) {
         configure()
-        treatment()
     }
 
 
@@ -52,6 +51,7 @@ class ViewController: UIViewController {
         config.featuresRefreshRate(30)
         config.segmentsRefreshRate(30)
         config.impressionRefreshRate(30)
+        config.readyTimeOut(15000)
         
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
@@ -62,22 +62,17 @@ class ViewController: UIViewController {
         //Split Client
         self.client = self.factory?.client()
         
+        let task = MyTaskOnReady(vc:self)
+        let taskTimedOut = MyTaskOnReadyTimedOut(vc:self)
+        
+        self.client?.on(SplitEvent.sdkReady, task)
+        self.client?.on(SplitEvent.sdkReadyTimedOut, taskTimedOut)
+        
         //Showing sdk version in UI
         self.sdkVersion?.text = "SDK Version: \(self.factory?.version() ?? "unknown") "
-    }
-    
-    
-    func treatment() {
         
-        var atributtes: [String:Any]?
-        if let json = param1?.text {
-           atributtes = convertToDictionary(text: json)
-        }
         
-        let treatment = client?.getTreatment(split: (splitName?.text)!, atributtes: atributtes)
-        treatmentResult?.text = treatment
     }
-    
     
     func convertToDictionary(text: String) -> [String: Any]? {
         if let data = text.data(using: .utf8) {
