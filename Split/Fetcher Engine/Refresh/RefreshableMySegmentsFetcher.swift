@@ -19,12 +19,18 @@ import Foundation
 
     public weak var dispatchGroup: DispatchGroup?
     
-    public init(matchingKey: String, mySegmentsChangeFetcher: MySegmentsChangeFetcher, mySegmentsCache: MySegmentsCacheProtocol, interval: Int, dispatchGroup: DispatchGroup? = nil) {
+    private var _eventsManager: SplitEventsManager
+    
+    private var firstMySegmentsFetch = true
+    
+    public init(matchingKey: String, mySegmentsChangeFetcher: MySegmentsChangeFetcher, mySegmentsCache: MySegmentsCacheProtocol, interval: Int, dispatchGroup: DispatchGroup? = nil, eventsManager:SplitEventsManager) {
         self.matchingKey = matchingKey
         self.mySegmentsCache = mySegmentsCache
         self.mySegmentsChangeFetcher = mySegmentsChangeFetcher
         self.interval = interval
         self.dispatchGroup = dispatchGroup
+        
+        self._eventsManager = eventsManager
     }
     
     public func forceRefresh() {
@@ -77,6 +83,13 @@ import Foundation
                 let segments = try strongSelf.mySegmentsChangeFetcher.fetch(user: strongSelf.matchingKey)
                 Logger.d(segments.debugDescription)
                 strongSelf.dispatchGroup?.leave()
+                
+                if strongSelf.firstMySegmentsFetch {
+                    strongSelf.firstMySegmentsFetch = false
+                    strongSelf._eventsManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreReady)
+                } else {
+                    strongSelf._eventsManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreUpdated)
+                }
                 
             } catch let error {
                 Logger.e("Problem fetching mySegments: %@", error.localizedDescription)

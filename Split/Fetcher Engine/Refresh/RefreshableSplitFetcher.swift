@@ -18,11 +18,15 @@ public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
 
     public weak var dispatchGroup: DispatchGroup?
 
-    public init(splitChangeFetcher: SplitChangeFetcher, splitCache: SplitCacheProtocol, interval: Int, dispatchGroup: DispatchGroup? = nil) {
+    private var _eventsManager: SplitEventsManager
+    private var firstSplitFetchs: Bool = true
+    
+    public init(splitChangeFetcher: SplitChangeFetcher, splitCache: SplitCacheProtocol, interval: Int, dispatchGroup: DispatchGroup? = nil, eventsManager:SplitEventsManager) {
         self.splitCache = splitCache
         self.splitChangeFetcher = splitChangeFetcher
         self.interval = interval
         self.dispatchGroup = dispatchGroup
+        self._eventsManager = eventsManager
     }
     
     public func forceRefresh() {
@@ -31,12 +35,10 @@ public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
     }
     
     public func fetch(splitName: String) -> Split? {
-        // TODO: We need to actually save ParsedSplit objects
         return splitCache.getSplit(splitName: splitName)
     }
     
     public func fetchAll() -> [Split]? {
-        // TODO: We need to actually save ParsedSplit objects
         return splitCache.getAllSplits()
     }
     
@@ -44,6 +46,8 @@ public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
 
         if let _ = try? self.splitChangeFetcher.fetch(since: -1, policy: .cacheOnly) {
             Logger.d("SplitChanges fetched from CACHE successfully")
+            self._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
+            firstSplitFetchs = false
         } else {
             Logger.e("Error trying to fetch SplitChanges from CACHE")
         }
@@ -90,6 +94,15 @@ public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
                 Logger.d(splitChanges.debugDescription)
 
                 strongSelf.dispatchGroup?.leave()
+                
+                if strongSelf.firstSplitFetchs {
+                    strongSelf.firstSplitFetchs = false
+                    strongSelf._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
+                } else {
+                    strongSelf._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreUpdated)
+                }
+                
+                
             } catch let error {
                 Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
             }
