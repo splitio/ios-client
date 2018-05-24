@@ -11,7 +11,7 @@ open class SplitEventTask {
     
     public init(){}
     
-    open func onPostExecute() -> Void {
+    open func onPostExecute(client:SplitClientProtocol) -> Void {
         debugPrint("* running superclass.onPostExecute. This method should be override by developers")
     }
     
