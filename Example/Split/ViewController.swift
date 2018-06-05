@@ -40,8 +40,7 @@ class ViewController: UIViewController {
     func configure() {
         
         // Your Split API-KEY
-        //let authorizationKey: String = "YOUR_API_KEY"
-        let authorizationKey: String = "4eri39qiou5ene271kpk1tnlfnfvid89dgab"
+        let authorizationKey: String = "YOUR_API_KEY"
         
         //Provided keys from UI
         let matchingKeyText: String = (matchingKey?.text)!
@@ -53,9 +52,6 @@ class ViewController: UIViewController {
         config.segmentsRefreshRate(30)
         config.impressionRefreshRate(30)
         config.readyTimeOut(15000)
-      
-      config.sdkEndpoint("https://sdk-aws-staging.split.io/api")
-      config.eventsEndpoint("https://events-aws-staging.split.io/api")
         
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
