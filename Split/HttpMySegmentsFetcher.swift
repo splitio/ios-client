@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Alamofire
 
 public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
 
@@ -27,7 +26,7 @@ public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
         
         var reachable: Bool = true
         
-        if let reachabilityManager = Alamofire.NetworkReachabilityManager(host: "sdk.split.io/api/version") {
+        if let reachabilityManager = NetworkReachabilityManager(host: "sdk.split.io/api/version") {
             
             if (!reachabilityManager.isReachable)  {
                 reachable = false
@@ -48,7 +47,7 @@ public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
             }
             semaphore.wait()
             
-            let segments = try requestResult!.unwrap()
+            let segments = try requestResult!.unwrap()!
             mySegmentCache?.addSegments(segmentNames: segments, key: user)
 
             return segments

@@ -9,10 +9,10 @@
 import Foundation
 
 enum DataResult<Value> {
-    case Success(value: Value)
+    case Success(value: Value?)
     case Failure(error: NSError)
     
-    init(_ f: () throws -> Value) {
+    init(_ f: () throws -> Value?) {
         do {
             let value = try f()
             self = .Success(value: value)
@@ -21,7 +21,7 @@ enum DataResult<Value> {
         }
     }
     
-    func unwrap() throws -> Value {
+    func unwrap() throws -> Value? {
         switch self {
         case .Success(let value):
             return value
