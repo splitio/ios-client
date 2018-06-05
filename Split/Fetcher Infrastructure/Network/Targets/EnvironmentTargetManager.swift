@@ -40,10 +40,15 @@ class EnvironmentTargetManager {
                              DynamicTarget.DynamicTargetStatus.GetMySegments(user: user))
     }
     
-    public static func GetImpressions() -> Target {
-        return DynamicTarget(shared.sdkBaseUrl,
+    public static func GetImpressions(impressions: String) -> Target {
+        
+        
+        let target = DynamicTarget(shared.sdkBaseUrl,
                              shared.eventsBaseURL,
                              DynamicTarget.DynamicTargetStatus.GetImpressions())
+        target.append(value: "application/json", forHttpHeader: "content-type")
+        target.setBody(json: impressions)
+        return target
     }
     
 }

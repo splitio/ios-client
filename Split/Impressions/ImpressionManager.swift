@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Alamofire
 import SwiftyJSON
 import UIKit
 
@@ -23,7 +22,9 @@ public class ImpressionManager {
     private var impressionsFileStorage: ImpressionsFileStorage?
     public static let EMPTY_JSON: String = "[]"
     private var impressionAccum: Int = 0
-
+    
+    private let restClient = RestClient()
+    
     public static let shared: ImpressionManager = {
         
         let instance = ImpressionManager()
@@ -39,53 +40,36 @@ public class ImpressionManager {
     }
     
     //------------------------------------------------------------------------------------------------------------------
-    public func sendImpressions(fileContent: Data?, fileName: String) {
+    public func sendImpressions(fileContent: String?, fileName: String) {
         
-        let composeRequest = createRequest(content: fileContent, fileName: fileName)
-        let request = composeRequest["request"] as! URLRequest
-        let filename: String = composeRequest["fileName"] as! String
+        guard let fileContent = fileContent else {
+            return
+        }
+        
         var reachable: Bool = true
         
-        if let reachabilityManager = Alamofire.NetworkReachabilityManager(host: "sdk.split.io/api/version") {
-            
+        if let reachabilityManager = NetworkReachabilityManager(host: "sdk.split.io/api/version") {
             if (!reachabilityManager.isReachable)  {
-                
                 reachable = false
-                
             }
-            
         }
         
         if !reachable {
-            
             Logger.v("Saving impressions")
             saveImpressionsToDisk()
-            
         } else {
             
-            Alamofire.request(request).debugCurl().validate(statusCode: 200..<300).response {  [weak self] response in
-                
-                guard let strongSelf = self else {
-                    return
-                }
-                
-                if response.error != nil && reachable {
-                    
-                    strongSelf.impressionsFileStorage?.saveImpressions(fileName: filename)
-                    Logger.e("Impressions error : \(String(describing: response.error))")
-                    
-                    
-                } else {
-                    
+            restClient.sendImpressions(impressions: fileContent, completion: { result in
+                do {
+                    let _ = try result.unwrap()
                     Logger.d("Impressions posted successfully")
-                    strongSelf.cleanImpressions(fileName: filename)
-                    
+                    self.cleanImpressions(fileName: fileName)
+                } catch {
+                    self.impressionsFileStorage?.saveImpressions(fileName: fileName)
+                    Logger.e("Impressions error : \(String(describing: error))")
                 }
-                
-            }
-            
+            })
         }
-        
     }
     //------------------------------------------------------------------------------------------------------------------
     
@@ -173,36 +157,6 @@ public class ImpressionManager {
     }
     //------------------------------------------------------------------------------------------------------------------
     
-    func createRequest(content: Data?, fileName: String) -> [String:Any] {
-        
-        // Configure paramaters
-        let url: URL = EnvironmentTargetManager.GetImpressions().url
-        var headers: HTTPHeaders = [:]
-        headers["splitsdkversion"] = Version.toString()
-        headers["authorization"] = "Bearer " + SecureDataStore.shared.getToken()!
-        headers["content-type"] = "application/json"
-        
-        //Create new request
-        var request = URLRequest(url: url)
-        request.httpMethod = HTTPMethod.post.rawValue
-        request.allHTTPHeaderFields = headers
-        
-        
-        //Create json file with impressions
-        let encodedData = content
-        
-        request.httpBody = encodedData
-        
-        var composeRequest : [String:Any] = [:]
-        
-        composeRequest["request"] = request
-        composeRequest["fileName"] = fileName
-        
-        return composeRequest
-        
-    }
-    //------------------------------------------------------------------------------------------------------------------
-    
     
     func createEncodedImpressions() -> Data? {
         
@@ -249,7 +203,7 @@ public class ImpressionManager {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    
+
     public func appendImpressions(impression: ImpressionDTO, splitName: String) {
         
         var impressionsArray = impressionStorage[splitName]
@@ -306,14 +260,8 @@ public class ImpressionManager {
         if let impressionsFiles = impressionsFileStorage?.readImpressions() {
             
             for fileName in impressionsFiles.keys {
-                
-                let file = impressionsFiles[fileName]
-                
-                let encodedData = file?.data(using: .utf8)
-                
-                sendImpressions(fileContent: encodedData,fileName: fileName)
-                
-                
+                let fileContent = impressionsFiles[fileName]
+                sendImpressions(fileContent: fileContent, fileName: fileName)
             }
             
         }
@@ -329,13 +277,13 @@ public class ImpressionManager {
     func subscribeNotifications() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
-
+        
     }
     //------------------------------------------------------------------------------------------------------------------
     deinit {
         
         NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
-
+        
     }
     //------------------------------------------------------------------------------------------------------------------
 }
