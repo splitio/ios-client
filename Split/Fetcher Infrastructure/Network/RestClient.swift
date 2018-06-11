@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Alamofire
 import SwiftyJSON
 
 @objc public final class RestClient: NSObject {
@@ -24,8 +23,11 @@ import SwiftyJSON
         let _ = manager.sendRequest(target: target).getResponse(errorSanitizer: target.errorSanitizer) { response in
             switch response.result {
             case .success(let json):
-                let parsedObject = processResponse(json) as! T
-                completion( DataResult{ return parsedObject } )
+                if let parsedObject = processResponse(json) as? T {
+                    completion( DataResult{ return parsedObject } )
+                } else {
+                    completion( DataResult{ return nil } )
+                }
             case .failure(let error):
                 completion( DataResult{ throw error })
             }

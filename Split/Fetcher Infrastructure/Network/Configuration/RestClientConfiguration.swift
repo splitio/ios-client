@@ -7,10 +7,9 @@
 //
 
 import Foundation
-import Alamofire
 
 struct RestClientConfiguration {
     static var manager: RestClientManagerProtocol {
-        return SessionManager.default
+        return HttpSession.shared
     }
 }
