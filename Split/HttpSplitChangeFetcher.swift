@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Alamofire
 
 public enum FecthingPolicy {
     case cacheOnly
@@ -36,7 +35,7 @@ public enum FecthingPolicy {
 
         }
         
-        if let reachabilityManager = Alamofire.NetworkReachabilityManager(host: "sdk.split.io/api/version") {
+        if let reachabilityManager = NetworkReachabilityManager(host: "sdk.split.io/api/version") {
             
             if (!reachabilityManager.isReachable)  {
                 reachable = false
@@ -56,7 +55,7 @@ public enum FecthingPolicy {
                 semaphore.signal()
             }
             semaphore.wait()
-            let change: SplitChange = try requestResult!.unwrap()
+            let change: SplitChange = try requestResult!.unwrap()!
             _ = self.splitChangeCache?.addChange(splitChange: change)
             return change
             

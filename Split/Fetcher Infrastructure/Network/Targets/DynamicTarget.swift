@@ -6,12 +6,11 @@
 //
 
 import Foundation
-import Alamofire
 import SwiftyJSON
 
 
 class DynamicTarget: Target {
-    
+  
     public enum DynamicTargetStatus {
         case GetSplitChanges(since: Int64)
         case GetMySegments(user: String)
@@ -28,6 +27,14 @@ class DynamicTarget: Target {
     
     var commonHeaders: [String : String]?
     
+    var parameters: [String:Any]? = nil
+    
+    var body: Data? {
+        return bodyContent
+    }
+    
+    private var bodyContent: Data? = nil
+    
     public init(_ sdkBaseUrl:URL, _ eventsBaseURL:URL, _ status: DynamicTargetStatus ){
         self.sdkBaseUrl = sdkBaseUrl
         self.eventsBaseURL = eventsBaseURL
@@ -43,7 +50,7 @@ class DynamicTarget: Target {
     
     
     //public var method: HTTPMethod
-    public var method: HTTPMethod {
+    public var method: HttpMethod {
         switch self.internalStatus {
         case .GetSplitChanges:
             return .get
@@ -65,11 +72,26 @@ class DynamicTarget: Target {
             
         case .GetImpressions():
             return eventsBaseURL.appendingPathComponent("testImpressions").appendingPathComponent("bulk")
+          
         }
     }
     
+    func append(value: String, forHttpHeader headerKey: String) {
+        if commonHeaders == nil {
+            commonHeaders = [String:String]()
+        }
+        commonHeaders![headerKey] = value
+    }
     
-    public var errorSanitizer: (JSON, Int) -> Result<JSON> {
+    func setBody(data: Data) {
+        bodyContent = data
+    }
+    
+    func setBody(json: String) {
+        bodyContent = json.data(using: .utf8)
+    }
+    
+    public var errorSanitizer: (JSON, Int) -> HttpResult<JSON> {
         return { json, statusCode in
             guard statusCode >= 200 && statusCode <= 203  else {
                 let error = NSError(domain: InfoUtils.bundleNameKey(), code: ErrorCode.Undefined, userInfo: nil)
