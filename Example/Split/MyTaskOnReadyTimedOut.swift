@@ -15,6 +15,7 @@ class MyTaskOnReadyTimedOut: SplitEventTask {
     public init(vc:ViewController){
         _vc = vc
         super.init()
+        _vc.isEvaluating(active: true)
     }
     
     override public func onPostExecute() -> Void {
@@ -30,5 +31,6 @@ class MyTaskOnReadyTimedOut: SplitEventTask {
         
         let treatment = client.getTreatment((_vc.splitName?.text)!, attributes: attributes)
         _vc.treatmentResult?.text = treatment
+        _vc.isEvaluating(active: false)
     }
 }
