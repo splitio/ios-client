@@ -7,15 +7,10 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-@objc public class Treatment: NSObject {
+@objc public class Treatment: NSObject, Codable {
     
-    let name: String!
-    let treatment: String!
-    
-    internal init(_ json: JSON) {
-        self.name = json["splitName"].string
-        self.treatment = json["treatment"].string
-    }
+    var name: String!
+    var treatment: String!
+   
 }
