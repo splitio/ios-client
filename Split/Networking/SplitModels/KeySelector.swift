@@ -7,15 +7,10 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-@objc public class KeySelector: NSObject {
+@objc public class KeySelector: NSObject, Codable {
     
     var trafficType: String?
     var attribute: String?
-    
-    public init(_ json: JSON) {
-        self.trafficType = json["trafficType"] != JSON.null ? json["trafficType"].stringValue : nil
-        self.attribute = json["attribute"] != JSON.null ? json["attribute"].stringValue : nil
-    }
+
 }

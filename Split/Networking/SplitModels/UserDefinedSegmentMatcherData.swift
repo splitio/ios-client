@@ -7,14 +7,9 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-@objc public class UserDefinedSegmentMatcherData: NSObject {
+@objc public class UserDefinedSegmentMatcherData: NSObject, Codable {
     
     var segmentName: String?
-    
-    public init(_ json: JSON) {
-        self.segmentName = json["segmentName"].string
-    }
-    
+      
 }

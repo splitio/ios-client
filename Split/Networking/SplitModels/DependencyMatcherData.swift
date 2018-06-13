@@ -7,16 +7,10 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-@objc public class DependencyMatcherData: NSObject {
+@objc public class DependencyMatcherData: NSObject, Codable {
     
     var split: String?
     var treatments: [String]?
-    
-    public init(_ json: JSON) {
-        self.split = json["split"].string
-        self.treatments = json["treatments"].array?.map { return $0.stringValue }
-    }
     
 }

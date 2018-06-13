@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftyJSON
 
 // MARK: HttpDataRequest
 
@@ -84,7 +83,6 @@ class HttpRequest: HttpRequestProtocol {
     }
 }
 
-
 // MARK: HttpDataRequest
 
 class HttpDataRequest: HttpRequest, HttpDataRequestProtocol {
@@ -157,7 +155,7 @@ extension HttpDataRequest: RestClientRequestProtocol {
             }
             
             if let validData = data {
-                let json = JSON(data: validData)
+                let json = JSON(validData)
                 return errorSanitizer(json, response!.statusCode)
             } else {
                 return errorSanitizer(JSON(), response!.statusCode)

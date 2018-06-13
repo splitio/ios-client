@@ -8,6 +8,9 @@
 
 import Foundation
 
+struct EmptyValue: Codable {
+}
+
 enum DataResult<Value> {
     case Success(value: Value?)
     case Failure(error: NSError)
