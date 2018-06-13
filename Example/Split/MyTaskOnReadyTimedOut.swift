@@ -18,12 +18,11 @@ class MyTaskOnReadyTimedOut: SplitEventTask {
         _vc.isEvaluating(active: true)
     }
     
-    override public func onPostExecute() -> Void {
+    override public func onPostExecute(client:SplitClientProtocol) -> Void {
 
     }
     
     override public func onPostExecuteView(client:SplitClientProtocol) -> Void {
-                
         var attributes: [String:Any]?
         if let json = _vc.param1?.text {
             attributes = _vc.convertToDictionary(text: json)
