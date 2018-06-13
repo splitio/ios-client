@@ -18,8 +18,8 @@ class MyTaskOnReady: SplitEventTask {
         _vc.isEvaluating(active: true)
     }
     
-    override public func onPostExecute() -> Void {
-
+    override public func onPostExecute(client:SplitClientProtocol) -> Void {
+        //Do some stuff here at background execution
     }
     
     override public func onPostExecuteView(client:SplitClientProtocol) -> Void {

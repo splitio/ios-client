@@ -20,7 +20,7 @@ class SplitEventExecutorWithClient: SplitEventExecutorProtocol {
     public func execute(){
         DispatchQueue.global().async {
             // Background thread
-            self._task.onPostExecute()
+            self._task.onPostExecute(client: self._client)
             DispatchQueue.main.async(execute: {
                 // UI Updates
                 self._task.onPostExecuteView(client: self._client)
