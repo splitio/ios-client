@@ -99,7 +99,6 @@ extension HttpRequestManager: URLSessionTaskDelegate {
         if let request = requests[task.taskIdentifier] {
             request.complete(withError: error)
         }
-        print(" remove task: \(task.taskIdentifier)")
         requests.removeValue(forKey: task.taskIdentifier)
     }
 }
@@ -111,7 +110,6 @@ extension HttpRequestManager: URLSessionDataDelegate {
                     dataTask: URLSessionDataTask,
                     didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void){
-        print(" didReceive response task: \(dataTask.taskIdentifier)")
         if let request = requests[dataTask.taskIdentifier], let response = response as? HTTPURLResponse {
             request.setResponse(response)
             completionHandler(.allow)
