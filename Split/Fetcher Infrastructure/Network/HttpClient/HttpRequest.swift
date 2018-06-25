@@ -78,7 +78,6 @@ class HttpRequest: HttpRequestProtocol {
     func complete(withError error: Error?) {
         self.error = error
         if let completionHandler = requestCompletionHandler {
-            print("Completion handler: \(completionHandler)")
             completionHandler()
         }
     }
