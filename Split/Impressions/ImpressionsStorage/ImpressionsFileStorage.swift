@@ -7,7 +7,7 @@
 
 import Foundation
 
-
+/*
 public class ImpressionsFileStorage {
     
     public static let IMPRESSIONS_FILE_PREFIX: String = "impressions_";
@@ -129,3 +129,4 @@ public class ImpressionsFileStorage {
  
     }
 }
+*/
