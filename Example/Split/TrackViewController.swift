@@ -11,8 +11,6 @@ import Split
 
 class TrackViewController: UIViewController {
     
-    
-    @IBOutlet weak var matchingKeyField: UITextField!
     @IBOutlet weak var eventTypeField: UITextField!
     @IBOutlet weak var trafficTypeField: UITextField!
     @IBOutlet weak var valueField: UITextField!
@@ -25,10 +23,6 @@ class TrackViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        eventTypeField.text = "FAKE_ID_1"
-        eventTypeField.text = "EVENT_TEST1"
-        trafficTypeField.text = "testtrack"
-        initClient()
     }
     
     override func didReceiveMemoryWarning() {
@@ -37,14 +31,17 @@ class TrackViewController: UIViewController {
     }
     
     @IBAction func sendEventDidTouch(_ sender: UIButton) {
+        if client == nil {
+            initClient()
+        }
         sendEvent()
     }
     func initClient(){
         // Your Split API-KEY - Change in Config.swift file
         let authorizationKey: String = "YOUR_API_KEY"
         
-        //Provided keys from UI
-        let matchingKeyText: String = matchingKeyField.text!
+        //This Key should identify user or installation
+        let matchingKeyText: String = "SAMPLE_KEY_1"
         
         //Split Configuration
         let config = SplitClientConfig()
@@ -54,9 +51,9 @@ class TrackViewController: UIViewController {
         config.readyTimeOut(15000)
         
         // Track config
-        config.eventsPushRate(1000)
-        config.eventsPerPush(2)
-        config.eventsQueueSize(4)
+        config.eventsPushRate(10)
+        config.eventsPerPush(2000)
+        config.eventsQueueSize(10000)
         config.eventsFirstPushWindow(10)
         config.trafficType("custom")
         
