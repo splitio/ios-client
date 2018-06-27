@@ -18,6 +18,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var treatmentResult: UILabel?
     @IBOutlet weak var param1: UITextField?
     @IBOutlet weak var sdkVersion: UILabel?
+    @IBOutlet weak var evaluateActivityIndicator: UIActivityIndicatorView!
     
     var factory: SplitFactory?
     var client: SplitClientProtocol?
@@ -52,7 +53,7 @@ class ViewController: UIViewController {
         config.segmentsRefreshRate(30)
         config.impressionRefreshRate(30)
         config.readyTimeOut(15000)
-        
+
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
       
@@ -83,6 +84,14 @@ class ViewController: UIViewController {
             }
         }
         return nil
+    }
+    
+    func isEvaluating(active: Bool){
+        if active {
+            self.evaluateActivityIndicator.startAnimating()
+        } else {
+            self.evaluateActivityIndicator.stopAnimating()
+        }
     }
     
 }

@@ -10,10 +10,8 @@ import Foundation
 
 extension RestClient {
     
-  func sendImpressions(impressions: String, completion: @escaping (DataResult<Void>) -> Void) {
+  func sendImpressions(impressions: String, completion: @escaping (DataResult<EmptyValue>) -> Void) {
       
-    self.execute(target: EnvironmentTargetManager.GetImpressions(impressions: impressions), completion: completion, processResponse: { json in
-        return nil
-      })
+    self.execute(target: EnvironmentTargetManager.GetImpressions(impressions: impressions), completion: completion)
     }
 }

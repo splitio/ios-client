@@ -55,10 +55,15 @@ public enum FecthingPolicy {
                 semaphore.signal()
             }
             semaphore.wait()
-            let change: SplitChange = try requestResult!.unwrap()!
+            
+            guard let change: SplitChange = try requestResult!.unwrap() else {
+                throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
+            }
             _ = self.splitChangeCache?.addChange(splitChange: change)
+            
             return change
             
         }
     }
+    
 }

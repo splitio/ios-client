@@ -7,18 +7,24 @@
 //
 
 import Foundation
-import SwiftyJSON
 
 extension RestClient {
     
     func getMySegments(user: String, completion: @escaping (DataResult<[String]>) -> Void) {
-        self.execute(target: EnvironmentTargetManager.GetMySegments(user: user), completion: completion) { json in
-            return json["mySegments"].arrayValue
-                .filter{ $0["name"] != JSON.null }
-                .map { (json: JSON) -> String in
-                    return json["name"].stringValue
+        
+        let completionHandler: (DataResult<[String:[Segment]]>) -> Void = { result in
+            do {
+                let data = try result.unwrap()
+                var segmentsNames = [String]()
+                if let data = data, let segments = data["mySegments"]  {
+                    segmentsNames = segments.map { segment in  return segment.name }
                 }
+                completion(DataResult.Success(value: segmentsNames))
+            } catch {
+                completion(DataResult.Failure(error: error as NSError))
+            }
         }
+        self.execute(target: EnvironmentTargetManager.GetMySegments(user: user), completion: completionHandler)
     }
     
 }

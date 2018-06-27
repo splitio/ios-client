@@ -6,12 +6,13 @@
 //
 
 import Foundation
-import SwiftyJSON
 
 public class SplitCache: SplitCacheProtocol {
     
     public static let SPLIT_FILE_PREFIX: String = "SPLITIO.split."
     public static let CHANGE_NUMBER_FILE_PREFIX: String = "SPLITIO.changeNumber"
+    private let kClassName = String(describing: SplitCache.self)
+    
     var storage: StorageProtocol
     //------------------------------------------------------------------------------------------------------------------
     init(storage: StorageProtocol) {
@@ -21,8 +22,12 @@ public class SplitCache: SplitCacheProtocol {
     //------------------------------------------------------------------------------------------------------------------
     public func addSplit(splitName: String, split: Split) -> Bool {
         
-        let jsonString = split.splitJson?.rawString()
-        storage.write(elementId: getSplitId(splitName: splitName), content: jsonString)
+        do {
+            let jsonString = try JSON.encodeToJson(split)
+            storage.write(elementId: getSplitId(splitName: splitName), content: jsonString)
+        } catch {
+            Logger.e("addSplit: Error parsing split to Json", kClassName)
+        }
         return true
         
     }
@@ -57,10 +62,11 @@ public class SplitCache: SplitCacheProtocol {
     public func getSplit(splitName: String) -> Split? {
         
         if let splitString = storage.read(elementId: getSplitId(splitName: splitName)) {
-        let json: JSON = JSON(parseJSON: splitString)
-        let split = Split(json)
-            return split
-            
+            do {
+                return try Json.encodeFrom(json: splitString, to: Split.self)
+            } catch {
+                Logger.e("getSplit: Error parsing split from Json", kClassName)
+            }
         }
         return nil
     }
