@@ -24,6 +24,7 @@ import Foundation
             case .success(let json):
                 if json.isNull(){
                     completion( DataResult{ return nil } )
+                    return
                 }
                 
                 do {
