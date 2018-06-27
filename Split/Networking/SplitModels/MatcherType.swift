@@ -8,36 +8,37 @@
 
 import Foundation
 
-public enum MatcherType: String {
+public enum MatcherType: String, Codable {
     
-    case AllKeys
-    case InSegment
-    case Whitelist
+    case AllKeys = "ALL_KEYS"
+    case InSegment = "IN_SEGMENT"
+    case Whitelist = "WHITELIST"
     
     /* Numeric Matcher */
-    case EqualTo
-    case GreaterThanOrEqualTo
-    case LessThanOrEqualTo
-    case Between
+    case EqualTo = "EQUAL_TO"
+    case GreaterThanOrEqualTo = "GREATER_THAN_OR_EQUAL_TO"
+    case LessThanOrEqualTo = "LESS_THAN_OR_EQUAL_TO"
+    case Between = "BETWEEN"
     
     /* Set Matcher */
-    case EqualToSet
-    case ContainsAnyOfSet
-    case ContainsAllOfSet
-    case PartOfSet
+    case EqualToSet = "EQUAL_TO_SET"
+    case ContainsAnyOfSet = "CONTAINS_ANY_OF_SET"
+    case ContainsAllOfSet = "CONTAINS_ALL_OF_SET"
+    case PartOfSet = "PART_OF_SET"
     
     /* String Matcher */
-    case StartsWith
-    case EndsWith
-    case ContainsString
-    case MatchesString
+    case StartsWith = "STARTS_WITH"
+    case EndsWith = "ENDS_WITH"
+    case ContainsString = "CONTAINS_STRING"
+    case MatchesString = "MATCHES_STRING"
     
     /* Boolean Matcher */
-    case EqualToBoolean
+    case EqualToBoolean = "EQUAL_TO_BOOLEAN"
     
     /* Dependency Matcher */
-    case Dependency
+    case Dependency = "IN_SPLIT_TREATMENT"
     
+    /*
     static func enumFromString(string: String) -> MatcherType? {
         switch string.lowercased() {
         case "all_keys":
@@ -78,4 +79,5 @@ public enum MatcherType: String {
             return nil
         }
     }
+ */
 }

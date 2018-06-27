@@ -6,11 +6,12 @@
 //
 
 import Foundation
-import SwiftyJSON
 
 public class MySegmentsCache: MySegmentsCacheProtocol {
     
     public static let SEGMENT_FILE_PREFIX: String = "SEGMENTIO.split.mysegments";
+    
+    private let kClassName = String(describing: MySegmentsCache.self)
 
     var storage: StorageProtocol
 
@@ -23,12 +24,11 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
 
         let userDefaults: UserDefaults = UserDefaults.standard
         userDefaults.set(key, forKey: "key")
-
-        let json: JSON = JSON(segmentNames)
-        let jsonString = json.rawString()
-
+        guard let jsonString = try? JSON.encodeToJson(segmentNames) else {
+            Logger.e("addSegments: Could not parse data to Json", kClassName)
+            return
+        }
         storage.write(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX , content: jsonString)
-        
     }
     //------------------------------------------------------------------------------------------------------------------
     public func removeSegments() {
@@ -41,10 +41,10 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
         if let savedKey = userDefaults.string(forKey: "key"), savedKey == key {
             let segments = storage.read(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX)
             if let segmentsStored = segments {
-                let json: JSON = JSON(parseJSON: segmentsStored)
-                let arrayParsed = json.arrayObject
-                if let array = arrayParsed as? [String] {
-                    return array
+                do {
+                    return try JSON.encodeFrom(json: segmentsStored, to: [String].self)
+                } catch {
+                    Logger.e("getSegments: Error parsing stored segments", kClassName)
                 }
             }
         }
