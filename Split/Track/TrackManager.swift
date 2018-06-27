@@ -65,18 +65,28 @@ extension TrackManager {
     func appendEvent(event: EventDTO) {
         currentEventsHit.append(event)
         if currentEventsHit.count == eventsPerPush {
-            let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit)
-            eventsHits[newHit.identifier] = newHit
-            currentEventsHit = [EventDTO]()
+            appendHit()
             if eventsHits.count * eventsPerPush >= eventsQueueSize {
                 sendEvents()
             }
         }
     }
+    
+    func appendHitAndSendAll(){
+        appendHit()
+        sendEvents()
+    }
 }
 
 // MARK: Private
 extension TrackManager {
+    
+    private func appendHit(){
+        let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit)
+        eventsHits[newHit.identifier] = newHit
+        currentEventsHit = [EventDTO]()
+    }
+    
     private func createPollingManager(dispatchGroup: DispatchGroup?){
         var config = PollingManagerConfig()
         config.firstPollWindow = self.eventsFirstPushWindow
@@ -85,11 +95,11 @@ extension TrackManager {
         pollingManager = PollingManager(
             dispatchGroup: dispatchGroup,
             config: config,
-            triggerAction: { self.sendEvents() }
+            triggerAction: { self.appendHitAndSendAll() }
         )
     }
-
-    func sendEvents() {
+    
+    private func sendEvents() {
         for (_, eventsHit) in eventsHits {
             sendEvents(eventsHit: eventsHit)
         }
