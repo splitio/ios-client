@@ -15,6 +15,7 @@ class MyTaskOnReady: SplitEventTask {
     public init(vc:ViewController){
         _vc = vc
         super.init()
+        _vc.isEvaluating(active: true)
     }
     
     override public func onPostExecute(client:SplitClientProtocol) -> Void {
@@ -23,6 +24,7 @@ class MyTaskOnReady: SplitEventTask {
     
     override public func onPostExecuteView(client:SplitClientProtocol) -> Void {
         
+        
         var attributes: [String:Any]?
         if let json = _vc.param1?.text {
             attributes = _vc.convertToDictionary(text: json)
@@ -30,5 +32,6 @@ class MyTaskOnReady: SplitEventTask {
         
         let treatment = client.getTreatment((_vc.splitName?.text)!, attributes: attributes)
         _vc.treatmentResult?.text = treatment
+        _vc.isEvaluating(active: false)
     }
 }

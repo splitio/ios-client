@@ -119,12 +119,17 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" hidesWhenStopped="YES" style="gray" id="U6L-K6-bzX">
+                                <rect key="frame" x="339" y="105" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Item 1" id="pkT-rt-mab"/>
                     <connections>
                         <outlet property="bucketkey" destination="PY6-i2-EB0" id="S4K-sU-5QF"/>
+                        <outlet property="evaluateActivityIndicator" destination="U6L-K6-bzX" id="JM7-uZ-Jt1"/>
                         <outlet property="evaluteButton" destination="X9Y-TO-Zmz" id="sOb-ms-3wU"/>
                         <outlet property="matchingKey" destination="Zu0-nd-lHK" id="FcQ-K7-Dj8"/>
                         <outlet property="param1" destination="uPq-Ku-2wc" id="E4a-1K-tsf"/>
