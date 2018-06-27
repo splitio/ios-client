@@ -7,17 +7,13 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-@objc public class BetweenMatcherData: NSObject {
+@objc public class BetweenMatcherData: NSObject, Codable {
     
     var dataType: DataType?
     var start: Int64?
     var end: Int64?
-    
-    public init(_ json: JSON) {
-        self.dataType = DataType.enumFromString(string: json["dataType"].stringValue)
-        self.start = json["start"].int64
-        self.end = json["end"].int64
-    }
+  
 }
+
+

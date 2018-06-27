@@ -7,16 +7,10 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-@objc public class Partition: NSObject {
+@objc public class Partition: NSObject, Codable {
     
     var treatment: String?
     var size: Int?
-    
-    public init(_ json: JSON) {
-        self.treatment = json["treatment"].string
-        self.size = json["size"].int
-    }
     
 }
