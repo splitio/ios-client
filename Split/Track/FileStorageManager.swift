@@ -54,6 +54,10 @@ public class FileStorageManager {
         }
     }
     
+    func save(content: String, as fileName: String) {
+        storage.write(elementId: fileName, content: content)
+    }
+    
     func read() -> [String:String] {
         var files: [String:String] = [:]
         let fileNames = storedFileNames()
@@ -66,6 +70,10 @@ public class FileStorageManager {
             }
         }
         return files
+    }
+    
+    func read(fileName: String) -> String? {
+        return storage.readWithProperties(elementId: fileName)
     }
     
     func delete(fileName: String) {
