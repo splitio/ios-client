@@ -18,10 +18,7 @@ class HttpSession {
     var requestManager: HttpRequestManager
     
     init(configuration: URLSessionConfiguration = URLSessionConfiguration.default) {
-        
-        if #available(iOS 11.0, *) {
-            configuration.waitsForConnectivity = true
-        }
+   
         configuration.httpMaximumConnectionsPerHost = 100
         
         requestManager = HttpRequestManager()
