@@ -63,10 +63,6 @@ class TrackViewController: UIViewController {
         config.eventsFirstPushWindow(10)
         config.trafficType("custom")
         
-        config.sdkEndpoint("https://sdk-aws-staging.split.io/api")
-        config.eventsEndpoint("https://events-aws-staging.split.io/api")
-
-        
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: nil)
         
