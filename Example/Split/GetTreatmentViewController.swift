@@ -9,8 +9,8 @@
 import UIKit
 import Split
 
-class ViewController: UIViewController {
-
+class GetTreatmentViewController: UIViewController {
+    
     @IBOutlet weak var bucketkey: UITextField?
     @IBOutlet weak var splitName: UITextField?
     @IBOutlet weak var matchingKey: UITextField?
@@ -22,25 +22,28 @@ class ViewController: UIViewController {
     
     var factory: SplitFactory?
     var client: SplitClientProtocol?
-
+    
     @IBAction func evaluate(_ sender: Any) {
-        configure()
+        evaluate()
     }
-
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        self.view.addGestureRecognizer(tap)
     }
     
-    func configure() {
-        
-        // Your Split API-KEY
+    @objc func handleTap(){
+        self.view.endEditing(true)
+    }
+    
+    func evaluate() {
+        // Your Split API-KEY - Change in Config.swift file
         let authorizationKey: String = "YOUR_API_KEY"
         
         //Provided keys from UI
@@ -53,26 +56,24 @@ class ViewController: UIViewController {
         config.segmentsRefreshRate(30)
         config.impressionRefreshRate(30)
         config.readyTimeOut(15000)
-
+        
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
-      
+        
         //Split Factory
         self.factory = SplitFactory(apiKey: authorizationKey, key: key, config: config)
         
         //Split Client
         self.client = self.factory?.client()
         
+        //Showing sdk version in UI
+        self.sdkVersion?.text = "SDK Version: \(self.factory?.version() ?? "unknown") "
+        
         let task = MyTaskOnReady(vc:self)
         let taskTimedOut = MyTaskOnReadyTimedOut(vc:self)
         
         self.client?.on(SplitEvent.sdkReady, task)
         self.client?.on(SplitEvent.sdkReadyTimedOut, taskTimedOut)
-        
-        //Showing sdk version in UI
-        self.sdkVersion?.text = "SDK Version: \(self.factory?.version() ?? "unknown") "
-        
-        
     }
     
     func convertToDictionary(text: String) -> [String: Any]? {
@@ -95,4 +96,3 @@ class ViewController: UIViewController {
     }
     
 }
-

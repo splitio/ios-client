@@ -10,9 +10,9 @@ import Foundation
 import Split
 
 class MyTaskOnReady: SplitEventTask {
-    var _vc:ViewController
+    var _vc:GetTreatmentViewController
     
-    public init(vc:ViewController){
+    public init(vc:GetTreatmentViewController){
         _vc = vc
         super.init()
         _vc.isEvaluating(active: true)
