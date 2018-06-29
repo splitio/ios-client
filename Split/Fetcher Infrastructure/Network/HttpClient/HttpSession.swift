@@ -18,10 +18,7 @@ class HttpSession {
     var requestManager: HttpRequestManager
     
     init(configuration: URLSessionConfiguration = URLSessionConfiguration.default) {
-        
-        if #available(iOS 11.0, *) {
-            configuration.waitsForConnectivity = true
-        }
+   
         configuration.httpMaximumConnectionsPerHost = 100
         
         requestManager = HttpRequestManager()
@@ -110,7 +107,6 @@ extension HttpRequestManager: URLSessionDataDelegate {
                     dataTask: URLSessionDataTask,
                     didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void){
-        
         if let request = requests[dataTask.taskIdentifier], let response = response as? HTTPURLResponse {
             request.setResponse(response)
             completionHandler(.allow)

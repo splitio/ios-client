@@ -44,3 +44,20 @@ import Foundation
         self.start(target: target, completion: completion)
     }
 }
+
+extension RestClient {
+    func isServerAvailable(_ url: URL) -> Bool {
+        return self.isServerAvailable(url.absoluteString)
+    }
+    
+    func isServerAvailable(_ url: String) -> Bool {
+        if let reachabilityManager = NetworkReachabilityManager(host: url) {
+            return reachabilityManager.isReachable
+        }
+        return false
+    }
+    
+    func isServerAvailable() -> Bool {
+        return self.isServerAvailable(EnvironmentTargetManager.shared.eventsBaseURL)
+    }
+}

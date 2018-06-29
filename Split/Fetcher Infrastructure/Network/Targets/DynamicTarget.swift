@@ -13,6 +13,7 @@ class DynamicTarget: Target {
         case GetSplitChanges(since: Int64)
         case GetMySegments(user: String)
         case GetImpressions()
+        case SendTrackEvents()
     }
     
     var internalStatus:DynamicTargetStatus
@@ -56,6 +57,8 @@ class DynamicTarget: Target {
             return .get
         case .GetImpressions:
             return .post
+        case .SendTrackEvents:
+            return .post
         }
     }
     
@@ -65,11 +68,15 @@ class DynamicTarget: Target {
             let url = sdkBaseUrl.appendingPathComponent("splitChanges")
             let params = "?since=\(since)"
             return URL(string: params.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!, relativeTo: url)!
+            
         case .GetMySegments(let user):
             return sdkBaseUrl.appendingPathComponent("mySegments").appendingPathComponent(user)
             
         case .GetImpressions():
             return eventsBaseURL.appendingPathComponent("testImpressions").appendingPathComponent("bulk")
+        
+        case .SendTrackEvents():
+            return eventsBaseURL.appendingPathComponent("events").appendingPathComponent("bulk")
           
         }
     }

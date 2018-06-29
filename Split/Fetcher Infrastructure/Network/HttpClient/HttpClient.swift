@@ -57,4 +57,3 @@ enum HttpMethod : String, CustomStringConvertible {
 typealias HttpParameters = [String: Any]
 typealias HttpHeaders = [String: String]
 
-
