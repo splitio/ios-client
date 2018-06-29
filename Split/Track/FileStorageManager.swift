@@ -64,7 +64,6 @@ public class FileStorageManager {
         
         for fileName in fileNames {
             Logger.v(fileName)
-            print("Read file name: \(fileName)")
             if let content = storage.readWithProperties(elementId: fileName) {
                 files[fileName] = content
             }
