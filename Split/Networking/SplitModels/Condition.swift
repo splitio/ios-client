@@ -7,9 +7,8 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-@objc public class Condition: NSObject {
+@objc public class Condition: NSObject, Codable {
     
     public var conditionType: ConditionType?
     public var matcherGroup: MatcherGroup?
@@ -17,13 +16,20 @@ import SwiftyJSON
     public var label: String?
     public var client: SplitClient?
     
-    public init(_ json: JSON) {
-        self.conditionType = ConditionType.enumFromString(string: json["conditionType"].stringValue)
-        self.matcherGroup = MatcherGroup(json["matcherGroup"])
-        self.partitions = json["partitions"].array?.map { (json: JSON) -> Partition in
-            return Partition(json)
+    enum CodingKeys: String, CodingKey {
+        case conditionType
+        case matcherGroup
+        case partitions
+        case label
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        if let values = try? decoder.container(keyedBy: CodingKeys.self) {
+            conditionType = try? values.decode(ConditionType.self, forKey: .conditionType)
+            matcherGroup = try? values.decode(MatcherGroup.self, forKey: .matcherGroup)
+            partitions = try? values.decode([Partition].self, forKey: .partitions)
+            label = try? values.decode(String.self, forKey: .label)
         }
-        self.label = json["label"].string
     }
     
     func match(matchValue: Any?, bucketingKey: String?, attributes: [String:Any]?) throws -> Bool {

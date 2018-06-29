@@ -1,3 +1,7 @@
+0.3.0: (Jun 27, 2018)
+- Removing Alamofire and SwiftyJSON dependencies.
+0.2.1rc1: (May 24, 2018)
+- Adding client dependency to event background task
 0.2.0: (Apr 25, 2018)
 - Events listener has been added. Available events: SplitEvent.sdkReady and SplitEvent.sdkReadyTimedOut
 0.1.5: (Mar 19, 2018)

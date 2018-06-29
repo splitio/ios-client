@@ -25,6 +25,8 @@ public final class SplitClient: NSObject, SplitClientProtocol {
 
     private var _eventsManager: SplitEventsManager
     
+    private var trackEventsManager: TrackManager
+    
     public init(config: SplitClientConfig, key: Key) {
         
         self.config = config
@@ -32,11 +34,18 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         
         _eventsManager = SplitEventsManager(config: config)
         _eventsManager.start()
-        
-        
+
         let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.getFeaturesRefreshRate(), eventsManager: _eventsManager)
         
         let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate(), eventsManager: _eventsManager)
+
+        
+        var trackConfig = TrackManagerConfig()
+        trackConfig.pushRate = config.getEventsPushRate()
+        trackConfig.firstPushWindow = config.getEventsFirstPushWindow()
+        trackConfig.eventsPerPush = config.getEventsPerPush()
+        trackConfig.queueSize = config.getEventsQueueSize()
+        trackEventsManager = TrackManager(config: trackConfig)
         
         self.initialized = false
         
@@ -50,6 +59,8 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
         
         _eventsManager.getExecutorResources().setClient(client: self)
+
+        trackEventsManager.start()
         
         Logger.i("iOS Split SDK initialized!")
     }
@@ -98,7 +109,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         impression.label = label
         impression.changeNumber = changeNumber
         impression.treatment = treatment
-        impression.time = Int64(Date().timeIntervalSince1970 * 1000)
+        impression.time = Date().unixTimestamp()
         ImpressionManager.shared.appendImpressions(impression: impression, splitName: splitName)
     }
     
@@ -164,5 +175,42 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     }
 }
 
-
-
+// MARK: Track Events
+extension SplitClient {
+    
+    public func track(trafficType: String, eventType: String) -> Bool {
+        return track(eventType: eventType, trafficType: trafficType)
+    }
+    
+    public func track(trafficType: String, eventType: String, value: Double) -> Bool {
+        return track(eventType: eventType, trafficType: trafficType, value: value)
+    }
+    
+    public func track(eventType: String) -> Bool {
+        return track(eventType: eventType, trafficType: nil)
+    }
+    
+    public func track(eventType: String, value: Double) -> Bool {
+        return track(eventType: eventType, trafficType: nil, value: value)
+    }
+    
+    private func track(eventType: String, trafficType: String? = nil, value: Double? = nil) -> Bool {
+        
+        var finalTrafficType: String? = nil
+        if let trafficType = trafficType {
+            finalTrafficType = trafficType
+        } else if let trafficType = self.config?.getTrafficType() {
+            finalTrafficType = trafficType
+        } else {
+            return false
+        }
+        
+        let event: EventDTO = EventDTO(trafficType: finalTrafficType!, eventType: eventType)
+        event.key = self.key.matchingKey
+        event.value = value
+        event.timestamp = Date().unixTimestamp()
+        trackEventsManager.appendEvent(event: event)
+        
+        return true
+    }
+}

@@ -7,15 +7,10 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-@objc public class UnaryNumericMatcherData: NSObject {
+@objc public class UnaryNumericMatcherData: NSObject , Codable{
 
     var dataType: DataType?
     var value: Int64?
-    
-    public init(_ json: JSON) {
-        self.dataType = DataType.enumFromString(string: json["dataType"].stringValue)
-        self.value = json["value"].int64
-    }
+  
 }

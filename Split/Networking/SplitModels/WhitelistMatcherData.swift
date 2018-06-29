@@ -7,13 +7,9 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-public class WhitelistMatcherData: NSObject {
+public class WhitelistMatcherData: NSObject, Codable {
 
     var whitelist: [String]?
-    
-    public init(_ json: JSON) {
-        self.whitelist = json["whitelist"].array?.map { $0.stringValue }
-    }
+   
 }

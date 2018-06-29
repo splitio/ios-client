@@ -6,24 +6,23 @@
 //
 
 import Foundation
-import Alamofire
-import SwiftyJSON
-import UIKit
 
 public typealias ImpressionsBulk = [ImpressionsHit]
 
 public class ImpressionManager {
-    
+    private let kImpressionsPrefix: String = "impressions_"
     public var interval: Int
     public var impressionsChunkSize: Int64
     private var featurePollTimer: DispatchSourceTimer?
     public weak var dispatchGroup: DispatchGroup?
     public var impressionStorage: [String:[ImpressionDTO]] = [:]
     private var fileStorage = FileStorage()
-    private var impressionsFileStorage: ImpressionsFileStorage?
+    private var impressionsFileStorage: FileStorageManager?
     public static let EMPTY_JSON: String = "[]"
     private var impressionAccum: Int = 0
-
+    
+    private let restClient = RestClient()
+    
     public static let shared: ImpressionManager = {
         
         let instance = ImpressionManager()
@@ -33,59 +32,42 @@ public class ImpressionManager {
     public init(interval: Int = 10, dispatchGroup: DispatchGroup? = nil, impressionsChunkSize: Int64 = 100) {
         self.interval = interval
         self.dispatchGroup = dispatchGroup
-        self.impressionsFileStorage = ImpressionsFileStorage(storage: self.fileStorage)
+        self.impressionsFileStorage = FileStorageManager(storage: self.fileStorage, filePrefix: kImpressionsPrefix)
         self.impressionsChunkSize = impressionsChunkSize
         subscribeNotifications()
     }
     
     //------------------------------------------------------------------------------------------------------------------
-    public func sendImpressions(fileContent: Data?, fileName: String) {
+    public func sendImpressions(fileContent: String?, fileName: String) {
         
-        let composeRequest = createRequest(content: fileContent, fileName: fileName)
-        let request = composeRequest["request"] as! URLRequest
-        let filename: String = composeRequest["fileName"] as! String
+        guard let fileContent = fileContent else {
+            return
+        }
+        
         var reachable: Bool = true
         
-        if let reachabilityManager = Alamofire.NetworkReachabilityManager(host: "sdk.split.io/api/version") {
-            
+        if let reachabilityManager = NetworkReachabilityManager(host: "sdk.split.io/api/version") {
             if (!reachabilityManager.isReachable)  {
-                
                 reachable = false
-                
             }
-            
         }
         
         if !reachable {
-            
             Logger.v("Saving impressions")
             saveImpressionsToDisk()
-            
         } else {
             
-            Alamofire.request(request).debugCurl().validate(statusCode: 200..<300).response {  [weak self] response in
-                
-                guard let strongSelf = self else {
-                    return
-                }
-                
-                if response.error != nil && reachable {
-                    
-                    strongSelf.impressionsFileStorage?.saveImpressions(fileName: filename)
-                    Logger.e("Impressions error : \(String(describing: response.error))")
-                    
-                    
-                } else {
-                    
+            restClient.sendImpressions(impressions: fileContent, completion: { result in
+                do {
+                    let _ = try result.unwrap()
                     Logger.d("Impressions posted successfully")
-                    strongSelf.cleanImpressions(fileName: filename)
-                    
+                    self.cleanImpressions(fileName: fileName)
+                } catch {
+                    self.impressionsFileStorage?.save(fileName: fileName)
+                    Logger.e("Impressions error : \(String(describing: error))")
                 }
-                
-            }
-            
+            })
         }
-        
     }
     //------------------------------------------------------------------------------------------------------------------
     
@@ -160,45 +142,15 @@ public class ImpressionManager {
     private func cleanImpressions(fileName: String) {
         
         impressionStorage = [:]
-        impressionsFileStorage?.deleteImpressions(fileName: fileName)
+        impressionsFileStorage?.delete(fileName: fileName)
         
     }
     //------------------------------------------------------------------------------------------------------------------
     
     func saveImpressions(json: String) {
         
-        impressionsFileStorage?.saveImpressions(impressions: json)
+        impressionsFileStorage?.save(content: json)
         impressionStorage = [:]
-        
-    }
-    //------------------------------------------------------------------------------------------------------------------
-    
-    func createRequest(content: Data?, fileName: String) -> [String:Any] {
-        
-        // Configure paramaters
-        let url: URL = EnvironmentTargetManager.GetImpressions().url
-        var headers: HTTPHeaders = [:]
-        headers["splitsdkversion"] = Version.toString()
-        headers["authorization"] = "Bearer " + SecureDataStore.shared.getToken()!
-        headers["content-type"] = "application/json"
-        
-        //Create new request
-        var request = URLRequest(url: url)
-        request.httpMethod = HTTPMethod.post.rawValue
-        request.allHTTPHeaderFields = headers
-        
-        
-        //Create json file with impressions
-        let encodedData = content
-        
-        request.httpBody = encodedData
-        
-        var composeRequest : [String:Any] = [:]
-        
-        composeRequest["request"] = request
-        composeRequest["fileName"] = fileName
-        
-        return composeRequest
         
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -249,7 +201,7 @@ public class ImpressionManager {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    
+
     public func appendImpressions(impression: ImpressionDTO, splitName: String) {
         
         var impressionsArray = impressionStorage[splitName]
@@ -303,19 +255,12 @@ public class ImpressionManager {
     
     func sendImpressionsFromFile() {
         
-        if let impressionsFiles = impressionsFileStorage?.readImpressions() {
-            
+        if let fileStorage = impressionsFileStorage {
+            let impressionsFiles = fileStorage.read()
             for fileName in impressionsFiles.keys {
-                
-                let file = impressionsFiles[fileName]
-                
-                let encodedData = file?.data(using: .utf8)
-                
-                sendImpressions(fileContent: encodedData,fileName: fileName)
-                
-                
+                let fileContent = impressionsFiles[fileName]
+                sendImpressions(fileContent: fileContent, fileName: fileName)
             }
-            
         }
         
     }
@@ -329,13 +274,13 @@ public class ImpressionManager {
     func subscribeNotifications() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
-
+        
     }
     //------------------------------------------------------------------------------------------------------------------
     deinit {
         
         NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
-
+        
     }
     //------------------------------------------------------------------------------------------------------------------
 }

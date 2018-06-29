@@ -7,20 +7,22 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-@objc public class MatcherGroup: NSObject {
+@objc public class MatcherGroup: NSObject, Codable {
     
     public var matcherCombiner: MatcherCombiner?
     public var matchers: [Matcher]?
     
-    public init(_ json: JSON) {
-        self.matcherCombiner = MatcherCombiner.enumFromString(string: json["combiner"].stringValue)
-        self.matchers = json["matchers"].array?.map { (json: JSON) -> Matcher in
-            return Matcher(json)
-        }
+    enum CodingKeys: String, CodingKey {
+        case matcherCombiner = "combiner"
+        case matchers
     }
     
-    
+    public required init(from decoder: Decoder) throws {
+        if let values = try? decoder.container(keyedBy: CodingKeys.self) {
+            matcherCombiner = try? values.decode(MatcherCombiner.self, forKey: .matcherCombiner)
+            matchers = try? values.decode([Matcher].self, forKey: .matchers)
+        }
+    }
     
 }
