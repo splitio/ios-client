@@ -6,19 +6,18 @@
 //
 
 import Foundation
-import UIKit
 
 public typealias ImpressionsBulk = [ImpressionsHit]
 
 public class ImpressionManager {
-    
+    private let kImpressionsPrefix: String = "impressions_"
     public var interval: Int
     public var impressionsChunkSize: Int64
     private var featurePollTimer: DispatchSourceTimer?
     public weak var dispatchGroup: DispatchGroup?
     public var impressionStorage: [String:[ImpressionDTO]] = [:]
     private var fileStorage = FileStorage()
-    private var impressionsFileStorage: ImpressionsFileStorage?
+    private var impressionsFileStorage: FileStorageManager?
     public static let EMPTY_JSON: String = "[]"
     private var impressionAccum: Int = 0
     
@@ -33,7 +32,7 @@ public class ImpressionManager {
     public init(interval: Int = 10, dispatchGroup: DispatchGroup? = nil, impressionsChunkSize: Int64 = 100) {
         self.interval = interval
         self.dispatchGroup = dispatchGroup
-        self.impressionsFileStorage = ImpressionsFileStorage(storage: self.fileStorage)
+        self.impressionsFileStorage = FileStorageManager(storage: self.fileStorage, filePrefix: kImpressionsPrefix)
         self.impressionsChunkSize = impressionsChunkSize
         subscribeNotifications()
     }
@@ -64,7 +63,7 @@ public class ImpressionManager {
                     Logger.d("Impressions posted successfully")
                     self.cleanImpressions(fileName: fileName)
                 } catch {
-                    self.impressionsFileStorage?.saveImpressions(fileName: fileName)
+                    self.impressionsFileStorage?.save(fileName: fileName)
                     Logger.e("Impressions error : \(String(describing: error))")
                 }
             })
@@ -143,14 +142,14 @@ public class ImpressionManager {
     private func cleanImpressions(fileName: String) {
         
         impressionStorage = [:]
-        impressionsFileStorage?.deleteImpressions(fileName: fileName)
+        impressionsFileStorage?.delete(fileName: fileName)
         
     }
     //------------------------------------------------------------------------------------------------------------------
     
     func saveImpressions(json: String) {
         
-        impressionsFileStorage?.saveImpressions(impressions: json)
+        impressionsFileStorage?.save(content: json)
         impressionStorage = [:]
         
     }
@@ -256,13 +255,12 @@ public class ImpressionManager {
     
     func sendImpressionsFromFile() {
         
-        if let impressionsFiles = impressionsFileStorage?.readImpressions() {
-            
+        if let fileStorage = impressionsFileStorage {
+            let impressionsFiles = fileStorage.read()
             for fileName in impressionsFiles.keys {
                 let fileContent = impressionsFiles[fileName]
                 sendImpressions(fileContent: fileContent, fileName: fileName)
             }
-            
         }
         
     }

@@ -51,4 +51,14 @@ class EnvironmentTargetManager {
         return target
     }
     
+    public static func SendTrackEvents(events: [EventDTO]) -> Target {
+        let target = DynamicTarget(shared.sdkBaseUrl,
+                                   shared.eventsBaseURL,
+                                   DynamicTarget.DynamicTargetStatus.SendTrackEvents())
+        target.append(value: "application/json", forHttpHeader: "content-type")
+        let jsonEvents = (try? Json.encodeToJson(events)) ?? "[]"
+        target.setBody(json: jsonEvents)
+        
+        return target
+    }
 }
