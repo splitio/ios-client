@@ -6,7 +6,6 @@
 
 
 import Foundation
-import SwiftyJSON
 
 public class  SplitChangeCache: SplitChangeCacheProtocol {
     

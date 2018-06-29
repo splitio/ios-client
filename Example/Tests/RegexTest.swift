@@ -17,7 +17,6 @@
 import Foundation
 import Quick
 import Nimble
-import SwiftyJSON
 
 @testable import Split
 

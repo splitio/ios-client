@@ -7,9 +7,8 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-@objc public class Matcher: NSObject {
+@objc public class Matcher: NSObject, Codable {
     
     var keySelector: KeySelector?
     var matcherType: MatcherType?
@@ -23,18 +22,34 @@ import SwiftyJSON
     var stringMatcherData: String?
     public var client: SplitClient?
     
-    public init(_ json: JSON) {
-        self.keySelector = json["keySelector"] != JSON.null ? KeySelector(json["keySelector"]) : nil
-        self.matcherType = MatcherType.enumFromString(string: json["matcherType"].stringValue)
-        self.negate = json["negate"].boolValue
-        self.userDefinedSegmentMatcherData = json["userDefinedSegmentMatcherData"] != JSON.null ? UserDefinedSegmentMatcherData(json["userDefinedSegmentMatcherData"]) : nil
-        self.whitelistMatcherData = json["whitelistMatcherData"] != JSON.null ? WhitelistMatcherData(json["whitelistMatcherData"]) : nil
-        self.unaryNumericMatcherData = json["unaryNumericMatcherData"] != JSON.null ? UnaryNumericMatcherData(json["unaryNumericMatcherData"]) : nil
-        self.betweenMatcherData = json["betweenMatcherData"] != JSON.null ? BetweenMatcherData(json["betweenMatcherData"]) : nil
-        self.dependencyMatcherData = json["dependencyMatcherData"] != JSON.null ? DependencyMatcherData(json["dependencyMatcherData"]) : nil
-        self.booleanMatcherData = json["booleanMatcherData"] != JSON.null ? json["booleanMatcherData"].boolValue : nil
-        self.stringMatcherData = json["stringMatcherData"] != JSON.null ? json["stringMatcherData"].stringValue : nil
+    enum CodingKeys: String, CodingKey {
+        case keySelector
+        case matcherType
+        case negate
+        case userDefinedSegmentMatcherData
+        case whitelistMatcherData
+        case unaryNumericMatcherData
+        case betweenMatcherData
+        case dependencyMatcherData
+        case booleanMatcherData
+        case stringMatcherData
     }
+
+    public required init(from decoder: Decoder) throws {
+        if let values = try? decoder.container(keyedBy: CodingKeys.self) {
+            keySelector = try? values.decode(KeySelector.self, forKey: .keySelector)
+            matcherType = try? values.decode(MatcherType.self, forKey: .matcherType)
+            negate = (try? values.decode(Bool.self, forKey: .negate)) ?? false
+            userDefinedSegmentMatcherData = try? values.decode(UserDefinedSegmentMatcherData.self, forKey: .userDefinedSegmentMatcherData)
+            whitelistMatcherData = try? values.decode(WhitelistMatcherData.self, forKey: .whitelistMatcherData)
+            unaryNumericMatcherData = try? values.decode(UnaryNumericMatcherData.self, forKey: .unaryNumericMatcherData)
+            betweenMatcherData = try? values.decode(BetweenMatcherData.self, forKey: .betweenMatcherData)
+            dependencyMatcherData = try? values.decode(DependencyMatcherData.self, forKey: .dependencyMatcherData)
+            booleanMatcherData = try? values.decode(Bool.self, forKey: .booleanMatcherData)
+            stringMatcherData = try? values.decode(String.self, forKey: .stringMatcherData)
+        }
+    }
+ 
     //--------------------------------------------------------------------------------------------------
     public func getMatcher() throws -> MatcherProtocol {
         
