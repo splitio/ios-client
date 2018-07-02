@@ -20,7 +20,7 @@ public class SplitClientConfig: NSObject {
     
     private var trafficType: String? = nil
     private var eventsFirstPushWindow: Int = 10
-    private var eventsPushRate: Int = 10
+    private var eventsPushRate: Int = 1800
     private var eventsQueueSize: Int64 = 10000
     private var eventsPerPush: Int = 2000
     

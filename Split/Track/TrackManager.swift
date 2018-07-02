@@ -65,18 +65,29 @@ extension TrackManager {
     func appendEvent(event: EventDTO) {
         currentEventsHit.append(event)
         if currentEventsHit.count == eventsPerPush {
-            let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit)
-            eventsHits[newHit.identifier] = newHit
-            currentEventsHit = [EventDTO]()
+            appendHit()
             if eventsHits.count * eventsPerPush >= eventsQueueSize {
                 sendEvents()
             }
         }
     }
+    
+    func appendHitAndSendAll(){
+        appendHit()
+        sendEvents()
+    }
 }
 
 // MARK: Private
 extension TrackManager {
+    
+    private func appendHit(){
+        if currentEventsHit.count == 0 { return }
+        let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit)
+        eventsHits[newHit.identifier] = newHit
+        currentEventsHit = [EventDTO]()
+    }
+    
     private func createPollingManager(dispatchGroup: DispatchGroup?){
         var config = PollingManagerConfig()
         config.firstPollWindow = self.eventsFirstPushWindow
@@ -85,17 +96,18 @@ extension TrackManager {
         pollingManager = PollingManager(
             dispatchGroup: dispatchGroup,
             config: config,
-            triggerAction: { self.sendEvents() }
+            triggerAction: { self.appendHitAndSendAll() }
         )
     }
-
-    func sendEvents() {
+    
+    private func sendEvents() {
         for (_, eventsHit) in eventsHits {
             sendEvents(eventsHit: eventsHit)
         }
     }
     
     private func sendEvents(eventsHit: EventsHit) {
+        if eventsHits.count == 0 { return }
         if restClient.isServerAvailable() {
             eventsHit.addAttempt()
             restClient.sendTrackEvents(events: eventsHit.events, completion: { result in
@@ -124,23 +136,18 @@ extension TrackManager {
 
         do {
             let json = try Json.encodeToJson(eventsFile)
-            eventsFileStorage?.save(content: json, fileName: kEventsFileName)
+            eventsFileStorage?.save(content: json, as: kEventsFileName)
         } catch {
             Logger.e("Could not save events hits)")
         }
     }
     
     func loadEventsFromDisk(){
-        guard let savedHits = eventsFileStorage?.read() else {
+        guard let hitsJson = eventsFileStorage?.read(fileName: kEventsFileName) else {
             return
         }
-        
-        if savedHits.count == 0 { return }
-        
-        guard let hitsJson = savedHits[kEventsFileName] else {
-            return
-        }
-        
+        if hitsJson.count == 0 { return }
+        eventsFileStorage?.delete(fileName: kEventsFileName)
         do {
             let hitsFile = try Json.encodeFrom(json: hitsJson, to: EventsFile.self)
             eventsHits = hitsFile.oldHits ?? [String: EventsHit]()

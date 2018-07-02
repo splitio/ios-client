@@ -34,6 +34,12 @@ class GetTreatmentViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        self.view.addGestureRecognizer(tap)
+    }
+    
+    @objc func handleTap(){
+        self.view.endEditing(true)
     }
     
     func evaluate() {

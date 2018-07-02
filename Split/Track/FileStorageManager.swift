@@ -54,18 +54,25 @@ public class FileStorageManager {
         }
     }
     
+    func save(content: String, as fileName: String) {
+        storage.write(elementId: fileName, content: content)
+    }
+    
     func read() -> [String:String] {
         var files: [String:String] = [:]
         let fileNames = storedFileNames()
         
         for fileName in fileNames {
             Logger.v(fileName)
-            print("Read file name: \(fileName)")
             if let content = storage.readWithProperties(elementId: fileName) {
                 files[fileName] = content
             }
         }
         return files
+    }
+    
+    func read(fileName: String) -> String? {
+        return storage.readWithProperties(elementId: fileName)
     }
     
     func delete(fileName: String) {
