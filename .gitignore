@@ -27,5 +27,8 @@ changelog.properties
 Pods/
 Podfile.lock
 
+## Carthage
+Carthage/
+
 ## OSX
 .DS_Store
