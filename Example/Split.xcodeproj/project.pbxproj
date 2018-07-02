@@ -180,7 +180,6 @@
 		607FACD21AFB9204008FA782 /* Example for Split */ = {
 			isa = PBXGroup;
 			children = (
-				3BFF3E9120D94A1E00AFE66C /* Track */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				3BFF3E9220D94A9C00AFE66C /* TrackViewController.swift */,
 				607FACD71AFB9204008FA782 /* GetTreatmentViewController.swift */,

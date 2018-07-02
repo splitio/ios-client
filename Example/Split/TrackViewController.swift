@@ -23,11 +23,17 @@ class TrackViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        self.view.addGestureRecognizer(tap)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    @objc func handleTap(){
+        self.view.endEditing(true)
     }
     
     @IBAction func sendEventDidTouch(_ sender: UIButton) {
@@ -41,7 +47,7 @@ class TrackViewController: UIViewController {
         let authorizationKey: String = "YOUR_API_KEY"
         
         //This Key should identify user or installation
-        let matchingKeyText: String = "SAMPLE_KEY_1"
+        let matchingKeyText: String = "SAMPLE_ID_1"
         
         //Split Configuration
         let config = SplitClientConfig()
