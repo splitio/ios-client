@@ -40,7 +40,6 @@
 		3B6DEF2920EA6AE50067435E /* ImpressionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8920EA6AE00067435E /* ImpressionManager.swift */; };
 		3B6DEF2A20EA6AE50067435E /* ImpressionsConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8A20EA6AE00067435E /* ImpressionsConstants.swift */; };
 		3B6DEF2B20EA6AE50067435E /* ImpressionsHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8B20EA6AE00067435E /* ImpressionsHit.swift */; };
-		3B6DEF2C20EA6AE50067435E /* ImpressionsFileStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8D20EA6AE00067435E /* ImpressionsFileStorage.swift */; };
 		3B6DEF2D20EA6AE50067435E /* SplitConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9020EA6AE00067435E /* SplitConstants.swift */; };
 		3B6DEF2E20EA6AE50067435E /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9120EA6AE00067435E /* Engine.swift */; };
 		3B6DEF2F20EA6AE50067435E /* EngineError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9220EA6AE00067435E /* EngineError.swift */; };
@@ -176,7 +175,6 @@
 		3B6DEE8920EA6AE00067435E /* ImpressionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionManager.swift; sourceTree = "<group>"; };
 		3B6DEE8A20EA6AE00067435E /* ImpressionsConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsConstants.swift; sourceTree = "<group>"; };
 		3B6DEE8B20EA6AE00067435E /* ImpressionsHit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsHit.swift; sourceTree = "<group>"; };
-		3B6DEE8D20EA6AE00067435E /* ImpressionsFileStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsFileStorage.swift; sourceTree = "<group>"; };
 		3B6DEE9020EA6AE00067435E /* SplitConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitConstants.swift; sourceTree = "<group>"; };
 		3B6DEE9120EA6AE00067435E /* Engine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
 		3B6DEE9220EA6AE00067435E /* EngineError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EngineError.swift; sourceTree = "<group>"; };
@@ -412,17 +410,8 @@
 				3B6DEE8920EA6AE00067435E /* ImpressionManager.swift */,
 				3B6DEE8A20EA6AE00067435E /* ImpressionsConstants.swift */,
 				3B6DEE8B20EA6AE00067435E /* ImpressionsHit.swift */,
-				3B6DEE8C20EA6AE00067435E /* ImpressionsStorage */,
 			);
 			path = Impressions;
-			sourceTree = "<group>";
-		};
-		3B6DEE8C20EA6AE00067435E /* ImpressionsStorage */ = {
-			isa = PBXGroup;
-			children = (
-				3B6DEE8D20EA6AE00067435E /* ImpressionsFileStorage.swift */,
-			);
-			path = ImpressionsStorage;
 			sourceTree = "<group>";
 		};
 		3B6DEE8E20EA6AE00067435E /* SplitEngine */ = {
@@ -893,7 +882,6 @@
 				3B6DEF7820EA6AE50067435E /* ErrorCode.swift in Sources */,
 				3B6DEF4C20EA6AE50067435E /* SplitBase.swift in Sources */,
 				3B6DEF8220EA6AE50067435E /* DynamicTarget.swift in Sources */,
-				3B6DEF2C20EA6AE50067435E /* ImpressionsFileStorage.swift in Sources */,
 				3B6DEF6F20EA6AE50067435E /* StartWithMatcher.swift in Sources */,
 				3B6DEF6420EA6AE50067435E /* DateTime.swift in Sources */,
 				3B6DEF4720EA6AE50067435E /* MatcherGroup.swift in Sources */,
