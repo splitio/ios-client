@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B4C3DC120EC1D64002A1022 /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B6DEF9320EA818D0067435E /* Split.framework */; };
+		3B4C3DC220EC1D64002A1022 /* Split.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B6DEF9320EA818D0067435E /* Split.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3BFF3E9420D94A9C00AFE66C /* TrackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF3E9220D94A9C00AFE66C /* TrackViewController.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* GetTreatmentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* GetTreatmentViewController.swift */; };
@@ -32,7 +34,6 @@
 		CCF2C9D81FB4A503000A885E /* HashingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2C9D61FB4A503000A885E /* HashingTest.swift */; };
 		D39460CC1F71D09A000396FC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CA1F71D09A000396FC /* Nimble.framework */; };
 		D39460CD1F71D09A000396FC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460CB1F71D09A000396FC /* Quick.framework */; };
-		D39460CE1F71D215000396FC /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39460BB1F71C7F5000396FC /* Split.framework */; };
 		D3C8F0111F8425A200C2632D /* SplitChangeFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C8F00F1F84255F00C2632D /* SplitChangeFetcherTests.swift */; };
 		D3D5C57A1F85DBAD0088529F /* MySegmentsFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D5C5791F85DBAD0088529F /* MySegmentsFetcherTests.swift */; };
 		D3D5C57C1F85DD4A0088529F /* mysegments_1.json in Resources */ = {isa = PBXBuildFile; fileRef = D3D5C57B1F85DD4A0088529F /* mysegments_1.json */; };
@@ -46,6 +47,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3B4C3DC320EC1D64002A1022 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B6DEF8E20EA818D0067435E /* Split.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B6DEE5920EA6A4E0067435E;
+			remoteInfo = Split;
+		};
+		3B6DEF9220EA818D0067435E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B6DEF8E20EA818D0067435E /* Split.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3B6DEE5A20EA6A4E0067435E;
+			remoteInfo = Split;
+		};
 		607FACE61AFB9204008FA782 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 607FACC81AFB9204008FA782 /* Project object */;
@@ -55,8 +70,23 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		3B4C3DC520EC1D64002A1022 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3B4C3DC220EC1D64002A1022 /* Split.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		14946A7643C6298E66BB0478 /* Pods_Split_Example_Split_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Split_Example_Split_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B6DEF8E20EA818D0067435E /* Split.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Split.xcodeproj; path = ../Split.xcodeproj; sourceTree = "<group>"; };
 		3BFF3E9220D94A9C00AFE66C /* TrackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackViewController.swift; sourceTree = "<group>"; };
 		441D254060332D10C49E0F46 /* Pods_Split_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Split_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		58CFD60B6F2902D3FC84E8C7 /* Pods-Split_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Example/Pods-Split_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -114,7 +144,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D39460CE1F71D215000396FC /* Split.framework in Frameworks */,
+				3B4C3DC120EC1D64002A1022 /* Split.framework in Frameworks */,
 				63921D5F780CE4DBD840F0D8 /* Pods_Split_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -132,6 +162,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3B6DEF8F20EA818D0067435E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3B6DEF9320EA818D0067435E /* Split.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
@@ -141,6 +179,7 @@
 				607FACD11AFB9204008FA782 /* Products */,
 				A2947A6D11639E12827D433F /* Pods */,
 				7BE1D07F8D4AB1835B67B615 /* Frameworks */,
+				3B6DEF8E20EA818D0067435E /* Split.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -267,10 +306,12 @@
 				607FACCE1AFB9204008FA782 /* Resources */,
 				BE2F8898579A9CE966ADF6B6 /* [CP] Embed Pods Frameworks */,
 				F9BF18F210DE30522E995FA3 /* [CP] Copy Pods Resources */,
+				3B4C3DC520EC1D64002A1022 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				3B4C3DC420EC1D64002A1022 /* PBXTargetDependency */,
 			);
 			name = Split_Example;
 			productName = Split;
@@ -331,6 +372,12 @@
 			mainGroup = 607FACC71AFB9204008FA782;
 			productRefGroup = 607FACD11AFB9204008FA782 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 3B6DEF8F20EA818D0067435E /* Products */;
+					ProjectRef = 3B6DEF8E20EA818D0067435E /* Split.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				607FACCF1AFB9204008FA782 /* Split_Example */,
@@ -338,6 +385,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		3B6DEF9320EA818D0067435E /* Split.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Split.framework;
+			remoteRef = 3B6DEF9220EA818D0067435E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		607FACCE1AFB9204008FA782 /* Resources */ = {
@@ -414,7 +471,6 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Split_Example-Split_Tests/Pods-Split_Example-Split_Tests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Split/Split.framework",
 				"${BUILT_PRODUCTS_DIR}/Mockingjay/Mockingjay.framework",
 				"${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
@@ -423,7 +479,6 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Split.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mockingjay.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nimble.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
@@ -520,6 +575,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3B4C3DC420EC1D64002A1022 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Split;
+			targetProxy = 3B4C3DC320EC1D64002A1022 /* PBXContainerItemProxy */;
+		};
 		607FACE71AFB9204008FA782 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 607FACCF1AFB9204008FA782 /* Split_Example */;
@@ -638,6 +698,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 664B0712AEA1E445A6CBAA10 /* Pods-Split_Example.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 45J85HU5GF;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -657,6 +718,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 58CFD60B6F2902D3FC84E8C7 /* Pods-Split_Example.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 45J85HU5GF;
 				FRAMEWORK_SEARCH_PATHS = (
