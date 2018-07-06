@@ -91,8 +91,6 @@ class GetTreatmentViewController: UIViewController {
             }
         }
         
-        client.on(SplitEvent.sdkReady,SplitEventTask())
-        
         client.on(event: SplitEvent.sdkReadyTimedOut) {
             [unowned self, unowned client = client] in
             // Main thread stuff
