@@ -23,7 +23,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     let splitImpressionManager = ImpressionManager.shared
     public var shouldSendBucketingKey: Bool = false
 
-    private var _eventsManager: SplitEventsManager
+    private var eventsManager: SplitEventsManager
     
     private var trackEventsManager: TrackManager
     
@@ -32,12 +32,12 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         self.config = config
         self.key = key
         
-        _eventsManager = SplitEventsManager(config: config)
-        _eventsManager.start()
+        eventsManager = SplitEventsManager(config: config)
+        eventsManager.start()
 
-        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.getFeaturesRefreshRate(), eventsManager: _eventsManager)
+        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.getFeaturesRefreshRate(), eventsManager: eventsManager)
         
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate(), eventsManager: _eventsManager)
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate(), eventsManager: eventsManager)
 
         
         var trackConfig = TrackManagerConfig()
@@ -58,15 +58,22 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         self.splitFetcher = refreshableSplitFetcher
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
         
-        _eventsManager.getExecutorResources().setClient(client: self)
+        eventsManager.getExecutorResources().setClient(client: self)
 
         trackEventsManager.start()
         
         Logger.i("iOS Split SDK initialized!")
     }
     
+    @available(iOS, deprecated)
     public func on(_ event:SplitEvent, _ task:SplitEventTask) -> Void {
-        _eventsManager.register(event: event, task: task)
+        Logger.w("SplitClient.on(_:_) -> This method is deprecated")
+        eventsManager.register(event: event, task: task)
+    }
+    
+    public func on(event: SplitEvent, execute action: @escaping SplitAction){
+        let task = SplitEventActionTask(action: action)
+        eventsManager.register(event: event, task: task)
     }
     
     
