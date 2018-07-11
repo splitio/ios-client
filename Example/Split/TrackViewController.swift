@@ -74,19 +74,23 @@ class TrackViewController: UIViewController {
     }
     
     private func sendEvent(){
-                
+        
+        guard let client = self.client else {
+            return
+        }
+        
         if isEmpty(eventTypeField) {
             resultLabel.text = "Event Type should not be empty"
         } else if !isEmpty(valueField) && Double(valueField.text ?? "") == nil {
             resultLabel.text = "Value field is not valid"
         } else if isEmpty(trafficTypeField) && isEmpty(valueField) {
-            showResult(client?.track(eventType: trafficTypeField.text!) ?? false)
+            showResult(client.track(eventType: trafficTypeField.text!))
         } else if isEmpty(trafficTypeField) {
-            showResult(client?.track(eventType: eventTypeField.text!, value: Double(valueField.text!)!) ?? false)
+            showResult(client.track(eventType: eventTypeField.text!, value: Double(valueField.text!)!))
         } else if isEmpty(valueField) {
-            showResult(client?.track(trafficType: trafficTypeField.text!, eventType: eventTypeField.text!) ?? false)
+            showResult(client.track(trafficType: trafficTypeField.text!, eventType: eventTypeField.text!))
         } else {
-            showResult(client?.track(trafficType: trafficTypeField.text!, eventType: eventTypeField.text!, value: Double(valueField.text!)!) ?? false)
+            showResult(client.track(trafficType: trafficTypeField.text!, eventType: eventTypeField.text!, value: Double(valueField.text!)!))
         }
     }
     

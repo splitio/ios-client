@@ -69,11 +69,44 @@ class GetTreatmentViewController: UIViewController {
         //Showing sdk version in UI
         self.sdkVersion?.text = "SDK Version: \(self.factory?.version() ?? "unknown") "
         
-        let task = MyTaskOnReady(vc:self)
-        let taskTimedOut = MyTaskOnReadyTimedOut(vc:self)
+        guard let client = self.client else {
+            return
+        }
         
-        self.client?.on(SplitEvent.sdkReady, task)
-        self.client?.on(SplitEvent.sdkReadyTimedOut, taskTimedOut)
+        self.isEvaluating(active: true)
+        client.on(event: SplitEvent.sdkReady) {
+            [unowned self, unowned client = client] in
+            
+            // Main thread stuff
+            var attributes: [String:Any]?
+            if let json = self.param1?.text {
+                attributes = self.convertToDictionary(text: json)
+            }
+            
+            let treatment = client.getTreatment((self.splitName?.text)!, attributes: attributes)
+            self.treatmentResult?.text = treatment
+            self.isEvaluating(active: false)
+            DispatchQueue.global().async {
+                // Do some async stuff
+            }
+        }
+        
+        client.on(event: SplitEvent.sdkReadyTimedOut) {
+            [unowned self, unowned client = client] in
+            // Main thread stuff
+            var attributes: [String:Any]?
+            if let json = self.param1?.text {
+                attributes = self.convertToDictionary(text: json)
+            }
+            
+            let treatment = client.getTreatment((self.splitName?.text)!, attributes: attributes)
+            self.treatmentResult?.text = treatment
+            self.isEvaluating(active: false)
+            DispatchQueue.global().async {
+                // Do some async stuff
+            }
+        }
+        
     }
     
     func convertToDictionary(text: String) -> [String: Any]? {

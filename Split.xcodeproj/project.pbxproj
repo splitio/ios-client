@@ -137,6 +137,7 @@
 		3B6DEF8B20EA6AE50067435E /* FileStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0920EA6AE40067435E /* FileStorage.swift */; };
 		3B6DEF8C20EA6AE50067435E /* MemoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0A20EA6AE40067435E /* MemoryStorage.swift */; };
 		3B6DEF8D20EA6AE50067435E /* StorageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0B20EA6AE40067435E /* StorageProtocol.swift */; };
+		3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -272,6 +273,7 @@
 		3B6DEF0920EA6AE40067435E /* FileStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileStorage.swift; sourceTree = "<group>"; };
 		3B6DEF0A20EA6AE40067435E /* MemoryStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemoryStorage.swift; sourceTree = "<group>"; };
 		3B6DEF0B20EA6AE40067435E /* StorageProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageProtocol.swift; sourceTree = "<group>"; };
+		3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEventActionTask.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -525,6 +527,7 @@
 				3B6DEEC420EA6AE20067435E /* SplitEvent.swift */,
 				3B6DEEC520EA6AE20067435E /* SplitEventsManager.swift */,
 				3B6DEEC620EA6AE20067435E /* SplitEventTask.swift */,
+				3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */,
 				3B6DEEC720EA6AE20067435E /* SplitInternalEvent.swift */,
 			);
 			path = Events;
@@ -834,6 +837,7 @@
 				3B6DEF8120EA6AE50067435E /* DataResult.swift in Sources */,
 				3B6DEF7F20EA6AE50067435E /* RestClientRequestProtocol.swift in Sources */,
 				3B6DEF1520EA6AE50067435E /* ParsedSplit.swift in Sources */,
+				3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */,
 				3B6DEF5420EA6AE50067435E /* SplitEventExecutorFactory.swift in Sources */,
 				3B6DEF3020EA6AE50067435E /* Evaluator.swift in Sources */,
 				3B6DEF7920EA6AE50067435E /* HttpClient.swift in Sources */,
