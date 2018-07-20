@@ -10,7 +10,7 @@ import Foundation
 public class ImpressionsHit: Codable {
     
     public var testName: String?
-    public var keyImpressions: [ImpressionDTO]?
+    public var keyImpressions: [Impression]?
     
     
     enum CodingKeys: String, CodingKey {

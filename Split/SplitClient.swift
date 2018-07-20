@@ -76,7 +76,6 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         eventsManager.register(event: event, task: task)
     }
     
-    
     public func getTreatment(_ split: String, attributes:[String:Any]? = nil) -> String {
         
         let evaluator: Evaluator = Evaluator.shared
@@ -107,9 +106,9 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     }
     
     
-    func logImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String) {
+    func logImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String, attributes:[String:Any]? = nil) {
         
-        let impression: ImpressionDTO = ImpressionDTO()
+        var impression: Impression = Impression()
         impression.keyName = self.key.matchingKey
         
         impression.bucketingKey = (self.shouldSendBucketingKey) ? self.key.bucketingKey : nil
@@ -118,6 +117,11 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         impression.treatment = treatment
         impression.time = Date().unixTimestamp()
         ImpressionManager.shared.appendImpressions(impression: impression, splitName: splitName)
+        
+        if let externalImpressionHandler = config?.getImpressionListener() {
+            impression.atributtes = attributes
+            externalImpressionHandler(impression)
+        }
     }
     
     

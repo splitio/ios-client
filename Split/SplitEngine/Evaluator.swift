@@ -10,7 +10,7 @@ import Foundation
 public class Evaluator {
     
     //------------------------------------------------------------------------------------------------------------------
-    public var impressions: [ImpressionDTO] 
+    public var impressions: [Impression] 
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
     internal var splitClient: SplitClient?  {
