@@ -16,7 +16,7 @@ public struct Impression: Codable {
     public var changeNumber: Int64?
     public var label: String?
     public var bucketingKey: String?
-    public var atributtes: [String: Any]?
+    public var attributes: [String: Any]?
     
     enum CodingKeys: String, CodingKey {
         case keyName

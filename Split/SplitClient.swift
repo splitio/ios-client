@@ -91,15 +91,15 @@ public final class SplitClient: NSObject, SplitClientProtocol {
             
             if let val = result![Engine.EVALUATION_RESULT_SPLIT_VERSION] {
                 let splitVersion = val as! Int64
-                logImpression(label: label, changeNumber: splitVersion, treatment: treatment, splitName: split)
+                logImpression(label: label, changeNumber: splitVersion, treatment: treatment, splitName: split, attributes: attributes)
             } else {
-                logImpression(label: label, treatment: treatment, splitName: split)
+                logImpression(label: label, treatment: treatment, splitName: split, attributes: attributes)
             }
             
             return treatment
         }
         catch {
-            logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: split)
+            logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: split, attributes: attributes)
             return SplitConstants.CONTROL
         }
         
@@ -119,7 +119,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         ImpressionManager.shared.appendImpressions(impression: impression, splitName: splitName)
         
         if let externalImpressionHandler = config?.getImpressionListener() {
-            impression.atributtes = attributes
+            impression.attributes = attributes
             externalImpressionHandler(impression)
         }
     }
