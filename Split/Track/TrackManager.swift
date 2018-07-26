@@ -23,7 +23,7 @@ class TrackManager {
     private var fileStorage = FileStorage()
     private var eventsFileStorage: FileStorageManager?
     
-    private var currentEventsHit = [EventDTO]()
+    private var currentEventsHit = SynchronizedArrayWrapper<EventDTO>()
     private var eventsHits = [String: EventsHit]()
     
     private let restClient = RestClient()
@@ -83,9 +83,9 @@ extension TrackManager {
     
     private func appendHit(){
         if currentEventsHit.count == 0 { return }
-        let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit)
+        let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit.all)
         eventsHits[newHit.identifier] = newHit
-        currentEventsHit = [EventDTO]()
+        currentEventsHit.removeAll()
     }
     
     private func createPollingManager(dispatchGroup: DispatchGroup?){
@@ -130,7 +130,7 @@ extension TrackManager {
         eventsFile.oldHits = eventsHits
         
         if currentEventsHit.count > 0 {
-            let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit)
+            let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit.all)
             eventsFile.currentHit = newHit
         }
 
@@ -151,7 +151,7 @@ extension TrackManager {
         do {
             let hitsFile = try Json.encodeFrom(json: hitsJson, to: EventsFile.self)
             eventsHits = hitsFile.oldHits ?? [String: EventsHit]()
-            currentEventsHit = hitsFile.currentHit?.events ?? [EventDTO]()
+            currentEventsHit.fill(with: hitsFile.currentHit?.events ?? [EventDTO]())
         } catch {
             Logger.e("Error while loading track events from disk")
             return

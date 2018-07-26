@@ -79,24 +79,60 @@ extension HttpSession: RestClientManagerProtocol {
     }
 }
 
-class HttpRequestManager: NSObject {
+class HttpRequestList {
+    private let queueName = "split.http-request-queue"
+    private var queue: DispatchQueue
+    private var requests: [Int: HttpRequestProtocol]
     
-    var requests = [Int: HttpRequestProtocol]()
-    
-    func addRequest(_ request: HttpRequestProtocol){
-        requests[request.identifier] = request
+    init(){
+        queue = DispatchQueue(label: queueName, attributes: .concurrent)
+        requests = [Int: HttpRequestProtocol]()
     }
     
+    func set(_ request: HttpRequestProtocol) {
+        queue.async(flags: .barrier) {
+            self.requests[request.identifier] = request
+        }
+    }
+    
+    func get(identifier: Int) -> HttpRequestProtocol? {
+        var request: HttpRequestProtocol? = nil
+        queue.sync {
+            request = requests[identifier]
+        }
+        return request
+    }
+    
+    func take(identifier: Int) -> HttpRequestProtocol? {
+        var request: HttpRequestProtocol? = nil
+        queue.sync {
+            request = requests[identifier]
+            if request != nil {
+                queue.async(flags: .barrier) {
+                    self.requests.removeValue(forKey: identifier)
+                }
+            }
+        }
+        return request
+    }
+}
+
+class HttpRequestManager: NSObject {
+    
+    var requests = HttpRequestList()
+    
+    func addRequest(_ request: HttpRequestProtocol){
+        requests.set(request)
+    }
 }
 
 // MARK: HttpRequestManager - URLSessionTaskDelegate
 
 extension HttpRequestManager: URLSessionTaskDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?){
-        if let request = requests[task.taskIdentifier] {
+        if let request = requests.take(identifier: task.taskIdentifier) {
             request.complete(withError: error)
         }
-        requests.removeValue(forKey: task.taskIdentifier)
     }
 }
 
@@ -107,7 +143,7 @@ extension HttpRequestManager: URLSessionDataDelegate {
                     dataTask: URLSessionDataTask,
                     didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void){
-        if let request = requests[dataTask.taskIdentifier], let response = response as? HTTPURLResponse {
+        if let request = requests.get(identifier: dataTask.taskIdentifier), let response = response as? HTTPURLResponse {
             request.setResponse(response)
             completionHandler(.allow)
         } else {
@@ -116,7 +152,7 @@ extension HttpRequestManager: URLSessionDataDelegate {
     }
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        if let request = requests[dataTask.taskIdentifier] as? HttpDataRequestProtocol {
+        if let request = requests.get(identifier: dataTask.taskIdentifier) as? HttpDataRequestProtocol {
             request.appendData(data)
         }
     }
