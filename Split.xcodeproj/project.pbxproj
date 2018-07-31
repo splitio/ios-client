@@ -605,7 +605,6 @@
 				3B6DEEE520EA6AE30067435E /* DataParsing */,
 				3B6DEEE720EA6AE30067435E /* Endpoints */,
 				3B6DEEEC20EA6AE30067435E /* Errors */,
-				3B6DEEEE20EA6AE30067435E /* Extensions */,
 				3B6DEEEF20EA6AE30067435E /* HttpClient */,
 				3B6DEEF420EA6AE30067435E /* NetworkReachabilityManager.swift */,
 				3B6DEEF520EA6AE30067435E /* Protocols */,
@@ -649,13 +648,6 @@
 				3B6DEEED20EA6AE30067435E /* ErrorCode.swift */,
 			);
 			path = Errors;
-			sourceTree = "<group>";
-		};
-		3B6DEEEE20EA6AE30067435E /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		3B6DEEEF20EA6AE30067435E /* HttpClient */ = {
