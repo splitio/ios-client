@@ -15,6 +15,7 @@ public class SecureDataStore {
         case accessToken = "user_auth_token"
     }
     
+    private var token: String? = nil
     
     public static let shared: SecureDataStore = {
         let instance = SecureDataStore();
@@ -27,10 +28,13 @@ public class SecureDataStore {
     
     public func setToken(token: String){
         
+        
         if let token = getToken() {
             Logger.d(token)
             removeToken()
         }
+        
+        self.token = token
         
         guard let valueData = token.data(using: String.Encoding.utf8) else {
             Logger.e("Error saving text to Keychain")
@@ -60,6 +64,10 @@ public class SecureDataStore {
     // MARK: - retrieve access token
     
     public func getToken() -> String? {
+        
+        if let token = self.token {
+            return token
+        }
         
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
