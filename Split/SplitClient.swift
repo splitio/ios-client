@@ -35,7 +35,8 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
 
-        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), storage: splitStorage), splitCache: SplitCache(storage: splitStorage), interval: self.config!.getFeaturesRefreshRate(), eventsManager: eventsManager)
+        let splitCache = SplitCache(storage: splitStorage)
+        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache), splitCache: splitCache, interval: self.config!.getFeaturesRefreshRate(), eventsManager: eventsManager)
         
         let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate(), eventsManager: eventsManager)
 

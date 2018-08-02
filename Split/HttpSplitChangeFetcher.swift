@@ -16,13 +16,11 @@ public enum FecthingPolicy {
 @objc public final class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
     
     private let restClient: RestClient
-    private let storage: StorageProtocol
     private let splitChangeCache: SplitChangeCache?
     
-    public init(restClient: RestClient, storage: StorageProtocol) {
+    public init(restClient: RestClient, splitCache: SplitCacheProtocol) {
         self.restClient = restClient
-        self.storage = storage
-        self.splitChangeCache = SplitChangeCache(storage: storage)
+        self.splitChangeCache = SplitChangeCache(splitCache: splitCache)
     }
     
     public func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
@@ -53,9 +51,7 @@ public enum FecthingPolicy {
             guard let change: SplitChange = try requestResult!.unwrap() else {
                 throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
             }
-
             _ = self.splitChangeCache?.addChange(splitChange: change)
-            
             return change
         }
     }

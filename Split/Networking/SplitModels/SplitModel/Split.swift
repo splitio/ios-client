@@ -22,4 +22,11 @@ import Foundation
     var trafficAllocationSeed: Int?
     var algo: Int?
     
+    var isValid: Bool {
+         return name != nil && seed != nil && killed != nil && defaultTreatment != nil &&
+                conditions != nil && trafficTypeName != nil && changeNumber != nil &&
+                trafficAllocation != nil && trafficAllocationSeed != nil &&
+                algo != nil
+    }
+    
 }
