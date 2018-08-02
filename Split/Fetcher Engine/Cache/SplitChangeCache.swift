@@ -41,22 +41,25 @@ public class  SplitChangeCache: SplitChangeCacheProtocol {
     //------------------------------------------------------------------------------------------------------------------
     public func getChanges(since: Int64) -> SplitChange? {
         
-        let splitChange: SplitChange = SplitChange()
-        
+        guard let splitCache = self.splitCache else {
+            return nil
+        }
+
+        var splitChange: SplitChange? = nil
         _queue.sync {
-            let changeNumber = self.splitCache?.getChangeNumber()
+            let changeNumber = splitCache.getChangeNumber()
+            if changeNumber != -1 {
+                splitChange = SplitChange()
+                splitChange!.since = since
+                splitChange!.till = changeNumber
+                splitChange!.splits = []
             
-            splitChange.since = changeNumber
-            splitChange.till = changeNumber
-            splitChange.splits = []
-            
-            if splitChange.since! == -1  || splitChange.since! < splitChange.till! {
-                splitChange.splits = self.splitCache?.getAllSplits()
+                if since == -1 || since < changeNumber {
+                    splitChange!.splits = splitCache.getAllSplits()
+                }
             }
         }
-        
         return splitChange
-        
     }
     //------------------------------------------------------------------------------------------------------------------
 }
