@@ -9,7 +9,7 @@
 import Foundation
 
 public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
-
+    
     private let restClient: RestClient
     private let storage: StorageProtocol
     private let mySegmentCache: MySegmentsCacheProtocol?
@@ -22,9 +22,15 @@ public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
         
     }
     
-    public func fetch(user: String) throws -> [String] {
+    public func fetch(user: String, policy: FecthingPolicy) throws -> [String] {
         
         var reachable: Bool = true
+        
+        if policy == .cacheOnly {
+            
+            return (self.mySegmentCache?.getSegments(key: user))!
+            
+        }
         
         if let reachabilityManager = NetworkReachabilityManager(host: "sdk.split.io/api/version") {
             

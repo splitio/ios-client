@@ -38,10 +38,14 @@ class DynamicTarget: Target {
         self.sdkBaseUrl = sdkBaseUrl
         self.eventsBaseURL = eventsBaseURL
         
-        self.commonHeaders = [
-            "authorization" : "Bearer " + SecureDataStore.shared.getToken()!,
-            "splitsdkversion" : Version.toString()
-        ]
+        if let token = SecureDataStore.shared.getToken() {
+            self.commonHeaders = [
+                "authorization" : "Bearer " + token,
+                "splitsdkversion" : Version.toString()
+            ]
+        } else {
+            Logger.e("API key is null")
+        }
         
         self.internalStatus = status
         
