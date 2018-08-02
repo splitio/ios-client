@@ -25,29 +25,23 @@ public enum FecthingPolicy {
         self.splitChangeCache = SplitChangeCache(storage: storage)
     }
     
-    public func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange {
+    public func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
         
         var reachable: Bool = true
 
         if policy == .cacheOnly {
-
-            return (self.splitChangeCache?.getChanges(since: -1))!
-
+            return self.splitChangeCache?.getChanges(since: -1)
         }
         
         if let reachabilityManager = NetworkReachabilityManager(host: "sdk.split.io/api/version") {
-            
             if (!reachabilityManager.isReachable)  {
                 reachable = false
             }
         }
         
         if !reachable {
-            
-            return (self.splitChangeCache?.getChanges(since: since))!
-            
+            return self.splitChangeCache?.getChanges(since: since)
         } else {
-
             let semaphore = DispatchSemaphore(value: 0)
             var requestResult: DataResult<SplitChange>?
             restClient.getSplitChanges(since: since) { result in
@@ -59,10 +53,10 @@ public enum FecthingPolicy {
             guard let change: SplitChange = try requestResult!.unwrap() else {
                 throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
             }
+
             _ = self.splitChangeCache?.addChange(splitChange: change)
             
             return change
-            
         }
     }
     
