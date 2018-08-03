@@ -35,11 +35,11 @@ public class FileStorageManager {
                     Logger.d("Failed 3 attempts, deleting Track from cache")
                     delete(fileName: fileName!)
                 } else {
-                    let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-                    let documentDirectory = URL(fileURLWithPath: path)
-                    let originPath = documentDirectory.appendingPathComponent(fileName!)
+                    let path = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
+                    let cachesDirectory = URL(fileURLWithPath: path)
+                    let originPath = cachesDirectory.appendingPathComponent(fileName!)
                     let newFileName = fileComponents[0] + "_" + fileComponents[1] + "_" + attempString
-                    let destinationPath = documentDirectory.appendingPathComponent(newFileName)
+                    let destinationPath = cachesDirectory.appendingPathComponent(newFileName)
                     try FileManager.default.moveItem(at: originPath, to: destinationPath)
                 }
             } catch {
@@ -83,7 +83,7 @@ public class FileStorageManager {
         var splitFileNames: [String] = []
         
         let fileManager = FileManager.default
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let documentsURL = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)[0]
         do {
             
             if let fileURLs = try? fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil) {
