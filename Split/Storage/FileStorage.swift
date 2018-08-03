@@ -17,8 +17,8 @@ public class FileStorage: StorageProtocol {
         
         do {
             
-            let documentDirectory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
-            let fileURL = documentDirectory.appendingPathComponent(elementId)
+            let cachesDirectory = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
+            let fileURL = cachesDirectory.appendingPathComponent(elementId)
             
             return try String(contentsOf: fileURL, encoding: .utf8)
             
@@ -38,14 +38,14 @@ public class FileStorage: StorageProtocol {
         
         do {
             
-            let documentDirectory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
-            let fileURL = documentDirectory.appendingPathComponent(elementId)
+            let cachesDirectory = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
+            let fileURL = cachesDirectory.appendingPathComponent(elementId)
             
             if let data = content {
                 
                 try data.write(to: fileURL, atomically: false, encoding: .utf8)
                
-                let fileURL = documentDirectory.appendingPathComponent(elementId)
+                let fileURL = cachesDirectory.appendingPathComponent(elementId)
                 
                 let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
                 Logger.d(fileContent)
@@ -53,7 +53,7 @@ public class FileStorage: StorageProtocol {
             
         } catch {
             
-            Logger.e(error.localizedDescription)
+            Logger.e("File Storage - write: " + error.localizedDescription)
             
         }
         
@@ -65,14 +65,14 @@ public class FileStorage: StorageProtocol {
             
             let fileManager = FileManager.default
             
-            let documentDirectory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
-            let fileURL = documentDirectory.appendingPathComponent(elementId)
+            let cachesDirectory = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
+            let fileURL = cachesDirectory.appendingPathComponent(elementId)
             
             try fileManager.removeItem(at: fileURL)
             
         }
         catch let error as NSError {
-            Logger.e("An error took place: \(error)")
+            Logger.e("File Storage - delete: " + "An error took place: \(error)")
         }
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ public class FileStorage: StorageProtocol {
         let fileMngr = FileManager.default
         
         // Full path to documents directory
-        let docs = fileMngr.urls(for: .documentDirectory, in: .userDomainMask)[0].path
+        let docs = fileMngr.urls(for: .cachesDirectory, in: .userDomainMask)[0].path
         
         // List all contents of directory and return as [String] OR nil if failed
         return try? fileMngr.contentsOfDirectory(atPath:docs)
@@ -94,9 +94,9 @@ public class FileStorage: StorageProtocol {
         
         do {
             
-            let documentDirectory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
+            let cachesDirectory = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
             
-            let fileURL = documentDirectory.appendingPathComponent(elementId)
+            let fileURL = cachesDirectory.appendingPathComponent(elementId)
             
             let resources = try fileURL.resourceValues(forKeys: [.creationDateKey])
             let creationDate = resources.creationDate!
@@ -115,7 +115,7 @@ public class FileStorage: StorageProtocol {
             
         } catch {
             
-            Logger.e(error.localizedDescription)
+            Logger.e("File Storage - readWithProperties: " + error.localizedDescription)
             
         }
         
