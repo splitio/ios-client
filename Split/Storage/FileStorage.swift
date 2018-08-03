@@ -24,7 +24,8 @@ public class FileStorage: StorageProtocol {
             
         } catch {
             
-            Logger.e(error.localizedDescription)
+            // Logger.e(error.localizedDescription)
+            // TODO: Improve this code. For now it's normal than first time no file is available
             
         }
         
