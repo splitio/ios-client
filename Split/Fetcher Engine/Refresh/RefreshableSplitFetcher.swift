@@ -49,6 +49,8 @@ public final class RefreshableSplitFetcher: SplitFetcher {
                 self._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
                 firstSplitFetchs = false
                 Logger.d("SplitChanges fetched from CACHE successfully")
+            } else {
+                Logger.d("Split CACHE not found")
             }
         } catch {
             Logger.e("Error trying to fetch SplitChanges from CACHE")

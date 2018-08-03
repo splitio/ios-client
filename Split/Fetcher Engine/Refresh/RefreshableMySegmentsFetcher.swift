@@ -49,6 +49,8 @@ import Foundation
                 Logger.d("Segments Changes fetched from CACHE successfully")
                 self._eventsManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreReady)
                 firstMySegmentsFetch = false
+            } else {
+                Logger.d("Segments CACHE not found")
             }
         } catch {
             Logger.e("Error trying to fetch MySegmentsChanges from CACHE")
