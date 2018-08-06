@@ -8,8 +8,12 @@
 
 import Foundation
 
-@objc public protocol MySegmentsChangeFetcher {
-    
-    func fetch(user: String) throws -> [String]
-    
+public protocol MySegmentsChangeFetcher {
+    func fetch(user: String, policy: FecthingPolicy) throws -> [String]?
+}
+
+public extension MySegmentsChangeFetcher {
+    func fetch(user: String, policy: FecthingPolicy = .networkAndCache) throws -> [String]? {
+        return try fetch(user: user, policy: policy)
+    }
 }
