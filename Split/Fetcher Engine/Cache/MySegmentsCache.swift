@@ -35,7 +35,7 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
         storage.delete(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX)
     }
     //------------------------------------------------------------------------------------------------------------------
-    public func getSegments(key: String) -> [String] {
+    public func getSegments(key: String) -> [String]? {
 
         let userDefaults: UserDefaults = UserDefaults.standard
         if let savedKey = userDefaults.string(forKey: "key"), savedKey == key {
@@ -49,14 +49,15 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
             }
         }
         
-        return []
+        return nil
     }
     //------------------------------------------------------------------------------------------------------------------
     public func isInSegment(segmentName: String, key: String) -> Bool {
         
-        let segments = self.getSegments(key:key)
-        return segments.contains(segmentName)
-        
+        if let segments = self.getSegments(key:key) {
+            return segments.contains(segmentName)
+        }
+        return false
     }
     //------------------------------------------------------------------------------------------------------------------
     public func clear() {

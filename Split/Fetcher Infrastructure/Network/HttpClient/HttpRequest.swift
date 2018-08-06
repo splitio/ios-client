@@ -35,7 +35,6 @@ protocol HttpDataRequestProtocol {
 class HttpRequest: HttpRequestProtocol {
     
     var httpSession: HttpSession
-    
     var task: URLSessionTask!
     var request: URLRequest!
     var response: HTTPURLResponse?
@@ -133,9 +132,12 @@ class HttpDataRequest: HttpRequest, HttpDataRequestProtocol {
     {
         
         requestCompletionHandler = {
-            let result = responseSerializer.serializeResponse(self.request, self.response, self.data, self.error)
+            [weak self] in
+            
+            guard let strongSelf = self else { return }
+            let result = responseSerializer.serializeResponse(strongSelf.request, strongSelf.response, strongSelf.data, strongSelf.error)
             let dataResponse = HttpDataResponse<JSON>(
-                request: self.request, response: self.response, data: self.data, result: result
+                request: strongSelf.request, response: strongSelf.response, data: strongSelf.data, result: result
             )
             (queue ?? DispatchQueue.main).async { completionHandler(dataResponse) }
         }

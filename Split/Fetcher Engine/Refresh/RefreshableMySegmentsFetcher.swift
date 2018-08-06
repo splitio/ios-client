@@ -38,10 +38,23 @@ import Foundation
     }
     
     public func fetchAll() -> [String] {
-        return mySegmentsCache.getSegments()
+        return mySegmentsCache.getSegments() ?? []
     }
     
     public func start() {
+        
+        do {
+            let mySegments = try self.mySegmentsChangeFetcher.fetch(user: self.matchingKey, policy: .cacheOnly)
+            if let _ = mySegments {
+                Logger.d("Segments Changes fetched from CACHE successfully")
+                self._eventsManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreReady)
+                firstMySegmentsFetch = false
+            } else {
+                Logger.d("Segments CACHE not found")
+            }
+        } catch {
+            Logger.e("Error trying to fetch MySegmentsChanges from CACHE")
+        }
         startPollingForMySegmentsChanges()
     }
     
