@@ -138,6 +138,7 @@
 		3B6DEF8C20EA6AE50067435E /* MemoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0A20EA6AE40067435E /* MemoryStorage.swift */; };
 		3B6DEF8D20EA6AE50067435E /* StorageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0B20EA6AE40067435E /* StorageProtocol.swift */; };
 		3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */; };
+		5903C497210A5E0900A754B0 /* SynchronizedArrayWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* SynchronizedArrayWrapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -274,6 +275,7 @@
 		3B6DEF0A20EA6AE40067435E /* MemoryStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemoryStorage.swift; sourceTree = "<group>"; };
 		3B6DEF0B20EA6AE40067435E /* StorageProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageProtocol.swift; sourceTree = "<group>"; };
 		3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEventActionTask.swift; sourceTree = "<group>"; };
+		5903C496210A5E0900A754B0 /* SynchronizedArrayWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizedArrayWrapper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -603,7 +605,6 @@
 				3B6DEEE520EA6AE30067435E /* DataParsing */,
 				3B6DEEE720EA6AE30067435E /* Endpoints */,
 				3B6DEEEC20EA6AE30067435E /* Errors */,
-				3B6DEEEE20EA6AE30067435E /* Extensions */,
 				3B6DEEEF20EA6AE30067435E /* HttpClient */,
 				3B6DEEF420EA6AE30067435E /* NetworkReachabilityManager.swift */,
 				3B6DEEF520EA6AE30067435E /* Protocols */,
@@ -647,13 +648,6 @@
 				3B6DEEED20EA6AE30067435E /* ErrorCode.swift */,
 			);
 			path = Errors;
-			sourceTree = "<group>";
-		};
-		3B6DEEEE20EA6AE30067435E /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		3B6DEEEF20EA6AE30067435E /* HttpClient */ = {
@@ -715,6 +709,7 @@
 			isa = PBXGroup;
 			children = (
 				3B6DEF0620EA6AE40067435E /* SynchronizedArrayQueue.swift */,
+				5903C496210A5E0900A754B0 /* SynchronizedArrayWrapper.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -920,6 +915,7 @@
 				3B6DEF2520EA6AE50067435E /* Version.swift in Sources */,
 				3B6DEF5F20EA6AE50067435E /* BaseMatcher.swift in Sources */,
 				3B6DEF1D20EA6AE50067435E /* PollingManager.swift in Sources */,
+				5903C497210A5E0900A754B0 /* SynchronizedArrayWrapper.swift in Sources */,
 				3B6DEF1020EA6AE50067435E /* SplitCache.swift in Sources */,
 				3B6DEF2F20EA6AE50067435E /* EngineError.swift in Sources */,
 				3B6DEF2D20EA6AE50067435E /* SplitConstants.swift in Sources */,
