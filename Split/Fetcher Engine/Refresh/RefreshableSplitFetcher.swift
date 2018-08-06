@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
+public final class RefreshableSplitFetcher: SplitFetcher {
     
     private let splitChangeFetcher: SplitChangeFetcher
     private let interval: Int
@@ -43,15 +43,18 @@ public final class RefreshableSplitFetcher: NSObject, SplitFetcher {
     }
     
     public func start() {
-
-        if let _ = try? self.splitChangeFetcher.fetch(since: -1, policy: .cacheOnly) {
-            Logger.d("SplitChanges fetched from CACHE successfully")
-            self._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
-            firstSplitFetchs = false
-        } else {
+        do {
+            let splitChange = try self.splitChangeFetcher.fetch(since: -1, policy: .cacheOnly)
+            if let _ = splitChange {
+                self._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
+                firstSplitFetchs = false
+                Logger.d("SplitChanges fetched from CACHE successfully")
+            } else {
+                Logger.d("Split CACHE not found")
+            }
+        } catch {
             Logger.e("Error trying to fetch SplitChanges from CACHE")
         }
-
         startPollingForSplitChanges()
     }
     
