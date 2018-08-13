@@ -14,6 +14,8 @@ public protocol MySegmentsCacheProtocol {
     
     func removeSegments()
     
+    func getSegments() -> [String]?
+    
     func getSegments(key: String) -> [String]?
     
     func isInSegment(segmentName: String, key:String) -> Bool
@@ -24,6 +26,7 @@ public protocol MySegmentsCacheProtocol {
 
 public extension MySegmentsCacheProtocol {
 
+    /*
     func addSegments(segmentNames: [String], key: String = "") {
         return addSegments(segmentNames: segmentNames, key: key)
     }
@@ -31,5 +34,5 @@ public extension MySegmentsCacheProtocol {
     func getSegments(key: String = "") -> [String]? {
         return getSegments(key: key)
     }
-
+*/
 }
