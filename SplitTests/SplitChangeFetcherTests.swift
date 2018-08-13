@@ -31,11 +31,7 @@ class SplitChangeFetcherTests: QuickSpec {
                 
                 it("should return a json of type object when server response is a json object") {
                     
-                    //let path = Bundle(for: type(of: self)).path(forResource: "splitchanges_1", ofType: "json")!
-                    //let data = Data(referencing: NSData(contentsOfFile: path)!)
-                    //self.stub(uri("/api/splitChanges"), jsonData(data))
-                    
-                    stub(condition: isHost("/api/splitChanges")) { _ in
+                    stub(condition: isPath("/api/splitChanges")) { _ in
                         let stubPath = OHPathForFile("splitchanges_1.json", type(of: self))
                         return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
                     }
@@ -53,12 +49,7 @@ class SplitChangeFetcherTests: QuickSpec {
                 
                 it("should return a json of type object when server response is a json object with some extra parameters") {
                     
-                    //let path = Bundle(for: type(of: self)).path(forResource: "splitchanges_2", ofType: "json")!
-                    //let data = Data(referencing: NSData(contentsOfFile: path)!)
-                    //self.stub(uri("/api/splitChanges"), jsonData(data))
-                    
-                    
-                    stub(condition: isHost("/api/splitChanges")) { _ in
+                    stub(condition: isPath("/api/splitChanges")) { _ in
                         let stubPath = OHPathForFile("splitchanges_2.json", type(of: self))
                         return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
                     }
@@ -87,12 +78,7 @@ class SplitChangeFetcherTests: QuickSpec {
             context("Fetch SplitChanges With Empty Response") {
                 
                 it("splits, till and since should be nil") {
-                    
-                    //let path = Bundle(for: type(of: self)).path(forResource: "splitchanges_3", ofType: "json")!
-                    //let data = Data(referencing: NSData(contentsOfFile: path)!)
-                    //self.stub(uri("/api/splitChanges"), jsonData(data))
-                    
-                    stub(condition: isHost("/api/splitChanges")) { _ in
+                    stub(condition: isPath("/api/splitChanges")) { _ in
                         let stubPath = OHPathForFile("splitchanges_3.json", type(of: self))
                         return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
                     }
@@ -107,6 +93,10 @@ class SplitChangeFetcherTests: QuickSpec {
                     }
                 }
                 
+            }
+            
+            afterEach {
+                OHHTTPStubs.removeAllStubs()
             }
         }
     }

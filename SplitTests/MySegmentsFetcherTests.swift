@@ -30,11 +30,7 @@ class MySegmentsFetcherTests: QuickSpec {
                 
                 it("should return an array of strings") {
                     
-                    //let path = Bundle(for: type(of: self)).path(forResource: "mysegments_1", ofType: "json")!
-                    //let data = Data(referencing: NSData(contentsOfFile: path)!)
-                    //self.stub(uri("/api/mySegments/{user}"), jsonData(data))
-                    
-                    stub(condition: isPath("/api/mySegments/user")) { _ in
+                    stub(condition: isPath("/api/mySegments/{user}")) { _ in
                         let stubPath = OHPathForFile("mysegments_1.json", type(of: self))
                         return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
                     }
@@ -52,11 +48,7 @@ class MySegmentsFetcherTests: QuickSpec {
                 
                 it("should return an array of two strings: 'test' and 'test1'") {
                     
-                    //let path = Bundle(for: type(of: self)).path(forResource: "mysegments_2", ofType: "json")!
-                    //let data = Data(referencing: NSData(contentsOfFile: path)!)
-                    //self.stub(uri("/api/mySegments/{user}"), jsonData(data))
-                    
-                    stub(condition: isHost("/api/mySegments/{user}")) { _ in
+                    stub(condition: isPath("/api/mySegments/{user}")) { _ in
                         let stubPath = OHPathForFile("mysegments_2.json", type(of: self))
                         return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
                     }
@@ -77,11 +69,7 @@ class MySegmentsFetcherTests: QuickSpec {
                 
                 it("should return an empty array") {
                     
-                    //let path = Bundle(for: type(of: self)).path(forResource: "mysegments_3", ofType: "json")!
-                    //let data = Data(referencing: NSData(contentsOfFile: path)!)
-                    //self.stub(uri("/api/mySegments/{user}"), jsonData(data))
-                    
-                    stub(condition: isHost("/api/mySegments/{user}")) { _ in
+                    stub(condition: isPath("/api/mySegments/{user}")) { _ in
                         let stubPath = OHPathForFile("mysegments_3.json", type(of: self))
                         return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
                     }
@@ -95,6 +83,9 @@ class MySegmentsFetcherTests: QuickSpec {
                 }
             }
             
+            afterEach {
+                OHHTTPStubs.removeAllStubs()
+            }
         }
     }
 }
