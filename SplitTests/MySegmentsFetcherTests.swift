@@ -30,7 +30,7 @@ class MySegmentsFetcherTests: QuickSpec {
                 
                 it("should return an array of strings") {
                     
-                    stub(condition: isPath("/api/mySegments/{user}")) { _ in
+                    stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
                         let stubPath = OHPathForFile("mysegments_1.json", type(of: self))
                         return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
                     }
@@ -48,7 +48,7 @@ class MySegmentsFetcherTests: QuickSpec {
                 
                 it("should return an array of two strings: 'test' and 'test1'") {
                     
-                    stub(condition: isPath("/api/mySegments/{user}")) { _ in
+                    stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
                         let stubPath = OHPathForFile("mysegments_2.json", type(of: self))
                         return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
                     }
@@ -69,7 +69,7 @@ class MySegmentsFetcherTests: QuickSpec {
                 
                 it("should return an empty array") {
                     
-                    stub(condition: isPath("/api/mySegments/{user}")) { _ in
+                    stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
                         let stubPath = OHPathForFile("mysegments_3.json", type(of: self))
                         return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
                     }

@@ -49,7 +49,7 @@ class SplitChangeFetcherTests: QuickSpec {
                 
                 it("should return a json of type object when server response is a json object with some extra parameters") {
                     
-                    stub(condition: isPath("/api/splitChanges")) { _ in
+                    stub(condition: pathMatches("/api/splitChanges")) { _ in
                         let stubPath = OHPathForFile("splitchanges_2.json", type(of: self))
                         return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
                     }
