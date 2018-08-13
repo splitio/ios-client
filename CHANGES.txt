@@ -1,5 +1,5 @@
 1.2.9: (Aug 13, 2018)
-- Added impression listener
+- Adding impression listener
 1.2.8: (Aug 3, 2018)
 - Performance improvements on Cache
 - Concurrency fixes for Cache Loading
