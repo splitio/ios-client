@@ -15,7 +15,7 @@ public class ImpressionManager {
     public var impressionsChunkSize: Int64
     private var featurePollTimer: DispatchSourceTimer?
     public weak var dispatchGroup: DispatchGroup?
-    public var impressionStorage: [String:[ImpressionDTO]] = [:]
+    public var impressionStorage: [String:[Impression]] = [:]
     private var fileStorage = FileStorage()
     private var impressionsFileStorage: FileStorageManager?
     public static let EMPTY_JSON: String = "[]"
@@ -186,7 +186,7 @@ public class ImpressionManager {
     }
     //------------------------------------------------------------------------------------------------------------------
     
-    func sizeOfJsonString(impression: ImpressionDTO) -> Int {
+    func sizeOfJsonString(impression: Impression) -> Int {
         
         let encodedData = try? JSONEncoder().encode(impression)
         
@@ -202,7 +202,7 @@ public class ImpressionManager {
     }
     //------------------------------------------------------------------------------------------------------------------
 
-    public func appendImpressions(impression: ImpressionDTO, splitName: String) {
+    public func appendImpressions(impression: Impression, splitName: String) {
         
         var impressionsArray = impressionStorage[splitName]
         var shouldSaveToDisk = false
