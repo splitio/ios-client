@@ -48,7 +48,7 @@ public enum FecthingPolicy {
             }
             semaphore.wait()
             
-            guard let change: SplitChange = try requestResult!.unwrap() else {
+            guard let change: SplitChange = try requestResult!.unwrap(), change.isValid else {
                 throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
             }
             _ = self.splitChangeCache?.addChange(splitChange: change)
