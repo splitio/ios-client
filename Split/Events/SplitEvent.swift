@@ -17,8 +17,6 @@ public enum SplitEvent {
             return "SDK_READY"
         case .sdkReadyTimedOut:
             return "SDK_READY_TIMED_OUT"
-        default:
-            return "UNKNOWN"
         }
     }
 }
