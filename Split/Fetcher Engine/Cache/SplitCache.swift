@@ -21,19 +21,20 @@ public class SplitCache: SplitCacheProtocol {
         self.storage = storage
         
         var splits: [String:Split] = [:]
-        let names = storage.getAllIds()
-        for name in names! {
-            var split: Split? = nil
-            if let splitString = storage.read(elementId: name) {
-                do {
-                    split = try Json.encodeFrom(json: splitString, to: Split.self)
-                } catch {
-                    // TODO: Improve this code!!!
+        if let names = storage.getAllIds() {
+            for name in names {
+                var split: Split? = nil
+                if let splitString = storage.read(elementId: name) {
+                    do {
+                        split = try Json.encodeFrom(json: splitString, to: Split.self)
+                    } catch {
+                        // TODO: Improve this code!!!
+                    }
                 }
-            }
-            
-            if let split = split, split.isValid {
-                splits[split.name!] = split
+                
+                if let split = split, split.isValid {
+                    splits[split.name!] = split
+                }
             }
         }
         
