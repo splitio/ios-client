@@ -8,8 +8,11 @@
 
 import Foundation
 
+public typealias SplitImpressionListener = (SplitImpression) -> Void
+
 public class SplitClientConfig: NSObject {
     
+    /// - ToDo: Refactor - Declare these properties as public and remove getters and setters
     private var sdkReadyTimeOut: Int = -1
     private var featuresRefreshRate: Int = 3600
     private var impressionRefreshRate: Int = 1800
@@ -23,6 +26,7 @@ public class SplitClientConfig: NSObject {
     private var eventsPushRate: Int = 1800
     private var eventsQueueSize: Int64 = 10000
     private var eventsPerPush: Int = 2000
+    private var impressionListener: SplitImpressionListener?
     
     private var apiKey: String? { return SecureDataStore.shared.getToken() }
     
@@ -105,6 +109,19 @@ public class SplitClientConfig: NSObject {
     
     public func eventsEndpoint(_ u: String) {
         EnvironmentTargetManager.shared.eventsEndpoint(u)
+    }
+    
+    /**
+        The logic to handle an impression log generated during a getTreatment call
+        - Parameters
+            - A closure of type SplitImpressionListener, that means (SplitImpression) -> Void
+     */
+    public func setImpressionListener(_ il: @escaping SplitImpressionListener){
+        impressionListener = il
+    }
+    
+    public func getImpressionListener() -> SplitImpressionListener? {
+        return impressionListener
     }
 }
 
