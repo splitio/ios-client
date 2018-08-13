@@ -18,4 +18,10 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.source_files = 'Split/*.{swift}'
   s.source_files = 'Split/**/*.{swift}'
 
+  s.test_spec 'SplitTests' do |t|
+    t.source_files = 'SplitTests/*.swift'
+    t.dependency 'Nimble', '7.0.2'
+    t.dependency 'Quick', '1.2.0'
+  end
+
 end

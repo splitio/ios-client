@@ -6,7 +6,6 @@
 //
 
 import Foundation
-//import ObjectMapper
 
 public class ImpressionDTO: Codable {
     
@@ -17,7 +16,7 @@ public class ImpressionDTO: Codable {
     public var label: String?
     public var bucketingKey: String?
     
-    
+
     enum CodingKeys: String, CodingKey {
         
         case keyName = "keyName"

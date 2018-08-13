@@ -4,13 +4,12 @@ platform :ios, '11.0'
 
 
 target 'Split_Example' do
-    
+  
   target 'Split_Tests' do
   
     pod 'Quick', '~> 1.2.0'
     pod 'Nimble', '~> 7.0.2'
     pod 'Mockingjay'
-    pod 'ObjectMapper'
 
     post_install do |installer|
         installer.pods_project.targets.each do |target|

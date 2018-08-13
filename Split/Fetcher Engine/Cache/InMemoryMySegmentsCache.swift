@@ -22,7 +22,7 @@ import Foundation
         self.changeNumber = changeNumber
     }
     
-    public func addSegments(segmentNames: [String]) {
+    public func addSegments(segmentNames: [String], key: String = "") {
         var dict = [String : String]()
         for name in segmentNames {
             dict[name] = name
@@ -34,8 +34,12 @@ import Foundation
         self.mySegments.removeAllObjects()
     }
     
-    public func getSegments() -> [String] {
-        return self.mySegments.allKeys as! [String]
+    public func getSegments() -> [String]? {
+        return self.mySegments.allKeys as? [String]
+    }
+    
+    public func getSegments(key: String) -> [String]? {
+        return self.mySegments.allKeys as? [String]
     }
     
     public func isInSegment(segmentName: String, key:String) -> Bool {
