@@ -14,7 +14,7 @@ import Foundation
     let _manager: SplitManagerProtocol
     
     public init(apiKey: String, key: Key, config: SplitClientConfig) {
-        _ = config.apiKey(apiKey)
+        _ = config.apiKey = apiKey
         let client = SplitClient(config: config, key: key)
         _client = client 
         _manager = SplitManager()

@@ -10,14 +10,39 @@ import Foundation
 
 public class SplitClientConfig: NSObject {
     
-    
+    /**
+     How many seconds to wait before triggering a timeout event when the SDK is being initialized. Default: -1 (means no timeout)
+     */
     public var sdkReadyTimeOut: Int = -1
+    
+    /**
+    The SDK will poll Split servers for changes to feature Splits at this rate (in seconds). Default 3600 (1 hour)
+     */
     public var featuresRefreshRate: Int = 3600
+    
+    /**
+     The treatment log captures which customer saw what treatment ("on", "off", etc) at what time. This log is periodically flushed back to Split servers. This configuration controls how quickly does the cache expire after a write (in seconds). Default: 1800 seconds (30 minutes)
+     */
     public var impressionRefreshRate: Int = 1800
+    
+    /**
+     */
     public var impressionsChunkSize: Int64 = 100
+    
+    /**
+     The SDK will poll Split servers for changes to segments at this rate (in seconds). Default: 1800 seconds (30 minutes)
+     */
     public var segmentsRefreshRate: Int = 1800
+    
+    /**
+     Default queue size for impressions. Default: 30K
+     */
     public var impressionsQueueSize: Int = 30000
-    public var connectionTimeout: Int = 15000
+    
+    /**
+     Timeout for HTTP calls in seconds. Default 30 seconds
+     */
+    public var connectionTimeout: Int = 30
     
     /**
      The traffic type associated with the client key. If it’s present, it’s binded to the client instance, exactly as the key. If not, we will expect the traffic type on each .track() call. This is an optional value.
@@ -44,7 +69,9 @@ public class SplitClientConfig: NSObject {
      */
     public var eventsPerPush: Int = 2000
     
-    
+    /**
+     Client API key for company. Get it from Split admin dashboard.
+     */
     public var apiKey: String {
         get {
             return SecureDataStore.shared.getToken() ?? ""

@@ -52,6 +52,7 @@ class GetTreatmentViewController: UIViewController {
         
         //Split Configuration
         let config = SplitClientConfig()
+        
         config.featuresRefreshRate = 30
         config.segmentsRefreshRate = 30
         config.impressionRefreshRate = 30
