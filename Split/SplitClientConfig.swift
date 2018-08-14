@@ -89,6 +89,14 @@ public class SplitClientConfig: NSObject {
     public func verbose(_ v:Bool){
         Logger.shared.verboseLevel(verbose: v)
     }
+    
+    public func sdkEndpoint(_ u: String) {
+        EnvironmentTargetManager.shared.sdkEndpoint(u)
+    }
+    
+    public func eventsEndpoint(_ u: String) {
+        EnvironmentTargetManager.shared.eventsEndpoint(u)
+    }
 }
 
 // MARK: Deprecated methods
@@ -174,16 +182,6 @@ extension SplitClientConfig {
     @available(*, deprecated, renamed: "apiKey", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead")
     public func getApiKey() -> String {
         return self.apiKey
-    }
-    
-    @available(*, deprecated, renamed: "sdkReadyTimeOut", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead")
-    public func sdkEndpoint(_ u: String) {
-        EnvironmentTargetManager.shared.sdkEndpoint(u)
-    }
-    
-    @available(*, deprecated, renamed: "sdkReadyTimeOut", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead")
-    public func eventsEndpoint(_ u: String) {
-        EnvironmentTargetManager.shared.eventsEndpoint(u)
     }
 }
 
