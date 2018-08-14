@@ -66,7 +66,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         Logger.i("iOS Split SDK initialized!")
     }
     
-    @available(iOS, deprecated)
+    @available(iOS, deprecated, message: "This method is deprecated and it will be removed. Please use on(event:execute) instead")
     public func on(_ event:SplitEvent, _ task:SplitEventTask) -> Void {
         Logger.w("SplitClient.on(_:_) -> This method is deprecated and will be removed. Please use on(event:execute) method instead.")
         eventsManager.register(event: event, task: task)
