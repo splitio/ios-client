@@ -20,7 +20,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     internal var dispatchGroup: DispatchGroup?
     var splitStorage = FileAndMemoryStorage()
     var mySegmentStorage = FileAndMemoryStorage()
-    let splitImpressionManager = ImpressionManager.shared
+    let splitImpressionManager: ImpressionManager
     public var shouldSendBucketingKey: Bool = false
 
     private var eventsManager: SplitEventsManager
@@ -31,7 +31,9 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         
         self.config = config
         self.key = key
+        HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
         
+        splitImpressionManager = ImpressionManager.shared
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
 
