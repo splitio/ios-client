@@ -22,7 +22,7 @@ class GetTreatmentViewController: UIViewController {
     
     var factory: SplitFactory?
     var client: SplitClientProtocol?
-    
+
     @IBAction func evaluate(_ sender: Any) {
         evaluate()
     }
@@ -58,6 +58,13 @@ class GetTreatmentViewController: UIViewController {
         config.impressionRefreshRate = 30
         config.sdkReadyTimeOut = 15000
         config.connectionTimeout = 50
+        
+        config.impressionListener = { impression in
+            print("\(impression.keyName ?? "") - \(impression.treatment ?? "") - \(impression.label ?? "")")
+            DispatchQueue.global().async {
+                // Do some async stuff
+            }
+        }
         
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
@@ -108,7 +115,6 @@ class GetTreatmentViewController: UIViewController {
                 // Do some async stuff
             }
         }
-        
     }
     
     func convertToDictionary(text: String) -> [String: Any]? {
@@ -129,5 +135,4 @@ class GetTreatmentViewController: UIViewController {
             self.evaluateActivityIndicator.stopAnimating()
         }
     }
-    
 }
