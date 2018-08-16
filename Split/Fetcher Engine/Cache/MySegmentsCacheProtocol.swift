@@ -23,16 +23,3 @@ public protocol MySegmentsCacheProtocol {
     func clear()
 
 }
-
-public extension MySegmentsCacheProtocol {
-
-    /*
-    func addSegments(segmentNames: [String], key: String = "") {
-        return addSegments(segmentNames: segmentNames, key: key)
-    }
-
-    func getSegments(key: String = "") -> [String]? {
-        return getSegments(key: key)
-    }
-*/
-}
