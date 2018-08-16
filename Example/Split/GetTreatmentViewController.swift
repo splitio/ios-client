@@ -57,6 +57,7 @@ class GetTreatmentViewController: UIViewController {
         config.segmentsRefreshRate = 30
         config.impressionRefreshRate = 30
         config.sdkReadyTimeOut = 15000
+        config.connectionTimeout = 50
         
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)

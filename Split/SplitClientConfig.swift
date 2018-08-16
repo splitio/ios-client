@@ -82,28 +82,61 @@ public class SplitClientConfig: NSObject {
         
     }
     
-    public func debug(_ d:Bool){
-        Logger.shared.debugLevel(debug: d)
+    /**
+     Sdk endpoint URL string.
+     */
+    public var targetSdkEndPoint: String {
+        get {
+            return EnvironmentTargetManager.shared.sdkEndpoint
+        }
+        set {
+            EnvironmentTargetManager.shared.sdkEndpoint = newValue
+        }
     }
     
-    public func verbose(_ v:Bool){
-        Logger.shared.verboseLevel(verbose: v)
+    /**
+     Events endpoint URL string.
+     */
+    public var targetEventsEndPoint: String {
+        get {
+            return EnvironmentTargetManager.shared.eventsEndpoint
+        }
+        set {
+            EnvironmentTargetManager.shared.eventsEndpoint = newValue
+        }
     }
     
-    public func sdkEndpoint(_ u: String) {
-        EnvironmentTargetManager.shared.sdkEndpoint(u)
+    /**
+     Enables debug messages in console
+     */
+    public var isDebugModeEnabled: Bool {
+        get {
+            return Logger.shared.isDebugModeEnabled
+        }
+        set {
+            Logger.shared.isDebugModeEnabled = newValue
+        }
     }
     
-    public func eventsEndpoint(_ u: String) {
-        EnvironmentTargetManager.shared.eventsEndpoint(u)
+    /**
+     Enables verbose mode. All Sdk messages will be logged in console
+     */
+    public var isVerboseModeEnabled: Bool {
+        get {
+            return Logger.shared.isVerboseModeEnabled
+        }
+        set {
+            Logger.shared.isVerboseModeEnabled = newValue
+        }
     }
 }
 
 // MARK: Deprecated methods
-
-// MARK: Event track Settings
+/**
+ All this methods are deprecated and will be removed on next versions. Should use properties instead.
+ */
 extension SplitClientConfig {
-    @available(*, deprecated, renamed: "sdkReadyTimeOut", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead. Please use equivalent propery instead Please use equivalent propery instead")
+    @available(*, deprecated, renamed: "sdkReadyTimeOut", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead.")
     public func readyTimeOut(_ readyInMillis: Int){
         self.sdkReadyTimeOut = readyInMillis
     }
@@ -112,7 +145,6 @@ extension SplitClientConfig {
     public func getReadyTimeOut() -> Int {
         return self.sdkReadyTimeOut
     }
-    
     
     @available(*, deprecated, renamed: "featuresRefreshRate", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead")
     public func featuresRefreshRate(_ rr: Int) {
@@ -183,10 +215,6 @@ extension SplitClientConfig {
     public func getApiKey() -> String {
         return self.apiKey
     }
-}
-
-// MARK: Event track Settings
-extension SplitClientConfig {
     
     @available(*, deprecated, renamed: "trafficType", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead")
     public func trafficType(_ tt: String){
@@ -236,5 +264,25 @@ extension SplitClientConfig {
     @available(*, deprecated, renamed: "eventsPerPush", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead")
     public func getEventsPerPush() -> Int {
         return self.eventsPerPush
+    }
+    
+    @available(*, deprecated, renamed: "isDebugModeEnabled", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead.")
+    public func debug(_ d:Bool){
+        Logger.shared.isDebugModeEnabled = d
+    }
+    
+    @available(*, deprecated, renamed: "isVerboseModeEnabled", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead.")
+    public func verbose(_ v:Bool){
+        Logger.shared.isVerboseModeEnabled = v
+    }
+    
+    @available(*, deprecated, renamed: "sdkEndpoint", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead.")
+    public func sdkEndpoint(_ u: String) {
+        EnvironmentTargetManager.shared.sdkEndpoint = u
+    }
+    
+    @available(*, deprecated, renamed: "eventsEndpoint", message: "This function was deprecated and will be removed in future versions. Please use equivalent propery instead.")
+    public func eventsEndpoint(_ u: String) {
+        EnvironmentTargetManager.shared.eventsEndpoint = u
     }
 }
