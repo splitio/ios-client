@@ -66,6 +66,19 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         Logger.i("iOS Split SDK initialized!")
     }
     
+    func configureImpressionManager() {
+        
+        splitImpressionManager.interval = (self.config?.getImpressionRefreshRate())!
+        
+        splitImpressionManager.impressionsChunkSize = (self.config?.getImpressionsChunkSize())!
+        
+        splitImpressionManager.start()
+ 
+    }
+}
+
+// MARK: Events
+extension SplitClient {
     @available(iOS, deprecated)
     public func on(_ event:SplitEvent, _ task:SplitEventTask) -> Void {
         Logger.w("SplitClient.on(_:_) -> This method is deprecated and will be removed. Please use on(event:execute) method instead.")
@@ -76,36 +89,53 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         let task = SplitEventActionTask(action: action)
         eventsManager.register(event: event, task: task)
     }
-    
+}
+
+// MARK: Treatment / Evaluation
+extension SplitClient {
     public func getTreatment(_ split: String, attributes:[String:Any]? = nil) -> String {
+        return getTreatment(splitName: split, verifyKey: true, attributes: attributes)
+    }
+    
+    public func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String] {
+        
+        var results = [String:String]()
+        self.verifyKey()
+        for splitName in splits {
+            results[splitName] = getTreatment(splitName: splitName, verifyKey: false, attributes: attributes)
+        }
+        
+        return results
+    }
+    
+    private func getTreatment(splitName: String, verifyKey: Bool = true, attributes:[String:Any]? = nil) -> String {
         
         let evaluator: Evaluator = Evaluator.shared
         evaluator.splitClient = self
         do {
+            if verifyKey {
+                self.verifyKey()
+            }
             
-            verifyKey()
-            
-            let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: split, attributes: attributes)
-           
+            let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: splitName, attributes: attributes)
             let label = result![Engine.EVALUATION_RESULT_LABEL] as! String
             let treatment = result![Engine.EVALUATION_RESULT_TREATMENT] as! String
             
             if let val = result![Engine.EVALUATION_RESULT_SPLIT_VERSION] {
                 let splitVersion = val as! Int64
-                logImpression(label: label, changeNumber: splitVersion, treatment: treatment, splitName: split, attributes: attributes)
+                logImpression(label: label, changeNumber: splitVersion, treatment: treatment, splitName: splitName, attributes: attributes)
             } else {
-                logImpression(label: label, treatment: treatment, splitName: split, attributes: attributes)
+                logImpression(label: label, treatment: treatment, splitName: splitName, attributes: attributes)
             }
             
             return treatment
         }
         catch {
-            logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: split, attributes: attributes)
+            logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: splitName, attributes: attributes)
             return SplitConstants.CONTROL
         }
         
     }
-    
     
     func logImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String, attributes:[String:Any]? = nil) {
         
@@ -125,65 +155,20 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         }
     }
     
-    
-    public func getTreatments(splits: [String], atributtes:[String:Any]?) throws ->  [String:String] {
-        
-        let evaluator: Evaluator = Evaluator.shared
-        evaluator.splitClient = self
-        var results: [String:String] = [:]
-        
-        for split in splits {
-            
-            do {
-                
-                verifyKey()
-                
-                let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: split, attributes: atributtes)
-                
-                results[split] = result![Engine.EVALUATION_RESULT_TREATMENT] as? String
-                
-            } catch {
-                
-                results[split] =  SplitConstants.CONTROL
-    
-            }
-            
-        }
-        
-        return results
-    }
-    
     public func verifyKey() {
         
         var composeKey: Key?
-        
         if let bucketKey = self.key.bucketingKey, bucketKey != "" {
-            
             composeKey = Key(matchingKey: self.key.matchingKey , bucketingKey: bucketKey)
             self.shouldSendBucketingKey = true
-
         } else {
-            
             composeKey = Key(matchingKey: self.key.matchingKey, bucketingKey: nil)
             self.shouldSendBucketingKey = false
         }
         
         if let finalKey = composeKey {
-            
             self.key = finalKey
-            
         }
-        
-    }
-
-    func configureImpressionManager() {
-        
-        splitImpressionManager.interval = (self.config?.getImpressionRefreshRate())!
-        
-        splitImpressionManager.impressionsChunkSize = (self.config?.getImpressionsChunkSize())!
-        
-        splitImpressionManager.start()
- 
     }
 }
 

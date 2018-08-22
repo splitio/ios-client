@@ -10,6 +10,7 @@
 		3B4C3DC120EC1D64002A1022 /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B6DEF9320EA818D0067435E /* Split.framework */; };
 		3B4C3DC220EC1D64002A1022 /* Split.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B6DEF9320EA818D0067435E /* Split.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3BFF3E9420D94A9C00AFE66C /* TrackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF3E9220D94A9C00AFE66C /* TrackViewController.swift */; };
+		590DF9AB212C83160082B94F /* GetTreatmentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590DF9AA212C83160082B94F /* GetTreatmentsViewController.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* GetTreatmentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* GetTreatmentViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -88,6 +89,7 @@
 		3BFF3E9220D94A9C00AFE66C /* TrackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackViewController.swift; sourceTree = "<group>"; };
 		441D254060332D10C49E0F46 /* Pods_Split_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Split_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		58CFD60B6F2902D3FC84E8C7 /* Pods-Split_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Split_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Split_Example/Pods-Split_Example.release.xcconfig"; sourceTree = "<group>"; };
+		590DF9AA212C83160082B94F /* GetTreatmentsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetTreatmentsViewController.swift; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* Split_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Split_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				3BFF3E9220D94A9C00AFE66C /* TrackViewController.swift */,
 				607FACD71AFB9204008FA782 /* GetTreatmentViewController.swift */,
+				590DF9AA212C83160082B94F /* GetTreatmentsViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
@@ -493,6 +496,7 @@
 			files = (
 				607FACD81AFB9204008FA782 /* GetTreatmentViewController.swift in Sources */,
 				3BFF3E9420D94A9C00AFE66C /* TrackViewController.swift in Sources */,
+				590DF9AB212C83160082B94F /* GetTreatmentsViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
