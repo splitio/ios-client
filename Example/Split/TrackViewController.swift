@@ -51,17 +51,17 @@ class TrackViewController: UIViewController {
         
         //Split Configuration
         let config = SplitClientConfig()
-        config.featuresRefreshRate(30)
-        config.segmentsRefreshRate(30)
-        config.impressionRefreshRate(30)
-        config.readyTimeOut(15000)
+        config.featuresRefreshRate = 30
+        config.segmentsRefreshRate = 30
+        config.impressionRefreshRate = 30
+        config.sdkReadyTimeOut = 15000
         
         // Track config
-        config.eventsPushRate(10)
-        config.eventsPerPush(2000)
-        config.eventsQueueSize(10000)
-        config.eventsFirstPushWindow(10)
-        config.trafficType("custom")
+        config.eventsPushRate = 10
+        config.eventsPerPush = 2000
+        config.eventsQueueSize = 10000
+        config.eventsFirstPushWindow = 10
+        config.trafficType = "custom"
         
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: nil)

@@ -35,6 +35,10 @@ public class MySegmentsCache: MySegmentsCacheProtocol {
         storage.delete(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX)
     }
     //------------------------------------------------------------------------------------------------------------------
+    public func getSegments() -> [String]? {
+        return getSegments(key: "")
+    }
+    
     public func getSegments(key: String) -> [String]? {
 
         let userDefaults: UserDefaults = UserDefaults.standard
