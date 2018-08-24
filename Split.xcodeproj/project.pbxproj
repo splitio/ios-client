@@ -139,7 +139,59 @@
 		3B6DEF8D20EA6AE50067435E /* StorageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0B20EA6AE40067435E /* StorageProtocol.swift */; };
 		3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */; };
 		5903C497210A5E0900A754B0 /* SynchronizedArrayWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* SynchronizedArrayWrapper.swift */; };
+		590DF99A2125F6910082B94F /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 590DF9972125F6900082B94F /* Quick.framework */; };
+		590DF99B2125F6910082B94F /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 590DF9982125F6910082B94F /* OHHTTPStubs.framework */; };
+		590DF99C2125F6910082B94F /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 590DF9992125F6910082B94F /* Nimble.framework */; };
+		590DF99D2125F6D70082B94F /* Nimble.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 590DF9992125F6910082B94F /* Nimble.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		590DF99E2125F6D70082B94F /* OHHTTPStubs.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 590DF9982125F6910082B94F /* OHHTTPStubs.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		590DF99F2125F6D70082B94F /* Quick.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 590DF9972125F6900082B94F /* Quick.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		592C6AAA211B6C99002D120C /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B6DEE5A20EA6A4E0067435E /* Split.framework */; };
+		592C6ABC211B718E002D120C /* InMemoryMySegmentsCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C6AB1211B718D002D120C /* InMemoryMySegmentsCacheTests.swift */; };
+		592C6ABD211B718E002D120C /* DatesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C6AB2211B718D002D120C /* DatesTests.swift */; };
+		592C6ABE211B718E002D120C /* ArrayBlockingQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C6AB3211B718D002D120C /* ArrayBlockingQueueTest.swift */; };
+		592C6ABF211B718E002D120C /* InMemorySplitCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C6AB4211B718D002D120C /* InMemorySplitCacheTests.swift */; };
+		592C6AC1211B718E002D120C /* HashingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C6AB6211B718D002D120C /* HashingTest.swift */; };
+		592C6AC2211B718E002D120C /* MatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C6AB7211B718E002D120C /* MatcherTest.swift */; };
+		592C6AC3211B718E002D120C /* MySegmentsFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C6AB8211B718E002D120C /* MySegmentsFetcherTests.swift */; };
+		592C6AC4211B718E002D120C /* RegexTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C6AB9211B718E002D120C /* RegexTest.swift */; };
+		592C6AC5211B718E002D120C /* SplitChangeFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C6ABA211B718E002D120C /* SplitChangeFetcherTests.swift */; };
+		592C6AC6211B718E002D120C /* SplitEventsManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C6ABB211B718E002D120C /* SplitEventsManagerTest.swift */; };
+		592C6AE6211CBBB0002D120C /* murmur.csv in Resources */ = {isa = PBXBuildFile; fileRef = 592C6ADC211CBBB0002D120C /* murmur.csv */; };
+		592C6AE7211CBBB0002D120C /* splitchanges_3.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6ADD211CBBB0002D120C /* splitchanges_3.json */; };
+		592C6AE8211CBBB0002D120C /* mysegments_3.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6ADE211CBBB0002D120C /* mysegments_3.json */; };
+		592C6AE9211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 592C6ADF211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv */; };
+		592C6AEA211CBBB0002D120C /* regex.csv in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE0211CBBB0002D120C /* regex.csv */; };
+		592C6AEB211CBBB0002D120C /* murmur3-sample-data-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE1211CBBB0002D120C /* murmur3-sample-data-v2.csv */; };
+		592C6AEC211CBBB0002D120C /* mysegments_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE2211CBBB0002D120C /* mysegments_1.json */; };
+		592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE3211CBBB0002D120C /* splitchanges_2.json */; };
+		592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE4211CBBB0002D120C /* splitchanges_1.json */; };
+		592C6AEF211CBBB0002D120C /* mysegments_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE5211CBBB0002D120C /* mysegments_2.json */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		592C6AAB211B6C99002D120C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B6DEE5920EA6A4E0067435E;
+			remoteInfo = Split;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		592C6AF2211CBED7002D120C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				590DF99D2125F6D70082B94F /* Nimble.framework in CopyFiles */,
+				590DF99E2125F6D70082B94F /* OHHTTPStubs.framework in CopyFiles */,
+				590DF99F2125F6D70082B94F /* Quick.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3B6DEE5A20EA6A4E0067435E /* Split.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Split.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -276,6 +328,32 @@
 		3B6DEF0B20EA6AE40067435E /* StorageProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageProtocol.swift; sourceTree = "<group>"; };
 		3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEventActionTask.swift; sourceTree = "<group>"; };
 		5903C496210A5E0900A754B0 /* SynchronizedArrayWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizedArrayWrapper.swift; sourceTree = "<group>"; };
+		590DF9972125F6900082B94F /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = Carthage/Build/iOS/Quick.framework; sourceTree = "<group>"; };
+		590DF9982125F6910082B94F /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = Carthage/Build/iOS/OHHTTPStubs.framework; sourceTree = "<group>"; };
+		590DF9992125F6910082B94F /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
+		592C6AA5211B6C99002D120C /* SplitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		592C6AA9211B6C99002D120C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		592C6AB0211B718D002D120C /* SplitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SplitTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		592C6AB1211B718D002D120C /* InMemoryMySegmentsCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InMemoryMySegmentsCacheTests.swift; sourceTree = "<group>"; };
+		592C6AB2211B718D002D120C /* DatesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatesTests.swift; sourceTree = "<group>"; };
+		592C6AB3211B718D002D120C /* ArrayBlockingQueueTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayBlockingQueueTest.swift; sourceTree = "<group>"; };
+		592C6AB4211B718D002D120C /* InMemorySplitCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InMemorySplitCacheTests.swift; sourceTree = "<group>"; };
+		592C6AB6211B718D002D120C /* HashingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashingTest.swift; sourceTree = "<group>"; };
+		592C6AB7211B718E002D120C /* MatcherTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MatcherTest.swift; sourceTree = "<group>"; };
+		592C6AB8211B718E002D120C /* MySegmentsFetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentsFetcherTests.swift; sourceTree = "<group>"; };
+		592C6AB9211B718E002D120C /* RegexTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegexTest.swift; sourceTree = "<group>"; };
+		592C6ABA211B718E002D120C /* SplitChangeFetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangeFetcherTests.swift; sourceTree = "<group>"; };
+		592C6ABB211B718E002D120C /* SplitEventsManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEventsManagerTest.swift; sourceTree = "<group>"; };
+		592C6ADC211CBBB0002D120C /* murmur.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = murmur.csv; path = SplitTests/Resources/murmur.csv; sourceTree = SOURCE_ROOT; };
+		592C6ADD211CBBB0002D120C /* splitchanges_3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_3.json; path = SplitTests/Resources/splitchanges_3.json; sourceTree = SOURCE_ROOT; };
+		592C6ADE211CBBB0002D120C /* mysegments_3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mysegments_3.json; path = SplitTests/Resources/mysegments_3.json; sourceTree = SOURCE_ROOT; };
+		592C6ADF211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "murmur3-sample-data-non-alpha-numeric-v2.csv"; path = "SplitTests/Resources/murmur3-sample-data-non-alpha-numeric-v2.csv"; sourceTree = SOURCE_ROOT; };
+		592C6AE0211CBBB0002D120C /* regex.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = regex.csv; path = SplitTests/Resources/regex.csv; sourceTree = SOURCE_ROOT; };
+		592C6AE1211CBBB0002D120C /* murmur3-sample-data-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "murmur3-sample-data-v2.csv"; path = "SplitTests/Resources/murmur3-sample-data-v2.csv"; sourceTree = SOURCE_ROOT; };
+		592C6AE2211CBBB0002D120C /* mysegments_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mysegments_1.json; path = SplitTests/Resources/mysegments_1.json; sourceTree = SOURCE_ROOT; };
+		592C6AE3211CBBB0002D120C /* splitchanges_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_2.json; path = SplitTests/Resources/splitchanges_2.json; sourceTree = SOURCE_ROOT; };
+		592C6AE4211CBBB0002D120C /* splitchanges_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_1.json; path = SplitTests/Resources/splitchanges_1.json; sourceTree = SOURCE_ROOT; };
+		592C6AE5211CBBB0002D120C /* mysegments_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mysegments_2.json; path = SplitTests/Resources/mysegments_2.json; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -286,6 +364,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		592C6AA2211B6C99002D120C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				592C6AAA211B6C99002D120C /* Split.framework in Frameworks */,
+				590DF99A2125F6910082B94F /* Quick.framework in Frameworks */,
+				590DF99B2125F6910082B94F /* OHHTTPStubs.framework in Frameworks */,
+				590DF99C2125F6910082B94F /* Nimble.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -293,7 +382,9 @@
 			isa = PBXGroup;
 			children = (
 				3B6DEE5C20EA6A4E0067435E /* Split */,
+				592C6AA6211B6C99002D120C /* SplitTests */,
 				3B6DEE5B20EA6A4E0067435E /* Products */,
+				590DF9962125F6900082B94F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -301,6 +392,7 @@
 			isa = PBXGroup;
 			children = (
 				3B6DEE5A20EA6A4E0067435E /* Split.framework */,
+				592C6AA5211B6C99002D120C /* SplitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -725,6 +817,61 @@
 			path = Storage;
 			sourceTree = "<group>";
 		};
+		590DF9962125F6900082B94F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				590DF9992125F6910082B94F /* Nimble.framework */,
+				590DF9982125F6910082B94F /* OHHTTPStubs.framework */,
+				590DF9972125F6900082B94F /* Quick.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		592C6AA6211B6C99002D120C /* SplitTests */ = {
+			isa = PBXGroup;
+			children = (
+				592C6AF1211CBD63002D120C /* Supporting Files */,
+				592C6ADB211CBB86002D120C /* Resources */,
+				592C6AB3211B718D002D120C /* ArrayBlockingQueueTest.swift */,
+				592C6AB2211B718D002D120C /* DatesTests.swift */,
+				592C6AB6211B718D002D120C /* HashingTest.swift */,
+				592C6AB1211B718D002D120C /* InMemoryMySegmentsCacheTests.swift */,
+				592C6AB4211B718D002D120C /* InMemorySplitCacheTests.swift */,
+				592C6AB7211B718E002D120C /* MatcherTest.swift */,
+				592C6AB8211B718E002D120C /* MySegmentsFetcherTests.swift */,
+				592C6AB9211B718E002D120C /* RegexTest.swift */,
+				592C6ABA211B718E002D120C /* SplitChangeFetcherTests.swift */,
+				592C6ABB211B718E002D120C /* SplitEventsManagerTest.swift */,
+			);
+			path = SplitTests;
+			sourceTree = "<group>";
+		};
+		592C6ADB211CBB86002D120C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				592C6ADC211CBBB0002D120C /* murmur.csv */,
+				592C6ADF211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv */,
+				592C6AE1211CBBB0002D120C /* murmur3-sample-data-v2.csv */,
+				592C6AE2211CBBB0002D120C /* mysegments_1.json */,
+				592C6AE5211CBBB0002D120C /* mysegments_2.json */,
+				592C6ADE211CBBB0002D120C /* mysegments_3.json */,
+				592C6AE0211CBBB0002D120C /* regex.csv */,
+				592C6AE4211CBBB0002D120C /* splitchanges_1.json */,
+				592C6AE3211CBBB0002D120C /* splitchanges_2.json */,
+				592C6ADD211CBBB0002D120C /* splitchanges_3.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		592C6AF1211CBD63002D120C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				592C6AA9211B6C99002D120C /* Info.plist */,
+				592C6AB0211B718D002D120C /* SplitTests-Bridging-Header.h */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -757,18 +904,43 @@
 			productReference = 3B6DEE5A20EA6A4E0067435E /* Split.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		592C6AA4211B6C99002D120C /* SplitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 592C6AAF211B6C99002D120C /* Build configuration list for PBXNativeTarget "SplitTests" */;
+			buildPhases = (
+				592C6AA1211B6C99002D120C /* Sources */,
+				592C6AA2211B6C99002D120C /* Frameworks */,
+				592C6AA3211B6C99002D120C /* Resources */,
+				592C6AF2211CBED7002D120C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				592C6AAC211B6C99002D120C /* PBXTargetDependency */,
+			);
+			name = SplitTests;
+			productName = SplitTests;
+			productReference = 592C6AA5211B6C99002D120C /* SplitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		3B6DEE5120EA6A4D0067435E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0940;
 				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = Split;
 				TargetAttributes = {
 					3B6DEE5920EA6A4E0067435E = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 0920;
+						ProvisioningStyle = Automatic;
+					};
+					592C6AA4211B6C99002D120C = {
+						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 0940;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -786,6 +958,7 @@
 			projectRoot = "";
 			targets = (
 				3B6DEE5920EA6A4E0067435E /* Split */,
+				592C6AA4211B6C99002D120C /* SplitTests */,
 			);
 		};
 /* End PBXProject section */
@@ -796,6 +969,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B6DEF5C20EA6AE50067435E /* .gitkeep in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		592C6AA3211B6C99002D120C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				592C6AE6211CBBB0002D120C /* murmur.csv in Resources */,
+				592C6AE9211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
+				592C6AE7211CBBB0002D120C /* splitchanges_3.json in Resources */,
+				592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */,
+				592C6AEA211CBBB0002D120C /* regex.csv in Resources */,
+				592C6AEF211CBBB0002D120C /* mysegments_2.json in Resources */,
+				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
+				592C6AEC211CBBB0002D120C /* mysegments_1.json in Resources */,
+				592C6AE8211CBBB0002D120C /* mysegments_3.json in Resources */,
+				592C6AEB211CBBB0002D120C /* murmur3-sample-data-v2.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -939,7 +1129,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		592C6AA1211B6C99002D120C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				592C6AC5211B718E002D120C /* SplitChangeFetcherTests.swift in Sources */,
+				592C6AC6211B718E002D120C /* SplitEventsManagerTest.swift in Sources */,
+				592C6ABC211B718E002D120C /* InMemoryMySegmentsCacheTests.swift in Sources */,
+				592C6ABD211B718E002D120C /* DatesTests.swift in Sources */,
+				592C6AC2211B718E002D120C /* MatcherTest.swift in Sources */,
+				592C6ABE211B718E002D120C /* ArrayBlockingQueueTest.swift in Sources */,
+				592C6AC3211B718E002D120C /* MySegmentsFetcherTests.swift in Sources */,
+				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
+				592C6ABF211B718E002D120C /* InMemorySplitCacheTests.swift in Sources */,
+				592C6AC1211B718E002D120C /* HashingTest.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		592C6AAC211B6C99002D120C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3B6DEE5920EA6A4E0067435E /* Split */;
+			targetProxy = 592C6AAB211B6C99002D120C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3B6DEE6020EA6A4E0067435E /* Debug */ = {
@@ -1098,6 +1313,55 @@
 			};
 			name = Release;
 		};
+		592C6AAD211B6C99002D120C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = SplitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SplitTests/SplitTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		592C6AAE211B6C99002D120C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = SplitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SplitTests/SplitTests-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1115,6 +1379,15 @@
 			buildConfigurations = (
 				3B6DEE6320EA6A4E0067435E /* Debug */,
 				3B6DEE6420EA6A4E0067435E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		592C6AAF211B6C99002D120C /* Build configuration list for PBXNativeTarget "SplitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				592C6AAD211B6C99002D120C /* Debug */,
+				592C6AAE211B6C99002D120C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

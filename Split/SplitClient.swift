@@ -20,7 +20,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     internal var dispatchGroup: DispatchGroup?
     var splitStorage = FileAndMemoryStorage()
     var mySegmentStorage = FileAndMemoryStorage()
-    let splitImpressionManager = ImpressionManager.shared
+    let splitImpressionManager: ImpressionManager
     public var shouldSendBucketingKey: Bool = false
 
     private var eventsManager: SplitEventsManager
@@ -31,21 +31,23 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         
         self.config = config
         self.key = key
+        HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
         
+        splitImpressionManager = ImpressionManager.shared
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
 
         let splitCache = SplitCache(storage: splitStorage)
-        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache), splitCache: splitCache, interval: self.config!.getFeaturesRefreshRate(), eventsManager: eventsManager)
+        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache), splitCache: splitCache, interval: self.config!.featuresRefreshRate, eventsManager: eventsManager)
         
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.getSegmentsRefreshRate(), eventsManager: eventsManager)
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.segmentsRefreshRate, eventsManager: eventsManager)
 
         
         var trackConfig = TrackManagerConfig()
-        trackConfig.pushRate = config.getEventsPushRate()
-        trackConfig.firstPushWindow = config.getEventsFirstPushWindow()
-        trackConfig.eventsPerPush = config.getEventsPerPush()
-        trackConfig.queueSize = config.getEventsQueueSize()
+        trackConfig.pushRate = config.eventsPushRate
+        trackConfig.firstPushWindow = config.eventsFirstPushWindow
+        trackConfig.eventsPerPush = config.eventsPerPush
+        trackConfig.queueSize = config.eventsQueueSize
         trackEventsManager = TrackManager(config: trackConfig)
         
         self.initialized = false
@@ -66,7 +68,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         Logger.i("iOS Split SDK initialized!")
     }
     
-    @available(iOS, deprecated)
+    @available(iOS, deprecated, message: "This method is deprecated and it will be removed. Please use on(event:execute) instead")
     public func on(_ event:SplitEvent, _ task:SplitEventTask) -> Void {
         Logger.w("SplitClient.on(_:_) -> This method is deprecated and will be removed. Please use on(event:execute) method instead.")
         eventsManager.register(event: event, task: task)
@@ -119,7 +121,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         impression.time = Date().unixTimestamp()
         ImpressionManager.shared.appendImpressions(impression: impression, splitName: splitName)
         
-        if let externalImpressionHandler = config?.getImpressionListener() {
+        if let externalImpressionHandler = config?.impressionListener {
             impression.attributes = attributes
             externalImpressionHandler(impression)
         }
@@ -178,9 +180,9 @@ public final class SplitClient: NSObject, SplitClientProtocol {
 
     func configureImpressionManager() {
         
-        splitImpressionManager.interval = (self.config?.getImpressionRefreshRate())!
+        splitImpressionManager.interval = (self.config?.impressionRefreshRate)!
         
-        splitImpressionManager.impressionsChunkSize = (self.config?.getImpressionsChunkSize())!
+        splitImpressionManager.impressionsChunkSize = (self.config?.impressionsChunkSize)!
         
         splitImpressionManager.start()
  
@@ -211,7 +213,7 @@ extension SplitClient {
         var finalTrafficType: String? = nil
         if let trafficType = trafficType {
             finalTrafficType = trafficType
-        } else if let trafficType = self.config?.getTrafficType() {
+        } else if let trafficType = self.config?.trafficType {
             finalTrafficType = trafficType
         } else {
             return false

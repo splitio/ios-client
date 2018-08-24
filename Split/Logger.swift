@@ -9,6 +9,13 @@ import Foundation
 
 class Logger {
     
+    private let queueName = "split.logger-queue"
+    private var queue: DispatchQueue
+    private let TAG:String = "SplitSDK"
+    
+    private var isVerboseEnabled = false
+    private var isDebugEnabled = false
+    
     enum Level : String {
         case VERBOSE="VERBOSE"
         case DEBUG="DEBUG"
@@ -17,13 +24,35 @@ class Logger {
         case ERROR="ERROR"
     }
     
-    private let locker: NSLock = NSLock()
+    var isVerboseModeEnabled: Bool {
+        set {
+            queue.async(flags: .barrier) {
+                self.isVerboseEnabled = newValue
+            }
+        }
+        get {
+            var isEnabled = false
+            queue.sync {
+                isEnabled = self.isVerboseEnabled
+            }
+            return isEnabled
+        }
+    }
     
-    private let TAG:String = "SplitSDK";
-    
-    private var _verboseOn:Bool = false;
-    
-    private var _debugOn:Bool = false;
+    var isDebugModeEnabled: Bool {
+        set {
+            queue.async(flags: .barrier) {
+                self.isDebugEnabled = newValue
+            }
+        }
+        get {
+            var isEnabled = false
+            queue.sync {
+                isEnabled = self.isDebugEnabled
+            }
+            return isEnabled
+        }
+    }
     
     static let shared: Logger = {
         let instance = Logger()
@@ -31,27 +60,17 @@ class Logger {
     }()
     
     //Guarantee singleton instance
-    private init(){}
-    
-    public func verboseLevel(verbose:Bool){
-        self.locker.lock()
-        _verboseOn = verbose
-        self.locker.unlock()
-    }
-    
-    public func debugLevel(debug:Bool){
-        self.locker.lock()
-        _debugOn = debug
-        self.locker.unlock()
+    private init(){
+        queue = DispatchQueue(label: queueName, attributes: .concurrent)
     }
     
     private func log(level:Logger.Level, msg:String, _ ctx:Any ...){
         
-        if(!_debugOn && level == Logger.Level.DEBUG){
+        if(!isDebugModeEnabled && level == Logger.Level.DEBUG){
             return
         }
         
-        if(!_verboseOn && level == Logger.Level.VERBOSE){
+        if(!isVerboseModeEnabled && level == Logger.Level.VERBOSE){
             return
         }
         

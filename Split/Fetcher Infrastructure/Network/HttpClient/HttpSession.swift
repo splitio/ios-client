@@ -8,6 +8,13 @@ import Foundation
 
 // MARK: HttpSession
 
+class HttpSessionConfig {
+    static let  `default`: HttpSessionConfig = {
+        return HttpSessionConfig()
+    }()
+    var connectionTimeOut: TimeInterval = 30
+}
+
 class HttpSession {
     
     static let shared: HttpSession = {
@@ -17,12 +24,16 @@ class HttpSession {
     var urlSession: URLSession
     var requestManager: HttpRequestManager
     
-    init(configuration: URLSessionConfiguration = URLSessionConfiguration.default) {
+    init(configuration: HttpSessionConfig = HttpSessionConfig.default) {
    
-        configuration.httpMaximumConnectionsPerHost = 100
+        let urlSessionConfig = URLSessionConfiguration.default
+        
+        urlSessionConfig.timeoutIntervalForResource = configuration.connectionTimeOut
+        urlSessionConfig.timeoutIntervalForRequest = configuration.connectionTimeOut
+        urlSessionConfig.httpMaximumConnectionsPerHost = 100
         
         requestManager = HttpRequestManager()
-        urlSession = URLSession(configuration: configuration,
+        urlSession = URLSession(configuration: urlSessionConfig,
                                 delegate: requestManager, delegateQueue: nil)
     }
     
