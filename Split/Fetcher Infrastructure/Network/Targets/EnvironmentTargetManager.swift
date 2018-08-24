@@ -8,9 +8,29 @@
 import Foundation
 
 class EnvironmentTargetManager {
+    private let kDefaultSdkBaseUrl = "https://sdk.split.io/api"
+    private let kDefaultEventsBaseUrl = "https://events.split.io/api"
     
-    var sdkBaseUrl: URL = URL(string:"https://sdk.split.io/api")!
-    var eventsBaseURL: URL = URL(string:"https://events.split.io/api")!
+    var sdkBaseUrl: URL
+    var eventsBaseURL: URL
+    
+    var eventsEndpoint: String {
+        get {
+            return eventsBaseURL.absoluteString
+        }
+        set {
+            self.eventsBaseURL = URL(string:newValue) ?? URL(string:kDefaultEventsBaseUrl)!
+        }
+    }
+    
+    var sdkEndpoint: String {
+        get {
+            return sdkBaseUrl.absoluteString
+        }
+        set {
+            self.sdkBaseUrl = URL(string:newValue) ?? URL(string:kDefaultSdkBaseUrl)!
+        }
+    }
     
     static let shared: EnvironmentTargetManager = {
         let instance = EnvironmentTargetManager()
@@ -18,14 +38,9 @@ class EnvironmentTargetManager {
     }()
     
     //Guarantee singleton instance
-    private init(){}
-    
-    public func sdkEndpoint(_ url: String) {
-        self.sdkBaseUrl = URL(string:url)!
-    }
-    
-    public func eventsEndpoint(_ url: String) {
-        self.eventsBaseURL = URL(string:url)!
+    private init(){
+        sdkBaseUrl = URL(string:kDefaultSdkBaseUrl)!
+        eventsBaseURL = URL(string:kDefaultEventsBaseUrl)!
     }
     
     public static func GetSplitChanges(since: Int64) -> Target {

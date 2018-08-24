@@ -9,7 +9,7 @@ import Foundation
 public typealias SplitImpression = Impression
 
 public struct Impression: Codable {
-    
+
     public var keyName: String?
     public var treatment: String?
     public var time: Int64?
@@ -17,7 +17,7 @@ public struct Impression: Codable {
     public var label: String?
     public var bucketingKey: String?
     public var attributes: [String: Any]?
-    
+
     enum CodingKeys: String, CodingKey {
         case keyName
         case treatment
