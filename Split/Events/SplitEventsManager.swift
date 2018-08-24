@@ -30,9 +30,9 @@ public class SplitEventsManager {
         _executionTimes = [String: Int]()
         registerMaxAllowebExecutionTimesPerEvent()
         
-        if config.getReadyTimeOut() > 0 {
+        if config.sdkReadyTimeOut > 0 {
             let readyTimedoutQueue = DispatchQueue(label: "io.Split.Event.TimedOut")
-            readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.getReadyTimeOut()), execute: {
+            readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.sdkReadyTimeOut), execute: {
                 self.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
             })
         }
