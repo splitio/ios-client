@@ -27,7 +27,7 @@ class InMemoryMySegmentsCacheTests: QuickSpec {
                     
                     let segments = mySegmentsCache.getSegments(key: "some_user_key")
                     expect(segments).toNot(beNil())
-                    expect(segments.count).to(equal(3))
+                    expect(segments?.count).to(equal(3))
                 }
                 
             }
