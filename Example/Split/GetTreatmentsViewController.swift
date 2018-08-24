@@ -52,18 +52,10 @@ class GetTreatmentsViewController: UIViewController {
         
         //Split Configuration
         let config = SplitClientConfig()
-        config.featuresRefreshRate(30)
-        config.segmentsRefreshRate(30)
-        config.impressionRefreshRate(30)
-        config.readyTimeOut(15000)
-
-        
-        config.setImpressionListener() { impression in
-            print("\(impression.keyName ?? "") - \(impression.treatment ?? "") - \(impression.label ?? "")")
-            DispatchQueue.global().async {
-                // Do some async stuff
-            }
-        }
+        config.featuresRefreshRate = 30
+        config.segmentsRefreshRate = 30
+        config.impressionRefreshRate = 30
+        config.sdkReadyTimeOut = 15000
         
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
