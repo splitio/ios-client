@@ -13,7 +13,7 @@ class InfoUtils {
     static func bundleNameKey() -> String {
         guard let info = Bundle.main.infoDictionary,
             let domain = info[kCFBundleNameKey as String] as? String else {
-                fatalError("Cannot get bundle name key from Info.plist")
+                return "Unknown"
         }
         return domain;
     }

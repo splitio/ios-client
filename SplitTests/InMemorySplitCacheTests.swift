@@ -24,17 +24,15 @@ class InMemorySplitCacheTests: QuickSpec {
                 
                 it("should return a Split with the same values as it was saved") {
                     
-                    let split1 = Split(JSON(""))
-                    split1.name = "test"
-                    split1.status = Status.Active
-                    splitCache.addSplit(splitName: split1.name!, split: split1)
+                    let jsonSplit = "{\"name\":\"test\", \"status\":\"active\"}"
+                    let split1 = try? JSON.encodeFrom(json: jsonSplit, to: Split.self)
+                    _  = splitCache.addSplit(splitName: split1!.name!, split: split1!)
 
-                    let split2 = Split(JSON(""))
-                    split2.name = "test2"
-                    split2.status = Status.Archived
-                    splitCache.addSplit(splitName: split2.name!, split: split2)
+                    let jsonSplit2 = "{\"name\":\"test2\", \"status\":\"archived\"}"
+                    let split2 = try? JSON.encodeFrom(json: jsonSplit2, to: Split.self)
+                    _  = splitCache.addSplit(splitName: split2!.name!, split: split2!)
 
-                    let cachedSplit = splitCache.getSplit(splitName: "test") as? Split
+                    let cachedSplit = splitCache.getSplit(splitName: "test")
                     expect(cachedSplit).toNot(beNil())
                     expect(cachedSplit!.name!).to(equal("test"))
                     expect(cachedSplit!.status).to(equal(Status.Active))
@@ -50,15 +48,15 @@ class InMemorySplitCacheTests: QuickSpec {
                     let allCachedSplits = splitCache.getAllSplits()
                     expect(allCachedSplits).toNot(beNil())
                     expect(allCachedSplits.count).to(equal(2))
-                    expect(allCachedSplits[0] as? Split).toNot(beNil())
+                    expect(allCachedSplits[0]).toNot(beNil())
                 }
             }
             
             context("Test Remove One Split") {
                 
                 it("getSplit should return nil when getting a removed split") {
-                    splitCache.removeSplit(splitName: "test")
-                    let removedSplit = splitCache.getSplit(splitName: "test") as? Split
+                    _ = splitCache.removeSplit(splitName: "test")
+                    let removedSplit = splitCache.getSplit(splitName: "test")
                     expect(removedSplit).to(beNil())
                 }
             }

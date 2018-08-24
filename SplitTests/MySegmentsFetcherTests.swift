@@ -9,7 +9,7 @@
 import Foundation
 import Quick
 import Nimble
-import Mockingjay
+import OHHTTPStubs
 
 @testable import Split
 
@@ -30,33 +30,37 @@ class MySegmentsFetcherTests: QuickSpec {
                 
                 it("should return an array of strings") {
                     
-                    let path = Bundle(for: type(of: self)).path(forResource: "mysegments_1", ofType: "json")!
-                    let data = Data(referencing: NSData(contentsOfFile: path)!)
-                    self.stub(uri("/api/mySegments/{user}"), jsonData(data))
+                    stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
+                        let stubPath = OHPathForFile("mysegments_1.json", type(of: self))
+                        return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
+                    }
                     
                     let response = try? mySegmentsFetcher.fetch(user: "test")
-                    
                     expect(response).toEventuallyNot(beNil())
-                    expect(response!.count).to(beGreaterThan(0))
-                    expect(response![0]).to(equal("splitters"))
+                    if let response = response {
+                        expect(response!.count).to(beGreaterThan(0))
+                        expect(response![0]).to(equal("splitters"))
+                    }
                 }
-                
             }
             
             context("Test MySegments With a Json with Renamed Parameters") {
                 
                 it("should return an array of two strings: 'test' and 'test1'") {
                     
-                    let path = Bundle(for: type(of: self)).path(forResource: "mysegments_2", ofType: "json")!
-                    let data = Data(referencing: NSData(contentsOfFile: path)!)
-                    self.stub(uri("/api/mySegments/{user}"), jsonData(data))
+                    stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
+                        let stubPath = OHPathForFile("mysegments_2.json", type(of: self))
+                        return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
+                    }
                     
                     let response = try? mySegmentsFetcher.fetch(user: "test")
                     
                     expect(response).toEventuallyNot(beNil())
-                    expect(response!.count).to(equal(2))
-                    expect(response![0]).to(equal("test"))
-                    expect(response![1]).to(equal("test1"))
+                    if let response = response {
+                        expect(response!.count).to(equal(2))
+                        expect(response![0]).to(equal("test"))
+                        expect(response![1]).to(equal("test1"))
+                    }
                 }
                 
             }
@@ -65,18 +69,23 @@ class MySegmentsFetcherTests: QuickSpec {
                 
                 it("should return an empty array") {
                     
-                    let path = Bundle(for: type(of: self)).path(forResource: "mysegments_3", ofType: "json")!
-                    let data = Data(referencing: NSData(contentsOfFile: path)!)
-                    self.stub(uri("/api/mySegments/{user}"), jsonData(data))
+                    stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
+                        let stubPath = OHPathForFile("mysegments_3.json", type(of: self))
+                        return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
+                    }
                     
                     let response = try? mySegmentsFetcher.fetch(user: "test")
                     
                     expect(response).toEventuallyNot(beNil())
-                    expect(response!.count).to(equal(0))
+                    if let response = response {
+                        expect(response!.count).to(equal(0))
+                    }
                 }
-                
             }
             
+            afterEach {
+                OHHTTPStubs.removeAllStubs()
+            }
         }
     }
 }
