@@ -69,13 +69,11 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     }
 
     func configureImpressionManager() {
-
-        splitImpressionManager.interval = (self.config?.getImpressionRefreshRate())!
-
-        splitImpressionManager.impressionsChunkSize = (self.config?.getImpressionsChunkSize())!
-
+        if let config = self.config {
+            splitImpressionManager.interval = config.impressionRefreshRate
+            splitImpressionManager.impressionsChunkSize = config.impressionsChunkSize
+        }
         splitImpressionManager.start()
-
     }
 }
 
