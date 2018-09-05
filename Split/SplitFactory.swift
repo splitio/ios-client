@@ -17,8 +17,9 @@ import Foundation
     public init(apiKey: String, key: Key, config: SplitClientConfig) {
         config.apiKey = apiKey
         let splitCache = SplitCache(storage: FileStorage())
+        let splitFetcher: SplitFetcher = LocalSplitFetcher(splitCache: splitCache)
         _client = SplitClient(config: config, key: key, splitCache: splitCache)
-        _manager = SplitManager(splitCache: splitCache)
+        _manager = SplitManager(splitFetcher: splitFetcher)
     }
 
     public func client() -> SplitClientProtocol {

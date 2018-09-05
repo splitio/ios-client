@@ -22,8 +22,9 @@ class SplitManagerTest: QuickSpec {
             let json = try? Data(contentsOf: URL(fileURLWithPath: path)).stringRepresentation
             let loadedSplits = try? JSON.encodeFrom(json: json!, to: [Split].self)
             context("Initial split loaded") {
-                let cache = SplitCacheStub(splits: loadedSplits!, changeNumber:1)
-                let manager = SplitManager(splitCache: cache)
+                let cache: SplitCacheProtocol = SplitCacheStub(splits: loadedSplits!, changeNumber:1)
+                let fetcher: SplitFetcher = LocalSplitFetcher(splitCache: cache)
+                let manager: SplitManagerProtocol = SplitManager(splitFetcher: fetcher)
                 let splits = manager.splitNames
                 let names = manager.splitNames
                 
@@ -97,8 +98,9 @@ class SplitManagerTest: QuickSpec {
             }
             
             context("Added One Split") {
-                let cache = SplitCacheStub(splits: loadedSplits!, changeNumber: 1)
-                let manager = SplitManager(splitCache: cache)
+                let cache: SplitCacheProtocol = SplitCacheStub(splits: loadedSplits!, changeNumber: 1)
+                let fetcher: SplitFetcher = LocalSplitFetcher(splitCache: cache)
+                let manager: SplitManagerProtocol = SplitManager(splitFetcher: fetcher)
                 let path = bundle.path(forResource: "split_sample_feature6", ofType: "json")!
                 let newSplit = try! JSON(Data(contentsOf: URL(fileURLWithPath: path))).decode(Split.self)!
                 cache.addSplit(splitName: newSplit.name!, split: newSplit)
@@ -115,8 +117,9 @@ class SplitManagerTest: QuickSpec {
             }
             
             context("Removed One Split") {
-                let cache = SplitCacheStub(splits: loadedSplits!, changeNumber: 1)
-                let manager = SplitManager(splitCache: cache)
+                let cache: SplitCacheProtocol = SplitCacheStub(splits: loadedSplits!, changeNumber: 1)
+                let fetcher: SplitFetcher = LocalSplitFetcher(splitCache: cache)
+                let manager: SplitManagerProtocol = SplitManager(splitFetcher: fetcher)
                 cache.removeSplit(splitName: "sample_feature4")
                 cache.setChangeNumber(2)
                 let splits = manager.splits
