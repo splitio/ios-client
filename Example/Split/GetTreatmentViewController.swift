@@ -22,6 +22,7 @@ class GetTreatmentViewController: UIViewController {
     
     var factory: SplitFactory?
     var client: SplitClientProtocol?
+    var manager: SplitManagerProtocol?
 
     @IBAction func evaluate(_ sender: Any) {
         evaluate()
@@ -44,7 +45,7 @@ class GetTreatmentViewController: UIViewController {
     
     func evaluate() {
         // Your Split API-KEY - Change in Config.swift file
-        let authorizationKey: String = "YOUR_API_KEY"
+        let authorizationKey: String = "4eri39qiou5ene271kpk1tnlfnfvid89dgab"
         
         //Provided keys from UI
         let matchingKeyText: String = (matchingKey?.text)!
@@ -58,6 +59,10 @@ class GetTreatmentViewController: UIViewController {
         config.impressionRefreshRate = 30
         config.sdkReadyTimeOut = 15000
         config.connectionTimeout = 50
+        
+        config.targetSdkEndPoint = "https://sdk-aws-staging.split.io/api"
+        config.targetEventsEndPoint = "https://events-aws-staging.split.io/api"
+
         
         config.impressionListener = { impression in
             print("\(impression.keyName ?? "") - \(impression.treatment ?? "") - \(impression.label ?? "")")
@@ -74,6 +79,9 @@ class GetTreatmentViewController: UIViewController {
         
         //Split Client
         self.client = self.factory?.client()
+        
+        //Split Manager
+        self.manager = self.factory?.manager()
         
         //Showing sdk version in UI
         self.sdkVersion?.text = "SDK Version: \(self.factory?.version() ?? "unknown") "
@@ -92,8 +100,30 @@ class GetTreatmentViewController: UIViewController {
                 attributes = self.convertToDictionary(text: json)
             }
             
+            // Evaluate one split
             let treatment = client.getTreatment((self.splitName?.text)!, attributes: attributes)
             self.treatmentResult?.text = treatment
+            
+            // Get All Splits
+            if let manager = self.manager {
+                let splits = manager.splits
+                splits.forEach {
+                    print("SplitView: \($0)")
+                }
+                
+                // Get Splits Names
+                let splitNames = manager.splitNames
+                splitNames.forEach {
+                    print("Split Name: \($0)")
+                }
+                
+                // Find a Split
+                if splitNames.count > 0 {
+                    let split = manager.split(featureName: splitNames[0])!
+                    print("Found Split: \(split)")
+                }
+            }
+            
             self.isEvaluating(active: false)
             DispatchQueue.global().async {
                 // Do some async stuff
@@ -110,6 +140,7 @@ class GetTreatmentViewController: UIViewController {
             
             let treatment = client.getTreatment((self.splitName?.text)!, attributes: attributes)
             self.treatmentResult?.text = treatment
+            
             self.isEvaluating(active: false)
             DispatchQueue.global().async {
                 // Do some async stuff
