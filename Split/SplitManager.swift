@@ -10,27 +10,17 @@ import Foundation
 
 @objc public class SplitManager: NSObject, SplitManagerProtocol {
     
-    private var splitCache: SplitCacheProtocol
-    private var cachedChangeNumber = Int64(-1)
-    private var cachedSplits = [SplitView]()
-    private var cachedSplitsNames = [String]()
+    private var splitFetcher: SplitFetcher
     
-    init(splitCache: SplitCacheProtocol) {
-        self.splitCache = splitCache
+    init(splitFetcher: SplitFetcher) {
+        self.splitFetcher = splitFetcher
         super.init()
     }
     
-    private var shouldReturnCache: Bool {
-        return  cachedChangeNumber > -1 && cachedChangeNumber == splitCache.getChangeNumber()
-    }
-    
     public var splits: [SplitView] {
+        guard let splits = splitFetcher.fetchAll() else { return [SplitView]()}
         
-        if shouldReturnCache {
-            return cachedSplits
-        }
-        
-        let splits: [SplitView] = splitCache.getAllSplits().map { split in
+        return splits.map { split in
             let splitView = SplitView()
             splitView.name = split.name
             splitView.changeNumber = split.changeNumber
@@ -54,10 +44,6 @@ import Foundation
             }
             return splitView
         }
-        cachedChangeNumber = splitCache.getChangeNumber()
-        cachedSplits = splits
-        
-        return cachedSplits
     }
     
     public var splitNames: [String] {
