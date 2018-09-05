@@ -13,11 +13,12 @@ import Foundation
     let _client: SplitClientProtocol
     let _manager: SplitManagerProtocol
     
+    
     public init(apiKey: String, key: Key, config: SplitClientConfig) {
-        _ = config.apiKey = apiKey
-        let client = SplitClient(config: config, key: key)
-        _client = client 
-        _manager = SplitManager()
+        config.apiKey = apiKey
+        let splitCache = SplitCache(storage: FileStorage())
+        _client = SplitClient(config: config, key: key, splitCache: splitCache)
+        _manager = SplitManager(splitCache: splitCache)
     }
 
     public func client() -> SplitClientProtocol {
