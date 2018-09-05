@@ -9,11 +9,7 @@
 import Foundation
 
 @objc public protocol SplitManagerProtocol {
-    
-    func splits() -> [SplitView]
-    
-    func split(featureName: String) -> SplitView
-    
-    func splitNames() -> [String]
-
+    var splits: [SplitView] { get }
+    var splitNames: [String] { get }
+    func split(featureName: String) -> SplitView?
 }
