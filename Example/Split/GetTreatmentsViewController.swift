@@ -9,7 +9,7 @@
 import UIKit
 import Split
 
-class GetTreatmentViewController: UIViewController {
+class GetTreatmentsViewController: UIViewController {
     
     @IBOutlet weak var bucketkey: UITextField?
     @IBOutlet weak var splitName: UITextField?
@@ -22,7 +22,6 @@ class GetTreatmentViewController: UIViewController {
     
     var factory: SplitFactory?
     var client: SplitClientProtocol?
-    var manager: SplitManagerProtocol?
 
     @IBAction func evaluate(_ sender: Any) {
         evaluate()
@@ -53,19 +52,10 @@ class GetTreatmentViewController: UIViewController {
         
         //Split Configuration
         let config = SplitClientConfig()
-        
         config.featuresRefreshRate = 30
         config.segmentsRefreshRate = 30
         config.impressionRefreshRate = 30
         config.sdkReadyTimeOut = 15000
-        config.connectionTimeout = 50
-
-        config.impressionListener = { impression in
-            print("\(impression.keyName ?? "") - \(impression.treatment ?? "") - \(impression.label ?? "")")
-            DispatchQueue.global().async {
-                // Do some async stuff
-            }
-        }
         
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
@@ -75,9 +65,6 @@ class GetTreatmentViewController: UIViewController {
         
         //Split Client
         self.client = self.factory?.client()
-        
-        //Split Manager
-        self.manager = self.factory?.manager()
         
         //Showing sdk version in UI
         self.sdkVersion?.text = "SDK Version: \(self.factory?.version() ?? "unknown") "
@@ -96,47 +83,22 @@ class GetTreatmentViewController: UIViewController {
                 attributes = self.convertToDictionary(text: json)
             }
             
-            // Evaluate one split
-            let treatment = client.getTreatment((self.splitName?.text)!, attributes: attributes)
-            self.treatmentResult?.text = treatment
-            
-            // Get All Splits
-            if let manager = self.manager {
-                let splits = manager.splits
-                splits.forEach {
-                    print("SplitView: \($0)")
+            if let splits = self.splitName?.text {
+                let splitList = splits.components(separatedBy: ",")
+                let result = client.getTreatments(splits: splitList, attributes: attributes)
+                if let jsonData = try? JSONSerialization.data(withJSONObject: result, options: []) {
+                    let resultString = String(data:jsonData, encoding: .utf8) ?? "Invalid Data"
+                    self.treatmentResult?.text = resultString
+                    print("Treatments: " + resultString)
                 }
-                
-                // Get Splits Names
-                let splitNames = manager.splitNames
-                splitNames.forEach {
-                    print("Split Name: \($0)")
-                }
-                
-                // Find a Split
-                if splitNames.count > 0 {
-                    let split = manager.split(featureName: splitNames[0])!
-                    print("Found Split: \(split)")
-                }
-            }
-            
-            self.isEvaluating(active: false)
-            DispatchQueue.global().async {
-                // Do some async stuff
+                self.isEvaluating(active: false)
             }
         }
         
         client.on(event: SplitEvent.sdkReadyTimedOut) {
-            [unowned self, unowned client = client] in
+            [unowned self] in
             // Main thread stuff
-            var attributes: [String:Any]?
-            if let json = self.param1?.text {
-                attributes = self.convertToDictionary(text: json)
-            }
-            
-            let treatment = client.getTreatment((self.splitName?.text)!, attributes: attributes)
-            self.treatmentResult?.text = treatment
-            
+            self.treatmentResult?.text = "Time Out!!!"
             self.isEvaluating(active: false)
             DispatchQueue.global().async {
                 // Do some async stuff
