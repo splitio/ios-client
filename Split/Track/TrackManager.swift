@@ -108,7 +108,7 @@ extension TrackManager {
     
     private func sendEvents(eventsHit: EventsHit) {
         if eventsHits.count == 0 { return }
-        if restClient.isServerAvailable() {
+        if restClient.isEventsServerAvailable() {
             eventsHit.addAttempt()
             restClient.sendTrackEvents(events: eventsHit.events, completion: { result in
                 do {
