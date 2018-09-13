@@ -56,7 +56,7 @@ public class ImpressionManager {
             Logger.v("Saving impressions")
             saveImpressionsToDisk()
         } else {
-            
+            print("******* FILE CONTENT ********\n: \(fileContent)\n*************" )
             restClient.sendImpressions(impressions: fileContent, completion: { result in
                 do {
                     let _ = try result.unwrap()
@@ -185,31 +185,13 @@ public class ImpressionManager {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    
-    func sizeOfJsonString(impression: Impression) -> Int {
-        
-        let encodedData = try? JSONEncoder().encode(impression)
-        
-        let json = String(data: encodedData!, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))
-        if let json = json {
-            
-            return json.utf8.count
-        }
-        
-        
-        return 0
-        
-    }
-    //------------------------------------------------------------------------------------------------------------------
 
     public func appendImpressions(impression: Impression, splitName: String) {
         
         var impressionsArray = impressionStorage[splitName]
         var shouldSaveToDisk = false
-        //calculate size
-        let impressionSize: Int = sizeOfJsonString(impression: impression)
-        impressionAccum = impressionAccum + impressionSize
-        
+        impressionAccum = impressionAccum + 1
+
         if impressionAccum >= impressionsChunkSize {
             
             shouldSaveToDisk = true
