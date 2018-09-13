@@ -23,20 +23,12 @@ public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
     
     public func fetch(user: String, policy: FecthingPolicy) throws -> [String]? {
         
-        var reachable: Bool = true
-        
         if policy == .cacheOnly {
             return self.mySegmentCache?.getSegments(key: user)
         }
         
-        if let reachabilityManager = NetworkReachabilityManager(host: "sdk.split.io/api/version") {
-            if (!reachabilityManager.isReachable)  {
-                reachable = false
-            }
-        }
-        
-        if !reachable {
-            return (self.mySegmentCache?.getSegments(key: user))!
+        if !self.restClient.isSdkServerAvailable() {
+            return self.mySegmentCache?.getSegments(key: user)
         } else {
             let semaphore = DispatchSemaphore(value: 0)
             var requestResult: DataResult<[String]>?
@@ -45,10 +37,10 @@ public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
                 semaphore.signal()
             }
             semaphore.wait()
-            
-            let segments = try requestResult!.unwrap()!
+            guard let segments = try requestResult?.unwrap() else {
+                return nil
+            }
             mySegmentCache?.addSegments(segmentNames: segments, key: user)
-
             return segments
         }
     }
