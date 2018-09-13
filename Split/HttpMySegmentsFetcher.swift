@@ -23,11 +23,7 @@ public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
     
     public func fetch(user: String, policy: FecthingPolicy) throws -> [String]? {
         
-        if policy == .cacheOnly {
-            return self.mySegmentCache?.getSegments(key: user)
-        }
-        
-        if !self.restClient.isSdkServerAvailable() {
+        if policy == .cacheOnly || !self.restClient.isSdkServerAvailable() {
             return self.mySegmentCache?.getSegments(key: user)
         } else {
             let semaphore = DispatchSemaphore(value: 0)
