@@ -9,16 +9,16 @@ import Foundation
 
 public typealias ImpressionsBulk = [ImpressionsHit]
 
-public class ImpressionManager {
+class ImpressionManager {
     private let kImpressionsPrefix: String = "impressions_"
-    public var interval: Int
-    public var impressionsChunkSize: Int64
+    var interval: Int
+    var impressionsChunkSize: Int64
     private var featurePollTimer: DispatchSourceTimer?
-    public weak var dispatchGroup: DispatchGroup?
-    public var impressionStorage: [String:[Impression]] = [:]
+    weak var dispatchGroup: DispatchGroup?
+    var impressionStorage = SynchronizedDictionaryWrapper<String, [Impression]>()
     private var fileStorage = FileStorage()
     private var impressionsFileStorage: FileStorageManager?
-    public static let EMPTY_JSON: String = "[]"
+    static let EMPTY_JSON: String = "[]"
     private var impressionAccum: Int = 0
     
     private let restClient = RestClient()
@@ -37,26 +37,15 @@ public class ImpressionManager {
         subscribeNotifications()
     }
     
-    //------------------------------------------------------------------------------------------------------------------
     public func sendImpressions(fileContent: String?, fileName: String) {
         
         guard let fileContent = fileContent else {
             return
         }
         
-        var reachable: Bool = true
-        
-        if let reachabilityManager = NetworkReachabilityManager(host: "sdk.split.io/api/version") {
-            if (!reachabilityManager.isReachable)  {
-                reachable = false
-            }
-        }
-        
-        if !reachable {
-            Logger.v("Saving impressions")
+        if !restClient.isSdkServerAvailable() {
             saveImpressionsToDisk()
         } else {
-            print("******* FILE CONTENT ********\n: \(fileContent)\n*************" )
             restClient.sendImpressions(impressions: fileContent, completion: { result in
                 do {
                     let _ = try result.unwrap()
@@ -69,26 +58,21 @@ public class ImpressionManager {
             })
         }
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     public func createImpressionsBulk() -> ImpressionsBulk {
-        
         var hits: [ImpressionsHit] = []
-        
-        for key in impressionStorage.keys {
-            
-            let array = impressionStorage[key]
-            let hit = ImpressionsHit()
-            hit.keyImpressions = array
-            hit.testName = key
-            hits.append(hit)
-            
+        let impressions = impressionStorage.all
+        for key in impressions.keys {
+            if let array = impressionStorage.value(forKey: key){
+                let hit = ImpressionsHit()
+                hit.keyImpressions = array
+                hit.testName = key
+                hits.append(hit)
+            }
         }
-        
         return hits
     }
     
-    //------------------------------------------------------------------------------------------------------------------
     private func startPollingForImpressions() {
         
         let queue = DispatchQueue(label: "split-polling-queue")
@@ -106,9 +90,7 @@ public class ImpressionManager {
         }
         featurePollTimer!.resume()
     }
-    //------------------------------------------------------------------------------------------------------------------
-    
-    
+
     private func stopPollingForSendImpressions() {
         featurePollTimer?.cancel()
         featurePollTimer = nil
@@ -122,40 +104,30 @@ public class ImpressionManager {
             guard let strongSelf = self else {
                 return
             }
+            strongSelf.saveImpressionsToDisk()
             strongSelf.sendImpressionsFromFile()
             strongSelf.dispatchGroup?.leave()
         }
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     public func start() {
         startPollingForImpressions()
     }
-    //------------------------------------------------------------------------------------------------------------------
-    
     
     public func stop() {
         stopPollingForSendImpressions()
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     private func cleanImpressions(fileName: String) {
-        
-        impressionStorage = [:]
+        impressionStorage.removeAll()
         impressionsFileStorage?.delete(fileName: fileName)
-        
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     func saveImpressions(json: String) {
-        
         impressionsFileStorage?.save(content: json)
-        impressionStorage = [:]
-        
+        impressionStorage.removeAll()
     }
-    //------------------------------------------------------------------------------------------------------------------
-    
-    
+
     func createEncodedImpressions() -> Data? {
         
         //Create data set with all the impressions
@@ -166,77 +138,37 @@ public class ImpressionManager {
         
         return encodedData
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     func createImpressionsJsonString() -> String {
-        
         //Create json file with impressions
         let encodedData = createEncodedImpressions()
-        
         let json = String(data: encodedData!, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))
         if let json = json {
-            
             return json
-            
         } else {
-            
             return " "
         }
-        
     }
-    //------------------------------------------------------------------------------------------------------------------
-
+    
     public func appendImpressions(impression: Impression, splitName: String) {
-        
-        var impressionsArray = impressionStorage[splitName]
-        var shouldSaveToDisk = false
-        impressionAccum = impressionAccum + 1
-
+        var impressionsArray = impressionStorage.value(forKey: splitName) ?? []
+        impressionsArray.append(impression)
+        impressionStorage.set(value: impressionsArray, forKey: splitName)
+        impressionAccum += 1
         if impressionAccum >= impressionsChunkSize {
-            
-            shouldSaveToDisk = true
             impressionAccum = 0
-            
-        }
-        
-        if  impressionsArray != nil {
-            
-            impressionsArray?.append(impression)
-            impressionStorage[splitName] = impressionsArray
-            
-            
-        } else {
-            
-            impressionsArray = []
-            impressionsArray?.append(impression)
-            impressionStorage[splitName] = impressionsArray
-            
-        }
-        
-        if shouldSaveToDisk {
-            
             saveImpressionsToDisk()
-            
         }
-        
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     func saveImpressionsToDisk() {
-        
         let jsonImpression = createImpressionsJsonString()
-        
         if jsonImpression != ImpressionManager.EMPTY_JSON {
-            
             saveImpressions(json: jsonImpression)
-            
         }
-        
     }
-    //------------------------------------------------------------------------------------------------------------------
     
     func sendImpressionsFromFile() {
-        
         if let fileStorage = impressionsFileStorage {
             let impressionsFiles = fileStorage.read()
             for fileName in impressionsFiles.keys {
@@ -244,25 +176,23 @@ public class ImpressionManager {
                 sendImpressions(fileContent: fileContent, fileName: fileName)
             }
         }
-        
     }
-    //------------------------------------------------------------------------------------------------------------------
+    
     @objc func applicationDidEnterBackground(_ application: UIApplication) {
         
-        Logger.d("Saving impressions to disk")
         saveImpressionsToDisk()
     }
-    //------------------------------------------------------------------------------------------------------------------
+    
     func subscribeNotifications() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
         
     }
-    //------------------------------------------------------------------------------------------------------------------
+    
     deinit {
         
         NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
         
     }
-    //------------------------------------------------------------------------------------------------------------------
+    
 }
