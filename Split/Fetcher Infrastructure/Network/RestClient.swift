@@ -57,7 +57,11 @@ extension RestClient {
         return false
     }
     
-    func isServerAvailable() -> Bool {
+    func isEventsServerAvailable() -> Bool {
         return self.isServerAvailable(EnvironmentTargetManager.shared.eventsBaseURL)
+    }
+    
+    func isSdkServerAvailable() -> Bool {
+        return self.isServerAvailable(EnvironmentTargetManager.shared.sdkBaseUrl)
     }
 }
