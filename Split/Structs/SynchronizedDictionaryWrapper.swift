@@ -8,13 +8,13 @@
 
 import Foundation
 
-class   SynchronizedDictionaryWrapper<K: Hashable,T> {
+class SynchronizedDictionaryWrapper<K: Hashable,T> {
     
     private var queue: DispatchQueue
-    private var items: [K:T]
+    private var items: [K:[T]]
     
-    var all: [K:T] {
-        var allItems: [K:T]? = nil
+    var all: [K:[T]] {
+        var allItems: [K:[T]]? = nil
         queue.sync {
             allItems = items
         }
@@ -31,32 +31,38 @@ class   SynchronizedDictionaryWrapper<K: Hashable,T> {
     
     init(){
         queue = DispatchQueue(label: NSUUID().uuidString, attributes: .concurrent)
-        items = [K:T]()
+        items = [K:[T]]()
     }
     
-    func value(forKey key: K) -> T? {
-        var value: T? = nil
+    func value(forKey key: K) -> [T]? {
+        var value: [T]? = nil
         queue.sync {
             value = items[key]
         }
         return value
     }
     
-    func set(value: T, forKey key: K) {
+    func removeValues(forKeys keys: Dictionary<K, [T]>.Keys) {
         queue.async(flags: .barrier) {
-            self.items[key] = value
+            for key in keys {
+                self.items.removeValue(forKey: key)
+            }
         }
     }
     
-    func removeValue(forKey key: K) {
-        queue.async(flags: .barrier) {
-            self.items.removeValue(forKey: key)
-        }
-    }
-    
-    func removeAll(){
+    func removeAll() {
+        print("sync array ****** removeAll")
         queue.async(flags: .barrier) {
             self.items.removeAll()
+        }
+    }
+    
+    func appendValue(value: T, toKey key: K) {
+        queue.async(flags: .barrier) {
+            var values = self.items[key] ?? []
+            values.append(value)
+            self.items[key] = values
+            print("append \(value) to \(key) count = \(values.count)")
         }
     }
 }
