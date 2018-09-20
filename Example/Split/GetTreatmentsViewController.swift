@@ -9,7 +9,7 @@
 import UIKit
 import Split
 
-class GetTreatmentViewController: UIViewController {
+class GetTreatmentsViewController: UIViewController {
     
     @IBOutlet weak var bucketkey: UITextField?
     @IBOutlet weak var splitName: UITextField?
@@ -52,19 +52,10 @@ class GetTreatmentViewController: UIViewController {
         
         //Split Configuration
         let config = SplitClientConfig()
-        
         config.featuresRefreshRate = 30
         config.segmentsRefreshRate = 30
         config.impressionRefreshRate = 30
         config.sdkReadyTimeOut = 15000
-        config.connectionTimeout = 50
-
-        config.impressionListener = { impression in
-            print("\(impression.keyName ?? "") - \(impression.treatment ?? "") - \(impression.label ?? "")")
-            DispatchQueue.global().async {
-                // Do some async stuff
-            }
-        }
         
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
@@ -92,24 +83,22 @@ class GetTreatmentViewController: UIViewController {
                 attributes = self.convertToDictionary(text: json)
             }
             
-            let treatment = client.getTreatment((self.splitName?.text)!, attributes: attributes)
-            self.treatmentResult?.text = treatment
-            self.isEvaluating(active: false)
-            DispatchQueue.global().async {
-                // Do some async stuff
+            if let splits = self.splitName?.text {
+                let splitList = splits.components(separatedBy: ",")
+                let result = client.getTreatments(splits: splitList, attributes: attributes)
+                if let jsonData = try? JSONSerialization.data(withJSONObject: result, options: []) {
+                    let resultString = String(data:jsonData, encoding: .utf8) ?? "Invalid Data"
+                    self.treatmentResult?.text = resultString
+                    print("Treatments: " + resultString)
+                }
+                self.isEvaluating(active: false)
             }
         }
         
         client.on(event: SplitEvent.sdkReadyTimedOut) {
-            [unowned self, unowned client = client] in
+            [unowned self] in
             // Main thread stuff
-            var attributes: [String:Any]?
-            if let json = self.param1?.text {
-                attributes = self.convertToDictionary(text: json)
-            }
-            
-            let treatment = client.getTreatment((self.splitName?.text)!, attributes: attributes)
-            self.treatmentResult?.text = treatment
+            self.treatmentResult?.text = "Time Out!!!"
             self.isEvaluating(active: false)
             DispatchQueue.global().async {
                 // Do some async stuff
