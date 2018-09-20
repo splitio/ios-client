@@ -138,7 +138,6 @@ extension SplitClient {
     }
 
     func logImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String, attributes:[String:Any]? = nil) {
-        print("IMPRESION*************: \(self.key.matchingKey)")
         var impression: Impression = Impression()
         impression.keyName = self.key.matchingKey
 
