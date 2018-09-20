@@ -7,18 +7,16 @@
 
 import Foundation
 
-public typealias ImpressionsBulk = [ImpressionsHit]
-
 class ImpressionManager {
     private let kImpressionsPrefix: String = "impressions_"
     var interval: Int
     var impressionsChunkSize: Int64
     private var featurePollTimer: DispatchSourceTimer?
     weak var dispatchGroup: DispatchGroup?
-    var impressionStorage = SynchronizedDictionaryWrapper<String, [Impression]>()
+    var impressionStorage = SynchronizedDictionaryWrapper<String, Impression>()
     private var fileStorage = FileStorage()
     private var impressionsFileStorage: FileStorageManager?
-    static let EMPTY_JSON: String = "[]"
+    let kEmptyJson: String = "[]"
     private var impressionAccum: Int = 0
     
     private let restClient = RestClient()
@@ -58,21 +56,7 @@ class ImpressionManager {
             })
         }
     }
-    
-    public func createImpressionsBulk() -> ImpressionsBulk {
-        var hits: [ImpressionsHit] = []
-        let impressions = impressionStorage.all
-        for key in impressions.keys {
-            if let array = impressionStorage.value(forKey: key){
-                let hit = ImpressionsHit()
-                hit.keyImpressions = array
-                hit.testName = key
-                hits.append(hit)
-            }
-        }
-        return hits
-    }
-    
+
     private func startPollingForImpressions() {
         
         let queue = DispatchQueue(label: "split-polling-queue")
@@ -119,41 +103,11 @@ class ImpressionManager {
     }
     
     private func cleanImpressions(fileName: String) {
-        impressionStorage.removeAll()
         impressionsFileStorage?.delete(fileName: fileName)
     }
-    
-    func saveImpressions(json: String) {
-        impressionsFileStorage?.save(content: json)
-        impressionStorage.removeAll()
-    }
 
-    func createEncodedImpressions() -> Data? {
-        
-        //Create data set with all the impressions
-        let hits: [ImpressionsHit] = createImpressionsBulk()
-        
-        //Create json file with impressions
-        let encodedData = try? JSONEncoder().encode(hits)
-        
-        return encodedData
-    }
-    
-    func createImpressionsJsonString() -> String {
-        //Create json file with impressions
-        let encodedData = createEncodedImpressions()
-        let json = String(data: encodedData!, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))
-        if let json = json {
-            return json
-        } else {
-            return " "
-        }
-    }
-    
     public func appendImpressions(impression: Impression, splitName: String) {
-        var impressionsArray = impressionStorage.value(forKey: splitName) ?? []
-        impressionsArray.append(impression)
-        impressionStorage.set(value: impressionsArray, forKey: splitName)
+        impressionStorage.appendValue(value: impression, toKey: splitName)
         impressionAccum += 1
         if impressionAccum >= impressionsChunkSize {
             impressionAccum = 0
@@ -162,10 +116,33 @@ class ImpressionManager {
     }
     
     func saveImpressionsToDisk() {
-        let jsonImpression = createImpressionsJsonString()
-        if jsonImpression != ImpressionManager.EMPTY_JSON {
-            saveImpressions(json: jsonImpression)
+        //Create data set with all the impressions
+        let impressionsToSave = impressionStorage.all
+        if let jsonImpression = encodeImpressions(hits: buildImpressionsHits(impressions: impressionsToSave)), jsonImpression != kEmptyJson {
+            impressionsFileStorage?.save(content: jsonImpression)
+            impressionStorage.removeValues(forKeys: impressionsToSave.keys)
         }
+    }
+    
+    func encodeImpressions(hits: [ImpressionsHit]) -> String? {
+        let encodedData = try? JSONEncoder().encode(hits)
+        guard let json = String(data: encodedData!, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue)) else {
+            return nil
+        }
+        return json
+    }
+    
+    public func buildImpressionsHits(impressions: [String: [Impression]]) -> [ImpressionsHit] {
+        var hits: [ImpressionsHit] = []
+        for key in impressions.keys {
+            if let array = impressions[key] {
+                let hit = ImpressionsHit()
+                hit.keyImpressions = array
+                hit.testName = key
+                hits.append(hit)
+            }
+        }
+        return hits
     }
     
     func sendImpressionsFromFile() {
