@@ -24,7 +24,9 @@ class SynchronizedDictionaryWrapper<K: Hashable,T> {
     var count: Int {
         var count: Int = 0
         queue.sync {
-            count = items.count
+            for (_, values) in items {
+                count += values.count
+            }
         }
         return count
     }
@@ -51,18 +53,16 @@ class SynchronizedDictionaryWrapper<K: Hashable,T> {
     }
     
     func removeAll() {
-        print("sync array ****** removeAll")
         queue.async(flags: .barrier) {
             self.items.removeAll()
         }
     }
     
-    func appendValue(value: T, toKey key: K) {
+    func appendValue(_ value: T, toKey key: K) {
         queue.async(flags: .barrier) {
             var values = self.items[key] ?? []
             values.append(value)
             self.items[key] = values
-            print("append \(value) to \(key) count = \(values.count)")
         }
     }
 }

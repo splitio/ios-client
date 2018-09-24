@@ -43,33 +43,32 @@ class EnvironmentTargetManager {
         eventsBaseURL = URL(string:kDefaultEventsBaseUrl)!
     }
     
-    public static func GetSplitChanges(since: Int64) -> Target {
+    public static func getSplitChanges(since: Int64) -> Target {
         return DynamicTarget(shared.sdkBaseUrl,
                              shared.eventsBaseURL,
-                             DynamicTarget.DynamicTargetStatus.GetSplitChanges(since: since))
+                             DynamicTarget.DynamicTargetStatus.getSplitChanges(since: since))
     }
     
-    public static func GetMySegments(user: String) -> Target {
+    public static func getMySegments(user: String) -> Target {
         return DynamicTarget(shared.sdkBaseUrl,
                              shared.eventsBaseURL,
-                             DynamicTarget.DynamicTargetStatus.GetMySegments(user: user))
+                             DynamicTarget.DynamicTargetStatus.getMySegments(user: user))
     }
     
-    public static func GetImpressions(impressions: String) -> Target {
-        
-        
+    public static func sendImpressions(impressions: [ImpressionsTest]) -> Target {
         let target = DynamicTarget(shared.sdkBaseUrl,
                              shared.eventsBaseURL,
-                             DynamicTarget.DynamicTargetStatus.GetImpressions())
+                             DynamicTarget.DynamicTargetStatus.sendImpressions())
         target.append(value: "application/json", forHttpHeader: "content-type")
-        target.setBody(json: impressions)
+        let jsonImpressions = (try? Json.encodeToJson(impressions)) ?? "[]"
+        target.setBody(json: jsonImpressions)
         return target
     }
     
-    public static func SendTrackEvents(events: [EventDTO]) -> Target {
+    public static func sendTrackEvents(events: [EventDTO]) -> Target {
         let target = DynamicTarget(shared.sdkBaseUrl,
                                    shared.eventsBaseURL,
-                                   DynamicTarget.DynamicTargetStatus.SendTrackEvents())
+                                   DynamicTarget.DynamicTargetStatus.sendTrackEvents())
         target.append(value: "application/json", forHttpHeader: "content-type")
         let jsonEvents = (try? Json.encodeToJson(events)) ?? "[]"
         target.setBody(json: jsonEvents)
