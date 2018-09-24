@@ -2,22 +2,23 @@
 //  ImpressionsHit.swift
 //  Split
 //
-//  Created by Natalia  Stele on 08/01/2018.
+//  Created by Javier L. Avrudsky on 6/19/18.
 //
-
+// ToDo: Replace with generic implemention for track events and impressions. Temporal implementation.
 import Foundation
 
-public class ImpressionsHit: Codable {
+class ImpressionsHit: Codable {
+    var identifier: String
+    var impressions: [ImpressionsTest]
+    var attempts: Int = 0
     
-    public var testName: String?
-    public var keyImpressions: [Impression]?
-    
-    
-    enum CodingKeys: String, CodingKey {
-        
-        case testName = "testName"
-        case keyImpressions = "keyImpressions"
-        
+    init(identifier: String, impressions: [ImpressionsTest]){
+        self.identifier = identifier
+        self.impressions = impressions
     }
-
+    
+    func addAttempt(){
+        attempts += 1
+    }
+    
 }

@@ -24,7 +24,7 @@ extension RestClient {
                 completion(DataResult.Failure(error: error as NSError))
             }
         }
-        self.execute(target: EnvironmentTargetManager.GetMySegments(user: user), completion: completionHandler)
+        self.execute(target: EnvironmentTargetManager.getMySegments(user: user), completion: completionHandler)
     }
     
 }
