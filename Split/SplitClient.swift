@@ -32,7 +32,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         self.key = key
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
 
-        splitImpressionManager = ImpressionManager.shared
+        
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
 
@@ -47,6 +47,11 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         trackConfig.eventsPerPush = config.eventsPerPush
         trackConfig.queueSize = config.eventsQueueSize
         trackEventsManager = TrackManager(config: trackConfig)
+        
+        var impressionsConfig = ImpressionManagerConfig()
+        impressionsConfig.pushRate = config.impressionRefreshRate
+        impressionsConfig.impressionsPerPush = config.impressionsChunkSize
+        splitImpressionManager = ImpressionManager(config: impressionsConfig)
 
         self.initialized = false
 
@@ -55,23 +60,15 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         self.dispatchGroup = nil
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()
-        configureImpressionManager()
         self.splitFetcher = refreshableSplitFetcher
         self.mySegmentsFetcher = refreshableMySegmentsFetcher
 
         eventsManager.getExecutorResources().setClient(client: self)
 
         trackEventsManager.start()
+        splitImpressionManager.start()
 
         Logger.i("iOS Split SDK initialized!")
-    }
-
-    func configureImpressionManager() {
-        if let config = self.config {
-            splitImpressionManager.interval = config.impressionRefreshRate
-            splitImpressionManager.impressionsChunkSize = config.impressionsChunkSize
-        }
-        splitImpressionManager.start()
     }
 }
 
@@ -136,7 +133,6 @@ extension SplitClient {
     }
 
     func logImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String, attributes:[String:Any]? = nil) {
-
         var impression: Impression = Impression()
         impression.keyName = self.key.matchingKey
 
@@ -145,7 +141,7 @@ extension SplitClient {
         impression.changeNumber = changeNumber
         impression.treatment = treatment
         impression.time = Date().unixTimestamp()
-        ImpressionManager.shared.appendImpressions(impression: impression, splitName: splitName)
+        splitImpressionManager.appendImpression(impression: impression, splitName: splitName)
 
         if let externalImpressionHandler = config?.impressionListener {
             impression.attributes = attributes

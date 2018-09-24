@@ -62,16 +62,11 @@ public class FileStorage: StorageProtocol {
     public func delete(elementId: String) {
         
         do {
-            
             let fileManager = FileManager.default
-            
             let cachesDirectory = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
             let fileURL = cachesDirectory.appendingPathComponent(elementId)
-            
-            try fileManager.removeItem(at: fileURL)
-            
-        }
-        catch let error as NSError {
+            try? fileManager.removeItem(at: fileURL)
+        } catch let error as NSError {
             Logger.e("File Storage - delete: " + "An error took place: \(error)")
         }
     }

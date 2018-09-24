@@ -52,7 +52,6 @@ public enum FecthingPolicy {
                 throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
             }
             _ = self.splitChangeCache?.addChange(splitChange: change)
-            print("added CHANGE******: \(change)")
             return change
         }
     }
