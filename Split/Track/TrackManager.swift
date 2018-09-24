@@ -96,7 +96,11 @@ extension TrackManager {
         pollingManager = PollingManager(
             dispatchGroup: dispatchGroup,
             config: config,
-            triggerAction: { self.appendHitAndSendAll() }
+            triggerAction: {[weak self] in
+                if let strongSelf = self {
+                    strongSelf.appendHitAndSendAll()
+                }
+            }
         )
     }
     

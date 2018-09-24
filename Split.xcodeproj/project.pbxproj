@@ -167,6 +167,8 @@
 		592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE3211CBBB0002D120C /* splitchanges_2.json */; };
 		592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE4211CBBB0002D120C /* splitchanges_1.json */; };
 		592C6AEF211CBBB0002D120C /* mysegments_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE5211CBBB0002D120C /* mysegments_2.json */; };
+		59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA7D215578F400A51997 /* ImpressionsFile.swift */; };
+		59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -356,6 +358,8 @@
 		592C6AE3211CBBB0002D120C /* splitchanges_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_2.json; path = SplitTests/Resources/splitchanges_2.json; sourceTree = SOURCE_ROOT; };
 		592C6AE4211CBBB0002D120C /* splitchanges_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_1.json; path = SplitTests/Resources/splitchanges_1.json; sourceTree = SOURCE_ROOT; };
 		592C6AE5211CBBB0002D120C /* mysegments_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mysegments_2.json; path = SplitTests/Resources/mysegments_2.json; sourceTree = SOURCE_ROOT; };
+		59F6AA7D215578F400A51997 /* ImpressionsFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsFile.swift; sourceTree = "<group>"; };
+		59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -504,6 +508,8 @@
 		3B6DEE8720EA6AE00067435E /* Impressions */ = {
 			isa = PBXGroup;
 			children = (
+				59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */,
+				59F6AA7D215578F400A51997 /* ImpressionsFile.swift */,
 				3B6DEE8820EA6AE00067435E /* Impression.swift */,
 				3B6DEE8920EA6AE00067435E /* ImpressionManager.swift */,
 				3B6DEE8A20EA6AE00067435E /* ImpressionsConstants.swift */,
@@ -1007,6 +1013,7 @@
 				3B6DEF5220EA6AE50067435E /* UserDefinedSegmentMatcherData.swift in Sources */,
 				3B6DEF7620EA6AE50067435E /* RestClient+SplitChanges.swift in Sources */,
 				3B6DEF6E20EA6AE50067435E /* PartOfSetMatcher.swift in Sources */,
+				59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */,
 				3B6DEF7520EA6AE50067435E /* RestClient+MySegments.swift in Sources */,
 				3B6DEF8B20EA6AE50067435E /* FileStorage.swift in Sources */,
 				3B6DEF2420EA6AE50067435E /* SplitFactory.swift in Sources */,
@@ -1091,6 +1098,7 @@
 				3B6DEF3920EA6AE50067435E /* Date+Utils.swift in Sources */,
 				3B6DEF0F20EA6AE50067435E /* MySegmentsCacheProtocol.swift in Sources */,
 				3B6DEF4420EA6AE50067435E /* KeySelector.swift in Sources */,
+				59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */,
 				3B6DEF8620EA6AE50067435E /* SplitPersistence.swift in Sources */,
 				3B6DEF7120EA6AE50067435E /* SplitManager.swift in Sources */,
 				3B6DEF7720EA6AE50067435E /* RestClient+TrackEvents.swift in Sources */,
