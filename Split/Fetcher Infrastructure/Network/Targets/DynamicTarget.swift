@@ -10,10 +10,10 @@ import Foundation
 class DynamicTarget: Target {
   
     public enum DynamicTargetStatus {
-        case GetSplitChanges(since: Int64)
-        case GetMySegments(user: String)
-        case GetImpressions()
-        case SendTrackEvents()
+        case getSplitChanges(since: Int64)
+        case getMySegments(user: String)
+        case sendImpressions()
+        case sendTrackEvents()
     }
     
     var internalStatus:DynamicTargetStatus
@@ -55,31 +55,31 @@ class DynamicTarget: Target {
     //public var method: HTTPMethod
     public var method: HttpMethod {
         switch self.internalStatus {
-        case .GetSplitChanges:
+        case .getSplitChanges:
             return .get
-        case .GetMySegments:
+        case .getMySegments:
             return .get
-        case .GetImpressions:
+        case .sendImpressions:
             return .post
-        case .SendTrackEvents:
+        case .sendTrackEvents:
             return .post
         }
     }
     
     public var url: URL {
         switch self.internalStatus {
-        case .GetSplitChanges(let since):
+        case .getSplitChanges(let since):
             let url = sdkBaseUrl.appendingPathComponent("splitChanges")
             let params = "?since=\(since)"
             return URL(string: params.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!, relativeTo: url)!
             
-        case .GetMySegments(let user):
+        case .getMySegments(let user):
             return sdkBaseUrl.appendingPathComponent("mySegments").appendingPathComponent(user)
             
-        case .GetImpressions():
+        case .sendImpressions():
             return eventsBaseURL.appendingPathComponent("testImpressions").appendingPathComponent("bulk")
         
-        case .SendTrackEvents():
+        case .sendTrackEvents():
             return eventsBaseURL.appendingPathComponent("events").appendingPathComponent("bulk")
           
         }
