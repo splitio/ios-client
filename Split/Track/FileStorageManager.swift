@@ -22,6 +22,9 @@ public class FileStorageManager {
         
         if content == nil {
             Logger.d("There's no data to store")
+            if let fileName = fileName {
+                delete(fileName: fileName)
+            }
             return
         }
         
