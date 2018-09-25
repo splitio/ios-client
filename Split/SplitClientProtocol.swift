@@ -13,6 +13,7 @@ public typealias SplitAction = () -> Void
 public protocol SplitClientProtocol: class {
     
     func getTreatment(_ split: String, attributes:[String:Any]?) -> String
+    func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String]
 
     func on(_ event:SplitEvent, _ task:SplitEventTask) -> Void
     func on(event: SplitEvent, execute action: @escaping SplitAction)

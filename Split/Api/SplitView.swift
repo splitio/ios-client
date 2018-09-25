@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public class SplitView: NSObject {
+@objc public class SplitView: NSObject, Codable {
     
     public var name: String?
     public var trafficType: String?

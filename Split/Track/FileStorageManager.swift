@@ -22,13 +22,16 @@ public class FileStorageManager {
         
         if content == nil {
             Logger.d("There's no data to store")
+            if let fileName = fileName {
+                delete(fileName: fileName)
+            }
             return
         }
         
         if fileName != nil {
             do {
                 let fileComponents = parseFileName(fileName: fileName!)
-                let attemp = limitAttempts ? Int(fileComponents[2])! + 1 : 0
+                let attemp = limitAttempts ? Int(fileComponents[3])! + 1 : 0
                 let attempString = String(attemp)
                 
                 if limitAttempts, attemp > 3 {
@@ -46,10 +49,9 @@ public class FileStorageManager {
                 Logger.e(error.localizedDescription)
             }
         } else {
-
             let dateTimestamp = Int(Date().timeIntervalSince1970)
             let stringDate = String(describing: dateTimestamp)
-            let fileName = filePrefix + stringDate + "_0"
+            let fileName = "\(filePrefix)_\(NSUUID().uuidString)_\(stringDate)_0"
             storage.write(elementId: fileName, content: content)
         }
     }
