@@ -1,3 +1,7 @@
+1.5.0: (Sep 24, 2018)
+- Adding Split Manager feature
+1.4.0: (Sep 13, 2018)
+- Adding get treatments feature
 1.3.1: (Sep 12, 2018)
 - Fixing issue when loading empty my segments Cache
 - Changing Deployment Target to 9.0

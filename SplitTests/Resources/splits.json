@@ -1,0 +1,1322 @@
+ [{
+  "trafficTypeName": "custom",
+  "name": "SAMPLE_FEATURE0",
+  "trafficAllocation": 100,
+  "trafficAllocationSeed": 1595297106,
+  "seed": -1332540447,
+  "status": "ACTIVE",
+  "killed": false,
+  "defaultTreatment": "off",
+  "changeNumber": 1,
+  "algo": 2,
+  "conditions": [{
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributoNumero"
+                              },
+                              "matcherType": "BETWEEN",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": {
+                              "dataType": "NUMBER",
+                              "start": 90,
+                              "end": 500
+                              },
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_0",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_0",
+                                "size": 0
+                                }],
+                 "label": "atributoNumero between 90 and 500"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo2"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["salamin"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_0",
+                                "size": 100
+                                }, {
+                                "treatment": "t2_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_0",
+                                "size": 0
+                                }],
+                 "label": "atributo2 exactly matches [salamin]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo1"
+                              },
+                              "matcherType": "MATCHES_STRING",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": "mila"
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_0",
+                                "size": 100
+                                }, {
+                                "treatment": "t4_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_0",
+                                "size": 0
+                                }],
+                 "label": "atributo1 matches mila"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atribute"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["papapa"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_0",
+                                "size": 100
+                                }, {
+                                "treatment": "t3_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_0",
+                                "size": 0
+                                }],
+                 "label": "atribute exactly matches[papapa]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": null
+                              },
+                              "matcherType": "ALL_KEYS",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_0",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_0",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_0",
+                                "size": 0
+                                }],
+                 "label": "default rule"
+                 }]
+  }, {
+  "trafficTypeName": "custom1",
+  "name": "SAMPLE_FEATURE1",
+  "trafficAllocation": 100,
+  "trafficAllocationSeed": 1595297106,
+  "seed": -1332540447,
+  "status": "ACTIVE",
+  "killed": true,
+  "defaultTreatment": "off",
+  "changeNumber": 1,
+  "algo": 2,
+  "conditions": [{
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributoNumero"
+                              },
+                              "matcherType": "BETWEEN",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": {
+                              "dataType": "NUMBER",
+                              "start": 90,
+                              "end": 500
+                              },
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_1",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_1",
+                                "size": 0
+                                }],
+                 "label": "atributoNumero between 90 and 500"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo2"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["salamin"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_1",
+                                "size": 100
+                                }, {
+                                "treatment": "t2_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_1",
+                                "size": 0
+                                }],
+                 "label": "atributo2 exactly matches [salamin]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo1"
+                              },
+                              "matcherType": "MATCHES_STRING",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": "mila"
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_1",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_1",
+                                "size": 0
+                                }],
+                 "label": "atributo1 matches mila"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atribute"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["papapa"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_1",
+                                "size": 100
+                                }, {
+                                "treatment": "t3_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_1",
+                                "size": 0
+                                }],
+                 "label": "atribute exactly matches[papapa]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": null
+                              },
+                              "matcherType": "ALL_KEYS",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_1",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_1",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_1",
+                                "size": 0
+                                }],
+                 "label": "default rule"
+                 }]
+  }, {
+  "trafficTypeName": "custom",
+  "name": "SAMPLE_FEATURE2",
+  "trafficAllocation": 100,
+  "trafficAllocationSeed": 1595297106,
+  "seed": -1332540447,
+  "status": "ACTIVE",
+  "killed": false,
+  "defaultTreatment": "off",
+  "changeNumber": 1,
+  "algo": 2,
+  "conditions": [{
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributoNumero"
+                              },
+                              "matcherType": "BETWEEN",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": {
+                              "dataType": "NUMBER",
+                              "start": 90,
+                              "end": 500
+                              },
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_2",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_2",
+                                "size": 0
+                                }],
+                 "label": "atributoNumero between 90 and 500"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo2"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["salamin"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_2",
+                                "size": 100
+                                }, {
+                                "treatment": "t2_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_2",
+                                "size": 0
+                                }],
+                 "label": "atributo2 exactly matches [salamin]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo1"
+                              },
+                              "matcherType": "MATCHES_STRING",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": "mila"
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_2",
+                                "size": 100
+                                }, {
+                                "treatment": "t4_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_2",
+                                "size": 0
+                                }],
+                 "label": "atributo1 matches mila"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atribute"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["papapa"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_2",
+                                "size": 100
+                                }, {
+                                "treatment": "t3_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_2",
+                                "size": 0
+                                }],
+                 "label": "atribute exactly matches[papapa]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": null
+                              },
+                              "matcherType": "ALL_KEYS",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_2",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_2",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_2",
+                                "size": 0
+                                }],
+                 "label": "default rule"
+                 }]
+  }, {
+  "trafficTypeName": "custom",
+  "name": "SAMPLE_FEATURE3",
+  "trafficAllocation": 100,
+  "trafficAllocationSeed": 1595297106,
+  "seed": -1332540447,
+  "status": "ACTIVE",
+  "killed": false,
+  "defaultTreatment": "off",
+  "changeNumber": 1,
+  "algo": 2,
+  "conditions": [{
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributoNumero"
+                              },
+                              "matcherType": "BETWEEN",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": {
+                              "dataType": "NUMBER",
+                              "start": 90,
+                              "end": 500
+                              },
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_3",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_3",
+                                "size": 0
+                                }],
+                 "label": "atributoNumero between 90 and 500"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo2"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["salamin"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_3",
+                                "size": 100
+                                }, {
+                                "treatment": "t2_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_3",
+                                "size": 0
+                                }],
+                 "label": "atributo2 exactly matches [salamin]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo1"
+                              },
+                              "matcherType": "MATCHES_STRING",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": "mila"
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_3",
+                                "size": 100
+                                }, {
+                                "treatment": "t4_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_3",
+                                "size": 0
+                                }],
+                 "label": "atributo1 matches mila"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atribute"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["papapa"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_3",
+                                "size": 100
+                                }, {
+                                "treatment": "t3_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_3",
+                                "size": 0
+                                }],
+                 "label": "atribute exactly matches[papapa]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": null
+                              },
+                              "matcherType": "ALL_KEYS",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_3",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_3",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_3",
+                                "size": 0
+                                }],
+                 "label": "default rule"
+                 }]
+  }, {
+  "trafficTypeName": "custom",
+  "name": "SAMPLE_FEATURE4",
+  "trafficAllocation": 100,
+  "trafficAllocationSeed": 1595297106,
+  "seed": -1332540447,
+  "status": "ACTIVE",
+  "killed": false,
+  "defaultTreatment": "off",
+  "changeNumber": 1,
+  "algo": 2,
+  "conditions": [{
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributoNumero"
+                              },
+                              "matcherType": "BETWEEN",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": {
+                              "dataType": "NUMBER",
+                              "start": 90,
+                              "end": 500
+                              },
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_4",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_4",
+                                "size": 0
+                                }],
+                 "label": "atributoNumero between 90 and 500"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo2"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["salamin"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_4",
+                                "size": 100
+                                }, {
+                                "treatment": "t2_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_4",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_4",
+                                "size": 0
+                                }],
+                 "label": "atributo2 exactly matches [salamin]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo1"
+                              },
+                              "matcherType": "MATCHES_STRING",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": "mila"
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_4",
+                                "size": 100
+                                }, {
+                                "treatment": "t4_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_4",
+                                "size": 0
+                                }],
+                 "label": "atributo1 matches mila"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atribute"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["papapa"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_4",
+                                "size": 100
+                                }, {
+                                "treatment": "t3_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_4",
+                                "size": 0
+                                }],
+                 "label": "atribute exactly matches[papapa]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": null
+                              },
+                              "matcherType": "ALL_KEYS",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_4",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_4",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_4",
+                                "size": 0
+                                }],
+                 "label": "default rule"
+                 }]
+  }, {
+  "trafficTypeName": "custom",
+  "name": "SAMPLE_FEATURE5",
+  "trafficAllocation": 100,
+  "trafficAllocationSeed": 1595297106,
+  "seed": -1332540447,
+  "status": "ACTIVE",
+  "killed": false,
+  "defaultTreatment": "off",
+  "changeNumber": 1,
+  "algo": 2,
+  "conditions": [{
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributoNumero"
+                              },
+                              "matcherType": "BETWEEN",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": {
+                              "dataType": "NUMBER",
+                              "start": 90,
+                              "end": 500
+                              },
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_5",
+                                "size": 100
+                                }, {
+                                "treatment": "t2_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_5",
+                                "size": 0
+                                }],
+                 "label": "atributoNumero between 3 and 30"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo2"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["salamin"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_5",
+                                "size": 100
+                                }, {
+                                "treatment": "t5_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_5",
+                                "size": 0
+                                }],
+                 "label": "atributo2 exactly matches [salamin]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atributo1"
+                              },
+                              "matcherType": "MATCHES_STRING",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": "mila"
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_5",
+                                "size": 100
+                                }, {
+                                "treatment": "t6_5",
+                                "size": 0
+                                }],
+                 "label": "atributo1 matches mila"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": "atribute"
+                              },
+                              "matcherType": "EQUAL_TO_SET",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": {
+                              "whitelist": ["papapa"]
+                              },
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_5",
+                                "size": 100
+                                }, {
+                                "treatment": "t4_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_5",
+                                "size": 0
+                                }],
+                 "label": "atribute exactly matches[papapa]"
+                 }, {
+                 "conditionType": "ROLLOUT",
+                 "matcherGroup": {
+                 "combiner": "AND",
+                 "matchers": [{
+                              "keySelector": {
+                              "trafficType": "custom",
+                              "attribute": null
+                              },
+                              "matcherType": "ALL_KEYS",
+                              "negate": false,
+                              "userDefinedSegmentMatcherData": null,
+                              "whitelistMatcherData": null,
+                              "unaryNumericMatcherData": null,
+                              "betweenMatcherData": null,
+                              "booleanMatcherData": null,
+                              "dependencyMatcherData": null,
+                              "stringMatcherData": null
+                              }]
+                 },
+                 "partitions": [{
+                                "treatment": "t1_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t2_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t3_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t4_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t5_5",
+                                "size": 0
+                                }, {
+                                "treatment": "t6_5",
+                                "size": 100
+                                }],
+                 "label": "default rule"
+                 }]
+  }
+]
