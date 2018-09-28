@@ -177,6 +177,9 @@
 		59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */; };
 		59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */; };
 		59F6AA9B215E9DA100A51997 /* LatencyCounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA9A215E9DA100A51997 /* LatencyCounterTests.swift */; };
+		59F6AAA9215EBD4400A51997 /* MetricCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AAA6215EBD4400A51997 /* MetricCounter.swift */; };
+		59F6AAAA215EBD4400A51997 /* MetricGauge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AAA7215EBD4400A51997 /* MetricGauge.swift */; };
+		59F6AAAB215EBD4400A51997 /* MetricTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AAA8215EBD4400A51997 /* MetricTime.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -376,6 +379,9 @@
 		59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTest.swift; sourceTree = "<group>"; };
 		59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyCounter.swift; sourceTree = "<group>"; };
 		59F6AA9A215E9DA100A51997 /* LatencyCounterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyCounterTests.swift; sourceTree = "<group>"; };
+		59F6AAA6215EBD4400A51997 /* MetricCounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetricCounter.swift; sourceTree = "<group>"; };
+		59F6AAA7215EBD4400A51997 /* MetricGauge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetricGauge.swift; sourceTree = "<group>"; };
+		59F6AAA8215EBD4400A51997 /* MetricTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetricTime.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -916,6 +922,7 @@
 		59F6AA94215E69A600A51997 /* Metrics */ = {
 			isa = PBXGroup;
 			children = (
+				59F6AAA5215EBD0E00A51997 /* Models */,
 				59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */,
 			);
 			path = Metrics;
@@ -927,6 +934,16 @@
 				59F6AA9A215E9DA100A51997 /* LatencyCounterTests.swift */,
 			);
 			path = Metrics;
+			sourceTree = "<group>";
+		};
+		59F6AAA5215EBD0E00A51997 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				59F6AAA6215EBD4400A51997 /* MetricCounter.swift */,
+				59F6AAA7215EBD4400A51997 /* MetricGauge.swift */,
+				59F6AAA8215EBD4400A51997 /* MetricTime.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1070,6 +1087,7 @@
 				3B6DEF1B20EA6AE50067435E /* EventsFile.swift in Sources */,
 				3B6DEF2320EA6AE50067435E /* HttpMySegmentsFetcher.swift in Sources */,
 				3B6DEF5620EA6AE50067435E /* SplitEventExecutorResources.swift in Sources */,
+				59F6AAAA215EBD4400A51997 /* MetricGauge.swift in Sources */,
 				3B6DEF1720EA6AE50067435E /* RefreshableSplitFetcher.swift in Sources */,
 				3B6DEF6820EA6AE50067435E /* EqualToMatcher.swift in Sources */,
 				3B6DEF5020EA6AE50067435E /* Treatment.swift in Sources */,
@@ -1081,6 +1099,7 @@
 				3B6DEF7320EA6AE50067435E /* Json.swift in Sources */,
 				3B6DEF8120EA6AE50067435E /* DataResult.swift in Sources */,
 				3B6DEF7F20EA6AE50067435E /* RestClientRequestProtocol.swift in Sources */,
+				59F6AAA9215EBD4400A51997 /* MetricCounter.swift in Sources */,
 				3B6DEF1520EA6AE50067435E /* ParsedSplit.swift in Sources */,
 				3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */,
 				3B6DEF5420EA6AE50067435E /* SplitEventExecutorFactory.swift in Sources */,
@@ -1153,6 +1172,7 @@
 				3B6DEF8620EA6AE50067435E /* SplitPersistence.swift in Sources */,
 				3B6DEF7120EA6AE50067435E /* SplitManager.swift in Sources */,
 				590DF9D6214065880082B94F /* LocalSplitFetcher.swift in Sources */,
+				59F6AAAB215EBD4400A51997 /* MetricTime.swift in Sources */,
 				3B6DEF7720EA6AE50067435E /* RestClient+TrackEvents.swift in Sources */,
 				3B6DEF6B20EA6AE50067435E /* InSegmentMatcher.swift in Sources */,
 				3B6DEF5B20EA6AE50067435E /* SplitInternalEvent.swift in Sources */,
