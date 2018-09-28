@@ -175,6 +175,8 @@
 		592C6AEF211CBBB0002D120C /* mysegments_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE5211CBBB0002D120C /* mysegments_2.json */; };
 		59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA7D215578F400A51997 /* ImpressionsFile.swift */; };
 		59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */; };
+		59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */; };
+		59F6AA9B215E9DA100A51997 /* LatencyCounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA9A215E9DA100A51997 /* LatencyCounterTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -372,6 +374,8 @@
 		592C6AE5211CBBB0002D120C /* mysegments_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mysegments_2.json; path = SplitTests/Resources/mysegments_2.json; sourceTree = SOURCE_ROOT; };
 		59F6AA7D215578F400A51997 /* ImpressionsFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsFile.swift; sourceTree = "<group>"; };
 		59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTest.swift; sourceTree = "<group>"; };
+		59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyCounter.swift; sourceTree = "<group>"; };
+		59F6AA9A215E9DA100A51997 /* LatencyCounterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyCounterTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -445,6 +449,7 @@
 				3B6DEF0720EA6AE40067435E /* Storage */,
 				3B6DEF0520EA6AE40067435E /* Structs */,
 				3B6DEE7520EA6ADF0067435E /* Track */,
+				59F6AA94215E69A600A51997 /* Metrics */,
 				3B6DEE8420EA6AE00067435E /* Version.swift */,
 				3B6DEE5D20EA6A4E0067435E /* Split.h */,
 				3B6DEE5E20EA6A4E0067435E /* Info.plist */,
@@ -864,6 +869,7 @@
 				590DF9CD213EB92D0082B94F /* Fake */,
 				592C6AF1211CBD63002D120C /* Supporting Files */,
 				592C6ADB211CBB86002D120C /* Resources */,
+				59F6AA99215E941E00A51997 /* Metrics */,
 				592C6AB3211B718D002D120C /* ArrayBlockingQueueTest.swift */,
 				592C6AB2211B718D002D120C /* DatesTests.swift */,
 				592C6AB6211B718D002D120C /* HashingTest.swift */,
@@ -905,6 +911,22 @@
 				592C6AB0211B718D002D120C /* SplitTests-Bridging-Header.h */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		59F6AA94215E69A600A51997 /* Metrics */ = {
+			isa = PBXGroup;
+			children = (
+				59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */,
+			);
+			path = Metrics;
+			sourceTree = "<group>";
+		};
+		59F6AA99215E941E00A51997 /* Metrics */ = {
+			isa = PBXGroup;
+			children = (
+				59F6AA9A215E9DA100A51997 /* LatencyCounterTests.swift */,
+			);
+			path = Metrics;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1114,6 +1136,7 @@
 				3B6DEF4720EA6AE50067435E /* MatcherGroup.swift in Sources */,
 				3B6DEF6520EA6AE50067435E /* DependencyMatcher.swift in Sources */,
 				3B6DEF4620EA6AE50067435E /* MatcherCombiner.swift in Sources */,
+				59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */,
 				3B6DEF4F20EA6AE50067435E /* TrafficType.swift in Sources */,
 				3B6DEF8020EA6AE50067435E /* RestClient.swift in Sources */,
 				3B6DEF7020EA6AE50067435E /* Whitelist.swift in Sources */,
@@ -1180,6 +1203,7 @@
 				590DF9CC213EB7D50082B94F /* SplitManagerTest.swift in Sources */,
 				592C6ABC211B718E002D120C /* InMemoryMySegmentsCacheTests.swift in Sources */,
 				592C6ABD211B718E002D120C /* DatesTests.swift in Sources */,
+				59F6AA9B215E9DA100A51997 /* LatencyCounterTests.swift in Sources */,
 				590DF9CF213EB95D0082B94F /* SplitCacheStub.swift in Sources */,
 				592C6AC2211B718E002D120C /* MatcherTest.swift in Sources */,
 				592C6ABE211B718E002D120C /* ArrayBlockingQueueTest.swift in Sources */,
