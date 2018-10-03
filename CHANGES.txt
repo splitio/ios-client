@@ -1,3 +1,5 @@
+1.5.1: (Oct 3, 2018)
+- Migrating to Swift 4.2
 1.5.0: (Sep 24, 2018)
 - Adding Split Manager feature
 1.4.0: (Sep 13, 2018)
