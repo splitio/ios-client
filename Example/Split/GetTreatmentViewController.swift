@@ -45,7 +45,7 @@ class GetTreatmentViewController: UIViewController {
     
     func evaluate() {
         // Your Split API-KEY - Change in Config.swift file
-        let authorizationKey: String = "YOUR_API_KEY"
+        let authorizationKey: String = "4eri39qiou5ene271kpk1tnlfnfvid89dgab"
         
         //Provided keys from UI
         let matchingKeyText: String = (matchingKey?.text)!
@@ -59,6 +59,9 @@ class GetTreatmentViewController: UIViewController {
         config.impressionRefreshRate = 30
         config.sdkReadyTimeOut = 15000
         config.connectionTimeout = 50
+
+        config.targetSdkEndPoint = "https://sdk.split-stage.io/api"
+        config.targetEventsEndPoint = "https://events.split-stage.io/api"
 
 
 
