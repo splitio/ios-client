@@ -2,7 +2,8 @@
 //  FileStorageManager.swift
 //  Split
 //
-//  Created by Javier Avrudsky on 06/14/2018.
+//  Created by Javier Avrudsky on 06/14/2018. Extracted from origial Impression manager
+//  ToDo: Remove this file (or refactor)
 //
 
 import Foundation

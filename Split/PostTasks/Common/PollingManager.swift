@@ -20,7 +20,7 @@ protocol PollingManagerProtocol {
 
 class PollingManager: PollingManagerProtocol {
     
-    /* public weak ??? */ private var dispatchGroup: DispatchGroup?
+    private var dispatchGroup: DispatchGroup?
     private var firstPollWindow: Int = 0
     private var rate: Int
     private var triggerAction: PollingTriggerAction

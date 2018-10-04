@@ -65,6 +65,13 @@ class LatencyCounter {
         counters = Array(repeating: 0, count: kMaxBucketIndex + 1)
     }
     
+    func fillCounters(values: [Int]){
+        if values.count - 1 == kMaxBucketIndex {
+            return
+        }
+        counters = values
+    }
+    
     func addLatency(microseconds time: Int64) {
         counters[findBucketIndex(for: time)] += 1
     }
