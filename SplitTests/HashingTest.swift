@@ -12,6 +12,7 @@ import Nimble
 
 @testable import Split
 
+
 class HashingTest: QuickSpec {
     
     override func spec() {
@@ -78,3 +79,4 @@ class HashingTest: QuickSpec {
     }
     
 }
+
