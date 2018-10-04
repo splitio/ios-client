@@ -172,6 +172,7 @@
 		592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE3211CBBB0002D120C /* splitchanges_2.json */; };
 		592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE4211CBBB0002D120C /* splitchanges_1.json */; };
 		592C6AEF211CBBB0002D120C /* mysegments_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE5211CBBB0002D120C /* mysegments_2.json */; };
+		59C492FB216695D500F5F774 /* HashingTestNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C492FA216695D500F5F774 /* HashingTestNew.swift */; };
 		59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA7D215578F400A51997 /* ImpressionsFile.swift */; };
 		59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */; };
 /* End PBXBuildFile section */
@@ -369,6 +370,7 @@
 		592C6AE3211CBBB0002D120C /* splitchanges_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_2.json; path = SplitTests/Resources/splitchanges_2.json; sourceTree = SOURCE_ROOT; };
 		592C6AE4211CBBB0002D120C /* splitchanges_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_1.json; path = SplitTests/Resources/splitchanges_1.json; sourceTree = SOURCE_ROOT; };
 		592C6AE5211CBBB0002D120C /* mysegments_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mysegments_2.json; path = SplitTests/Resources/mysegments_2.json; sourceTree = SOURCE_ROOT; };
+		59C492FA216695D500F5F774 /* HashingTestNew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashingTestNew.swift; sourceTree = "<group>"; };
 		59F6AA7D215578F400A51997 /* ImpressionsFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsFile.swift; sourceTree = "<group>"; };
 		59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -865,7 +867,6 @@
 				592C6ADB211CBB86002D120C /* Resources */,
 				592C6AB3211B718D002D120C /* ArrayBlockingQueueTest.swift */,
 				592C6AB2211B718D002D120C /* DatesTests.swift */,
-				592C6AB6211B718D002D120C /* HashingTest.swift */,
 				592C6AB1211B718D002D120C /* InMemoryMySegmentsCacheTests.swift */,
 				592C6AB4211B718D002D120C /* InMemorySplitCacheTests.swift */,
 				592C6AB7211B718E002D120C /* MatcherTest.swift */,
@@ -874,6 +875,8 @@
 				592C6ABA211B718E002D120C /* SplitChangeFetcherTests.swift */,
 				592C6ABB211B718E002D120C /* SplitEventsManagerTest.swift */,
 				590DF9CB213EB7D50082B94F /* SplitManagerTest.swift */,
+				592C6AB6211B718D002D120C /* HashingTest.swift */,
+				59C492FA216695D500F5F774 /* HashingTestNew.swift */,
 			);
 			path = SplitTests;
 			sourceTree = "<group>";
@@ -1176,6 +1179,7 @@
 			files = (
 				592C6AC5211B718E002D120C /* SplitChangeFetcherTests.swift in Sources */,
 				592C6AC6211B718E002D120C /* SplitEventsManagerTest.swift in Sources */,
+				59C492FB216695D500F5F774 /* HashingTestNew.swift in Sources */,
 				590DF9CC213EB7D50082B94F /* SplitManagerTest.swift in Sources */,
 				592C6ABC211B718E002D120C /* InMemoryMySegmentsCacheTests.swift in Sources */,
 				592C6ABD211B718E002D120C /* DatesTests.swift in Sources */,
