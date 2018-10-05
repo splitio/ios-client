@@ -1,50 +1,56 @@
 //
 //  HashingTest.swift
-//  Split
+//  SplitTests
 //
-//  Created by Natalia  Stele on 11/9/17.
-//  Copyright © 2017 CocoaPods. All rights reserved.
+//  Created by Javier on 04/10/2018.
+//  Copyright © 2018 Split. All rights reserved.
 //
 
-import Foundation
-import Quick
-import Nimble
-
+import XCTest
 @testable import Split
 
-
-class HashingTest: QuickSpec {
+class HashingTest: XCTestCase {
     
-    override func spec() {
-        
-        describe("HashingTest") {
-            let files: [String] = ["murmur3-sample-data-v2","murmur3-sample-data-non-alpha-numeric-v2"]
-            for file in files {
-                var data = readDataFromCSV(fileName: file)
-                data = cleanRows(file: data!)
-                let csvRows = csv(data: data!)
+    override func setUp() {
+        // Put setup code here. This method is called before the invocation of each test method in the class.
+    }
+    
+    override func tearDown() {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    }
+    
+    func testHashing() {
+        let files: [String] = ["murmur3-sample-data-v2",
+                               "murmur3-sample-data-non-alpha-numeric-v2",
+                               "murmur3-sample-v4",
+                               "murmur3-sample-v3",
+                               "murmur3-sample-double-treatment-users"]
+        for file in files {
+            var data = readDataFromCSV(fileName: file)
+            data = cleanRows(file: data!)
+            let csvRows = csv(data: data!)
 
-                context("Murmur3 returns the bucket expected") {
-                    
-                    for row in csvRows {
-                        
-                        if row.count != 4 {
-                            continue
-                        }
-                        let seed: Int = Int(row[0])!
-                        let key: String = row[1]
-                        let bucketExpected = Int(row[3])!
-                        
-                        let bucket = Splitter.shared.getBucket(seed: seed, key: key, algo: 2)
-                        
-                        expect(bucket).toNot(beNil())
-                        expect(bucket).to(equal(bucketExpected))
-                    }
+            for row in csvRows {
+                if row.count != 4 {
+                    continue
                 }
+                let seed: Int = Int(row[0])!
+                let key: String = row[1]
+                let bucketExpected = Int(row[3])!
+                let bucket = Splitter.shared.getBucket(seed: seed, key: key, algo: 2)
+                
+                //print("seed: \(seed) - key: \(key) - buckexp: \(bucketExpected) - bucket: \(bucket) ")
+                
+                XCTAssertNotNil(bucket, "Bucket should not be nil")
+                XCTAssertTrue(bucket == bucketExpected, "Bucket has not expected value: \(bucket) expected => \(bucketExpected)")
             }
         }
     }
     
+}
+
+// MARK: Helpers
+extension HashingTest {
     func readDataFromCSV(fileName:String)-> String! {
         
         guard let filepath = Bundle(for: type(of: self)).path(forResource: fileName, ofType: "csv") else {
@@ -79,4 +85,3 @@ class HashingTest: QuickSpec {
     }
     
 }
-
