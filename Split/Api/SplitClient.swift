@@ -140,7 +140,7 @@ extension SplitClient {
         impression.label = label
         impression.changeNumber = changeNumber
         impression.treatment = treatment
-        impression.time = Date().unixTimestamp()
+        impression.time = Date().unixTimestampInMiliseconds()
         splitImpressionManager.appendImpression(impression: impression, splitName: splitName)
 
         if let externalImpressionHandler = config?.impressionListener {
@@ -199,7 +199,7 @@ extension SplitClient {
         let event: EventDTO = EventDTO(trafficType: finalTrafficType!, eventType: eventType)
         event.key = self.key.matchingKey
         event.value = value
-        event.timestamp = Date().unixTimestamp()
+        event.timestamp = Date().unixTimestampInMiliseconds()
         trackEventsManager.appendEvent(event: event)
 
         return true

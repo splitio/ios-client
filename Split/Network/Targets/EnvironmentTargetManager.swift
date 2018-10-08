@@ -75,4 +75,37 @@ class EnvironmentTargetManager {
         
         return target
     }
+    
+    public static func sendTimeMetrics(_ times: [MetricTime]) -> Target {
+        let target = DynamicTarget(shared.sdkBaseUrl,
+                                   shared.eventsBaseURL,
+                                   DynamicTarget.DynamicTargetStatus.sendTimeMetrics())
+        target.append(value: "application/json", forHttpHeader: "content-type")
+        let jsonEvents = (try? Json.encodeToJson(times)) ?? "[]"
+        target.setBody(json: jsonEvents)
+        
+        return target
+    }
+    
+    public static func sendCounterMetrics(_ counters: [MetricCounter]) -> Target {
+        let target = DynamicTarget(shared.sdkBaseUrl,
+                                   shared.eventsBaseURL,
+                                   DynamicTarget.DynamicTargetStatus.sendCounterMetrics())
+        target.append(value: "application/json", forHttpHeader: "content-type")
+        let jsonEvents = (try? Json.encodeToJson(counters)) ?? "[]"
+        target.setBody(json: jsonEvents)
+        
+        return target
+    }
+    
+    public static func sendGaugeMetrics(_ gauge: MetricGauge) -> Target {
+        let target = DynamicTarget(shared.sdkBaseUrl,
+                                   shared.eventsBaseURL,
+                                   DynamicTarget.DynamicTargetStatus.sendGaugeMetrics())
+        target.append(value: "application/json", forHttpHeader: "content-type")
+        let jsonEvents = (try? Json.encodeToJson(gauge)) ?? "[]"
+        target.setBody(json: jsonEvents)
+        
+        return target
+    }
 }

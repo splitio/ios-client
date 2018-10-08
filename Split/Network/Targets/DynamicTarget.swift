@@ -14,6 +14,9 @@ class DynamicTarget: Target {
         case getMySegments(user: String)
         case sendImpressions()
         case sendTrackEvents()
+        case sendTimeMetrics()
+        case sendCounterMetrics()
+        case sendGaugeMetrics()
     }
     
     var internalStatus:DynamicTargetStatus
@@ -51,7 +54,6 @@ class DynamicTarget: Target {
         
     }
     
-    
     //public var method: HTTPMethod
     public var method: HttpMethod {
         switch self.internalStatus {
@@ -62,6 +64,12 @@ class DynamicTarget: Target {
         case .sendImpressions:
             return .post
         case .sendTrackEvents:
+            return .post
+        case .sendTimeMetrics:
+            return .post
+        case .sendCounterMetrics:
+            return .post
+        case .sendGaugeMetrics:
             return .post
         }
     }
@@ -82,6 +90,14 @@ class DynamicTarget: Target {
         case .sendTrackEvents():
             return eventsBaseURL.appendingPathComponent("events").appendingPathComponent("bulk")
           
+        case .sendTimeMetrics:
+            return eventsBaseURL.appendingPathComponent("metrics").appendingPathComponent("times")
+            
+        case .sendCounterMetrics:
+            return eventsBaseURL.appendingPathComponent("metrics").appendingPathComponent("counters")
+            
+        case .sendGaugeMetrics:
+            return eventsBaseURL.appendingPathComponent("metrics").appendingPathComponent("gauge")
         }
     }
     

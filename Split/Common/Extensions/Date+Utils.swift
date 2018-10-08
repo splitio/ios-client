@@ -28,6 +28,10 @@ extension Date {
 
 extension Date {
     public func unixTimestamp() -> Int64 {
+        return Int64(Date().timeIntervalSince1970)
+    }
+    
+    public func unixTimestampInMiliseconds() -> Int64 {
         return Int64(Date().timeIntervalSince1970 * 1000)
     }
 }

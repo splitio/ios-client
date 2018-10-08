@@ -19,7 +19,12 @@ class MetricsManager: PeriodicDataTask {
     private let kTimesFile = "timesFile"
     private let kCountersFile = "countersFile"
     
+    private var pushRateInSecs: Int
+    private var lastPostTime: Int64 = Date().unixTimestampInMiliseconds()
+    private let restClient = RestClient()
+    
     init(config: MetricManagerConfig) {
+        pushRateInSecs = config.pushRate
         super.init()
     }
     
@@ -50,6 +55,9 @@ extension MetricsManager {
         }
         time.addLatency(microseconds: latency)
         currentTimesHit.setValue(time, toKey: operationName)
+        if shouldPostToServer() {
+            executePeriodicAction()
+        }
     }
     
     func count(delta: Int64, for counterName: String) {
@@ -67,23 +75,33 @@ extension MetricsManager {
         
     }
     
-    func appendHitAndSendAll(){
-        
-        sendMetrics()
-    }
 }
 
 // MARK: Private
 extension MetricsManager {
     
     
-    private func sendMetrics() {
-        /*
-        for (_, metricsHit) in metricsHits {
-            sendMetrics(metricsHit: metricsHit)
+    private func sendTimes() {
+        if currentTimesHit.count == 0 { return }
+        let times = currentTimesHit.all.map {  key, time in
+            return time
         }
- */
+        currentTimesHit.removeAll()
+        
+        if restClient.isSdkServerAvailable() {
+            restClient.sendTimeMetrics(times, completion: { result in
+                do {
+                    let _ = try result.unwrap()
+                    Logger.d("Time metrics posted successfully")
+                } catch {
+                    Logger.e("Time metrics error: \(String(describing: error))")
+                    currentTimesHit.A
+                }
+            })
+        }
     }
+    
+
     
     private func loadTimesFile() {
         guard let jsonContent = loadFileContent(fileName: kTimesFile) else {
@@ -139,5 +157,14 @@ extension MetricsManager {
                 Logger.e("Could not save metrics counters)")
             }
         }
+    }
+    
+    private func shouldPostToServer() -> Bool {
+        let curTime = Date().unixTimestamp()
+        if curTime - lastPostTime >= pushRateInSecs {
+            lastPostTime = curTime
+            return true
+        }
+        return false
     }
 }
