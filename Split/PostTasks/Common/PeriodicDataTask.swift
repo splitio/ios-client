@@ -16,7 +16,6 @@ class PeriodicDataTask: PeriodicDataTaskProtocol {
     private var queueSize: Int64 = -1 // No queue size
     private var itemsPerPush: Int = -1 // No item per push limit
     private var pollingManager: PollingManager!
-    private let restClient = RestClient()
     
     private var fileStorage = FileStorage()
     
