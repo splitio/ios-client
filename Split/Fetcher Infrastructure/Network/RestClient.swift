@@ -47,10 +47,10 @@ import Foundation
 
 extension RestClient {
     func isServerAvailable(_ url: URL) -> Bool {
-        return self.isServerAvailable(url.absoluteString)
+        return self.isServerAvailable(path: url.absoluteString)
     }
     
-    func isServerAvailable(_ url: String) -> Bool {
+    func isServerAvailable(path url: String) -> Bool {
         if let reachabilityManager = NetworkReachabilityManager(host: url) {
             return reachabilityManager.isReachable
         }
