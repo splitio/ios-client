@@ -13,7 +13,6 @@ import Foundation
     let _client: SplitClientProtocol
     let _manager: SplitManagerProtocol
     
-    
     public init(apiKey: String, key: Key, config: SplitClientConfig) {
         config.apiKey = apiKey
         let splitCache = SplitCache(storage: FileStorage())

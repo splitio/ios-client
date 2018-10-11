@@ -12,6 +12,7 @@ import Foundation
 
 public final class SplitClient: NSObject, SplitClientProtocol {
 
+    private let kMetricsManagerPushRateInSeconds = 10
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
     public var key: Key
@@ -23,8 +24,8 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     public var shouldSendBucketingKey: Bool = false
 
     private var eventsManager: SplitEventsManager
-
     private var trackEventsManager: TrackManager
+    private var metricsManager: MetricsManager
 
     public init(config: SplitClientConfig, key: Key, splitCache: SplitCache) {
 
@@ -53,6 +54,9 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         impressionsConfig.impressionsPerPush = config.impressionsChunkSize
         splitImpressionManager = ImpressionManager(config: impressionsConfig)
 
+        
+        metricsManager = MetricsManager.shared
+        
         self.initialized = false
 
         super.init()
@@ -105,6 +109,7 @@ extension SplitClient {
 
     private func getTreatment(splitName: String, verifyKey: Bool = true, attributes:[String:Any]? = nil) -> String {
 
+        let timeMetricStart = Date().unixTimestampInMicroseconds()
         let evaluator: Evaluator = Evaluator.shared
         evaluator.splitClient = self
         do {
@@ -122,7 +127,7 @@ extension SplitClient {
             } else {
                 logImpression(label: label, treatment: treatment, splitName: splitName, attributes: attributes)
             }
-
+            metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatment)
             return treatment
         }
         catch {

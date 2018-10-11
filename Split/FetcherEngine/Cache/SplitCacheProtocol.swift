@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public protocol SplitCacheProtocol {
+protocol SplitCacheProtocol {
     
     func addSplit(splitName: String, split: Split) -> Bool
     

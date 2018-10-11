@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-public class SplitCacheStub: SplitCacheProtocol {
+class SplitCacheStub: SplitCacheProtocol {
     
     private let kClassName = String(describing: SplitCache.self)
     private var changeNumber: Int64
@@ -23,19 +23,19 @@ public class SplitCacheStub: SplitCacheProtocol {
     }
     
     @discardableResult
-    public func addSplit(splitName: String, split: Split) -> Bool {
+    func addSplit(splitName: String, split: Split) -> Bool {
         splits[splitName.lowercased()] = split
         return true
     }
     
     @discardableResult
-    public func removeSplit(splitName: String) -> Bool {
+    func removeSplit(splitName: String) -> Bool {
         splits.removeValue(forKey: splitName.lowercased())
         return true
     }
     
     @discardableResult
-    public func setChangeNumber(_ changeNumber: Int64) -> Bool {
+    func setChangeNumber(_ changeNumber: Int64) -> Bool {
         self.changeNumber = changeNumber
         return true
     }
@@ -48,15 +48,15 @@ public class SplitCacheStub: SplitCacheProtocol {
         return changeNumber
     }
     
-    public func getSplit(splitName: String) -> Split? {
+    func getSplit(splitName: String) -> Split? {
         return splits[splitName.lowercased()]
     }
     
-    public func getAllSplits() -> [Split] {
+    func getAllSplits() -> [Split] {
         return Array(splits.values)
     }
     
-    public func clear() {
+    func clear() {
     }
     
 }

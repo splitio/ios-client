@@ -7,24 +7,53 @@
 
 import Foundation
 
+struct Metrics {
+    struct time {
+        static let getTreatment = "sdk.getTreatment"
+    }
+    
+    struct counter {
+        static let getApiKeyFromSecureStorage = "sdk.getApiKeyFromSecureStorage"
+        static let saveApiKeyInSecureStorage = "sdk.saveApiKeyInSecureStorage"
+        static let getApiKeyFromSecureStorageCache = "sdk.getApiKeyFromSecureStorageCache"
+    }
+}
+
 struct MetricManagerConfig {
-    var pushRate: Int! // Interval
+    var pushRateInSeconds: Int! // Interval
 }
 
 class MetricsManager: PeriodicDataTask {
     
-    private var currentCountersHit = SingleDictionaryWrapper<String, MetricCounter>()
-    private var currentTimesHit = SingleDictionaryWrapper<String, MetricTime>()
+    private var countersCache = SynchronizedArrayWrapper<CounterMetricSample>()
+    private var timesCache = SynchronizedArrayWrapper<TimeMetricSample>()
     
     private let kTimesFile = "timesFile"
     private let kCountersFile = "countersFile"
     
-    private var pushRateInSecs: Int
-    private var lastPostTime: Int64 = Date().unixTimestampInMiliseconds()
-    private let restClient = RestClient()
+    private var pushRateInSeconds: Int
+    private var lastPostTime: Int64 = Date().unixTimestamp()
+    private let restClient: MetricsRestClient
     
-    init(config: MetricManagerConfig) {
-        pushRateInSecs = config.pushRate
+    /***
+     * Shared instance to use within all app
+     * It can be used with a default config
+     * Constructors remain interna so that the manager can
+     * can be used with a custom config
+     */
+    static let shared: MetricsManager = {
+        let config = MetricManagerConfig(pushRateInSeconds: 10)
+        let instance = MetricsManager(config: config)
+        return instance;
+    }()
+    
+    convenience init(config: MetricManagerConfig) {
+        self.init(config: config, restClient: RestClient())
+    }
+    
+     init(config: MetricManagerConfig, restClient: MetricsRestClient) {
+        pushRateInSeconds = config.pushRateInSeconds
+        self.restClient = restClient
         super.init()
     }
     
@@ -39,7 +68,8 @@ class MetricsManager: PeriodicDataTask {
     }
     
     override func executePeriodicAction() {
-        
+        sendTimes()
+        sendCounters()
     }
 }
 
@@ -47,98 +77,66 @@ class MetricsManager: PeriodicDataTask {
 extension MetricsManager {
     
     func time(microseconds latency: Int64, for operationName: String) {
-        var time: MetricTime
-        if let t = currentTimesHit.value(forKey: operationName) {
-            time = t
-        } else {
-            time = MetricTime(name: operationName)
-        }
-        time.addLatency(microseconds: latency)
-        currentTimesHit.setValue(time, toKey: operationName)
+        timesCache.append(TimeMetricSample(operation: operationName, latency: latency))
         if shouldPostToServer() {
             executePeriodicAction()
         }
     }
     
     func count(delta: Int64, for counterName: String) {
-        var counter: MetricCounter
-        if let c = currentCountersHit.value(forKey: counterName) {
-            counter = c
-        } else {
-            counter = MetricCounter(name: counterName)
+        countersCache.append(CounterMetricSample(name: counterName, delta: delta))
+        if shouldPostToServer() {
+            executePeriodicAction()
         }
-        counter.addDelta(delta)
-        currentCountersHit.setValue(counter, toKey: counterName)
     }
-    
-    func gauge(value: Double, for gauge: String) {
-        
-    }
-    
 }
 
-// MARK: Private
+// MARK: Private - Common
 extension MetricsManager {
-    
-    
-    private func sendTimes() {
-        if currentTimesHit.count == 0 { return }
-        let times = currentTimesHit.all.map {  key, time in
-            return time
+    private func shouldPostToServer() -> Bool {
+        let curTime = Date().unixTimestamp()
+        if curTime - lastPostTime >= pushRateInSeconds {
+            lastPostTime = curTime
+            return true
         }
-        currentTimesHit.removeAll()
-        
+        return false
+    }
+}
+
+// MARK: Private - Times
+extension MetricsManager {
+
+    private func sendTimes() {
+        if timesCache.count == 0 { return }
+        let timeSamples = timesCache.all
+        timesCache.removeAll()
         if restClient.isSdkServerAvailable() {
-            restClient.sendTimeMetrics(times, completion: { result in
+            restClient.sendTimeMetrics(buildTimesToSend(timeSamples: timeSamples), completion: { result in
                 do {
                     let _ = try result.unwrap()
                     Logger.d("Time metrics posted successfully")
                 } catch {
+                    self.timesCache.append(timeSamples)
                     Logger.e("Time metrics error: \(String(describing: error))")
-                    currentTimesHit.A
                 }
             })
         }
     }
-    
 
-    
-    private func loadTimesFile() {
-        guard let jsonContent = loadFileContent(fileName: kTimesFile) else {
-            return
+    private func buildTimesToSend(timeSamples: [TimeMetricSample]) -> [TimeMetric]{
+        var times = [String: TimeMetric]()
+        for sample in timeSamples {
+            let time = times[sample.operation] ?? TimeMetric(name: sample.operation)
+            time.addLatency(microseconds: sample.latency)
+            times[sample.operation] = time
         }
-        do {
-            let times = try Json.encodeFrom(json: jsonContent, to: [MetricTime].self)
-            currentTimesHit = SingleDictionaryWrapper()
-            for time in times {
-                currentTimesHit.setValue(time, toKey: time.name)
-            }
-        } catch {
-            Logger.e("Error while loading time metrics from disk")
-            return
-        }
+        return times.values.map { return $0 }
     }
     
-    private func loadCountersFile() {
-        guard let jsonContent = loadFileContent(fileName: kCountersFile) else {
-            return
-        }
-        do {
-            let counters = try Json.encodeFrom(json: jsonContent, to: [MetricCounter].self)
-            currentCountersHit = SingleDictionaryWrapper()
-            for counter in counters {
-                currentCountersHit.setValue(counter, toKey: counter.name)
-            }
-        } catch {
-            Logger.e("Error while loading metrics counters from disk")
-            return
-        }
-    }
-
     private func saveTimesToDisk() {
-        if currentTimesHit.count > 0 {
+        if timesCache.count > 0 {
             do {
-                let times = currentTimesHit.all.values.map { $0 }
+                let times: [TimeMetricSample] = timesCache.all
                 let jsonData = try Json.encodeToJson(times)
                 saveFileContent(fileName: kTimesFile, content: jsonData)
             } catch {
@@ -147,10 +145,58 @@ extension MetricsManager {
         }
     }
     
+    private func loadTimesFile() {
+        guard let jsonContent = loadFileContent(fileName: kTimesFile) else {
+            return
+        }
+        do {
+            let times = try Json.encodeFrom(json: jsonContent, to: [TimeMetricSample].self)
+            timesCache = SynchronizedArrayWrapper()
+            for time in times {
+                timesCache.append(time)
+            }
+        } catch {
+            Logger.e("Error while loading time metrics from disk")
+            return
+        }
+    }
+}
+
+// MARK: Private - Counters
+extension MetricsManager {
+    
+    private func sendCounters() {
+        if countersCache.count == 0 { return }
+        let counterSamples = countersCache.all
+        countersCache.removeAll()
+        
+        if restClient.isSdkServerAvailable() {
+            restClient.sendCounterMetrics(buildCountersToSend(counterSamples: counterSamples), completion: { result in
+                do {
+                    let _ = try result.unwrap()
+                    Logger.d("Counter metrics posted successfully")
+                } catch {
+                    self.countersCache.append(counterSamples)
+                    Logger.e("Counter metrics error: \(String(describing: error))")
+                }
+            })
+        }
+    }
+    
+    private func buildCountersToSend(counterSamples: [CounterMetricSample]) -> [CounterMetric]{
+        var counters = [String: CounterMetric]()
+        for sample in counterSamples {
+            var counter = counters[sample.name] ?? CounterMetric(name: sample.name)
+            counter.addDelta(sample.delta)
+            counters[sample.name] = counter
+        }
+        return counters.values.map { return $0 }
+    }
+    
     private func saveCountersToDisk() {
-        if currentCountersHit.count > 0 {
+        if countersCache.count > 0 {
             do {
-                let counters = currentCountersHit.all.values.map { $0 }
+                let counters: [CounterMetricSample] = countersCache.all
                 let jsonData = try Json.encodeToJson(counters)
                 saveFileContent(fileName: kCountersFile, content: jsonData)
             } catch {
@@ -159,12 +205,19 @@ extension MetricsManager {
         }
     }
     
-    private func shouldPostToServer() -> Bool {
-        let curTime = Date().unixTimestamp()
-        if curTime - lastPostTime >= pushRateInSecs {
-            lastPostTime = curTime
-            return true
+    private func loadCountersFile() {
+        guard let jsonContent = loadFileContent(fileName: kCountersFile) else {
+            return
         }
-        return false
+        do {
+            let counters = try Json.encodeFrom(json: jsonContent, to: [CounterMetricSample].self)
+            countersCache = SynchronizedArrayWrapper<CounterMetricSample>()
+            for counter in counters {
+                countersCache.append(counter)
+            }
+        } catch {
+            Logger.e("Error while loading metrics counters from disk")
+            return
+        }
     }
 }

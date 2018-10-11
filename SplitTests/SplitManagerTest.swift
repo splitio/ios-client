@@ -103,8 +103,8 @@ class SplitManagerTest: QuickSpec {
                 let manager: SplitManagerProtocol = SplitManager(splitFetcher: fetcher)
                 let path = bundle.path(forResource: "split_sample_feature6", ofType: "json")!
                 let newSplit = try! JSON(Data(contentsOf: URL(fileURLWithPath: path))).decode(Split.self)!
-                cache.addSplit(splitName: newSplit.name!, split: newSplit)
-                cache.setChangeNumber(2)
+                _ = cache.addSplit(splitName: newSplit.name!, split: newSplit)
+                _ = cache.setChangeNumber(2)
                 let splits = manager.splits
                 let names = manager.splitNames
                 it("split count") {
@@ -120,8 +120,8 @@ class SplitManagerTest: QuickSpec {
                 let cache: SplitCacheProtocol = SplitCacheStub(splits: loadedSplits!, changeNumber: 1)
                 let fetcher: SplitFetcher = LocalSplitFetcher(splitCache: cache)
                 let manager: SplitManagerProtocol = SplitManager(splitFetcher: fetcher)
-                cache.removeSplit(splitName: "sample_feature4")
-                cache.setChangeNumber(2)
+                _ = cache.removeSplit(splitName: "sample_feature4")
+                _ = cache.setChangeNumber(2)
                 let splits = manager.splits
                 let names = manager.splitNames
                 it("split count") {

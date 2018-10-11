@@ -8,7 +8,15 @@
 
 import Foundation
 
-@objc public final class RestClient: NSObject {
+protocol RestClientProtocol {
+    func isServerAvailable(_ url: URL) -> Bool
+    func isServerAvailable(_ url: String) -> Bool
+    func isEventsServerAvailable() -> Bool
+    func isSdkServerAvailable() -> Bool
+}
+
+/*@objc public final */
+class RestClient: NSObject {
     // MARK: - Private Properties
     private let manager: RestClientManagerProtocol
     
@@ -45,7 +53,7 @@ import Foundation
     }
 }
 
-extension RestClient {
+extension RestClient: RestClientProtocol {
     func isServerAvailable(_ url: URL) -> Bool {
         return self.isServerAvailable(url.absoluteString)
     }
