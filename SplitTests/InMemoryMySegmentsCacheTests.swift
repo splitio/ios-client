@@ -7,57 +7,41 @@
 //
 
 import Foundation
-import Quick
-import Nimble
+import XCTest
 
 @testable import Split
 
-class InMemoryMySegmentsCacheTests: QuickSpec {
+class InMemoryMySegmentsCacheTests: XCTestCase {
     
-    override func spec() {
-        
-        describe("InMemoryMySegmentsCacheTest") {
-            
-            let mySegmentsCache = InMemoryMySegmentsCache()
-
-            context("Save MySegments Successfully") {
-                
-                it("should return an array of strings with the same values as it was saved") {
-                    mySegmentsCache.addSegments(segmentNames: ["segment1", "segment2", "segment3"], key: "some_user_key")
-                    
-                    let segments = mySegmentsCache.getSegments(key: "some_user_key")
-                    expect(segments).toNot(beNil())
-                    expect(segments?.count).to(equal(3))
-                }
-                
-            }
-            
-            context("Test IsInSegment") {
-                
-                it("should return true when passing segments1 and segment2, and false on segment4") {
-                    expect(mySegmentsCache.isInSegment(segmentName: "segment1", key: "some_user_key")).to(beTrue())
-                        
-                    expect(mySegmentsCache.isInSegment(segmentName: "segment4",key: "some_user_key")).to(beFalse())
-                        
-                    expect(mySegmentsCache.isInSegment(segmentName: "segment2",key: "some_user_key")).to(beTrue())
-                }
-            }
-            
-            context("Test RemoveSegment") {
-
-                it("isInSegment should return false when passing segments2") {
-                    mySegmentsCache.removeSegments()
-                    expect(mySegmentsCache.isInSegment(segmentName: "segment2",key: "some_user_key")).to(beFalse())
-                }
-            }
-            
-            context("Test Clear Cache") {
-                
-                it("getSegments should return an empty array") {
-                    mySegmentsCache.clear()
-                    expect(mySegmentsCache.getSegments()).to(beEmpty())
-                }
-            }
-        }
+    var mySegmentsCache: InMemoryMySegmentsCache!
+    
+    override func setUp() {
+        mySegmentsCache = InMemoryMySegmentsCache()
+        mySegmentsCache.addSegments(segmentNames: ["segment1", "segment2", "segment3"], key: "some_user_key")
+    }
+    
+    override func tearDown() {
+    }
+    
+    func testAddMySegments() {
+        let segments = mySegmentsCache.getSegments(key: "some_user_key")
+        XCTAssertNotNil(segments, "Segments for this key should not be nil")
+        XCTAssertTrue(segments!.count == 3, "Should be 3 segments")
+    }
+    
+    func testIsInSegment() {
+        XCTAssertTrue(mySegmentsCache.isInSegment(segmentName: "segment1", key: "some_user_key"), "Segment1 should be in cache")
+        XCTAssertFalse(mySegmentsCache.isInSegment(segmentName: "segment4",key: "some_user_key"), "Segment4 should not be in cache")
+        XCTAssertTrue(mySegmentsCache.isInSegment(segmentName: "segment2",key: "some_user_key"), "Segment2 should be in cache")
+    }
+    
+    func testRemoveSegment() {
+        mySegmentsCache.removeSegments()
+        XCTAssertFalse(mySegmentsCache.isInSegment(segmentName: "segment2",key: "some_user_key"), "Segment2 should be in cache")
+    }
+    
+    func testClearCache() {
+        mySegmentsCache.clear()
+        XCTAssertTrue(mySegmentsCache.getSegments()!.count == 0, "Segment count should be 0")
     }
 }
