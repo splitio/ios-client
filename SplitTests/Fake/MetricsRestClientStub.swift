@@ -40,7 +40,7 @@ extension MetricsRestClientStub: MetricsRestClient {
         return true
     }
     
-    func isServerAvailable(_ url: String) -> Bool {
+    func isServerAvailable(path url: String) -> Bool {
         return true
     }
     

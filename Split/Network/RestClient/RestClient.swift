@@ -10,7 +10,7 @@ import Foundation
 
 protocol RestClientProtocol {
     func isServerAvailable(_ url: URL) -> Bool
-    func isServerAvailable(_ url: String) -> Bool
+    func isServerAvailable(path url: String) -> Bool
     func isEventsServerAvailable() -> Bool
     func isSdkServerAvailable() -> Bool
 }
@@ -55,10 +55,10 @@ class RestClient: NSObject {
 
 extension RestClient: RestClientProtocol {
     func isServerAvailable(_ url: URL) -> Bool {
-        return self.isServerAvailable(url.absoluteString)
+        return self.isServerAvailable(path: url.absoluteString)
     }
     
-    func isServerAvailable(_ url: String) -> Bool {
+    func isServerAvailable(path url: String) -> Bool {
         if let reachabilityManager = NetworkReachabilityManager(host: url) {
             return reachabilityManager.isReachable
         }
