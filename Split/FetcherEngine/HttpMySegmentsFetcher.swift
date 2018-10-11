@@ -8,20 +8,20 @@
 
 import Foundation
 
-public final class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
+class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
     
     private let restClient: RestClient
     private let storage: StorageProtocol
     private let mySegmentCache: MySegmentsCacheProtocol?
     
-    public init(restClient: RestClient, storage: StorageProtocol) {
+    init(restClient: RestClient, storage: StorageProtocol) {
         
         self.restClient = restClient
         self.storage = storage
         self.mySegmentCache = MySegmentsCache(storage: storage)
     }
     
-    public func fetch(user: String, policy: FecthingPolicy) throws -> [String]? {
+    func fetch(user: String, policy: FecthingPolicy) throws -> [String]? {
         
         if policy == .cacheOnly || !self.restClient.isSdkServerAvailable() {
             return self.mySegmentCache?.getSegments(key: user)

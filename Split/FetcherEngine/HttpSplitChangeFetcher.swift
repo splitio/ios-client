@@ -13,17 +13,17 @@ public enum FecthingPolicy {
     case networkAndCache
 }
 
-@objc public final class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
+class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
     
     private let restClient: RestClient
     private let splitChangeCache: SplitChangeCache?
     
-    public init(restClient: RestClient, splitCache: SplitCacheProtocol) {
+    init(restClient: RestClient, splitCache: SplitCacheProtocol) {
         self.restClient = restClient
         self.splitChangeCache = SplitChangeCache(splitCache: splitCache)
     }
     
-    public func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
+    func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
         
         var reachable: Bool = true
 

@@ -76,7 +76,7 @@ class EnvironmentTargetManager {
         return target
     }
     
-    public static func sendTimeMetrics(_ times: [MetricTime]) -> Target {
+    public static func sendTimeMetrics(_ times: [TimeMetric]) -> Target {
         let target = DynamicTarget(shared.sdkBaseUrl,
                                    shared.eventsBaseURL,
                                    DynamicTarget.DynamicTargetStatus.sendTimeMetrics())
@@ -87,7 +87,7 @@ class EnvironmentTargetManager {
         return target
     }
     
-    public static func sendCounterMetrics(_ counters: [MetricCounter]) -> Target {
+    public static func sendCounterMetrics(_ counters: [CounterMetric]) -> Target {
         let target = DynamicTarget(shared.sdkBaseUrl,
                                    shared.eventsBaseURL,
                                    DynamicTarget.DynamicTargetStatus.sendCounterMetrics())

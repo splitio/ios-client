@@ -91,11 +91,11 @@ extension PeriodicDataTask {
 // MARK: Background / Foreground
 extension PeriodicDataTask {
     @objc func applicationDidEnterBackground() {
-        loadDataFromDisk()
+        saveDataToDisk()
     }
     
     @objc func applicationDidBecomeActive() {
-        saveDataToDisk()
+        loadDataFromDisk()
     }
     
     func subscribeNotifications() {

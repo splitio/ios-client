@@ -45,6 +45,12 @@ class SynchronizedArrayWrapper<T> {
         }
     }
     
+    func append(_ items: [T]){
+        queue.async(flags: .barrier) {
+            self.items.append(contentsOf: items)
+        }
+    }
+    
     func fill(with newItems: [T]){
         queue.async(flags: .barrier) {
             self.items.removeAll()

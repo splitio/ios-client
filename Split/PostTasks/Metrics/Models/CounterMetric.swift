@@ -1,5 +1,5 @@
 //
-//  MetricCounter.swift
+//  CounterMetric.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 28/09/2018.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct MetricCounter: Codable {
+struct CounterMetric: Codable {
     var name: String
     var delta: Int64 = 0
     

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class RefreshableSplitFetcher: SplitFetcher {
+class RefreshableSplitFetcher: SplitFetcher {
     
     private let splitChangeFetcher: SplitChangeFetcher
     private let interval: Int
@@ -21,7 +21,7 @@ public final class RefreshableSplitFetcher: SplitFetcher {
     private var _eventsManager: SplitEventsManager
     private var firstSplitFetchs: Bool = true
     
-    public init(splitChangeFetcher: SplitChangeFetcher, splitCache: SplitCacheProtocol, interval: Int, dispatchGroup: DispatchGroup? = nil, eventsManager:SplitEventsManager) {
+    init(splitChangeFetcher: SplitChangeFetcher, splitCache: SplitCacheProtocol, interval: Int, dispatchGroup: DispatchGroup? = nil, eventsManager:SplitEventsManager) {
         self.splitCache = splitCache
         self.splitChangeFetcher = splitChangeFetcher
         self.interval = interval
@@ -29,20 +29,20 @@ public final class RefreshableSplitFetcher: SplitFetcher {
         self._eventsManager = eventsManager
     }
     
-    public func forceRefresh() {
+    func forceRefresh() {
         _ = self.splitCache.setChangeNumber(-1)
         pollForSplitChanges()
     }
     
-    public func fetch(splitName: String) -> Split? {
+    func fetch(splitName: String) -> Split? {
         return splitCache.getSplit(splitName: splitName)
     }
     
-    public func fetchAll() -> [Split]? {
+    func fetchAll() -> [Split]? {
         return splitCache.getAllSplits()
     }
     
-    public func start() {
+    func start() {
         do {
             let splitChange = try self.splitChangeFetcher.fetch(since: -1, policy: .cacheOnly)
             if let _ = splitChange {
@@ -58,7 +58,7 @@ public final class RefreshableSplitFetcher: SplitFetcher {
         startPollingForSplitChanges()
     }
     
-    public func stop() {
+    func stop() {
         stopPollingForSplitChanges()
     }
     
