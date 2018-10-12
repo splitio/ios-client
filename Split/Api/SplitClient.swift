@@ -12,7 +12,6 @@ import Foundation
 
 public final class SplitClient: NSObject, SplitClientProtocol {
 
-    private let kMetricsManagerPushRateInSeconds = 10
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
     public var key: Key
@@ -32,6 +31,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         self.config = config
         self.key = key
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
+        MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate
 
         
         eventsManager = SplitEventsManager(config: config)
