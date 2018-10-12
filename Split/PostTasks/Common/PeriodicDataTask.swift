@@ -9,7 +9,7 @@
 import Foundation
 
 class PeriodicDataTask: PeriodicDataTaskProtocol {
-
+    
     private var maxHitAttempts = 3
     private var firstPushWindowInSecs: Int = 0
     private var pushRateInSecs: Int = 1800
@@ -25,8 +25,13 @@ class PeriodicDataTask: PeriodicDataTaskProtocol {
     }
     
     deinit {
+        #if swift(>=4.2)
         NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+        #else
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: .UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
+        #endif
     }
     
     func start(){
@@ -99,8 +104,12 @@ extension PeriodicDataTask {
     }
     
     func subscribeNotifications() {
+        #if swift(>=4.2)
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        #else
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: .UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
+        #endif
     }
 }
-
