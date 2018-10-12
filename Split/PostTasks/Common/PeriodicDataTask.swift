@@ -12,7 +12,7 @@ class PeriodicDataTask: PeriodicDataTaskProtocol {
 
     private var maxHitAttempts = 3
     private var firstPushWindowInSecs: Int = 0
-    private var pushRateInSecs: Int = 20
+    private var pushRateInSecs: Int = 1800
     private var queueSize: Int64 = -1 // No queue size
     private var itemsPerPush: Int = -1 // No item per push limit
     private var pollingManager: PollingManager!

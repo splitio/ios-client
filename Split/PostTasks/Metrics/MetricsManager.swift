@@ -20,7 +20,7 @@ struct Metrics {
 }
 
 struct MetricManagerConfig {
-    var pushRateInSeconds: Int! // Interval
+    var pushRateInSeconds: Int = 60
 }
 
 class MetricsManager: PeriodicDataTask {
@@ -42,7 +42,7 @@ class MetricsManager: PeriodicDataTask {
      * can be used with a custom config
      */
     static let shared: MetricsManager = {
-        let config = MetricManagerConfig(pushRateInSeconds: 10)
+        let config = MetricManagerConfig()
         let instance = MetricsManager(config: config)
         return instance;
     }()
