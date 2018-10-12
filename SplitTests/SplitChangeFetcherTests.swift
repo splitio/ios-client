@@ -7,97 +7,76 @@
 //
 
 import Foundation
-
-import Quick
-import Nimble
+import XCTest
 import OHHTTPStubs
 
 @testable import Split
 
-class SplitChangeFetcherTests: QuickSpec {
+class SplitChangeFetcherTests: XCTestCase {
     
-    override func spec() {
+    var splitChangeFetcher: SplitChangeFetcher!
+    var cache: SplitCache!
+    
+    override func setUp() {
+        cache = SplitCache(storage: MemoryStorage())
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: cache)
+    }
+    
+    override func tearDown() {
+        OHHTTPStubs.removeAllStubs()
+    }
+    
+    func testFetchCount() {
+        stub(condition: isPath("/api/splitChanges")) { _ in
+            let stubPath = OHPathForFile("splitchanges_1.json", type(of: self))
+            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
+        }
         
-        describe("SplitChangeFetcher") {
-            
-            var splitChangeFetcher: SplitChangeFetcher!
-            let cache = SplitCache(storage: MemoryStorage())
-
-            beforeEach {
-                splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: cache)
-            }
-            
-            context("Test a Json that changes its structure and is deserialized without exception. Contains: a field renamed, a field removed and a field added.") {
-                
-                it("should return a json of type object when server response is a json object") {
-                    
-                    stub(condition: isPath("/api/splitChanges")) { _ in
-                        let stubPath = OHPathForFile("splitchanges_1.json", type(of: self))
-                        return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-                    }
-                    
-                    let response = try? splitChangeFetcher.fetch(since: -1)
-                    expect(response).toEventuallyNot(beNil())
-                    if let response = response {
-                        expect(response!.splits!.count).toEventually(beGreaterThan(0))
-                    }
-                }
-                
-            }
-            
-            context("Fetch SplitChanges Successfully") {
-                
-                it("should return a json of type object when server response is a json object with some extra parameters") {
-                    
-                    stub(condition: pathMatches("/api/splitChanges")) { _ in
-                        let stubPath = OHPathForFile("splitchanges_2.json", type(of: self))
-                        return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-                    }
-                    
-                    let response = try? splitChangeFetcher.fetch(since: -1)
-                    
-                    expect(response).toEventuallyNot(beNil())
-                    if let response = response {
-                        expect(response!.splits!.count).to(equal(1))
-                        
-                        let split = response!.splits![0];
-                        expect(split.name).to(equal("FACUNDO_TEST"))
-                        expect(split.killed).to(equal(false))
-                        expect(split.status).to(equal(Status.Active))
-                        expect(split.trafficTypeName).to(equal("account"))
-                        expect(split.defaultTreatment).to(equal("off"))
-                        expect(split.conditions).toNot(beNil())
-                        expect(response!.since).to(equal(-1))
-                        expect(response!.till).to(equal(1506703262916))
-                        expect(split.algo).to(beNil())
-                    }
-                }
-                
-            }
-            
-            context("Fetch SplitChanges With Empty Response") {
-                
-                it("splits, till and since should be nil") {
-                    stub(condition: isPath("/api/splitChanges")) { _ in
-                        let stubPath = OHPathForFile("splitchanges_3.json", type(of: self))
-                        return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-                    }
-                    
-                    let response = try? splitChangeFetcher.fetch(since: -1)
-                    
-                    expect(response).toEventuallyNot(beNil())
-                    if let response = response {
-                        expect(response!.splits).to(beNil())
-                        expect(response!.since).to(beNil())
-                        expect(response!.till).to(beNil())
-                    }
-                }
-                
-            }
-            
-            afterEach {
-                OHHTTPStubs.removeAllStubs()
-            }
+        sleep(1) // Time to load the file
+        let response = try? splitChangeFetcher.fetch(since: -1)
+        XCTAssertTrue(response != nil, "Response should not be nil")
+        if let response = response {
+            XCTAssertTrue(response!.splits!.count > 0, "Split count should be greater than 0")
+        }
+    }
+    
+    func testChangeFetch() {
+        stub(condition: pathMatches("/api/splitChanges")) { _ in
+            let stubPath = OHPathForFile("splitchanges_2.json", type(of: self))
+            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
+        }
+        
+        sleep(1) // Time to load the file
+        let response = try? splitChangeFetcher.fetch(since: -1)
+        XCTAssertTrue(response != nil, "Response should not be nil")
+        if let response = response {
+            XCTAssertEqual(response!.splits!.count, 1, "Splits count should be 1")
+            let split = response!.splits![0];
+            XCTAssertEqual(split.name, "FACUNDO_TEST", "Split name value")
+            XCTAssertFalse(split.killed!, "Split killed value should be false")
+            XCTAssertEqual(split.status, Status.Active, "Split status should be 'Active'")
+            XCTAssertEqual(split.trafficTypeName, "account", "Split traffict type should be account")
+            XCTAssertEqual(split.defaultTreatment, "off", "Default treatment value")
+            XCTAssertNotNil(split.conditions, "Conditions should not be nil")
+            XCTAssertEqual(response!.since, -1, "Since should be -1")
+            XCTAssertEqual(response!.till, 1506703262916, "Check till value")
+            XCTAssertNil(split.algo, "Algo should be nil")
+        }
+    }
+    
+    func testSplitsTillAndSince() {
+        stub(condition: isPath("/api/splitChanges")) { _ in
+            let stubPath = OHPathForFile("splitchanges_3.json", type(of: self))
+            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
+        }
+        
+        sleep(2) // Time to load the file
+        let response = try? splitChangeFetcher.fetch(since: -1)
+        XCTAssertTrue(response != nil, "Response should not be nil")
+        if let response = response {
+            XCTAssertNil(response!.splits, "Splits should be nil")
+            XCTAssertNil(response!.since, "Since should be nil")
+            XCTAssertNil(response!.till, "Till should be nil")
         }
     }
 }
