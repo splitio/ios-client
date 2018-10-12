@@ -70,6 +70,11 @@ public class SplitClientConfig: NSObject {
      The amount of events to send in a POST request. Default: 2000
      */
     public var eventsPerPush: Int = 2000
+    
+    /**
+     The schedule time for metrics flush after the first one. Default: 60s
+     */
+    public var metricsPushRate: Int = 60
 
     /**
      Client API key for company. Get it from Split admin dashboard.
