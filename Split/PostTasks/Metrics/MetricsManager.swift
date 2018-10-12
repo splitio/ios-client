@@ -19,8 +19,11 @@ struct Metrics {
     }
 }
 
-struct MetricManagerConfig {
-    var pushRateInSeconds: Int = 60
+class MetricManagerConfig {
+    static let  `default`: MetricManagerConfig = {
+        return MetricManagerConfig()
+    }()
+    var pushRateInSeconds: Int = 1800
 }
 
 class MetricsManager: PeriodicDataTask {
@@ -47,7 +50,7 @@ class MetricsManager: PeriodicDataTask {
         return instance;
     }()
     
-    convenience init(config: MetricManagerConfig) {
+    convenience init(config: MetricManagerConfig = MetricManagerConfig.default) {
         self.init(config: config, restClient: RestClient())
     }
     
