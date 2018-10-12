@@ -60,8 +60,6 @@ class GetTreatmentViewController: UIViewController {
         config.sdkReadyTimeOut = 15000
         config.connectionTimeout = 50
 
-
-
         config.impressionListener = { impression in
             print("\(impression.keyName ?? "") - \(impression.treatment ?? "") - \(impression.label ?? "")")
             DispatchQueue.global().async {
