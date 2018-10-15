@@ -7,35 +7,30 @@
 //
 
 import Foundation
-import Quick
-import Nimble
+import XCTest
 
 @testable import Split
 
-class SplitEventsManagerTest: QuickSpec {
-    
-    override func spec() {
-        
-        describe("SplitEventsManagerTest") {
-            let config: SplitClientConfig = SplitClientConfig()
-            config.sdkReadyTimeOut = 100
-            
-            let eventManager:SplitEventsManager = SplitEventsManager(config: config)
-            eventManager.start()
-            
-            eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreReady)
-            eventManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
-            eventManager.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
-            
-            _ = DispatchQueue(label:"testing.queue").sync(execute: {
-                sleep(2)
-            })
-            assert(eventManager.getExecutionTimes()[SplitEvent.sdkReady.toString()]! > 0)
-            //assert(eventManager.getExecutionTimes()[SplitEvent.sdkReadyTimedOut.toString()] == 0)
-        }
-        
+class SplitEventsManagerTest: XCTestCase {
+    override func setUp() {
     }
     
+    override func tearDown() {
+    }
     
+    func testSdkReadyEvent() {
+    
+        let config: SplitClientConfig = SplitClientConfig()
+        config.sdkReadyTimeOut = 100
+        
+        let eventManager:SplitEventsManager = SplitEventsManager(config: config)
+        eventManager.start()
+        
+        eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreReady)
+        eventManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
+        eventManager.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
 
+        sleep(2)
+        assert(eventManager.getExecutionTimes()[SplitEvent.sdkReady.toString()]! > 0)
+    }
 }
