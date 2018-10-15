@@ -70,13 +70,15 @@ class SplitChangeFetcherTests: XCTestCase {
             return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
         }
         
-        sleep(2) // Time to load the file
-        let response = try? splitChangeFetcher.fetch(since: -1)
-        XCTAssertTrue(response != nil, "Response should not be nil")
-        if let response = response {
-            XCTAssertNil(response!.splits, "Splits should be nil")
-            XCTAssertNil(response!.since, "Since should be nil")
-            XCTAssertNil(response!.till, "Till should be nil")
+        sleep(1) // Time to load the file
+        var response: SplitChange?
+        var errorHasOccurred = false
+        do {
+            response = try splitChangeFetcher.fetch(since: -1)
+        } catch {
+            errorHasOccurred = true
         }
+        XCTAssertTrue(errorHasOccurred, "An exception should be raised")
+        XCTAssertTrue(response == nil, "Response should be nil")
     }
 }
