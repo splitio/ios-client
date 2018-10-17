@@ -45,8 +45,7 @@ class MetricsManager: PeriodicDataTask {
      * can be used with a custom config
      */
     static let shared: MetricsManager = {
-        let config = MetricManagerConfig()
-        let instance = MetricsManager(config: config)
+        let instance = MetricsManager()
         return instance;
     }()
     
