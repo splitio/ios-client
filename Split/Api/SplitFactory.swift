@@ -14,9 +14,13 @@ import Foundation
     let _manager: SplitManagerProtocol
     
     public init(apiKey: String, key: Key, config: SplitClientConfig) {
+        HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
+        MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate
+    
         config.apiKey = apiKey
         let splitCache = SplitCache(storage: FileStorage())
         let splitFetcher: SplitFetcher = LocalSplitFetcher(splitCache: splitCache)
+        
         _client = SplitClient(config: config, key: key, splitCache: splitCache)
         _manager = SplitManager(splitFetcher: splitFetcher)
     }

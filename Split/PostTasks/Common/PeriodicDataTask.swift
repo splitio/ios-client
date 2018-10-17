@@ -48,7 +48,6 @@ class PeriodicDataTask: PeriodicDataTaskProtocol {
     func saveDataToDisk() {
         print("saveDataToDisk - method not implemented")
     }
-    
 }
 
 // MARK: Helpers - Internal not overridable
