@@ -25,24 +25,20 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
     
     func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
         
-        var reachable: Bool = true
-
         if policy == .cacheOnly {
             return self.splitChangeCache?.getChanges(since: -1)
         }
         
-        if let reachabilityManager = NetworkReachabilityManager(host: "sdk.split.io/api/version") {
-            if (!reachabilityManager.isReachable)  {
-                reachable = false
-            }
-        }
-        
-        if !reachable {
+        if !restClient.isSdkServerAvailable() {
             return self.splitChangeCache?.getChanges(since: since)
         } else {
+            let metricsManager = MetricsManager.shared
             let semaphore = DispatchSemaphore(value: 0)
             var requestResult: DataResult<SplitChange>?
+            let fetchStartTime = Date().unixTimestampInMiliseconds()
             restClient.getSplitChanges(since: since) { result in
+                metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime, for: Metrics.time.splitChangeFetcherGet)
+                metricsManager.count(delta: 1, for: Metrics.counter.splitChangeFetcherStatus200)
                 requestResult = result
                 semaphore.signal()
             }
