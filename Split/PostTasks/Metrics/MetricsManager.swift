@@ -10,12 +10,19 @@ import Foundation
 struct Metrics {
     struct time {
         static let getTreatment = "sdk.getTreatment"
+        static let sdkReady = "sdk.ready"
+        static let splitChangeFetcherGet = "splitChangeFetcher.time"
+        static let mySegmentsFetcherGet = "mySegmentsFetcher.time"
     }
     
     struct counter {
         static let getApiKeyFromSecureStorage = "sdk.getApiKeyFromSecureStorage"
         static let saveApiKeyInSecureStorage = "sdk.saveApiKeyInSecureStorage"
         static let getApiKeyFromSecureStorageCache = "sdk.getApiKeyFromSecureStorageCache"
+        static let splitChangeFetcherStatus200 = "splitChangeFetcher.status.200"
+        static let splitChangeFetcherException = "splitChangeFetcher.exception"
+        static let mySegmentsFetcherStatus200 = "mySegmentsFetcher.status.200"
+        static let mySegmentsFetcherException = "mySegmentsFetcher.exception"
     }
 }
 
@@ -45,8 +52,7 @@ class MetricsManager: PeriodicDataTask {
      * can be used with a custom config
      */
     static let shared: MetricsManager = {
-        let config = MetricManagerConfig()
-        let instance = MetricsManager(config: config)
+        let instance = MetricsManager()
         return instance;
     }()
     
