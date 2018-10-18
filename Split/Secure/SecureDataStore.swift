@@ -68,7 +68,6 @@ class SecureDataStore {
     func getToken() -> String? {
         
         if let token = self.token {
-            metricsManager.count(delta: 1, for: Metrics.counter.getApiKeyFromSecureStorageCache)
             return token
         }
         metricsManager.count(delta: 1, for: Metrics.counter.getApiKeyFromSecureStorage)
