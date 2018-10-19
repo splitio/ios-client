@@ -17,8 +17,6 @@ struct Metrics {
     
     struct counter {
         static let getApiKeyFromSecureStorage = "sdk.getApiKeyFromSecureStorage"
-        static let saveApiKeyInSecureStorage = "sdk.saveApiKeyInSecureStorage"
-        static let getApiKeyFromSecureStorageCache = "sdk.getApiKeyFromSecureStorageCache"
         static let splitChangeFetcherStatus200 = "splitChangeFetcher.status.200"
         static let splitChangeFetcherException = "splitChangeFetcher.exception"
         static let mySegmentsFetcherStatus200 = "mySegmentsFetcher.status.200"
