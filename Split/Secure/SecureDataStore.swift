@@ -29,7 +29,6 @@ class SecureDataStore {
     
     func setToken(token: String){
         
-        metricsManager.count(delta: 1, for: Metrics.counter.saveApiKeyInSecureStorage)
         if let token = getToken() {
             Logger.d(token)
             removeToken()
