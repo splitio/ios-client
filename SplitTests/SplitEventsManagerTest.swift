@@ -18,7 +18,7 @@ class SplitEventsManagerTest: QuickSpec {
         
         describe("SplitEventsManagerTest") {
             let config: SplitClientConfig = SplitClientConfig()
-            config.readyTimeOut(100)
+            config.sdkReadyTimeOut = 100
             
             let eventManager:SplitEventsManager = SplitEventsManager(config: config)
             eventManager.start()
@@ -27,7 +27,7 @@ class SplitEventsManagerTest: QuickSpec {
             eventManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
             eventManager.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
             
-            DispatchQueue(label:"testing.queue").sync(execute: {
+            _ = DispatchQueue(label:"testing.queue").sync(execute: {
                 sleep(2)
             })
             assert(eventManager.getExecutionTimes()[SplitEvent.sdkReady.toString()]! > 0)

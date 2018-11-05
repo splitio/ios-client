@@ -9,15 +9,16 @@ import Foundation
 
 
 
-public class SecureDataStore {
+class SecureDataStore {
     
     enum asset: String {
         case accessToken = "user_auth_token"
     }
     
+    private let metricsManager = MetricsManager.shared
     private var token: String? = nil
     
-    public static let shared: SecureDataStore = {
+    static let shared: SecureDataStore = {
         let instance = SecureDataStore();
         
         return instance;
@@ -26,8 +27,7 @@ public class SecureDataStore {
     
     // MARK: - save access token
     
-    public func setToken(token: String){
-        
+    func setToken(token: String){
         
         if let token = getToken() {
             Logger.d(token)
@@ -50,6 +50,7 @@ public class SecureDataStore {
         
         let resultCode = SecItemAdd(queryAdd as CFDictionary, nil)
         
+        
         if resultCode != noErr {
             
             Logger.e("Error saving to Keychain: \(resultCode).")
@@ -63,12 +64,12 @@ public class SecureDataStore {
     
     // MARK: - retrieve access token
     
-    public func getToken() -> String? {
+    func getToken() -> String? {
         
         if let token = self.token {
             return token
         }
-        
+        metricsManager.count(delta: 1, for: Metrics.counter.getApiKeyFromSecureStorage)
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: asset.accessToken.rawValue
@@ -99,7 +100,7 @@ public class SecureDataStore {
     
     // MARK: - delete access token
     
-    public func removeToken() {
+    func removeToken() {
         
         let queryDelete: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
