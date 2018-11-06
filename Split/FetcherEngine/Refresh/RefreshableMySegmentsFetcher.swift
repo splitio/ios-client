@@ -23,7 +23,7 @@ import Foundation
     
     private var firstMySegmentsFetch = true
     
-    public init(matchingKey: String, mySegmentsChangeFetcher: MySegmentsChangeFetcher, mySegmentsCache: MySegmentsCacheProtocol, interval: Int, dispatchGroup: DispatchGroup? = nil, eventsManager:SplitEventsManager) {
+    init(matchingKey: String, mySegmentsChangeFetcher: MySegmentsChangeFetcher, mySegmentsCache: MySegmentsCacheProtocol, interval: Int, dispatchGroup: DispatchGroup? = nil, eventsManager:SplitEventsManager) {
         self.matchingKey = matchingKey
         self.mySegmentsCache = mySegmentsCache
         self.mySegmentsChangeFetcher = mySegmentsChangeFetcher

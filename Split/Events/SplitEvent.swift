@@ -7,16 +7,7 @@
 
 import Foundation
 
-public enum SplitEvent {
-    case sdkReady
-    case sdkReadyTimedOut
-    
-    func toString() -> String {
-        switch self {
-        case .sdkReady:
-            return "SDK_READY"
-        case .sdkReadyTimedOut:
-            return "SDK_READY_TIMED_OUT"
-        }
-    }
+public enum SplitEvent: String {
+    case sdkReady = "SDK_READY"
+    case sdkReadyTimedOut = "SDK_READY_TIMED_OUT"
 }
