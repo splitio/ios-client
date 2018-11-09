@@ -11,20 +11,17 @@ import Foundation
 class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
     
     private let restClient: RestClient
-    private let storage: StorageProtocol
-    private let mySegmentCache: MySegmentsCacheProtocol?
+    private let mySegmentsCache: MySegmentsCacheProtocol?
     
-    init(restClient: RestClient, storage: StorageProtocol) {
-        
+    init(restClient: RestClient, mySegmentsCache: MySegmentsCacheProtocol) {
         self.restClient = restClient
-        self.storage = storage
-        self.mySegmentCache = MySegmentsCache(storage: storage)
+        self.mySegmentsCache = mySegmentsCache
     }
     
     func fetch(user: String, policy: FecthingPolicy) throws -> [String]? {
         
         if policy == .cacheOnly || !self.restClient.isSdkServerAvailable() {
-            return self.mySegmentCache?.getSegments(key: user)
+            return self.mySegmentsCache?.getSegments()
         } else {
             let metricsManager = MetricsManager.shared
             let semaphore = DispatchSemaphore(value: 0)
@@ -40,7 +37,7 @@ class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
             guard let segments = try requestResult?.unwrap() else {
                 return nil
             }
-            mySegmentCache?.addSegments(segmentNames: segments, key: user)
+            mySegmentsCache?.addSegments(segments)
             return segments
         }
     }

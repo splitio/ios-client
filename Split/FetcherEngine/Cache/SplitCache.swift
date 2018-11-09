@@ -4,90 +4,93 @@
 //
 //  Created by Natalia  Stele on 05/12/2017.
 //
+//  Refactored by Javier Avrudsky on 11/08/2018
 
 import Foundation
 
-public class SplitCache: SplitCacheProtocol {
+class SplitCache: SplitCacheProtocol {
     
-    public static let SPLIT_FILE_PREFIX: String = "SPLITIO.split."
-    public static let CHANGE_NUMBER_FILE_PREFIX: String = "SPLITIO.changeNumber"
-    private let kClassName = String(describing: SplitCache.self)
+    private struct SplitsFile: Codable {
+        var splits: [String: Split]
+        var changeNumber: Int64
+    }
+
+    let kSplitsFileName: String = "SPLITIO.split.splitsFile"
+    var fileStorage: FileStorageProtocol
+    var inMemoryCache: InMemorySplitCache!
     
-    var storage: StorageProtocol
-    var inMemoryCache: InMemorySplitCache
+    convenience init(){
+        self.init(fileStorage: FileStorage())
+    }
     
-    init(storage: StorageProtocol) {
-        
-        self.storage = storage
-        
-        var splits: [String:Split] = [:]
-        if let names = storage.getAllIds() {
-            for name in names {
-                var split: Split? = nil
-                if let splitString = storage.read(elementId: name) {
-                    do {
-                        split = try Json.encodeFrom(json: splitString, to: Split.self)
-                    } catch {
-                        // TODO: Improve this code!!!
-                    }
+    init(fileStorage: FileStorageProtocol) {
+        self.fileStorage = fileStorage
+        self.inMemoryCache = initialInMemoryCache()
+        NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) {
+            DispatchQueue.global().async { [weak self] in
+                guard let strongSelf = self else {
+                    return
                 }
-                
-                if let split = split, split.isValid {
-                    splits[split.name!] = split
-                }
+                strongSelf.saveSplits()
             }
         }
-        
-        var changeNumber = Int64(-1)
-        if let file = storage.read(elementId: SplitCache.CHANGE_NUMBER_FILE_PREFIX), let changeNb = Int64(file) {
-            changeNumber = changeNb
-        }
-        inMemoryCache = InMemorySplitCache(splits: splits, changeNumber: changeNumber)
     }
     
-    public func addSplit(splitName: String, split: Split) -> Bool {
-        do {
-            let jsonString = try JSON.encodeToJson(split)
-            storage.write(elementId: getSplitId(splitName: splitName), content: jsonString)
-            _ = inMemoryCache.addSplit(splitName: splitName, split: split)
-        } catch {
-            Logger.e("addSplit: Error parsing split to Json", kClassName)
-        }
-        return true
+    func addSplit(splitName: String, split: Split) {
+        inMemoryCache.addSplit(splitName: splitName, split: split)
     }
     
-    public func removeSplit(splitName: String) -> Bool {
-        storage.delete(elementId: getSplitId(splitName: splitName))
-        _ = inMemoryCache.removeSplit(splitName: splitName)
-        return true
+    func removeSplit(splitName: String) {
+        inMemoryCache.removeSplit(splitName: splitName)
     }
     
-    public func setChangeNumber(_ changeNumber: Int64) -> Bool {
-        storage.write(elementId: getChangeNumberId(),content: String(changeNumber))
-        _ = inMemoryCache.setChangeNumber(changeNumber)
-        return true
+    func setChangeNumber(_ changeNumber: Int64) {
+        inMemoryCache.setChangeNumber(changeNumber)
     }
     
-    private func getChangeNumberId() -> String {
-        return SplitCache.CHANGE_NUMBER_FILE_PREFIX
-    }
-    
-    public func getChangeNumber() -> Int64 {
+    func getChangeNumber() -> Int64 {
         return inMemoryCache.getChangeNumber()
     }
     
-    public func getSplit(splitName: String) -> Split? {
+    func getSplit(splitName: String) -> Split? {
         return inMemoryCache.getSplit(splitName: splitName)
     }
     
-    public func getAllSplits() -> [Split] {
+    func getAllSplits() -> [Split] {
         return inMemoryCache.getAllSplits()
     }
     
-    public func clear() {
+    func getSplits() -> [String : Split] {
+        return inMemoryCache.getSplits()
     }
     
-    func getSplitId(splitName: String) -> String {
-        return SplitCache.SPLIT_FILE_PREFIX + splitName
+    func clear() {
+    }
+}
+
+// MARK: Private
+extension SplitCache {
+    private func initialInMemoryCache() -> InMemorySplitCache {
+        var inMemoryCache = InMemorySplitCache(splits: [String: Split]())
+        guard let jsonContent = fileStorage.read(fileName: kSplitsFileName) else {
+            return inMemoryCache
+        }
+        do {
+            let splitsFile = try Json.encodeFrom(json: jsonContent, to: SplitsFile.self)
+            inMemoryCache = InMemorySplitCache(splits: splitsFile.splits, changeNumber: splitsFile.changeNumber)
+        } catch {
+            Logger.e("Error while loading Splits from disk")
+        }
+        return inMemoryCache
+    }
+    
+    private func saveSplits() {
+        let splitsFile = SplitsFile(splits: getSplits(), changeNumber: getChangeNumber())
+        do {
+            let jsonSplits = try Json.encodeToJson(splitsFile)
+            fileStorage.write(fileName: kSplitsFileName, content: jsonSplits)
+        } catch {
+            Logger.e("Could not save splits on disk")
+        }
     }
 }
