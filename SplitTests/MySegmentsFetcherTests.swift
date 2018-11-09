@@ -20,10 +20,9 @@ class MySegmentsFetcherTests: QuickSpec {
         describe("SplitChangeFetcher") {
             
             var mySegmentsFetcher: MySegmentsChangeFetcher!
-            let storage = FileAndMemoryStorage()
             
             beforeEach {
-                mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient(), storage: storage)
+                mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: MySegmentCacheStub())
             }
             
             context("Fetch MySegments Successfully") {

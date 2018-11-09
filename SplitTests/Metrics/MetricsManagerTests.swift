@@ -20,7 +20,8 @@ class MetricsManagerTests: XCTestCase {
     }
 
     func testPushRateNoTimeElapsed() {
-        let config = MetricManagerConfig(pushRateInSeconds: 100)
+        let config = MetricManagerConfig.default
+        config.pushRateInSeconds = 100
         let manager = MetricsManager(config: config, restClient: restClient)
         
         for i in 1...100 {
@@ -36,7 +37,8 @@ class MetricsManagerTests: XCTestCase {
      **/
     func testPushRateTimeElapsed() {
         
-        let config = MetricManagerConfig(pushRateInSeconds: 1)
+        let config = MetricManagerConfig.default
+        config.pushRateInSeconds = 1
         let manager = MetricsManager(config: config, restClient: restClient)
         
         manager.time(microseconds: 1, for: "time1")
@@ -107,7 +109,8 @@ class MetricsManagerTests: XCTestCase {
         ]
         
         
-        let config = MetricManagerConfig(pushRateInSeconds: 1)
+        let config = MetricManagerConfig.default
+        config.pushRateInSeconds = 1
         let manager = MetricsManager(config: config, restClient: restClient)
         
         for time in times {
@@ -147,7 +150,8 @@ class MetricsManagerTests: XCTestCase {
             ["counter1": 291929]
         ]
         
-        let config = MetricManagerConfig(pushRateInSeconds: 1)
+        let config = MetricManagerConfig.default
+        config.pushRateInSeconds = 1
         let manager = MetricsManager(config: config, restClient: restClient)
         
         for counter in counters {
@@ -168,7 +172,8 @@ class MetricsManagerTests: XCTestCase {
     func testCounters() {
         
         let results: [String:Int64] = ["counter1": 2, "counter2": 6, "counter3": 40, "counter4": 1]
-        let config = MetricManagerConfig(pushRateInSeconds: 1)
+        let config = MetricManagerConfig.default
+        config.pushRateInSeconds = 1
         let manager = MetricsManager(config: config, restClient: restClient)
         
         manager.count(delta: 1, for: "counter1")
