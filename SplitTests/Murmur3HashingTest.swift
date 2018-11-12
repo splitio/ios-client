@@ -1,5 +1,5 @@
 //
-//  HashingTest.swift
+//  Murmur3HashingTest.swift
 //  SplitTests
 //
 //  Created by Javier on 04/10/2018.
@@ -9,7 +9,7 @@
 import XCTest
 @testable import Split
 
-class HashingTest: XCTestCase {
+class Murmur3HashingTest: XCTestCase {
     
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -26,9 +26,9 @@ class HashingTest: XCTestCase {
                                "murmur3-sample-v3",
                                "murmur3-sample-double-treatment-users"]
         for file in files {
-            var data = readDataFromCSV(fileName: file)
-            data = cleanRows(file: data!)
-            let csvRows = csv(data: data!)
+            var data = CsvHelper.readDataFromCSV(sourceClass: self, fileName: file)
+            data = CsvHelper.cleanRows(file: data!)
+            let csvRows = CsvHelper.csv(data: data!)
 
             for row in csvRows {
                 if row.count != 4 {
@@ -45,43 +45,6 @@ class HashingTest: XCTestCase {
                 XCTAssertTrue(bucket == bucketExpected, "Bucket has not expected value: \(bucket) expected => \(bucketExpected)")
             }
         }
-    }
-    
-}
-
-// MARK: Helpers
-extension HashingTest {
-    func readDataFromCSV(fileName:String)-> String! {
-        
-        guard let filepath = Bundle(for: type(of: self)).path(forResource: fileName, ofType: "csv") else {
-            return nil
-        }
-        do {
-            var contents = try String(contentsOfFile: filepath, encoding: .utf8)
-            contents = cleanRows(file: contents)
-            return contents
-        } catch {
-            print("File Read Error for file \(filepath)")
-            return nil
-        }
-    }
-    
-    
-    func cleanRows(file:String)->String{
-        var cleanFile = file
-        cleanFile = cleanFile.replacingOccurrences(of: "\r", with: "\n")
-        cleanFile = cleanFile.replacingOccurrences(of: "\n\n", with: "\n")
-        return cleanFile
-    }
-    
-    func csv(data: String) -> [[String]] {
-        var result: [[String]] = []
-        let rows = data.components(separatedBy: "\n")
-        for row in rows {
-            let columns = row.components(separatedBy: ",")
-            result.append(columns)
-        }
-        return result
     }
     
 }

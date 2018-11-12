@@ -60,7 +60,7 @@ public class Splitter: SplitterProtocol {
     //------------------------------------------------------------------------------------------------------------------
     public func getBucket(seed: Int, key: String ,algo: Int) -> Int {
         
-        let hashCode: UInt32 = self.hashCode(seed: seed, key: key, algo: algo)
+        let hashCode: Int = self.hashCode(seed: seed, key: key, algo: algo)
         
         let bucket = (hashCode  % 100) + 1
         
@@ -68,24 +68,24 @@ public class Splitter: SplitterProtocol {
         
     }
     //------------------------------------------------------------------------------------------------------------------
-    private func hashCode(seed: Int, key: String ,algo: Int) -> UInt32 {
+    private func hashCode(seed: Int, key: String ,algo: Int) -> Int {
         
         switch algo {
             
         case Splitter.ALGO_LEGACY:
             
-            return LegacyHash.getHash(key, UInt32(seed))
+            return LegacyHash.getHash(key, seed)
             
         case Splitter.ALGO_MURMUR:
             
             
-            return Murmur3Hash.hashString(key, UInt32(truncatingIfNeeded: seed))
+            return Int(Murmur3Hash.hashString(key, UInt32(truncatingIfNeeded: seed)))
             
             
             
         default:
             
-            return LegacyHash.getHash(key, UInt32(seed))
+            return LegacyHash.getHash(key, seed)
         }
         
     }
