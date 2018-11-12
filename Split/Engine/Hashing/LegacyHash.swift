@@ -9,18 +9,18 @@ import Foundation
 
 public final class LegacyHash {
     
-    public static func getHash(_ key: String, _ seed: UInt32) -> UInt32 {
+    public static func getHash(_ key: String, _ seed: Int) -> Int {
         
-        var h: UInt32 = 0
+        var h: Int = 0
         for character: Character in key {
             
-            let value =  character.unicodeScalars.first?.value
+            let value = Int(character.unicodeScalars.first!.value)
             let shifted = (h &* 31)
-            h = (shifted) + value!
+            h = (shifted) + value
             
         }
         
-        return UInt32(h ^ seed)
+        return h ^ seed
     }
     
 }
