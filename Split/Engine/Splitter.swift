@@ -7,27 +7,28 @@
 
 import Foundation
 
-public protocol SplitterProtocol {
+enum Algorithm: Int {
+    case legacy = 1
+    case murmur3 = 2
+}
+
+protocol SplitterProtocol {
     
-    func getTreatment(key: Key, seed: Int, attributes:[String:Any]?, partions: [Partition]?, algo: Int) -> String
+    func getTreatment(key: Key, seed: Int, attributes:[String:Any]?, partions: [Partition]?, algo: Algorithm) -> String
     
-    func getBucket(seed: Int,key: String ,algo: Int) -> Int
+    func getBucket(seed: Int,key: String ,algo: Algorithm) -> Int
     
 }
 
-public class Splitter: SplitterProtocol {
+class Splitter: SplitterProtocol {
     
-    public static let ALGO_LEGACY: Int = 1
-    public static let ALGO_MURMUR: Int = 2
-    //------------------------------------------------------------------------------------------------------------------
-    
-    public static let shared: Splitter = {
+    static let shared: Splitter = {
         
         let instance = Splitter();
         return instance;
     }()
-    //------------------------------------------------------------------------------------------------------------------
-    public func getTreatment(key: Key, seed: Int, attributes: [String : Any]?, partions: [Partition]?, algo: Int) -> String {
+    
+    func getTreatment(key: Key, seed: Int, attributes: [String : Any]?, partions: [Partition]?, algo: Algorithm) -> String {
         
         var accumulatedSize: Int = 0
         
@@ -57,37 +58,23 @@ public class Splitter: SplitterProtocol {
         
         return SplitConstants.CONTROL
     }
-    //------------------------------------------------------------------------------------------------------------------
-    public func getBucket(seed: Int, key: String ,algo: Int) -> Int {
-        
+    
+    func getBucket(seed: Int, key: String ,algo: Algorithm) -> Int {
         let hashCode: Int = self.hashCode(seed: seed, key: key, algo: algo)
-        
-        let bucket = (hashCode  % 100) + 1
-        
-        return Int(bucket)
-        
-    }
-    //------------------------------------------------------------------------------------------------------------------
-    private func hashCode(seed: Int, key: String ,algo: Int) -> Int {
-        
-        switch algo {
-            
-        case Splitter.ALGO_LEGACY:
-            
-            return LegacyHash.getHash(key, seed)
-            
-        case Splitter.ALGO_MURMUR:
-            
-            
-            return Int(Murmur3Hash.hashString(key, UInt32(truncatingIfNeeded: seed)))
-            
-            
-            
-        default:
-            
-            return LegacyHash.getHash(key, seed)
+        var reminder = hashCode  % 100
+        if algo == Algorithm.legacy {
+            reminder = abs(reminder)
         }
-        
+        return Int(reminder) + 1
     }
-    //------------------------------------------------------------------------------------------------------------------
+    
+     func hashCode(seed: Int, key: String ,algo: Algorithm) -> Int {
+        switch algo {
+        case .murmur3:
+            return Int(Murmur3Hash.hashString(key, UInt32(truncatingIfNeeded: seed)))
+        default:
+            return LegacyHash.getHash(key, Int32(truncatingIfNeeded: seed))
+        }
+    }
+    
 }
