@@ -7,22 +7,17 @@
 
 import Foundation
 
-public final class LegacyHash {
+class LegacyHash {
     
-    public static func getHash(_ key: String, _ seed: UInt32) -> UInt32 {
-        
-        var h: UInt32 = 0
+    static func getHash(_ key: String, _ seed: Int32) -> Int {
+        var h: Int32 = 0
         for character: Character in key {
-            
-            let value =  character.unicodeScalars.first?.value
+            let value = Int32(truncatingIfNeeded: character.unicodeScalars.first!.value)
             let shifted = (h &* 31)
-            h = (shifted) + value!
-            
+            h = shifted + value
         }
-        
-        return UInt32(h ^ seed)
+        return Int(h ^ seed)
     }
-    
 }
 
 extension Character {
