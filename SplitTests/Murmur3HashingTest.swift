@@ -19,7 +19,7 @@ class Murmur3HashingTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    func testHashing() {
+    func testBucket() {
         let files: [String] = ["murmur3-sample-data-v2",
                                "murmur3-sample-data-non-alpha-numeric-v2",
                                "murmur3-sample-v4",
@@ -37,7 +37,7 @@ class Murmur3HashingTest: XCTestCase {
                 let seed: Int = Int(row[0])!
                 let key: String = row[1]
                 let bucketExpected = Int(row[3])!
-                let bucket = Splitter.shared.getBucket(seed: seed, key: key, algo: 2)
+                let bucket = Splitter.shared.getBucket(seed: seed, key: key, algo: .murmur3)
                 
                 //print("seed: \(seed) - key: \(key) - buckexp: \(bucketExpected) - bucket: \(bucket) ")
                 
