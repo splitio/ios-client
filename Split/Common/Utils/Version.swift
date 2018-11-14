@@ -9,7 +9,7 @@ import Foundation
 
 class Version {
     private static let name:String = "ios"
-    private static let number:String = "1.5.4-rc1"
+    private static let number:String = "1.5.3-rc1"
 
     public static func toString() -> String {
         return name + "-" + number
