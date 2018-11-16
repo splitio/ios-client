@@ -42,7 +42,7 @@ public class BetweenMatcher: BaseMatcher, MatcherProtocol {
             return attributeDate >= backendDateStart && attributeDate <= backendDateEnd
             
         case DataType.Number:
-            guard let keyValue = matchValue as? Int64 else {return false}
+            guard let keyValue = CastUtils.anyToInt64(value: matchValue) else {return false}
             return keyValue >= start && keyValue <= end
             
         }
