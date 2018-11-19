@@ -10,20 +10,8 @@ import Foundation
 
 class CsvHelper {
     static func readDataFromCSV(sourceClass: Any, fileName:String)-> String! {
-        
-        guard let filepath = Bundle(for: type(of: sourceClass) as! AnyClass).path(forResource: fileName, ofType: "csv") else {
-            return nil
-        }
-        do {
-            var contents = try String(contentsOfFile: filepath, encoding: .utf8)
-            contents = cleanRows(file: contents)
-            return contents
-        } catch {
-            print("File Read Error for file \(filepath)")
-            return nil
-        }
+        return cleanRows(file: FileHelper.readDataFromFile(sourceClass: sourceClass, name: fileName, type: "csv"))
     }
-    
     
     static func cleanRows(file:String)->String{
         var cleanFile = file

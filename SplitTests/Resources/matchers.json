@@ -1,0 +1,99 @@
+[
+  {
+    "matcherType": "GREATER_THAN_OR_EQUAL_TO",
+    "description": "Test >= 10000000",
+    "values": [9999, 10000000, 10000001],
+    "results": [0, 1, 1],
+    "matcher": {
+      "keySelector": {
+        "trafficType": "user",
+        "attribute": "numberAttribute"
+      },
+      "matcherType": "GREATER_THAN_OR_EQUAL_TO",
+      "negate": false,
+      "userDefinedSegmentMatcherData": null,
+      "whitelistMatcherData": null,
+      "unaryNumericMatcherData": {
+        "dataType": "NUMBER",
+        "value": 10000000
+      },
+      "betweenMatcherData": null,
+      "booleanMatcherData": null,
+      "dependencyMatcherData": null,
+      "stringMatcherData": null
+    }
+  },
+  {
+    "matcherType": "LESS_THAN_OR_EQUAL_TO",
+    "description": "Test <= 10000000",
+    "values": [-10000001, 0, 9999, 10000000, 10000001],
+    "results": [1, 1, 1, 1, 0],
+    "matcher": {
+      "keySelector": {
+        "trafficType": "user",
+        "attribute": "numberAttribute"
+      },
+      "matcherType": "LESS_THAN_OR_EQUAL_TO",
+      "negate": false,
+      "userDefinedSegmentMatcherData": null,
+      "whitelistMatcherData": null,
+      "unaryNumericMatcherData": {
+        "dataType": "NUMBER",
+        "value": 10000000
+      },
+      "betweenMatcherData": null,
+      "booleanMatcherData": null,
+      "dependencyMatcherData": null,
+      "stringMatcherData": null
+    }
+  },
+  {
+    "matcherType": "EQUAL_TO",
+    "description": "Test equal 10000000",
+    "values": [10000000, 9999, 10000001, -10000000, 0],
+    "results": [1, 0, 0, 0, 0, 0],
+    "matcher": {
+      "keySelector": {
+        "trafficType": "user",
+        "attribute": "numberAttribute"
+      },
+      "matcherType": "EQUAL_TO",
+      "negate": false,
+      "userDefinedSegmentMatcherData": null,
+      "whitelistMatcherData": null,
+      "unaryNumericMatcherData": {
+        "dataType": "NUMBER",
+        "value": 10000000
+      },
+      "betweenMatcherData": null,
+      "booleanMatcherData": null,
+      "dependencyMatcherData": null,
+      "stringMatcherData": null
+    }
+  },
+  {
+    "matcherType": "BETWEEN",
+    "description": "Test between 10000000 and 20000000",
+    "values": [10000000, 20000000, 10050000, -1, 9999, 20000001, -10000000],
+    "results": [1, 1, 1, 0, 0, 0, 0],
+    "matcher": {
+      "keySelector": {
+        "trafficType": "user",
+        "attribute": "numberAttribute"
+      },
+      "matcherType": "BETWEEN",
+      "negate": false,
+      "userDefinedSegmentMatcherData": null,
+      "whitelistMatcherData": null,
+      "unaryNumericMatcherData": null,
+      "betweenMatcherData": {
+        "dataType": "NUMBER",
+        "start": 10000000,
+        "end": 20000000
+      },
+      "booleanMatcherData": null,
+      "dependencyMatcherData": null,
+      "stringMatcherData": null
+    }
+  }
+]
