@@ -185,6 +185,10 @@
 		597CD33A216D022F00A15487 /* MetricsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD339216D022F00A15487 /* MetricsManagerTests.swift */; };
 		597CD33C216D042300A15487 /* MetricsRestClientStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD33B216D042300A15487 /* MetricsRestClientStub.swift */; };
 		5982D92F219C83D000230F44 /* legacy_1_short.csv in Resources */ = {isa = PBXBuildFile; fileRef = 5982D92E219C83D000230F44 /* legacy_1_short.csv */; };
+		5982D931219EFEF500230F44 /* CastUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D930219EFEF500230F44 /* CastUtils.swift */; };
+		5982D934219F3D2E00230F44 /* MatcherEvalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D933219F3D2E00230F44 /* MatcherEvalTests.swift */; };
+		5982D936219F494500230F44 /* matchers.json in Resources */ = {isa = PBXBuildFile; fileRef = 5982D935219F494500230F44 /* matchers.json */; };
+		5982D938219F57BE00230F44 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D937219F57BE00230F44 /* FileHelper.swift */; };
 		59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C492FA216695D500F5F774 /* Murmur3HashingTest.swift */; };
 		59C493052167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv in Resources */ = {isa = PBXBuildFile; fileRef = 59C493022167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv */; };
 		59C493062167E3B400F5F774 /* murmur3-sample-v3.csv in Resources */ = {isa = PBXBuildFile; fileRef = 59C493032167E3B400F5F774 /* murmur3-sample-v3.csv */; };
@@ -403,6 +407,10 @@
 		597CD339216D022F00A15487 /* MetricsManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsManagerTests.swift; sourceTree = "<group>"; };
 		597CD33B216D042300A15487 /* MetricsRestClientStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsRestClientStub.swift; sourceTree = "<group>"; };
 		5982D92E219C83D000230F44 /* legacy_1_short.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = legacy_1_short.csv; sourceTree = "<group>"; };
+		5982D930219EFEF500230F44 /* CastUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastUtils.swift; sourceTree = "<group>"; };
+		5982D933219F3D2E00230F44 /* MatcherEvalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MatcherEvalTests.swift; sourceTree = "<group>"; };
+		5982D935219F494500230F44 /* matchers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = matchers.json; sourceTree = "<group>"; };
+		5982D937219F57BE00230F44 /* FileHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		59C492FA216695D500F5F774 /* Murmur3HashingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Murmur3HashingTest.swift; sourceTree = "<group>"; };
 		59C493022167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-double-treatment-users.csv"; sourceTree = "<group>"; };
 		59C493032167E3B400F5F774 /* murmur3-sample-v3.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-v3.csv"; sourceTree = "<group>"; };
@@ -827,6 +835,7 @@
 				3B6DEE8420EA6AE00067435E /* Version.swift */,
 				3B6DEE8620EA6AE00067435E /* Logger.swift */,
 				3B6DEF0320EA6AE30067435E /* InfoUtils.swift */,
+				5982D930219EFEF500230F44 /* CastUtils.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -876,6 +885,7 @@
 			isa = PBXGroup;
 			children = (
 				5912D151219A022000BC698C /* CsvHelper.swift */,
+				5982D937219F57BE00230F44 /* FileHelper.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -933,6 +943,7 @@
 				590DF9CB213EB7D50082B94F /* SplitManagerTest.swift */,
 				59C492FA216695D500F5F774 /* Murmur3HashingTest.swift */,
 				5912D14E2199FD8600BC698C /* LegacyHashingTest.swift */,
+				5982D933219F3D2E00230F44 /* MatcherEvalTests.swift */,
 			);
 			path = SplitTests;
 			sourceTree = "<group>";
@@ -940,6 +951,7 @@
 		592C6ADB211CBB86002D120C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5982D935219F494500230F44 /* matchers.json */,
 				59C493022167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv */,
 				59C493032167E3B400F5F774 /* murmur3-sample-v3.csv */,
 				59C493042167E3B400F5F774 /* murmur3-sample-v4.csv */,
@@ -1107,6 +1119,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				592C6AE6211CBBB0002D120C /* murmur.csv in Resources */,
+				5982D936219F494500230F44 /* matchers.json in Resources */,
 				592C6AE9211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
 				592C6AE7211CBBB0002D120C /* splitchanges_3.json in Resources */,
 				59C493062167E3B400F5F774 /* murmur3-sample-v3.csv in Resources */,
@@ -1178,6 +1191,7 @@
 				3B6DEF3220EA6AE50067435E /* Murmur3Hash.swift in Sources */,
 				3B6DEF5720EA6AE50067435E /* SplitEventExecutorWithClient.swift in Sources */,
 				3B6DEF5520EA6AE50067435E /* SplitEventExecutorProtocol.swift in Sources */,
+				5982D931219EFEF500230F44 /* CastUtils.swift in Sources */,
 				3B6DEF8A20EA6AE50067435E /* FileAndMemoryStorage.swift in Sources */,
 				3B6DEF7220EA6AE50067435E /* RestClientConfiguration.swift in Sources */,
 				3B6DEF5120EA6AE50067435E /* UnaryNumericMatcherData.swift in Sources */,
@@ -1297,11 +1311,13 @@
 				590DF9CF213EB95D0082B94F /* SplitCacheStub.swift in Sources */,
 				5912D14F2199FD8600BC698C /* LegacyHashingTest.swift in Sources */,
 				5912D152219A022000BC698C /* CsvHelper.swift in Sources */,
+				5982D934219F3D2E00230F44 /* MatcherEvalTests.swift in Sources */,
 				592C6AC2211B718E002D120C /* MatcherTest.swift in Sources */,
 				592C6ABE211B718E002D120C /* ArrayBlockingQueueTest.swift in Sources */,
 				592C6AC3211B718E002D120C /* MySegmentsFetcherTests.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
 				597CD33A216D022F00A15487 /* MetricsManagerTests.swift in Sources */,
+				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				592C6ABF211B718E002D120C /* InMemorySplitCacheTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
