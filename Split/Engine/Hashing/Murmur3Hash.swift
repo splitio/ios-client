@@ -8,9 +8,9 @@
 import Foundation
 
 
-public final class Murmur3Hash {
+class Murmur3Hash {
     
-    private static let DEFAULT_SEED: UInt32 = 0
+    private static let kDefaultSeed: UInt32 = 0
     
     private static let c1:UInt32 = 0xCC9E2D51
     private static let c2 = UInt32(0x1B873593)
@@ -24,8 +24,8 @@ public final class Murmur3Hash {
     ///
     /// - Returns: the intermediate hash value
     ///
-    public static func initialize() -> UInt32 {
-        return initialize(DEFAULT_SEED)
+    static func initialize() -> UInt32 {
+        return initialize(kDefaultSeed)
     }
     
     ///
@@ -35,7 +35,7 @@ public final class Murmur3Hash {
     /// - Returns: the intermediate hash value
 
     //------------------------------------------------------------------------------------------------------------------
-    public static func initialize(_ seed: UInt32) -> UInt32 {
+    static func initialize(_ seed: UInt32) -> UInt32 {
         return seed
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ public final class Murmur3Hash {
     ///
     //------------------------------------------------------------------------------------------------------------------
 
-    public static func update2(_ hashIn: UInt32, _ value: Int) -> UInt32 {
+    static func update2(_ hashIn: UInt32, _ value: Int) -> UInt32 {
         let k = calcK(UInt32(truncatingIfNeeded: value))
         var hash = hashIn
         hash = hash ^ k
@@ -75,7 +75,7 @@ public final class Murmur3Hash {
     ///
     //------------------------------------------------------------------------------------------------------------------
 
-    public static func update<T:Hashable>(_ hash: UInt32, _ value: T?) -> UInt32 {
+    static func update<T:Hashable>(_ hash: UInt32, _ value: T?) -> UInt32 {
         return update2(hash, value != nil ? value!.hashValue : 0)
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ public final class Murmur3Hash {
     /// - Returns: the final hash result
     ///
     //------------------------------------------------------------------------------------------------------------------
-    public static func finish(_ hashin: UInt32, _ numberOfWords: Int) -> Int {
+    static func finish(_ hashin: UInt32, _ numberOfWords: Int) -> Int {
         return Int(finish(hashin, byteCount: (numberOfWords &* 4)))
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ public final class Murmur3Hash {
     /// - Returns: the hash code of the data
     ///
     //------------------------------------------------------------------------------------------------------------------
-    public static func hashCode<T:Hashable>(_ data: [T], _ seed: Int) -> Int {
+    static func hashCode<T:Hashable>(_ data: [T], _ seed: Int) -> Int {
         var hash = initialize(UInt32(truncatingIfNeeded: seed))
         for value in data {
             hash = update(hash, value)
@@ -136,7 +136,7 @@ public final class Murmur3Hash {
     /// Wikipedia.
     ///
     //------------------------------------------------------------------------------------------------------------------
-    public static func hashString(_ s: String, _ seed: UInt32) -> UInt32 {
+    static func hashString(_ s: String, _ seed: UInt32) -> UInt32 {
         let bytes = Array(s.utf8)
         return hashBytesLittleEndian(bytes, seed)
     }
