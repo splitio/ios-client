@@ -1,3 +1,6 @@
+1.5.4: (Nov 16, 2018)
+- Fixing Any to Int64 convertion issue
+- Fixing issue in legacy algorithm
 1.5.2: (Oct 11, 2018)
 - Adding internal split metrics
 - Refactoring project structure tree

@@ -38,7 +38,7 @@ public class EqualToMatcher: BaseMatcher, MatcherProtocol {
             return backendDate == attributeDate
             
         case DataType.Number:
-            guard let keyValue = matchValue as? Int64 else {return false}
+            guard let keyValue = CastUtils.anyToInt64(value: matchValue) else {return false}
             return keyValue == value
         }
         
