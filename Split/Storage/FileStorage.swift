@@ -30,9 +30,10 @@ class FileStorage: FileStorageProtocol {
             
             if let data = content {
                 try data.write(to: fileURL, atomically: false, encoding: .utf8)
-                let fileURL = cachesDirectory.appendingPathComponent(fileName)
-                let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
-                Logger.d(fileContent)
+                if Logger.shared.isDebugModeEnabled {
+                    let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
+                    Logger.d(fileContent)
+                }
             }
         } catch {
             Logger.e("File Storage - write: " + error.localizedDescription)

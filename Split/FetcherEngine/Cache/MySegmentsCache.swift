@@ -7,6 +7,14 @@
 
 import Foundation
 
+/// ** MySegmentsCache **
+/// Handles My Segments Cache by loading my segments for
+/// a given matching key from disk into memory when the class is instantiated.
+/// In memory segments are updated each time new information is retrieved
+/// from the server and it is saved to disk when application goes to background.
+/// In order to separate segments from different matching keys
+/// there is one file per each one of them.
+
 class MySegmentsCache: MySegmentsCacheProtocol {
     
     private struct MySegmentsFile: Codable {
