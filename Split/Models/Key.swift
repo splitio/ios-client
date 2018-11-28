@@ -14,9 +14,13 @@ public class Key: NSObject {
     let bucketingKey: String?
 
     
-    public init(matchingKey: String, bucketingKey: String? = nil) {
+    @objc public init(matchingKey: String, bucketingKey: String? = nil) {
         self.matchingKey = matchingKey
         self.bucketingKey = bucketingKey
+    }
+    
+    @objc public func pepe(){
+    
     }
 
 }
