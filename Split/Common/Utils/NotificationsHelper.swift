@@ -15,6 +15,12 @@ enum AppNotification: String {
     case didBecomeActive
 }
 
+/// ** NotificationHelper **
+/// This class is a wrapper to handle some app notifications to avoid the
+/// boilerplate code involved when registering to observe native notifications.
+/// The main goal is to replace @obj functions based handler with Swift closures,
+/// that way the code becomes streight and simple.
+
 class NotificationHelper {
     
     private let queue = DispatchQueue(label: UUID.init().uuidString, attributes: .concurrent)
@@ -62,11 +68,13 @@ class NotificationHelper {
     }
     
     private func executeActions(for notification: AppNotification) {
+        var actions: [ObserverAction]?
         queue.sync {
-            if let actions = self.actions[notification.rawValue] {
-                for action in actions {
-                    action()
-                }
+            actions = self.actions[notification.rawValue]
+        }
+        if let actions =  actions {
+            for action in actions {
+                action()
             }
         }
     }

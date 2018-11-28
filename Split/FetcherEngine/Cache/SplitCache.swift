@@ -8,6 +8,12 @@
 
 import Foundation
 
+/// ** SplitCache **
+/// Handles Splits Cache by loading them from disk
+/// into memory when the class is instantiated.
+/// In memory splits are updated each time new information is retrieved
+/// from the server and it is saved to disk when application goes to background.
+
 class SplitCache: SplitCacheProtocol {
     
     private struct SplitsFile: Codable {
