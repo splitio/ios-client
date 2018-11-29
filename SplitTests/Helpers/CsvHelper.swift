@@ -9,11 +9,14 @@
 import Foundation
 
 class CsvHelper {
-    static func readDataFromCSV(sourceClass: Any, fileName:String)-> String! {
-        return cleanRows(file: FileHelper.readDataFromFile(sourceClass: sourceClass, name: fileName, type: "csv"))
+    static func readDataFromCSV(sourceClass: Any, fileName:String)-> String? {
+        if let file = FileHelper.readDataFromFile(sourceClass: sourceClass, name: fileName, type: "csv") {
+            return cleanRows(file: file)
+        }
+        return nil
     }
     
-    static func cleanRows(file:String)->String{
+    static func cleanRows(file:String)->String {
         var cleanFile = file
         cleanFile = cleanFile.replacingOccurrences(of: "\r", with: "\n")
         cleanFile = cleanFile.replacingOccurrences(of: "\n\n", with: "\n")
