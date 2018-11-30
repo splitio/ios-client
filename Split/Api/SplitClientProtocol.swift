@@ -10,9 +10,10 @@ import Foundation
 
 public typealias SplitAction = () -> Void
 
-public protocol SplitClientProtocol: class {
+@objc public protocol SplitClientProtocol {
     
     func getTreatment(_ split: String, attributes:[String:Any]?) -> String
+    func getTreatment(_ split: String) -> String
     func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String]
 
     func on(_ event:SplitEvent, _ task:SplitEventTask) -> Void
@@ -23,12 +24,4 @@ public protocol SplitClientProtocol: class {
     func track(trafficType: String, eventType: String, value: Double) -> Bool
     func track(eventType: String) -> Bool
     func track(eventType: String, value: Double) -> Bool
-}
-
-public extension SplitClientProtocol {
-    
-    func getTreatment(_ split: String, attributes:[String:Any]? = nil) -> String {
-        return getTreatment(split, attributes: attributes)
-    }
-    
 }

@@ -13,6 +13,8 @@
 		5982D99721ADCCE500230F44 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5982D99621ADCCE500230F44 /* Assets.xcassets */; };
 		5982D99A21ADCCE500230F44 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5982D99821ADCCE500230F44 /* LaunchScreen.storyboard */; };
 		5982D99D21ADCCE500230F44 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5982D99C21ADCCE500230F44 /* main.m */; };
+		5982D9D421B185F000230F44 /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5982D9B221ADCD5100230F44 /* Split.framework */; };
+		5982D9D521B185F000230F44 /* Split.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5982D9B221ADCD5100230F44 /* Split.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,7 +32,28 @@
 			remoteGlobalIDString = 592C6AA5211B6C99002D120C;
 			remoteInfo = SplitTests;
 		};
+		5982D9D621B185F000230F44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5982D9AC21ADCD5100230F44 /* Split.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B6DEE5920EA6A4E0067435E;
+			remoteInfo = Split;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5982D9D821B185F000230F44 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5982D9D521B185F000230F44 /* Split.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5982D98A21ADCCE400230F44 /* ExampleObjc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExampleObjc.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -51,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5982D9D421B185F000230F44 /* Split.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,10 +133,12 @@
 				5982D98621ADCCE400230F44 /* Sources */,
 				5982D98721ADCCE400230F44 /* Frameworks */,
 				5982D98821ADCCE400230F44 /* Resources */,
+				5982D9D821B185F000230F44 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5982D9D721B185F000230F44 /* PBXTargetDependency */,
 			);
 			name = ExampleObjc;
 			productName = ExampleObjc;
@@ -199,6 +225,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5982D9D721B185F000230F44 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Split;
+			targetProxy = 5982D9D621B185F000230F44 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		5982D99321ADCCE400230F44 /* Main.storyboard */ = {
@@ -335,6 +369,7 @@
 		5982D9A121ADCCE500230F44 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ExampleObjc/Info.plist;
@@ -351,6 +386,7 @@
 		5982D9A221ADCCE500230F44 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ExampleObjc/Info.plist;

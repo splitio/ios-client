@@ -18,22 +18,26 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    NSString *apiKey = @"YOUR_API_KEY";
+    NSString *apiKey = @"4eri39qiou5ene271kpk1tnlfnfvid89dgab";
+    NSString *matchingKey = @"fake_id_1";
+    
     SplitClientConfig *config = [[SplitClientConfig alloc] init];
     //Key *key = [[Key alloc] initWithMatchingKey:@"CUSTOMER_ID"];
-    Key *key = [[Key alloc] initMatchingKey:<#(NSString * _Nonnull)#> bucketingKey:<#(NSString * _Nullable)#>
-    [key pepe];
-                SplitFactory *factory = [[SplitFactory alloc] initWithApiKey: apiKey key: key config: config];
-                SplitClientProtocol *client = [factory getClient];
-                NSString * treatment = [client getTreatment:@"SPLIT_NAME"];
-                
-                if treatment == "on" {
-                    // insert code here to show on treatment
-                } else if treatment == "off" {
-                    // insert code here to show off treatment
-                } else {
-                    // insert your control treatment code here
-                }
+    Key *key = [[Key alloc] initWithMatchingKey:matchingKey bucketingKey:nil];
+    SplitFactory *factory = [[SplitFactory alloc] initWithApiKey: apiKey key: key config: config];
+    id<SplitClientProtocol> client = [factory client];
+    NSString * treatment = [client getTreatment:@"SPLIT_NAME"];
+    config.targetSdkEndPoint = @"https://sdk.split-stage.io/api";
+    config.targetEventsEndPoint = @"https://events.split-stage.io/api";
+
+    
+    if ([treatment  isEqual: @"on"]) {
+        // insert code here to show on treatment
+    } else if([treatment  isEqual: @"off"]) {
+        // insert code here to show off treatment
+    } else {
+        // insert your control treatment code here
+    }
 }
 
 
