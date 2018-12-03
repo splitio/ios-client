@@ -37,6 +37,7 @@
     NSString *splitName = self.splitNameText.text;
     NSString *matchingKey = self.matchingKeyText.text;
     
+    // Split Config
     SplitClientConfig *config = [[SplitClientConfig alloc] init];
     config.featuresRefreshRate = 30;
     config.segmentsRefreshRate = 30;
@@ -44,13 +45,13 @@
     config.sdkReadyTimeOut = 15000;
     config.connectionTimeout = 50;
     
+    // Impression listener
     config.impressionListener = ^(Impression *impression){
         NSLog(@"Impression Key: %@", impression.keyName);
         NSLog(@"Impression Treatment: %@", impression.treatment);
         NSLog(@"Impression Time: %@", impression.timestamp);
         NSLog(@"Impression Change Number: %@", impression.changeNum);
     };
-    
     
     //User Key
     Key *key = [[Key alloc] initWithMatchingKey:matchingKey bucketingKey:nil];
