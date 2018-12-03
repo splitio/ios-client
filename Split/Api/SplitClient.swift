@@ -136,7 +136,7 @@ extension SplitClient {
     }
 
     func logImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String, attributes:[String:Any]? = nil) {
-        var impression: Impression = Impression()
+        let impression: Impression = Impression()
         impression.keyName = self.key.matchingKey
 
         impression.bucketingKey = (self.shouldSendBucketingKey) ? self.key.bucketingKey : nil
