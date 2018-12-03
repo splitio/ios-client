@@ -14,11 +14,11 @@ public typealias SplitImpression = Impression
     @objc public var treatment: String?
     public var time: Int64?
     // Added cause Int couldn't be null in Objc
-    @objc var timestamp: NSNumber? {
+    @objc public var timestamp: NSNumber? {
         return time as NSNumber?
     }
     public var changeNumber: Int64?
-    @objc var changeNum: NSNumber? {
+    @objc public var changeNum: NSNumber? {
         return changeNumber as NSNumber?
     }
     @objc public var label: String?

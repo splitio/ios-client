@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  GetTreatmentViewController.h
 //  ExampleObjc
 //
 //  Created by Javier L. Avrudsky on 27/11/2018.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+@interface GetTreatmentViewController : UIViewController
 
 
 @end
