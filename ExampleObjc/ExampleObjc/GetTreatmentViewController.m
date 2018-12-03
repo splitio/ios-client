@@ -91,6 +91,10 @@
             NSLog(@"Found: %@, treatments: %@", split.name, [split.treatments componentsJoinedByString:@","]);
         }
     }];
+    
+    [client onEvent: SplitEventSdkReadyTimedOut execute: ^(){
+        self.resultLabel.text = @"SDK Time Out";
+    }];
 }
     
     
