@@ -15,6 +15,8 @@
 		5982D99D21ADCCE500230F44 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5982D99C21ADCCE500230F44 /* main.m */; };
 		5982D9D421B185F000230F44 /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5982D9B221ADCD5100230F44 /* Split.framework */; };
 		5982D9D521B185F000230F44 /* Split.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5982D9B221ADCD5100230F44 /* Split.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5982D9E021B5A11000230F44 /* TrackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5982D9DF21B5A11000230F44 /* TrackViewController.m */; };
+		5982D9E421B5A14600230F44 /* GetTreatmentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5982D9E321B5A14600230F44 /* GetTreatmentsViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +69,10 @@
 		5982D99B21ADCCE500230F44 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5982D99C21ADCCE500230F44 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5982D9AC21ADCD5100230F44 /* Split.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Split.xcodeproj; path = ../Split.xcodeproj; sourceTree = "<group>"; };
+		5982D9DE21B5A11000230F44 /* TrackViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackViewController.h; sourceTree = "<group>"; };
+		5982D9DF21B5A11000230F44 /* TrackViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackViewController.m; sourceTree = "<group>"; };
+		5982D9E221B5A14600230F44 /* GetTreatmentsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetTreatmentsViewController.h; sourceTree = "<group>"; };
+		5982D9E321B5A14600230F44 /* GetTreatmentsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GetTreatmentsViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,9 +111,13 @@
 				5982D98E21ADCCE400230F44 /* AppDelegate.m */,
 				5982D99021ADCCE400230F44 /* GetTreatmentViewController.h */,
 				5982D99121ADCCE400230F44 /* GetTreatmentViewController.m */,
+				5982D9E221B5A14600230F44 /* GetTreatmentsViewController.h */,
+				5982D9E321B5A14600230F44 /* GetTreatmentsViewController.m */,
+				5982D9DE21B5A11000230F44 /* TrackViewController.h */,
+				5982D9DF21B5A11000230F44 /* TrackViewController.m */,
 				5982D99321ADCCE400230F44 /* Main.storyboard */,
-				5982D99621ADCCE500230F44 /* Assets.xcassets */,
 				5982D99821ADCCE500230F44 /* LaunchScreen.storyboard */,
+				5982D99621ADCCE500230F44 /* Assets.xcassets */,
 				5982D99B21ADCCE500230F44 /* Info.plist */,
 				5982D99C21ADCCE500230F44 /* main.m */,
 			);
@@ -218,6 +228,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5982D9E421B5A14600230F44 /* GetTreatmentsViewController.m in Sources */,
+				5982D9E021B5A11000230F44 /* TrackViewController.m in Sources */,
 				5982D99221ADCCE400230F44 /* GetTreatmentViewController.m in Sources */,
 				5982D99D21ADCCE500230F44 /* main.m in Sources */,
 				5982D98F21ADCCE400230F44 /* AppDelegate.m in Sources */,
