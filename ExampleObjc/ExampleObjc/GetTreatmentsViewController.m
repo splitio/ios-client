@@ -20,15 +20,12 @@
 @property (weak, nonatomic) IBOutlet UILabel *resultLabel;
 @property (weak, nonatomic) IBOutlet UIButton *evaluateButton;
 
-
 @end
 
 @implementation GetTreatmentsViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    
 }
 
 - (IBAction)evaluateDidTouch:(UIButton *)sender {
@@ -58,17 +55,13 @@
     id<SplitClientProtocol> client = [factory client];
     
     [client onEvent: SplitEventSdkReady execute: ^(){
-        
         NSDictionary *attributes = [self convertToDictionary:self.attributesField.text];
-        
-        
         self.resultLabel.text = [client getTreatment:splitName attributes: attributes];
         
         if(![[self.splitsField.text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] isEqualToString:@""]){
             NSArray *splits = [self.splitsField.text componentsSeparatedByString:@","];
             NSDictionary *result = [client getTreatmentsForSplits:splits attributes:attributes];
             self.resultLabel.text = [self convertToJsonString:result];
-            
         }
     }];
     
@@ -76,7 +69,6 @@
         self.resultLabel.text = @"SDK Time Out";
     }];
 }
-
 
 - ( NSDictionary* _Nullable ) convertToDictionary:(NSString*) text {
     NSData *data = [text dataUsingEncoding: kCFStringEncodingUTF8];
@@ -97,9 +89,7 @@
     if(error != nil){
         return error.localizedDescription;
     }
-    
     return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 }
-
 
 @end

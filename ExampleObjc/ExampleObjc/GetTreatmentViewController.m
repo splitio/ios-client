@@ -10,32 +10,29 @@
 @import Split;
 
 @interface GetTreatmentViewController ()
-    
-    @property (weak, nonatomic) IBOutlet UITextField *splitNameText;
-    @property (weak, nonatomic) IBOutlet UITextField *matchingKeyText;
-    @property (weak, nonatomic) IBOutlet UITextField *bucketingKeyText;
-    @property (weak, nonatomic) IBOutlet UITextField *attributesText;
-    
-    @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
-    @property (weak, nonatomic) IBOutlet UILabel *resultLabel;
-    @property (weak, nonatomic) IBOutlet UIButton *evaluateButton;
-    
-    
-    @end
+
+@property (weak, nonatomic) IBOutlet UITextField *splitNameField;
+@property (weak, nonatomic) IBOutlet UITextField *matchingKeyField;
+@property (weak, nonatomic) IBOutlet UITextField *bucketingKeyField;
+@property (weak, nonatomic) IBOutlet UITextField *attributesField;
+
+@property (weak, nonatomic) IBOutlet UILabel *versionLabel;
+@property (weak, nonatomic) IBOutlet UILabel *resultLabel;
+@property (weak, nonatomic) IBOutlet UIButton *evaluateButton;
+
+@end
 
 @implementation GetTreatmentViewController
-    
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    
 }
-    
+
 - (IBAction)evaluateDidTouch:(UIButton *)sender {
     
     NSString *apiKey = @"YOUR_API_KEY";
-    NSString *splitName = self.splitNameText.text;
-    NSString *matchingKey = self.matchingKeyText.text;
+    NSString *splitName = self.splitNameField.text;
+    NSString *matchingKey = self.matchingKeyField.text;
     
     // Split Config
     SplitClientConfig *config = [[SplitClientConfig alloc] init];
@@ -70,7 +67,7 @@
     
     [client onEvent: SplitEventSdkReady execute: ^(){
         
-        NSDictionary *attributes = [self convertToDictionary:self.attributesText.text];
+        NSDictionary *attributes = [self convertToDictionary:self.attributesField.text];
         self.resultLabel.text = [client getTreatment:splitName attributes: attributes];
         
         // Get All Splits
@@ -96,8 +93,7 @@
         self.resultLabel.text = @"SDK Time Out";
     }];
 }
-    
-    
+
 - ( NSDictionary* _Nullable ) convertToDictionary:(NSString*) text {
     NSData *data = [text dataUsingEncoding: kCFStringEncodingUTF8];
     if( data == nil) return nil;
@@ -109,6 +105,5 @@
     }
     return jsonObject;
 }
-    
-    
-    @end
+
+@end
