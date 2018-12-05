@@ -10,16 +10,16 @@
 @import Split;
 
 @interface TrackViewController ()
-    
-    @property (weak, nonatomic) IBOutlet UITextField *trafficTypeField;
-    @property (weak, nonatomic) IBOutlet UITextField *eventTypeField;
-    @property (weak, nonatomic) IBOutlet UITextField *valueField;
-    
-    @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
-    @property (weak, nonatomic) IBOutlet UILabel *resultLabel;
-    @property (weak, nonatomic) IBOutlet UIButton *trackButton;
-    
-    @property (strong, nonatomic) id<SplitClientProtocol> client;
+
+@property (weak, nonatomic) IBOutlet UITextField *trafficTypeField;
+@property (weak, nonatomic) IBOutlet UITextField *eventTypeField;
+@property (weak, nonatomic) IBOutlet UITextField *valueField;
+
+@property (weak, nonatomic) IBOutlet UILabel *versionLabel;
+@property (weak, nonatomic) IBOutlet UILabel *resultLabel;
+@property (weak, nonatomic) IBOutlet UIButton *trackButton;
+
+@property (strong, nonatomic) id<SplitClientProtocol> client;
 
 @end
 
@@ -29,14 +29,14 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 }
-    
+
 - (IBAction)trackDidTouch:(UIButton *)sender {
     if(self.client == nil) {
         [self initClient];
     }
     [self sendEvent];
 }
-    
+
 - (void) initClient {
     
     NSString *apiKey = @"YOUR_API_KEY";
@@ -68,39 +68,38 @@
     
     //Split Client
     self.client = [factory client];
-    
 }
+
+- (void) sendEvent {
     
-    - (void) sendEvent {
-        
-        if (self.client == nil) {
-            return;
-        }
-        
-        if ([self isEmpty: self.eventTypeField]) {
-            self.resultLabel.text = @"Event Type should not be empty";
-        } else if( ![self isEmpty: self.valueField] && [self stringToNumber: self.valueField.text] == nil) {
-            self.resultLabel.text = @"Value field is not valid";
-        } else if( [self isEmpty: self.trafficTypeField] && [self isEmpty: self.valueField]) {
-            [self showResult: [self.client trackWithEventType: self.trafficTypeField.text]];
-        } else if( [self isEmpty:self.trafficTypeField]) {
-            double value = [[self stringToNumber: self.valueField.text] doubleValue];
-            [self showResult:[self.client trackWithEventType:self.eventTypeField.text value: value]];
-        } else if([self isEmpty:self.valueField]) {
-            [self showResult:[self.client trackWithTrafficType: self.trafficTypeField.text eventType: self.eventTypeField.text]];
-        } else {
-            double value = [[self stringToNumber: self.valueField.text] doubleValue];
-            [self showResult:[self.client trackWithTrafficType: self.trafficTypeField.text eventType: self.eventTypeField.text value: value]];
-        }
+    if (self.client == nil) {
+        return;
     }
     
-    - (bool) isEmpty: (UITextField*) textField {
-        return textField.text == nil || [[textField.text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] isEqualToString:@""];
+    if ([self isEmpty: self.eventTypeField]) {
+        self.resultLabel.text = @"Event Type should not be empty";
+    } else if( ![self isEmpty: self.valueField] && [self stringToNumber: self.valueField.text] == nil) {
+        self.resultLabel.text = @"Value field is not valid";
+    } else if( [self isEmpty: self.trafficTypeField] && [self isEmpty: self.valueField]) {
+        [self showResult: [self.client trackWithEventType: self.trafficTypeField.text]];
+    } else if( [self isEmpty:self.trafficTypeField]) {
+        double value = [[self stringToNumber: self.valueField.text] doubleValue];
+        [self showResult:[self.client trackWithEventType:self.eventTypeField.text value: value]];
+    } else if([self isEmpty:self.valueField]) {
+        [self showResult:[self.client trackWithTrafficType: self.trafficTypeField.text eventType: self.eventTypeField.text]];
+    } else {
+        double value = [[self stringToNumber: self.valueField.text] doubleValue];
+        [self showResult:[self.client trackWithTrafficType: self.trafficTypeField.text eventType: self.eventTypeField.text value: value]];
     }
-    
-    - (void) showResult:(bool) result {
-        self.resultLabel.text = (result ? @"Success" : @"Failure");
-    }
+}
+
+- (bool) isEmpty: (UITextField*) textField {
+    return textField.text == nil || [[textField.text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] isEqualToString:@""];
+}
+
+- (void) showResult:(bool) result {
+    self.resultLabel.text = (result ? @"Success" : @"Failure");
+}
 
 - (NSNumber* _Nullable) stringToNumber:(NSString*)stringNumber {
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
