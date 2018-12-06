@@ -18,16 +18,16 @@ class InMemoryMySegmentsCacheTests: QuickSpec {
         
         describe("InMemoryMySegmentsCacheTest") {
             
-            let mySegmentsCache = InMemoryMySegmentsCache()
+            let mySegmentsCache = InMemoryMySegmentsCache(segments: [])
 
             context("Save MySegments Successfully") {
                 
                 it("should return an array of strings with the same values as it was saved") {
-                    mySegmentsCache.addSegments(segmentNames: ["segment1", "segment2", "segment3"], key: "some_user_key")
+                    mySegmentsCache.addSegments(["segment1", "segment2", "segment3"])
                     
-                    let segments = mySegmentsCache.getSegments(key: "some_user_key")
+                    let segments = mySegmentsCache.getSegments()
                     expect(segments).toNot(beNil())
-                    expect(segments?.count).to(equal(3))
+                    expect(segments.count).to(equal(3))
                 }
                 
             }
@@ -35,11 +35,11 @@ class InMemoryMySegmentsCacheTests: QuickSpec {
             context("Test IsInSegment") {
                 
                 it("should return true when passing segments1 and segment2, and false on segment4") {
-                    expect(mySegmentsCache.isInSegment(segmentName: "segment1", key: "some_user_key")).to(beTrue())
+                    expect(mySegmentsCache.isInSegments(name: "segment1")).to(beTrue())
                         
-                    expect(mySegmentsCache.isInSegment(segmentName: "segment4",key: "some_user_key")).to(beFalse())
+                    expect(mySegmentsCache.isInSegments(name: "segment4")).to(beFalse())
                         
-                    expect(mySegmentsCache.isInSegment(segmentName: "segment2",key: "some_user_key")).to(beTrue())
+                    expect(mySegmentsCache.isInSegments(name: "segment2")).to(beTrue())
                 }
             }
             
@@ -47,7 +47,7 @@ class InMemoryMySegmentsCacheTests: QuickSpec {
 
                 it("isInSegment should return false when passing segments2") {
                     mySegmentsCache.removeSegments()
-                    expect(mySegmentsCache.isInSegment(segmentName: "segment2",key: "some_user_key")).to(beFalse())
+                    expect(mySegmentsCache.isInSegments(name: "segment2")).to(beFalse())
                 }
             }
             

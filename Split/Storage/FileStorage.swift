@@ -7,17 +7,13 @@
 
 import Foundation
 
-class FileStorage: StorageProtocol {
+class FileStorage: FileStorageProtocol {
     
     func read(fileName: String) -> String? {
-        return read(elementId: fileName)
-    }
-    
-    func read(elementId: String) -> String? {
         let fileManager = FileManager.default
         do {
             let cachesDirectory = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
-            let fileURL = cachesDirectory.appendingPathComponent(elementId)
+            let fileURL = cachesDirectory.appendingPathComponent(fileName)
             return try String(contentsOf: fileURL, encoding: .utf8)
         } catch {
             // Logger.e(error.localizedDescription)
@@ -26,21 +22,18 @@ class FileStorage: StorageProtocol {
         return nil
     }
     
-    func save(fileName: String, content: String) {
-        write(elementId: fileName, content: content)
-    }
-    
-    func write(elementId: String, content: String?) {
+    func write(fileName: String, content: String?) {
         let fileManager = FileManager.default
         do {
             let cachesDirectory = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
-            let fileURL = cachesDirectory.appendingPathComponent(elementId)
+            let fileURL = cachesDirectory.appendingPathComponent(fileName)
             
             if let data = content {
                 try data.write(to: fileURL, atomically: false, encoding: .utf8)
-                let fileURL = cachesDirectory.appendingPathComponent(elementId)
-                let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
-                Logger.d(fileContent)
+                if Logger.shared.isDebugModeEnabled {
+                    let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
+                    Logger.d(fileContent)
+                }
             }
         } catch {
             Logger.e("File Storage - write: " + error.localizedDescription)

@@ -53,12 +53,12 @@ public class FileStorageManager {
             let dateTimestamp = Int(Date().timeIntervalSince1970)
             let stringDate = String(describing: dateTimestamp)
             let fileName = "\(filePrefix)_\(NSUUID().uuidString)_\(stringDate)_0"
-            storage.write(elementId: fileName, content: content)
+            storage.write(fileName: fileName, content: content)
         }
     }
     
     func save(content: String, as fileName: String) {
-        storage.write(elementId: fileName, content: content)
+        storage.write(fileName: fileName, content: content)
     }
     
     func read() -> [String:String] {

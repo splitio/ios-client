@@ -21,7 +21,7 @@ class SplitChangeFetcherTests: QuickSpec {
         describe("SplitChangeFetcher") {
             
             var splitChangeFetcher: SplitChangeFetcher!
-            let cache = SplitCache(storage: MemoryStorage())
+            let cache = SplitCache(fileStorage: FileStorage())
 
             beforeEach {
                 splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: cache)
