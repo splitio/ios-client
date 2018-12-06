@@ -7,85 +7,67 @@
 //
 
 import Foundation
-import Quick
-import Nimble
+import XCTest
 import OHHTTPStubs
 
 @testable import Split
 
-class MySegmentsFetcherTests: QuickSpec {
+class MySegmentsFetcherTests: XCTestCase {
     
-    override func spec() {
+    var mySegmentsFetcher: MySegmentsChangeFetcher!
+    
+    override func setUp() {
+        let storage = FileAndMemoryStorage()
+        mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient(), storage: storage)
+    }
+    
+    override func tearDown() {
+        OHHTTPStubs.removeAllStubs()
+    }
+    
+    func testOneSegmentFetch() {
+        stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
+            let stubPath = OHPathForFile("mysegments_1.json", type(of: self))
+            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
+        }
         
-        describe("SplitChangeFetcher") {
-            
-            var mySegmentsFetcher: MySegmentsChangeFetcher!
-            let storage = FileAndMemoryStorage()
-            
-            beforeEach {
-                mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient(), storage: storage)
-            }
-            
-            context("Fetch MySegments Successfully") {
-                
-                it("should return an array of strings") {
-                    
-                    stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
-                        let stubPath = OHPathForFile("mysegments_1.json", type(of: self))
-                        return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-                    }
-                    
-                    let response = try? mySegmentsFetcher.fetch(user: "test")
-                    expect(response).toEventuallyNot(beNil())
-                    if let response = response {
-                        expect(response!.count).to(beGreaterThan(0))
-                        expect(response![0]).to(equal("splitters"))
-                    }
-                }
-            }
-            
-            context("Test MySegments With a Json with Renamed Parameters") {
-                
-                it("should return an array of two strings: 'test' and 'test1'") {
-                    
-                    stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
-                        let stubPath = OHPathForFile("mysegments_2.json", type(of: self))
-                        return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-                    }
-                    
-                    let response = try? mySegmentsFetcher.fetch(user: "test")
-                    
-                    expect(response).toEventuallyNot(beNil())
-                    if let response = response {
-                        expect(response!.count).to(equal(2))
-                        expect(response![0]).to(equal("test"))
-                        expect(response![1]).to(equal("test1"))
-                    }
-                }
-                
-            }
-            
-            context("Test MySegments With a Json without mySegments parameter") {
-                
-                it("should return an empty array") {
-                    
-                    stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
-                        let stubPath = OHPathForFile("mysegments_3.json", type(of: self))
-                        return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-                    }
-                    
-                    let response = try? mySegmentsFetcher.fetch(user: "test")
-                    
-                    expect(response).toEventuallyNot(beNil())
-                    if let response = response {
-                        expect(response!.count).to(equal(0))
-                    }
-                }
-            }
-            
-            afterEach {
-                OHHTTPStubs.removeAllStubs()
-            }
+        sleep(1) // Time to load the file
+        let response = try? mySegmentsFetcher.fetch(user: "test")
+        XCTAssertTrue(response != nil, "Response should not be nil")
+        if let response = response {
+            XCTAssertTrue(response!.count > 0, "Response count should be greater than 0")
+            XCTAssertEqual(response![0], "splitters", "First segment should be named 'splitters'")
+        }
+    }
+    
+    func testThreeSegmentsFetch() {
+        stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
+            let stubPath = OHPathForFile("mysegments_2.json", type(of: self))
+            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
+        }
+
+        sleep(1) // Time to load the file
+        let response = try? mySegmentsFetcher.fetch(user: "test")
+        
+        XCTAssertTrue(response != nil, "Response should not be nil")
+        if let response = response {
+            XCTAssertEqual(response!.count, 2, "Response count should be 2")
+            XCTAssertEqual(response![0], "test", "First segment should be named 'test'")
+            XCTAssertEqual(response![1], "test1", "Second segment should be named 'test1'")
+        }
+    }
+    
+    func testEmptySegmentFetch() {
+        stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
+            let stubPath = OHPathForFile("mysegments_3.json", type(of: self))
+            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
+        }
+        
+        sleep(1) // Time to load the file
+        let response = try? mySegmentsFetcher.fetch(user: "test")
+        XCTAssertTrue(response != nil, "Response should not be nil")
+        if let response = response {
+            XCTAssertEqual(response!.count, 0, "Response count should empty")
         }
     }
 }

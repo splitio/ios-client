@@ -66,5 +66,8 @@ import Foundation
     }
     
     public func clear() {
+        queue.async(flags: .barrier) {
+            self.splits.removeAll()
+        }
     }
 }

@@ -7,70 +7,57 @@
 //
 
 import Foundation
-import Quick
-import Nimble
+import XCTest
 
 @testable import Split
 
-class InMemorySplitCacheTests: QuickSpec {
+class InMemorySplitCacheTests: XCTestCase {
     
-    override func spec() {
+    var splitCache: InMemorySplitCache!
+    
+    override func setUp() {
+        splitCache = InMemorySplitCache()
+        let jsonSplit = "{\"name\":\"test\", \"status\":\"active\"}"
+        let split1 = try? JSON.encodeFrom(json: jsonSplit, to: Split.self)
+        _  = splitCache.addSplit(splitName: split1!.name!, split: split1!)
         
-        describe("InMemorySplitCacheTest") {
-            
-            let splitCache = InMemorySplitCache()
-
-            context("Save Split Successfully") {
-                
-                it("should return a Split with the same values as it was saved") {
-                    
-                    let jsonSplit = "{\"name\":\"test\", \"status\":\"active\"}"
-                    let split1 = try? JSON.encodeFrom(json: jsonSplit, to: Split.self)
-                    _  = splitCache.addSplit(splitName: split1!.name!, split: split1!)
-
-                    let jsonSplit2 = "{\"name\":\"test2\", \"status\":\"archived\"}"
-                    let split2 = try? JSON.encodeFrom(json: jsonSplit2, to: Split.self)
-                    _  = splitCache.addSplit(splitName: split2!.name!, split: split2!)
-
-                    let cachedSplit = splitCache.getSplit(splitName: "test")
-                    expect(cachedSplit).toNot(beNil())
-                    expect(cachedSplit!.name!).to(equal("test"))
-                    expect(cachedSplit!.status).to(equal(Status.Active))
-                    expect(cachedSplit!.conditions).toNot(beNil())
-                    expect(cachedSplit!.conditions?.count).to(equal(0))
-                    expect(cachedSplit!.killed).to(beNil())
-                }
-            }
-            
-            context("Test getAllSplits") {
-
-                it("should return 2 splits") {
-                    let allCachedSplits = splitCache.getAllSplits()
-                    expect(allCachedSplits).toNot(beNil())
-                    expect(allCachedSplits.count).to(equal(2))
-                    expect(allCachedSplits[0]).toNot(beNil())
-                }
-            }
-            
-            context("Test Remove One Split") {
-                
-                it("getSplit should return nil when getting a removed split") {
-                    _ = splitCache.removeSplit(splitName: "test")
-                    let removedSplit = splitCache.getSplit(splitName: "test")
-                    expect(removedSplit).to(beNil())
-                }
-            }
-            
-            context("Test Clear Cache") {
-                
-                it("getAllSplits should return an empty array") {
-                    splitCache.clear()
-                    let allCachedSplitsShouldBeEmpty = splitCache.getAllSplits()
-                    expect(allCachedSplitsShouldBeEmpty).toNot(beNil())
-                    expect(allCachedSplitsShouldBeEmpty.count).to(equal(0))
-                }
-            }
-            
-        }
+        let jsonSplit2 = "{\"name\":\"test2\", \"status\":\"archived\"}"
+        let split2 = try? JSON.encodeFrom(json: jsonSplit2, to: Split.self)
+        _  = splitCache.addSplit(splitName: split2!.name!, split: split2!)
     }
+    
+    override func tearDown() {
+    }
+    
+    func testSaveSplit() {
+        let cachedSplit = splitCache.getSplit(splitName: "test")
+        XCTAssertNotNil(cachedSplit, "Cached split should not be nil")
+        XCTAssertEqual(cachedSplit!.name!, "test", "Split name should be 'Test'")
+        XCTAssertEqual(cachedSplit!.status, Status.Active, "Split status should be active")
+        XCTAssertNil(cachedSplit!.conditions, "Split conditions should be nil")
+        XCTAssertNil(cachedSplit!.killed, "Split should not be killed")
+    }
+    
+    func testGetAllSplits() {
+        let allCachedSplits = splitCache.getAllSplits()
+        XCTAssertNotNil(allCachedSplits, "Cached splits should not be nil")
+        XCTAssertEqual(allCachedSplits.count, 2, "Cached splits should be 2")
+        XCTAssertNotNil(allCachedSplits[0], "First Cached split should not be nil")
+    }
+    
+    func testRemoveOneSplit() {
+        _ = splitCache.removeSplit(splitName: "test")
+        let removedSplit = splitCache.getSplit(splitName: "test")
+        XCTAssertNil(removedSplit, "Removed split should not be available")
+    }
+    
+    func testClearCache() {
+        splitCache.clear()
+        let allCachedSplits = splitCache.getAllSplits()
+        XCTAssertNotNil(allCachedSplits, "Cleared cached splits should not be nil")
+        XCTAssertEqual(allCachedSplits.count, 0, "Cleared cached splits should be empty")
+        
+    }
+    
+    
 }

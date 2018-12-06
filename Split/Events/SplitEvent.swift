@@ -10,7 +10,7 @@ import Foundation
 @objc public enum SplitEvent: Int {
     case sdkReady
     case sdkReadyTimedOut
-    
+
     func toString() -> String {
         switch self {
         case .sdkReady:
