@@ -107,6 +107,7 @@ class RefreshableSplitFetcher: SplitFetcher {
                 
                 
             } catch let error {
+                MetricsManager.shared.count(delta: 1, for: Metrics.counter.splitChangeFetcherException)
                 Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
             }
         }

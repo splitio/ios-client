@@ -105,6 +105,7 @@ import Foundation
                 }
                 
             } catch let error {
+                MetricsManager.shared.count(delta: 1, for: Metrics.counter.mySegmentsFetcherException)
                 Logger.e("Problem fetching mySegments: %@", error.localizedDescription)
             }
         }
