@@ -191,6 +191,7 @@
 		5982D936219F494500230F44 /* matchers.json in Resources */ = {isa = PBXBuildFile; fileRef = 5982D935219F494500230F44 /* matchers.json */; };
 		5982D938219F57BE00230F44 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D937219F57BE00230F44 /* FileHelper.swift */; };
 		5982D9C421B04FA400230F44 /* MySegmentsCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D9C321B04FA400230F44 /* MySegmentsCacheTests.swift */; };
+		5982D9C021B00EBC00230F44 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D9BF21B00EBC00230F44 /* EngineTests.swift */; };
 		59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C492FA216695D500F5F774 /* Murmur3HashingTest.swift */; };
 		59C493052167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv in Resources */ = {isa = PBXBuildFile; fileRef = 59C493022167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv */; };
 		59C493062167E3B400F5F774 /* murmur3-sample-v3.csv in Resources */ = {isa = PBXBuildFile; fileRef = 59C493032167E3B400F5F774 /* murmur3-sample-v3.csv */; };
@@ -415,6 +416,7 @@
 		5982D935219F494500230F44 /* matchers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = matchers.json; sourceTree = "<group>"; };
 		5982D937219F57BE00230F44 /* FileHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5982D9C321B04FA400230F44 /* MySegmentsCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsCacheTests.swift; sourceTree = "<group>"; };
+		5982D9BF21B00EBC00230F44 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 		59C492FA216695D500F5F774 /* Murmur3HashingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Murmur3HashingTest.swift; sourceTree = "<group>"; };
 		59C493022167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-double-treatment-users.csv"; sourceTree = "<group>"; };
 		59C493032167E3B400F5F774 /* murmur3-sample-v3.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-v3.csv"; sourceTree = "<group>"; };
@@ -950,6 +952,7 @@
 				5912D14E2199FD8600BC698C /* LegacyHashingTest.swift */,
 				5982D933219F3D2E00230F44 /* MatcherEvalTests.swift */,
 				5982D9C321B04FA400230F44 /* MySegmentsCacheTests.swift */,
+				5982D9BF21B00EBC00230F44 /* EngineTests.swift */,
 			);
 			path = SplitTests;
 			sourceTree = "<group>";
@@ -1321,6 +1324,7 @@
 				5912D152219A022000BC698C /* CsvHelper.swift in Sources */,
 				5982D934219F3D2E00230F44 /* MatcherEvalTests.swift in Sources */,
 				592C6AC2211B718E002D120C /* MatcherTest.swift in Sources */,
+				5982D9C021B00EBC00230F44 /* EngineTests.swift in Sources */,
 				592C6ABE211B718E002D120C /* ArrayBlockingQueueTest.swift in Sources */,
 				592C6AC3211B718E002D120C /* MySegmentsFetcherTests.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
