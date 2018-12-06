@@ -15,47 +15,41 @@
 //
 
 import Foundation
-import Quick
-import Nimble
+import XCTest
 
 @testable import Split
 
-class RegexTest: QuickSpec {
-
-    override func spec() {
-
-        describe("RegexTest") {
-            let files: [String] = ["regex"]
-            for file in files {
-                var data = readDataFromCSV(fileName: file)
-                data = cleanRows(file: data!)
-                let csvRows = csv(data: data!)
-
-                context("Regex returns the boolean value expected") {
-
-                    for row in csvRows {
-
-                        if row.count != 3 {
-                            continue
-                        }
-                        let regex: String = row[0]
-                        let key: String = row[1]
-                        let resultString: String = row[2]
-                        let result: Bool = resultString.toBool()!
-
-                        let matcher = MatchesStringMatcher(data: regex, negate: false)
-                        let resultEvaluation = matcher.evaluate(matchValue: key, bucketingKey: key, attributes: nil)
-
-                        expect(resultEvaluation).to(equal(result))
-
-                    }
+class RegexTest: XCTestCase {
+    
+    override func setUp() {
+    }
+    
+    override func tearDown() {
+    }
+    
+    func testsRegex() {
+        let files: [String] = ["regex"]
+        for file in files {
+            var data = readDataFromCSV(fileName: file)
+            data = cleanRows(file: data!)
+            let csvRows = csv(data: data!)
+            for row in csvRows {
+                if row.count != 3 {
+                    continue
                 }
+                let regex: String = row[0]
+                let key: String = row[1]
+                let resultString: String = row[2]
+                let result: Bool = resultString.toBool()!
+                let matcher = MatchesStringMatcher(data: regex, negate: false)
+                let resultEvaluation = matcher.evaluate(matchValue: key, bucketingKey: key, attributes: nil)
+                XCTAssertEqual(resultEvaluation, result, "Evaluation result: \(resultEvaluation), expected -> \(result)")
             }
         }
     }
-
+    
     func readDataFromCSV(fileName:String)-> String! {
-
+        
         guard let filepath = Bundle(for: type(of: self)).path(forResource: fileName, ofType: "csv") else {
             return nil
         }
@@ -68,15 +62,14 @@ class RegexTest: QuickSpec {
             return nil
         }
     }
-
-
+    
     func cleanRows(file:String)->String{
         var cleanFile = file
         cleanFile = cleanFile.replacingOccurrences(of: "\r", with: "\n")
         cleanFile = cleanFile.replacingOccurrences(of: "\n\n", with: "\n")
         return cleanFile
     }
-
+    
     func csv(data: String) -> [[String]] {
         var result: [[String]] = []
         let rows = data.components(separatedBy: "\n")
@@ -86,10 +79,7 @@ class RegexTest: QuickSpec {
         }
         return result
     }
-
 }
-
-
 
 extension String {
     func toBool() -> Bool? {
@@ -103,4 +93,3 @@ extension String {
         }
     }
 }
-

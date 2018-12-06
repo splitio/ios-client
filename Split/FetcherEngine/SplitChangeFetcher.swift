@@ -8,11 +8,11 @@
 
 import Foundation
 
-public protocol SplitChangeFetcher {
+protocol SplitChangeFetcher {
     func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange?
 }
 
-public extension SplitChangeFetcher {
+extension SplitChangeFetcher {
     func fetch(since: Int64, policy: FecthingPolicy = .networkAndCache) throws -> SplitChange? {
         return try fetch(since: since, policy: policy)
     }
