@@ -27,21 +27,25 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
         
         if policy == .cacheOnly || !restClient.isSdkServerAvailable() {
             return self.splitChangeCache.getChanges(since: -1)
+        } else {
+            let metricsManager = MetricsManager.shared
+            let semaphore = DispatchSemaphore(value: 0)
+            var requestResult: DataResult<SplitChange>?
+            let fetchStartTime = Date().unixTimestampInMiliseconds()
+            restClient.getSplitChanges(since: since) { result in
+                metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime, for: Metrics.time.splitChangeFetcherGet)
+                metricsManager.count(delta: 1, for: Metrics.counter.splitChangeFetcherStatus200)
+                requestResult = result
+                semaphore.signal()
+            }
+            semaphore.wait()
+            
+            guard let change: SplitChange = try requestResult?.unwrap(), change.isValid else {
+                throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
+            }
+            _ = self.splitChangeCache.addChange(splitChange: change)
+            return change
         }
-        
-        let semaphore = DispatchSemaphore(value: 0)
-        var requestResult: DataResult<SplitChange>?
-        restClient.getSplitChanges(since: since) { result in
-            requestResult = result
-            semaphore.signal()
-        }
-        semaphore.wait()
-        
-        guard let change: SplitChange = try requestResult?.unwrap(), change.isValid else {
-            throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
-        }
-        _ = self.splitChangeCache.addChange(splitChange: change)
-        return change
     }
     
 }

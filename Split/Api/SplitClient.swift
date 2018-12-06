@@ -12,7 +12,6 @@ import Foundation
 
 public final class SplitClient: NSObject, SplitClientProtocol {
 
-    private let kMetricsManagerPushRateInSeconds = 10
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
     public var key: Key
@@ -28,12 +27,9 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     private var metricsManager: MetricsManager
 
     public init(config: SplitClientConfig, key: Key, splitCache: SplitCache) {
-
         self.config = config
         self.key = key
-        HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
 
-        
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
 
@@ -54,13 +50,11 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         impressionsConfig.impressionsPerPush = config.impressionsChunkSize
         splitImpressionManager = ImpressionManager(config: impressionsConfig)
 
-        
         metricsManager = MetricsManager.shared
         
         self.initialized = false
-
         super.init()
-
+        
         self.dispatchGroup = nil
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()

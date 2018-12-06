@@ -37,7 +37,7 @@ public class GreaterThanOrEqualToMatcher: BaseMatcher, MatcherProtocol {
                 return  attributeDate >= backendDate
             
             case DataType.Number:
-                guard let keyValue = matchValue as? Int64 else {return false}
+                guard let keyValue = CastUtils.anyToInt64(value: matchValue) else {return false}
                 return keyValue >= value
         }
         
