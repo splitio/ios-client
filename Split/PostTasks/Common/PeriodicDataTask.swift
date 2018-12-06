@@ -69,7 +69,7 @@ extension PeriodicDataTask {
     }
     
     func saveFileContent(fileName: String, content: String) {
-        fileStorage.save(fileName: fileName, content: content)
+        fileStorage.write(fileName: fileName, content: content)
     }
 }
 

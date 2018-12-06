@@ -18,7 +18,7 @@ import Foundation
         MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate
     
         config.apiKey = apiKey
-        let splitCache = SplitCache(storage: FileStorage())
+        let splitCache = SplitCache()
         let splitFetcher: SplitFetcher = LocalSplitFetcher(splitCache: splitCache)
         
         _client = SplitClient(config: config, key: key, splitCache: splitCache)
