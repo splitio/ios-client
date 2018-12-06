@@ -25,10 +25,10 @@ class Engine {
         var bucketKey: String?
         var inRollOut: Bool = false
         var result: [String: String] = [:]
-        var splitAlgo: Algorithm!
+        var splitAlgo: Algorithm = Algorithm.legacy
             
-        if let rawAlgo = split?.algo {
-            splitAlgo = Algorithm.init(rawValue: rawAlgo) ?? Algorithm.legacy
+        if let rawAlgo = split?.algo,  let algo = Algorithm.init(rawValue: rawAlgo) {
+            splitAlgo = algo
         }
         
         if bucketingKey == nil || bucketingKey == "" {
