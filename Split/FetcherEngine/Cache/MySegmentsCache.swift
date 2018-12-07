@@ -45,8 +45,8 @@ class MySegmentsCache: MySegmentsCacheProtocol {
         }
     }
     
-    func addSegments(_ segments: [String]) {
-        inMemoryCache.addSegments(segments)
+    func setSegments(_ segments: [String]) {
+        inMemoryCache.setSegments(segments)
     }
     
     func removeSegments() {
