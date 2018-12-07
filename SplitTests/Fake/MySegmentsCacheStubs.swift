@@ -14,7 +14,7 @@ class MySegmentCacheStub: MySegmentsCacheProtocol {
     
     let segments: Set = ["s1", "s2", "s3"]
     
-    func addSegments(_ segments: [String]) {
+    func setSegments(_ segments: [String]) {
     }
     
     func removeSegments() {
