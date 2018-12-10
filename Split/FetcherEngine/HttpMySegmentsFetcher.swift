@@ -37,7 +37,7 @@ class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
             guard let segments = try requestResult?.unwrap() else {
                 return nil
             }
-            mySegmentsCache?.addSegments(segments)
+            mySegmentsCache?.setSegments(segments)
             return segments
         }
     }

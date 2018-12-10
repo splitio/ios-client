@@ -10,7 +10,7 @@ import Foundation
 
 protocol MySegmentsCacheProtocol {
     
-    func addSegments(_ segments: [String])
+    func setSegments(_ segments: [String])
 
     func removeSegments()
     

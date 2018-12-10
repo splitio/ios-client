@@ -18,8 +18,9 @@ class InMemoryMySegmentsCache: MySegmentsCacheProtocol {
         mySegments = segments
     }
     
-    func addSegments(_ segments: [String]) {
+    func setSegments(_ segments: [String]) {
         queue.async(flags: .barrier) {
+            self.mySegments.removeAll()
             for segment in segments {
                 self.mySegments.insert(segment)
             }
