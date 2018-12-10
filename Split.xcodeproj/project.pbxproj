@@ -179,6 +179,7 @@
 		592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE3211CBBB0002D120C /* splitchanges_2.json */; };
 		592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE4211CBBB0002D120C /* splitchanges_1.json */; };
 		592C6AEF211CBBB0002D120C /* mysegments_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE5211CBBB0002D120C /* mysegments_2.json */; };
+		597848BB21BB072B00ABB4A6 /* SplitCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597848BA21BB072B00ABB4A6 /* SplitCacheTests.swift */; };
 		597CD32B216BA09000A15487 /* RestClient+Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD32A216BA09000A15487 /* RestClient+Metrics.swift */; };
 		597CD336216CE09100A15487 /* TimeMetricSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD335216CE09100A15487 /* TimeMetricSample.swift */; };
 		597CD338216CE9F700A15487 /* CounterMetricSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD337216CE9F700A15487 /* CounterMetricSample.swift */; };
@@ -403,6 +404,7 @@
 		592C6AE3211CBBB0002D120C /* splitchanges_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_2.json; path = SplitTests/Resources/splitchanges_2.json; sourceTree = SOURCE_ROOT; };
 		592C6AE4211CBBB0002D120C /* splitchanges_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_1.json; path = SplitTests/Resources/splitchanges_1.json; sourceTree = SOURCE_ROOT; };
 		592C6AE5211CBBB0002D120C /* mysegments_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mysegments_2.json; path = SplitTests/Resources/mysegments_2.json; sourceTree = SOURCE_ROOT; };
+		597848BA21BB072B00ABB4A6 /* SplitCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitCacheTests.swift; sourceTree = "<group>"; };
 		597CD32A216BA09000A15487 /* RestClient+Metrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RestClient+Metrics.swift"; sourceTree = "<group>"; };
 		597CD335216CE09100A15487 /* TimeMetricSample.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeMetricSample.swift; sourceTree = "<group>"; };
 		597CD337216CE9F700A15487 /* CounterMetricSample.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CounterMetricSample.swift; sourceTree = "<group>"; };
@@ -949,6 +951,7 @@
 				5912D14E2199FD8600BC698C /* LegacyHashingTest.swift */,
 				5982D933219F3D2E00230F44 /* MatcherEvalTests.swift */,
 				5982D9C321B04FA400230F44 /* MySegmentsCacheTests.swift */,
+				597848BA21BB072B00ABB4A6 /* SplitCacheTests.swift */,
 				5982D9BF21B00EBC00230F44 /* EngineTests.swift */,
 			);
 			path = SplitTests;
@@ -1327,6 +1330,7 @@
 				597CD33A216D022F00A15487 /* MetricsManagerTests.swift in Sources */,
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				592C6ABF211B718E002D120C /* InMemorySplitCacheTests.swift in Sources */,
+				597848BB21BB072B00ABB4A6 /* SplitCacheTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
