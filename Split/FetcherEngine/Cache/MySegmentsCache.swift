@@ -7,66 +7,92 @@
 
 import Foundation
 
-public class MySegmentsCache: MySegmentsCacheProtocol {
+/// ** MySegmentsCache **
+/// Handles My Segments Cache by loading my segments for
+/// a given matching key from disk into memory when the class is instantiated.
+/// In memory segments are updated each time new information is retrieved
+/// from the server and it is saved to disk when application goes to background.
+/// In order to separate segments from different matching keys
+/// there is one file per each one of them.
+
+class MySegmentsCache: MySegmentsCacheProtocol {
     
-    public static let SEGMENT_FILE_PREFIX: String = "SEGMENTIO.split.mysegments";
-    
-    private let kClassName = String(describing: MySegmentsCache.self)
-
-    var storage: StorageProtocol
-
-    init(storage: StorageProtocol) {
-        
-        self.storage = storage
-    }
-    //------------------------------------------------------------------------------------------------------------------
-    public func addSegments(segmentNames: [String], key: String) {
-
-        let userDefaults: UserDefaults = UserDefaults.standard
-        userDefaults.set(key, forKey: "key")
-        guard let jsonString = try? JSON.encodeToJson(segmentNames) else {
-            Logger.e("addSegments: Could not parse data to Json", kClassName)
-            return
-        }
-        storage.write(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX , content: jsonString)
-    }
-    //------------------------------------------------------------------------------------------------------------------
-    public func removeSegments() {
-        storage.delete(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX)
-    }
-    //------------------------------------------------------------------------------------------------------------------
-    public func getSegments() -> [String]? {
-        return getSegments(key: "")
+    private struct MySegmentsFile: Codable {
+        var matchingKey: String
+        var segments: [String]
     }
     
-    public func getSegments(key: String) -> [String]? {
+    private let kMySegmentsFileNamePrefix  = "SEGMENTIO.split.mySegmentsFile"
+    private var fileStorage: FileStorageProtocol
+    private var inMemoryCache: InMemoryMySegmentsCache!
+    private var matchingKey: String
 
-        let userDefaults: UserDefaults = UserDefaults.standard
-        if let savedKey = userDefaults.string(forKey: "key"), savedKey == key {
-            let segments = storage.read(elementId: MySegmentsCache.SEGMENT_FILE_PREFIX)
-            if let segmentsStored = segments {
-                do {
-                    return try JSON.encodeFrom(json: segmentsStored, to: [String].self)
-                } catch {
-                    Logger.e("getSegments: Error parsing stored segments", kClassName)
+    convenience init(matchingKey: String) {
+        self.init(matchingKey: matchingKey, fileStorage: FileStorage())
+    }
+    
+    init(matchingKey: String, fileStorage: FileStorageProtocol) {
+        self.matchingKey = matchingKey
+        self.fileStorage = fileStorage
+        self.inMemoryCache = initialInMemoryCache()
+        NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) {
+            DispatchQueue.global().async { [weak self] in
+                guard let strongSelf = self else {
+                    return
                 }
+                strongSelf.saveSegments()
             }
         }
-        
-        return nil
     }
-    //------------------------------------------------------------------------------------------------------------------
-    public func isInSegment(segmentName: String, key: String) -> Bool {
-        
-        if let segments = self.getSegments(key:key) {
-            return segments.contains(segmentName)
-        }
-        return false
-    }
-    //------------------------------------------------------------------------------------------------------------------
-    public func clear() {
-        
-    }
-    //------------------------------------------------------------------------------------------------------------------
     
+    func setSegments(_ segments: [String]) {
+        inMemoryCache.setSegments(segments)
+    }
+    
+    func removeSegments() {
+        inMemoryCache.removeSegments()
+    }
+    
+    func getSegments() -> [String] {
+        return inMemoryCache.getSegments()
+    }
+    
+    func isInSegments(name: String) -> Bool {
+        return inMemoryCache.isInSegments(name: name)
+    }
+    
+    func clear() {
+        inMemoryCache.clear()
+    }
+}
+
+// MARK: Private
+extension MySegmentsCache {
+    private func fileNameForCurrentMatchingKey() -> String {
+        return "\(kMySegmentsFileNamePrefix)_\(matchingKey)"
+    }
+    
+    private func initialInMemoryCache() -> InMemoryMySegmentsCache {
+        var inMemoryCache = InMemoryMySegmentsCache(segments: Set<String>())
+        guard let jsonContent = fileStorage.read(fileName: fileNameForCurrentMatchingKey()) else {
+            return inMemoryCache
+        }
+        do {
+            let mySegmentsFile = try Json.encodeFrom(json: jsonContent, to: MySegmentsFile.self)
+            inMemoryCache = InMemoryMySegmentsCache(segments: Set(mySegmentsFile.segments))
+        } catch {
+            Logger.e("Error while loading Splits from disk")
+        }
+        return inMemoryCache
+    }
+    
+    private func saveSegments() {
+        let splitsFile = MySegmentsFile(matchingKey: matchingKey, segments: getSegments())
+        do {
+            let jsonSplits = try Json.encodeToJson(splitsFile)
+            fileStorage.write(fileName: fileNameForCurrentMatchingKey(), content: jsonSplits)
+        } catch {
+            Logger.e("Could not save splits on disk")
+        }
+    }
 }

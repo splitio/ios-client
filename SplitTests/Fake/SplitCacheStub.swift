@@ -10,8 +10,7 @@ import Foundation
 @testable import Split
 
 class SplitCacheStub: SplitCacheProtocol {
-    
-    private let kClassName = String(describing: SplitCache.self)
+
     private var changeNumber: Int64
     private var splits: [String:Split]
     init(splits: [Split], changeNumber: Int64) {
@@ -22,22 +21,16 @@ class SplitCacheStub: SplitCacheProtocol {
         }
     }
     
-    @discardableResult
-    func addSplit(splitName: String, split: Split) -> Bool {
+    func addSplit(splitName: String, split: Split) {
         splits[splitName.lowercased()] = split
-        return true
     }
     
-    @discardableResult
-    func removeSplit(splitName: String) -> Bool {
+    func removeSplit(splitName: String) {
         splits.removeValue(forKey: splitName.lowercased())
-        return true
     }
     
-    @discardableResult
-    func setChangeNumber(_ changeNumber: Int64) -> Bool {
+    func setChangeNumber(_ changeNumber: Int64) {
         self.changeNumber = changeNumber
-        return true
     }
     
     private func getChangeNumberId() -> String {
@@ -54,6 +47,10 @@ class SplitCacheStub: SplitCacheProtocol {
     
     func getAllSplits() -> [Split] {
         return Array(splits.values)
+    }
+    
+    func getSplits() -> [String : Split] {
+        return splits
     }
     
     func clear() {
