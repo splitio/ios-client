@@ -8,17 +8,15 @@
 
 import Foundation
 
-public protocol MySegmentsCacheProtocol {
+protocol MySegmentsCacheProtocol {
     
-    func addSegments(segmentNames: [String], key: String)
-    
+    func setSegments(_ segments: [String])
+
     func removeSegments()
     
-    func getSegments() -> [String]?
+    func getSegments() -> [String]
     
-    func getSegments(key: String) -> [String]?
-    
-    func isInSegment(segmentName: String, key:String) -> Bool
+    func isInSegments(name: String) -> Bool
     
     func clear()
 

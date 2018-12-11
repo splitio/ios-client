@@ -8,54 +8,50 @@
 
 import Foundation
 
-@objc public final class InMemoryMySegmentsCache: NSObject, MySegmentsCacheProtocol {
+class InMemoryMySegmentsCache: MySegmentsCacheProtocol {
+    private let queueName = "split.inmemcache-queue.mysegments"
+    private var queue: DispatchQueue
+    private var mySegments: Set<String>
     
-    private var mySegments: NSMutableDictionary = NSMutableDictionary()
-    private var changeNumber: Int64
-
-    public init(segments: [String] = [], changeNumber: Int64 = -1) {
-        var dict = [String : String]()
-        for name in segments {
-            dict[name] = name
+    init(segments: Set<String>) {
+        self.queue = DispatchQueue(label: queueName, attributes: .concurrent)
+        mySegments = segments
+    }
+    
+    func setSegments(_ segments: [String]) {
+        queue.async(flags: .barrier) {
+            self.mySegments.removeAll()
+            for segment in segments {
+                self.mySegments.insert(segment)
+            }
         }
-        self.mySegments.addEntries(from: dict)
-        self.changeNumber = changeNumber
     }
     
-    public func addSegments(segmentNames: [String], key: String = "") {
-        var dict = [String : String]()
-        for name in segmentNames {
-            dict[name] = name
+    func removeSegments() {
+        queue.async(flags: .barrier) {
+            self.mySegments.removeAll()
         }
-        self.mySegments.addEntries(from: dict)
     }
     
-    public func removeSegments() {
-        self.mySegments.removeAllObjects()
+    func getSegments() -> [String] {
+        var segments: Set<String>!
+        queue.sync {
+            segments = self.mySegments
+        }
+        return Array(segments)
     }
     
-    public func getSegments() -> [String]? {
-        return self.mySegments.allKeys as? [String]
+    func isInSegments(name: String) -> Bool {
+        var segments: Set<String>!
+        queue.sync {
+            segments = self.mySegments
+        }
+        return segments.contains(name)
     }
     
-    public func getSegments(key: String) -> [String]? {
-        return self.mySegments.allKeys as? [String]
+    func clear() {
+        queue.async(flags: .barrier) {
+            self.mySegments.removeAll()
+        }
     }
-    
-    public func isInSegment(segmentName: String, key:String) -> Bool {
-        return self.mySegments.object(forKey: segmentName) != nil
-    }
-    
-    public func setChangeNumber(_ changeNumber: Int64) {
-        self.changeNumber = changeNumber
-    }
-    
-    public func getChangeNumber() -> Int64 {
-        return self.changeNumber
-    }
-    
-    public func clear() {
-        self.mySegments.removeAllObjects()
-    }
-    
 }

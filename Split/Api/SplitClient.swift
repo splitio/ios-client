@@ -18,7 +18,6 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     internal var initialized: Bool = false
     internal var config: SplitClientConfig?
     internal var dispatchGroup: DispatchGroup?
-    var mySegmentStorage = FileAndMemoryStorage()
     let splitImpressionManager: ImpressionManager
     public var shouldSendBucketingKey: Bool = false
 
@@ -26,16 +25,16 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     private var trackEventsManager: TrackManager
     private var metricsManager: MetricsManager
 
-    public init(config: SplitClientConfig, key: Key, splitCache: SplitCache) {
+    init(config: SplitClientConfig, key: Key, splitCache: SplitCache) {
         self.config = config
         self.key = key
-
+        let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey)
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
 
         let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache), splitCache: splitCache, interval: self.config!.featuresRefreshRate, eventsManager: eventsManager)
 
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), storage: mySegmentStorage), mySegmentsCache: MySegmentsCache(storage: mySegmentStorage), interval: self.config!.segmentsRefreshRate, eventsManager: eventsManager)
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache), mySegmentsCache: mySegmentsCache, interval: self.config!.segmentsRefreshRate, eventsManager: eventsManager)
 
 
         var trackConfig = TrackManagerConfig()
