@@ -65,7 +65,7 @@ class Engine {
                     bucketKey = matchingKey
                 }
                 let key: Key = Key(matchingKey: matchingKey!, bucketingKey: bucketKey)
-                result[Engine.EVALUATION_RESULT_TREATMENT] = Splitter.shared.getTreatment(key: key, seed: (split?.seed)!, attributes: attributes, partions: condition.partitions, algo: splitAlgo)
+                result[Engine.EVALUATION_RESULT_TREATMENT] = splitter.getTreatment(key: key, seed: (split?.seed)!, attributes: attributes, partions: condition.partitions, algo: splitAlgo)
                 result[Engine.EVALUATION_RESULT_LABEL] = condition.label
                 return result
             }
