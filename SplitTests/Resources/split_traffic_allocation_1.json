@@ -1,0 +1,30 @@
+{
+    "trafficTypeName": "tt1",
+    "name": "split",
+    "trafficAllocation": 1,
+    "trafficAllocationSeed": -1667452163,
+    "seed": 1234,
+    "status": "ACTIVE",
+    "killed": false,
+    "defaultTreatment": "default",
+    "changeNumber": 123,
+    "algo": 2,
+    "label": "Traffic allocation 1",
+    "conditions": [{
+                   "conditionType": "ROLLOUT",
+                   "matcherGroup": {
+                   "combiner": "AND",
+                   "matchers": [{
+                                "matcherType": "ALL_KEYS",
+                                "whitelist": null,
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": null
+                                }]
+                   },
+                   "partitions": [{
+                                  "treatment": "on",
+                                  "size": 100
+                                  }]
+                   }]
+}
