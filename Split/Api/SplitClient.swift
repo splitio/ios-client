@@ -24,6 +24,8 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     private var eventsManager: SplitEventsManager
     private var trackEventsManager: TrackManager
     private var metricsManager: MetricsManager
+    
+    private let kTrackEventNameValidationPattern = "\\b[a-zA-Z0-9][-_\\.a-zA-Z0-9]{0,62}\\b"
 
     init(config: SplitClientConfig, key: Key, splitCache: SplitCache) {
         self.config = config
@@ -201,5 +203,17 @@ extension SplitClient {
         trackEventsManager.appendEvent(event: event)
 
         return true
+    }
+    
+    private func validateEventName(eventName: String) -> Bool {
+        let validationRegex: NSRegularExpression? = try? NSRegularExpression(pattern: kTrackEventNameValidationPattern, options: .caseInsensitive)
+        
+        if let regex = validationRegex {
+            let matchesCount = regex.numberOfMatches(in: eventName, options: [], range: NSRange(location: 0,  length: eventName.count))
+            if matchesCount == 1 {
+                return true
+            }
+        }
+        return false
     }
 }
