@@ -24,8 +24,6 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     private var eventsManager: SplitEventsManager
     private var trackEventsManager: TrackManager
     private var metricsManager: MetricsManager
-    
-    private let kTrackEventNameValidationPattern = "\\b[a-zA-Z0-9][-_\\.a-zA-Z0-9]{0,62}\\b"
 
     init(config: SplitClientConfig, key: Key, splitCache: SplitCache) {
         self.config = config
@@ -94,9 +92,14 @@ extension SplitClient {
     public func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String] {
 
         var results = [String:String]()
-        self.verifyKey()
-        for splitName in splits {
-            results[splitName] = getTreatment(splitName: splitName, verifyKey: false, attributes: attributes)
+        
+        if splits.count > 0 {
+            self.verifyKey()
+            for splitName in splits {
+                results[splitName] = getTreatment(splitName: splitName, verifyKey: false, attributes: attributes)
+            }
+        } else {
+            Logger.d("split_names is an empty array or has null values")
         }
 
         return results
@@ -186,34 +189,19 @@ extension SplitClient {
     }
 
     private func track(eventType: String, trafficType: String? = nil, value: Double? = nil) -> Bool {
-
-        var finalTrafficType: String? = nil
-        if let trafficType = trafficType {
-            finalTrafficType = trafficType
-        } else if let trafficType = self.config?.trafficType {
-            finalTrafficType = trafficType
-        } else {
+        
+        let eventBuilder = EventBuilder()
+            .setType(trafficType ?? self.config?.trafficType)
+            .setMatchingKey(self.key.matchingKey)
+            .setType(eventType)
+            .setValue(value)
+        
+        do {
+            let event = try eventBuilder.build()
+            trackEventsManager.appendEvent(event: event)
+        } catch {
             return false
         }
-
-        let event: EventDTO = EventDTO(trafficType: finalTrafficType!, eventType: eventType)
-        event.key = self.key.matchingKey
-        event.value = value
-        event.timestamp = Date().unixTimestampInMiliseconds()
-        trackEventsManager.appendEvent(event: event)
-
         return true
-    }
-    
-    private func validateEventName(eventName: String) -> Bool {
-        let validationRegex: NSRegularExpression? = try? NSRegularExpression(pattern: kTrackEventNameValidationPattern, options: .caseInsensitive)
-        
-        if let regex = validationRegex {
-            let matchesCount = regex.numberOfMatches(in: eventName, options: [], range: NSRange(location: 0,  length: eventName.count))
-            if matchesCount == 1 {
-                return true
-            }
-        }
-        return false
     }
 }
