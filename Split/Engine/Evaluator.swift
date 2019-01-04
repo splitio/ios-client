@@ -38,8 +38,16 @@ public class Evaluator {
     }
     //------------------------------------------------------------------------------------------------------------------
     public func evalTreatment(key: String, bucketingKey: String? , split: String, attributes:[String:Any]?) throws -> [String:Any]?  {
-        
+
         var result: [String:Any] = [:]
+        
+        if split.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+            Logger.w("getTreatment: split_name must not be an empty string");
+            result[Engine.EVALUATION_RESULT_TREATMENT] = SplitConstants.CONTROL
+            result[Engine.EVALUATION_RESULT_LABEL] = ImpressionsConstants.EXCEPTION
+            result[Engine.EVALUATION_RESULT_SPLIT_VERSION] = nil
+            return result
+        }
 
         if let splitTreated: Split = splitFetcher?.fetch(splitName: split), splitTreated.status != Status.Archived {
             
