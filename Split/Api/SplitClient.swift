@@ -65,6 +65,9 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         trackEventsManager.start()
         splitImpressionManager.start()
 
+        if key.bucketingKey == nil {
+            Logger.w("Client instance: Key object should have bucketingKey set")
+        }
         Logger.i("iOS Split SDK initialized!")
     }
 }
@@ -95,11 +98,12 @@ extension SplitClient {
         
         if splits.count > 0 {
             self.verifyKey()
-            for splitName in splits {
+            let splitsNoDuplicated = Set(splits.filter { !$0.isEmpty() }.map { $0 })
+            for splitName in splitsNoDuplicated {
                 results[splitName] = getTreatment(splitName: splitName, verifyKey: false, attributes: attributes)
             }
         } else {
-            Logger.d("split_names is an empty array or has null values")
+            Logger.d("getTreatments: split_names is an empty array or has null values")
         }
 
         return results
