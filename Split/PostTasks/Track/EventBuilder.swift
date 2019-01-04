@@ -10,8 +10,11 @@ import Foundation
 
 enum EventValidationError: Error {
     case nullTrafficType
+    case emptyTrafficType
+    case emptyMatchingKey
     case nullMatchingKey
     case nullType
+    case emptyType
     case invalidType
 }
 
@@ -47,18 +50,37 @@ class EventBuilder {
     private func validate() throws {
         
         if matchingKey == nil {
+            Logger.e("track: key cannot be null")
             throw EventValidationError.nullMatchingKey
         }
         
+        if matchingKey!.isEmpty() {
+            Logger.e("track: traffic_type_name must not be an empty String")
+            throw EventValidationError.emptyMatchingKey
+        }
+        
         if trafficType == nil {
+            Logger.e("track: traffic_type_name cannot be null")
             throw EventValidationError.nullTrafficType
         }
         
+        if trafficType!.isEmpty() {
+            Logger.e("track: traffic_type_name must not be an empty String")
+            throw EventValidationError.emptyTrafficType
+        }
+        
         if type == nil {
+            Logger.e("track: event_type cannot be null")
             throw EventValidationError.nullType
         }
         
+        if type!.isEmpty() {
+            Logger.e("track: event_type must be not be an empty String")
+            throw EventValidationError.emptyType
+        }
+        
         if !isTypeValid(type!) {
+            Logger.e("track: event name must adhere to the regular expression \(kTrackEventNameValidationPattern)")
             throw EventValidationError.invalidType
         }
     }
