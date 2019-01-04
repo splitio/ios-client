@@ -52,6 +52,10 @@ import Foundation
     }
     
     public func split(featureName: String) -> SplitView? {
+        if featureName.isEmpty() {
+            Logger.e("split: split_name cannot be empty")
+            return nil
+        }
         let filtered = splits.filter { return ( featureName.lowercased() == $0.name?.lowercased() ) }
         return filtered.count > 0 ? filtered[0] : nil
     }
