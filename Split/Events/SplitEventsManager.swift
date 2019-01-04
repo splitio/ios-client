@@ -136,6 +136,13 @@ public class SplitEventsManager {
         return executionTimes
     }
     
+    func eventAlreadyTriggered(event: SplitEvent) -> Bool {
+        if let times = executionTimes[event.toString()] {
+            return times == 0
+        }
+        return false
+    }
+    
     private func trigger(event:SplitEvent) {
         
         // If executionTimes is zero, maximum executions has been reached
