@@ -77,10 +77,18 @@ extension SplitClient {
     @available(iOS, deprecated, message: "This method is deprecated and it will be removed. Please use on(event:execute) instead")
     public func on(_ event:SplitEvent, _ task:SplitEventTask) -> Void {
         Logger.w("SplitClient.on(_:_) -> This method is deprecated and will be removed. Please use on(event:execute) method instead.")
+        if eventsManager.eventAlreadyTriggered(event: event) {
+            Logger.w("A handler was added for \(event.toString()) on the SDK, which has already fired and won’t be emitted again. The callback won’t be executed.")
+            return
+        }
         eventsManager.register(event: event, task: task)
     }
 
     public func on(event: SplitEvent, execute action: @escaping SplitAction){
+        if eventsManager.eventAlreadyTriggered(event: event) {
+            Logger.w("A handler was added for \(event.toString()) on the SDK, which has already fired and won’t be emitted again. The callback won’t be executed.")
+            return
+        }
         let task = SplitEventActionTask(action: action)
         eventsManager.register(event: event, task: task)
     }
