@@ -112,7 +112,7 @@ extension SplitClient {
     private func getTreatment(splitName: String, verifyKey: Bool = true, attributes:[String:Any]? = nil) -> String {
         
         if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
-            Logger.w("getTreatment: No ready parameter has been set - incorrect control treatments could be logged")
+            Logger.w("No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not yet ready")
         }
 
         let timeMetricStart = Date().unixTimestampInMicroseconds()
