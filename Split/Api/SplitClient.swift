@@ -11,7 +11,7 @@
 import Foundation
 
 public final class SplitClient: NSObject, SplitClientProtocol {
-
+    
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
     public var key: Key
@@ -85,7 +85,11 @@ extension SplitClient {
 
 // MARK: Treatment / Evaluation
 extension SplitClient {
-    public func getTreatment(_ split: String, attributes:[String:Any]? = nil) -> String {
+    public func getTreatment(_ split: String) -> String {
+        return getTreatment(splitName: split, attributes: nil)
+    }
+    
+    public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
         return getTreatment(splitName: split, verifyKey: true, attributes: attributes)
     }
 
@@ -131,7 +135,7 @@ extension SplitClient {
     }
 
     func logImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String, attributes:[String:Any]? = nil) {
-        var impression: Impression = Impression()
+        let impression: Impression = Impression()
         impression.keyName = self.key.matchingKey
 
         impression.bucketingKey = (self.shouldSendBucketingKey) ? self.key.bucketingKey : nil

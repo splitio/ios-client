@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol SplitFactoryProtocol {
+@objc public protocol SplitFactoryProtocol {
     
     func client() -> SplitClientProtocol
     
