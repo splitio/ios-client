@@ -13,73 +13,73 @@ public typealias SplitImpressionListener = (SplitImpression) -> Void
 public class SplitClientConfig: NSObject {
 
     /**
-     How many seconds to wait before triggering a timeout event when the SDK is being initialized. Default: -1 (means no timeout)
+     How many milliseconds to wait before triggering a timeout event when the SDK is being initialized. Default: -1 (means no timeout)
      */
-    public var sdkReadyTimeOut: Int = -1
+    @objc public var sdkReadyTimeOut: Int = -1
 
     /**
     The SDK will poll Split servers for changes to feature Splits at this rate (in seconds). Default 3600 (1 hour)
      */
-    public var featuresRefreshRate: Int = 3600
+    @objc public var featuresRefreshRate: Int = 3600
 
     /**
      The treatment log captures which customer saw what treatment ("on", "off", etc) at what time. This log is periodically flushed back to Split servers. This configuration controls how quickly does the cache expire after a write (in seconds). Default: 1800 seconds (30 minutes)
      */
-    public var impressionRefreshRate: Int = 1800
+    @objc public var impressionRefreshRate: Int = 1800
 
     /**
      */
-    public var impressionsChunkSize: Int64 = 100
+    @objc public var impressionsChunkSize: Int64 = 100
 
     /**
      The SDK will poll Split servers for changes to segments at this rate (in seconds). Default: 1800 seconds (30 minutes)
      */
-    public var segmentsRefreshRate: Int = 1800
+    @objc public var segmentsRefreshRate: Int = 1800
 
     /**
      Default queue size for impressions. Default: 30K
      */
-    public var impressionsQueueSize: Int = 30000
+    @objc public var impressionsQueueSize: Int = 30000
 
     /**
      Timeout for HTTP calls in seconds. Default 30 seconds
      */
-    public var connectionTimeout: Int = 30
+    @objc public var connectionTimeout: Int = 30
 
     /**
      The traffic type associated with the client key. If it’s present, it’s binded to the client instance, exactly as the key. If not, we will expect the traffic type on each .track() call. This is an optional value.
      */
-    public var trafficType: String? = nil
+    @objc public var trafficType: String? = nil
 
     /**
      How much will we wait for the first events flush. Default: 10s.
      */
-    public var eventsFirstPushWindow: Int = 10
+    @objc public var eventsFirstPushWindow: Int = 10
 
     /**
      The schedule time for events flush after the first one. Default:  1800 seconds (30 minutes)
      */
-    public var eventsPushRate: Int = 1800
+    @objc public var eventsPushRate: Int = 1800
 
     /**
      The max size of the events queue. If the queue is full, we should flush. Default: 10000
      */
-    public var eventsQueueSize: Int64 = 10000
+    @objc public var eventsQueueSize: Int64 = 10000
 
     /**
      The amount of events to send in a POST request. Default: 2000
      */
-    public var eventsPerPush: Int = 2000
+    @objc public var eventsPerPush: Int = 2000
     
     /**
      The schedule time for metrics flush after the first one. Default:  1800 seconds (30 minutes)
      */
-    public var metricsPushRate: Int = 1800
+    @objc public var metricsPushRate: Int = 1800
 
     /**
      Client API key for company. Get it from Split admin dashboard.
      */
-    public var apiKey: String {
+    @objc public var apiKey: String {
         get {
             return SecureDataStore.shared.getToken() ?? ""
         }
@@ -92,7 +92,7 @@ public class SplitClientConfig: NSObject {
     /**
      Sdk endpoint URL string.
      */
-    public var targetSdkEndPoint: String {
+    @objc public var targetSdkEndPoint: String {
         get {
             return EnvironmentTargetManager.shared.sdkEndpoint
         }
@@ -104,7 +104,7 @@ public class SplitClientConfig: NSObject {
     /**
      Events endpoint URL string.
      */
-    public var targetEventsEndPoint: String {
+    @objc public var targetEventsEndPoint: String {
         get {
             return EnvironmentTargetManager.shared.eventsEndpoint
         }
@@ -116,7 +116,7 @@ public class SplitClientConfig: NSObject {
     /**
      Enables debug messages in console
      */
-    public var isDebugModeEnabled: Bool {
+    @objc public var isDebugModeEnabled: Bool {
         get {
             return Logger.shared.isDebugModeEnabled
         }
@@ -128,7 +128,7 @@ public class SplitClientConfig: NSObject {
     /**
      Enables verbose mode. All Sdk messages will be logged in console
      */
-    public var isVerboseModeEnabled: Bool {
+    @objc public var isVerboseModeEnabled: Bool {
         get {
             return Logger.shared.isVerboseModeEnabled
         }
@@ -142,7 +142,7 @@ public class SplitClientConfig: NSObject {
         - Parameters
         - A closure of type SplitImpressionListener, that means (SplitImpression) -> Void
      */
-    public var impressionListener: SplitImpressionListener?
+    @objc public var impressionListener: SplitImpressionListener?
 }
 
 // MARK: Deprecated methods

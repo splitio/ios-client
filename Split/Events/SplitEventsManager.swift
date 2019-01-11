@@ -7,67 +7,67 @@
 
 import Foundation
 
-public class SplitEventsManager {
-    private let eventQueue:SynchronizedArrayQueue<SplitInternalEvent>
+class SplitEventsManager {
+    private let queue:SynchronizedArrayQueue<SplitInternalEvent>
     private var queueReadingTimer: DispatchSourceTimer?
     private let queueReadingRefreshTime: Int
-    
+
     private var eventMySegmentsAreReady:Bool
     private var eventSplitsAreReady:Bool
-    
+
     private var sdkReadyTimeStart: Int64
-    
+
     private var suscriptions = [SplitEvent:[SplitEventTask]]()
     private let executorResources: SplitEventExecutorResources?
     private var executionTimes: [String: Int]
-    
-    public init(config: SplitClientConfig){
+
+    init(config: SplitClientConfig){
         sdkReadyTimeStart = Date().unixTimestampInMiliseconds()
-        eventQueue = SynchronizedArrayQueue<SplitInternalEvent>()
+        queue = SynchronizedArrayQueue<SplitInternalEvent>()
         queueReadingRefreshTime = 300
         eventMySegmentsAreReady = false
         eventSplitsAreReady = false
         executorResources = SplitEventExecutorResources()
         executionTimes = [String: Int]()
         registerMaxAllowebExecutionTimesPerEvent()
-        
+
         if config.sdkReadyTimeOut > 0 {
             let readyTimedoutQueue = DispatchQueue(label: "io.Split.Event.TimedOut")
             readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.sdkReadyTimeOut), execute: {
                 self.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
             })
         }
-        
+
     }
-    
-    public func notifyInternalEvent(_ event:SplitInternalEvent) {
-        eventQueue.append(event)
+
+    func notifyInternalEvent(_ event:SplitInternalEvent) {
+        queue.append(event)
     }
-    
-    public func getExecutorResources() -> SplitEventExecutorResources {
+
+    func getExecutorResources() -> SplitEventExecutorResources {
         return executorResources!
     }
-    
+
     /**
      * This method should registering the allowed maximum times of event trigger
      * EXAMPLE: SDK_READY should be triggered only once
      */
     private func registerMaxAllowebExecutionTimesPerEvent() {
-        
-        executionTimes = [SplitEvent.sdkReady.toString():1,
-                                SplitEvent.sdkReadyTimedOut.toString():1]
+
+        executionTimes = [ SplitEvent.sdkReady.toString(): 1,
+                            SplitEvent.sdkReadyTimedOut.toString(): 1]
     }
-    
-    public func register(event:SplitEvent, task:SplitEventTask) {
+
+    func register(event: SplitEvent, task: SplitEventTask) {
         let queue = DispatchQueue(label: "io.Split.Register.SplitEventTask")
         queue.sync {
-            
+
             // If event is already triggered, execute the task
             if self.executionTimes[event.toString()] != nil && self.executionTimes[event.toString()] == 0 {
                 executeTask(event: event, task: task);
                 return;
             }
-            
+
             if self.suscriptions[event] != nil {
                 self.suscriptions[event]?.append(task)
             } else {
@@ -75,8 +75,8 @@ public class SplitEventsManager {
             }
         }
     }
-    
-    public func start(){
+
+    func start(){
         let queue = DispatchQueue(label: "io.Split.Reading.Queue")
         queueReadingTimer = DispatchSource.makeTimerSource(queue: queue)
         queueReadingTimer!.schedule(deadline: .now(), repeating: .milliseconds(queueReadingRefreshTime))
@@ -92,14 +92,14 @@ public class SplitEventsManager {
         }
         queueReadingTimer!.resume()
     }
-    
+
     private func stopReadingQueue() {
         queueReadingTimer?.cancel()
         queueReadingTimer = nil
     }
-    
+
     private func processEvents(){
-        self.eventQueue.take(completion: {(element:SplitInternalEvent) -> Void in
+        self.queue.take(completion: {(element:SplitInternalEvent) -> Void in
             switch element {
             case .mySegmentsAreReady:
                 self.eventMySegmentsAreReady = true
@@ -120,7 +120,7 @@ public class SplitEventsManager {
                     self.trigger(event: SplitEvent.sdkReadyTimedOut)
                 }
                 break
-                
+
             /*
             Update events will be added soon
             */
@@ -131,13 +131,20 @@ public class SplitEventsManager {
             }
         })
     }
-    
-    public func getExecutionTimes() -> [String: Int] {
+
+    func eventAlreadyTriggered(event: SplitEvent) -> Bool {
+        if let times = executionTimes[event.toString()] {
+            return times == 0
+        }
+        return false
+    }
+
+    func getExecutionTimes() -> [String: Int] {
         return executionTimes
     }
-    
-    private func trigger(event:SplitEvent) {
-        
+
+    private func trigger(event: SplitEvent) {
+
         // If executionTimes is zero, maximum executions has been reached
         if (self.executionTimes[event.toString()] == 0){
             return;
@@ -152,10 +159,10 @@ public class SplitEventsManager {
             }
         }
     }
-    
-    private func executeTask(event:SplitEvent, task:SplitEventTask) {
+
+    private func executeTask(event: SplitEvent, task: SplitEventTask) {
         let executor: SplitEventExecutorProtocol = SplitEventExecutorFactory.factory(event: event, task: task, resources: self.executorResources! )
         executor.execute()
     }
-    
+
 }
