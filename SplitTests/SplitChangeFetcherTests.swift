@@ -13,25 +13,25 @@ import OHHTTPStubs
 @testable import Split
 
 class SplitChangeFetcherTests: XCTestCase {
-    
+
     var splitChangeFetcher: SplitChangeFetcher!
     var cache: SplitCache!
-    
+
     override func setUp() {
-        cache = SplitCache(storage: MemoryStorage())
+        cache = SplitCache(fileStorage: FileStorageStub())
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: cache)
     }
-    
+
     override func tearDown() {
         OHHTTPStubs.removeAllStubs()
     }
-    
+
     func testFetchCount() {
         stub(condition: isPath("/api/splitChanges")) { _ in
             let stubPath = OHPathForFile("splitchanges_1.json", type(of: self))
             return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
         }
-        
+
         sleep(1) // Time to load the file
         let response = try? splitChangeFetcher.fetch(since: -1)
         XCTAssertTrue(response != nil, "Response should not be nil")
@@ -39,13 +39,13 @@ class SplitChangeFetcherTests: XCTestCase {
             XCTAssertTrue(response!.splits!.count > 0, "Split count should be greater than 0")
         }
     }
-    
+
     func testChangeFetch() {
         stub(condition: pathMatches("/api/splitChanges")) { _ in
             let stubPath = OHPathForFile("splitchanges_2.json", type(of: self))
             return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
         }
-        
+
         sleep(1) // Time to load the file
         let response = try? splitChangeFetcher.fetch(since: -1)
         XCTAssertTrue(response != nil, "Response should not be nil")
@@ -63,13 +63,13 @@ class SplitChangeFetcherTests: XCTestCase {
             XCTAssertNil(split.algo, "Algo should be nil")
         }
     }
-    
+
     func testSplitsTillAndSince() {
         stub(condition: isPath("/api/splitChanges")) { _ in
             let stubPath = OHPathForFile("splitchanges_3.json", type(of: self))
             return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
         }
-        
+
         sleep(1) // Time to load the file
         var response: SplitChange?
         var errorHasOccurred = false
