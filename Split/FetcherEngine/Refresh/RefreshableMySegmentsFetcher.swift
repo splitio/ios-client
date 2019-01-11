@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public final class RefreshableMySegmentsFetcher: NSObject, MySegmentsFetcher {
+@objc final class RefreshableMySegmentsFetcher: NSObject, MySegmentsFetcher {
     
     private let mySegmentsChangeFetcher: MySegmentsChangeFetcher
     private let interval: Int
@@ -17,7 +17,7 @@ import Foundation
     
     private var pollTimer: DispatchSourceTimer?
 
-    public weak var dispatchGroup: DispatchGroup?
+    weak var dispatchGroup: DispatchGroup?
     
     private var _eventsManager: SplitEventsManager
     
@@ -33,15 +33,15 @@ import Foundation
         self._eventsManager = eventsManager
     }
     
-    public func forceRefresh() {
+    func forceRefresh() {
         pollForMySegmentsChanges()
     }
     
-    public func fetchAll() -> [String] {
-        return mySegmentsCache.getSegments() ?? []
+    func fetchAll() -> [String] {
+        return mySegmentsCache.getSegments()
     }
     
-    public func start() {
+    func start() {
         
         do {
             let mySegments = try self.mySegmentsChangeFetcher.fetch(user: self.matchingKey, policy: .cacheOnly)
@@ -58,7 +58,7 @@ import Foundation
         startPollingForMySegmentsChanges()
     }
     
-    public func stop() {
+    func stop() {
         stopPollingForMySegmentsChanges()
     }
     

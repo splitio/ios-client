@@ -9,7 +9,7 @@
 import Foundation
 
 class FileHelper {
-    static func readDataFromFile(sourceClass: Any, name: String,  type fileType: String)-> String! {
+    static func readDataFromFile(sourceClass: Any, name: String,  type fileType: String)-> String? {
         
         guard let filepath = Bundle(for: type(of: sourceClass) as! AnyClass).path(forResource: name, ofType: fileType) else {
             return nil

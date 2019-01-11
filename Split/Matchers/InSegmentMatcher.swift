@@ -22,16 +22,14 @@ public class InSegmentMatcher: BaseMatcher, MatcherProtocol {
     //--------------------------------------------------------------------------------------------------
     public func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String : Any]?) -> Bool {
         
-        guard let matchValueString = matchValue as? String, let dataElements = data, let segmentName = dataElements.segmentName else {
-            
-            return false
-            
+        // Match value is not used because it is matching key. My segments cache only has segments for that key cause
+        // Split client is instantiated  based on it
+        if let _ = matchValue as? String, let dataElements = data, let segmentName = dataElements.segmentName {
+            if let segment = self.splitClient?.mySegmentsFetcher as? RefreshableMySegmentsFetcher {
+                return segment.mySegmentsCache.isInSegments(name: segmentName)
+            }
         }
-                
-        let segment = self.splitClient?.mySegmentsFetcher as? RefreshableMySegmentsFetcher
-        
-        return (segment?.mySegmentsCache.isInSegment(segmentName: segmentName, key:matchValueString))!
-        
+        return false
     }
     //--------------------------------------------------------------------------------------------------
     

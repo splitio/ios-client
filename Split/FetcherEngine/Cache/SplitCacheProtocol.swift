@@ -10,16 +10,18 @@ import Foundation
 
 protocol SplitCacheProtocol {
     
-    func addSplit(splitName: String, split: Split) -> Bool
+    func addSplit(splitName: String, split: Split)
     
-    func removeSplit(splitName: String) -> Bool
+    func removeSplit(splitName: String)
     
-    func setChangeNumber(_ changeNumber: Int64) -> Bool
+    func setChangeNumber(_ changeNumber: Int64)
     
     func getChangeNumber() -> Int64
     
     func getSplit(splitName: String) -> Split?
 
+    func getSplits() -> [String: Split]
+    
     func getAllSplits() -> [Split]
 
     func clear()
