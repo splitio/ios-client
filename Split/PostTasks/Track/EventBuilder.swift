@@ -48,39 +48,39 @@ class EventBuilder {
     }
     
     private func validate() throws {
-        
+        let tag = "track:"
         if matchingKey == nil {
-            Logger.e("track: key cannot be null")
+            Logger.e("\(tag) you passed nil,  key cannot be null")
             throw EventValidationError.nullMatchingKey
         }
         
         if matchingKey!.isEmpty() {
-            Logger.e("track: traffic_type_name must not be an empty String")
+            Logger.e("\(tag) you passed \"\", key must not be an empty string")
             throw EventValidationError.emptyMatchingKey
         }
         
         if trafficType == nil {
-            Logger.e("track: traffic_type_name cannot be null")
+            Logger.e("\(tag) you passed nil, traffic_type_name cannot be null")
             throw EventValidationError.nullTrafficType
         }
         
         if trafficType!.isEmpty() {
-            Logger.e("track: traffic_type_name must not be an empty String")
+            Logger.e("\(tag) you passed \"\", traffic_type_name must not be an empty string")
             throw EventValidationError.emptyTrafficType
         }
         
         if type == nil {
-            Logger.e("track: event_type cannot be null")
+            Logger.e("\(tag) you passed nil, event_type cannot be null")
             throw EventValidationError.nullType
         }
         
         if type!.isEmpty() {
-            Logger.e("track: event_type must be not be an empty String")
+            Logger.e("\(tag) you passed \"\", event_type must be not be an empty String")
             throw EventValidationError.emptyType
         }
         
         if !isTypeValid(type!) {
-            Logger.e("track: event name must adhere to the regular expression \(kTrackEventNameValidationPattern)")
+            Logger.e("\(tag) you passed \(type ?? "nil"), event name must adhere to the regular expression \(kTrackEventNameValidationPattern). This means an event name must be alphanumeric, cannot be more than 80 characters long, and can only include a dash, underscore, period, or colon as separators of alphanumeric characters")
             throw EventValidationError.invalidType
         }
     }

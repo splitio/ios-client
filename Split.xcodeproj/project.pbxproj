@@ -210,6 +210,12 @@
 		59F6AAAA215EBD4400A51997 /* MetricGauge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AAA7215EBD4400A51997 /* MetricGauge.swift */; };
 		59F6AAAB215EBD4400A51997 /* TimeMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AAA8215EBD4400A51997 /* TimeMetric.swift */; };
 		59FB7BCA21DFE0A500ECC96A /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BC921DFE0A500ECC96A /* String+Utils.swift */; };
+		59FB7BCE21E68E2400ECC96A /* KeyValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BCD21E68E2400ECC96A /* KeyValidator.swift */; };
+		59FB7BD121E77B6800ECC96A /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BD021E77B6800ECC96A /* Validator.swift */; };
+		59FB7BD321E77CBC00ECC96A /* Validatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BD221E77CBC00ECC96A /* Validatable.swift */; };
+		59FB7BD521E7C64700ECC96A /* SplitNameValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BD421E7C64700ECC96A /* SplitNameValidator.swift */; };
+		59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BD621E7EC0700ECC96A /* KeyValidatorTests.swift */; };
+		59FB7C0821ED21C600ECC96A /* SplitChangeValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C0721ED21C600ECC96A /* SplitChangeValidator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -442,6 +448,12 @@
 		59F6AAA7215EBD4400A51997 /* MetricGauge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetricGauge.swift; sourceTree = "<group>"; };
 		59F6AAA8215EBD4400A51997 /* TimeMetric.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeMetric.swift; sourceTree = "<group>"; };
 		59FB7BC921DFE0A500ECC96A /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
+		59FB7BCD21E68E2400ECC96A /* KeyValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValidator.swift; sourceTree = "<group>"; };
+		59FB7BD021E77B6800ECC96A /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
+		59FB7BD221E77CBC00ECC96A /* Validatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validatable.swift; sourceTree = "<group>"; };
+		59FB7BD421E7C64700ECC96A /* SplitNameValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitNameValidator.swift; sourceTree = "<group>"; };
+		59FB7BD621E7EC0700ECC96A /* KeyValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValidatorTests.swift; sourceTree = "<group>"; };
+		59FB7C0721ED21C600ECC96A /* SplitChangeValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangeValidator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -929,6 +941,7 @@
 		59163B11216396EF00C7AA57 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				59FB7BCF21E77ABD00ECC96A /* Validators */,
 				3B6DEF0220EA6AE30067435E /* Utils */,
 				3B6DEF0520EA6AE40067435E /* Structs */,
 				3B6DEE9D20EA6AE10067435E /* Extensions */,
@@ -973,6 +986,7 @@
 				597848BA21BB072B00ABB4A6 /* SplitCacheTests.swift */,
 				5982D9BF21B00EBC00230F44 /* EngineTests.swift */,
 				5919C64321C7CCE400EC35B8 /* TrafficAllocationTest.swift */,
+				59FB7BD621E7EC0700ECC96A /* KeyValidatorTests.swift */,
 			);
 			path = SplitTests;
 			sourceTree = "<group>";
@@ -1042,6 +1056,18 @@
 				597CD335216CE09100A15487 /* TimeMetricSample.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		59FB7BCF21E77ABD00ECC96A /* Validators */ = {
+			isa = PBXGroup;
+			children = (
+				59FB7BCD21E68E2400ECC96A /* KeyValidator.swift */,
+				59FB7BD421E7C64700ECC96A /* SplitNameValidator.swift */,
+				59FB7C0721ED21C600ECC96A /* SplitChangeValidator.swift */,
+				59FB7BD021E77B6800ECC96A /* Validator.swift */,
+				59FB7BD221E77CBC00ECC96A /* Validatable.swift */,
+			);
+			path = Validators;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1184,12 +1210,14 @@
 				3B6DEF1F20EA6AE50067435E /* SplitError.swift in Sources */,
 				3B6DEF5220EA6AE50067435E /* UserDefinedSegmentMatcherData.swift in Sources */,
 				3B6DEF7620EA6AE50067435E /* RestClient+SplitChanges.swift in Sources */,
+				59FB7BD521E7C64700ECC96A /* SplitNameValidator.swift in Sources */,
 				3B6DEF6E20EA6AE50067435E /* PartOfSetMatcher.swift in Sources */,
 				59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */,
 				3B6DEF7520EA6AE50067435E /* RestClient+MySegments.swift in Sources */,
 				3B6DEF8B20EA6AE50067435E /* FileStorage.swift in Sources */,
 				3B6DEF2420EA6AE50067435E /* SplitFactory.swift in Sources */,
 				3B6DEF1B20EA6AE50067435E /* EventsFile.swift in Sources */,
+				59FB7BCE21E68E2400ECC96A /* KeyValidator.swift in Sources */,
 				59163B0F2162571E00C7AA57 /* PeriodicDataTask.swift in Sources */,
 				3B6DEF2320EA6AE50067435E /* HttpMySegmentsFetcher.swift in Sources */,
 				3B6DEF5620EA6AE50067435E /* SplitEventExecutorResources.swift in Sources */,
@@ -1204,6 +1232,7 @@
 				3B6DEF6120EA6AE50067435E /* ContainsAllOfSetMatcher.swift in Sources */,
 				3B6DEF7320EA6AE50067435E /* Json.swift in Sources */,
 				3B6DEF8120EA6AE50067435E /* DataResult.swift in Sources */,
+				59FB7BD121E77B6800ECC96A /* Validator.swift in Sources */,
 				3B6DEF7F20EA6AE50067435E /* RestClientRequestProtocol.swift in Sources */,
 				59F6AAA9215EBD4400A51997 /* CounterMetric.swift in Sources */,
 				3B6DEF1520EA6AE50067435E /* ParsedSplit.swift in Sources */,
@@ -1231,6 +1260,8 @@
 				3B6DEF2820EA6AE50067435E /* Impression.swift in Sources */,
 				3B6DEF3D20EA6AE50067435E /* BetweenMatcherData.swift in Sources */,
 				3B6DEF2220EA6AE50067435E /* SplitView.swift in Sources */,
+				59FB7BD321E77CBC00ECC96A /* Validatable.swift in Sources */,
+				59FB7C0821ED21C600ECC96A /* SplitChangeValidator.swift in Sources */,
 				3B6DEF3E20EA6AE50067435E /* Condition.swift in Sources */,
 				3B6DEF4320EA6AE50067435E /* Key.swift in Sources */,
 				3B6DEF7A20EA6AE50067435E /* HttpRequest.swift in Sources */,
@@ -1352,6 +1383,7 @@
 				5982D9C021B00EBC00230F44 /* EngineTests.swift in Sources */,
 				592C6ABE211B718E002D120C /* ArrayBlockingQueueTest.swift in Sources */,
 				592C6AC3211B718E002D120C /* MySegmentsFetcherTests.swift in Sources */,
+				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
 				5919C68E21DD07D200EC35B8 /* EventBuilderTests.swift in Sources */,
 				597CD33A216D022F00A15487 /* MetricsManagerTests.swift in Sources */,
