@@ -8,14 +8,18 @@
 
 import Foundation
 
-@objc public class SplitChange: NSObject, Codable {
+@objc public class SplitChange: NSObject, Codable, Validatable {
+    
+    typealias Entity = SplitChange
+    
     var splits: [Split]?
     var since: Int64?
     var till: Int64?
     
-    var isValid: Bool {
-        return splits != nil && since != nil && till != nil
+    func isValid<V>(validator: V) -> Bool where V : Validator, SplitChange.Entity == V.Entity {
+        return validator.isValidEntity(self)
     }
+    
 }
 
 extension SplitChange {

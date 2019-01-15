@@ -28,6 +28,9 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     init(config: SplitClientConfig, key: Key, splitCache: SplitCache) {
         self.config = config
         self.key = key
+        
+        _ = key.isValid(validator: KeyValidator(tag: "client init"))
+        
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey)
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
@@ -65,9 +68,6 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         trackEventsManager.start()
         splitImpressionManager.start()
 
-        if key.bucketingKey == nil {
-            Logger.w("Client instance: Key object should have bucketingKey set")
-        }
         Logger.i("iOS Split SDK initialized!")
     }
 }
@@ -98,6 +98,7 @@ extension SplitClient {
 extension SplitClient {
     public func getTreatment(_ split: String, attributes:[String:Any]? = nil) -> String {
         return getTreatment(splitName: split, verifyKey: true, attributes: attributes)
+        
     }
 
     public func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String] {
@@ -122,10 +123,21 @@ extension SplitClient {
         if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
             Logger.w("No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not yet ready")
         }
+        
+        if !self.key.isValid(validator: KeyValidator(tag: "getTreatment")) {
+            return SplitConstants.CONTROL;
+        }
+        
+        let split = Split()
+        split.name = splitName
+        if !split.isValid(validator: SplitNameValidator(tag: "getTreatment")) {
+            return SplitConstants.CONTROL;
+        }
 
         let timeMetricStart = Date().unixTimestampInMicroseconds()
         let evaluator: Evaluator = Evaluator.shared
         evaluator.splitClient = self
+        
         do {
             if verifyKey {
                 self.verifyKey()

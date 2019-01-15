@@ -41,14 +41,6 @@ public class Evaluator {
 
         var result: [String:Any] = [:]
         
-        if split.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-            Logger.w("getTreatment: split_name must not be an empty string");
-            result[Engine.EVALUATION_RESULT_TREATMENT] = SplitConstants.CONTROL
-            result[Engine.EVALUATION_RESULT_LABEL] = ImpressionsConstants.EXCEPTION
-            result[Engine.EVALUATION_RESULT_SPLIT_VERSION] = nil
-            return result
-        }
-
         if let splitTreated: Split = splitFetcher?.fetch(splitName: split), splitTreated.status != Status.Archived {
             
             if let killed = splitTreated.killed, killed {

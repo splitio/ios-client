@@ -8,7 +8,9 @@
 
 import Foundation
 
-@objc public class Split: NSObject, SplitBase, Codable {
+@objc public class Split: NSObject, SplitBase, Codable, Validatable {
+    
+    typealias Entity = Split
     
     var name: String?
     var seed: Int?
@@ -22,10 +24,8 @@ import Foundation
     var trafficAllocationSeed: Int?
     var algo: Int?
     
-    var isValid: Bool {
-         return name != nil && seed != nil && killed != nil && defaultTreatment != nil &&
-                conditions != nil && trafficTypeName != nil && changeNumber != nil &&
-                trafficAllocation != nil
+    func isValid<V>(validator: V) -> Bool where V : Validator, V.Entity == Entity {
+        return validator.isValidEntity(self)
     }
     
 }
