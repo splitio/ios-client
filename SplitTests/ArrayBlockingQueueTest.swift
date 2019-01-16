@@ -7,36 +7,37 @@
 //
 
 import Foundation
-import Quick
-import Nimble
+import XCTest
 
 @testable import Split
 
-class ArrayBlockingQueueTest: QuickSpec {
+class ArrayBlockingQueueTests: XCTestCase {
     
-    override func spec() {
+    override func setUp() {
+    }
+    
+    override func tearDown() {
+    }
+    
+    func testArrayBlockingQueue() {
         
-        describe("ArrayBlockingQueueTest") {
-            
-            let abqt = SynchronizedArrayQueue<String>()
-            
-            abqt.append("STR_1")
-            abqt.append("STR_2")
-            abqt.append("STR_3")
-            
-            abqt.take(completion: {(element:String) -> Void in
-                assert(element == "STR_1")
-            })
+        let abqt = SynchronizedArrayQueue<String>()
         
-            abqt.take(completion: {(element:String) -> Void in
-                assert(element == "STR_2")
-            })
-            
-            abqt.take(completion: {(element:String) -> Void in
-                assert(element == "STR_3")
-            })
-            
-        }
+        abqt.append("STR_1")
+        abqt.append("STR_2")
+        abqt.append("STR_3")
+        
+        abqt.take(completion: {(element:String) -> Void in
+            assert(element == "STR_1")
+        })
+        
+        abqt.take(completion: {(element:String) -> Void in
+            assert(element == "STR_2")
+        })
+        
+        abqt.take(completion: {(element:String) -> Void in
+            assert(element == "STR_3")
+        })
         
     }
 }

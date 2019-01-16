@@ -8,15 +8,22 @@
 import Foundation
 public typealias SplitImpression = Impression
 
-public struct Impression: Codable {
+@objc public class Impression: NSObject, Codable {
 
-    public var keyName: String?
-    public var treatment: String?
+    @objc public var keyName: String?
+    @objc public var treatment: String?
     public var time: Int64?
+    // Added cause Int couldn't be null in Objc
+    @objc public var timestamp: NSNumber? {
+        return time as NSNumber?
+    }
     public var changeNumber: Int64?
-    public var label: String?
-    public var bucketingKey: String?
-    public var attributes: [String: Any]?
+    @objc public var changeNum: NSNumber? {
+        return changeNumber as NSNumber?
+    }
+    @objc public var label: String?
+    @objc public var bucketingKey: String?
+    @objc public var attributes: [String: Any]?
 
     enum CodingKeys: String, CodingKey {
         case keyName

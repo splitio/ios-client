@@ -13,10 +13,8 @@ public class Key: NSObject {
     let matchingKey: String
     let bucketingKey: String?
 
-    
-    public init(matchingKey: String, bucketingKey: String? = nil) {
+    @objc(initWithMatchingKey:bucketingKey:) public init(matchingKey: String, bucketingKey: String? = nil) {
         self.matchingKey = matchingKey
         self.bucketingKey = bucketingKey
     }
-
 }
