@@ -13,12 +13,16 @@ class Engine {
     static let EVALUATION_RESULT_LABEL: String = "label"
     static let EVALUATION_RESULT_SPLIT_VERSION: String = "splitChangeNumber"
     internal var splitClient: SplitClient?
+    private var splitter: SplitterProtocol
     
     static let shared: Engine = {
-        
         let instance = Engine();
         return instance;
     }()
+    
+    init(splitter: SplitterProtocol = Splitter.shared){
+        self.splitter = splitter
+    }
     
     func getTreatment(matchingKey: String?, bucketingKey: String?, split: Split?, attributes: [String:Any]?) throws -> [String: String] {
         
@@ -42,8 +46,8 @@ class Engine {
             condition.client = self.splitClient
             if (!inRollOut && condition.conditionType == ConditionType.Rollout) {
                 if let trafficAllocation = split?.trafficAllocation, trafficAllocation < 100  {
-                    let bucket: Int = Splitter.shared.getBucket(seed: (split?.seed)!, key: bucketKey!, algo: splitAlgo)
-                    if bucket >= trafficAllocation {
+                    let bucket: Int = splitter.getBucket(seed: (split?.seed)!, key: bucketKey!, algo: splitAlgo)
+                    if bucket > trafficAllocation {
                         result[Engine.EVALUATION_RESULT_TREATMENT] = split?.defaultTreatment
                         result[Engine.EVALUATION_RESULT_LABEL] = ImpressionsConstants.NOT_IN_SPLIT
 
@@ -61,7 +65,7 @@ class Engine {
                     bucketKey = matchingKey
                 }
                 let key: Key = Key(matchingKey: matchingKey!, bucketingKey: bucketKey)
-                result[Engine.EVALUATION_RESULT_TREATMENT] = Splitter.shared.getTreatment(key: key, seed: (split?.seed)!, attributes: attributes, partions: condition.partitions, algo: splitAlgo)
+                result[Engine.EVALUATION_RESULT_TREATMENT] = splitter.getTreatment(key: key, seed: (split?.seed)!, attributes: attributes, partions: condition.partitions, algo: splitAlgo)
                 result[Engine.EVALUATION_RESULT_LABEL] = condition.label
                 return result
             }

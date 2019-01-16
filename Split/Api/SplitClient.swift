@@ -11,10 +11,27 @@
 import Foundation
 
 public final class SplitClient: NSObject, SplitClientProtocol {
-
+    
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
-    public var key: Key
+    private var syncKey: Key!
+    
+    let keyQueue = DispatchQueue(label: "com.splitio.com.key", attributes: .concurrent)
+    public var key: Key {
+        get {
+            var key: Key!
+            keyQueue.sync() {
+                key = self.syncKey
+            }
+            return key
+        }
+        
+        set {
+            keyQueue.async(flags: .barrier) {
+                self.syncKey = newValue
+            }
+        }
+    }
     internal var initialized: Bool = false
     internal var config: SplitClientConfig?
     internal var dispatchGroup: DispatchGroup?
@@ -27,14 +44,13 @@ public final class SplitClient: NSObject, SplitClientProtocol {
 
     init(config: SplitClientConfig, key: Key, splitCache: SplitCache) {
         self.config = config
-        self.key = key
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey)
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
 
         let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache), splitCache: splitCache, interval: self.config!.featuresRefreshRate, eventsManager: eventsManager)
 
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache), mySegmentsCache: mySegmentsCache, interval: self.config!.segmentsRefreshRate, eventsManager: eventsManager)
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache), mySegmentsCache: mySegmentsCache, interval: self.config!.segmentsRefreshRate, eventsManager: eventsManager)
 
 
         var trackConfig = TrackManagerConfig()
@@ -53,7 +69,7 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         
         self.initialized = false
         super.init()
-        
+        self.key = key
         self.dispatchGroup = nil
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()
@@ -85,7 +101,11 @@ extension SplitClient {
 
 // MARK: Treatment / Evaluation
 extension SplitClient {
-    public func getTreatment(_ split: String, attributes:[String:Any]? = nil) -> String {
+    public func getTreatment(_ split: String) -> String {
+        return getTreatment(splitName: split, attributes: nil)
+    }
+    
+    public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
         return getTreatment(splitName: split, verifyKey: true, attributes: attributes)
     }
 
@@ -131,7 +151,7 @@ extension SplitClient {
     }
 
     func logImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String, attributes:[String:Any]? = nil) {
-        var impression: Impression = Impression()
+        let impression: Impression = Impression()
         impression.keyName = self.key.matchingKey
 
         impression.bucketingKey = (self.shouldSendBucketingKey) ? self.key.bucketingKey : nil

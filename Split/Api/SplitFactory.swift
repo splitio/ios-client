@@ -8,12 +8,12 @@
 
 import Foundation
 
-@objc public class SplitFactory: NSObject, SplitFactoryProtocol {
+public class SplitFactory: NSObject, SplitFactoryProtocol {
     
     let _client: SplitClientProtocol
     let _manager: SplitManagerProtocol
     
-    public init(apiKey: String, key: Key, config: SplitClientConfig) {
+    @objc(initWithApiKey:key:config:) public init(apiKey: String, key: Key, config: SplitClientConfig) {
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
         MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate
     
