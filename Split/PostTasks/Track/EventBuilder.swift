@@ -15,8 +15,6 @@ class EventBuilder {
     private var trafficType: String?
     private var value: Double?
     
-    
-    
     func setKey(_ key: String?) -> EventBuilder {
         self.key = key
         return self
@@ -42,7 +40,7 @@ class EventBuilder {
         eventValidatable.key = self.key
         eventValidatable.value = self.value
         eventValidatable.trafficTypeName = self.trafficType
-        eventValidatable.key = self.key
+        eventValidatable.eventTypeId = self.type
         
         let eventValidator = EventValidator(tag: "track")
         if !eventValidatable.isValid(validator: eventValidator) {

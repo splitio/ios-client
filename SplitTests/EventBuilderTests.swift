@@ -12,9 +12,11 @@ import XCTest
 class EventBuilderTests: XCTestCase {
 
     var builder: EventBuilder!
+    var typeNameHelper: EventTypeNameHelper!
     
     override func setUp() {
         builder = EventBuilder()
+        typeNameHelper = EventTypeNameHelper()
     }
 
     override func tearDown() {
@@ -114,8 +116,8 @@ class EventBuilderTests: XCTestCase {
         XCTAssertTrue(typeErrorOccurs, "Type should be null")
     }
     
-    func testValidTypeName() {
-        let typeName = "Abcdefghij:klmnopkrstuvwxyz_-12345.6789:"
+    func testValidAllValidCharsTypeName() {
+        let typeName = typeNameHelper.validAllValidChars
         var event: EventDTO? = nil
         do {
             event = try builder
@@ -131,7 +133,7 @@ class EventBuilderTests: XCTestCase {
     }
     
     func testNumberStartValidTypeName() {
-        let typeName = "1Abcdefghijklmnopkrstuvwxyz_-12345.6789:"
+        let typeName = typeNameHelper.validStartNumber
         var event: EventDTO? = nil
         do {
             event = try builder
@@ -147,7 +149,7 @@ class EventBuilderTests: XCTestCase {
     }
     
     func testHypenStartInvalidTypeName() {
-        let typeName = "-1Abcdefghijklmnopkrstuvwxyz_-123456789:"
+        let typeName = typeNameHelper.invalidHypenStart
         var event: EventDTO? = nil
         do {
             event = try builder
@@ -162,7 +164,7 @@ class EventBuilderTests: XCTestCase {
     }
     
     func testUndercoreStartInvalidTypeName() {
-        let typeName = "_1Abcdefghijklmnopkrstuvwxyz_-123456789:"
+        let typeName = typeNameHelper.invalidUndercoreStart
         var event: EventDTO? = nil
         do {
             event = try builder
@@ -177,7 +179,7 @@ class EventBuilderTests: XCTestCase {
     }
     
     func testInvalidCharsTypeName() {
-        let typeName = "Abcd,;][}{efghijklmnopkrstuvwxyz_-123456789:"
+        let typeName = typeNameHelper.invalidChars
         var event: EventDTO? = nil
         do {
             event = try builder
@@ -189,6 +191,44 @@ class EventBuilderTests: XCTestCase {
         }
         
         XCTAssertNil(event, "Event should be null")
+    }
+    
+    func testUppercaseCharsInTrafficType() {
+        var event: EventDTO? = nil
+        var event1: EventDTO? = nil
+        var event2: EventDTO? = nil
+        
+        do {
+            event = try builder
+                .setKey("key1")
+                .setTrafficType("Custom")
+                .setType("typeName")
+                .build()
+        } catch {
+        }
+        
+        do {
+            event1 = try builder
+                .setTrafficType("custoM")
+                .build()
+        } catch {
+        }
+        
+        do {
+            event2 = try builder
+                .setTrafficType("cUSTOm")
+                .build()
+        } catch {
+        }
+        
+        XCTAssertNotNil(event, "Event should not be null")
+        XCTAssertEqual(event?.trafficTypeName, "custom")
+        
+        XCTAssertNotNil(event1, "Event should not be null")
+        XCTAssertEqual(event1?.trafficTypeName, "custom")
+        
+        XCTAssertNotNil(event2, "Event should not be null")
+        XCTAssertEqual(event2?.trafficTypeName, "custom")
     }
 
 }
