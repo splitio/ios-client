@@ -12,4 +12,19 @@ extension String {
     public func isEmpty() -> Bool {
         return (self.trimmingCharacters(in: .whitespacesAndNewlines) == "")
     }
+    
+    public func hasUpperCaseChar() -> Bool {
+        
+        if self.isEmpty() {
+            return false
+        }
+        
+        let validationRegex: NSRegularExpression? = try? NSRegularExpression(pattern: "*[A-Z]+*", options: [])
+        if let regex = validationRegex {
+            let range = regex.rangeOfFirstMatch(in: self, options: [], range: NSRange(location: 0,  length: self.count))
+            return range.location == 0 && range.length == self.count
+        }
+        return false
+    }
+    
 }

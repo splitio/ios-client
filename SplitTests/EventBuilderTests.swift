@@ -26,7 +26,7 @@ class EventBuilderTests: XCTestCase {
         do {
             event = try  builder
                 .setTrafficType("custom")
-                .setMatchingKey("key1")
+                .setKey("key1")
                 .setType("type1")
                 .setValue(1.0).build()
         } catch {
@@ -44,7 +44,7 @@ class EventBuilderTests: XCTestCase {
         var event: EventDTO? = nil
         do {
             event = try builder.setTrafficType("custom")
-                .setMatchingKey("key1")
+                .setKey("key1")
                 .setType("type1")
                 .build()
         } catch {
@@ -63,7 +63,7 @@ class EventBuilderTests: XCTestCase {
         var event: EventDTO? = nil
         do {
             event = try builder
-                .setMatchingKey("key1")
+                .setKey("key1")
                 .setType("type1")
                 .build()
         } catch EventValidationError.nullTrafficType {
@@ -102,7 +102,7 @@ class EventBuilderTests: XCTestCase {
         var event: EventDTO? = nil
         do {
             event = try builder
-                .setMatchingKey("key1")
+                .setKey("key1")
                 .setTrafficType("custom")
                 .build()
         } catch EventValidationError.nullType {
@@ -119,7 +119,7 @@ class EventBuilderTests: XCTestCase {
         var event: EventDTO? = nil
         do {
             event = try builder
-                .setMatchingKey("key1")
+                .setKey("key1")
                 .setTrafficType("custom")
                 .setType(typeName)
                 .build()
@@ -135,7 +135,7 @@ class EventBuilderTests: XCTestCase {
         var event: EventDTO? = nil
         do {
             event = try builder
-                .setMatchingKey("key1")
+                .setKey("key1")
                 .setTrafficType("custom")
                 .setType(typeName)
                 .build()
@@ -151,7 +151,7 @@ class EventBuilderTests: XCTestCase {
         var event: EventDTO? = nil
         do {
             event = try builder
-                .setMatchingKey("key1")
+                .setKey("key1")
                 .setTrafficType("custom")
                 .setType(typeName)
                 .build()
@@ -166,7 +166,7 @@ class EventBuilderTests: XCTestCase {
         var event: EventDTO? = nil
         do {
             event = try builder
-                .setMatchingKey("key1")
+                .setKey("key1")
                 .setTrafficType("custom")
                 .setType(typeName)
                 .build()
@@ -181,7 +181,7 @@ class EventBuilderTests: XCTestCase {
         var event: EventDTO? = nil
         do {
             event = try builder
-                .setMatchingKey("key1")
+                .setKey("key1")
                 .setTrafficType("custom")
                 .setType(typeName)
                 .build()

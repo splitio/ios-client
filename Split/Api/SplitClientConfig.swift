@@ -143,6 +143,11 @@ public class SplitClientConfig: NSObject {
         - A closure of type SplitImpressionListener, that means (SplitImpression) -> Void
      */
     public var impressionListener: SplitImpressionListener?
+    
+    /**
+     Maximum length matching / bucketing key. Internal config
+     */
+    var maximumKeyLength = 250
 }
 
 // MARK: Deprecated methods

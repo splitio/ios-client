@@ -8,9 +8,7 @@
 
 import Foundation
 
-public class Key: NSObject, Validatable {
-    
-    typealias Entity = Key
+public class Key: NSObject {
     
     let matchingKey: String
     let bucketingKey: String?
@@ -19,9 +17,4 @@ public class Key: NSObject, Validatable {
         self.matchingKey = matchingKey
         self.bucketingKey = bucketingKey
     }
-    
-    func isValid<V>(validator: V) -> Bool where V : Validator, V.Entity == Entity {
-        return validator.isValidEntity(self)
-    }
-    
 }

@@ -216,6 +216,9 @@
 		59FB7BD521E7C64700ECC96A /* SplitNameValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BD421E7C64700ECC96A /* SplitNameValidator.swift */; };
 		59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BD621E7EC0700ECC96A /* KeyValidatorTests.swift */; };
 		59FB7C0821ED21C600ECC96A /* SplitChangeValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C0721ED21C600ECC96A /* SplitChangeValidator.swift */; };
+		59FB7C0B21F0FF1700ECC96A /* ValidationConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C0A21F0FF1700ECC96A /* ValidationConfig.swift */; };
+		59FB7C0D21F6099500ECC96A /* EventValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C0C21F6099500ECC96A /* EventValidator.swift */; };
+		59FB7C1121F7572700ECC96A /* ApiKeyValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1021F7572700ECC96A /* ApiKeyValidator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -454,6 +457,9 @@
 		59FB7BD421E7C64700ECC96A /* SplitNameValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitNameValidator.swift; sourceTree = "<group>"; };
 		59FB7BD621E7EC0700ECC96A /* KeyValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValidatorTests.swift; sourceTree = "<group>"; };
 		59FB7C0721ED21C600ECC96A /* SplitChangeValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangeValidator.swift; sourceTree = "<group>"; };
+		59FB7C0A21F0FF1700ECC96A /* ValidationConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationConfig.swift; sourceTree = "<group>"; };
+		59FB7C0C21F6099500ECC96A /* EventValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventValidator.swift; sourceTree = "<group>"; };
+		59FB7C1021F7572700ECC96A /* ApiKeyValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiKeyValidator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1062,10 +1068,13 @@
 			isa = PBXGroup;
 			children = (
 				59FB7BCD21E68E2400ECC96A /* KeyValidator.swift */,
+				59FB7C1021F7572700ECC96A /* ApiKeyValidator.swift */,
+				59FB7C0C21F6099500ECC96A /* EventValidator.swift */,
 				59FB7BD421E7C64700ECC96A /* SplitNameValidator.swift */,
 				59FB7C0721ED21C600ECC96A /* SplitChangeValidator.swift */,
 				59FB7BD021E77B6800ECC96A /* Validator.swift */,
 				59FB7BD221E77CBC00ECC96A /* Validatable.swift */,
+				59FB7C0A21F0FF1700ECC96A /* ValidationConfig.swift */,
 			);
 			path = Validators;
 			sourceTree = "<group>";
@@ -1205,6 +1214,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B6DEF2920EA6AE50067435E /* ImpressionManager.swift in Sources */,
+				59FB7C0B21F0FF1700ECC96A /* ValidationConfig.swift in Sources */,
 				3B6DEF1C20EA6AE50067435E /* EventsHit.swift in Sources */,
 				3B6DEF4220EA6AE50067435E /* SplitModels+StringConvertible.swift in Sources */,
 				3B6DEF1F20EA6AE50067435E /* SplitError.swift in Sources */,
@@ -1279,6 +1289,7 @@
 				3B6DEF4D20EA6AE50067435E /* SplitChange.swift in Sources */,
 				5912D1452193778600BC698C /* NotificationsHelper.swift in Sources */,
 				3B6DEF8420EA6AE50067435E /* Target.swift in Sources */,
+				59FB7C1121F7572700ECC96A /* ApiKeyValidator.swift in Sources */,
 				3B6DEF2B20EA6AE50067435E /* ImpressionsHit.swift in Sources */,
 				3B6DEF4920EA6AE50067435E /* MatcherType.swift in Sources */,
 				597CD336216CE09100A15487 /* TimeMetricSample.swift in Sources */,
@@ -1310,6 +1321,7 @@
 				3B6DEF3420EA6AE50067435E /* Splitter.swift in Sources */,
 				3B6DEF4120EA6AE50067435E /* DependencyMatcherData.swift in Sources */,
 				3B6DEF4520EA6AE50067435E /* Matcher.swift in Sources */,
+				59FB7C0D21F6099500ECC96A /* EventValidator.swift in Sources */,
 				3B6DEF3C20EA6AE50067435E /* MySegmentsChangeFetcher.swift in Sources */,
 				3B6DEF3920EA6AE50067435E /* Date+Utils.swift in Sources */,
 				3B6DEF0F20EA6AE50067435E /* MySegmentsCacheProtocol.swift in Sources */,
