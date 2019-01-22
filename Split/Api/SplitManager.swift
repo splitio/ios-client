@@ -52,9 +52,9 @@ import Foundation
     }
     
     public func split(featureName: String) -> SplitView? {
-        if featureName.isEmpty() {
-            Logger.e("split: you passed \"\", split name must be a non-empty string")
-            return nil
+
+        if !SplitValidatable(name: featureName).isValid(validator: SplitNameValidator(tag: "split")) {
+           return nil
         }
         let filtered = splits.filter { return ( featureName.lowercased() == $0.name?.lowercased() ) }
         return filtered.count > 0 ? filtered[0] : nil

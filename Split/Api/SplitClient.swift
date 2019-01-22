@@ -29,7 +29,9 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         self.config = config
         self.key = key
         
-        _ = key.isValid(validator: KeyValidator(tag: "client init"))
+        let kValidatorTag = "client init"
+        ValidationConfig.default.maximumKeyLength = config.maximumKeyLength
+        _ = KeyValidatable(key: key).isValid(validator: KeyValidator(tag: kValidatorTag))
         
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey)
         eventsManager = SplitEventsManager(config: config)
@@ -119,18 +121,18 @@ extension SplitClient {
     }
 
     private func getTreatment(splitName: String, verifyKey: Bool = true, attributes:[String:Any]? = nil) -> String {
+        let validationTag = "getTreatment"
         
         if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
             Logger.w("No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not yet ready")
         }
         
-        if !self.key.isValid(validator: KeyValidator(tag: "getTreatment")) {
+        if !KeyValidatable(key:self.key).isValid(validator: KeyValidator(tag: validationTag)) {
             return SplitConstants.CONTROL;
         }
         
-        let split = Split()
-        split.name = splitName
-        if !split.isValid(validator: SplitNameValidator(tag: "getTreatment")) {
+        let split = SplitValidatable(name: splitName)
+        if !split.isValid(validator: SplitNameValidator(tag: validationTag)) {
             return SplitConstants.CONTROL;
         }
 
@@ -160,7 +162,6 @@ extension SplitClient {
             logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: splitName, attributes: attributes)
             return SplitConstants.CONTROL
         }
-
     }
 
     func logImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String, attributes:[String:Any]? = nil) {
@@ -220,7 +221,7 @@ extension SplitClient {
         
         let eventBuilder = EventBuilder()
             .setType(trafficType ?? self.config?.trafficType)
-            .setMatchingKey(self.key.matchingKey)
+            .setKey(self.key.matchingKey)
             .setType(eventType)
             .setValue(value)
         

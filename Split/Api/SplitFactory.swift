@@ -12,14 +12,12 @@ import Foundation
     
     let _client: SplitClientProtocol
     let _manager: SplitManagerProtocol
+    let kValidationTag = "factory instantiation"
     
     public init(apiKey: String, key: Key, config: SplitClientConfig) {
         
-        if apiKey.isEmpty() {
-            Logger.e("factory instantiation: you passed \"\", api_key must be a non-empty string")
-        }
-        
-        _ = key.isValid(validator: KeyValidator(tag: "factory instantiation"))
+        _ = ApiKeyValidatable(apiKey: apiKey).isValid(validator: ApiKeyValidator(tag: kValidationTag))
+        _ = KeyValidatable(key: key).isValid(validator: KeyValidator(tag: kValidationTag))
         
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
         MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate

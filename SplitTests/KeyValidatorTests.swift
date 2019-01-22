@@ -22,17 +22,17 @@ class KeyValidatorTests: XCTestCase {
     }
     
     func testValidKey() {
-        let key = Key(matchingKey: "key1")
+        let key = KeyValidatable(matchingKey: "key1")
         XCTAssertTrue(validator.isValidEntity(key), "Key should be valid")
     }
     
     func testInvalidEmptyKey() {
-        let key = Key(matchingKey: "")
+        let key = KeyValidatable(matchingKey: "")
         XCTAssertFalse(validator.isValidEntity(key), "Key should not be valid")
     }
     
     func testInvalidLongKey() {
-        let key = Key(matchingKey: String(repeating: "p", count: 256))
+        let key = KeyValidatable(matchingKey: String(repeating: "p", count: 256))
         XCTAssertFalse(validator.isValidEntity(key), "Key should not be valid")
     }
 }
