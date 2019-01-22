@@ -6,39 +6,45 @@
 //  Copyright © 2018 CocoaPods. All rights reserved.
 //
 
+/***
+ * Not sure what is this test about
+ * ToDo: Ask about it
+ *
+ **/
+
 import Foundation
-import Quick
-import Nimble
+import XCTest
 
-@testable import Split
+//@testable import Split
 
-class DatesTest: QuickSpec {
+class DatesTest: XCTestCase {
     
-    override func spec() {
-        
-        describe("DatesTest") {
-    
-            let timestamp1 = 1461280509
-            let timestamp2 = 1461196800
-            
-            let d1 = normalizeDate(timestamp: TimeInterval(timestamp1))
-            let d2 = normalizeDate(timestamp: TimeInterval(timestamp2))
-            expect(d1).to(equal(d2))
-            
-        }
+    override func setUp() {
     }
     
+    override func tearDown() {
+    }
+    
+    func testDates() {
+        
+        let timestamp1 = 1461280509
+        let timestamp2 = 1461196800
+        
+        let d1 = normalizeDate(timestamp: TimeInterval(timestamp1))
+        let d2 = normalizeDate(timestamp: TimeInterval(timestamp2))
+        XCTAssertEqual(d1, d2, "Normalized dates should be equal")
+    }
+    
+    // MARK: Helpers
     func normalizeDate(timestamp: TimeInterval) -> Date {
         let date = Date(timeIntervalSince1970: timestamp)
         let calendar = Calendar.current
         
         var dateComponents = calendar.dateComponents(in: TimeZone(identifier: "UTC")!, from: date)
-         dateComponents.hour = 0
-         dateComponents.minute = 0
-         dateComponents.second = 0
+        dateComponents.hour = 0
+        dateComponents.minute = 0
+        dateComponents.second = 0
         
         return calendar.date(from: dateComponents)!
     }
-    
-    
 }

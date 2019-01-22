@@ -7,15 +7,13 @@
 
 import Foundation
 
-open class SplitEventTask {
+open class SplitEventTask: NSObject {
     
-    public init(){}
-    
-    open func onPostExecute(client:SplitClientProtocol) -> Void {
+    @objc open func onPostExecute(client:SplitClientProtocol) -> Void {
         debugPrint("* running superclass.onPostExecute. This method should be override by developers")
     }
     
-    open func onPostExecuteView(client:SplitClientProtocol) -> Void {
+    @objc open func onPostExecuteView(client:SplitClientProtocol) -> Void {
         debugPrint("* running superclass.onPostExecuteView. This method should be override by developers")
     }
 }

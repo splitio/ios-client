@@ -14,7 +14,24 @@ public final class SplitClient: NSObject, SplitClientProtocol {
 
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
-    public var key: Key
+    private var syncKey: Key!
+
+    let keyQueue = DispatchQueue(label: "com.splitio.com.key", attributes: .concurrent)
+    public var key: Key {
+        get {
+            var key: Key!
+            keyQueue.sync() {
+                key = self.syncKey
+            }
+            return key
+        }
+
+        set {
+            keyQueue.async(flags: .barrier) {
+                self.syncKey = newValue
+            }
+        }
+    }
     internal var initialized: Bool = false
     internal var config: SplitClientConfig?
     internal var dispatchGroup: DispatchGroup?
@@ -27,19 +44,17 @@ public final class SplitClient: NSObject, SplitClientProtocol {
 
     init(config: SplitClientConfig, key: Key, splitCache: SplitCache) {
         self.config = config
-        self.key = key
-        
+
         let kValidatorTag = "client init"
-        ValidationConfig.default.maximumKeyLength = config.maximumKeyLength
         _ = KeyValidatable(key: key).isValid(validator: KeyValidator(tag: kValidatorTag))
-        
+
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey)
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
 
         let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache), splitCache: splitCache, interval: self.config!.featuresRefreshRate, eventsManager: eventsManager)
 
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: self.key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache), mySegmentsCache: mySegmentsCache, interval: self.config!.segmentsRefreshRate, eventsManager: eventsManager)
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache), mySegmentsCache: mySegmentsCache, interval: self.config!.segmentsRefreshRate, eventsManager: eventsManager)
 
 
         var trackConfig = TrackManagerConfig()
@@ -48,17 +63,17 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         trackConfig.eventsPerPush = config.eventsPerPush
         trackConfig.queueSize = config.eventsQueueSize
         trackEventsManager = TrackManager(config: trackConfig)
-        
+
         var impressionsConfig = ImpressionManagerConfig()
         impressionsConfig.pushRate = config.impressionRefreshRate
         impressionsConfig.impressionsPerPush = config.impressionsChunkSize
         splitImpressionManager = ImpressionManager(config: impressionsConfig)
 
         metricsManager = MetricsManager.shared
-        
+
         self.initialized = false
         super.init()
-        
+        self.key = key
         self.dispatchGroup = nil
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()
@@ -98,15 +113,19 @@ extension SplitClient {
 
 // MARK: Treatment / Evaluation
 extension SplitClient {
-    public func getTreatment(_ split: String, attributes:[String:Any]? = nil) -> String {
+    public func getTreatment(_ split: String) -> String {
+        return getTreatment(splitName: split, attributes: nil)
+    }
+
+    public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
         return getTreatment(splitName: split, verifyKey: true, attributes: attributes)
-        
+
     }
 
     public func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String] {
 
         var results = [String:String]()
-        
+
         if splits.count > 0 {
             self.verifyKey()
             let splitsNoDuplicated = Set(splits.filter { !$0.isEmpty() }.map { $0 })
@@ -122,15 +141,15 @@ extension SplitClient {
 
     private func getTreatment(splitName: String, verifyKey: Bool = true, attributes:[String:Any]? = nil) -> String {
         let validationTag = "getTreatment"
-        
+
         if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
             Logger.w("No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not yet ready")
         }
-        
+
         if !KeyValidatable(key:self.key).isValid(validator: KeyValidator(tag: validationTag)) {
             return SplitConstants.CONTROL;
         }
-        
+
         let split = SplitValidatable(name: splitName)
         if !split.isValid(validator: SplitNameValidator(tag: validationTag)) {
             return SplitConstants.CONTROL;
@@ -139,7 +158,7 @@ extension SplitClient {
         let timeMetricStart = Date().unixTimestampInMicroseconds()
         let evaluator: Evaluator = Evaluator.shared
         evaluator.splitClient = self
-        
+
         do {
             if verifyKey {
                 self.verifyKey()
@@ -165,7 +184,7 @@ extension SplitClient {
     }
 
     func logImpression(label: String, changeNumber: Int64? = nil, treatment: String, splitName: String, attributes:[String:Any]? = nil) {
-        var impression: Impression = Impression()
+        let impression: Impression = Impression()
         impression.keyName = self.key.matchingKey
 
         impression.bucketingKey = (self.shouldSendBucketingKey) ? self.key.bucketingKey : nil
@@ -218,13 +237,13 @@ extension SplitClient {
     }
 
     private func track(eventType: String, trafficType: String? = nil, value: Double? = nil) -> Bool {
-        
+
         let eventBuilder = EventBuilder()
             .setType(trafficType ?? self.config?.trafficType)
             .setKey(self.key.matchingKey)
             .setType(eventType)
             .setValue(value)
-        
+
         do {
             let event = try eventBuilder.build()
             trackEventsManager.appendEvent(event: event)
