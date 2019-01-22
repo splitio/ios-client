@@ -19,10 +19,10 @@ extension String {
             return false
         }
         
-        let validationRegex: NSRegularExpression? = try? NSRegularExpression(pattern: "*[A-Z]+*", options: [])
+        let validationRegex: NSRegularExpression? = try? NSRegularExpression(pattern: "^.*[A-Z]+.*$", options: [])
         if let regex = validationRegex {
             let range = regex.rangeOfFirstMatch(in: self, options: [], range: NSRange(location: 0,  length: self.count))
-            return range.location == 0 && range.length == self.count
+            return range.length > 0
         }
         return false
     }

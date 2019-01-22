@@ -52,7 +52,7 @@ class EventValidator: Validator {
     }
     
     func isValidEntity(_ entity: EventValidatable) -> Bool {
-        
+        warnings.removeAll()
         let validatableKey = KeyValidatable(matchingKey: entity.key)
         let keyValidator = KeyValidator(tag: tag)
         
