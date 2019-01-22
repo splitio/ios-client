@@ -8,12 +8,20 @@
 
 import Foundation
 
-@objc public class SplitView: NSObject, Codable {
+public class SplitView: NSObject, Codable {
     
-    public var name: String?
-    public var trafficType: String?
+    @objc public var name: String?
+    @objc public var trafficType: String?
     public var killed: Bool?
-    public var treatments: [String]?
+    @objc public var isKilled: Bool {
+        return killed ?? false
+    }
+    @objc public var treatments: [String]?
     public var changeNumber: Int64?
+    
+    @objc public var changeNum: NSNumber? {
+        return changeNumber as NSNumber?
+    }
+    
     
 }
