@@ -140,6 +140,7 @@ extension SplitClient {
     }
 
     private func getTreatment(splitName: String, verifyKey: Bool = true, attributes:[String:Any]? = nil) -> String {
+        let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
         let validationTag = "getTreatment"
 
         if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
@@ -150,7 +151,7 @@ extension SplitClient {
             return SplitConstants.CONTROL;
         }
 
-        let split = SplitValidatable(name: splitName)
+        let split = SplitValidatable(name: trimmedSplitName)
         if !split.isValid(validator: SplitNameValidator(tag: validationTag)) {
             return SplitConstants.CONTROL;
         }
@@ -164,21 +165,21 @@ extension SplitClient {
                 self.verifyKey()
             }
 
-            let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: splitName, attributes: attributes)
+            let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: trimmedSplitName, attributes: attributes)
             let label = result![Engine.EVALUATION_RESULT_LABEL] as! String
             let treatment = result![Engine.EVALUATION_RESULT_TREATMENT] as! String
 
             if let val = result![Engine.EVALUATION_RESULT_SPLIT_VERSION] {
                 let splitVersion = val as! Int64
-                logImpression(label: label, changeNumber: splitVersion, treatment: treatment, splitName: splitName, attributes: attributes)
+                logImpression(label: label, changeNumber: splitVersion, treatment: treatment, splitName: trimmedSplitName, attributes: attributes)
             } else {
-                logImpression(label: label, treatment: treatment, splitName: splitName, attributes: attributes)
+                logImpression(label: label, treatment: treatment, splitName: trimmedSplitName, attributes: attributes)
             }
             metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatment)
             return treatment
         }
         catch {
-            logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: splitName, attributes: attributes)
+            logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: trimmedSplitName, attributes: attributes)
             return SplitConstants.CONTROL
         }
     }
