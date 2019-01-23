@@ -59,7 +59,7 @@ class KeyValidator: Validator {
         
         if let key = matchingKey  {
             if key.isEmpty() {
-                Logger.e("\(tag): you passed an empty string, matching key must be a non-empty string")
+                Logger.e("\(tag): you passed an empty string, matching key must be null or a non-empty string")
                 error = KeyValidationError.emptyMatchingKey
                 return false
             }
