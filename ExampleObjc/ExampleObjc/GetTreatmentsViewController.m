@@ -32,7 +32,12 @@
     
     NSString *apiKey = @"YOUR_API_KEY";
     NSString *splitName = self.splitsField.text;
-    NSString *matchingKey = self.matchingKeyField.text;
+    NSString *matchingKey = nil;
+    
+    if(self.matchingKeyField.text != nil &&
+       ![[self.matchingKeyField.text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] isEqualToString:@""]) {
+        matchingKey = self.matchingKeyField.text;
+    }
     
     // Split Config
     SplitClientConfig *config = [[SplitClientConfig alloc] init];

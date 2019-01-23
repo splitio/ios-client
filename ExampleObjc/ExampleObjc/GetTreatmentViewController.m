@@ -32,7 +32,12 @@
     
     NSString *apiKey = @"YOUR_API_KEY";
     NSString *splitName = self.splitNameField.text;
-    NSString *matchingKey = self.matchingKeyField.text;
+    NSString *matchingKey = nil;
+    
+    if(self.matchingKeyField.text != nil &&
+       ![[self.matchingKeyField.text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] isEqualToString:@""]) {
+        matchingKey = self.matchingKeyField.text;
+    }
     
     // Split Config
     SplitClientConfig *config = [[SplitClientConfig alloc] init];
@@ -41,6 +46,7 @@
     config.impressionRefreshRate = 30;
     config.sdkReadyTimeOut = 15000;
     config.connectionTimeout = 50;
+
     
     // Impression listener
     config.impressionListener = ^(Impression *impression){
