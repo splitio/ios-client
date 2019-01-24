@@ -26,8 +26,6 @@ struct ApiKeyValidatable: Validatable {
 class ApiKeyValidator: Validator {
     
     private let tag: String
-    let kMaxMatchingKeyLength = ValidationConfig.default.maximumKeyLength
-    let kMaxBucketingKeyLength = ValidationConfig.default.maximumKeyLength
     
     init(tag: String) {
         self.tag = tag
