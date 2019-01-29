@@ -44,7 +44,7 @@ class EventBuilder {
         
         let eventValidator = EventValidator(tag: "track")
         if !eventValidatable.isValid(validator: eventValidator) {
-            throw eventValidator.error!
+            throw ValidationError()
         }
         
         if eventValidator.warnings.count > 0, eventValidator.warnings[0] == EventValidationWarning.uppercaseTrafficType {

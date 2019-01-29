@@ -8,12 +8,12 @@
 
 import Foundation
 
-enum KeyValidationError {
-    case nullMatchingKey
-    case emptyMatchingKey
-    case longMatchingKey
-    case emptyBucketingkey
-    case longBucketingKey
+struct KeyValidationError {
+    static let nullMatchingKey: Int = 1
+    static let emptyMatchingKey: Int = 2
+    static let longMatchingKey: Int = 3
+    static let emptyBucketingkey: Int = 4
+    static let longBucketingKey: Int = 5
 }
 
 struct KeyValidatable: Validatable {
@@ -44,13 +44,15 @@ struct KeyValidatable: Validatable {
 
 class KeyValidator: Validator {
     
-    private let tag: String
-    var error: KeyValidationError? = nil
+    var error: Int? = nil
+    var warnings: [Int] = []
+    var messageLogger: ValidationMessageLogger
+    
     let kMaxMatchingKeyLength = ValidationConfig.default.maximumKeyLength
     let kMaxBucketingKeyLength = ValidationConfig.default.maximumKeyLength
     
     init(tag: String) {
-        self.tag = tag
+        self.messageLogger = DefaultValidationMessageLogger(tag: tag)
     }
     
     func isValidEntity(_ entity: KeyValidatable) -> Bool {
@@ -59,31 +61,31 @@ class KeyValidator: Validator {
         
         if let key = matchingKey  {
             if key.isEmpty() {
-                Logger.e("\(tag): you passed an empty string, matching key must be null or a non-empty string")
+                messageLogger.e("you passed an empty string, matching key must a non-empty string")
                 error = KeyValidationError.emptyMatchingKey
                 return false
             }
             
             if key.count > kMaxMatchingKeyLength {
-                Logger.e("\(tag): matching key too long - must be \(kMaxMatchingKeyLength) characters or less")
+                messageLogger.e("matching key too long - must be \(kMaxMatchingKeyLength) characters or less")
                 error = KeyValidationError.longMatchingKey
                 return false
             }
         } else {
-            Logger.e("\(tag): you passed a null key, the key must be a non-empty string")
+            messageLogger.e("you passed a null key, the key must be a non-empty string")
             error = KeyValidationError.nullMatchingKey
             return false
         }
 
         if let key = bucketingKey {
             if key.isEmpty() {
-                Logger.e("\(tag): you passed an empty string, bucketing key must be a non-empty string")
+                messageLogger.e("you passed an empty string, bucketing key must be be null or a non-empty string")
                 error = KeyValidationError.emptyBucketingkey
                 return false
             }
             
             if key.count > kMaxBucketingKeyLength {
-                Logger.e("\(tag): bucketing key too long - must be \(kMaxBucketingKeyLength) characters or less")
+                messageLogger.e("bucketing key too long - must be \(kMaxBucketingKeyLength) characters or less")
                 error = KeyValidationError.longBucketingKey
                 return false
             }

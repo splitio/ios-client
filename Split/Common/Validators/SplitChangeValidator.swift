@@ -8,6 +8,10 @@
 
 import Foundation
 
+struct SplitChangeValidationError {
+    static let someError = 1
+}
+
 struct SplitChangeValidatable: Validatable {
     
     typealias Entity = SplitChangeValidatable
@@ -28,7 +32,17 @@ struct SplitChangeValidatable: Validatable {
 }
 
 class SplitChangeValidator: Validator {
+    var error: Int? = nil
+    var warnings: [Int] = []
+    var messageLogger: ValidationMessageLogger = DefaultValidationMessageLogger(tag: "SplitChangeValidator")
+    
     func isValidEntity(_ entity: SplitChangeValidatable) -> Bool {
-        return entity.splits != nil && entity.since != nil && entity.till != nil
+        error = SplitChangeValidationError.someError
+        if !(entity.splits != nil && entity.since != nil && entity.till != nil) {
+            messageLogger.w("Split change not valid")
+            return false
+        }
+        error = nil
+        return true
     }
 }

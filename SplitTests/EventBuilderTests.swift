@@ -68,9 +68,8 @@ class EventBuilderTests: XCTestCase {
                 .setKey("key1")
                 .setType("type1")
                 .build()
-        } catch EventValidationError.nullTrafficType {
-            trafficTypeErrorOccurs = true
         } catch {
+            trafficTypeErrorOccurs = true
         }
         
         XCTAssertNil(event, "Event should be null")
@@ -88,9 +87,8 @@ class EventBuilderTests: XCTestCase {
                 .setType("type1")
                 .setTrafficType("custom")
                 .build()
-        } catch EventValidationError.nullMatchingKey {
+        } catch  {
             keyErrorOccurs = true
-        } catch {
         }
         
         XCTAssertNil(event, "Event should be null")
@@ -107,9 +105,8 @@ class EventBuilderTests: XCTestCase {
                 .setKey("key1")
                 .setTrafficType("custom")
                 .build()
-        } catch EventValidationError.nullType {
-            typeErrorOccurs = true
         } catch {
+            typeErrorOccurs = true
         }
         
         XCTAssertNil(event, "Event should be null")

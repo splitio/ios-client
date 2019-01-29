@@ -23,15 +23,37 @@ class SplitNameValidatorTests: XCTestCase {
     func testValid() {
         let name = SplitValidatable(name: "name1")
         XCTAssertTrue(name.isValid(validator: validator), "name should be valid")
+        XCTAssertNil(validator.error)
+        XCTAssertEqual(validator.warnings.count, 0)
     }
     
     func testNull() {
         let name = SplitValidatable(name: nil)
         XCTAssertFalse(name.isValid(validator: validator), "name should not be valid")
+        XCTAssertNotNil(validator.error)
+        XCTAssertEqual(validator.warnings.count, 0)
     }
     
-    func testEmptyname() {
+    func testEmptyName() {
         let name = SplitValidatable(name: "")
         XCTAssertFalse(name.isValid(validator: validator), "name should not be valid")
+        XCTAssertNotNil(validator.error)
+        XCTAssertEqual(validator.warnings.count, 0)
+    }
+    
+    func testLeadingSpaces() {
+        let name = SplitValidatable(name: " split")
+        XCTAssertTrue(name.isValid(validator: validator), "name should be valid")
+        XCTAssertNil(validator.error)
+        XCTAssertEqual(validator.warnings.count, 1)
+        XCTAssertEqual(validator.warnings[0], SplitNameValidationWarning.nameWasTrimmed)
+    }
+    
+    func testTrailingSpaces() {
+        let name = SplitValidatable(name: "split ")
+        XCTAssertTrue(name.isValid(validator: validator), "name should be valid")
+        XCTAssertNil(validator.error)
+        XCTAssertEqual(validator.warnings.count, 1)
+        XCTAssertEqual(validator.warnings[0], SplitNameValidationWarning.nameWasTrimmed)
     }
 }

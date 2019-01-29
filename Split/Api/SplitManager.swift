@@ -56,7 +56,8 @@ import Foundation
         if !SplitValidatable(name: featureName).isValid(validator: SplitNameValidator(tag: "split")) {
            return nil
         }
-        let filtered = splits.filter { return ( featureName.lowercased() == $0.name?.lowercased() ) }
+        let splitName = featureName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        let filtered = splits.filter { return ( splitName == $0.name?.lowercased() ) }
         return filtered.count > 0 ? filtered[0] : nil
     }
 }

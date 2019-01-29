@@ -8,7 +8,14 @@
 
 import Foundation
 
+class ValidationError: Error {
+}
+
 protocol Validator {
     associatedtype Entity where Entity: Validatable
+    var error: Int? { get }
+    var warnings: [Int] { get }
+    var messageLogger: ValidationMessageLogger { set get }
+
     func isValidEntity(_ entity: Entity) -> Bool
 }

@@ -8,6 +8,14 @@
 
 import Foundation
 
+struct SplitNameValidationError {
+    static let someError: Int = 1
+}
+
+struct SplitNameValidationWarning {
+    static let nameWasTrimmed: Int = 101
+}
+
 struct SplitValidatable: Validatable {
     
     typealias Entity = SplitValidatable
@@ -25,23 +33,34 @@ struct SplitValidatable: Validatable {
 
 class SplitNameValidator: Validator {
     
-    private let tag: String
+    var error: Int? = nil
+    var warnings: [Int] = []
+    var messageLogger: ValidationMessageLogger
     
     init(tag: String) {
-        self.tag = tag
+        self.messageLogger = DefaultValidationMessageLogger(tag: tag)
     }
     
     func isValidEntity(_ entity: SplitValidatable) -> Bool {
+        error = SplitNameValidationError.someError
+        warnings.removeAll()
         
         if entity.name == nil {
-            Logger.e("\(tag): you passed a null split name, split name must be a non-empty string")
+            messageLogger.e("you passed a null split name, split name must be a non-empty string")
             return false
         }
         
         if entity.name!.isEmpty() {
-            Logger.e("\(tag): you passed an empty split name, split name must be a non-empty string")
+            messageLogger.e("you passed an empty split name, split name must be a non-empty string")
             return false
         }
+        
+        if entity.name!.trimmingCharacters(in: .whitespacesAndNewlines) != entity.name! {
+            messageLogger.w("split name '\(entity.name!)' has extra whitespace, trimming")
+            warnings.append(SplitNameValidationWarning.nameWasTrimmed)
+        }
+        
+        error = nil
         return true
     }
 }
