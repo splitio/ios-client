@@ -8,6 +8,10 @@
 
 import Foundation
 
+struct ApiKeyValidationError {
+    static let someError: Int = 1
+}
+
 struct ApiKeyValidatable: Validatable {
         
     typealias Entity = ApiKeyValidatable
@@ -25,25 +29,29 @@ struct ApiKeyValidatable: Validatable {
 
 class ApiKeyValidator: Validator {
     
-    private let tag: String
+    var error: Int? = nil
+    var warnings: [Int] = []
+    var messageLogger: ValidationMessageLogger
     
     init(tag: String) {
-        self.tag = tag
+        self.messageLogger = DefaultValidationMessageLogger(tag: tag)
     }
     
     func isValidEntity(_ entity: ApiKeyValidatable) -> Bool {
         let apiKey = entity.apiKey
+        error = ApiKeyValidationError.someError
         
         if let key = apiKey  {
             if key.isEmpty() {
-                Logger.e("\(tag): you passed and empty api_key, api_key must be a non-empty string")
+                messageLogger.e("you passed and empty api_key, api_key must be a non-empty string")
                 return false
             }
         } else {
-            Logger.e("\(tag): you passed a null api_key, the api_key must be a non-empty string")
+            messageLogger.e("you passed a null api_key, the api_key must be a non-empty string")
             return false
         }
-
+        
+        error = nil
         return true
     }
 }

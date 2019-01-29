@@ -23,15 +23,21 @@ class ApiKeyValidatorTests: XCTestCase {
     func testValid() {
         let key = ApiKeyValidatable(apiKey: "key1")
         XCTAssertTrue(key.isValid(validator: validator), "Key should be valid")
+        XCTAssertNil(validator.error)
+        XCTAssertEqual(validator.warnings.count, 0)
     }
     
     func testNull() {
         let key = ApiKeyValidatable(apiKey: nil)
         XCTAssertFalse(key.isValid(validator: validator), "Key should not be valid")
+        XCTAssertNotNil(validator.error)
+        XCTAssertEqual(validator.warnings.count, 0)
     }
     
     func testEmptyKey() {
         let key = ApiKeyValidatable(apiKey: "")
         XCTAssertFalse(key.isValid(validator: validator), "Key should not be valid")
+        XCTAssertNotNil(validator.error)
+        XCTAssertEqual(validator.warnings.count, 0)
     }
 }

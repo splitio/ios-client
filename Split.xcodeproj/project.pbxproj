@@ -220,6 +220,7 @@
 		59FB7C1821F7ABEF00ECC96A /* ApiKeyValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1721F7ABEF00ECC96A /* ApiKeyValidatorTests.swift */; };
 		59FB7C1A21F7ACF300ECC96A /* SplitNameValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1921F7ACF300ECC96A /* SplitNameValidatorTests.swift */; };
 		59FB7C1C21F7AE2E00ECC96A /* SplitChangeValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1B21F7AE2E00ECC96A /* SplitChangeValidatorTests.swift */; };
+		59FB7C202200A4B200ECC96A /* ValidatorMessageLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1F2200A4B200ECC96A /* ValidatorMessageLogger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -462,6 +463,7 @@
 		59FB7C1721F7ABEF00ECC96A /* ApiKeyValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiKeyValidatorTests.swift; sourceTree = "<group>"; };
 		59FB7C1921F7ACF300ECC96A /* SplitNameValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitNameValidatorTests.swift; sourceTree = "<group>"; };
 		59FB7C1B21F7AE2E00ECC96A /* SplitChangeValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangeValidatorTests.swift; sourceTree = "<group>"; };
+		59FB7C1F2200A4B200ECC96A /* ValidatorMessageLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorMessageLogger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1074,6 +1076,7 @@
 				59FB7BD021E77B6800ECC96A /* Validator.swift */,
 				59FB7BD221E77CBC00ECC96A /* Validatable.swift */,
 				59FB7C0A21F0FF1700ECC96A /* ValidationConfig.swift */,
+				59FB7C1F2200A4B200ECC96A /* ValidatorMessageLogger.swift */,
 			);
 			path = Validators;
 			sourceTree = "<group>";
@@ -1342,6 +1345,7 @@
 				590DF9D6214065880082B94F /* LocalSplitFetcher.swift in Sources */,
 				59F6AAAB215EBD4400A51997 /* TimeMetric.swift in Sources */,
 				3B6DEF7720EA6AE50067435E /* RestClient+TrackEvents.swift in Sources */,
+				59FB7C202200A4B200ECC96A /* ValidatorMessageLogger.swift in Sources */,
 				3B6DEF6B20EA6AE50067435E /* InSegmentMatcher.swift in Sources */,
 				3B6DEF5B20EA6AE50067435E /* SplitInternalEvent.swift in Sources */,
 				3B6DEF7B20EA6AE50067435E /* HttpResponse.swift in Sources */,

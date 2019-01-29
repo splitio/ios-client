@@ -140,7 +140,7 @@ extension SplitClient {
     }
 
     private func getTreatment(splitName: String, verifyKey: Bool = true, attributes:[String:Any]? = nil) -> String {
-        let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
+        
         let validationTag = "getTreatment"
 
         if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
@@ -151,11 +151,12 @@ extension SplitClient {
             return SplitConstants.CONTROL;
         }
 
-        let split = SplitValidatable(name: trimmedSplitName)
+        let split = SplitValidatable(name: splitName)
         if !split.isValid(validator: SplitNameValidator(tag: validationTag)) {
             return SplitConstants.CONTROL;
         }
-
+        
+        let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
         let timeMetricStart = Date().unixTimestampInMicroseconds()
         let evaluator: Evaluator = Evaluator.shared
         evaluator.splitClient = self
@@ -240,7 +241,7 @@ extension SplitClient {
     private func track(eventType: String, trafficType: String? = nil, value: Double? = nil) -> Bool {
 
         let eventBuilder = EventBuilder()
-            .setType(trafficType ?? self.config?.trafficType)
+            .setTrafficType(trafficType ?? self.config?.trafficType)
             .setKey(self.key.matchingKey)
             .setType(eventType)
             .setValue(value)
