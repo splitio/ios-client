@@ -8,10 +8,17 @@
 
 import Foundation
 
+/**
+ Returned errors occurred during validation
+ */
 struct SplitChangeValidationError {
     static let someError = 1
 }
 
+/**
+ A struct implementing Validatable protocol
+ inteded to use it for Split change validation
+ */
 struct SplitChangeValidatable: Validatable {
     
     typealias Entity = SplitChangeValidatable
@@ -31,6 +38,9 @@ struct SplitChangeValidatable: Validatable {
     }
 }
 
+/**
+ A validator for Splits Change
+ */
 class SplitChangeValidator: Validator {
     var error: Int? = nil
     var warnings: [Int] = []
