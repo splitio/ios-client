@@ -8,6 +8,9 @@
 
 import Foundation
 
+/**
+ Returned errors occurred during validation
+ */
 struct SplitNameValidationError {
     static let someError: Int = 1
 }
@@ -16,6 +19,10 @@ struct SplitNameValidationWarning {
     static let nameWasTrimmed: Int = 101
 }
 
+/**
+ A struct implementing Validatable protocol
+ inteded to use it for Split validation
+ */
 struct SplitValidatable: Validatable {
     
     typealias Entity = SplitValidatable
@@ -31,6 +38,9 @@ struct SplitValidatable: Validatable {
     }
 }
 
+/**
+ A validator for Splits name
+ */
 class SplitNameValidator: Validator {
     
     var error: Int? = nil

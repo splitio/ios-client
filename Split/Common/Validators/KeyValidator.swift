@@ -8,6 +8,9 @@
 
 import Foundation
 
+/**
+ Returned errors occurred during validation
+ */
 struct KeyValidationError {
     static let nullMatchingKey: Int = 1
     static let emptyMatchingKey: Int = 2
@@ -16,6 +19,11 @@ struct KeyValidationError {
     static let longBucketingKey: Int = 5
 }
 
+/**
+ A struct similar to Key class implementing Validatable protocol
+ and allowing null values so that is possible
+ use it for validation
+ */
 struct KeyValidatable: Validatable {
         
     typealias Entity = KeyValidatable
@@ -42,6 +50,9 @@ struct KeyValidatable: Validatable {
     }
 }
 
+/**
+ A validator for Key component
+ */
 class KeyValidator: Validator {
     
     var error: Int? = nil

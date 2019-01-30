@@ -8,11 +8,18 @@
 
 import Foundation
 
+/**
+  Protocol to implement to create a
+  logger for validations components
+ */
 protocol ValidationMessageLogger {
     func e(_ message: String)
     func w(_ message: String)
 }
 
+/**
+  Default implementation of ValidationMessageLogger protocol
+ */
 class DefaultValidationMessageLogger: ValidationMessageLogger {
     
     let tag: String

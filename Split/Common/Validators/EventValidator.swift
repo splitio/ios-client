@@ -8,6 +8,9 @@
 
 import Foundation
 
+/**
+ Returned errors occurred during validation
+ */
 struct EventValidationError {
     static let nullTrafficType: Int = 1
     static let emptyTrafficType: Int = 2
@@ -20,10 +23,17 @@ struct EventValidationError {
     static let unknown: Int = 9
 }
 
+/**
+ Warnings occurred during validation
+ */
 struct EventValidationWarning {
     static let uppercaseTrafficType: Int = 101
 }
 
+/**
+ A struct implementing Validatable protocol
+ inteded to use it for Events validation
+ */
 struct EventValidatable: Validatable {
     
     typealias Entity = EventValidatable
@@ -38,6 +48,9 @@ struct EventValidatable: Validatable {
     }
 }
 
+/**
+ A validator for Track events
+ */
 class EventValidator: Validator {
     
     private let kMaxMatchingKeyLength = ValidationConfig.default.maximumKeyLength

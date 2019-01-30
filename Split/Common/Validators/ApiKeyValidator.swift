@@ -8,10 +8,17 @@
 
 import Foundation
 
+/**
+ Returned errors occurred during validation
+ */
 struct ApiKeyValidationError {
     static let someError: Int = 1
 }
 
+/**
+ A struct implementing Validatable protocol
+ inteded to use it for validation
+ */
 struct ApiKeyValidatable: Validatable {
         
     typealias Entity = ApiKeyValidatable
@@ -27,6 +34,9 @@ struct ApiKeyValidatable: Validatable {
     }
 }
 
+/**
+ A validator for Key component
+ */
 class ApiKeyValidator: Validator {
     
     var error: Int? = nil
