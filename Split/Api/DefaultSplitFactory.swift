@@ -28,7 +28,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return Version.toString()
     }
     
-    @objc(initWithApiKey:key:config:) public init(apiKey: String, key: Key, config: SplitClientConfig) {
+    init(apiKey: String, key: Key, config: SplitClientConfig) {
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
         MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate
     
