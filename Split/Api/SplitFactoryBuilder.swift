@@ -17,6 +17,7 @@ import Foundation
      Sets the client API Key
      - returns: the current instance of SplitFactoryBuilder implementation
      */
+    @discardableResult
     func setApiKey(_ apiKey: String) -> SplitFactoryBuilder
     
     /**
@@ -26,6 +27,7 @@ import Foundation
      - parameter matchingKey: A string representing matching key
      - returns: the current instance of SplitFactoryBuilder implementation
      */
+    @discardableResult
     func setMatchingKey(_ matchingKey: String) -> SplitFactoryBuilder
     
     /**
@@ -34,6 +36,7 @@ import Foundation
      - parameter bucketingKey: A string representing bucketing key
      - returns: the current instance of SplitFactoryBuilder implementation
      */
+    @discardableResult
     func setBucketingKey(_ bucketingKey: String) -> SplitFactoryBuilder
     
     /**
@@ -42,6 +45,7 @@ import Foundation
      - parameter key: An instances of Key class
      - returns: the current instance of SplitFactoryBuilder implementation
      */
+    @discardableResult
     func setKey(_ key: Key) -> SplitFactoryBuilder
     
     /**
@@ -50,6 +54,7 @@ import Foundation
      - parameter config: An instances of SplitConfig class
      - returns: the current instance of SplitFactoryBuilder implementation
      */
+    @discardableResult
     func setConfig(_ config: SplitClientConfig) -> SplitFactoryBuilder
     
     /**
