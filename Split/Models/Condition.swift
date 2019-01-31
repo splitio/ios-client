@@ -14,7 +14,7 @@ import Foundation
     public var matcherGroup: MatcherGroup?
     public var partitions: [Partition]?
     public var label: String?
-    public var client: SplitClient?
+    public var client: DefaultSplitClient?
     
     enum CodingKeys: String, CodingKey {
         case conditionType

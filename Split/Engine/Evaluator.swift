@@ -13,7 +13,7 @@ public class Evaluator {
     public var impressions: [Impression] 
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
-    internal var splitClient: SplitClient?  {
+    internal var splitClient: DefaultSplitClient?  {
         
         didSet {
             
@@ -29,7 +29,7 @@ public class Evaluator {
         return instance;
     }()
     //------------------------------------------------------------------------------------------------------------------
-    public init(splitClient: SplitClient? = nil) {
+    public init(splitClient: DefaultSplitClient? = nil) {
         
         self.splitClient = splitClient
         self.splitFetcher = self.splitClient?.splitFetcher
