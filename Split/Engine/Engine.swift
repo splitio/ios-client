@@ -12,7 +12,7 @@ class Engine {
     static let EVALUATION_RESULT_TREATMENT: String = "treatment"
     static let EVALUATION_RESULT_LABEL: String = "label"
     static let EVALUATION_RESULT_SPLIT_VERSION: String = "splitChangeNumber"
-    internal var splitClient: SplitClient?
+    internal var splitClient: DefaultSplitClient?
     private var splitter: SplitterProtocol
     
     static let shared: Engine = {

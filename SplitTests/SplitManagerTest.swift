@@ -14,7 +14,7 @@ import XCTest
 class SplitManagerTest: XCTestCase {
     
     var loadedSplits: [Split]!
-    var manager: SplitManagerProtocol!
+    var manager: SplitManager!
     var cache: SplitCacheProtocol!
     
     override func setUp() {
@@ -24,7 +24,7 @@ class SplitManagerTest: XCTestCase {
         loadedSplits = try? JSON.encodeFrom(json: json!, to: [Split].self)
         cache = SplitCacheStub(splits: loadedSplits!, changeNumber:1)
         let fetcher: SplitFetcher = LocalSplitFetcher(splitCache: cache)
-        manager = SplitManager(splitFetcher: fetcher)
+        manager = DefaultSplitManager(splitFetcher: fetcher)
     }
     
     override func tearDown() {
@@ -93,7 +93,7 @@ class SplitManagerTest: XCTestCase {
     func testRemoveOneSplit() {
         let cache: SplitCacheProtocol = SplitCacheStub(splits: loadedSplits!, changeNumber: 1)
         let fetcher: SplitFetcher = LocalSplitFetcher(splitCache: cache)
-        let manager: SplitManagerProtocol = SplitManager(splitFetcher: fetcher)
+        let manager: SplitManager = DefaultSplitManager(splitFetcher: fetcher)
         _ = cache.removeSplit(splitName: "sample_feature4")
         _ = cache.setChangeNumber(2)
         let splits = manager.splits
