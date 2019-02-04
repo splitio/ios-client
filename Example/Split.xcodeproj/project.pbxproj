@@ -12,6 +12,7 @@
 		3BFF3E9420D94A9C00AFE66C /* TrackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF3E9220D94A9C00AFE66C /* TrackViewController.swift */; };
 		590DF9AB212C83160082B94F /* (null) in Sources */ = {isa = PBXBuildFile; };
 		590DF9B82130604A0082B94F /* GetTreatmentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590DF9B62130604A0082B94F /* GetTreatmentsViewController.swift */; };
+		59FB7C2422022DD100ECC96A /* localhost.splits in Resources */ = {isa = PBXBuildFile; fileRef = 59FB7C2322022DD100ECC96A /* localhost.splits */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* GetTreatmentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* GetTreatmentViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -69,6 +70,7 @@
 		3B6DEF8E20EA818D0067435E /* Split.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Split.xcodeproj; path = ../Split.xcodeproj; sourceTree = "<group>"; };
 		3BFF3E9220D94A9C00AFE66C /* TrackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackViewController.swift; sourceTree = "<group>"; };
 		590DF9B62130604A0082B94F /* GetTreatmentsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetTreatmentsViewController.swift; sourceTree = "<group>"; };
+		59FB7C2322022DD100ECC96A /* localhost.splits */ = {isa = PBXFileReference; lastKnownFileType = text; path = localhost.splits; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* Split_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Split_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
+				59FB7C2322022DD100ECC96A /* localhost.splits */,
 			);
 			name = "Example for Split";
 			path = Split;
@@ -287,6 +290,7 @@
 				9FCD532C2088C3C2009C64A8 /* CHANGES.txt in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
+				59FB7C2422022DD100ECC96A /* localhost.splits in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

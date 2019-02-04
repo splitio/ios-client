@@ -23,6 +23,16 @@ public class SplitFactory: NSObject, SplitFactoryProtocol {
         
         _client = SplitClient(config: config, key: key, splitCache: splitCache)
         _manager = SplitManager(splitFetcher: splitFetcher)
+        
+        
+        if let filepath = Bundle.main.path(forResource: "localhost", ofType: "splits") {
+            do {
+                let fileContent = try String(contentsOfFile: filepath, encoding: .utf8)
+                print("Localhost file: \(fileContent)")
+            } catch {
+                print("File Read Error for file \(filepath)")
+            }
+        }
     }
 
     public func client() -> SplitClientProtocol {
@@ -36,5 +46,17 @@ public class SplitFactory: NSObject, SplitFactoryProtocol {
     public func version() -> String {
         return Version.toString()
     }
+    
+    func openFile() {
+        if let filepath = Bundle.main.path(forResource: "localhost", ofType: "splits") {
+            do {
+                let fileContent = try String(contentsOfFile: filepath, encoding: .utf8)
+                print("Localhost file: \(fileContent)")
+            } catch {
+                print("File Read Error for file \(filepath)")
+            }
+        }
+    }
+    
     
 }

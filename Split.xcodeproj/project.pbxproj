@@ -185,7 +185,6 @@
 		597CD338216CE9F700A15487 /* CounterMetricSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD337216CE9F700A15487 /* CounterMetricSample.swift */; };
 		597CD33A216D022F00A15487 /* MetricsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD339216D022F00A15487 /* MetricsManagerTests.swift */; };
 		597CD33C216D042300A15487 /* MetricsRestClientStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD33B216D042300A15487 /* MetricsRestClientStub.swift */; };
-		59C492FB216695D500F5F774 /* HashingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C492FA216695D500F5F774 /* HashingTest.swift */; };
 		5982D92F219C83D000230F44 /* legacy_1_short.csv in Resources */ = {isa = PBXBuildFile; fileRef = 5982D92E219C83D000230F44 /* legacy_1_short.csv */; };
 		5982D931219EFEF500230F44 /* CastUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D930219EFEF500230F44 /* CastUtils.swift */; };
 		5982D934219F3D2E00230F44 /* MatcherEvalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D933219F3D2E00230F44 /* MatcherEvalTests.swift */; };
@@ -204,6 +203,12 @@
 		59F6AAA9215EBD4400A51997 /* CounterMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AAA6215EBD4400A51997 /* CounterMetric.swift */; };
 		59F6AAAA215EBD4400A51997 /* MetricGauge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AAA7215EBD4400A51997 /* MetricGauge.swift */; };
 		59F6AAAB215EBD4400A51997 /* TimeMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AAA8215EBD4400A51997 /* TimeMetric.swift */; };
+		59FB7C282202457D00ECC96A /* LocalhostParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C272202457D00ECC96A /* LocalhostParserTests.swift */; };
+		59FB7C2A2202463000ECC96A /* localhost_1.splits in Resources */ = {isa = PBXBuildFile; fileRef = 59FB7C292202463000ECC96A /* localhost_1.splits */; };
+		59FB7C2C2202467C00ECC96A /* localhost_2.splits in Resources */ = {isa = PBXBuildFile; fileRef = 59FB7C2B2202467C00ECC96A /* localhost_2.splits */; };
+		59FB7C2E220247D300ECC96A /* localhost_3.splits in Resources */ = {isa = PBXBuildFile; fileRef = 59FB7C2D220247D300ECC96A /* localhost_3.splits */; };
+		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
+		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -411,7 +416,6 @@
 		597CD337216CE9F700A15487 /* CounterMetricSample.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CounterMetricSample.swift; sourceTree = "<group>"; };
 		597CD339216D022F00A15487 /* MetricsManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsManagerTests.swift; sourceTree = "<group>"; };
 		597CD33B216D042300A15487 /* MetricsRestClientStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsRestClientStub.swift; sourceTree = "<group>"; };
-		59C492FA216695D500F5F774 /* HashingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashingTest.swift; sourceTree = "<group>"; };
 		5982D92E219C83D000230F44 /* legacy_1_short.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = legacy_1_short.csv; sourceTree = "<group>"; };
 		5982D930219EFEF500230F44 /* CastUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastUtils.swift; sourceTree = "<group>"; };
 		5982D933219F3D2E00230F44 /* MatcherEvalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MatcherEvalTests.swift; sourceTree = "<group>"; };
@@ -430,6 +434,12 @@
 		59F6AAA6215EBD4400A51997 /* CounterMetric.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CounterMetric.swift; sourceTree = "<group>"; };
 		59F6AAA7215EBD4400A51997 /* MetricGauge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetricGauge.swift; sourceTree = "<group>"; };
 		59F6AAA8215EBD4400A51997 /* TimeMetric.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeMetric.swift; sourceTree = "<group>"; };
+		59FB7C272202457D00ECC96A /* LocalhostParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostParserTests.swift; sourceTree = "<group>"; };
+		59FB7C292202463000ECC96A /* localhost_1.splits */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = localhost_1.splits; sourceTree = "<group>"; };
+		59FB7C2B2202467C00ECC96A /* localhost_2.splits */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = localhost_2.splits; sourceTree = "<group>"; };
+		59FB7C2D220247D300ECC96A /* localhost_3.splits */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = localhost_3.splits; sourceTree = "<group>"; };
+		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -486,6 +496,7 @@
 				3B6DEE9920EA6AE00067435E /* Secure */,
 				3B6DEEE220EA6AE30067435E /* Network */,
 				3B6DEF0720EA6AE40067435E /* Storage */,
+				59FB7C3A220378F600ECC96A /* Localhost */,
 				3B6DEE5D20EA6A4E0067435E /* Split.h */,
 				3B6DEE5E20EA6A4E0067435E /* Info.plist */,
 			);
@@ -938,6 +949,7 @@
 				592C6AF1211CBD63002D120C /* Supporting Files */,
 				592C6ADB211CBB86002D120C /* Resources */,
 				59F6AA99215E941E00A51997 /* Metrics */,
+				59FB7C262202454700ECC96A /* Localhost */,
 				592C6AB3211B718D002D120C /* ArrayBlockingQueueTest.swift */,
 				592C6AB2211B718D002D120C /* DatesTests.swift */,
 				592C6AB4211B718D002D120C /* InMemorySplitCacheTests.swift */,
@@ -978,6 +990,9 @@
 				590DF9C9213DAC9D0082B94F /* splits.json */,
 				590DF9D0213F07400082B94F /* split_sample_feature6.json */,
 				5919C64121C7C8A600EC35B8 /* split_traffic_allocation_1.json */,
+				59FB7C292202463000ECC96A /* localhost_1.splits */,
+				59FB7C2B2202467C00ECC96A /* localhost_2.splits */,
+				59FB7C2D220247D300ECC96A /* localhost_3.splits */,
 				5912D14C2199FD4D00BC698C /* legacy_1.csv */,
 				5982D92E219C83D000230F44 /* legacy_1_short.csv */,
 				5912D153219A065200BC698C /* legacy_2.csv */,
@@ -1023,6 +1038,23 @@
 				597CD335216CE09100A15487 /* TimeMetricSample.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		59FB7C262202454700ECC96A /* Localhost */ = {
+			isa = PBXGroup;
+			children = (
+				59FB7C272202457D00ECC96A /* LocalhostParserTests.swift */,
+			);
+			path = Localhost;
+			sourceTree = "<group>";
+		};
+		59FB7C3A220378F600ECC96A /* Localhost */ = {
+			isa = PBXGroup;
+			children = (
+				59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */,
+				59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */,
+			);
+			path = Localhost;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1132,9 +1164,11 @@
 				592C6AE6211CBBB0002D120C /* murmur.csv in Resources */,
 				5982D936219F494500230F44 /* matchers.json in Resources */,
 				592C6AE9211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
+				59FB7C2C2202467C00ECC96A /* localhost_2.splits in Resources */,
 				592C6AE7211CBBB0002D120C /* splitchanges_3.json in Resources */,
 				59C493062167E3B400F5F774 /* murmur3-sample-v3.csv in Resources */,
 				592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */,
+				59FB7C2E220247D300ECC96A /* localhost_3.splits in Resources */,
 				590DF9CA213DAC9D0082B94F /* splits.json in Resources */,
 				592C6AEA211CBBB0002D120C /* regex.csv in Resources */,
 				59C493052167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv in Resources */,
@@ -1145,6 +1179,7 @@
 				592C6AEF211CBBB0002D120C /* mysegments_2.json in Resources */,
 				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
 				592C6AEC211CBBB0002D120C /* mysegments_1.json in Resources */,
+				59FB7C2A2202463000ECC96A /* localhost_1.splits in Resources */,
 				5919C64221C7C8A600EC35B8 /* split_traffic_allocation_1.json in Resources */,
 				592C6AE8211CBBB0002D120C /* mysegments_3.json in Resources */,
 				59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */,
@@ -1232,6 +1267,7 @@
 				3B6DEF4920EA6AE50067435E /* MatcherType.swift in Sources */,
 				597CD336216CE09100A15487 /* TimeMetricSample.swift in Sources */,
 				3B6DEF3620EA6AE50067435E /* SplitClientProtocol.swift in Sources */,
+				59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */,
 				3B6DEF3F20EA6AE50067435E /* ConditionType.swift in Sources */,
 				3B6DEF1120EA6AE50067435E /* SplitCacheProtocol.swift in Sources */,
 				3B6DEF1920EA6AE50067435E /* FileStorageManager.swift in Sources */,
@@ -1265,6 +1301,7 @@
 				59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */,
 				3B6DEF7120EA6AE50067435E /* SplitManager.swift in Sources */,
 				590DF9D6214065880082B94F /* LocalSplitFetcher.swift in Sources */,
+				59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */,
 				59F6AAAB215EBD4400A51997 /* TimeMetric.swift in Sources */,
 				3B6DEF7720EA6AE50067435E /* RestClient+TrackEvents.swift in Sources */,
 				3B6DEF6B20EA6AE50067435E /* InSegmentMatcher.swift in Sources */,
@@ -1323,6 +1360,7 @@
 				59F6AA9B215E9DA100A51997 /* LatencyCounterTests.swift in Sources */,
 				590DF9CF213EB95D0082B94F /* SplitCacheStub.swift in Sources */,
 				5912D14F2199FD8600BC698C /* LegacyHashingTest.swift in Sources */,
+				59FB7C282202457D00ECC96A /* LocalhostParserTests.swift in Sources */,
 				5912D152219A022000BC698C /* CsvHelper.swift in Sources */,
 				5919C64421C7CCE400EC35B8 /* TrafficAllocationTest.swift in Sources */,
 				5982D934219F3D2E00230F44 /* MatcherEvalTests.swift in Sources */,
