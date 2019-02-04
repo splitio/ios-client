@@ -1,0 +1,20 @@
+####
+# This file a simple mock for testing
+####
+
+split0 on_off
+split1 on
+#sample_feature off
+split2 off
+split3 on
+split4 off
+#default_split4 result_1
+split5 on
+split6 off
+split7 on
+#lorem ipsum mega byte
+split8 off
+split9 on
+#lorem ipsum mega byte
+
+

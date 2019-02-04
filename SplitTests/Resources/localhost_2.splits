@@ -1,0 +1,9 @@
+####
+# This file a simple mock for testing
+####
+
+sample1 on
+ sample_feature off
+split3 result_1
+split4 result_1 
+ default_split4 result_1
