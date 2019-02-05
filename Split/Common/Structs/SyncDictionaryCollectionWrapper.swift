@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SynchronizedDictionaryWrapper<K: Hashable,T> {
+class SyncDictionaryCollectionWrapper<K: Hashable,T> {
     
     private var queue: DispatchQueue
     private var items: [K:[T]]
