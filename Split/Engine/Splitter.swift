@@ -71,7 +71,7 @@ class Splitter: SplitterProtocol {
      func hashCode(seed: Int, key: String ,algo: Algorithm) -> Int {
         switch algo {
         case .murmur3:
-            return Int(Murmur3Hash.hashString(key, UInt32(truncatingIfNeeded: seed)))
+            return Int(truncatingIfNeeded: Murmur3Hash.hashString(key, UInt32(truncatingIfNeeded: seed)))
         default:
             return LegacyHash.getHash(key, Int32(truncatingIfNeeded: seed))
         }
