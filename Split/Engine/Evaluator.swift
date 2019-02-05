@@ -48,10 +48,12 @@ public class Evaluator {
                 result[Engine.EVALUATION_RESULT_LABEL] = ImpressionsConstants.KILLED
                 result[Engine.EVALUATION_RESULT_SPLIT_VERSION] = splitTreated.changeNumber!
             } else {
+ 
                 let engine = Engine.shared
                 engine.splitClient = self.splitClient
                 do {
                     let evaluationResult = try engine.getTreatment(matchingKey: key, bucketingKey: bucketingKey, split: splitTreated, attributes: attributes)
+                    
                     var treatment: String? = evaluationResult[Engine.EVALUATION_RESULT_TREATMENT]
                     var impressionLabel: String? = evaluationResult[Engine.EVALUATION_RESULT_LABEL]
                     let impressionSplitVersion: Int64? = splitTreated.changeNumber!
