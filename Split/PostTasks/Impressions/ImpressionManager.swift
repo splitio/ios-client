@@ -22,8 +22,9 @@ class ImpressionManager {
     private var fileStorage = FileStorage()
     private var impressionsFileStorage: FileStorageManager?
     
-    private var currentImpressionsHit = SynchronizedDictionaryWrapper<String, Impression>()
-    private var impressionsHits = [String: ImpressionsHit]()
+    private var currentImpressionsHit = SyncDictionaryCollectionWrapper<String, Impression>()
+    private var impressionsHits = SyncDictionarySingleWrapper<String, ImpressionsHit>()
+    //private var impressionsHits = [String: ImpressionsHit]()
     
     private let restClient = RestClient()
     private var pollingManager: PollingManager!
@@ -80,7 +81,7 @@ extension ImpressionManager {
     private func appendHit(){
         if currentImpressionsHit.count == 0 { return }
         let newHit = ImpressionsHit(identifier: UUID().uuidString, impressions: currentImpressionsTests())
-        impressionsHits[newHit.identifier] = newHit
+        impressionsHits.appendValue(newHit, toKey: newHit.identifier)
         currentImpressionsHit.removeAll()
     }
     
@@ -100,6 +101,7 @@ extension ImpressionManager {
     }
     
     private func sendImpressions() {
+        let impressionsHits = self.impressionsHits.all
         for (_, impressionsHit) in impressionsHits {
             sendImpressions(impressionsHit: impressionsHit)
         }
@@ -133,7 +135,7 @@ extension ImpressionManager {
     
     func saveImpressionsToDisk() {
         let impressionsFile = ImpressionsFile()
-        impressionsFile.oldHits = impressionsHits
+        impressionsFile.oldHits = impressionsHits.all
         
         if currentImpressionsHit.count > 0 {
             let newHit = ImpressionsHit(identifier: UUID().uuidString, impressions: currentImpressionsTests())
@@ -156,8 +158,13 @@ extension ImpressionManager {
         impressionsFileStorage?.delete(fileName: kImpressionsFileName)
         do {
             let hitsFile = try Json.encodeFrom(json: hitsJson, to: ImpressionsFile.self)
-            impressionsHits = hitsFile.oldHits ?? [String: ImpressionsHit]()
-            currentImpressionsHit = SynchronizedDictionaryWrapper()
+            impressionsHits = SyncDictionarySingleWrapper()
+            if let hits = hitsFile.oldHits {
+                for hit in hits {
+                    impressionsHits.appendValue(hit.value, toKey: hit.key)
+                }
+            }
+            currentImpressionsHit = SyncDictionaryCollectionWrapper()
             if let tests = hitsFile.currentHit?.impressions {
                 for test in tests {
                     for impresion in test.keyImpressions {
