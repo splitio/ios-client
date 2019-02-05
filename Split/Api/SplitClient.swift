@@ -129,11 +129,10 @@ extension SplitClient {
             if verifyKey {
                 self.verifyKey()
             }
-
             let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: splitName, attributes: attributes)
             let label = result![Engine.EVALUATION_RESULT_LABEL] as! String
             let treatment = result![Engine.EVALUATION_RESULT_TREATMENT] as! String
-
+            
             if let val = result![Engine.EVALUATION_RESULT_SPLIT_VERSION] {
                 let splitVersion = val as! Int64
                 logImpression(label: label, changeNumber: splitVersion, treatment: treatment, splitName: splitName, attributes: attributes)
