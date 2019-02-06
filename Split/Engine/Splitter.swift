@@ -16,7 +16,7 @@ protocol SplitterProtocol {
     
     func getTreatment(key: Key, seed: Int, attributes:[String:Any]?, partions: [Partition]?, algo: Algorithm) -> String
     
-    func getBucket(seed: Int,key: String ,algo: Algorithm) -> Int
+    func getBucket(seed: Int,key: String ,algo: Algorithm) -> Int64
     
 }
 
@@ -34,7 +34,7 @@ class Splitter: SplitterProtocol {
         
         Logger.d("Splitter evaluating partitions ... \n")
         
-        let bucket: Int = getBucket(seed: seed, key: key.bucketingKey! ,algo: algo)
+        let bucket: Int64 = getBucket(seed: seed, key: key.bucketingKey! ,algo: algo)
         Logger.d("BUCKET: \(bucket)")
         
         if let splitPartitions = partions {
@@ -59,19 +59,19 @@ class Splitter: SplitterProtocol {
         return SplitConstants.CONTROL
     }
     
-    func getBucket(seed: Int, key: String ,algo: Algorithm) -> Int {
-        let hashCode: Int = self.hashCode(seed: seed, key: key, algo: algo)
+    func getBucket(seed: Int, key: String ,algo: Algorithm) -> Int64 {
+        let hashCode: Int64 = self.hashCode(seed: seed, key: key, algo: algo)
         var reminder = hashCode  % 100
         if algo == Algorithm.legacy {
             reminder = abs(reminder)
         }
-        return Int(reminder) + 1
+        return Int64(reminder) + Int64(1)
     }
     
-     func hashCode(seed: Int, key: String ,algo: Algorithm) -> Int {
+     func hashCode(seed: Int, key: String ,algo: Algorithm) -> Int64 {
         switch algo {
         case .murmur3:
-            return Int(truncatingIfNeeded: Murmur3Hash.hashString(key, UInt32(truncatingIfNeeded: seed)))
+            return Int64(truncatingIfNeeded: Murmur3Hash.hashString(key, UInt32(truncatingIfNeeded: seed)))
         default:
             return LegacyHash.getHash(key, Int32(truncatingIfNeeded: seed))
         }
