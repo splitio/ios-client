@@ -89,7 +89,7 @@ extension TrackManager {
     private func appendHit(){
         if currentEventsHit.count == 0 { return }
         let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit.all)
-        eventsHits.appendValue(newHit, toKey: newHit.identifier)
+        eventsHits.setValue(newHit, forKey: newHit.identifier)
         currentEventsHit.removeAll()
     }
     
@@ -162,7 +162,7 @@ extension TrackManager {
             let hitsFile = try Json.encodeFrom(json: hitsJson, to: EventsFile.self)
             if let oldHits = hitsFile.oldHits {
                 for hit in oldHits {
-                    eventsHits.appendValue(hit.value, toKey: hit.key)
+                    eventsHits.setValue(hit.value, forKey: hit.key)
                 }
             }
             currentEventsHit.fill(with: hitsFile.currentHit?.events ?? [EventDTO]())

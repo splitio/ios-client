@@ -24,7 +24,6 @@ class ImpressionManager {
     
     private var currentImpressionsHit = SyncDictionaryCollectionWrapper<String, Impression>()
     private var impressionsHits = SyncDictionarySingleWrapper<String, ImpressionsHit>()
-    //private var impressionsHits = [String: ImpressionsHit]()
     
     private let restClient = RestClient()
     private var pollingManager: PollingManager!
@@ -81,7 +80,7 @@ extension ImpressionManager {
     private func appendHit(){
         if currentImpressionsHit.count == 0 { return }
         let newHit = ImpressionsHit(identifier: UUID().uuidString, impressions: currentImpressionsTests())
-        impressionsHits.appendValue(newHit, toKey: newHit.identifier)
+        impressionsHits.setValue(newHit, forKey: newHit.identifier)
         currentImpressionsHit.removeAll()
     }
     
@@ -161,7 +160,7 @@ extension ImpressionManager {
             impressionsHits = SyncDictionarySingleWrapper()
             if let hits = hitsFile.oldHits {
                 for hit in hits {
-                    impressionsHits.appendValue(hit.value, toKey: hit.key)
+                    impressionsHits.setValue(hit.value, forKey: hit.key)
                 }
             }
             currentImpressionsHit = SyncDictionaryCollectionWrapper()

@@ -62,7 +62,7 @@ class SyncDictionarySingleWrapper<K: Hashable,T> {
         }
     }
     
-    func appendValue(_ value: T, toKey key: K) {
+    func setValue(_ value: T, forKey key: K) {
         queue.async(flags: .barrier) {
             self.items[key] = value
         }
