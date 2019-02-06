@@ -151,7 +151,7 @@ class Murmur3Hash {
             word |= UInt32(bytes[i + 2]) << 16
             word |= UInt32(bytes[i + 3]) << 24
             
-            hash = update2(hash, Int(word))
+            hash = update2(hash, Int(truncatingIfNeeded: word))
         }
         let remaining = byteCount & 3
         if remaining != 0 {
