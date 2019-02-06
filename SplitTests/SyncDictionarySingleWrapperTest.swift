@@ -1,5 +1,5 @@
 //
-//  SyncDictionaryCollectionWrapperTest.swift
+//  SyncDictionarySingleWrapperTest.swift
 //  SplitTests
 //
 //  Created by Javier L. Avrudsky on 06/02/2019.
@@ -9,55 +9,63 @@
 import XCTest
 @testable import Split
 
-class SyncDictionaryCollectionWrapperTest: XCTestCase {
+class SyncDictionarySingleWrapperTest: XCTestCase {
 
-    var dic: SyncDictionaryCollectionWrapper<String, String>!
+    var dic: SyncDictionarySingleWrapper<String, String>!
     override func setUp() {
-        dic = SyncDictionaryCollectionWrapper()
-        dic.appendValue("k1value1", toKey: "key1")
-        dic.appendValue("k1value2", toKey: "key1")
-        dic.appendValue("k1value3", toKey: "key1")
+        dic = SyncDictionarySingleWrapper()
+        dic.setValue("k1value1", forKey: "key1")
+        dic.setValue("k1value2", forKey: "key1")
+        dic.setValue("k1value", forKey: "key1")
         
-        dic.appendValue("k2value1", toKey: "key2")
-        dic.appendValue("k2value2", toKey: "key2")
+        dic.setValue("k2value1", forKey: "key2")
+        dic.setValue("k2value", forKey: "key2")
         
-        dic.appendValue("k3value1", toKey: "key3")
-        dic.appendValue("k3value2", toKey: "key3")
-        dic.appendValue("k3value3", toKey: "key3")
-        dic.appendValue("k3value4", toKey: "key3")
+        dic.setValue("k3value", forKey: "key3")
+        dic.setValue("k4value", forKey: "key4")
+        dic.setValue("k5value", forKey: "key5")
+        dic.setValue("k6value", forKey: "key6")
     }
 
     override func tearDown() {
     }
 
-    func testInitialAppend() {
+    func testInitialSetup() {
         let v1 = dic.value(forKey:"key1")
         let v2 = dic.value(forKey:"key2")
-        let v3 = dic.value(forKey:"key3")
+        let v5 = dic.value(forKey:"key5")
         
-        XCTAssertEqual(9, dic.count)
-        XCTAssertEqual(3, v1?.count)
-        XCTAssertEqual(2, v2?.count)
-        XCTAssertEqual(4, v3?.count)
+        XCTAssertEqual(6, dic.count)
         
-        XCTAssertTrue(indexForValue(value: "k1value1", array: v1) != -1)
-        XCTAssertTrue(indexForValue(value: "k2value1", array: v2) != -1)
-        XCTAssertTrue(indexForValue(value: "k3value1", array: v3) != -1)
+        XCTAssertEqual("k1value", v1)
+        XCTAssertEqual("k2value", v2)
+        XCTAssertEqual("k5value", v5)
         
     }
     
     func testRemoveValue() {
-        dic.removeValues(forKeys: ["key1", "key2"])
-        XCTAssertEqual(4, dic.count)
+        dic.removeValue(forKey: "key1")
+        dic.removeValue(forKey: "key4")
+        dic.removeValue(forKey: "key6")
+        XCTAssertEqual(3, dic.count)
         XCTAssertNil(dic.value(forKey: "key1"))
-        XCTAssertNil(dic.value(forKey: "key2"))
+        XCTAssertNil(dic.value(forKey: "key4"))
+        XCTAssertNil(dic.value(forKey: "key6"))
     }
     
     func testAllValues() {
+        let values = dic.all
+        
+        for i in 1...6 {
+            let v = values["key\(i)"]
+            XCTAssertEqual("k\(i)value", v)
+        }
+    }
+    
+    func testRemoveAllValues() {
         dic.removeAll()
         XCTAssertEqual(0, dic.count)
     }
-    
     
     private func indexForValue(value: String, array: [String]?) -> Int {
         guard let array = array else {
