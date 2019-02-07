@@ -1,4 +1,4 @@
-1.6.1: (Feb 5, 2019)
+1.6.1: (Feb 7, 2019)
 - Fixed issue when casting from Int32 to Int on iPhone 5
 1.6.0: (Jan 11, 2019)
 - Added Objective C support
