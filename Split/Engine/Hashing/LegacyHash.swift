@@ -9,14 +9,14 @@ import Foundation
 
 class LegacyHash {
     
-    static func getHash(_ key: String, _ seed: Int32) -> Int {
+    static func getHash(_ key: String, _ seed: Int32) -> Int64 {
         var h: Int32 = 0
         for character: Character in key {
             let value = Int32(truncatingIfNeeded: character.unicodeScalars.first!.value)
             let shifted = (h &* 31)
             h = shifted + value
         }
-        return Int(h ^ seed)
+        return Int64(h ^ seed)
     }
 }
 
