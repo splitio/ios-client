@@ -24,7 +24,7 @@ class TrackManager {
     private var eventsFileStorage: FileStorageManager?
     
     private var currentEventsHit = SynchronizedArrayWrapper<EventDTO>()
-    private var eventsHits = [String: EventsHit]()
+    private var eventsHits = SyncDictionarySingleWrapper<String, EventsHit>()
     
     private let restClient = RestClient()
     private var pollingManager: PollingManager!
@@ -89,7 +89,7 @@ extension TrackManager {
     private func appendHit(){
         if currentEventsHit.count == 0 { return }
         let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit.all)
-        eventsHits[newHit.identifier] = newHit
+        eventsHits.setValue(newHit, forKey: newHit.identifier)
         currentEventsHit.removeAll()
     }
     
@@ -110,7 +110,8 @@ extension TrackManager {
     }
     
     private func sendEvents() {
-        for (_, eventsHit) in eventsHits {
+        let hits = eventsHits.all
+        for (_, eventsHit) in hits {
             sendEvents(eventsHit: eventsHit)
         }
     }
@@ -136,7 +137,7 @@ extension TrackManager {
     
     func saveEventsToDisk() {
         let eventsFile = EventsFile()
-        eventsFile.oldHits = eventsHits
+        eventsFile.oldHits = eventsHits.all
         
         if currentEventsHit.count > 0 {
             let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit.all)
@@ -159,7 +160,11 @@ extension TrackManager {
         eventsFileStorage?.delete(fileName: kEventsFileName)
         do {
             let hitsFile = try Json.encodeFrom(json: hitsJson, to: EventsFile.self)
-            eventsHits = hitsFile.oldHits ?? [String: EventsHit]()
+            if let oldHits = hitsFile.oldHits {
+                for hit in oldHits {
+                    eventsHits.setValue(hit.value, forKey: hit.key)
+                }
+            }
             currentEventsHit.fill(with: hitsFile.currentHit?.events ?? [EventDTO]())
         } catch {
             Logger.e("Error while loading track events from disk")
