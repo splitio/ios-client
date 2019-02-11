@@ -14,30 +14,29 @@ class ApiKeyValidatorTests: XCTestCase {
     var validator: ApiKeyValidator!
     
     override func setUp() {
-        validator = ApiKeyValidator(tag: "ApiKeyValidatorTests")
+        validator = DefaultApiKeyValidator()
     }
     
     override func tearDown() {
     }
     
     func testValid() {
-        let key = ApiKeyValidatable(apiKey: "key1")
-        XCTAssertTrue(key.isValid(validator: validator), "Key should be valid")
-        XCTAssertNil(validator.error)
-        XCTAssertEqual(validator.warnings.count, 0)
+        XCTAssertNil(validator.validate(apiKey: "key1"))
     }
     
     func testNull() {
-        let key = ApiKeyValidatable(apiKey: nil)
-        XCTAssertFalse(key.isValid(validator: validator), "Key should not be valid")
-        XCTAssertNotNil(validator.error)
-        XCTAssertEqual(validator.warnings.count, 0)
+        let errorInfo = validator.validate(apiKey: nil)
+        XCTAssertNotNil(errorInfo)
+        XCTAssertNotNil(errorInfo?.error)
+        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
     
     func testEmptyKey() {
-        let key = ApiKeyValidatable(apiKey: "")
-        XCTAssertFalse(key.isValid(validator: validator), "Key should not be valid")
-        XCTAssertNotNil(validator.error)
-        XCTAssertEqual(validator.warnings.count, 0)
+        let errorInfo = validator.validate(apiKey: "")
+        XCTAssertNotNil(errorInfo)
+        XCTAssertNotNil(errorInfo?.error)
+        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
 }

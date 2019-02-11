@@ -11,9 +11,13 @@ import Foundation
 @objc public class SplitManager: NSObject, SplitManagerProtocol {
     
     private var splitFetcher: SplitFetcher
+    private var splitValidator: SplitValidator
+    private var validationLogger: ValidationMessageLogger
     
     init(splitFetcher: SplitFetcher) {
         self.splitFetcher = splitFetcher
+        self.splitValidator = DefaultSplitValidator()
+        self.validationLogger = DefaultValidationMessageLogger()
         super.init()
     }
     
@@ -52,10 +56,14 @@ import Foundation
     }
     
     public func split(featureName: String) -> SplitView? {
-
-        if !SplitValidatable(name: featureName).isValid(validator: SplitNameValidator(tag: "split")) {
-           return nil
+        
+        if let errorInfo = splitValidator.validate(name: featureName) {
+            validationLogger.log(errorInfo: errorInfo, tag: "split")
+            if errorInfo.isError {
+                return nil
+            }
         }
+        
         let splitName = featureName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         let filtered = splits.filter { return ( splitName == $0.name?.lowercased() ) }
         return filtered.count > 0 ? filtered[0] : nil

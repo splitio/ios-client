@@ -41,12 +41,18 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     private var eventsManager: SplitEventsManager
     private var trackEventsManager: TrackManager
     private var metricsManager: MetricsManager
+    
+    private let keyValidator: KeyValidator
+    private let splitValidator: SplitValidator
+    private let eventValidator: EventValidator
+    private let validationLogger: ValidationMessageLogger
 
     init(config: SplitClientConfig, key: Key, splitCache: SplitCache) {
         self.config = config
-
-        let kValidatorTag = "client init"
-        _ = KeyValidatable(key: key).isValid(validator: KeyValidator(tag: kValidatorTag))
+        self.keyValidator = DefaultKeyValidator()
+        self.eventValidator = DefaultEventValidator()
+        self.splitValidator = DefaultSplitValidator()
+        self.validationLogger = DefaultValidationMessageLogger()
 
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey)
         eventsManager = SplitEventsManager(config: config)
@@ -118,8 +124,7 @@ extension SplitClient {
     }
 
     public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
-        return getTreatment(splitName: split, verifyKey: true, attributes: attributes)
-
+        return getTreatment(splitName: split, shouldValidate: true, attributes: attributes)
     }
 
     public func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String] {
@@ -130,7 +135,7 @@ extension SplitClient {
             self.verifyKey()
             let splitsNoDuplicated = Set(splits.filter { !$0.isEmpty() }.map { $0 })
             for splitName in splitsNoDuplicated {
-                results[splitName] = getTreatment(splitName: splitName, verifyKey: false, attributes: attributes)
+                results[splitName] = getTreatment(splitName: splitName, shouldValidate: false, attributes: attributes)
             }
         } else {
             Logger.d("getTreatments: split_names is an empty array or has null values")
@@ -139,21 +144,26 @@ extension SplitClient {
         return results
     }
 
-    private func getTreatment(splitName: String, verifyKey: Bool = true, attributes:[String:Any]? = nil) -> String {
+    private func getTreatment(splitName: String, shouldValidate: Bool = true, attributes:[String:Any]? = nil) -> String {
         
         let validationTag = "getTreatment"
 
-        if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
-            Logger.w("No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not yet ready")
+        if shouldValidate {
+            if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
+                Logger.w("No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not yet ready")
+            }
+            
+            if let errorInfo = keyValidator.validate(matchingKey: key.matchingKey, bucketingKey: key.bucketingKey) {
+                validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+                return SplitConstants.CONTROL;
+            }
         }
-
-        if !KeyValidatable(key:self.key).isValid(validator: KeyValidator(tag: validationTag)) {
-            return SplitConstants.CONTROL;
-        }
-
-        let split = SplitValidatable(name: splitName)
-        if !split.isValid(validator: SplitNameValidator(tag: validationTag)) {
-            return SplitConstants.CONTROL;
+        
+        if let errorInfo = splitValidator.validate(name: splitName) {
+            validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+            if errorInfo.isError {
+                return SplitConstants.CONTROL;
+            }
         }
         
         let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -162,7 +172,7 @@ extension SplitClient {
         evaluator.splitClient = self
 
         do {
-            if verifyKey {
+            if shouldValidate {
                 self.verifyKey()
             }
 
@@ -239,19 +249,20 @@ extension SplitClient {
     }
 
     private func track(eventType: String, trafficType: String? = nil, value: Double? = nil) -> Bool {
-
-        let eventBuilder = EventBuilder()
-            .setTrafficType(trafficType ?? self.config?.trafficType)
-            .setKey(self.key.matchingKey)
-            .setType(eventType)
-            .setValue(value)
-
-        do {
-            let event = try eventBuilder.build()
-            trackEventsManager.appendEvent(event: event)
-        } catch {
-            return false
+        
+        if let errorInfo = eventValidator.validate(key: self.key.matchingKey, trafficTypeName: trafficType, eventTypeId: trafficType, value: value) {
+            validationLogger.log(errorInfo: errorInfo, tag: "track")
+            if errorInfo.isError {
+                return false
+            }
         }
+
+        let event = EventDTO(trafficType: trafficType!.lowercased(), eventType: eventType)
+        event.key = self.key.matchingKey
+        event.value = value
+        event.timestamp = Date().unixTimestampInMiliseconds()
+        trackEventsManager.appendEvent(event: event)
+        
         return true
     }
 }

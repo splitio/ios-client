@@ -9,108 +9,53 @@
 import Foundation
 
 /**
- Returned errors occurred during validation
- */
-struct EventValidationError {
-    static let nullTrafficType: Int = 1
-    static let emptyTrafficType: Int = 2
-    static let emptyMatchingKey: Int = 3
-    static let longMatchingKey: Int = 4
-    static let nullMatchingKey: Int = 5
-    static let nullType: Int = 6
-    static let emptyType: Int = 7
-    static let invalidType: Int = 8
-    static let unknown: Int = 9
-}
-
-/**
- Warnings occurred during validation
- */
-struct EventValidationWarning {
-    static let uppercaseTrafficType: Int = 101
-}
-
-/**
- A struct implementing Validatable protocol
- inteded to use it for Events validation
- */
-struct EventValidatable: Validatable {
-    
-    typealias Entity = EventValidatable
-    
-    var key: String?
-    var eventTypeId: String?
-    var trafficTypeName: String?
-    var value: Double?
-    
-    func isValid<V>(validator: V) -> Bool where V : Validator, V.Entity == Entity {
-        return validator.isValidEntity(self)
-    }
-}
-
-/**
  A validator for Track events
  */
-class EventValidator: Validator {
+protocol EventValidator {
+    func validate(key: String?, trafficTypeName: String?, eventTypeId: String?, value: Double?) -> ValidationErrorInfo?
+}
+
+class DefaultEventValidator: EventValidator {
     
     private let kMaxMatchingKeyLength = ValidationConfig.default.maximumKeyLength
     private let kTrackEventNameValidationPattern = ValidationConfig.default.trackEventNamePattern
-    var error: Int? = nil
-    var warnings: [Int] = []
-    var messageLogger: ValidationMessageLogger
-    let tag: String
     
-    init(tag: String) {
-        self.messageLogger = DefaultValidationMessageLogger(tag: tag)
-        self.tag = tag
+    var keyValidator: KeyValidator
+    
+    init(){
+        keyValidator = DefaultKeyValidator()
     }
     
-    func isValidEntity(_ entity: EventValidatable) -> Bool {
-        warnings.removeAll()
-        let validatableKey = KeyValidatable(matchingKey: entity.key)
-        let keyValidator = KeyValidator(tag: tag)
+    func validate(key: String?, trafficTypeName: String?, eventTypeId: String?, value: Double?) -> ValidationErrorInfo? {
         
-        if !validatableKey.isValid(validator: keyValidator) {
-            error = mapKeyErrorToEventError(keyError: keyValidator.error!)
-            return false
+        if let resultInfo = keyValidator.validate(matchingKey: key, bucketingKey: nil) {
+            return resultInfo
         }
         
-        if entity.trafficTypeName == nil {
-            messageLogger.e("you passed a null or undefined traffic_type_name, traffic_type_name must be a non-empty string")
-            error = EventValidationError.nullTrafficType
-            return false
+        if trafficTypeName == nil {
+            return ValidationErrorInfo(error: .some, message: "you passed a null or undefined traffic_type_name, traffic_type_name must be a non-empty string")
         }
         
-        if entity.trafficTypeName!.isEmpty() {
-            messageLogger.e("you passed an empty traffic_type_name, traffic_type_name must be a non-empty string")
-            error = EventValidationError.emptyTrafficType
-            return false
+        if trafficTypeName!.isEmpty() {
+            return ValidationErrorInfo(error: .some, message: "you passed an empty traffic_type_name, traffic_type_name must be a non-empty string")
+        }
+
+        if eventTypeId == nil {
+            return ValidationErrorInfo(error: .some, message: "you passed a null or undefined event_type, event_type must be a non-empty String")
         }
         
-        if entity.trafficTypeName!.hasUpperCaseChar() {
-            messageLogger.e("traffic_type_name should be all lowercase - converting string to lowercase")
-            warnings.append(EventValidationWarning.uppercaseTrafficType)
+        if eventTypeId!.isEmpty() {
+            return ValidationErrorInfo(error: .some, message: "you passed an empty event_type, event_type must be a non-empty String")
         }
         
-        if entity.eventTypeId == nil {
-            messageLogger.e("you passed a null or undefined event_type, event_type must be a non-empty String")
-            error = EventValidationError.nullType
-            return false
+        if !isTypeValid(eventTypeId!) {
+            return ValidationErrorInfo(error: .some, message: "you passed \(eventTypeId ?? "null"), event name must adhere to the regular expression \(kTrackEventNameValidationPattern). This means an event name must be alphanumeric, cannot be more than 80 characters long, and can only include a dash, underscore, period, or colon as separators of alphanumeric characters")
         }
         
-        if entity.eventTypeId!.isEmpty() {
-            messageLogger.e("you passed an empty event_type, event_type must be a non-empty String")
-            error = EventValidationError.emptyType
-            return false
+        if trafficTypeName!.hasUpperCaseChar() {
+            return ValidationErrorInfo(warning: .trafficTypeNameHasUppercaseChars , message: "traffic_type_name should be all lowercase - converting string to lowercase")
         }
-        
-        if !isTypeValid(entity.eventTypeId!) {
-            messageLogger.e("\(tag) you passed \(entity.eventTypeId ?? "null"), event name must adhere to the regular expression \(kTrackEventNameValidationPattern). This means an event name must be alphanumeric, cannot be more than 80 characters long, and can only include a dash, underscore, period, or colon as separators of alphanumeric characters")
-            error = EventValidationError.invalidType
-            return false
-        }
-        error = nil
-        return true
+        return nil
     }
 
     private func isTypeValid(_ typeName: String) -> Bool {
@@ -120,20 +65,5 @@ class EventValidator: Validator {
             return range.location == 0 && range.length == typeName.count
         }
         return false
-    }
-    
-    private func mapKeyErrorToEventError(keyError: Int) -> Int {
-        var error: Int!
-        switch keyError {
-        case KeyValidationError.nullMatchingKey:
-            error = EventValidationError.nullMatchingKey
-        case KeyValidationError.emptyMatchingKey:
-            error = EventValidationError.emptyMatchingKey
-        case KeyValidationError.longMatchingKey:
-            error = EventValidationError.longMatchingKey
-        default:
-            error = EventValidationError.unknown
-        }
-        return error
     }
 }
