@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SynchronizedDictionaryWrapper<K: Hashable,T> {
+class SyncDictionaryCollectionWrapper<K: Hashable,T> {
     
     private var queue: DispatchQueue
     private var items: [K:[T]]
@@ -44,7 +44,7 @@ class SynchronizedDictionaryWrapper<K: Hashable,T> {
         return value
     }
     
-    func removeValues(forKeys keys: Dictionary<K, [T]>.Keys) {
+    func removeValues(forKeys keys: [K]) {
         queue.async(flags: .barrier) {
             for key in keys {
                 self.items.removeValue(forKey: key)

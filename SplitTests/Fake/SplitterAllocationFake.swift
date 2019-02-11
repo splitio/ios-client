@@ -15,7 +15,7 @@ class SplitterAllocationFake: SplitterProtocol {
         return Splitter.shared.getTreatment(key: key, seed: seed, attributes: attributes, partions: partions, algo: algo)
     }
     
-    func getBucket(seed: Int, key: String ,algo: Algorithm) -> Int {
+    func getBucket(seed: Int, key: String ,algo: Algorithm) -> Int64 {
         return 1
     }
 }
