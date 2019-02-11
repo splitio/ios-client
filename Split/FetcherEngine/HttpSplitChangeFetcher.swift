@@ -17,10 +17,12 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
     
     private let restClient: RestClient
     private let splitChangeCache: SplitChangeCache
+    private let splitChangeValidator: SplitChangeValidator
     
     init(restClient: RestClient, splitCache: SplitCacheProtocol) {
         self.restClient = restClient
         self.splitChangeCache = SplitChangeCache(splitCache: splitCache)
+        self.splitChangeValidator = DefaultSplitChangeValidator()
     }
     
     func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
@@ -40,7 +42,7 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
             }
             semaphore.wait()
             
-            guard let change: SplitChange = try requestResult?.unwrap(), SplitChangeValidatable(splitChange: change).isValid(validator: SplitChangeValidator()) else {
+            guard let change: SplitChange = try requestResult?.unwrap(), splitChangeValidator.validate(change) == nil else {
                 throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
             }
             _ = self.splitChangeCache.addChange(splitChange: change)

@@ -13,8 +13,7 @@ import Foundation
   logger for validations components
  */
 protocol ValidationMessageLogger {
-    func e(_ message: String)
-    func w(_ message: String)
+    func log(errorInfo: ValidationErrorInfo, tag: String)
 }
 
 /**
@@ -22,17 +21,22 @@ protocol ValidationMessageLogger {
  */
 class DefaultValidationMessageLogger: ValidationMessageLogger {
     
-    let tag: String
-    
-    init(tag: String) {
-        self.tag = tag
+    func log(errorInfo: ValidationErrorInfo, tag: String) {
+        if errorInfo.isError, let message = errorInfo.errorMessage {
+            e(message: message, tag: tag)
+        } else {
+            let warnings = errorInfo.warnings.values
+            for warning in warnings {
+                w(message: warning, tag: tag)
+            }
+        }
     }
-    
-    func e(_ message: String) {
+
+    private func e(message: String, tag: String = "") {
         Logger.e("\(tag): \(message)")
     }
     
-    func w(_ message: String) {
+    private func w(message: String, tag: String = "") {
         Logger.w("\(tag): \(message)")
     }
 }

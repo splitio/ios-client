@@ -14,7 +14,7 @@ class SplitChangeValidatorTests: XCTestCase {
     var validator: SplitChangeValidator!
     
     override func setUp() {
-        validator = SplitChangeValidator()
+        validator = DefaultSplitChangeValidator()
     }
     
     override func tearDown() {
@@ -25,11 +25,11 @@ class SplitChangeValidatorTests: XCTestCase {
         change.splits = []
         change.since = 1111
         change.till = 2222
-        XCTAssertTrue(SplitChangeValidatable(splitChange: change).isValid(validator: validator), "Change should be valid")
+        XCTAssertNil(validator.validate(change))
     }
     
     func testAllNull() {
-        XCTAssertFalse(SplitChangeValidatable(splitChange: SplitChange()).isValid(validator: validator), "Change should be valid")
+        XCTAssertNotNil(validator.validate(SplitChange()))
     }
     
     func testNullSplits() {
@@ -37,7 +37,7 @@ class SplitChangeValidatorTests: XCTestCase {
         change.splits = nil
         change.since = 1111
         change.till = 2222
-        XCTAssertFalse(SplitChangeValidatable(splitChange: change).isValid(validator: validator), "Change should be valid")
+        XCTAssertNotNil(validator.validate(change))
     }
     
     func testNullSince() {
@@ -45,7 +45,7 @@ class SplitChangeValidatorTests: XCTestCase {
         change.splits = []
         change.since = nil
         change.till = 2222
-        XCTAssertFalse(SplitChangeValidatable(splitChange: change).isValid(validator: validator), "Change should be valid")
+        XCTAssertNotNil(validator.validate(change))
     }
     
     func testNullTill() {
@@ -53,6 +53,6 @@ class SplitChangeValidatorTests: XCTestCase {
         change.splits = []
         change.since = 1111
         change.till = nil
-        XCTAssertFalse(SplitChangeValidatable(splitChange: change).isValid(validator: validator), "Change should be valid")
+        XCTAssertNotNil(validator.validate(change))
     }
 }

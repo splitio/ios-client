@@ -14,17 +14,7 @@ extension String {
     }
     
     public func hasUpperCaseChar() -> Bool {
-        
-        if self.isEmpty() {
-            return false
-        }
-        
-        let validationRegex: NSRegularExpression? = try? NSRegularExpression(pattern: "^.*[A-Z]+.*$", options: [])
-        if let regex = validationRegex {
-            let range = regex.rangeOfFirstMatch(in: self, options: [], range: NSRange(location: 0,  length: self.count))
-            return range.length > 0
-        }
-        return false
+        return self.lowercased() != self
     }
     
 }

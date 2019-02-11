@@ -14,64 +14,59 @@ class KeyValidatorTests: XCTestCase {
     var validator: KeyValidator!
     
     override func setUp() {
-        validator = KeyValidator(tag: "KeyValidatorTests")
+        validator = DefaultKeyValidator()
     }
     
     override func tearDown() {
     }
     
     func testValidMatchingKey() {
-        let key = KeyValidatable(matchingKey: "key1")
-        XCTAssertTrue(key.isValid(validator: validator), "Key should be valid")
-        XCTAssertNil(validator.error)
-        XCTAssertEqual(validator.warnings.count, 0)
+        XCTAssertNil(validator.validate(matchingKey: "key1", bucketingKey: nil))
     }
     
     func testValidMatchingAndBucketingKey() {
-        let key = KeyValidatable(matchingKey: "key1", bucketingKey: "bkey1")
-        XCTAssertTrue(key.isValid(validator: validator), "Key should be valid")
-        XCTAssertNil(validator.error)
-        XCTAssertEqual(validator.warnings.count, 0)
+        XCTAssertNil(validator.validate(matchingKey: "key1", bucketingKey: "bkey1"))
     }
     
     func testNullMatchingKey() {
-        let key = KeyValidatable(matchingKey: nil)
-        XCTAssertFalse(key.isValid(validator: validator), "Key should not be valid")
-        XCTAssertNotNil(validator.error)
-        XCTAssertEqual(validator.error, KeyValidationError.nullMatchingKey)
-        XCTAssertEqual(validator.warnings.count, 0)
-        
+        let errorInfo = validator.validate(matchingKey: nil, bucketingKey: nil);
+        XCTAssertNotNil(errorInfo)
+        XCTAssertNotNil(errorInfo?.error)
+        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
     
     func testInvalidEmptyMatchingKey() {
-        let key = KeyValidatable(matchingKey: "")
-        XCTAssertFalse(key.isValid(validator: validator), "Key should not be valid")
-        XCTAssertNotNil(validator.error)
-        XCTAssertEqual(validator.error, KeyValidationError.emptyMatchingKey)
-        XCTAssertEqual(validator.warnings.count, 0)
+        let errorInfo = validator.validate(matchingKey: "", bucketingKey: nil);
+        XCTAssertNotNil(errorInfo)
+        XCTAssertNotNil(errorInfo?.error)
+        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
     
     func testInvalidLongMatchingKey() {
-        let key = KeyValidatable(matchingKey: String(repeating: "p", count: 256))
-        XCTAssertFalse(key.isValid(validator: validator), "Key should not be valid")
-        XCTAssertEqual(validator.error, KeyValidationError.longMatchingKey)
-        XCTAssertNotNil(validator.error)
-        XCTAssertEqual(validator.warnings.count, 0)
+        let key = String(repeating: "p", count: 256)
+        let errorInfo = validator.validate(matchingKey: key, bucketingKey: nil);
+        XCTAssertNotNil(errorInfo)
+        XCTAssertNotNil(errorInfo?.error)
+        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
     
     func testInvalidEmptyBucketingKey() {
-        let key = KeyValidatable(matchingKey: "key1", bucketingKey: "")
-        XCTAssertFalse(key.isValid(validator: validator), "Key should not be valid")
-        XCTAssertNotNil(validator.error)
-        XCTAssertEqual(validator.error, KeyValidationError.emptyBucketingkey)
-        XCTAssertEqual(validator.warnings.count, 0)
+        let errorInfo = validator.validate(matchingKey: "key1", bucketingKey: "");
+        XCTAssertNotNil(errorInfo)
+        XCTAssertNotNil(errorInfo?.error)
+        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
     
     func testInvalidLongBucketingKey() {
-        let key = KeyValidatable(matchingKey: "key1", bucketingKey: String(repeating: "p", count: 256))
-        XCTAssertFalse(key.isValid(validator: validator), "Key should not be valid")
-        XCTAssertNotNil(validator.error)
-        XCTAssertEqual(validator.error, KeyValidationError.longBucketingKey)
-        XCTAssertEqual(validator.warnings.count, 0)
+        let bkey = String(repeating: "p", count: 256)
+        let errorInfo = validator.validate(matchingKey: "key1", bucketingKey: bkey);
+        XCTAssertNotNil(errorInfo)
+        XCTAssertNotNil(errorInfo?.error)
+        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
 }
