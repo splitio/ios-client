@@ -10,7 +10,7 @@ import Foundation
 /**
  Data structure to hold parsed splits and its corresponding treatment
  */
-typealias LocalhostSplits = [[String: String]]
+typealias LocalhostSplits = [String: String]
 
 /**
  Interface to implement by classes intended to parse

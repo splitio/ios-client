@@ -24,14 +24,36 @@ public class SplitFactory: NSObject, SplitFactoryProtocol {
         _client = SplitClient(config: config, key: key, splitCache: splitCache)
         _manager = SplitManager(splitFetcher: splitFetcher)
         
+        /*
+         */
+        super.init()
+        loadLhFile()
+    }
+    
+    func loadLhFile() {
+        let fileStorage = FileStorage()
+        var fileContent: String? = nil
         
         if let filepath = Bundle.main.path(forResource: "localhost", ofType: "splits") {
             do {
-                let fileContent = try String(contentsOfFile: filepath, encoding: .utf8)
-                print("Localhost file: \(fileContent)")
+                fileContent = try String(contentsOfFile: filepath, encoding: .utf8)
+                print("Localhost file: \(fileContent ?? "NOT FOUND")")
             } catch {
                 print("File Read Error for file \(filepath)")
             }
+        }
+        
+        if let content = fileContent {
+            let fileName = "localhost.splits"
+            let capath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
+            let cachesDirectory = URL(fileURLWithPath: capath)
+            let path = cachesDirectory.appendingPathComponent(fileName)
+            
+            fileStorage.write(fileName: fileName, content: content)
+            
+            print("**************************")
+            print("LOCALHOST FILE FOUND WITH PATH: \(path)")
+            print("**************************")
         }
     }
 
