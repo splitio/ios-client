@@ -46,7 +46,7 @@ class Engine {
             condition.client = self.splitClient
             if (!inRollOut && condition.conditionType == ConditionType.Rollout) {
                 if let trafficAllocation = split?.trafficAllocation, trafficAllocation < 100  {
-                    let bucket: Int = splitter.getBucket(seed: (split?.seed)!, key: bucketKey!, algo: splitAlgo)
+                    let bucket: Int64 = splitter.getBucket(seed: (split?.seed)!, key: bucketKey!, algo: splitAlgo)
                     if bucket > trafficAllocation {
                         result[Engine.EVALUATION_RESULT_TREATMENT] = split?.defaultTreatment
                         result[Engine.EVALUATION_RESULT_LABEL] = ImpressionsConstants.NOT_IN_SPLIT
