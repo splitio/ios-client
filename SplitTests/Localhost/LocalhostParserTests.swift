@@ -21,6 +21,7 @@ class LocalhostParserTests: XCTestCase {
 
     func testFile1() {
         let splits = parser.parseContent(openFile(number: 1))
+        
     }
     
     
