@@ -9,11 +9,11 @@ import Foundation
 
 open class SplitEventTask: NSObject {
     
-    @objc open func onPostExecute(client:SplitClientProtocol) -> Void {
+    @objc open func onPostExecute(client:SplitClient) -> Void {
         debugPrint("* running superclass.onPostExecute. This method should be override by developers")
     }
     
-    @objc open func onPostExecuteView(client:SplitClientProtocol) -> Void {
+    @objc open func onPostExecuteView(client:SplitClient) -> Void {
         debugPrint("* running superclass.onPostExecuteView. This method should be override by developers")
     }
 }

@@ -13,7 +13,7 @@ public class BetweenMatcher: BaseMatcher, MatcherProtocol {
     
     
     //--------------------------------------------------------------------------------------------------
-    public init(data: BetweenMatcherData?, splitClient: SplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+    public init(data: BetweenMatcherData?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
         
         super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.data = data

@@ -8,35 +8,29 @@
 
 import Foundation
 
-public class SplitFactory: NSObject, SplitFactoryProtocol {
+/**
+ This protocol was renamed from SplitFactoryProtocol to SplitFactory
+ to follow Swift guidelines
+ Also all methods where replaced by read only variables following Uniform Access Principle
+ */
+@objc public protocol SplitFactory {
 
-    let _client: SplitClientProtocol
-    let _manager: SplitManagerProtocol
-    let kValidationTag = "factory instantiation"
+    /**
+     Current Split client instance
+     - returns: An instance of a class implementing SplitClient protocol
+     */
+    var client: SplitClient { get }
 
-    @objc(initWithApiKey:key:config:) public init(apiKey: String, key: Key, config: SplitClientConfig) {
-        HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
-        MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate
-        ValidationConfig.default.maximumKeyLength = config.maximumKeyLength
+    /**
+     Current Split manager instance
+     - returns: An instance of a class implementing SplitManager protocol
+     */
+    var manager: SplitManager { get }
 
-        config.apiKey = apiKey
-        let splitCache = SplitCache()
-        let splitFetcher: SplitFetcher = LocalSplitFetcher(splitCache: splitCache)
-
-        _client = SplitClient(config: config, key: key, splitCache: splitCache)
-        _manager = SplitManager(splitFetcher: splitFetcher)
-    }
-
-    public func client() -> SplitClientProtocol {
-        return _client
-    }
-
-    public func manager() -> SplitManagerProtocol {
-        return _manager
-    }
-
-    public func version() -> String {
-        return Version.toString()
-    }
+    /**
+     Current Split SDK Version
+     - returns: A String representation of the current SDK version
+     */
+    var version: String { get }
 
 }
