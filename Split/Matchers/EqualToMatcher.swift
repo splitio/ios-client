@@ -13,7 +13,7 @@ public class EqualToMatcher: BaseMatcher, MatcherProtocol {
     
     
     //--------------------------------------------------------------------------------------------------
-    public init(data: UnaryNumericMatcherData?, splitClient: SplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+    public init(data: UnaryNumericMatcherData?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
         
         super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.data = data

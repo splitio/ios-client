@@ -20,7 +20,7 @@ import Foundation
     var dependencyMatcherData: DependencyMatcherData?
     var booleanMatcherData: Bool?
     var stringMatcherData: String?
-    public var client: SplitClient?
+    public var client: DefaultSplitClient?
     
     enum CodingKeys: String, CodingKey {
         case keySelector

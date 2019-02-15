@@ -11,7 +11,7 @@ import XCTest
 @testable import Split
 
 class LocalhostParserTests: XCTestCase {
-    
+
     let parser: LocalhostSplitsParser = SpaceDelimitedLocalhostSplitsParser()
     override func setUp() {
     }
@@ -19,12 +19,27 @@ class LocalhostParserTests: XCTestCase {
     override func tearDown() {
     }
 
-    func testFile1() {
+    func testPerfectFile() {
         let splits = parser.parseContent(openFile(number: 1))
-        
+        for i in 1...3 {
+            XCTAssertEqual("t\(i)", splits["split\(i)"])
+        }
     }
-    
-    
+
+    func testSpacedLinesFile() {
+        let splits = parser.parseContent(openFile(number: 2))
+        for i in 1...5 {
+            XCTAssertEqual("t\(i)", splits["split\(i)"])
+        }
+    }
+
+    func testIntercomentedLinesFile() {
+        let splits = parser.parseContent(openFile(number: 3))
+        for i in 1...9 {
+            XCTAssertEqual("t\(i)", splits["split\(i)"])
+        }
+    }
+
     private func openFile(number: Int) -> String {
         let fileName = "localhost_\(number)"
         let content = FileHelper.readDataFromFile(sourceClass: self, name:fileName, type: "splits")

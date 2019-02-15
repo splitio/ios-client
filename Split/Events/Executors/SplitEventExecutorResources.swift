@@ -8,15 +8,15 @@
 import Foundation
 
 public class SplitEventExecutorResources {
-    private var _client: SplitClientProtocol?
+    private var _client: SplitClient?
     
     public init() {}
     
-    public func setClient(client: SplitClientProtocol) {
+    public func setClient(client: SplitClient) {
         _client = client
     }
     
-    public func getClient() -> SplitClientProtocol {
+    public func getClient() -> SplitClient {
         return _client!
     }
 }
