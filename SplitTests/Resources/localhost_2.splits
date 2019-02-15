@@ -2,8 +2,8 @@
 # This file a simple mock for testing
 ####
 
-sample1 on
- sample_feature off
-split3 result_1
-split4 result_1 
- default_split4 result_1
+split1 t1
+ split2 t2
+split3   t3
+split4 t4
+ split5 t5

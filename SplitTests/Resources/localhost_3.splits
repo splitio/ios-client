@@ -2,19 +2,18 @@
 # This file a simple mock for testing
 ####
 
-split0 on_off
-split1 on
-#sample_feature off
-split2 off
-split3 on
-split4 off
+split1 t1
+#sample_feature aaa
+split2 t2
+split3 t3
+split4 t4
 #default_split4 result_1
-split5 on
-split6 off
-split7 on
+split5 t5
+split6 t6
+split7 t7
 #lorem ipsum mega byte
-split8 off
-split9 on
+split8 t8
+split9 t9
 #lorem ipsum mega byte
 
 

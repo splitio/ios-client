@@ -2,6 +2,6 @@
 # This file a simple mock for testing
 ####
 
-testing_split on
-testing_split2 off
-testing_split3 custom_treatment
+split1 t1
+split2 t2
+split3 t3

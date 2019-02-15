@@ -19,7 +19,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *resultLabel;
 @property (weak, nonatomic) IBOutlet UIButton *trackButton;
 
-@property (strong, nonatomic) id<SplitClientProtocol> client;
+@property (strong, nonatomic) id<SplitClient> client;
 
 @end
 
@@ -61,13 +61,18 @@
     Key *key = [[Key alloc] initWithMatchingKey:matchingKey bucketingKey:nil];
     
     //Split Factory
-    SplitFactory *factory = [[SplitFactory alloc] initWithApiKey: apiKey key: key config: config];
+    id<SplitFactoryBuilder> builder = [[DefaultSplitFactoryBuilder alloc] init];
+    [builder setApiKey: apiKey];
+    [builder setKey: key];
+    [builder setConfig: config];
+    
+    id<SplitFactory> factory = [builder build];
     
     //Showing sdk version in UI
-    self.versionLabel.text = [factory version];
+    self.versionLabel.text = factory.version;
     
     //Split Client
-    self.client = [factory client];
+    id<SplitClient> client = factory.client;
 }
 
 - (void) sendEvent {
