@@ -1,3 +1,14 @@
+2.0.0: (Feb 01, 2019)
+- Adding Factory Builder to instanciate Split Factory.
+- Removing previous Factory constructor
+- Renaming protocol SplitClientProtocol to SplitClient
+- Renaming protocol SplitFactoryProtocol to SplitFactory
+- Renaming protocol SplitManagerProtocol to SplitManager
+- Renaming old class SplitClient to DefaultSplitClient
+- Renaming old class SplitFactory to DefaultSplitFactory
+- Renaming old class SplitManager to DefaultSplitManager
+- Replaced methods from DefaultSplitManager class (Previously named SplitManager) by read only properties
+- Removed deprecated methods to set values from SplitClientConfig
 1.6.1: (Feb 5, 2019)
 - Fixed issue when casting from Int32 to Int on iPhone 5
 1.6.0: (Jan 11, 2019)
