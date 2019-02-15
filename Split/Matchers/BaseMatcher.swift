@@ -10,13 +10,13 @@ import Foundation
 
 public class BaseMatcher : NSObject  {
     
-    public var splitClient: SplitClient?
+    public var splitClient: DefaultSplitClient?
     var negate: Bool?
     var attribute: String?
     var type: MatcherType?
     
     //--------------------------------------------------------------------------------------------------
-    public init(splitClient: SplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+    public init(splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
 
         self.splitClient = splitClient
         self.negate = negate

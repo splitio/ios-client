@@ -14,7 +14,7 @@ public class StartWithMatcher: BaseMatcher, MatcherProtocol {
     var data: [String]?
     
     //--------------------------------------------------------------------------------------------------
-    public init(data:[String]?, splitClient: SplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+    public init(data:[String]?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
         
         super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.data = data
