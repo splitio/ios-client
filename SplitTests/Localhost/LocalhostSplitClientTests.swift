@@ -12,68 +12,68 @@ import XCTest
 
 class LocalhostSplitClientTests: XCTestCase {
 
-    var storage: FileStorageProtocol!
-    var fetcher: TreatmentFetcher!
-    let fileName = "localhost.splits"
+    var client: SplitClient!
     
     override func setUp() {
+        let fileName = "localhost.splits"
         let fileContent = """
                             s1 t1\n
                             s2 t2\n
-                            s3 t3
+                            s3 t3\n
+                            s4 t4\n
+                            s5 t5\n
                             """
-        storage = FileStorageStub()
-        storage.write(fileName: fileName, content: fileContent)
+        let storage = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
         config.refreshInterval = 0
-        fetcher = LocalhostTreatmentFetcher(storageManager: storage, config: config)
+        let fetcher = LocalhostTreatmentFetcher(storageManager: storage, config: config)
+        storage.write(fileName: fileName, content: fileContent)
+        fetcher.forceRefresh()
+        client = LocalhostSplitClient(treatmentFetcher: fetcher)
     }
     
     override func tearDown() {
     }
     
-    func testInitial() {
-        let fileContent = """
-                            s1 t1\n
-                            s2 t2\n
-                            s3 t3
-                            """
-        storage.write(fileName: fileName, content: fileContent)
-        fetcher.forceRefresh()
-        XCTAssertEqual(fetcher.fetchAll()?.count, 3)
-        for i in 1...3 {
-            XCTAssertEqual(fetcher.fetch(splitName: "s\(i)"), "t\(i)")
+    func testRightTreatment() {
+        for i in 1...5 {
+            XCTAssertEqual(client.getTreatment("s\(i)"), "t\(i)")
         }
     }
     
-    func testFileUpdate() {
-        let fileContent = """
-                            s5 t5\n
-                            s6 t6\n
-                            s7 t7
-                            """
-        storage.write(fileName: fileName, content: fileContent)
-        fetcher.forceRefresh()
-        XCTAssertEqual(fetcher.fetchAll()?.count, 3)
-        for i in 5...7 {
-            XCTAssertEqual(fetcher.fetch(splitName: "s\(i)"), "t\(i)")
+    func testRightTreatments() {
+        let splitsCount = 5
+        var splits = [String]()
+        for i in 1...splitsCount {
+            splits.append("s\(i)")
+        }
+        let treatments = client.getTreatments(splits: splits, attributes: nil)
+        for i in 1...splitsCount {
+            XCTAssertEqual(treatments["s\(i)"], "t\(i)")
         }
     }
     
-    func testFileUpdate2() {
-        let fileContent = """
-                            s5 t5\n
-                            s6 t6\n
-                            s7 t7\n
-                            s8 t8
-                            """
-        storage.write(fileName: fileName, content: fileContent)
-        fetcher.forceRefresh()
-        XCTAssertEqual(fetcher.fetchAll()?.count, 4)
-        for i in 5...8 {
-            XCTAssertEqual(fetcher.fetch(splitName: "s\(i)"), "t\(i)")
+    func testNonExistingSplitsTreatment() {
+        XCTAssertEqual(client.getTreatment("pocho"), SplitConstants.CONTROL)
+        XCTAssertEqual(client.getTreatment("toto"), SplitConstants.CONTROL)
+        XCTAssertEqual(client.getTreatment("cholo"), SplitConstants.CONTROL)
+        XCTAssertEqual(client.getTreatment("tom"), SplitConstants.CONTROL)
+        XCTAssertEqual(client.getTreatment("moncho"), SplitConstants.CONTROL)
+        XCTAssertEqual(client.getTreatment("rodolfo"), SplitConstants.CONTROL)
+        XCTAssertEqual(client.getTreatment("otto"), SplitConstants.CONTROL)
+        XCTAssertEqual(client.getTreatment("pololo"), SplitConstants.CONTROL)
+    }
+    
+    func testNonExistingSplitsTreatments() {
+        let splitsCount = 5
+        var splits = [String]()
+        for i in 1...splitsCount {
+            splits.append("s\(i + 1000)")
+        }
+        let treatments = client.getTreatments(splits: splits, attributes: nil)
+        for i in 1...splitsCount {
+            XCTAssertEqual(treatments["s\(i + 1000)"], SplitConstants.CONTROL)
         }
     }
-
 
 }
