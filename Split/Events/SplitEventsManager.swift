@@ -143,7 +143,7 @@ class SplitEventsManager {
         return executionTimes
     }
 
-    private func trigger(event: SplitEvent) {
+    private func trigger(event:SplitEvent) {
 
         // If executionTimes is zero, maximum executions has been reached
         if (self.executionTimes[event.toString()] == 0){

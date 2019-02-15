@@ -11,14 +11,13 @@ import Foundation
 public typealias SplitAction = () -> Void
 
 @objc public protocol SplitClient {
-    
+
     func getTreatment(_ split: String, attributes:[String:Any]?) -> String
     func getTreatment(_ split: String) -> String
     @objc(getTreatmentsForSplits:attributes:) func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String]
 
-    func on(_ event:SplitEvent, _ task:SplitEventTask) -> Void
     func on(event: SplitEvent, execute action: @escaping SplitAction)
-    
+
     // Track feature
     func track(trafficType: String, eventType: String) -> Bool
     func track(trafficType: String, eventType: String, value: Double) -> Bool
