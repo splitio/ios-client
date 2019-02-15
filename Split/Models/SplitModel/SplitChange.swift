@@ -12,10 +12,6 @@ import Foundation
     var splits: [Split]?
     var since: Int64?
     var till: Int64?
-    
-    var isValid: Bool {
-        return splits != nil && since != nil && till != nil
-    }
 }
 
 extension SplitChange {

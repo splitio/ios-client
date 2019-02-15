@@ -51,10 +51,12 @@ class TrackViewController: UIViewController {
         
         //Split Configuration
         let config = SplitClientConfig()
+        
         config.featuresRefreshRate = 30
         config.segmentsRefreshRate = 30
         config.impressionRefreshRate = 30
         config.sdkReadyTimeOut = 15000
+        config.connectionTimeout = 50
         
         // Track config
         config.eventsPushRate = 10
