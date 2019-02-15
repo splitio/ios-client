@@ -17,15 +17,20 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
     
     public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
-        return "CONTROL"
+        return treatmentFetcher.fetch(splitName: split) ?? SplitConstants.CONTROL
     }
     
     public func getTreatment(_ split: String) -> String {
-        return "CONTROL"
+        return getTreatment(_: split, attributes: nil)
     }
     
     public func getTreatments(splits: [String], attributes: [String : Any]?) -> [String : String] {
-        return ["FAKE_SPLIT": "CONTROL"]
+        let treatments = treatmentFetcher.fetchAll()
+        var results = [String : String]()
+        for split in splits {
+            results[split] = treatments?[split] ?? SplitConstants.CONTROL
+        }
+        return results
     }
     
     public func on(_ event: SplitEvent, _ task: SplitEventTask) {

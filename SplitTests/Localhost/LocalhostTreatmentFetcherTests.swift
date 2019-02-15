@@ -9,14 +9,12 @@
 import XCTest
 @testable import Split
 
-class LocalhostTreatmentFetcherTest: XCTestCase {
+class LocalhostTreatmentFetcherTests: XCTestCase {
 
-    var cache: SplitCacheProtocol!
     var storage: FileStorageProtocol!
     var fetcher: TreatmentFetcher!
     let fileName = "localhost.splits"
-    
-    
+
     override func setUp() {
         let fileContent = """
                             s1 t1\n
@@ -25,10 +23,9 @@ class LocalhostTreatmentFetcherTest: XCTestCase {
                             """
         storage = FileStorageStub()
         storage.write(fileName: fileName, content: fileContent)
-        cache = InMemorySplitCache()
         var config = LocalhostSplitFetcherConfig()
         config.refreshInterval = 0
-        fetcher = LocalhostSplitFetcher(splitCache: cache, storageManager: storage, config: config)
+        fetcher = LocalhostTreatmentFetcher(storageManager: storage, config: config)
     }
 
     override func tearDown() {
