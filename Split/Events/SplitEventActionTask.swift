@@ -20,11 +20,11 @@ class SplitEventActionTask: SplitEventTask {
         eventHandler = action
     }
     
-    override func onPostExecute(client:SplitClientProtocol) -> Void {
+    override func onPostExecute(client:SplitClient) -> Void {
         // Do nothing
     }
     
-    override func onPostExecuteView(client:SplitClientProtocol) -> Void {
+    override func onPostExecuteView(client:SplitClient) -> Void {
         eventHandler()
     }
 }

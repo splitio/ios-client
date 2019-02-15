@@ -54,16 +54,21 @@
     Key *key = [[Key alloc] initWithMatchingKey:matchingKey bucketingKey:nil];
     
     //Split Factory
-    SplitFactory *factory = [[SplitFactory alloc] initWithApiKey: apiKey key: key config: config];
+    id<SplitFactoryBuilder> builder = [[DefaultSplitFactoryBuilder alloc] init];
+    [builder setApiKey: apiKey];
+    [builder setKey: key];
+    [builder setConfig: config];
+    
+    id<SplitFactory> factory = [builder build];
     
     //Showing sdk version in UI
-    self.versionLabel.text = [factory version];
+    self.versionLabel.text = factory.version;
     
     //Split Client
-    id<SplitClientProtocol> client = [factory client];
+    id<SplitClient> client = factory.client;
     
     //Split Manager
-    id<SplitManagerProtocol>manager = [factory manager];
+    id<SplitManager>manager = factory.manager;
     
     [client onEvent: SplitEventSdkReady execute: ^(){
         
