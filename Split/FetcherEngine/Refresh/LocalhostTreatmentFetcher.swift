@@ -67,12 +67,9 @@ class LocalhostTreatmentFetcher: TreatmentFetcher {
     }
     
     private func loadFile() {
-        print("LOCALHOST LOADING FILE CONTENT ********************************")
         if let content = fileStorage.read(fileName: fullFileName), !content.isEmpty {
             let loadedSplits = fileParser.parseContent(content)
             splits.setValues(loadedSplits)
-            print("LOCALHOST FILE CONTENT ********************************")
-            print(content)
         }
     }
     
@@ -99,12 +96,6 @@ class LocalhostTreatmentFetcher: TreatmentFetcher {
         let cachePath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
         let cacheDirectory = URL(fileURLWithPath: cachePath)
         let path = cacheDirectory.appendingPathComponent(fullFileName)
-        Logger.d("****************************************************")
-        Logger.d("LOCALHOST FILE FOUND WITH PATH: \(path)")
-        Logger.d("****************************************************")
-        
-        print("****************************************************")
-        print("LOCALHOST FILE FOUND WITH PATH: \(path)")
-        print("****************************************************")
+        Logger.d("Localhost file path: \(path)")
     }
 }
