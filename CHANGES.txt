@@ -10,8 +10,8 @@
 - Replacing methods from DefaultSplitManager class (Previously named SplitManager) by read only properties
 - Removing deprecated methods to set values from SplitClientConfig
 - Adding validations for user input
-1.6.1: (Feb 5, 2019)
-- Fixing issue when casting from Int32 to Int on iPhone 5
+1.6.1: (Feb 7, 2019)
+- Fixed issue when casting from Int32 to Int on iPhone 5
 1.6.0: (Jan 11, 2019)
 - Adding Objective C support
 - Fixing issue about allocation = 1
