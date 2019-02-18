@@ -18,7 +18,7 @@ class TrackViewController: UIViewController {
     @IBOutlet weak var resultLabel: UILabel!
     
     var factory: SplitFactory?
-    var client: SplitClientProtocol?
+    var client: SplitClient?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,10 +51,12 @@ class TrackViewController: UIViewController {
         
         //Split Configuration
         let config = SplitClientConfig()
+        
         config.featuresRefreshRate = 30
         config.segmentsRefreshRate = 30
         config.impressionRefreshRate = 30
         config.sdkReadyTimeOut = 15000
+        config.connectionTimeout = 50
         
         // Track config
         config.eventsPushRate = 10
@@ -67,10 +69,11 @@ class TrackViewController: UIViewController {
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: nil)
         
         //Split Factory
-        self.factory = SplitFactory(apiKey: authorizationKey, key: key, config: config)
+        let builder = DefaultSplitFactoryBuilder()
+        self.factory = builder.setApiKey(authorizationKey).setKey(key).setConfig(config).build()
         
         //Split Client
-        self.client = self.factory?.client()
+        self.client = self.factory?.client
     }
     
     private func sendEvent(){

@@ -13,7 +13,7 @@ public class Evaluator {
     public var impressions: [Impression] 
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
-    internal var splitClient: SplitClient?  {
+    internal var splitClient: DefaultSplitClient?  {
         
         didSet {
             
@@ -29,7 +29,7 @@ public class Evaluator {
         return instance;
     }()
     //------------------------------------------------------------------------------------------------------------------
-    public init(splitClient: SplitClient? = nil) {
+    public init(splitClient: DefaultSplitClient? = nil) {
         
         self.splitClient = splitClient
         self.splitFetcher = self.splitClient?.splitFetcher
@@ -38,9 +38,9 @@ public class Evaluator {
     }
     //------------------------------------------------------------------------------------------------------------------
     public func evalTreatment(key: String, bucketingKey: String? , split: String, attributes:[String:Any]?) throws -> [String:Any]?  {
-        
-        var result: [String:Any] = [:]
 
+        var result: [String:Any] = [:]
+        
         if let splitTreated: Split = splitFetcher?.fetch(splitName: split), splitTreated.status != Status.Archived {
             
             if let killed = splitTreated.killed, killed {

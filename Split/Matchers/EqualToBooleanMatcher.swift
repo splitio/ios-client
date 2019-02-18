@@ -12,7 +12,7 @@ public class EqualToBooleanMatcher: BaseMatcher, MatcherProtocol {
     var data: Bool?
     
     //--------------------------------------------------------------------------------------------------
-    public init(data: Bool?, splitClient: SplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+    public init(data: Bool?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
         
         super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.data = data

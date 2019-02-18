@@ -32,7 +32,12 @@
     
     NSString *apiKey = @"YOUR_API_KEY";
     NSString *splitName = self.splitsField.text;
-    NSString *matchingKey = self.matchingKeyField.text;
+    NSString *matchingKey = nil;
+    
+    if(self.matchingKeyField.text != nil &&
+       ![[self.matchingKeyField.text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] isEqualToString:@""]) {
+        matchingKey = self.matchingKeyField.text;
+    }
     
     // Split Config
     SplitClientConfig *config = [[SplitClientConfig alloc] init];
@@ -46,13 +51,18 @@
     Key *key = [[Key alloc] initWithMatchingKey:matchingKey bucketingKey:nil];
     
     //Split Factory
-    SplitFactory *factory = [[SplitFactory alloc] initWithApiKey: apiKey key: key config: config];
+    id<SplitFactoryBuilder> builder = [[DefaultSplitFactoryBuilder alloc] init];
+    [builder setApiKey: apiKey];
+    [builder setKey: key];
+    [builder setConfig: config];
+    
+    id<SplitFactory> factory = [builder build];
     
     //Showing sdk version in UI
-    self.versionLabel.text = [factory version];
+    self.versionLabel.text = factory.version;
     
     //Split Client
-    id<SplitClientProtocol> client = [factory client];
+    id<SplitClient> client = factory.client;
     
     [client onEvent: SplitEventSdkReady execute: ^(){
         NSDictionary *attributes = [self convertToDictionary:self.attributesField.text];

@@ -9,7 +9,7 @@
 import Foundation
 
 public class Key: NSObject {
-    
+
     let matchingKey: String
     let bucketingKey: String?
 
