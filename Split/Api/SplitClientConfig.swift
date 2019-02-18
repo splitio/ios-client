@@ -70,7 +70,7 @@ public class SplitClientConfig: NSObject {
      The amount of events to send in a POST request. Default: 2000
      */
     @objc public var eventsPerPush: Int = 2000
-    
+
     /**
      The schedule time for metrics flush after the first one. Default:  1800 seconds (30 minutes)
      */
@@ -136,11 +136,16 @@ public class SplitClientConfig: NSObject {
             Logger.shared.isVerboseModeEnabled = newValue
         }
     }
-    
+
     /**
      The logic to handle an impression log generated during a getTreatment call
         - Parameters
         - A closure of type SplitImpressionListener, that means (SplitImpression) -> Void
      */
     @objc public var impressionListener: SplitImpressionListener?
+
+    /**
+     Maximum length matching / bucketing key. Internal config
+     */
+    var maximumKeyLength = 250
 }

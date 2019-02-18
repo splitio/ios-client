@@ -10,7 +10,7 @@ import UIKit
 import Split
 
 class GetTreatmentsViewController: UIViewController {
-    
+
     @IBOutlet weak var bucketkey: UITextField?
     @IBOutlet weak var splitName: UITextField?
     @IBOutlet weak var matchingKey: UITextField?
@@ -19,74 +19,77 @@ class GetTreatmentsViewController: UIViewController {
     @IBOutlet weak var param1: UITextField?
     @IBOutlet weak var sdkVersion: UILabel?
     @IBOutlet weak var evaluateActivityIndicator: UIActivityIndicatorView!
-    
+
     var factory: SplitFactory?
     var client: SplitClient?
 
     @IBAction func evaluate(_ sender: Any) {
         evaluate()
     }
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         self.view.addGestureRecognizer(tap)
     }
-    
+
     @objc func handleTap(){
         self.view.endEditing(true)
     }
-    
+
     func evaluate() {
         // Your Split API-KEY - Change in Config.swift file
         let authorizationKey: String = "4eri39qiou5ene271kpk1tnlfnfvid89dgab"
-        
+
         //Provided keys from UI
         let matchingKeyText: String = (matchingKey?.text)!
-        let bucketing: String? = bucketkey?.text
-        
+        var bucketing: String? = nil
+
+        if let key = bucketkey?.text, !key.isEmpty() {
+            bucketing = key
+        }
+
         //Split Configuration
         let config = SplitClientConfig()
+
         config.featuresRefreshRate = 30
         config.segmentsRefreshRate = 30
         config.impressionRefreshRate = 30
         config.sdkReadyTimeOut = 15000
-        config.targetSdkEndPoint = "https://sdk.split-stage.io/api"
-        config.targetEventsEndPoint = "https://events.split-stage.io/api"
+        config.connectionTimeout = 50
 
-        
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
-        
+
         //Split Factory
         let builder = DefaultSplitFactoryBuilder()
         self.factory = builder.setApiKey(authorizationKey).setKey(key).setConfig(config).build()
-        
+
         //Split Client
         self.client = self.factory?.client
-        
+
         //Showing sdk version in UI
         self.sdkVersion?.text = "SDK Version: \(self.factory?.version ?? "unknown") "
-        
+
         guard let client = self.client else {
             return
         }
-        
+
         self.isEvaluating(active: true)
         client.on(event: SplitEvent.sdkReady) {
             [unowned self, unowned client = client] in
-            
+
             // Main thread stuff
             var attributes: [String:Any]?
             if let json = self.param1?.text {
                 attributes = self.convertToDictionary(text: json)
             }
-            
+
             if let splits = self.splitName?.text {
                 let splitList = splits.components(separatedBy: ",")
                 let result = client.getTreatments(splits: splitList, attributes: attributes)
@@ -98,7 +101,7 @@ class GetTreatmentsViewController: UIViewController {
                 self.isEvaluating(active: false)
             }
         }
-        
+
         client.on(event: SplitEvent.sdkReadyTimedOut) {
             [unowned self] in
             // Main thread stuff
@@ -109,7 +112,7 @@ class GetTreatmentsViewController: UIViewController {
             }
         }
     }
-    
+
     func convertToDictionary(text: String) -> [String: Any]? {
         if let data = text.data(using: .utf8) {
             do {
@@ -120,7 +123,7 @@ class GetTreatmentsViewController: UIViewController {
         }
         return nil
     }
-    
+
     func isEvaluating(active: Bool){
         if active {
             self.evaluateActivityIndicator.startAnimating()
