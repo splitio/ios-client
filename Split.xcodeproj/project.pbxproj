@@ -1138,6 +1138,8 @@
 				59FB7C1321F78C4E00ECC96A /* EventValidatorTests.swift */,
 			);
 			path = ValidatorsTests;
+			sourceTree = "<group>";
+		};
 		59FB7C262202454700ECC96A /* Localhost */ = {
 			isa = PBXGroup;
 			children = (
