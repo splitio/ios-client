@@ -28,11 +28,11 @@
 		3B6DEF1D20EA6AE50067435E /* PollingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7B20EA6ADF0067435E /* PollingManager.swift */; };
 		3B6DEF1E20EA6AE50067435E /* TrackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7C20EA6ADF0067435E /* TrackManager.swift */; };
 		3B6DEF1F20EA6AE50067435E /* SplitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7D20EA6ADF0067435E /* SplitError.swift */; };
-		3B6DEF2020EA6AE50067435E /* SplitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7E20EA6ADF0067435E /* SplitClient.swift */; };
+		3B6DEF2020EA6AE50067435E /* DefaultSplitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7E20EA6ADF0067435E /* DefaultSplitClient.swift */; };
 		3B6DEF2120EA6AE50067435E /* HttpSplitChangeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7F20EA6ADF0067435E /* HttpSplitChangeFetcher.swift */; };
 		3B6DEF2220EA6AE50067435E /* SplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8120EA6ADF0067435E /* SplitView.swift */; };
 		3B6DEF2320EA6AE50067435E /* HttpMySegmentsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8220EA6AE00067435E /* HttpMySegmentsFetcher.swift */; };
-		3B6DEF2420EA6AE50067435E /* SplitFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8320EA6AE00067435E /* SplitFactory.swift */; };
+		3B6DEF2420EA6AE50067435E /* DefaultSplitFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8320EA6AE00067435E /* DefaultSplitFactory.swift */; };
 		3B6DEF2520EA6AE50067435E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8420EA6AE00067435E /* Version.swift */; };
 		3B6DEF2620EA6AE50067435E /* SplitClientConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8520EA6AE00067435E /* SplitClientConfig.swift */; };
 		3B6DEF2720EA6AE50067435E /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8620EA6AE00067435E /* Logger.swift */; };
@@ -49,8 +49,8 @@
 		3B6DEF3320EA6AE50067435E /* Partition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9720EA6AE00067435E /* Partition.swift */; };
 		3B6DEF3420EA6AE50067435E /* Splitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9820EA6AE00067435E /* Splitter.swift */; };
 		3B6DEF3520EA6AE50067435E /* SecureDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9A20EA6AE00067435E /* SecureDataStore.swift */; };
-		3B6DEF3620EA6AE50067435E /* SplitClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9B20EA6AE10067435E /* SplitClientProtocol.swift */; };
-		3B6DEF3720EA6AE50067435E /* SplitManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9C20EA6AE10067435E /* SplitManagerProtocol.swift */; };
+		3B6DEF3620EA6AE50067435E /* SplitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9B20EA6AE10067435E /* SplitClient.swift */; };
+		3B6DEF3720EA6AE50067435E /* SplitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9C20EA6AE10067435E /* SplitManager.swift */; };
 		3B6DEF3820EA6AE50067435E /* Data+StringRepresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9E20EA6AE10067435E /* Data+StringRepresentation.swift */; };
 		3B6DEF3920EA6AE50067435E /* Date+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9F20EA6AE10067435E /* Date+Utils.swift */; };
 		3B6DEF3A20EA6AE50067435E /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEA020EA6AE10067435E /* Dictionary+Extensions.swift */; };
@@ -88,7 +88,7 @@
 		3B6DEF5A20EA6AE50067435E /* SplitEventTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC620EA6AE20067435E /* SplitEventTask.swift */; };
 		3B6DEF5B20EA6AE50067435E /* SplitInternalEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC720EA6AE20067435E /* SplitInternalEvent.swift */; };
 		3B6DEF5C20EA6AE50067435E /* .gitkeep in Resources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC920EA6AE20067435E /* .gitkeep */; };
-		3B6DEF5D20EA6AE50067435E /* SplitFactoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEECA20EA6AE30067435E /* SplitFactoryProtocol.swift */; };
+		3B6DEF5D20EA6AE50067435E /* SplitFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEECA20EA6AE30067435E /* SplitFactory.swift */; };
 		3B6DEF5E20EA6AE50067435E /* AllKeysMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEECC20EA6AE30067435E /* AllKeysMatcher.swift */; };
 		3B6DEF5F20EA6AE50067435E /* BaseMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEECD20EA6AE30067435E /* BaseMatcher.swift */; };
 		3B6DEF6020EA6AE50067435E /* BetweenMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEECE20EA6AE30067435E /* BetweenMatcher.swift */; };
@@ -108,7 +108,7 @@
 		3B6DEF6E20EA6AE50067435E /* PartOfSetMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEDD20EA6AE30067435E /* PartOfSetMatcher.swift */; };
 		3B6DEF6F20EA6AE50067435E /* StartWithMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEDE20EA6AE30067435E /* StartWithMatcher.swift */; };
 		3B6DEF7020EA6AE50067435E /* Whitelist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEDF20EA6AE30067435E /* Whitelist.swift */; };
-		3B6DEF7120EA6AE50067435E /* SplitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEE020EA6AE30067435E /* SplitManager.swift */; };
+		3B6DEF7120EA6AE50067435E /* DefaultSplitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEE020EA6AE30067435E /* DefaultSplitManager.swift */; };
 		3B6DEF7220EA6AE50067435E /* RestClientConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEE420EA6AE30067435E /* RestClientConfiguration.swift */; };
 		3B6DEF7320EA6AE50067435E /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEE620EA6AE30067435E /* Json.swift */; };
 		3B6DEF7420EA6AE50067435E /* RestClient+Impressions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEE820EA6AE30067435E /* RestClient+Impressions.swift */; };
@@ -193,6 +193,7 @@
 		5982D938219F57BE00230F44 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D937219F57BE00230F44 /* FileHelper.swift */; };
 		5982D9C021B00EBC00230F44 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D9BF21B00EBC00230F44 /* EngineTests.swift */; };
 		5982D9C421B04FA400230F44 /* MySegmentsCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D9C321B04FA400230F44 /* MySegmentsCacheTests.swift */; };
+		59B8B8B0220C6E3F003E0D5A /* ValidationErrorInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8AF220C6E3F003E0D5A /* ValidationErrorInfo.swift */; };
 		59B8B8AA220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */; };
 		59B8B8AC220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8AB220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift */; };
 		59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C492FA216695D500F5F774 /* Murmur3HashingTest.swift */; };
@@ -206,6 +207,23 @@
 		59F6AAA9215EBD4400A51997 /* CounterMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AAA6215EBD4400A51997 /* CounterMetric.swift */; };
 		59F6AAAA215EBD4400A51997 /* MetricGauge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AAA7215EBD4400A51997 /* MetricGauge.swift */; };
 		59F6AAAB215EBD4400A51997 /* TimeMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AAA8215EBD4400A51997 /* TimeMetric.swift */; };
+		59FB7C3122030EFA00ECC96A /* SplitFactoryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3022030EFA00ECC96A /* SplitFactoryBuilder.swift */; };
+		59FB7C332203126400ECC96A /* DefaultSplitFactoryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C322203126400ECC96A /* DefaultSplitFactoryBuilder.swift */; };
+		59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */; };
+		59FB7BCA21DFE0A500ECC96A /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BC921DFE0A500ECC96A /* String+Utils.swift */; };
+		59FB7BCE21E68E2400ECC96A /* KeyValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BCD21E68E2400ECC96A /* KeyValidator.swift */; };
+		59FB7BD521E7C64700ECC96A /* SplitValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BD421E7C64700ECC96A /* SplitValidator.swift */; };
+		59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BD621E7EC0700ECC96A /* KeyValidatorTests.swift */; };
+		59FB7C0821ED21C600ECC96A /* SplitChangeValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C0721ED21C600ECC96A /* SplitChangeValidator.swift */; };
+		59FB7C0B21F0FF1700ECC96A /* ValidationConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C0A21F0FF1700ECC96A /* ValidationConfig.swift */; };
+		59FB7C0D21F6099500ECC96A /* EventValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C0C21F6099500ECC96A /* EventValidator.swift */; };
+		59FB7C1121F7572700ECC96A /* ApiKeyValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1021F7572700ECC96A /* ApiKeyValidator.swift */; };
+		59FB7C1421F78C4E00ECC96A /* EventValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1321F78C4E00ECC96A /* EventValidatorTests.swift */; };
+		59FB7C1621F79B8200ECC96A /* EventTypeNameHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1521F79B8200ECC96A /* EventTypeNameHelper.swift */; };
+		59FB7C1821F7ABEF00ECC96A /* ApiKeyValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1721F7ABEF00ECC96A /* ApiKeyValidatorTests.swift */; };
+		59FB7C1A21F7ACF300ECC96A /* SplitValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1921F7ACF300ECC96A /* SplitValidatorTests.swift */; };
+		59FB7C1C21F7AE2E00ECC96A /* SplitChangeValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1B21F7AE2E00ECC96A /* SplitChangeValidatorTests.swift */; };
+		59FB7C202200A4B200ECC96A /* ValidatorMessageLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C1F2200A4B200ECC96A /* ValidatorMessageLogger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -255,11 +273,11 @@
 		3B6DEE7B20EA6ADF0067435E /* PollingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollingManager.swift; sourceTree = "<group>"; };
 		3B6DEE7C20EA6ADF0067435E /* TrackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackManager.swift; sourceTree = "<group>"; };
 		3B6DEE7D20EA6ADF0067435E /* SplitError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitError.swift; sourceTree = "<group>"; };
-		3B6DEE7E20EA6ADF0067435E /* SplitClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitClient.swift; sourceTree = "<group>"; };
+		3B6DEE7E20EA6ADF0067435E /* DefaultSplitClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultSplitClient.swift; sourceTree = "<group>"; };
 		3B6DEE7F20EA6ADF0067435E /* HttpSplitChangeFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpSplitChangeFetcher.swift; sourceTree = "<group>"; };
 		3B6DEE8120EA6ADF0067435E /* SplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitView.swift; sourceTree = "<group>"; };
 		3B6DEE8220EA6AE00067435E /* HttpMySegmentsFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpMySegmentsFetcher.swift; sourceTree = "<group>"; };
-		3B6DEE8320EA6AE00067435E /* SplitFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitFactory.swift; sourceTree = "<group>"; };
+		3B6DEE8320EA6AE00067435E /* DefaultSplitFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultSplitFactory.swift; sourceTree = "<group>"; };
 		3B6DEE8420EA6AE00067435E /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		3B6DEE8520EA6AE00067435E /* SplitClientConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitClientConfig.swift; sourceTree = "<group>"; };
 		3B6DEE8620EA6AE00067435E /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -276,8 +294,8 @@
 		3B6DEE9720EA6AE00067435E /* Partition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Partition.swift; sourceTree = "<group>"; };
 		3B6DEE9820EA6AE00067435E /* Splitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Splitter.swift; sourceTree = "<group>"; };
 		3B6DEE9A20EA6AE00067435E /* SecureDataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecureDataStore.swift; sourceTree = "<group>"; };
-		3B6DEE9B20EA6AE10067435E /* SplitClientProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitClientProtocol.swift; sourceTree = "<group>"; };
-		3B6DEE9C20EA6AE10067435E /* SplitManagerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitManagerProtocol.swift; sourceTree = "<group>"; };
+		3B6DEE9B20EA6AE10067435E /* SplitClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitClient.swift; sourceTree = "<group>"; };
+		3B6DEE9C20EA6AE10067435E /* SplitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitManager.swift; sourceTree = "<group>"; };
 		3B6DEE9E20EA6AE10067435E /* Data+StringRepresentation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+StringRepresentation.swift"; sourceTree = "<group>"; };
 		3B6DEE9F20EA6AE10067435E /* Date+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Utils.swift"; sourceTree = "<group>"; };
 		3B6DEEA020EA6AE10067435E /* Dictionary+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extensions.swift"; sourceTree = "<group>"; };
@@ -315,7 +333,7 @@
 		3B6DEEC620EA6AE20067435E /* SplitEventTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEventTask.swift; sourceTree = "<group>"; };
 		3B6DEEC720EA6AE20067435E /* SplitInternalEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitInternalEvent.swift; sourceTree = "<group>"; };
 		3B6DEEC920EA6AE20067435E /* .gitkeep */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
-		3B6DEECA20EA6AE30067435E /* SplitFactoryProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitFactoryProtocol.swift; sourceTree = "<group>"; };
+		3B6DEECA20EA6AE30067435E /* SplitFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitFactory.swift; sourceTree = "<group>"; };
 		3B6DEECC20EA6AE30067435E /* AllKeysMatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllKeysMatcher.swift; sourceTree = "<group>"; };
 		3B6DEECD20EA6AE30067435E /* BaseMatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseMatcher.swift; sourceTree = "<group>"; };
 		3B6DEECE20EA6AE30067435E /* BetweenMatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BetweenMatcher.swift; sourceTree = "<group>"; };
@@ -335,7 +353,7 @@
 		3B6DEEDD20EA6AE30067435E /* PartOfSetMatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PartOfSetMatcher.swift; sourceTree = "<group>"; };
 		3B6DEEDE20EA6AE30067435E /* StartWithMatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartWithMatcher.swift; sourceTree = "<group>"; };
 		3B6DEEDF20EA6AE30067435E /* Whitelist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Whitelist.swift; sourceTree = "<group>"; };
-		3B6DEEE020EA6AE30067435E /* SplitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitManager.swift; sourceTree = "<group>"; };
+		3B6DEEE020EA6AE30067435E /* DefaultSplitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultSplitManager.swift; sourceTree = "<group>"; };
 		3B6DEEE420EA6AE30067435E /* RestClientConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClientConfiguration.swift; sourceTree = "<group>"; };
 		3B6DEEE620EA6AE30067435E /* Json.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Json.swift; sourceTree = "<group>"; };
 		3B6DEEE820EA6AE30067435E /* RestClient+Impressions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+Impressions.swift"; sourceTree = "<group>"; };
@@ -421,6 +439,7 @@
 		5982D937219F57BE00230F44 /* FileHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5982D9BF21B00EBC00230F44 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 		5982D9C321B04FA400230F44 /* MySegmentsCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsCacheTests.swift; sourceTree = "<group>"; };
+		59B8B8AF220C6E3F003E0D5A /* ValidationErrorInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationErrorInfo.swift; sourceTree = "<group>"; };
 		59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SyncDictionaryCollectionWrapperTest.swift; path = SplitTests/SyncDictionaryCollectionWrapperTest.swift; sourceTree = SOURCE_ROOT; };
 		59B8B8AB220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncDictionarySingleWrapperTest.swift; sourceTree = "<group>"; };
 		59C492FA216695D500F5F774 /* Murmur3HashingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Murmur3HashingTest.swift; sourceTree = "<group>"; };
@@ -434,6 +453,23 @@
 		59F6AAA6215EBD4400A51997 /* CounterMetric.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CounterMetric.swift; sourceTree = "<group>"; };
 		59F6AAA7215EBD4400A51997 /* MetricGauge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetricGauge.swift; sourceTree = "<group>"; };
 		59F6AAA8215EBD4400A51997 /* TimeMetric.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeMetric.swift; sourceTree = "<group>"; };
+		59FB7C3022030EFA00ECC96A /* SplitFactoryBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilder.swift; sourceTree = "<group>"; };
+		59FB7C322203126400ECC96A /* DefaultSplitFactoryBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultSplitFactoryBuilder.swift; sourceTree = "<group>"; };
+		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
+		59FB7BC921DFE0A500ECC96A /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
+		59FB7BCD21E68E2400ECC96A /* KeyValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValidator.swift; sourceTree = "<group>"; };
+		59FB7BD421E7C64700ECC96A /* SplitValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitValidator.swift; sourceTree = "<group>"; };
+		59FB7BD621E7EC0700ECC96A /* KeyValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValidatorTests.swift; sourceTree = "<group>"; };
+		59FB7C0721ED21C600ECC96A /* SplitChangeValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangeValidator.swift; sourceTree = "<group>"; };
+		59FB7C0A21F0FF1700ECC96A /* ValidationConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationConfig.swift; sourceTree = "<group>"; };
+		59FB7C0C21F6099500ECC96A /* EventValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventValidator.swift; sourceTree = "<group>"; };
+		59FB7C1021F7572700ECC96A /* ApiKeyValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiKeyValidator.swift; sourceTree = "<group>"; };
+		59FB7C1321F78C4E00ECC96A /* EventValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventValidatorTests.swift; sourceTree = "<group>"; };
+		59FB7C1521F79B8200ECC96A /* EventTypeNameHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTypeNameHelper.swift; sourceTree = "<group>"; };
+		59FB7C1721F7ABEF00ECC96A /* ApiKeyValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiKeyValidatorTests.swift; sourceTree = "<group>"; };
+		59FB7C1921F7ACF300ECC96A /* SplitValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitValidatorTests.swift; sourceTree = "<group>"; };
+		59FB7C1B21F7AE2E00ECC96A /* SplitChangeValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangeValidatorTests.swift; sourceTree = "<group>"; };
+		59FB7C1F2200A4B200ECC96A /* ValidatorMessageLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorMessageLogger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -559,15 +595,17 @@
 		3B6DEE8020EA6ADF0067435E /* Api */ = {
 			isa = PBXGroup;
 			children = (
-				3B6DEE7E20EA6ADF0067435E /* SplitClient.swift */,
+				3B6DEE7E20EA6ADF0067435E /* DefaultSplitClient.swift */,
 				3B6DEE8520EA6AE00067435E /* SplitClientConfig.swift */,
-				3B6DEE9B20EA6AE10067435E /* SplitClientProtocol.swift */,
+				3B6DEE9B20EA6AE10067435E /* SplitClient.swift */,
 				3B6DEE8120EA6ADF0067435E /* SplitView.swift */,
 				3B6DEE7D20EA6ADF0067435E /* SplitError.swift */,
-				3B6DEE8320EA6AE00067435E /* SplitFactory.swift */,
-				3B6DEECA20EA6AE30067435E /* SplitFactoryProtocol.swift */,
-				3B6DEEE020EA6AE30067435E /* SplitManager.swift */,
-				3B6DEE9C20EA6AE10067435E /* SplitManagerProtocol.swift */,
+				3B6DEE8320EA6AE00067435E /* DefaultSplitFactory.swift */,
+				3B6DEECA20EA6AE30067435E /* SplitFactory.swift */,
+				3B6DEEE020EA6AE30067435E /* DefaultSplitManager.swift */,
+				3B6DEE9C20EA6AE10067435E /* SplitManager.swift */,
+				59FB7C3022030EFA00ECC96A /* SplitFactoryBuilder.swift */,
+				59FB7C322203126400ECC96A /* DefaultSplitFactoryBuilder.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -632,6 +670,7 @@
 				3B6DEEA020EA6AE10067435E /* Dictionary+Extensions.swift */,
 				3B6DEEA120EA6AE10067435E /* Dictionary+JSON.swift */,
 				590DF9D32140287F0082B94F /* SplitView+StringConvertible.swift */,
+				59FB7BC921DFE0A500ECC96A /* String+Utils.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -898,6 +937,7 @@
 				5912D151219A022000BC698C /* CsvHelper.swift */,
 				5982D937219F57BE00230F44 /* FileHelper.swift */,
 				5919C64721C7D45B00EC35B8 /* SplitHelper.swift */,
+				59FB7C1521F79B8200ECC96A /* EventTypeNameHelper.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -916,6 +956,7 @@
 		59163B11216396EF00C7AA57 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				59FB7BCF21E77ABD00ECC96A /* Validators */,
 				3B6DEF0220EA6AE30067435E /* Utils */,
 				3B6DEF0520EA6AE40067435E /* Structs */,
 				3B6DEE9D20EA6AE10067435E /* Extensions */,
@@ -942,7 +983,8 @@
 				590DF9CD213EB92D0082B94F /* Fake */,
 				592C6AF1211CBD63002D120C /* Supporting Files */,
 				592C6ADB211CBB86002D120C /* Resources */,
-				59F6AA99215E941E00A51997 /* Metrics */,
+				59F6AA99215E941E00A51997 /* MetricsTests */,
+				59FB7C1221F78BF400ECC96A /* ValidatorsTests */,
 				59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */,
 				59B8B8AB220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift */,
 				592C6AB3211B718D002D120C /* ArrayBlockingQueueTest.swift */,
@@ -961,6 +1003,7 @@
 				597848BA21BB072B00ABB4A6 /* SplitCacheTests.swift */,
 				5982D9BF21B00EBC00230F44 /* EngineTests.swift */,
 				5919C64321C7CCE400EC35B8 /* TrafficAllocationTest.swift */,
+				59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */,
 			);
 			path = SplitTests;
 			sourceTree = "<group>";
@@ -1011,13 +1054,13 @@
 			path = Metrics;
 			sourceTree = "<group>";
 		};
-		59F6AA99215E941E00A51997 /* Metrics */ = {
+		59F6AA99215E941E00A51997 /* MetricsTests */ = {
 			isa = PBXGroup;
 			children = (
 				59F6AA9A215E9DA100A51997 /* LatencyCounterTests.swift */,
 				597CD339216D022F00A15487 /* MetricsManagerTests.swift */,
 			);
-			path = Metrics;
+			path = MetricsTests;
 			sourceTree = "<group>";
 		};
 		59F6AAA5215EBD0E00A51997 /* Models */ = {
@@ -1030,6 +1073,33 @@
 				597CD335216CE09100A15487 /* TimeMetricSample.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		59FB7BCF21E77ABD00ECC96A /* Validators */ = {
+			isa = PBXGroup;
+			children = (
+				59FB7BCD21E68E2400ECC96A /* KeyValidator.swift */,
+				59FB7C1021F7572700ECC96A /* ApiKeyValidator.swift */,
+				59FB7C0C21F6099500ECC96A /* EventValidator.swift */,
+				59FB7BD421E7C64700ECC96A /* SplitValidator.swift */,
+				59FB7C0721ED21C600ECC96A /* SplitChangeValidator.swift */,
+				59FB7C0A21F0FF1700ECC96A /* ValidationConfig.swift */,
+				59FB7C1F2200A4B200ECC96A /* ValidatorMessageLogger.swift */,
+				59B8B8AF220C6E3F003E0D5A /* ValidationErrorInfo.swift */,
+			);
+			path = Validators;
+			sourceTree = "<group>";
+		};
+		59FB7C1221F78BF400ECC96A /* ValidatorsTests */ = {
+			isa = PBXGroup;
+			children = (
+				59FB7BD621E7EC0700ECC96A /* KeyValidatorTests.swift */,
+				59FB7C1721F7ABEF00ECC96A /* ApiKeyValidatorTests.swift */,
+				59FB7C1B21F7AE2E00ECC96A /* SplitChangeValidatorTests.swift */,
+				59FB7C1921F7ACF300ECC96A /* SplitValidatorTests.swift */,
+				59FB7C1321F78C4E00ECC96A /* EventValidatorTests.swift */,
+			);
+			path = ValidatorsTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1167,17 +1237,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B6DEF2920EA6AE50067435E /* ImpressionManager.swift in Sources */,
+				59FB7C0B21F0FF1700ECC96A /* ValidationConfig.swift in Sources */,
 				3B6DEF1C20EA6AE50067435E /* EventsHit.swift in Sources */,
 				3B6DEF4220EA6AE50067435E /* SplitModels+StringConvertible.swift in Sources */,
 				3B6DEF1F20EA6AE50067435E /* SplitError.swift in Sources */,
 				3B6DEF5220EA6AE50067435E /* UserDefinedSegmentMatcherData.swift in Sources */,
 				3B6DEF7620EA6AE50067435E /* RestClient+SplitChanges.swift in Sources */,
+				59FB7BD521E7C64700ECC96A /* SplitValidator.swift in Sources */,
 				3B6DEF6E20EA6AE50067435E /* PartOfSetMatcher.swift in Sources */,
 				59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */,
 				3B6DEF7520EA6AE50067435E /* RestClient+MySegments.swift in Sources */,
 				3B6DEF8B20EA6AE50067435E /* FileStorage.swift in Sources */,
-				3B6DEF2420EA6AE50067435E /* SplitFactory.swift in Sources */,
+				3B6DEF2420EA6AE50067435E /* DefaultSplitFactory.swift in Sources */,
 				3B6DEF1B20EA6AE50067435E /* EventsFile.swift in Sources */,
+				59FB7BCE21E68E2400ECC96A /* KeyValidator.swift in Sources */,
 				59163B0F2162571E00C7AA57 /* PeriodicDataTask.swift in Sources */,
 				3B6DEF2320EA6AE50067435E /* HttpMySegmentsFetcher.swift in Sources */,
 				3B6DEF5620EA6AE50067435E /* SplitEventExecutorResources.swift in Sources */,
@@ -1202,7 +1275,7 @@
 				3B6DEF7920EA6AE50067435E /* HttpClient.swift in Sources */,
 				597CD32B216BA09000A15487 /* RestClient+Metrics.swift in Sources */,
 				3B6DEF6020EA6AE50067435E /* BetweenMatcher.swift in Sources */,
-				3B6DEF3720EA6AE50067435E /* SplitManagerProtocol.swift in Sources */,
+				3B6DEF3720EA6AE50067435E /* SplitManager.swift in Sources */,
 				3B6DEF3A20EA6AE50067435E /* Dictionary+Extensions.swift in Sources */,
 				59163B0B215EC88F00C7AA57 /* EndpointHit.swift in Sources */,
 				3B6DEF2620EA6AE50067435E /* SplitClientConfig.swift in Sources */,
@@ -1219,6 +1292,7 @@
 				3B6DEF2820EA6AE50067435E /* Impression.swift in Sources */,
 				3B6DEF3D20EA6AE50067435E /* BetweenMatcherData.swift in Sources */,
 				3B6DEF2220EA6AE50067435E /* SplitView.swift in Sources */,
+				59FB7C0821ED21C600ECC96A /* SplitChangeValidator.swift in Sources */,
 				3B6DEF3E20EA6AE50067435E /* Condition.swift in Sources */,
 				3B6DEF4320EA6AE50067435E /* Key.swift in Sources */,
 				3B6DEF7A20EA6AE50067435E /* HttpRequest.swift in Sources */,
@@ -1236,10 +1310,11 @@
 				3B6DEF4D20EA6AE50067435E /* SplitChange.swift in Sources */,
 				5912D1452193778600BC698C /* NotificationsHelper.swift in Sources */,
 				3B6DEF8420EA6AE50067435E /* Target.swift in Sources */,
+				59FB7C1121F7572700ECC96A /* ApiKeyValidator.swift in Sources */,
 				3B6DEF2B20EA6AE50067435E /* ImpressionsHit.swift in Sources */,
 				3B6DEF4920EA6AE50067435E /* MatcherType.swift in Sources */,
 				597CD336216CE09100A15487 /* TimeMetricSample.swift in Sources */,
-				3B6DEF3620EA6AE50067435E /* SplitClientProtocol.swift in Sources */,
+				3B6DEF3620EA6AE50067435E /* SplitClient.swift in Sources */,
 				3B6DEF3F20EA6AE50067435E /* ConditionType.swift in Sources */,
 				3B6DEF1120EA6AE50067435E /* SplitCacheProtocol.swift in Sources */,
 				3B6DEF1920EA6AE50067435E /* FileStorageManager.swift in Sources */,
@@ -1255,6 +1330,7 @@
 				597CD338216CE9F700A15487 /* CounterMetricSample.swift in Sources */,
 				3B6DEF6420EA6AE50067435E /* DateTime.swift in Sources */,
 				3B6DEF4720EA6AE50067435E /* MatcherGroup.swift in Sources */,
+				59FB7BCA21DFE0A500ECC96A /* String+Utils.swift in Sources */,
 				3B6DEF6520EA6AE50067435E /* DependencyMatcher.swift in Sources */,
 				3B6DEF4620EA6AE50067435E /* MatcherCombiner.swift in Sources */,
 				59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */,
@@ -1266,18 +1342,23 @@
 				3B6DEF3420EA6AE50067435E /* Splitter.swift in Sources */,
 				3B6DEF4120EA6AE50067435E /* DependencyMatcherData.swift in Sources */,
 				3B6DEF4520EA6AE50067435E /* Matcher.swift in Sources */,
+				59FB7C0D21F6099500ECC96A /* EventValidator.swift in Sources */,
 				3B6DEF3C20EA6AE50067435E /* MySegmentsChangeFetcher.swift in Sources */,
 				3B6DEF3920EA6AE50067435E /* Date+Utils.swift in Sources */,
 				3B6DEF0F20EA6AE50067435E /* MySegmentsCacheProtocol.swift in Sources */,
 				3B6DEF4420EA6AE50067435E /* KeySelector.swift in Sources */,
 				59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */,
-				3B6DEF7120EA6AE50067435E /* SplitManager.swift in Sources */,
+				3B6DEF7120EA6AE50067435E /* DefaultSplitManager.swift in Sources */,
 				590DF9D6214065880082B94F /* LocalSplitFetcher.swift in Sources */,
 				59F6AAAB215EBD4400A51997 /* TimeMetric.swift in Sources */,
 				3B6DEF7720EA6AE50067435E /* RestClient+TrackEvents.swift in Sources */,
+				59FB7C202200A4B200ECC96A /* ValidatorMessageLogger.swift in Sources */,
 				3B6DEF6B20EA6AE50067435E /* InSegmentMatcher.swift in Sources */,
+				59B8B8B0220C6E3F003E0D5A /* ValidationErrorInfo.swift in Sources */,
 				3B6DEF5B20EA6AE50067435E /* SplitInternalEvent.swift in Sources */,
+				59FB7C332203126400ECC96A /* DefaultSplitFactoryBuilder.swift in Sources */,
 				3B6DEF7B20EA6AE50067435E /* HttpResponse.swift in Sources */,
+				59FB7C3122030EFA00ECC96A /* SplitFactoryBuilder.swift in Sources */,
 				590DF9EE215038200082B94F /* SyncDictionaryCollectionWrapper.swift in Sources */,
 				3B6DEF6620EA6AE50067435E /* EndsWithMatcher.swift in Sources */,
 				3B6DEF4B20EA6AE50067435E /* Split.swift in Sources */,
@@ -1297,8 +1378,8 @@
 				3B6DEF2D20EA6AE50067435E /* SplitConstants.swift in Sources */,
 				3B6DEF1E20EA6AE50067435E /* TrackManager.swift in Sources */,
 				3B6DEF5320EA6AE50067435E /* WhitelistMatcherData.swift in Sources */,
-				3B6DEF5D20EA6AE50067435E /* SplitFactoryProtocol.swift in Sources */,
-				3B6DEF2020EA6AE50067435E /* SplitClient.swift in Sources */,
+				3B6DEF5D20EA6AE50067435E /* SplitFactory.swift in Sources */,
+				3B6DEF2020EA6AE50067435E /* DefaultSplitClient.swift in Sources */,
 				3B6DEF3820EA6AE50067435E /* Data+StringRepresentation.swift in Sources */,
 				3B6DEF7D20EA6AE50067435E /* NetworkReachabilityManager.swift in Sources */,
 				3B6DEF0D20EA6AE50067435E /* InMemorySplitCache.swift in Sources */,
@@ -1324,13 +1405,17 @@
 				592C6AC6211B718E002D120C /* SplitEventsManagerTest.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
 				5982D9C421B04FA400230F44 /* MySegmentsCacheTests.swift in Sources */,
+				59FB7C1621F79B8200ECC96A /* EventTypeNameHelper.swift in Sources */,
 				59B8B8AA220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift in Sources */,
 				590DF9CC213EB7D50082B94F /* SplitManagerTest.swift in Sources */,
+				59FB7C1C21F7AE2E00ECC96A /* SplitChangeValidatorTests.swift in Sources */,
 				5912D1492195F25200BC698C /* MySegmentsCacheStubs.swift in Sources */,
 				592C6ABD211B718E002D120C /* DatesTests.swift in Sources */,
 				5912D14B2195F3C900BC698C /* FileStorageStub.swift in Sources */,
 				59F6AA9B215E9DA100A51997 /* LatencyCounterTests.swift in Sources */,
 				590DF9CF213EB95D0082B94F /* SplitCacheStub.swift in Sources */,
+				59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */,
+				59FB7C1421F78C4E00ECC96A /* EventValidatorTests.swift in Sources */,
 				5912D14F2199FD8600BC698C /* LegacyHashingTest.swift in Sources */,
 				5912D152219A022000BC698C /* CsvHelper.swift in Sources */,
 				5919C64421C7CCE400EC35B8 /* TrafficAllocationTest.swift in Sources */,
@@ -1341,11 +1426,14 @@
 				5982D9C021B00EBC00230F44 /* EngineTests.swift in Sources */,
 				592C6ABE211B718E002D120C /* ArrayBlockingQueueTest.swift in Sources */,
 				592C6AC3211B718E002D120C /* MySegmentsFetcherTests.swift in Sources */,
+				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
 				597CD33A216D022F00A15487 /* MetricsManagerTests.swift in Sources */,
 				5919C64821C7D45B00EC35B8 /* SplitHelper.swift in Sources */,
+				59FB7C1821F7ABEF00ECC96A /* ApiKeyValidatorTests.swift in Sources */,
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				592C6ABF211B718E002D120C /* InMemorySplitCacheTests.swift in Sources */,
+				59FB7C1A21F7ACF300ECC96A /* SplitValidatorTests.swift in Sources */,
 				597848BB21BB072B00ABB4A6 /* SplitCacheTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

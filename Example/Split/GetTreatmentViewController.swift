@@ -21,8 +21,8 @@ class GetTreatmentViewController: UIViewController {
     @IBOutlet weak var evaluateActivityIndicator: UIActivityIndicatorView!
     
     var factory: SplitFactory?
-    var client: SplitClientProtocol?
-    var manager: SplitManagerProtocol?
+    var client: SplitClient?
+    var manager: SplitManager?
 
     @IBAction func evaluate(_ sender: Any) {
         evaluate()
@@ -49,14 +49,18 @@ class GetTreatmentViewController: UIViewController {
         
         //Provided keys from UI
         let matchingKeyText: String = (matchingKey?.text)!
-        let bucketing: String? = bucketkey?.text
+        var bucketing: String? = nil
+        
+        if let key = bucketkey?.text, !key.isEmpty() {
+            bucketing = key
+        }
         
         //Split Configuration
         let config = SplitClientConfig()
         
         config.featuresRefreshRate = 30
         config.segmentsRefreshRate = 30
-        config.impressionRefreshRate = 30
+        config.impressionRefreshRate = 120
         config.sdkReadyTimeOut = 15000
         config.connectionTimeout = 50
 
@@ -67,20 +71,23 @@ class GetTreatmentViewController: UIViewController {
             }
         }
         
+        
+        
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
         
         //Split Factory
-        self.factory = SplitFactory(apiKey: authorizationKey, key: key, config: config)
+        let builder = DefaultSplitFactoryBuilder()
+        self.factory = builder.setApiKey(authorizationKey).setKey(key).setConfig(config).build()
         
         //Split Client
-        self.client = self.factory?.client()
+        self.client = self.factory?.client
         
         //Split Manager
-        self.manager = self.factory?.manager()
+        self.manager = self.factory?.manager
         
         //Showing sdk version in UI
-        self.sdkVersion?.text = "SDK Version: \(self.factory?.version() ?? "unknown") "
+        self.sdkVersion?.text = "SDK Version: \(self.factory?.version ?? "unknown") "
         
         guard let client = self.client else {
             return

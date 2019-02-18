@@ -10,9 +10,9 @@ import Foundation
 class SplitEventExecutorWithClient: SplitEventExecutorProtocol {
     
     private var _task: SplitEventTask
-    private var _client: SplitClientProtocol
+    private var _client: SplitClient
     
-    public init(task:SplitEventTask, client:SplitClientProtocol) {
+    public init(task:SplitEventTask, client:SplitClient) {
         _task = task
         _client = client
     }
