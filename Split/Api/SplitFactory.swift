@@ -26,7 +26,7 @@ import Foundation
      - returns: An instance of a class implementing SplitManager protocol
      */
     var manager: SplitManager { get }
-    
+
     /**
      Current Split SDK Version
      - returns: A String representation of the current SDK version

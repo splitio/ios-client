@@ -38,9 +38,9 @@ public class Evaluator {
     }
     //------------------------------------------------------------------------------------------------------------------
     public func evalTreatment(key: String, bucketingKey: String? , split: String, attributes:[String:Any]?) throws -> [String:Any]?  {
-        
-        var result: [String:Any] = [:]
 
+        var result: [String:Any] = [:]
+        
         if let splitTreated: Split = splitFetcher?.fetch(splitName: split), splitTreated.status != Status.Archived {
             
             if let killed = splitTreated.killed, killed {

@@ -49,13 +49,17 @@ class GetTreatmentViewController: UIViewController {
         
         //Provided keys from UI
         let matchingKeyText: String = (matchingKey?.text)!
-        let bucketing: String? = bucketkey?.text
+        var bucketing: String? = nil
+        
+        if let key = bucketkey?.text, !key.isEmpty() {
+            bucketing = key
+        }
         
         //Split Configuration
         let config = SplitClientConfig()
         config.featuresRefreshRate = 30
         config.segmentsRefreshRate = 30
-        config.impressionRefreshRate = 30
+        config.impressionRefreshRate = 120
         config.sdkReadyTimeOut = 15000
 
         config.impressionListener = { impression in
@@ -64,6 +68,8 @@ class GetTreatmentViewController: UIViewController {
                 // Do some async stuff
             }
         }
+        
+        
         
         //User Key
         let key: Key = Key(matchingKey: matchingKeyText, bucketingKey: bucketing)
