@@ -9,7 +9,7 @@
 import Foundation
 
 /**
- Default implementation of SplitManager protocol
+ Localhost implementation of SplitManager protocol
  */
 @objc public class LocalhostSplitManager: NSObject, SplitManager {
     
@@ -20,11 +20,22 @@ import Foundation
     }
     
     public var splits: [SplitView] {
-        return [SplitView]()
+        var splits = [SplitView]()
+        if let treatments = treatmentFetcher.fetchAll() {
+            for splitName in treatments.keys {
+                let split = SplitView()
+                split.name = splitName
+                split.killed = true
+                split.changeNumber = 0
+                split.treatments = []
+                splits.append(split)
+            }
+        }
+        return splits
     }
     
     public var splitNames: [String] {
-        return [String]()
+        return splits.compactMap { return $0.name }
     }
     
     public func split(featureName: String) -> SplitView? {
