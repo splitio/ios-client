@@ -54,14 +54,9 @@ class LocalhostSplitClientTests: XCTestCase {
     }
     
     func testNonExistingSplitsTreatment() {
-        XCTAssertEqual(client.getTreatment("pocho"), SplitConstants.CONTROL)
-        XCTAssertEqual(client.getTreatment("toto"), SplitConstants.CONTROL)
-        XCTAssertEqual(client.getTreatment("cholo"), SplitConstants.CONTROL)
-        XCTAssertEqual(client.getTreatment("tom"), SplitConstants.CONTROL)
-        XCTAssertEqual(client.getTreatment("moncho"), SplitConstants.CONTROL)
-        XCTAssertEqual(client.getTreatment("rodolfo"), SplitConstants.CONTROL)
-        XCTAssertEqual(client.getTreatment("otto"), SplitConstants.CONTROL)
-        XCTAssertEqual(client.getTreatment("pololo"), SplitConstants.CONTROL)
+        for i in 1...5 {
+            XCTAssertEqual(client.getTreatment("j\(i)"), SplitConstants.CONTROL)
+        }
     }
     
     func testNonExistingSplitsTreatments() {

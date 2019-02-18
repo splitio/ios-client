@@ -10,10 +10,12 @@ import Foundation
 
 public final class LocalhostSplitClient: NSObject, SplitClient {
     
-    var treatmentFetcher: TreatmentFetcher
+    private var treatmentFetcher: TreatmentFetcher
+    private var eventsManager: SplitEventsManager?
     
-    init(treatmentFetcher: TreatmentFetcher) {
+    init(treatmentFetcher: TreatmentFetcher, eventsManager: SplitEventsManager? = nil) {
         self.treatmentFetcher = treatmentFetcher
+        self.eventsManager = eventsManager
     }
     
     public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
@@ -37,6 +39,10 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
     
     public func on(event: SplitEvent, execute action: @escaping SplitAction) {
+        if let eventsManager = self.eventsManager {
+            let task = SplitEventActionTask(action: action)
+            eventsManager.register(event: event, task: task)
+        }
     }
     
     public func track(trafficType: String, eventType: String) -> Bool {
