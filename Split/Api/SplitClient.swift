@@ -14,29 +14,14 @@ public final class SplitClient: NSObject, SplitClientProtocol {
     
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
-    private var syncKey: Key!
     
-    let keyQueue = DispatchQueue(label: "com.splitio.com.key", attributes: .concurrent)
-    public var key: Key {
-        get {
-            var key: Key!
-            keyQueue.sync() {
-                key = self.syncKey
-            }
-            return key
-        }
-        
-        set {
-            keyQueue.async(flags: .barrier) {
-                self.syncKey = newValue
-            }
-        }
-    }
+    private let keyQueue = DispatchQueue(label: "com.splitio.com.key", attributes: .concurrent)
+    private var key: Key
     internal var initialized: Bool = false
     internal var config: SplitClientConfig?
     internal var dispatchGroup: DispatchGroup?
-    let splitImpressionManager: ImpressionManager
-    public var shouldSendBucketingKey: Bool = false
+    private let splitImpressionManager: ImpressionManager
+    private var shouldSendBucketingKey: Bool = false
 
     private var eventsManager: SplitEventsManager
     private var trackEventsManager: TrackManager
@@ -68,8 +53,14 @@ public final class SplitClient: NSObject, SplitClientProtocol {
         metricsManager = MetricsManager.shared
         
         self.initialized = false
+        
+        if let bucketingKey = key.bucketingKey, !bucketingKey.isEmpty {
+            self.key = Key(matchingKey: key.matchingKey , bucketingKey: bucketingKey)
+            shouldSendBucketingKey = true
+        } else {
+            self.key = Key(matchingKey: key.matchingKey , bucketingKey: key.matchingKey)
+        }
         super.init()
-        self.key = key
         self.dispatchGroup = nil
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()
@@ -106,30 +97,24 @@ extension SplitClient {
     }
     
     public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
-        return getTreatment(splitName: split, verifyKey: true, attributes: attributes)
+        return getTreatment(splitName: split, attributes: attributes)
     }
 
     public func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String] {
 
         var results = [String:String]()
-        self.verifyKey()
         for splitName in splits {
-            results[splitName] = getTreatment(splitName: splitName, verifyKey: false, attributes: attributes)
+            results[splitName] = getTreatment(splitName: splitName, attributes: attributes)
         }
-
         return results
     }
 
-    private func getTreatment(splitName: String, verifyKey: Bool = true, attributes:[String:Any]? = nil) -> String {
+    private func getTreatment(splitName: String, attributes:[String:Any]? = nil) -> String {
 
         let timeMetricStart = Date().unixTimestampInMicroseconds()
         let evaluator: Evaluator = Evaluator.shared
         evaluator.splitClient = self
         do {
-            if verifyKey {
-                self.verifyKey()
-            }
-
             let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: splitName, attributes: attributes)
             let label = result![Engine.EVALUATION_RESULT_LABEL] as! String
             let treatment = result![Engine.EVALUATION_RESULT_TREATMENT] as! String
@@ -164,22 +149,6 @@ extension SplitClient {
         if let externalImpressionHandler = config?.impressionListener {
             impression.attributes = attributes
             externalImpressionHandler(impression)
-        }
-    }
-
-    public func verifyKey() {
-
-        var composeKey: Key?
-        if let bucketKey = self.key.bucketingKey, bucketKey != "" {
-            composeKey = Key(matchingKey: self.key.matchingKey , bucketingKey: bucketKey)
-            self.shouldSendBucketingKey = true
-        } else {
-            composeKey = Key(matchingKey: self.key.matchingKey, bucketingKey: nil)
-            self.shouldSendBucketingKey = false
-        }
-
-        if let finalKey = composeKey {
-            self.key = finalKey
         }
     }
 }
