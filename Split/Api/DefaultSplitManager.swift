@@ -8,9 +8,9 @@
 
 import Foundation
 
-/**
- Default implementation of SplitManager protocol
- */
+///
+/// Default implementation of SplitManager protocol
+///
 @objc public class DefaultSplitManager: NSObject, SplitManager {
     
     private var splitFetcher: SplitFetcher

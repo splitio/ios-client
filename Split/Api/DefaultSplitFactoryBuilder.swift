@@ -8,13 +8,13 @@
 
 import Foundation
 
-/**
- Default implemenation of factory builder.
- This class is intended to use as a kind of Director in the future. It will use
- another concrete class implementing the same protocol to build the factory.
- The idea is to avoid as many boilerplate code when creating the factory.
- For now it's just the defaul factory.
- */
+///
+/// Default implementation of factory builder.
+/// This class is intended to use as a kind of Director in the future. It will use
+/// another concrete class implementing the same protocol to build the factory.
+/// The idea is to avoid some boilerplate code when creating the factory.
+/// For now it's just the defaul factory.
+/// 
 @objc public class DefaultSplitFactoryBuilder: NSObject, SplitFactoryBuilder {
     
     private var apiKey: String?

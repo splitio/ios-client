@@ -8,9 +8,14 @@
 
 import Foundation
 
-/**
- Default implementation of SplitManager protocol
- */
+///
+/// SplitFactory implementation for Localhost mode
+///
+/// This mode is intended to use during development.
+/// Check LocalhostSplitClient class for more information
+///  - seealso:
+/// [Split iOS SDK](https://docs.split.io/docs/ios-sdk-overview#section-localhost)
+///
 public class LocalhostSplitFactory: NSObject, SplitFactory {
     
     private let localhostClient: SplitClient

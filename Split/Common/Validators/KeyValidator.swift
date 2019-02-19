@@ -9,6 +9,14 @@
 import Foundation
 
 protocol KeyValidator {
+    ///
+    /// Validates matching and bucketing keys
+    ///
+    /// - Parameters:
+    ///     - matchingKey: Matching key to validate
+    ///     - bucketingKey: Bucketing key to validate
+    /// - Returns: nil when validations succeded, otherwise ValidationErrorInfo instance
+    ///
     func validate(matchingKey: String?, bucketingKey: String?) -> ValidationErrorInfo?
 }
 
