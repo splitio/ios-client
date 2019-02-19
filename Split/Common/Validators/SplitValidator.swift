@@ -9,11 +9,17 @@
 import Foundation
 
 
-/**
- A validator for Splits name
- */
+///
+/// A validator for Splits name
+///
 
 protocol SplitValidator {
+    ///
+    /// Validates a split name
+    ///
+    /// - Parameter name: Split name to validate
+    /// - Returns: nil when validations succeded, otherwise ValidationErrorInfo instance
+    ///
     func validate(name: String?) -> ValidationErrorInfo?
 }
 

@@ -8,9 +8,17 @@
 
 import Foundation
 
-/**
- Localhost implementation of SplitManager protocol
- */
+///
+/// SplitManager implementation for Localhost mode
+///
+/// This mode is intended to use during development.
+/// Information returned from this functions in this implementation
+/// are loaded from a local file named **localhost.splits**
+///
+/// Check LocalhostSplitClient class for more information
+///  - seealso:
+/// [Split iOS SDK](https://docs.split.io/docs/ios-sdk-overview#section-localhost)
+///
 @objc public class LocalhostSplitManager: NSObject, SplitManager {
     
     var treatmentFetcher: TreatmentFetcher

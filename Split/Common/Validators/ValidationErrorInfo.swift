@@ -8,15 +8,25 @@
 
 import Foundation
 
+///
+/// Types of erros occurring while validation
+///
 enum ValidationError {
     case some
 }
 
+///
+/// Warnings occuring during validation
+///
 enum ValidationWarning {
     case splitNameShouldBeTrimmed
     case trafficTypeNameHasUppercaseChars
 }
 
+///
+/// When validation fails, validator returns
+/// an instance of this type containing failing causes
+///
 struct ValidationErrorInfo {
     var error: ValidationError?
     var errorMessage: String?
