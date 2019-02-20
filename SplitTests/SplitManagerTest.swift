@@ -102,4 +102,9 @@ class SplitManagerTest: XCTestCase {
         XCTAssertEqual(splits.count, 5, "Removed split count")
         XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), "sample_feature0,sample_feature1,sample_feature2,sample_feature3,sample_feature5", "Removed split names check")
     }
+    
+    func testEmptyName(){
+        let split = manager.split(featureName: "  ")
+        XCTAssertNil(split)
+    }
 }
