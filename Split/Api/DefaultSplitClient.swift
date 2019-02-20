@@ -14,24 +14,9 @@ public final class DefaultSplitClient: NSObject, SplitClient {
     
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
-    private var syncKey: Key!
     
-    let keyQueue = DispatchQueue(label: "com.splitio.com.key", attributes: .concurrent)
-    public var key: Key {
-        get {
-            var key: Key!
-            keyQueue.sync() {
-                key = self.syncKey
-            }
-            return key
-        }
-        
-        set {
-            keyQueue.async(flags: .barrier) {
-                self.syncKey = newValue
-            }
-        }
-    }
+    private let keyQueue = DispatchQueue(label: "com.splitio.com.key", attributes: .concurrent)
+    private var key: Key
     internal var initialized: Bool = false
     internal var config: SplitClientConfig?
     internal var dispatchGroup: DispatchGroup?
@@ -78,8 +63,13 @@ public final class DefaultSplitClient: NSObject, SplitClient {
         metricsManager = MetricsManager.shared
         
         self.initialized = false
+        if let bucketingKey = key.bucketingKey, !bucketingKey.isEmpty() {
+            self.key = Key(matchingKey: key.matchingKey , bucketingKey: bucketingKey)
+            self.shouldSendBucketingKey = true
+        } else {
+            self.key = Key(matchingKey: key.matchingKey, bucketingKey: key.matchingKey)
+        }
         super.init()
-        self.key = key
         self.dispatchGroup = nil
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()
@@ -122,7 +112,6 @@ extension DefaultSplitClient {
         var results = [String:String]()
         
         if splits.count > 0 {
-            self.verifyKey()
             let splitsNoDuplicated = Set(splits.filter { !$0.isEmpty() }.map { $0 })
             for splitName in splitsNoDuplicated {
                 results[splitName] = getTreatment(splitName: splitName, shouldValidate: false, attributes: attributes)
@@ -162,10 +151,6 @@ extension DefaultSplitClient {
         evaluator.splitClient = self
         
         do {
-            if shouldValidate {
-                self.verifyKey()
-            }
-            
             let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: trimmedSplitName, attributes: attributes)
             let label = result![Engine.EVALUATION_RESULT_LABEL] as! String
             let treatment = result![Engine.EVALUATION_RESULT_TREATMENT] as! String
@@ -199,22 +184,6 @@ extension DefaultSplitClient {
         if let externalImpressionHandler = config?.impressionListener {
             impression.attributes = attributes
             externalImpressionHandler(impression)
-        }
-    }
-    
-    public func verifyKey() {
-        
-        var composeKey: Key?
-        if let bucketKey = self.key.bucketingKey, bucketKey != "" {
-            composeKey = Key(matchingKey: self.key.matchingKey , bucketingKey: bucketKey)
-            self.shouldSendBucketingKey = true
-        } else {
-            composeKey = Key(matchingKey: self.key.matchingKey, bucketingKey: nil)
-            self.shouldSendBucketingKey = false
-        }
-        
-        if let finalKey = composeKey {
-            self.key = finalKey
         }
     }
 }
