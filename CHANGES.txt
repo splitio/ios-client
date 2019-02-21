@@ -1,3 +1,5 @@
+1.6.2: (Feb 21, 2019)
+- Fixing key recreation issue in SplitClient
 1.6.1: (Feb 7, 2019)
 - Fixed issue when casting from Int32 to Int on iPhone 5
 1.6.0: (Jan 11, 2019)
