@@ -35,10 +35,10 @@ class Engine {
             splitAlgo = algo
         }
         
-        if bucketingKey == nil || bucketingKey == "" {
-            bucketKey = matchingKey
-        } else {
+        if let bucketingKey = bucketingKey, !bucketingKey.isEmpty {
             bucketKey = bucketingKey
+        } else {
+            bucketKey = matchingKey
         }
         
         let conditions: [Condition] = (split?.conditions)!
