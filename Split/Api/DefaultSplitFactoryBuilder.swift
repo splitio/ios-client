@@ -22,6 +22,17 @@ import Foundation
     private var bucketingKey: String?
     private var key: Key?
     private var config: SplitClientConfig?
+    private let keyValidator: KeyValidator
+    private let apiKeyValidator: ApiKeyValidator
+    private let validationLogger: ValidationMessageLogger
+    private let validationTag = "factory instantiation"
+    
+    public override init() {
+        keyValidator = DefaultKeyValidator()
+        apiKeyValidator = DefaultApiKeyValidator()
+        validationLogger = DefaultValidationMessageLogger()
+        super.init()
+    }
     
     public func setApiKey(_ apiKey: String) -> SplitFactoryBuilder {
         self.apiKey = apiKey
@@ -50,7 +61,16 @@ import Foundation
     
     public func build() -> SplitFactory? {
         
-        if apiKey == nil || (key == nil && matchingKey == nil) {
+        if let errorInfo = apiKeyValidator.validate(apiKey: apiKey) {
+            validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+            return nil
+        }
+        
+        let matchingKey = key?.matchingKey ?? self.matchingKey
+        let bucketingKey = key?.bucketingKey ?? self.bucketingKey
+        
+        if let errorInfo = keyValidator.validate(matchingKey: matchingKey, bucketingKey: bucketingKey) {
+            validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             return nil
         }
         
