@@ -1,3 +1,6 @@
+2.0.1: (Feb 01, 2019)
+- Adding some pending validations missed in 2.0.0
+- Improving key handling in Split Client
 2.0.0: (Feb 01, 2019)
 - Adding Factory Builder to instanciate Split Factory.
 - Removing previous Factory constructor
