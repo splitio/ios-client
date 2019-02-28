@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'Split'
   s.module_name      = 'Split'
-  s.version          = '2.0.1-sdks-219.1'
+  s.version          = '2.0.2-sdks-219.1'
   s.summary          = 'iOS SDK for Split'
 
   s.description      = <<-DESC
