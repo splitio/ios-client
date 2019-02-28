@@ -10,13 +10,14 @@
 - Renaming old class SplitClient to DefaultSplitClient
 - Renaming old class SplitFactory to DefaultSplitFactory
 - Renaming old class SplitManager to DefaultSplitManager
-- Replaced methods from DefaultSplitManager class (Previously named SplitManager) by read only properties
-- Removed deprecated methods to set values from SplitClientConfig
-1.6.1: (Feb 5, 2019)
+- Replacing methods from DefaultSplitManager class (Previously named SplitManager) by read only properties
+- Removing deprecated methods to set values from SplitClientConfig
+- Adding validations for user input
+1.6.1: (Feb 7, 2019)
 - Fixed issue when casting from Int32 to Int on iPhone 5
 1.6.0: (Jan 11, 2019)
-- Added Objective C support
-- Fixed issue about allocation = 1
+- Adding Objective C support
+- Fixing issue about allocation = 1
 1.5.6: (Dic 10, 2018)
 - Storing cache data on disk only when app goes to background
 1.5.5: (Nov 29, 2018)
