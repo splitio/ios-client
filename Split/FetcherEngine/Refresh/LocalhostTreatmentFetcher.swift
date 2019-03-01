@@ -16,7 +16,7 @@ class LocalhostTreatmentFetcher: TreatmentFetcher {
 
     private let refreshInterval: Int
     internal let splits: SyncDictionarySingleWrapper<String, String>
-    private let pollingManager: PollingManager?
+    private var pollingManager: PollingManager?
     private let eventsManager: SplitEventsManager?
     private let fileName = "localhost"
     private let fileType = "splits"
