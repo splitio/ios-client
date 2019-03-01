@@ -31,9 +31,36 @@ class SplitFactoryBuilderTests: XCTestCase {
         XCTAssertNil(factory, "Factory should be nil")
     }
     
+    func testEmptyApiKey() {
+        let builder: SplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        let factory = builder.setApiKey(" ").setMatchingKey("pepe").build()
+        XCTAssertNil(factory, "Factory should be nil")
+    }
+    
     func testNullMatchingKey() {
         let builder: SplitFactoryBuilder = DefaultSplitFactoryBuilder()
         let factory = builder.setApiKey("pepe").build()
+        XCTAssertNil(factory, "Factory should be nil")
+    }
+    
+    func testLongMatchingKey() {
+        let key = String(repeating: "k", count: ValidationConfig.default.maximumKeyLength + 1)
+        let builder: SplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        let factory = builder
+            .setApiKey("pepe")
+            .setMatchingKey(key)
+            .build()
+        XCTAssertNil(factory, "Factory should be nil")
+    }
+    
+    func testLongBucketingKey() {
+        let bkey = String(repeating: "k", count: ValidationConfig.default.maximumKeyLength + 1)
+        let builder: SplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        let factory = builder
+            .setApiKey("pepe")
+            .setMatchingKey("key")
+            .setBucketingKey(bkey)
+            .build()
         XCTAssertNil(factory, "Factory should be nil")
     }
     
@@ -45,7 +72,7 @@ class SplitFactoryBuilderTests: XCTestCase {
             .build()
         XCTAssertNotNil(factory, "Factory should not be nil")
     }
-    
+
     func testKey() {
         let builder: SplitFactoryBuilder = DefaultSplitFactoryBuilder()
         let factory = builder
