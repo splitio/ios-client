@@ -1,6 +1,6 @@
 //
 //  SplitManager.swift
-//  Pods
+//  Split
 //
 //  Created by Brian Sztamfater on 27/9/17.
 //
@@ -8,15 +8,16 @@
 
 import Foundation
 
-/**
- Default implementation of SplitManager protocol
- */
 @objc public class DefaultSplitManager: NSObject, SplitManager {
     
     private var splitFetcher: SplitFetcher
+    private var splitValidator: SplitValidator
+    private var validationLogger: ValidationMessageLogger
     
     init(splitFetcher: SplitFetcher) {
         self.splitFetcher = splitFetcher
+        self.splitValidator = DefaultSplitValidator()
+        self.validationLogger = DefaultValidationMessageLogger()
         super.init()
     }
     
@@ -55,7 +56,17 @@ import Foundation
     }
     
     public func split(featureName: String) -> SplitView? {
-        let filtered = splits.filter { return ( featureName.lowercased() == $0.name?.lowercased() ) }
+        
+        if let errorInfo = splitValidator.validate(name: featureName) {
+            validationLogger.log(errorInfo: errorInfo, tag: "split")
+            if errorInfo.isError {
+                return nil
+            }
+        }
+        
+        let splitName = featureName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        let filtered = splits.filter { return ( splitName == $0.name?.lowercased() ) }
         return filtered.count > 0 ? filtered[0] : nil
     }
 }
+
