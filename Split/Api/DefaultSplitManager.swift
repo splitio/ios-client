@@ -13,9 +13,9 @@ import Foundation
 ///
 @objc public class DefaultSplitManager: NSObject, SplitManager {
 
-    private var splitFetcher: SplitFetcher
-    private var splitValidator: SplitValidator
-    private var validationLogger: ValidationMessageLogger
+    private let splitFetcher: SplitFetcher
+    private let splitValidator: SplitValidator
+    private let validationLogger: ValidationMessageLogger
 
     init(splitFetcher: SplitFetcher) {
         self.splitFetcher = splitFetcher

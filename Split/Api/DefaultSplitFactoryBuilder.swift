@@ -22,7 +22,7 @@ import Foundation
     private var bucketingKey: String?
     private var key: Key?
     private var config: SplitClientConfig?
-    private var kApiKeyLocalhost = "LOCALHOST"
+    private let kApiKeyLocalhost = "LOCALHOST"
     private let keyValidator: KeyValidator
     private let apiKeyValidator: ApiKeyValidator
     private let validationLogger: ValidationMessageLogger
