@@ -43,8 +43,8 @@ import Foundation
 
 public final class LocalhostSplitClient: NSObject, SplitClient {
     
-    private var treatmentFetcher: TreatmentFetcher
-    private var eventsManager: SplitEventsManager?
+    private let treatmentFetcher: TreatmentFetcher
+    private let eventsManager: SplitEventsManager?
     
     init(treatmentFetcher: TreatmentFetcher, eventsManager: SplitEventsManager? = nil) {
         self.treatmentFetcher = treatmentFetcher

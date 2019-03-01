@@ -21,7 +21,7 @@ import Foundation
 ///
 @objc public class LocalhostSplitManager: NSObject, SplitManager {
     
-    var treatmentFetcher: TreatmentFetcher
+    let treatmentFetcher: TreatmentFetcher
     
     init(treatmentFetcher: TreatmentFetcher) {
         self.treatmentFetcher = treatmentFetcher
