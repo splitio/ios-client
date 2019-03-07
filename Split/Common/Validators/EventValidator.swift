@@ -12,6 +12,16 @@ import Foundation
  A validator for Track events
  */
 protocol EventValidator {
+    ///
+    /// Validates a split change instance
+    ///
+    /// - Parameters:
+    ///     - key: Matching key to validate
+    ///     - trafficTypeName: Traffic type to validate
+    ///     - eventTypeId: Event type to validate
+    ///     - value: track value to validate
+    /// - Returns: nil when validations succeded, otherwise ValidationErrorInfo instance
+    ///
     func validate(key: String?, trafficTypeName: String?, eventTypeId: String?, value: Double?) -> ValidationErrorInfo?
 }
 
