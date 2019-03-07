@@ -38,5 +38,5 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         
         defaultClient = DefaultSplitClient(config: config, key: key, splitCache: splitCache)
         defaultManager = DefaultSplitManager(splitFetcher: splitFetcher)
-    }
+    }    
 }

@@ -14,6 +14,12 @@ import Foundation
 /// A validator for Key component
 ///
 protocol ApiKeyValidator {
+    ///
+    /// Validates an Api Key
+    ///
+    /// - Parameter apiKey: Api key to validate
+    /// - Returns: nil when validations succeded, otherwise ValidationErrorInfo instance
+    ///
     func validate(apiKey: String?) -> ValidationErrorInfo?
 }
 
