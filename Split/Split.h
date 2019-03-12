@@ -5,7 +5,6 @@
 //  Created by Javier L. Avrudsky on 7/2/18.
 //  Copyright © 2018 Split. All rights reserved.
 //
-
 #import <UIKit/UIKit.h>
 
 //! Project version number for Split.

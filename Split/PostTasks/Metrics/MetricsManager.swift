@@ -29,19 +29,20 @@ class MetricManagerConfig {
         return MetricManagerConfig()
     }()
     var pushRateInSeconds: Int = 1800
+    var defaultDataFolderName: String = "split_data"
 }
 
-class MetricsManager: PeriodicDataTask {
+class MetricsManager {
     
+    private var lastPostTime: Int64 = Date().unixTimestamp()
     private var countersCache = SynchronizedArrayWrapper<CounterMetricSample>()
     private var timesCache = SynchronizedArrayWrapper<TimeMetricSample>()
     
     private let kTimesFile = "timesFile"
     private let kCountersFile = "countersFile"
-    
-    private var pushRateInSeconds: Int
-    private var lastPostTime: Int64 = Date().unixTimestamp()
+    private let pushRateInSeconds: Int
     private let restClient: MetricsRestClient
+    private let fileStorage: FileStorageProtocol
     
     /***
      * Shared instance to use within all app
@@ -58,23 +59,23 @@ class MetricsManager: PeriodicDataTask {
         self.init(config: config, restClient: RestClient())
     }
     
-     init(config: MetricManagerConfig, restClient: MetricsRestClient) {
-        pushRateInSeconds = config.pushRateInSeconds
+    init(config: MetricManagerConfig, restClient: MetricsRestClient) {
         self.restClient = restClient
-        super.init()
+        self.fileStorage = FileStorage(dataFolderName: config.defaultDataFolderName)
+        self.pushRateInSeconds = config.pushRateInSeconds
     }
     
-    override func saveDataToDisk() {
+    func saveDataToDisk() {
         saveTimesToDisk()
         saveCountersToDisk()
     }
     
-    override func loadDataFromDisk(){
+    func loadDataFromDisk(){
         loadTimesFile()
         loadCountersFile()
     }
     
-    override func executePeriodicAction() {
+    func sendDataToServer() {
         sendTimes()
         sendCounters()
     }
@@ -86,14 +87,14 @@ extension MetricsManager {
     func time(microseconds latency: Int64, for operationName: String) {
         timesCache.append(TimeMetricSample(operation: operationName, latency: latency))
         if shouldPostToServer() {
-            executePeriodicAction()
+            sendDataToServer()
         }
     }
     
     func count(delta: Int64, for counterName: String) {
         countersCache.append(CounterMetricSample(name: counterName, delta: delta))
         if shouldPostToServer() {
-            executePeriodicAction()
+            sendDataToServer()
         }
     }
 }
@@ -225,6 +226,44 @@ extension MetricsManager {
         } catch {
             Logger.e("Error while loading metrics counters from disk")
             return
+        }
+    }
+}
+
+// MARK: Helpers - Internal not overridable
+extension MetricsManager {
+    func loadFileContent(fileName: String, removeAfter: Bool = true) -> String? {
+        guard let fileContent = fileStorage.read(fileName: fileName) else {
+            return nil
+        }
+        if fileContent.count == 0 { return nil }
+        if removeAfter {
+            fileStorage.delete(fileName: fileName)
+        }
+        return fileContent
+    }
+    
+    func saveFileContent(fileName: String, content: String) {
+        fileStorage.write(fileName: fileName, content: content)
+    }
+}
+
+// MARK: Background / Foreground
+extension MetricsManager {
+    
+    func subscribeNotifications() {
+        NotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.loadDataFromDisk()
+        }
+        
+        NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.saveDataToDisk()
         }
     }
 }

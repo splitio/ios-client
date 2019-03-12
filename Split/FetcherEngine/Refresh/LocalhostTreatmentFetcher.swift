@@ -24,10 +24,10 @@ class LocalhostTreatmentFetcher: TreatmentFetcher {
     private let fileParser: LocalhostSplitsParser
     private let fileStorage: FileStorageProtocol
     
-    init(storageManager: FileStorageProtocol = FileStorage(), config: LocalhostSplitFetcherConfig = LocalhostSplitFetcherConfig(), eventsManager: SplitEventsManager? = nil) {
+    init(fileStorage: FileStorageProtocol, config: LocalhostSplitFetcherConfig = LocalhostSplitFetcherConfig(), eventsManager: SplitEventsManager? = nil) {
         self.fullFileName = "\(fileName).\(fileType)"
         self.fileParser = SpaceDelimitedLocalhostSplitsParser()
-        self.fileStorage = storageManager
+        self.fileStorage = fileStorage
         self.refreshInterval = config.refreshInterval
         self.splits = SyncDictionarySingleWrapper()
         self.eventsManager = eventsManager

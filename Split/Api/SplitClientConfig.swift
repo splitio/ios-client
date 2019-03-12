@@ -147,5 +147,10 @@ public class SplitClientConfig: NSObject {
     /**
      Maximum length matching / bucketing key. Internal config
      */
-    var maximumKeyLength = 250
+    let maximumKeyLength = 250
+    
+    ///
+    /// Maximum length matching / bucketing key. Internal config
+    ///
+    let defaultDataFolder = "split_data"
 }

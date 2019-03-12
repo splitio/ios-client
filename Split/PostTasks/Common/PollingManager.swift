@@ -8,7 +8,7 @@
 import Foundation
 
 struct PollingManagerConfig {
-    var firstPollWindow: Int?
+    var firstPollWindow: Int = 0
     var rate: Int = 10
 }
 
@@ -29,9 +29,7 @@ class PollingManager: PollingManagerProtocol {
     init(dispatchGroup: DispatchGroup?, config: PollingManagerConfig, triggerAction: @escaping PollingTriggerAction){
         self.dispatchGroup = dispatchGroup
         self.rate = config.rate
-        if let firstPollWindow = config.firstPollWindow {
-            self.firstPollWindow = firstPollWindow
-        }
+        self.firstPollWindow = config.firstPollWindow
         self.triggerAction = triggerAction
     }
     
