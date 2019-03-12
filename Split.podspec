@@ -15,7 +15,7 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.ios.deployment_target = '9.0'
   s.source_files = 'Split/**/*'
   s.frameworks = 'Foundation'
-  s.source_files = 'Split/*.{swift}'
+  s.source_files = 'Split/*.{swift},'*.h','*.m'
   s.source_files = 'Split/**/*.{swift}'
 
 end
