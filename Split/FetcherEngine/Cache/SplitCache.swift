@@ -21,13 +21,9 @@ class SplitCache: SplitCacheProtocol {
         var changeNumber: Int64
     }
 
-    let kSplitsFileName: String = "SPLITIO.split.splitsFile"
+    let kSplitsFileName: String = "SPLITIO.splits"
     var fileStorage: FileStorageProtocol
     var inMemoryCache: InMemorySplitCache!
-    
-    convenience init(){
-        self.init(fileStorage: FileStorage())
-    }
     
     init(fileStorage: FileStorageProtocol) {
         self.fileStorage = fileStorage

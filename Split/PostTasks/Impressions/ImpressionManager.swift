@@ -15,12 +15,10 @@ struct ImpressionManagerConfig {
 
 class ImpressionManager {
     
-    private let kImpressionsPrefix: String = "impressions_"
-    private let kImpressionsFileName: String = "impressions_"
+    private let kImpressionsFileName: String = "SPLITIO.impressions"
     private let kMaxHitAttempts = 3
     
-    private var fileStorage = FileStorage()
-    private var impressionsFileStorage: FileStorageManager?
+    private var fileStorage: FileStorageProtocol
     
     private var currentImpressionsHit = SyncDictionaryCollectionWrapper<String, Impression>()
     private var impressionsHits = SyncDictionarySingleWrapper<String, ImpressionsHit>()
@@ -31,23 +29,12 @@ class ImpressionManager {
     private var impressionsPushRate: Int!
     private var impressionsPerPush: Int64!
     
-    init(dispatchGroup: DispatchGroup? = nil, config: ImpressionManagerConfig) {
-        self.impressionsFileStorage = FileStorageManager(storage: self.fileStorage, filePrefix: kImpressionsPrefix)
-        self.impressionsFileStorage?.limitAttempts = false
+    init(dispatchGroup: DispatchGroup? = nil, config: ImpressionManagerConfig, fileStorage: FileStorageProtocol) {
+        self.fileStorage = fileStorage
         self.impressionsPushRate = config.pushRate
         self.impressionsPerPush = config.impressionsPerPush
         self.createPollingManager(dispatchGroup: dispatchGroup)
         subscribeNotifications()
-    }
-    
-    deinit {
-        #if swift(>=4.2)
-            NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
-            NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
-        #else
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: .UIApplicationDidEnterBackground, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
-        #endif
     }
 }
 
@@ -143,18 +130,18 @@ extension ImpressionManager {
 
         do {
             let json = try Json.encodeToJson(impressionsFile)
-            impressionsFileStorage?.save(content: json, as: kImpressionsFileName)
+            fileStorage.write(fileName: kImpressionsFileName, content: json)
         } catch {
             Logger.e("Could not save impressions hits)")
         }
     }
     
     func loadImpressionsFromDisk(){
-        guard let hitsJson = impressionsFileStorage?.read(fileName: kImpressionsFileName) else {
+        guard let hitsJson = fileStorage.read(fileName: kImpressionsFileName) else {
             return
         }
         if hitsJson.count == 0 { return }
-        impressionsFileStorage?.delete(fileName: kImpressionsFileName)
+        fileStorage.delete(fileName: kImpressionsFileName)
         do {
             let hitsFile = try Json.encodeFrom(json: hitsJson, to: ImpressionsFile.self)
             impressionsHits = SyncDictionarySingleWrapper()
@@ -182,22 +169,19 @@ extension ImpressionManager {
 
 // MARK: Background / Foreground
 extension ImpressionManager {
-    @objc func applicationDidEnterBackground() {
-        Logger.d("Saving Impression to disk")
-        saveImpressionsToDisk()
-    }
-    
-    @objc func applicationDidBecomeActive() {
-        loadImpressionsFromDisk()
-    }
-    
     func subscribeNotifications() {
-        #if swift(>=4.2)
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-        #else
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: .UIApplicationDidEnterBackground, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
-        #endif
+        NotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.loadImpressionsFromDisk()
+        }
+        
+        NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.saveImpressionsToDisk()
+        }
     }
 }

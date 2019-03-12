@@ -37,11 +37,12 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
     init(config: SplitClientConfig) {
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
         MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate
-    
+        
+        let fileStorage = FileStorage(dataFolderName: DataFolderFactory().createFrom(apiKey: config.apiKey) ?? config.defaultDataFolder)
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
         
-        let treatmentFetcher: TreatmentFetcher = LocalhostTreatmentFetcher()
+        let treatmentFetcher: TreatmentFetcher = LocalhostTreatmentFetcher(fileStorage: fileStorage)
         localhostClient = LocalhostSplitClient(treatmentFetcher: treatmentFetcher, eventsManager: eventsManager)
         localhostManager = LocalhostSplitManager(treatmentFetcher: treatmentFetcher)
         eventsManager.getExecutorResources().setClient(client: localhostClient)

@@ -32,14 +32,14 @@ public final class DefaultSplitClient: NSObject, SplitClient {
     private let eventValidator: EventValidator
     private let validationLogger: ValidationMessageLogger
     
-    init(config: SplitClientConfig, key: Key, splitCache: SplitCache) {
+    init(config: SplitClientConfig, key: Key, splitCache: SplitCache, fileStorage: FileStorageProtocol) {
         self.config = config
         self.keyValidator = DefaultKeyValidator()
         self.eventValidator = DefaultEventValidator()
         self.splitValidator = DefaultSplitValidator()
         self.validationLogger = DefaultValidationMessageLogger()
         
-        let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey)
+        let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
         
@@ -53,12 +53,12 @@ public final class DefaultSplitClient: NSObject, SplitClient {
         trackConfig.firstPushWindow = config.eventsFirstPushWindow
         trackConfig.eventsPerPush = config.eventsPerPush
         trackConfig.queueSize = config.eventsQueueSize
-        trackEventsManager = TrackManager(config: trackConfig)
+        trackEventsManager = TrackManager(config: trackConfig, fileStorage: fileStorage)
         
         var impressionsConfig = ImpressionManagerConfig()
         impressionsConfig.pushRate = config.impressionRefreshRate
         impressionsConfig.impressionsPerPush = config.impressionsChunkSize
-        splitImpressionManager = ImpressionManager(config: impressionsConfig)
+        splitImpressionManager = ImpressionManager(config: impressionsConfig, fileStorage: fileStorage)
         
         metricsManager = MetricsManager.shared
         
