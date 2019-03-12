@@ -27,7 +27,7 @@ class LocalhostManagerTests: XCTestCase {
         storage = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
         config.refreshInterval = 0
-        fetcher = LocalhostTreatmentFetcher(storageManager: storage, config: config)
+        fetcher = LocalhostTreatmentFetcher(fileStorage: storage, config: config)
         storage.write(fileName: fileName, content: fileContent)
         fetcher.forceRefresh()
         manager = LocalhostSplitManager(treatmentFetcher: fetcher)
