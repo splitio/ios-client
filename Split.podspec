@@ -14,7 +14,6 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.source = { :git => 'https://github.com/splitio/ios-client.git', :tag => s.version.to_s }
   s.ios.deployment_target = '9.0'
   s.frameworks = 'Foundation'
-  s.public_header_files = 'JFBCrypt.h,JFGC.h,JFRandom.h'
   s.source_files = 'Split/**/*.{swift}','Split/Common/Utils/JFBCrypt/*.{h,m}'
 
 end
