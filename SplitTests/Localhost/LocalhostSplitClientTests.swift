@@ -26,7 +26,7 @@ class LocalhostSplitClientTests: XCTestCase {
         let storage = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
         config.refreshInterval = 0
-        let fetcher = LocalhostTreatmentFetcher(storageManager: storage, config: config)
+        let fetcher = LocalhostTreatmentFetcher(fileStorage: storage, config: config)
         storage.write(fileName: fileName, content: fileContent)
         fetcher.forceRefresh()
         client = LocalhostSplitClient(treatmentFetcher: fetcher)

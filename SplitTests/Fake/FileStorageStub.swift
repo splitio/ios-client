@@ -39,4 +39,12 @@ class FileStorageStub: FileStorageProtocol {
             self.files.removeValue(forKey: fileName)
         }
     }
+    
+    func readWithProperties(fileName: String) -> String? {
+        var content: String?
+        queue.sync {
+            content = files[fileName]
+        }
+        return content
+    }
 }

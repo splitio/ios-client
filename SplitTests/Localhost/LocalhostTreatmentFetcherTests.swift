@@ -25,7 +25,7 @@ class LocalhostTreatmentFetcherTests: XCTestCase {
         storage.write(fileName: fileName, content: fileContent)
         var config = LocalhostSplitFetcherConfig()
         config.refreshInterval = 0
-        fetcher = LocalhostTreatmentFetcher(storageManager: storage, config: config)
+        fetcher = LocalhostTreatmentFetcher(fileStorage: storage, config: config)
     }
 
     override func tearDown() {
