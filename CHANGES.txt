@@ -1,3 +1,6 @@
+2.0.2: (Mar 13, 2019)
+- Adding localhost mode
+- Using different data folders for each api key factory instance
 2.0.1: (Feb 01, 2019)
 - Adding some pending validations missed in 2.0.0
 - Improving key handling in Split Client

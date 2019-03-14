@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public protocol SplitFetcher {
+protocol SplitFetcher {
     
     func fetch(splitName: String) -> Split?
     

@@ -16,12 +16,10 @@ struct TrackManagerConfig {
 
 class TrackManager {
     
-    private let kEventsPrefix: String = "events_"
-    private let kEventsFileName: String = "events_track"
+    private let kEventsFileName: String = "SPLITIO.events_track"
     private let kMaxHitAttempts = 3
     
-    private var fileStorage = FileStorage()
-    private var eventsFileStorage: FileStorageManager?
+    private var eventsFileStorage: FileStorageProtocol
     
     private var currentEventsHit = SynchronizedArrayWrapper<EventDTO>()
     private var eventsHits = SyncDictionarySingleWrapper<String, EventsHit>()
@@ -34,26 +32,14 @@ class TrackManager {
     private var eventsQueueSize: Int64!
     private var eventsPerPush: Int!
     
-    init(dispatchGroup: DispatchGroup? = nil, config: TrackManagerConfig) {
-        
-        self.eventsFileStorage = FileStorageManager(storage: self.fileStorage, filePrefix: kEventsPrefix)
-        self.eventsFileStorage?.limitAttempts = false
+    init(dispatchGroup: DispatchGroup? = nil, config: TrackManagerConfig, fileStorage: FileStorageProtocol) {
+        self.eventsFileStorage = fileStorage
         self.eventsFirstPushWindow = config.firstPushWindow
         self.eventsPushRate = config.pushRate
         self.eventsQueueSize = config.queueSize
         self.eventsPerPush = config.eventsPerPush
         self.createPollingManager(dispatchGroup: dispatchGroup)
         subscribeNotifications()
-    }
-    
-    deinit {
-        #if swift(>=4.2)
-            NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
-            NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
-        #else
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: .UIApplicationDidEnterBackground, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
-        #endif
     }
 }
 
@@ -146,18 +132,18 @@ extension TrackManager {
 
         do {
             let json = try Json.encodeToJson(eventsFile)
-            eventsFileStorage?.save(content: json, as: kEventsFileName)
+            eventsFileStorage.write(fileName: kEventsFileName, content: json)
         } catch {
             Logger.e("Could not save events hits)")
         }
     }
     
     func loadEventsFromDisk(){
-        guard let hitsJson = eventsFileStorage?.read(fileName: kEventsFileName) else {
+        guard let hitsJson = eventsFileStorage.read(fileName: kEventsFileName) else {
             return
         }
         if hitsJson.count == 0 { return }
-        eventsFileStorage?.delete(fileName: kEventsFileName)
+        eventsFileStorage.delete(fileName: kEventsFileName)
         do {
             let hitsFile = try Json.encodeFrom(json: hitsJson, to: EventsFile.self)
             if let oldHits = hitsFile.oldHits {
@@ -176,22 +162,19 @@ extension TrackManager {
 
 // MARK: Background / Foreground
 extension TrackManager {
-    @objc func applicationDidEnterBackground() {
-        Logger.d("Saving Event to disk")
-        saveEventsToDisk()
-    }
-    
-    @objc func applicationDidBecomeActive() {
-        loadEventsFromDisk()
-    }
-    
     func subscribeNotifications() {
-        #if swift(>=4.2)
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-        #else
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: .UIApplicationDidEnterBackground, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
-        #endif
+        NotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.loadEventsFromDisk()
+        }
+        
+        NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.saveEventsToDisk()
+        }
     }
 }

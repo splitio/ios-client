@@ -12,4 +12,5 @@ protocol FileStorageProtocol {
     func read(fileName: String) -> String?
     func write(fileName: String, content: String?)
     func delete(fileName: String)
+    func readWithProperties(fileName: String) -> String?
 }
