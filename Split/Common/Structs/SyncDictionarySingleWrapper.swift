@@ -67,4 +67,13 @@ class SyncDictionarySingleWrapper<K: Hashable,T> {
             self.items[key] = value
         }
     }
+    
+    func setValues(_ values: Dictionary<K,T>) {
+        queue.async(flags: .barrier) {
+            self.items.removeAll()
+            for (key, value) in values {
+                self.items[key] = value
+            }
+        }
+    }
 }

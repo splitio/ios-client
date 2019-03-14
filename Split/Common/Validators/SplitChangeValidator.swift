@@ -8,11 +8,16 @@
 
 import Foundation
 
-/**
- A validator for Splits Change
- */
-
+///
+/// A validator for Splits Change
+///
 protocol SplitChangeValidator {
+    ///
+    /// Validates a split change instance
+    ///
+    /// - Parameter change: Split Change to validate
+    /// - Returns: nil when validations succeded, otherwise ValidationErrorInfo instance
+    ///
     func validate(_ change: SplitChange) -> ValidationErrorInfo?
 }
 

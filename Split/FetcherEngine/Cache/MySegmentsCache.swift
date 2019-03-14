@@ -22,14 +22,10 @@ class MySegmentsCache: MySegmentsCacheProtocol {
         var segments: [String]
     }
     
-    private let kMySegmentsFileNamePrefix  = "SEGMENTIO.split.mySegmentsFile"
+    private let kMySegmentsFileNamePrefix  = "SPLITIO.mySegments"
     private var fileStorage: FileStorageProtocol
     private var inMemoryCache: InMemoryMySegmentsCache!
     private var matchingKey: String
-
-    convenience init(matchingKey: String) {
-        self.init(matchingKey: matchingKey, fileStorage: FileStorage())
-    }
     
     init(matchingKey: String, fileStorage: FileStorageProtocol) {
         self.matchingKey = matchingKey

@@ -57,12 +57,10 @@ class GetTreatmentViewController: UIViewController {
         
         //Split Configuration
         let config = SplitClientConfig()
-        
         config.featuresRefreshRate = 30
         config.segmentsRefreshRate = 30
         config.impressionRefreshRate = 120
         config.sdkReadyTimeOut = 15000
-        config.connectionTimeout = 50
 
         config.impressionListener = { impression in
             print("\(impression.keyName ?? "") - \(impression.treatment ?? "") - \(impression.label ?? "")")
