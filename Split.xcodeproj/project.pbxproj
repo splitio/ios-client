@@ -189,6 +189,10 @@
 		5982D938219F57BE00230F44 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D937219F57BE00230F44 /* FileHelper.swift */; };
 		5982D9C021B00EBC00230F44 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D9BF21B00EBC00230F44 /* EngineTests.swift */; };
 		5982D9C421B04FA400230F44 /* MySegmentsCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D9C321B04FA400230F44 /* MySegmentsCacheTests.swift */; };
+		599407DA223FE19D003B85CC /* TrafficTypesCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599407D9223FE19D003B85CC /* TrafficTypesCache.swift */; };
+		599407DC22400EF7003B85CC /* DefaultTrafficTypesCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599407DB22400EF7003B85CC /* DefaultTrafficTypesCache.swift */; };
+		599407DE22402B10003B85CC /* InMemoryTrafficTypesCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599407DD22402B10003B85CC /* InMemoryTrafficTypesCache.swift */; };
+		599407E022403BE9003B85CC /* TrafficTypesCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599407DF22403BE9003B85CC /* TrafficTypesCacheTests.swift */; };
 		59B8B8AA220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */; };
 		59B8B8AC220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8AB220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift */; };
 		59B8B8B0220C6E3F003E0D5A /* ValidationErrorInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8AF220C6E3F003E0D5A /* ValidationErrorInfo.swift */; };
@@ -454,6 +458,10 @@
 		5982D937219F57BE00230F44 /* FileHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5982D9BF21B00EBC00230F44 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 		5982D9C321B04FA400230F44 /* MySegmentsCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsCacheTests.swift; sourceTree = "<group>"; };
+		599407D9223FE19D003B85CC /* TrafficTypesCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrafficTypesCache.swift; sourceTree = "<group>"; };
+		599407DB22400EF7003B85CC /* DefaultTrafficTypesCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultTrafficTypesCache.swift; sourceTree = "<group>"; };
+		599407DD22402B10003B85CC /* InMemoryTrafficTypesCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InMemoryTrafficTypesCache.swift; sourceTree = "<group>"; };
+		599407DF22403BE9003B85CC /* TrafficTypesCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrafficTypesCacheTests.swift; sourceTree = "<group>"; };
 		59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SyncDictionaryCollectionWrapperTest.swift; path = SplitTests/SyncDictionaryCollectionWrapperTest.swift; sourceTree = SOURCE_ROOT; };
 		59B8B8AB220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncDictionarySingleWrapperTest.swift; sourceTree = "<group>"; };
 		59B8B8AF220C6E3F003E0D5A /* ValidationErrorInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationErrorInfo.swift; sourceTree = "<group>"; };
@@ -591,6 +599,9 @@
 				3B6DEE6820EA6ADF0067435E /* InMemorySplitCache.swift */,
 				3B6DEE6920EA6ADF0067435E /* MySegmentsCache.swift */,
 				3B6DEE6A20EA6ADF0067435E /* MySegmentsCacheProtocol.swift */,
+				599407D9223FE19D003B85CC /* TrafficTypesCache.swift */,
+				599407DB22400EF7003B85CC /* DefaultTrafficTypesCache.swift */,
+				599407DD22402B10003B85CC /* InMemoryTrafficTypesCache.swift */,
 				3B6DEE6B20EA6ADF0067435E /* SplitCache.swift */,
 				3B6DEE6C20EA6ADF0067435E /* SplitCacheProtocol.swift */,
 				3B6DEE6D20EA6ADF0067435E /* SplitChangeCache.swift */,
@@ -1044,6 +1055,7 @@
 				5912D14E2199FD8600BC698C /* LegacyHashingTest.swift */,
 				5982D933219F3D2E00230F44 /* MatcherEvalTests.swift */,
 				5982D9C321B04FA400230F44 /* MySegmentsCacheTests.swift */,
+				599407DF22403BE9003B85CC /* TrafficTypesCacheTests.swift */,
 				597848BA21BB072B00ABB4A6 /* SplitCacheTests.swift */,
 				5982D9BF21B00EBC00230F44 /* EngineTests.swift */,
 				5919C64321C7CCE400EC35B8 /* TrafficAllocationTest.swift */,
@@ -1402,11 +1414,13 @@
 				3B6DEF4920EA6AE50067435E /* MatcherType.swift in Sources */,
 				597CD336216CE09100A15487 /* TimeMetricSample.swift in Sources */,
 				59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */,
+				599407DA223FE19D003B85CC /* TrafficTypesCache.swift in Sources */,
 				3B6DEF3620EA6AE50067435E /* SplitClient.swift in Sources */,
 				3B6DEF3F20EA6AE50067435E /* ConditionType.swift in Sources */,
 				3B6DEF1120EA6AE50067435E /* SplitCacheProtocol.swift in Sources */,
 				3B6DEF3B20EA6AE50067435E /* Dictionary+JSON.swift in Sources */,
 				3B6DEF1A20EA6AE50067435E /* EventDTO.swift in Sources */,
+				599407DE22402B10003B85CC /* InMemoryTrafficTypesCache.swift in Sources */,
 				3B6DEF0E20EA6AE50067435E /* MySegmentsCache.swift in Sources */,
 				3B6DEF1620EA6AE50067435E /* RefreshableMySegmentsFetcher.swift in Sources */,
 				3B6DEF7820EA6AE50067435E /* ErrorCode.swift in Sources */,
@@ -1432,6 +1446,7 @@
 				3B6DEF4120EA6AE50067435E /* DependencyMatcherData.swift in Sources */,
 				3B6DEF4520EA6AE50067435E /* Matcher.swift in Sources */,
 				59FB7C0D21F6099500ECC96A /* EventValidator.swift in Sources */,
+				599407DC22400EF7003B85CC /* DefaultTrafficTypesCache.swift in Sources */,
 				3B6DEF3C20EA6AE50067435E /* MySegmentsChangeFetcher.swift in Sources */,
 				3B6DEF3920EA6AE50067435E /* Date+Utils.swift in Sources */,
 				3B6DEF0F20EA6AE50067435E /* MySegmentsCacheProtocol.swift in Sources */,
@@ -1526,6 +1541,7 @@
 				592C6AC3211B718E002D120C /* MySegmentsFetcherTests.swift in Sources */,
 				59DD34B42236989700FA9545 /* FolderApiKeyTests.swift in Sources */,
 				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
+				599407E022403BE9003B85CC /* TrafficTypesCacheTests.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
 				597CD33A216D022F00A15487 /* MetricsManagerTests.swift in Sources */,
 				5919C64821C7D45B00EC35B8 /* SplitHelper.swift in Sources */,
