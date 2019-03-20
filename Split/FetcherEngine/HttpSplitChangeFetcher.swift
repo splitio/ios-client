@@ -46,7 +46,6 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
                 throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
             }
             _ = self.splitChangeCache.addChange(splitChange: change)
-            
             return change
         }
     }
