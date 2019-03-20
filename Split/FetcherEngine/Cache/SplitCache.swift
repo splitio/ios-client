@@ -22,7 +22,6 @@ class SplitCache: SplitCacheProtocol {
     }
 
     let kSplitsFileName: String = "SPLITIO.splits"
-    var onSplitsUpdatedHandler: (([Split])->Void)?
     var fileStorage: FileStorageProtocol
     var inMemoryCache: InMemorySplitCache!
     
@@ -41,12 +40,10 @@ class SplitCache: SplitCacheProtocol {
     
     func addSplit(splitName: String, split: Split) {
         inMemoryCache.addSplit(splitName: splitName, split: split)
-        notifySplitsUpdated()
     }
     
     func removeSplit(splitName: String) {
         inMemoryCache.removeSplit(splitName: splitName)
-        notifySplitsUpdated()
     }
     
     func setChangeNumber(_ changeNumber: Int64) {
@@ -96,12 +93,6 @@ extension SplitCache {
             fileStorage.write(fileName: kSplitsFileName, content: jsonSplits)
         } catch {
             Logger.e("Could not save splits on disk")
-        }
-    }
-    
-    private func notifySplitsUpdated(){
-        if let handler = onSplitsUpdatedHandler {
-            handler(self.getAllSplits())
         }
     }
 }

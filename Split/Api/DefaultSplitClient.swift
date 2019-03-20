@@ -37,13 +37,6 @@ public final class DefaultSplitClient: NSObject, SplitClient {
         
         let trafficTypesCache = InMemoryTrafficTypesCache(splits: splitCache.getAllSplits())
         
-        splitCache.onSplitsUpdatedHandler = { [weak trafficTypesCache] (splits)  in
-            guard let strongTrafficTypesCache = trafficTypesCache else {
-                return
-            }
-            strongTrafficTypesCache.set(from: splits)
-        }
-        
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
         
         self.keyValidator = DefaultKeyValidator()
@@ -55,7 +48,7 @@ public final class DefaultSplitClient: NSObject, SplitClient {
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
         
-        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
+        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache, trafficTypesCache: trafficTypesCache)
         
         let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: self.config!.featuresRefreshRate, eventsManager: eventsManager)
         
