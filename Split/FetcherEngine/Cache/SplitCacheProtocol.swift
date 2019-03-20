@@ -10,6 +10,8 @@ import Foundation
 
 protocol SplitCacheProtocol {
     
+    var onSplitsUpdatedHandler: (([Split])->Void)? { get set }
+    
     func addSplit(splitName: String, split: Split)
     
     func removeSplit(splitName: String)
@@ -25,4 +27,6 @@ protocol SplitCacheProtocol {
     func getAllSplits() -> [Split]
 
     func clear()
+    
+    
 }

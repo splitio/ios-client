@@ -34,16 +34,30 @@ public final class DefaultSplitClient: NSObject, SplitClient {
     
     init(config: SplitClientConfig, key: Key, splitCache: SplitCache, fileStorage: FileStorageProtocol) {
         self.config = config
+        
+        let trafficTypesCache = InMemoryTrafficTypesCache(splits: splitCache.getAllSplits())
+        
+        splitCache.onSplitsUpdatedHandler = { [weak trafficTypesCache] (splits)  in
+            guard let strongTrafficTypesCache = trafficTypesCache else {
+                return
+            }
+            strongTrafficTypesCache.set(from: splits)
+        }
+        
+        let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
+        
         self.keyValidator = DefaultKeyValidator()
-        self.eventValidator = DefaultEventValidator()
+        self.eventValidator = DefaultEventValidator(trafficTypesCache: trafficTypesCache)
         self.splitValidator = DefaultSplitValidator()
         self.validationLogger = DefaultValidationMessageLogger()
         
-        let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
+        
         eventsManager = SplitEventsManager(config: config)
         eventsManager.start()
         
-        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache), splitCache: splitCache, interval: self.config!.featuresRefreshRate, eventsManager: eventsManager)
+        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
+        
+        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: self.config!.featuresRefreshRate, eventsManager: eventsManager)
         
         let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache), mySegmentsCache: mySegmentsCache, interval: self.config!.segmentsRefreshRate, eventsManager: eventsManager)
         

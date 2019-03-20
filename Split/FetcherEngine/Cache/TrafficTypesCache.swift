@@ -9,8 +9,8 @@
 import Foundation
 
 protocol TrafficTypesCache {
-    func set(trafficTypes: [String])
+    func set(from splits: [Split]?)
     func removeAll()
     func getAll() -> [String]
-    func isInTrafficTypes(name: String) -> Bool
+    func contains(name: String) -> Bool
 }

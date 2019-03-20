@@ -9,24 +9,29 @@
 import Foundation
 
 class InMemoryTrafficTypesCache: TrafficTypesCache {
+    
     private let queueName = "split.inmemcache-queue.traffictypes"
     private var queue: DispatchQueue
-    private var trafficTypes: Set<String>
+    private var trafficTypes = Set<String>()
     
-    init(trafficTypes: Set<String>) {
+    init(splits: [Split]?) {
         self.queue = DispatchQueue(label: queueName, attributes: .concurrent)
-        self.trafficTypes = trafficTypes
+        set(from: splits)
     }
     
-    func set(trafficTypes: [String]) {
-        queue.async(flags: .barrier) {
-            self.trafficTypes.removeAll()
-            for trafficType in trafficTypes {
-                self.trafficTypes.insert(trafficType)
+    func set(from splits: [Split]?) {
+        if let splits = splits, splits.count > 0 {
+            queue.async(flags: .barrier) {
+                self.trafficTypes.removeAll()
+                for split in splits {
+                    if let trafficTypeName = split.trafficTypeName, let status = split.status, status == .Active {
+                        self.trafficTypes.insert(trafficTypeName.lowercased())
+                    }
+                }
             }
         }
     }
-    
+
     func removeAll() {
         queue.async(flags: .barrier) {
             self.trafficTypes.removeAll()
@@ -34,18 +39,18 @@ class InMemoryTrafficTypesCache: TrafficTypesCache {
     }
     
     func getAll() -> [String] {
-        var trafficTypes: Set<String>!
+        var trafficTypes: [String]!
         queue.sync {
-            trafficTypes = self.trafficTypes
+            trafficTypes = Array(self.trafficTypes)
         }
-        return Array(trafficTypes)
+        return trafficTypes
     }
     
-    func isInTrafficTypes(name: String) -> Bool {
-        var trafficTypes: Set<String>!
+    func contains(name: String) -> Bool {
+        var containsName = false
         queue.sync {
-            trafficTypes = self.trafficTypes
+            containsName = self.trafficTypes.contains(name.lowercased())
         }
-        return trafficTypes.contains(name)
+        return containsName
     }
 }
