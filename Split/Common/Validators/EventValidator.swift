@@ -31,9 +31,11 @@ class DefaultEventValidator: EventValidator {
     private let kTrackEventNameValidationPattern = ValidationConfig.default.trackEventNamePattern
     
     var keyValidator: KeyValidator
+    var trafficTypeCache: TrafficTypesCache
     
-    init(){
+    init(trafficTypesCache: TrafficTypesCache){
         keyValidator = DefaultKeyValidator()
+        self.trafficTypeCache = trafficTypesCache
     }
     
     func validate(key: String?, trafficTypeName: String?, eventTypeId: String?, value: Double?) -> ValidationErrorInfo? {
@@ -49,7 +51,7 @@ class DefaultEventValidator: EventValidator {
         if trafficTypeName!.isEmpty() {
             return ValidationErrorInfo(error: .some, message: "you passed an empty traffic_type_name, traffic_type_name must be a non-empty string")
         }
-
+        
         if eventTypeId == nil {
             return ValidationErrorInfo(error: .some, message: "you passed a null or undefined event_type, event_type must be a non-empty String")
         }
@@ -62,10 +64,21 @@ class DefaultEventValidator: EventValidator {
             return ValidationErrorInfo(error: .some, message: "you passed \(eventTypeId ?? "null"), event name must adhere to the regular expression \(kTrackEventNameValidationPattern). This means an event name must be alphanumeric, cannot be more than 80 characters long, and can only include a dash, underscore, period, or colon as separators of alphanumeric characters")
         }
         
+        var validationInfo: ValidationErrorInfo? = nil
         if trafficTypeName!.hasUpperCaseChar() {
-            return ValidationErrorInfo(warning: .trafficTypeNameHasUppercaseChars , message: "traffic_type_name should be all lowercase - converting string to lowercase")
+            validationInfo = ValidationErrorInfo(warning: .trafficTypeNameHasUppercaseChars , message: "traffic_type_name should be all lowercase - converting string to lowercase")
         }
-        return nil
+        
+        if !trafficTypeCache.contains(name: trafficTypeName!) {
+            let message = "Traffic Type \(trafficTypeName!) does not have any corresponding Splits in this environment, make sure you’re tracking your events to a valid traffic type defined in the Split console"
+            if validationInfo != nil {
+                validationInfo!.addWarning(.trafficTypeWithoutSplitInEnvironment, message: message)
+            } else {
+                validationInfo = ValidationErrorInfo(warning: .trafficTypeWithoutSplitInEnvironment , message: message)
+            }
+            
+        }
+        return validationInfo
     }
 
     private func isTypeValid(_ typeName: String) -> Bool {
