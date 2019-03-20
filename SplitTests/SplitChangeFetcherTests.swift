@@ -15,11 +15,13 @@ import OHHTTPStubs
 class SplitChangeFetcherTests: XCTestCase {
 
     var splitChangeFetcher: SplitChangeFetcher!
-    var cache: SplitCache!
+    var splitsCache: SplitCache!
+    var trafficTypesCache: TrafficTypesCacheStub!
 
     override func setUp() {
-        cache = SplitCache(fileStorage: FileStorageStub())
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: cache)
+        trafficTypesCache = TrafficTypesCacheStub()
+        splitsCache = SplitCache(fileStorage: FileStorageStub())
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitsCache, trafficTypesCache: trafficTypesCache)
     }
 
     override func tearDown() {
@@ -38,6 +40,7 @@ class SplitChangeFetcherTests: XCTestCase {
         if let response = response {
             XCTAssertTrue(response!.splits!.count > 0, "Split count should be greater than 0")
         }
+        XCTAssertTrue(trafficTypesCache.updateWasCalled())
     }
 
     func testChangeFetch() {
@@ -62,6 +65,7 @@ class SplitChangeFetcherTests: XCTestCase {
             XCTAssertEqual(response!.till, 1506703262916, "Check till value")
             XCTAssertNil(split.algo, "Algo should be nil")
         }
+        XCTAssertTrue(trafficTypesCache.updateWasCalled())
     }
 
     func testSplitsTillAndSince() {
@@ -80,5 +84,6 @@ class SplitChangeFetcherTests: XCTestCase {
         }
         XCTAssertTrue(errorHasOccurred, "An exception should be raised")
         XCTAssertTrue(response == nil, "Response should be nil")
+        XCTAssertFalse(trafficTypesCache.updateWasCalled())
     }
 }
