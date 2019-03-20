@@ -27,6 +27,4 @@ protocol SplitCacheProtocol {
     func getAllSplits() -> [Split]
 
     func clear()
-    
-    
 }
