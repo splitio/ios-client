@@ -11,7 +11,6 @@ import Foundation
 class InMemorySplitCache: NSObject, SplitCacheProtocol {
     
     var onSplitsUpdatedHandler: (([Split]) -> Void)?  = nil
-    
     private let queueName = "split.inmemcache-queue.splits"
     private var queue: DispatchQueue
     private var splits: [String: Split]
