@@ -21,5 +21,6 @@ import Foundation
     var trafficAllocation: Int?
     var trafficAllocationSeed: Int?
     var algo: Int?
+    var configurations: SplitConfigurations?
     
 }
