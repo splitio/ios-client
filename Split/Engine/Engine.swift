@@ -7,11 +7,22 @@
 
 import Foundation
 
-class Engine {
+struct EvaluationResult {
+    var treatment: String
+    var label: String?
+    var splitVersion: Int64?
+    var configurations: String?
     
-    static let EVALUATION_RESULT_TREATMENT: String = "treatment"
-    static let EVALUATION_RESULT_LABEL: String = "label"
-    static let EVALUATION_RESULT_SPLIT_VERSION: String = "splitChangeNumber"
+    init(treatment: String, label: String? = nil, splitVersion: Int64? = nil, configurations: String? = nil){
+        self.treatment = treatment
+        self.label = label
+        self.splitVersion = splitVersion
+        self.configurations = configurations
+    }
+}
+
+class Engine {
+
     internal var splitClient: DefaultSplitClient?
     private var splitter: SplitterProtocol
     
@@ -24,34 +35,33 @@ class Engine {
         self.splitter = splitter
     }
     
-    func getTreatment(matchingKey: String?, bucketingKey: String?, split: Split?, attributes: [String:Any]?) throws -> [String: String] {
-        
+    func getTreatment(matchingKey: String?, bucketingKey: String?, split: Split, attributes: [String:Any]?) throws -> EvaluationResult {
         var bucketKey: String?
         var inRollOut: Bool = false
-        var result: [String: String] = [:]
         var splitAlgo: Algorithm = Algorithm.legacy
+        let defaultTreatment  = split.defaultTreatment ?? SplitConstants.CONTROL
             
-        if let rawAlgo = split?.algo,  let algo = Algorithm.init(rawValue: rawAlgo) {
+        if let rawAlgo = split.algo,  let algo = Algorithm.init(rawValue: rawAlgo) {
             splitAlgo = algo
         }
         
-        if bucketingKey == nil || bucketingKey == "" {
-            bucketKey = matchingKey
-        } else {
-            bucketKey = bucketingKey
+        bucketKey = !(bucketingKey ?? "").isEmpty() ? bucketingKey : matchingKey
+        
+        guard let conditions: [Condition] = split.conditions else {
+            return EvaluationResult(treatment: SplitConstants.CONTROL)
         }
         
-        let conditions: [Condition] = (split?.conditions)!
+        guard let seed = split.seed else {
+            return EvaluationResult(treatment: SplitConstants.CONTROL)
+        }
+        
         for condition in conditions {
             condition.client = self.splitClient
             if (!inRollOut && condition.conditionType == ConditionType.Rollout) {
-                if let trafficAllocation = split?.trafficAllocation, trafficAllocation < 100  {
-                    let bucket: Int64 = splitter.getBucket(seed: (split?.seed)!, key: bucketKey!, algo: splitAlgo)
+                if let trafficAllocation = split.trafficAllocation, trafficAllocation < 100  {
+                    let bucket: Int64 = splitter.getBucket(seed: seed, key: bucketKey!, algo: splitAlgo)
                     if bucket > trafficAllocation {
-                        result[Engine.EVALUATION_RESULT_TREATMENT] = split?.defaultTreatment
-                        result[Engine.EVALUATION_RESULT_LABEL] = ImpressionsConstants.NOT_IN_SPLIT
-
-                        return result
+                        return EvaluationResult(treatment: defaultTreatment, label: ImpressionsConstants.NOT_IN_SPLIT)
                     }
                     inRollOut = true
                 }
@@ -59,17 +69,11 @@ class Engine {
             
             //Return the first condition that match.
             if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, attributes: attributes) {
-                var bucketKey: String? = bucketingKey
-                
-                if  bucketKey == nil {
-                    bucketKey = matchingKey
-                }
                 let key: Key = Key(matchingKey: matchingKey!, bucketingKey: bucketKey)
-                result[Engine.EVALUATION_RESULT_TREATMENT] = splitter.getTreatment(key: key, seed: (split?.seed)!, attributes: attributes, partions: condition.partitions, algo: splitAlgo)
-                result[Engine.EVALUATION_RESULT_LABEL] = condition.label
-                return result
+                let treatment = splitter.getTreatment(key: key, seed: seed, attributes: attributes, partions: condition.partitions, algo: splitAlgo)
+                return EvaluationResult(treatment: treatment, label: condition.label)
             }
         }
-        return result
+        return EvaluationResult(treatment: defaultTreatment)
     }
 }

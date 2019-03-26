@@ -30,7 +30,7 @@ class EngineTests: XCTestCase {
         } catch {
         }
         XCTAssertNotNil(treatment, "Treatment should not be nil when algo = nil")
-        XCTAssertTrue(treatment?[Engine.EVALUATION_RESULT_TREATMENT] == "t4_6", "Expected treatment 'On', obtained '\(treatment?[Engine.EVALUATION_RESULT_TREATMENT] ?? "null")'")
+        XCTAssertTrue(treatment?[Engine.kEvaluationResult] == "t4_6", "Expected treatment 'On', obtained '\(treatment?[Engine.kEvaluationResult] ?? "null")'")
     }
     
     func testAlgoLegacy() {
@@ -42,7 +42,7 @@ class EngineTests: XCTestCase {
         } catch {
         }
         XCTAssertNotNil(treatment, "Treatment should not be nil when algo = 1 (Legacy)")
-        XCTAssertTrue(treatment?[Engine.EVALUATION_RESULT_TREATMENT] == "t4_6", "Expected treatment 'On', obtained '\(treatment?[Engine.EVALUATION_RESULT_TREATMENT] ?? "null")'")
+        XCTAssertTrue(treatment?[Engine.kEvaluationResult] == "t4_6", "Expected treatment 'On', obtained '\(treatment?[Engine.kEvaluationResult] ?? "null")'")
     }
     
     func testAlgoMurmur3() {
@@ -54,7 +54,7 @@ class EngineTests: XCTestCase {
         } catch {
         }
         XCTAssertNotNil(treatment, "Treatment should not be nil when algo = 2 (Murmur3)")
-        XCTAssertTrue(treatment?[Engine.EVALUATION_RESULT_TREATMENT] == "t4_6", "Expected treatment 'On', obtained '\(treatment?[Engine.EVALUATION_RESULT_TREATMENT] ?? "null")'")
+        XCTAssertTrue(treatment?[Engine.kEvaluationResult] == "t4_6", "Expected treatment 'On', obtained '\(treatment?[Engine.kEvaluationResult] ?? "null")'")
     }
 
     func loadSplit(splitName: String) -> Split? {
