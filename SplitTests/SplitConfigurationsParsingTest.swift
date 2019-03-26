@@ -21,7 +21,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testOneBasicConfig() {
+    func testEncodingOneBasicConfig() {
         
         let config = "{ \"treatment1\": {\"c1\": \"v1\"}}"
         let split = createAndParseSplit(config: config)
@@ -31,7 +31,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
         XCTAssertEqual("v1", configData?["c1"] as? String)
     }
     
-    func testBasicArrayConfig() {
+    func testEncodingBasicArrayConfig() {
         
         let config = "{ \"treatment1\": {\"c1\": [1, 2.0, 3, 4.0]}}"
         let split = createAndParseSplit(config: config)
@@ -45,7 +45,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
         XCTAssertEqual(4.0, array?[3])
     }
     
-    func testMapArrayConfig() {
+    func testEncodingMapArrayConfig() {
         
         let config = "{\"treatment1\": {\"a1\":[{\"f\":\"v1\"}, {\"f\":\"v2\"}, {\"f\":\"v3\"}], \"a2\":[{\"f1\":1, \"f2\":2, \"f3\":3}, {\"f1\":11, \"f2\": 12, \"f3\":13}]}, \"treatment2\": {\"f1\":\"v1\"}}"
         let split = createAndParseSplit(config: config)
@@ -82,7 +82,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
         XCTAssertEqual("v1", config2Data?["f1"] as? String)
     }
     
-    func testMultiTreatmentConfig() {
+    func testEncodingMultiTreatmentConfig() {
         
         let config = "{ \"treatment1\": {\"c1\": \"v1\"}, \"treatment2\": {\"c1\": \"v1\"}, \"treatment3\": {\"c1\": \"v1\"}}"
         let split = createAndParseSplit(config: config)
@@ -96,7 +96,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
         XCTAssertEqual("v1", config3?["c1"] as? String)
     }
     
-    func testAllValueTypesConfig() {
+    func testEncodingAllValueTypesConfig() {
         
         let config = "{ \"double\": {\"c1\": 20576.85}, \"string\": {\"c1\": \"v1\"}, \"int\": {\"c1\": 123456}, \"boolean\": {\"c1\": false}}"
         let split = createAndParseSplit(config: config)
@@ -112,7 +112,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
         XCTAssertEqual(false, boolean?["c1"] as? Bool)
     }
     
-    func testNestedMultiConfig() {
+    func testEncodingNestedMultiConfig() {
         
         let config = "{\"treatment1\": {\"f1\": 10,\"f2\":\"v2\",\"nested1\":{\"nv1\":\"nval1\"}, \"nested2\":{\"nv2\":\"nval2\"}} , \"treatment2\": {\"f1\": 10.20,\"f2\":true,\"nested3\":{\"nested4\":{\"nv2\": \"nval3\"}}}}"
         let split = createAndParseSplit(config: config)
@@ -141,21 +141,63 @@ class SplitConfigurationsParsingTest: XCTestCase {
         XCTAssertEqual(true, config2?["f2"] as? Bool)
     }
     
-    func testNullConfig() {
+    func testEncodingNullConfig() {
         let split = createAndParseSplit(config: nil)
         
         XCTAssertNotNil(split)
         XCTAssertNil(split?.configurations)
     }
     
-    // TODO: Check this tests
-    func testNullValue() {
+    func testEncodingNullValue() {
         let config = "{ \"treatment1\": {\"c1\": null}}"
         let split = createAndParseSplit(config: config)
         let configData = jsonObj(config: split?.configurations?["treatment1"])
         
         XCTAssertNotNil(split)
         XCTAssertNil(configData?["c1"])
+    }
+    
+    func testDecodingSimpleConfig() {
+        let config = "{ \"treatment1\": {\"c1\": \"v1\"}, \"treatment2\": {\"c1\": \"v1\"}}"
+        let initialSplit = createAndParseSplit(config: config)
+        let jsonSplit = try? Json.encodeToJson(initialSplit)
+        var split: Split?
+        if let jsonSplit = jsonSplit {
+            split = try? JSON.encodeFrom(json: jsonSplit, to: Split.self)
+        }
+        let t1Config = jsonObj(config: split?.configurations?["treatment1"])
+        let t2Config = jsonObj(config: split?.configurations?["treatment2"])
+        
+        XCTAssertNotNil(split)
+        XCTAssertNotNil(split?.configurations)
+        XCTAssertEqual("v1", t1Config?["c1"] as? String)
+        XCTAssertEqual("v1", t2Config?["c1"] as? String)
+    }
+    
+    func testDecodingArrayAndMapConfig() {
+        let config = "{ \"treatment1\": {\"c1\": \"v1\"}, \"treatment2\": {\"a1\": [1,2,3,4], \"m1\": {\"c1\": \"v1\"}}}"
+        let initialSplit = createAndParseSplit(config: config)
+        let jsonSplit = try? Json.encodeToJson(initialSplit)
+        var split: Split?
+        if let jsonSplit = jsonSplit {
+            split = try? JSON.encodeFrom(json: jsonSplit, to: Split.self)
+        }
+        let t1Config = jsonObj(config: split?.configurations?["treatment1"])
+        let t2Config = jsonObj(config: split?.configurations?["treatment2"])
+        let array = t2Config?["a1"] as? [Int]
+        let map = t2Config?["m1"] as? [String: String]
+        
+        XCTAssertNotNil(split)
+        XCTAssertNotNil(split?.configurations)
+        XCTAssertNotNil(t1Config)
+        XCTAssertNotNil(t2Config)
+        XCTAssertNotNil(array)
+        XCTAssertNotNil(map)
+        XCTAssertEqual("v1", t1Config?["c1"] as? String)
+        XCTAssertEqual(4, array?.count)
+        XCTAssertEqual(1, array?[0])
+        XCTAssertEqual(4, array?[3])
+        XCTAssertEqual("v1", map?["c1"])
     }
     
     private func createAndParseSplit(config: String?) -> Split? {
