@@ -23,7 +23,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
 
     func testEncodingOneBasicConfig() {
         
-        let config = "{ \"treatment1\": {\"c1\": \"v1\"}}"
+        let config = "{ \"treatment1\": \"{\\\"c1\\\": \\\"v1\\\"}\"}"
         let split = createAndParseSplit(config: config)
         let configData = jsonObj(config: split?.configurations?["treatment1"])
         
@@ -33,7 +33,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
     
     func testEncodingBasicArrayConfig() {
         
-        let config = "{ \"treatment1\": {\"c1\": [1, 2.0, 3, 4.0]}}"
+        let config = "{ \"treatment1\": \"{\\\"c1\\\": [1, 2.0, 3, 4.0]}\"}"
         let split = createAndParseSplit(config: config)
         let configData = jsonObj(config: split?.configurations?["treatment1"])
         let array = configData?["c1"] as? [Double]
@@ -47,7 +47,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
     
     func testEncodingMapArrayConfig() {
         
-        let config = "{\"treatment1\": {\"a1\":[{\"f\":\"v1\"}, {\"f\":\"v2\"}, {\"f\":\"v3\"}], \"a2\":[{\"f1\":1, \"f2\":2, \"f3\":3}, {\"f1\":11, \"f2\": 12, \"f3\":13}]}, \"treatment2\": {\"f1\":\"v1\"}}"
+        let config = "{\"treatment1\": \"{\\\"a1\\\":[{\\\"f\\\":\\\"v1\\\"}, {\\\"f\\\":\\\"v2\\\"}, {\\\"f\\\":\\\"v3\\\"}], \\\"a2\\\":[{\\\"f1\\\":1, \\\"f2\\\":2, \\\"f3\\\":3}, {\\\"f1\\\":11, \\\"f2\\\": 12, \\\"f3\\\":13}]}\", \"treatment2\": \"{\\\"f1\\\":\\\"v1\\\"}\"}"
         let split = createAndParseSplit(config: config)
         let config1Data = jsonObj(config: split?.configurations?["treatment1"])
         let config2Data = jsonObj(config: split?.configurations?["treatment2"])
@@ -84,7 +84,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
     
     func testEncodingMultiTreatmentConfig() {
         
-        let config = "{ \"treatment1\": {\"c1\": \"v1\"}, \"treatment2\": {\"c1\": \"v1\"}, \"treatment3\": {\"c1\": \"v1\"}}"
+        let config = "{ \"treatment1\": \"{\\\"c1\\\": \\\"v1\\\"}\", \"treatment2\": \"{\\\"c1\\\": \\\"v1\\\"}\", \"treatment3\": \"{\\\"c1\\\": \\\"v1\\\"}\"}"
         let split = createAndParseSplit(config: config)
         let config1 = jsonObj(config: split?.configurations?["treatment1"])
         let config2 = jsonObj(config: split?.configurations?["treatment2"])
@@ -98,7 +98,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
     
     func testEncodingAllValueTypesConfig() {
         
-        let config = "{ \"double\": {\"c1\": 20576.85}, \"string\": {\"c1\": \"v1\"}, \"int\": {\"c1\": 123456}, \"boolean\": {\"c1\": false}}"
+        let config = "{ \"double\": \"{\\\"c1\\\": 20576.85}\", \"string\": \"{\\\"c1\\\": \\\"v1\\\"}\", \"int\": \"{\\\"c1\\\": 123456}\", \"boolean\": \"{\\\"c1\\\": false}\"}"
         let split = createAndParseSplit(config: config)
         let double = jsonObj(config: split?.configurations?["double"])
         let string = jsonObj(config: split?.configurations?["string"])
@@ -114,7 +114,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
     
     func testEncodingNestedMultiConfig() {
         
-        let config = "{\"treatment1\": {\"f1\": 10,\"f2\":\"v2\",\"nested1\":{\"nv1\":\"nval1\"}, \"nested2\":{\"nv2\":\"nval2\"}} , \"treatment2\": {\"f1\": 10.20,\"f2\":true,\"nested3\":{\"nested4\":{\"nv2\": \"nval3\"}}}}"
+        let config = "{\"treatment1\": \"{\\\"f1\\\": 10,\\\"f2\\\":\\\"v2\\\",\\\"nested1\\\":{\\\"nv1\\\":\\\"nval1\\\"}, \\\"nested2\\\":{\\\"nv2\\\":\\\"nval2\\\"}}\" , \"treatment2\": \"{\\\"f1\\\": 10.20,\\\"f2\\\":true,\\\"nested3\\\":{\\\"nested4\\\":{\\\"nv2\\\": \\\"nval3\\\"}}}\"}"
         let split = createAndParseSplit(config: config)
         let config1 = jsonObj(config: split?.configurations?["treatment1"])
         let config2 = jsonObj(config: split?.configurations?["treatment2"])
@@ -148,17 +148,8 @@ class SplitConfigurationsParsingTest: XCTestCase {
         XCTAssertNil(split?.configurations)
     }
     
-    func testEncodingNullValue() {
-        let config = "{ \"treatment1\": {\"c1\": null}}"
-        let split = createAndParseSplit(config: config)
-        let configData = jsonObj(config: split?.configurations?["treatment1"])
-        
-        XCTAssertNotNil(split)
-        XCTAssertNil(configData?["c1"])
-    }
-    
     func testDecodingSimpleConfig() {
-        let config = "{ \"treatment1\": {\"c1\": \"v1\"}, \"treatment2\": {\"c1\": \"v1\"}}"
+        let config = "{ \"treatment1\": \"{\\\"c1\\\": \\\"v1\\\"}\", \"treatment2\": \"{\\\"c1\\\": \\\"v1\\\"}\"}"
         let initialSplit = createAndParseSplit(config: config)
         let jsonSplit = try? Json.encodeToJson(initialSplit)
         var split: Split?
@@ -175,7 +166,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
     }
     
     func testDecodingArrayAndMapConfig() {
-        let config = "{ \"treatment1\": {\"c1\": \"v1\"}, \"treatment2\": {\"a1\": [1,2,3,4], \"m1\": {\"c1\": \"v1\"}}}"
+        let config = "{ \"treatment1\": \"{\\\"c1\\\": \\\"v1\\\"}\", \"treatment2\": \"{\\\"a1\\\": [1,2,3,4], \\\"m1\\\": {\\\"c1\\\": \\\"v1\\\"}}\"}"
         let initialSplit = createAndParseSplit(config: config)
         let jsonSplit = try? Json.encodeToJson(initialSplit)
         var split: Split?
