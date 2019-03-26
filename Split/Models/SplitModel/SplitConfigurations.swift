@@ -42,20 +42,25 @@ struct SplitConfigurations: Codable {
         var debugDescription: String { return stringValue }
     }
     
+    
+    
     init(from decoder: Decoder) throws {
         configurations = [String: String]()
         do {
             let values = try decoder.container(keyedBy: DynamicCodingKeys.self)
             for key in values.allKeys {
-                do {
-                    let container = try values.nestedContainer(keyedBy: DynamicCodingKeys.self, forKey: key)
+                if let container = try? values.nestedContainer(keyedBy: DynamicCodingKeys.self, forKey: key) {
+                    // Parsing from server
                     let config: [String: Any] = decodeKeyedContainer(container)
                     if let jsonData = try? JSONSerialization.data(withJSONObject: config, options: .prettyPrinted) {
                         let jsonString = String(data: jsonData, encoding: .utf8)?.replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: " ", with: "")
                         self.configurations[key.stringValue] = jsonString
                     }
-                } catch {
-                    Logger.e("Unable to parse Split Configurations values from server: \(error)")
+                } else if let string = try? values.decode(String.self, forKey: key) {
+                    // Parsing from disk
+                    self.configurations[key.stringValue] = string
+                } else {
+                    Logger.e("Unable to parse Split Configurations values from server")
                 }
             }
         } catch  {
@@ -107,5 +112,13 @@ struct SplitConfigurations: Codable {
             }
         }
         return config
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: DynamicCodingKeys.self)
+        for (key, value) in configurations {
+            let json = value.replacingOccurrences(of: "\\", with: "")
+            try container.encode(json, forKey: DynamicCodingKeys(stringValue: key)!)
+        }
     }
 }
