@@ -91,21 +91,21 @@ struct SplitConfigurations: Codable {
         return config
     }
 
-    private func decodeUnkeyedContainer(_ val: UnkeyedDecodingContainer) -> [Any] {
+    private func decodeUnkeyedContainer(_ values: UnkeyedDecodingContainer) -> [Any] {
         var config: [Any] = [Any]()
-        var values = val
-        while !values.isAtEnd {
-            if let container = try? values.nestedContainer(keyedBy: DynamicCodingKeys.self) {
+        var mutableValues = values
+        while !mutableValues.isAtEnd {
+            if let container = try? mutableValues.nestedContainer(keyedBy: DynamicCodingKeys.self) {
                 config.append(decodeKeyedContainer(container))
-            } else if let container = try? values.nestedUnkeyedContainer() {
+            } else if let container = try? mutableValues.nestedUnkeyedContainer() {
                 config.append(decodeUnkeyedContainer(container))
-            } else if let double = try? values.decode(Double.self) {
+            } else if let double = try? mutableValues.decode(Double.self) {
                 config.append(double)
-            } else if let string = try? values.decode(String.self) {
+            } else if let string = try? mutableValues.decode(String.self) {
                 config.append(string)
-            } else if let integer = try? values.decode(Int.self) {
+            } else if let integer = try? mutableValues.decode(Int.self) {
                 config.append(integer)
-            } else if let boolean = try? values.decode(Bool.self) {
+            } else if let boolean = try? mutableValues.decode(Bool.self) {
                 config.append(boolean)
             } else {
                 Logger.e("Unexpected type when parsing json array in Split Configurations from server")
