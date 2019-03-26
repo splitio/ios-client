@@ -17,6 +17,16 @@
                     "someKey": "someValue",
                     "someKey2": 1000
               },
+              "configurations": {
+                  "on": {
+                      "color": "blue",
+                      "dimension": { "height": 100.0, "width": 250.0 }
+                  },
+                  "off": {
+                      "color": "red",
+                      "dimension": { "height": 150.0, "width": 200.0 }
+                  }
+              },
               "conditions":[
                             {
                             "conditionType":"WHITELIST",
