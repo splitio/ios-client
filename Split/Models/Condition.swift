@@ -8,13 +8,13 @@
 
 import Foundation
 
-@objc public class Condition: NSObject, Codable {
+class Condition: NSObject, Codable {
     
-    public var conditionType: ConditionType?
-    public var matcherGroup: MatcherGroup?
-    public var partitions: [Partition]?
-    public var label: String?
-    public var client: DefaultSplitClient?
+    var conditionType: ConditionType?
+    var matcherGroup: MatcherGroup?
+    var partitions: [Partition]?
+    var label: String?
+    var client: InternalSplitClient?
     
     enum CodingKeys: String, CodingKey {
         case conditionType
@@ -23,7 +23,7 @@ import Foundation
         case label
     }
     
-    public required init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         if let values = try? decoder.container(keyedBy: CodingKeys.self) {
             conditionType = try? values.decode(ConditionType.self, forKey: .conditionType)
             matcherGroup = try? values.decode(MatcherGroup.self, forKey: .matcherGroup)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public protocol MySegmentsFetcher {
+protocol MySegmentsFetcher {
     
     func fetchAll() -> [String]
     

@@ -9,11 +9,11 @@ import Foundation
 
 struct EvaluationResult {
     var treatment: String
-    var label: String?
+    var label: String
     var splitVersion: Int64?
     var configurations: String?
     
-    init(treatment: String, label: String? = nil, splitVersion: Int64? = nil, configurations: String? = nil){
+    init(treatment: String, label: String, splitVersion: Int64? = nil, configurations: String? = nil){
         self.treatment = treatment
         self.label = label
         self.splitVersion = splitVersion
@@ -23,7 +23,7 @@ struct EvaluationResult {
 
 class Engine {
 
-    internal var splitClient: DefaultSplitClient?
+    internal var splitClient: InternalSplitClient?
     private var splitter: SplitterProtocol
     
     static let shared: Engine = {
@@ -48,11 +48,11 @@ class Engine {
         bucketKey = !(bucketingKey ?? "").isEmpty() ? bucketingKey : matchingKey
         
         guard let conditions: [Condition] = split.conditions else {
-            return EvaluationResult(treatment: SplitConstants.CONTROL)
+            return EvaluationResult(treatment: SplitConstants.CONTROL, label: ImpressionsConstants.EXCEPTION)
         }
         
         guard let seed = split.seed else {
-            return EvaluationResult(treatment: SplitConstants.CONTROL)
+            return EvaluationResult(treatment: SplitConstants.CONTROL, label: ImpressionsConstants.EXCEPTION)
         }
         
         for condition in conditions {
@@ -61,7 +61,9 @@ class Engine {
                 if let trafficAllocation = split.trafficAllocation, trafficAllocation < 100  {
                     let bucket: Int64 = splitter.getBucket(seed: seed, key: bucketKey!, algo: splitAlgo)
                     if bucket > trafficAllocation {
-                        return EvaluationResult(treatment: defaultTreatment, label: ImpressionsConstants.NOT_IN_SPLIT)
+                        return EvaluationResult(treatment: defaultTreatment,
+                                                label: ImpressionsConstants.NOT_IN_SPLIT,
+                                                configurations: split.configurations?[defaultTreatment])
                     }
                     inRollOut = true
                 }
@@ -71,9 +73,12 @@ class Engine {
             if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, attributes: attributes) {
                 let key: Key = Key(matchingKey: matchingKey!, bucketingKey: bucketKey)
                 let treatment = splitter.getTreatment(key: key, seed: seed, attributes: attributes, partions: condition.partitions, algo: splitAlgo)
-                return EvaluationResult(treatment: treatment, label: condition.label)
+                // *** condition.label should not be null, but what if...
+                return EvaluationResult(treatment: treatment,
+                                        label: condition.label ?? "Missing Label",
+                                        configurations: split.configurations?[treatment])
             }
         }
-        return EvaluationResult(treatment: defaultTreatment)
+        return EvaluationResult(treatment: defaultTreatment, label: ImpressionsConstants.MATCHER_NOT_FOUND)
     }
 }

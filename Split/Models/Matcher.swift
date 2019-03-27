@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public class Matcher: NSObject, Codable {
+class Matcher: NSObject, Codable {
     
     var keySelector: KeySelector?
     var matcherType: MatcherType?
@@ -20,7 +20,7 @@ import Foundation
     var dependencyMatcherData: DependencyMatcherData?
     var booleanMatcherData: Bool?
     var stringMatcherData: String?
-    public var client: DefaultSplitClient?
+    var client: InternalSplitClient?
     
     enum CodingKeys: String, CodingKey {
         case keySelector
@@ -35,7 +35,7 @@ import Foundation
         case stringMatcherData
     }
 
-    public required init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         if let values = try? decoder.container(keyedBy: CodingKeys.self) {
             keySelector = try? values.decode(KeySelector.self, forKey: .keySelector)
             matcherType = try? values.decode(MatcherType.self, forKey: .matcherType)
@@ -51,7 +51,7 @@ import Foundation
     }
  
     //--------------------------------------------------------------------------------------------------
-    public func getMatcher() throws -> MatcherProtocol {
+    func getMatcher() throws -> MatcherProtocol {
         
         if self.matcherType == nil {
             throw EngineError.MatcherNotFound
