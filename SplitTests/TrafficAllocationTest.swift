@@ -28,7 +28,7 @@ class TrafficAllocationTest: XCTestCase {
         var treatment = ""
         let split = splitHelper.loadSplitFromFile(name: "split_traffic_allocation_1")!
         let result = try? splitEngine.getTreatment(matchingKey: "aaaaaaklmnbv", bucketingKey: nil, split: split, attributes: nil)
-        treatment = result![Engine.kEvaluationResult]!
+        treatment = result!.treatment
         XCTAssertEqual(treatment, "on", "Result should be 'on'")
     }
 

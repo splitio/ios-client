@@ -8,15 +8,15 @@
 import Foundation
 
 
-public class BaseMatcher : NSObject  {
+class BaseMatcher : NSObject  {
     
-    public var splitClient: DefaultSplitClient?
+    var splitClient: InternalSplitClient?
     var negate: Bool?
     var attribute: String?
     var type: MatcherType?
     
     //--------------------------------------------------------------------------------------------------
-    public init(splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+    init(splitClient: InternalSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
 
         self.splitClient = splitClient
         self.negate = negate
@@ -25,30 +25,30 @@ public class BaseMatcher : NSObject  {
         
     }
     //--------------------------------------------------------------------------------------------------
-    public func isNegate() -> Bool {
+    func isNegate() -> Bool {
         
         return self.negate!
     }
     //--------------------------------------------------------------------------------------------------
-    public func hasAttribute() -> Bool {
+    func hasAttribute() -> Bool {
         
         return self.attribute != nil
         
     }
     //--------------------------------------------------------------------------------------------------
-    public func getAttribute() -> String? {
+    func getAttribute() -> String? {
         
         return self.attribute
         
     }
     //--------------------------------------------------------------------------------------------------
-    public func getMatcherType() -> MatcherType {
+    func getMatcherType() -> MatcherType {
         
         return self.type!
         
     }
     //--------------------------------------------------------------------------------------------------
-    public func matcherHasAttribute() -> Bool {
+    func matcherHasAttribute() -> Bool {
         
         return self.attribute != nil
         

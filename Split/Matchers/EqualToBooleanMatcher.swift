@@ -7,18 +7,18 @@
 
 import Foundation
 
-public class EqualToBooleanMatcher: BaseMatcher, MatcherProtocol {
+class EqualToBooleanMatcher: BaseMatcher, MatcherProtocol {
     
     var data: Bool?
     
     //--------------------------------------------------------------------------------------------------
-    public init(data: Bool?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+    init(data: Bool?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
         
         super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.data = data
     }
     //--------------------------------------------------------------------------------------------------
-    public func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String : Any]?) -> Bool {
+    func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String : Any]?) -> Bool {
         
         guard let matchValueBool = matchValue, let booleanData = data else {
             
