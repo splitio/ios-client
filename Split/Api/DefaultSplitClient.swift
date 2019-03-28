@@ -99,18 +99,31 @@ extension DefaultSplitClient {
 
 // MARK: Treatment / Evaluation
 extension DefaultSplitClient {
-    public func getTreatment(_ split: String) -> String {
-        return getTreatment(splitName: split, attributes: nil)
+    
+    public func getTreatmentWithConfig(_ split: String) -> SplitResult {
+        return getTreatmentWithConfig(split, attributes: nil)
     }
     
-    public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
+    public func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
         return getTreatment(splitName: split, shouldValidate: true, attributes: attributes)
     }
     
+    public func getTreatment(_ split: String) -> String {
+        return getTreatment(split, attributes: nil)
+    }
+    
+    public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
+        return getTreatment(splitName: split, shouldValidate: true, attributes: attributes).treatment
+    }
+    
     public func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String] {
+        return getTreatmentsWithConfig(splits: splits, attributes: attributes).mapValues { $0.treatment }
+    }
+    
+    public func getTreatmentsWithConfig(splits: [String], attributes:[String:Any]?) ->  [String:SplitResult] {
         
-        var results = [String:String]()
-        
+        var results = [String:SplitResult]()
+
         if splits.count > 0 {
             let splitsNoDuplicated = Set(splits.filter { !$0.isEmpty() }.map { $0 })
             for splitName in splitsNoDuplicated {
@@ -123,7 +136,7 @@ extension DefaultSplitClient {
         return results
     }
     
-    private func getTreatment(splitName: String, shouldValidate: Bool = true, attributes:[String:Any]? = nil) -> String {
+    private func getTreatment(splitName: String, shouldValidate: Bool = true, attributes:[String:Any]? = nil) -> SplitResult {
         
         let validationTag = "getTreatment"
         
@@ -134,14 +147,14 @@ extension DefaultSplitClient {
             
             if let errorInfo = keyValidator.validate(matchingKey: key.matchingKey, bucketingKey: key.bucketingKey) {
                 validationLogger.log(errorInfo: errorInfo, tag: validationTag)
-                return SplitConstants.CONTROL
+                return SplitResult(treatment: SplitConstants.CONTROL)
             }
         }
         
         if let errorInfo = splitValidator.validate(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
-                return SplitConstants.CONTROL
+                return SplitResult(treatment: SplitConstants.CONTROL)
             }
         }
         
@@ -158,11 +171,11 @@ extension DefaultSplitClient {
                 logImpression(label: result.label, treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
             }
             metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatment)
-            return result.treatment
+            return SplitResult(treatment: result.treatment, configurations: result.configurations)
         }
         catch {
             logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: trimmedSplitName, attributes: attributes)
-            return SplitConstants.CONTROL
+            return SplitResult(treatment: SplitConstants.CONTROL)
         }
     }
     
