@@ -10,6 +10,9 @@ import Foundation
 struct Metrics {
     struct time {
         static let getTreatment = "sdk.getTreatment"
+        static let getTreatments = "sdk.getTreatments"
+        static let getTreatmentWithConfig = "sdk.getTreatmentWithConfig"
+        static let getTreatmentsWithConfig = "sdk.getTreatmentsWithConfig"
         static let sdkReady = "sdk.ready"
         static let splitChangeFetcherGet = "splitChangeFetcher.time"
         static let mySegmentsFetcherGet = "mySegmentsFetcher.time"

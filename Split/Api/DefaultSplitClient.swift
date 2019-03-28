@@ -105,7 +105,10 @@ extension DefaultSplitClient {
     }
     
     public func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
-        return getTreatment(splitName: split, shouldValidate: true, attributes: attributes)
+        let timeMetricStart = Date().unixTimestampInMicroseconds()
+        let result = getTreatmentWithConfigNoMetrics(splitName: split, shouldValidate: true, attributes: attributes, validationTag: ValidationTag.getTreatmentWithConfig)
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatmentWithConfig)
+        return result
     }
     
     public func getTreatment(_ split: String) -> String {
@@ -113,32 +116,41 @@ extension DefaultSplitClient {
     }
     
     public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
-        return getTreatment(splitName: split, shouldValidate: true, attributes: attributes).treatment
+        let timeMetricStart = Date().unixTimestampInMicroseconds()
+        let result = getTreatmentWithConfigNoMetrics(splitName: split, shouldValidate: true, attributes: attributes, validationTag: ValidationTag.getTreatment).treatment
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatment)
+        return result
     }
     
     public func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String] {
-        return getTreatmentsWithConfig(splits: splits, attributes: attributes).mapValues { $0.treatment }
+        let timeMetricStart = Date().unixTimestampInMicroseconds()
+        let result = getTreatmentsWithConfigNoMetrics(splits: splits, attributes: attributes, validationTag: ValidationTag.getTreatments).mapValues { $0.treatment }
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatments)
+        return result
     }
     
     public func getTreatmentsWithConfig(splits: [String], attributes:[String:Any]?) ->  [String:SplitResult] {
-        
+        let timeMetricStart = Date().unixTimestampInMicroseconds()
+        let result = getTreatmentsWithConfigNoMetrics(splits: splits, attributes: attributes, validationTag: ValidationTag.getTreatmentsWithConfig)
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatmentsWithConfig)
+        return result
+    }
+    
+    private func getTreatmentsWithConfigNoMetrics(splits: [String], attributes:[String:Any]?, validationTag: String) ->  [String:SplitResult] {
         var results = [String:SplitResult]()
 
         if splits.count > 0 {
             let splitsNoDuplicated = Set(splits.filter { !$0.isEmpty() }.map { $0 })
             for splitName in splitsNoDuplicated {
-                results[splitName] = getTreatment(splitName: splitName, shouldValidate: false, attributes: attributes)
+                results[splitName] = getTreatmentWithConfigNoMetrics(splitName: splitName, shouldValidate: false, attributes: attributes, validationTag: validationTag)
             }
         } else {
-            Logger.d("getTreatments: split_names is an empty array or has null values")
+            Logger.d("\(validationTag): split_names is an empty array or has null values")
         }
-        
         return results
     }
     
-    private func getTreatment(splitName: String, shouldValidate: Bool = true, attributes:[String:Any]? = nil) -> SplitResult {
-        
-        let validationTag = "getTreatment"
+    private func getTreatmentWithConfigNoMetrics(splitName: String, shouldValidate: Bool = true, attributes:[String:Any]? = nil, validationTag: String) -> SplitResult {
         
         if shouldValidate {
             if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
@@ -159,7 +171,6 @@ extension DefaultSplitClient {
         }
         
         let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let timeMetricStart = Date().unixTimestampInMicroseconds()
         let evaluator: Evaluator = Evaluator.shared
         evaluator.splitClient = self
         
@@ -170,7 +181,6 @@ extension DefaultSplitClient {
             } else {
                 logImpression(label: result.label, treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
             }
-            metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatment)
             return SplitResult(treatment: result.treatment, configurations: result.configurations)
         }
         catch {
