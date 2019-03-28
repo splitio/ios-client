@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct SplitResult {
+@objc public class SplitResult: NSObject {
     var treatment: String
     var configurations: String?
     

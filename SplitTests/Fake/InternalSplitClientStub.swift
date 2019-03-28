@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 
 class InternalSplitClientStub: InternalSplitClient {
-    
+
     var splitFetcher: SplitFetcher?
     var mySegmentsFetcher: MySegmentsFetcher?
     
@@ -29,6 +29,18 @@ class InternalSplitClientStub: InternalSplitClient {
     
     func getTreatments(splits: [String], attributes: [String : Any]?) -> [String : String] {
         return ["":""]
+    }
+    
+    func getTreatmentWithConfig(_ split: String) -> SplitResult {
+        return SplitResult(treatment: SplitConstants.CONTROL)
+    }
+    
+    func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
+        return getTreatmentWithConfig(split)
+    }
+    
+    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+        return ["": SplitResult(treatment: SplitConstants.CONTROL)]
     }
     
     func on(event: SplitEvent, execute action: @escaping SplitAction) {
@@ -50,6 +62,5 @@ class InternalSplitClientStub: InternalSplitClient {
     func track(eventType: String, value: Double) -> Bool {
         return true
     }
-    
     
 }
