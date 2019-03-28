@@ -9,12 +9,12 @@ import Foundation
 
 
 
-public class InSegmentMatcher: BaseMatcher, MatcherProtocol {
+class InSegmentMatcher: BaseMatcher, MatcherProtocol {
     
     var data: UserDefinedSegmentMatcherData?
     
     //--------------------------------------------------------------------------------------------------
-    public init(data: UserDefinedSegmentMatcherData?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+    init(data: UserDefinedSegmentMatcherData?, splitClient: InternalSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
         
         super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.data = data
@@ -25,8 +25,8 @@ public class InSegmentMatcher: BaseMatcher, MatcherProtocol {
         // Match value is not used because it is matching key. My segments cache only has segments for that key cause
         // Split client is instantiated  based on it
         if let _ = matchValue as? String, let dataElements = data, let segmentName = dataElements.segmentName {
-            if let segment = self.splitClient?.mySegmentsFetcher as? RefreshableMySegmentsFetcher {
-                return segment.mySegmentsCache.isInSegments(name: segmentName)
+            if let segmentFetcher = self.splitClient?.mySegmentsFetcher as? QueryableMySegmentsFetcher {
+                return segmentFetcher.isInSegments(name: segmentName)
             }
         }
         return false

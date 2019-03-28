@@ -7,19 +7,19 @@
 
 import Foundation
 
-public class LessThanOrEqualToMatcher: BaseMatcher, MatcherProtocol {
+class LessThanOrEqualToMatcher: BaseMatcher, MatcherProtocol {
     
     var data: UnaryNumericMatcherData?
     
     
     //--------------------------------------------------------------------------------------------------
-    public init(data: UnaryNumericMatcherData?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+    init(data: UnaryNumericMatcherData?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
         
         super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.data = data
     }
     //--------------------------------------------------------------------------------------------------
-    public func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String : Any]?) -> Bool {
+    func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String : Any]?) -> Bool {
         
         guard let matcherData = data, let dataType = matcherData.dataType, let value = matcherData.value else {
             return false

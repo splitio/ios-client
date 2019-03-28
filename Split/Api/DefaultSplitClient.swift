@@ -10,7 +10,7 @@
 
 import Foundation
 
-public final class DefaultSplitClient: NSObject, SplitClient {
+public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClient {
     
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
@@ -152,17 +152,13 @@ extension DefaultSplitClient {
         
         do {
             let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: trimmedSplitName, attributes: attributes)
-            let label = result![Engine.EVALUATION_RESULT_LABEL] as! String
-            let treatment = result![Engine.EVALUATION_RESULT_TREATMENT] as! String
-            
-            if let val = result![Engine.EVALUATION_RESULT_SPLIT_VERSION] {
-                let splitVersion = val as! Int64
-                logImpression(label: label, changeNumber: splitVersion, treatment: treatment, splitName: trimmedSplitName, attributes: attributes)
+            if let splitVersion = result.splitVersion {
+                logImpression(label: result.label, changeNumber: splitVersion, treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
             } else {
-                logImpression(label: label, treatment: treatment, splitName: trimmedSplitName, attributes: attributes)
+                logImpression(label: result.label, treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
             }
             metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatment)
-            return treatment
+            return result.treatment
         }
         catch {
             logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: trimmedSplitName, attributes: attributes)
