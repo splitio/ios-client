@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'Split'
   s.module_name      = 'Split'
-  s.version          = '2.0.2-sdks-480.1'
+  s.version          = '2.0.2'
   s.summary          = 'iOS SDK for Split'
 
   s.description      = <<-DESC
@@ -13,9 +13,7 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.author           = { 'Patricio Echague' => 'pato@split.io', 'Sebastian Arrubia' => 'sebastian@split.io', 'Fernando Martin' => 'fernando@split.io'}
   s.source = { :git => 'https://github.com/splitio/ios-client.git', :tag => s.version.to_s }
   s.ios.deployment_target = '9.0'
-  s.source_files = 'Split/**/*'
   s.frameworks = 'Foundation'
-  s.source_files = 'Split/*.{swift}'
-  s.source_files = 'Split/**/*.{swift}'
+  s.source_files = 'Split/**/*.{swift}','Split/Common/Utils/JFBCrypt/*.{h,m}'
 
 end
