@@ -34,6 +34,7 @@ import Foundation
                 splitView.changeNumber = split.changeNumber
                 splitView.trafficType = split.trafficTypeName
                 splitView.killed = split.killed
+                splitView.configurations = split.configurations
 
                 if let conditions = split.conditions {
                     var treatments = Set<String>()
