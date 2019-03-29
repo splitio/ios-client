@@ -22,6 +22,6 @@ public class SplitView: NSObject, Codable {
     @objc public var changeNum: NSNumber? {
         return changeNumber as NSNumber?
     }
-    
-    
+    @objc public var configurations: [String: String]?
+
 }
