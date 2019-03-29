@@ -42,7 +42,7 @@ import Foundation
 ///
 
 public final class LocalhostSplitClient: NSObject, SplitClient {
-    
+
     private let treatmentFetcher: TreatmentFetcher
     private let eventsManager: SplitEventsManager?
     
@@ -66,6 +66,18 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
             results[split] = treatments?[split] ?? SplitConstants.CONTROL
         }
         return results
+    }
+    
+    public func getTreatmentWithConfig(_ split: String) -> SplitResult {
+        return getTreatmentWithConfig(split, attributes: nil)
+    }
+    
+    public func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
+        return SplitResult(treatment: getTreatment(split), configurations: nil)
+    }
+    
+    public func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+        return getTreatments(splits: splits, attributes: attributes).mapValues( { SplitResult(treatment: $0, configurations: nil) } )
     }
     
     public func on(_ event: SplitEvent, _ task: SplitEventTask) {
