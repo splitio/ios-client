@@ -9,8 +9,8 @@
 import Foundation
 
 @objc public class SplitResult: NSObject {
-    public var treatment: String
-    public var configurations: String?
+    @objc public var treatment: String
+    @objc public var configurations: String?
     
     init(treatment: String, configurations: String? = nil) {
         self.treatment = treatment
