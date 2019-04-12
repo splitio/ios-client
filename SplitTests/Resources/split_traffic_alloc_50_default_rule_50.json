@@ -1,0 +1,51 @@
+{
+    "trafficTypeName":"client",
+    "name":"tf_50_dr_50",
+    "trafficAllocation":50,
+    "trafficAllocationSeed":1222036110,
+    "seed":-720499763,
+    "status":"ACTIVE",
+    "killed":false,
+    "defaultTreatment":"off",
+    "changeNumber":1555013518431,
+    "algo":2,
+    "configurations":{
+        
+    },
+    "conditions":[
+        {
+            "conditionType":"ROLLOUT",
+            "matcherGroup":{
+                "combiner":"AND",
+                "matchers":[
+                    {
+                        "keySelector":{
+                            "trafficType":"client",
+                            "attribute":null
+                        },
+                        "matcherType":"ALL_KEYS",
+                        "negate":false,
+                        "userDefinedSegmentMatcherData":null,
+                        "whitelistMatcherData":null,
+                        "unaryNumericMatcherData":null,
+                        "betweenMatcherData":null,
+                        "booleanMatcherData":null,
+                        "dependencyMatcherData":null,
+                        "stringMatcherData":null
+                    }
+                ]
+            },
+            "partitions":[
+                {
+                    "treatment":"on",
+                    "size":50
+                },
+                {
+                    "treatment":"off",
+                    "size":50
+                }
+            ],
+            "label":"default rule"
+        }
+    ]
+}
