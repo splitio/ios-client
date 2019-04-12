@@ -1,3 +1,5 @@
+2.0.3: (Apr 12, 2019)
+- Fixing traffic allocation issue on certain scenarios
 2.0.2: (Mar 13, 2019)
 - Adding localhost mode
 - Using different data folders for each api key factory instance
