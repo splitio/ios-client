@@ -10,10 +10,10 @@ import Foundation
 
 @objc public class SplitResult: NSObject {
     @objc public var treatment: String
-    @objc public var configurations: String?
+    @objc public var config: String?
     
-    init(treatment: String, configurations: String? = nil) {
+    init(treatment: String, config: String? = nil) {
         self.treatment = treatment
-        self.configurations = configurations
+        self.config = config
     }
 }

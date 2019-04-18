@@ -181,7 +181,7 @@ extension DefaultSplitClient {
             } else {
                 logImpression(label: result.label, treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
             }
-            return SplitResult(treatment: result.treatment, configurations: result.configurations)
+            return SplitResult(treatment: result.treatment, config: result.configuration)
         }
         catch {
             logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: trimmedSplitName, attributes: attributes)

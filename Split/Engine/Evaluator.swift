@@ -14,7 +14,7 @@ class Evaluator {
     var splitClient: InternalSplitClient?  {
         
         didSet {
-            
+
             self.splitFetcher = self.splitClient?.splitFetcher
             self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
             
@@ -41,11 +41,11 @@ class Evaluator {
             
             if let killed = splitTreated.killed, killed {
                 let treatment = splitTreated.defaultTreatment ?? SplitConstants.CONTROL
-                let configurations = splitTreated.configurations?[treatment]
+                let configuration = splitTreated.configurations?[treatment]
                 return EvaluationResult(treatment: treatment,
                                         label: ImpressionsConstants.KILLED,
                                         splitVersion: (splitTreated.changeNumber ?? -1),
-                                        configurations: configurations)
+                                        configuration: configuration)
             }
             
             var result: EvaluationResult!

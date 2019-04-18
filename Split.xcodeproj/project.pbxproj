@@ -199,6 +199,19 @@
 		598EDE84224CE2C4005D4762 /* SplitResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598EDE83224CE2C4005D4762 /* SplitResult.swift */; };
 		598EDE8C224D49C9005D4762 /* SplitIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598EDE8B224D49C9005D4762 /* SplitIntegrationTests.swift */; };
 		598EDE8E224D49C9005D4762 /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B6DEE5A20EA6A4E0067435E /* Split.framework */; };
+		599EA57522666B84006CBA89 /* YAMLOperators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA56E22666B84006CBA89 /* YAMLOperators.swift */; };
+		599EA57622666B84006CBA89 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 599EA56F22666B84006CBA89 /* LICENSE */; };
+		599EA57722666B84006CBA89 /* YAMLTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57022666B84006CBA89 /* YAMLTokenizer.swift */; };
+		599EA57822666B84006CBA89 /* YAMLResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57122666B84006CBA89 /* YAMLResult.swift */; };
+		599EA57922666B84006CBA89 /* YAMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57222666B84006CBA89 /* YAMLParser.swift */; };
+		599EA57A22666B84006CBA89 /* YAMLRegex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57322666B84006CBA89 /* YAMLRegex.swift */; };
+		599EA57B22666B84006CBA89 /* Yaml.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57422666B84006CBA89 /* Yaml.swift */; };
+		599EA57F2266708D006CBA89 /* LocalhostYamlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57E2266708D006CBA89 /* LocalhostYamlParserTest.swift */; };
+		599EA5812266719C006CBA89 /* YamlLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA5802266719C006CBA89 /* YamlLocalhostSplitsParser.swift */; };
+		599EA5852268E9C2006CBA89 /* LocalhostTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA5842268E9C2006CBA89 /* LocalhostTests.swift */; };
+		599EA58C226903DF006CBA89 /* localhost.yaml in Resources */ = {isa = PBXBuildFile; fileRef = 599EA58B226903DF006CBA89 /* localhost.yaml */; };
+		599EA58E226916CB006CBA89 /* localhost_legacy.splits in Resources */ = {isa = PBXBuildFile; fileRef = 599EA58D226916CB006CBA89 /* localhost_legacy.splits */; };
+		599EA59022691D57006CBA89 /* localhost_yml.yml in Resources */ = {isa = PBXBuildFile; fileRef = 599EA58F22691D57006CBA89 /* localhost_yml.yml */; };
 		59B8B8AA220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */; };
 		59B8B8AC220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8AB220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift */; };
 		59B8B8B0220C6E3F003E0D5A /* ValidationErrorInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8AF220C6E3F003E0D5A /* ValidationErrorInfo.swift */; };
@@ -216,10 +229,8 @@
 		59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */ = {isa = PBXBuildFile; fileRef = 59C493042167E3B400F5F774 /* murmur3-sample-v4.csv */; };
 		59D84BD422158A07003DA248 /* LocalhostSplitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BD322158A07003DA248 /* LocalhostSplitClient.swift */; };
 		59D84BD622158A24003DA248 /* LocalhostSplitFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BD522158A24003DA248 /* LocalhostSplitFactory.swift */; };
-		59D84BD822158A45003DA248 /* LocalhostSplitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BD722158A45003DA248 /* LocalhostSplitManager.swift */; };
-		59D84BDA2215A589003DA248 /* LocalhostTreatmentFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BD92215A589003DA248 /* LocalhostTreatmentFetcher.swift */; };
-		59D84BDC2215CD52003DA248 /* LocalhostTreatmentFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BDB2215CD52003DA248 /* LocalhostTreatmentFetcherTests.swift */; };
-		59D84BDE22160A96003DA248 /* TreatmentFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BDD22160A96003DA248 /* TreatmentFetcher.swift */; };
+		59D84BDA2215A589003DA248 /* LocalhostSplitFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BD92215A589003DA248 /* LocalhostSplitFetcher.swift */; };
+		59D84BDC2215CD52003DA248 /* LocalhostSplitFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BDB2215CD52003DA248 /* LocalhostSplitFetcherTests.swift */; };
 		59D84BE3221734F5003DA248 /* LocalhostSplitClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */; };
 		59D84BE7221AE775003DA248 /* LocalhostManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */; };
 		59DD34B42236989700FA9545 /* FolderApiKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DD34B32236989700FA9545 /* FolderApiKeyTests.swift */; };
@@ -482,6 +493,19 @@
 		598EDE89224D49C9005D4762 /* SplitIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		598EDE8B224D49C9005D4762 /* SplitIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitIntegrationTests.swift; sourceTree = "<group>"; };
 		598EDE8D224D49C9005D4762 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		599EA56E22666B84006CBA89 /* YAMLOperators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YAMLOperators.swift; sourceTree = "<group>"; };
+		599EA56F22666B84006CBA89 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		599EA57022666B84006CBA89 /* YAMLTokenizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YAMLTokenizer.swift; sourceTree = "<group>"; };
+		599EA57122666B84006CBA89 /* YAMLResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YAMLResult.swift; sourceTree = "<group>"; };
+		599EA57222666B84006CBA89 /* YAMLParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YAMLParser.swift; sourceTree = "<group>"; };
+		599EA57322666B84006CBA89 /* YAMLRegex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YAMLRegex.swift; sourceTree = "<group>"; };
+		599EA57422666B84006CBA89 /* Yaml.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Yaml.swift; sourceTree = "<group>"; };
+		599EA57E2266708D006CBA89 /* LocalhostYamlParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostYamlParserTest.swift; sourceTree = "<group>"; };
+		599EA5802266719C006CBA89 /* YamlLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YamlLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		599EA5842268E9C2006CBA89 /* LocalhostTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostTests.swift; sourceTree = "<group>"; };
+		599EA58B226903DF006CBA89 /* localhost.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = localhost.yaml; sourceTree = "<group>"; };
+		599EA58D226916CB006CBA89 /* localhost_legacy.splits */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = localhost_legacy.splits; sourceTree = "<group>"; };
+		599EA58F22691D57006CBA89 /* localhost_yml.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = localhost_yml.yml; sourceTree = "<group>"; };
 		59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SyncDictionaryCollectionWrapperTest.swift; path = SplitTests/SyncDictionaryCollectionWrapperTest.swift; sourceTree = SOURCE_ROOT; };
 		59B8B8AB220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncDictionarySingleWrapperTest.swift; sourceTree = "<group>"; };
 		59B8B8AF220C6E3F003E0D5A /* ValidationErrorInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationErrorInfo.swift; sourceTree = "<group>"; };
@@ -499,10 +523,8 @@
 		59C493042167E3B400F5F774 /* murmur3-sample-v4.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-v4.csv"; sourceTree = "<group>"; };
 		59D84BD322158A07003DA248 /* LocalhostSplitClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitClient.swift; sourceTree = "<group>"; };
 		59D84BD522158A24003DA248 /* LocalhostSplitFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostSplitFactory.swift; sourceTree = "<group>"; };
-		59D84BD722158A45003DA248 /* LocalhostSplitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostSplitManager.swift; sourceTree = "<group>"; };
-		59D84BD92215A589003DA248 /* LocalhostTreatmentFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostTreatmentFetcher.swift; sourceTree = "<group>"; };
-		59D84BDB2215CD52003DA248 /* LocalhostTreatmentFetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostTreatmentFetcherTests.swift; sourceTree = "<group>"; };
-		59D84BDD22160A96003DA248 /* TreatmentFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreatmentFetcher.swift; sourceTree = "<group>"; };
+		59D84BD92215A589003DA248 /* LocalhostSplitFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostSplitFetcher.swift; sourceTree = "<group>"; };
+		59D84BDB2215CD52003DA248 /* LocalhostSplitFetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostSplitFetcherTests.swift; sourceTree = "<group>"; };
 		59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitClientTests.swift; sourceTree = "<group>"; };
 		59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostManagerTests.swift; sourceTree = "<group>"; };
 		59DD34B32236989700FA9545 /* FolderApiKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderApiKeyTests.swift; sourceTree = "<group>"; };
@@ -646,8 +668,7 @@
 				3B6DEE7320EA6ADF0067435E /* RefreshableSplitFetcher.swift */,
 				3B6DEE7420EA6ADF0067435E /* SplitFetcher.swift */,
 				590DF9D5214065880082B94F /* LocalSplitFetcher.swift */,
-				59D84BDD22160A96003DA248 /* TreatmentFetcher.swift */,
-				59D84BD92215A589003DA248 /* LocalhostTreatmentFetcher.swift */,
+				59D84BD92215A589003DA248 /* LocalhostSplitFetcher.swift */,
 				598EDE81224C0437005D4762 /* QueryableMySegmentsFetcher.swift */,
 			);
 			path = Refresh;
@@ -688,7 +709,6 @@
 				59FB7C322203126400ECC96A /* DefaultSplitFactoryBuilder.swift */,
 				59D84BD322158A07003DA248 /* LocalhostSplitClient.swift */,
 				59D84BD522158A24003DA248 /* LocalhostSplitFactory.swift */,
-				59D84BD722158A45003DA248 /* LocalhostSplitManager.swift */,
 				598EDE77224BB3E9005D4762 /* InternalSplitClient.swift */,
 				598EDE83224CE2C4005D4762 /* SplitResult.swift */,
 			);
@@ -1045,6 +1065,7 @@
 		59163B11216396EF00C7AA57 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				599EA56D22666B57006CBA89 /* Yaml */,
 				59FB7BCF21E77ABD00ECC96A /* Validators */,
 				3B6DEF0220EA6AE30067435E /* Utils */,
 				3B6DEF0520EA6AE40067435E /* Structs */,
@@ -1103,6 +1124,7 @@
 		592C6ADB211CBB86002D120C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				599EA58B226903DF006CBA89 /* localhost.yaml */,
 				5982D935219F494500230F44 /* matchers.json */,
 				59C493022167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv */,
 				59C493032167E3B400F5F774 /* murmur3-sample-v3.csv */,
@@ -1123,9 +1145,11 @@
 				59FB7C292202463000ECC96A /* localhost_1.splits */,
 				59FB7C2B2202467C00ECC96A /* localhost_2.splits */,
 				59FB7C2D220247D300ECC96A /* localhost_3.splits */,
+				599EA58D226916CB006CBA89 /* localhost_legacy.splits */,
 				5912D14C2199FD4D00BC698C /* legacy_1.csv */,
 				5982D92E219C83D000230F44 /* legacy_1_short.csv */,
 				5912D153219A065200BC698C /* legacy_2.csv */,
+				599EA58F22691D57006CBA89 /* localhost_yml.yml */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1146,6 +1170,20 @@
 				598EDE8D224D49C9005D4762 /* Info.plist */,
 			);
 			path = SplitIntegrationTests;
+			sourceTree = "<group>";
+		};
+		599EA56D22666B57006CBA89 /* Yaml */ = {
+			isa = PBXGroup;
+			children = (
+				599EA56F22666B84006CBA89 /* LICENSE */,
+				599EA57422666B84006CBA89 /* Yaml.swift */,
+				599EA56E22666B84006CBA89 /* YAMLOperators.swift */,
+				599EA57222666B84006CBA89 /* YAMLParser.swift */,
+				599EA57322666B84006CBA89 /* YAMLRegex.swift */,
+				599EA57122666B84006CBA89 /* YAMLResult.swift */,
+				599EA57022666B84006CBA89 /* YAMLTokenizer.swift */,
+			);
+			path = Yaml;
 			sourceTree = "<group>";
 		};
 		59BF3D2C22313E82004D134D /* JFBCrypt */ = {
@@ -1221,10 +1259,12 @@
 		59FB7C262202454700ECC96A /* Localhost */ = {
 			isa = PBXGroup;
 			children = (
-				59D84BDB2215CD52003DA248 /* LocalhostTreatmentFetcherTests.swift */,
+				59D84BDB2215CD52003DA248 /* LocalhostSplitFetcherTests.swift */,
 				59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */,
 				59FB7C272202457D00ECC96A /* LocalhostParserTests.swift */,
 				59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */,
+				599EA5842268E9C2006CBA89 /* LocalhostTests.swift */,
+				599EA57E2266708D006CBA89 /* LocalhostYamlParserTest.swift */,
 			);
 			path = Localhost;
 			sourceTree = "<group>";
@@ -1234,6 +1274,7 @@
 			children = (
 				59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */,
 				59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */,
+				599EA5802266719C006CBA89 /* YamlLocalhostSplitsParser.swift */,
 			);
 			path = Localhost;
 			sourceTree = "<group>";
@@ -1360,6 +1401,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				599EA57622666B84006CBA89 /* LICENSE in Resources */,
 				3B6DEF5C20EA6AE50067435E /* .gitkeep in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1379,6 +1421,8 @@
 				590DF9CA213DAC9D0082B94F /* splits.json in Resources */,
 				592C6AEA211CBBB0002D120C /* regex.csv in Resources */,
 				59C493052167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv in Resources */,
+				599EA59022691D57006CBA89 /* localhost_yml.yml in Resources */,
+				599EA58C226903DF006CBA89 /* localhost.yaml in Resources */,
 				5982D92F219C83D000230F44 /* legacy_1_short.csv in Resources */,
 				590DF9D1213F07400082B94F /* split_sample_feature6.json in Resources */,
 				5912D154219A065200BC698C /* legacy_2.csv in Resources */,
@@ -1390,6 +1434,7 @@
 				5919C64221C7C8A600EC35B8 /* split_traffic_allocation_1.json in Resources */,
 				592C6AE8211CBBB0002D120C /* mysegments_3.json in Resources */,
 				59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */,
+				599EA58E226916CB006CBA89 /* localhost_legacy.splits in Resources */,
 				592C6AEB211CBBB0002D120C /* murmur3-sample-data-v2.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1436,6 +1481,7 @@
 				3B6DEF4A20EA6AE50067435E /* Segment.swift in Sources */,
 				3B6DEF6120EA6AE50067435E /* ContainsAllOfSetMatcher.swift in Sources */,
 				3B6DEF7320EA6AE50067435E /* Json.swift in Sources */,
+				599EA57A22666B84006CBA89 /* YAMLRegex.swift in Sources */,
 				3B6DEF8120EA6AE50067435E /* DataResult.swift in Sources */,
 				3B6DEF7F20EA6AE50067435E /* RestClientRequestProtocol.swift in Sources */,
 				59F6AAA9215EBD4400A51997 /* CounterMetric.swift in Sources */,
@@ -1448,12 +1494,13 @@
 				597CD32B216BA09000A15487 /* RestClient+Metrics.swift in Sources */,
 				3B6DEF6020EA6AE50067435E /* BetweenMatcher.swift in Sources */,
 				3B6DEF3720EA6AE50067435E /* SplitManager.swift in Sources */,
-				59D84BDE22160A96003DA248 /* TreatmentFetcher.swift in Sources */,
+				599EA57B22666B84006CBA89 /* Yaml.swift in Sources */,
 				3B6DEF3A20EA6AE50067435E /* Dictionary+Extensions.swift in Sources */,
 				59163B0B215EC88F00C7AA57 /* EndpointHit.swift in Sources */,
 				3B6DEF2620EA6AE50067435E /* SplitClientConfig.swift in Sources */,
 				59163B07215EC7A600C7AA57 /* MetricsManager.swift in Sources */,
 				3B6DEF3220EA6AE50067435E /* Murmur3Hash.swift in Sources */,
+				599EA5812266719C006CBA89 /* YamlLocalhostSplitsParser.swift in Sources */,
 				3B6DEF5720EA6AE50067435E /* SplitEventExecutorWithClient.swift in Sources */,
 				3B6DEF5520EA6AE50067435E /* SplitEventExecutorProtocol.swift in Sources */,
 				5982D931219EFEF500230F44 /* CastUtils.swift in Sources */,
@@ -1470,8 +1517,10 @@
 				3B6DEF4320EA6AE50067435E /* Key.swift in Sources */,
 				3B6DEF7A20EA6AE50067435E /* HttpRequest.swift in Sources */,
 				3B6DEF3120EA6AE50067435E /* LegacyHash.swift in Sources */,
+				599EA57922666B84006CBA89 /* YAMLParser.swift in Sources */,
 				59163B09215EC86C00C7AA57 /* HitsFile.swift in Sources */,
 				3B6DEF8720EA6AE50067435E /* InfoUtils.swift in Sources */,
+				599EA57522666B84006CBA89 /* YAMLOperators.swift in Sources */,
 				3B6DEF2120EA6AE50067435E /* HttpSplitChangeFetcher.swift in Sources */,
 				3B6DEF5A20EA6AE50067435E /* SplitEventTask.swift in Sources */,
 				3B6DEF8920EA6AE50067435E /* SynchronizedArrayQueue.swift in Sources */,
@@ -1542,7 +1591,8 @@
 				3B6DEF4B20EA6AE50067435E /* Split.swift in Sources */,
 				3B6DEF6A20EA6AE50067435E /* GreaterThanOrEqualToMatcher.swift in Sources */,
 				3B6DEF5820EA6AE50067435E /* SplitEvent.swift in Sources */,
-				59D84BDA2215A589003DA248 /* LocalhostTreatmentFetcher.swift in Sources */,
+				599EA57822666B84006CBA89 /* YAMLResult.swift in Sources */,
+				59D84BDA2215A589003DA248 /* LocalhostSplitFetcher.swift in Sources */,
 				3B6DEF1220EA6AE50067435E /* SplitChangeCache.swift in Sources */,
 				59BF3D3E22329C7A004D134D /* JFBCrypt.m in Sources */,
 				3B6DEF8820EA6AE50067435E /* SplitChangeFetcher.swift in Sources */,
@@ -1550,6 +1600,7 @@
 				3B6DEF5E20EA6AE50067435E /* AllKeysMatcher.swift in Sources */,
 				590DF9D4214028800082B94F /* SplitView+StringConvertible.swift in Sources */,
 				3B6DEF2520EA6AE50067435E /* Version.swift in Sources */,
+				599EA57722666B84006CBA89 /* YAMLTokenizer.swift in Sources */,
 				3B6DEF5F20EA6AE50067435E /* BaseMatcher.swift in Sources */,
 				59D84BD422158A07003DA248 /* LocalhostSplitClient.swift in Sources */,
 				3B6DEF1D20EA6AE50067435E /* PollingManager.swift in Sources */,
@@ -1567,7 +1618,6 @@
 				3B6DEF4E20EA6AE50067435E /* Status.swift in Sources */,
 				5912D1472194715500BC698C /* FileStorageProtocol.swift in Sources */,
 				3B6DEF1420EA6AE50067435E /* MySegmentsFetcher.swift in Sources */,
-				59D84BD822158A45003DA248 /* LocalhostSplitManager.swift in Sources */,
 				3B6DEF7420EA6AE50067435E /* RestClient+Impressions.swift in Sources */,
 				3B6DEF6720EA6AE50067435E /* EqualToBooleanMatcher.swift in Sources */,
 				3B6DEF1820EA6AE50067435E /* SplitFetcher.swift in Sources */,
@@ -1605,7 +1655,8 @@
 				598EDE7C224BCA58005D4762 /* InternalSplitClientStub.swift in Sources */,
 				5912D14F2199FD8600BC698C /* LegacyHashingTest.swift in Sources */,
 				59FB7C282202457D00ECC96A /* LocalhostParserTests.swift in Sources */,
-				59D84BDC2215CD52003DA248 /* LocalhostTreatmentFetcherTests.swift in Sources */,
+				59D84BDC2215CD52003DA248 /* LocalhostSplitFetcherTests.swift in Sources */,
+				599EA5852268E9C2006CBA89 /* LocalhostTests.swift in Sources */,
 				5912D152219A022000BC698C /* CsvHelper.swift in Sources */,
 				5919C64421C7CCE400EC35B8 /* TrafficAllocationTest.swift in Sources */,
 				5982D934219F3D2E00230F44 /* MatcherEvalTests.swift in Sources */,
@@ -1618,6 +1669,7 @@
 				598EDE7A224BBF7E005D4762 /* EvaluatorTests.swift in Sources */,
 				598EDE7422493008005D4762 /* SplitConfigurationsParsingTest.swift in Sources */,
 				59DD34B42236989700FA9545 /* FolderApiKeyTests.swift in Sources */,
+				599EA57F2266708D006CBA89 /* LocalhostYamlParserTest.swift in Sources */,
 				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
 				597CD33A216D022F00A15487 /* MetricsManagerTests.swift in Sources */,

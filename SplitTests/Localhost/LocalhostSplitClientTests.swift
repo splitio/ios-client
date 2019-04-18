@@ -26,22 +26,22 @@ class LocalhostSplitClientTests: XCTestCase {
         let storage = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
         config.refreshInterval = 0
-        let fetcher = LocalhostTreatmentFetcher(fileStorage: storage, config: config)
+        let fetcher = LocalhostSplitFetcher(fileStorage: storage, config: config, splitsFileName: fileName)
         storage.write(fileName: fileName, content: fileContent)
         fetcher.forceRefresh()
-        client = LocalhostSplitClient(treatmentFetcher: fetcher)
+        client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), splitFetcher: fetcher)
     }
     
     override func tearDown() {
     }
     
-    func testRightTreatment() {
+    func testRightSplitsFileTreatment() {
         for i in 1...5 {
             XCTAssertEqual(client.getTreatment("s\(i)"), "t\(i)")
         }
     }
     
-    func testRightTreatments() {
+    func testRightSplitsFileTreatments() {
         let splitsCount = 5
         var splits = [String]()
         for i in 1...splitsCount {

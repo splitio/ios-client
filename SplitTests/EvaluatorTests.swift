@@ -38,7 +38,7 @@ class EvaluatorTests: XCTestCase {
         }
         XCTAssertNotNil(result)
         XCTAssertEqual("on", result.treatment)
-        XCTAssertNil(result.configurations)
+        XCTAssertNil(result.configuration)
         XCTAssertEqual("whitelisted", result.label)
     }
     
@@ -52,7 +52,7 @@ class EvaluatorTests: XCTestCase {
         }
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
-        XCTAssertNil(result.configurations)
+        XCTAssertNil(result.configuration)
         XCTAssertEqual("whitelisted", result.label)
     }
     
@@ -66,7 +66,7 @@ class EvaluatorTests: XCTestCase {
         }
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
-        XCTAssertNil(result.configurations)
+        XCTAssertNil(result.configuration)
         XCTAssertEqual("in segment all", result.label)
         
     }
@@ -81,7 +81,7 @@ class EvaluatorTests: XCTestCase {
         }
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
-        XCTAssertNil(result.configurations)
+        XCTAssertNil(result.configuration)
         XCTAssertEqual("whitelisted segment", result.label)
         
     }
@@ -96,7 +96,7 @@ class EvaluatorTests: XCTestCase {
         }
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
-        XCTAssertNotNil(result.configurations)
+        XCTAssertNotNil(result.configuration)
         XCTAssertEqual(ImpressionsConstants.KILLED, result.label)
     }
     
@@ -110,7 +110,7 @@ class EvaluatorTests: XCTestCase {
         }
         XCTAssertNotNil(result)
         XCTAssertEqual(SplitConstants.CONTROL, result.treatment)
-        XCTAssertNil(result.configurations)
+        XCTAssertNil(result.configuration)
         XCTAssertEqual(ImpressionsConstants.SPLIT_NOT_FOUND, result.label)
     }
     
@@ -124,7 +124,7 @@ class EvaluatorTests: XCTestCase {
         }
         XCTAssertNotNil(result)
         XCTAssertEqual(SplitConstants.CONTROL, result.treatment)
-        XCTAssertNil(result.configurations)
+        XCTAssertNil(result.configuration)
         XCTAssertEqual(ImpressionsConstants.EXCEPTION, result.label)
     }
     

@@ -16,7 +16,7 @@ class LocalhostManagerTests: XCTestCase {
 
     override func setUp() {
         var storage: FileStorageProtocol!
-        var fetcher: TreatmentFetcher!
+        var fetcher: SplitFetcher!
         let fileContent = """
                             s1 t1\n
                             s2 t2\n
@@ -27,10 +27,10 @@ class LocalhostManagerTests: XCTestCase {
         storage = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
         config.refreshInterval = 0
-        fetcher = LocalhostTreatmentFetcher(fileStorage: storage, config: config)
+        fetcher = LocalhostSplitFetcher(fileStorage: storage, config: config, splitsFileName: fileName)
         storage.write(fileName: fileName, content: fileContent)
         fetcher.forceRefresh()
-        manager = LocalhostSplitManager(treatmentFetcher: fetcher)
+        manager = DefaultSplitManager(splitFetcher: fetcher)
     }
 
     override func tearDown() {
