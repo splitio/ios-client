@@ -1,5 +1,5 @@
 //
-//  LocalhostTreatmentFetcherTest.swift
+//  LocalhostSplitFetcherTests.swift
 //  SplitTests
 //
 //  Created by Javier L. Avrudsky on 14/02/2018.
@@ -9,10 +9,10 @@
 import XCTest
 @testable import Split
 
-class LocalhostTreatmentFetcherTests: XCTestCase {
+class LocalhostSplitFetcherTests: XCTestCase {
 
     var storage: FileStorageProtocol!
-    var fetcher: TreatmentFetcher!
+    var fetcher: SplitFetcher!
     let fileName = "localhost.splits"
 
     override func setUp() {
@@ -25,7 +25,7 @@ class LocalhostTreatmentFetcherTests: XCTestCase {
         storage.write(fileName: fileName, content: fileContent)
         var config = LocalhostSplitFetcherConfig()
         config.refreshInterval = 0
-        fetcher = LocalhostTreatmentFetcher(fileStorage: storage, config: config)
+        fetcher = LocalhostSplitFetcher(fileStorage: storage, config: config, splitsFileName: fileName)
     }
 
     override func tearDown() {
@@ -41,7 +41,7 @@ class LocalhostTreatmentFetcherTests: XCTestCase {
         fetcher.forceRefresh()
         XCTAssertEqual(fetcher.fetchAll()?.count, 3)
         for i in 1...3 {
-            XCTAssertEqual(fetcher.fetch(splitName: "s\(i)"), "t\(i)")
+            XCTAssertEqual(fetcher.fetch(splitName: "s\(i)")?.name, "s\(i)")
         }
     }
     
@@ -55,7 +55,7 @@ class LocalhostTreatmentFetcherTests: XCTestCase {
         fetcher.forceRefresh()
         XCTAssertEqual(fetcher.fetchAll()?.count, 3)
         for i in 5...7 {
-            XCTAssertEqual(fetcher.fetch(splitName: "s\(i)"), "t\(i)")
+            XCTAssertEqual(fetcher.fetch(splitName: "s\(i)")?.name, "s\(i)")
         }
     }
     
@@ -70,7 +70,7 @@ class LocalhostTreatmentFetcherTests: XCTestCase {
         fetcher.forceRefresh()
         XCTAssertEqual(fetcher.fetchAll()?.count, 4)
         for i in 5...8 {
-            XCTAssertEqual(fetcher.fetch(splitName: "s\(i)"), "t\(i)")
+            XCTAssertEqual(fetcher.fetch(splitName: "s\(i)")?.name, "s\(i)")
         }
     }
 

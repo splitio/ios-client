@@ -34,6 +34,10 @@ class Matcher: NSObject, Codable {
         case booleanMatcherData
         case stringMatcherData
     }
+    
+    override init() {
+        super.init()
+    }
 
     required init(from decoder: Decoder) throws {
         if let values = try? decoder.container(keyedBy: CodingKeys.self) {

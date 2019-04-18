@@ -23,6 +23,10 @@ class Condition: NSObject, Codable {
         case label
     }
     
+    override init() {
+        super.init()
+    }
+    
     required init(from decoder: Decoder) throws {
         if let values = try? decoder.container(keyedBy: CodingKeys.self) {
             conditionType = try? values.decode(ConditionType.self, forKey: .conditionType)

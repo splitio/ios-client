@@ -18,6 +18,10 @@ class MatcherGroup: NSObject, Codable {
         case matchers
     }
     
+    override init() {
+        super.init()
+    }
+    
     required init(from decoder: Decoder) throws {
         if let values = try? decoder.container(keyedBy: CodingKeys.self) {
             matcherCombiner = try? values.decode(MatcherCombiner.self, forKey: .matcherCombiner)
