@@ -15,11 +15,11 @@ public enum FecthingPolicy {
 
 class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
     
-    private let restClient: RestClient
+    private let restClient: RestClientSplitChanges
     private let splitChangeCache: SplitChangeCache
     private let splitChangeValidator: SplitChangeValidator
     
-    init(restClient: RestClient, splitCache: SplitCacheProtocol) {
+    init(restClient: RestClientSplitChanges, splitCache: SplitCacheProtocol) {
         self.restClient = restClient
         self.splitChangeCache = SplitChangeCache(splitCache: splitCache)
         self.splitChangeValidator = DefaultSplitChangeValidator()

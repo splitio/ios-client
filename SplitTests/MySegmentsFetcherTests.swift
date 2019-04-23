@@ -8,7 +8,6 @@
 
 import Foundation
 import XCTest
-import OHHTTPStubs
 
 @testable import Split
 
@@ -21,16 +20,13 @@ class MySegmentsFetcherTests: XCTestCase {
     }
 
     override func tearDown() {
-        OHHTTPStubs.removeAllStubs()
     }
 
     func testOneSegmentFetch() {
-        stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
-            let stubPath = OHPathForFile("mysegments_1.json", type(of: self))
-            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-        }
-
-        sleep(1) // Time to load the file
+        let restClient: RestClientMySegments = RestClientStub()
+        let restClientTest: RestClientTest = restClient as! RestClientTest
+        restClientTest.update(segments: ["splitters"])
+        mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
         let response = try? mySegmentsFetcher.fetch(user: "test")
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
@@ -40,12 +36,10 @@ class MySegmentsFetcherTests: XCTestCase {
     }
 
     func testThreeSegmentsFetch() {
-        stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
-            let stubPath = OHPathForFile("mysegments_2.json", type(of: self))
-            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-        }
-
-        sleep(1) // Time to load the file
+        let restClient: RestClientMySegments = RestClientStub()
+        let restClientTest: RestClientTest = restClient as! RestClientTest
+        restClientTest.update(segments: ["test", "test1"])
+        mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
         let response = try? mySegmentsFetcher.fetch(user: "test")
 
         XCTAssertTrue(response != nil, "Response should not be nil")
@@ -57,12 +51,10 @@ class MySegmentsFetcherTests: XCTestCase {
     }
 
     func testEmptySegmentFetch() {
-        stub(condition: pathMatches("/api/mysegments/.*", options:[.caseInsensitive])) { _ in
-            let stubPath = OHPathForFile("mysegments_3.json", type(of: self))
-            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-        }
-
-        sleep(1) // Time to load the file
+        let restClient: RestClientMySegments = RestClientStub()
+        let restClientTest: RestClientTest = restClient as! RestClientTest
+        restClientTest.update(segments: [])
+        mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
         let response = try? mySegmentsFetcher.fetch(user: "test")
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
