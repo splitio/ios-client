@@ -10,6 +10,7 @@ import Foundation
 
 class YamlLocalhostSplitsParser: LocalhostSplitsParser {
     
+    private let splitConditionHelper = SplitConditionHelper()
     private let kTreatmentField = "treatment";
     private let kConfigField = "config";
     private let kKeysField = "keys";
@@ -53,14 +54,14 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
                                 if let keys = keys.array {
                                     for yamlKey in keys {
                                         if let key = yamlKey.string {
-                                            split.conditions!.insert(createWhitelistCondition(key: key, treatment: treatment), at:0)
+                                            split.conditions!.insert(splitConditionHelper.createWhitelistCondition(key: key, treatment: treatment), at:0)
                                         }
                                     }
                                 } else if let key = keys.string {
-                                    split.conditions!.insert(createWhitelistCondition(key: key, treatment: treatment), at:0)
+                                    split.conditions!.insert(splitConditionHelper.createWhitelistCondition(key: key, treatment: treatment), at:0)
                                 }
                             } else {
-                                split.conditions!.append(createRolloutCondition(treatment: treatment))
+                                split.conditions!.append(splitConditionHelper.createRolloutCondition(treatment: treatment))
                             }
                             if let yamlConfig = splitMap[Yaml.string(kConfigField)], let config = yamlConfig.string {
                                 if split.configurations == nil {
@@ -76,48 +77,4 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
         }
         return loadedSplits
     }
-    
-    func createWhitelistCondition(key: String, treatment: String) -> Condition {
-
-        let condition = Condition()
-        let matcherGroup = MatcherGroup()
-        let matcher = Matcher()
-        let whiteListMatcherData = WhitelistMatcherData()
-        let partition = Partition()
-        
-        condition.conditionType = ConditionType.Whitelist
-        matcherGroup.matcherCombiner = MatcherCombiner.And
-        matcher.matcherType = MatcherType.Whitelist
-        whiteListMatcherData.whitelist = [key]
-        matcher.whitelistMatcherData = whiteListMatcherData
-        partition.size = 100
-        partition.treatment = treatment
-        matcherGroup.matchers = [matcher]
-        condition.matcherGroup = matcherGroup
-        condition.partitions = [partition]
-        condition.label = "LOCAL_\(key)"
-        
-        return condition
-    }
-    
-    func createRolloutCondition(treatment: String) -> Condition {
-        let condition = Condition()
-        let matcherGroup = MatcherGroup()
-        let matcher = Matcher()
-        let partition = Partition()
-        
-        condition.conditionType = ConditionType.Rollout
-        matcherGroup.matcherCombiner = MatcherCombiner.And
-        matcher.matcherType = MatcherType.AllKeys
-        partition.size = 100
-        partition.treatment = treatment
-        
-        matcherGroup.matchers = [matcher]
-        condition.matcherGroup = matcherGroup
-        condition.partitions = [partition]
-        condition.label = "in segment all"
-        
-        return condition
-    }
-    
 }
