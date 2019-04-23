@@ -9,6 +9,9 @@
 import Foundation
 
 class SpaceDelimitedLocalhostSplitsParser: LocalhostSplitsParser {
+    
+    let splitConditionHelper = SplitConditionHelper()
+    
     func parseContent(_ content: String) -> LocalhostSplits {
         
         var loadedSplits = LocalhostSplits()
@@ -31,32 +34,12 @@ class SpaceDelimitedLocalhostSplitsParser: LocalhostSplitsParser {
                     split.trafficAllocation = 100
                     split.trafficAllocationSeed = 1
                     split.seed = 1
-                    split.conditions = [createRolloutCondition(treatment: treatment)]
+                    split.conditions = [splitConditionHelper.createRolloutCondition(treatment: treatment)]
                     loadedSplits[splitName] = split
                 }
             }
         }
         return loadedSplits
     }
-    
-    func createRolloutCondition(treatment: String) -> Condition {
-        let condition = Condition()
-        let matcherGroup = MatcherGroup()
-        let matcher = Matcher()
-        let partition = Partition()
-        
-        condition.conditionType = ConditionType.Rollout
-        matcherGroup.matcherCombiner = MatcherCombiner.And
-        matcher.matcherType = MatcherType.AllKeys
-        partition.size = 100
-        partition.treatment = treatment
-        
-        matcherGroup.matchers = [matcher]
-        condition.matcherGroup = matcherGroup
-        condition.partitions = [partition]
-        condition.label = "in segment all"
-        
-        return condition
-    }
-    
+
 }
