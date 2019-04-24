@@ -24,7 +24,7 @@ class LocalhostTests: XCTestCase {
     
     func testUsingYamlFile() {
         let config = SplitClientConfig()
-        config.localhostSplitsFileName = "localhost.yaml"
+        config.splitFile = "localhost.yaml"
         let factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
         let client = factory.client
         let manager = factory.manager
@@ -108,7 +108,7 @@ class LocalhostTests: XCTestCase {
     
     func testUsingSpaceSeparatedFile() {
         let config = SplitClientConfig()
-        config.localhostSplitsFileName = "localhost_legacy.splits"
+        config.splitFile = "localhost_legacy.splits"
         let factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
         let client = factory.client
         let manager = factory.manager
@@ -177,7 +177,7 @@ class LocalhostTests: XCTestCase {
     
     func testLoadYml() {
         let config = SplitClientConfig()
-        config.localhostSplitsFileName = "localhost_yml.yml"
+        config.splitFile = "localhost_yml.yml"
         let factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
         let client = factory.client
         let t = client.getTreatment("split_0")
