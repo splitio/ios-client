@@ -40,7 +40,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         self.validationLogger = DefaultValidationMessageLogger()
         
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
-        eventsManager = SplitEventsManager(config: config)
+        eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
         
         let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache), splitCache: splitCache, interval: self.config!.featuresRefreshRate, eventsManager: eventsManager)
