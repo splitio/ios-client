@@ -143,6 +143,17 @@ public class SplitClientConfig: NSObject {
         - A closure of type SplitImpressionListener, that means (SplitImpression) -> Void
      */
     @objc public var impressionListener: SplitImpressionListener?
+    
+    ///
+    /// Data folder to store localhost splits file
+    /// - Default: localhost
+    ///
+    @objc public var localhostDataFolder: String = "localhost"
+    
+    ///
+    /// Localhost splits file name
+    ///
+    @objc public var localhostSplitsFileName: String = "splits.yaml"
 
     /**
      Maximum length matching / bucketing key. Internal config
@@ -150,7 +161,7 @@ public class SplitClientConfig: NSObject {
     let maximumKeyLength = 250
     
     ///
-    /// Maximum length matching / bucketing key. Internal config
+    /// Default folder to store cached data
     ///
     let defaultDataFolder = "split_data"
 }

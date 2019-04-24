@@ -22,7 +22,7 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
         do {
             document = try Yaml.load(content)
         } catch {
-            print(error)
+            Logger.e("Error parsing Yaml content: \(content)")
         }
         
         if let document = document, let values = document.array {
