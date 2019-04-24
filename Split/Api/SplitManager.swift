@@ -1,6 +1,6 @@
 //
-//  SplitManagerProtocol.swift
-//  Pods
+//  SplitManager.swift
+//  Split
 //
 //  Created by Brian Sztamfater on 27/9/17.
 //
