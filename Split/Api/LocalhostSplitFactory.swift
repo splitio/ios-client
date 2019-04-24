@@ -39,7 +39,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
         let fileStorage = FileStorage(dataFolderName: DataFolderFactory().sanitizeForFolderName(config.localhostDataFolder))
-        let splitFetcher: SplitFetcher = LocalhostSplitFetcher(fileStorage: fileStorage, eventsManager: eventsManager, splitsFileName: config.localhostSplitsFileName, bundle: bundle)
+        let splitFetcher: SplitFetcher = LocalhostSplitFetcher(fileStorage: fileStorage, eventsManager: eventsManager, splitsFileName: config.splitFile, bundle: bundle)
         localhostClient = LocalhostSplitClient(key:key, splitFetcher: splitFetcher, eventsManager: eventsManager)
         eventsManager.getExecutorResources().setClient(client: localhostClient)
         localhostManager = DefaultSplitManager(splitFetcher: splitFetcher)

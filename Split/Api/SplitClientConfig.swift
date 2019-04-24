@@ -153,7 +153,7 @@ public class SplitClientConfig: NSObject {
     ///
     /// Localhost splits file name
     ///
-    @objc public var localhostSplitsFileName: String = "localhost.splits"
+    @objc public var splitFile: String = "localhost.splits"
 
     /**
      Maximum length matching / bucketing key. Internal config
