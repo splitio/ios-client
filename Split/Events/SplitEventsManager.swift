@@ -38,7 +38,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         eventSplitsAreReady = false
         executorResources = SplitEventExecutorResources()
         executionTimes = [String: Int]()
-        registerMaxAllowebExecutionTimesPerEvent()
+        registerMaxAllowedExecutionTimesPerEvent()
 
         if config.sdkReadyTimeOut > 0 {
             let readyTimedoutQueue = DispatchQueue(label: "io.Split.Event.TimedOut")
@@ -107,7 +107,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
      * This method should registering the allowed maximum times of event trigger
      * EXAMPLE: SDK_READY should be triggered only once
      */
-    private func registerMaxAllowebExecutionTimesPerEvent() {
+    private func registerMaxAllowedExecutionTimesPerEvent() {
         
         executionTimes = [ SplitEvent.sdkReady.toString(): 1,
                            SplitEvent.sdkReadyTimedOut.toString(): 1]
