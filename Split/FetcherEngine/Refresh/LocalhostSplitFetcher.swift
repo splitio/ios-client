@@ -38,13 +38,13 @@ class LocalhostSplitFetcher: SplitFetcher {
         let fileName = splitsFileName.lowercased()
         guard let fileInfo = splitFileName(fileName) else {
             eventsManager.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
-            Logger.e("Localhost file name \(fileName) has not the correct format. It should be similar to 'name.yaml', 'name.yml' or deprecated 'name.splits'")
+            Logger.e("Localhost file name \(fileName) has not the correct format. It should be similar to 'name.yaml', 'name.yml'")
             return
         }
         
         if !isSupportedExtensionType(fileInfo.type) {
             eventsManager.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
-            Logger.e("Localhost file extension \(fileInfo.type) is not supported. It should be '.yaml', '.yml' or deprecated '.splits'")
+            Logger.e("Localhost file extension \(fileInfo.type) is not supported. It should be '.yaml', '.yml'")
             return
         }
         
