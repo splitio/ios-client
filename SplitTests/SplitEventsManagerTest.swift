@@ -29,7 +29,7 @@ class SplitEventsManagerTest: XCTestCase {
     func testSdkReady() {
         
         let config: SplitClientConfig = SplitClientConfig()
-        let eventManager: SplitEventsManager = SplitEventsManager(config: config)
+        let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
         
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreReady)
@@ -56,7 +56,7 @@ class SplitEventsManagerTest: XCTestCase {
         
         let config: SplitClientConfig = SplitClientConfig()
         config.sdkReadyTimeOut = 5000
-        let eventManager: SplitEventsManager = SplitEventsManager(config: config)
+        let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
         
         let expectation = XCTestExpectation(description: "SDK Readky Timeout triggered")
@@ -81,7 +81,7 @@ class SplitEventsManagerTest: XCTestCase {
         
         let config: SplitClientConfig = SplitClientConfig()
         config.sdkReadyTimeOut = 5000
-        let eventManager: SplitEventsManager = SplitEventsManager(config: config)
+        let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
         
         let expectationTimeout = XCTestExpectation(description: "SDK Readky triggered")

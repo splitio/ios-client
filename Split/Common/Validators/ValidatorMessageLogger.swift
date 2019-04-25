@@ -9,6 +9,16 @@
 import Foundation
 
 ///
+/// Tags to use when logging message on validation
+///
+struct ValidationTag {
+    static let getTreatmentWithConfig = "getTreatmentWithConfig"
+    static let getTreatmentsWithConfig = "getTreatmentsWithConfig"
+    static let getTreatment = "getTreatment"
+    static let getTreatments = "getTreatments"
+}
+
+///
 /// Protocol to implement to create a
 /// logger for validations components
 /// The component will be responsible to log information

@@ -9,6 +9,11 @@
     "defaultTreatment": "off",
     "changeNumber": 2,
     "algo": 2,
+    "configurations":  {
+        "t2_6": "{ \"c1\": \"v1\" }",
+        "t4_6": "{ \"c1\": \"v1\" }",
+        "off": "{ \"c1\": \"v1\" }"
+    },
     "conditions": [{
                    "conditionType": "ROLLOUT",
                    "matcherGroup": {
