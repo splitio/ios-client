@@ -17,18 +17,10 @@ class LocalhostManagerTests: XCTestCase {
 
     override func setUp() {
         eventsManager = SplitEventsManagerMock()
-        /*let fileContent = """
-                            s1 t1\n
-                            s2 t2\n
-                            s3 t3\n
-                            s4 t4\n
-                            s5 t5
-                            """*/
         let storage: FileStorageProtocol = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
         config.refreshInterval = 0
         let fetcher: SplitFetcher = LocalhostSplitFetcher(fileStorage: storage, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
-        //storage.write(fileName: fileName, content: fileContent)
         fetcher.forceRefresh()
         manager = DefaultSplitManager(splitFetcher: fetcher)
     }
