@@ -10,10 +10,10 @@ import Foundation
 
 class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
     
-    private let restClient: RestClient
+    private let restClient: RestClientMySegments
     private let mySegmentsCache: MySegmentsCacheProtocol?
     
-    init(restClient: RestClient, mySegmentsCache: MySegmentsCacheProtocol) {
+    init(restClient: RestClientMySegments, mySegmentsCache: MySegmentsCacheProtocol) {
         self.restClient = restClient
         self.mySegmentsCache = mySegmentsCache
     }

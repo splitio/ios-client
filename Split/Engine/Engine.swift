@@ -11,13 +11,13 @@ struct EvaluationResult {
     var treatment: String
     var label: String
     var splitVersion: Int64?
-    var configurations: String?
+    var configuration: String?
     
-    init(treatment: String, label: String, splitVersion: Int64? = nil, configurations: String? = nil){
+    init(treatment: String, label: String, splitVersion: Int64? = nil, configuration: String? = nil){
         self.treatment = treatment
         self.label = label
         self.splitVersion = splitVersion
-        self.configurations = configurations
+        self.configuration = configuration
     }
 }
 
@@ -63,7 +63,7 @@ class Engine {
                     if bucket > trafficAllocation {
                         return EvaluationResult(treatment: defaultTreatment,
                                                 label: ImpressionsConstants.NOT_IN_SPLIT,
-                                                configurations: split.configurations?[defaultTreatment])
+                                                configuration: split.configurations?[defaultTreatment])
                     }
                     inRollOut = true
                 }
@@ -76,7 +76,7 @@ class Engine {
                 // *** condition.label should not be null, but what if...
                 return EvaluationResult(treatment: treatment,
                                         label: condition.label ?? "Missing Label",
-                                        configurations: split.configurations?[treatment])
+                                        configuration: split.configurations?[treatment])
             }
         }
         return EvaluationResult(treatment: defaultTreatment, label: ImpressionsConstants.MATCHER_NOT_FOUND)

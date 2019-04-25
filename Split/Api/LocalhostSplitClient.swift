@@ -41,31 +41,33 @@ import Foundation
 /// [Split iOS SDK](https://docs.split.io/docs/ios-sdk-overview#section-localhost)
 ///
 
-public final class LocalhostSplitClient: NSObject, SplitClient {
+public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitClient {
 
-    private let treatmentFetcher: TreatmentFetcher
+    var mySegmentsFetcher: MySegmentsFetcher?
+    var splitFetcher: SplitFetcher?
     private let eventsManager: SplitEventsManager?
+    private let evaluator: Evaluator
+    private let key: Key
     
-    init(treatmentFetcher: TreatmentFetcher, eventsManager: SplitEventsManager? = nil) {
-        self.treatmentFetcher = treatmentFetcher
+    init(key: Key, splitFetcher: SplitFetcher, eventsManager: SplitEventsManager? = nil) {
+        self.splitFetcher = splitFetcher
         self.eventsManager = eventsManager
+        self.evaluator = Evaluator()
+        self.key = key
+        super.init()
+        self.evaluator.splitClient = self
     }
     
     public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
-        return treatmentFetcher.fetch(splitName: split) ?? SplitConstants.CONTROL
+        return getTreatmentWithConfig(split).treatment
     }
     
     public func getTreatment(_ split: String) -> String {
-        return getTreatment(_: split, attributes: nil)
+        return getTreatment(split, attributes: nil)
     }
     
     public func getTreatments(splits: [String], attributes: [String : Any]?) -> [String : String] {
-        let treatments = treatmentFetcher.fetchAll()
-        var results = [String : String]()
-        for split in splits {
-            results[split] = treatments?[split] ?? SplitConstants.CONTROL
-        }
-        return results
+        return getTreatmentsWithConfig(splits: splits, attributes: nil).mapValues( { $0.treatment })
     }
     
     public func getTreatmentWithConfig(_ split: String) -> SplitResult {
@@ -73,11 +75,21 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
     
     public func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
-        return SplitResult(treatment: getTreatment(split), configurations: nil)
+        var result: EvaluationResult?
+        do {
+            result = try evaluator.evalTreatment(key: key.matchingKey, bucketingKey: key.bucketingKey, split: split, attributes: nil)
+        } catch {
+            return SplitResult(treatment: SplitConstants.CONTROL)
+        }
+        return SplitResult(treatment: result!.treatment, config: result!.configuration)
     }
     
     public func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
-        return getTreatments(splits: splits, attributes: attributes).mapValues( { SplitResult(treatment: $0, configurations: nil) } )
+        var results = [String : SplitResult]()
+        for split in splits {
+            results[split] = getTreatmentWithConfig(split)
+        }
+        return results
     }
     
     public func on(_ event: SplitEvent, _ task: SplitEventTask) {
