@@ -186,6 +186,7 @@
 		5982D938219F57BE00230F44 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D937219F57BE00230F44 /* FileHelper.swift */; };
 		5982D9C021B00EBC00230F44 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D9BF21B00EBC00230F44 /* EngineTests.swift */; };
 		5982D9C421B04FA400230F44 /* MySegmentsCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5982D9C321B04FA400230F44 /* MySegmentsCacheTests.swift */; };
+		598EDF04225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json in Resources */ = {isa = PBXBuildFile; fileRef = 598EDF03225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json */; };
 		598EDE7422493008005D4762 /* SplitConfigurationsParsingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598EDE7322493008005D4762 /* SplitConfigurationsParsingTest.swift */; };
 		598EDE78224BB3E9005D4762 /* InternalSplitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598EDE77224BB3E9005D4762 /* InternalSplitClient.swift */; };
 		598EDE7A224BBF7E005D4762 /* EvaluatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598EDE79224BBF7E005D4762 /* EvaluatorTests.swift */; };
@@ -479,6 +480,7 @@
 		5982D937219F57BE00230F44 /* FileHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5982D9BF21B00EBC00230F44 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 		5982D9C321B04FA400230F44 /* MySegmentsCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsCacheTests.swift; sourceTree = "<group>"; };
+		598EDF03225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_traffic_alloc_50_default_rule_50.json; sourceTree = "<group>"; };
 		598EDE7322493008005D4762 /* SplitConfigurationsParsingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SplitConfigurationsParsingTest.swift; path = SplitTests/SplitConfigurationsParsingTest.swift; sourceTree = SOURCE_ROOT; };
 		598EDE77224BB3E9005D4762 /* InternalSplitClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalSplitClient.swift; sourceTree = "<group>"; };
 		598EDE79224BBF7E005D4762 /* EvaluatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EvaluatorTests.swift; sourceTree = "<group>"; };
@@ -1149,6 +1151,7 @@
 				5912D14C2199FD4D00BC698C /* legacy_1.csv */,
 				5982D92E219C83D000230F44 /* legacy_1_short.csv */,
 				5912D153219A065200BC698C /* legacy_2.csv */,
+				598EDF03225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json */,
 				599EA58F22691D57006CBA89 /* localhost_yml.yml */,
 			);
 			path = Resources;
@@ -1424,6 +1427,7 @@
 				59FB7C2C2202467C00ECC96A /* localhost_2.splits in Resources */,
 				599EDAF52270AD6700D7DACB /* wrong_format.yaml in Resources */,
 				592C6AE7211CBBB0002D120C /* splitchanges_3.json in Resources */,
+				598EDF04225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json in Resources */,
 				59C493062167E3B400F5F774 /* murmur3-sample-v3.csv in Resources */,
 				592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */,
 				59FB7C2E220247D300ECC96A /* localhost_3.splits in Resources */,
