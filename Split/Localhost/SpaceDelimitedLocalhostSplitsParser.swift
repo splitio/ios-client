@@ -10,7 +10,7 @@ import Foundation
 
 class SpaceDelimitedLocalhostSplitsParser: LocalhostSplitsParser {
     
-    let splitConditionHelper = SplitConditionHelper()
+    let splitHelper = SplitHelper()
     
     func parseContent(_ content: String) -> LocalhostSplits {
         
@@ -25,16 +25,8 @@ class SpaceDelimitedLocalhostSplitsParser: LocalhostSplitsParser {
                 if splits.count == 2, !splits[0].isEmpty, !splits[1].isEmpty {
                     let splitName = splits[0].trimmingCharacters(in: .whitespacesAndNewlines)
                     let treatment = splits[1].trimmingCharacters(in: .whitespacesAndNewlines)
-                    let split = Split()
-                    split.name = splitName
-                    split.defaultTreatment = treatment
-                    split.status = Status.Active
-                    split.algo = Algorithm.murmur3.rawValue
-                    split.trafficTypeName = "custom"
-                    split.trafficAllocation = 100
-                    split.trafficAllocationSeed = 1
-                    split.seed = 1
-                    split.conditions = [splitConditionHelper.createRolloutCondition(treatment: treatment)]
+                    let split = splitHelper.createDefaultSplit(named: splitName)
+                    split.conditions = [splitHelper.createRolloutCondition(treatment: treatment)]
                     loadedSplits[splitName] = split
                 }
             }
