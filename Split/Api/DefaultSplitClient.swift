@@ -40,7 +40,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         self.validationLogger = DefaultValidationMessageLogger()
         
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
-        eventsManager = SplitEventsManager(config: config)
+        eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
         
         let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache), splitCache: splitCache, interval: self.config!.featuresRefreshRate, eventsManager: eventsManager)
@@ -181,7 +181,7 @@ extension DefaultSplitClient {
             } else {
                 logImpression(label: result.label, treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
             }
-            return SplitResult(treatment: result.treatment, configurations: result.configurations)
+            return SplitResult(treatment: result.treatment, config: result.configuration)
         }
         catch {
             logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: trimmedSplitName, attributes: attributes)

@@ -58,13 +58,13 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertEqual(SplitConstants.CONTROL, treatments?[kFeatureOne])
         XCTAssertEqual(SplitConstants.CONTROL, treatments?[kFeatureTwo])
         XCTAssertEqual(SplitConstants.CONTROL, splitResult?.treatment)
-        XCTAssertNil(splitResult?.configurations)
+        XCTAssertNil(splitResult?.config)
         
         XCTAssertEqual(SplitConstants.CONTROL, splitResults?[kFeatureOne]?.treatment)
-        XCTAssertNil(splitResults?[kFeatureOne]?.configurations)
+        XCTAssertNil(splitResults?[kFeatureOne]?.config)
         
         XCTAssertEqual(SplitConstants.CONTROL, splitResults?[kFeatureTwo]?.treatment)
-        XCTAssertNil(splitResults?[kFeatureTwo]?.configurations)
+        XCTAssertNil(splitResults?[kFeatureTwo]?.config)
         
     }
 }

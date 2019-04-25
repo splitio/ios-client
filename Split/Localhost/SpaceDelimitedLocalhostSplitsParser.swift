@@ -9,6 +9,9 @@
 import Foundation
 
 class SpaceDelimitedLocalhostSplitsParser: LocalhostSplitsParser {
+    
+    let splitHelper = SplitHelper()
+    
     func parseContent(_ content: String) -> LocalhostSplits {
         
         var loadedSplits = LocalhostSplits()
@@ -20,13 +23,15 @@ class SpaceDelimitedLocalhostSplitsParser: LocalhostSplitsParser {
             if line.count > 0, !line.hasSuffix("#") {
                 let splits = line.split(separator: " ")
                 if splits.count == 2, !splits[0].isEmpty, !splits[1].isEmpty {
-                    let split = splits[0].trimmingCharacters(in: .whitespacesAndNewlines)
+                    let splitName = splits[0].trimmingCharacters(in: .whitespacesAndNewlines)
                     let treatment = splits[1].trimmingCharacters(in: .whitespacesAndNewlines)
-                    loadedSplits[split] = treatment
+                    let split = splitHelper.createDefaultSplit(named: splitName)
+                    split.conditions = [splitHelper.createRolloutCondition(treatment: treatment)]
+                    loadedSplits[splitName] = split
                 }
             }
         }
         return loadedSplits
     }
-    
+
 }

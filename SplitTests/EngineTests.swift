@@ -34,7 +34,7 @@ class EngineTests: XCTestCase {
         }
         XCTAssertNotNil(result, "Treatment should not be nil when algo = nil")
         XCTAssertTrue(result.treatment == "t4_6", "Expected treatment 'On', obtained '\(result.treatment)'")
-        XCTAssertNotNil(result.configurations)
+        XCTAssertNotNil(result.configuration)
     }
     
     func testAlgoLegacy() {
@@ -48,7 +48,7 @@ class EngineTests: XCTestCase {
         }
         XCTAssertNotNil(result, "Treatment should not be nil when algo = 1 (Legacy)")
         XCTAssertTrue(result.treatment == "t4_6", "Expected treatment 'On', obtained '\(result.treatment)'")
-        XCTAssertNotNil(result.configurations)
+        XCTAssertNotNil(result.configuration)
     }
     
     func testAlgoMurmur3() {
@@ -62,7 +62,7 @@ class EngineTests: XCTestCase {
         }
         XCTAssertNotNil(result, "Treatment should not be nil when algo = 2 (Murmur3)")
         XCTAssertTrue(result.treatment == "t4_6", "Expected treatment 'On', obtained '\(result.treatment)'")
-        XCTAssertNotNil(result.configurations)
+        XCTAssertNotNil(result.configuration)
     }
     
     func testEqualsToSetNoConfigTreatment() {
@@ -78,7 +78,7 @@ class EngineTests: XCTestCase {
         }
         XCTAssertNotNil(result)
         XCTAssertEqual("t1_6", result?.treatment)
-        XCTAssertNil(result?.configurations)
+        XCTAssertNil(result?.configuration)
     }
     
     func testMatchesStringNoConfigTreatment() {
@@ -94,7 +94,7 @@ class EngineTests: XCTestCase {
         }
         XCTAssertNotNil(result)
         XCTAssertEqual("t3_6", result?.treatment)
-        XCTAssertNil(result?.configurations)
+        XCTAssertNil(result?.configuration)
     }
     
     func testEqualsToSetConfigTreatment() {
@@ -110,7 +110,7 @@ class EngineTests: XCTestCase {
         }
         XCTAssertNotNil(result)
         XCTAssertEqual("t2_6", result?.treatment)
-        XCTAssertNotNil(result?.configurations)
+        XCTAssertNotNil(result?.configuration)
     }
     
     func testDefaultTreatment() {
@@ -126,7 +126,7 @@ class EngineTests: XCTestCase {
         }
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result?.treatment)
-        XCTAssertNotNil(result?.configurations)
+        XCTAssertNotNil(result?.configuration)
     }
     
     func loadSplit(splitName: String) -> Split? {

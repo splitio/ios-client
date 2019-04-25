@@ -7,7 +7,16 @@
 
 import Foundation
 
-class SplitEventsManager {
+protocol SplitEventsManager {
+    func notifyInternalEvent(_ event:SplitInternalEvent)
+    func getExecutorResources() -> SplitEventExecutorResources
+    func register(event: SplitEvent, task: SplitEventTask)
+    func start()
+    func eventAlreadyTriggered(event: SplitEvent) -> Bool
+    func getExecutionTimes() -> [String: Int] 
+}
+
+class DefaultSplitEventsManager: SplitEventsManager {
     private let queue:SynchronizedArrayQueue<SplitInternalEvent>
     private var queueReadingTimer: DispatchSourceTimer?
     private let queueReadingRefreshTime: Int
@@ -29,7 +38,7 @@ class SplitEventsManager {
         eventSplitsAreReady = false
         executorResources = SplitEventExecutorResources()
         executionTimes = [String: Int]()
-        registerMaxAllowebExecutionTimesPerEvent()
+        registerMaxAllowedExecutionTimesPerEvent()
 
         if config.sdkReadyTimeOut > 0 {
             let readyTimedoutQueue = DispatchQueue(label: "io.Split.Event.TimedOut")
@@ -46,16 +55,6 @@ class SplitEventsManager {
 
     func getExecutorResources() -> SplitEventExecutorResources {
         return executorResources!
-    }
-
-    /**
-     * This method should registering the allowed maximum times of event trigger
-     * EXAMPLE: SDK_READY should be triggered only once
-     */
-    private func registerMaxAllowebExecutionTimesPerEvent() {
-
-        executionTimes = [ SplitEvent.sdkReady.toString(): 1,
-                            SplitEvent.sdkReadyTimedOut.toString(): 1]
     }
 
     func register(event: SplitEvent, task: SplitEventTask) {
@@ -91,6 +90,27 @@ class SplitEventsManager {
             strongSelf.processEvents()
         }
         queueReadingTimer!.resume()
+    }
+    
+    func eventAlreadyTriggered(event: SplitEvent) -> Bool {
+        if let times = executionTimes[event.toString()] {
+            return times == 0
+        }
+        return false
+    }
+    
+    func getExecutionTimes() -> [String: Int] {
+        return executionTimes
+    }
+    
+    /**
+     * This method should registering the allowed maximum times of event trigger
+     * EXAMPLE: SDK_READY should be triggered only once
+     */
+    private func registerMaxAllowedExecutionTimesPerEvent() {
+        
+        executionTimes = [ SplitEvent.sdkReady.toString(): 1,
+                           SplitEvent.sdkReadyTimedOut.toString(): 1]
     }
 
     private func stopReadingQueue() {
@@ -131,18 +151,7 @@ class SplitEventsManager {
             }
         })
     }
-
-    func eventAlreadyTriggered(event: SplitEvent) -> Bool {
-        if let times = executionTimes[event.toString()] {
-            return times == 0
-        }
-        return false
-    }
-
-    func getExecutionTimes() -> [String: Int] {
-        return executionTimes
-    }
-
+    
     private func trigger(event:SplitEvent) {
 
         // If executionTimes is zero, maximum executions has been reached
