@@ -10,7 +10,7 @@
 
 import Foundation
 
-public final class DefaultSplitClient: NSObject, SplitClient {
+public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClient {
     
     internal var splitFetcher: SplitFetcher?
     internal var mySegmentsFetcher: MySegmentsFetcher?
@@ -40,7 +40,7 @@ public final class DefaultSplitClient: NSObject, SplitClient {
         self.validationLogger = DefaultValidationMessageLogger()
         
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
-        eventsManager = SplitEventsManager(config: config)
+        eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
         
         let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache), splitCache: splitCache, interval: self.config!.featuresRefreshRate, eventsManager: eventsManager)
@@ -99,33 +99,58 @@ extension DefaultSplitClient {
 
 // MARK: Treatment / Evaluation
 extension DefaultSplitClient {
+    
+    public func getTreatmentWithConfig(_ split: String) -> SplitResult {
+        return getTreatmentWithConfig(split, attributes: nil)
+    }
+    
+    public func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
+        let timeMetricStart = Date().unixTimestampInMicroseconds()
+        let result = getTreatmentWithConfigNoMetrics(splitName: split, shouldValidate: true, attributes: attributes, validationTag: ValidationTag.getTreatmentWithConfig)
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatmentWithConfig)
+        return result
+    }
+    
     public func getTreatment(_ split: String) -> String {
-        return getTreatment(splitName: split, attributes: nil)
+        return getTreatment(split, attributes: nil)
     }
     
     public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
-        return getTreatment(splitName: split, shouldValidate: true, attributes: attributes)
+        let timeMetricStart = Date().unixTimestampInMicroseconds()
+        let result = getTreatmentWithConfigNoMetrics(splitName: split, shouldValidate: true, attributes: attributes, validationTag: ValidationTag.getTreatment).treatment
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatment)
+        return result
     }
     
     public func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String] {
-        
-        var results = [String:String]()
-        
+        let timeMetricStart = Date().unixTimestampInMicroseconds()
+        let result = getTreatmentsWithConfigNoMetrics(splits: splits, attributes: attributes, validationTag: ValidationTag.getTreatments).mapValues { $0.treatment }
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatments)
+        return result
+    }
+    
+    public func getTreatmentsWithConfig(splits: [String], attributes:[String:Any]?) ->  [String:SplitResult] {
+        let timeMetricStart = Date().unixTimestampInMicroseconds()
+        let result = getTreatmentsWithConfigNoMetrics(splits: splits, attributes: attributes, validationTag: ValidationTag.getTreatmentsWithConfig)
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatmentsWithConfig)
+        return result
+    }
+    
+    private func getTreatmentsWithConfigNoMetrics(splits: [String], attributes:[String:Any]?, validationTag: String) ->  [String:SplitResult] {
+        var results = [String:SplitResult]()
+
         if splits.count > 0 {
             let splitsNoDuplicated = Set(splits.filter { !$0.isEmpty() }.map { $0 })
             for splitName in splitsNoDuplicated {
-                results[splitName] = getTreatment(splitName: splitName, shouldValidate: false, attributes: attributes)
+                results[splitName] = getTreatmentWithConfigNoMetrics(splitName: splitName, shouldValidate: false, attributes: attributes, validationTag: validationTag)
             }
         } else {
-            Logger.d("getTreatments: split_names is an empty array or has null values")
+            Logger.d("\(validationTag): split_names is an empty array or has null values")
         }
-        
         return results
     }
     
-    private func getTreatment(splitName: String, shouldValidate: Bool = true, attributes:[String:Any]? = nil) -> String {
-        
-        let validationTag = "getTreatment"
+    private func getTreatmentWithConfigNoMetrics(splitName: String, shouldValidate: Bool = true, attributes:[String:Any]? = nil, validationTag: String) -> SplitResult {
         
         if shouldValidate {
             if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
@@ -134,39 +159,33 @@ extension DefaultSplitClient {
             
             if let errorInfo = keyValidator.validate(matchingKey: key.matchingKey, bucketingKey: key.bucketingKey) {
                 validationLogger.log(errorInfo: errorInfo, tag: validationTag)
-                return SplitConstants.CONTROL
+                return SplitResult(treatment: SplitConstants.CONTROL)
             }
         }
         
         if let errorInfo = splitValidator.validate(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
-                return SplitConstants.CONTROL
+                return SplitResult(treatment: SplitConstants.CONTROL)
             }
         }
         
         let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let timeMetricStart = Date().unixTimestampInMicroseconds()
         let evaluator: Evaluator = Evaluator.shared
         evaluator.splitClient = self
         
         do {
             let result = try Evaluator.shared.evalTreatment(key: self.key.matchingKey, bucketingKey: self.key.bucketingKey, split: trimmedSplitName, attributes: attributes)
-            let label = result![Engine.EVALUATION_RESULT_LABEL] as! String
-            let treatment = result![Engine.EVALUATION_RESULT_TREATMENT] as! String
-            
-            if let val = result![Engine.EVALUATION_RESULT_SPLIT_VERSION] {
-                let splitVersion = val as! Int64
-                logImpression(label: label, changeNumber: splitVersion, treatment: treatment, splitName: trimmedSplitName, attributes: attributes)
+            if let splitVersion = result.splitVersion {
+                logImpression(label: result.label, changeNumber: splitVersion, treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
             } else {
-                logImpression(label: label, treatment: treatment, splitName: trimmedSplitName, attributes: attributes)
+                logImpression(label: result.label, treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
             }
-            metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatment)
-            return treatment
+            return SplitResult(treatment: result.treatment, config: result.configuration)
         }
         catch {
             logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL, splitName: trimmedSplitName, attributes: attributes)
-            return SplitConstants.CONTROL
+            return SplitResult(treatment: SplitConstants.CONTROL)
         }
     }
     

@@ -18,7 +18,7 @@ class SplitCacheTests: XCTestCase {
     override func setUp() {
         let fileContent = initialSplitFile()
         let fileStorage = FileStorageStub()
-        fileStorage.write(fileName: "SPLITIO.split.splitsFile", content: fileContent)
+        fileStorage.write(fileName: "SPLITIO.splits", content: fileContent)
         splitCache = SplitCache(fileStorage: fileStorage)
     }
 

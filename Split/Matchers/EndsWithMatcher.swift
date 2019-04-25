@@ -10,18 +10,18 @@ import Foundation
 
 
 
-public class EndsWithMatcher: BaseMatcher, MatcherProtocol {
+class EndsWithMatcher: BaseMatcher, MatcherProtocol {
     
     var data: [String]?
     
     //--------------------------------------------------------------------------------------------------
-    public init(data:[String]?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+    init(data:[String]?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
         
         super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.data = data
     }
     //--------------------------------------------------------------------------------------------------
-    public func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String : Any]?) -> Bool {
+    func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String : Any]?) -> Bool {
         
         guard let matchValueString = matchValue as? String, let dataElements = data else {
             

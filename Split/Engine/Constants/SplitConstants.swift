@@ -7,8 +7,8 @@
 
 import Foundation
 
-public class  SplitConstants {
+class  SplitConstants {
 
-    public static let CONTROL : String = "control"
+    static let CONTROL : String = "control"
     
 }
