@@ -43,8 +43,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         self.eventValidator = DefaultEventValidator(trafficTypesCache: trafficTypesCache)
         self.splitValidator = DefaultSplitValidator()
         self.validationLogger = DefaultValidationMessageLogger()
-        
-        let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
+
         eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
