@@ -16,7 +16,8 @@ import Foundation
 /// For now it's just the defaul factory.
 ///
 @objc public class DefaultSplitFactoryBuilder: NSObject, SplitFactoryBuilder {
-
+    
+    private var bundle: Bundle = Bundle.main
     private var apiKey: String?
     private var matchingKey: String?
     private var bucketingKey: String?
@@ -59,11 +60,13 @@ import Foundation
         self.config = config
         return self
     }
+    
+    func setBundle(_ bundle: Bundle) -> SplitFactoryBuilder {
+        self.bundle = bundle
+        return self
+    }
 
     public func build() -> SplitFactory? {
-        if apiKey?.uppercased() == kApiKeyLocalhost {
-            return LocalhostSplitFactory(config: config ?? SplitClientConfig())
-        }
 
         if let errorInfo = apiKeyValidator.validate(apiKey: apiKey) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
@@ -77,9 +80,17 @@ import Foundation
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             return nil
         }
+        
+        let finalKey = Key(matchingKey: matchingKey!, bucketingKey: bucketingKey)
+        
+        if apiKey?.uppercased() == kApiKeyLocalhost {
+            return LocalhostSplitFactory(key: finalKey,
+                                         config: config ?? SplitClientConfig(),
+                                         bundle: bundle)
+        }
 
         return DefaultSplitFactory(apiKey: apiKey!,
-                                   key: (key ?? Key(matchingKey: matchingKey!, bucketingKey: bucketingKey)),
+                                   key: finalKey,
                                    config: config ?? SplitClientConfig())
     }
 }

@@ -9,6 +9,10 @@
   "defaultTreatment": "off",
   "changeNumber": 1,
   "algo": 2,
+  "configurations": {
+      "t1": "{\"f1\": \"v1\"}",
+      "t2": "{\"f2\": \"v2\"}"
+  },
   "conditions": [{
                  "conditionType": "ROLLOUT",
                  "matcherGroup": {
@@ -449,6 +453,11 @@
   "defaultTreatment": "off",
   "changeNumber": 1,
   "algo": 2,
+  "configurations": {
+      "t1": "{\"f1\": \"v1\"}",
+      "t3": "{\"f3\": \"v3\"}",
+      "t2": "{\"f2\": \"v2\"}"
+  },
   "conditions": [{
                  "conditionType": "ROLLOUT",
                  "matcherGroup": {
@@ -889,6 +898,12 @@
   "defaultTreatment": "off",
   "changeNumber": 1,
   "algo": 2,
+  "configurations": {
+      "t1": "{\"f1\": \"v1\"}",
+      "t3": "{\"f3\": \"v3\"}",
+      "t4": "{\"f4\": \"v4\"}",
+      "t2": "{\"f2\": \"v2\"}"
+  },
   "conditions": [{
                  "conditionType": "ROLLOUT",
                  "matcherGroup": {

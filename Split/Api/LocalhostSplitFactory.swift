@@ -34,18 +34,14 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         return Version.toString()
     }
     
-    init(config: SplitClientConfig) {
-        HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
-        MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate
+    init(key: Key, config: SplitClientConfig, bundle: Bundle) {
         
-        let fileStorage = FileStorage(dataFolderName: DataFolderFactory().createFrom(apiKey: config.apiKey) ?? config.defaultDataFolder)
-        eventsManager = SplitEventsManager(config: config)
+        eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
-        
-        let treatmentFetcher: TreatmentFetcher = LocalhostTreatmentFetcher(fileStorage: fileStorage)
-        localhostClient = LocalhostSplitClient(treatmentFetcher: treatmentFetcher, eventsManager: eventsManager)
-        localhostManager = LocalhostSplitManager(treatmentFetcher: treatmentFetcher)
+        let fileStorage = FileStorage(dataFolderName: DataFolderFactory().sanitizeForFolderName(config.localhostDataFolder))
+        let splitFetcher: SplitFetcher = LocalhostSplitFetcher(fileStorage: fileStorage, eventsManager: eventsManager, splitsFileName: config.splitFile, bundle: bundle)
+        localhostClient = LocalhostSplitClient(key:key, splitFetcher: splitFetcher, eventsManager: eventsManager)
         eventsManager.getExecutorResources().setClient(client: localhostClient)
+        localhostManager = DefaultSplitManager(splitFetcher: splitFetcher)
     }
-    
 }

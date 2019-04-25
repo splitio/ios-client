@@ -17,7 +17,7 @@ class MySegmentsCacheTests: XCTestCase {
     override func setUp() {
         let fileContent = "{\"matchingKey\": \"fake_id_1\", \"segments\": [\"segment0\", \"segment1\", \"segment2\"]}"
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        let filePrefix = "SEGMENTIO.split.mySegmentsFile"
+        let filePrefix = "SPLITIO.mySegments"
         let matchingKey = "fake_id_1"
         let fileStorage = FileStorageStub()
         fileStorage.write(fileName: "\(filePrefix)_\(matchingKey)", content: fileContent)
