@@ -8,7 +8,20 @@
 
 import Foundation
 
-class SplitConditionHelper {
+class SplitHelper {
+    
+    func createDefaultSplit(named splitName: String) -> Split {
+        let split = Split()
+        split.name = splitName
+        split.defaultTreatment = SplitConstants.CONTROL
+        split.status = Status.Active
+        split.algo = Algorithm.murmur3.rawValue
+        split.trafficTypeName = "custom"
+        split.trafficAllocation = 100
+        split.trafficAllocationSeed = 1
+        split.seed = 1
+        return split
+    }
     
     func createWhitelistCondition(key: String, treatment: String) -> Condition {
         

@@ -10,7 +10,7 @@ import Foundation
 
 class YamlLocalhostSplitsParser: LocalhostSplitsParser {
     
-    private let splitConditionHelper = SplitConditionHelper()
+    private let splitHelper = SplitHelper()
     private let kTreatmentField = "treatment";
     private let kConfigField = "config";
     private let kKeysField = "keys";
@@ -34,15 +34,7 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
                         if let existingSplit = loadedSplits[splitName] {
                             split = existingSplit
                         } else {
-                            split = Split()
-                            split.name = splitName
-                            split.defaultTreatment = SplitConstants.CONTROL
-                            split.status = Status.Active
-                            split.algo = Algorithm.murmur3.rawValue
-                            split.trafficTypeName = "custom"
-                            split.trafficAllocation = 100
-                            split.trafficAllocationSeed = 1
-                            split.seed = 1
+                            split = splitHelper.createDefaultSplit(named: splitName)
                         }
                         
                         if let splitMap = rowDic[splitNameField]?.dictionary {
@@ -54,14 +46,14 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
                                 if let keys = keys.array {
                                     for yamlKey in keys {
                                         if let key = yamlKey.string {
-                                            split.conditions!.insert(splitConditionHelper.createWhitelistCondition(key: key, treatment: treatment), at:0)
+                                            split.conditions!.insert(splitHelper.createWhitelistCondition(key: key, treatment: treatment), at:0)
                                         }
                                     }
                                 } else if let key = keys.string {
-                                    split.conditions!.insert(splitConditionHelper.createWhitelistCondition(key: key, treatment: treatment), at:0)
+                                    split.conditions!.insert(splitHelper.createWhitelistCondition(key: key, treatment: treatment), at:0)
                                 }
                             } else {
-                                split.conditions!.append(splitConditionHelper.createRolloutCondition(treatment: treatment))
+                                split.conditions!.append(splitHelper.createRolloutCondition(treatment: treatment))
                             }
                             if let yamlConfig = splitMap[Yaml.string(kConfigField)], let config = yamlConfig.string {
                                 if split.configurations == nil {
