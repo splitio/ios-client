@@ -35,22 +35,22 @@ class LocalhostSplitFetcher: SplitFetcher {
         self.splits = SyncDictionarySingleWrapper()
         self.eventsManager = eventsManager
         
-        let fileName = splitsFileName.lowercased()
+        let fileName = splitsFileName
         guard let fileInfo = splitFileName(fileName) else {
             eventsManager.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
-            Logger.e("Localhost file name \(fileName) has not the correct format. It should be similar to 'name.yaml', 'name.yml' or deprecated 'name.splits'")
+            Logger.e("Localhost file name \(fileName) has not the correct format. It should be similar to 'name.yaml', 'name.yml'")
             return
         }
         
         if !isSupportedExtensionType(fileInfo.type) {
             eventsManager.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
-            Logger.e("Localhost file extension \(fileInfo.type) is not supported. It should be '.yaml', '.yml' or deprecated '.splits'")
+            Logger.e("Localhost file extension \(fileInfo.type) is not supported. It should be '.yaml', '.yml'")
             return
         }
         
         if !LocalhostFileCopier(bundle: bundle).copySourceFile(name: fileInfo.name, type: fileInfo.type, fileStorage: fileStorage) {
             eventsManager.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
-            Logger.e("Localhost file name \(fileName) not found. Please check name. Remeber it should be lowercased.")
+            Logger.e("Localhost file name \(fileName) not found. Please check name.")
             return
         }
         
@@ -137,7 +137,7 @@ class LocalhostSplitFetcher: SplitFetcher {
     }
     
     private func isSupportedExtensionType(_ type: String) -> Bool {
-        return (supportedExtensions.filter( {$0 == type } ).count == 1)
+        return (supportedExtensions.filter( {$0 == type.lowercased() } ).count == 1)
     }
 }
 
