@@ -20,8 +20,9 @@ class LocalhostSplitClientTests: XCTestCase {
         let fileName = "localhost.splits"
         let storage = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
+        let splitCache = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
         config.refreshInterval = 0
-        let fetcher = LocalhostSplitFetcher(fileStorage: storage, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
+        let fetcher = LocalhostSplitFetcher(fileStorage: storage, splitCache: splitCache, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
         fetcher.forceRefresh()
         client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), splitFetcher: fetcher)
     }

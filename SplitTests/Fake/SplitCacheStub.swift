@@ -57,4 +57,8 @@ class SplitCacheStub: SplitCacheProtocol {
     func clear() {
     }
     
+    func exists(trafficType: String) -> Bool {
+        return true
+    }
+    
 }

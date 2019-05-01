@@ -21,7 +21,8 @@ class TrafficTypesCacheTests: XCTestCase {
             newSplit(name: "s2", trafficType: "trafficType2"),
             newSplit(name: "s3", trafficType: "trafficType3")
         ]
-        cache = InMemoryTrafficTypesCache(splits: splits)
+        cache = InMemoryTrafficTypesCache()
+        cache.update(from: splits)
     }
 
     override func tearDown() {

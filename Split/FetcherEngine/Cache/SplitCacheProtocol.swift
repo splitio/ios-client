@@ -12,7 +12,7 @@ protocol SplitCacheProtocol {
     
     func addSplit(splitName: String, split: Split)
     
-    func removeSplit(splitName: String)
+    //func removeSplit(splitName: String)
     
     func setChangeNumber(_ changeNumber: Int64)
     
@@ -23,6 +23,8 @@ protocol SplitCacheProtocol {
     func getSplits() -> [String: Split]
     
     func getAllSplits() -> [Split]
+    
+    func exists(trafficType: String) -> Bool
 
     func clear()
 }

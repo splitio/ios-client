@@ -13,10 +13,9 @@ class InMemoryTrafficTypesCache: TrafficTypesCache {
     private let queueName = "split.inmemcache-queue.traffictypes"
     private var queue: DispatchQueue
     private var trafficTypes = [String: Int]()
-    
-    init(splits: [Split]? = nil) {
+
+    init() {
         self.queue = DispatchQueue(label: queueName, attributes: .concurrent)
-        set(from: splits)
     }
     
     func update(from splits: [Split]) {
@@ -36,6 +35,18 @@ class InMemoryTrafficTypesCache: TrafficTypesCache {
         }
     }
     
+    func update(with split: Split) {
+        queue.async(flags: .barrier) {
+            if let trafficTypeName = split.trafficTypeName, let status = split.status {
+                if status == .Active {
+                    self.add(name: trafficTypeName)
+                } else {
+                    self.remove(name: trafficTypeName)
+                }
+            }
+        }
+    }
+    
     func contains(name: String) -> Bool {
         var containsName = false
         queue.sync {
@@ -46,18 +57,6 @@ class InMemoryTrafficTypesCache: TrafficTypesCache {
 }
 
 extension InMemoryTrafficTypesCache {
-    private func set(from splits: [Split]?) {
-        if let splits = splits, splits.count > 0 {
-            queue.async(flags: .barrier) {
-                self.trafficTypes.removeAll()
-                for split in splits {
-                    if let trafficTypeName = split.trafficTypeName, let status = split.status, status == .Active {
-                        self.add(name: trafficTypeName)
-                    }
-                }
-            }
-        }
-    }
     
     private func add(name: String) {
         let trafficType = name.lowercased()

@@ -9,11 +9,17 @@
 import Foundation
 @testable import Split
 class TrafficTypesCacheStub: TrafficTypesCache {
-    var updateCallCount: Int = 0
+    
+    var updateCallFromCount: Int = 0
+    var updateCallWithCount: Int = 0
     var containsCallCount: Int = 0
     
     func update(from: [Split]) {
-        updateCallCount += 1
+        updateCallFromCount += 1
+    }
+    
+    func update(with: Split) {
+        updateCallWithCount += 1
     }
     
     func contains(name: String) -> Bool {
@@ -21,8 +27,12 @@ class TrafficTypesCacheStub: TrafficTypesCache {
         return true
     }
     
-    func updateWasCalled() -> Bool {
-        return updateCallCount > 0
+    func updateFromWasCalled() -> Bool {
+        return updateCallFromCount > 0
+    }
+    
+    func updateWithWasCalled() -> Bool {
+        return updateCallWithCount > 0
     }
     
     func containsWasCalled() -> Bool {

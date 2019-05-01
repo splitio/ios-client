@@ -9,6 +9,7 @@
 import Foundation
 
 protocol TrafficTypesCache {
+    func update(with: Split)
     func update(from: [Split])
     func contains(name: String) -> Bool
 }

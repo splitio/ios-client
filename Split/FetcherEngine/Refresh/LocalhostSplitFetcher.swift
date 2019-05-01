@@ -15,25 +15,25 @@ struct LocalhostSplitFetcherConfig {
 class LocalhostSplitFetcher: SplitFetcher {
     
     private let refreshInterval: Int
-    internal let splits: SyncDictionarySingleWrapper<String, Split>
     private let eventsManager: SplitEventsManager
     private let fileStorage: FileStorageProtocol
-    
+    private let splitCache: SplitCacheProtocol
     private var pollingManager: PollingManager?
     private var fileParser: LocalhostSplitsParser!
     private let supportedExtensions = ["yaml", "yml", "splits"]
     private let fileName: String
     
     init(fileStorage: FileStorageProtocol,
+         splitCache: SplitCacheProtocol,
          config: LocalhostSplitFetcherConfig = LocalhostSplitFetcherConfig(),
          eventsManager: SplitEventsManager,
-        splitsFileName: String, bundle: Bundle) {
+         splitsFileName: String, bundle: Bundle) {
         
         self.fileName = splitsFileName
         self.fileStorage = fileStorage
         self.refreshInterval = config.refreshInterval
-        self.splits = SyncDictionarySingleWrapper()
         self.eventsManager = eventsManager
+        self.splitCache = splitCache
         
         let fileName = splitsFileName
         guard let fileInfo = splitFileName(fileName) else {
@@ -75,11 +75,11 @@ class LocalhostSplitFetcher: SplitFetcher {
     }
     
     func fetch(splitName: String) -> Split? {
-        return splits.value(forKey: splitName)
+        return splitCache.getSplit(splitName: splitName)
     }
     
     func fetchAll() -> [Split]? {
-        return splits.all.values.map( { $0 })
+        return splitCache.getAllSplits()
     }
     
     private func createPollingManager() -> PollingManager {
@@ -102,7 +102,10 @@ class LocalhostSplitFetcher: SplitFetcher {
     private func loadFile(name: String) -> Bool {
         if let content = fileStorage.read(fileName: name), !content.isEmpty, let parser = self.fileParser {
             let loadedSplits = parser.parseContent(content)
-            splits.setValues(loadedSplits)
+            splitCache.clear()
+            for (splitName, split) in loadedSplits {
+                splitCache.addSplit(splitName: splitName, split: split)
+            }
             if loadedSplits.count > 0 {
                 return true
             }

@@ -19,10 +19,11 @@ class LocalhostManagerTests: XCTestCase {
         eventsManager = SplitEventsManagerMock()
         let storage: FileStorageProtocol = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
+        let splitCache: SplitCacheProtocol = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
         config.refreshInterval = 0
-        let fetcher: SplitFetcher = LocalhostSplitFetcher(fileStorage: storage, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
+        let fetcher: SplitFetcher = LocalhostSplitFetcher(fileStorage: storage, splitCache: splitCache, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
         fetcher.forceRefresh()
-        manager = DefaultSplitManager(splitFetcher: fetcher)
+        manager = DefaultSplitManager(splitCache: splitCache)
     }
 
     override func tearDown() {

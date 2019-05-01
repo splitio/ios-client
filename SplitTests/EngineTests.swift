@@ -171,6 +171,39 @@ class EngineTests: XCTestCase {
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result?.treatment)
         XCTAssertNotNil(result?.configuration)
+        XCTAssertEqual("not in split", result?.label)
+    }
+    
+    func testDefaultRule() {
+        var result: EvaluationResult!
+        if let split = split {
+            do {
+                split.trafficAllocation = 100
+                split.algo = 2
+                result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, split: split, attributes: nil)
+            } catch {
+                print(error)
+            }
+        }
+        XCTAssertNotNil(result)
+        XCTAssertEqual("t4_6", result?.treatment)
+        XCTAssertNotNil(result?.configuration)
+        XCTAssertEqual("default rule", result?.label)
+    }
+    
+    func testInSegmentsRule() {
+        var result: EvaluationResult!
+        if let split = loadSplit(splitName: "segment_conta_condition") {
+            do {
+                result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, split: split, attributes: nil)
+            } catch {
+                print(error)
+            }
+        }
+        XCTAssertNotNil(result)
+        XCTAssertEqual("t3", result?.treatment)
+        XCTAssertNil(result?.configuration)
+        XCTAssertEqual("default rule", result?.label)
     }
 
     func loadSplit(splitName: String) -> Split? {
