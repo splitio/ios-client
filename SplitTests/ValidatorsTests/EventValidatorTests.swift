@@ -39,16 +39,16 @@ class EventValidatorTests: XCTestCase {
     func testNullKey() {
         let errorInfo = validator.validate(key: nil, trafficTypeName: "custom", eventTypeId: "type1", value: nil)
         XCTAssertNotNil(errorInfo)
-        XCTAssertNotNil(errorInfo?.error)
-        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertTrue(errorInfo?.isError ?? false)
+        XCTAssertEqual("you passed a null key, the key must be a non-empty string", errorInfo?.errorMessage)
         XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
     
     func testEmptyKey() {
         let errorInfo = validator.validate(key: "", trafficTypeName: "custom", eventTypeId: "type1", value: nil)
         XCTAssertNotNil(errorInfo)
-        XCTAssertNotNil(errorInfo?.error)
-        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertTrue(errorInfo?.isError ?? false)
+        XCTAssertEqual("you passed an empty string, matching key must a non-empty string", errorInfo?.errorMessage)
         XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
     
@@ -56,8 +56,8 @@ class EventValidatorTests: XCTestCase {
         let key = String(repeating: "p", count: 300)
         let errorInfo = validator.validate(key: key, trafficTypeName: "custom", eventTypeId: "type1", value: nil)
         XCTAssertNotNil(errorInfo)
-        XCTAssertNotNil(errorInfo?.error)
-        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertTrue(errorInfo?.isError ?? false)
+        XCTAssertEqual("you passed an empty string, matching key must a non-empty string", errorInfo?.errorMessage)
         XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
     
