@@ -14,7 +14,9 @@ class SplitValidatorTests: XCTestCase {
     var validator: SplitValidator!
     
     override func setUp() {
+        
         let splitCache: SplitCacheProtocol = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
+        splitCache.addSplit(splitName: "split1", split: createSplit(name: "split1"))
         validator = DefaultSplitValidator(splitCache: splitCache)
     }
     
@@ -58,4 +60,25 @@ class SplitValidatorTests: XCTestCase {
         XCTAssertEqual(errorInfo?.warnings.count, 1)
         XCTAssertTrue(errorInfo?.hasWarning(.splitNameShouldBeTrimmed) ?? false)
     }
+    
+    func testExistingSplit() {
+        let errorInfo = validator.validateSplit(name: "split1")
+        
+        XCTAssertNil(errorInfo)
+    }
+    
+    func testNoExistingSplit() {
+        let errorInfo = validator.validateSplit(name: "split2")
+        
+        XCTAssertTrue(errorInfo!.isError)
+        XCTAssertEqual("you passed split2 that does not exist in this environment, please double check what Splits exist in the web console.", errorInfo?.errorMessage)
+    }
+    
+    func createSplit(name: String) -> Split {
+        let split = Split()
+        split.name = name
+        return split
+    }
+    
+    
 }
