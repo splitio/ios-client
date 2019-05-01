@@ -652,6 +652,9 @@
               "defaultTreatment":"off",
               "changeNumber":1504206031141,
               "algo":2,
+              "configurations": {
+                  "off": "{\"f1\":\"v1\"}"
+              },
               "conditions":[
                             {
                             "conditionType":"WHITELIST",
@@ -2510,6 +2513,16 @@
                             "label":"in segment all"
                             }
                             ]
+              },
+              {
+                  "trafficTypeName":"user",
+                  "name":"broken_split",
+                  "trafficAllocation":100,
+                  "trafficAllocationSeed":-285565213,
+                  "status":"ACTIVE",
+                  "killed":false,
+                  "defaultTreatment":"off",
+                  "changeNumber":1494593336752
               }
               ],
     "since":-1,

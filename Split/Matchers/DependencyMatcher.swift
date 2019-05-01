@@ -10,12 +10,12 @@ import Foundation
 
 
 
-public class DependencyMatcher: BaseMatcher, MatcherProtocol  {
+class DependencyMatcher: BaseMatcher, MatcherProtocol  {
     
     
     var dependencyData: DependencyMatcherData?
     //--------------------------------------------------------------------------------------------------
-    public init(splitClient: DefaultSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil, dependencyData: DependencyMatcherData?) {
+    public init(splitClient: InternalSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil, dependencyData: DependencyMatcherData?) {
         
         super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.dependencyData = dependencyData

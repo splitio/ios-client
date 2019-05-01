@@ -8,8 +8,8 @@
 
 import Foundation
 
-@objc final class RefreshableMySegmentsFetcher: NSObject, MySegmentsFetcher {
-    
+final class RefreshableMySegmentsFetcher: NSObject, MySegmentsFetcher, QueryableMySegmentsFetcher {
+
     private let mySegmentsChangeFetcher: MySegmentsChangeFetcher
     private let interval: Int
     private let matchingKey: String
@@ -109,5 +109,9 @@ import Foundation
                 Logger.e("Problem fetching mySegments: %@", error.localizedDescription)
             }
         }
+    }
+    
+    func isInSegments(name: String) -> Bool {
+        return mySegmentsCache.isInSegments(name: name)
     }
 }
