@@ -83,6 +83,6 @@ class Engine {
                                         configuration: split.configurations?[treatment])
             }
         }
-        return EvaluationResult(treatment: defaultTreatment, label: ImpressionsConstants.MATCHER_NOT_FOUND)
+        return EvaluationResult(treatment: defaultTreatment, label: ImpressionsConstants.NO_CONDITION_MATCHED)
     }
 }
