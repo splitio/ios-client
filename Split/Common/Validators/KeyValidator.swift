@@ -43,7 +43,7 @@ class DefaultKeyValidator: KeyValidator {
 
         if let key = bucketingKey {
             if key.isEmpty() {
-                return ValidationErrorInfo(error: .some, message: "you passed an empty string, bucketing key must be be null or a non-empty string")
+                return ValidationErrorInfo(error: .some, message: "you passed an empty string, bucketing key must be null or a non-empty string")
             }
             
             if key.count > kMaxBucketingKeyLength {
