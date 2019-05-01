@@ -32,22 +32,20 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private let eventValidator: EventValidator
     private let validationLogger: ValidationMessageLogger
 
-    init(config: SplitClientConfig, key: Key, splitCache: SplitCache, fileStorage: FileStorageProtocol) {
+    init(config: SplitClientConfig, key: Key, splitCache: SplitCache, trafficTypesCache: TrafficTypesCache, fileStorage: FileStorageProtocol) {
         self.config = config
-
-        let trafficTypesCache = InMemoryTrafficTypesCache(splits: splitCache.getAllSplits())
 
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
 
         self.keyValidator = DefaultKeyValidator()
-        self.eventValidator = DefaultEventValidator(trafficTypesCache: trafficTypesCache)
-        self.splitValidator = DefaultSplitValidator()
+        self.eventValidator = DefaultEventValidator(splitCache: splitCache)
+        self.splitValidator = DefaultSplitValidator(splitCache: splitCache)
         self.validationLogger = DefaultValidationMessageLogger()
 
         eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
-        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache, trafficTypesCache: trafficTypesCache)
+        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
 
         let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: self.config!.featuresRefreshRate, eventsManager: eventsManager)
 
@@ -170,6 +168,13 @@ extension DefaultSplitClient {
         }
 
         if let errorInfo = splitValidator.validate(name: splitName) {
+            validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+            if errorInfo.isError {
+                return SplitResult(treatment: SplitConstants.CONTROL)
+            }
+        }
+        
+        if let errorInfo = splitValidator.validateSplit(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
                 return SplitResult(treatment: SplitConstants.CONTROL)

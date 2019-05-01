@@ -31,11 +31,11 @@ class DefaultEventValidator: EventValidator {
     private let kTrackEventNameValidationPattern = ValidationConfig.default.trackEventNamePattern
     
     var keyValidator: KeyValidator
-    var trafficTypeCache: TrafficTypesCache
+    var splitCache: SplitCacheProtocol
     
-    init(trafficTypesCache: TrafficTypesCache){
+    init(splitCache: SplitCacheProtocol){
         keyValidator = DefaultKeyValidator()
-        self.trafficTypeCache = trafficTypesCache
+        self.splitCache = splitCache
     }
     
     func validate(key: String?, trafficTypeName: String?, eventTypeId: String?, value: Double?) -> ValidationErrorInfo? {
@@ -69,14 +69,13 @@ class DefaultEventValidator: EventValidator {
             validationInfo = ValidationErrorInfo(warning: .trafficTypeNameHasUppercaseChars , message: "traffic_type_name should be all lowercase - converting string to lowercase")
         }
         
-        if !trafficTypeCache.contains(name: trafficTypeName!) {
+        if !splitCache.exists(trafficType: trafficTypeName!) {
             let message = "Traffic Type \(trafficTypeName!) does not have any corresponding Splits in this environment, make sure you’re tracking your events to a valid traffic type defined in the Split console"
             if validationInfo != nil {
                 validationInfo!.addWarning(.trafficTypeWithoutSplitInEnvironment, message: message)
             } else {
                 validationInfo = ValidationErrorInfo(warning: .trafficTypeWithoutSplitInEnvironment , message: message)
             }
-            
         }
         return validationInfo
     }

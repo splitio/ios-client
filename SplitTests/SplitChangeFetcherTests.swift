@@ -14,17 +14,11 @@ import XCTest
 class SplitChangeFetcherTests: XCTestCase {
 
     var splitChangeFetcher: SplitChangeFetcher!
-    var splitsCache: SplitCache!
-    var trafficTypesCache: TrafficTypesCacheStub!
+    var splitCache: SplitCache!
 
     override func setUp() {
-<<<<<<< HEAD
-        trafficTypesCache = TrafficTypesCacheStub()
-        splitsCache = SplitCache(fileStorage: FileStorageStub())
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitsCache, trafficTypesCache: trafficTypesCache)
-=======
-        cache = SplitCache(fileStorage: FileStorageStub())
->>>>>>> skds-621_locahost_dc
+        splitCache = SplitCache(fileStorage: FileStorageStub())
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
     }
 
     override func tearDown() {
@@ -36,13 +30,12 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: getChanges(fileName: "splitchanges_1"))
         
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: cache)
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         let response = try? splitChangeFetcher.fetch(since: -1)
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
             XCTAssertTrue(response!.splits!.count > 0, "Split count should be greater than 0")
         }
-        XCTAssertTrue(trafficTypesCache.updateWasCalled())
     }
 
     func testChangeFetch() {
@@ -50,7 +43,7 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: getChanges(fileName: "splitchanges_2"))
         
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: cache)
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         let response = try? splitChangeFetcher.fetch(since: -1)
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
@@ -69,7 +62,6 @@ class SplitChangeFetcherTests: XCTestCase {
             XCTAssertEqual(response!.till, 1506703262916, "Check till value")
             XCTAssertNil(split.algo, "Algo should be nil")
         }
-        XCTAssertTrue(trafficTypesCache.updateWasCalled())
     }
 
     func testSplitsTillAndSince() {
@@ -77,7 +69,7 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: getChanges(fileName: "splitchanges_3"))
         
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: cache)
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange?
         var errorHasOccurred = false
         do {
@@ -87,7 +79,6 @@ class SplitChangeFetcherTests: XCTestCase {
         }
         XCTAssertTrue(errorHasOccurred, "An exception should be raised")
         XCTAssertTrue(response == nil, "Response should be nil")
-        XCTAssertFalse(trafficTypesCache.updateWasCalled())
     }
     
     func getChanges(fileName: String) -> SplitChange? {

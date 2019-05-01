@@ -115,11 +115,12 @@ class LocalhostSplitFetcherTests: XCTestCase {
     }
     
     func fetcherFor(fileName: String) {
+        let splitCache: SplitCacheProtocol = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
         eventsManager = SplitEventsManagerMock()
         storage = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
         config.refreshInterval = 0
-        fetcher = LocalhostSplitFetcher(fileStorage: storage, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
+        fetcher = LocalhostSplitFetcher(fileStorage: storage, splitCache: splitCache, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
     }
 
 }
