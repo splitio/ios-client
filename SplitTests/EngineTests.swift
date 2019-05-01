@@ -172,6 +172,55 @@ class EngineTests: XCTestCase {
         XCTAssertEqual("off", result?.treatment)
         XCTAssertNotNil(result?.configuration)
     }
+    
+    func testDefaultRule() {
+        var result: EvaluationResult!
+        if let split = split {
+            do {
+                split.trafficAllocation = 100
+                split.algo = 2
+                result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, split: split, attributes: nil)
+            } catch {
+                print(error)
+            }
+        }
+        XCTAssertNotNil(result)
+        XCTAssertEqual("t4_6", result?.treatment)
+        XCTAssertNotNil(result?.configuration)
+        XCTAssertEqual("default rule", result?.label)
+    }
+    
+    func testInSegmentsRule() {
+        var result: EvaluationResult!
+        if let split = loadSplit(splitName: "in_segment_condition_split") {
+            do {
+                result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, split: split, attributes: nil)
+            } catch {
+                print(error)
+            }
+        }
+        XCTAssertNotNil(result)
+        XCTAssertEqual("t3", result?.treatment)
+        XCTAssertNil(result?.configuration)
+        XCTAssertEqual("default rule", result?.label)
+    }
+    
+    func testMissingDefaultRule() {
+        var result: EvaluationResult!
+        if let split = loadSplit(splitName: "in_segment_condition_split") {
+            let defaultRuleIndex  = split.conditions!.count - 1
+            split.conditions?.remove(at: defaultRuleIndex)
+            do {
+                result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, split: split, attributes: nil)
+            } catch {
+                print(error)
+            }
+        }
+        XCTAssertNotNil(result)
+        XCTAssertEqual("t1", result?.treatment)
+        XCTAssertNil(result?.configuration)
+        XCTAssertEqual("default rule", result?.label)
+    }
 
     func loadSplit(splitName: String) -> Split? {
         if let splitContent = FileHelper.readDataFromFile(sourceClass: self, name: splitName, type: "json") {
