@@ -22,21 +22,21 @@ class LocalhostParserTests: XCTestCase {
     func testPerfectFile() {
         let splits = parser.parseContent(openFile(number: 1))
         for i in 1...3 {
-            XCTAssertEqual("t\(i)", splits["split\(i)"])
+            XCTAssertEqual("t\(i)", splits["split\(i)"]?.conditions?[0].partitions?[0].treatment)
         }
     }
 
     func testSpacedLinesFile() {
         let splits = parser.parseContent(openFile(number: 2))
         for i in 1...5 {
-            XCTAssertEqual("t\(i)", splits["split\(i)"])
+            XCTAssertEqual("t\(i)", splits["split\(i)"]?.conditions?[0].partitions?[0].treatment)
         }
     }
 
     func testIntercomentedLinesFile() {
         let splits = parser.parseContent(openFile(number: 3))
         for i in 1...9 {
-            XCTAssertEqual("t\(i)", splits["split\(i)"])
+            XCTAssertEqual("t\(i)", splits["split\(i)"]?.conditions?[0].partitions?[0].treatment)
         }
     }
 

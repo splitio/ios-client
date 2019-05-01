@@ -7,91 +7,65 @@
 
 import Foundation
 
-public class Evaluator {
-    
-    //------------------------------------------------------------------------------------------------------------------
-    public var impressions: [Impression] 
-    internal var splitFetcher: SplitFetcher?
-    internal var mySegmentsFetcher: MySegmentsFetcher?
-    internal var splitClient: DefaultSplitClient?  {
+class Evaluator {
+    var impressions: [Impression]
+    var splitFetcher: SplitFetcher?
+    var mySegmentsFetcher: MySegmentsFetcher?
+    var splitClient: InternalSplitClient?  {
         
         didSet {
-            
+
             self.splitFetcher = self.splitClient?.splitFetcher
             self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
             
         }
     }
-    //------------------------------------------------------------------------------------------------------------------
-    public static let shared: Evaluator = {
+    
+    static let shared: Evaluator = {
         
         let instance = Evaluator()
         return instance;
     }()
-    //------------------------------------------------------------------------------------------------------------------
-    public init(splitClient: DefaultSplitClient? = nil) {
+    
+    init(splitClient: InternalSplitClient? = nil) {
         
         self.splitClient = splitClient
         self.splitFetcher = self.splitClient?.splitFetcher
         self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
         self.impressions = []
     }
-    //------------------------------------------------------------------------------------------------------------------
-    public func evalTreatment(key: String, bucketingKey: String? , split: String, attributes:[String:Any]?) throws -> [String:Any]?  {
+    
+    func evalTreatment(key: String, bucketingKey: String? , split: String, attributes:[String:Any]?) throws -> EvaluationResult  {
 
-        var result: [String:Any] = [:]
-        
         if let splitTreated: Split = splitFetcher?.fetch(splitName: split), splitTreated.status != Status.Archived {
             
             if let killed = splitTreated.killed, killed {
-                result[Engine.EVALUATION_RESULT_TREATMENT] = splitTreated.defaultTreatment!
-                result[Engine.EVALUATION_RESULT_LABEL] = ImpressionsConstants.KILLED
-                result[Engine.EVALUATION_RESULT_SPLIT_VERSION] = splitTreated.changeNumber!
-            } else {
- 
-                let engine = Engine.shared
-                engine.splitClient = self.splitClient
-                do {
-                    let evaluationResult = try engine.getTreatment(matchingKey: key, bucketingKey: bucketingKey, split: splitTreated, attributes: attributes)
-                    
-                    var treatment: String? = evaluationResult[Engine.EVALUATION_RESULT_TREATMENT]
-                    var impressionLabel: String? = evaluationResult[Engine.EVALUATION_RESULT_LABEL]
-                    let impressionSplitVersion: Int64? = splitTreated.changeNumber!
-                    
-                    if treatment == nil {
-                        
-                        treatment = splitTreated.defaultTreatment!
-                        impressionLabel = ImpressionsConstants.NO_CONDITION_MATCHED
-                        
-                    }
-                    
-                    Logger.d("* Treatment for \(key) in \(String(describing: splitTreated.name)) is: \(String(describing: treatment))")
-                    
-                    result[Engine.EVALUATION_RESULT_TREATMENT] = treatment
-                    result[Engine.EVALUATION_RESULT_SPLIT_VERSION] = impressionSplitVersion
-                    
-                    if let label = impressionLabel {
-                        result[Engine.EVALUATION_RESULT_LABEL] = label
-                    } else {
-                        result[Engine.EVALUATION_RESULT_LABEL] = " "
-                    }
-                } catch EngineError.MatcherNotFound {
-                    Logger.e("The matcher has not been found");
-                    result[Engine.EVALUATION_RESULT_TREATMENT] = SplitConstants.CONTROL
-                    result[Engine.EVALUATION_RESULT_LABEL] = ImpressionsConstants.MATCHER_NOT_FOUND
-                    result[Engine.EVALUATION_RESULT_SPLIT_VERSION] = splitTreated.changeNumber!
-                }
-                
+                let treatment = splitTreated.defaultTreatment ?? SplitConstants.CONTROL
+                let configuration = splitTreated.configurations?[treatment]
+                return EvaluationResult(treatment: treatment,
+                                        label: ImpressionsConstants.KILLED,
+                                        splitVersion: (splitTreated.changeNumber ?? -1),
+                                        configuration: configuration)
             }
             
-        } else {
-            Logger.w("The SPLIT definition for '\(split)' has not been found");
-            result[Engine.EVALUATION_RESULT_TREATMENT] = SplitConstants.CONTROL
-            result[Engine.EVALUATION_RESULT_LABEL] = ImpressionsConstants.SPLIT_NOT_FOUND
-            result[Engine.EVALUATION_RESULT_SPLIT_VERSION] = nil
+            var result: EvaluationResult!
+            let engine = Engine.shared
+            engine.splitClient = self.splitClient
+            do {
+                result = try engine.getTreatment(matchingKey: key, bucketingKey: bucketingKey, split: splitTreated, attributes: attributes)
+                result.splitVersion = splitTreated.changeNumber
+                Logger.d("* Treatment for \(key) in \(splitTreated.name ?? "") is: \(result.treatment)")
+            } catch EngineError.MatcherNotFound {
+                Logger.e("The matcher has not been found");
+                result = EvaluationResult(treatment: SplitConstants.CONTROL,
+                                          label: ImpressionsConstants.MATCHER_NOT_FOUND,
+                                          splitVersion: splitTreated.changeNumber)
+            }
+            return result
         }
         
-        return result
+        Logger.w("The SPLIT definition for '\(split)' has not been found");
+        return EvaluationResult(treatment: SplitConstants.CONTROL, label: ImpressionsConstants.SPLIT_NOT_FOUND)
         
     }
 }
