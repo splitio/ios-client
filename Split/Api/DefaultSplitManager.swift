@@ -13,19 +13,19 @@ import Foundation
 ///
 @objc public class DefaultSplitManager: NSObject, SplitManager {
 
-    private let splitFetcher: SplitFetcher
+    private let splitCache: SplitCacheProtocol
     private let splitValidator: SplitValidator
     private let validationLogger: ValidationMessageLogger
 
-    init(splitFetcher: SplitFetcher) {
-        self.splitFetcher = splitFetcher
-        self.splitValidator = DefaultSplitValidator()
+    init(splitCache: SplitCacheProtocol) {
+        self.splitCache = splitCache
+        self.splitValidator = DefaultSplitValidator(splitCache: splitCache)
         self.validationLogger = DefaultValidationMessageLogger()
         super.init()
     }
 
     public var splits: [SplitView] {
-        guard let splits = splitFetcher.fetchAll() else { return [SplitView]()}
+        let splits = splitCache.getAllSplits()
 
         return splits.filter { $0.status == Status.Active }
             .map { split in
@@ -34,6 +34,7 @@ import Foundation
                 splitView.changeNumber = split.changeNumber
                 splitView.trafficType = split.trafficTypeName
                 splitView.killed = split.killed
+                splitView.configs = split.configurations ?? [String: String]()
 
                 if let conditions = split.conditions {
                     var treatments = Set<String>()
@@ -61,6 +62,13 @@ import Foundation
     public func split(featureName: String) -> SplitView? {
 
         if let errorInfo = splitValidator.validate(name: featureName) {
+            validationLogger.log(errorInfo: errorInfo, tag: "split")
+            if errorInfo.isError {
+                return nil
+            }
+        }
+        
+        if let errorInfo = splitValidator.validateSplit(name: featureName) {
             validationLogger.log(errorInfo: errorInfo, tag: "split")
             if errorInfo.isError {
                 return nil

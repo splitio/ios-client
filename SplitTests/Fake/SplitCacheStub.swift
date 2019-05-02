@@ -11,6 +11,7 @@ import Foundation
 
 class SplitCacheStub: SplitCacheProtocol {
 
+    var onSplitsUpdatedHandler: (([Split]) -> Void)? = nil
     private var changeNumber: Int64
     private var splits: [String:Split]
     init(splits: [Split], changeNumber: Int64) {
@@ -54,6 +55,10 @@ class SplitCacheStub: SplitCacheProtocol {
     }
     
     func clear() {
+    }
+    
+    func exists(trafficType: String) -> Bool {
+        return true
     }
     
 }

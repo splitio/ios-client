@@ -14,7 +14,15 @@ class EventValidatorTests: XCTestCase {
     var validator: EventValidator!
     
     override func setUp() {
-        validator = DefaultEventValidator()
+        let split1 = newSplit(trafficType: "custom")
+        let split2 = newSplit(trafficType: "other")
+        let split3 = newSplit(trafficType: "archivedtraffictype", status: .Archived)
+
+        let splitCache = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
+        splitCache.addSplit(splitName: split1.name!, split: split1)
+        splitCache.addSplit(splitName: split2.name!, split: split2)
+        splitCache.addSplit(splitName: split3.name!, split: split3)
+        validator = DefaultEventValidator(splitCache: splitCache)
     }
     
     override func tearDown() {
@@ -137,6 +145,32 @@ class EventValidatorTests: XCTestCase {
         XCTAssertNil(errorInfo3?.errorMessage)
         XCTAssertEqual(errorInfo3?.warnings.count, 1)
         XCTAssertTrue(errorInfo3?.hasWarning(.trafficTypeNameHasUppercaseChars) ?? false)
-        
+    }
+    
+    func testNoChachedServerTrafficType() {
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: "nocached", eventTypeId: "type1", value: nil)
+        XCTAssertNotNil(errorInfo)
+        XCTAssertNil(errorInfo?.error)
+        XCTAssertNil(errorInfo?.errorMessage)
+        XCTAssertEqual(errorInfo?.warnings.count, 1)
+        XCTAssertTrue(errorInfo?.hasWarning(.trafficTypeWithoutSplitInEnvironment) ?? false)
+    }
+    
+    func testNoChachedServerAndUppercasedTrafficType() {
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: "noCached", eventTypeId: "type1", value: nil)
+        XCTAssertNotNil(errorInfo)
+        XCTAssertNil(errorInfo?.error)
+        XCTAssertNil(errorInfo?.errorMessage)
+        XCTAssertEqual(errorInfo?.warnings.count, 2)
+        XCTAssertTrue(errorInfo?.hasWarning(.trafficTypeWithoutSplitInEnvironment) ?? false)
+        XCTAssertTrue(errorInfo?.hasWarning(.trafficTypeNameHasUppercaseChars) ?? false)
+    }
+    
+    private func newSplit(trafficType: String, status: Status = .Active) -> Split {
+        let split = Split()
+        split.name = UUID().uuidString
+        split.trafficTypeName = trafficType
+        split.status = status
+        return split
     }
 }

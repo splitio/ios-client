@@ -9,7 +9,7 @@ import Foundation
 
 class  SplitChangeCache: SplitChangeCacheProtocol {
     
-    private let _queue = DispatchQueue(label: "io.Split.FetcherEngine.Cache.SplitChangeCache.SyncQueue")
+    private let queue = DispatchQueue(label: "io.Split.FetcherEngine.Cache.SplitChangeCache.SyncQueue")
     var splitCache: SplitCacheProtocol?
     
     init(splitCache: SplitCacheProtocol) {
@@ -20,7 +20,7 @@ class  SplitChangeCache: SplitChangeCacheProtocol {
 
         if splitCache == nil { return false }
         
-        _queue.sync {
+        queue.sync {
             let _ = self.splitCache?.setChangeNumber(splitChange.till!)
             for split in splitChange.splits! {
                 _ = self.splitCache?.addSplit(splitName: split.name!, split: split)
@@ -36,7 +36,7 @@ class  SplitChangeCache: SplitChangeCacheProtocol {
         }
 
         var splitChange: SplitChange? = nil
-        _queue.sync {
+        queue.sync {
             let changeNumber = splitCache.getChangeNumber()
             if changeNumber != -1 {
                 splitChange = SplitChange()

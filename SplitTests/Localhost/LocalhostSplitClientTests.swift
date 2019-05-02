@@ -13,35 +13,30 @@ import XCTest
 class LocalhostSplitClientTests: XCTestCase {
 
     var client: SplitClient!
+    var eventsManager: SplitEventsManager!
     
     override func setUp() {
+        eventsManager = SplitEventsManagerMock()
         let fileName = "localhost.splits"
-        let fileContent = """
-                            s1 t1\n
-                            s2 t2\n
-                            s3 t3\n
-                            s4 t4\n
-                            s5 t5\n
-                            """
         let storage = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
+        let splitCache = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
         config.refreshInterval = 0
-        let fetcher = LocalhostTreatmentFetcher(fileStorage: storage, config: config)
-        storage.write(fileName: fileName, content: fileContent)
+        let fetcher = LocalhostSplitFetcher(fileStorage: storage, splitCache: splitCache, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
         fetcher.forceRefresh()
-        client = LocalhostSplitClient(treatmentFetcher: fetcher)
+        client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), splitFetcher: fetcher)
     }
     
     override func tearDown() {
     }
     
-    func testRightTreatment() {
+    func testRightSplitsFileTreatment() {
         for i in 1...5 {
             XCTAssertEqual(client.getTreatment("s\(i)"), "t\(i)")
         }
     }
     
-    func testRightTreatments() {
+    func testRightSplitsFileTreatments() {
         let splitsCount = 5
         var splits = [String]()
         for i in 1...splitsCount {
