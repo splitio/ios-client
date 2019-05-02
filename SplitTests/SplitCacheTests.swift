@@ -51,25 +51,6 @@ class SplitCacheTests: XCTestCase {
         XCTAssertNotNil(splitCache.getSplit(splitName: splitName4), "\(splitName4) should be in cache")
     }
     
-    func testRemoveOneSplit() {
-        let splitName2 = "split2"
-        splitCache.removeSplit(splitName: splitName2)
-        XCTAssertEqual(splitCache.getSplits().count, 2, "Removed 1 split - count")
-        XCTAssertNotNil(splitCache.getSplit(splitName: "split0"), "split0 should be in cache")
-        XCTAssertNil(splitCache.getSplit(splitName: splitName2), "\(splitName2) should no be in cache")
-    }
-    
-    func testRemoveTwoSplits() {
-        let splitName1 = "split1"
-        let splitName2 = "split2"
-        splitCache.removeSplit(splitName: splitName1)
-        splitCache.removeSplit(splitName: splitName2)
-        XCTAssertEqual(splitCache.getSplits().count, 1, "Removed 2 splits - count")
-        XCTAssertNotNil(splitCache.getSplit(splitName: "split0"), "split0 should be in cache")
-        XCTAssertNil(splitCache.getSplit(splitName: splitName1), "\(splitName1) should not be in cache")
-        XCTAssertNil(splitCache.getSplit(splitName: splitName2), "\(splitName2) should not be in cache")
-    }
-    
     func testInitialChangeNumber() {
         XCTAssertEqual(splitCache.getChangeNumber(), initialChangeNumber, "Change number should be \(initialChangeNumber)")
     }

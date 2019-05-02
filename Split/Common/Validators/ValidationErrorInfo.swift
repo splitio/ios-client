@@ -21,6 +21,7 @@ enum ValidationError {
 enum ValidationWarning {
     case splitNameShouldBeTrimmed
     case trafficTypeNameHasUppercaseChars
+    case trafficTypeWithoutSplitInEnvironment
 }
 
 ///

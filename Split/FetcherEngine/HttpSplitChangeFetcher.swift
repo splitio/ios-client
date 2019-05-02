@@ -14,19 +14,19 @@ public enum FecthingPolicy {
 }
 
 class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
-    
+
     private let restClient: RestClientSplitChanges
     private let splitChangeCache: SplitChangeCache
     private let splitChangeValidator: SplitChangeValidator
-    
+
     init(restClient: RestClientSplitChanges, splitCache: SplitCacheProtocol) {
         self.restClient = restClient
         self.splitChangeCache = SplitChangeCache(splitCache: splitCache)
         self.splitChangeValidator = DefaultSplitChangeValidator()
     }
-    
+
     func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
-        
+
         if policy == .cacheOnly || !restClient.isSdkServerAvailable() {
             return self.splitChangeCache.getChanges(since: -1)
         } else {
@@ -41,7 +41,7 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
                 semaphore.signal()
             }
             semaphore.wait()
-            
+
             guard let change: SplitChange = try requestResult?.unwrap(), splitChangeValidator.validate(change) == nil else {
                 throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
             }
@@ -49,5 +49,4 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
             return change
         }
     }
-    
 }
