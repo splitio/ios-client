@@ -14,10 +14,11 @@ import XCTest
 class SplitChangeFetcherTests: XCTestCase {
 
     var splitChangeFetcher: SplitChangeFetcher!
-    var cache: SplitCache!
+    var splitCache: SplitCache!
 
     override func setUp() {
-        cache = SplitCache(fileStorage: FileStorageStub())
+        splitCache = SplitCache(fileStorage: FileStorageStub())
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
     }
 
     override func tearDown() {
@@ -29,7 +30,7 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: getChanges(fileName: "splitchanges_1"))
         
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: cache)
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         let response = try? splitChangeFetcher.fetch(since: -1)
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
@@ -42,7 +43,7 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: getChanges(fileName: "splitchanges_2"))
         
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: cache)
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         let response = try? splitChangeFetcher.fetch(since: -1)
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
@@ -68,7 +69,7 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: getChanges(fileName: "splitchanges_3"))
         
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: cache)
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange?
         var errorHasOccurred = false
         do {
