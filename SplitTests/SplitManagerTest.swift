@@ -23,8 +23,7 @@ class SplitManagerTest: XCTestCase {
         let json = try? Data(contentsOf: URL(fileURLWithPath: path)).stringRepresentation
         loadedSplits = try? JSON.encodeFrom(json: json!, to: [Split].self)
         cache = SplitCacheStub(splits: loadedSplits!, changeNumber:1)
-        let fetcher: SplitFetcher = LocalSplitFetcher(splitCache: cache)
-        manager = DefaultSplitManager(splitFetcher: fetcher)
+        manager = DefaultSplitManager(splitCache: cache)
     }
     
     override func tearDown() {
@@ -56,26 +55,29 @@ class SplitManagerTest: XCTestCase {
     
     func testSplitInfo(){
         
-        let split0 = manager.split(featureName: "sample_feature0")!
-        let treatments0 = split0.treatments!
+        let split0 = manager.split(featureName: "sample_feature0")
+        let treatments0 = split0?.treatments
         
-        XCTAssertEqual(split0.name!.lowercased(), "sample_feature0", "Split0 name")
-        XCTAssertEqual(split0.changeNumber, 1, "Split0 change number")
-        XCTAssertFalse(split0.killed!, "Split0 killed")
-        XCTAssertEqual(split0.trafficType, "custom", "Split0 traffic type")
+        XCTAssertEqual(split0?.name?.lowercased(), "sample_feature0", "Split0 name")
+        XCTAssertEqual(split0?.changeNumber, 1, "Split0 change number")
+        XCTAssertFalse(split0?.killed ?? true, "Split0 killed")
+        XCTAssertEqual(split0?.trafficType, "custom", "Split0 traffic type")
+        XCTAssertNotNil(split0?.configs)
         
-        XCTAssertEqual(treatments0.count, 6, "Split0 treatment count")
-        XCTAssertEqual(treatments0.sorted().joined(separator: ",").lowercased(), "t1_0,t2_0,t3_0,t4_0,t5_0,t6_0", "Split0 treatment names")
+        XCTAssertEqual(treatments0?.count, 6, "Split0 treatment count")
+        XCTAssertEqual(treatments0?.sorted().joined(separator: ",").lowercased(), "t1_0,t2_0,t3_0,t4_0,t5_0,t6_0", "Split0 treatment names")
         
-        let split1 = manager.split(featureName: "sample_feature1")!
-        let treatments1 = split1.treatments!
+        let split1 = manager.split(featureName: "sample_feature1")
+        let treatments1 = split1?.treatments
         
-        XCTAssertEqual(split1.name!.lowercased(), "sample_feature1", "Split1 name")
-        XCTAssertEqual(split1.changeNumber, 1, "Split1 change number")
-        XCTAssertTrue(split1.killed!, "Split1 killed")
-        XCTAssertEqual(split1.trafficType, "custom1", "Split1 traffic type")
-        XCTAssertEqual(treatments1.count, 6, "Split1 treatment count")
-        XCTAssertEqual(treatments1.sorted().joined(separator: ",").lowercased(), "t1_1,t2_1,t3_1,t4_1,t5_1,t6_1", "Split1 treatment names")
+        XCTAssertEqual(split1?.name?.lowercased(), "sample_feature1", "Split1 name")
+        XCTAssertEqual(split1?.changeNumber, 1, "Split1 change number")
+        XCTAssertTrue(split1?.killed ?? false, "Split1 killed")
+        XCTAssertEqual(split1?.trafficType, "custom1", "Split1 traffic type")
+        XCTAssertNotNil(split1?.configs)
+        XCTAssertEqual(0, split1?.configs?.count)
+        XCTAssertEqual(treatments1?.count, 6, "Split1 treatment count")
+        XCTAssertEqual(treatments1?.sorted().joined(separator: ",").lowercased(), "t1_1,t2_1,t3_1,t4_1,t5_1,t6_1", "Split1 treatment names")
     }
     
     func testAddOneSplit() {
@@ -88,19 +90,6 @@ class SplitManagerTest: XCTestCase {
         let names = manager.splitNames
         XCTAssertEqual(splits.count, 7, "Added one split count")
         XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), "sample_feature0,sample_feature1,sample_feature2,sample_feature3,sample_feature4,sample_feature5,sample_feature6", "Added one split name check")
-    }
-    
-    func testRemoveOneSplit() {
-        let cache: SplitCacheProtocol = SplitCacheStub(splits: loadedSplits!, changeNumber: 1)
-        let fetcher: SplitFetcher = LocalSplitFetcher(splitCache: cache)
-        let manager: SplitManager = DefaultSplitManager(splitFetcher: fetcher)
-        _ = cache.removeSplit(splitName: "sample_feature4")
-        _ = cache.setChangeNumber(2)
-        let splits = manager.splits
-        let names = manager.splitNames
-        
-        XCTAssertEqual(splits.count, 5, "Removed split count")
-        XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), "sample_feature0,sample_feature1,sample_feature2,sample_feature3,sample_feature5", "Removed split names check")
     }
     
     func testEmptyName(){

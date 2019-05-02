@@ -8,31 +8,29 @@
 
 import Foundation
 import XCTest
-import OHHTTPStubs
 
 @testable import Split
 
 class SplitChangeFetcherTests: XCTestCase {
 
     var splitChangeFetcher: SplitChangeFetcher!
-    var cache: SplitCache!
+    var splitCache: SplitCache!
 
     override func setUp() {
-        cache = SplitCache(fileStorage: FileStorageStub())
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: cache)
+        splitCache = SplitCache(fileStorage: FileStorageStub())
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
     }
 
     override func tearDown() {
-        OHHTTPStubs.removeAllStubs()
     }
 
     func testFetchCount() {
-        stub(condition: isPath("/api/splitChanges")) { _ in
-            let stubPath = OHPathForFile("splitchanges_1.json", type(of: self))
-            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-        }
-
-        sleep(1) // Time to load the file
+        
+        let restClient: RestClientSplitChanges = RestClientStub()
+        let restClientTest: RestClientTest = restClient as! RestClientTest
+        restClientTest.update(change: getChanges(fileName: "splitchanges_1"))
+        
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         let response = try? splitChangeFetcher.fetch(since: -1)
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
@@ -41,12 +39,11 @@ class SplitChangeFetcherTests: XCTestCase {
     }
 
     func testChangeFetch() {
-        stub(condition: pathMatches("/api/splitChanges")) { _ in
-            let stubPath = OHPathForFile("splitchanges_2.json", type(of: self))
-            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-        }
-
-        sleep(1) // Time to load the file
+        let restClient: RestClientSplitChanges = RestClientStub()
+        let restClientTest: RestClientTest = restClient as! RestClientTest
+        restClientTest.update(change: getChanges(fileName: "splitchanges_2"))
+        
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         let response = try? splitChangeFetcher.fetch(since: -1)
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
@@ -58,6 +55,9 @@ class SplitChangeFetcherTests: XCTestCase {
             XCTAssertEqual(split.trafficTypeName, "account", "Split traffict type should be account")
             XCTAssertEqual(split.defaultTreatment, "off", "Default treatment value")
             XCTAssertNotNil(split.conditions, "Conditions should not be nil")
+            XCTAssertNotNil(split.configurations, "Configurations should not be nil")
+            XCTAssertNotNil(split.configurations?["on"])
+            XCTAssertNotNil(split.configurations?["off"])
             XCTAssertEqual(response!.since, -1, "Since should be -1")
             XCTAssertEqual(response!.till, 1506703262916, "Check till value")
             XCTAssertNil(split.algo, "Algo should be nil")
@@ -65,12 +65,11 @@ class SplitChangeFetcherTests: XCTestCase {
     }
 
     func testSplitsTillAndSince() {
-        stub(condition: isPath("/api/splitChanges")) { _ in
-            let stubPath = OHPathForFile("splitchanges_3.json", type(of: self))
-            return fixture(filePath: stubPath!, headers: ["Content-Type":"application/json"])
-        }
-
-        sleep(1) // Time to load the file
+        let restClient: RestClientSplitChanges = RestClientStub()
+        let restClientTest: RestClientTest = restClient as! RestClientTest
+        restClientTest.update(change: getChanges(fileName: "splitchanges_3"))
+        
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange?
         var errorHasOccurred = false
         do {
@@ -80,5 +79,13 @@ class SplitChangeFetcherTests: XCTestCase {
         }
         XCTAssertTrue(errorHasOccurred, "An exception should be raised")
         XCTAssertTrue(response == nil, "Response should be nil")
+    }
+    
+    func getChanges(fileName: String) -> SplitChange? {
+        var change: SplitChange?
+        if let content = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json") {
+            change = try? Json.encodeFrom(json: content, to: SplitChange.self)
+        }
+        return change
     }
 }

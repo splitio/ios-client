@@ -165,4 +165,9 @@ class FolderApiKeyTests: XCTestCase {
             XCTAssertEqual(expectedFolder, folder);
         }
     }
+    
+    func testSanitizeEmptyFolder() {
+        let folder = folderFactory.sanitizeForFolderName("")
+        XCTAssertEqual("", folder)
+    }
 }

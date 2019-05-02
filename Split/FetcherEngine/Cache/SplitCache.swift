@@ -15,16 +15,16 @@ import Foundation
 /// from the server and it is saved to disk when application goes to background.
 
 class SplitCache: SplitCacheProtocol {
-    
+
     private struct SplitsFile: Codable {
         var splits: [String: Split]
         var changeNumber: Int64
     }
 
     let kSplitsFileName: String = "SPLITIO.splits"
-    var fileStorage: FileStorageProtocol
+    let fileStorage: FileStorageProtocol
     var inMemoryCache: InMemorySplitCache!
-    
+
     init(fileStorage: FileStorageProtocol) {
         self.fileStorage = fileStorage
         self.inMemoryCache = initialInMemoryCache()
@@ -40,10 +40,6 @@ class SplitCache: SplitCacheProtocol {
     
     func addSplit(splitName: String, split: Split) {
         inMemoryCache.addSplit(splitName: splitName, split: split)
-    }
-    
-    func removeSplit(splitName: String) {
-        inMemoryCache.removeSplit(splitName: splitName)
     }
     
     func setChangeNumber(_ changeNumber: Int64) {
@@ -66,6 +62,10 @@ class SplitCache: SplitCacheProtocol {
         return inMemoryCache.getSplits()
     }
     
+    func exists(trafficType: String) -> Bool {
+        return inMemoryCache.exists(trafficType: trafficType)
+    }
+    
     func clear() {
     }
 }
@@ -73,17 +73,21 @@ class SplitCache: SplitCacheProtocol {
 // MARK: Private
 extension SplitCache {
     private func initialInMemoryCache() -> InMemorySplitCache {
-        var inMemoryCache = InMemorySplitCache(splits: [String: Split]())
+        let inMemoryTrafficTypesCache = InMemoryTrafficTypesCache()
+        let emptySplitCache: (() -> InMemorySplitCache) = {
+            return InMemorySplitCache(trafficTypesCache: inMemoryTrafficTypesCache, splits: [String: Split]())
+        }
+        
         guard let jsonContent = fileStorage.read(fileName: kSplitsFileName) else {
-            return inMemoryCache
+            return emptySplitCache()
         }
         do {
             let splitsFile = try Json.encodeFrom(json: jsonContent, to: SplitsFile.self)
-            inMemoryCache = InMemorySplitCache(splits: splitsFile.splits, changeNumber: splitsFile.changeNumber)
+            return InMemorySplitCache(trafficTypesCache: inMemoryTrafficTypesCache, splits: splitsFile.splits, changeNumber: splitsFile.changeNumber)
         } catch {
             Logger.e("Error while loading Splits from disk")
         }
-        return inMemoryCache
+        return emptySplitCache()
     }
     
     private func saveSplits() {

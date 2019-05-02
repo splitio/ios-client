@@ -15,6 +15,10 @@ public typealias SplitAction = () -> Void
     func getTreatment(_ split: String, attributes:[String:Any]?) -> String
     func getTreatment(_ split: String) -> String
     @objc(getTreatmentsForSplits:attributes:) func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String]
+    
+    func getTreatmentWithConfig(_ split: String) -> SplitResult
+    func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult
+    @objc(getTreatmentsWithConfigForSplits:attributes:) func getTreatmentsWithConfig(splits: [String], attributes:[String:Any]?) ->  [String:SplitResult]
 
     func on(event: SplitEvent, execute action: @escaping SplitAction)
 

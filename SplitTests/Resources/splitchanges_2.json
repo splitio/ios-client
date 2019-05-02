@@ -17,6 +17,10 @@
                     "someKey": "someValue",
                     "someKey2": 1000
               },
+              "configurations": {
+                  "on": "{\"c1\": \"v1\"}",
+                  "off": "{\"c1\": \"v1\"}"
+              },
               "conditions":[
                             {
                             "conditionType":"WHITELIST",
