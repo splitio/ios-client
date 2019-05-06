@@ -28,6 +28,10 @@ import Foundation
     private let apiKeyValidator: ApiKeyValidator
     private let validationLogger: ValidationMessageLogger
     private let validationTag = "factory instantiation"
+    
+    private static let  factoryMonitor: FactoryMonitor = {
+        return DefaultFactoryMonitor()
+    }()
 
     public override init() {
         keyValidator = DefaultKeyValidator()
@@ -81,16 +85,28 @@ import Foundation
             return nil
         }
         
+        let factoryCount = DefaultSplitFactoryBuilder.factoryMonitor.instanceCount(for: apiKey!)
+        
+        if factoryCount > 0 {
+            let errorInfo = ValidationErrorInfo(error: ValidationError.some, message: "You already have \(factoryCount) \(factoryCount == 1 ? "factory" : "factories") with this API Key. We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing it throughout your application.")
+            validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+        }
+        
+        
         let finalKey = Key(matchingKey: matchingKey!, bucketingKey: bucketingKey)
         
+        var factory: SplitFactory!
         if apiKey?.uppercased() == kApiKeyLocalhost {
-            return LocalhostSplitFactory(key: finalKey,
-                                         config: config ?? SplitClientConfig(),
-                                         bundle: bundle)
-        }
-
-        return DefaultSplitFactory(apiKey: apiKey!,
+            factory = LocalhostSplitFactory(key: finalKey,
+                                            config: config ?? SplitClientConfig(),
+                                            bundle: bundle)
+        } else {
+            factory = DefaultSplitFactory(apiKey: apiKey!,
                                    key: finalKey,
                                    config: config ?? SplitClientConfig())
+        }
+        
+        DefaultSplitFactoryBuilder.factoryMonitor.register(instance: factory, for: apiKey!)
+        return factory
     }
 }
