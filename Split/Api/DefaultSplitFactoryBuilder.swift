@@ -26,7 +26,7 @@ import Foundation
     private let kApiKeyLocalhost = "LOCALHOST"
     private let keyValidator: KeyValidator
     private let apiKeyValidator: ApiKeyValidator
-    private let validationLogger: ValidationMessageLogger
+    var validationLogger: ValidationMessageLogger
     private let validationTag = "factory instantiation"
     
     private static let  factoryMonitor: FactoryMonitor = {
@@ -86,12 +86,13 @@ import Foundation
         }
         
         let factoryCount = DefaultSplitFactoryBuilder.factoryMonitor.instanceCount(for: apiKey!)
-        
         if factoryCount > 0 {
             let errorInfo = ValidationErrorInfo(error: ValidationError.some, message: "You already have \(factoryCount) \(factoryCount == 1 ? "factory" : "factories") with this API Key. We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing it throughout your application.")
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+        } else if DefaultSplitFactoryBuilder.factoryMonitor.allCount > 0 {
+            let errorInfo = ValidationErrorInfo(error: ValidationError.some, message: "You already have an instance of the Split factory. Make sure you definitely want this additional instance. We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing it throughout your application.")
+            validationLogger.log(errorInfo: errorInfo, tag: validationTag)
         }
-        
         
         let finalKey = Key(matchingKey: matchingKey!, bucketingKey: bucketingKey)
         
