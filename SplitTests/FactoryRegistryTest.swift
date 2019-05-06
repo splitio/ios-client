@@ -48,6 +48,7 @@ class FactoryRegistryTest: XCTestCase {
         XCTAssertEqual(1, registry.count(for: "k2"))
         XCTAssertEqual(1, registry.count(for: "k3"))
         XCTAssertEqual(3, registry.count(for: "k4"))
+        XCTAssertEqual(7, registry.count)
         
     }
     
@@ -84,6 +85,7 @@ class FactoryRegistryTest: XCTestCase {
         XCTAssertEqual(1, registry.count(for: "k2"))
         XCTAssertEqual(1, registry.count(for: "k3"))
         XCTAssertEqual(2, registry.count(for: "k4"))
+        XCTAssertEqual(5, registry.count)
         
     }
 }
