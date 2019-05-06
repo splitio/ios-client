@@ -81,5 +81,75 @@ class SplitFactoryBuilderTests: XCTestCase {
             .build()
         XCTAssertNotNil(factory, "Factory should not be nil")
     }
+    
+    func testMultiFactorySameKey() {
+        let builder1: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        let builder2: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        
+        let logger = ValidationMessageLoggerMock()
+        builder2.validationLogger = logger
+        
+        let f1 = builder1
+            .setApiKey("pepe")
+            .setKey(Key(matchingKey: "pepe"))
+            .build()
+        
+        let f2 = builder2
+            .setApiKey("pepe")
+            .setKey(Key(matchingKey: "pepe"))
+            .build()
+        
+        XCTAssertEqual(factoryValidationMessage(count: 1, for: "pepe"), logger.messages[0])
+    }
+    
+    func testMultiFactoryTwoSameKey() {
+        let builder1: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        let builder2: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        
+        let logger = ValidationMessageLoggerMock()
+        builder2.validationLogger = logger
+        
+        let f1 = builder1
+            .setApiKey("pepe")
+            .setKey(Key(matchingKey: "pepe"))
+            .build()
+        
+        let f3 = builder1
+            .setApiKey("pepe")
+            .setKey(Key(matchingKey: "pepe"))
+            .build()
+        
+        let f2 = builder2
+            .setApiKey("pepe")
+            .setKey(Key(matchingKey: "pepe"))
+            .build()
+        
+        XCTAssertEqual(factoryValidationMessage(count: 2, for: "pepe"), logger.messages[0])
+    }
+    
+    func testMultiFactoryDifferentKey() {
+        let builder1: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        let builder2: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        
+        let logger = ValidationMessageLoggerMock()
+        builder2.validationLogger = logger
+        
+        let f1 = builder1
+            .setApiKey("pepe1")
+            .setKey(Key(matchingKey: "pepe"))
+            .build()
+        
+        let f2 = builder2
+            .setApiKey("pepe")
+            .setKey(Key(matchingKey: "pepe"))
+            .build()
+        
+        XCTAssertEqual("You already have an instance of the Split factory. Make sure you definitely want this additional instance. We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing it throughout your application.", logger.messages[0])
+    }
+    
+    func factoryValidationMessage(count: Int, for key: String) -> String {
+        let m = "You already have \(count) \(count == 1 ? "factory" : "factories") with this API Key. We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing it throughout your application."
+        return m
+    }
 
 }
