@@ -39,6 +39,7 @@ class FactoryMonitorTest: XCTestCase {
         XCTAssertEqual(1, monitor.instanceCount(for: "k2"))
         XCTAssertEqual(1, monitor.instanceCount(for: "k3"))
         XCTAssertEqual(3, monitor.instanceCount(for: "k4"))
+        XCTAssertEqual(7, monitor.allCount)
     }
     
     func testDeallocatedCountLiveFactories() {
@@ -66,5 +67,6 @@ class FactoryMonitorTest: XCTestCase {
         XCTAssertEqual(1, monitor.instanceCount(for: "k2"))
         XCTAssertEqual(1, monitor.instanceCount(for: "k3"))
         XCTAssertEqual(2, monitor.instanceCount(for: "k4"))
+        XCTAssertEqual(5, monitor.allCount)
     }
 }

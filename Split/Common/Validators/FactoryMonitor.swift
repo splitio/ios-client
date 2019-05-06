@@ -21,6 +21,17 @@ class FactoryRegistry {
     private var queue: DispatchQueue
     private var weakFactories: [String:[WeakFactory]]
     
+    var count: Int {
+        var count: Int = 0
+        queue.sync {
+            for (key, factories) in self.weakFactories {
+                self.compact(for: key)
+                count += factories.count
+            }
+        }
+        return count
+    }
+    
     init(){
         queue = DispatchQueue(label: NSUUID().uuidString)
         weakFactories = [String:[WeakFactory]]()
@@ -52,12 +63,17 @@ class FactoryRegistry {
 }
 
 protocol FactoryMonitor {
+    var allCount: Int { get }
     func instanceCount(for apiKey: String) -> Int
     func register(instance: SplitFactory?, for apiKey: String)
 }
 
 class DefaultFactoryMonitor: FactoryMonitor {
     var factoryRegistry: FactoryRegistry
+    
+    var allCount: Int {
+        return factoryRegistry.count
+    }
     
     init() {
         factoryRegistry = FactoryRegistry()
