@@ -131,7 +131,7 @@ extension TrackManager {
         }
 
         do {
-            let json = try Json.encodeToJson(eventsFile)
+            let json = try Json.dynamicEncodeToJson(eventsFile)
             eventsFileStorage.write(fileName: kEventsFileName, content: json)
         } catch {
             Logger.e("Could not save events hits)")
@@ -145,7 +145,7 @@ extension TrackManager {
         if hitsJson.count == 0 { return }
         eventsFileStorage.delete(fileName: kEventsFileName)
         do {
-            let hitsFile = try Json.encodeFrom(json: hitsJson, to: EventsFile.self)
+            let hitsFile = try Json.dynamicEncodeFrom(json: hitsJson, to: EventsFile.self)
             if let oldHits = hitsFile.oldHits {
                 for hit in oldHits {
                     eventsHits.setValue(hit.value, forKey: hit.key)

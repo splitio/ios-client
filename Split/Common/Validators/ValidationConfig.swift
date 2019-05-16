@@ -26,6 +26,11 @@ struct ValidationConfig {
     ///
     var trackEventNamePattern = "^[a-zA-Z0-9][-_.:a-zA-Z0-9]{0,79}$"
     
+    ///
+    /// maximumEventPropertyBytes
+    ///
+    let maximumEventPropertyBytes: Int = 32768
+    
     static var `default`: ValidationConfig = {
         return ValidationConfig()
     }()

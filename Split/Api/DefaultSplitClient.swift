@@ -211,24 +211,40 @@ extension DefaultSplitClient {
 extension DefaultSplitClient {
     
     public func track(trafficType: String, eventType: String) -> Bool {
-        return track(eventType: eventType, trafficType: trafficType)
+        return track(eventType: eventType, trafficType: trafficType, properties: nil)
     }
     
     public func track(trafficType: String, eventType: String, value: Double) -> Bool {
-        return track(eventType: eventType, trafficType: trafficType, value: value)
+        return track(eventType: eventType, trafficType: trafficType, value: value, properties: nil)
     }
     
     public func track(eventType: String) -> Bool {
-        return track(eventType: eventType, trafficType: nil)
+        return track(eventType: eventType, trafficType: nil, properties: nil)
     }
     
     public func track(eventType: String, value: Double) -> Bool {
-        return track(eventType: eventType, trafficType: nil, value: value)
+        return track(eventType: eventType, trafficType: nil, value: value, properties: nil)
     }
     
-    private func track(eventType: String, trafficType: String? = nil, value: Double? = nil) -> Bool {
+    public func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool {
+        return track(eventType: eventType, trafficType: trafficType, properties: properties)
+    }
+    
+    public func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool {
+        return track(eventType: eventType, trafficType: trafficType, value: value, properties: properties)
+    }
+    
+    public func track(eventType: String, properties: [String: Any]?) -> Bool {
+        return track(eventType: eventType, trafficType: nil, properties: properties)
+    }
+    
+    public func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool {
+        return track(eventType: eventType, trafficType: nil, value: value, properties: properties)
+    }
+    
+    private func track(eventType: String, trafficType: String? = nil, value: Double? = nil, properties: [String: Any]?) -> Bool {
         
-        if let errorInfo = eventValidator.validate(key: self.key.matchingKey, trafficTypeName: trafficType, eventTypeId: trafficType, value: value) {
+        if let errorInfo = eventValidator.validate(key: self.key.matchingKey, trafficTypeName: trafficType, eventTypeId: trafficType, value: value, properties: properties) {
             validationLogger.log(errorInfo: errorInfo, tag: "track")
             if errorInfo.isError {
                 return false
@@ -239,6 +255,7 @@ extension DefaultSplitClient {
         event.key = self.key.matchingKey
         event.value = value
         event.timestamp = Date().unixTimestampInMiliseconds()
+        event.properties = properties
         trackEventsManager.appendEvent(event: event)
         
         return true
