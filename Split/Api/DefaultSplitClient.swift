@@ -245,10 +245,24 @@ extension DefaultSplitClient {
     
     private func track(eventType: String, trafficType: String? = nil, value: Double? = nil, properties: [String: Any]?) -> Bool {
         
+        let validationTag = "track"
         if let errorInfo = eventValidator.validate(key: self.key.matchingKey, trafficTypeName: trafficType, eventTypeId: trafficType, value: value, properties: properties) {
-            validationLogger.log(errorInfo: errorInfo, tag: "track")
+            validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
                 return false
+            }
+        }
+        var validatedProps = properties
+        if let props = validatedProps {
+            let maxBytes = ValidationConfig.default.maximumEventPropertyBytes
+            for (prop, value) in props {
+                if  estimateSize(for: prop) > maxBytes || estimateSize(for: (value as? String)) > maxBytes {
+                    validationLogger.log(errorInfo: ValidationErrorInfo(error: .some, message: "The maximum size allowed for the properties is 32kb. Current is \(prop). Event not queued"), tag: validationTag)
+                    return false
+                }
+                if type(of: value) == [Any].self ||  type(of: value) == [AnyHashable:Any].self{
+                    validatedProps![prop] = nil
+                }
             }
         }
         
@@ -256,9 +270,16 @@ extension DefaultSplitClient {
         event.key = self.key.matchingKey
         event.value = value
         event.timestamp = Date().unixTimestampInMiliseconds()
-        event.properties = properties
+        event.properties = validatedProps
         trackEventsManager.appendEvent(event: event)
         
         return true
+    }
+    
+    private func estimateSize(for value: String?) -> Int {
+        if let value = value {
+            return MemoryLayout.size(ofValue: value) * value.count
+        }
+        return 0
     }
 }

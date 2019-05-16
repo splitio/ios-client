@@ -139,38 +139,4 @@ class EventValidatorTests: XCTestCase {
         XCTAssertTrue(errorInfo3?.hasWarning(.trafficTypeNameHasUppercaseChars) ?? false)
         
     }
-    
-    func testLongPropertyNameAndValue() {
-        
-        let longStr = String(repeating: "a", count: 2050)
-        
-        let errorInfo1 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: "evtype", value: nil, properties: [longStr: "value"])
-        let errorInfo2 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: "evtype", value: nil, properties: ["prop": longStr])
-        
-        XCTAssertTrue(errorInfo1?.isError ?? false)
-        XCTAssertEqual(longErrorMsg(for: longStr), errorInfo1?.errorMessage)
-        XCTAssertEqual(errorInfo1?.warnings.count, 0)
-        
-        XCTAssertTrue(errorInfo2?.isError ?? false)
-        XCTAssertEqual(longErrorMsg(for: "prop"), errorInfo2?.errorMessage)
-        XCTAssertEqual(errorInfo1?.warnings.count, 0)
-    }
-    
-    func testArrayAndDictionaryValue() {
-        
-        let errorInfo1 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: "evtype", value: nil, properties: ["prop": ["value", "value1"]])
-        let errorInfo2 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: "evtype", value: nil, properties: ["prop": ["v1": "value", "2": "value1"]])
-        
-        XCTAssertTrue(errorInfo1?.isError ?? false)
-        XCTAssertEqual("Array", errorInfo1?.errorMessage)
-        XCTAssertEqual(errorInfo1?.warnings.count, 0)
-        
-        XCTAssertTrue(errorInfo2?.isError ?? false)
-        XCTAssertEqual("Dic", errorInfo2?.errorMessage)
-        XCTAssertEqual(errorInfo1?.warnings.count, 0)
-    }
-    
-    func longErrorMsg(for prop: String) -> String {
-        return "The maximum size allowed for the properties is 32kb. Current is \(prop). Event not queued"
-    }
 }
