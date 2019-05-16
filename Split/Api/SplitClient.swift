@@ -27,4 +27,10 @@ public typealias SplitAction = () -> Void
     func track(trafficType: String, eventType: String, value: Double) -> Bool
     func track(eventType: String) -> Bool
     func track(eventType: String, value: Double) -> Bool
+    
+    func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool
+    func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool
+    func track(eventType: String, properties: [String: Any]?) -> Bool
+    func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool
+    
 }
