@@ -12,6 +12,7 @@ struct TrackManagerConfig {
     var pushRate: Int!
     var queueSize: Int64!
     var eventsPerPush: Int!
+    var maxHitsSizeInBytes: Int!
 }
 
 class TrackManager {
@@ -27,10 +28,11 @@ class TrackManager {
     private let restClient = RestClient()
     private var pollingManager: PollingManager!
     
-    private var eventsFirstPushWindow: Int!
-    private var eventsPushRate: Int!
-    private var eventsQueueSize: Int64!
-    private var eventsPerPush: Int!
+    private let eventsFirstPushWindow: Int
+    private let eventsPushRate: Int
+    private let eventsQueueSize: Int64
+    private let eventsPerPush: Int
+    private let maxHitsSizeInBytes: Int
     
     init(dispatchGroup: DispatchGroup? = nil, config: TrackManagerConfig, fileStorage: FileStorageProtocol) {
         self.eventsFileStorage = fileStorage
@@ -38,6 +40,7 @@ class TrackManager {
         self.eventsPushRate = config.pushRate
         self.eventsQueueSize = config.queueSize
         self.eventsPerPush = config.eventsPerPush
+        self.maxHitsSizeInBytes = config.maxHitsSizeInBytes
         self.createPollingManager(dispatchGroup: dispatchGroup)
         subscribeNotifications()
     }
@@ -57,7 +60,7 @@ extension TrackManager {
         currentEventsHit.append(event)
         if currentEventsHit.count == eventsPerPush {
             appendHit()
-            if eventsHits.count * eventsPerPush >= eventsQueueSize {
+            if (eventsHits.count * eventsPerPush >= eventsQueueSize) || (hitsMemorySize(forCount: eventsHits.count) > maxHitsSizeInBytes) {
                 sendEvents()
             }
         }
@@ -71,6 +74,10 @@ extension TrackManager {
 
 // MARK: Private
 extension TrackManager {
+    
+    private func hitsMemorySize(forCount count: Int) -> Int {
+        return MemoryLayout<EventsHit>.stride * count
+    }
     
     private func appendHit(){
         if currentEventsHit.count == 0 { return }

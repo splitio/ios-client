@@ -53,6 +53,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         trackConfig.firstPushWindow = config.eventsFirstPushWindow
         trackConfig.eventsPerPush = config.eventsPerPush
         trackConfig.queueSize = config.eventsQueueSize
+        trackConfig.maxHitsSizeInBytes = config.maxEventsQueueMemorySizeInBytes
         trackEventsManager = TrackManager(config: trackConfig, fileStorage: fileStorage)
         
         var impressionsConfig = ImpressionManagerConfig()
