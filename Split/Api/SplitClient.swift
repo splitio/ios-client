@@ -30,7 +30,7 @@ public typealias SplitAction = () -> Void
     
     @objc(trackWithTrafficType:eventType:properties:) func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool
     @objc(trackWithTrafficType:eventType:value:properties:) func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool
-    @objc(trackEventType:properties:) func track(eventType: String, properties: [String: Any]?) -> Bool
-    @objc(trackEventType:value:properties:) func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool
+    @objc(trackWithEventType:properties:) func track(eventType: String, properties: [String: Any]?) -> Bool
+    @objc(trackWithEventType:value:properties:) func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool
 
 }
