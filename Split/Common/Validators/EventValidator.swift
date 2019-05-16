@@ -62,23 +62,6 @@ class DefaultEventValidator: EventValidator {
             return ValidationErrorInfo(error: .some, message: "you passed \(eventTypeId ?? "null"), event name must adhere to the regular expression \(kTrackEventNameValidationPattern). This means an event name must be alphanumeric, cannot be more than 80 characters long, and can only include a dash, underscore, period, or colon as separators of alphanumeric characters")
         }
         
-        if let props = properties {
-            let maxBytes = ValidationConfig.default.maximumEventPropertyBytes
-            for (prop, value) in props {
-                if let _ = value as? [Any] {
-                    return ValidationErrorInfo(error: .some, message: "Array")
-                }
-                
-                if let _ = value as? [AnyHashable:Any] {
-                    return ValidationErrorInfo(error: .some, message: "Dic")
-                }
-                
-                if  estimateSize(for: prop) > maxBytes || estimateSize(for: (value as? String)) > maxBytes {
-                    return ValidationErrorInfo(error: .some, message: "The maximum size allowed for the properties is 32kb. Current is \(prop). Event not queued")
-                }
-            }
-        }
-        
         if trafficTypeName!.hasUpperCaseChar() {
             return ValidationErrorInfo(warning: .trafficTypeNameHasUppercaseChars , message: "traffic_type_name should be all lowercase - converting string to lowercase")
         }
@@ -93,12 +76,5 @@ class DefaultEventValidator: EventValidator {
             return range.location == 0 && range.length == typeName.count
         }
         return false
-    }
-    
-    private func estimateSize(for value: String?) -> Int {
-        if let value = value {
-            return MemoryLayout.size(ofValue: value) * value.count
-        }
-        return 0
     }
 }
