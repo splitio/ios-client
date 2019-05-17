@@ -265,7 +265,7 @@ extension DefaultSplitClient {
                     validatedProps![prop] = nil
                 }
                 
-                if  estimateSize(for: prop) > maxBytes || estimateSize(for: (value as? String)) > maxBytes {
+                if  estimateSize(for: prop) + estimateSize(for: (value as? String)) > maxBytes {
                     validationLogger.log(errorInfo: ValidationErrorInfo(error: .some, message: "The maximum size allowed for the properties is 32kb. Current is \(prop). Event not queued"), tag: validationTag)
                     return false
                 }
