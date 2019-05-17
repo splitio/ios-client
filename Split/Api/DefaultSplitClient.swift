@@ -260,6 +260,7 @@ extension DefaultSplitClient {
                 if type(of: value) != String.self &&
                     type(of: value) != Int.self &&
                     type(of: value) != Double.self &&
+                    type(of: value) != Float.self &&
                     type(of: value) != Bool.self {
                     validatedProps![prop] = nil
                 }
