@@ -255,13 +255,18 @@ extension DefaultSplitClient {
         var validatedProps = properties
         if let props = validatedProps {
             let maxBytes = ValidationConfig.default.maximumEventPropertyBytes
+
             for (prop, value) in props {
+                if type(of: value) != String.self &&
+                    type(of: value) != Int.self &&
+                    type(of: value) != Double.self &&
+                    type(of: value) != Bool.self {
+                    validatedProps![prop] = nil
+                }
+                
                 if  estimateSize(for: prop) > maxBytes || estimateSize(for: (value as? String)) > maxBytes {
                     validationLogger.log(errorInfo: ValidationErrorInfo(error: .some, message: "The maximum size allowed for the properties is 32kb. Current is \(prop). Event not queued"), tag: validationTag)
                     return false
-                }
-                if type(of: value) == [Any].self ||  type(of: value) == [AnyHashable:Any].self{
-                    validatedProps![prop] = nil
                 }
             }
         }
