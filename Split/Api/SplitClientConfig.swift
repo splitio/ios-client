@@ -169,4 +169,10 @@ public class SplitClientConfig: NSObject {
     /// Max events queue memory size in bytes (5mb)
     ///
     let maxEventsQueueMemorySizeInBytes = 5242880
+
+    ///
+    /// Event without properties estimated size in bytes
+    //
+    let initialEventSizeInBytes = 1024
+    
 }

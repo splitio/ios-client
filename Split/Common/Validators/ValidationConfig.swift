@@ -31,6 +31,11 @@ struct ValidationConfig {
     ///
     let maximumEventPropertyBytes: Int = 32768
     
+    ///
+    /// Maximum properties count for a track event
+    ///
+    let maxEventPropertiesCount = 300
+    
     static var `default`: ValidationConfig = {
         return ValidationConfig()
     }()
