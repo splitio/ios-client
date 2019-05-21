@@ -150,7 +150,7 @@ extension DefaultSplitClient {
                     results[splitName] = getTreatmentWithConfigNoMetrics(splitName: splitName, shouldValidate: false, attributes: attributes, validationTag: validationTag)
                 }
             } else {
-                validationLogger.e(message: "No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not yet ready", tag: validationTag)
+                validationLogger.e(message: "No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not ready", tag: validationTag)
                 for splitName in splitsNoDuplicated {
                     logImpression(label: ImpressionsConstants.NOT_READY, treatment: SplitConstants.CONTROL, splitName: splitName, attributes: attributes)
                     results[splitName] = SplitResult(treatment: SplitConstants.CONTROL)
@@ -166,7 +166,7 @@ extension DefaultSplitClient {
 
         if shouldValidate {
             if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
-                validationLogger.e(message: "No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not yet ready", tag: validationTag)
+                validationLogger.e(message: "No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not ready", tag: validationTag)
                 logImpression(label: ImpressionsConstants.NOT_READY, treatment: SplitConstants.CONTROL, splitName: splitName, attributes: attributes)
                 return SplitResult(treatment: SplitConstants.CONTROL)
             }
