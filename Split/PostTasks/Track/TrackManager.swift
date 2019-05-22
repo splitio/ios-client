@@ -64,7 +64,6 @@ extension TrackManager {
         increaseToEventCount()
         addToBytesCount(event.sizeInBytes)
 
-        print("count: \(getBytesCount()),  max: \(maxHitsSizeInBytes)")
         if (getEventCount() >= eventsQueueSize) || (getBytesCount() >= maxHitsSizeInBytes) {
             appendHitAndSendAll()
         } else if currentEventsHit.count == eventsPerPush {
