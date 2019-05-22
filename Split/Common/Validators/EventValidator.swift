@@ -22,7 +22,7 @@ protocol EventValidator {
     ///     - value: track value to validate
     /// - Returns: nil when validations succeded, otherwise ValidationErrorInfo instance
     ///
-    func validate(key: String?, trafficTypeName: String?, eventTypeId: String?, value: Double?) -> ValidationErrorInfo?
+    func validate(key: String?, trafficTypeName: String?, eventTypeId: String?, value: Double?, properties: [String: Any]?) -> ValidationErrorInfo?
 }
 
 class DefaultEventValidator: EventValidator {
@@ -36,7 +36,7 @@ class DefaultEventValidator: EventValidator {
         keyValidator = DefaultKeyValidator()
     }
     
-    func validate(key: String?, trafficTypeName: String?, eventTypeId: String?, value: Double?) -> ValidationErrorInfo? {
+    func validate(key: String?, trafficTypeName: String?, eventTypeId: String?, value: Double?, properties: [String: Any]?) -> ValidationErrorInfo? {
         
         if let resultInfo = keyValidator.validate(matchingKey: key, bucketingKey: nil) {
             return resultInfo
@@ -65,6 +65,7 @@ class DefaultEventValidator: EventValidator {
         if trafficTypeName!.hasUpperCaseChar() {
             return ValidationErrorInfo(warning: .trafficTypeNameHasUppercaseChars , message: "traffic_type_name should be all lowercase - converting string to lowercase")
         }
+
         return nil
     }
 

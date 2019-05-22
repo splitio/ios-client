@@ -63,4 +63,20 @@ class InternalSplitClientStub: InternalSplitClient {
         return true
     }
     
+    func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool {
+        return true
+    }
+    
+    func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool {
+        return true
+    }
+    
+    func track(eventType: String, properties: [String: Any]?) -> Bool {
+        return true
+    }
+    
+    func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool {
+        return true
+    }
+    
 }
