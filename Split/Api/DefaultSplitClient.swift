@@ -262,12 +262,12 @@ extension DefaultSplitClient {
             
             
             for (prop, value) in props {
-                if type(of: value) != String.self &&
-                    type(of: value) != Int.self &&
-                    type(of: value) != Double.self &&
-                    type(of: value) != Float.self &&
-                    type(of: value) != Bool.self {
-                    validatedProps![prop] = nil
+                if value as? String == nil &&
+                    value as? Int == nil &&
+                    value as? Double == nil &&
+                    value as? Float == nil &&
+                    value as? Bool == nil {
+                    validatedProps![prop] = NSNull()
                 }
                 
                 totalSizeInBytes += estimateSize(for: prop) + estimateSize(for: (value as? String))
