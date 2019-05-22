@@ -15,6 +15,7 @@ class EventDTO: DynamicCodable {
     var value: Double?
     var timestamp: Int64?
     var properties: [String: Any]?
+    var sizeInBytes: Int = 0
     
     init(trafficType: String, eventType: String){
         self.trafficTypeName = trafficType

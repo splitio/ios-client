@@ -253,13 +253,14 @@ extension DefaultSplitClient {
             }
         }
         var validatedProps = properties
+        var totalSizeInBytes = config?.initialEventSizeInBytes ?? 0
         if let props = validatedProps {
             let maxBytes = ValidationConfig.default.maximumEventPropertyBytes
             if props.count > ValidationConfig.default.maxEventPropertiesCount {
                 validationLogger.log(errorInfo: ValidationErrorInfo(warning: .maxEventPropertyCountReached, message: "Event has more than 300 properties. Some of them will be trimmed when processed"), tag: validationTag)
             }
             
-            var totalSizeInBytes = config?.initialEventSizeInBytes ?? 0
+            
             for (prop, value) in props {
                 if type(of: value) != String.self &&
                     type(of: value) != Int.self &&
@@ -282,6 +283,7 @@ extension DefaultSplitClient {
         event.value = value
         event.timestamp = Date().unixTimestampInMiliseconds()
         event.properties = validatedProps
+        event.sizeInBytes = totalSizeInBytes
         trackEventsManager.appendEvent(event: event)
         
         return true

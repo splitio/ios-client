@@ -25,7 +25,7 @@ class TrackManager {
     private var currentEventsHit = SynchronizedArrayWrapper<EventDTO>()
     private var eventsHits = SyncDictionarySingleWrapper<String, EventsHit>()
     
-    private let restClient = RestClient()
+    private let restClient: RestClientTrackEvents
     private var pollingManager: PollingManager!
     
     private let eventsFirstPushWindow: Int
@@ -33,14 +33,17 @@ class TrackManager {
     private let eventsQueueSize: Int64
     private let eventsPerPush: Int
     private let maxHitsSizeInBytes: Int
+    private var eventCount: Int = 0
+    private var eventBytesCount: Int = 0
     
-    init(dispatchGroup: DispatchGroup? = nil, config: TrackManagerConfig, fileStorage: FileStorageProtocol) {
+    init(dispatchGroup: DispatchGroup? = nil, config: TrackManagerConfig, fileStorage: FileStorageProtocol, restClient: RestClientTrackEvents? = nil) {
         self.eventsFileStorage = fileStorage
         self.eventsFirstPushWindow = config.firstPushWindow
         self.eventsPushRate = config.pushRate
         self.eventsQueueSize = config.queueSize
         self.eventsPerPush = config.eventsPerPush
         self.maxHitsSizeInBytes = config.maxHitsSizeInBytes
+        self.restClient = restClient ?? RestClient()
         self.createPollingManager(dispatchGroup: dispatchGroup)
         subscribeNotifications()
     }
@@ -58,26 +61,79 @@ extension TrackManager {
 
     func appendEvent(event: EventDTO) {
         currentEventsHit.append(event)
-        if currentEventsHit.count == eventsPerPush {
+        increaseToEventCount()
+        addToBytesCount(event.sizeInBytes)
+
+        print("count: \(getBytesCount()),  max: \(maxHitsSizeInBytes)")
+        if (getEventCount() >= eventsQueueSize) || (getBytesCount() >= maxHitsSizeInBytes) {
+            appendHitAndSendAll()
+        } else if currentEventsHit.count == eventsPerPush {
             appendHit()
-            if (eventsHits.count * eventsPerPush >= eventsQueueSize) || (hitsMemorySize(forCount: eventsHits.count) > maxHitsSizeInBytes) {
-                sendEvents()
-            }
         }
     }
     
     func appendHitAndSendAll(){
         appendHit()
         sendEvents()
+        clearBytesCount()
+        clearEventCount()
+    }
+    
+    func addToBytesCount(_ count: Int) {
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                self.eventBytesCount += count
+            }
+        }
+    }
+    
+    func clearBytesCount() {
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                self.eventBytesCount = 0
+            }
+        }
+    }
+    
+    func getBytesCount() -> Int {
+        var count = 0
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                count = self.eventBytesCount
+            }
+        }
+        return count
+    }
+    
+    func increaseToEventCount() {
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                self.eventCount += 1
+            }
+        }
+    }
+    
+    func clearEventCount() {
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                self.eventCount = 0
+            }
+        }
+    }
+    
+    func getEventCount() -> Int {
+        var count = 0
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                count = self.eventCount
+            }
+        }
+        return count
     }
 }
 
 // MARK: Private
 extension TrackManager {
-    
-    private func hitsMemorySize(forCount count: Int) -> Int {
-        return MemoryLayout<EventsHit>.stride * count
-    }
     
     private func appendHit(){
         if currentEventsHit.count == 0 { return }
