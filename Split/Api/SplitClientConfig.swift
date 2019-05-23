@@ -164,4 +164,15 @@ public class SplitClientConfig: NSObject {
     /// Default folder to store cached data
     ///
     let defaultDataFolder = "split_data"
+    
+    ///
+    /// Max events queue memory size in bytes (5mb)
+    ///
+    let maxEventsQueueMemorySizeInBytes = 5242880
+
+    ///
+    /// Event without properties estimated size in bytes
+    //
+    let initialEventSizeInBytes = 1024
+    
 }
