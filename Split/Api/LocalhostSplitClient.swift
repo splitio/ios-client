@@ -118,5 +118,21 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
         return true
     }
     
+    public func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool {
+        return true
+    }
+    
+    public func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool {
+        return true
+    }
+    
+    public func track(eventType: String, properties: [String: Any]?) -> Bool {
+        return true
+    }
+    
+    public func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool {
+        return true
+    }
+    
     
 }
