@@ -12,6 +12,7 @@ struct TrackManagerConfig {
     var pushRate: Int!
     var queueSize: Int64!
     var eventsPerPush: Int!
+    var maxHitsSizeInBytes: Int!
 }
 
 class TrackManager {
@@ -24,20 +25,25 @@ class TrackManager {
     private var currentEventsHit = SynchronizedArrayWrapper<EventDTO>()
     private var eventsHits = SyncDictionarySingleWrapper<String, EventsHit>()
     
-    private let restClient = RestClient()
+    private let restClient: RestClientTrackEvents
     private var pollingManager: PollingManager!
     
-    private var eventsFirstPushWindow: Int!
-    private var eventsPushRate: Int!
-    private var eventsQueueSize: Int64!
-    private var eventsPerPush: Int!
+    private let eventsFirstPushWindow: Int
+    private let eventsPushRate: Int
+    private let eventsQueueSize: Int64
+    private let eventsPerPush: Int
+    private let maxHitsSizeInBytes: Int
+    private var eventCount: Int = 0
+    private var eventBytesCount: Int = 0
     
-    init(dispatchGroup: DispatchGroup? = nil, config: TrackManagerConfig, fileStorage: FileStorageProtocol) {
+    init(dispatchGroup: DispatchGroup? = nil, config: TrackManagerConfig, fileStorage: FileStorageProtocol, restClient: RestClientTrackEvents? = nil) {
         self.eventsFileStorage = fileStorage
         self.eventsFirstPushWindow = config.firstPushWindow
         self.eventsPushRate = config.pushRate
         self.eventsQueueSize = config.queueSize
         self.eventsPerPush = config.eventsPerPush
+        self.maxHitsSizeInBytes = config.maxHitsSizeInBytes
+        self.restClient = restClient ?? RestClient()
         self.createPollingManager(dispatchGroup: dispatchGroup)
         subscribeNotifications()
     }
@@ -55,17 +61,73 @@ extension TrackManager {
 
     func appendEvent(event: EventDTO) {
         currentEventsHit.append(event)
-        if currentEventsHit.count == eventsPerPush {
+        increaseToEventCount()
+        addToBytesCount(event.sizeInBytes)
+
+        if (getEventCount() >= eventsQueueSize) || (getBytesCount() >= maxHitsSizeInBytes) {
+            appendHitAndSendAll()
+        } else if currentEventsHit.count == eventsPerPush {
             appendHit()
-            if eventsHits.count * eventsPerPush >= eventsQueueSize {
-                sendEvents()
-            }
         }
     }
     
     func appendHitAndSendAll(){
         appendHit()
         sendEvents()
+        clearBytesCount()
+        clearEventCount()
+    }
+    
+    func addToBytesCount(_ count: Int) {
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                self.eventBytesCount += count
+            }
+        }
+    }
+    
+    func clearBytesCount() {
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                self.eventBytesCount = 0
+            }
+        }
+    }
+    
+    func getBytesCount() -> Int {
+        var count = 0
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                count = self.eventBytesCount
+            }
+        }
+        return count
+    }
+    
+    func increaseToEventCount() {
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                self.eventCount += 1
+            }
+        }
+    }
+    
+    func clearEventCount() {
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                self.eventCount = 0
+            }
+        }
+    }
+    
+    func getEventCount() -> Int {
+        var count = 0
+        DispatchQueue.global().sync { [weak self] in
+            if let self = self {
+                count = self.eventCount
+            }
+        }
+        return count
     }
 }
 
@@ -131,7 +193,7 @@ extension TrackManager {
         }
 
         do {
-            let json = try Json.encodeToJson(eventsFile)
+            let json = try Json.dynamicEncodeToJson(eventsFile)
             eventsFileStorage.write(fileName: kEventsFileName, content: json)
         } catch {
             Logger.e("Could not save events hits)")
@@ -145,7 +207,7 @@ extension TrackManager {
         if hitsJson.count == 0 { return }
         eventsFileStorage.delete(fileName: kEventsFileName)
         do {
-            let hitsFile = try Json.encodeFrom(json: hitsJson, to: EventsFile.self)
+            let hitsFile = try Json.dynamicEncodeFrom(json: hitsJson, to: EventsFile.self)
             if let oldHits = hitsFile.oldHits {
                 for hit in oldHits {
                     eventsHits.setValue(hit.value, forKey: hit.key)
