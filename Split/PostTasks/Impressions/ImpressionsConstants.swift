@@ -15,6 +15,7 @@ class ImpressionsConstants {
     static let NOT_IN_SPLIT: String = "not in split"
     static let MATCHER_NOT_FOUND: String = "matcher not found"
     static let EXCEPTION: String = "exception"
+    static let NOT_READY: String = "not ready"
 }
 
 

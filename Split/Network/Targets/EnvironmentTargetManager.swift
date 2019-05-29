@@ -71,7 +71,7 @@ class EnvironmentTargetManager {
                                    shared.eventsBaseURL,
                                    DynamicTarget.DynamicTargetStatus.sendTrackEvents)
         target.append(value: "application/json", forHttpHeader: "content-type")
-        let jsonEvents = (try? Json.encodeToJson(events)) ?? "[]"
+        let jsonEvents = (try? Json.dynamicEncodeToJson(events)) ?? "[]"
         target.setBody(json: jsonEvents)
         
         return target

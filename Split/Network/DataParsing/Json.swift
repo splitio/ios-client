@@ -7,6 +7,20 @@
 
 import Foundation
 
+enum SplitEncodingError: Error {
+    case unknown
+}
+
+protocol DynamicEncodable {
+    func toJsonObject() -> Any
+}
+
+protocol DynamicDecodable {
+    init(jsonObject: Any) throws
+}
+
+typealias DynamicCodable = DynamicDecodable & DynamicEncodable
+
 struct Json {
     private var data: Data?
     
@@ -30,6 +44,17 @@ struct Json {
             throw error
         }
     }
+    
+    func dynamicDecode<T>(_ type: T.Type) throws -> T? where T: DynamicDecodable {
+        var obj: T? = nil
+        if let data = self.data {
+            if let jsondObj = try JSONSerialization.jsonObject(with: data,
+                                                               options: []) as? [String:DynamicDecodable] {
+                obj = try T.init(jsonObject: jsondObj as! DynamicDecodable)
+            }
+        }
+        return obj
+    }
 }
 
 // Static methods
@@ -45,6 +70,17 @@ extension Json {
         let jsonData = json.data(using: .utf8)!
         let encoded = try JSON(jsonData).decode(type)
         return encoded!
+    }
+    
+    static func dynamicEncodeToJson<T: DynamicEncodable>(_ data: T) throws -> String {
+        let jsonData = try JSONSerialization.data(withJSONObject: data.toJsonObject(), options: [])
+        return String(data: jsonData, encoding: .utf8)!
+    }
+    
+    static func dynamicEncodeFrom<T: DynamicDecodable>(json: String, to type: T.Type) throws -> T {
+        let jsonData = json.data(using: .utf8)!
+        let encoded = try JSONSerialization.jsonObject(with: jsonData, options: [])
+        return try T.init(jsonObject: encoded)
     }
 }
 
