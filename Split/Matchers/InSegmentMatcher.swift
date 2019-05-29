@@ -25,7 +25,7 @@ class InSegmentMatcher: BaseMatcher, MatcherProtocol {
         // Match value is not used because it is matching key. My segments cache only has segments for that key cause
         // Split client is instantiated  based on it
         if let _ = matchValue as? String, let dataElements = data, let segmentName = dataElements.segmentName {
-            if let segmentFetcher = self.mySegmentsFetcher as? QueryableMySegmentsFetcher {
+            if let segmentFetcher = self.splitClient?.mySegmentsFetcher as? QueryableMySegmentsFetcher {
                 return segmentFetcher.isInSegments(name: segmentName)
             }
         }

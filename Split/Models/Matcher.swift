@@ -20,8 +20,7 @@ class Matcher: NSObject, Codable {
     var dependencyMatcherData: DependencyMatcherData?
     var booleanMatcherData: Bool?
     var stringMatcherData: String?
-    var splitFetcher: SplitFetcher
-    var mySegmentsFetcher: MySegmentsFetcher
+    var client: InternalSplitClient?
     
     enum CodingKeys: String, CodingKey {
         case keySelector
