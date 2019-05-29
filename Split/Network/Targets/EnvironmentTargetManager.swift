@@ -58,7 +58,7 @@ class EnvironmentTargetManager {
     public static func sendImpressions(impressions: [ImpressionsTest]) -> Target {
         let target = DynamicTarget(shared.sdkBaseUrl,
                              shared.eventsBaseURL,
-                             DynamicTarget.DynamicTargetStatus.sendImpressions())
+        DynamicTarget.DynamicTargetStatus.sendImpressions)
         target.append(value: "application/json", forHttpHeader: "content-type")
         let jsonImpressions = (try? Json.encodeToJson(impressions)) ?? "[]"
         target.setBody(json: jsonImpressions)
@@ -66,9 +66,10 @@ class EnvironmentTargetManager {
     }
     
     public static func sendTrackEvents(events: [EventDTO]) -> Target {
+
         let target = DynamicTarget(shared.sdkBaseUrl,
                                    shared.eventsBaseURL,
-                                   DynamicTarget.DynamicTargetStatus.sendTrackEvents())
+                                   DynamicTarget.DynamicTargetStatus.sendTrackEvents)
         target.append(value: "application/json", forHttpHeader: "content-type")
         let jsonEvents = (try? Json.dynamicEncodeToJson(events)) ?? "[]"
         target.setBody(json: jsonEvents)
@@ -79,7 +80,7 @@ class EnvironmentTargetManager {
     public static func sendTimeMetrics(_ times: [TimeMetric]) -> Target {
         let target = DynamicTarget(shared.sdkBaseUrl,
                                    shared.eventsBaseURL,
-                                   DynamicTarget.DynamicTargetStatus.sendTimeMetrics())
+                                   DynamicTarget.DynamicTargetStatus.sendTimeMetrics)
         target.append(value: "application/json", forHttpHeader: "content-type")
         let jsonEvents = (try? Json.encodeToJson(times)) ?? "[]"
         target.setBody(json: jsonEvents)
@@ -90,7 +91,7 @@ class EnvironmentTargetManager {
     public static func sendCounterMetrics(_ counters: [CounterMetric]) -> Target {
         let target = DynamicTarget(shared.sdkBaseUrl,
                                    shared.eventsBaseURL,
-                                   DynamicTarget.DynamicTargetStatus.sendCounterMetrics())
+                                   DynamicTarget.DynamicTargetStatus.sendCounterMetrics)
         target.append(value: "application/json", forHttpHeader: "content-type")
         let jsonEvents = (try? Json.encodeToJson(counters)) ?? "[]"
         target.setBody(json: jsonEvents)
@@ -101,7 +102,7 @@ class EnvironmentTargetManager {
     public static func sendGaugeMetrics(_ gauge: MetricGauge) -> Target {
         let target = DynamicTarget(shared.sdkBaseUrl,
                                    shared.eventsBaseURL,
-                                   DynamicTarget.DynamicTargetStatus.sendGaugeMetrics())
+                                   DynamicTarget.DynamicTargetStatus.sendGaugeMetrics)
         target.append(value: "application/json", forHttpHeader: "content-type")
         let jsonEvents = (try? Json.encodeToJson(gauge)) ?? "[]"
         target.setBody(json: jsonEvents)
