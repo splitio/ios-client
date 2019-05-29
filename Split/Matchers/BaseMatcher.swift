@@ -7,52 +7,40 @@
 
 import Foundation
 
-
 class BaseMatcher : NSObject  {
     
     var splitClient: InternalSplitClient?
     var negate: Bool?
     var attribute: String?
     var type: MatcherType?
+    var splitFetcher: SplitFetcher?
+    var mySegmentsFetcher: MySegmentsFetcher?
     
-    //--------------------------------------------------------------------------------------------------
-    init(splitClient: InternalSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
-
-        self.splitClient = splitClient
+    init(splitFetcher: SplitFetcher? = nil, mySegmentsFetcher: MySegmentsFetcher? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+        self.splitFetcher = splitFetcher
+        self.mySegmentsFetcher = mySegmentsFetcher
         self.negate = negate
         self.attribute = attribute
         self.type = type
-        
     }
-    //--------------------------------------------------------------------------------------------------
+    
     func isNegate() -> Bool {
-        
         return self.negate ?? false
     }
-    //--------------------------------------------------------------------------------------------------
+    
     func hasAttribute() -> Bool {
-        
         return self.attribute != nil
-        
     }
-    //--------------------------------------------------------------------------------------------------
+    
     func getAttribute() -> String? {
-        
         return self.attribute
-        
     }
-    //--------------------------------------------------------------------------------------------------
+    
     func getMatcherType() -> MatcherType {
-        
         return self.type!
-        
     }
-    //--------------------------------------------------------------------------------------------------
+    
     func matcherHasAttribute() -> Bool {
-        
         return self.attribute != nil
-        
     }
-    //--------------------------------------------------------------------------------------------------
-
 }
