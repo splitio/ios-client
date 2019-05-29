@@ -76,7 +76,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
     public func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
         var result: EvaluationResult?
         do {
-            result = try evaluator.getTreatment(matchingKey: key.matchingKey, bucketingKey: key.bucketingKey, splitName: split, attributes: nil)
+            result = try evaluator.evalTreatment(matchingKey: key.matchingKey, bucketingKey: key.bucketingKey, splitName: split, attributes: nil)
         } catch {
             return SplitResult(treatment: SplitConstants.CONTROL)
         }

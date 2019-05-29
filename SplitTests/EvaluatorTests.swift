@@ -32,7 +32,7 @@ class EvaluatorTests: XCTestCase {
         let matchingKey = "nico_test"
         let splitName = "FACUNDO_TEST"
         do {
-            result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
         } catch {
         }
         XCTAssertNotNil(result)
@@ -46,7 +46,7 @@ class EvaluatorTests: XCTestCase {
         let matchingKey = "bla"
         let splitName = "FACUNDO_TEST"
         do {
-            result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
         } catch {
         }
         XCTAssertNotNil(result)
@@ -60,7 +60,7 @@ class EvaluatorTests: XCTestCase {
         let matchingKey = "anyKey"
         let splitName = "FACUNDO_TEST"
         do {
-            result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
         } catch {
         }
         XCTAssertNotNil(result)
@@ -75,7 +75,7 @@ class EvaluatorTests: XCTestCase {
         let matchingKey = "anyKey"
         let splitName = "a_new_split_2"
         do {
-            result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
         } catch {
         }
         XCTAssertNotNil(result)
@@ -90,7 +90,7 @@ class EvaluatorTests: XCTestCase {
         let matchingKey = "anyKey"
         let splitName = "Test"
         do {
-            result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
         } catch {
         }
         XCTAssertNotNil(result)
@@ -104,7 +104,7 @@ class EvaluatorTests: XCTestCase {
         let matchingKey = "anyKey"
         let splitName = "split_not_available_to_test_right_now"
         do {
-            result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
         } catch {
         }
         XCTAssertNotNil(result)
@@ -118,7 +118,7 @@ class EvaluatorTests: XCTestCase {
         let matchingKey = "anyKey"
         let splitName = "broken_split"
         do {
-            result = try evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
         } catch {
         }
         XCTAssertNotNil(result)
@@ -136,7 +136,7 @@ class EvaluatorTests: XCTestCase {
         }
         split.algo = nil
         evaluator = customEvaluator(split: split)
-        result = try? evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
         
         XCTAssertNotNil(result, "Treatment should not be nil when algo = nil")
         XCTAssertTrue(result.treatment == "t4_6", "Expected treatment 'On', obtained '\(result.treatment)'")
@@ -152,7 +152,7 @@ class EvaluatorTests: XCTestCase {
         }
         split.algo = 2
         evaluator = customEvaluator(split: split)
-        result = try? evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
         
         XCTAssertNotNil(result, "Treatment should not be nil when algo = 1 (Legacy)")
         XCTAssertTrue(result.treatment == "t4_6", "Expected treatment 'On', obtained '\(result.treatment)'")
@@ -168,7 +168,7 @@ class EvaluatorTests: XCTestCase {
         }
         split.algo = 2
         evaluator = customEvaluator(split: split)
-        result = try? evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
         
         XCTAssertNotNil(result, "Treatment should not be nil when algo = 2 (Murmur3)")
         XCTAssertTrue(result.treatment == "t4_6", "Expected treatment 'On', obtained '\(result.treatment)'")
@@ -195,18 +195,18 @@ class EvaluatorTests: XCTestCase {
         
         do {
             // Changing key
-            treatmentOn = try evaluator.getTreatment(matchingKey: theKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
-            treatmentOff = try evaluator.getTreatment(matchingKey: "aa9055eb-710c-4817-93bc-6906db5f4934", bucketingKey: nil, splitName: splitName, attributes: nil)
-            treatmentOutOfSplit = try evaluator.getTreatment(matchingKey: "5a2e15a7-d1a3-481f-bf40-4aecb72c9a40", bucketingKey: nil, splitName: splitName, attributes: nil)
+            treatmentOn = try evaluator.evalTreatment(matchingKey: theKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
+            treatmentOff = try evaluator.evalTreatment(matchingKey: "aa9055eb-710c-4817-93bc-6906db5f4934", bucketingKey: nil, splitName: splitName, attributes: nil)
+            treatmentOutOfSplit = try evaluator.evalTreatment(matchingKey: "5a2e15a7-d1a3-481f-bf40-4aecb72c9a40", bucketingKey: nil, splitName: splitName, attributes: nil)
             
             // Changing seed
             // Seed default off
             split.seed = 997637287
-            treatmentSeedDefaultOff = try evaluator.getTreatment(matchingKey: theKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+            treatmentSeedDefaultOff = try evaluator.evalTreatment(matchingKey: theKey, bucketingKey: nil, splitName: splitName, attributes: nil)
             
             // Traffic allocation out
             split.trafficAllocationSeed = 1444036110
-            treatmentSeedOutOfSplit = try evaluator.getTreatment(matchingKey: theKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+            treatmentSeedOutOfSplit = try evaluator.evalTreatment(matchingKey: theKey, bucketingKey: nil, splitName: splitName, attributes: nil)
             
         } catch {
             print(error)
@@ -237,7 +237,7 @@ class EvaluatorTests: XCTestCase {
         let attributes = ["atributo2": ["salamin"]]
         split.algo = 2
         evaluator = customEvaluator(split: split)
-        result = try? evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: attributes)
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: attributes)
 
         XCTAssertNotNil(result)
         XCTAssertEqual("t1_6", result?.treatment)
@@ -254,7 +254,7 @@ class EvaluatorTests: XCTestCase {
         let attributes = ["atributo1": "mila"]
         split.algo = 2
         evaluator = customEvaluator(split: split)
-        result = try? evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: attributes)
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: attributes)
         
         XCTAssertNotNil(result)
         XCTAssertEqual("t3_6", result?.treatment)
@@ -271,7 +271,7 @@ class EvaluatorTests: XCTestCase {
         let attributes = ["atribute": ["papapa"]]
         split.algo = 2
         evaluator = customEvaluator(split: split)
-        result = try? evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: attributes)
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: attributes)
         
         XCTAssertNotNil(result)
         XCTAssertEqual("t2_6", result?.treatment)
@@ -289,7 +289,7 @@ class EvaluatorTests: XCTestCase {
         split.trafficAllocation = 0
         split.algo = 2
         evaluator = customEvaluator(split: split)
-        result = try? evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
         
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result?.treatment)
@@ -300,7 +300,7 @@ class EvaluatorTests: XCTestCase {
     func testInSegmentsRule1() {
         var result: EvaluationResult!
         let evaluator = customEvaluator(splitFile: "segment_conta_condition")
-        result = try? evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: "failing_test", attributes: nil)
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: "failing_test", attributes: nil)
         
         XCTAssertNotNil(result)
         XCTAssertEqual("t3", result?.treatment)
@@ -318,7 +318,7 @@ class EvaluatorTests: XCTestCase {
         split.trafficAllocation = 100
         split.algo = 2
         evaluator = customEvaluator(split: split)
-        result = try? evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
         XCTAssertNotNil(result)
         XCTAssertEqual("t4_6", result?.treatment)
         XCTAssertNotNil(result?.configuration)
@@ -332,7 +332,7 @@ class EvaluatorTests: XCTestCase {
             let defaultRuleIndex  = split.conditions!.count - 1
             split.conditions?.remove(at: defaultRuleIndex)
             evaluator = customEvaluator(split: split)
-            result = try? evaluator.getTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
+            result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
         }
         XCTAssertNotNil(result)
         XCTAssertEqual("t1", result?.treatment)
@@ -346,7 +346,7 @@ class EvaluatorTests: XCTestCase {
         let evaluator = customEvaluator(splitFile: "split_traffic_allocation_1") as! DefaultEvaluator
         evaluator.splitter = SplitterAllocationFake()
         
-        result = try? evaluator.getTreatment(matchingKey: "thekey", bucketingKey: nil, splitName: "split", attributes: nil)
+        result = try? evaluator.evalTreatment(matchingKey: "thekey", bucketingKey: nil, splitName: "split", attributes: nil)
 
         treatment = result!.treatment
         XCTAssertEqual(treatment, "on", "Result should be 'on'")
