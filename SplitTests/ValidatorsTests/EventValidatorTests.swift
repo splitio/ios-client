@@ -125,6 +125,8 @@ class EventValidatorTests: XCTestCase {
 
     func testUppercaseCharsInTrafficType() {
 
+        let upperCaseMsg = "traffic_type_name should be all lowercase - converting string to lowercase"
+
         let errorInfo1 = validator.validate(key: "key1", trafficTypeName: "Custom", eventTypeId: "type1", value: nil, properties: nil)
         let errorInfo2 = validator.validate(key: "key1", trafficTypeName: "cUSTom", eventTypeId: "type1", value: nil, properties: nil)
         let errorInfo3 = validator.validate(key: "key1", trafficTypeName: "custoM", eventTypeId: "type1", value: nil, properties: nil)
@@ -149,7 +151,7 @@ class EventValidatorTests: XCTestCase {
     }
 
     func testNoChachedServerTrafficType() {
-        let errorInfo = validator.validate(key: "key1", trafficTypeName: "nocached", eventTypeId: "type1", value: nil)
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: "nocached", eventTypeId: "type1", value: nil, properties: nil)
         XCTAssertNotNil(errorInfo)
         XCTAssertNil(errorInfo?.error)
         XCTAssertNil(errorInfo?.errorMessage)
@@ -159,7 +161,7 @@ class EventValidatorTests: XCTestCase {
     }
 
     func testNoChachedServerAndUppercasedTrafficType() {
-        let errorInfo = validator.validate(key: "key1", trafficTypeName: "noCached", eventTypeId: "type1", value: nil)
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: "noCached", eventTypeId: "type1", value: nil, properties: nil)
         XCTAssertNotNil(errorInfo)
         XCTAssertNil(errorInfo?.error)
         XCTAssertNil(errorInfo?.errorMessage)

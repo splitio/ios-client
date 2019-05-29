@@ -10,6 +10,12 @@ import Foundation
 @testable import Split
 
 class ValidationMessageLoggerMock: ValidationMessageLogger {
+    func e(message: String, tag: String) {
+    }
+    
+    func w(message: String, tag: String) {
+    }
+    
     var messages = [String]()
     func log(errorInfo: ValidationErrorInfo, tag: String) {
         messages.append(errorInfo.errorMessage ?? "")

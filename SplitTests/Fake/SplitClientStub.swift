@@ -10,6 +10,7 @@ import Foundation
 @testable import Split
 
 class SplitClientStub: SplitClient {
+
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
         return SplitConstants.CONTROL
     }
@@ -50,6 +51,22 @@ class SplitClientStub: SplitClient {
     }
     
     func track(eventType: String, value: Double) -> Bool {
+        return true
+    }
+    
+    func track(trafficType: String, eventType: String, properties: [String:Any]?) -> Bool {
+        return true
+    }
+    
+    func track(trafficType: String, eventType: String, value: Double, properties: [String:Any]?) -> Bool {
+        return true
+    }
+    
+    func track(eventType: String, properties: [String:Any]?) -> Bool {
+        return true
+    }
+    
+    func track(eventType: String, value: Double, properties: [String:Any]?) -> Bool {
         return true
     }
 }
