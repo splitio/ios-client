@@ -26,26 +26,28 @@ protocol Evaluator {
 }
 
 class DefaultEvaluator: Evaluator {
-    var splitFetcher: SplitFetcher
-    var mySegmentsFetcher: MySegmentsFetcher
+    var splitFetcher: SplitFetcher?
+    var mySegmentsFetcher: MySegmentsFetcher?
+    var splitClient: InternalSplitClient?  {
+        
+        didSet {
+            self.splitFetcher = self.splitClient?.splitFetcher
+            self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
+            
+        }
+    }
     let splitter: Splitter = Splitter.shared
     
-    /*
-    static let shared: Evaluator = {
+    init(splitClient: InternalSplitClient? = nil) {
         
-        let instance = Evaluator()
-        return instance;
-    }()
- */
-    
-    init(splitFetcher: SplitFetcher, mySegmentsFetcher: MySegmentsFetcher) {
-        self.splitFetcher = splitFetcher
-        self.mySegmentsFetcher = mySegmentsFetcher
+            self.splitClient = splitClient
+            self.splitFetcher = self.splitClient?.splitFetcher
+            self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
     }
     
     func getTreatment(matchingKey: String, bucketingKey: String? , splitName: String, attributes:[String:Any]?) throws -> EvaluationResult  {
 
-        if let split: Split = splitFetcher.fetch(splitName: splitName), split.status != Status.Archived {
+        if let split: Split = splitFetcher?.fetch(splitName: splitName), split.status != Status.Archived {
             
             if let killed = split.killed, killed {
                 let treatment = split.defaultTreatment ?? SplitConstants.CONTROL
@@ -55,8 +57,7 @@ class DefaultEvaluator: Evaluator {
                                         splitVersion: (split.changeNumber ?? -1),
                                         configuration: configuration)
             }
-            
-            var result: EvaluationResult!
+
             var bucketKey: String?
             var inRollOut: Bool = false
             var splitAlgo: Algorithm = Algorithm.legacy
@@ -105,16 +106,15 @@ class DefaultEvaluator: Evaluator {
                                                 configuration: split.configurations?[treatment])
                     }
                 }
-
-                result.splitVersion = split.changeNumber
+                let result = EvaluationResult(treatment: defaultTreatment, label: ImpressionsConstants.NO_CONDITION_MATCHED, splitVersion: split.changeNumber)
                 Logger.d("* Treatment for \(matchingKey) in \(split.name ?? "") is: \(result.treatment)")
+                return result
             } catch EvaluatorError.MatcherNotFound {
                 Logger.e("The matcher has not been found");
-                result = EvaluationResult(treatment: SplitConstants.CONTROL,
+                return EvaluationResult(treatment: SplitConstants.CONTROL,
                                           label: ImpressionsConstants.MATCHER_NOT_FOUND,
                                           splitVersion: split.changeNumber)
             }
-            return result
         }
         
         Logger.w("The SPLIT definition for '\(splitName)' has not been found");

@@ -46,16 +46,15 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
     var mySegmentsFetcher: MySegmentsFetcher?
     var splitFetcher: SplitFetcher?
     private let eventsManager: SplitEventsManager?
-    private let evaluator: Evaluator
+    private var evaluator: Evaluator!
     private let key: Key
     
     init(key: Key, splitFetcher: SplitFetcher, eventsManager: SplitEventsManager? = nil) {
         self.splitFetcher = splitFetcher
         self.eventsManager = eventsManager
-        self.evaluator = Evaluator()
         self.key = key
         super.init()
-        self.evaluator.splitClient = self
+        self.evaluator = DefaultEvaluator(splitClient: self)
     }
     
     public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
@@ -77,7 +76,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
     public func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
         var result: EvaluationResult?
         do {
-            result = try evaluator.evalTreatment(key: key.matchingKey, bucketingKey: key.bucketingKey, split: split, attributes: nil)
+            result = try evaluator.getTreatment(matchingKey: key.matchingKey, bucketingKey: key.bucketingKey, splitName: split, attributes: nil)
         } catch {
             return SplitResult(treatment: SplitConstants.CONTROL)
         }

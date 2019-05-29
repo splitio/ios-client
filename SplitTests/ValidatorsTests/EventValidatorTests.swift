@@ -148,7 +148,7 @@ class EventValidatorTests: XCTestCase {
     }
     
     func testNoChachedServerTrafficType() {
-        let errorInfo = validator.validate(key: "key1", trafficTypeName: "nocached", eventTypeId: "type1", value: nil)
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: "nocached", eventTypeId: "type1", value: nil, properties: nil)
         XCTAssertNotNil(errorInfo)
         XCTAssertNil(errorInfo?.error)
         XCTAssertNil(errorInfo?.errorMessage)
@@ -157,7 +157,7 @@ class EventValidatorTests: XCTestCase {
     }
     
     func testNoChachedServerAndUppercasedTrafficType() {
-        let errorInfo = validator.validate(key: "key1", trafficTypeName: "noCached", eventTypeId: "type1", value: nil)
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: "noCached", eventTypeId: "type1", value: nil, properties: nil)
         XCTAssertNotNil(errorInfo)
         XCTAssertNil(errorInfo?.error)
         XCTAssertNil(errorInfo?.errorMessage)

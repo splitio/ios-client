@@ -31,6 +31,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private let splitValidator: SplitValidator
     private let eventValidator: EventValidator
     private let validationLogger: ValidationMessageLogger
+    private var evaluator: Evaluator!
 
     init(config: SplitClientConfig, key: Key, splitCache: SplitCache, trafficTypesCache: TrafficTypesCache, fileStorage: FileStorageProtocol) {
         self.config = config
@@ -74,6 +75,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         } else {
             self.key = Key(matchingKey: key.matchingKey, bucketingKey: key.matchingKey)
         }
+        
         super.init()
         self.dispatchGroup = nil
         refreshableSplitFetcher.start()
@@ -85,7 +87,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
         trackEventsManager.start()
         splitImpressionManager.start()
-
+        evaluator = DefaultEvaluator(splitClient: self)
         Logger.i("iOS Split SDK initialized!")
     }
 }
@@ -183,7 +185,7 @@ extension DefaultSplitClient {
         }
 
         let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let evaluator: Evaluator = DefaultEvaluator(splitFetcher: splitFetcher!, mySegmentsFetcher: mySegmentsFetcher!)
+        
 
         do {
             let result = try evaluator.getTreatment(matchingKey: self.key.matchingKey, bucketingKey: self.key.bucketingKey, splitName: trimmedSplitName, attributes: attributes)

@@ -13,12 +13,10 @@ class BaseMatcher : NSObject  {
     var negate: Bool?
     var attribute: String?
     var type: MatcherType?
-    var splitFetcher: SplitFetcher?
-    var mySegmentsFetcher: MySegmentsFetcher?
     
-    init(splitFetcher: SplitFetcher? = nil, mySegmentsFetcher: MySegmentsFetcher? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
-        self.splitFetcher = splitFetcher
-        self.mySegmentsFetcher = mySegmentsFetcher
+    init(splitClient: InternalSplitClient? = nil, negate: Bool? = nil, attribute: String? = nil , type: MatcherType? = nil) {
+        
+        self.splitClient = splitClient
         self.negate = negate
         self.attribute = attribute
         self.type = type
