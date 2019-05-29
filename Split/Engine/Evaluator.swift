@@ -22,7 +22,7 @@ struct EvaluationResult {
 }
 
 protocol Evaluator {
-    func getTreatment(matchingKey: String, bucketingKey: String? , splitName: String, attributes:[String:Any]?) throws -> EvaluationResult
+    func evalTreatment(matchingKey: String, bucketingKey: String? , splitName: String, attributes:[String:Any]?) throws -> EvaluationResult
 }
 
 class DefaultEvaluator: Evaluator {
@@ -45,7 +45,7 @@ class DefaultEvaluator: Evaluator {
             self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
     }
     
-    func getTreatment(matchingKey: String, bucketingKey: String? , splitName: String, attributes:[String:Any]?) throws -> EvaluationResult  {
+    func evalTreatment(matchingKey: String, bucketingKey: String? , splitName: String, attributes:[String:Any]?) throws -> EvaluationResult  {
 
         if let split: Split = splitFetcher?.fetch(splitName: splitName), split.status != Status.Archived {
             

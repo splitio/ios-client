@@ -188,7 +188,7 @@ extension DefaultSplitClient {
         
 
         do {
-            let result = try evaluator.getTreatment(matchingKey: self.key.matchingKey, bucketingKey: self.key.bucketingKey, splitName: trimmedSplitName, attributes: attributes)
+            let result = try evaluator.evalTreatment(matchingKey: self.key.matchingKey, bucketingKey: self.key.bucketingKey, splitName: trimmedSplitName, attributes: attributes)
             if let splitVersion = result.splitVersion {
                 logImpression(label: result.label, changeNumber: splitVersion, treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
             } else {
