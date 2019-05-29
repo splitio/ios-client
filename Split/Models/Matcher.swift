@@ -20,7 +20,8 @@ class Matcher: NSObject, Codable {
     var dependencyMatcherData: DependencyMatcherData?
     var booleanMatcherData: Bool?
     var stringMatcherData: String?
-    var client: InternalSplitClient?
+    var splitFetcher: SplitFetcher
+    var mySegmentsFetcher: MySegmentsFetcher
     
     enum CodingKeys: String, CodingKey {
         case keySelector
@@ -58,7 +59,7 @@ class Matcher: NSObject, Codable {
     func getMatcher() throws -> MatcherProtocol {
         
         if self.matcherType == nil {
-            throw EngineError.MatcherNotFound
+            throw EvaluatorError.MatcherNotFound
         }
         
         switch self.matcherType! {
