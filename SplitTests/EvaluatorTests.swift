@@ -343,7 +343,9 @@ class EvaluatorTests: XCTestCase {
     func testAllocation1Percent() {
         var treatment = ""
         var result: EvaluationResult!
-        let evaluator = customEvaluator(splitFile: "split_traffic_allocation_1")
+        let evaluator = customEvaluator(splitFile: "split_traffic_allocation_1") as! DefaultEvaluator
+        evaluator.splitter = SplitterAllocationFake()
+        
         result = try? evaluator.getTreatment(matchingKey: "thekey", bucketingKey: nil, splitName: "split", attributes: nil)
 
         treatment = result!.treatment

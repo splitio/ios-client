@@ -36,7 +36,7 @@ class DefaultEvaluator: Evaluator {
             
         }
     }
-    let splitter: Splitter = Splitter.shared
+    var splitter: SplitterProtocol = Splitter.shared
     
     init(splitClient: InternalSplitClient? = nil) {
         
