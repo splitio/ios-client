@@ -6,7 +6,7 @@
 //  Copyright © 2019 Split. All rights reserved.
 //
 
-import Foundation
+import XCTest
 @testable import Split
 
 protocol RestClientTest {
@@ -17,6 +17,11 @@ protocol RestClientTest {
 class RestClientStub {
     private var segments: [String]?
     private var splitChange: SplitChange?
+    private var sendTrackEventsCount = 0
+    
+    func getSendTrackEventsCount() -> Int {
+        return sendTrackEventsCount;
+    }
 }
 
 extension RestClientStub: RestClientProtocol {
@@ -35,6 +40,13 @@ extension RestClientStub: RestClientSplitChanges {
 extension RestClientStub: RestClientMySegments {
     func getMySegments(user: String, completion: @escaping (DataResult<[String]>) -> Void) {
         completion(DataResult.Success(value: segments))
+    }
+}
+
+extension RestClientStub: RestClientTrackEvents {
+    func sendTrackEvents(events: [EventDTO], completion: @escaping (DataResult<EmptyValue>) -> Void) {
+        sendTrackEventsCount+=1
+        completion(DataResult.Success(value: nil))
     }
 }
 

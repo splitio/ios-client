@@ -8,7 +8,11 @@
 
 import Foundation
 
-extension RestClient {
+protocol RestClientTrackEvents: RestClientProtocol {
+    func sendTrackEvents(events: [EventDTO], completion: @escaping (DataResult<EmptyValue>) -> Void)
+}
+
+extension RestClient: RestClientTrackEvents {
     
   func sendTrackEvents(events: [EventDTO], completion: @escaping (DataResult<EmptyValue>) -> Void) {
     self.execute(target: EnvironmentTargetManager.sendTrackEvents(events: events), completion: completion)
