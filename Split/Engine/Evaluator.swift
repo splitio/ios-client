@@ -46,13 +46,12 @@ class DefaultEvaluator: Evaluator {
     }
     
     func evalTreatment(matchingKey: String, bucketingKey: String? , splitName: String, attributes:[String:Any]?) throws -> EvaluationResult  {
-
+        
         if let split: Split = splitFetcher?.fetch(splitName: splitName), split.status != Status.Archived {
-            
+            let defaultTreatment  = split.defaultTreatment ?? SplitConstants.CONTROL
             if let killed = split.killed, killed {
-                let treatment = split.defaultTreatment ?? SplitConstants.CONTROL
-                let configuration = split.configurations?[treatment]
-                return EvaluationResult(treatment: treatment,
+                let configuration = split.configurations?[defaultTreatment]
+                return EvaluationResult(treatment: defaultTreatment,
                                         label: ImpressionsConstants.KILLED,
                                         splitVersion: (split.changeNumber ?? -1),
                                         configuration: configuration)
@@ -61,7 +60,7 @@ class DefaultEvaluator: Evaluator {
             var bucketKey: String?
             var inRollOut: Bool = false
             var splitAlgo: Algorithm = Algorithm.legacy
-            let defaultTreatment  = split.defaultTreatment ?? SplitConstants.CONTROL
+            
             
             if let rawAlgo = split.algo,  let algo = Algorithm.init(rawValue: rawAlgo) {
                 splitAlgo = algo
