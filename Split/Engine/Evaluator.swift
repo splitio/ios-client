@@ -61,7 +61,6 @@ class DefaultEvaluator: Evaluator {
             var inRollOut: Bool = false
             var splitAlgo: Algorithm = Algorithm.legacy
             
-            
             if let rawAlgo = split.algo,  let algo = Algorithm.init(rawValue: rawAlgo) {
                 splitAlgo = algo
             }
@@ -101,7 +100,7 @@ class DefaultEvaluator: Evaluator {
                         let treatment = splitter.getTreatment(key: key, seed: seed, attributes: attributes, partions: condition.partitions, algo: splitAlgo)
                         // *** condition.label should not be null, but what if...
                         return EvaluationResult(treatment: treatment,
-                                                label: condition.label ?? "Missing Label",
+                                                label: condition.label!,
                                                 configuration: split.configurations?[treatment])
                     }
                 }
