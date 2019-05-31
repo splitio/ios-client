@@ -23,6 +23,7 @@ enum ValidationWarning {
     case trafficTypeNameHasUppercaseChars
     case trafficTypeWithoutSplitInEnvironment
     case maxEventPropertyCountReached
+    case nonExistingSplit
 }
 
 ///

@@ -187,7 +187,7 @@ extension DefaultSplitClient {
 
         if let errorInfo = splitValidator.validateSplit(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
-            if errorInfo.isError {
+            if errorInfo.isError || errorInfo.hasWarning(.nonExistingSplit) {
                 return SplitResult(treatment: SplitConstants.CONTROL)
             }
         }
