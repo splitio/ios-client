@@ -1,3 +1,8 @@
+2.3.0: (May 31, 2019)
+- Adding split existence validation
+- Adding traffic type validation
+- Adding multiple factory instance validation
+- Adding support for Swift 5.0
 2.2.0: (May 17, 2019)
 - Adding properties field to Track Event feature
 2.1.0: (Apr 25, 2019)
