@@ -16,7 +16,7 @@ class InMemorySplitCacheTests: XCTestCase {
     var splitCache: InMemorySplitCache!
     
     override func setUp() {
-        splitCache = InMemorySplitCache()
+        splitCache = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
         let jsonSplit = "{\"name\":\"test\", \"status\":\"active\"}"
         let split1 = try? JSON.encodeFrom(json: jsonSplit, to: Split.self)
         _  = splitCache.addSplit(splitName: split1!.name!, split: split1!)
@@ -43,12 +43,6 @@ class InMemorySplitCacheTests: XCTestCase {
         XCTAssertNotNil(allCachedSplits, "Cached splits should not be nil")
         XCTAssertEqual(allCachedSplits.count, 2, "Cached splits should be 2")
         XCTAssertNotNil(allCachedSplits[0], "First Cached split should not be nil")
-    }
-    
-    func testRemoveOneSplit() {
-        _ = splitCache.removeSplit(splitName: "test")
-        let removedSplit = splitCache.getSplit(splitName: "test")
-        XCTAssertNil(removedSplit, "Removed split should not be available")
     }
     
     func testClearCache() {

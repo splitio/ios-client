@@ -9,26 +9,26 @@
 import Foundation
 
 class InMemorySplitCache: NSObject, SplitCacheProtocol {
+
     private let queueName = "split.inmemcache-queue.splits"
     private var queue: DispatchQueue
     private var splits: [String: Split]
     private var changeNumber: Int64
+    private let trafficTypesCache: TrafficTypesCache
 
-    init(splits: [String: Split] = [:], changeNumber: Int64 = -1) {
+    init(trafficTypesCache: TrafficTypesCache, splits: [String: Split] = [:], changeNumber: Int64 = -1) {
         self.queue = DispatchQueue(label: queueName, attributes: .concurrent)
         self.splits = splits
         self.changeNumber = changeNumber
+        self.trafficTypesCache = trafficTypesCache
+        super.init()
+        self.trafficTypesCache.update(from: self.getAllSplits())
     }
 
     func addSplit(splitName: String, split: Split) {
         queue.async(flags: .barrier) {
             self.splits[splitName] = split
-        }
-    }
-
-    func removeSplit(splitName: String) {
-        queue.async(flags: .barrier) {
-            self.splits.removeValue(forKey: splitName)
+            self.trafficTypesCache.update(with: split)
         }
     }
 
@@ -70,9 +70,17 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
         return splits
     }
 
-    public func clear() {
+    func clear() {
         queue.async(flags: .barrier) {
             self.splits.removeAll()
         }
+    }
+    
+    func exists(trafficType: String) -> Bool {
+        var exists = false
+        queue.sync {
+            exists = trafficTypesCache.contains(name: trafficType)
+        }
+        return exists
     }
 }

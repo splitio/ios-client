@@ -8,15 +8,14 @@
 import Foundation
 
 class DynamicTarget: Target {
-  
-    public enum DynamicTargetStatus {
+  enum DynamicTargetStatus {
         case getSplitChanges(since: Int64)
         case getMySegments(user: String)
-        case sendImpressions()
-        case sendTrackEvents()
-        case sendTimeMetrics()
-        case sendCounterMetrics()
-        case sendGaugeMetrics()
+        case sendImpressions
+        case sendTrackEvents
+        case sendTimeMetrics
+        case sendCounterMetrics
+        case sendGaugeMetrics
     }
     
     var internalStatus:DynamicTargetStatus
@@ -84,10 +83,10 @@ class DynamicTarget: Target {
         case .getMySegments(let user):
             return sdkBaseUrl.appendingPathComponent("mySegments").appendingPathComponent(user)
             
-        case .sendImpressions():
+        case .sendImpressions:
             return eventsBaseURL.appendingPathComponent("testImpressions").appendingPathComponent("bulk")
         
-        case .sendTrackEvents():
+        case .sendTrackEvents:
             return eventsBaseURL.appendingPathComponent("events").appendingPathComponent("bulk")
           
         case .sendTimeMetrics:
