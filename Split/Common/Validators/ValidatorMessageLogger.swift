@@ -32,6 +32,22 @@ protocol ValidationMessageLogger {
     ///     - tag: Tag for a log line
     ///
     func log(errorInfo: ValidationErrorInfo, tag: String)
+    
+    ///
+    /// Logs error level info
+    /// - Parameters:
+    ///     - message: Error message to log in console
+    ///     - tag: Tag for a log line
+    ///
+    func e(message: String, tag: String)
+    
+    ///
+    /// Logs warning level info
+    /// - Parameters:
+    ///     - message: Warning message to log in console
+    ///     - tag: Tag for a log line
+    ///
+    func w(message: String, tag: String)
 }
 
 ///
@@ -41,20 +57,28 @@ class DefaultValidationMessageLogger: ValidationMessageLogger {
     
     func log(errorInfo: ValidationErrorInfo, tag: String) {
         if errorInfo.isError, let message = errorInfo.errorMessage {
-            e(message: message, tag: tag)
+            logError(message: message, tag: tag)
         } else {
             let warnings = errorInfo.warnings.values
             for warning in warnings {
-                w(message: warning, tag: tag)
+                logWarning(message: warning, tag: tag)
             }
         }
     }
+    
+    func e(message: String, tag: String = "") {
+        logWarning(message: message, tag: tag)
+    }
+    
+    func w(message: String, tag: String = "") {
+        logWarning(message: message, tag: tag)
+    }
 
-    private func e(message: String, tag: String = "") {
+    private func logError(message: String, tag: String = "") {
         Logger.e("\(tag): \(message)")
     }
     
-    private func w(message: String, tag: String = "") {
+    private func logWarning(message: String, tag: String = "") {
         Logger.w("\(tag): \(message)")
     }
 }

@@ -171,6 +171,7 @@ class EngineTests: XCTestCase {
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result?.treatment)
         XCTAssertNotNil(result?.configuration)
+        XCTAssertEqual("not in split", result?.label)
     }
     
     func testDefaultRule() {

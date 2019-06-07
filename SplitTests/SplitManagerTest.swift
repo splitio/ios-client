@@ -23,8 +23,7 @@ class SplitManagerTest: XCTestCase {
         let json = try? Data(contentsOf: URL(fileURLWithPath: path)).stringRepresentation
         loadedSplits = try? JSON.encodeFrom(json: json!, to: [Split].self)
         cache = SplitCacheStub(splits: loadedSplits!, changeNumber:1)
-        let fetcher: SplitFetcher = LocalSplitFetcher(splitCache: cache)
-        manager = DefaultSplitManager(splitFetcher: fetcher)
+        manager = DefaultSplitManager(splitCache: cache)
     }
     
     override func tearDown() {
@@ -91,19 +90,6 @@ class SplitManagerTest: XCTestCase {
         let names = manager.splitNames
         XCTAssertEqual(splits.count, 7, "Added one split count")
         XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), "sample_feature0,sample_feature1,sample_feature2,sample_feature3,sample_feature4,sample_feature5,sample_feature6", "Added one split name check")
-    }
-    
-    func testRemoveOneSplit() {
-        let cache: SplitCacheProtocol = SplitCacheStub(splits: loadedSplits!, changeNumber: 1)
-        let fetcher: SplitFetcher = LocalSplitFetcher(splitCache: cache)
-        let manager: SplitManager = DefaultSplitManager(splitFetcher: fetcher)
-        _ = cache.removeSplit(splitName: "sample_feature4")
-        _ = cache.setChangeNumber(2)
-        let splits = manager.splits
-        let names = manager.splitNames
-        
-        XCTAssertEqual(splits.count, 5, "Removed split count")
-        XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), "sample_feature0,sample_feature1,sample_feature2,sample_feature3,sample_feature5", "Removed split names check")
     }
     
     func testEmptyName(){
