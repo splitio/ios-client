@@ -27,16 +27,16 @@ class ApiKeyValidatorTests: XCTestCase {
     func testNull() {
         let errorInfo = validator.validate(apiKey: nil)
         XCTAssertNotNil(errorInfo)
-        XCTAssertNotNil(errorInfo?.error)
-        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertTrue(errorInfo?.isError ?? false)
+        XCTAssertEqual("you passed a null api_key, the api_key must be a non-empty string", errorInfo?.errorMessage)
         XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
     
     func testEmptyKey() {
         let errorInfo = validator.validate(apiKey: "")
         XCTAssertNotNil(errorInfo)
-        XCTAssertNotNil(errorInfo?.error)
-        XCTAssertNotNil(errorInfo?.errorMessage)
+        XCTAssertTrue(errorInfo?.isError ?? false)
+        XCTAssertEqual("you passed an empty api_key, api_key must be a non-empty string", errorInfo?.errorMessage)
         XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
 }
