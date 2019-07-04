@@ -58,7 +58,7 @@ class Matcher: NSObject, Codable {
     func getMatcher() throws -> MatcherProtocol {
         
         if self.matcherType == nil {
-            throw EngineError.MatcherNotFound
+            throw EvaluatorError.MatcherNotFound
         }
         
         switch self.matcherType! {
