@@ -148,8 +148,16 @@ extension DefaultSplitClient {
 
         if splits.count > 0 {
             let splitsNoDuplicated = Set(splits.filter { !$0.isEmpty() }.map { $0 })
-            for splitName in splitsNoDuplicated {
-                results[splitName] = getTreatmentWithConfigNoMetrics(splitName: splitName, shouldValidate: false, attributes: attributes, validationTag: validationTag)
+            if eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
+                for splitName in splitsNoDuplicated {
+                    results[splitName] = getTreatmentWithConfigNoMetrics(splitName: splitName, shouldValidate: false, attributes: attributes, validationTag: validationTag)
+                }
+            } else {
+                validationLogger.e(message: "No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not ready", tag: validationTag)
+                for splitName in splitsNoDuplicated {
+                    logImpression(label: ImpressionsConstants.NOT_READY, treatment: SplitConstants.CONTROL, splitName: splitName, attributes: attributes)
+                    results[splitName] = SplitResult(treatment: SplitConstants.CONTROL)
+                }
             }
         } else {
             Logger.d("\(validationTag): split_names is an empty array or has null values")
@@ -161,7 +169,9 @@ extension DefaultSplitClient {
 
         if shouldValidate {
             if !eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
-                Logger.w("No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not yet ready")
+                validationLogger.e(message: "No listeners for SDK Readiness detected. Incorrect control treatments could be logged if you call getTreatment while the SDK is not ready", tag: validationTag)
+                logImpression(label: ImpressionsConstants.NOT_READY, treatment: SplitConstants.CONTROL, splitName: splitName, attributes: attributes)
+                return SplitResult(treatment: SplitConstants.CONTROL)
             }
 
             if let errorInfo = keyValidator.validate(matchingKey: key.matchingKey, bucketingKey: key.bucketingKey) {
@@ -179,7 +189,7 @@ extension DefaultSplitClient {
 
         if let errorInfo = splitValidator.validateSplit(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
-            if errorInfo.isError {
+            if errorInfo.isError || errorInfo.hasWarning(.nonExistingSplit) {
                 return SplitResult(treatment: SplitConstants.CONTROL)
             }
         }
