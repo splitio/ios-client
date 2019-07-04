@@ -32,7 +32,7 @@ class Condition: NSObject, Codable {
             conditionType = try? values.decode(ConditionType.self, forKey: .conditionType)
             matcherGroup = try? values.decode(MatcherGroup.self, forKey: .matcherGroup)
             partitions = try? values.decode([Partition].self, forKey: .partitions)
-            label = try? values.decode(String.self, forKey: .label)
+            label = (try? values.decode(String.self, forKey: .label)) ?? ""
         }
     }
     
