@@ -22,7 +22,7 @@ class MetricsManagerTests: XCTestCase {
     func testPushRateNoTimeElapsed() {
         let config = MetricManagerConfig.default
         config.pushRateInSeconds = 100
-        let manager = MetricsManager(config: config, restClient: restClient)
+        let manager = DefaultMetricsManager(config: config, restClient: restClient)
         
         for i in 1...100 {
             manager.time(microseconds: Int64(i), for: "time1")
@@ -39,7 +39,7 @@ class MetricsManagerTests: XCTestCase {
         
         let config = MetricManagerConfig.default
         config.pushRateInSeconds = 1
-        let manager = MetricsManager(config: config, restClient: restClient)
+        let manager = DefaultMetricsManager(config: config, restClient: restClient)
         
         manager.time(microseconds: 1, for: "time1")
         manager.time(microseconds: 1, for: "time2")
@@ -111,7 +111,7 @@ class MetricsManagerTests: XCTestCase {
         
         let config = MetricManagerConfig.default
         config.pushRateInSeconds = 1
-        let manager = MetricsManager(config: config, restClient: restClient)
+        let manager = DefaultMetricsManager(config: config, restClient: restClient)
         
         for time in times {
             let operation = Array(time.keys)[0]
@@ -152,7 +152,7 @@ class MetricsManagerTests: XCTestCase {
         
         let config = MetricManagerConfig.default
         config.pushRateInSeconds = 1
-        let manager = MetricsManager(config: config, restClient: restClient)
+        let manager = DefaultMetricsManager(config: config, restClient: restClient)
         
         for counter in counters {
             let counterName = Array(counter.keys)[0]
@@ -174,7 +174,7 @@ class MetricsManagerTests: XCTestCase {
         let results: [String:Int64] = ["counter1": 2, "counter2": 6, "counter3": 40, "counter4": 1]
         let config = MetricManagerConfig.default
         config.pushRateInSeconds = 1
-        let manager = MetricsManager(config: config, restClient: restClient)
+        let manager = DefaultMetricsManager(config: config, restClient: restClient)
         
         manager.count(delta: 1, for: "counter1")
         manager.count(delta: 1, for: "counter1")

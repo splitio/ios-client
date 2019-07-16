@@ -154,6 +154,11 @@ public class SplitClientConfig: NSObject {
     /// Localhost splits file name
     ///
     @objc public var splitFile: String = "localhost.splits"
+    
+    ///
+    /// Enable labels for impressions
+    ///
+    @objc public var isLabelsEnabled = true
 
     /**
      Maximum length matching / bucketing key. Internal config
@@ -172,7 +177,7 @@ public class SplitClientConfig: NSObject {
 
     ///
     /// Event without properties estimated size in bytes
-    //
+    ///
     let initialEventSizeInBytes = 1024
     
 }
