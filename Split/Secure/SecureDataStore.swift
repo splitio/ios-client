@@ -15,7 +15,7 @@ class SecureDataStore {
         case accessToken = "user_auth_token"
     }
     
-    private let metricsManager = MetricsManager.shared
+    private let metricsManager = DefaultMetricsManager.shared
     private var token: String? = nil
     
     static let shared: SecureDataStore = {

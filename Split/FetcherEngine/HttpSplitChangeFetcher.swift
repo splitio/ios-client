@@ -30,7 +30,7 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
         if policy == .cacheOnly || !restClient.isSdkServerAvailable() {
             return self.splitChangeCache.getChanges(since: -1)
         } else {
-            let metricsManager = MetricsManager.shared
+            let metricsManager = DefaultMetricsManager.shared
             let semaphore = DispatchSemaphore(value: 0)
             var requestResult: DataResult<SplitChange>?
             let fetchStartTime = Date().unixTimestampInMiliseconds()
