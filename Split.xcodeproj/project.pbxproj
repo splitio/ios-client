@@ -175,6 +175,9 @@
 		594677E622CFFA2D00F94E58 /* MetricsManagerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594677E522CFFA2D00F94E58 /* MetricsManagerStub.swift */; };
 		594677E822D4CAB300F94E58 /* ImpressionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594677E722D4CAB300F94E58 /* ImpressionsManager.swift */; };
 		594677EA22D4D44300F94E58 /* ImpressionsManagerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594677E922D4D44300F94E58 /* ImpressionsManagerStub.swift */; };
+		5946783522E110A700F94E58 /* MockWebServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5946783422E110A600F94E58 /* MockWebServer.swift */; };
+		5946783822E1144400F94E58 /* Swifter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5946783722E1144400F94E58 /* Swifter.framework */; };
+		5946783A22E1147600F94E58 /* SplitIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5946783922E1147600F94E58 /* SplitIntegrationTest.swift */; };
 		5955633F2294AECF00907C2D /* TrackManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5955633E2294AECF00907C2D /* TrackManagerTest.swift */; };
 		5959C46E2278D9AD0064F968 /* segment_conta_condition.json in Resources */ = {isa = PBXBuildFile; fileRef = 5959C46D2278D9AD0064F968 /* segment_conta_condition.json */; };
 		5959C4722279EBBC0064F968 /* in_segment_condition_split.json in Resources */ = {isa = PBXBuildFile; fileRef = 5959C4712279EBBC0064F968 /* in_segment_condition_split.json */; };
@@ -208,8 +211,6 @@
 		598EDE80224BD238005D4762 /* SplitFetcherStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598EDE7F224BD238005D4762 /* SplitFetcherStub.swift */; };
 		598EDE82224C0437005D4762 /* QueryableMySegmentsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598EDE81224C0437005D4762 /* QueryableMySegmentsFetcher.swift */; };
 		598EDE84224CE2C4005D4762 /* SplitResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598EDE83224CE2C4005D4762 /* SplitResult.swift */; };
-		598EDE8C224D49C9005D4762 /* SplitIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598EDE8B224D49C9005D4762 /* SplitIntegrationTests.swift */; };
-		598EDE8E224D49C9005D4762 /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B6DEE5A20EA6A4E0067435E /* Split.framework */; };
 		598EDF04225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json in Resources */ = {isa = PBXBuildFile; fileRef = 598EDF03225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json */; };
 		599407DA223FE19D003B85CC /* TrafficTypesCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599407D9223FE19D003B85CC /* TrafficTypesCache.swift */; };
 		599407DE22402B10003B85CC /* InMemoryTrafficTypesCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599407DD22402B10003B85CC /* InMemoryTrafficTypesCache.swift */; };
@@ -286,13 +287,6 @@
 
 /* Begin PBXContainerItemProxy section */
 		592C6AAB211B6C99002D120C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3B6DEE5920EA6A4E0067435E;
-			remoteInfo = Split;
-		};
-		598EDE8F224D49C9005D4762 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
 			proxyType = 1;
@@ -486,6 +480,9 @@
 		594677E522CFFA2D00F94E58 /* MetricsManagerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsManagerStub.swift; sourceTree = "<group>"; };
 		594677E722D4CAB300F94E58 /* ImpressionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsManager.swift; sourceTree = "<group>"; };
 		594677E922D4D44300F94E58 /* ImpressionsManagerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsManagerStub.swift; sourceTree = "<group>"; };
+		5946783422E110A600F94E58 /* MockWebServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockWebServer.swift; sourceTree = "<group>"; };
+		5946783722E1144400F94E58 /* Swifter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Swifter.framework; path = Carthage/Build/iOS/Swifter.framework; sourceTree = "<group>"; };
+		5946783922E1147600F94E58 /* SplitIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitIntegrationTest.swift; sourceTree = "<group>"; };
 		5955633E2294AECF00907C2D /* TrackManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackManagerTest.swift; sourceTree = "<group>"; };
 		5959C46D2278D9AD0064F968 /* segment_conta_condition.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = segment_conta_condition.json; sourceTree = "<group>"; };
 		5959C4712279EBBC0064F968 /* in_segment_condition_split.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = in_segment_condition_split.json; sourceTree = "<group>"; };
@@ -519,9 +516,6 @@
 		598EDE7F224BD238005D4762 /* SplitFetcherStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFetcherStub.swift; sourceTree = "<group>"; };
 		598EDE81224C0437005D4762 /* QueryableMySegmentsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryableMySegmentsFetcher.swift; sourceTree = "<group>"; };
 		598EDE83224CE2C4005D4762 /* SplitResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitResult.swift; sourceTree = "<group>"; };
-		598EDE89224D49C9005D4762 /* SplitIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		598EDE8B224D49C9005D4762 /* SplitIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitIntegrationTests.swift; sourceTree = "<group>"; };
-		598EDE8D224D49C9005D4762 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		598EDF03225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_traffic_alloc_50_default_rule_50.json; sourceTree = "<group>"; };
 		599407D9223FE19D003B85CC /* TrafficTypesCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrafficTypesCache.swift; sourceTree = "<group>"; };
 		599407DD22402B10003B85CC /* InMemoryTrafficTypesCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InMemoryTrafficTypesCache.swift; sourceTree = "<group>"; };
@@ -609,14 +603,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				592C6AAA211B6C99002D120C /* Split.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		598EDE86224D49C9005D4762 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				598EDE8E224D49C9005D4762 /* Split.framework in Frameworks */,
+				5946783822E1144400F94E58 /* Swifter.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -628,7 +615,6 @@
 			children = (
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
-				598EDE8A224D49C9005D4762 /* SplitIntegrationTests */,
 				3B6DEE5B20EA6A4E0067435E /* Products */,
 				590DF9962125F6900082B94F /* Frameworks */,
 			);
@@ -639,7 +625,6 @@
 			children = (
 				3B6DEE5A20EA6A4E0067435E /* Split.framework */,
 				592C6AA5211B6C99002D120C /* SplitTests.xctest */,
-				598EDE89224D49C9005D4762 /* SplitIntegrationTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1065,6 +1050,7 @@
 		590DF9962125F6900082B94F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5946783722E1144400F94E58 /* Swifter.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1096,6 +1082,7 @@
 		5912D150219A005400BC698C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				5946783422E110A600F94E58 /* MockWebServer.swift */,
 				5912D151219A022000BC698C /* CsvHelper.swift */,
 				5982D937219F57BE00230F44 /* FileHelper.swift */,
 				5919C64721C7D45B00EC35B8 /* SplitHelper.swift */,
@@ -1208,15 +1195,6 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
-		598EDE8A224D49C9005D4762 /* SplitIntegrationTests */ = {
-			isa = PBXGroup;
-			children = (
-				598EDE8B224D49C9005D4762 /* SplitIntegrationTests.swift */,
-				598EDE8D224D49C9005D4762 /* Info.plist */,
-			);
-			path = SplitIntegrationTests;
-			sourceTree = "<group>";
-		};
 		599EA56D22666B57006CBA89 /* Yaml */ = {
 			isa = PBXGroup;
 			children = (
@@ -1311,6 +1289,7 @@
 				59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */,
 				599EA5842268E9C2006CBA89 /* LocalhostTests.swift */,
 				599EA57E2266708D006CBA89 /* LocalhostYamlParserTest.swift */,
+				5946783922E1147600F94E58 /* SplitIntegrationTest.swift */,
 			);
 			path = Localhost;
 			sourceTree = "<group>";
@@ -1368,6 +1347,7 @@
 				592C6AA2211B6C99002D120C /* Frameworks */,
 				592C6AA3211B6C99002D120C /* Resources */,
 				592C6AF2211CBED7002D120C /* CopyFiles */,
+				5946783622E1110600F94E58 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1377,24 +1357,6 @@
 			name = SplitTests;
 			productName = SplitTests;
 			productReference = 592C6AA5211B6C99002D120C /* SplitTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		598EDE88224D49C9005D4762 /* SplitIntegrationTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 598EDE91224D49C9005D4762 /* Build configuration list for PBXNativeTarget "SplitIntegrationTests" */;
-			buildPhases = (
-				598EDE85224D49C9005D4762 /* Sources */,
-				598EDE86224D49C9005D4762 /* Frameworks */,
-				598EDE87224D49C9005D4762 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				598EDE90224D49C9005D4762 /* PBXTargetDependency */,
-			);
-			name = SplitIntegrationTests;
-			productName = SplitIntegrationTests;
-			productReference = 598EDE89224D49C9005D4762 /* SplitIntegrationTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -1417,10 +1379,6 @@
 						LastSwiftMigration = 0940;
 						ProvisioningStyle = Automatic;
 					};
-					598EDE88224D49C9005D4762 = {
-						CreatedOnToolsVersion = 10.1;
-						ProvisioningStyle = Automatic;
-					};
 				};
 			};
 			buildConfigurationList = 3B6DEE5420EA6A4D0067435E /* Build configuration list for PBXProject "Split" */;
@@ -1437,7 +1395,6 @@
 			targets = (
 				3B6DEE5920EA6A4E0067435E /* Split */,
 				592C6AA4211B6C99002D120C /* SplitTests */,
-				598EDE88224D49C9005D4762 /* SplitIntegrationTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1487,14 +1444,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		598EDE87224D49C9005D4762 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5946783622E1110600F94E58 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Swifter.framework",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Swifter.framework",
+			);
 			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
 		};
-/* End PBXResourcesBuildPhase section */
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3B6DEE5520EA6A4E0067435E /* Sources */ = {
@@ -1709,6 +1681,7 @@
 				590DF9CF213EB95D0082B94F /* SplitCacheStub.swift in Sources */,
 				59D84BE7221AE775003DA248 /* LocalhostManagerTests.swift in Sources */,
 				59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */,
+				5946783522E110A700F94E58 /* MockWebServer.swift in Sources */,
 				594677E622CFFA2D00F94E58 /* MetricsManagerStub.swift in Sources */,
 				5955633F2294AECF00907C2D /* TrackManagerTest.swift in Sources */,
 				599EDAF12270970500D7DACB /* SplitEventsManagerMock.swift in Sources */,
@@ -1726,6 +1699,7 @@
 				592C6AC2211B718E002D120C /* MatcherTest.swift in Sources */,
 				5959C482228074800064F968 /* ValidationMessageLoggerStub.swift in Sources */,
 				59B8B8AC220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift in Sources */,
+				5946783A22E1147600F94E58 /* SplitIntegrationTest.swift in Sources */,
 				5959C477227B89820064F968 /* FactoryMonitorTest.swift in Sources */,
 				592C6ABE211B718E002D120C /* ArrayBlockingQueueTest.swift in Sources */,
 				598EDE7A224BBF7E005D4762 /* EvaluatorTests.swift in Sources */,
@@ -1750,14 +1724,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		598EDE85224D49C9005D4762 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				598EDE8C224D49C9005D4762 /* SplitIntegrationTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1765,11 +1731,6 @@
 			isa = PBXTargetDependency;
 			target = 3B6DEE5920EA6A4E0067435E /* Split */;
 			targetProxy = 592C6AAB211B6C99002D120C /* PBXContainerItemProxy */;
-		};
-		598EDE90224D49C9005D4762 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3B6DEE5920EA6A4E0067435E /* Split */;
-			targetProxy = 598EDE8F224D49C9005D4762 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2011,47 +1972,6 @@
 			};
 			name = Release;
 		};
-		598EDE92224D49C9005D4762 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
-				INFOPLIST_FILE = SplitIntegrationTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitIntegrationTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		598EDE93224D49C9005D4762 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
-				INFOPLIST_FILE = SplitIntegrationTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitIntegrationTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2078,15 +1998,6 @@
 			buildConfigurations = (
 				592C6AAD211B6C99002D120C /* Debug */,
 				592C6AAE211B6C99002D120C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		598EDE91224D49C9005D4762 /* Build configuration list for PBXNativeTarget "SplitIntegrationTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				598EDE92224D49C9005D4762 /* Debug */,
-				598EDE93224D49C9005D4762 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
