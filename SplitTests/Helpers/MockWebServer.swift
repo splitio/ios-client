@@ -35,26 +35,31 @@ class MockWebServer {
         }
     }
     
-    private func bytesToString(bytes: [UInt8]?) -> String? {
-        guard let bytes = bytes else { return nil }
-        return String(bytes: bytes, encoding: .utf8)
-    }
-    
     func routePost(path: String, data: String?) {
         httpServer.POST[path] = { request in
             HttpResponse.ok(.text(data ?? ""))
         }
     }
     
+    private func bytesToString(bytes: [UInt8]?) -> String? {
+        guard let bytes = bytes else { return nil }
+        return String(bytes: bytes, encoding: .utf8)
+    }
+    
+    
+    
     func start() {
-        httpServer.GET["/test)_server"] = { request in
+        httpServer.GET["/test_server"] = { request in
             return HttpResponse.ok(.text("Test server success!!!"))
         }
-        try! httpServer.start()
+
+        try! httpServer.start(8080)
+        print("Mock web server started")
     }
     
     func stop() {
         httpServer.stop()
+        print("Mock web server stoped")
     }
     
 }
