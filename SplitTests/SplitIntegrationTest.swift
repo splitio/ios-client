@@ -38,11 +38,12 @@ class SplitIntegrationTests: XCTestCase {
         webServer.stop()
     }
     
-    func testControlTreatment() {
+    func testControlTreatment() throws {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
         let dataFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "account"
+        var impressions = [String:Impression]()
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 30
@@ -54,11 +55,17 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.eventsQueueSize = 100
         splitConfig.targetSdkEndPoint = "http://localhost:8080"
         splitConfig.targetEventsEndPoint = "http://localhost:8080"
+        splitConfig.impressionListener = { impression in
+            impressions[self.buildImpressionKey(impression: impression)] = impression
+        }
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        
         let client = factory?.client
+        let manager = factory?.manager
+        
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         var timeOutFired = false
         var sdkReadyFired = false
@@ -79,12 +86,40 @@ class SplitIntegrationTests: XCTestCase {
         let t2 = client?.getTreatment("NO_EXISTING_FEATURE")
         let treatmentConfigEmojis = client?.getTreatmentWithConfig("Welcome_Page_UI")
         
+        let ts1 = client?.getTreatments(splits: ["testing222", "NO_EXISTING_FEATURE1", "NO_EXISTING_FEATURE2"], attributes: nil)
+        let s1 = manager?.split(featureName: "FACUNDO_TEST")
+        let s2 = manager?.split(featureName: "NO_EXISTING_FEATURE")
+        let splits = manager?.splits
+        
+        let i1 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "FACUNDO_TEST", treatment: "off")]
+        let i2 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "NO_EXISTING_FEATURE", treatment: SplitConstants.CONTROL)]
+        
+        for i in 1..<101 {
+            _ = client?.track(eventType: "account", value: Double(i))
+        }
+        
+        let lastEventHitEvents = try buildEventsFromJson(content: getLastTrackEventJsonHit())
+        let event99 = lastEventHitEvents.filter { $0.value == 99.0 }
+        let event100 = lastEventHitEvents.filter { $0.value == 100.0 }
+        
+        XCTAssertTrue(existsFolder(name: dataFolderName))
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertEqual("off", t1)
         XCTAssertEqual(SplitConstants.CONTROL, t2)
         XCTAssertEqual("{\"the_emojis\":\"\\uD83D\\uDE01 -- áéíóúöÖüÜÏëç\"}", treatmentConfigEmojis?.config)
+        XCTAssertEqual(SplitConstants.CONTROL, ts1?["NO_EXISTING_FEATURE1"])
+        XCTAssertEqual(SplitConstants.CONTROL, ts1?["NO_EXISTING_FEATURE2"])
         
+        XCTAssertEqual(29, splits?.count)
+        XCTAssertNotNil(s1)
+        XCTAssertNil(s2)
+        XCTAssertNotNil(i1)
+        XCTAssertNil(i2)
+        XCTAssertEqual("not in split", i1?.label)
+        XCTAssertEqual(10, tracksHits().count)
+        XCTAssertNotNil(event99)
+        XCTAssertNil(event100)
     }
     
     private func loadSplitsChangeFile() -> SplitChange? {
@@ -93,13 +128,42 @@ class SplitIntegrationTests: XCTestCase {
     
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.encodeFrom(json: file, to: SplitChange.self),
-            let splits = change.splits {
+            let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
             return change
         }
         return nil
     }
     
+    private func existsFolder(name: String) -> Bool {
+        let fileManager = FileManager.default
+        do {
+            let cachesDirectory = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
+            let folder = cachesDirectory.appendingPathComponent(name)
+            return fileManager.fileExists(atPath: folder.path)
+        } catch {
+        }
+        return false
+    }
+    private func buildImpressionKey(impression: Impression) -> String {
+        return buildImpressionKey(key: impression.keyName!, splitName: "MISSING_IN_IMPRESSION!!_ADD", treatment: impression.treatment!)
+    }
     
+    private func buildImpressionKey(key: String, splitName: String, treatment: String) -> String {
+        return "(\(key)_\(splitName)_\(treatment)"
+    }
+    
+    private func buildEventsFromJson(content: String) throws -> [EventDTO] {
+        let hit = try Json.dynamicEncodeFrom(json: content, to: EventsHit.self)
+        return hit.events
+    }
+    
+        private func tracksHits() -> [ReceivedRequest] {
+            return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
+        }
+        
+    private func getLastTrackEventJsonHit() -> String {
+        let trackRecs = tracksHits()
+        return trackRecs[trackRecs.count  - 1].data!
+    }
 }
 

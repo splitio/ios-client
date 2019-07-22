@@ -1113,6 +1113,7 @@
 				59F6AA99215E941E00A51997 /* MetricsTests */,
 				59FB7C1221F78BF400ECC96A /* ValidatorsTests */,
 				59FB7C262202454700ECC96A /* Localhost */,
+				5946783922E1147600F94E58 /* SplitIntegrationTest.swift */,
 				593AE9FE226F5B98000D61B0 /* SplitChangeFetcherTests.swift */,
 				593AE9F1226F4068000D61B0 /* MySegmentsFetcherTests.swift */,
 				598EDE7322493008005D4762 /* SplitConfigurationsParsingTest.swift */,
@@ -1289,7 +1290,6 @@
 				59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */,
 				599EA5842268E9C2006CBA89 /* LocalhostTests.swift */,
 				599EA57E2266708D006CBA89 /* LocalhostYamlParserTest.swift */,
-				5946783922E1147600F94E58 /* SplitIntegrationTest.swift */,
 			);
 			path = Localhost;
 			sourceTree = "<group>";
