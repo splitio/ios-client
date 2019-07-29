@@ -36,8 +36,11 @@ class MockWebServer {
     }
     
     func routePost(path: String, data: String?) {
-        httpServer.POST[path] = { request in
-            HttpResponse.ok(.text(data ?? ""))
+        httpServer.POST[path] = { [weak self] request in
+            if let self = self {
+                self.receivedRequests.append(ReceivedRequest(path: request.path, data: self.bytesToString(bytes: request.body), method: "POST"))
+            }
+            return HttpResponse.ok(.text(data ?? ""))
         }
     }
     
