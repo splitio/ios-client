@@ -94,11 +94,9 @@ class DefaultTreatmentManager: TreatmentManager {
     
     private func getTreatmentWithConfigNoMetrics(splitName: String, shouldValidate: Bool = true, attributes:[String:Any]? = nil, validationTag: String) -> SplitResult {
         
-        if shouldValidate {
-            if let errorInfo = keyValidator.validate(matchingKey: key.matchingKey, bucketingKey: key.bucketingKey) {
-                validationLogger.log(errorInfo: errorInfo, tag: validationTag)
-                return SplitResult(treatment: SplitConstants.CONTROL)
-            }
+        if shouldValidate, let errorInfo = keyValidator.validate(matchingKey: key.matchingKey, bucketingKey: key.bucketingKey) {
+            validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+            return SplitResult(treatment: SplitConstants.CONTROL)
         }
         
         if let errorInfo = splitValidator.validate(name: splitName) {
