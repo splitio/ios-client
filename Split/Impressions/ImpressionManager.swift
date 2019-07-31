@@ -13,7 +13,7 @@ struct ImpressionManagerConfig {
     var impressionsPerPush: Int64! // ChunkSize
 }
 
-class ImpressionManager {
+class DefaultImpressionsManager: ImpressionsManager {
     
     private let kImpressionsFileName: String = "SPLITIO.impressions"
     private let kMaxHitAttempts = 3
@@ -39,7 +39,7 @@ class ImpressionManager {
 }
 
 // MARK: Public
-extension ImpressionManager {
+extension DefaultImpressionsManager {
     func start(){
         pollingManager.start()
     }
@@ -62,7 +62,7 @@ extension ImpressionManager {
 }
 
 // MARK: Private
-extension ImpressionManager {
+extension DefaultImpressionsManager {
     
     private func appendHit(){
         if currentImpressionsHit.count == 0 { return }
@@ -168,7 +168,7 @@ extension ImpressionManager {
 }
 
 // MARK: Background / Foreground
-extension ImpressionManager {
+extension DefaultImpressionsManager {
     func subscribeNotifications() {
         NotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
             guard let strongSelf = self else {

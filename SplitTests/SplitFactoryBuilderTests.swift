@@ -86,7 +86,7 @@ class SplitFactoryBuilderTests: XCTestCase {
         let builder1: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
         let builder2: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
         
-        let logger = ValidationMessageLoggerMock()
+        let logger = ValidationMessageLoggerStub()
         builder2.validationLogger = logger
         
         let f1 = builder1
@@ -106,7 +106,7 @@ class SplitFactoryBuilderTests: XCTestCase {
         let builder1: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
         let builder2: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
         
-        let logger = ValidationMessageLoggerMock()
+        let logger = ValidationMessageLoggerStub()
         builder2.validationLogger = logger
         
         let f1 = builder1
@@ -131,7 +131,7 @@ class SplitFactoryBuilderTests: XCTestCase {
         let builder1: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
         let builder2: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
         
-        let logger = ValidationMessageLoggerMock()
+        let logger = ValidationMessageLoggerStub()
         builder2.validationLogger = logger
         
         let f1 = builder1
