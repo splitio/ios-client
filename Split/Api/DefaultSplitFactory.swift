@@ -36,10 +36,9 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         MetricManagerConfig.default.defaultDataFolderName = dataFolderName
     
         config.apiKey = apiKey
-        let trafficTypesCache = InMemoryTrafficTypesCache()
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
         let splitCache = SplitCache(fileStorage: fileStorage)
-        defaultClient = DefaultSplitClient(config: config, key: key, splitCache: splitCache, trafficTypesCache: trafficTypesCache, fileStorage: fileStorage)
+        defaultClient = DefaultSplitClient(config: config, key: key, splitCache: splitCache, fileStorage: fileStorage)
         defaultManager = DefaultSplitManager(splitCache: splitCache)
     }    
 }
