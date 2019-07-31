@@ -23,7 +23,7 @@ class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
         if policy == .cacheOnly || !self.restClient.isSdkServerAvailable() {
             return self.mySegmentsCache?.getSegments()
         } else {
-            let metricsManager = MetricsManager.shared
+            let metricsManager = DefaultMetricsManager.shared
             let semaphore = DispatchSemaphore(value: 0)
             var requestResult: DataResult<[String]>?
             let fetchStartTime = Date().unixTimestampInMiliseconds()
