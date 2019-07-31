@@ -33,7 +33,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private let validationLogger: ValidationMessageLogger
     private var evaluator: Evaluator!
 
-    init(config: SplitClientConfig, key: Key, splitCache: SplitCache, trafficTypesCache: TrafficTypesCache, fileStorage: FileStorageProtocol) {
+    init(config: SplitClientConfig, key: Key, splitCache: SplitCache, fileStorage: FileStorageProtocol) {
         self.config = config
 
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
