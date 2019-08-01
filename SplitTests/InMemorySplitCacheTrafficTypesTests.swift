@@ -93,6 +93,40 @@ class InMemorySplitCacheTrafficTypesTests: XCTestCase {
         XCTAssertTrue(cache.exists(trafficType: "tt"))
         XCTAssertFalse(cache.exists(trafficType: "mytt"))
     }
+    
+    
+    func testChangedTrafficTypeForSplit() {
+        // Testing remove split and recreate it with other tt
+        let splitName = "n_s2"
+        let s2t1 = newSplit(name: splitName, trafficType: "tt", status: .Active)
+        let s2t2 = newSplit(name: splitName, trafficType: "mytt", status: .Active)
+        
+        cache.addSplit(splitName: splitName, split: s2t1)
+        cache.addSplit(splitName: splitName, split: s2t1)
+        cache.addSplit(splitName: splitName, split: s2t1)
+        cache.addSplit(splitName: splitName, split: s2t1)
+        cache.addSplit(splitName: splitName, split: s2t2)
+        
+        XCTAssertFalse(cache.exists(trafficType: "tt"))
+        XCTAssertTrue(cache.exists(trafficType: "mytt"))
+    }
+    
+    func testExistingChangedTrafficTypeForSplit() {
+        let splitName = "n_s2"
+        let s1 = newSplit(name: "n_s1", trafficType: "tt", status: .Active)
+        let s2t1 = newSplit(name: splitName, trafficType: "tt", status: .Active)
+        let s2t2 = newSplit(name: splitName, trafficType: "mytt", status: .Active)
+        
+        cache.addSplit(splitName: s1.name!, split: s1)
+        cache.addSplit(splitName: splitName, split: s2t1)
+        cache.addSplit(splitName: splitName, split: s2t1)
+        cache.addSplit(splitName: splitName, split: s2t1)
+        cache.addSplit(splitName: splitName, split: s2t1)
+        cache.addSplit(splitName: splitName, split: s2t2)
+        
+        XCTAssertTrue(cache.exists(trafficType: "tt"))
+        XCTAssertTrue(cache.exists(trafficType: "mytt"))
+    }
  
     private func newSplit(name: String, trafficType: String, status: Status = .Active) -> Split {
         let split = Split()
