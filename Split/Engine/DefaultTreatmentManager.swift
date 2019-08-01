@@ -144,6 +144,7 @@ class DefaultTreatmentManager: TreatmentManager {
         impressionsManager.appendImpression(impression: impression, splitName: splitName)
         
         if let externalImpressionHandler = splitConfig.impressionListener {
+            impression.feature = splitName
             impression.attributes = attributes
             externalImpressionHandler(impression)
         }
