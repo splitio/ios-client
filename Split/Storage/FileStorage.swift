@@ -83,7 +83,7 @@ class FileStorage: FileStorageProtocol {
                     return try String(contentsOf: fileURL, encoding: .utf8)
                 }
             } catch {
-                Logger.e("File Storage - readWithProperties: " + error.localizedDescription)
+                Logger.w("File Storage - readWithProperties: " + error.localizedDescription)
             }
         }
         return nil
