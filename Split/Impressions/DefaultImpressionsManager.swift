@@ -47,8 +47,12 @@ extension DefaultImpressionsManager {
     func stop(){
         pollingManager.stop()
     }
+    
+    func flush(){
+        appendHitAndSendAll()
+    }
 
-    func appendImpression(impression: Impression, splitName: String) {
+    func appendImpression(impression: Impression, splitName: String){
         currentImpressionsHit.appendValue(impression, toKey: splitName)
         if currentImpressionsHit.count == impressionsPerPush {
             appendHit()

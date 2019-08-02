@@ -20,7 +20,7 @@ class TrackManagerTest: XCTestCase {
         config.maxHitsSizeInBytes = SplitClientConfig().maxEventsQueueMemorySizeInBytes
         
         let restClient: RestClientTrackEvents = RestClientStub()
-        let trackManager = TrackManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)
+        let trackManager = DefaultTrackManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)
         for _ in 1...159 {
             trackManager.appendEvent(event: create32kbEvent())
         }
@@ -43,7 +43,7 @@ class TrackManagerTest: XCTestCase {
         config.maxHitsSizeInBytes = SplitClientConfig().maxEventsQueueMemorySizeInBytes
         
         let restClient: RestClientTrackEvents = RestClientStub()
-        let trackManager = TrackManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)
+        let trackManager = DefaultTrackManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)
         for _ in 1...49 {
             trackManager.appendEvent(event: create32kbEvent())
         }

@@ -51,7 +51,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         trackConfig.eventsPerPush = config.eventsPerPush
         trackConfig.queueSize = config.eventsQueueSize
         trackConfig.maxHitsSizeInBytes = config.maxEventsQueueMemorySizeInBytes
-        trackEventsManager = TrackManager(config: trackConfig, fileStorage: fileStorage)
+        trackEventsManager = DefaultTrackManager(config: trackConfig, fileStorage: fileStorage)
 
         self.initialized = false
         
