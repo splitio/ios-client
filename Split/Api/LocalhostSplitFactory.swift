@@ -40,7 +40,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         eventsManager.start()
         
         let fileStorage = FileStorage(dataFolderName: DataFolderFactory().sanitizeForFolderName(config.localhostDataFolder))
-        let splitCache: SplitCacheProtocol = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
+        let splitCache: SplitCacheProtocol = InMemorySplitCache()
         let splitFetcher: SplitFetcher = LocalhostSplitFetcher(fileStorage: fileStorage, splitCache: splitCache, eventsManager: eventsManager, splitsFileName: config.splitFile, bundle: bundle)
         localhostClient = LocalhostSplitClient(key:key, splitFetcher: splitFetcher, eventsManager: eventsManager)
         eventsManager.getExecutorResources().setClient(client: localhostClient)

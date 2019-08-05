@@ -10,6 +10,7 @@ public typealias SplitImpression = Impression
 
 @objc public class Impression: NSObject, Codable {
 
+    @objc public var feature: String?
     @objc public var keyName: String?
     @objc public var treatment: String?
     public var time: Int64?

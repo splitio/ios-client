@@ -115,7 +115,7 @@ class LocalhostSplitFetcherTests: XCTestCase {
     }
     
     func fetcherFor(fileName: String) {
-        let splitCache: SplitCacheProtocol = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
+        let splitCache: SplitCacheProtocol = InMemorySplitCache()
         eventsManager = SplitEventsManagerMock()
         storage = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
