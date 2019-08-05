@@ -194,12 +194,10 @@ class SplitIntegrationTests: XCTestCase {
         return false
     }
     private func buildImpressionKey(impression: Impression) -> String {
-        return buildImpressionKey(key: impression.keyName!, splitName: "MISSING_IN_IMPRESSION_ADD", treatment: impression.treatment!)
+        return buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
     }
     
     private func buildImpressionKey(key: String, splitName: String, treatment: String) -> String {
-        
-        let splitName = "MISSING_IN_IMPRESSION_ADD" // REMOVE WHEN FIXING SPLIT NAME IN TRACK
         return "(\(key)_\(splitName)_\(treatment)"
     }
     
