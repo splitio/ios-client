@@ -42,7 +42,7 @@ import Foundation
 ///
 
 public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitClient {
-
+    
     var mySegmentsFetcher: MySegmentsFetcher?
     var splitFetcher: SplitFetcher?
     private let eventsManager: SplitEventsManager?
@@ -133,5 +133,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
         return true
     }
     
+    public func flush() {
+    }
     
 }
