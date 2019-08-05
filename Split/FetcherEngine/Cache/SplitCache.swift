@@ -73,9 +73,8 @@ class SplitCache: SplitCacheProtocol {
 // MARK: Private
 extension SplitCache {
     private func initialInMemoryCache() -> InMemorySplitCache {
-        let inMemoryTrafficTypesCache = InMemoryTrafficTypesCache()
         let emptySplitCache: (() -> InMemorySplitCache) = {
-            return InMemorySplitCache(trafficTypesCache: inMemoryTrafficTypesCache, splits: [String: Split]())
+            return InMemorySplitCache(splits: [String: Split]())
         }
         
         guard let jsonContent = fileStorage.read(fileName: kSplitsFileName) else {
@@ -83,7 +82,7 @@ extension SplitCache {
         }
         do {
             let splitsFile = try Json.encodeFrom(json: jsonContent, to: SplitsFile.self)
-            return InMemorySplitCache(trafficTypesCache: inMemoryTrafficTypesCache, splits: splitsFile.splits, changeNumber: splitsFile.changeNumber)
+            return InMemorySplitCache(splits: splitsFile.splits, changeNumber: splitsFile.changeNumber)
         } catch {
             Logger.e("Error while loading Splits from disk")
         }

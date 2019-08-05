@@ -16,7 +16,7 @@ class InMemorySplitCacheTests: XCTestCase {
     var splitCache: InMemorySplitCache!
     
     override func setUp() {
-        splitCache = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
+        splitCache = InMemorySplitCache()
         let jsonSplit = "{\"name\":\"test\", \"status\":\"active\"}"
         let split1 = try? JSON.encodeFrom(json: jsonSplit, to: Split.self)
         _  = splitCache.addSplit(splitName: split1!.name!, split: split1!)
