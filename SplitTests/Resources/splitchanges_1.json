@@ -835,6 +835,9 @@
               "defaultTreatment":"off",
               "changeNumber":1503956389520,
               "algo":2,
+              "configurations": {
+                  "off": "{\"f1\":\"v1\"}"
+              },
               "conditions":[
                             {
                             "conditionType":"WHITELIST",

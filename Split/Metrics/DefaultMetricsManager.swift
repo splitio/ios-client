@@ -7,6 +7,11 @@
 
 import Foundation
 
+protocol MetricsManager {
+    func time(microseconds latency: Int64, for operationName: String)
+    func count(delta: Int64, for counterName: String)
+}
+
 struct Metrics {
     struct time {
         static let getTreatment = "sdk.getTreatment"
@@ -35,7 +40,7 @@ class MetricManagerConfig {
     var defaultDataFolderName: String = "split_data"
 }
 
-class MetricsManager {
+class DefaultMetricsManager {
     
     private var lastPostTime: Int64 = Date().unixTimestamp()
     private var countersCache = SynchronizedArrayWrapper<CounterMetricSample>()
@@ -53,8 +58,8 @@ class MetricsManager {
      * Constructors remain interna so that the manager can
      * can be used with a custom config
      */
-    static let shared: MetricsManager = {
-        let instance = MetricsManager()
+    static let shared: DefaultMetricsManager = {
+        let instance = DefaultMetricsManager()
         return instance;
     }()
     
@@ -68,24 +73,24 @@ class MetricsManager {
         self.pushRateInSeconds = config.pushRateInSeconds
     }
     
-    func saveDataToDisk() {
+    private func saveDataToDisk() {
         saveTimesToDisk()
         saveCountersToDisk()
     }
     
-    func loadDataFromDisk(){
+    private func loadDataFromDisk(){
         loadTimesFile()
         loadCountersFile()
     }
     
-    func sendDataToServer() {
+    private func sendDataToServer() {
         sendTimes()
         sendCounters()
     }
 }
 
 // MARK: Public
-extension MetricsManager {
+extension DefaultMetricsManager {
     
     func time(microseconds latency: Int64, for operationName: String) {
         timesCache.append(TimeMetricSample(operation: operationName, latency: latency))
@@ -103,7 +108,7 @@ extension MetricsManager {
 }
 
 // MARK: Private - Common
-extension MetricsManager {
+extension DefaultMetricsManager {
     private func shouldPostToServer() -> Bool {
         let curTime = Date().unixTimestamp()
         if curTime - lastPostTime >= pushRateInSeconds {
@@ -115,7 +120,7 @@ extension MetricsManager {
 }
 
 // MARK: Private - Times
-extension MetricsManager {
+extension DefaultMetricsManager {
 
     private func sendTimes() {
         if timesCache.count == 0 { return }
@@ -174,7 +179,7 @@ extension MetricsManager {
 }
 
 // MARK: Private - Counters
-extension MetricsManager {
+extension DefaultMetricsManager {
     
     private func sendCounters() {
         if countersCache.count == 0 { return }
@@ -234,7 +239,7 @@ extension MetricsManager {
 }
 
 // MARK: Helpers - Internal not overridable
-extension MetricsManager {
+extension DefaultMetricsManager {
     func loadFileContent(fileName: String, removeAfter: Bool = true) -> String? {
         guard let fileContent = fileStorage.read(fileName: fileName) else {
             return nil
@@ -252,9 +257,9 @@ extension MetricsManager {
 }
 
 // MARK: Background / Foreground
-extension MetricsManager {
+extension DefaultMetricsManager {
     
-    func subscribeNotifications() {
+    private func subscribeNotifications() {
         NotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
             guard let strongSelf = self else {
                 return
