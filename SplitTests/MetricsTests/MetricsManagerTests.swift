@@ -30,6 +30,21 @@ class MetricsManagerTests: XCTestCase {
         XCTAssertNil(restClient.timeMetrics, "Time metrics should be nil")
     }
     
+    func testFlush() {
+        let config = MetricManagerConfig.default
+        config.pushRateInSeconds = 999999
+        let manager = DefaultMetricsManager(config: config, restClient: restClient)
+        
+        for i in 1...100 {
+            manager.time(microseconds: Int64(i), for: "time1")
+            manager.count(delta: 3, for: "count1")
+        }
+        manager.flush()
+        
+        XCTAssertEqual(1, restClient.timeMetrics?.count)
+        XCTAssertEqual(1, restClient.counterMetrics?.count)
+    }
+    
     /***
      *  Metrics manager sends metrics by checking time elapsed since
      *  last post when a new metric is added

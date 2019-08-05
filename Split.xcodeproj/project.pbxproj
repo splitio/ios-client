@@ -211,6 +211,7 @@
 		598EDE8E224D49C9005D4762 /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B6DEE5A20EA6A4E0067435E /* Split.framework */; };
 		598EDF04225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json in Resources */ = {isa = PBXBuildFile; fileRef = 598EDF03225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json */; };
 		599407E022403BE9003B85CC /* InMemorySplitCacheTrafficTypesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599407DF22403BE9003B85CC /* InMemorySplitCacheTrafficTypesTests.swift */; };
+		599A6E2D22F8C65500D3D68C /* ImpressionsManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599A6E2C22F8C65500D3D68C /* ImpressionsManagerTest.swift */; };
 		599EA57522666B84006CBA89 /* YAMLOperators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA56E22666B84006CBA89 /* YAMLOperators.swift */; };
 		599EA57622666B84006CBA89 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 599EA56F22666B84006CBA89 /* LICENSE */; };
 		599EA57722666B84006CBA89 /* YAMLTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57022666B84006CBA89 /* YAMLTokenizer.swift */; };
@@ -521,6 +522,7 @@
 		598EDE8D224D49C9005D4762 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		598EDF03225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_traffic_alloc_50_default_rule_50.json; sourceTree = "<group>"; };
 		599407DF22403BE9003B85CC /* InMemorySplitCacheTrafficTypesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InMemorySplitCacheTrafficTypesTests.swift; sourceTree = "<group>"; };
+		599A6E2C22F8C65500D3D68C /* ImpressionsManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsManagerTest.swift; sourceTree = "<group>"; };
 		599EA56E22666B84006CBA89 /* YAMLOperators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YAMLOperators.swift; sourceTree = "<group>"; };
 		599EA56F22666B84006CBA89 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		599EA57022666B84006CBA89 /* YAMLTokenizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YAMLTokenizer.swift; sourceTree = "<group>"; };
@@ -1145,6 +1147,7 @@
 				5959C476227B89820064F968 /* FactoryMonitorTest.swift */,
 				5959C478227B89980064F968 /* FactoryRegistryTest.swift */,
 				5955633E2294AECF00907C2D /* TrackManagerTest.swift */,
+				599A6E2C22F8C65500D3D68C /* ImpressionsManagerTest.swift */,
 				594677E322CFF30B00F94E58 /* TreatmentManagerTest.swift */,
 			);
 			path = SplitTests;
@@ -1685,6 +1688,7 @@
 				592C6AC6211B718E002D120C /* SplitEventsManagerTest.swift in Sources */,
 				5959C480228051CA0064F968 /* SplitManagerStub.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
+				599A6E2D22F8C65500D3D68C /* ImpressionsManagerTest.swift in Sources */,
 				5982D9C421B04FA400230F44 /* MySegmentsCacheTests.swift in Sources */,
 				598EDE7E224BD1A6005D4762 /* MySegmentsFetcherStub.swift in Sources */,
 				59FB7C1621F79B8200ECC96A /* EventTypeNameHelper.swift in Sources */,
