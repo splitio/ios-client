@@ -123,6 +123,54 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertNil(event100)
     }
     
+    
+    func testSdkTimeout() throws {
+        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+        let dataFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
+        let matchingKey = "CUSTOMER_ID"
+        let trafficType = "account"
+        var impressions = [String:Impression]()
+        
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 99999
+        splitConfig.segmentsRefreshRate = 99999
+        splitConfig.impressionRefreshRate = 99999
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.trafficType = trafficType
+        splitConfig.eventsPerPush = 10
+        splitConfig.eventsQueueSize = 100
+        splitConfig.impressionListener = { impression in
+            impressions[self.buildImpressionKey(impression: impression)] = impression
+        }
+        
+        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let builder = DefaultSplitFactoryBuilder()
+        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        
+        let client = factory?.client
+        
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        var timeOutFired = false
+        var sdkReadyFired = false
+        
+        client?.on(event: SplitEvent.sdkReady) {
+            sdkReadyFired = true
+            sdkReadyExpectation.fulfill()
+        }
+        
+        client?.on(event: SplitEvent.sdkReadyTimedOut) {
+            timeOutFired = true
+            sdkReadyExpectation.fulfill()
+        }
+        
+        wait(for: [sdkReadyExpectation], timeout: 400000.0)
+        
+        XCTAssertTrue(existsFolder(name: dataFolderName))
+        XCTAssertFalse(sdkReadyFired)
+        XCTAssertTrue(timeOutFired)
+        
+    }
+    
     private func loadSplitsChangeFile() -> SplitChange? {
         return loadSplitChangeFile(name: "splitchanges_1")
     }
