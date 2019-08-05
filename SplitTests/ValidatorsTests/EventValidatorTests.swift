@@ -18,7 +18,7 @@ class EventValidatorTests: XCTestCase {
         let split2 = newSplit(trafficType: "other")
         let split3 = newSplit(trafficType: "archivedtraffictype", status: .Archived)
 
-        let splitCache = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
+        let splitCache = InMemorySplitCache()
         splitCache.addSplit(splitName: split1.name!, split: split1)
         splitCache.addSplit(splitName: split2.name!, split: split2)
         splitCache.addSplit(splitName: split3.name!, split: split3)

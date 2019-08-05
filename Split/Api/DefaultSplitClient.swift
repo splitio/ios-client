@@ -26,7 +26,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private let validationLogger: ValidationMessageLogger
     private var treatmentManager: TreatmentManager!
 
-    init(config: SplitClientConfig, key: Key, splitCache: SplitCache, trafficTypesCache: TrafficTypesCache, fileStorage: FileStorageProtocol) {
+    init(config: SplitClientConfig, key: Key, splitCache: SplitCache, fileStorage: FileStorageProtocol) {
         self.config = config
         self.key = key
 
