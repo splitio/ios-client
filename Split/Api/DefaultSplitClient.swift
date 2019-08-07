@@ -154,6 +154,7 @@ extension DefaultSplitClient {
     private func track(eventType: String, trafficType: String? = nil, value: Double? = nil, properties: [String: Any]?) -> Bool {
 
         let validationTag = "track"
+        let trafficType = trafficType ?? config.trafficType
         if let errorInfo = eventValidator.validate(key: self.key.matchingKey, trafficTypeName: trafficType, eventTypeId: trafficType, value: value, properties: properties) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
