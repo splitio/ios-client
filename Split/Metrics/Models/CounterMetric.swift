@@ -11,12 +11,12 @@ import Foundation
 struct CounterMetric: Codable {
     var name: String
     var delta: Int64 = 0
-    
-    init(name: String){
+
+    init(name: String) {
         self.name = name
     }
-    
-    mutating func addDelta(_ delta: Int64){
+
+    mutating func addDelta(_ delta: Int64) {
         self.delta += delta
     }
 }

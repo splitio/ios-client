@@ -9,9 +9,6 @@
 import Foundation
 
 protocol MySegmentsFetcher {
-    
     func fetchAll() -> [String]
-    
     func forceRefresh()
-    
 }

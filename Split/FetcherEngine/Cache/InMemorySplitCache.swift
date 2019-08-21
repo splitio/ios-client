@@ -46,7 +46,7 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
     }
 
     func getSplit(splitName: String) -> Split? {
-        var split: Split? = nil
+        var split: Split?
         queue.sync {
             split = self.splits[splitName]
         }
@@ -74,7 +74,7 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
             self.splits.removeAll()
         }
     }
-    
+
     func exists(trafficType: String) -> Bool {
         var exists = false
         queue.sync {
@@ -85,7 +85,7 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
 }
 
 extension InMemorySplitCache {
-    private func initSplits(splits: [String:Split]) {
+    private func initSplits(splits: [String: Split]) {
         for (splitName, split) in splits {
             addSplit(splitName: splitName, split: split)
         }
@@ -104,13 +104,13 @@ extension InMemorySplitCache {
             }
         }
     }
-    
+
     private func addTrafficType(name: String) {
         let trafficType = name.lowercased()
         let newCount = (trafficTypes[trafficType] ?? 0) + 1
         trafficTypes[trafficType] = newCount
     }
-    
+
     private func removeTrafficType(name: String) {
         let trafficType = name.lowercased()
         let newCount = (trafficTypes[trafficType] ?? 0) - 1

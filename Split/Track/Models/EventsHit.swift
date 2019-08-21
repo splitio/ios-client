@@ -12,36 +12,35 @@ class EventsHit: DynamicCodable {
     var identifier: String
     var events: [EventDTO]
     var attempts: Int = 0
-    
-    init(identifier: String, events: [EventDTO]){
+
+    init(identifier: String, events: [EventDTO]) {
         self.identifier = identifier
         self.events = events
     }
-    
-    func addAttempt(){
+
+    func addAttempt() {
         attempts += 1
     }
-    
+
     required init(jsonObject: Any) throws {
-        guard let data = jsonObject as? [String:Any] else {
+        guard let data = jsonObject as? [String: Any] else {
             throw SplitEncodingError.unknown
         }
-        
+
         identifier = data["identifier"] as! String
         attempts = data["attempts"] as! Int
-        
+
         guard let eventsData = data["events"] else {
             throw SplitEncodingError.unknown
         }
         events = try [EventDTO](jsonObject: eventsData)
     }
-    
+
     func toJsonObject() -> Any {
-        var jsonObject = [String:Any]()
+        var jsonObject = [String: Any]()
         jsonObject["identifier"] = identifier
         jsonObject["attempts"] = attempts
         jsonObject["events"] = events.toJsonObject()
         return jsonObject
     }
-    
 }

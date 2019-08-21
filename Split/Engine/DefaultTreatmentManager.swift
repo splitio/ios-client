@@ -44,28 +44,28 @@ class DefaultTreatmentManager: TreatmentManager {
     func getTreatmentWithConfig(_ splitName: String, attributes: [String : Any]?) -> SplitResult {
         let timeMetricStart = Date().unixTimestampInMicroseconds()
         let result = getTreatmentWithConfigNoMetrics(splitName: splitName, shouldValidate: true, attributes: attributes, validationTag: ValidationTag.getTreatmentWithConfig)
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatmentWithConfig)
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.Time.getTreatmentWithConfig)
         return result
     }
     
     func getTreatment(_ splitName: String, attributes: [String : Any]?) -> String {
         let timeMetricStart = Date().unixTimestampInMicroseconds()
         let result = getTreatmentWithConfigNoMetrics(splitName: splitName, shouldValidate: true, attributes: attributes, validationTag: ValidationTag.getTreatment).treatment
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatment)
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.Time.getTreatment)
         return result
     }
     
     func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String] {
         let timeMetricStart = Date().unixTimestampInMicroseconds()
         let result = getTreatmentsWithConfigNoMetrics(splits: splits, attributes: attributes, validationTag: ValidationTag.getTreatments).mapValues { $0.treatment }
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatments)
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.Time.getTreatments)
         return result
     }
     
     func getTreatmentsWithConfig(splits: [String], attributes:[String:Any]?) ->  [String:SplitResult] {
         let timeMetricStart = Date().unixTimestampInMicroseconds()
         let result = getTreatmentsWithConfigNoMetrics(splits: splits, attributes: attributes, validationTag: ValidationTag.getTreatmentsWithConfig)
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.time.getTreatmentsWithConfig)
+        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart, for: Metrics.Time.getTreatmentsWithConfig)
         return result
     }
     

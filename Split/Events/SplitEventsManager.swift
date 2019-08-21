@@ -124,14 +124,14 @@ class DefaultSplitEventsManager: SplitEventsManager {
             case .mySegmentsAreReady:
                 self.eventMySegmentsAreReady = true
                 if self.eventSplitsAreReady {
-                    DefaultMetricsManager.shared.time(microseconds: Date().unixTimestampInMiliseconds() - self.sdkReadyTimeStart, for: Metrics.time.sdkReady)
+                    DefaultMetricsManager.shared.time(microseconds: Date().unixTimestampInMiliseconds() - self.sdkReadyTimeStart, for: Metrics.Time.sdkReady)
                     self.trigger(event: SplitEvent.sdkReady)
                 }
                 break
             case .splitsAreReady:
                 self.eventSplitsAreReady = true
                 if self.eventMySegmentsAreReady {
-                    DefaultMetricsManager.shared.time(microseconds: Date().unixTimestampInMiliseconds() - self.sdkReadyTimeStart, for: Metrics.time.sdkReady)
+                    DefaultMetricsManager.shared.time(microseconds: Date().unixTimestampInMiliseconds() - self.sdkReadyTimeStart, for: Metrics.Time.sdkReady)
                     self.trigger(event: SplitEvent.sdkReady)
                 }
                 break

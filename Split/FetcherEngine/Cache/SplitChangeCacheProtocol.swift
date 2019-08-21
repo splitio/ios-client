@@ -8,7 +8,7 @@
 import Foundation
 
 public protocol SplitChangeCacheProtocol {
-    
+
     func addChange(splitChange: SplitChange) -> Bool
     func getChanges(since: Int64) -> SplitChange?
 

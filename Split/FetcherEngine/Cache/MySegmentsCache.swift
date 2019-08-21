@@ -16,17 +16,17 @@ import Foundation
 /// there is one file per each one of them.
 
 class MySegmentsCache: MySegmentsCacheProtocol {
-    
+
     private struct MySegmentsFile: Codable {
         var matchingKey: String
         var segments: [String]
     }
-    
+
     private let kMySegmentsFileNamePrefix  = "SPLITIO.mySegments"
     private var fileStorage: FileStorageProtocol
     private var inMemoryCache: InMemoryMySegmentsCache!
     private var matchingKey: String
-    
+
     init(matchingKey: String, fileStorage: FileStorageProtocol) {
         self.matchingKey = matchingKey
         self.fileStorage = fileStorage
@@ -40,23 +40,23 @@ class MySegmentsCache: MySegmentsCacheProtocol {
             }
         }
     }
-    
+
     func setSegments(_ segments: [String]) {
         inMemoryCache.setSegments(segments)
     }
-    
+
     func removeSegments() {
         inMemoryCache.removeSegments()
     }
-    
+
     func getSegments() -> [String] {
         return inMemoryCache.getSegments()
     }
-    
+
     func isInSegments(name: String) -> Bool {
         return inMemoryCache.isInSegments(name: name)
     }
-    
+
     func clear() {
         inMemoryCache.clear()
     }
@@ -67,7 +67,7 @@ extension MySegmentsCache {
     private func fileNameForCurrentMatchingKey() -> String {
         return "\(kMySegmentsFileNamePrefix)_\(matchingKey)"
     }
-    
+
     private func initialInMemoryCache() -> InMemoryMySegmentsCache {
         var inMemoryCache = InMemoryMySegmentsCache(segments: Set<String>())
         guard let jsonContent = fileStorage.read(fileName: fileNameForCurrentMatchingKey()) else {
@@ -81,7 +81,7 @@ extension MySegmentsCache {
         }
         return inMemoryCache
     }
-    
+
     private func saveSegments() {
         let splitsFile = MySegmentsFile(matchingKey: matchingKey, segments: getSegments())
         do {

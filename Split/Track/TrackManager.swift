@@ -16,18 +16,18 @@ struct TrackManagerConfig {
 }
 
 class TrackManager {
-    
+
     private let kEventsFileName: String = "SPLITIO.events_track"
     private let kMaxHitAttempts = 3
-    
+
     private var eventsFileStorage: FileStorageProtocol
-    
+
     private var currentEventsHit = SynchronizedArrayWrapper<EventDTO>()
     private var eventsHits = SyncDictionarySingleWrapper<String, EventsHit>()
-    
+
     private let restClient: RestClientTrackEvents
     private var pollingManager: PollingManager!
-    
+
     private let eventsFirstPushWindow: Int
     private let eventsPushRate: Int
     private let eventsQueueSize: Int64
@@ -35,8 +35,12 @@ class TrackManager {
     private let maxHitsSizeInBytes: Int
     private var eventCount: Int = 0
     private var eventBytesCount: Int = 0
-    
-    init(dispatchGroup: DispatchGroup? = nil, config: TrackManagerConfig, fileStorage: FileStorageProtocol, restClient: RestClientTrackEvents? = nil) {
+
+    init(dispatchGroup: DispatchGroup? = nil,
+         config: TrackManagerConfig,
+         fileStorage: FileStorageProtocol,
+         restClient: RestClientTrackEvents? = nil) {
+
         self.eventsFileStorage = fileStorage
         self.eventsFirstPushWindow = config.firstPushWindow
         self.eventsPushRate = config.pushRate
@@ -51,11 +55,11 @@ class TrackManager {
 
 // MARK: Public
 extension TrackManager {
-    func start(){
+    func start() {
         pollingManager.start()
     }
-    
-    func stop(){
+
+    func stop() {
         pollingManager.stop()
     }
 
@@ -70,14 +74,14 @@ extension TrackManager {
             appendHit()
         }
     }
-    
-    func appendHitAndSendAll(){
+
+    func appendHitAndSendAll() {
         appendHit()
         sendEvents()
         clearBytesCount()
         clearEventCount()
     }
-    
+
     func addToBytesCount(_ count: Int) {
         DispatchQueue.global().sync { [weak self] in
             if let self = self {
@@ -85,7 +89,7 @@ extension TrackManager {
             }
         }
     }
-    
+
     func clearBytesCount() {
         DispatchQueue.global().sync { [weak self] in
             if let self = self {
@@ -93,7 +97,7 @@ extension TrackManager {
             }
         }
     }
-    
+
     func getBytesCount() -> Int {
         var count = 0
         DispatchQueue.global().sync { [weak self] in
@@ -103,7 +107,7 @@ extension TrackManager {
         }
         return count
     }
-    
+
     func increaseToEventCount() {
         DispatchQueue.global().sync { [weak self] in
             if let self = self {
@@ -111,7 +115,7 @@ extension TrackManager {
             }
         }
     }
-    
+
     func clearEventCount() {
         DispatchQueue.global().sync { [weak self] in
             if let self = self {
@@ -119,7 +123,7 @@ extension TrackManager {
             }
         }
     }
-    
+
     func getEventCount() -> Int {
         var count = 0
         DispatchQueue.global().sync { [weak self] in
@@ -133,19 +137,19 @@ extension TrackManager {
 
 // MARK: Private
 extension TrackManager {
-    
-    private func appendHit(){
+
+    private func appendHit() {
         if currentEventsHit.count == 0 { return }
         let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit.all)
         eventsHits.setValue(newHit, forKey: newHit.identifier)
         currentEventsHit.removeAll()
     }
-    
-    private func createPollingManager(dispatchGroup: DispatchGroup?){
+
+    private func createPollingManager(dispatchGroup: DispatchGroup?) {
         var config = PollingManagerConfig()
         config.firstPollWindow = self.eventsFirstPushWindow
         config.rate = self.eventsPushRate
-        
+
         pollingManager = PollingManager(
             dispatchGroup: dispatchGroup,
             config: config,
@@ -156,21 +160,21 @@ extension TrackManager {
             }
         )
     }
-    
+
     private func sendEvents() {
         let hits = eventsHits.all
         for (_, eventsHit) in hits {
             sendEvents(eventsHit: eventsHit)
         }
     }
-    
+
     private func sendEvents(eventsHit: EventsHit) {
         if eventsHits.count == 0 { return }
         if restClient.isEventsServerAvailable() {
             eventsHit.addAttempt()
             restClient.sendTrackEvents(events: eventsHit.events, completion: { result in
                 do {
-                    let _ = try result.unwrap()
+                    _ = try result.unwrap()
                     Logger.d("Event posted successfully")
                     self.eventsHits.removeValue(forKey: eventsHit.identifier)
                 } catch {
@@ -182,11 +186,11 @@ extension TrackManager {
             })
         }
     }
-    
+
     func saveEventsToDisk() {
         let eventsFile = EventsFile()
         eventsFile.oldHits = eventsHits.all
-        
+
         if currentEventsHit.count > 0 {
             let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit.all)
             eventsFile.currentHit = newHit
@@ -199,8 +203,8 @@ extension TrackManager {
             Logger.e("Could not save events hits)")
         }
     }
-    
-    func loadEventsFromDisk(){
+
+    func loadEventsFromDisk() {
         guard let hitsJson = eventsFileStorage.read(fileName: kEventsFileName) else {
             return
         }
@@ -231,7 +235,7 @@ extension TrackManager {
             }
             strongSelf.loadEventsFromDisk()
         }
-        
+
         NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
             guard let strongSelf = self else {
                 return

@@ -13,13 +13,13 @@ struct TimeMetric {
     var latencies: [Int] {
         return latencyCounter.counters
     }
-    
+
     private let latencyCounter = LatencyCounter()
-    
+
     func addLatency(microseconds latency: Int64) {
         latencyCounter.addLatency(microseconds: latency)
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case name
         case latencies
