@@ -9,7 +9,7 @@
 import Foundation
 
 class RefreshableSplitFetcher: SplitFetcher {
-    
+
     private let splitChangeFetcher: SplitChangeFetcher
     private let interval: Int
     private var featurePollTimer: DispatchSourceTimer?
@@ -20,7 +20,7 @@ class RefreshableSplitFetcher: SplitFetcher {
 
     private var _eventsManager: SplitEventsManager
     private var firstSplitFetchs: Bool = true
-    
+
     init(splitChangeFetcher: SplitChangeFetcher, splitCache: SplitCacheProtocol, interval: Int, dispatchGroup: DispatchGroup? = nil, eventsManager:SplitEventsManager) {
         self.splitCache = splitCache
         self.splitChangeFetcher = splitChangeFetcher
@@ -28,24 +28,24 @@ class RefreshableSplitFetcher: SplitFetcher {
         self.dispatchGroup = dispatchGroup
         self._eventsManager = eventsManager
     }
-    
+
     func forceRefresh() {
         _ = self.splitCache.setChangeNumber(-1)
         pollForSplitChanges()
     }
-    
+
     func fetch(splitName: String) -> Split? {
         return splitCache.getSplit(splitName: splitName)
     }
-    
+
     func fetchAll() -> [Split]? {
         return splitCache.getAllSplits()
     }
-    
+
     func start() {
         do {
             let splitChange = try self.splitChangeFetcher.fetch(since: -1, policy: .cacheOnly)
-            if let _ = splitChange {
+            if splitChange != nil{
                 self._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
                 firstSplitFetchs = false
                 Logger.d("SplitChanges fetched from CACHE successfully")
@@ -57,11 +57,11 @@ class RefreshableSplitFetcher: SplitFetcher {
         }
         startPollingForSplitChanges()
     }
-    
+
     func stop() {
         stopPollingForSplitChanges()
     }
-    
+
     private func startPollingForSplitChanges() {
         let queue = DispatchQueue(label: "split-polling-queue")
         featurePollTimer = DispatchSource.makeTimerSource(queue: queue)
@@ -78,12 +78,12 @@ class RefreshableSplitFetcher: SplitFetcher {
         }
         featurePollTimer!.resume()
     }
-    
+
     private func stopPollingForSplitChanges() {
         featurePollTimer?.cancel()
         featurePollTimer = nil
     }
-    
+
     private func pollForSplitChanges() {
         dispatchGroup?.enter()
         let queue = DispatchQueue(label: "split-changes-queue")
@@ -92,22 +92,21 @@ class RefreshableSplitFetcher: SplitFetcher {
                 return
             }
             do {
-                
-                let splitChanges = try strongSelf.splitChangeFetcher.fetch(since: strongSelf.splitCache.getChangeNumber())
+
+                let splitChanges =
+                    try strongSelf.splitChangeFetcher.fetch(since: strongSelf.splitCache.getChangeNumber())
                 Logger.d(splitChanges.debugDescription)
 
                 strongSelf.dispatchGroup?.leave()
-                
+
                 if strongSelf.firstSplitFetchs {
                     strongSelf.firstSplitFetchs = false
                     strongSelf._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
                 } else {
                     strongSelf._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreUpdated)
                 }
-                
-                
             } catch let error {
-                DefaultMetricsManager.shared.count(delta: 1, for: Metrics.counter.splitChangeFetcherException)
+                DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
                 Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
             }
         }

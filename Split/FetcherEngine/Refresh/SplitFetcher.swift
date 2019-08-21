@@ -9,11 +9,7 @@
 import Foundation
 
 protocol SplitFetcher {
-    
     func fetch(splitName: String) -> Split?
-    
     func fetchAll() -> [Split]?
-    
     func forceRefresh()
-    
 }

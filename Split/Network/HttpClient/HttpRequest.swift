@@ -10,7 +10,7 @@ import Foundation
 // MARK: HttpDataRequest
 
 protocol HttpRequestProtocol {
-    
+
     typealias RequestCompletionHandler = () -> Void
     var identifier: Int { get }
     var url: URL { get set }
@@ -19,12 +19,12 @@ protocol HttpRequestProtocol {
     var headers: HttpHeaders  { get set }
     var response: HTTPURLResponse? { get }
     var retryTimes: Int { get set }
-    
+
     func setResponse(_ response: HTTPURLResponse)
     func send()
     func retry()
     func complete(withError error: Error?)
-    
+
 }
 
 protocol HttpDataRequestProtocol {
@@ -33,25 +33,25 @@ protocol HttpDataRequestProtocol {
 }
 
 class HttpRequest: HttpRequestProtocol {
-    
+
     var httpSession: HttpSession
     var task: URLSessionTask!
     var request: URLRequest!
     var response: HTTPURLResponse?
     var error: Error? = nil
     var retryTimes: Int = 0
-    
+
     var url: URL
     var method: HttpMethod
     var parameters: HttpParameters?
     var headers: HttpHeaders = [:]
-    
+
     var requestCompletionHandler: RequestCompletionHandler?
-    
+
     var identifier: Int {
         return task.taskIdentifier
     }
-    
+
     init(session: HttpSession, url: URL, method: HttpMethod, parameters: HttpParameters? = nil, headers: HttpHeaders?){
         self.httpSession = session
         self.url = url
@@ -61,19 +61,19 @@ class HttpRequest: HttpRequestProtocol {
             self.headers = headers
         }
     }
-    
+
     func send(){
         assertionFailure("Method not implemented")
     }
-    
+
     func retry(){
         assertionFailure("Method not implemented")
     }
-    
+
     func setResponse(_ response: HTTPURLResponse){
         self.response = response
     }
-    
+
     func complete(withError error: Error?) {
         self.error = error
         if let completionHandler = requestCompletionHandler {
@@ -85,11 +85,17 @@ class HttpRequest: HttpRequestProtocol {
 // MARK: HttpDataRequest
 
 class HttpDataRequest: HttpRequest, HttpDataRequestProtocol {
-    
+
     var data: Data?
     var body: Data?
-    
-    init(session: HttpSession, url: URL, method: HttpMethod, parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil){
+
+    init(session: HttpSession,
+         url: URL,
+         method: HttpMethod,
+         parameters: HttpParameters? = nil,
+         headers: HttpHeaders?,
+         body: Data? = nil) {
+        
         super.init(session: session, url: url, method: method, parameters: nil, headers: headers)
         self.httpSession = session
         self.url = url
@@ -99,15 +105,15 @@ class HttpDataRequest: HttpRequest, HttpDataRequestProtocol {
             self.headers = headers
         }
     }
-    
-    override func send(){
+
+    override func send() {
         request = URLRequest(url: url)
         request.httpMethod = self.method.rawValue
-        
+
         for (key, value) in headers {
             request.setValue(value, forHTTPHeaderField: key)
         }
-        
+
         if method.isUpload, let body = self.bodyPayload() {
             task = httpSession.uploadTask(with: request, from: body)
         } else {
@@ -115,25 +121,23 @@ class HttpDataRequest: HttpRequest, HttpDataRequestProtocol {
         }
         task.resume()
     }
-    
-    func appendData(_ newData: Data){
+
+    func appendData(_ newData: Data) {
         if data == nil {
             data = Data()
         }
         data!.append(newData)
     }
-    
+
     @discardableResult
     public func response(
         queue: DispatchQueue? = nil,
         responseSerializer: HttpDataResponseSerializer<JSON>,
         completionHandler: @escaping (HttpDataResponse<JSON>) -> Void)
-        -> Self
-    {
-        
+        -> Self {
         requestCompletionHandler = {
             [weak self] in
-            
+
             guard let strongSelf = self else { return }
             let result = responseSerializer.serializeResponse(strongSelf.request, strongSelf.response, strongSelf.data, strongSelf.error)
             let dataResponse = HttpDataResponse<JSON>(
@@ -141,21 +145,22 @@ class HttpDataRequest: HttpRequest, HttpDataRequestProtocol {
             )
             (queue ?? DispatchQueue.main).async { completionHandler(dataResponse) }
         }
-        
+
         return self
     }
 }
 
 // MARK: HttpDataRequest - RestClientRequestProtocol
-
 extension HttpDataRequest: RestClientRequestProtocol {
-    
-    static func responseSerializer(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>) -> HttpDataResponseSerializer<JSON> {
-        return HttpDataResponseSerializer<JSON> { request, response, data, error in
+
+    static func responseSerializer(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>)
+        -> HttpDataResponseSerializer<JSON> {
+
+        return HttpDataResponseSerializer<JSON> { _, response, data, error in
             if let error = error {
                 return .failure(error)
             }
-            
+
             if let validData = data {
                 let json = JSON(validData)
                 return errorSanitizer(json, response!.statusCode)
@@ -164,26 +169,31 @@ extension HttpDataRequest: RestClientRequestProtocol {
             }
         }
     }
-    
-    func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>, completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
-        self.response(queue: DispatchQueue(label: HttpQueue.default), responseSerializer: HttpDataRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
+
+    func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>,
+                     completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
+
+        self.response(
+            queue: DispatchQueue(label: HttpQueue.default),
+            responseSerializer: HttpDataRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
             completionHandler(response)
         }
-        return self;
+        return self
     }
-    
+
 }
 
 // MARK: HttpDataRequest - Private
 
 extension HttpDataRequest {
     private func bodyPayload() -> Data? {
-        
+
         if let body = self.body {
             return body
         }
-        
-        if let parameters = parameters, let body = try? JSONSerialization.data(withJSONObject: parameters, options: []) {
+
+        if let parameters = parameters,
+            let body = try? JSONSerialization.data(withJSONObject: parameters, options: []) {
             return body
         }
         return nil
@@ -194,9 +204,9 @@ extension HttpDataRequest: CustomStringConvertible, CustomDebugStringConvertible
     var description: String {
         return request.description
     }
-    
+
     var debugDescription: String {
         return request.debugDescription
     }
-    
+
 }

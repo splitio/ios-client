@@ -69,7 +69,7 @@ class SecureDataStore {
         if let token = self.token {
             return token
         }
-        metricsManager.count(delta: 1, for: Metrics.counter.getApiKeyFromSecureStorage)
+        metricsManager.count(delta: 1, for: Metrics.Counter.getApiKeyFromSecureStorage)
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: asset.accessToken.rawValue

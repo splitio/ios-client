@@ -12,12 +12,12 @@ class InMemoryMySegmentsCache: MySegmentsCacheProtocol {
     private let queueName = "split.inmemcache-queue.mysegments"
     private var queue: DispatchQueue
     private var mySegments: Set<String>
-    
+
     init(segments: Set<String>) {
         self.queue = DispatchQueue(label: queueName, attributes: .concurrent)
         mySegments = segments
     }
-    
+
     func setSegments(_ segments: [String]) {
         queue.async(flags: .barrier) {
             self.mySegments.removeAll()
@@ -26,13 +26,13 @@ class InMemoryMySegmentsCache: MySegmentsCacheProtocol {
             }
         }
     }
-    
+
     func removeSegments() {
         queue.async(flags: .barrier) {
             self.mySegments.removeAll()
         }
     }
-    
+
     func getSegments() -> [String] {
         var segments: Set<String>!
         queue.sync {
@@ -40,7 +40,7 @@ class InMemoryMySegmentsCache: MySegmentsCacheProtocol {
         }
         return Array(segments)
     }
-    
+
     func isInSegments(name: String) -> Bool {
         var segments: Set<String>!
         queue.sync {
@@ -48,7 +48,7 @@ class InMemoryMySegmentsCache: MySegmentsCacheProtocol {
         }
         return segments.contains(name)
     }
-    
+
     func clear() {
         queue.async(flags: .barrier) {
             self.mySegments.removeAll()

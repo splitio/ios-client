@@ -9,20 +9,20 @@
 import Foundation
 
 class LocalSplitFetcher: SplitFetcher {
-    
+
     private let splitCache: SplitCacheProtocol
-    init(splitCache: SplitCacheProtocol){
+    init(splitCache: SplitCacheProtocol) {
         self.splitCache = splitCache
     }
-    
+
     func fetch(splitName: String) -> Split? {
         return splitCache.getSplit(splitName: splitName)
     }
-    
+
     func fetchAll() -> [Split]? {
         return splitCache.getAllSplits()
     }
-    
+
     func forceRefresh() {
         // Nothing to refresh
     }
