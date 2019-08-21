@@ -1,0 +1,6 @@
+included: # paths to include during linting. `--path` is ignored if present.
+  - Split
+excluded: # paths to ignore during linting. Takes precedence over `included`.
+  - Carthage
+  - Pods
+  - Split/Common/Yaml
