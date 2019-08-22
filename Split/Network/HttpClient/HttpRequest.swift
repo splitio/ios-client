@@ -16,7 +16,7 @@ protocol HttpRequestProtocol {
     var url: URL { get set }
     var method: HttpMethod { get set }
     var parameters: HttpParameters? { get set }
-    var headers: HttpHeaders  { get set }
+    var headers: HttpHeaders { get set }
     var response: HTTPURLResponse? { get }
     var retryTimes: Int { get set }
 
@@ -38,7 +38,7 @@ class HttpRequest: HttpRequestProtocol {
     var task: URLSessionTask!
     var request: URLRequest!
     var response: HTTPURLResponse?
-    var error: Error? = nil
+    var error: Error?
     var retryTimes: Int = 0
 
     var url: URL
@@ -52,7 +52,8 @@ class HttpRequest: HttpRequestProtocol {
         return task.taskIdentifier
     }
 
-    init(session: HttpSession, url: URL, method: HttpMethod, parameters: HttpParameters? = nil, headers: HttpHeaders?){
+    init(session: HttpSession, url: URL, method: HttpMethod,
+         parameters: HttpParameters? = nil, headers: HttpHeaders?) {
         self.httpSession = session
         self.url = url
         self.method = method
@@ -62,15 +63,15 @@ class HttpRequest: HttpRequestProtocol {
         }
     }
 
-    func send(){
+    func send() {
         assertionFailure("Method not implemented")
     }
 
-    func retry(){
+    func retry() {
         assertionFailure("Method not implemented")
     }
 
-    func setResponse(_ response: HTTPURLResponse){
+    func setResponse(_ response: HTTPURLResponse) {
         self.response = response
     }
 
@@ -83,7 +84,6 @@ class HttpRequest: HttpRequestProtocol {
 }
 
 // MARK: HttpDataRequest
-
 class HttpDataRequest: HttpRequest, HttpDataRequestProtocol {
 
     var data: Data?
@@ -95,7 +95,7 @@ class HttpDataRequest: HttpRequest, HttpDataRequestProtocol {
          parameters: HttpParameters? = nil,
          headers: HttpHeaders?,
          body: Data? = nil) {
-        
+
         super.init(session: session, url: url, method: method, parameters: nil, headers: headers)
         self.httpSession = session
         self.url = url
@@ -139,7 +139,10 @@ class HttpDataRequest: HttpRequest, HttpDataRequestProtocol {
             [weak self] in
 
             guard let strongSelf = self else { return }
-            let result = responseSerializer.serializeResponse(strongSelf.request, strongSelf.response, strongSelf.data, strongSelf.error)
+            let result = responseSerializer.serializeResponse(strongSelf.request,
+                                                              strongSelf.response,
+                                                              strongSelf.data,
+                                                              strongSelf.error)
             let dataResponse = HttpDataResponse<JSON>(
                 request: strongSelf.request, response: strongSelf.response, data: strongSelf.data, result: result
             )

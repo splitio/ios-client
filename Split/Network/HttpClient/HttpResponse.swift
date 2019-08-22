@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 // MARK: HttpDataResponse
 struct HttpDataResponse<Value> {
     let request: URLRequest?
