@@ -14,7 +14,7 @@ struct EmptyValue: Codable {
 enum DataResult<Value> {
     case Success(value: Value?)
     case Failure(error: NSError)
-    
+
     init(_ f: () throws -> Value?) {
         do {
             let value = try f()
@@ -23,7 +23,7 @@ enum DataResult<Value> {
             self = .Failure(error: error)
         }
     }
-    
+
     func unwrap() throws -> Value? {
         switch self {
         case .Success(let value):

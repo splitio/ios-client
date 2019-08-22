@@ -13,14 +13,13 @@ protocol RestClientMySegments: RestClientProtocol {
 }
 
 extension RestClient: RestClientMySegments {
-    
+
     func getMySegments(user: String, completion: @escaping (DataResult<[String]>) -> Void) {
-        
-        let completionHandler: (DataResult<[String:[Segment]]>) -> Void = { result in
+        let completionHandler: (DataResult<[String: [Segment]]>) -> Void = { result in
             do {
                 let data = try result.unwrap()
                 var segmentsNames = [String]()
-                if let data = data, let segments = data["mySegments"]  {
+                if let data = data, let segments = data["mySegments"] {
                     segmentsNames = segments.map { segment in  return segment.name }
                 }
                 completion(DataResult.Success(value: segmentsNames))
@@ -30,5 +29,4 @@ extension RestClient: RestClientMySegments {
         }
         self.execute(target: EnvironmentTargetManager.getMySegments(user: user), completion: completionHandler)
     }
-    
 }

@@ -21,7 +21,12 @@ class RefreshableSplitFetcher: SplitFetcher {
     private var _eventsManager: SplitEventsManager
     private var firstSplitFetchs: Bool = true
 
-    init(splitChangeFetcher: SplitChangeFetcher, splitCache: SplitCacheProtocol, interval: Int, dispatchGroup: DispatchGroup? = nil, eventsManager:SplitEventsManager) {
+    init(splitChangeFetcher: SplitChangeFetcher,
+         splitCache: SplitCacheProtocol,
+         interval: Int,
+         dispatchGroup: DispatchGroup? = nil,
+         eventsManager: SplitEventsManager) {
+
         self.splitCache = splitCache
         self.splitChangeFetcher = splitChangeFetcher
         self.interval = interval
@@ -45,7 +50,7 @@ class RefreshableSplitFetcher: SplitFetcher {
     func start() {
         do {
             let splitChange = try self.splitChangeFetcher.fetch(since: -1, policy: .cacheOnly)
-            if splitChange != nil{
+            if splitChange != nil {
                 self._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
                 firstSplitFetchs = false
                 Logger.d("SplitChanges fetched from CACHE successfully")
