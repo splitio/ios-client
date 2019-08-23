@@ -43,10 +43,10 @@ class LocalhostYamlParserTest: XCTestCase {
         XCTAssertEqual(4, splits["my_feature"]?.conditions?.count)
         
         XCTAssertEqual(SplitConstants.CONTROL, splits["my_feature"]?.defaultTreatment)
-        XCTAssertEqual(ConditionType.Whitelist, splits["my_feature"]?.conditions?[0].conditionType)
-        XCTAssertEqual(ConditionType.Whitelist, splits["my_feature"]?.conditions?[1].conditionType)
-        XCTAssertEqual(ConditionType.Whitelist, splits["my_feature"]?.conditions?[2].conditionType)
-        XCTAssertEqual(ConditionType.Rollout, splits["my_feature"]?.conditions?[3].conditionType)
+        XCTAssertEqual(ConditionType.whitelist, splits["my_feature"]?.conditions?[0].conditionType)
+        XCTAssertEqual(ConditionType.whitelist, splits["my_feature"]?.conditions?[1].conditionType)
+        XCTAssertEqual(ConditionType.whitelist, splits["my_feature"]?.conditions?[2].conditionType)
+        XCTAssertEqual(ConditionType.rollout, splits["my_feature"]?.conditions?[3].conditionType)
         XCTAssertNil(splits["my_feature"]?.configurations?["white"])
         XCTAssertEqual("{\"desc\" : \"this applies only to ON treatment\"}", splits["my_feature"]?.configurations?["on"])
 
@@ -55,8 +55,8 @@ class LocalhostYamlParserTest: XCTestCase {
         XCTAssertEqual("{ \"size\" : 20 }", splits["split_0"]?.configurations?["off"])
         
         XCTAssertEqual(SplitConstants.CONTROL, splits["x_feature"]?.defaultTreatment)
-        XCTAssertEqual(ConditionType.Whitelist, splits["x_feature"]?.conditions?[0].conditionType)
-        XCTAssertEqual(ConditionType.Rollout, splits["x_feature"]?.conditions?[1].conditionType)
+        XCTAssertEqual(ConditionType.whitelist, splits["x_feature"]?.conditions?[0].conditionType)
+        XCTAssertEqual(ConditionType.rollout, splits["x_feature"]?.conditions?[1].conditionType)
         XCTAssertNil(splits["x_feature"]?.configurations?["on"])
         XCTAssertEqual("{\"desc\" : \"this applies only to OFF and only for only_key. The rest will receive ON\"}", splits["x_feature"]?.configurations?["off"])
         
@@ -92,7 +92,7 @@ class LocalhostYamlParserTest: XCTestCase {
         
         XCTAssertEqual(1, splits["s2"]?.conditions?.count)
         XCTAssertEqual(SplitConstants.CONTROL, splits["s2"]?.defaultTreatment)
-        XCTAssertEqual(ConditionType.Whitelist, splits["s2"]?.conditions?[0].conditionType)
+        XCTAssertEqual(ConditionType.whitelist, splits["s2"]?.conditions?[0].conditionType)
         XCTAssertNil(splits["s2"]?.configurations)
     }
     

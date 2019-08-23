@@ -29,7 +29,7 @@ class BetweenMatcher: BaseMatcher, MatcherProtocol {
         
         switch dataType {
             
-        case DataType.DateTime:
+        case DataType.dateTime:
             guard let keyValue = matchValue as? TimeInterval else {return false}
             let backendTimeIntervalStart = TimeInterval(start/1000) //Backend is in millis
             let backendTimeIntervalEnd = TimeInterval(end/1000) //Backend is in millis
@@ -41,7 +41,7 @@ class BetweenMatcher: BaseMatcher, MatcherProtocol {
 
             return attributeDate >= backendDateStart && attributeDate <= backendDateEnd
             
-        case DataType.Number:
+        case DataType.number:
             guard let keyValue = CastUtils.anyToInt64(value: matchValue) else {return false}
             return keyValue >= start && keyValue <= end
             

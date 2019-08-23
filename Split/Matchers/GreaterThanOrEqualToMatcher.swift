@@ -26,7 +26,7 @@ class GreaterThanOrEqualToMatcher: BaseMatcher, MatcherProtocol {
         }
         
         switch dataType {
-            case DataType.DateTime:
+            case DataType.dateTime:
                 guard let keyValue = matchValue as? TimeInterval else {return false}
                 
                 let backendTimeInterval = TimeInterval(value/1000) //Backend is in millis
@@ -36,7 +36,7 @@ class GreaterThanOrEqualToMatcher: BaseMatcher, MatcherProtocol {
                 let backendDate = DateTime.zeroOutSeconds(timestamp: backendTimeInterval)
                 return  attributeDate >= backendDate
             
-            case DataType.Number:
+            case DataType.number:
                 guard let keyValue = CastUtils.anyToInt64(value: matchValue) else {return false}
                 return keyValue >= value
         }

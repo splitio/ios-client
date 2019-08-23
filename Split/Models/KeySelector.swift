@@ -8,9 +8,7 @@
 
 import Foundation
 
-@objc public class KeySelector: NSObject, Codable {
-    
+@objc class KeySelector: NSObject, Codable {
     var trafficType: String?
     var attribute: String?
-
 }

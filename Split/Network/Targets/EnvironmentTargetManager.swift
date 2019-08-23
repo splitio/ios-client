@@ -19,7 +19,7 @@ class EnvironmentTargetManager {
             return eventsBaseURL.absoluteString
         }
         set {
-            self.eventsBaseURL = URL(string:newValue) ?? URL(string: kDefaultEventsBaseUrl)!
+            self.eventsBaseURL = URL(string: newValue) ?? URL(string: kDefaultEventsBaseUrl)!
         }
     }
 
@@ -28,7 +28,7 @@ class EnvironmentTargetManager {
             return sdkBaseUrl.absoluteString
         }
         set {
-            self.sdkBaseUrl = URL(string:newValue) ?? URL(string: kDefaultSdkBaseUrl)!
+            self.sdkBaseUrl = URL(string: newValue) ?? URL(string: kDefaultSdkBaseUrl)!
         }
     }
 
