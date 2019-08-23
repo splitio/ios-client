@@ -31,7 +31,7 @@ class SplitHelper {
         let whiteListMatcherData = WhitelistMatcherData()
         let partition = Partition()
         
-        condition.conditionType = ConditionType.Whitelist
+        condition.conditionType = ConditionType.whitelist
         matcherGroup.matcherCombiner = MatcherCombiner.And
         matcher.matcherType = MatcherType.Whitelist
         whiteListMatcherData.whitelist = [key]
@@ -52,7 +52,7 @@ class SplitHelper {
         let matcher = Matcher()
         let partition = Partition()
         
-        condition.conditionType = ConditionType.Rollout
+        condition.conditionType = ConditionType.rollout
         matcherGroup.matcherCombiner = MatcherCombiner.And
         matcher.matcherType = MatcherType.AllKeys
         partition.size = 100

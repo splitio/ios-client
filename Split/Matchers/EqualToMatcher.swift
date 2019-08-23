@@ -28,7 +28,7 @@ class EqualToMatcher: BaseMatcher, MatcherProtocol {
         
         switch dataType {
             
-        case DataType.DateTime:
+        case DataType.dateTime:
             guard let keyValue = matchValue as? TimeInterval else {return false}
             let backendTimeInterval = TimeInterval(value/1000)
             let attributeTimeInterval = keyValue
@@ -37,7 +37,7 @@ class EqualToMatcher: BaseMatcher, MatcherProtocol {
             let backendDate = DateTime.zeroOutTime(timestamp: backendTimeInterval)
             return backendDate == attributeDate
             
-        case DataType.Number:
+        case DataType.number:
             guard let keyValue = CastUtils.anyToInt64(value: matchValue) else {return false}
             return keyValue == value
         }

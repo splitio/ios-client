@@ -1,6 +1,6 @@
 //
 //  Split.swift
-//  Pods
+//  Split
 //
 //  Created by Brian Sztamfater on 28/9/17.
 //
@@ -8,8 +8,7 @@
 
 import Foundation
 
-@objc public class Split: NSObject, SplitBase, Codable {
-    
+@objc class Split: NSObject, SplitBase, Codable {
     var name: String?
     var seed: Int?
     var status: Status?
@@ -22,5 +21,4 @@ import Foundation
     var trafficAllocationSeed: Int?
     var algo: Int?
     var configurations: [String: String]?
-    
 }

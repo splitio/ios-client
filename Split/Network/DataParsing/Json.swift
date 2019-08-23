@@ -30,7 +30,7 @@ struct Json {
 
     func isNull() -> Bool { return data == nil }
 
-    func decode<T>(_ type: T.Type) throws -> T? where T : Decodable {
+    func decode<T>(_ type: T.Type) throws -> T? where T: Decodable {
 
         if self.isNull() {
             return nil
@@ -46,10 +46,10 @@ struct Json {
     }
 
     func dynamicDecode<T>(_ type: T.Type) throws -> T? where T: DynamicDecodable {
-        var obj: T? = nil
+        var obj: T?
         if let data = self.data {
             if let jsondObj = try JSONSerialization.jsonObject(with: data,
-                                                               options: []) as? [String:DynamicDecodable] {
+                                                               options: []) as? [String: DynamicDecodable] {
                 obj = try T.init(jsonObject: jsondObj as! DynamicDecodable)
             }
         }

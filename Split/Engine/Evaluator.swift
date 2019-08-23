@@ -82,7 +82,7 @@ class DefaultEvaluator: Evaluator {
             do {
                 for condition in conditions {
                     condition.client = self.splitClient
-                    if (!inRollOut && condition.conditionType == ConditionType.Rollout) {
+                    if (!inRollOut && condition.conditionType == ConditionType.rollout) {
                         if let trafficAllocation = split.trafficAllocation, trafficAllocation < 100  {
                             let bucket: Int64 = splitter.getBucket(seed: trafficAllocationSeed, key: bucketKey!, algo: splitAlgo)
                             if bucket > trafficAllocation {
