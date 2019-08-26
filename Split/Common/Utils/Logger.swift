@@ -8,22 +8,22 @@
 import Foundation
 
 class Logger {
-    
+
     private let queueName = "split.logger-queue"
     private var queue: DispatchQueue
     private let TAG:String = "SplitSDK"
-    
+
     private var isVerboseEnabled = false
     private var isDebugEnabled = false
-    
-    enum Level : String {
-        case VERBOSE="VERBOSE"
-        case DEBUG="DEBUG"
-        case INFO="INFO"
-        case WARNING="WARNING"
-        case ERROR="ERROR"
+
+    enum Level: String {
+        case verbose = "VERBOSE"
+        case debug = "DEBUG"
+        case info = "INFO"
+        case warning = "WARNING"
+        case error = "ERROR"
     }
-    
+
     var isVerboseModeEnabled: Bool {
         set {
             queue.async(flags: .barrier) {
@@ -38,7 +38,7 @@ class Logger {
             return isEnabled
         }
     }
-    
+
     var isDebugModeEnabled: Bool {
         set {
             queue.async(flags: .barrier) {
@@ -53,61 +53,61 @@ class Logger {
             return isEnabled
         }
     }
-    
+
     static let shared: Logger = {
         let instance = Logger()
         return instance
     }()
-    
+
     //Guarantee singleton instance
-    private init(){
+    private init() {
         queue = DispatchQueue(label: queueName, attributes: .concurrent)
     }
-    
-    private func log(level:Logger.Level, msg:String, _ ctx:Any ...){
-        
-        if(!isDebugModeEnabled && level == Logger.Level.DEBUG){
+
+    private func log(level: Logger.Level, msg: String, _ ctx: Any ...) {
+
+        if !isDebugModeEnabled && level == Logger.Level.debug {
             return
         }
-        
-        if(!isVerboseModeEnabled && level == Logger.Level.VERBOSE){
+
+        if !isVerboseModeEnabled && level == Logger.Level.verbose {
             return
         }
-        
-        if(ctx.count == 0) {
+
+        if ctx.count == 0 {
             print(level.rawValue, self.TAG, msg)
         } else {
             print(level.rawValue, self.TAG, msg, ctx[0])
         }
     }
-    
-    public static func v(_ message:String, _ context:Any ...){
+
+    static func v(_ message: String, _ context: Any ...) {
         context.count > 0
-            ? shared.log(level:Logger.Level.VERBOSE, msg:message, context)
-            : shared.log(level:Logger.Level.VERBOSE, msg:message)
+            ? shared.log(level: Logger.Level.verbose, msg: message, context)
+            : shared.log(level: Logger.Level.verbose, msg: message)
     }
-    
-    public static func d(_ message:String, _ context:Any ...){
+
+    static func d(_ message: String, _ context: Any ...) {
         context.count > 0
-            ? shared.log(level:Logger.Level.DEBUG, msg:message, context)
-            : shared.log(level:Logger.Level.DEBUG, msg:message)
+            ? shared.log(level: Logger.Level.debug, msg: message, context)
+            : shared.log(level: Logger.Level.debug, msg: message)
     }
-    
-    public static func i(_ message:String, _ context:Any ...){
+
+    static func i(_ message: String, _ context: Any ...) {
         context.count > 0
-            ? shared.log(level:Logger.Level.INFO, msg: message, context)
-            : shared.log(level:Logger.Level.INFO, msg: message)
+            ? shared.log(level: Logger.Level.info, msg: message, context)
+            : shared.log(level: Logger.Level.info, msg: message)
     }
-    
-    public static func w(_ message:String, _ context:Any ...){
+
+    static func w(_ message: String, _ context: Any ...) {
         context.count > 0
-            ? shared.log(level:Logger.Level.WARNING, msg: message, context)
-            : shared.log(level:Logger.Level.WARNING, msg: message)
+            ? shared.log(level: Logger.Level.warning, msg: message, context)
+            : shared.log(level: Logger.Level.warning, msg: message)
     }
-    
-    public static func e(_ message:String, _ context:Any ...){
+
+    static func e(_ message: String, _ context: Any ...) {
         context.count > 0
-            ? shared.log(level:Logger.Level.ERROR, msg:message, context)
-            : shared.log(level:Logger.Level.ERROR, msg:message)
+            ? shared.log(level: Logger.Level.error, msg: message, context)
+            : shared.log(level: Logger.Level.error, msg: message)
     }
 }

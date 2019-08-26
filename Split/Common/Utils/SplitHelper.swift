@@ -9,7 +9,7 @@
 import Foundation
 
 class SplitHelper {
-    
+
     func createDefaultSplit(named splitName: String) -> Split {
         let split = Split()
         split.name = splitName
@@ -22,15 +22,15 @@ class SplitHelper {
         split.seed = 1
         return split
     }
-    
+
     func createWhitelistCondition(key: String, treatment: String) -> Condition {
-        
+
         let condition = Condition()
         let matcherGroup = MatcherGroup()
         let matcher = Matcher()
         let whiteListMatcherData = WhitelistMatcherData()
         let partition = Partition()
-        
+
         condition.conditionType = ConditionType.whitelist
         matcherGroup.matcherCombiner = MatcherCombiner.And
         matcher.matcherType = MatcherType.Whitelist
@@ -42,27 +42,27 @@ class SplitHelper {
         condition.matcherGroup = matcherGroup
         condition.partitions = [partition]
         condition.label = "LOCAL_\(key)"
-        
+
         return condition
     }
-    
+
     func createRolloutCondition(treatment: String) -> Condition {
         let condition = Condition()
         let matcherGroup = MatcherGroup()
         let matcher = Matcher()
         let partition = Partition()
-        
+
         condition.conditionType = ConditionType.rollout
         matcherGroup.matcherCombiner = MatcherCombiner.And
         matcher.matcherType = MatcherType.AllKeys
         partition.size = 100
         partition.treatment = treatment
-        
+
         matcherGroup.matchers = [matcher]
         condition.matcherGroup = matcherGroup
         condition.partitions = [partition]
         condition.label = "in segment all"
-        
+
         return condition
     }
 }

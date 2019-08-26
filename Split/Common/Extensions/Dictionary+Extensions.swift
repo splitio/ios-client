@@ -1,6 +1,6 @@
 //
 //  Dictionary+JSON.swift
-//  Pods
+//  Split
 //
 //  Created by Brian Sztamfater on 20/9/17.
 //
