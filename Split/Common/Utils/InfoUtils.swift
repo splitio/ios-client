@@ -9,20 +9,20 @@
 import Foundation
 
 class InfoUtils {
-    
+
     static func bundleNameKey() -> String {
         guard let info = Bundle.main.infoDictionary,
             let domain = info[kCFBundleNameKey as String] as? String else {
                 return "Unknown"
         }
-        return domain;
+        return domain
     }
-    
+
     static func valueForKey(key: String) -> String {
         guard let info = Bundle.main.infoDictionary,
             let domain = info[key] as? String else {
                 fatalError("Cannot get \(key) key from Info.plist")
         }
-        return domain;
+        return domain
     }
 }

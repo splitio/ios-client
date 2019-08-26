@@ -8,17 +8,17 @@
 
 import Foundation
 
-extension Dictionary: DynamicEncodable where Key: Hashable, Value:DynamicEncodable {
+extension Dictionary: DynamicEncodable where Key: Hashable, Value: DynamicEncodable {
     func toJsonObject() -> Any {
         let dic = self.mapValues({ $0.toJsonObject() })
         return dic
     }
 }
 
-extension Dictionary: DynamicDecodable where Key: Hashable, Value:DynamicDecodable {
+extension Dictionary: DynamicDecodable where Key: Hashable, Value: DynamicDecodable {
     init(jsonObject: Any) throws {
-        let elements = jsonObject as! [Key:Any]
+        let elements = jsonObject as! [Key: Any]
         print(elements)
-        self = try elements.mapValues( { try Value.init(jsonObject: $0) } )
+        self = try elements.mapValues({ try Value.init(jsonObject: $0) })
     }
 }
