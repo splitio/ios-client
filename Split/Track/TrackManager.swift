@@ -8,11 +8,11 @@
 import Foundation
 
 struct TrackManagerConfig {
-    var firstPushWindow: Int!
-    var pushRate: Int!
-    var queueSize: Int64!
-    var eventsPerPush: Int!
-    var maxHitsSizeInBytes: Int!
+    var firstPushWindow: Int
+    var pushRate: Int
+    var queueSize: Int64
+    var eventsPerPush: Int
+    var maxHitsSizeInBytes: Int
 }
 
 class TrackManager {

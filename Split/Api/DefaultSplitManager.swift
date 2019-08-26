@@ -67,7 +67,7 @@ import Foundation
                 return nil
             }
         }
-        
+
         if let errorInfo = splitValidator.validateSplit(name: featureName) {
             validationLogger.log(errorInfo: errorInfo, tag: "split")
             if errorInfo.isError || errorInfo.hasWarning(.nonExistingSplit) {

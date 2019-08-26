@@ -37,12 +37,6 @@ import Foundation
     }
 
     func combineAndResults(partialResults: [Bool]) -> Bool {
-        for result in partialResults {
-            if result == false {
-                return false
-            }
-        }
-
-        return true
+        return !partialResults.contains(false)
     }
 }

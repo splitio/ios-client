@@ -22,7 +22,7 @@ protocol SplitChangeValidator {
 }
 
 class DefaultSplitChangeValidator: SplitChangeValidator {
-    
+
     func validate(_ change: SplitChange) -> ValidationErrorInfo? {
         if !(change.splits != nil && change.since != nil && change.till != nil) {
             return ValidationErrorInfo(error: .some, message: "Split change not valid")

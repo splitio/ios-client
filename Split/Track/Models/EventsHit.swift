@@ -27,8 +27,8 @@ class EventsHit: DynamicCodable {
             throw SplitEncodingError.unknown
         }
 
-        identifier = data["identifier"] as! String
-        attempts = data["attempts"] as! Int
+        identifier = data["identifier"] as? String ?? ""
+        attempts = data["attempts"] as? Int ?? 0
 
         guard let eventsData = data["events"] else {
             throw SplitEncodingError.unknown

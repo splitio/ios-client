@@ -16,13 +16,14 @@ class EventsFile: DynamicCodable {
     }
 
     required init(jsonObject: Any) throws {
-        let jsonObj = jsonObject as! [String: Any]
-        if let jsonOldHits = jsonObj["oldHits"] {
-            oldHits = try [String: EventsHit](jsonObject: jsonOldHits)
-        }
+        if let jsonObj = jsonObject as? [String: Any] {
+            if let jsonOldHits = jsonObj["oldHits"] {
+                oldHits = try [String: EventsHit](jsonObject: jsonOldHits)
+            }
 
-        if let jsonCurrentHit = jsonObj["currentHit"] {
-            currentHit = try? EventsHit(jsonObject: jsonCurrentHit)
+            if let jsonCurrentHit = jsonObj["currentHit"] {
+                currentHit = try? EventsHit(jsonObject: jsonCurrentHit)
+            }
         }
     }
 

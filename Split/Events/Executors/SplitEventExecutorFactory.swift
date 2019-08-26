@@ -8,14 +8,16 @@
 import Foundation
 
 class SplitEventExecutorFactory {
-    public static func factory(event:SplitEvent, task:SplitEventTask, resources:SplitEventExecutorResources) -> SplitEventExecutorProtocol {
-        
+    static func factory(event: SplitEvent,
+                        task: SplitEventTask,
+                        resources: SplitEventExecutorResources) -> SplitEventExecutorProtocol {
+
         switch event {
         case .sdkReady:
-            return SplitEventExecutorWithClient(task:task, client:resources.getClient())
+            return SplitEventExecutorWithClient(task: task, client: resources.getClient())
 
         case .sdkReadyTimedOut:
-            return SplitEventExecutorWithClient(task:task, client:resources.getClient())
+            return SplitEventExecutorWithClient(task: task, client: resources.getClient())
         }
     }
 }

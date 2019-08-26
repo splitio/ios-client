@@ -9,15 +9,15 @@
 import Foundation
 
 class SpaceDelimitedLocalhostSplitsParser: LocalhostSplitsParser {
-    
+
     let splitHelper = SplitHelper()
-    
+
     func parseContent(_ content: String) -> LocalhostSplits {
-        
+
         var loadedSplits = LocalhostSplits()
-        
+
         let rows = content.split(separator: "\n")
-        
+
         for row in rows {
             let line = row.trimmingCharacters(in: .whitespacesAndNewlines)
             if line.count > 0, !line.hasSuffix("#") {

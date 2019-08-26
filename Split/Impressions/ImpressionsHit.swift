@@ -11,14 +11,14 @@ class ImpressionsHit: Codable {
     var identifier: String
     var impressions: [ImpressionsTest]
     var attempts: Int = 0
-    
-    init(identifier: String, impressions: [ImpressionsTest]){
+
+    init(identifier: String, impressions: [ImpressionsTest]) {
         self.identifier = identifier
         self.impressions = impressions
     }
-    
-    func addAttempt(){
+
+    func addAttempt() {
         attempts += 1
     }
-    
+
 }

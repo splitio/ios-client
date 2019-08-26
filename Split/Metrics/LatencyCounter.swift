@@ -78,10 +78,8 @@ class LatencyCounter {
 
         // Although Binary Search is O(log n) and Linear Search is O(n)
         // we're using Linear Search because is faster in small arrays
-        for (index, bucketLatency) in kLatencyBuckets.enumerated() {
-            if latency < bucketLatency {
-                return index
-            }
+        if let index = kLatencyBuckets.firstIndex(where: { latency < $0 }) {
+            return index
         }
         return kMaxBucketIndex
     }

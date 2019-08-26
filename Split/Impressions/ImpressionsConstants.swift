@@ -8,7 +8,7 @@
 import Foundation
 
 class ImpressionsConstants {
-    
+
     static let NO_CONDITION_MATCHED: String = "default rule"
     static let KILLED: String = "killed"
     static let SPLIT_NOT_FOUND: String = "definition not found"
@@ -17,6 +17,3 @@ class ImpressionsConstants {
     static let EXCEPTION: String = "exception"
     static let NOT_READY: String = "not ready"
 }
-
-
-

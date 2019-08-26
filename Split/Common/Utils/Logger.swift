@@ -11,7 +11,7 @@ class Logger {
 
     private let queueName = "split.logger-queue"
     private var queue: DispatchQueue
-    private let TAG:String = "SplitSDK"
+    private let TAG: String = "SplitSDK"
 
     private var isVerboseEnabled = false
     private var isDebugEnabled = false
