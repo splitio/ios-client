@@ -23,10 +23,10 @@ class EventDTO: DynamicCodable {
     }
 
     required init(jsonObject: Any) throws {
-        let jsonObj = jsonObject as! [String: Any]
+        let jsonObj = jsonObject as? [String: Any] ?? [:]
         key = jsonObj["key"] as? String
-        eventTypeId = jsonObj["eventTypeId"] as! String
-        trafficTypeName = jsonObj["trafficTypeName"] as! String
+        eventTypeId = jsonObj["eventTypeId"] as? String ?? ""
+        trafficTypeName = jsonObj["trafficTypeName"] as? String ?? ""
         value = jsonObj["value"] as? Double
         timestamp = jsonObj["timestamp"] as? Int64
         properties = jsonObj["properties"] as? [String: Any]

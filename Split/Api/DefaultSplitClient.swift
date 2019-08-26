@@ -40,21 +40,24 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
         let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
 
-        let refreshableSplitFetcher = RefreshableSplitFetcher(splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: self.config.featuresRefreshRate, eventsManager: eventsManager)
+        let refreshableSplitFetcher = RefreshableSplitFetcher(
+            splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: self.config.featuresRefreshRate,
+            eventsManager: eventsManager)
 
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(matchingKey: key.matchingKey, mySegmentsChangeFetcher: HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache), mySegmentsCache: mySegmentsCache, interval: self.config.segmentsRefreshRate, eventsManager: eventsManager)
+        let mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache)
+        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(
+            matchingKey: key.matchingKey, mySegmentsChangeFetcher: mySegmentsFetcher, mySegmentsCache: mySegmentsCache,
+            interval: self.config.segmentsRefreshRate, eventsManager: eventsManager)
 
+        let trackConfig = TrackManagerConfig(
+            firstPushWindow: config.eventsFirstPushWindow, pushRate: config.eventsPushRate,
+            queueSize: config.eventsQueueSize, eventsPerPush: config.eventsPerPush,
+            maxHitsSizeInBytes: config.maxEventsQueueMemorySizeInBytes)
 
-        var trackConfig = TrackManagerConfig()
-        trackConfig.pushRate = config.eventsPushRate
-        trackConfig.firstPushWindow = config.eventsFirstPushWindow
-        trackConfig.eventsPerPush = config.eventsPerPush
-        trackConfig.queueSize = config.eventsQueueSize
-        trackConfig.maxHitsSizeInBytes = config.maxEventsQueueMemorySizeInBytes
         trackEventsManager = TrackManager(config: trackConfig, fileStorage: fileStorage)
 
         self.initialized = false
-        
+
         super.init()
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()
@@ -65,22 +68,26 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
         trackEventsManager.start()
 
-        var impressionsConfig = ImpressionManagerConfig()
-        impressionsConfig.pushRate = config.impressionRefreshRate
-        impressionsConfig.impressionsPerPush = config.impressionsChunkSize
+        let impressionsConfig = ImpressionManagerConfig(pushRate: config.impressionRefreshRate,
+                                                        impressionsPerPush: config.impressionsChunkSize)
         let impressionsManager = DefaultImpressionsManager(config: impressionsConfig, fileStorage: fileStorage)
         impressionsManager.start()
 
-        self.treatmentManager = DefaultTreatmentManager(evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager, impressionsManager: impressionsManager, metricsManager: DefaultMetricsManager.shared, keyValidator: DefaultKeyValidator(), splitValidator: DefaultSplitValidator(splitCache: splitCache), validationLogger: validationLogger)
+        self.treatmentManager = DefaultTreatmentManager(
+            evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager,
+            impressionsManager: impressionsManager, metricsManager: DefaultMetricsManager.shared,
+            keyValidator: DefaultKeyValidator(), splitValidator: DefaultSplitValidator(splitCache: splitCache),
+            validationLogger: validationLogger)
         Logger.i("iOS Split SDK initialized!")
     }
 }
 
 // MARK: Events
 extension DefaultSplitClient {
-    public func on(event: SplitEvent, execute action: @escaping SplitAction){
+    public func on(event: SplitEvent, execute action: @escaping SplitAction) {
         if eventsManager.eventAlreadyTriggered(event: event) {
-            Logger.w("A handler was added for \(event.toString()) on the SDK, which has already fired and won’t be emitted again. The callback won’t be executed.")
+            Logger.w("A handler was added for \(event.toString()) on the SDK, " +
+                "which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
         }
         let task = SplitEventActionTask(action: action)
@@ -95,7 +102,7 @@ extension DefaultSplitClient {
         return treatmentManager.getTreatmentWithConfig(split, attributes: nil)
     }
 
-    public func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
+    public func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?) -> SplitResult {
         return treatmentManager.getTreatmentWithConfig(split, attributes: attributes)
     }
 
@@ -103,15 +110,15 @@ extension DefaultSplitClient {
         return treatmentManager.getTreatment(split, attributes: nil)
     }
 
-    public func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
+    public func getTreatment(_ split: String, attributes: [String: Any]?) -> String {
         return treatmentManager.getTreatment(split, attributes: attributes)
     }
 
-    public func getTreatments(splits: [String], attributes:[String:Any]?) ->  [String:String] {
+    public func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String] {
         return treatmentManager.getTreatments(splits: splits, attributes: attributes)
     }
 
-    public func getTreatmentsWithConfig(splits: [String], attributes:[String:Any]?) ->  [String:SplitResult] {
+    public func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult] {
         return treatmentManager.getTreatmentsWithConfig(splits: splits, attributes: attributes)
     }
 }
@@ -151,37 +158,41 @@ extension DefaultSplitClient {
         return track(eventType: eventType, trafficType: nil, value: value, properties: properties)
     }
 
-    private func track(eventType: String, trafficType: String? = nil, value: Double? = nil, properties: [String: Any]?) -> Bool {
+    private func track(eventType: String, trafficType: String? = nil,
+                       value: Double? = nil, properties: [String: Any]?) -> Bool {
 
         let validationTag = "track"
         let trafficType = trafficType ?? config.trafficType
-        if let errorInfo = eventValidator.validate(key: self.key.matchingKey, trafficTypeName: trafficType, eventTypeId: trafficType, value: value, properties: properties) {
+        if let errorInfo = eventValidator.validate(key: self.key.matchingKey,
+                                                   trafficTypeName: trafficType,
+                                                   eventTypeId: trafficType,
+                                                   value: value,
+                                                   properties: properties) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
                 return false
             }
         }
+
         var validatedProps = properties
         var totalSizeInBytes = config.initialEventSizeInBytes
         if let props = validatedProps {
             let maxBytes = ValidationConfig.default.maximumEventPropertyBytes
             if props.count > ValidationConfig.default.maxEventPropertiesCount {
-                validationLogger.log(errorInfo: ValidationErrorInfo(warning: .maxEventPropertyCountReached, message: "Event has more than 300 properties. Some of them will be trimmed when processed"), tag: validationTag)
+                validationLogger.w(message: "Event has more than 300 properties. " +
+                    "Some of them will be trimmed when processed",
+                                   tag: validationTag)
             }
 
-
             for (prop, value) in props {
-                if value as? String == nil &&
-                    value as? Int == nil &&
-                    value as? Double == nil &&
-                    value as? Float == nil &&
-                    value as? Bool == nil {
+                if !isPropertyValid(value: value) {
                     validatedProps![prop] = NSNull()
                 }
 
                 totalSizeInBytes += estimateSize(for: prop) + estimateSize(for: (value as? String))
                 if totalSizeInBytes > maxBytes {
-                    validationLogger.log(errorInfo: ValidationErrorInfo(error: .some, message: "The maximum size allowed for the properties is 32kb. Current is \(prop). Event not queued"), tag: validationTag)
+                    validationLogger.e(message: "The maximum size allowed for the properties is 32kb." +
+                                                " Current is \(prop). Event not queued", tag: validationTag)
                     return false
                 }
             }
@@ -198,6 +209,14 @@ extension DefaultSplitClient {
         return true
     }
 
+    private func isPropertyValid(value: Any) -> Bool {
+        return !(
+            value as? String == nil &&
+            value as? Int == nil &&
+            value as? Double == nil &&
+            value as? Float == nil &&
+            value as? Bool == nil)
+    }
     private func estimateSize(for value: String?) -> Int {
         if let value = value {
             return MemoryLayout.size(ofValue: value) * value.count

@@ -11,6 +11,6 @@ public enum SplitInternalEvent {
     case mySegmentsAreReady
     case splitsAreReady
     case sdkReadyTimeoutReached
-    case mySegmentsAreUpdated
     case splitsAreUpdated
+    case mySegmentsAreUpdated
 }

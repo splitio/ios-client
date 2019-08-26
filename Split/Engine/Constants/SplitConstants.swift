@@ -9,6 +9,6 @@ import Foundation
 
 class  SplitConstants {
 
-    static let CONTROL : String = "control"
-    
+    static let CONTROL: String = "control"
+
 }

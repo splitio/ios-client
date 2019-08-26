@@ -8,23 +8,23 @@
 import Foundation
 
 class SplitEventActionTask: SplitEventTask {
-    
+
     var eventHandler: SplitAction!
-    
-    override private init(){
+
+    override private init() {
         super.init()
     }
-    
-    convenience init(action: @escaping SplitAction){
+
+    convenience init(action: @escaping SplitAction) {
         self.init()
         eventHandler = action
     }
-    
-    override func onPostExecute(client:SplitClient) -> Void {
+
+    override func onPostExecute(client: SplitClient) {
         // Do nothing
     }
-    
-    override func onPostExecuteView(client:SplitClient) -> Void {
+
+    override func onPostExecuteView(client: SplitClient) {
         eventHandler()
     }
 }

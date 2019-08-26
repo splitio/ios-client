@@ -50,7 +50,9 @@ struct Json {
         if let data = self.data {
             if let jsondObj = try JSONSerialization.jsonObject(with: data,
                                                                options: []) as? [String: DynamicDecodable] {
-                obj = try T.init(jsonObject: jsondObj as! DynamicDecodable)
+                if let jsondObj = jsondObj as? DynamicDecodable {
+                    obj = try T.init(jsonObject: jsondObj)
+                }
             }
         }
         return obj
