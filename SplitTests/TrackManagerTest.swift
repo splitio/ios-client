@@ -12,12 +12,7 @@ import XCTest
 class TrackManagerTest: XCTestCase {
     
     func testEventsFlushedWhenSizeLimitReached() {
-        var config = TrackManagerConfig()
-        config.firstPushWindow = 100000
-        config.queueSize = 100000
-        config.eventsPerPush = 200
-        config.pushRate = 100000
-        config.maxHitsSizeInBytes = SplitClientConfig().maxEventsQueueMemorySizeInBytes
+        var config = TrackManagerConfig(firstPushWindow: 100000, pushRate: 100000, queueSize: 100000, eventsPerPush: 200, maxHitsSizeInBytes: SplitClientConfig().maxEventsQueueMemorySizeInBytes)
         
         let restClient: RestClientTrackEvents = RestClientStub()
         let trackManager = TrackManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)
@@ -35,12 +30,7 @@ class TrackManagerTest: XCTestCase {
     }
     
     func testEventsFlushedWhenCountLimitReached() {
-        var config = TrackManagerConfig()
-        config.firstPushWindow = 100000
-        config.queueSize = 50
-        config.eventsPerPush = 200
-        config.pushRate = 100000
-        config.maxHitsSizeInBytes = SplitClientConfig().maxEventsQueueMemorySizeInBytes
+        let config = TrackManagerConfig(firstPushWindow: 100000, pushRate: 100000, queueSize: 50, eventsPerPush: 200, maxHitsSizeInBytes: SplitClientConfig().maxEventsQueueMemorySizeInBytes)
         
         let restClient: RestClientTrackEvents = RestClientStub()
         let trackManager = TrackManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)

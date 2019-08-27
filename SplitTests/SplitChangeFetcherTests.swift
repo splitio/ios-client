@@ -51,7 +51,7 @@ class SplitChangeFetcherTests: XCTestCase {
             let split = response!.splits![0];
             XCTAssertEqual(split.name, "FACUNDO_TEST", "Split name value")
             XCTAssertFalse(split.killed!, "Split killed value should be false")
-            XCTAssertEqual(split.status, Status.Active, "Split status should be 'Active'")
+            XCTAssertEqual(split.status, .active, "Split status should be 'Active'")
             XCTAssertEqual(split.trafficTypeName, "account", "Split traffict type should be account")
             XCTAssertEqual(split.defaultTreatment, "off", "Default treatment value")
             XCTAssertNotNil(split.conditions, "Conditions should not be nil")

@@ -61,11 +61,8 @@ class DefaultSplitValidator: SplitValidator {
     func validateSplit(name: String) -> ValidationErrorInfo? {
         if splitCache.getSplit(splitName: name) == nil {
             return ValidationErrorInfo(warning: .nonExistingSplit,
-                                       message:
-                """
-                you passed '\(name)' that does not exist in this environment,
-                please double check what Splits exist in the web console.
-                """)
+                                       message: "you passed '\(name)' that does not exist in this environment, " +
+                "please double check what Splits exist in the web console.")
         }
         return nil
     }

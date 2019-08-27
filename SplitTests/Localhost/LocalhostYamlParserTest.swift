@@ -42,7 +42,7 @@ class LocalhostYamlParserTest: XCTestCase {
         
         XCTAssertEqual(4, splits["my_feature"]?.conditions?.count)
         
-        XCTAssertEqual(SplitConstants.CONTROL, splits["my_feature"]?.defaultTreatment)
+        XCTAssertEqual(SplitConstants.control, splits["my_feature"]?.defaultTreatment)
         XCTAssertEqual(ConditionType.whitelist, splits["my_feature"]?.conditions?[0].conditionType)
         XCTAssertEqual(ConditionType.whitelist, splits["my_feature"]?.conditions?[1].conditionType)
         XCTAssertEqual(ConditionType.whitelist, splits["my_feature"]?.conditions?[2].conditionType)
@@ -51,17 +51,17 @@ class LocalhostYamlParserTest: XCTestCase {
         XCTAssertEqual("{\"desc\" : \"this applies only to ON treatment\"}", splits["my_feature"]?.configurations?["on"])
 
         XCTAssertEqual(1, splits["split_0"]?.conditions?.count)
-        XCTAssertEqual(SplitConstants.CONTROL, splits["split_0"]?.defaultTreatment)
+        XCTAssertEqual(SplitConstants.control, splits["split_0"]?.defaultTreatment)
         XCTAssertEqual("{ \"size\" : 20 }", splits["split_0"]?.configurations?["off"])
         
-        XCTAssertEqual(SplitConstants.CONTROL, splits["x_feature"]?.defaultTreatment)
+        XCTAssertEqual(SplitConstants.control, splits["x_feature"]?.defaultTreatment)
         XCTAssertEqual(ConditionType.whitelist, splits["x_feature"]?.conditions?[0].conditionType)
         XCTAssertEqual(ConditionType.rollout, splits["x_feature"]?.conditions?[1].conditionType)
         XCTAssertNil(splits["x_feature"]?.configurations?["on"])
         XCTAssertEqual("{\"desc\" : \"this applies only to OFF and only for only_key. The rest will receive ON\"}", splits["x_feature"]?.configurations?["off"])
         
         XCTAssertEqual(1, splits["other_feature_2"]?.conditions?.count)
-        XCTAssertEqual(SplitConstants.CONTROL, splits["other_feature_2"]?.defaultTreatment)
+        XCTAssertEqual(SplitConstants.control, splits["other_feature_2"]?.defaultTreatment)
        XCTAssertNil(splits["other_feature_2"]?.configurations)
     }
     
@@ -73,7 +73,7 @@ class LocalhostYamlParserTest: XCTestCase {
         XCTAssertEqual(1, splits.count)
         
         XCTAssertEqual(1, splits["s1"]?.conditions?.count)
-        XCTAssertEqual(SplitConstants.CONTROL, splits["s1"]?.defaultTreatment)
+        XCTAssertEqual(SplitConstants.control, splits["s1"]?.defaultTreatment)
         XCTAssertNil(splits["s1"]?.configurations)
 
         XCTAssertNil(splits["s2"])
@@ -87,11 +87,11 @@ class LocalhostYamlParserTest: XCTestCase {
         XCTAssertEqual(2, splits.count)
         
         XCTAssertEqual(1, splits["s1"]?.conditions?.count)
-        XCTAssertEqual(SplitConstants.CONTROL, splits["s1"]?.defaultTreatment)
+        XCTAssertEqual(SplitConstants.control, splits["s1"]?.defaultTreatment)
         XCTAssertNil(splits["s1"]?.configurations)
         
         XCTAssertEqual(1, splits["s2"]?.conditions?.count)
-        XCTAssertEqual(SplitConstants.CONTROL, splits["s2"]?.defaultTreatment)
+        XCTAssertEqual(SplitConstants.control, splits["s2"]?.defaultTreatment)
         XCTAssertEqual(ConditionType.whitelist, splits["s2"]?.conditions?[0].conditionType)
         XCTAssertNil(splits["s2"]?.configurations)
     }
