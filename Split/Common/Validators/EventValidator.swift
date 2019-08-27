@@ -76,8 +76,8 @@ class DefaultEventValidator: EventValidator {
                                        message:
                 "you passed \(eventTypeId ?? "null"), event name must adhere " +
                     "to the regular expression \(kTrackEventNameValidationPattern). " +
-                    " This means an event name must be alphanumeric, cannot be more than 80 characters long, " +
-                    "and can only include a dash, underscore," +
+                    "This means an event name must be alphanumeric, cannot be more than 80 characters long, " +
+                    "and can only include a dash, underscore, " +
                 "period, or colon as separators of alphanumeric characters")
         }
 
@@ -90,7 +90,7 @@ class DefaultEventValidator: EventValidator {
 
         if !splitCache.exists(trafficType: trafficTypeName!) {
             let message = "Traffic Type \(trafficTypeName!) does not have any corresponding " +
-                "Splits in this environment, make sure you’re tracking" +
+                "Splits in this environment, make sure you’re tracking " +
             "your events to a valid traffic type defined in the Split console"
 
             if validationInfo != nil {

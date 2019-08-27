@@ -108,7 +108,7 @@ class EvaluatorTests: XCTestCase {
         } catch {
         }
         XCTAssertNotNil(result)
-        XCTAssertEqual(SplitConstants.CONTROL, result.treatment)
+        XCTAssertEqual(SplitConstants.control, result.treatment)
         XCTAssertNil(result.configuration)
         XCTAssertEqual(ImpressionsConstants.splitNotFound, result.label)
     }
@@ -122,9 +122,9 @@ class EvaluatorTests: XCTestCase {
         } catch {
         }
         XCTAssertNotNil(result)
-        XCTAssertEqual(SplitConstants.CONTROL, result.treatment)
+        XCTAssertEqual(SplitConstants.control, result.treatment)
         XCTAssertNil(result.configuration)
-        XCTAssertEqual(ImpressionsConstants.EXCEPTION, result.label)
+        XCTAssertEqual(ImpressionsConstants.exception, result.label)
     }
     
     func testAlgoNull() {
