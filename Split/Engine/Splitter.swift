@@ -44,7 +44,7 @@ class Splitter: SplitterProtocol {
                 }
             }
         }
-        return SplitConstants.CONTROL
+        return SplitConstants.control
     }
 
     func getBucket(seed: Int, key: String, algo: Algorithm) -> Int64 {

@@ -30,8 +30,11 @@ class DataFolderFactory {
     }
 
     func sanitizeForFolderName(_ string: String) -> String {
-        let regex: NSRegularExpression = try! NSRegularExpression(pattern: "[^a-zA-Z0-9]",
-                                                                  options: NSRegularExpression.Options.caseInsensitive)
+        guard let regex: NSRegularExpression =
+            try? NSRegularExpression(pattern: "[^a-zA-Z0-9]",
+                                     options: NSRegularExpression.Options.caseInsensitive) else {
+                fatalError("Regular expression not valid")
+        }
         let range = NSRange(location: 0, length: string.count)
         return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
     }

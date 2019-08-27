@@ -22,9 +22,9 @@ extension RestClient: RestClientMySegments {
                 if let data = data, let segments = data["mySegments"] {
                     segmentsNames = segments.map { segment in  return segment.name }
                 }
-                completion(DataResult.Success(value: segmentsNames))
+                completion(DataResult.success(value: segmentsNames))
             } catch {
-                completion(DataResult.Failure(error: error as NSError))
+                completion(DataResult.failure(error: error as NSError))
             }
         }
         self.execute(target: EnvironmentTargetManager.getMySegments(user: user), completion: completionHandler)

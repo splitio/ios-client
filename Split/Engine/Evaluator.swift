@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+// swiftlint:disable function_body_length
 struct EvaluationResult {
     var treatment: String
     var label: String
@@ -34,7 +34,6 @@ class DefaultEvaluator: Evaluator {
         didSet {
             self.splitFetcher = self.splitClient?.splitFetcher
             self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
-
         }
     }
     var splitter: SplitterProtocol = Splitter.shared
@@ -49,11 +48,11 @@ class DefaultEvaluator: Evaluator {
     func evalTreatment(matchingKey: String, bucketingKey: String?,
                        splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
 
-        if let split: Split = splitFetcher?.fetch(splitName: splitName), split.status != Status.Archived {
-            let defaultTreatment  = split.defaultTreatment ?? SplitConstants.CONTROL
+        if let split: Split = splitFetcher?.fetch(splitName: splitName), split.status != .archived {
+            let defaultTreatment  = split.defaultTreatment ?? SplitConstants.control
             if let killed = split.killed, killed {
                 return EvaluationResult(treatment: defaultTreatment,
-                                        label: ImpressionsConstants.KILLED,
+                                        label: ImpressionsConstants.killed,
                                         splitVersion: (split.changeNumber ?? -1),
                                         configuration: split.configurations?[defaultTreatment])
             }
@@ -71,7 +70,7 @@ class DefaultEvaluator: Evaluator {
             guard let conditions: [Condition] = split.conditions,
                 let trafficAllocationSeed = split.trafficAllocationSeed,
                 let seed = split.seed else {
-                return EvaluationResult(treatment: SplitConstants.CONTROL, label: ImpressionsConstants.EXCEPTION)
+                return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.exception)
             }
 
             do {
@@ -84,7 +83,7 @@ class DefaultEvaluator: Evaluator {
                                                                    algo: splitAlgo)
                             if bucket > trafficAllocation {
                                 return EvaluationResult(treatment: defaultTreatment,
-                                                        label: ImpressionsConstants.NOT_IN_SPLIT,
+                                                        label: ImpressionsConstants.notInSplit,
                                                         configuration: split.configurations?[defaultTreatment])
                             }
                             inRollOut = true
@@ -94,30 +93,27 @@ class DefaultEvaluator: Evaluator {
                     //Return the first condition that match.
                     if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, attributes: attributes) {
                         let key: Key = Key(matchingKey: matchingKey, bucketingKey: bucketKey)
-                        let treatment = splitter.getTreatment(key: key, seed: seed,
-                                                              attributes: attributes, partions: condition.partitions,
-                                                              algo: splitAlgo)
+                        let treatment = splitter.getTreatment(key: key, seed: seed, attributes: attributes,
+                                                              partions: condition.partitions, algo: splitAlgo)
                         // *** condition.label should not be null, but what if...
-                        return EvaluationResult(treatment: treatment,
-                                                label: condition.label!,
+                        return EvaluationResult(treatment: treatment, label: condition.label!,
                                                 configuration: split.configurations?[treatment])
                     }
                 }
                 let result = EvaluationResult(treatment: defaultTreatment,
-                                              label: ImpressionsConstants.NO_CONDITION_MATCHED,
+                                              label: ImpressionsConstants.noConditionMatched,
                                               splitVersion: split.changeNumber)
                 Logger.d("* Treatment for \(matchingKey) in \(split.name ?? "") is: \(result.treatment)")
                 return result
-            } catch EvaluatorError.MatcherNotFound {
+            } catch EvaluatorError.matcherNotFound {
                 Logger.e("The matcher has not been found")
-                return EvaluationResult(treatment: SplitConstants.CONTROL,
-                                          label: ImpressionsConstants.MATCHER_NOT_FOUND,
+                return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.matcherNotFound,
                                           splitVersion: split.changeNumber)
             }
         }
 
         Logger.w("The SPLIT definition for '\(splitName)' has not been found")
-        return EvaluationResult(treatment: SplitConstants.CONTROL, label: ImpressionsConstants.SPLIT_NOT_FOUND)
+        return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
 
     }
 }

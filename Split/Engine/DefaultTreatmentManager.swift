@@ -94,7 +94,7 @@ class DefaultTreatmentManager: TreatmentManager {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             return splits.filter { !$0.isEmpty() }.reduce([String: SplitResult]()) { results, splitName in
                 var res = results
-                res[splitName] = SplitResult(treatment: SplitConstants.CONTROL)
+                res[splitName] = SplitResult(treatment: SplitConstants.control)
                 return res
             }
         }
@@ -121,20 +121,20 @@ class DefaultTreatmentManager: TreatmentManager {
         if shouldValidate, let errorInfo = keyValidator.validate(matchingKey: key.matchingKey,
                                                                  bucketingKey: key.bucketingKey) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
-            return SplitResult(treatment: SplitConstants.CONTROL)
+            return SplitResult(treatment: SplitConstants.control)
         }
 
         if let errorInfo = splitValidator.validate(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
-                return SplitResult(treatment: SplitConstants.CONTROL)
+                return SplitResult(treatment: SplitConstants.control)
             }
         }
 
         if let errorInfo = splitValidator.validateSplit(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError || errorInfo.hasWarning(.nonExistingSplit) {
-                return SplitResult(treatment: SplitConstants.CONTROL)
+                return SplitResult(treatment: SplitConstants.control)
             }
         }
 
@@ -146,15 +146,15 @@ class DefaultTreatmentManager: TreatmentManager {
                           treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
             return SplitResult(treatment: result.treatment, config: result.configuration)
         } catch {
-            logImpression(label: ImpressionsConstants.EXCEPTION, treatment: SplitConstants.CONTROL,
+            logImpression(label: ImpressionsConstants.exception, treatment: SplitConstants.control,
                           splitName: trimmedSplitName, attributes: attributes)
-            return SplitResult(treatment: SplitConstants.CONTROL)
+            return SplitResult(treatment: SplitConstants.control)
         }
     }
 
     private func evaluateIfReady(splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
         if !isSdkReady() {
-            return EvaluationResult(treatment: SplitConstants.CONTROL, label: ImpressionsConstants.NOT_READY)
+            return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.notReady)
         }
         return try evaluator.evalTreatment(matchingKey: key.matchingKey,
                                            bucketingKey: key.bucketingKey,

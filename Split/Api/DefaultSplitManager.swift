@@ -27,7 +27,7 @@ import Foundation
     public var splits: [SplitView] {
         let splits = splitCache.getAllSplits()
 
-        return splits.filter { $0.status == Status.Active }
+        return splits.filter { $0.status == .active }
             .map { split in
                 let splitView = SplitView()
                 splitView.name = split.name

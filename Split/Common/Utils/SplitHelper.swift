@@ -13,8 +13,8 @@ class SplitHelper {
     func createDefaultSplit(named splitName: String) -> Split {
         let split = Split()
         split.name = splitName
-        split.defaultTreatment = SplitConstants.CONTROL
-        split.status = Status.Active
+        split.defaultTreatment = SplitConstants.control
+        split.status = .active
         split.algo = Algorithm.murmur3.rawValue
         split.trafficTypeName = "custom"
         split.trafficAllocation = 100
@@ -32,8 +32,8 @@ class SplitHelper {
         let partition = Partition()
 
         condition.conditionType = ConditionType.whitelist
-        matcherGroup.matcherCombiner = MatcherCombiner.And
-        matcher.matcherType = MatcherType.Whitelist
+        matcherGroup.matcherCombiner = .and
+        matcher.matcherType = MatcherType.whitelist
         whiteListMatcherData.whitelist = [key]
         matcher.whitelistMatcherData = whiteListMatcherData
         partition.size = 100
@@ -53,8 +53,8 @@ class SplitHelper {
         let partition = Partition()
 
         condition.conditionType = ConditionType.rollout
-        matcherGroup.matcherCombiner = MatcherCombiner.And
-        matcher.matcherType = MatcherType.AllKeys
+        matcherGroup.matcherCombiner = .and
+        matcher.matcherType = MatcherType.allKeys
         partition.size = 100
         partition.treatment = treatment
 

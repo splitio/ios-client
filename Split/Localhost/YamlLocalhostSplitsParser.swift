@@ -8,6 +8,7 @@
 
 import Foundation
 
+// swiftlint:disable cyclomatic_complexity
 class YamlLocalhostSplitsParser: LocalhostSplitsParser {
 
     private let splitHelper = SplitHelper()
@@ -38,7 +39,7 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
                         }
 
                         if let splitMap = rowDic[splitNameField]?.dictionary {
-                            let treatment = splitMap[Yaml.string(kTreatmentField)]?.string ?? SplitConstants.CONTROL
+                            let treatment = splitMap[Yaml.string(kTreatmentField)]?.string ?? SplitConstants.control
                             if split.conditions == nil {
                                 split.conditions = [Condition]()
                             }

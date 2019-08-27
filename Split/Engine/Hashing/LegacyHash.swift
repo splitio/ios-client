@@ -7,6 +7,7 @@
 
 import Foundation
 
+// swiftlint:disable identifier_name
 class LegacyHash {
 
     static func getHash(_ key: String, _ seed: Int32) -> Int64 {

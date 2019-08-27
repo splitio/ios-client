@@ -18,28 +18,28 @@ import Foundation
 
     public init(from decoder: Decoder) throws {
         let stringValue = try? decoder.singleValueContainer().decode(String.self)
-        self = Status.enumFromString(string: stringValue ?? "active") ?? .Archived
+        self = Status.enumFromString(string: stringValue ?? "active") ?? .archived
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
-        case .Active:
+        case .active:
             try container.encode("active")
-        case .Archived:
+        case .archived:
             try container.encode("archived")
         }
     }
 
-    case Active
-    case Archived
+    case active
+    case archived
 
     static func enumFromString(string: String) -> Status? {
         switch string.lowercased() {
         case "active":
-            return Status.Active
+            return Status.active
         case "archived":
-            return Status.Archived
+            return Status.archived
         default:
             return nil
         }

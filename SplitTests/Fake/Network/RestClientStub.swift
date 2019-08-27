@@ -33,20 +33,20 @@ extension RestClientStub: RestClientProtocol {
 
 extension RestClientStub: RestClientSplitChanges {
     func getSplitChanges(since: Int64, completion: @escaping (DataResult<SplitChange>) -> Void) {
-        completion(DataResult.Success(value: splitChange))
+        completion(DataResult.success(value: splitChange))
     }
 }
 
 extension RestClientStub: RestClientMySegments {
     func getMySegments(user: String, completion: @escaping (DataResult<[String]>) -> Void) {
-        completion(DataResult.Success(value: segments))
+        completion(DataResult.success(value: segments))
     }
 }
 
 extension RestClientStub: RestClientTrackEvents {
     func sendTrackEvents(events: [EventDTO], completion: @escaping (DataResult<EmptyValue>) -> Void) {
         sendTrackEventsCount+=1
-        completion(DataResult.Success(value: nil))
+        completion(DataResult.success(value: nil))
     }
 }
 
