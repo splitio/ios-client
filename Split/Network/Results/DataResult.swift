@@ -12,23 +12,23 @@ struct EmptyValue: Codable {
 }
 
 enum DataResult<Value> {
-    case Success(value: Value?)
-    case Failure(error: NSError)
+    case success(value: Value?)
+    case failure(error: NSError)
 
-    init(_ f: () throws -> Value?) {
+    init(_ function: () throws -> Value?) {
         do {
-            let value = try f()
-            self = .Success(value: value)
+            let value = try function()
+            self = .success(value: value)
         } catch let error as NSError {
-            self = .Failure(error: error)
+            self = .failure(error: error)
         }
     }
 
     func unwrap() throws -> Value? {
         switch self {
-        case .Success(let value):
+        case .success(let value):
             return value
-        case .Failure(let error):
+        case .failure(let error):
             throw error
         }
     }

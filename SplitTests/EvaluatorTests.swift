@@ -96,7 +96,7 @@ class EvaluatorTests: XCTestCase {
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
         XCTAssertNotNil(result.configuration)
-        XCTAssertEqual(ImpressionsConstants.KILLED, result.label)
+        XCTAssertEqual(ImpressionsConstants.killed, result.label)
     }
     
     func testNotInSplit() {
@@ -110,7 +110,7 @@ class EvaluatorTests: XCTestCase {
         XCTAssertNotNil(result)
         XCTAssertEqual(SplitConstants.CONTROL, result.treatment)
         XCTAssertNil(result.configuration)
-        XCTAssertEqual(ImpressionsConstants.SPLIT_NOT_FOUND, result.label)
+        XCTAssertEqual(ImpressionsConstants.splitNotFound, result.label)
     }
     
     func testBrokenSplit() {

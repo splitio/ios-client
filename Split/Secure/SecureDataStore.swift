@@ -9,7 +9,7 @@ import Foundation
 
 class SecureDataStore {
 
-    enum asset: String {
+    enum Asset: String {
         case accessToken = "user_auth_token"
     }
 
@@ -40,7 +40,7 @@ class SecureDataStore {
 
         let queryAdd: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: asset.accessToken.rawValue,
+            kSecAttrAccount as String: Asset.accessToken.rawValue,
             kSecValueData as String: valueData,
             kSecAttrAccessible as String: kSecAttrAccessibleAlways
         ]
@@ -68,7 +68,7 @@ class SecureDataStore {
         metricsManager.count(delta: 1, for: Metrics.Counter.getApiKeyFromSecureStorage)
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: asset.accessToken.rawValue
+            kSecAttrAccount as String: Asset.accessToken.rawValue
         ]
 
         query[kSecMatchLimit as String] = kSecMatchLimitOne
@@ -100,7 +100,7 @@ class SecureDataStore {
 
         let queryDelete: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: asset.accessToken.rawValue
+            kSecAttrAccount as String: Asset.accessToken.rawValue
         ]
 
         let resultCodeDelete = SecItemDelete(queryDelete as CFDictionary)

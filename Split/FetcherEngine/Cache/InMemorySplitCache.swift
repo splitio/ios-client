@@ -94,7 +94,7 @@ extension InMemorySplitCache {
         if let trafficTypeName = split.trafficTypeName?.lowercased(),
             let status = split.status,
             let splitName = split.name {
-            if status == .Active {
+            if status == .active {
                 if let loadedSplit = splits[splitName], let loadedTrafficType = loadedSplit.trafficTypeName {
                     self.removeTrafficType(name: loadedTrafficType)
                 }

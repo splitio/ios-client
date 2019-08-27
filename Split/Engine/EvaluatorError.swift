@@ -8,5 +8,5 @@
 import Foundation
 
 enum EvaluatorError: Error {
-    case MatcherNotFound
+    case matcherNotFound
 }

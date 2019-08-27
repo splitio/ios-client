@@ -12,7 +12,7 @@ class AllKeysMatcher: BaseMatcher, MatcherProtocol {
     //--------------------------------------------------------------------------------------------------
      init(negate: Bool? = false) {
 
-        super.init(negate: negate, type: MatcherType.AllKeys)
+        super.init(negate: negate, type: MatcherType.allKeys)
 
     }
     //--------------------------------------------------------------------------------------------------

@@ -9,11 +9,11 @@
 import Foundation
 
 extension String {
-    func isEmpty() -> Bool {
+    public func isEmpty() -> Bool {
         return (self.trimmingCharacters(in: .whitespacesAndNewlines) == "")
     }
 
-    func hasUpperCaseChar() -> Bool {
+    public func hasUpperCaseChar() -> Bool {
         return self.lowercased() != self
     }
 }

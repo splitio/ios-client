@@ -81,7 +81,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
                                                  splitName: split,
                                                  attributes: nil)
         } catch {
-            return SplitResult(treatment: SplitConstants.CONTROL)
+            return SplitResult(treatment: SplitConstants.control)
         }
         return SplitResult(treatment: result!.treatment, config: result!.configuration)
     }

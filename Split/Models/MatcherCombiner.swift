@@ -9,7 +9,7 @@
 import Foundation
 
 @objc enum MatcherCombiner: Int, Codable {
-    case And
+    case and
 
     public typealias RawValue = Int
 
@@ -29,7 +29,7 @@ import Foundation
     static func enumFromString(string: String) -> MatcherCombiner? {
         switch string.lowercased() {
         case "and":
-            return MatcherCombiner.And
+            return .and
 
         default:
             return nil

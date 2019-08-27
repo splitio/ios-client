@@ -45,7 +45,7 @@ class Condition: NSObject, Codable {
                 let matcherEvaluator = try matcher.getMatcher()
                 var result: Bool = false
 
-                if matcherEvaluator.getMatcherType() != MatcherType.Dependency {
+                if matcherEvaluator.getMatcherType() != MatcherType.dependency {
                     // scenario 1: no attr in matcher
                     // e.g. if user is in segment all then split 100:on
                     if !matcherEvaluator.matcherHasAttribute() {
@@ -66,7 +66,7 @@ class Condition: NSObject, Codable {
                         }
                     }
                 } else {
-                    if matcherEvaluator.getMatcherType() == MatcherType.Dependency {
+                    if matcherEvaluator.getMatcherType() == MatcherType.dependency {
                         result = matcherEvaluator.evaluate(matchValue: matchValue,
                                                            bucketingKey: bucketingKey,
                                                            attributes: attributes)
@@ -78,7 +78,7 @@ class Condition: NSObject, Codable {
             }
 
             switch matcherG.matcherCombiner {
-            case .And?:
+            case .and?:
                 return (matcherG.matcherCombiner?.combineAndResults(partialResults: results))!
             case .none:
                 return (matcherG.matcherCombiner?.combineAndResults(partialResults: results))!
