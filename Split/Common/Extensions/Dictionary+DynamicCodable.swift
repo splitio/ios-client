@@ -17,8 +17,10 @@ extension Dictionary: DynamicEncodable where Key: Hashable, Value: DynamicEncoda
 
 extension Dictionary: DynamicDecodable where Key: Hashable, Value: DynamicDecodable {
     init(jsonObject: Any) throws {
-        let elements = jsonObject as! [Key: Any]
-        print(elements)
-        self = try elements.mapValues({ try Value.init(jsonObject: $0) })
+        if let elements = jsonObject as? [Key: Any] {
+            self = try elements.mapValues({ try Value.init(jsonObject: $0) })
+        } else {
+            fatalError("DynamicDecodable: Could not parse objects")
+        }
     }
 }
