@@ -10,6 +10,7 @@ import Foundation
 protocol MetricsManager {
     func time(microseconds latency: Int64, for operationName: String)
     func count(delta: Int64, for counterName: String)
+    func flush()
 }
 
 struct Metrics {
@@ -104,6 +105,10 @@ extension DefaultMetricsManager {
         if shouldPostToServer() {
             sendDataToServer()
         }
+    }
+    
+    func flush() {
+        sendDataToServer()
     }
 }
 
