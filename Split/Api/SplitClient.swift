@@ -28,6 +28,8 @@ public typealias SplitAction = () -> Void
     func track(eventType: String) -> Bool
     func track(eventType: String, value: Double) -> Bool
     
+    func flush()
+    
     @objc(trackWithTrafficType:eventType:properties:) func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool
     @objc(trackWithTrafficType:eventType:value:properties:) func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool
     @objc(trackWithEventType:properties:) func track(eventType: String, properties: [String: Any]?) -> Bool

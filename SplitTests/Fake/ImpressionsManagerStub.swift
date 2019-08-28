@@ -22,6 +22,9 @@ class ImpressionsManagerStub: ImpressionsManager {
     func stop() {
     }
     
+    func flush() {
+    }
+    
     func appendImpression(impression: Impression, splitName: String) {
         impressions[splitName] = impression
     }
