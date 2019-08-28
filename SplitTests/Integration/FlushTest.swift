@@ -28,6 +28,8 @@ class FlushTests: XCTestCase {
     
     private func setupServer() {
         webServer = MockWebServer()
+        webServer.routeGet(path: "/mySegments/:user_id", data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}")
+        webServer.routeGet(path: "/splitChanges?since=:param", data: try? Json.encodeToJson(splitChange))
         webServer.routePost(path: "/events/bulk", data: nil)
         webServer.routePost(path: "/testImpressions/bulk", data: nil)
         webServer.start()
@@ -39,10 +41,8 @@ class FlushTests: XCTestCase {
     
     func testControlTreatment() throws {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
-        let dataFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "account"
-        var impressions = [String:Impression]()
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 999999
@@ -52,7 +52,7 @@ class FlushTests: XCTestCase {
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 10
-        splitConfig.eventsQueueSize = 100
+        splitConfig.eventsQueueSize = 1000
         splitConfig.targetSdkEndPoint = "http://localhost:8080"
         splitConfig.targetEventsEndPoint = "http://localhost:8080"
         
@@ -63,7 +63,6 @@ class FlushTests: XCTestCase {
         let client = factory?.client
         
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-        let serverExpectation = XCTestExpectation(description: "Server Expectation")
 
         var timeOutFired = false
         var sdkReadyFired = false
@@ -87,23 +86,24 @@ class FlushTests: XCTestCase {
             _ = client?.getTreatment("NO_EXISTING_FEATURE_\(i)")
         }
 
-        for i in 0..<101 {
+        for i in 0..<100 {
             _ = client?.track(eventType: "account", value: Double(i))
         }
-        
-        wait(for: [serverExpectation], timeout: 4000.0)
-        
+        client?.flush()
+        //wait(for: [serverExpectation], timeout: 4000.0)
+        sleep(3)
+
         let event99 = getTrackEventBy(value: 99.0)
         let event100 = getTrackEventBy(value: 100.0)
-        
-        XCTAssertTrue(existsFolder(name: dataFolderName))
+
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertEqual(10, tracksHits().count)
         XCTAssertNotNil(event99)
         XCTAssertNil(event100)
     }
-    
+
+    // MARK: Tracks Hits
     private func buildEventsFromJson(content: String) throws -> [EventDTO] {
         return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
     }
@@ -116,7 +116,7 @@ class FlushTests: XCTestCase {
         let trackRecs = tracksHits()
         return trackRecs[trackRecs.count  - 1].data!
     }
-    
+
     private func getTrackEventBy(value: Double) -> EventDTO? {
         let hits = tracksHits()
         for req in hits {
@@ -133,5 +133,16 @@ class FlushTests: XCTestCase {
         }
         return nil
     }
-}
 
+    private func loadSplitsChangeFile() -> SplitChange? {
+        return loadSplitChangeFile(name: "splitchanges_1")
+    }
+
+    private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
+        if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
+            let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+            return change
+        }
+        return nil
+    }
+}
