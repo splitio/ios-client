@@ -1,10 +1,9 @@
 //
-//  LocalSplitClient.swift
-//  Pods
+//  DefaultSplitClient.swift
+//  Split
 //
 //  Created by Brian Sztamfater on 20/9/17.
 //  Modified by Natalia Stele on 11/10/17.
-
 //
 //
 
@@ -21,6 +20,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
     private var eventsManager: SplitEventsManager
     private var trackEventsManager: TrackManager
+    private var impressionsManager: ImpressionsManager
 
     private let eventValidator: EventValidator
     private let validationLogger: ValidationMessageLogger
@@ -53,8 +53,11 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
             firstPushWindow: config.eventsFirstPushWindow, pushRate: config.eventsPushRate,
             queueSize: config.eventsQueueSize, eventsPerPush: config.eventsPerPush,
             maxHitsSizeInBytes: config.maxEventsQueueMemorySizeInBytes)
+        trackEventsManager = DefaultTrackManager(config: trackConfig, fileStorage: fileStorage)
 
-        trackEventsManager = TrackManager(config: trackConfig, fileStorage: fileStorage)
+        let impressionsConfig = ImpressionManagerConfig(pushRate: config.impressionRefreshRate,
+                                                        impressionsPerPush: config.impressionsChunkSize)
+        impressionsManager = DefaultImpressionsManager(config: impressionsConfig, fileStorage: fileStorage)
 
         self.initialized = false
 
@@ -67,10 +70,6 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         eventsManager.getExecutorResources().setClient(client: self)
 
         trackEventsManager.start()
-
-        let impressionsConfig = ImpressionManagerConfig(pushRate: config.impressionRefreshRate,
-                                                        impressionsPerPush: config.impressionsChunkSize)
-        let impressionsManager = DefaultImpressionsManager(config: impressionsConfig, fileStorage: fileStorage)
         impressionsManager.start()
 
         self.treatmentManager = DefaultTreatmentManager(
@@ -121,6 +120,15 @@ extension DefaultSplitClient {
     public func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult] {
         return treatmentManager.getTreatmentsWithConfig(splits: splits, attributes: attributes)
     }
+
+    public func flush() {
+        DispatchQueue.global().async {
+            self.impressionsManager.flush()
+            self.trackEventsManager.flush()
+            DefaultMetricsManager.shared.flush()
+        }
+    }
+
 }
 
 // MARK: Track Events

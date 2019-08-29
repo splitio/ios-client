@@ -23,16 +23,18 @@ class DefaultImpressionsManager: ImpressionsManager {
     private var currentImpressionsHit = SyncDictionaryCollectionWrapper<String, Impression>()
     private var impressionsHits = SyncDictionarySingleWrapper<String, ImpressionsHit>()
 
-    private let restClient = RestClient()
+    private let restClient: RestClientImpressions
     private var pollingManager: PollingManager!
 
     private var impressionsPushRate: Int!
     private var impressionsPerPush: Int64!
 
-    init(dispatchGroup: DispatchGroup? = nil, config: ImpressionManagerConfig, fileStorage: FileStorageProtocol) {
+    init(dispatchGroup: DispatchGroup? = nil, config: ImpressionManagerConfig, fileStorage: FileStorageProtocol,
+         restClient: RestClientImpressions? = nil) {
         self.fileStorage = fileStorage
         self.impressionsPushRate = config.pushRate
         self.impressionsPerPush = config.impressionsPerPush
+        self.restClient = restClient ?? RestClient()
         self.createPollingManager(dispatchGroup: dispatchGroup)
         subscribeNotifications()
     }
@@ -46,6 +48,10 @@ extension DefaultImpressionsManager {
 
     func stop() {
         pollingManager.stop()
+    }
+
+    func flush() {
+        appendHitAndSendAll()
     }
 
     func appendImpression(impression: Impression, splitName: String) {

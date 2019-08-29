@@ -11,6 +11,7 @@ import Foundation
 protocol ImpressionsManager {
     func start()
     func stop()
+    func flush()
     func appendImpression(impression: Impression, splitName: String)
     func appendHitAndSendAll()
 }

@@ -136,4 +136,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
         return true
     }
 
+    public func flush() {
+    }
+
 }

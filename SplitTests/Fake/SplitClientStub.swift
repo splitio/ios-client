@@ -69,4 +69,7 @@ class SplitClientStub: SplitClient {
     func track(eventType: String, value: Double, properties: [String:Any]?) -> Bool {
         return true
     }
+    
+    func flush() {
+    }
 }

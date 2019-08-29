@@ -12,10 +12,10 @@ import XCTest
 class TrackManagerTest: XCTestCase {
     
     func testEventsFlushedWhenSizeLimitReached() {
-        var config = TrackManagerConfig(firstPushWindow: 100000, pushRate: 100000, queueSize: 100000, eventsPerPush: 200, maxHitsSizeInBytes: SplitClientConfig().maxEventsQueueMemorySizeInBytes)
+        let config = TrackManagerConfig(firstPushWindow: 100000, pushRate: 100000, queueSize: 100000, eventsPerPush: 200, maxHitsSizeInBytes: SplitClientConfig().maxEventsQueueMemorySizeInBytes)
         
         let restClient: RestClientTrackEvents = RestClientStub()
-        let trackManager = TrackManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)
+        let trackManager = DefaultTrackManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)
         for _ in 1...159 {
             trackManager.appendEvent(event: create32kbEvent())
         }
@@ -33,7 +33,7 @@ class TrackManagerTest: XCTestCase {
         let config = TrackManagerConfig(firstPushWindow: 100000, pushRate: 100000, queueSize: 50, eventsPerPush: 200, maxHitsSizeInBytes: SplitClientConfig().maxEventsQueueMemorySizeInBytes)
         
         let restClient: RestClientTrackEvents = RestClientStub()
-        let trackManager = TrackManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)
+        let trackManager = DefaultTrackManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)
         for _ in 1...49 {
             trackManager.appendEvent(event: create32kbEvent())
         }
@@ -54,4 +54,26 @@ class TrackManagerTest: XCTestCase {
         event.sizeInBytes = 1024 * 32;
         return event;
     }
+    
+    func testEventsFlush() {
+        var config = TrackManagerConfig()
+        config.firstPushWindow = 100000
+        config.queueSize = 100000
+        config.eventsPerPush = 200
+        config.pushRate = 100000
+        config.maxHitsSizeInBytes = SplitClientConfig().maxEventsQueueMemorySizeInBytes
+        
+        let restClient: RestClientTrackEvents = RestClientStub()
+        let trackManager = DefaultTrackManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)
+        for _ in 1...10 {
+            trackManager.appendEvent(event: create32kbEvent())
+        }
+        trackManager.flush()
+        let sentCount = (restClient as! RestClientStub).getSendTrackEventsCount()
+        
+        
+        XCTAssertEqual(1, sentCount)
+        
+    }
+    
 }
