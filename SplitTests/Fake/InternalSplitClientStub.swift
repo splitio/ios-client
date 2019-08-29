@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 
 class InternalSplitClientStub: InternalSplitClient {
-
+    
     var splitFetcher: SplitFetcher?
     var mySegmentsFetcher: MySegmentsFetcher?
     
@@ -77,6 +77,9 @@ class InternalSplitClientStub: InternalSplitClient {
     
     func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool {
         return true
+    }
+    
+    func flush() {
     }
     
 }

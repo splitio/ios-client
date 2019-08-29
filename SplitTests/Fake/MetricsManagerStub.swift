@@ -15,4 +15,7 @@ class MetricsManagerStub: MetricsManager {
     
     func count(delta: Int64, for counterName: String) {
     }
+    
+    func flush() {
+    }
 }
