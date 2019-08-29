@@ -96,11 +96,16 @@ class FlushTests: XCTestCase {
         let event99 = getTrackEventBy(value: 99.0)
         let event100 = getTrackEventBy(value: 100.0)
 
+        let impression1 = getImpressionBy(testName: "FACUNDO_TEST")
+        let impression2 = getImpressionBy(testName: "NO_EXISTING_FEATURE_1")
+
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertEqual(10, tracksHits().count)
         XCTAssertNotNil(event99)
         XCTAssertNil(event100)
+        XCTAssertNotNil(impression1)
+        XCTAssertNil(impression2)
     }
 
     // MARK: Tracks Hits
@@ -108,10 +113,10 @@ class FlushTests: XCTestCase {
         return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
     }
     
-        private func tracksHits() -> [ReceivedRequest] {
-            return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
-        }
-        
+    private func tracksHits() -> [ReceivedRequest] {
+        return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
+    }
+
     private func getLastTrackEventJsonHit() -> String {
         let trackRecs = tracksHits()
         return trackRecs[trackRecs.count  - 1].data!
@@ -129,6 +134,37 @@ class FlushTests: XCTestCase {
             let events = lastEventHitEvents.filter { $0.value == value }
             if events.count > 0 {
                 return events[0]
+            }
+        }
+        return nil
+    }
+
+    // MARK: Impressions Hits
+    private func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
+        return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
+    }
+
+    private func impressionsHits() -> [ReceivedRequest] {
+        return webServer.receivedRequests.filter { $0.path == "/testImpressions/bulk"}
+    }
+
+    private func getLastImpressionsJsonHit() -> String {
+        let trackRecs = tracksHits()
+        return trackRecs[trackRecs.count  - 1].data!
+    }
+
+    private func getImpressionBy(testName: String) -> ImpressionsTest? {
+        let hits = impressionsHits()
+        for req in hits {
+            var lastImpressionsHitTest: [ImpressionsTest] = []
+            do {
+                lastImpressionsHitTest = try buildImpressionsFromJson(content: req.data!)
+            } catch {
+                print("error: \(error)")
+            }
+            let impressions = lastImpressionsHitTest.filter { $0.testName == testName }
+            if impressions.count > 0 {
+                return impressions[0]
             }
         }
         return nil
