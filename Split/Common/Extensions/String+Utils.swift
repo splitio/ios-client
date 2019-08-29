@@ -12,9 +12,8 @@ extension String {
     public func isEmpty() -> Bool {
         return (self.trimmingCharacters(in: .whitespacesAndNewlines) == "")
     }
-    
+
     public func hasUpperCaseChar() -> Bool {
         return self.lowercased() != self
     }
-    
 }

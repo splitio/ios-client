@@ -92,7 +92,7 @@ class SplitIntegrationTests: XCTestCase {
         let splits = manager?.splits
         
         let i1 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "FACUNDO_TEST", treatment: "off")]
-        let i2 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "NO_EXISTING_FEATURE", treatment: SplitConstants.CONTROL)]
+        let i2 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "NO_EXISTING_FEATURE", treatment: SplitConstants.control)]
         
         for i in 0..<101 {
             _ = client?.track(eventType: "account", value: Double(i))
@@ -107,10 +107,10 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertEqual("off", t1)
-        XCTAssertEqual(SplitConstants.CONTROL, t2)
+        XCTAssertEqual(SplitConstants.control, t2)
         XCTAssertEqual("{\"the_emojis\":\"\\uD83D\\uDE01 -- áéíóúöÖüÜÏëç\"}", treatmentConfigEmojis?.config)
-        XCTAssertEqual(SplitConstants.CONTROL, ts1?["NO_EXISTING_FEATURE1"])
-        XCTAssertEqual(SplitConstants.CONTROL, ts1?["NO_EXISTING_FEATURE2"])
+        XCTAssertEqual(SplitConstants.control, ts1?["NO_EXISTING_FEATURE1"])
+        XCTAssertEqual(SplitConstants.control, ts1?["NO_EXISTING_FEATURE2"])
         
         XCTAssertEqual(30, splits?.count)
         XCTAssertNotNil(s1)

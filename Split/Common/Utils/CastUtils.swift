@@ -11,7 +11,6 @@
 
 import Foundation
 
-
 class CastUtils {
     static func anyToInt64(value: Any?) -> Int64? {
         if let val = value as? NSNumber {

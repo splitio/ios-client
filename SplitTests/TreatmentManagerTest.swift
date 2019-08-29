@@ -233,9 +233,9 @@ class TreatmentManagerTest: XCTestCase {
     }
     
     func assertControl(splitList: [String], treatment: String, treatmentList: [String:String], splitResult: SplitResult?, splitResultList: [String:SplitResult]) {
-        XCTAssertEqual(SplitConstants.CONTROL, treatment)
+        XCTAssertEqual(SplitConstants.control, treatment)
         
-        XCTAssertEqual(SplitConstants.CONTROL, splitResult?.treatment)
+        XCTAssertEqual(SplitConstants.control, splitResult?.treatment)
         XCTAssertNil(splitResult?.config)
         
         for splitName in splitList {
@@ -243,7 +243,7 @@ class TreatmentManagerTest: XCTestCase {
         }
         
         for res in splitResultList.values {
-            XCTAssertEqual(SplitConstants.CONTROL, res.treatment)
+            XCTAssertEqual(SplitConstants.control, res.treatment)
         }
         
         

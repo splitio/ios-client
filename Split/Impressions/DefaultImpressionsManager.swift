@@ -9,27 +9,28 @@
 import Foundation
 
 struct ImpressionManagerConfig {
-    var pushRate: Int! // Interval
-    var impressionsPerPush: Int64! // ChunkSize
+    var pushRate: Int
+    var impressionsPerPush: Int64
 }
 
 class DefaultImpressionsManager: ImpressionsManager {
-    
+
     private let kImpressionsFileName: String = "SPLITIO.impressions"
     private let kMaxHitAttempts = 3
-    
+
     private var fileStorage: FileStorageProtocol
-    
+
     private var currentImpressionsHit = SyncDictionaryCollectionWrapper<String, Impression>()
     private var impressionsHits = SyncDictionarySingleWrapper<String, ImpressionsHit>()
-    
+
     private let restClient: RestClientImpressions
     private var pollingManager: PollingManager!
-    
+
     private var impressionsPushRate: Int!
     private var impressionsPerPush: Int64!
-    
-    init(dispatchGroup: DispatchGroup? = nil, config: ImpressionManagerConfig, fileStorage: FileStorageProtocol, restClient: RestClientImpressions? = nil) {
+
+    init(dispatchGroup: DispatchGroup? = nil, config: ImpressionManagerConfig, fileStorage: FileStorageProtocol,
+         restClient: RestClientImpressions? = nil) {
         self.fileStorage = fileStorage
         self.impressionsPushRate = config.pushRate
         self.impressionsPerPush = config.impressionsPerPush
@@ -41,26 +42,26 @@ class DefaultImpressionsManager: ImpressionsManager {
 
 // MARK: Public
 extension DefaultImpressionsManager {
-    func start(){
+    func start() {
         pollingManager.start()
     }
-    
-    func stop(){
+
+    func stop() {
         pollingManager.stop()
     }
-    
-    func flush(){
+
+    func flush() {
         appendHitAndSendAll()
     }
 
-    func appendImpression(impression: Impression, splitName: String){
+    func appendImpression(impression: Impression, splitName: String) {
         currentImpressionsHit.appendValue(impression, toKey: splitName)
         if currentImpressionsHit.count == impressionsPerPush {
             appendHit()
         }
     }
-    
-    func appendHitAndSendAll(){
+
+    func appendHitAndSendAll() {
         appendHit()
         sendImpressions()
     }
@@ -68,18 +69,18 @@ extension DefaultImpressionsManager {
 
 // MARK: Private
 extension DefaultImpressionsManager {
-    
-    private func appendHit(){
+
+    private func appendHit() {
         if currentImpressionsHit.count == 0 { return }
         let newHit = ImpressionsHit(identifier: UUID().uuidString, impressions: currentImpressionsTests())
         impressionsHits.setValue(newHit, forKey: newHit.identifier)
         currentImpressionsHit.removeAll()
     }
-    
-    private func createPollingManager(dispatchGroup: DispatchGroup?){
+
+    private func createPollingManager(dispatchGroup: DispatchGroup?) {
         var config = PollingManagerConfig()
         config.rate = self.impressionsPushRate
-        
+
         pollingManager = PollingManager(
             dispatchGroup: dispatchGroup,
             config: config,
@@ -90,22 +91,22 @@ extension DefaultImpressionsManager {
             }
         )
     }
-    
+
     private func sendImpressions() {
         let impressionsHits = self.impressionsHits.all
         for (_, impressionsHit) in impressionsHits {
             sendImpressions(impressionsHit: impressionsHit)
         }
     }
-    
+
     private func sendImpressions(impressionsHit: ImpressionsHit) {
         if impressionsHits.count == 0 { return }
         if restClient.isSdkServerAvailable() {
             impressionsHit.addAttempt()
-            
+
             restClient.sendImpressions(impressions: impressionsHit.impressions, completion: { result in
                 do {
-                    let _ = try result.unwrap()
+                    _ = try result.unwrap()
                     Logger.d("Impressions posted successfully")
                     self.impressionsHits.removeValue(forKey: impressionsHit.identifier)
                 } catch {
@@ -117,17 +118,17 @@ extension DefaultImpressionsManager {
             })
         }
     }
-    
+
     private func currentImpressionsTests() -> [ImpressionsTest] {
         return currentImpressionsHit.all.map { key, impressions in
             return ImpressionsTest(testName: key, keyImpressions: impressions)
         }
     }
-    
+
     func saveImpressionsToDisk() {
         let impressionsFile = ImpressionsFile()
         impressionsFile.oldHits = impressionsHits.all
-        
+
         if currentImpressionsHit.count > 0 {
             let newHit = ImpressionsHit(identifier: UUID().uuidString, impressions: currentImpressionsTests())
             impressionsFile.currentHit = newHit
@@ -140,8 +141,8 @@ extension DefaultImpressionsManager {
             Logger.e("Could not save impressions hits)")
         }
     }
-    
-    func loadImpressionsFromDisk(){
+
+    func loadImpressionsFromDisk() {
         guard let hitsJson = fileStorage.read(fileName: kImpressionsFileName) else {
             return
         }
@@ -163,7 +164,7 @@ extension DefaultImpressionsManager {
                     }
                 }
             }
-            
+
         } catch {
             Logger.e("Error while loading Impression impressions from disk")
             return
@@ -181,7 +182,7 @@ extension DefaultImpressionsManager {
             }
             strongSelf.loadImpressionsFromDisk()
         }
-        
+
         NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
             guard let strongSelf = self else {
                 return

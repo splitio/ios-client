@@ -11,7 +11,7 @@ import Foundation
 @objc public class SplitResult: NSObject {
     @objc public var treatment: String
     @objc public var config: String?
-    
+
     init(treatment: String, config: String? = nil) {
         self.treatment = treatment
         self.config = config

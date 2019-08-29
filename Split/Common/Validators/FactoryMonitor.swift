@@ -10,17 +10,17 @@ import Foundation
 
 struct WeakFactory {
     private(set) weak var factory: SplitFactory?
-    
+
     init(factory: SplitFactory?) {
         self.factory = factory
     }
 }
 
 class FactoryRegistry {
-    
+
     private var queue: DispatchQueue
-    private var weakFactories: [String:[WeakFactory]]
-    
+    private var weakFactories: [String: [WeakFactory]]
+
     var count: Int {
         var count: Int = 0
         queue.sync {
@@ -31,12 +31,12 @@ class FactoryRegistry {
         }
         return count
     }
-    
-    init(){
+
+    init() {
         queue = DispatchQueue(label: NSUUID().uuidString)
-        weakFactories = [String:[WeakFactory]]()
+        weakFactories = [String: [WeakFactory]]()
     }
-    
+
     func count(for key: String) -> Int {
         var count: Int = 0
         queue.sync {
@@ -45,14 +45,14 @@ class FactoryRegistry {
         }
         return count
     }
-    
+
     private func compact(for key: String) {
         if let refs = self.weakFactories[key] {
-            let aliveRefs = refs.filter( {$0.factory != nil} )
+            let aliveRefs = refs.filter({$0.factory != nil})
             self.weakFactories[key] = aliveRefs
         }
     }
-    
+
     func append(_ factory: WeakFactory, to key: String) {
         queue.async {
             var factories = self.weakFactories[key] ?? []
@@ -70,19 +70,19 @@ protocol FactoryMonitor {
 
 class DefaultFactoryMonitor: FactoryMonitor {
     var factoryRegistry: FactoryRegistry
-    
+
     var allCount: Int {
         return factoryRegistry.count
     }
-    
+
     init() {
         factoryRegistry = FactoryRegistry()
     }
-    
+
     func instanceCount(for apiKey: String) -> Int {
         return factoryRegistry.count(for: apiKey)
     }
-    
+
     func register(instance: SplitFactory?, for apiKey: String) {
         let weakFactory = WeakFactory(factory: instance)
         factoryRegistry.append(weakFactory, to: apiKey)

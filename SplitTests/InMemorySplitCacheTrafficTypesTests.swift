@@ -34,8 +34,8 @@ class InMemorySplitCacheTrafficTypesTests: XCTestCase {
     }
     
     func testRemove2TrafficTypes() {
-        cache.addSplit(splitName: "s0", split: newSplit(name: "s0", trafficType: "trafficType0", status: .Archived))
-        cache.addSplit(splitName: "s1", split: newSplit(name: "s1", trafficType: "trafficType1", status: .Archived))
+        cache.addSplit(splitName: "s0", split: newSplit(name: "s0", trafficType: "trafficType0", status: .archived))
+        cache.addSplit(splitName: "s1", split: newSplit(name: "s1", trafficType: "trafficType1", status: .archived))
         XCTAssertFalse(cache.exists(trafficType: "traffictype0"))
         XCTAssertFalse(cache.exists(trafficType: "traffictype1"))
         XCTAssertTrue(cache.exists(trafficType: "traffictype2"))
@@ -43,10 +43,10 @@ class InMemorySplitCacheTrafficTypesTests: XCTestCase {
     }
     
     func testSeveralTrafficTypeUpdatesFinalActive() {
-        cache.addSplit(splitName: "s0", split: newSplit(name: "s0", trafficType: "trafficType0", status: .Archived))
-        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .Active))
-        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .Archived))
-        cache.addSplit(splitName: "s02", split: newSplit(name: "s02", trafficType: "trafficType0", status: .Active))
+        cache.addSplit(splitName: "s0", split: newSplit(name: "s0", trafficType: "trafficType0", status: .archived))
+        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .active))
+        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .archived))
+        cache.addSplit(splitName: "s02", split: newSplit(name: "s02", trafficType: "trafficType0", status: .active))
         XCTAssertTrue(cache.exists(trafficType: "traffictype0"))
         XCTAssertTrue(cache.exists(trafficType: "traffictype1"))
         XCTAssertTrue(cache.exists(trafficType: "traffictype2"))
@@ -54,11 +54,11 @@ class InMemorySplitCacheTrafficTypesTests: XCTestCase {
     }
     
     func testSeveralTrafficTypeUpdatesFinalArchived() {
-        cache.addSplit(splitName: "s0", split: newSplit(name: "s0", trafficType: "trafficType0", status: .Archived))
-        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .Active))
-        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .Archived))
-        cache.addSplit(splitName: "s02", split: newSplit(name: "s02", trafficType: "trafficType0", status: .Active))
-        cache.addSplit(splitName: "s02", split: newSplit(name: "s02", trafficType: "trafficType0", status: .Archived))
+        cache.addSplit(splitName: "s0", split: newSplit(name: "s0", trafficType: "trafficType0", status: .archived))
+        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .active))
+        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .archived))
+        cache.addSplit(splitName: "s02", split: newSplit(name: "s02", trafficType: "trafficType0", status: .active))
+        cache.addSplit(splitName: "s02", split: newSplit(name: "s02", trafficType: "trafficType0", status: .archived))
         XCTAssertFalse(cache.exists(trafficType: "traffictype0"))
         XCTAssertTrue(cache.exists(trafficType: "traffictype1"))
         XCTAssertTrue(cache.exists(trafficType: "traffictype2"))
@@ -66,11 +66,11 @@ class InMemorySplitCacheTrafficTypesTests: XCTestCase {
     }
     
     func testOverflowArchived() {
-        cache.addSplit(splitName: "s0", split: newSplit(name: "s0", trafficType: "trafficType0", status: .Archived))
-        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .Archived))
-        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .Archived))
-        cache.addSplit(splitName: "s02", split: newSplit(name: "s02", trafficType: "trafficType0", status: .Archived))
-        cache.addSplit(splitName: "s02", split: newSplit(name: "s02", trafficType: "trafficType0", status: .Archived))
+        cache.addSplit(splitName: "s0", split: newSplit(name: "s0", trafficType: "trafficType0", status: .archived))
+        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .archived))
+        cache.addSplit(splitName: "s01", split: newSplit(name: "s01", trafficType: "trafficType0", status: .archived))
+        cache.addSplit(splitName: "s02", split: newSplit(name: "s02", trafficType: "trafficType0", status: .archived))
+        cache.addSplit(splitName: "s02", split: newSplit(name: "s02", trafficType: "trafficType0", status: .archived))
     
         XCTAssertFalse(cache.exists(trafficType: "traffictype0"))
         XCTAssertTrue(cache.exists(trafficType: "traffictype1"))
@@ -80,9 +80,9 @@ class InMemorySplitCacheTrafficTypesTests: XCTestCase {
     
     func testUpdatedSplitTrafficType() {
         
-        let s1 = newSplit(name: "n_s0", trafficType: "tt", status: .Active)
-        let s2 = newSplit(name: "n_s2", trafficType: "mytt", status: .Active)
-        let s2ar = newSplit(name: "n_s2", trafficType: "mytt", status: .Archived)
+        let s1 = newSplit(name: "n_s0", trafficType: "tt", status: .active)
+        let s2 = newSplit(name: "n_s2", trafficType: "mytt", status: .active)
+        let s2ar = newSplit(name: "n_s2", trafficType: "mytt", status: .archived)
 
         cache.addSplit(splitName: s1.name!, split: s1)
         cache.addSplit(splitName: s2.name!, split: s2)
@@ -98,8 +98,8 @@ class InMemorySplitCacheTrafficTypesTests: XCTestCase {
     func testChangedTrafficTypeForSplit() {
         // Testing remove split and recreate it with other tt
         let splitName = "n_s2"
-        let s2t1 = newSplit(name: splitName, trafficType: "tt", status: .Active)
-        let s2t2 = newSplit(name: splitName, trafficType: "mytt", status: .Active)
+        let s2t1 = newSplit(name: splitName, trafficType: "tt", status: .active)
+        let s2t2 = newSplit(name: splitName, trafficType: "mytt", status: .active)
         
         cache.addSplit(splitName: splitName, split: s2t1)
         cache.addSplit(splitName: splitName, split: s2t1)
@@ -113,9 +113,9 @@ class InMemorySplitCacheTrafficTypesTests: XCTestCase {
     
     func testExistingChangedTrafficTypeForSplit() {
         let splitName = "n_s2"
-        let s1 = newSplit(name: "n_s1", trafficType: "tt", status: .Active)
-        let s2t1 = newSplit(name: splitName, trafficType: "tt", status: .Active)
-        let s2t2 = newSplit(name: splitName, trafficType: "mytt", status: .Active)
+        let s1 = newSplit(name: "n_s1", trafficType: "tt", status: .active)
+        let s2t1 = newSplit(name: splitName, trafficType: "tt", status: .active)
+        let s2t2 = newSplit(name: splitName, trafficType: "mytt", status: .active)
         
         cache.addSplit(splitName: s1.name!, split: s1)
         cache.addSplit(splitName: splitName, split: s2t1)
@@ -128,13 +128,11 @@ class InMemorySplitCacheTrafficTypesTests: XCTestCase {
         XCTAssertTrue(cache.exists(trafficType: "mytt"))
     }
  
-    private func newSplit(name: String, trafficType: String, status: Status = .Active) -> Split {
+    private func newSplit(name: String, trafficType: String, status: Status = .active) -> Split {
         let split = Split()
         split.name = name
         split.trafficTypeName = trafficType
         split.status = status
         return split
     }
-    
-
 }

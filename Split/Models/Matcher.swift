@@ -1,15 +1,16 @@
- //
+//
 //  Matcher.swift
-//  Pods
+//  Split
 //
 //  Created by Brian Sztamfater on 28/9/17.
 //
 //
 
-import Foundation
+ import Foundation
 
-class Matcher: NSObject, Codable {
-    
+// swiftlint:disable cyclomatic_complexity function_body_length
+ class Matcher: NSObject, Codable {
+
     var keySelector: KeySelector?
     var matcherType: MatcherType?
     var negate: Bool?
@@ -21,7 +22,7 @@ class Matcher: NSObject, Codable {
     var booleanMatcherData: Bool?
     var stringMatcherData: String?
     var client: InternalSplitClient?
-    
+
     enum CodingKeys: String, CodingKey {
         case keySelector
         case matcherType
@@ -34,7 +35,7 @@ class Matcher: NSObject, Codable {
         case booleanMatcherData
         case stringMatcherData
     }
-    
+
     override init() {
         super.init()
     }
@@ -44,7 +45,8 @@ class Matcher: NSObject, Codable {
             keySelector = try? values.decode(KeySelector.self, forKey: .keySelector)
             matcherType = try? values.decode(MatcherType.self, forKey: .matcherType)
             negate = (try? values.decode(Bool.self, forKey: .negate)) ?? false
-            userDefinedSegmentMatcherData = try? values.decode(UserDefinedSegmentMatcherData.self, forKey: .userDefinedSegmentMatcherData)
+            userDefinedSegmentMatcherData = try? values.decode(UserDefinedSegmentMatcherData.self,
+                                                               forKey: .userDefinedSegmentMatcherData)
             whitelistMatcherData = try? values.decode(WhitelistMatcherData.self, forKey: .whitelistMatcherData)
             unaryNumericMatcherData = try? values.decode(UnaryNumericMatcherData.self, forKey: .unaryNumericMatcherData)
             betweenMatcherData = try? values.decode(BetweenMatcherData.self, forKey: .betweenMatcherData)
@@ -53,54 +55,80 @@ class Matcher: NSObject, Codable {
             stringMatcherData = try? values.decode(String.self, forKey: .stringMatcherData)
         }
     }
- 
-    //--------------------------------------------------------------------------------------------------
+
     func getMatcher() throws -> MatcherProtocol {
-        
+
         if self.matcherType == nil {
-            throw EvaluatorError.MatcherNotFound
+            throw EvaluatorError.matcherNotFound
         }
-        
+
         switch self.matcherType! {
-            
-        case .AllKeys: return AllKeysMatcher()
-            
-        case .ContainsAllOfSet: return ContainsAllOfSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .ContainsString: return ContainsStringMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .EndsWith: return EndsWithMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .StartsWith: return StartWithMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .EqualTo: return EqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .EqualToBoolean: return EqualToBooleanMatcher(data: self.booleanMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .EqualToSet: return EqualToSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .InSegment: return InSegmentMatcher(data: self.userDefinedSegmentMatcherData, splitClient: self.client, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .MatchesString: return MatchesStringMatcher(data: self.stringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .Whitelist: return Whitelist(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .Dependency: return DependencyMatcher(splitClient: self.client, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType, dependencyData: self.dependencyMatcherData)
-            
-        case .ContainsAnyOfSet: return ContainsAnyOfSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .PartOfSet: return PartOfSetMatcher(data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .LessThanOrEqualTo: return LessThanOrEqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .GreaterThanOrEqualTo: return GreaterThanOrEqualToMatcher(data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-        case .Between: return BetweenMatcher(data: self.betweenMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
-            
-            
+
+        case .allKeys: return AllKeysMatcher()
+
+        case .containsAllOfSet: return ContainsAllOfSetMatcher(
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+                                                               type: self.matcherType)
+
+        case .containsString: return ContainsStringMatcher(
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+                                                           type: self.matcherType)
+
+        case .endsWith: return EndsWithMatcher(
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+                                               type: self.matcherType)
+
+        case .startsWith: return StartWithMatcher(
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+                                                  type: self.matcherType)
+
+        case .equalTo: return EqualToMatcher(
+            data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+                                             type: self.matcherType)
+
+        case .equalToBoolean: return EqualToBooleanMatcher(
+            data: self.booleanMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+                                                           type: self.matcherType)
+
+        case .equalToSet: return EqualToSetMatcher(
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+                                                   type: self.matcherType)
+
+        case .inSegment: return InSegmentMatcher(
+            data: self.userDefinedSegmentMatcherData, splitClient: self.client, negate: self.negate,
+            attribute: self.keySelector?.attribute, type: self.matcherType)
+
+        case .matchesString: return MatchesStringMatcher(
+            data: self.stringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
+
+        case .whitelist: return Whitelist(
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+                                          type: self.matcherType)
+
+        case .dependency: return DependencyMatcher(
+            splitClient: self.client, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType, dependencyData: self.dependencyMatcherData)
+
+        case .containsAnyOfSet: return ContainsAnyOfSetMatcher(
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
+
+        case .partOfSet: return PartOfSetMatcher(
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
+
+        case .lessThanOrEqualTo: return LessThanOrEqualToMatcher(
+            data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
+
+        case .greaterThanOrEqualTo: return GreaterThanOrEqualToMatcher(
+            data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
+
+        case .between: return BetweenMatcher(
+            data: self.betweenMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
         }
-        
     }
-    //--------------------------------------------------------------------------------------------------
-    
-}
+ }
