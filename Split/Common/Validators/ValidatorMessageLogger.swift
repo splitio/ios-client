@@ -32,7 +32,7 @@ protocol ValidationMessageLogger {
     ///     - tag: Tag for a log line
     ///
     func log(errorInfo: ValidationErrorInfo, tag: String)
-    
+
     ///
     /// Logs error level info
     /// - Parameters:
@@ -40,7 +40,7 @@ protocol ValidationMessageLogger {
     ///     - tag: Tag for a log line
     ///
     func e(message: String, tag: String)
-    
+
     ///
     /// Logs warning level info
     /// - Parameters:
@@ -54,7 +54,7 @@ protocol ValidationMessageLogger {
 ///  Default implementation of ValidationMessageLogger protocol
 ///
 class DefaultValidationMessageLogger: ValidationMessageLogger {
-    
+
     func log(errorInfo: ValidationErrorInfo, tag: String) {
         if errorInfo.isError, let message = errorInfo.errorMessage {
             logError(message: message, tag: tag)
@@ -65,11 +65,11 @@ class DefaultValidationMessageLogger: ValidationMessageLogger {
             }
         }
     }
-    
+
     func e(message: String, tag: String = "") {
         logWarning(message: message, tag: tag)
     }
-    
+
     func w(message: String, tag: String = "") {
         logWarning(message: message, tag: tag)
     }
@@ -77,7 +77,7 @@ class DefaultValidationMessageLogger: ValidationMessageLogger {
     private func logError(message: String, tag: String = "") {
         Logger.e("\(tag): \(message)")
     }
-    
+
     private func logWarning(message: String, tag: String = "") {
         Logger.w("\(tag): \(message)")
     }

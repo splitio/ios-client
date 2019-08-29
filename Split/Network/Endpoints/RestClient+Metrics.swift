@@ -15,15 +15,15 @@ protocol MetricsRestClient: RestClientProtocol {
 }
 
 extension RestClient: MetricsRestClient {
-    
+
     func sendTimeMetrics(_ times: [TimeMetric], completion: @escaping (DataResult<EmptyValue>) -> Void) {
         self.execute(target: EnvironmentTargetManager.sendTimeMetrics(times), completion: completion)
     }
-    
+
     func sendCounterMetrics(_ counters: [CounterMetric], completion: @escaping (DataResult<EmptyValue>) -> Void) {
         self.execute(target: EnvironmentTargetManager.sendCounterMetrics(counters), completion: completion)
     }
-    
+
     func sendGaugeMetrics(_ gauge: MetricGauge, completion: @escaping (DataResult<EmptyValue>) -> Void) {
         self.execute(target: EnvironmentTargetManager.sendGaugeMetrics(gauge), completion: completion)
     }

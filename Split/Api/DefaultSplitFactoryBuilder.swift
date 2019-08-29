@@ -16,7 +16,7 @@ import Foundation
 /// For now it's just the defaul factory.
 ///
 @objc public class DefaultSplitFactoryBuilder: NSObject, SplitFactoryBuilder {
-    
+
     private var bundle: Bundle = Bundle.main
     private var apiKey: String?
     private var matchingKey: String?
@@ -28,7 +28,7 @@ import Foundation
     private let apiKeyValidator: ApiKeyValidator
     var validationLogger: ValidationMessageLogger
     private let validationTag = "factory instantiation"
-    
+
     private static let  factoryMonitor: FactoryMonitor = {
         return DefaultFactoryMonitor()
     }()
@@ -64,7 +64,7 @@ import Foundation
         self.config = config
         return self
     }
-    
+
     func setBundle(_ bundle: Bundle) -> SplitFactoryBuilder {
         self.bundle = bundle
         return self
@@ -84,18 +84,27 @@ import Foundation
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             return nil
         }
-        
+
         let factoryCount = DefaultSplitFactoryBuilder.factoryMonitor.instanceCount(for: apiKey!)
         if factoryCount > 0 {
-            let errorInfo = ValidationErrorInfo(error: ValidationError.some, message: "You already have \(factoryCount) \(factoryCount == 1 ? "factory" : "factories") with this API Key. We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing it throughout your application.")
+            let errorInfo = ValidationErrorInfo(
+                error: ValidationError.some,
+                message: "You already have \(factoryCount) \(factoryCount == 1 ? "factory" : "factories") with this " +
+                "API Key. We recommend keeping only one instance of the factory at all times (Singleton pattern) and " +
+                "reusing it throughout your application.")
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+
         } else if DefaultSplitFactoryBuilder.factoryMonitor.allCount > 0 {
-            let errorInfo = ValidationErrorInfo(error: ValidationError.some, message: "You already have an instance of the Split factory. Make sure you definitely want this additional instance. We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing it throughout your application.")
+            let errorInfo = ValidationErrorInfo(
+                error: ValidationError.some,
+                message: "You already have an instance of the Split factory. Make sure you definitely want this " +
+                "additional instance. We recommend keeping only one instance of the factory at all times " +
+                "(Singleton pattern) and reusing it throughout your application.")
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
         }
-        
+
         let finalKey = Key(matchingKey: matchingKey!, bucketingKey: bucketingKey)
-        
+
         var factory: SplitFactory!
         if apiKey?.uppercased() == kApiKeyLocalhost {
             factory = LocalhostSplitFactory(key: finalKey,
@@ -106,7 +115,7 @@ import Foundation
                                    key: finalKey,
                                    config: config ?? SplitClientConfig())
         }
-        
+
         DefaultSplitFactoryBuilder.factoryMonitor.register(instance: factory, for: apiKey!)
         return factory
     }

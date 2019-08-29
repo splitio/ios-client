@@ -9,8 +9,8 @@
 import Foundation
 
 @objc public class Partition: NSObject, Codable {
-    
+
     var treatment: String?
     var size: Int?
-    
+
 }

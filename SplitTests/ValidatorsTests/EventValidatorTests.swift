@@ -16,7 +16,7 @@ class EventValidatorTests: XCTestCase {
     override func setUp() {
         let split1 = newSplit(trafficType: "custom")
         let split2 = newSplit(trafficType: "other")
-        let split3 = newSplit(trafficType: "archivedtraffictype", status: .Archived)
+        let split3 = newSplit(trafficType: "archivedtraffictype", status: .archived)
 
         let splitCache = InMemorySplitCache()
         splitCache.addSplit(splitName: split1.name!, split: split1)
@@ -174,7 +174,7 @@ class EventValidatorTests: XCTestCase {
 
     }
 
-    private func newSplit(trafficType: String, status: Status = .Active) -> Split {
+    private func newSplit(trafficType: String, status: Status = .active) -> Split {
         let split = Split()
         split.name = UUID().uuidString
         split.trafficTypeName = trafficType

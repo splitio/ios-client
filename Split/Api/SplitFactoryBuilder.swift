@@ -19,7 +19,7 @@ import Foundation
     ///
     @discardableResult
     func setApiKey(_ apiKey: String) -> SplitFactoryBuilder
-    
+
     ///
     /// Sets the Matching Key to use. This method is specially usefull when creating
     /// a Key without Bucketing Key. If no Matching Key or Key is set the build method
@@ -29,7 +29,7 @@ import Foundation
     ///
     @discardableResult
     func setMatchingKey(_ matchingKey: String) -> SplitFactoryBuilder
-    
+
     ///
     /// Sets the Bucketing Key to use. This method could be used in conjunction with setMatchingKey
     /// to avoid creating explicitly a Key instance
@@ -38,7 +38,7 @@ import Foundation
     ///
     @discardableResult
     func setBucketingKey(_ bucketingKey: String) -> SplitFactoryBuilder
-    
+
     ///
     /// Sets the Key to use. This method could be used instead of setMatchingKey
     /// and setBucketing
@@ -47,7 +47,7 @@ import Foundation
     ///
     @discardableResult
     func setKey(_ key: Key) -> SplitFactoryBuilder
-    
+
     ///
     /// Sets the Split configuration to use. If this method is avoided
     /// default configuration values will be used
@@ -56,7 +56,7 @@ import Foundation
     ///
     @discardableResult
     func setConfig(_ config: SplitClientConfig) -> SplitFactoryBuilder
-    
+
     ///
     /// Builds the SplitFactory implementation instance based on set values
     /// - returns: An instance of SplitFactory protocol implementation

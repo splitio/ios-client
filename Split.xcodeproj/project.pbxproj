@@ -16,7 +16,6 @@
 		3B6DEF1220EA6AE50067435E /* SplitChangeCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE6D20EA6ADF0067435E /* SplitChangeCache.swift */; };
 		3B6DEF1320EA6AE50067435E /* SplitChangeCacheProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE6E20EA6ADF0067435E /* SplitChangeCacheProtocol.swift */; };
 		3B6DEF1420EA6AE50067435E /* MySegmentsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7020EA6ADF0067435E /* MySegmentsFetcher.swift */; };
-		3B6DEF1520EA6AE50067435E /* ParsedSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7120EA6ADF0067435E /* ParsedSplit.swift */; };
 		3B6DEF1620EA6AE50067435E /* RefreshableMySegmentsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7220EA6ADF0067435E /* RefreshableMySegmentsFetcher.swift */; };
 		3B6DEF1720EA6AE50067435E /* RefreshableSplitFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7320EA6ADF0067435E /* RefreshableSplitFetcher.swift */; };
 		3B6DEF1820EA6AE50067435E /* SplitFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7420EA6ADF0067435E /* SplitFetcher.swift */; };
@@ -319,7 +318,6 @@
 		3B6DEE6D20EA6ADF0067435E /* SplitChangeCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangeCache.swift; sourceTree = "<group>"; };
 		3B6DEE6E20EA6ADF0067435E /* SplitChangeCacheProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangeCacheProtocol.swift; sourceTree = "<group>"; };
 		3B6DEE7020EA6ADF0067435E /* MySegmentsFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentsFetcher.swift; sourceTree = "<group>"; };
-		3B6DEE7120EA6ADF0067435E /* ParsedSplit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParsedSplit.swift; sourceTree = "<group>"; };
 		3B6DEE7220EA6ADF0067435E /* RefreshableMySegmentsFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshableMySegmentsFetcher.swift; sourceTree = "<group>"; };
 		3B6DEE7320EA6ADF0067435E /* RefreshableSplitFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshableSplitFetcher.swift; sourceTree = "<group>"; };
 		3B6DEE7420EA6ADF0067435E /* SplitFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitFetcher.swift; sourceTree = "<group>"; };
@@ -685,7 +683,6 @@
 			isa = PBXGroup;
 			children = (
 				3B6DEE7020EA6ADF0067435E /* MySegmentsFetcher.swift */,
-				3B6DEE7120EA6ADF0067435E /* ParsedSplit.swift */,
 				3B6DEE7220EA6ADF0067435E /* RefreshableMySegmentsFetcher.swift */,
 				3B6DEE7320EA6ADF0067435E /* RefreshableSplitFetcher.swift */,
 				3B6DEE7420EA6ADF0067435E /* SplitFetcher.swift */,
@@ -1337,6 +1334,7 @@
 				3B6DEE5620EA6A4E0067435E /* Frameworks */,
 				3B6DEE5720EA6A4E0067435E /* Headers */,
 				3B6DEE5820EA6A4E0067435E /* Resources */,
+				598F9BE1230DAEBC00F0E4C0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1474,6 +1472,23 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
 		};
+		598F9BE1230DAEBC00F0E4C0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1514,7 +1529,6 @@
 				3B6DEF8120EA6AE50067435E /* DataResult.swift in Sources */,
 				3B6DEF7F20EA6AE50067435E /* RestClientRequestProtocol.swift in Sources */,
 				59F6AAA9215EBD4400A51997 /* CounterMetric.swift in Sources */,
-				3B6DEF1520EA6AE50067435E /* ParsedSplit.swift in Sources */,
 				3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */,
 				3B6DEF5420EA6AE50067435E /* SplitEventExecutorFactory.swift in Sources */,
 				3B6DEF3020EA6AE50067435E /* Evaluator.swift in Sources */,

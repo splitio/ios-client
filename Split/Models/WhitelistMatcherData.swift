@@ -8,8 +8,6 @@
 
 import Foundation
 
-public class WhitelistMatcherData: NSObject, Codable {
-
+class WhitelistMatcherData: NSObject, Codable {
     var whitelist: [String]?
-   
 }

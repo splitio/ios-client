@@ -12,8 +12,7 @@ struct HttpQueue {
 }
 
 // MARK: HttpMethod
-
-enum HttpMethod : String, CustomStringConvertible {
+enum HttpMethod: String, CustomStringConvertible {
     case get
     case post
     case patch
@@ -21,7 +20,7 @@ enum HttpMethod : String, CustomStringConvertible {
     case delete
     case options
     case head
-    
+
     public var isUpload: Bool {
         switch self {
         case .post, .patch, .put:
@@ -30,8 +29,8 @@ enum HttpMethod : String, CustomStringConvertible {
             return false
         }
     }
-    
-    public var description : String {
+
+    public var description: String {
         switch self {
         case .get:
             return "GET"
@@ -51,9 +50,6 @@ enum HttpMethod : String, CustomStringConvertible {
     }
 }
 
-
 // MARK: HttpSession Delegate
-
 typealias HttpParameters = [String: Any]
 typealias HttpHeaders = [String: String]
-

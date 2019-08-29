@@ -9,13 +9,13 @@ import Foundation
 
 class SplitEventExecutorResources {
     private var _client: SplitClient?
-    
+
     init() {}
-    
+
     func setClient(client: SplitClient) {
         _client = client
     }
-    
+
     func getClient() -> SplitClient {
         return _client!
     }

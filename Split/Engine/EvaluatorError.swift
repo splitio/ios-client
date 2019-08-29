@@ -7,6 +7,6 @@
 
 import Foundation
 
-enum EvaluatorError : Error {
-    case MatcherNotFound
+enum EvaluatorError: Error {
+    case matcherNotFound
 }

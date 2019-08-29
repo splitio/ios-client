@@ -14,7 +14,7 @@ protocol MetricsManager {
 }
 
 struct Metrics {
-    struct time {
+    struct Time {
         static let getTreatment = "sdk.getTreatment"
         static let getTreatments = "sdk.getTreatments"
         static let getTreatmentWithConfig = "sdk.getTreatmentWithConfig"
@@ -23,8 +23,8 @@ struct Metrics {
         static let splitChangeFetcherGet = "splitChangeFetcher.time"
         static let mySegmentsFetcherGet = "mySegmentsFetcher.time"
     }
-    
-    struct counter {
+
+    struct Counter {
         static let getApiKeyFromSecureStorage = "sdk.getApiKeyFromSecureStorage"
         static let splitChangeFetcherStatus200 = "splitChangeFetcher.status.200"
         static let splitChangeFetcherException = "splitChangeFetcher.exception"
@@ -42,17 +42,17 @@ class MetricManagerConfig {
 }
 
 class DefaultMetricsManager {
-    
+
     private var lastPostTime: Int64 = Date().unixTimestamp()
     private var countersCache = SynchronizedArrayWrapper<CounterMetricSample>()
     private var timesCache = SynchronizedArrayWrapper<TimeMetricSample>()
-    
+
     private let kTimesFile = "timesFile"
     private let kCountersFile = "countersFile"
     private let pushRateInSeconds: Int
     private let restClient: MetricsRestClient
     private let fileStorage: FileStorageProtocol
-    
+
     /***
      * Shared instance to use within all app
      * It can be used with a default config
@@ -61,29 +61,29 @@ class DefaultMetricsManager {
      */
     static let shared: DefaultMetricsManager = {
         let instance = DefaultMetricsManager()
-        return instance;
+        return instance
     }()
-    
+
     convenience init(config: MetricManagerConfig = MetricManagerConfig.default) {
         self.init(config: config, restClient: RestClient())
     }
-    
+
     init(config: MetricManagerConfig, restClient: MetricsRestClient) {
         self.restClient = restClient
         self.fileStorage = FileStorage(dataFolderName: config.defaultDataFolderName)
         self.pushRateInSeconds = config.pushRateInSeconds
     }
-    
+
     private func saveDataToDisk() {
         saveTimesToDisk()
         saveCountersToDisk()
     }
-    
-    private func loadDataFromDisk(){
+
+    private func loadDataFromDisk() {
         loadTimesFile()
         loadCountersFile()
     }
-    
+
     private func sendDataToServer() {
         sendTimes()
         sendCounters()
@@ -92,21 +92,21 @@ class DefaultMetricsManager {
 
 // MARK: Public
 extension DefaultMetricsManager {
-    
+
     func time(microseconds latency: Int64, for operationName: String) {
         timesCache.append(TimeMetricSample(operation: operationName, latency: latency))
         if shouldPostToServer() {
             sendDataToServer()
         }
     }
-    
+
     func count(delta: Int64, for counterName: String) {
         countersCache.append(CounterMetricSample(name: counterName, delta: delta))
         if shouldPostToServer() {
             sendDataToServer()
         }
     }
-    
+
     func flush() {
         sendDataToServer()
     }
@@ -134,7 +134,7 @@ extension DefaultMetricsManager {
         if restClient.isSdkServerAvailable() {
             restClient.sendTimeMetrics(buildTimesToSend(timeSamples: timeSamples), completion: { result in
                 do {
-                    let _ = try result.unwrap()
+                    _ = try result.unwrap()
                     Logger.d("Time metrics posted successfully")
                 } catch {
                     self.timesCache.append(timeSamples)
@@ -144,7 +144,7 @@ extension DefaultMetricsManager {
         }
     }
 
-    private func buildTimesToSend(timeSamples: [TimeMetricSample]) -> [TimeMetric]{
+    private func buildTimesToSend(timeSamples: [TimeMetricSample]) -> [TimeMetric] {
         var times = [String: TimeMetric]()
         for sample in timeSamples {
             let time = times[sample.operation] ?? TimeMetric(name: sample.operation)
@@ -153,7 +153,7 @@ extension DefaultMetricsManager {
         }
         return times.values.map { return $0 }
     }
-    
+
     private func saveTimesToDisk() {
         if timesCache.count > 0 {
             do {
@@ -165,7 +165,7 @@ extension DefaultMetricsManager {
             }
         }
     }
-    
+
     private func loadTimesFile() {
         guard let jsonContent = loadFileContent(fileName: kTimesFile) else {
             return
@@ -185,16 +185,16 @@ extension DefaultMetricsManager {
 
 // MARK: Private - Counters
 extension DefaultMetricsManager {
-    
+
     private func sendCounters() {
         if countersCache.count == 0 { return }
         let counterSamples = countersCache.all
         countersCache.removeAll()
-        
+
         if restClient.isSdkServerAvailable() {
             restClient.sendCounterMetrics(buildCountersToSend(counterSamples: counterSamples), completion: { result in
                 do {
-                    let _ = try result.unwrap()
+                    _ = try result.unwrap()
                     Logger.d("Counter metrics posted successfully")
                 } catch {
                     self.countersCache.append(counterSamples)
@@ -203,8 +203,8 @@ extension DefaultMetricsManager {
             })
         }
     }
-    
-    private func buildCountersToSend(counterSamples: [CounterMetricSample]) -> [CounterMetric]{
+
+    private func buildCountersToSend(counterSamples: [CounterMetricSample]) -> [CounterMetric] {
         var counters = [String: CounterMetric]()
         for sample in counterSamples {
             var counter = counters[sample.name] ?? CounterMetric(name: sample.name)
@@ -213,7 +213,7 @@ extension DefaultMetricsManager {
         }
         return counters.values.map { return $0 }
     }
-    
+
     private func saveCountersToDisk() {
         if countersCache.count > 0 {
             do {
@@ -225,7 +225,7 @@ extension DefaultMetricsManager {
             }
         }
     }
-    
+
     private func loadCountersFile() {
         guard let jsonContent = loadFileContent(fileName: kCountersFile) else {
             return
@@ -255,7 +255,7 @@ extension DefaultMetricsManager {
         }
         return fileContent
     }
-    
+
     func saveFileContent(fileName: String, content: String) {
         fileStorage.write(fileName: fileName, content: content)
     }
@@ -263,7 +263,7 @@ extension DefaultMetricsManager {
 
 // MARK: Background / Foreground
 extension DefaultMetricsManager {
-    
+
     private func subscribeNotifications() {
         NotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
             guard let strongSelf = self else {
@@ -271,7 +271,7 @@ extension DefaultMetricsManager {
             }
             strongSelf.loadDataFromDisk()
         }
-        
+
         NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
             guard let strongSelf = self else {
                 return

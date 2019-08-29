@@ -32,7 +32,7 @@ class InternalSplitClientStub: InternalSplitClient {
     }
     
     func getTreatmentWithConfig(_ split: String) -> SplitResult {
-        return SplitResult(treatment: SplitConstants.CONTROL)
+        return SplitResult(treatment: SplitConstants.control)
     }
     
     func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
@@ -40,7 +40,7 @@ class InternalSplitClientStub: InternalSplitClient {
     }
     
     func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
-        return ["": SplitResult(treatment: SplitConstants.CONTROL)]
+        return ["": SplitResult(treatment: SplitConstants.control)]
     }
     
     func on(event: SplitEvent, execute action: @escaping SplitAction) {

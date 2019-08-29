@@ -8,9 +8,7 @@
 
 import Foundation
 
-@objc public class Treatment: NSObject, Codable {
-    
+@objc class Treatment: NSObject, Codable {
     var name: String!
     var treatment: String!
-   
 }

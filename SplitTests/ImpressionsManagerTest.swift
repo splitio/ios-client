@@ -12,9 +12,7 @@ import XCTest
 class ImpressionsManagerTest: XCTestCase {
     
     func testImpressionsFlush() {
-        var config = ImpressionManagerConfig()
-        config.impressionsPerPush = 200
-        config.pushRate = 100000
+        let config = ImpressionManagerConfig(pushRate: 200, impressionsPerPush: 100000)
         
         let restClient: RestClientImpressions = RestClientStub()
         let impressionsManager = DefaultImpressionsManager(dispatchGroup: nil, config: config, fileStorage: FileStorageStub(), restClient: restClient)
