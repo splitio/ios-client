@@ -185,6 +185,8 @@ extension DefaultTrackManager {
                     }
                 }
             })
+        } else {
+            Logger.d("Server is not reachable. Sending track events will be delayed until host is reachable")
         }
     }
 
