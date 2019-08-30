@@ -10,13 +10,13 @@ import Foundation
 struct EvaluationResult {
     var treatment: String
     var label: String
-    var splitVersion: Int64?
+    var changeNumber: Int64?
     var configuration: String?
 
     init(treatment: String, label: String, splitVersion: Int64? = nil, configuration: String? = nil) {
         self.treatment = treatment
         self.label = label
-        self.splitVersion = splitVersion
+        self.changeNumber = splitVersion
         self.configuration = configuration
     }
 }
