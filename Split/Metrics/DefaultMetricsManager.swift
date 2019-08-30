@@ -141,6 +141,8 @@ extension DefaultMetricsManager {
                     Logger.e("Time metrics error: \(String(describing: error))")
                 }
             })
+        } else {
+            Logger.d("Server is not reachable. Sending time metrics will be delayed until host is reachable")
         }
     }
 
@@ -201,6 +203,8 @@ extension DefaultMetricsManager {
                     Logger.e("Counter metrics error: \(String(describing: error))")
                 }
             })
+        } else {
+            Logger.d("Server is not reachable. Sending count metrics will be delayed until host is reachable")
         }
     }
 
