@@ -13,10 +13,10 @@ struct EvaluationResult {
     var changeNumber: Int64?
     var configuration: String?
 
-    init(treatment: String, label: String, splitVersion: Int64? = nil, configuration: String? = nil) {
+    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil) {
         self.treatment = treatment
         self.label = label
-        self.changeNumber = splitVersion
+        self.changeNumber = changeNumber
         self.configuration = configuration
     }
 }
@@ -54,7 +54,7 @@ class DefaultEvaluator: Evaluator {
             if let killed = split.killed, killed {
                 return EvaluationResult(treatment: defaultTreatment,
                                         label: ImpressionsConstants.killed,
-                                        splitVersion: changeNumber,
+                                        changeNumber: changeNumber,
                                         configuration: split.configurations?[defaultTreatment])
             }
 
@@ -85,7 +85,7 @@ class DefaultEvaluator: Evaluator {
                             if bucket > trafficAllocation {
                                 return EvaluationResult(treatment: defaultTreatment,
                                                         label: ImpressionsConstants.notInSplit,
-                                                        splitVersion: changeNumber,
+                                                        changeNumber: changeNumber,
                                                         configuration: split.configurations?[defaultTreatment])
                             }
                             inRollOut = true
@@ -98,20 +98,20 @@ class DefaultEvaluator: Evaluator {
                         let treatment = splitter.getTreatment(key: key, seed: seed, attributes: attributes,
                                                               partions: condition.partitions, algo: splitAlgo)
                         return EvaluationResult(treatment: treatment, label: condition.label!,
-                                                splitVersion: changeNumber,
+                                                changeNumber: changeNumber,
                                                 configuration: split.configurations?[treatment])
                     }
                 }
                 let result = EvaluationResult(treatment: defaultTreatment,
                                               label: ImpressionsConstants.noConditionMatched,
-                                              splitVersion: changeNumber,
+                                              changeNumber: changeNumber,
                                               configuration: split.configurations?[defaultTreatment])
                 Logger.d("* Treatment for \(matchingKey) in \(split.name ?? "") is: \(result.treatment)")
                 return result
             } catch EvaluatorError.matcherNotFound {
                 Logger.e("The matcher has not been found")
                 return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.matcherNotFound,
-                                          splitVersion: changeNumber)
+                                          changeNumber: changeNumber)
             }
         }
 
