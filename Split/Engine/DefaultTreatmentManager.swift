@@ -142,7 +142,7 @@ class DefaultTreatmentManager: TreatmentManager {
 
         do {
             let result = try evaluateIfReady(splitName: trimmedSplitName, attributes: attributes)
-            logImpression(label: result.label, changeNumber: result.splitVersion,
+            logImpression(label: result.label, changeNumber: result.changeNumber,
                           treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
             return SplitResult(treatment: result.treatment, config: result.configuration)
         } catch {

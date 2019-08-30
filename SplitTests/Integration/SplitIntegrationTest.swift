@@ -93,6 +93,7 @@ class SplitIntegrationTests: XCTestCase {
         
         let i1 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "FACUNDO_TEST", treatment: "off")]
         let i2 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "NO_EXISTING_FEATURE", treatment: SplitConstants.control)]
+        let i3 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "testing222", treatment: "off")]
         
         for i in 0..<101 {
             _ = client?.track(eventType: "account", value: Double(i))
@@ -109,6 +110,7 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertEqual("off", t1)
         XCTAssertEqual(SplitConstants.control, t2)
         XCTAssertEqual("{\"the_emojis\":\"\\uD83D\\uDE01 -- áéíóúöÖüÜÏëç\"}", treatmentConfigEmojis?.config)
+        XCTAssertEqual("off", ts1?["testing222"])
         XCTAssertEqual(SplitConstants.control, ts1?["NO_EXISTING_FEATURE1"])
         XCTAssertEqual(SplitConstants.control, ts1?["NO_EXISTING_FEATURE2"])
         
@@ -116,7 +118,10 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertNotNil(s1)
         XCTAssertNil(s2)
         XCTAssertNotNil(i1)
+        XCTAssertEqual(1506703262916, i1?.changeNumber)
         XCTAssertNil(i2)
+        XCTAssertNotNil(i3)
+        XCTAssertEqual(1505162627437, i3?.changeNumber)
         XCTAssertEqual("not in split", i1?.label) // TODO: Uncomment when impressions split name is added to impression listener
         XCTAssertEqual(10, tracksHits().count)
         XCTAssertNotNil(event99)
