@@ -45,7 +45,7 @@ class GetTreatmentViewController: UIViewController {
     
     func evaluate() {
         // Your Split API-KEY - Change in Config.swift file
-        let authorizationKey: String = "YOUR_API_KEY"
+        let authorizationKey: String = "4eri39qiou5ene271kpk1tnlfnfvid89dgab"
         
         //Provided keys from UI
         let matchingKeyText: String = (matchingKey?.text)!
