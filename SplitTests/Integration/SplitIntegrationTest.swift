@@ -118,10 +118,10 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertNotNil(s1)
         XCTAssertNil(s2)
         XCTAssertNotNil(i1)
-        XCTAssertNotNil(i1?.changeNumber)
+        XCTAssertEqual(1506703262916, i1?.changeNumber)
         XCTAssertNil(i2)
         XCTAssertNotNil(i3)
-        XCTAssertNotNil(i3?.changeNumber)
+        XCTAssertEqual(1505162627437, i3?.changeNumber)
         XCTAssertEqual("not in split", i1?.label) // TODO: Uncomment when impressions split name is added to impression listener
         XCTAssertEqual(10, tracksHits().count)
         XCTAssertNotNil(event99)
