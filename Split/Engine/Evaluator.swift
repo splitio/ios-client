@@ -10,13 +10,13 @@ import Foundation
 struct EvaluationResult {
     var treatment: String
     var label: String
-    var splitVersion: Int64?
+    var changeNumber: Int64?
     var configuration: String?
 
-    init(treatment: String, label: String, splitVersion: Int64? = nil, configuration: String? = nil) {
+    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil) {
         self.treatment = treatment
         self.label = label
-        self.splitVersion = splitVersion
+        self.changeNumber = changeNumber
         self.configuration = configuration
     }
 }
@@ -49,11 +49,12 @@ class DefaultEvaluator: Evaluator {
                        splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
 
         if let split: Split = splitFetcher?.fetch(splitName: splitName), split.status != .archived {
+            let changeNumber = split.changeNumber ?? -1
             let defaultTreatment  = split.defaultTreatment ?? SplitConstants.control
             if let killed = split.killed, killed {
                 return EvaluationResult(treatment: defaultTreatment,
                                         label: ImpressionsConstants.killed,
-                                        splitVersion: (split.changeNumber ?? -1),
+                                        changeNumber: changeNumber,
                                         configuration: split.configurations?[defaultTreatment])
             }
 
@@ -84,6 +85,7 @@ class DefaultEvaluator: Evaluator {
                             if bucket > trafficAllocation {
                                 return EvaluationResult(treatment: defaultTreatment,
                                                         label: ImpressionsConstants.notInSplit,
+                                                        changeNumber: changeNumber,
                                                         configuration: split.configurations?[defaultTreatment])
                             }
                             inRollOut = true
@@ -95,20 +97,21 @@ class DefaultEvaluator: Evaluator {
                         let key: Key = Key(matchingKey: matchingKey, bucketingKey: bucketKey)
                         let treatment = splitter.getTreatment(key: key, seed: seed, attributes: attributes,
                                                               partions: condition.partitions, algo: splitAlgo)
-                        // *** condition.label should not be null, but what if...
                         return EvaluationResult(treatment: treatment, label: condition.label!,
+                                                changeNumber: changeNumber,
                                                 configuration: split.configurations?[treatment])
                     }
                 }
                 let result = EvaluationResult(treatment: defaultTreatment,
                                               label: ImpressionsConstants.noConditionMatched,
-                                              splitVersion: split.changeNumber)
+                                              changeNumber: changeNumber,
+                                              configuration: split.configurations?[defaultTreatment])
                 Logger.d("* Treatment for \(matchingKey) in \(split.name ?? "") is: \(result.treatment)")
                 return result
             } catch EvaluatorError.matcherNotFound {
                 Logger.e("The matcher has not been found")
                 return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.matcherNotFound,
-                                          splitVersion: split.changeNumber)
+                                          changeNumber: changeNumber)
             }
         }
 
