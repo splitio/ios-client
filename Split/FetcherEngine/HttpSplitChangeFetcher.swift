@@ -29,7 +29,7 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
 
         if policy == .cacheOnly {
             return splitChangeCache.getChanges(since: -1)
-        } else if (!restClient.isSdkServerAvailable()) {
+        } else if !restClient.isSdkServerAvailable() {
             Logger.d("Server is not reachable. Split updates will be delayed until host is reachable")
             return splitChangeCache.getChanges(since: -1)
         } else {
