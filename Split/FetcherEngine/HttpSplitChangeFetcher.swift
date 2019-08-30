@@ -27,8 +27,11 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
 
     func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
 
-        if policy == .cacheOnly || !restClient.isSdkServerAvailable() {
-            return self.splitChangeCache.getChanges(since: -1)
+        if policy == .cacheOnly {
+            return splitChangeCache.getChanges(since: -1)
+        } else if (!restClient.isSdkServerAvailable()) {
+            Logger.d("Server is not reachable. Split updates will be delayed until host is reachable")
+            return splitChangeCache.getChanges(since: -1)
         } else {
             let metricsManager = DefaultMetricsManager.shared
             let semaphore = DispatchSemaphore(value: 0)
