@@ -116,6 +116,8 @@ extension DefaultImpressionsManager {
                     }
                 }
             })
+        } else {
+            Logger.d("Server is not reachable. Sending impressions will be delayed until host is reachable")
         }
     }
 
