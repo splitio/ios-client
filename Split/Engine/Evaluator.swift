@@ -104,7 +104,8 @@ class DefaultEvaluator: Evaluator {
                 }
                 let result = EvaluationResult(treatment: defaultTreatment,
                                               label: ImpressionsConstants.noConditionMatched,
-                                              splitVersion: changeNumber)
+                                              splitVersion: changeNumber,
+                                              configuration: split.configurations?[defaultTreatment])
                 Logger.d("* Treatment for \(matchingKey) in \(split.name ?? "") is: \(result.treatment)")
                 return result
             } catch EvaluatorError.matcherNotFound {
