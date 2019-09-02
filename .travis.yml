@@ -3,14 +3,13 @@ language: swift
 osx_image: xcode10.2
 
 env:
-  linter:
-    LINTER_PKG_PATH="/tmp/SwiftLint.pkg"
-    LINTER_PKG_URL="https://github.com/realm/SwiftLint/releases/download/0.34.0/SwiftLint.pkg"
   global:
     - WORKSPACE='Split.xcodeproj'
     - PLATFORM='iOS Simulator'
     - NAME='iPhone 8'
     - SCHEME='Split'
+    - LINTER_PKG_PATH="/tmp/SwiftLint.pkg"
+    - LINTER_PKG_URL="https://github.com/realm/SwiftLint/releases/download/0.34.0/SwiftLint.pkg"
 
 install:
   - wget --output-document=$SWIFTLINT_PKG_PATH $SWIFTLINT_PKG_URL
