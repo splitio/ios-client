@@ -15,7 +15,7 @@ class SplitValidatorTests: XCTestCase {
     
     override func setUp() {
         
-        let splitCache: SplitCacheProtocol = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
+        let splitCache: SplitCacheProtocol = InMemorySplitCache()
         splitCache.addSplit(splitName: "split1", split: createSplit(name: "split1"))
         validator = DefaultSplitValidator(splitCache: splitCache)
     }

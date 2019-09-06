@@ -20,7 +20,7 @@ class LocalhostSplitClientTests: XCTestCase {
         let fileName = "localhost.splits"
         let storage = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
-        let splitCache = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
+        let splitCache = InMemorySplitCache()
         config.refreshInterval = 0
         let fetcher = LocalhostSplitFetcher(fileStorage: storage, splitCache: splitCache, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
         fetcher.forceRefresh()
@@ -50,7 +50,7 @@ class LocalhostSplitClientTests: XCTestCase {
     
     func testNonExistingSplitsTreatment() {
         for i in 1...5 {
-            XCTAssertEqual(client.getTreatment("j\(i)"), SplitConstants.CONTROL)
+            XCTAssertEqual(client.getTreatment("j\(i)"), SplitConstants.control)
         }
     }
     
@@ -62,7 +62,7 @@ class LocalhostSplitClientTests: XCTestCase {
         }
         let treatments = client.getTreatments(splits: splits, attributes: nil)
         for i in 1...splitsCount {
-            XCTAssertEqual(treatments["s\(i + 1000)"], SplitConstants.CONTROL)
+            XCTAssertEqual(treatments["s\(i + 1000)"], SplitConstants.control)
         }
     }
 

@@ -37,35 +37,35 @@ class SplitCache: SplitCacheProtocol {
             }
         }
     }
-    
+
     func addSplit(splitName: String, split: Split) {
         inMemoryCache.addSplit(splitName: splitName, split: split)
     }
-    
+
     func setChangeNumber(_ changeNumber: Int64) {
         inMemoryCache.setChangeNumber(changeNumber)
     }
-    
+
     func getChangeNumber() -> Int64 {
         return inMemoryCache.getChangeNumber()
     }
-    
+
     func getSplit(splitName: String) -> Split? {
         return inMemoryCache.getSplit(splitName: splitName)
     }
-    
+
     func getAllSplits() -> [Split] {
         return inMemoryCache.getAllSplits()
     }
-    
-    func getSplits() -> [String : Split] {
+
+    func getSplits() -> [String: Split] {
         return inMemoryCache.getSplits()
     }
-    
+
     func exists(trafficType: String) -> Bool {
         return inMemoryCache.exists(trafficType: trafficType)
     }
-    
+
     func clear() {
     }
 }
@@ -73,23 +73,22 @@ class SplitCache: SplitCacheProtocol {
 // MARK: Private
 extension SplitCache {
     private func initialInMemoryCache() -> InMemorySplitCache {
-        let inMemoryTrafficTypesCache = InMemoryTrafficTypesCache()
         let emptySplitCache: (() -> InMemorySplitCache) = {
-            return InMemorySplitCache(trafficTypesCache: inMemoryTrafficTypesCache, splits: [String: Split]())
+            return InMemorySplitCache(splits: [String: Split]())
         }
-        
+
         guard let jsonContent = fileStorage.read(fileName: kSplitsFileName) else {
             return emptySplitCache()
         }
         do {
             let splitsFile = try Json.encodeFrom(json: jsonContent, to: SplitsFile.self)
-            return InMemorySplitCache(trafficTypesCache: inMemoryTrafficTypesCache, splits: splitsFile.splits, changeNumber: splitsFile.changeNumber)
+            return InMemorySplitCache(splits: splitsFile.splits, changeNumber: splitsFile.changeNumber)
         } catch {
             Logger.e("Error while loading Splits from disk")
         }
         return emptySplitCache()
     }
-    
+
     private func saveSplits() {
         let splitsFile = SplitsFile(splits: getSplits(), changeNumber: getChangeNumber())
         do {

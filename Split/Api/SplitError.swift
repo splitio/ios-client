@@ -1,6 +1,6 @@
 //
 //  SplitError.swift
-//  Pods
+//  Split
 //
 //  Created by Brian Sztamfater on 25/9/17.
 //
@@ -8,8 +8,8 @@
 
 import Foundation
 
-@objc public enum SplitError: Int, Error {
-    case Timeout
+@objc enum SplitError: Int, Error {
+    case timeout
     case matcherNoFound
 
 }

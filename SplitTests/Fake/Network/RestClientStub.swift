@@ -18,9 +18,14 @@ class RestClientStub {
     private var segments: [String]?
     private var splitChange: SplitChange?
     private var sendTrackEventsCount = 0
+    private var sendImpressionsCount = 0
     
     func getSendTrackEventsCount() -> Int {
         return sendTrackEventsCount;
+    }
+    
+    func getSendImpressionsCount() -> Int {
+        return sendImpressionsCount;
     }
 }
 
@@ -33,20 +38,20 @@ extension RestClientStub: RestClientProtocol {
 
 extension RestClientStub: RestClientSplitChanges {
     func getSplitChanges(since: Int64, completion: @escaping (DataResult<SplitChange>) -> Void) {
-        completion(DataResult.Success(value: splitChange))
+        completion(DataResult.success(value: splitChange))
     }
 }
 
 extension RestClientStub: RestClientMySegments {
     func getMySegments(user: String, completion: @escaping (DataResult<[String]>) -> Void) {
-        completion(DataResult.Success(value: segments))
+        completion(DataResult.success(value: segments))
     }
 }
 
 extension RestClientStub: RestClientTrackEvents {
     func sendTrackEvents(events: [EventDTO], completion: @escaping (DataResult<EmptyValue>) -> Void) {
         sendTrackEventsCount+=1
-        completion(DataResult.Success(value: nil))
+        completion(DataResult.success(value: nil))
     }
 }
 
@@ -57,5 +62,12 @@ extension RestClientStub: RestClientTest {
     
     func update(change: SplitChange?) {
         self.splitChange = change
+    }
+}
+
+extension RestClientStub: RestClientImpressions {
+    func sendImpressions(impressions: [ImpressionsTest], completion: @escaping (DataResult<EmptyValue>) -> Void) {
+        sendImpressionsCount+=1
+        completion(DataResult.success(value: nil))
     }
 }

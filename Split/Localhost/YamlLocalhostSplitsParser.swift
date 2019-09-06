@@ -8,15 +8,16 @@
 
 import Foundation
 
+// swiftlint:disable cyclomatic_complexity
 class YamlLocalhostSplitsParser: LocalhostSplitsParser {
-    
+
     private let splitHelper = SplitHelper()
-    private let kTreatmentField = "treatment";
-    private let kConfigField = "config";
-    private let kKeysField = "keys";
-    
+    private let kTreatmentField = "treatment"
+    private let kConfigField = "config"
+    private let kKeysField = "keys"
+
     func parseContent(_ content: String) -> LocalhostSplits {
-        
+
         var loadedSplits = LocalhostSplits()
         var document: Yaml?
         do {
@@ -24,7 +25,7 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
         } catch {
             Logger.e("Error parsing Yaml content: \(content)")
         }
-        
+
         if let document = document, let values = document.array {
             for row in values {
                 if let rowDic = row.dictionary {
@@ -36,9 +37,9 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
                         } else {
                             split = splitHelper.createDefaultSplit(named: splitName)
                         }
-                        
+
                         if let splitMap = rowDic[splitNameField]?.dictionary {
-                            let treatment = splitMap[Yaml.string(kTreatmentField)]?.string ?? SplitConstants.CONTROL
+                            let treatment = splitMap[Yaml.string(kTreatmentField)]?.string ?? SplitConstants.control
                             if split.conditions == nil {
                                 split.conditions = [Condition]()
                             }
@@ -46,11 +47,15 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
                                 if let keys = keys.array {
                                     for yamlKey in keys {
                                         if let key = yamlKey.string {
-                                            split.conditions!.insert(splitHelper.createWhitelistCondition(key: key, treatment: treatment), at:0)
+                                            split.conditions!.insert(
+                                                splitHelper.createWhitelistCondition(key: key,
+                                                                                     treatment: treatment), at: 0)
                                         }
                                     }
                                 } else if let key = keys.string {
-                                    split.conditions!.insert(splitHelper.createWhitelistCondition(key: key, treatment: treatment), at:0)
+                                    split.conditions!.insert(
+                                        splitHelper.createWhitelistCondition(key: key,
+                                                                             treatment: treatment), at: 0)
                                 }
                             } else {
                                 split.conditions!.append(splitHelper.createRolloutCondition(treatment: treatment))

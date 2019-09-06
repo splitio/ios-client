@@ -12,27 +12,27 @@ import Foundation
 class SplitClientStub: SplitClient {
 
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
-        return SplitConstants.CONTROL
+        return SplitConstants.control
     }
     
     func getTreatment(_ split: String) -> String {
-        return SplitConstants.CONTROL
+        return SplitConstants.control
     }
     
     func getTreatments(splits: [String], attributes: [String : Any]?) -> [String : String] {
-        return ["feature": SplitConstants.CONTROL]
+        return ["feature": SplitConstants.control]
     }
     
     func getTreatmentWithConfig(_ split: String) -> SplitResult {
-        return SplitResult(treatment: SplitConstants.CONTROL)
+        return SplitResult(treatment: SplitConstants.control)
     }
     
     func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
-        return SplitResult(treatment: SplitConstants.CONTROL)
+        return SplitResult(treatment: SplitConstants.control)
     }
     
     func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
-        return ["feature": SplitResult(treatment: SplitConstants.CONTROL)]
+        return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
     
     func on(event: SplitEvent, execute action: @escaping SplitAction) {
@@ -68,5 +68,8 @@ class SplitClientStub: SplitClient {
     
     func track(eventType: String, value: Double, properties: [String:Any]?) -> Bool {
         return true
+    }
+    
+    func flush() {
     }
 }

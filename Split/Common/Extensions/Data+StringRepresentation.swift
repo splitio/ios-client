@@ -9,6 +9,6 @@ import Foundation
 
 extension Data {
     var stringRepresentation: String {
-        return String(data:self, encoding: .utf8) ?? "<< Invalid string representation >>"
+        return String(data: self, encoding: .utf8) ?? "<< Invalid string representation >>"
     }
 }

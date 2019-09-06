@@ -14,21 +14,20 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
     private var queue: DispatchQueue
     private var splits: [String: Split]
     private var changeNumber: Int64
-    private let trafficTypesCache: TrafficTypesCache
+    private var trafficTypes = [String: Int]()
 
-    init(trafficTypesCache: TrafficTypesCache, splits: [String: Split] = [:], changeNumber: Int64 = -1) {
+    init(splits: [String: Split] = [:], changeNumber: Int64 = -1) {
         self.queue = DispatchQueue(label: queueName, attributes: .concurrent)
-        self.splits = splits
+        self.splits = [:]
         self.changeNumber = changeNumber
-        self.trafficTypesCache = trafficTypesCache
         super.init()
-        self.trafficTypesCache.update(from: self.getAllSplits())
+        initSplits(splits: splits)
     }
 
     func addSplit(splitName: String, split: Split) {
         queue.async(flags: .barrier) {
+            self.updateTrafficTypes(with: split)
             self.splits[splitName] = split
-            self.trafficTypesCache.update(with: split)
         }
     }
 
@@ -47,7 +46,7 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
     }
 
     func getSplit(splitName: String) -> Split? {
-        var split: Split? = nil
+        var split: Split?
         queue.sync {
             split = self.splits[splitName]
         }
@@ -75,12 +74,50 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
             self.splits.removeAll()
         }
     }
-    
+
     func exists(trafficType: String) -> Bool {
         var exists = false
         queue.sync {
-            exists = trafficTypesCache.contains(name: trafficType)
+            exists = (self.trafficTypes[trafficType.lowercased()] != nil)
         }
         return exists
+    }
+}
+
+extension InMemorySplitCache {
+    private func initSplits(splits: [String: Split]) {
+        for (splitName, split) in splits {
+            addSplit(splitName: splitName, split: split)
+        }
+    }
+    private func updateTrafficTypes(with split: Split) {
+        if let trafficTypeName = split.trafficTypeName?.lowercased(),
+            let status = split.status,
+            let splitName = split.name {
+            if status == .active {
+                if let loadedSplit = splits[splitName], let loadedTrafficType = loadedSplit.trafficTypeName {
+                    self.removeTrafficType(name: loadedTrafficType)
+                }
+                self.addTrafficType(name: trafficTypeName)
+            } else {
+                self.removeTrafficType(name: trafficTypeName)
+            }
+        }
+    }
+
+    private func addTrafficType(name: String) {
+        let trafficType = name.lowercased()
+        let newCount = (trafficTypes[trafficType] ?? 0) + 1
+        trafficTypes[trafficType] = newCount
+    }
+
+    private func removeTrafficType(name: String) {
+        let trafficType = name.lowercased()
+        let newCount = (trafficTypes[trafficType] ?? 0) - 1
+        if newCount > 0 {
+            trafficTypes[trafficType] = newCount
+        } else {
+            trafficTypes.removeValue(forKey: trafficType)
+        }
     }
 }

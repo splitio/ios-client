@@ -9,11 +9,14 @@
 import Foundation
 
 protocol RestClientManagerProtocol {
-    func sendRequest(target: Target, parameters: [String : AnyObject]?, headers: [String : String]?) -> RestClientRequestProtocol
+    func sendRequest(target: Target,
+                     parameters: [String: AnyObject]?,
+                     headers: [String: String]?) -> RestClientRequestProtocol
 }
 
 extension RestClientManagerProtocol {
-    func sendRequest(target: Target, parameters: [String : AnyObject]? = nil) -> RestClientRequestProtocol {
+    func sendRequest(target: Target,
+                     parameters: [String: AnyObject]? = nil) -> RestClientRequestProtocol {
         return sendRequest(target: target, parameters: parameters, headers: nil)
     }
 }
