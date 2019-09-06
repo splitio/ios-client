@@ -19,7 +19,7 @@ class LocalhostManagerTests: XCTestCase {
         eventsManager = SplitEventsManagerMock()
         let storage: FileStorageProtocol = FileStorageStub()
         var config = LocalhostSplitFetcherConfig()
-        let splitCache: SplitCacheProtocol = InMemorySplitCache(trafficTypesCache: InMemoryTrafficTypesCache())
+        let splitCache: SplitCacheProtocol = InMemorySplitCache()
         config.refreshInterval = 0
         let fetcher: SplitFetcher = LocalhostSplitFetcher(fileStorage: storage, splitCache: splitCache, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
         fetcher.forceRefresh()

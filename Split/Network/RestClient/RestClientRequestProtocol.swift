@@ -9,5 +9,6 @@
 import Foundation
 
 protocol RestClientRequestProtocol {
-    func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>, completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self
+    func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>,
+                     completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self
 }

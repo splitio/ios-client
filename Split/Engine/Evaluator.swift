@@ -6,66 +6,117 @@
 //
 
 import Foundation
+// swiftlint:disable function_body_length
+struct EvaluationResult {
+    var treatment: String
+    var label: String
+    var changeNumber: Int64?
+    var configuration: String?
 
-class Evaluator {
-    var impressions: [Impression]
+    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil) {
+        self.treatment = treatment
+        self.label = label
+        self.changeNumber = changeNumber
+        self.configuration = configuration
+    }
+}
+
+protocol Evaluator {
+    func evalTreatment(matchingKey: String, bucketingKey: String?,
+                       splitName: String, attributes: [String: Any]?) throws -> EvaluationResult
+}
+
+class DefaultEvaluator: Evaluator {
     var splitFetcher: SplitFetcher?
     var mySegmentsFetcher: MySegmentsFetcher?
-    var splitClient: InternalSplitClient?  {
-        
-        didSet {
+    var splitClient: InternalSplitClient? {
 
+        didSet {
             self.splitFetcher = self.splitClient?.splitFetcher
             self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
-            
         }
     }
-    
-    static let shared: Evaluator = {
-        
-        let instance = Evaluator()
-        return instance;
-    }()
-    
-    init(splitClient: InternalSplitClient? = nil) {
-        
-        self.splitClient = splitClient
-        self.splitFetcher = self.splitClient?.splitFetcher
-        self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
-        self.impressions = []
-    }
-    
-    func evalTreatment(key: String, bucketingKey: String? , split: String, attributes:[String:Any]?) throws -> EvaluationResult  {
+    var splitter: SplitterProtocol = Splitter.shared
 
-        if let splitTreated: Split = splitFetcher?.fetch(splitName: split), splitTreated.status != Status.Archived {
-            
-            if let killed = splitTreated.killed, killed {
-                let treatment = splitTreated.defaultTreatment ?? SplitConstants.CONTROL
-                let configuration = splitTreated.configurations?[treatment]
-                return EvaluationResult(treatment: treatment,
-                                        label: ImpressionsConstants.KILLED,
-                                        splitVersion: (splitTreated.changeNumber ?? -1),
-                                        configuration: configuration)
+    init(splitClient: InternalSplitClient? = nil) {
+
+            self.splitClient = splitClient
+            self.splitFetcher = self.splitClient?.splitFetcher
+            self.mySegmentsFetcher = self.splitClient?.mySegmentsFetcher
+    }
+
+    func evalTreatment(matchingKey: String, bucketingKey: String?,
+                       splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
+
+        if let split: Split = splitFetcher?.fetch(splitName: splitName), split.status != .archived {
+            let changeNumber = split.changeNumber ?? -1
+            let defaultTreatment  = split.defaultTreatment ?? SplitConstants.control
+            if let killed = split.killed, killed {
+                return EvaluationResult(treatment: defaultTreatment,
+                                        label: ImpressionsConstants.killed,
+                                        changeNumber: changeNumber,
+                                        configuration: split.configurations?[defaultTreatment])
             }
-            
-            var result: EvaluationResult!
-            let engine = Engine.shared
-            engine.splitClient = self.splitClient
+
+            var bucketKey: String?
+            var inRollOut: Bool = false
+            var splitAlgo: Algorithm = Algorithm.legacy
+
+            if let rawAlgo = split.algo, let algo = Algorithm.init(rawValue: rawAlgo) {
+                splitAlgo = algo
+            }
+
+            bucketKey = !(bucketingKey ?? "").isEmpty() ? bucketingKey : matchingKey
+
+            guard let conditions: [Condition] = split.conditions,
+                let trafficAllocationSeed = split.trafficAllocationSeed,
+                let seed = split.seed else {
+                return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.exception)
+            }
+
             do {
-                result = try engine.getTreatment(matchingKey: key, bucketingKey: bucketingKey, split: splitTreated, attributes: attributes)
-                result.splitVersion = splitTreated.changeNumber
-                Logger.d("* Treatment for \(key) in \(splitTreated.name ?? "") is: \(result.treatment)")
-            } catch EngineError.MatcherNotFound {
-                Logger.e("The matcher has not been found");
-                result = EvaluationResult(treatment: SplitConstants.CONTROL,
-                                          label: ImpressionsConstants.MATCHER_NOT_FOUND,
-                                          splitVersion: splitTreated.changeNumber)
+                for condition in conditions {
+                    condition.client = self.splitClient
+                    if !inRollOut && condition.conditionType == ConditionType.rollout {
+                        if let trafficAllocation = split.trafficAllocation, trafficAllocation < 100 {
+                            let bucket: Int64 = splitter.getBucket(seed: trafficAllocationSeed,
+                                                                   key: bucketKey!,
+                                                                   algo: splitAlgo)
+                            if bucket > trafficAllocation {
+                                return EvaluationResult(treatment: defaultTreatment,
+                                                        label: ImpressionsConstants.notInSplit,
+                                                        changeNumber: changeNumber,
+                                                        configuration: split.configurations?[defaultTreatment])
+                            }
+                            inRollOut = true
+                        }
+                    }
+
+                    //Return the first condition that match.
+                    if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, attributes: attributes) {
+                        let key: Key = Key(matchingKey: matchingKey, bucketingKey: bucketKey)
+                        let treatment = splitter.getTreatment(key: key, seed: seed, attributes: attributes,
+                                                              partions: condition.partitions, algo: splitAlgo)
+                        return EvaluationResult(treatment: treatment, label: condition.label!,
+                                                changeNumber: changeNumber,
+                                                configuration: split.configurations?[treatment])
+                    }
+                }
+                let result = EvaluationResult(treatment: defaultTreatment,
+                                              label: ImpressionsConstants.noConditionMatched,
+                                              changeNumber: changeNumber,
+                                              configuration: split.configurations?[defaultTreatment])
+                Logger.d("* Treatment for \(matchingKey) in \(split.name ?? "") is: \(result.treatment)")
+                return result
+            } catch EvaluatorError.matcherNotFound {
+                Logger.e("The matcher has not been found")
+                return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.matcherNotFound,
+                                          changeNumber: changeNumber)
             }
-            return result
         }
-        
-        Logger.w("The SPLIT definition for '\(split)' has not been found");
-        return EvaluationResult(treatment: SplitConstants.CONTROL, label: ImpressionsConstants.SPLIT_NOT_FOUND)
-        
+
+        Logger.w("The SPLIT definition for '\(splitName)' has not been found")
+        return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
+
     }
 }

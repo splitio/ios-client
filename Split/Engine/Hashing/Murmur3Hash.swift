@@ -7,18 +7,17 @@
 
 import Foundation
 
-
 class Murmur3Hash {
-    
+
     private static let kDefaultSeed: UInt32 = 0
-    
-    private static let c1:UInt32 = 0xCC9E2D51
+
+    private static let c1: UInt32 = 0xCC9E2D51
     private static let c2 = UInt32(0x1B873593)
     private static let r1 = UInt32(15)
     private static let r2 = UInt32(13)
     private static let m = UInt32(5)
-    private static let n:UInt32 = 0xE6546B64
-    
+    private static let n: UInt32 = 0xE6546B64
+
     ///
     /// Initialize the hash using the default seed value.
     ///
@@ -27,7 +26,7 @@ class Murmur3Hash {
     static func initialize() -> UInt32 {
         return initialize(kDefaultSeed)
     }
-    
+
     ///
     /// Initialize the hash using the specified `seed`.
     ///
@@ -75,7 +74,7 @@ class Murmur3Hash {
     ///
     //------------------------------------------------------------------------------------------------------------------
 
-    static func update<T:Hashable>(_ hash: UInt32, _ value: T?) -> UInt32 {
+    static func update<T: Hashable>(_ hash: UInt32, _ value: T?) -> UInt32 {
         return update2(hash, value != nil ? value!.hashValue : 0)
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -114,12 +113,12 @@ class Murmur3Hash {
     /// - Returns: the hash code of the data
     ///
     //------------------------------------------------------------------------------------------------------------------
-    static func hashCode<T:Hashable>(_ data: [T], _ seed: Int) -> Int {
+    static func hashCode<T: Hashable>(_ data: [T], _ seed: Int) -> Int {
         var hash = initialize(UInt32(truncatingIfNeeded: seed))
         for value in data {
             hash = update(hash, value)
         }
-        
+
         return finish(hash, data.count)
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -143,14 +142,14 @@ class Murmur3Hash {
     //------------------------------------------------------------------------------------------------------------------
     private static func hashBytesLittleEndian(_ bytes: [UInt8], _ seed: UInt32) -> UInt32 {
         let byteCount = bytes.count
-        
+
         var hash = seed
         for i in stride(from: 0, to: byteCount - 3, by: 4) {
             var word = UInt32(bytes[i])
             word |= UInt32(bytes[i + 1]) << 8
             word |= UInt32(bytes[i + 2]) << 16
             word |= UInt32(bytes[i + 3]) << 24
-            
+
             hash = update2(hash, Int(truncatingIfNeeded: word))
         }
         let remaining = byteCount & 3
@@ -159,20 +158,16 @@ class Murmur3Hash {
             for r in 0 ..< remaining {
                 lastWord |= UInt32(bytes[byteCount - 1 - r]) << (8 * (remaining - 1 - r))
             }
-            
+
             let k = calcK(lastWord)
             hash ^= k
         }
-        
+
         return finish(hash, byteCount: byteCount)
     }
     //------------------------------------------------------------------------------------------------------------------
     private init() {
-        
+
     }
     //------------------------------------------------------------------------------------------------------------------
 }
-
-
-
-

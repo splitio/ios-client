@@ -27,22 +27,27 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
 
     func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
 
-        if policy == .cacheOnly || !restClient.isSdkServerAvailable() {
-            return self.splitChangeCache.getChanges(since: -1)
+        if policy == .cacheOnly {
+            return splitChangeCache.getChanges(since: -1)
+        } else if !restClient.isSdkServerAvailable() {
+            Logger.d("Server is not reachable. Split updates will be delayed until host is reachable")
+            return splitChangeCache.getChanges(since: -1)
         } else {
-            let metricsManager = MetricsManager.shared
+            let metricsManager = DefaultMetricsManager.shared
             let semaphore = DispatchSemaphore(value: 0)
             var requestResult: DataResult<SplitChange>?
             let fetchStartTime = Date().unixTimestampInMiliseconds()
             restClient.getSplitChanges(since: since) { result in
-                metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime, for: Metrics.time.splitChangeFetcherGet)
-                metricsManager.count(delta: 1, for: Metrics.counter.splitChangeFetcherStatus200)
+                metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime,
+                                    for: Metrics.Time.splitChangeFetcherGet)
+                metricsManager.count(delta: 1, for: Metrics.Counter.splitChangeFetcherStatus200)
                 requestResult = result
                 semaphore.signal()
             }
             semaphore.wait()
 
-            guard let change: SplitChange = try requestResult?.unwrap(), splitChangeValidator.validate(change) == nil else {
+            guard let change: SplitChange = try requestResult?.unwrap(),
+                splitChangeValidator.validate(change) == nil else {
                 throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
             }
             _ = self.splitChangeCache.addChange(splitChange: change)

@@ -16,12 +16,12 @@ class MatcherTests: XCTestCase {
     func testMatcher() {
         
         let matcher = try? JSON.encodeFrom(json: "{}", to: Matcher.self)
-        let expectedVal = EngineError.MatcherNotFound
+        let expectedVal = EvaluatorError.matcherNotFound
         do {
             _ = try matcher!.getMatcher()
-        } catch EngineError.MatcherNotFound {
+        } catch EvaluatorError.matcherNotFound {
             debugPrint("MATCHER NOT FOUND")
-            XCTAssertEqual(expectedVal, EngineError.MatcherNotFound, "Matcher should be equal to NOT_FOUND value")
+            XCTAssertEqual(expectedVal, EvaluatorError.matcherNotFound, "Matcher should be equal to NOT_FOUND value")
             return
         } catch {
             debugPrint("Exception")

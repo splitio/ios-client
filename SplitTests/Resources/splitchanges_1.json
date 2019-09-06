@@ -835,6 +835,9 @@
               "defaultTreatment":"off",
               "changeNumber":1503956389520,
               "algo":2,
+              "configurations": {
+                  "off": "{\"f1\":\"v1\"}"
+              },
               "conditions":[
                             {
                             "conditionType":"WHITELIST",
@@ -1485,6 +1488,9 @@
               "defaultTreatment":"off",
               "changeNumber":1500577256901,
               "algo":2,
+              "configurations": {
+                  "off": "{\"the_emojis\":\"\\uD83D\\uDE01 -- áéíóúöÖüÜÏëç\"}"
+              },
               "conditions":[
                             {
                             "conditionType":"ROLLOUT",
