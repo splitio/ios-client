@@ -14,6 +14,7 @@ env:
     - PLATFORM='iOS Simulator'
     - NAME='iPhone 8'
     - SCHEME='Split'
+    - OS=12.2
     - LINTER_PKG_PATH="/tmp/SwiftLint.pkg"
     - LINTER_PKG_URL="https://github.com/realm/SwiftLint/releases/download/0.34.0/SwiftLint.pkg"
 
