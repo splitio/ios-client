@@ -10,7 +10,7 @@ addons:
 
 env:
   global:
-    - WORKSPACE='Split.xcodeproj'
+    - PROJECT ='Split.xcodeproj'
     - PLATFORM='iOS Simulator'
     - NAME='iPhone 8'
     - SCHEME='Split'
@@ -25,4 +25,4 @@ before_script:
 
 script:
   - swiftlint
-  - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -workspace "${WORKSPACE}" -scheme "${SCHEME}" -destination "${DESTINATION}" -derivedDataPath "${BUILD_FOLDER}" build  | xcpretty
+  - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" -derivedDataPath "${BUILD_FOLDER}" build  | xcpretty
