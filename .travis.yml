@@ -10,7 +10,7 @@ addons:
 
 env:
   global:
-    - PROJECT ='Split.xcodeproj'
+    - PROJECT='Split.xcodeproj'
     - PLATFORM='iOS Simulator'
     - NAME='iPhone 8'
     - SCHEME='Split'
