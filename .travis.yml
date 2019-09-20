@@ -1,0 +1,28 @@
+language: swift
+
+osx_image: xcode10.2
+
+addons:
+  homebrew:
+    packages:
+      - swiftlint
+    update: true
+
+env:
+  global:
+    - PROJECT='Split.xcodeproj'
+    - PLATFORM='iOS Simulator'
+    - NAME='iPhone 8'
+    - SCHEME='Split'
+    - OS=12.2
+    - LINTER_PKG_PATH="/tmp/SwiftLint.pkg"
+    - LINTER_PKG_URL="https://github.com/realm/SwiftLint/releases/download/0.34.0/SwiftLint.pkg"
+
+before_script:
+  - DESTINATION="platform=${PLATFORM},OS=${OS},name=${NAME}"
+  - BUILD_FOLDER='SplitApp'
+  - mkdir "${BUILD_FOLDER}"
+
+script:
+  - swiftlint
+  - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" -derivedDataPath "${BUILD_FOLDER}" build  | xcpretty
