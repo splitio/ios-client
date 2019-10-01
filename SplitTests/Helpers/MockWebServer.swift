@@ -9,14 +9,14 @@
 import Foundation
 import Swifter
 
-typealias PathRequest = ((Int) -> Void)
-
-struct ReceivedRequest {
+struct ClientRequest {
     var identifier: String
     var path: String
     var data: String?
     var method: String
 }
+
+typealias RequestHandler = ((ClientRequest) -> MockedResponse)
 
 struct MockedResponse {
     var code: Int
@@ -28,63 +28,46 @@ enum MockedMethod: String {
     case post = "POST"
 }
 
-class RequestCounter {
-    private var counters = [String: Int]()
-
-    func count(for path: String) -> Int {
-        var count = 0
-        DispatchQueue.global().sync(flags: .barrier) {
-            count = self.counters[path] ?? 0
-            self.counters[path] = count + 1
-        }
-        return count
-    }
-
-    func reset() {
-        DispatchQueue.global().async(flags: .barrier) {
-            self.counters.removeAll()
-        }
-    }
-}
-
 class MockWebServer {
     
     let httpServer = HttpServer()
-    var receivedRequests = [ReceivedRequest]()
-    let requestCounts = RequestCounter()
+    var receivedRequests = [ClientRequest]()
     
     init() {
     }
     
     func routeGet(path: String, data: String?) {
-        return route(method: .get, path: path, responses: [MockedResponse(code: 200, data: data)], onRequest: nil)
+        return route(method: .get, path: path, requestHandler: { request in
+                       return MockedResponse(code: 200, data: data)
+                   })
     }
     
     func routePost(path: String, data: String?) {
-        return route(method: .post, path: path, responses: [MockedResponse(code: 200, data: data)], onRequest: nil)
+        return route(method: .post, path: path, requestHandler: { request in
+                return MockedResponse(code: 200, data: data)
+            })
     }
 
-    func route(method: MockedMethod, path: String, responses: [MockedResponse]?, onRequest: PathRequest?) {
+    func route(method: MockedMethod, path: String, requestHandler: RequestHandler?) {
 
         let respHandler: (Swifter.HttpRequest) -> Swifter.HttpResponse = { [weak self] request in
             var mockedResponse: MockedResponse?
-            var responseIndex: Int = 0
             if let self = self {
-                responseIndex = self.requestCounts.count(for: request.path)
-                self.receivedRequests.append(ReceivedRequest(
+                self.receivedRequests.append(ClientRequest(
                     identifier:  self.buildRequestIdentifier(request: request),
                     path: request.path,
                     data: self.bytesToString(bytes: request.body),
                     method: method.rawValue))
+
+                if let requestHandler = requestHandler {
+                    let clientRequest = ClientRequest(identifier: self.buildRequestIdentifier(request: request),
+                                                      path: request.path,
+                                                      data: self.bytesToString(bytes: request.body),
+                                                      method: request.method)
+                    mockedResponse = requestHandler(clientRequest)
+                }
             }
 
-            if let responses = responses, responseIndex < responses.count {
-                    mockedResponse = responses[responseIndex]
-            }
-
-            if let onRequest = onRequest {
-                onRequest(responseIndex)
-            }
 
             if let response = mockedResponse {
                 if response.code == 200 {

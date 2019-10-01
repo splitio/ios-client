@@ -14,13 +14,18 @@ class SplitChangesTest: XCTestCase {
     let kNeverRefreshRate = 9999999
     var webServer: MockWebServer!
     let kChangeNbInterval: Int64 = 86400
+    var reqChangesIndex = 0
 
-    var exp = [
+    let spExp = [
         XCTestExpectation(description: "upd 0"),
         XCTestExpectation(description: "upd 1"),
         XCTestExpectation(description: "upd 2"),
         XCTestExpectation(description: "upd 3")
     ]
+
+    let impExp = XCTestExpectation(description: "impressions")
+
+    var impHit: [ImpressionsTest]?
     
     override func setUp() {
         setupServer()
@@ -31,18 +36,36 @@ class SplitChangesTest: XCTestCase {
     }
     
     private func setupServer() {
+
         webServer = MockWebServer()
         let respData = responseSlitChanges()
         var responses = [MockedResponse]()
         for data in respData {
            responses.append(MockedResponse(code: 200, data: try? Json.encodeToJson(data)))
         }
-        webServer.routeGet(path: "/mySegments/:user_id", data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}")
-        webServer.route(method: .get, path: "/splitChanges?since=:param", responses: responses) { index in
-            if index > 0 {
-                self.exp[index - 1].fulfill()
-                print("exp: \(index) -> \(index - 1)")
+
+        webServer.routeGet(path: "/mySegments/:user_id",
+                           data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, "
+                            + "{ \"id\":\"id1\", \"name\":\"segment2\"}]}")
+
+        webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
+            let index = self.reqChangesIndex
+            if index < self.spExp.count {
+                if self.reqChangesIndex > 0 {
+                    self.spExp[index - 1].fulfill()
+                }
+                self.reqChangesIndex += 1
+                return responses[index]
+            } else if index == self.spExp.count {
+                self.spExp[index - 1].fulfill()
             }
+            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9567456937865, \"till\": 9567456937869 }")
+        }
+
+        webServer.route(method: .post, path: "/testImpressions/bulk") { request in
+            self.impHit = try? self.impressionsFromHit(request: request)
+            self.impExp.fulfill()
+            return MockedResponse(code: 200, data: nil)
         }
         webServer.start()
     }
@@ -50,7 +73,9 @@ class SplitChangesTest: XCTestCase {
     private func stopServer() {
         webServer.stop()
     }
-    
+
+    // MARK: Test
+    /// Getting changes from server and test treatments and change number
     func test() throws {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
         let matchingKey = "CUSTOMER_ID"
@@ -62,13 +87,13 @@ class SplitChangesTest: XCTestCase {
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 5
-        splitConfig.impressionRefreshRate = 5
+        splitConfig.impressionRefreshRate = 21
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
         splitConfig.targetSdkEndPoint = "http://localhost:8080"
         splitConfig.targetEventsEndPoint = "http://localhost:8080"
         splitConfig.impressionListener = { impression in
-            impressions[self.buildImpressionKey(impression: impression)] = impression
+            impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
         }
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
@@ -88,36 +113,44 @@ class SplitChangesTest: XCTestCase {
             //self.exp[0].fulfill()
         }
         
-        wait(for: [sdkReady], timeout: 100000)
+        wait(for: [sdkReady], timeout: 20000)
 
         for i in 0..<4 {
-            wait(for: [exp[i]], timeout: 100000)
-            print("wait: \(i)")
+            wait(for: [spExp[i]], timeout: 20000)
             treatments.append(client.getTreatment("test_feature"))
-            print("tr: \(treatments[i])")
-            if i < exp.count {
-
-            }
         }
-        
-        let i1 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "test_feature", treatment: "on_0")]
-        let i2 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "test_feature", treatment: "off_1")]
-        let i3 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "test_feature", treatment: "on_2")]
+
+        wait(for: [impExp], timeout: 10000)
+
+        var impLis = [Impression]()
+        impLis.append(impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID",
+                                                                   splitName: "test_feature", treatment: "on_0")]!)
+        impLis.append(impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID",
+                                                                   splitName: "test_feature", treatment: "off_1")]!)
+        impLis.append(impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID",
+                                                                   splitName: "test_feature", treatment: "on_2")]!)
 
         XCTAssertTrue(sdkReadyFired)
         for i in 0..<4 {
             let even = ((i + 2) % 2 == 0)
             XCTAssertEqual((even ? "on_\(i)" : "off_\(i)"), treatments[i])
         }
-        XCTAssertNotNil(i1)
+        XCTAssertNotNil(impLis[0])
 
-        XCTAssertNotNil(i2)
-        XCTAssertNotNil(i3)
-        XCTAssertEqual(1567456937865, i1?.changeNumber)
-        XCTAssertEqual(1567456937865 + kChangeNbInterval, i2?.changeNumber)
-        XCTAssertEqual(1567456937865 + kChangeNbInterval * 2, i3?.changeNumber)
-        //XCTAssertEqual("not in split", i1?.label)
+        XCTAssertNotNil(impLis[1])
+        XCTAssertNotNil(impLis[2])
+        XCTAssertEqual(1567456937865, impLis[0].changeNumber)
+        XCTAssertEqual(1567456937865 + kChangeNbInterval, impLis[1].changeNumber)
+        XCTAssertEqual(1567456937865 + kChangeNbInterval * 2, impLis[2].changeNumber)
+        XCTAssertEqual(1, impHit?.count)
+        XCTAssertEqual(4, impHit?[0].keyImpressions.count)
+        let imp0 = impHit?[0].keyImpressions[0]
+        let imp3 = impHit?[0].keyImpressions[3]
+        XCTAssertEqual("on_0", imp0?.treatment)
+        XCTAssertEqual(1567456937865, imp0?.changeNumber)
 
+        XCTAssertEqual("off_3", imp3?.treatment)
+        XCTAssertEqual(1567456937865  + kChangeNbInterval * 3, imp3?.changeNumber)
     }
 
     private func  responseSlitChanges() -> [SplitChange] {
@@ -148,12 +181,16 @@ class SplitChangesTest: XCTestCase {
         return FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_int_test")
     }
 
-    private func buildImpressionKey(impression: Impression) -> String {
-        return buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
+    private func impressionsHits() -> [ClientRequest] {
+        return webServer.receivedRequests.filter { $0.path == "/testImpressions/bulk"}
     }
-    
-    private func buildImpressionKey(key: String, splitName: String, treatment: String) -> String {
-        return "(\(key)_\(splitName)_\(treatment)"
+
+    private func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
+        return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
+    }
+
+    private func impressionsFromHit(request: ClientRequest) throws -> [ImpressionsTest] {
+        return try buildImpressionsFromJson(content: request.data!)
     }
 }
 
