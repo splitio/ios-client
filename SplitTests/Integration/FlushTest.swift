@@ -113,7 +113,7 @@ class FlushTests: XCTestCase {
         return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
     }
     
-    private func tracksHits() -> [ReceivedRequest] {
+    private func tracksHits() -> [ClientRequest] {
         return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
     }
 
@@ -144,7 +144,7 @@ class FlushTests: XCTestCase {
         return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
     }
 
-    private func impressionsHits() -> [ReceivedRequest] {
+    private func impressionsHits() -> [ClientRequest] {
         return webServer.receivedRequests.filter { $0.path == "/testImpressions/bulk"}
     }
 

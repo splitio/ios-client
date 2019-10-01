@@ -56,7 +56,7 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.targetSdkEndPoint = "http://localhost:8080"
         splitConfig.targetEventsEndPoint = "http://localhost:8080"
         splitConfig.impressionListener = { impression in
-            impressions[self.buildImpressionKey(impression: impression)] = impression
+            impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
         }
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
@@ -91,9 +91,9 @@ class SplitIntegrationTests: XCTestCase {
         let s2 = manager?.split(featureName: "NO_EXISTING_FEATURE")
         let splits = manager?.splits
         
-        let i1 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "FACUNDO_TEST", treatment: "off")]
-        let i2 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "NO_EXISTING_FEATURE", treatment: SplitConstants.control)]
-        let i3 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "testing222", treatment: "off")]
+        let i1 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "FACUNDO_TEST", treatment: "off")]
+        let i2 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "NO_EXISTING_FEATURE", treatment: SplitConstants.control)]
+        let i3 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "testing222", treatment: "off")]
         
         for i in 0..<101 {
             _ = client?.track(eventType: "account", value: Double(i))
@@ -145,7 +145,7 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
         splitConfig.impressionListener = { impression in
-            impressions[self.buildImpressionKey(impression: impression)] = impression
+            impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
         }
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
@@ -198,21 +198,15 @@ class SplitIntegrationTests: XCTestCase {
         }
         return false
     }
-    private func buildImpressionKey(impression: Impression) -> String {
-        return buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
-    }
     
-    private func buildImpressionKey(key: String, splitName: String, treatment: String) -> String {
-        return "(\(key)_\(splitName)_\(treatment)"
-    }
     
     private func buildEventsFromJson(content: String) throws -> [EventDTO] {
         return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
     }
     
-        private func tracksHits() -> [ReceivedRequest] {
-            return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
-        }
+    private func tracksHits() -> [ClientRequest] {
+        return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
+    }
         
     private func getLastTrackEventJsonHit() -> String {
         let trackRecs = tracksHits()
