@@ -122,7 +122,6 @@ extension DefaultSplitClient {
     }
 
     public func flush() {
-        
         DispatchQueue.global().async {
             self.impressionsManager.flush()
             self.trackEventsManager.flush()
