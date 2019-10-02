@@ -53,8 +53,9 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
-        splitConfig.targetSdkEndPoint = "http://localhost:8080"
-        splitConfig.targetEventsEndPoint = "http://localhost:8080"
+        splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
+        splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
+
         splitConfig.impressionListener = { impression in
             impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
         }
@@ -101,8 +102,8 @@ class SplitIntegrationTests: XCTestCase {
         
         sleep(3)
         
-        let event99 = getTrackEventBy(value: 99.0)
-        let event100 = getTrackEventBy(value: 100.0)
+        let event99 = IntegrationHelper.getTrackEventBy(value: 99.0, trackHits: tracksHits())
+        let event100 = IntegrationHelper.getTrackEventBy(value: 100.0, trackHits: tracksHits())
         
         XCTAssertTrue(existsFolder(name: dataFolderName))
         XCTAssertTrue(sdkReadyFired)
@@ -199,11 +200,6 @@ class SplitIntegrationTests: XCTestCase {
         return false
     }
     
-    
-    private func buildEventsFromJson(content: String) throws -> [EventDTO] {
-        return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
-    }
-    
     private func tracksHits() -> [ClientRequest] {
         return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
     }
@@ -211,23 +207,6 @@ class SplitIntegrationTests: XCTestCase {
     private func getLastTrackEventJsonHit() -> String {
         let trackRecs = tracksHits()
         return trackRecs[trackRecs.count  - 1].data!
-    }
-    
-    private func getTrackEventBy(value: Double) -> EventDTO? {
-        let hits = tracksHits()
-        for req in hits {
-            var lastEventHitEvents: [EventDTO] = []
-            do {
-                lastEventHitEvents = try buildEventsFromJson(content: req.data!)
-            } catch {
-                print("error: \(error)")
-            }
-            let events = lastEventHitEvents.filter { $0.value == value }
-            if events.count > 0 {
-                return events[0]
-            }
-        }
-        return nil
     }
 }
 
