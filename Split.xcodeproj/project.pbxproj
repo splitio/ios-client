@@ -194,6 +194,7 @@
 		596A7B5E234395C1004F6139 /* IntegrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B5D234395C1004F6139 /* IntegrationHelper.swift */; };
 		596A7B602343D83C004F6139 /* SplitChangesServerErrorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B5F2343D83C004F6139 /* SplitChangesServerErrorTest.swift */; };
 		596A7B622343F848004F6139 /* MySegmentUpadatedTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B612343F848004F6139 /* MySegmentUpadatedTest.swift */; };
+		596A7B652344C1EF004F6139 /* MySegmentServerErrorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B642344C1EF004F6139 /* MySegmentServerErrorTest.swift */; };
 		597848BB21BB072B00ABB4A6 /* SplitCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597848BA21BB072B00ABB4A6 /* SplitCacheTests.swift */; };
 		597CD32B216BA09000A15487 /* RestClient+Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD32A216BA09000A15487 /* RestClient+Metrics.swift */; };
 		597CD336216CE09100A15487 /* TimeMetricSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD335216CE09100A15487 /* TimeMetricSample.swift */; };
@@ -503,6 +504,7 @@
 		596A7B5D234395C1004F6139 /* IntegrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHelper.swift; sourceTree = "<group>"; };
 		596A7B5F2343D83C004F6139 /* SplitChangesServerErrorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangesServerErrorTest.swift; sourceTree = "<group>"; };
 		596A7B612343F848004F6139 /* MySegmentUpadatedTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentUpadatedTest.swift; sourceTree = "<group>"; };
+		596A7B642344C1EF004F6139 /* MySegmentServerErrorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentServerErrorTest.swift; sourceTree = "<group>"; };
 		597848BA21BB072B00ABB4A6 /* SplitCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitCacheTests.swift; sourceTree = "<group>"; };
 		597CD32A216BA09000A15487 /* RestClient+Metrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RestClient+Metrics.swift"; sourceTree = "<group>"; };
 		597CD335216CE09100A15487 /* TimeMetricSample.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeMetricSample.swift; sourceTree = "<group>"; };
@@ -1217,6 +1219,7 @@
 				5946783922E1147600F94E58 /* SplitIntegrationTest.swift */,
 				595B66CC231D91100030F330 /* SplitChangesTest.swift */,
 				596A7B612343F848004F6139 /* MySegmentUpadatedTest.swift */,
+				596A7B642344C1EF004F6139 /* MySegmentServerErrorTest.swift */,
 				596A7B5F2343D83C004F6139 /* SplitChangesServerErrorTest.swift */,
 				599A6E3322FC681600D3D68C /* FlushTest.swift */,
 				596A7B5D234395C1004F6139 /* IntegrationHelper.swift */,
@@ -1707,6 +1710,7 @@
 				5959C47E228051040064F968 /* SplitClientStub.swift in Sources */,
 				59D84BE3221734F5003DA248 /* LocalhostSplitClientTests.swift in Sources */,
 				592C6AC6211B718E002D120C /* SplitEventsManagerTest.swift in Sources */,
+				596A7B652344C1EF004F6139 /* MySegmentServerErrorTest.swift in Sources */,
 				5959C480228051CA0064F968 /* SplitManagerStub.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
 				599A6E2D22F8C65500D3D68C /* ImpressionsManagerTest.swift in Sources */,
