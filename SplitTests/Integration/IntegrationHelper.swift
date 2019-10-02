@@ -17,4 +17,12 @@ class IntegrationHelper {
     static func buildImpressionKey(key: String, splitName: String, treatment: String) -> String {
         return "(\(key)_\(splitName)_\(treatment)"
     }
+
+    static func impressionsFromHit(request: ClientRequest) throws -> [ImpressionsTest] {
+        return try buildImpressionsFromJson(content: request.data!)
+    }
+
+    static func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
+        return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
+    }
 }

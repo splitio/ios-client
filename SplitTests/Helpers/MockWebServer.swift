@@ -36,13 +36,13 @@ class MockWebServer {
     init() {
     }
     
-    func routeGet(path: String, data: String?) {
+    func routeGet(path: String, data: String? = nil) {
         return route(method: .get, path: path, requestHandler: { request in
                        return MockedResponse(code: 200, data: data)
                    })
     }
     
-    func routePost(path: String, data: String?) {
+    func routePost(path: String, data: String? = nil) {
         return route(method: .post, path: path, requestHandler: { request in
                 return MockedResponse(code: 200, data: data)
             })
