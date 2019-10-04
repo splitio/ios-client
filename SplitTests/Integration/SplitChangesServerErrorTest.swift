@@ -88,8 +88,8 @@ class SplitChangesServerErrorTest: XCTestCase {
         splitConfig.impressionRefreshRate = kNeverRefreshRate
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
-        splitConfig.targetSdkEndPoint = "http://localhost:8080"
-        splitConfig.targetEventsEndPoint = "http://localhost:8080"
+        splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
+        splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()

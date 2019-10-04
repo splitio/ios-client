@@ -90,8 +90,8 @@ class SplitChangesTest: XCTestCase {
         splitConfig.impressionRefreshRate = 21
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
-        splitConfig.targetSdkEndPoint = "http://localhost:8080"
-        splitConfig.targetEventsEndPoint = "http://localhost:8080"
+        splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
+        splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
         splitConfig.impressionListener = { impression in
             impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
         }

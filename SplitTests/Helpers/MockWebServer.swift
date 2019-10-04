@@ -53,21 +53,19 @@ class MockWebServer {
         let respHandler: (Swifter.HttpRequest) -> Swifter.HttpResponse = { [weak self] request in
             var mockedResponse: MockedResponse?
             if let self = self {
-                self.receivedRequests.append(ClientRequest(
+
+                let clientRequest = ClientRequest(
                     identifier:  self.buildRequestIdentifier(request: request),
                     path: request.path,
                     data: self.bytesToString(bytes: request.body),
-                    method: method.rawValue))
+                    method: request.method)
+
+                self.receivedRequests.append(clientRequest)
 
                 if let requestHandler = requestHandler {
-                    let clientRequest = ClientRequest(identifier: self.buildRequestIdentifier(request: request),
-                                                      path: request.path,
-                                                      data: self.bytesToString(bytes: request.body),
-                                                      method: request.method)
                     mockedResponse = requestHandler(clientRequest)
                 }
             }
-
 
             if let response = mockedResponse {
                 if response.code == 200 {
