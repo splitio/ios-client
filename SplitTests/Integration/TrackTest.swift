@@ -154,8 +154,6 @@ class TrackTest: XCTestCase {
         let e2 = findEvent(type: "event2", value: 2.0)
         let e3 = findEvent(type: "event3", value: 3.0)
 
-
-
         XCTAssertEqual("custom", e1?.trafficTypeName)
         XCTAssertEqual(0.0, e1?.value)
         XCTAssertEqual("event1", e1?.eventTypeId)
@@ -175,8 +173,7 @@ class TrackTest: XCTestCase {
 
     private func  responseSlitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
-        
-        
+
         let c = loadSplitsChangeFile()!
         let split = c.splits![0]
         let inSegmentOneCondition = inSegmentCondition(name: "segment1")
