@@ -53,10 +53,11 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
-        splitConfig.targetSdkEndPoint = "http://localhost:8080"
-        splitConfig.targetEventsEndPoint = "http://localhost:8080"
+        splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
+        splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
+
         splitConfig.impressionListener = { impression in
-            impressions[self.buildImpressionKey(impression: impression)] = impression
+            impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
         }
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
@@ -91,9 +92,9 @@ class SplitIntegrationTests: XCTestCase {
         let s2 = manager?.split(featureName: "NO_EXISTING_FEATURE")
         let splits = manager?.splits
         
-        let i1 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "FACUNDO_TEST", treatment: "off")]
-        let i2 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "NO_EXISTING_FEATURE", treatment: SplitConstants.control)]
-        let i3 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "testing222", treatment: "off")]
+        let i1 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "FACUNDO_TEST", treatment: "off")]
+        let i2 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "NO_EXISTING_FEATURE", treatment: SplitConstants.control)]
+        let i3 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "testing222", treatment: "off")]
         
         for i in 0..<101 {
             _ = client?.track(eventType: "account", value: Double(i))
@@ -101,8 +102,8 @@ class SplitIntegrationTests: XCTestCase {
         
         sleep(3)
         
-        let event99 = getTrackEventBy(value: 99.0)
-        let event100 = getTrackEventBy(value: 100.0)
+        let event99 = IntegrationHelper.getTrackEventBy(value: 99.0, trackHits: tracksHits())
+        let event100 = IntegrationHelper.getTrackEventBy(value: 100.0, trackHits: tracksHits())
         
         XCTAssertTrue(existsFolder(name: dataFolderName))
         XCTAssertTrue(sdkReadyFired)
@@ -145,7 +146,7 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
         splitConfig.impressionListener = { impression in
-            impressions[self.buildImpressionKey(impression: impression)] = impression
+            impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
         }
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
@@ -198,42 +199,14 @@ class SplitIntegrationTests: XCTestCase {
         }
         return false
     }
-    private func buildImpressionKey(impression: Impression) -> String {
-        return buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
-    }
     
-    private func buildImpressionKey(key: String, splitName: String, treatment: String) -> String {
-        return "(\(key)_\(splitName)_\(treatment)"
+    private func tracksHits() -> [ClientRequest] {
+        return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
     }
-    
-    private func buildEventsFromJson(content: String) throws -> [EventDTO] {
-        return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
-    }
-    
-        private func tracksHits() -> [ReceivedRequest] {
-            return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
-        }
         
     private func getLastTrackEventJsonHit() -> String {
         let trackRecs = tracksHits()
         return trackRecs[trackRecs.count  - 1].data!
-    }
-    
-    private func getTrackEventBy(value: Double) -> EventDTO? {
-        let hits = tracksHits()
-        for req in hits {
-            var lastEventHitEvents: [EventDTO] = []
-            do {
-                lastEventHitEvents = try buildEventsFromJson(content: req.data!)
-            } catch {
-                print("error: \(error)")
-            }
-            let events = lastEventHitEvents.filter { $0.value == value }
-            if events.count > 0 {
-                return events[0]
-            }
-        }
-        return nil
     }
 }
 
