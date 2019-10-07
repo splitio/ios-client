@@ -20,40 +20,7 @@ Split SDK is an open source project and we welcome feedback and contribution. Th
 
 ### Building the SDK
 
-```
-// Create a Split config
-let config = SplitClientConfig()
-
-// Create a Key to evaluate
-let key: Key = Key(matchingKey: "CUSTOMER_ID")
-
-// Setup your Split Api Key
-let apiKey: String = "API_KEY"
-
-// Factory builder
-let factoryBuilder = DefaultSplitFactoryBuilder()
-factoryBuilder.setApiKey(apiKey).setKey(key).setConfig(config)
-
-// Create a Split factory
-let factory = factoryBuilder.build()
-
-// Get a Split Client
-let client = factory?.client
-
-// Subscribe to SDK READY event and evaluate your Split
-client?.on(event: SplitEvent.sdkReady) {
-    if let client = client {
-        let treatment = client.getTreatment("my_first_split")
-        if treatment == "on" {
-            print("I'm ON")
-        } else if treatment == "off" {
-            print("I'm OFF")
-        } else {
-            print("CONTROL was returned, there was an error")
-        }
-    }
-}
-```
+In Xcode open menu Product and then select Build.
 
 ### Running tests
 
