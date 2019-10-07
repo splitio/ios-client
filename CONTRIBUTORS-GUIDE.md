@@ -18,7 +18,7 @@ Split SDK is an open source project and we welcome feedback and contribution. Th
 10. Check for conflicts once the pull request is created to make sure your PR can be merged cleanly into `development`.
 11. Keep an eye out for any feedback or comments from Split's SDK team.
   
-### Building the SDK <THIS IS OPTIONAL>
+### Building the SDK
    
 Javi: ADD CONTENT HERE (Instructions on how to build this library, as simple as possible)
    
