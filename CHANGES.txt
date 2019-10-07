@@ -1,76 +1,108 @@
+2.4.0: (Aug 29, 2019)
+ - Added flush feature
+ - Added basic end to end tests setup
+ - Added swift linter
+ - Bugfixing - small issue with traffic types validation warning
+
 2.3.0: (Jun 07, 2019)
-- Adding split existence validation
-- Adding traffic type validation
-- Adding multiple factory instance validation
-- Adding support for Swift 5.0
+ - Added split existence validation
+ - Added traffic type validation
+ - Added multiple factory instance validation
+ - Added support for Swift 5.0
+
 2.2.0: (May 17, 2019)
-- Adding properties field to Track Event feature
+ - Added properties field to Track Event feature
+
 2.1.0: (Apr 25, 2019)
-- Adding Dynamic configurations feature
+ - Added Dynamic configurations feature
+
 2.0.3: (Apr 12, 2019)
-- Fixing traffic allocation issue on certain scenarios
+ - Bugfixing - Traffic allocation issue on certain scenarios
+
 2.0.2: (Mar 13, 2019)
-- Adding localhost mode
-- Using different data folders for each api key factory instance
+ - Added localhost mode
+ - Updated file storage to use different data folders for each api key factory instance
+
 2.0.1: (Feb 01, 2019)
-- Adding some pending validations missed in 2.0.0
-- Improving key handling in Split Client
+ - Added some pending validations missed in 2.0.0
+ - Improved key handling in Split Client
+
 2.0.0: (Feb 01, 2019)
-- Adding Factory Builder to instanciate Split Factory.
-- Removing previous Factory constructor
-- Renaming protocol SplitClientProtocol to SplitClient
-- Renaming protocol SplitFactoryProtocol to SplitFactory
-- Renaming protocol SplitManagerProtocol to SplitManager
-- Renaming old class SplitClient to DefaultSplitClient
-- Renaming old class SplitFactory to DefaultSplitFactory
-- Renaming old class SplitManager to DefaultSplitManager
-- Replacing methods from DefaultSplitManager class (Previously named SplitManager) by read only properties
-- Removing deprecated methods to set values from SplitClientConfig
-- Adding validations for user input
+ - Added Factory Builder to instanciate Split Factory.
+ - Removed previous Factory constructor
+ - Renamed protocol SplitClientProtocol to SplitClient
+ - Renamed protocol SplitFactoryProtocol to SplitFactory
+ - Renamed protocol SplitManagerProtocol to SplitManager
+ - Renamed old class SplitClient to DefaultSplitClient
+ - Renamed old class SplitFactory to DefaultSplitFactory
+ - Renamed old class SplitManager to DefaultSplitManager
+ - Replaced methods from DefaultSplitManager class (Previously named SplitManager) by read only properties
+ - Removed deprecated methods to set values from SplitClientConfig
+ - Added validations for user input
+
 1.6.1: (Feb 7, 2019)
-- Fixed issue when casting from Int32 to Int on iPhone 5
+ - Bugfixing - issue when casting from Int32 to Int on iPhone 5
+
 1.6.0: (Jan 11, 2019)
-- Adding Objective C support
-- Fixing issue about allocation = 1
+ - Added Objective C support
+ - Bugfixing - issue about Traffic Allocation = 1
+
 1.5.6: (Dic 10, 2018)
-- Storing cache data on disk only when app goes to background
+ - Updated file storage to cache data on disk only when app goes to background
+
 1.5.5: (Nov 29, 2018)
-- Fixing issue retrieving null split algorithm from server
+ - Bugfixing - retrieving null split algorithm from server
+
 1.5.4: (Nov 16, 2018)
-- Fixing Any to Int64 convertion issue
-- Fixing issue in legacy algorithm
+ - Bugfixing - Any to Int64 convertion issue
+ - Bugfixing - issue in legacy algorithm
+
 1.5.2: (Oct 11, 2018)
-- Adding internal split metrics
-- Refactoring project structure tree
+ - Added internal split metrics
+ - Updated project structure tree
+
 1.5.1: (Oct 3, 2018)
-- Migrating to Swift 4.2
+ - Migrated to Swift 4.2
+
 1.5.0: (Sep 24, 2018)
-- Adding Split Manager feature
+ - Added Split Manager feature
+
 1.4.0: (Sep 13, 2018)
-- Adding get treatments feature
+ - Added get treatments feature
+
 1.3.1: (Sep 12, 2018)
-- Fixing issue when loading empty my segments Cache
-- Changing Deployment Target to 9.0
+ - Bugfixing - issue when loading empty my segments Cache
+ - Updated Deployment Target to 9.0
+
 1.3.0: (Aug 24, 2018)
-- Refactoring API methods and properties to make it more Swift style
-- Removing CocoaPods dependency
-- Improving unit tests
+ - Updated API methods and properties to make it more Swift style
+ - Removed CocoaPods dependency
+ - Improved unit tests
+
 1.2.9: (Aug 13, 2018)
-- Adding impression listener
+ - Added impression listener
+
 1.2.8: (Aug 3, 2018)
-- Performance improvements on Cache
-- Concurrency fixes for Cache Loading
+ - Updated Cache with performance improvements
+ - Bugfixing - concurrency fixes for Cache Loading
+
 1.2.0: (Jul 11, 2018)
-- Adding new method to handle SDK events through a closure
+ - Added new method to handle SDK events through a closure
+
 1.1.0: (Jul 03, 2018)
-- Adding Carthage support
+ - Added Carthage support
+
 1.0.0: (Jun 29, 2018)
-- Adding track feature
+ - Added track feature
+
 0.3.0: (Jun 27, 2018)
-- Removing Alamofire and SwiftyJSON dependencies
+ - Removed Alamofire and SwiftyJSON dependencies
+
 0.2.1rc1: (May 24, 2018)
-- Adding client dependency to event background task
+ - Added client dependency to event background task
+
 0.2.0: (Apr 25, 2018)
-- Events listener has been added. Available events: SplitEvent.sdkReady and SplitEvent.sdkReadyTimedOut
+ - Added events listener. Available events: SplitEvent.sdkReady and SplitEvent.sdkReadyTimedOut
+
 0.1.5: (Mar 19, 2018)
-- Adding first load from cache
+ - Added first load from cache
