@@ -28,7 +28,7 @@ To run tests open Product menu on Xcode and select Test option.
 
 ### Linting and other useful checks
 
-Swiftlint is setup to run after the build process. To check if any issue ocurrs open issue navigator in Xcode
+Swiftlint is setup to run after the build process. To check if any issue occurs, open issue navigator in Xcode.
 
 # Contact
 
