@@ -13,7 +13,7 @@ import Foundation
  */
 public class DefaultSplitFactory: NSObject, SplitFactory {
 
-    private let defaultClient: SplitClient
+    private let defaultClient: SplitClient!
     private let defaultManager: SplitManager
 
     public var client: SplitClient {
@@ -38,7 +38,21 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         config.apiKey = apiKey
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
         let splitCache = SplitCache(fileStorage: fileStorage)
-        defaultClient = DefaultSplitClient(config: config, key: key, splitCache: splitCache, fileStorage: fileStorage)
-        defaultManager = DefaultSplitManager(splitCache: splitCache)
+        let manager = DefaultSplitManager(splitCache: splitCache)
+        defaultManager = manager
+
+        defaultClient = DefaultSplitClient( config: config,
+                                            key: key,
+                                            splitCache: splitCache,
+                                            fileStorage: fileStorage,
+                                            destroyHandler: {
+                                                manager.destroy()
+        })
+    }
+
+    private func destroy() {
+        if let manager = defaultManager as? Destroyable {
+            manager.destroy()
+        }
     }
 }

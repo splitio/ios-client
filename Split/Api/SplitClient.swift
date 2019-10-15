@@ -32,6 +32,7 @@ public typealias SplitAction = () -> Void
     func track(eventType: String, value: Double) -> Bool
 
     func flush()
+    func destroy()
 
     @objc(trackWithTrafficType:eventType:properties:) func track(trafficType: String,
                                                                  eventType: String,

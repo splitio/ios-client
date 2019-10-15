@@ -9,10 +9,20 @@
 
 import Foundation
 
+typealias DestroyHandler = () -> Void
+
 public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClient {
 
-    var splitFetcher: SplitFetcher?
-    var mySegmentsFetcher: MySegmentsFetcher?
+    var splitFetcher: SplitFetcher? {
+        return refreshableSplitFetcher
+    }
+
+    var mySegmentsFetcher: MySegmentsFetcher? {
+        return refreshableMySegmentsFetcher
+    }
+
+    private var refreshableSplitFetcher: RefreshableSplitFetcher?
+    private var refreshableMySegmentsFetcher: RefreshableMySegmentsFetcher?
 
     private var key: Key
     private var initialized: Bool = false
@@ -25,10 +35,14 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private let eventValidator: EventValidator
     private let validationLogger: ValidationMessageLogger
     private var treatmentManager: TreatmentManager!
+    private var factoryDestroyHandler: DestroyHandler
 
-    init(config: SplitClientConfig, key: Key, splitCache: SplitCache, fileStorage: FileStorageProtocol) {
+    init(config: SplitClientConfig, key: Key, splitCache: SplitCache,
+         fileStorage: FileStorageProtocol, destroyHandler: @escaping DestroyHandler) {
+
         self.config = config
         self.key = key
+        self.factoryDestroyHandler = destroyHandler
 
         let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
 
@@ -40,12 +54,12 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
         let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
 
-        let refreshableSplitFetcher = RefreshableSplitFetcher(
+        let refreshableSplitFetcher = DefaultRefreshableSplitFetcher(
             splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: self.config.featuresRefreshRate,
             eventsManager: eventsManager)
 
         let mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache)
-        let refreshableMySegmentsFetcher = RefreshableMySegmentsFetcher(
+        let refreshableMySegmentsFetcher = DefaultRefreshableMySegmentsFetcher(
             matchingKey: key.matchingKey, mySegmentsChangeFetcher: mySegmentsFetcher, mySegmentsCache: mySegmentsCache,
             interval: self.config.segmentsRefreshRate, eventsManager: eventsManager)
 
@@ -64,8 +78,8 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         super.init()
         refreshableSplitFetcher.start()
         refreshableMySegmentsFetcher.start()
-        self.splitFetcher = refreshableSplitFetcher
-        self.mySegmentsFetcher = refreshableMySegmentsFetcher
+        self.refreshableSplitFetcher = refreshableSplitFetcher
+        self.refreshableMySegmentsFetcher = refreshableMySegmentsFetcher
 
         eventsManager.getExecutorResources().setClient(client: self)
 
@@ -120,15 +134,6 @@ extension DefaultSplitClient {
     public func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult] {
         return treatmentManager.getTreatmentsWithConfig(splits: splits, attributes: attributes)
     }
-
-    public func flush() {
-        DispatchQueue.global().async {
-            self.impressionsManager.flush()
-            self.trackEventsManager.flush()
-            DefaultMetricsManager.shared.flush()
-        }
-    }
-
 }
 
 // MARK: Track Events
@@ -230,5 +235,30 @@ extension DefaultSplitClient {
             return MemoryLayout.size(ofValue: value) * value.count
         }
         return 0
+    }
+}
+
+// MARK: Flush / Destroy
+extension DefaultSplitClient {
+
+    public func flush() {
+        DispatchQueue.global().async {
+            self.impressionsManager.flush()
+            self.trackEventsManager.flush()
+            DefaultMetricsManager.shared.flush()
+        }
+    }
+
+    public func destroy() {
+        if let mySegmentsFetcher = self.refreshableMySegmentsFetcher {
+            mySegmentsFetcher.stop()
+        }
+
+        if let splitFetcher = self.refreshableSplitFetcher {
+            splitFetcher.stop()
+        }
+        impressionsManager.stop()
+        trackEventsManager.stop()
+        factoryDestroyHandler()
     }
 }

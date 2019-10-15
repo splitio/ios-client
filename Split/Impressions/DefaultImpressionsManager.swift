@@ -24,7 +24,7 @@ class DefaultImpressionsManager: ImpressionsManager {
     private var impressionsHits = SyncDictionarySingleWrapper<String, ImpressionsHit>()
 
     private let restClient: RestClientImpressions
-    private var pollingManager: PollingManager!
+    private var taskExecutor: PeriodicTaskExecutor!
 
     private var impressionsPushRate: Int!
     private var impressionsPerPush: Int64!
@@ -43,11 +43,11 @@ class DefaultImpressionsManager: ImpressionsManager {
 // MARK: Public
 extension DefaultImpressionsManager {
     func start() {
-        pollingManager.start()
+        taskExecutor.start()
     }
 
     func stop() {
-        pollingManager.stop()
+        taskExecutor.stop()
     }
 
     func flush() {
@@ -78,10 +78,10 @@ extension DefaultImpressionsManager {
     }
 
     private func createPollingManager(dispatchGroup: DispatchGroup?) {
-        var config = PollingManagerConfig()
+        var config = PeriodicTaskExecutorConfig()
         config.rate = self.impressionsPushRate
 
-        pollingManager = PollingManager(
+        taskExecutor = PeriodicTaskExecutor(
             dispatchGroup: dispatchGroup,
             config: config,
             triggerAction: {[weak self] in
