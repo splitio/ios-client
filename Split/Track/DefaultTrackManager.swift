@@ -26,7 +26,7 @@ class DefaultTrackManager {
     private var eventsHits = SyncDictionarySingleWrapper<String, EventsHit>()
 
     private let restClient: RestClientTrackEvents
-    private var pollingManager: PollingManager!
+    private var taskExecutor: PeriodicTaskExecutor!
 
     private let eventsFirstPushWindow: Int
     private let eventsPushRate: Int
@@ -53,11 +53,11 @@ class DefaultTrackManager {
 // MARK: Public
 extension DefaultTrackManager: TrackManager {
     func start() {
-        pollingManager.start()
+        taskExecutor.start()
     }
 
     func stop() {
-        pollingManager.stop()
+        taskExecutor.stop()
     }
 
     func flush() {
@@ -147,11 +147,11 @@ extension DefaultTrackManager {
     }
 
     private func createPollingManager(dispatchGroup: DispatchGroup?) {
-        var config = PollingManagerConfig()
-        config.firstPollWindow = self.eventsFirstPushWindow
+        var config = PeriodicTaskExecutorConfig()
+        config.firstExecutionWindow = self.eventsFirstPushWindow
         config.rate = self.eventsPushRate
 
-        pollingManager = PollingManager(
+        taskExecutor = PeriodicTaskExecutor(
             dispatchGroup: dispatchGroup,
             config: config,
             triggerAction: {[weak self] in

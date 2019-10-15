@@ -37,20 +37,25 @@ import Foundation
 ///
 ///
 /// For more information
-///  - seealso:
+///  - see also:
 /// [Split iOS SDK](https://docs.split.io/docs/ios-sdk-overview#section-localhost)
 ///
 
 public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitClient {
 
     var mySegmentsFetcher: MySegmentsFetcher?
-    var splitFetcher: SplitFetcher?
+
+    var splitFetcher: SplitFetcher? {
+        return refreshableSplitFetcher
+    }
+
+    private let refreshableSplitFetcher: RefreshableSplitFetcher?
     private let eventsManager: SplitEventsManager?
     private var evaluator: Evaluator!
     private let key: Key
 
-    init(key: Key, splitFetcher: SplitFetcher, eventsManager: SplitEventsManager? = nil) {
-        self.splitFetcher = splitFetcher
+    init(key: Key, splitFetcher: RefreshableSplitFetcher, eventsManager: SplitEventsManager? = nil) {
+        self.refreshableSplitFetcher = splitFetcher
         self.eventsManager = eventsManager
         self.key = key
         super.init()
@@ -137,6 +142,12 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
     }
 
     public func flush() {
+    }
+
+    public func destroy() {
+        if let splitFetcher = self.refreshableSplitFetcher {
+            splitFetcher.stop()
+        }
     }
 
 }

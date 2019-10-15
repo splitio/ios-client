@@ -8,7 +8,7 @@
 
 import Foundation
 
-class RefreshableSplitFetcher: SplitFetcher {
+class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
 
     private let splitChangeFetcher: SplitChangeFetcher
     private let interval: Int
