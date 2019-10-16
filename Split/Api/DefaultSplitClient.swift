@@ -250,6 +250,7 @@ extension DefaultSplitClient {
     }
 
     public func destroy() {
+        flush()
         if let mySegmentsFetcher = self.refreshableMySegmentsFetcher {
             mySegmentsFetcher.stop()
         }
