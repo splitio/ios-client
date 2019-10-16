@@ -19,6 +19,7 @@ class DefaultTreatmentManager: TreatmentManager {
     private let validationLogger: ValidationMessageLogger
     private let evaluator: Evaluator
     private let splitConfig: SplitClientConfig
+    private var isDestroyed = false
 
     init(evaluator: Evaluator,
          key: Key,
@@ -84,19 +85,31 @@ class DefaultTreatmentManager: TreatmentManager {
         return result
     }
 
+    func destroy() {
+        isDestroyed = true
+    }
+
     private func getTreatmentsWithConfigNoMetrics(splits: [String],
                                                   attributes: [String: Any]?,
                                                   validationTag: String) -> [String: SplitResult] {
         var results = [String: SplitResult]()
 
-        if let errorInfo = keyValidator.validate(matchingKey: key.matchingKey,
-                                                 bucketingKey: key.bucketingKey) {
-            validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+        let controlResults: () -> [String: SplitResult] = {
             return splits.filter { !$0.isEmpty() }.reduce([String: SplitResult]()) { results, splitName in
                 var res = results
                 res[splitName] = SplitResult(treatment: SplitConstants.control)
                 return res
             }
+        }
+
+        if checkAndLogIfDestroyed(logTag: validationTag) {
+            return controlResults()
+        }
+
+        if let errorInfo = keyValidator.validate(matchingKey: key.matchingKey,
+                                                 bucketingKey: key.bucketingKey) {
+            validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+            return controlResults()
         }
 
         if splits.count > 0 {
@@ -117,6 +130,10 @@ class DefaultTreatmentManager: TreatmentManager {
                                                  shouldValidate: Bool = true,
                                                  attributes: [String: Any]? = nil,
                                                  validationTag: String) -> SplitResult {
+
+        if checkAndLogIfDestroyed(logTag: validationTag) {
+            return SplitResult(treatment: SplitConstants.control)
+        }
 
         if shouldValidate, let errorInfo = keyValidator.validate(matchingKey: key.matchingKey,
                                                                  bucketingKey: key.bucketingKey) {
@@ -182,6 +199,13 @@ class DefaultTreatmentManager: TreatmentManager {
 
     private func isSdkReady() -> Bool {
         return eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady)
+    }
+
+    func checkAndLogIfDestroyed(logTag: String) -> Bool {
+        if isDestroyed {
+            validationLogger.e(message: "Client has already been destroyed - no calls possible", tag: logTag)
+        }
+        return isDestroyed
     }
 
 }
