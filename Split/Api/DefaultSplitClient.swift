@@ -37,6 +37,8 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private var treatmentManager: TreatmentManager!
     private var factoryDestroyHandler: DestroyHandler
 
+    private var isClientDestroyed = false
+
     init(config: SplitClientConfig, key: Key, splitCache: SplitCache,
          fileStorage: FileStorageProtocol, destroyHandler: @escaping DestroyHandler) {
 
@@ -175,6 +177,12 @@ extension DefaultSplitClient {
                        value: Double? = nil, properties: [String: Any]?) -> Bool {
 
         let validationTag = "track"
+
+        if(isClientDestroyed) {
+            validationLogger.e(message: "Client has already been destroyed - no calls possible", tag: validationTag);
+            return false;
+        }
+
         let trafficType = trafficType ?? config.trafficType
         if let errorInfo = eventValidator.validate(key: self.key.matchingKey,
                                                    trafficTypeName: trafficType,
@@ -250,6 +258,8 @@ extension DefaultSplitClient {
     }
 
     public func destroy() {
+        isClientDestroyed = true
+        treatmentManager.destroy()
         flush()
         if let mySegmentsFetcher = self.refreshableMySegmentsFetcher {
             mySegmentsFetcher.stop()
