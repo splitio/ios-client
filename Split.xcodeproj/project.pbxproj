@@ -197,6 +197,7 @@
 		596A7B652344C1EF004F6139 /* MySegmentServerErrorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B642344C1EF004F6139 /* MySegmentServerErrorTest.swift */; };
 		596A7B672344E967004F6139 /* TrackTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B662344E967004F6139 /* TrackTest.swift */; };
 		596A7B6E23566BE0004F6139 /* Destroyable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B6D23566BE0004F6139 /* Destroyable.swift */; };
+		596A7B71235729B5004F6139 /* DestroyTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B70235729B5004F6139 /* DestroyTest.swift */; };
 		597848BB21BB072B00ABB4A6 /* SplitCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597848BA21BB072B00ABB4A6 /* SplitCacheTests.swift */; };
 		597CD32B216BA09000A15487 /* RestClient+Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD32A216BA09000A15487 /* RestClient+Metrics.swift */; };
 		597CD336216CE09100A15487 /* TimeMetricSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597CD335216CE09100A15487 /* TimeMetricSample.swift */; };
@@ -509,6 +510,7 @@
 		596A7B642344C1EF004F6139 /* MySegmentServerErrorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentServerErrorTest.swift; sourceTree = "<group>"; };
 		596A7B662344E967004F6139 /* TrackTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackTest.swift; sourceTree = "<group>"; };
 		596A7B6D23566BE0004F6139 /* Destroyable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Destroyable.swift; sourceTree = "<group>"; };
+		596A7B70235729B5004F6139 /* DestroyTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DestroyTest.swift; sourceTree = "<group>"; };
 		597848BA21BB072B00ABB4A6 /* SplitCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitCacheTests.swift; sourceTree = "<group>"; };
 		597CD32A216BA09000A15487 /* RestClient+Metrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RestClient+Metrics.swift"; sourceTree = "<group>"; };
 		597CD335216CE09100A15487 /* TimeMetricSample.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeMetricSample.swift; sourceTree = "<group>"; };
@@ -1228,6 +1230,7 @@
 				596A7B642344C1EF004F6139 /* MySegmentServerErrorTest.swift */,
 				596A7B5F2343D83C004F6139 /* SplitChangesServerErrorTest.swift */,
 				599A6E3322FC681600D3D68C /* FlushTest.swift */,
+				596A7B70235729B5004F6139 /* DestroyTest.swift */,
 				596A7B5D234395C1004F6139 /* IntegrationHelper.swift */,
 			);
 			path = Integration;
@@ -1769,6 +1772,7 @@
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
 				597CD33A216D022F00A15487 /* MetricsManagerTests.swift in Sources */,
 				593AE9FC226F4825000D61B0 /* RestClientStub.swift in Sources */,
+				596A7B71235729B5004F6139 /* DestroyTest.swift in Sources */,
 				596A7B602343D83C004F6139 /* SplitChangesServerErrorTest.swift in Sources */,
 				596A7B672344E967004F6139 /* TrackTest.swift in Sources */,
 				5919C64821C7D45B00EC35B8 /* SplitHelper.swift in Sources */,

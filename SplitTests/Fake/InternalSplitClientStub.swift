@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 
 class InternalSplitClientStub: InternalSplitClient {
-    
+
     var splitFetcher: SplitFetcher?
     var mySegmentsFetcher: MySegmentsFetcher?
     
@@ -80,6 +80,9 @@ class InternalSplitClientStub: InternalSplitClient {
     }
     
     func flush() {
+    }
+
+    func destroy() {
     }
     
 }
