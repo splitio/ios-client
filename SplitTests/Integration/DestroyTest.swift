@@ -1,19 +1,24 @@
 //
-//  FlushTests.swift
+//  DestroyTests.swift
 //  SplitIntegrationTests
 //
-//  Created by Javier L. Avrudsky on 28/03/2019.
+//  Created by Javier L. Avrudsky on 16/10/2019.
 //  Copyright © 2019 Split. All rights reserved.
 //
 
 import XCTest
 @testable import Split
 
-class FlushTests: XCTestCase {
+class DestroyTests: XCTestCase {
     
     let kNeverRefreshRate = 9999999
     var webServer: MockWebServer!
     var splitChange: SplitChange?
+
+    var trackHitCounter = 0
+    var impressionsHitCount = 0
+    var splitChangesHitCount = 0
+    var mySegmentsHitCount = 0
     
     override func setUp() {
         if splitChange == nil {
@@ -28,10 +33,30 @@ class FlushTests: XCTestCase {
     
     private func setupServer() {
         webServer = MockWebServer()
-        webServer.routeGet(path: "/mySegments/:user_id", data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}")
-        webServer.routeGet(path: "/splitChanges?since=:param", data: try? Json.encodeToJson(splitChange))
-        webServer.routePost(path: "/events/bulk", data: nil)
-        webServer.routePost(path: "/testImpressions/bulk", data: nil)
+
+        webServer.route(method: .get, path: "/mySegments/:user_id") { request in
+            self.mySegmentsHitCount+=1
+            return MockedResponse(code: 200, data: IntegrationHelper.emptyMySegments)
+        }
+
+        webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
+
+            self.splitChangesHitCount+=1
+            return MockedResponse(code: 200,
+                                  data: self.splitChangesHitCount == 1 ?
+                                    try? Json.encodeToJson(self.splitChange) : IntegrationHelper.emptySplitChanges)
+        }
+
+        webServer.route(method: .post, path: "/events/bulk") { request in
+            self.trackHitCounter+=1
+            return MockedResponse(code: 200, data: nil)
+        }
+
+        webServer.route(method: .post, path: "/testImpressions/bulk") { request in
+            self.impressionsHitCount+=1
+            return MockedResponse(code: 200, data: nil)
+        }
+
         webServer.start()
     }
     
@@ -39,19 +64,20 @@ class FlushTests: XCTestCase {
         webServer.stop()
     }
     
-    func testControlTreatment() throws {
+    func testDestroy() throws {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "account"
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 999999
-        splitConfig.segmentsRefreshRate = 999999
-        splitConfig.impressionRefreshRate = 999999
-        splitConfig.eventsPushRate = 999999
+        splitConfig.featuresRefreshRate = 5
+        splitConfig.segmentsRefreshRate = 5
+        splitConfig.impressionRefreshRate = 5
+        splitConfig.impressionsChunkSize = 100
+        splitConfig.eventsPushRate = 5
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
-        splitConfig.eventsPerPush = 10
+        splitConfig.eventsPerPush = 100
         splitConfig.eventsQueueSize = 1000
         splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
         splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
@@ -61,6 +87,8 @@ class FlushTests: XCTestCase {
         let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory?.client
+        let manager = factory?.manager
+        let splitName = "FACUNDO_TEST"
         
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
 
@@ -79,95 +107,79 @@ class FlushTests: XCTestCase {
         
         wait(for: [sdkReadyExpectation], timeout: 400000.0)
 
-        for i in 0..<10 {
-            sleep(1)
-            _ = client?.getTreatment("FACUNDO_TEST")
-            _ = client?.getTreatment("Test_Save_1")
-            _ = client?.getTreatment("NO_EXISTING_FEATURE_\(i)")
-        }
 
-        for i in 0..<100 {
-            _ = client?.track(eventType: "account", value: Double(i))
-        }
-        client?.flush()
+        let treatmentBeforeDestroy = client?.getTreatment(splitName)
+        let treatmentWithConfigBeforeDestroy = client?.getTreatmentWithConfig(splitName)
+        let treatmentsBeforeDestroy = client?.getTreatments(splits: [splitName], attributes: nil)
+        let treatmentsWithConfigBeforeDestroy = client?.getTreatmentsWithConfig(splits: [splitName], attributes: nil)
+        let trackBeforeDestroy = client?.track(eventType: trafficType, value: 1.0)
+        let splitBeforeDestroy = manager?.split(featureName: splitName)
+        let splitCountBeforeDestroy = manager?.splits.count
+        let splitNamesCountBeforeDestroy = manager?.splitNames.count
+
+        client?.destroy()
         //wait(for: [serverExpectation], timeout: 4000.0)
-        sleep(3)
+        sleep(5)
 
-        let event99 = getTrackEventBy(value: 99.0)
-        let event100 = getTrackEventBy(value: 100.0)
+        let trackHitCounterBeforeDestroy = trackHitCounter
+        let impressionsHitCountBeforeDestroy = impressionsHitCount
+        let splitChangesHitCountBeforeDestroy = splitChangesHitCount
+        let mySegmentsHitCountBeforeDestroy = mySegmentsHitCount
 
-        let impression1 = getImpressionBy(testName: "FACUNDO_TEST")
-        let impression2 = getImpressionBy(testName: "NO_EXISTING_FEATURE_1")
+        clearCounters()
+
+        sleep(10)
+
+        let trackHitCounterAfterDestroy = trackHitCounter
+        let impressionsHitCountAfterDestroy = impressionsHitCount
+        let splitChangesHitCountAfterDestroy = splitChangesHitCount
+        let mySegmentsHitCountAfterDestroy = mySegmentsHitCount
+
+        let treatmentAfterDestroy = client?.getTreatment(splitName)
+        let treatmentWithConfigAfterDestroy = client?.getTreatmentWithConfig(splitName)
+        let treatmentsAfterDestroy = client?.getTreatments(splits: [splitName], attributes: nil)
+        let treatmentsWithConfigAfterDestroy = client?.getTreatmentsWithConfig(splits: [splitName], attributes: nil)
+        let trackAfterDestroy = client?.track(eventType: trafficType, value: 1.0)
+        let splitAfterDestroy = manager?.split(featureName: splitName)
+        let splitCountAfterDestroy = manager?.splits.count
+        let splitNamesAfterCountBDestroy = manager?.splitNames.count
 
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
-        XCTAssertEqual(10, tracksHits().count)
-        XCTAssertNotNil(event99)
-        XCTAssertNil(event100)
-        XCTAssertNotNil(impression1)
-        XCTAssertNil(impression2)
+        XCTAssertEqual("off", treatmentBeforeDestroy)
+        XCTAssertEqual("off", treatmentWithConfigBeforeDestroy?.treatment)
+        XCTAssertEqual("off", treatmentsBeforeDestroy?[splitName])
+        XCTAssertEqual("off", treatmentsWithConfigBeforeDestroy?[splitName]?.treatment)
+        XCTAssertEqual(true, trackBeforeDestroy)
+        XCTAssertEqual(splitName, splitBeforeDestroy?.name)
+        XCTAssertEqual(30, splitCountBeforeDestroy)
+        XCTAssertEqual(30, splitNamesCountBeforeDestroy)
+
+        XCTAssertEqual(SplitConstants.control, treatmentAfterDestroy)
+        XCTAssertEqual(SplitConstants.control, treatmentWithConfigAfterDestroy?.treatment)
+        XCTAssertEqual(SplitConstants.control, treatmentsAfterDestroy?[splitName])
+        XCTAssertEqual(SplitConstants.control, treatmentsWithConfigAfterDestroy?[splitName]?.treatment)
+        XCTAssertEqual(false, trackAfterDestroy)
+        XCTAssertNil(splitAfterDestroy)
+        XCTAssertEqual(0, splitCountAfterDestroy)
+        XCTAssertEqual(0, splitNamesAfterCountBDestroy)
+
+        XCTAssertEqual(1, trackHitCounterBeforeDestroy)
+        XCTAssertEqual(1, impressionsHitCountBeforeDestroy)
+        XCTAssertEqual(1, splitChangesHitCountBeforeDestroy)
+        XCTAssertEqual(1, mySegmentsHitCountBeforeDestroy)
+
+        XCTAssertEqual(0, trackHitCounterAfterDestroy)
+        XCTAssertEqual(0, impressionsHitCountAfterDestroy)
+        XCTAssertEqual(0, splitChangesHitCountAfterDestroy)
+        XCTAssertEqual(0, mySegmentsHitCountAfterDestroy)
     }
 
-    // MARK: Tracks Hits
-    private func buildEventsFromJson(content: String) throws -> [EventDTO] {
-        return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
-    }
-    
-    private func tracksHits() -> [ClientRequest] {
-        return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
-    }
-
-    private func getLastTrackEventJsonHit() -> String {
-        let trackRecs = tracksHits()
-        return trackRecs[trackRecs.count  - 1].data!
-    }
-
-    private func getTrackEventBy(value: Double) -> EventDTO? {
-        let hits = tracksHits()
-        for req in hits {
-            var lastEventHitEvents: [EventDTO] = []
-            do {
-                lastEventHitEvents = try buildEventsFromJson(content: req.data!)
-            } catch {
-                print("error: \(error)")
-            }
-            let events = lastEventHitEvents.filter { $0.value == value }
-            if events.count > 0 {
-                return events[0]
-            }
-        }
-        return nil
-    }
-
-    // MARK: Impressions Hits
-    private func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
-        return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
-    }
-
-    private func impressionsHits() -> [ClientRequest] {
-        return webServer.receivedRequests.filter { $0.path == "/testImpressions/bulk"}
-    }
-
-    private func getLastImpressionsJsonHit() -> String {
-        let trackRecs = tracksHits()
-        return trackRecs[trackRecs.count  - 1].data!
-    }
-
-    private func getImpressionBy(testName: String) -> ImpressionsTest? {
-        let hits = impressionsHits()
-        for req in hits {
-            var lastImpressionsHitTest: [ImpressionsTest] = []
-            do {
-                lastImpressionsHitTest = try buildImpressionsFromJson(content: req.data!)
-            } catch {
-                print("error: \(error)")
-            }
-            let impressions = lastImpressionsHitTest.filter { $0.testName == testName }
-            if impressions.count > 0 {
-                return impressions[0]
-            }
-        }
-        return nil
+    private func clearCounters() {
+        trackHitCounter = 0
+        impressionsHitCount = 0
+        splitChangesHitCount = 0
+        mySegmentsHitCount = 0
     }
 
     private func loadSplitsChangeFile() -> SplitChange? {
