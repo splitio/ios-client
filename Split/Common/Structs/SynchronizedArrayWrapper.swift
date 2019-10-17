@@ -57,4 +57,15 @@ class SynchronizedArrayWrapper<T> {
             self.items.append(contentsOf: newItems)
         }
     }
+
+    func takeAll() -> [T] {
+        var allItems: [T]!
+        queue.sync {
+            allItems = self.items
+            queue.async(flags: .barrier) {
+                self.items.removeAll()
+            }
+        }
+        return allItems
+    }
 }

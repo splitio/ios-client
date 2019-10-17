@@ -117,8 +117,9 @@ class DestroyTests: XCTestCase {
         let splitCountBeforeDestroy = manager?.splits.count
         let splitNamesCountBeforeDestroy = manager?.splitNames.count
 
-        client?.destroy()
-        //wait(for: [serverExpectation], timeout: 4000.0)
+        let semaphore = DispatchSemaphore(value: 0)
+        client?.destroy(wait: semaphore)
+        semaphore.wait()
         sleep(5)
 
         let trackHitCounterBeforeDestroy = trackHitCounter
