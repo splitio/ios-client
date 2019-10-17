@@ -65,4 +65,15 @@ class SyncDictionaryCollectionWrapper<K: Hashable, T> {
             self.items[key] = values
         }
     }
+
+    func takeAll() -> [K: [T]] {
+        var allItems: [K: [T]]!
+        queue.sync {
+            allItems = self.items
+            queue.async(flags: .barrier) {
+                self.items.removeAll()
+            }
+        }
+        return allItems
+    }
 }

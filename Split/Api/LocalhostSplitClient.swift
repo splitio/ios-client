@@ -145,9 +145,11 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
     }
 
     public func destroy() {
-        if let splitFetcher = self.refreshableSplitFetcher {
-            splitFetcher.stop()
-        }
+    }
+
+    public func destroy(wait semaphore: DispatchSemaphore? = nil) {
+        refreshableSplitFetcher?.stop()
+        _ = semaphore?.signal()
     }
 
 }
