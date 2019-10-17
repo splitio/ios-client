@@ -178,8 +178,8 @@ extension DefaultSplitClient {
 
         let validationTag = "track"
 
-        if(isClientDestroyed) {
-            validationLogger.e(message: "Client has already been destroyed - no calls possible", tag: validationTag);
+        if isClientDestroyed {
+            validationLogger.e(message: "Client has already been destroyed - no calls possible", tag: validationTag)
             return false;
         }
 
@@ -249,27 +249,33 @@ extension DefaultSplitClient {
 // MARK: Flush / Destroy
 extension DefaultSplitClient {
 
+    private func syncFlush() {
+        self.impressionsManager.flush()
+        self.trackEventsManager.flush()
+        DefaultMetricsManager.shared.flush()
+    }
+
     public func flush() {
         DispatchQueue.global().async {
-            self.impressionsManager.flush()
-            self.trackEventsManager.flush()
-            DefaultMetricsManager.shared.flush()
+            self.syncFlush()
         }
     }
 
     public func destroy() {
-        isClientDestroyed = true
-        treatmentManager.destroy()
-        flush()
-        if let mySegmentsFetcher = self.refreshableMySegmentsFetcher {
-            mySegmentsFetcher.stop()
-        }
+        destroy(wait: nil)
+    }
 
-        if let splitFetcher = self.refreshableSplitFetcher {
-            splitFetcher.stop()
+    public func destroy(wait semaphore: DispatchSemaphore?) {
+        isClientDestroyed = true
+        DispatchQueue.global().async {
+            self.treatmentManager.destroy()
+            self.syncFlush()
+            self.refreshableMySegmentsFetcher?.stop()
+            self.refreshableSplitFetcher?.stop()
+            self.impressionsManager.stop()
+            self.trackEventsManager.stop()
+            self.factoryDestroyHandler()
+            _ = semaphore?.signal()
         }
-        impressionsManager.stop()
-        trackEventsManager.stop()
-        factoryDestroyHandler()
     }
 }
