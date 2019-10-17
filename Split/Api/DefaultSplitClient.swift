@@ -262,10 +262,10 @@ extension DefaultSplitClient {
     }
 
     public func destroy() {
-        destroy(wait: nil)
+        destroy(completion: nil)
     }
 
-    public func destroy(wait semaphore: DispatchSemaphore?) {
+    public func destroy(completion: (() -> Void)?) {
         isClientDestroyed = true
         DispatchQueue.global().async {
             self.treatmentManager.destroy()
@@ -275,7 +275,7 @@ extension DefaultSplitClient {
             self.impressionsManager.stop()
             self.trackEventsManager.stop()
             self.factoryDestroyHandler()
-            _ = semaphore?.signal()
+            completion?()
         }
     }
 }
