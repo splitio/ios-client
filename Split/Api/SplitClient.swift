@@ -33,7 +33,7 @@ public typealias SplitAction = () -> Void
 
     func flush()
     func destroy()
-    func destroy(wait semaphore: DispatchSemaphore?)
+    func destroy(completion: (() -> Void)?)
 
     @objc(trackWithTrafficType:eventType:properties:) func track(trafficType: String,
                                                                  eventType: String,

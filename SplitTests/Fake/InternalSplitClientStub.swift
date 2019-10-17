@@ -85,6 +85,6 @@ class InternalSplitClientStub: InternalSplitClient {
     func destroy() {
     }
 
-    func destroy(wait semaphore: DispatchSemaphore?) {
+    func destroy(completion: (() -> Void)?) {
     }
 }
