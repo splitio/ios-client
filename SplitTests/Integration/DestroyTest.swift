@@ -19,11 +19,16 @@ class DestroyTests: XCTestCase {
     var impressionsHitCount = 0
     var splitChangesHitCount = 0
     var mySegmentsHitCount = 0
+
+    var impressions: [Impression]!
+    var events: [EventDTO]!
     
     override func setUp() {
         if splitChange == nil {
             splitChange = loadSplitsChangeFile()
         }
+        impressions = [Impression]()
+        events = [EventDTO]()
         setupServer()
     }
     
@@ -49,11 +54,23 @@ class DestroyTests: XCTestCase {
 
         webServer.route(method: .post, path: "/events/bulk") { request in
             self.trackHitCounter+=1
+            if let data = request.data {
+                if let e = try? IntegrationHelper.buildEventsFromJson(content: data) {
+                    self.events.append(contentsOf: e)
+                }
+            }
             return MockedResponse(code: 200, data: nil)
         }
 
         webServer.route(method: .post, path: "/testImpressions/bulk") { request in
             self.impressionsHitCount+=1
+            if let data = request.data {
+                if let tests = try? IntegrationHelper.buildImpressionsFromJson(content: data) {
+                    for test in tests {
+                        self.impressions.append(contentsOf: test.keyImpressions)
+                    }
+                }
+            }
             return MockedResponse(code: 200, data: nil)
         }
 
@@ -68,6 +85,7 @@ class DestroyTests: XCTestCase {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "account"
+        let eventType = "testEvent"
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 5
@@ -107,19 +125,19 @@ class DestroyTests: XCTestCase {
         
         wait(for: [sdkReadyExpectation], timeout: 400000.0)
 
-
         let treatmentBeforeDestroy = client?.getTreatment(splitName)
         let treatmentWithConfigBeforeDestroy = client?.getTreatmentWithConfig(splitName)
         let treatmentsBeforeDestroy = client?.getTreatments(splits: [splitName], attributes: nil)
         let treatmentsWithConfigBeforeDestroy = client?.getTreatmentsWithConfig(splits: [splitName], attributes: nil)
-        let trackBeforeDestroy = client?.track(eventType: trafficType, value: 1.0)
+        let trackBeforeDestroy = client?.track(eventType: eventType, value: 1.0)
         let splitBeforeDestroy = manager?.split(featureName: splitName)
         let splitCountBeforeDestroy = manager?.splits.count
         let splitNamesCountBeforeDestroy = manager?.splitNames.count
 
-        client?.destroy()
-        //wait(for: [serverExpectation], timeout: 4000.0)
-        sleep(5)
+        let semaphore = DispatchSemaphore(value: 0)
+        client?.destroy(wait: semaphore)
+        semaphore.wait()
+        sleep(15)
 
         let trackHitCounterBeforeDestroy = trackHitCounter
         let impressionsHitCountBeforeDestroy = impressionsHitCount
@@ -164,15 +182,28 @@ class DestroyTests: XCTestCase {
         XCTAssertEqual(0, splitCountAfterDestroy)
         XCTAssertEqual(0, splitNamesAfterCountBDestroy)
 
-        XCTAssertEqual(1, trackHitCounterBeforeDestroy)
-        XCTAssertEqual(1, impressionsHitCountBeforeDestroy)
-        XCTAssertEqual(1, splitChangesHitCountBeforeDestroy)
-        XCTAssertEqual(1, mySegmentsHitCountBeforeDestroy)
+        XCTAssertTrue(trackHitCounterBeforeDestroy > 0)
+        XCTAssertTrue(impressionsHitCountBeforeDestroy > 0)
+        XCTAssertTrue(splitChangesHitCountBeforeDestroy > 0)
+        XCTAssertTrue(mySegmentsHitCountBeforeDestroy > 0)
 
         XCTAssertEqual(0, trackHitCounterAfterDestroy)
         XCTAssertEqual(0, impressionsHitCountAfterDestroy)
         XCTAssertEqual(0, splitChangesHitCountAfterDestroy)
         XCTAssertEqual(0, mySegmentsHitCountAfterDestroy)
+
+        XCTAssertEqual(4, impressions.count)
+        XCTAssertEqual(1, events.count)
+
+        XCTAssertEqual(matchingKey, impressions?[0].keyName)
+        XCTAssertEqual("off", impressions?[0].treatment)
+
+        XCTAssertEqual(matchingKey, impressions?[3].keyName)
+        XCTAssertEqual("off", impressions?[3].treatment)
+
+        XCTAssertEqual(trafficType, events?[0].trafficTypeName)
+        XCTAssertEqual(1.0, events?[0].value)
+        XCTAssertEqual(eventType, events?[0].eventTypeId)
     }
 
     private func clearCounters() {

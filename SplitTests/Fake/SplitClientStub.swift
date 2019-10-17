@@ -75,4 +75,7 @@ class SplitClientStub: SplitClient {
 
     func destroy() {
     }
+
+    func destroy(wait semaphore: DispatchSemaphore?) {
+    }
 }

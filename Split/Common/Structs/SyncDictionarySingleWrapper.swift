@@ -76,4 +76,15 @@ class SyncDictionarySingleWrapper<K: Hashable, T> {
             }
         }
     }
+
+    func takeAll() -> [K: T] {
+        var allItems: [K: T]!
+        queue.sync {
+            allItems = items
+            queue.async(flags: .barrier) {
+                self.items.removeAll()
+            }
+        }
+        return allItems
+    }
 }
