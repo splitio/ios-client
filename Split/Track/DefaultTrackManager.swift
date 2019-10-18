@@ -178,7 +178,7 @@ extension DefaultTrackManager {
                     Logger.d("Event posted successfully")
                 } catch {
                     Logger.e("Event error: \(String(describing: error))")
-                    if eventsHit.attempts >= self.kMaxHitAttempts {
+                    if eventsHit.attempts < self.kMaxHitAttempts {
                         self.eventsHits.setValue(eventsHit, forKey: eventsHit.identifier)
                     }
                 }
