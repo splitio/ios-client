@@ -41,7 +41,7 @@ class SplitChangesTest: XCTestCase {
         let respData = responseSlitChanges()
         var responses = [MockedResponse]()
         for data in respData {
-           responses.append(MockedResponse(code: 200, data: try? Json.encodeToJson(data)))
+            responses.append(MockedResponse(code: 200, data: try? Json.encodeToJson(data)))
         }
 
         webServer.routeGet(path: "/mySegments/:user_id",
@@ -80,7 +80,7 @@ class SplitChangesTest: XCTestCase {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "client"
-         var impressions = [String:Impression]()
+        var impressions = [String:Impression]()
         var treatments = [String]()
 
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
@@ -124,11 +124,11 @@ class SplitChangesTest: XCTestCase {
 
         var impLis = [Impression]()
         impLis.append(impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID",
-                                                                   splitName: "test_feature", treatment: "on_0")]!)
+                                                                       splitName: "test_feature", treatment: "on_0")] ?? Impression())
         impLis.append(impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID",
-                                                                   splitName: "test_feature", treatment: "off_1")]!)
+                                                                       splitName: "test_feature", treatment: "off_1")] ?? Impression())
         impLis.append(impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID",
-                                                                   splitName: "test_feature", treatment: "on_2")]!)
+                                                                       splitName: "test_feature", treatment: "on_2")] ?? Impression())
 
         XCTAssertTrue(sdkReadyFired)
         for i in 0..<4 {

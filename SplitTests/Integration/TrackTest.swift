@@ -55,9 +55,9 @@ class TrackTest: XCTestCase {
         }
 
         webServer.route(method: .post, path: "/events/bulk") { request in
-
+            print("reqTrackIndex bef: \(self.reqTrackIndex)")
             var code: Int = 0
-            self.queue.sync(flags: .barrier) {
+            self.queue.sync {
                 let index = self.reqTrackIndex
                 if self.reqTrackIndex > 0, self.reqTrackIndex < 4 {
                     code = 500
@@ -69,11 +69,11 @@ class TrackTest: XCTestCase {
 
                 if index < 6 {
                     self.reqTrackIndex = index + 1
-                    print("reqTrackIndex: \(self.reqTrackIndex)")
                     self.trExp[index].fulfill()
                 }
-            }
 
+            }
+            print("reqTrackIndex: \(self.reqTrackIndex) -  code: \(code)")
             return MockedResponse(code: code, data: nil)
         }
         webServer.start()
@@ -120,7 +120,7 @@ class TrackTest: XCTestCase {
         
         wait(for: [sdkReady], timeout: 20000)
 
-        for i in 0..<5{
+        for i in 0..<5 {
             _ = client.track(trafficType: "custom", eventType: "event1", value: Double(i), properties: ["value": i])
         }
         wait(for: [trExp[0]], timeout: 10000)
