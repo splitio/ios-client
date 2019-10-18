@@ -107,7 +107,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         wait(for: [sdkReady], timeout: 20000)
 
         for i in 0..<4 {
-            wait(for: [spExp[i]], timeout: 20000)
+            wait(for: [spExp[i]], timeout: 40000)
             treatments.append(client.getTreatment("test_feature"))
         }
 

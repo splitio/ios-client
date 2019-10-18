@@ -113,11 +113,15 @@ class MockWebServer {
         }
 
         try! httpServer.start(8080)
+        while(httpServer.state == .starting) {
+        }
         print("Mock web server started")
     }
     
     func stop() {
         httpServer.stop()
+        while(httpServer.state != .stopped) {
+        }
         print("Mock web server stoped")
     }
     
