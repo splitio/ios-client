@@ -19,6 +19,7 @@ class DestroyTests: XCTestCase {
     var impressionsHitCount = 0
     var splitChangesHitCount = 0
     var mySegmentsHitCount = 0
+    var serverUrl = ""
 
     var impressions: [Impression]!
     var events: [EventDTO]!
@@ -75,6 +76,7 @@ class DestroyTests: XCTestCase {
         }
 
         webServer.start()
+        serverUrl =  webServer.url
     }
     
     private func stopServer() {
@@ -82,7 +84,7 @@ class DestroyTests: XCTestCase {
     }
     
     func testDestroy() throws {
-        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_h"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "account"
         let eventType = "testEvent"
@@ -97,8 +99,8 @@ class DestroyTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 100
         splitConfig.eventsQueueSize = 1000
-        splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
-        splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
+        splitConfig.targetSdkEndPoint = serverUrl
+        splitConfig.targetEventsEndPoint = serverUrl
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()

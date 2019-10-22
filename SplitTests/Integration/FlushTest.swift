@@ -14,6 +14,7 @@ class FlushTests: XCTestCase {
     let kNeverRefreshRate = 9999999
     var webServer: MockWebServer!
     var splitChange: SplitChange?
+    var serverUrl = ""
     
     override func setUp() {
         if splitChange == nil {
@@ -33,6 +34,7 @@ class FlushTests: XCTestCase {
         webServer.routePost(path: "/events/bulk", data: nil)
         webServer.routePost(path: "/testImpressions/bulk", data: nil)
         webServer.start()
+        serverUrl = webServer.url
     }
     
     private func stopServer() {
@@ -40,7 +42,7 @@ class FlushTests: XCTestCase {
     }
     
     func testControlTreatment() throws {
-        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_g"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "account"
         
@@ -53,12 +55,12 @@ class FlushTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 1000
-        splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
-        splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
+        splitConfig.targetSdkEndPoint = serverUrl
+        splitConfig.targetEventsEndPoint = serverUrl
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory?.client
         
@@ -106,6 +108,12 @@ class FlushTests: XCTestCase {
         XCTAssertNil(event100)
         XCTAssertNotNil(impression1)
         XCTAssertNil(impression2)
+        let semaphore = DispatchSemaphore(value: 0)
+        client?.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+        factory = nil
     }
 
     // MARK: Tracks Hits

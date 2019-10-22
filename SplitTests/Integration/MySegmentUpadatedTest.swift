@@ -16,6 +16,7 @@ class MySegmentUpdatedTest: XCTestCase {
     let kChangeNbInterval: Int64 = 86400
     var reqSegmentsIndex = 0
     var isFirstChangesReq = true
+    var serverUrl = ""
 
     let sgExp = [
         XCTestExpectation(description: "upd 0"),
@@ -27,6 +28,7 @@ class MySegmentUpdatedTest: XCTestCase {
     let impExp = XCTestExpectation(description: "impressions")
 
     var impHit: [ImpressionsTest]?
+    var impressions = [String: Impression]()
     
     override func setUp() {
         setupServer()
@@ -47,7 +49,7 @@ class MySegmentUpdatedTest: XCTestCase {
 
         webServer.route(method: .get, path: "/mySegments/:user_id") { request in
             var data: String
-            let index = self.reqSegmentsIndex
+            let index = self.getAndIncrement()
             switch index {
             case 1:
                 data = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}]}"
@@ -60,7 +62,6 @@ class MySegmentUpdatedTest: XCTestCase {
             if index > 0 && index <= self.sgExp.count {
                 self.sgExp[index - 1].fulfill()
             }
-            self.reqSegmentsIndex += 1
             return MockedResponse(code: 200, data: data)
         }
 
@@ -76,10 +77,13 @@ class MySegmentUpdatedTest: XCTestCase {
 
         webServer.route(method: .post, path: "/testImpressions/bulk") { request in
             self.impHit = try? IntegrationHelper.impressionsFromHit(request: request)
-            self.impExp.fulfill()
+            if self.addImpressions(tests: self.impHit) {
+                self.impExp.fulfill()
+            }
             return MockedResponse(code: 200, data: nil)
         }
         webServer.start()
+        serverUrl = webServer.url
     }
     
     private func stopServer() {
@@ -88,26 +92,27 @@ class MySegmentUpdatedTest: XCTestCase {
 
     // MARK: Test
     /// Getting changes from server and test treatments and change number
-    func test() throws {
-        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+    func testSegments() throws {
+        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_c"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "client"
         var treatments = [String]()
+        let splitName = "test_feature"
 
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 15
+        splitConfig.featuresRefreshRate = 50
         splitConfig.segmentsRefreshRate = 5
-        splitConfig.impressionRefreshRate = 21
+        splitConfig.impressionRefreshRate = splitConfig.segmentsRefreshRate * 6 + 1
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
-        splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
-        splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
+        splitConfig.targetSdkEndPoint = serverUrl
+        splitConfig.targetEventsEndPoint = serverUrl
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory!.client
 
@@ -117,19 +122,15 @@ class MySegmentUpdatedTest: XCTestCase {
             sdkReadyFired = true
             sdkReady.fulfill()
         }
-        
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
-            //self.exp[0].fulfill()
-        }
-        
-        wait(for: [sdkReady], timeout: 20000)
+
+        wait(for: [sdkReady], timeout: 20)
 
         for i in 0..<4 {
-            wait(for: [sgExp[i]], timeout: 20000)
-            treatments.append(client.getTreatment("test_feature"))
+            wait(for: [sgExp[i]], timeout: 10)
+            treatments.append(client.getTreatment(splitName))
         }
 
-        wait(for: [impExp], timeout: 10000)
+        wait(for: [impExp], timeout: 40)
 
         XCTAssertTrue(sdkReadyFired)
 
@@ -140,19 +141,25 @@ class MySegmentUpdatedTest: XCTestCase {
 
         XCTAssertEqual(1, impHit?.count)
         XCTAssertEqual(4, impHit?[0].keyImpressions.count)
-        let imp0 = impHit?[0].keyImpressions[0]
-        let imp1 = impHit?[0].keyImpressions[1]
-        let imp2 = impHit?[0].keyImpressions[2]
-        let imp3 = impHit?[0].keyImpressions[3]
+        let imp0 = impressions[IntegrationHelper.buildImpressionKey(key: matchingKey, splitName: splitName, treatment: "no")]
+        let imp1 = impressions[IntegrationHelper.buildImpressionKey(key: matchingKey, splitName: splitName, treatment: "on_s1")]
+        let imp2 = impressions[IntegrationHelper.buildImpressionKey(key: matchingKey, splitName: splitName, treatment: "on_s2")]
+
         XCTAssertEqual("no", imp0?.treatment)
         XCTAssertEqual("on_s1", imp1?.treatment)
         XCTAssertEqual("on_s2", imp2?.treatment)
-        XCTAssertEqual("no", imp3?.treatment)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+        factory = nil
+
     }
 
     private func  responseSlitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
-        
         
         let c = loadSplitsChangeFile()!
         let split = c.splits![0]
@@ -196,5 +203,30 @@ class MySegmentUpdatedTest: XCTestCase {
     private func loadSplitsChangeFile() -> SplitChange? {
         return FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_int_test")
     }
-}
 
+    private func getAndIncrement() -> Int {
+        var i = 0;
+        DispatchQueue.global().sync {
+            i = self.reqSegmentsIndex
+            self.reqSegmentsIndex+=1
+        }
+        return i
+    }
+
+    private func addImpressions(tests: [ImpressionsTest]?) -> Bool {
+        var res: Bool = false
+        DispatchQueue.global().sync {
+            if let tests = tests {
+                for test in tests {
+                    for imp in test.keyImpressions {
+                        //if imp.keyName! == "CUSTOMER_ID" {
+                            self.impressions[IntegrationHelper.buildImpressionKey(key: imp.keyName!, splitName: test.testName, treatment: imp.treatment!)] = imp
+                            res = true
+                        //}
+                    }
+                }
+            }
+        }
+        return res
+    }
+}

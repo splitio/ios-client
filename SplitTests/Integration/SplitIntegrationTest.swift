@@ -14,6 +14,7 @@ class SplitIntegrationTests: XCTestCase {
     let kNeverRefreshRate = 9999999
     var webServer: MockWebServer!
     var splitChange: SplitChange?
+    var serverUrl = ""
     
     override func setUp() {
         if splitChange == nil {
@@ -32,6 +33,7 @@ class SplitIntegrationTests: XCTestCase {
         webServer.routeGet(path: "/splitChanges?since=:param", data: try? Json.encodeToJson(splitChange))
         webServer.routePost(path: "/events/bulk", data: nil)
         webServer.start()
+        serverUrl = webServer.url
     }
     
     private func stopServer() {
@@ -53,8 +55,8 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
-        splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
-        splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
+        splitConfig.targetSdkEndPoint = serverUrl
+        splitConfig.targetEventsEndPoint = serverUrl
 
         splitConfig.impressionListener = { impression in
             impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
@@ -62,7 +64,7 @@ class SplitIntegrationTests: XCTestCase {
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory?.client
         let manager = factory?.manager
@@ -81,7 +83,7 @@ class SplitIntegrationTests: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
         
-        wait(for: [sdkReadyExpectation], timeout: 400000.0)
+        wait(for: [sdkReadyExpectation], timeout: 40)
         
         let t1 = client?.getTreatment("FACUNDO_TEST")
         let t2 = client?.getTreatment("NO_EXISTING_FEATURE")
@@ -127,6 +129,13 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertEqual(10, tracksHits().count)
         XCTAssertNotNil(event99)
         XCTAssertNil(event100)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client?.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+        factory = nil
     }
     
     private func loadSplitsChangeFile() -> SplitChange? {
