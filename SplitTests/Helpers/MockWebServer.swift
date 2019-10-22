@@ -29,11 +29,22 @@ enum MockedMethod: String {
 }
 
 class MockWebServer {
-    
-    let httpServer = HttpServer()
-    var receivedRequests = [ClientRequest]()
+    private let kBaseUrl = "http://localhost"
+    var currentPort: Int = 0
+
+    private static var usedPorts = [Int]()
+
+    var url: String {
+        return "\(kBaseUrl):\(currentPort)"
+    }
+
+    let httpServer: HttpServer
+    var receivedRequests: [ClientRequest]
     
     init() {
+        httpServer = HttpServer()
+        receivedRequests = [ClientRequest]()
+        currentPort = randomPort()
     }
     
     func routeGet(path: String, data: String? = nil) {
@@ -60,7 +71,9 @@ class MockWebServer {
                     data: self.bytesToString(bytes: request.body),
                     method: request.method)
 
-                self.receivedRequests.append(clientRequest)
+                DispatchQueue.global().sync {
+                    self.receivedRequests.append(clientRequest)
+                }
 
                 if let requestHandler = requestHandler {
                     mockedResponse = requestHandler(clientRequest)
@@ -112,13 +125,28 @@ class MockWebServer {
             return HttpResponse.ok(.text("Test server success!!!"))
         }
 
-        try! httpServer.start(8080)
-        print("Mock web server started")
+        try! httpServer.start(UInt16(currentPort))
+        while(httpServer.state != .running) {
+        }
+        print("Mock web server started at \(url)")
     }
     
     func stop() {
         httpServer.stop()
+        while(httpServer.state != .stopped) {
+        }
         print("Mock web server stoped")
+    }
+
+    private func randomPort() -> Int {
+        var port = 0
+        DispatchQueue.global().sync {
+            while port == 0 || MockWebServer.usedPorts.first(where: { $0 == port }) != nil {
+                port = Int.random(in: 8000 ... 8080)
+            }
+            MockWebServer.usedPorts.append(port)
+        }
+        return port
     }
     
 }

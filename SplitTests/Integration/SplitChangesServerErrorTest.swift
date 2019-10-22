@@ -23,6 +23,8 @@ class SplitChangesServerErrorTest: XCTestCase {
         XCTestExpectation(description: "upd 3")
     ]
 
+    var serverUrl = ""
+
     let impExp = XCTestExpectation(description: "impressions")
 
     var impHit: [ImpressionsTest]?
@@ -65,8 +67,8 @@ class SplitChangesServerErrorTest: XCTestCase {
         }
 
         webServer.routePost(path: "/testImpressions/bulk")
-
         webServer.start()
+        serverUrl = webServer.url
     }
     
     private func stopServer() {
@@ -75,8 +77,8 @@ class SplitChangesServerErrorTest: XCTestCase {
 
     // MARK: Test
     /// Getting changes from server and test treatments and change number
-    func test() throws {
-        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+    func testChangesError() throws {
+        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_f"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "client"
         var treatments = [String]()
@@ -88,12 +90,12 @@ class SplitChangesServerErrorTest: XCTestCase {
         splitConfig.impressionRefreshRate = kNeverRefreshRate
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
-        splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
-        splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
+        splitConfig.targetSdkEndPoint = serverUrl
+        splitConfig.targetEventsEndPoint = serverUrl
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory!.client
 
@@ -104,10 +106,10 @@ class SplitChangesServerErrorTest: XCTestCase {
             sdkReady.fulfill()
         }
         
-        wait(for: [sdkReady], timeout: 20000)
+        wait(for: [sdkReady], timeout: 20)
 
         for i in 0..<4 {
-            wait(for: [spExp[i]], timeout: 20000)
+            wait(for: [spExp[i]], timeout: 40)
             treatments.append(client.getTreatment("test_feature"))
         }
 
@@ -117,6 +119,13 @@ class SplitChangesServerErrorTest: XCTestCase {
         XCTAssertEqual("on_0", treatments[1])
         XCTAssertEqual("on_0", treatments[2])
         XCTAssertEqual("off_1", treatments[3])
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+        factory = nil
     }
 
     private func  responseSlitChanges() -> [SplitChange] {
