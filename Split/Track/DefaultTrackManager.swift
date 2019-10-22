@@ -26,7 +26,7 @@ class DefaultTrackManager {
     private var eventsHits = SyncDictionarySingleWrapper<String, EventsHit>()
 
     private let restClient: RestClientTrackEvents
-    private var pollingManager: PollingManager!
+    private var taskExecutor: PeriodicTaskExecutor!
 
     private let eventsFirstPushWindow: Int
     private let eventsPushRate: Int
@@ -45,7 +45,7 @@ class DefaultTrackManager {
         self.eventsPerPush = config.eventsPerPush
         self.maxHitsSizeInBytes = config.maxHitsSizeInBytes
         self.restClient = restClient ?? RestClient()
-        self.createPollingManager(dispatchGroup: dispatchGroup)
+        self.createTaskExecutor(dispatchGroup: dispatchGroup)
         subscribeNotifications()
     }
 }
@@ -53,11 +53,11 @@ class DefaultTrackManager {
 // MARK: Public
 extension DefaultTrackManager: TrackManager {
     func start() {
-        pollingManager.start()
+        taskExecutor.start()
     }
 
     func stop() {
-        pollingManager.stop()
+        taskExecutor.stop()
     }
 
     func flush() {
@@ -141,17 +141,16 @@ extension DefaultTrackManager {
 
     private func appendHit() {
         if currentEventsHit.count == 0 { return }
-        let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit.all)
+        let newHit = EventsHit(identifier: UUID().uuidString, events: currentEventsHit.takeAll())
         eventsHits.setValue(newHit, forKey: newHit.identifier)
-        currentEventsHit.removeAll()
     }
 
-    private func createPollingManager(dispatchGroup: DispatchGroup?) {
-        var config = PollingManagerConfig()
-        config.firstPollWindow = self.eventsFirstPushWindow
+    private func createTaskExecutor(dispatchGroup: DispatchGroup?) {
+        var config = PeriodicTaskExecutorConfig()
+        config.firstExecutionWindow = self.eventsFirstPushWindow
         config.rate = self.eventsPushRate
 
-        pollingManager = PollingManager(
+        taskExecutor = PeriodicTaskExecutor(
             dispatchGroup: dispatchGroup,
             config: config,
             triggerAction: {[weak self] in
@@ -163,25 +162,24 @@ extension DefaultTrackManager {
     }
 
     private func sendEvents() {
-        let hits = eventsHits.all
+        let hits = eventsHits.takeAll()
         for (_, eventsHit) in hits {
             sendEvents(eventsHit: eventsHit)
         }
     }
 
     private func sendEvents(eventsHit: EventsHit) {
-        if eventsHits.count == 0 { return }
+        if eventsHit.events.count == 0 { return }
         if restClient.isEventsServerAvailable() {
             eventsHit.addAttempt()
             restClient.sendTrackEvents(events: eventsHit.events, completion: { result in
                 do {
                     _ = try result.unwrap()
                     Logger.d("Event posted successfully")
-                    self.eventsHits.removeValue(forKey: eventsHit.identifier)
                 } catch {
                     Logger.e("Event error: \(String(describing: error))")
-                    if eventsHit.attempts >= self.kMaxHitAttempts {
-                        self.eventsHits.removeValue(forKey: eventsHit.identifier)
+                    if eventsHit.attempts < self.kMaxHitAttempts {
+                        self.eventsHits.setValue(eventsHit, forKey: eventsHit.identifier)
                     }
                 }
             })

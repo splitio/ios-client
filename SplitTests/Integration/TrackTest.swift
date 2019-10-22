@@ -15,6 +15,7 @@ class TrackTest: XCTestCase {
     var webServer: MockWebServer!
     let kChangeNbInterval: Int64 = 86400
     var reqTrackIndex = 0
+    var serverUrl = ""
 
     var trackHits = [[EventDTO]]()
 
@@ -55,11 +56,10 @@ class TrackTest: XCTestCase {
         }
 
         webServer.route(method: .post, path: "/events/bulk") { request in
-
             var code: Int = 0
-            self.queue.sync(flags: .barrier) {
-                let index = self.reqTrackIndex
-                if self.reqTrackIndex > 0, self.reqTrackIndex < 4 {
+            self.queue.sync {
+                let index = self.getAndIncrement()
+                if index > 0, index < 4 {
                     code = 500
                 } else {
                     let data = try? IntegrationHelper.buildEventsFromJson(content: request.data!)
@@ -68,15 +68,14 @@ class TrackTest: XCTestCase {
                 }
 
                 if index < 6 {
-                    self.reqTrackIndex = index + 1
-                    print("reqTrackIndex: \(self.reqTrackIndex)")
                     self.trExp[index].fulfill()
                 }
-            }
 
+            }
             return MockedResponse(code: code, data: nil)
         }
         webServer.start()
+        serverUrl = webServer.url
     }
     
     private func stopServer() {
@@ -86,7 +85,7 @@ class TrackTest: XCTestCase {
     // MARK: Test
     /// Getting changes from server and test treatments and change number
     func test() throws {
-        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_d"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "client"
         var trackCounts = [Int]()
@@ -102,12 +101,12 @@ class TrackTest: XCTestCase {
         splitConfig.eventsQueueSize = 10000
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
-        splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
-        splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
+        splitConfig.targetSdkEndPoint = serverUrl
+        splitConfig.targetEventsEndPoint = serverUrl
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory!.client
 
@@ -118,27 +117,27 @@ class TrackTest: XCTestCase {
             sdkReady.fulfill()
         }
         
-        wait(for: [sdkReady], timeout: 20000)
+        wait(for: [sdkReady], timeout: 20)
 
-        for i in 0..<5{
+        for i in 0..<5 {
             _ = client.track(trafficType: "custom", eventType: "event1", value: Double(i), properties: ["value": i])
         }
-        wait(for: [trExp[0]], timeout: 10000)
+        wait(for: [trExp[0]], timeout: 10)
         trackCounts.append(trackHits.count)
 
         for i in 0..<5 {
             _ = client.track(trafficType: "custom", eventType: "event2", value: Double(i), properties: ["value": i])
         }
-        wait(for: [trExp[1]], timeout: 10000)
+        wait(for: [trExp[1]], timeout: 10)
         trackCounts.append(trackHits.count)
 
         for i in 0..<5 {
             _ = client.track(trafficType: "custom", eventType: "event3", value: Double(i), properties: ["value": i])
         }
-        wait(for: [trExp[2], trExp[3]], timeout: 10000)
+        wait(for: [trExp[2], trExp[3]], timeout: 40)
         trackCounts.append(trackHits.count)
 
-        wait(for: [trExp[4], trExp[5]], timeout: 10000)
+        wait(for: [trExp[4], trExp[5]], timeout: 40)
         trackCounts.append(trackHits.count)
 
         XCTAssertTrue(sdkReadyFired)
@@ -168,6 +167,13 @@ class TrackTest: XCTestCase {
         XCTAssertEqual(3.0, e3?.value)
         XCTAssertEqual("event3", e3?.eventTypeId)
         XCTAssertEqual(3, e3?.properties?["value"] as! Int)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+        factory = nil
 
     }
 
@@ -225,6 +231,15 @@ class TrackTest: XCTestCase {
             i+=1
         }
         return e
+    }
+
+    private func getAndIncrement() -> Int {
+        var i = 0;
+        DispatchQueue.global().sync {
+            i = self.reqTrackIndex
+            self.reqTrackIndex+=1
+        }
+        return i
     }
 }
 

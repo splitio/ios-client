@@ -16,6 +16,7 @@ import Foundation
     private let splitCache: SplitCacheProtocol
     private let splitValidator: SplitValidator
     private let validationLogger: ValidationMessageLogger
+    private var isManagerDestroyed = false
 
     init(splitCache: SplitCacheProtocol) {
         self.splitCache = splitCache
@@ -25,6 +26,11 @@ import Foundation
     }
 
     public var splits: [SplitView] {
+
+        if checkAndLogIfDestroyed(logTag: "splits") {
+            return [SplitView]()
+        }
+
         let splits = splitCache.getAllSplits()
 
         return splits.filter { $0.status == .active }
@@ -56,20 +62,30 @@ import Foundation
     }
 
     public var splitNames: [String] {
+        if checkAndLogIfDestroyed(logTag: "splitNames") {
+            return [String]()
+        }
+
         return splits.compactMap { return $0.name }
     }
 
     public func split(featureName: String) -> SplitView? {
 
+        let logTag = "split"
+
+        if checkAndLogIfDestroyed(logTag: logTag) {
+            return nil
+        }
+
         if let errorInfo = splitValidator.validate(name: featureName) {
-            validationLogger.log(errorInfo: errorInfo, tag: "split")
+            validationLogger.log(errorInfo: errorInfo, tag: logTag)
             if errorInfo.isError {
                 return nil
             }
         }
 
         if let errorInfo = splitValidator.validateSplit(name: featureName) {
-            validationLogger.log(errorInfo: errorInfo, tag: "split")
+            validationLogger.log(errorInfo: errorInfo, tag: logTag)
             if errorInfo.isError || errorInfo.hasWarning(.nonExistingSplit) {
                 return nil
             }
@@ -78,5 +94,19 @@ import Foundation
         let splitName = featureName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         let filtered = splits.filter { return ( splitName == $0.name?.lowercased() ) }
         return filtered.count > 0 ? filtered[0] : nil
+    }
+}
+
+extension DefaultSplitManager: Destroyable {
+
+    func checkAndLogIfDestroyed(logTag: String) -> Bool {
+        if isManagerDestroyed {
+            validationLogger.e(message: "Manager has already been destroyed - no calls possible", tag: logTag)
+        }
+        return isManagerDestroyed
+    }
+
+    func destroy() {
+        isManagerDestroyed = true
     }
 }

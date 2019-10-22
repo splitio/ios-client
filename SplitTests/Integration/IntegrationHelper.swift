@@ -13,7 +13,15 @@ class IntegrationHelper {
     static var mockEndPoint: String {
         return "http://localhost:8080"
     }
-    
+
+    static var emptyMySegments: String {
+        return "{\"mySegments\":[]}"
+    }
+
+    static var emptySplitChanges: String {
+        return "{\"splits\":[], \"since\": 9567456937865, \"till\": 9567456937869 }"
+    }
+
     static func buildImpressionKey(impression: Impression) -> String {
         return buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
     }
