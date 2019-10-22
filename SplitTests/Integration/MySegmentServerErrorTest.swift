@@ -16,6 +16,7 @@ class MySegmentServerErrorTest: XCTestCase {
     let kChangeNbInterval: Int64 = 86400
     var reqSegmentsIndex = 0
     var isFirstChangesReq = true
+    var serverUrl = ""
 
     let sgExp = [
         XCTestExpectation(description: "upd 0"),
@@ -76,6 +77,7 @@ class MySegmentServerErrorTest: XCTestCase {
             return MockedResponse(code: 200, data: nil)
         }
         webServer.start()
+        serverUrl = webServer.url
     }
     
     private func stopServer() {
@@ -85,7 +87,7 @@ class MySegmentServerErrorTest: XCTestCase {
     // MARK: Test
     /// Getting changes from server and test treatments and change number
     func test() throws {
-        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_e"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "client"
         var treatments = [String]()
@@ -98,12 +100,12 @@ class MySegmentServerErrorTest: XCTestCase {
         splitConfig.impressionRefreshRate = 21
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
-        splitConfig.targetSdkEndPoint = IntegrationHelper.mockEndPoint
-        splitConfig.targetEventsEndPoint = IntegrationHelper.mockEndPoint
+        splitConfig.targetSdkEndPoint = serverUrl
+        splitConfig.targetEventsEndPoint = serverUrl
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory!.client
 
@@ -127,6 +129,13 @@ class MySegmentServerErrorTest: XCTestCase {
         XCTAssertEqual("on_s1", treatments[1])
         XCTAssertEqual("on_s1", treatments[2])
         XCTAssertEqual("on_s2", treatments[3])
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+        factory = nil
     }
 
     private func  responseSlitChanges() -> [SplitChange] {

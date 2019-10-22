@@ -33,7 +33,7 @@ class SplitSdkTiemoutTests: XCTestCase {
     }
     
     func testSdkTimeout() throws {
-        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_a"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "account"
         var impressions = [String:Impression]()
