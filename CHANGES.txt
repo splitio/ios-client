@@ -1,16 +1,11 @@
+2.5.0: (Oct 23, 2019)
+- Adding destroy method
+- Improving integration tests
 2.4.0: (Aug 29, 2019)
-<<<<<<< HEAD
- - Added flush feature
- - Added basic end to end tests setup
- - Added swift linter
- - Bugfixing - small issue with traffic types validation warning
-
-=======
 - Adding flush feature
 - Adding basic end to end tests setup
 - Adding swift linter
 - Fixing small issue with traffic types validation warning
->>>>>>> master
 2.3.0: (Jun 07, 2019)
  - Added split existence validation
  - Added traffic type validation
