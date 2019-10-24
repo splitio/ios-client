@@ -8,7 +8,7 @@
 import Foundation
 
 class SplitEventExecutorResources {
-    private var _client: SplitClient?
+    private weak var _client: SplitClient?
 
     init() {}
 
@@ -16,7 +16,7 @@ class SplitEventExecutorResources {
         _client = client
     }
 
-    func getClient() -> SplitClient {
-        return _client!
+    func getClient() -> SplitClient? {
+        return _client
     }
 }

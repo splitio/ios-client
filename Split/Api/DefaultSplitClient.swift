@@ -25,11 +25,10 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private var refreshableMySegmentsFetcher: RefreshableMySegmentsFetcher?
 
     private var key: Key
-    private var initialized: Bool = false
     private let config: SplitClientConfig
 
     private var eventsManager: SplitEventsManager
-    private var trackEventsManager: TrackManager
+    private var trackManager: TrackManager
     private var impressionsManager: ImpressionsManager
 
     private let eventValidator: EventValidator
@@ -39,60 +38,35 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
     private var isClientDestroyed = false
 
-    init(config: SplitClientConfig, key: Key, splitCache: SplitCache,
-         fileStorage: FileStorageProtocol, destroyHandler: @escaping DestroyHandler) {
+    init(config: SplitClientConfig,
+         key: Key,
+         splitCache: SplitCache,
+         eventsManager: SplitEventsManager,
+         trackManager: TrackManager,
+         impressionsManager: ImpressionsManager,
+         refreshableSplitFetcher: RefreshableSplitFetcher,
+         refreshableMySegmentsFetcher: RefreshableMySegmentsFetcher,
+         destroyHandler: @escaping DestroyHandler) {
 
         self.config = config
         self.key = key
+        self.impressionsManager = impressionsManager
+        self.trackManager = trackManager
         self.factoryDestroyHandler = destroyHandler
-
-        let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
-
         self.eventValidator = DefaultEventValidator(splitCache: splitCache)
         self.validationLogger = DefaultValidationMessageLogger()
-
-        eventsManager = DefaultSplitEventsManager(config: config)
-        eventsManager.start()
-
-        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
-
-        let refreshableSplitFetcher = DefaultRefreshableSplitFetcher(
-            splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: self.config.featuresRefreshRate,
-            eventsManager: eventsManager)
-
-        let mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache)
-        let refreshableMySegmentsFetcher = DefaultRefreshableMySegmentsFetcher(
-            matchingKey: key.matchingKey, mySegmentsChangeFetcher: mySegmentsFetcher, mySegmentsCache: mySegmentsCache,
-            interval: self.config.segmentsRefreshRate, eventsManager: eventsManager)
-
-        let trackConfig = TrackManagerConfig(
-            firstPushWindow: config.eventsFirstPushWindow, pushRate: config.eventsPushRate,
-            queueSize: config.eventsQueueSize, eventsPerPush: config.eventsPerPush,
-            maxHitsSizeInBytes: config.maxEventsQueueMemorySizeInBytes)
-        trackEventsManager = DefaultTrackManager(config: trackConfig, fileStorage: fileStorage)
-
-        let impressionsConfig = ImpressionManagerConfig(pushRate: config.impressionRefreshRate,
-                                                        impressionsPerPush: config.impressionsChunkSize)
-        impressionsManager = DefaultImpressionsManager(config: impressionsConfig, fileStorage: fileStorage)
-
-        self.initialized = false
+        self.eventsManager = eventsManager
+        self.refreshableMySegmentsFetcher = refreshableMySegmentsFetcher
+        self.refreshableSplitFetcher = refreshableSplitFetcher
 
         super.init()
-        refreshableSplitFetcher.start()
-        refreshableMySegmentsFetcher.start()
-        self.refreshableSplitFetcher = refreshableSplitFetcher
-        self.refreshableMySegmentsFetcher = refreshableMySegmentsFetcher
-
-        eventsManager.getExecutorResources().setClient(client: self)
-
-        trackEventsManager.start()
-        impressionsManager.start()
 
         self.treatmentManager = DefaultTreatmentManager(
             evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager,
             impressionsManager: impressionsManager, metricsManager: DefaultMetricsManager.shared,
             keyValidator: DefaultKeyValidator(), splitValidator: DefaultSplitValidator(splitCache: splitCache),
             validationLogger: validationLogger)
+
         Logger.i("iOS Split SDK initialized!")
     }
 }
@@ -180,7 +154,7 @@ extension DefaultSplitClient {
 
         if isClientDestroyed {
             validationLogger.e(message: "Client has already been destroyed - no calls possible", tag: validationTag)
-            return false;
+            return false
         }
 
         let trafficType = trafficType ?? config.trafficType
@@ -225,7 +199,7 @@ extension DefaultSplitClient {
         event.timestamp = Date().unixTimestampInMiliseconds()
         event.properties = validatedProps
         event.sizeInBytes = totalSizeInBytes
-        trackEventsManager.appendEvent(event: event)
+        trackManager.appendEvent(event: event)
 
         return true
     }
@@ -251,7 +225,7 @@ extension DefaultSplitClient {
 
     private func syncFlush() {
         self.impressionsManager.flush()
-        self.trackEventsManager.flush()
+        self.trackManager.flush()
         DefaultMetricsManager.shared.flush()
     }
 
@@ -267,13 +241,9 @@ extension DefaultSplitClient {
 
     public func destroy(completion: (() -> Void)?) {
         isClientDestroyed = true
+        treatmentManager.destroy()
         DispatchQueue.global().async {
-            self.treatmentManager.destroy()
             self.syncFlush()
-            self.refreshableMySegmentsFetcher?.stop()
-            self.refreshableSplitFetcher?.stop()
-            self.impressionsManager.stop()
-            self.trackEventsManager.stop()
             self.factoryDestroyHandler()
             completion?()
         }
