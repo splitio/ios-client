@@ -15,10 +15,16 @@ class SplitIntegrationTests: XCTestCase {
     var webServer: MockWebServer!
     var splitChange: SplitChange?
     var serverUrl = ""
+    var trackReqIndex = 0
+
+    var trExp = [XCTestExpectation]()
     
     override func setUp() {
         if splitChange == nil {
             splitChange = loadSplitsChangeFile()
+        }
+        for i in 0 ... 9 {
+            trExp.append(XCTestExpectation(description: "track: \(i)"))
         }
         setupServer()
     }
@@ -31,7 +37,13 @@ class SplitIntegrationTests: XCTestCase {
         webServer = MockWebServer()
         webServer.routeGet(path: "/mySegments/:user_id", data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}")
         webServer.routeGet(path: "/splitChanges?since=:param", data: try? Json.encodeToJson(splitChange))
-        webServer.routePost(path: "/events/bulk", data: nil)
+        webServer.route(method: .post, path: "/events/bulk") { request in
+            let index = self.getAndUpdateReqIndex()
+            if index < self.trExp.count {
+                self.trExp[index].fulfill()
+            }
+            return MockedResponse(code: 200)
+        }
         webServer.start()
         serverUrl = webServer.url
     }
@@ -55,6 +67,7 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
+        splitConfig.eventsPushRate = 5
         splitConfig.targetSdkEndPoint = serverUrl
         splitConfig.targetEventsEndPoint = serverUrl
 
@@ -102,7 +115,7 @@ class SplitIntegrationTests: XCTestCase {
             _ = client?.track(eventType: "account", value: Double(i))
         }
         
-        sleep(3)
+        wait(for: trExp, timeout: 30)
         
         let event99 = IntegrationHelper.getTrackEventBy(value: 99.0, trackHits: tracksHits())
         let event100 = IntegrationHelper.getTrackEventBy(value: 100.0, trackHits: tracksHits())
@@ -168,6 +181,15 @@ class SplitIntegrationTests: XCTestCase {
     private func getLastTrackEventJsonHit() -> String {
         let trackRecs = tracksHits()
         return trackRecs[trackRecs.count  - 1].data!
+    }
+
+    private func getAndUpdateReqIndex() -> Int {
+        var i = 0
+        DispatchQueue.global().sync {
+            i = trackReqIndex
+            trackReqIndex+=1
+        }
+        return i
     }
 }
 

@@ -9,21 +9,25 @@ import Foundation
 
 class SplitEventExecutorWithClient: SplitEventExecutorProtocol {
 
-    private var _task: SplitEventTask
-    private var _client: SplitClient
+    private var task: SplitEventTask
+    private var client: SplitClient?
 
-    public init(task: SplitEventTask, client: SplitClient) {
-        _task = task
-        _client = client
+    init(task: SplitEventTask, client: SplitClient?) {
+        self.task = task
+        self.client = client
     }
 
-    public func execute() {
+    func execute() {
+        guard let splitClient = client else {
+            return
+        }
+
         DispatchQueue.global().async {
             // Background thread
-            self._task.onPostExecute(client: self._client)
+            self.task.onPostExecute(client: splitClient)
             DispatchQueue.main.async(execute: {
                 // UI Updates
-                self._task.onPostExecuteView(client: self._client)
+                self.task.onPostExecuteView(client: splitClient)
             })
         }
     }
