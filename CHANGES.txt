@@ -1,4 +1,4 @@
-2.5.0: (Oct 29, 2019)
+2.5.0: (Oct 30, 2019)
 - Adding destroy method
 - Improving integration tests
 - Refactoring client and factory initialization
