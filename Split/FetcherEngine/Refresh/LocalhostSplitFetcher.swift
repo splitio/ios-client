@@ -12,13 +12,13 @@ struct LocalhostSplitFetcherConfig {
     var refreshInterval: Int = 10
 }
 
-class LocalhostSplitFetcher: SplitFetcher {
+class LocalhostSplitFetcher: RefreshableSplitFetcher {
 
     private let refreshInterval: Int
     private let eventsManager: SplitEventsManager
     private let fileStorage: FileStorageProtocol
     private let splitCache: SplitCacheProtocol
-    private var pollingManager: PollingManager?
+    private var taskExecutor: PeriodicTaskExecutor?
     private var fileParser: LocalhostSplitsParser!
     private let supportedExtensions = ["yaml", "yml", "splits"]
     private let fileName: String
@@ -70,8 +70,8 @@ class LocalhostSplitFetcher: SplitFetcher {
         eventsManager.notifyInternalEvent(.mySegmentsAreReady)
         eventsManager.notifyInternalEvent(.splitsAreReady)
         if refreshInterval > 0 {
-            self.pollingManager = createPollingManager()
-            pollingManager?.start()
+            self.taskExecutor = createTaskExecutor()
+            self.start()
         }
     }
 
@@ -87,12 +87,20 @@ class LocalhostSplitFetcher: SplitFetcher {
         return splitCache.getAllSplits()
     }
 
-    private func createPollingManager() -> PollingManager {
-        var config = PollingManagerConfig()
-        config.firstPollWindow = 1
+    func start() {
+        taskExecutor?.start()
+    }
+
+    func stop() {
+        taskExecutor?.stop()
+    }
+
+    private func createTaskExecutor() -> PeriodicTaskExecutor {
+        var config = PeriodicTaskExecutorConfig()
+        config.firstExecutionWindow = 1
         config.rate = refreshInterval
         let fileName = self.fileName
-        return PollingManager(
+        return PeriodicTaskExecutor(
             dispatchGroup: nil,
             config: config,
             triggerAction: {[weak self] in

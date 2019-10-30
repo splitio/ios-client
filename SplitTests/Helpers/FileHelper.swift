@@ -7,6 +7,7 @@
 //
 
 import Foundation
+@testable import Split
 
 class FileHelper {
     static func readDataFromFile(sourceClass: Any, name: String,  type fileType: String)-> String? {
@@ -20,5 +21,13 @@ class FileHelper {
             print("File Read Error for file \(filepath)")
             return nil
         }
+    }
+
+    static func loadSplitChangeFile(sourceClass: Any, fileName: String) -> SplitChange? {
+        if let file = FileHelper.readDataFromFile(sourceClass: sourceClass, name: fileName, type: "json"),
+            let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+            return change
+        }
+        return nil
     }
 }

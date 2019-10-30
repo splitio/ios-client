@@ -72,4 +72,10 @@ class SplitClientStub: SplitClient {
     
     func flush() {
     }
+
+    func destroy() {
+    }
+
+    func destroy(completion: (() -> Void)?) {
+    }
 }

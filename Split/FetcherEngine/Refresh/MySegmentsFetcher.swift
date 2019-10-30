@@ -12,3 +12,6 @@ protocol MySegmentsFetcher {
     func fetchAll() -> [String]
     func forceRefresh()
 }
+
+protocol RefreshableMySegmentsFetcher: MySegmentsFetcher, PeriodicTask {
+}

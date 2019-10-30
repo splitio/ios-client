@@ -13,3 +13,6 @@ protocol SplitFetcher {
     func fetchAll() -> [Split]?
     func forceRefresh()
 }
+
+protocol RefreshableSplitFetcher: SplitFetcher, PeriodicTask {
+}
