@@ -14,10 +14,17 @@ class SplitIntegrationTests: XCTestCase {
     let kNeverRefreshRate = 9999999
     var webServer: MockWebServer!
     var splitChange: SplitChange?
+    var serverUrl = ""
+    var trackReqIndex = 0
+
+    var trExp = [XCTestExpectation]()
     
     override func setUp() {
         if splitChange == nil {
             splitChange = loadSplitsChangeFile()
+        }
+        for i in 0 ... 9 {
+            trExp.append(XCTestExpectation(description: "track: \(i)"))
         }
         setupServer()
     }
@@ -30,8 +37,15 @@ class SplitIntegrationTests: XCTestCase {
         webServer = MockWebServer()
         webServer.routeGet(path: "/mySegments/:user_id", data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}")
         webServer.routeGet(path: "/splitChanges?since=:param", data: try? Json.encodeToJson(splitChange))
-        webServer.routePost(path: "/events/bulk", data: nil)
+        webServer.route(method: .post, path: "/events/bulk") { request in
+            let index = self.getAndUpdateReqIndex()
+            if index < self.trExp.count {
+                self.trExp[index].fulfill()
+            }
+            return MockedResponse(code: 200)
+        }
         webServer.start()
+        serverUrl = webServer.url
     }
     
     private func stopServer() {
@@ -53,15 +67,17 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
-        splitConfig.targetSdkEndPoint = "http://localhost:8080"
-        splitConfig.targetEventsEndPoint = "http://localhost:8080"
+        splitConfig.eventsPushRate = 5
+        splitConfig.targetSdkEndPoint = serverUrl
+        splitConfig.targetEventsEndPoint = serverUrl
+
         splitConfig.impressionListener = { impression in
-            impressions[self.buildImpressionKey(impression: impression)] = impression
+            impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
         }
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory?.client
         let manager = factory?.manager
@@ -80,7 +96,7 @@ class SplitIntegrationTests: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
         
-        wait(for: [sdkReadyExpectation], timeout: 400000.0)
+        wait(for: [sdkReadyExpectation], timeout: 40)
         
         let t1 = client?.getTreatment("FACUNDO_TEST")
         let t2 = client?.getTreatment("NO_EXISTING_FEATURE")
@@ -91,18 +107,18 @@ class SplitIntegrationTests: XCTestCase {
         let s2 = manager?.split(featureName: "NO_EXISTING_FEATURE")
         let splits = manager?.splits
         
-        let i1 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "FACUNDO_TEST", treatment: "off")]
-        let i2 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "NO_EXISTING_FEATURE", treatment: SplitConstants.control)]
-        let i3 = impressions[buildImpressionKey(key: "CUSTOMER_ID", splitName: "testing222", treatment: "off")]
+        let i1 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "FACUNDO_TEST", treatment: "off")]
+        let i2 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "NO_EXISTING_FEATURE", treatment: SplitConstants.control)]
+        let i3 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "testing222", treatment: "off")]
         
         for i in 0..<101 {
             _ = client?.track(eventType: "account", value: Double(i))
         }
         
-        sleep(3)
+        wait(for: trExp, timeout: 30)
         
-        let event99 = getTrackEventBy(value: 99.0)
-        let event100 = getTrackEventBy(value: 100.0)
+        let event99 = IntegrationHelper.getTrackEventBy(value: 99.0, trackHits: tracksHits())
+        let event100 = IntegrationHelper.getTrackEventBy(value: 100.0, trackHits: tracksHits())
         
         XCTAssertTrue(existsFolder(name: dataFolderName))
         XCTAssertTrue(sdkReadyFired)
@@ -126,54 +142,13 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertEqual(10, tracksHits().count)
         XCTAssertNotNil(event99)
         XCTAssertNil(event100)
-    }
-    
-    
-    func testSdkTimeout() throws {
-        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
-        let dataFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
-        let matchingKey = "CUSTOMER_ID"
-        let trafficType = "account"
-        var impressions = [String:Impression]()
-        
-        let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 99999
-        splitConfig.segmentsRefreshRate = 99999
-        splitConfig.impressionRefreshRate = 99999
-        splitConfig.sdkReadyTimeOut = 60000
-        splitConfig.trafficType = trafficType
-        splitConfig.eventsPerPush = 10
-        splitConfig.eventsQueueSize = 100
-        splitConfig.impressionListener = { impression in
-            impressions[self.buildImpressionKey(impression: impression)] = impression
-        }
-        
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
-        let builder = DefaultSplitFactoryBuilder()
-        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
-        
-        let client = factory?.client
-        
-        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-        var timeOutFired = false
-        var sdkReadyFired = false
-        
-        client?.on(event: SplitEvent.sdkReady) {
-            sdkReadyFired = true
-            sdkReadyExpectation.fulfill()
-        }
-        
-        client?.on(event: SplitEvent.sdkReadyTimedOut) {
-            timeOutFired = true
-            sdkReadyExpectation.fulfill()
-        }
-        
-        wait(for: [sdkReadyExpectation], timeout: 400000.0)
-        
-        XCTAssertTrue(existsFolder(name: dataFolderName))
-        XCTAssertFalse(sdkReadyFired)
-        XCTAssertTrue(timeOutFired)
-        
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client?.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+        factory = nil
     }
     
     private func loadSplitsChangeFile() -> SplitChange? {
@@ -198,42 +173,23 @@ class SplitIntegrationTests: XCTestCase {
         }
         return false
     }
-    private func buildImpressionKey(impression: Impression) -> String {
-        return buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
-    }
     
-    private func buildImpressionKey(key: String, splitName: String, treatment: String) -> String {
-        return "(\(key)_\(splitName)_\(treatment)"
+    private func tracksHits() -> [ClientRequest] {
+        return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
     }
-    
-    private func buildEventsFromJson(content: String) throws -> [EventDTO] {
-        return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
-    }
-    
-        private func tracksHits() -> [ReceivedRequest] {
-            return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
-        }
         
     private func getLastTrackEventJsonHit() -> String {
         let trackRecs = tracksHits()
         return trackRecs[trackRecs.count  - 1].data!
     }
-    
-    private func getTrackEventBy(value: Double) -> EventDTO? {
-        let hits = tracksHits()
-        for req in hits {
-            var lastEventHitEvents: [EventDTO] = []
-            do {
-                lastEventHitEvents = try buildEventsFromJson(content: req.data!)
-            } catch {
-                print("error: \(error)")
-            }
-            let events = lastEventHitEvents.filter { $0.value == value }
-            if events.count > 0 {
-                return events[0]
-            }
+
+    private func getAndUpdateReqIndex() -> Int {
+        var i = 0
+        DispatchQueue.global().sync {
+            i = trackReqIndex
+            trackReqIndex+=1
         }
-        return nil
+        return i
     }
 }
 

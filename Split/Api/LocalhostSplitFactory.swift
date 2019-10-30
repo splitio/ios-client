@@ -43,7 +43,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
             .sanitizeForFolderName(config.localhostDataFolder))
 
         let splitCache: SplitCacheProtocol = InMemorySplitCache()
-        let splitFetcher: SplitFetcher = LocalhostSplitFetcher(fileStorage: fileStorage,
+        let splitFetcher: RefreshableSplitFetcher = LocalhostSplitFetcher(fileStorage: fileStorage,
                                                                splitCache: splitCache,
                                                                eventsManager: eventsManager,
                                                                splitsFileName: config.splitFile,

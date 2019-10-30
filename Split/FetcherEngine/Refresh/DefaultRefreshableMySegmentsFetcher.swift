@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class RefreshableMySegmentsFetcher: NSObject, MySegmentsFetcher, QueryableMySegmentsFetcher {
+final class DefaultRefreshableMySegmentsFetcher: NSObject, RefreshableMySegmentsFetcher, QueryableMySegmentsFetcher {
 
     private let mySegmentsChangeFetcher: MySegmentsChangeFetcher
     private let interval: Int
