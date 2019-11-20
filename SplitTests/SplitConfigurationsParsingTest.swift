@@ -205,7 +205,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
     private func jsonObj(config: String?) -> [String: Any]? {
         var res: [String: Any]? = nil
         if let config = config, let data = config.data(using: .utf8) {
-            res = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : Any]
+            res = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String : Any]
         }
         return res
     }

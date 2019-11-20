@@ -27,7 +27,7 @@ class MySegmentsFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(segments: ["splitters"])
         mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
-        let response = try? mySegmentsFetcher.fetch(user: "test")
+        let response = ((try? mySegmentsFetcher.fetch(user: "test")) as [String]??)
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
             XCTAssertTrue(response!.count > 0, "Response count should be greater than 0")
@@ -40,7 +40,7 @@ class MySegmentsFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(segments: ["test", "test1"])
         mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
-        let response = try? mySegmentsFetcher.fetch(user: "test")
+        let response = ((try? mySegmentsFetcher.fetch(user: "test")) as [String]??)
 
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
@@ -55,7 +55,7 @@ class MySegmentsFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(segments: [])
         mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
-        let response = try? mySegmentsFetcher.fetch(user: "test")
+        let response = ((try? mySegmentsFetcher.fetch(user: "test")) as [String]??)
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
             XCTAssertEqual(response!.count, 0, "Response count should empty")

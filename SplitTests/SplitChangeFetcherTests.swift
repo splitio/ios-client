@@ -31,7 +31,7 @@ class SplitChangeFetcherTests: XCTestCase {
         restClientTest.update(change: getChanges(fileName: "splitchanges_1"))
         
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
-        let response = try? splitChangeFetcher.fetch(since: -1)
+        let response = ((try? splitChangeFetcher.fetch(since: -1)) as SplitChange??)
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
             XCTAssertTrue(response!.splits!.count > 0, "Split count should be greater than 0")
@@ -44,7 +44,7 @@ class SplitChangeFetcherTests: XCTestCase {
         restClientTest.update(change: getChanges(fileName: "splitchanges_2"))
         
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
-        let response = try? splitChangeFetcher.fetch(since: -1)
+        let response = ((try? splitChangeFetcher.fetch(since: -1)) as SplitChange??)
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
             XCTAssertEqual(response!.splits!.count, 1, "Splits count should be 1")

@@ -19,13 +19,13 @@ class FactoryMonitorTest: XCTestCase {
     
     func testCountLiveFactories() {
         
-        var f1: SplitFactory? = SplitFactoryStub(apiKey: "k1")
+        let f1: SplitFactory? = SplitFactoryStub(apiKey: "k1")
         let f2: SplitFactory? = SplitFactoryStub(apiKey: "k1")
-        var f3: SplitFactory? = SplitFactoryStub(apiKey: "k2")
-        var f4: SplitFactory? = SplitFactoryStub(apiKey: "k3")
+        let f3: SplitFactory? = SplitFactoryStub(apiKey: "k2")
+        let f4: SplitFactory? = SplitFactoryStub(apiKey: "k3")
         let f5: SplitFactory? = SplitFactoryStub(apiKey: "k4")
         let f6: SplitFactory? = SplitFactoryStub(apiKey: "k4")
-        var f7: SplitFactory? = SplitFactoryStub(apiKey: "k4")
+        let f7: SplitFactory? = SplitFactoryStub(apiKey: "k4")
         
         monitor.register(instance: f1, for: "k1")
         monitor.register(instance: f2, for: "k1")
@@ -46,8 +46,8 @@ class FactoryMonitorTest: XCTestCase {
         
         var f1: SplitFactory? = SplitFactoryStub(apiKey: "k1")
         let f2: SplitFactory? = SplitFactoryStub(apiKey: "k1")
-        var f3: SplitFactory? = SplitFactoryStub(apiKey: "k2")
-        var f4: SplitFactory? = SplitFactoryStub(apiKey: "k3")
+        let f3: SplitFactory? = SplitFactoryStub(apiKey: "k2")
+        let f4: SplitFactory? = SplitFactoryStub(apiKey: "k3")
         let f5: SplitFactory? = SplitFactoryStub(apiKey: "k4")
         let f6: SplitFactory? = SplitFactoryStub(apiKey: "k4")
         var f7: SplitFactory? = SplitFactoryStub(apiKey: "k4")

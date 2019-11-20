@@ -89,12 +89,12 @@ class SplitFactoryBuilderTests: XCTestCase {
         let logger = ValidationMessageLoggerStub()
         builder2.validationLogger = logger
         
-        let f1 = builder1
+        _ = builder1
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
             .build()
         
-        let f2 = builder2
+        _ = builder2
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
             .build()
@@ -109,17 +109,17 @@ class SplitFactoryBuilderTests: XCTestCase {
         let logger = ValidationMessageLoggerStub()
         builder2.validationLogger = logger
         
-        let f1 = builder1
+        _ = builder1
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
             .build()
         
-        let f3 = builder1
+        _ = builder1
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
             .build()
         
-        let f2 = builder2
+        _ = builder2
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
             .build()
@@ -134,12 +134,12 @@ class SplitFactoryBuilderTests: XCTestCase {
         let logger = ValidationMessageLoggerStub()
         builder2.validationLogger = logger
         
-        let f1 = builder1
+        _ = builder1
             .setApiKey("pepe1")
             .setKey(Key(matchingKey: "pepe"))
             .build()
         
-        let f2 = builder2
+        _ = builder2
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
             .build()
