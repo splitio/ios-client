@@ -25,7 +25,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     public var version: String {
-        return Version.toString()
+        return Version.sdk
     }
 
     init(apiKey: String, key: Key, config: SplitClientConfig) {
