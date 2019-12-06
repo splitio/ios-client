@@ -251,6 +251,7 @@
 		59BF3D4022329C7A004D134D /* JFGC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BF3D3B22329C7A004D134D /* JFGC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59BF3D4122329C7A004D134D /* JFRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BF3D3C22329C7A004D134D /* JFRandom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59BF3D432232A663004D134D /* Split.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BF3D422232A663004D134D /* Split.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59BF90B9239A75520007A896 /* VersionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BF90B8239A75520007A896 /* VersionTest.swift */; };
 		59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C492FA216695D500F5F774 /* Murmur3HashingTest.swift */; };
 		59C493052167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv in Resources */ = {isa = PBXBuildFile; fileRef = 59C493022167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv */; };
 		59C493062167E3B400F5F774 /* murmur3-sample-v3.csv in Resources */ = {isa = PBXBuildFile; fileRef = 59C493032167E3B400F5F774 /* murmur3-sample-v3.csv */; };
@@ -565,6 +566,7 @@
 		59BF3D3B22329C7A004D134D /* JFGC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JFGC.h; sourceTree = "<group>"; };
 		59BF3D3C22329C7A004D134D /* JFRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JFRandom.h; sourceTree = "<group>"; };
 		59BF3D422232A663004D134D /* Split.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Split.h; sourceTree = "<group>"; };
+		59BF90B8239A75520007A896 /* VersionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionTest.swift; sourceTree = "<group>"; };
 		59C492FA216695D500F5F774 /* Murmur3HashingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Murmur3HashingTest.swift; sourceTree = "<group>"; };
 		59C493022167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-double-treatment-users.csv"; sourceTree = "<group>"; };
 		59C493032167E3B400F5F774 /* murmur3-sample-v3.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-v3.csv"; sourceTree = "<group>"; };
@@ -1157,6 +1159,7 @@
 				5955633E2294AECF00907C2D /* TrackManagerTest.swift */,
 				599A6E2C22F8C65500D3D68C /* ImpressionsManagerTest.swift */,
 				594677E322CFF30B00F94E58 /* TreatmentManagerTest.swift */,
+				59BF90B8239A75520007A896 /* VersionTest.swift */,
 			);
 			path = SplitTests;
 			sourceTree = "<group>";
@@ -1785,6 +1788,7 @@
 				596A7B622343F848004F6139 /* MySegmentUpadatedTest.swift in Sources */,
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				594677EA22D4D44300F94E58 /* ImpressionsManagerStub.swift in Sources */,
+				59BF90B9239A75520007A896 /* VersionTest.swift in Sources */,
 				595B66CD231D91100030F330 /* SplitChangesTest.swift in Sources */,
 				5959C47C228050750064F968 /* SplitFactoryStub.swift in Sources */,
 				592C6ABF211B718E002D120C /* InMemorySplitCacheTests.swift in Sources */,
@@ -1944,6 +1948,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.5.0;
 				MODULEMAP_FILE = modules.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.Split;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1978,6 +1983,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.5.0;
 				MODULEMAP_FILE = modules.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.Split;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";

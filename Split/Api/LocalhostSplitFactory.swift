@@ -31,7 +31,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
     }
 
     public var version: String {
-        return Version.toString()
+        return Version.sdk
     }
 
     init(key: Key, config: SplitClientConfig, bundle: Bundle) {
