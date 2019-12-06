@@ -19,6 +19,6 @@ class Version {
     }
 
     static var sdk: String {
-        return "\(kSdkPlatform)-\(Self.semantic)"
+        return "\(kSdkPlatform)-\(Version.semantic)"
     }
 }
