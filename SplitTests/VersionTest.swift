@@ -22,4 +22,9 @@ class VersionTest: XCTestCase {
         XCTAssertTrue(sdkVersion.split(separator: ".")[0].contains("ios"))
     }
 
+    func testFactoryVersion() {
+
+        XCTAssertEqual(Version.semantic, DefaultSplitFactory.version)
+    }
+
 }
