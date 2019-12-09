@@ -88,7 +88,11 @@ class SplitFactoryBuilderTests: XCTestCase {
         
         let logger = ValidationMessageLoggerStub()
         builder2.validationLogger = logger
-        
+
+        // we should maintain this unused references
+        // to be able to test the factory registry.
+        // Otherwise weak references on it will be nil
+        // and the test will fail
         let f1 = builder1
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
@@ -98,6 +102,8 @@ class SplitFactoryBuilderTests: XCTestCase {
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
             .build()
+
+        print("print \(f1!.version) - \(f2!.version)")
         
         XCTAssertEqual(factoryValidationMessage(count: 1, for: "pepe"), logger.messages[0])
     }
@@ -114,15 +120,17 @@ class SplitFactoryBuilderTests: XCTestCase {
             .setKey(Key(matchingKey: "pepe"))
             .build()
         
-        let f3 = builder1
+        let f2 = builder1
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
             .build()
         
-        let f2 = builder2
+        let f3 = builder2
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
             .build()
+
+        print("print \(f1!.version) - \(f2!.version) - \(f3!.version)")
         
         XCTAssertEqual(factoryValidationMessage(count: 2, for: "pepe"), logger.messages[0])
     }
@@ -143,6 +151,8 @@ class SplitFactoryBuilderTests: XCTestCase {
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
             .build()
+
+        print("print \(f1!.version) - \(f2!.version)")
         
         XCTAssertEqual("You already have an instance of the Split factory. Make sure you definitely want this additional instance. We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing it throughout your application.", logger.messages[0])
     }
