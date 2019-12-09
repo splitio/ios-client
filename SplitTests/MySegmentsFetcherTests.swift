@@ -27,11 +27,16 @@ class MySegmentsFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(segments: ["splitters"])
         mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
-        let response = try? mySegmentsFetcher.fetch(user: "test")
+        var response: [String]? = nil
+        do {
+            response = try mySegmentsFetcher.fetch(user: "test")
+        } catch {
+        }
+
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
-            XCTAssertTrue(response!.count > 0, "Response count should be greater than 0")
-            XCTAssertEqual(response![0], "splitters", "First segment should be named 'splitters'")
+            XCTAssertTrue(response.count > 0, "Response count should be greater than 0")
+            XCTAssertEqual(response[0], "splitters", "First segment should be named 'splitters'")
         }
     }
 
@@ -40,13 +45,17 @@ class MySegmentsFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(segments: ["test", "test1"])
         mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
-        let response = try? mySegmentsFetcher.fetch(user: "test")
+        var response: [String]? = nil
+        do {
+            response = try mySegmentsFetcher.fetch(user: "test")
+        } catch {
+        }
 
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
-            XCTAssertEqual(response!.count, 2, "Response count should be 2")
-            XCTAssertEqual(response![0], "test", "First segment should be named 'test'")
-            XCTAssertEqual(response![1], "test1", "Second segment should be named 'test1'")
+            XCTAssertEqual(response.count, 2, "Response count should be 2")
+            XCTAssertEqual(response[0], "test", "First segment should be named 'test'")
+            XCTAssertEqual(response[1], "test1", "Second segment should be named 'test1'")
         }
     }
 
@@ -55,10 +64,14 @@ class MySegmentsFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(segments: [])
         mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
-        let response = try? mySegmentsFetcher.fetch(user: "test")
+        var response: [String]? = nil
+        do {
+            response = try mySegmentsFetcher.fetch(user: "test")
+        } catch {
+        }
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
-            XCTAssertEqual(response!.count, 0, "Response count should empty")
+            XCTAssertEqual(response.count, 0, "Response count should empty")
         }
     }
 }
