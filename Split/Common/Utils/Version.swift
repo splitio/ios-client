@@ -8,10 +8,17 @@
 import Foundation
 
 class Version {
-    private static let name: String = "ios"
-    private static let number: String = "2.5.0"
+    private static let kSdkPlatform: String = "ios"
+    private static let kBundleShortVersionField = "CFBundleShortVersionString"
 
-    public static func toString() -> String {
-        return name + "-" + number
+    static var semantic: String {
+        if let version =  Bundle(for: self).object(forInfoDictionaryKey: kBundleShortVersionField) as? String {
+            return version
+        }
+        return "Unavailable"
+    }
+
+    static var sdk: String {
+        return "\(kSdkPlatform)-\(Version.semantic)"
     }
 }

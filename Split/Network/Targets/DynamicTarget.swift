@@ -36,7 +36,7 @@ class DynamicTarget: Target {
         if let token = SecureDataStore.shared.getToken() {
             self.commonHeaders = [
                 "authorization": "Bearer " + token,
-                "splitsdkversion": Version.toString()
+                "splitsdkversion": Version.sdk
             ]
         } else {
             Logger.e("API key is null")
