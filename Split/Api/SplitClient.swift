@@ -52,9 +52,3 @@ public typealias SplitAction = () -> Void
                                                            properties: [String: Any]?) -> Bool
 
 }
-
-extension SplitClient {
-    public static var version: String {
-        return Version.semantic
-    }
-}
