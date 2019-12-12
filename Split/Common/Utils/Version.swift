@@ -9,13 +9,10 @@ import Foundation
 
 class Version {
     private static let kSdkPlatform: String = "ios"
-    private static let kBundleShortVersionField = "CFBundleShortVersionString"
+    private static let kVersion = "2.5.1-rc2"
 
     static var semantic: String {
-        if let version =  Bundle(for: self).object(forInfoDictionaryKey: kBundleShortVersionField) as? String {
-            return version
-        }
-        return "Unavailable"
+        return kVersion
     }
 
     static var sdk: String {
