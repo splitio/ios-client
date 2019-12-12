@@ -13,6 +13,12 @@ import Foundation
  */
 public class DefaultSplitFactory: NSObject, SplitFactory {
 
+    // Not using default implementation in protocol
+    // extension due to Objc interoperability
+    public static var sdkVersion: String {
+        return Version.semantic
+    }
+
     private var defaultClient: SplitClient!
     private let defaultManager: SplitManager
 
