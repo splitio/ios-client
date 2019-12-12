@@ -18,7 +18,7 @@ import Foundation
 ///
 public class LocalhostSplitFactory: NSObject, SplitFactory {
 
-    public static var sdkVersion: String {
+    @objc public static var sdkVersion: String {
         return Version.semantic
     }
 
