@@ -35,7 +35,7 @@ import Foundation
 }
 
 extension SplitFactory {
-    public static var version: String {
+    public static var sdkVersion: String {
         return Version.semantic
     }
 }
