@@ -15,7 +15,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
     // Not using default implementation in protocol
     // extension due to Objc interoperability
-    public static var sdkVersion: String {
+    @objc public static var sdkVersion: String {
         return Version.semantic
     }
 
