@@ -24,7 +24,7 @@ class VersionTest: XCTestCase {
 
     func testFactoryVersion() {
 
-        XCTAssertEqual(Version.semantic, DefaultSplitFactory.version)
+        XCTAssertEqual(Version.semantic, DefaultSplitFactory.sdkVersion)
     }
 
 }
