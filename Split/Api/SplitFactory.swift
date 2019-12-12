@@ -33,9 +33,3 @@ import Foundation
     ///
     var version: String { get }
 }
-
-extension SplitFactory {
-    public static var sdkVersion: String {
-        return Version.semantic
-    }
-}
