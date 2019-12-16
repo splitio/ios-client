@@ -18,6 +18,10 @@ import Foundation
 ///
 public class LocalhostSplitFactory: NSObject, SplitFactory {
 
+    @objc public static var sdkVersion: String {
+        return Version.semantic
+    }
+
     private let localhostClient: SplitClient
     private let localhostManager: SplitManager
     private let eventsManager: SplitEventsManager
@@ -31,7 +35,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
     }
 
     public var version: String {
-        return Version.toString()
+        return Version.sdk
     }
 
     init(key: Key, config: SplitClientConfig, bundle: Bundle) {

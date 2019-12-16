@@ -31,10 +31,14 @@ class SplitChangeFetcherTests: XCTestCase {
         restClientTest.update(change: getChanges(fileName: "splitchanges_1"))
         
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
-        let response = try? splitChangeFetcher.fetch(since: -1)
+        var response: SplitChange? = nil
+        do {
+            response = try splitChangeFetcher.fetch(since: -1)
+        } catch {
+        }
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
-            XCTAssertTrue(response!.splits!.count > 0, "Split count should be greater than 0")
+            XCTAssertTrue(response.splits!.count > 0, "Split count should be greater than 0")
         }
     }
 
@@ -44,11 +48,16 @@ class SplitChangeFetcherTests: XCTestCase {
         restClientTest.update(change: getChanges(fileName: "splitchanges_2"))
         
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
-        let response = try? splitChangeFetcher.fetch(since: -1)
+        var response: SplitChange? = nil
+        do {
+            response = try splitChangeFetcher.fetch(since: -1)
+        } catch {
+        }
+
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
-            XCTAssertEqual(response!.splits!.count, 1, "Splits count should be 1")
-            let split = response!.splits![0];
+            XCTAssertEqual(response.splits!.count, 1, "Splits count should be 1")
+            let split = response.splits![0];
             XCTAssertEqual(split.name, "FACUNDO_TEST", "Split name value")
             XCTAssertFalse(split.killed!, "Split killed value should be false")
             XCTAssertEqual(split.status, .active, "Split status should be 'Active'")
@@ -58,8 +67,8 @@ class SplitChangeFetcherTests: XCTestCase {
             XCTAssertNotNil(split.configurations, "Configurations should not be nil")
             XCTAssertNotNil(split.configurations?["on"])
             XCTAssertNotNil(split.configurations?["off"])
-            XCTAssertEqual(response!.since, -1, "Since should be -1")
-            XCTAssertEqual(response!.till, 1506703262916, "Check till value")
+            XCTAssertEqual(response.since, -1, "Since should be -1")
+            XCTAssertEqual(response.till, 1506703262916, "Check till value")
             XCTAssertNil(split.algo, "Algo should be nil")
         }
     }

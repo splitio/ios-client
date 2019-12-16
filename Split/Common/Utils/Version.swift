@@ -8,10 +8,14 @@
 import Foundation
 
 class Version {
-    private static let name: String = "ios"
-    private static let number: String = "2.5.0"
+    private static let kSdkPlatform: String = "ios"
+    private static let kVersion = "2.5.1"
 
-    public static func toString() -> String {
-        return name + "-" + number
+    static var semantic: String {
+        return kVersion
+    }
+
+    static var sdk: String {
+        return "\(kSdkPlatform)-\(Version.semantic)"
     }
 }
