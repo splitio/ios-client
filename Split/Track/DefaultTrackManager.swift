@@ -230,17 +230,16 @@ extension DefaultTrackManager {
 extension DefaultTrackManager {
     func subscribeNotifications() {
         NotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
-            guard let strongSelf = self else {
-                return
+            if let self = self {
+                self.loadEventsFromDisk()
             }
-            strongSelf.loadEventsFromDisk()
         }
 
         NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
-            guard let strongSelf = self else {
-                return
+
+            if let self = self {
+                self.saveEventsToDisk()
             }
-            strongSelf.saveEventsToDisk()
         }
     }
 }

@@ -17,6 +17,7 @@ class TreatmentManagerTest: XCTestCase {
     var splitFetcher: SplitFetcher!
     var mySegmentsFetcher: MySegmentsFetcher!
     var splitCache: SplitCacheProtocol!
+    var client: InternalSplitClient!
     
     var impressionsManagerStub: ImpressionsManagerStub {
         return impressionsManager as! ImpressionsManagerStub
@@ -251,7 +252,7 @@ class TreatmentManagerTest: XCTestCase {
     
     func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil) -> TreatmentManager {
         let key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
-        let client: InternalSplitClient = InternalSplitClientStub(splitFetcher: splitFetcher, mySegmentsFetcher: mySegmentsFetcher)
+        client = InternalSplitClientStub(splitFetcher: splitFetcher, mySegmentsFetcher: mySegmentsFetcher)
         let evaluator = DefaultEvaluator(splitClient: client)
         
         return DefaultTreatmentManager(evaluator: evaluator, key: key, splitConfig: SplitClientConfig(), eventsManager: SplitEventsManagerMock(), impressionsManager: impressionsManager, metricsManager: DefaultMetricsManager.shared, keyValidator: DefaultKeyValidator(), splitValidator: DefaultSplitValidator(splitCache: splitCache), validationLogger: validationLogger)
