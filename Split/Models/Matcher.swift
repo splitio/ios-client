@@ -21,7 +21,7 @@
     var dependencyMatcherData: DependencyMatcherData?
     var booleanMatcherData: Bool?
     var stringMatcherData: String?
-    var client: InternalSplitClient?
+    weak var client: InternalSplitClient?
 
     enum CodingKeys: String, CodingKey {
         case keySelector
