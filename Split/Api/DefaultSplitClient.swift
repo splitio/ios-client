@@ -69,6 +69,10 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
         Logger.i("iOS Split SDK initialized!")
     }
+
+    deinit {
+        NotificationHelper.instance.removeAllObservers()
+    }
 }
 
 // MARK: Events

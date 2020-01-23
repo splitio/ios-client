@@ -44,7 +44,7 @@ class NotificationHelper {
             if self.actions[notification.rawValue] == nil {
                 self.actions[notification.rawValue] = [ObserverAction]()
             }
-            self.actions[notification.rawValue]!.append(action)
+            self.actions[notification.rawValue]?.append(action)
         }
     }
 
@@ -98,5 +98,11 @@ class NotificationHelper {
 
     @objc private func applicationDidBecomeActive() {
         executeActions(for: AppNotification.didBecomeActive)
+    }
+
+    func removeAllObservers() {
+        queue.sync {
+           actions.removeAll()
+        }
     }
 }
