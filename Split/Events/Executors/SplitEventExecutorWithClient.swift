@@ -10,7 +10,7 @@ import Foundation
 class SplitEventExecutorWithClient: SplitEventExecutorProtocol {
 
     private var task: SplitEventTask
-    private var client: SplitClient?
+    private weak var client: SplitClient?
 
     init(task: SplitEventTask, client: SplitClient?) {
         self.task = task

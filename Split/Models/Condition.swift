@@ -14,7 +14,7 @@ class Condition: NSObject, Codable {
     var matcherGroup: MatcherGroup?
     var partitions: [Partition]?
     var label: String?
-    var client: InternalSplitClient?
+    weak var client: InternalSplitClient?
 
     enum CodingKeys: String, CodingKey {
         case conditionType

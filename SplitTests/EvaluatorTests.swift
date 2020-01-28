@@ -13,13 +13,14 @@ class EvaluatorTests: XCTestCase {
     
     var evaluator: Evaluator!
     let matchingKey = "test_key"
+    var client: InternalSplitClient!
     
     override func setUp() {
         if evaluator == nil {
             let mySegments = ["s1", "s2", "test_copy"]
             let splitFetcher: SplitFetcher = SplitFetcherStub(splits: loadSplitsFile())
             let mySegmentsFetcher: MySegmentsFetcher = MySegmentsFetcherStub(mySegments: mySegments)
-            let client: InternalSplitClient = InternalSplitClientStub(splitFetcher: splitFetcher, mySegmentsFetcher: mySegmentsFetcher)
+            client = InternalSplitClientStub(splitFetcher: splitFetcher, mySegmentsFetcher: mySegmentsFetcher)
             evaluator = DefaultEvaluator(splitClient: client)
         }
     }
