@@ -1,6 +1,10 @@
 2.5.2: (Jan 24, 2020)
 - Fixed some memory issues
 
+2.5.1: (Dic 10, 2019)
+- Added static version property in Factory
+- Updated project settings suggested for xcode 11.2.1
+
 2.5.0: (Oct 30, 2019)
 - Added client destroy method for shutdown of the SDK.
 - Updated integration tests suites.
