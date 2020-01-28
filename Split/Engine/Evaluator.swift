@@ -29,7 +29,7 @@ protocol Evaluator {
 class DefaultEvaluator: Evaluator {
     var splitFetcher: SplitFetcher?
     var mySegmentsFetcher: MySegmentsFetcher?
-    var splitClient: InternalSplitClient? {
+    weak var splitClient: InternalSplitClient? {
 
         didSet {
             self.splitFetcher = self.splitClient?.splitFetcher
@@ -76,7 +76,7 @@ class DefaultEvaluator: Evaluator {
 
             do {
                 for condition in conditions {
-                    condition.client = self.splitClient
+                    condition.client = splitClient
                     if !inRollOut && condition.conditionType == ConditionType.rollout {
                         if let trafficAllocation = split.trafficAllocation, trafficAllocation < 100 {
                             let bucket: Int64 = splitter.getBucket(seed: trafficAllocationSeed,

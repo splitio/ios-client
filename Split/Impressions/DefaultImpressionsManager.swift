@@ -178,17 +178,15 @@ extension DefaultImpressionsManager {
 extension DefaultImpressionsManager {
     func subscribeNotifications() {
         NotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
-            guard let strongSelf = self else {
-                return
+            if let self = self {
+                self.loadImpressionsFromDisk()
             }
-            strongSelf.loadImpressionsFromDisk()
         }
 
         NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
-            guard let strongSelf = self else {
-                return
+            if let self = self {
+                self.saveImpressionsToDisk()
             }
-            strongSelf.saveImpressionsToDisk()
         }
     }
 }
