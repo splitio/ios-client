@@ -67,6 +67,9 @@ class SplitCache: SplitCacheProtocol {
     }
 
     func clear() {
+        inMemoryCache.clear()
+        inMemoryCache.setChangeNumber(-1)
+        fileStorage.delete(fileName: kSplitsFileName)
     }
 }
 

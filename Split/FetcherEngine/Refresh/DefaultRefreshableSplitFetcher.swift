@@ -13,17 +13,18 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
     private let splitChangeFetcher: SplitChangeFetcher
     private let interval: Int
     private var featurePollTimer: DispatchSourceTimer?
-
+    private let cacheExpiration: Int
     internal let splitCache: SplitCacheProtocol
 
     public weak var dispatchGroup: DispatchGroup?
 
-    private var _eventsManager: SplitEventsManager
+    private var eventsManager: SplitEventsManager
     private var firstSplitFetchs: Bool = true
 
     init(splitChangeFetcher: SplitChangeFetcher,
          splitCache: SplitCacheProtocol,
          interval: Int,
+         cacheExpiration: Int,
          dispatchGroup: DispatchGroup? = nil,
          eventsManager: SplitEventsManager) {
 
@@ -31,7 +32,8 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
         self.splitChangeFetcher = splitChangeFetcher
         self.interval = interval
         self.dispatchGroup = dispatchGroup
-        self._eventsManager = eventsManager
+        self.eventsManager = eventsManager
+        self.cacheExpiration = cacheExpiration;
     }
 
     func forceRefresh() {
@@ -51,7 +53,7 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
         do {
             let splitChange = try self.splitChangeFetcher.fetch(since: -1, policy: .cacheOnly)
             if splitChange != nil {
-                self._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
+                self.eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
                 firstSplitFetchs = false
                 Logger.d("SplitChanges fetched from CACHE successfully")
             } else {
@@ -97,18 +99,24 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
                 return
             }
             do {
-
+                var storedChangeNumber = strongSelf.splitCache.getChangeNumber()
+                let elapsedTime = (Date().unixTimestampInMiliseconds()
+                    - storedChangeNumber) / 1000
+                if storedChangeNumber != -1 && elapsedTime > strongSelf.cacheExpiration {
+                    storedChangeNumber = -1
+                    strongSelf.splitCache.clear()
+                }
                 let splitChanges =
-                    try strongSelf.splitChangeFetcher.fetch(since: strongSelf.splitCache.getChangeNumber())
+                    try strongSelf.splitChangeFetcher.fetch(since: storedChangeNumber)
                 Logger.d(splitChanges.debugDescription)
 
                 strongSelf.dispatchGroup?.leave()
 
                 if strongSelf.firstSplitFetchs {
                     strongSelf.firstSplitFetchs = false
-                    strongSelf._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
+                    strongSelf.eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
                 } else {
-                    strongSelf._eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreUpdated)
+                    strongSelf.eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreUpdated)
                 }
             } catch let error {
                 DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
