@@ -187,4 +187,9 @@ public class SplitClientConfig: NSObject {
     ///
     let initialEventSizeInBytes = 1024
 
+    ///
+    /// Time to consider that cache has expired
+    ///
+    let cacheExpirationInSeconds = 864000
+
 }
