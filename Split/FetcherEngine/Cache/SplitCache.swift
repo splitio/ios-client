@@ -19,16 +19,20 @@ class SplitCache: SplitCacheProtocol {
     private struct SplitsFile: Codable {
         var splits: [String: Split]
         var changeNumber: Int64
-        var timestamp: Int = 0
+        var timestamp: Int? = 0
     }
 
+    private var timestamp = 0
     let kSplitsFileName: String = "SPLITIO.splits"
     private let fileStorage: FileStorageProtocol
-    private var inMemoryCache: InMemorySplitCache!
+    private var inMemoryCache: InMemorySplitCache = InMemorySplitCache(splits: [String: Split](), changeNumber: -1)
 
     init(fileStorage: FileStorageProtocol) {
         self.fileStorage = fileStorage
-        self.inMemoryCache = initialInMemoryCache()
+        if let splitsFile = loadSplitFile() {
+            timestamp = splitsFile.timestamp ?? 0
+            self.inMemoryCache = buildInMemoryCache(splitsFile: splitsFile)
+        }
         NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) {
             DispatchQueue.global().async { [weak self] in
                 guard let strongSelf = self else {
@@ -74,35 +78,31 @@ class SplitCache: SplitCacheProtocol {
     }
 
     func getTimestamp() -> Int {
-        return inMemoryCache.getTimestamp()
-    }
-
-    func updateTimestamp() {
-        inMemoryCache.updateTimestamp()
+        return timestamp
     }
 }
 
 // MARK: Private
 extension SplitCache {
-    private func initialInMemoryCache() -> InMemorySplitCache {
-        let emptySplitCache: (() -> InMemorySplitCache) = {
-            return InMemorySplitCache(splits: [String: Split]())
-        }
+    private func buildInMemoryCache(splitsFile: SplitsFile) -> InMemorySplitCache {
+        return InMemorySplitCache(splits: splitsFile.splits, changeNumber: splitsFile.changeNumber)
+    }
 
+    private func loadSplitFile() -> SplitsFile? {
         guard let jsonContent = fileStorage.read(fileName: kSplitsFileName) else {
-            return emptySplitCache()
+            return nil
         }
         do {
-            let splitsFile = try Json.encodeFrom(json: jsonContent, to: SplitsFile.self)
-            return InMemorySplitCache(splits: splitsFile.splits, changeNumber: splitsFile.changeNumber)
+            return try Json.encodeFrom(json: jsonContent, to: SplitsFile.self)
         } catch {
             Logger.e("Error while loading Splits from disk")
         }
-        return emptySplitCache()
+        return nil
     }
 
     private func saveSplits() {
-        let splitsFile = SplitsFile(splits: getSplits(), changeNumber: getChangeNumber(), timestamp: getTimestamp())
+        timestamp = Int(Date().timeIntervalSince1970)
+        let splitsFile = SplitsFile(splits: getSplits(), changeNumber: getChangeNumber(), timestamp: timestamp)
         do {
             let jsonSplits = try Json.encodeToJson(splitsFile)
             fileStorage.write(fileName: kSplitsFileName, content: jsonSplits)

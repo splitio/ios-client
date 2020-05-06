@@ -87,10 +87,6 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
     func getTimestamp() -> Int {
         return timestamp
     }
-
-    func updateTimestamp() {
-        timestamp = Int(Date().timeIntervalSince1970)
-    }
 }
 
 extension InMemorySplitCache {
