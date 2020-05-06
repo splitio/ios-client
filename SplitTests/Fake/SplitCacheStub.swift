@@ -76,7 +76,7 @@ class SplitCacheStub: SplitCacheProtocol {
         return timestamp
     }
 
-    func updateTimestamp() {
-        
+    func setTimestamp(timestamp: Int) {
+        self.timestamp = timestamp
     }
 }
