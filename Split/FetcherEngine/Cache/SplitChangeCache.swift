@@ -26,6 +26,7 @@ class  SplitChangeCache: SplitChangeCacheProtocol {
             for split in splitChange.splits! {
                 _ = self.splitCache?.addSplit(splitName: split.name!, split: split)
             }
+            self.splitCache?.updateTimestamp()
         }
         return true
     }

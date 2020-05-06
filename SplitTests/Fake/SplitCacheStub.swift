@@ -16,6 +16,8 @@ class SplitCacheStub: SplitCacheProtocol {
     var onSplitsUpdatedHandler: (([Split]) -> Void)? = nil
     private var changeNumber: Int64
     private var splits: [String:Split]
+    var timestamp = 0
+
     var clearCallCount = 0
     init(splits: [Split], changeNumber: Int64) {
         self.changeNumber = changeNumber
@@ -69,5 +71,12 @@ class SplitCacheStub: SplitCacheProtocol {
     func exists(trafficType: String) -> Bool {
         return true
     }
-    
+
+    func getTimestamp() -> Int {
+        return timestamp
+    }
+
+    func updateTimestamp() {
+        
+    }
 }
