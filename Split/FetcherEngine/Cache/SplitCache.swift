@@ -22,15 +22,13 @@ class SplitCache: SplitCacheProtocol {
         var timestamp: Int? = 0
     }
 
-    private var timestamp = 0
     let kSplitsFileName: String = "SPLITIO.splits"
     private let fileStorage: FileStorageProtocol
-    private var inMemoryCache: InMemorySplitCache = InMemorySplitCache(splits: [String: Split](), changeNumber: -1)
+    private var inMemoryCache: InMemorySplitCache = InMemorySplitCache(splits: [String: Split](), changeNumber: -1, timestamp: 0)
 
     init(fileStorage: FileStorageProtocol) {
         self.fileStorage = fileStorage
         if let splitsFile = loadSplitFile() {
-            timestamp = splitsFile.timestamp ?? 0
             self.inMemoryCache = buildInMemoryCache(splitsFile: splitsFile)
         }
         NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) {
@@ -78,14 +76,20 @@ class SplitCache: SplitCacheProtocol {
     }
 
     func getTimestamp() -> Int {
-        return timestamp
+        return inMemoryCache.getTimestamp()
+    }
+
+    func setTimestamp(timestamp: Int) {
+        inMemoryCache.setTimestamp(timestamp: timestamp)
     }
 }
 
 // MARK: Private
 extension SplitCache {
     private func buildInMemoryCache(splitsFile: SplitsFile) -> InMemorySplitCache {
-        return InMemorySplitCache(splits: splitsFile.splits, changeNumber: splitsFile.changeNumber)
+        return InMemorySplitCache(splits: splitsFile.splits,
+                                  changeNumber: splitsFile.changeNumber,
+                                  timestamp: splitsFile.timestamp)
     }
 
     private func loadSplitFile() -> SplitsFile? {
@@ -101,8 +105,7 @@ extension SplitCache {
     }
 
     private func saveSplits() {
-        timestamp = Int(Date().timeIntervalSince1970)
-        let splitsFile = SplitsFile(splits: getSplits(), changeNumber: getChangeNumber(), timestamp: timestamp)
+        let splitsFile = SplitsFile(splits: getSplits(), changeNumber: getChangeNumber(), timestamp: getTimestamp())
         do {
             let jsonSplits = try Json.encodeToJson(splitsFile)
             fileStorage.write(fileName: kSplitsFileName, content: jsonSplits)

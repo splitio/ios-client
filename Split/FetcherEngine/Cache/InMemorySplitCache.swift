@@ -17,10 +17,11 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
     private var trafficTypes = [String: Int]()
     private var timestamp: Int = 0
 
-    init(splits: [String: Split] = [:], changeNumber: Int64 = -1) {
+    init(splits: [String: Split] = [:], changeNumber: Int64 = -1, timestamp: Int? = 0) {
         self.queue = DispatchQueue(label: queueName, attributes: .concurrent)
         self.splits = [:]
         self.changeNumber = changeNumber
+        self.timestamp = timestamp ?? 0
         super.init()
         initSplits(splits: splits)
     }
@@ -86,6 +87,10 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
 
     func getTimestamp() -> Int {
         return timestamp
+    }
+
+    func setTimestamp(timestamp: Int) {
+        self.timestamp = timestamp
     }
 }
 
