@@ -15,6 +15,7 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
     private var splits: [String: Split]
     private var changeNumber: Int64
     private var trafficTypes = [String: Int]()
+    private var timestamp: Int = 0
 
     init(splits: [String: Split] = [:], changeNumber: Int64 = -1) {
         self.queue = DispatchQueue(label: queueName, attributes: .concurrent)
@@ -81,6 +82,14 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
             exists = (self.trafficTypes[trafficType.lowercased()] != nil)
         }
         return exists
+    }
+
+    func getTimestamp() -> Int {
+        return timestamp
+    }
+
+    func updateTimestamp() {
+        timestamp = Int(Date().timeIntervalSince1970)
     }
 }
 

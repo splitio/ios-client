@@ -33,7 +33,7 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
         self.interval = interval
         self.dispatchGroup = dispatchGroup
         self.eventsManager = eventsManager
-        self.cacheExpiration = cacheExpiration;
+        self.cacheExpiration = cacheExpiration
     }
 
     func forceRefresh() {
@@ -99,15 +99,15 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
                 return
             }
             do {
-                var storedChangeNumber = strongSelf.splitCache.getChangeNumber()
-                let elapsedTime = (Date().unixTimestampInMiliseconds()
-                    - storedChangeNumber) / 1000
-                if storedChangeNumber != -1 && elapsedTime > strongSelf.cacheExpiration {
-                    storedChangeNumber = -1
+                let timestamp = strongSelf.splitCache.getTimestamp()
+                var changeNumber = strongSelf.splitCache.getChangeNumber()
+                let elapsedTime = Int(Date().timeIntervalSince1970) - timestamp
+                if changeNumber != -1 && elapsedTime > strongSelf.cacheExpiration {
+                    changeNumber = -1
                     strongSelf.splitCache.clear()
                 }
                 let splitChanges =
-                    try strongSelf.splitChangeFetcher.fetch(since: storedChangeNumber)
+                    try strongSelf.splitChangeFetcher.fetch(since: changeNumber)
                 Logger.d(splitChanges.debugDescription)
 
                 strongSelf.dispatchGroup?.leave()

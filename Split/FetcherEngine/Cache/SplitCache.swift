@@ -19,11 +19,12 @@ class SplitCache: SplitCacheProtocol {
     private struct SplitsFile: Codable {
         var splits: [String: Split]
         var changeNumber: Int64
+        var timestamp: Int = 0
     }
 
     let kSplitsFileName: String = "SPLITIO.splits"
-    let fileStorage: FileStorageProtocol
-    var inMemoryCache: InMemorySplitCache!
+    private let fileStorage: FileStorageProtocol
+    private var inMemoryCache: InMemorySplitCache!
 
     init(fileStorage: FileStorageProtocol) {
         self.fileStorage = fileStorage
@@ -71,6 +72,14 @@ class SplitCache: SplitCacheProtocol {
         inMemoryCache.setChangeNumber(-1)
         fileStorage.delete(fileName: kSplitsFileName)
     }
+
+    func getTimestamp() -> Int {
+        return inMemoryCache.getTimestamp()
+    }
+
+    func updateTimestamp() {
+        inMemoryCache.updateTimestamp()
+    }
 }
 
 // MARK: Private
@@ -93,7 +102,7 @@ extension SplitCache {
     }
 
     private func saveSplits() {
-        let splitsFile = SplitsFile(splits: getSplits(), changeNumber: getChangeNumber())
+        let splitsFile = SplitsFile(splits: getSplits(), changeNumber: getChangeNumber(), timestamp: getTimestamp())
         do {
             let jsonSplits = try Json.encodeToJson(splitsFile)
             fileStorage.write(fileName: kSplitsFileName, content: jsonSplits)

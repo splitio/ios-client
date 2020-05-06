@@ -15,25 +15,24 @@ class RefreshableSplitFetcherTest: XCTestCase {
 
     private var splitCache: SplitCacheStub!
     private var splitChangeFetcher: SplitChangeFetcherStub!
-    private var changeNumber: Int64!
 
     override func setUp() {
-        changeNumber = Int64((Date().timeIntervalSince1970 - 60 * 24 * 5) * 1000)
-        splitCache = SplitCacheStub(splits: generateSplits(), changeNumber: changeNumber)
+        splitCache = SplitCacheStub(splits: generateSplits(), changeNumber: 1000)
         splitChangeFetcher = SplitChangeFetcherStub()
     }
 
 
     func testClearExpiredCache() {
+        let expiration: Int = 60 * 60 * 24 * 5 // Five days
         let fetcher = DefaultRefreshableSplitFetcher(splitChangeFetcher: splitChangeFetcher,
                 splitCache: splitCache,
                 interval: 1,
-                cacheExpiration: 60 * 23,
+                cacheExpiration: expiration,
                 dispatchGroup: nil,
                 eventsManager: SplitEventsManagerStub())
         let expectation = XCTestExpectation(description: "Clear")
         splitCache.clearExpectation = expectation
-
+        splitCache.timestamp = Int(Date().timeIntervalSince1970) - expiration - 10000 // expired
         fetcher.start()
 
         wait(for: [expectation], timeout: 40)
@@ -42,28 +41,31 @@ class RefreshableSplitFetcherTest: XCTestCase {
     }
 
     func testClearNonExpiredCache() {
+        let expiration: Int = 60 * 60 * 24 * 5 // Five days
         let fetcher = DefaultRefreshableSplitFetcher(splitChangeFetcher: splitChangeFetcher,
                 splitCache: splitCache,
                 interval: 1,
-                cacheExpiration: 60 * 24 * 10,
+                cacheExpiration: expiration,
                 dispatchGroup: nil,
                 eventsManager: SplitEventsManagerStub())
         let expectation = XCTestExpectation(description: "Clear")
         splitChangeFetcher.fetchExpectation = expectation
-
+        splitCache.timestamp = Int(Date().timeIntervalSince1970) - expiration + 60 * 60 * 24 // no expired
         fetcher.start()
 
         wait(for: [expectation], timeout: 40)
         XCTAssertEqual(splitCache.clearCallCount, 0)
-        XCTAssertEqual(splitCache.getChangeNumber(), changeNumber)
+        XCTAssertEqual(splitCache.getChangeNumber(), 1000)
     }
 
     func testClearMinusOneChangeNumberCache() {
+        let expiration = 60 * 60 * 24 * 10
         splitCache = SplitCacheStub(splits: generateSplits(), changeNumber: -1)
+        splitCache.timestamp = Int(Date().timeIntervalSince1970) -  expiration - 10000 // expired 1000 seconds ago
         let fetcher = DefaultRefreshableSplitFetcher(splitChangeFetcher: splitChangeFetcher,
                 splitCache: splitCache,
                 interval: 1,
-                cacheExpiration: 60 * 24 * 10,
+                cacheExpiration: expiration,
                 dispatchGroup: nil,
                 eventsManager: SplitEventsManagerStub())
         let expectation = XCTestExpectation(description: "Clear")
