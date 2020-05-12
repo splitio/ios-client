@@ -8,11 +8,11 @@
 
 import Foundation
 
-protocol RestClientMySegments: RestClientProtocol {
+protocol RestClientMySegments: RestClient {
     func getMySegments(user: String, completion: @escaping (DataResult<[String]>) -> Void)
 }
 
-extension RestClient: RestClientMySegments {
+extension DefaultRestClient: RestClientMySegments {
 
     func getMySegments(user: String, completion: @escaping (DataResult<[String]>) -> Void) {
         let completionHandler: (DataResult<[String: [Segment]]>) -> Void = { result in

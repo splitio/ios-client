@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol RestClientProtocol {
+protocol RestClient {
     func isServerAvailable(_ url: URL) -> Bool
     func isServerAvailable(path url: String) -> Bool
     func isEventsServerAvailable() -> Bool
@@ -16,17 +16,16 @@ protocol RestClientProtocol {
 }
 
 /*@objc public final */
-class RestClient: NSObject {
+class DefaultRestClient: NSObject {
     // MARK: - Private Properties
-    private let manager: RestClientManagerProtocol
+    private let manager: HttpClient
 
     // MARK: - Designated Initializer
-    init(manager: RestClientManagerProtocol = RestClientConfiguration.manager) {
+    init(manager: HttpClient = RestClientConfiguration.manager) {
         self.manager = manager
     }
 
-    // MARK: - Private Functions
-    private func start<T: Any>(target: Target, completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
+    func execute<T>(target: Target, completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
         _ = manager.sendRequest(target: target).getResponse(errorSanitizer: target.errorSanitizer) { response in
             switch response.result {
             case .success(let json):
@@ -46,14 +45,9 @@ class RestClient: NSObject {
             }
         }
     }
-
-    // MARK: - Internal Functions
-    internal func execute<T>(target: Target, completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
-        self.start(target: target, completion: completion)
-    }
 }
 
-extension RestClient: RestClientProtocol {
+extension DefaultRestClient: RestClient {
     func isServerAvailable(_ url: URL) -> Bool {
         return self.isServerAvailable(path: url.absoluteString)
     }

@@ -52,13 +52,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
-        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
+        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: DefaultRestClient(), splitCache: splitCache)
 
         let refreshableSplitFetcher = DefaultRefreshableSplitFetcher(
             splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: config.featuresRefreshRate,
             eventsManager: eventsManager)
 
-        let mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache)
+        let mySegmentsFetcher = HttpMySegmentsFetcher(restClient: DefaultRestClient(), mySegmentsCache: mySegmentsCache)
         let refreshableMySegmentsFetcher = DefaultRefreshableMySegmentsFetcher(
             matchingKey: key.matchingKey, mySegmentsChangeFetcher: mySegmentsFetcher, mySegmentsCache: mySegmentsCache,
             interval: config.segmentsRefreshRate, eventsManager: eventsManager)
