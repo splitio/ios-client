@@ -29,7 +29,7 @@ class RestClientStub {
     }
 }
 
-extension RestClientStub: RestClientProtocol {
+extension RestClientStub: RestClient {
     func isServerAvailable(_ url: URL) -> Bool { return true }
     func isServerAvailable(path url: String) -> Bool { return true }
     func isEventsServerAvailable() -> Bool { return true }

@@ -34,7 +34,7 @@ class DefaultImpressionsManager: ImpressionsManager {
         self.fileStorage = fileStorage
         self.impressionsPushRate = config.pushRate
         self.impressionsPerPush = config.impressionsPerPush
-        self.restClient = restClient ?? RestClient()
+        self.restClient = restClient ?? DefaultRestClient()
         self.createPollingManager(dispatchGroup: dispatchGroup)
         subscribeNotifications()
     }

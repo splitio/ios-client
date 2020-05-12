@@ -9,7 +9,7 @@
 import Foundation
 
 struct RestClientConfiguration {
-    static var manager: RestClientManagerProtocol {
-        return HttpSession.shared
+    static var manager: HttpClient {
+        return DefaultHttpClient.shared
     }
 }
