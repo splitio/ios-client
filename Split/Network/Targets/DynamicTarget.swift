@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+//TODO: Remove this class
 class DynamicTarget: Target {
     enum DynamicTargetStatus {
         case getSplitChanges(since: Int64)

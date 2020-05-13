@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		31AA2036872EEC62D9EDF4AB /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA22D3DA2B022F2E7F3231 /* Endpoint.swift */; };
+		31AA21DE01A000A7C30630F2 /* SSEClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA280A65C72BC92858422C /* SSEClientTest.swift */; };
 		31AA22905C46031E68E70266 /* RestClient+SplitChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2B308C842042CD5D4ED3 /* RestClient+SplitChanges.swift */; };
 		31AA251394DE280C77882C76 /* HttpDataRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2B33B325F1FD8A8C1776 /* HttpDataRequest.swift */; };
 		31AA2785C12C110A50A5FD4E /* RestClient+TrackEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2847FBCF5577DBE75BA3 /* RestClient+TrackEvents.swift */; };
 		31AA2821B621310140DEBEF0 /* RestClient+Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2BB572835C3E7A292EC8 /* RestClient+Metrics.swift */; };
 		31AA2C1F4964CD9D0769D021 /* RestClient+Impressions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA229CA74193186137A991 /* RestClient+Impressions.swift */; };
 		31AA2E60DECD00E2B2990F26 /* RestClient+MySegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA203D93FA685145C3BCCD /* RestClient+MySegments.swift */; };
+		31AA2F6D62FB93B974F6C029 /* HttpStreamRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2574C755A12C1B5ABCF8 /* HttpStreamRequest.swift */; };
 		3B6DEF0C20EA6AE50067435E /* InMemoryMySegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE6720EA6ADF0067435E /* InMemoryMySegmentsCache.swift */; };
 		3B6DEF0D20EA6AE50067435E /* InMemorySplitCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE6820EA6ADF0067435E /* InMemorySplitCache.swift */; };
 		3B6DEF0E20EA6AE50067435E /* MySegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE6920EA6ADF0067435E /* MySegmentsCache.swift */; };
@@ -237,6 +240,7 @@
 		599EDAF12270970500D7DACB /* SplitEventsManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EDAF02270970500D7DACB /* SplitEventsManagerMock.swift */; };
 		599EDAF32270A15B00D7DACB /* localhost.splits in Resources */ = {isa = PBXBuildFile; fileRef = 599EDAF22270A15B00D7DACB /* localhost.splits */; };
 		599EDAF52270AD6700D7DACB /* wrong_format.yaml in Resources */ = {isa = PBXBuildFile; fileRef = 599EDAF42270AD6700D7DACB /* wrong_format.yaml */; };
+		59AD7ACC246C9DAE00F5B0B4 /* ServiceEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2EAA5F782C4F108D7777 /* ServiceEndpoints.swift */; };
 		59AD7FD322F38BEF00F569C3 /* TrackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AD7FD222F38BEF00F569C3 /* TrackManager.swift */; };
 		59B8B8AA220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */; };
 		59B8B8AC220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8AB220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift */; };
@@ -318,10 +322,14 @@
 /* Begin PBXFileReference section */
 		31AA203D93FA685145C3BCCD /* RestClient+MySegments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+MySegments.swift"; sourceTree = "<group>"; };
 		31AA229CA74193186137A991 /* RestClient+Impressions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+Impressions.swift"; sourceTree = "<group>"; };
+		31AA22D3DA2B022F2E7F3231 /* Endpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
+		31AA2574C755A12C1B5ABCF8 /* HttpStreamRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpStreamRequest.swift; sourceTree = "<group>"; };
+		31AA280A65C72BC92858422C /* SSEClientTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSEClientTest.swift; sourceTree = "<group>"; };
 		31AA2847FBCF5577DBE75BA3 /* RestClient+TrackEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+TrackEvents.swift"; sourceTree = "<group>"; };
 		31AA2B308C842042CD5D4ED3 /* RestClient+SplitChanges.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+SplitChanges.swift"; sourceTree = "<group>"; };
 		31AA2B33B325F1FD8A8C1776 /* HttpDataRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpDataRequest.swift; sourceTree = "<group>"; };
 		31AA2BB572835C3E7A292EC8 /* RestClient+Metrics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+Metrics.swift"; sourceTree = "<group>"; };
+		31AA2EAA5F782C4F108D7777 /* ServiceEndpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceEndpoints.swift; sourceTree = "<group>"; };
 		3B6DEE5A20EA6A4E0067435E /* Split.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Split.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B6DEE5E20EA6A4E0067435E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B6DEE6720EA6ADF0067435E /* InMemoryMySegmentsCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InMemoryMySegmentsCache.swift; sourceTree = "<group>"; };
@@ -626,6 +634,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		31AA215C368D12E69FE80703 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				31AA280A65C72BC92858422C /* SSEClientTest.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
 		3B6DEE5020EA6A4D0067435E = {
 			isa = PBXGroup;
 			children = (
@@ -981,6 +997,7 @@
 				3B6DEEF220EA6AE30067435E /* HttpResponse.swift */,
 				3B6DEEF320EA6AE30067435E /* HttpClient.swift */,
 				31AA2B33B325F1FD8A8C1776 /* HttpDataRequest.swift */,
+				31AA2574C755A12C1B5ABCF8 /* HttpStreamRequest.swift */,
 			);
 			path = HttpClient;
 			sourceTree = "<group>";
@@ -1012,6 +1029,8 @@
 				3B6DEEFC20EA6AE30067435E /* DynamicTarget.swift */,
 				3B6DEEFD20EA6AE30067435E /* EnvironmentTargetManager.swift */,
 				3B6DEEFE20EA6AE30067435E /* Target.swift */,
+				31AA2EAA5F782C4F108D7777 /* ServiceEndpoints.swift */,
+				31AA22D3DA2B022F2E7F3231 /* Endpoint.swift */,
 			);
 			path = Targets;
 			sourceTree = "<group>";
@@ -1146,6 +1165,7 @@
 				599A6E2C22F8C65500D3D68C /* ImpressionsManagerTest.swift */,
 				594677E322CFF30B00F94E58 /* TreatmentManagerTest.swift */,
 				59BF90B8239A75520007A896 /* VersionTest.swift */,
+				31AA215C368D12E69FE80703 /* Network */,
 			);
 			path = SplitTests;
 			sourceTree = "<group>";
@@ -1668,6 +1688,7 @@
 				3B6DEF8820EA6AE50067435E /* SplitChangeFetcher.swift in Sources */,
 				3B6DEF6220EA6AE50067435E /* ContainsAnyOfSetMatcher.swift in Sources */,
 				3B6DEF5E20EA6AE50067435E /* AllKeysMatcher.swift in Sources */,
+				59AD7ACC246C9DAE00F5B0B4 /* ServiceEndpoints.swift in Sources */,
 				590DF9D4214028800082B94F /* SplitView+StringConvertible.swift in Sources */,
 				3B6DEF2520EA6AE50067435E /* Version.swift in Sources */,
 				599EA57722666B84006CBA89 /* YAMLTokenizer.swift in Sources */,
@@ -1699,6 +1720,8 @@
 				31AA2E60DECD00E2B2990F26 /* RestClient+MySegments.swift in Sources */,
 				31AA2C1F4964CD9D0769D021 /* RestClient+Impressions.swift in Sources */,
 				31AA22905C46031E68E70266 /* RestClient+SplitChanges.swift in Sources */,
+				31AA2F6D62FB93B974F6C029 /* HttpStreamRequest.swift in Sources */,
+				31AA2036872EEC62D9EDF4AB /* Endpoint.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1778,6 +1801,7 @@
 				59FB7C1A21F7ACF300ECC96A /* SplitValidatorTests.swift in Sources */,
 				597848BB21BB072B00ABB4A6 /* SplitCacheTests.swift in Sources */,
 				593AE9FF226F5B98000D61B0 /* SplitChangeFetcherTests.swift in Sources */,
+				31AA21DE01A000A7C30630F2 /* SSEClientTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

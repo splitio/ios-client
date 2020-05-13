@@ -121,6 +121,13 @@ public class SplitClientConfig: NSObject {
     }
 
     ///
+    /// Temporal url settings
+    /// TODO: Use this setting to replace separated endpoints and make it public
+    ///
+    var serviceEndpoints: ServiceEndpoints?//.buider.build()
+
+
+    ///
     /// Enables debug messages in console
     ///
     @objc public var isDebugModeEnabled: Bool {

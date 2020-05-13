@@ -18,15 +18,15 @@ protocol RestClient {
 /*@objc public final */
 class DefaultRestClient: NSObject {
     // MARK: - Private Properties
-    private let manager: HttpClient
+    private let httpClient: HttpClient
 
     // MARK: - Designated Initializer
-    init(manager: HttpClient = RestClientConfiguration.manager) {
-        self.manager = manager
+    init(manager: HttpClient = RestClientConfiguration.httpClient) {
+        self.httpClient = manager
     }
 
     func execute<T>(target: Target, completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
-        _ = manager.sendRequest(target: target).getResponse(errorSanitizer: target.errorSanitizer) { response in
+        _ = httpClient.sendRequest(target: target).getResponse(errorSanitizer: target.errorSanitizer) { response in
             switch response.result {
             case .success(let json):
                 if json.isNull() {

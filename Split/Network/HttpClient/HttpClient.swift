@@ -106,8 +106,6 @@ class DefaultHttpClient {
     deinit {
         urlSession.invalidateAndCancel()
     }
-
-
 }
 
 extension DefaultHttpClient: HttpSession {
@@ -248,5 +246,9 @@ extension HttpRequestManager: URLSessionDataDelegate {
         if let request = requests.get(identifier: dataTask.taskIdentifier) as? HttpDataRequest {
             request.appendData(data)
         }
+    }
+
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didBecome streamTask: URLSessionStreamTask) {
+
     }
 }
