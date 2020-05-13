@@ -190,6 +190,6 @@ public class SplitClientConfig: NSObject {
     ///
     /// Time to consider that cache has expired
     ///
-    let cacheExpirationInSeconds = 30//864000
+    let cacheExpirationInSeconds = 864000
 
 }
