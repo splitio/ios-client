@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+//TODO: Remove this file
 protocol Target {
     var sdkBaseUrl: URL { get }
     var eventsBaseURL: URL { get }

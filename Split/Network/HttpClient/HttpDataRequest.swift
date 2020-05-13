@@ -70,8 +70,8 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
     func response(
             queue: DispatchQueue? = nil,
             responseSerializer: HttpDataResponseSerializer<JSON>,
-            completionHandler: @escaping (HttpDataResponse<JSON>) -> Void)
-                    -> Self {
+            completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
+
         requestCompletionHandler = {
             [weak self] in
 
@@ -117,7 +117,6 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
         }
         return self
     }
-
 }
 
 // MARK: HttpDataRequest - Private
