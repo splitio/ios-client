@@ -46,7 +46,7 @@ class EventDTO: DynamicCodable {
             parsedProps = [String: Any]()
             for (propKey, propValue) in properties {
                 // Workaround to avoid lost of precision of Decimal(double:) constructor
-                if let doubleValue = propValue as? Double {
+                if !(propValue is Bool || propValue is String), let doubleValue = propValue as? Double {
                     parsedProps?[propKey] = Decimal(string: String(doubleValue))
                 } else {
                     parsedProps?[propKey] = propValue
