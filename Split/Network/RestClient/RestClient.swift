@@ -15,18 +15,27 @@ protocol RestClient {
     func isSdkServerAvailable() -> Bool
 }
 
-/*@objc public final */
-class DefaultRestClient: NSObject {
+class DefaultRestClient {
     // MARK: - Private Properties
     private let httpClient: HttpClient
+    let endpointFactory: EndpointFactory
 
     // MARK: - Designated Initializer
-    init(manager: HttpClient = RestClientConfiguration.httpClient) {
-        self.httpClient = manager
+    init(httpClient: HttpClient = RestClientConfiguration.httpClient, endpointFactory: EndpointFactory) {
+        self.httpClient = httpClient
+        self.endpointFactory = endpointFactory
     }
 
-    func execute<T>(target: Target, completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
-        _ = httpClient.sendRequest(target: target).getResponse(errorSanitizer: target.errorSanitizer) { response in
+    func execute<T>(endpoint: Endpoint,
+                    parameters: [String: Any]? = nil,
+                    body: Data? = nil,
+                    completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
+        _ = httpClient.sendRequest(
+                        endpoint: endpoint,
+                        parameters: parameters,
+                        headers: nil,
+                        body: body)
+                .getResponse(errorHandler: endpoint.errorSanitizer) { response in
             switch response.result {
             case .success(let json):
                 if json.isNull() {
@@ -60,10 +69,10 @@ extension DefaultRestClient: RestClient {
     }
 
     func isEventsServerAvailable() -> Bool {
-        return self.isServerAvailable(EnvironmentTargetManager.shared.eventsBaseURL)
+        return self.isServerAvailable(endpointFactory.serviceEndpoints.eventsEndpoint)
     }
 
     func isSdkServerAvailable() -> Bool {
-        return self.isServerAvailable(EnvironmentTargetManager.shared.sdkBaseUrl)
+        return self.isServerAvailable(endpointFactory.serviceEndpoints.sdkEndpoint)
     }
 }

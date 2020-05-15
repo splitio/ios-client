@@ -52,13 +52,19 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
-        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: DefaultRestClient(), splitCache: splitCache)
+        let restClient = DefaultRestClient(
+                endpointFactory: EndpointFactory(serviceEndpoints: config.serviceEndpoints,
+                apiKey: apiKey, userKey: key.matchingKey))
+
+        /// TODO: Remove this line when metrics refactor
+        DefaultMetricsManager.shared.restClient = restClient
+        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
 
         let refreshableSplitFetcher = DefaultRefreshableSplitFetcher(
             splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: config.featuresRefreshRate,
             eventsManager: eventsManager)
 
-        let mySegmentsFetcher = HttpMySegmentsFetcher(restClient: DefaultRestClient(), mySegmentsCache: mySegmentsCache)
+        let mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: mySegmentsCache)
         let refreshableMySegmentsFetcher = DefaultRefreshableMySegmentsFetcher(
             matchingKey: key.matchingKey, mySegmentsChangeFetcher: mySegmentsFetcher, mySegmentsCache: mySegmentsCache,
             interval: config.segmentsRefreshRate, eventsManager: eventsManager)
@@ -66,10 +72,11 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         super.init()
 
         let trackConfig = buildTrackConfig(from: config)
-        let trackManager = DefaultTrackManager(config: trackConfig, fileStorage: fileStorage)
+        let trackManager = DefaultTrackManager(config: trackConfig, fileStorage: fileStorage, restClient: restClient)
 
         let impressionsConfig = buildImpressionsConfig(from: config)
-        let impressionsManager = DefaultImpressionsManager(config: impressionsConfig, fileStorage: fileStorage)
+        let impressionsManager = DefaultImpressionsManager(
+                config: impressionsConfig, fileStorage: fileStorage, restClient: restClient)
 
         defaultClient = DefaultSplitClient(
             config: config, key: key, splitCache: splitCache, eventsManager: eventsManager, trackManager: trackManager,

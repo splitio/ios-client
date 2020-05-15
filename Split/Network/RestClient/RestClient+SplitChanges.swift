@@ -13,7 +13,11 @@ protocol RestClientSplitChanges: RestClient {
 }
 
 extension DefaultRestClient: RestClientSplitChanges {
+    var kSinceParameter: String { "since" }
     func getSplitChanges(since: Int64, completion: @escaping (DataResult<SplitChange>) -> Void) {
-        self.execute(target: EnvironmentTargetManager.getSplitChanges(since: since), completion: completion)
+        self.execute(
+                endpoint: endpointFactory.splitChangesEndpoint,
+                parameters: [kSinceParameter: since],
+                completion: completion)
     }
 }

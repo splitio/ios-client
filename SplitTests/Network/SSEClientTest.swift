@@ -18,8 +18,8 @@ class SSEClientTest: XCTestCase {
     }
 
     func test() {
-        let url = URL(string: "https://split-realtime.ably.io/sse")
-        let target = DynamicTarget(u)
-        let r = httpClient?.sendRequest(target: <#T##Target##Split.Target#>)
+//        let url = URL(string: "https://split-realtime.ably.io/sse")
+//        let target = DynamicTarget(u)
+//        let r = httpClient?.sendRequest(target: <#T##Target##Split.Target#>)
     }
 }

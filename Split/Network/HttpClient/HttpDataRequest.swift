@@ -10,7 +10,7 @@ import Foundation
 protocol HttpDataRequest {
     var data: Data? { get }
     func appendData(_ newData: Data)
-    func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>,
+    func getResponse(errorHandler: @escaping (JSON, Int) -> HttpResult<JSON>,
                      completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self
 }
 
@@ -106,13 +106,13 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
         }
     }
 
-    func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>,
+    func getResponse(errorHandler: @escaping (JSON, Int) -> HttpResult<JSON>,
                      completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
 
         self.response(
                 queue: DispatchQueue(label: HttpQueue.default),
                 responseSerializer:
-            DefaultHttpDataRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
+            DefaultHttpDataRequest.responseSerializer(errorSanitizer: errorHandler)) { response in
             completionHandler(response)
         }
         return self

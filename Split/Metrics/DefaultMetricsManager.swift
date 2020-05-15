@@ -34,7 +34,7 @@ struct Metrics {
 }
 
 class MetricManagerConfig {
-    static let  `default`: MetricManagerConfig = {
+    static let `default`: MetricManagerConfig = {
         return MetricManagerConfig()
     }()
     var pushRateInSeconds: Int = 1800
@@ -42,7 +42,8 @@ class MetricManagerConfig {
 }
 
 class DefaultMetricsManager {
-
+    /// TODO: Improve this class implementation by removing singleton to allow passing common RestClient to constructor
+    /// This improvement will be in a future PR to avoid more changes in this one.
     private var lastPostTime: Int64 = Date().unixTimestamp()
     private var countersCache = SynchronizedArrayWrapper<CounterMetricSample>()
     private var timesCache = SynchronizedArrayWrapper<TimeMetricSample>()
@@ -50,7 +51,8 @@ class DefaultMetricsManager {
     private let kTimesFile = "timesFile"
     private let kCountersFile = "countersFile"
     private let pushRateInSeconds: Int
-    private let restClient: MetricsRestClient
+    // TODO: Make this private in refactor
+    var restClient: MetricsRestClient?
     private let fileStorage: FileStorageProtocol
 
     /***
@@ -64,12 +66,7 @@ class DefaultMetricsManager {
         return instance
     }()
 
-    convenience init(config: MetricManagerConfig = MetricManagerConfig.default) {
-        self.init(config: config, restClient: DefaultRestClient())
-    }
-
-    init(config: MetricManagerConfig, restClient: MetricsRestClient) {
-        self.restClient = restClient
+    init(config: MetricManagerConfig = MetricManagerConfig.default) {
         self.fileStorage = FileStorage(dataFolderName: config.defaultDataFolderName)
         self.pushRateInSeconds = config.pushRateInSeconds
     }
@@ -128,7 +125,15 @@ extension DefaultMetricsManager {
 extension DefaultMetricsManager {
 
     private func sendTimes() {
-        if timesCache.count == 0 { return }
+
+        // TODO: This check must be removed on class refactor
+        guard let restClient = self.restClient else {
+            preconditionFailure("Rest client not initialized")
+        }
+
+        if timesCache.count == 0 {
+            return
+        }
         let timeSamples = timesCache.all
         timesCache.removeAll()
         if restClient.isSdkServerAvailable() {
@@ -153,7 +158,9 @@ extension DefaultMetricsManager {
             time.addLatency(microseconds: sample.latency)
             times[sample.operation] = time
         }
-        return times.values.map { return $0 }
+        return times.values.map {
+            return $0
+        }
     }
 
     private func saveTimesToDisk() {
@@ -189,7 +196,15 @@ extension DefaultMetricsManager {
 extension DefaultMetricsManager {
 
     private func sendCounters() {
-        if countersCache.count == 0 { return }
+
+        // TODO: This check must be removed on class refactor
+        guard let restClient = self.restClient else {
+            preconditionFailure("Rest client not initialized")
+        }
+
+        if countersCache.count == 0 {
+            return
+        }
         let counterSamples = countersCache.all
         countersCache.removeAll()
 
@@ -215,7 +230,9 @@ extension DefaultMetricsManager {
             counter.addDelta(sample.delta)
             counters[sample.name] = counter
         }
-        return counters.values.map { return $0 }
+        return counters.values.map {
+            return $0
+        }
     }
 
     private func saveCountersToDisk() {
@@ -253,7 +270,9 @@ extension DefaultMetricsManager {
         guard let fileContent = fileStorage.read(fileName: fileName) else {
             return nil
         }
-        if fileContent.count == 0 { return nil }
+        if fileContent.count == 0 {
+            return nil
+        }
         if removeAfter {
             fileStorage.delete(fileName: fileName)
         }
