@@ -96,35 +96,7 @@ public class SplitClientConfig: NSObject {
 
     }
 
-    ///
-    /// Sdk endpoint URL string.
-    ///
-    @objc public var targetSdkEndPoint: String {
-        get {
-            return EnvironmentTargetManager.shared.sdkEndpoint
-        }
-        set {
-            EnvironmentTargetManager.shared.sdkEndpoint = newValue
-        }
-    }
-
-    ///
-    /// Events endpoint URL string.
-    ///
-    @objc public var targetEventsEndPoint: String {
-        get {
-            return EnvironmentTargetManager.shared.eventsEndpoint
-        }
-        set {
-            EnvironmentTargetManager.shared.eventsEndpoint = newValue
-        }
-    }
-
-    ///
-    /// Temporal url settings
-    /// TODO: Use this setting to replace separated endpoints and make it public
-    ///
-    var serviceEndpoints: ServiceEndpoints?//.buider.build()
+    @objc public var serviceEndpoints = ServiceEndpoints.builder().build()
 
 
     ///

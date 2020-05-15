@@ -30,11 +30,11 @@ class DefaultImpressionsManager: ImpressionsManager {
     private var impressionsPerPush: Int64!
 
     init(dispatchGroup: DispatchGroup? = nil, config: ImpressionManagerConfig, fileStorage: FileStorageProtocol,
-         restClient: RestClientImpressions? = nil) {
+         restClient: RestClientImpressions) {
         self.fileStorage = fileStorage
         self.impressionsPushRate = config.pushRate
         self.impressionsPerPush = config.impressionsPerPush
-        self.restClient = restClient ?? DefaultRestClient()
+        self.restClient = restClient
         self.createPollingManager(dispatchGroup: dispatchGroup)
         subscribeNotifications()
     }

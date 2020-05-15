@@ -14,6 +14,7 @@
 		31AA2785C12C110A50A5FD4E /* RestClient+TrackEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2847FBCF5577DBE75BA3 /* RestClient+TrackEvents.swift */; };
 		31AA2821B621310140DEBEF0 /* RestClient+Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2BB572835C3E7A292EC8 /* RestClient+Metrics.swift */; };
 		31AA2C1F4964CD9D0769D021 /* RestClient+Impressions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA229CA74193186137A991 /* RestClient+Impressions.swift */; };
+		31AA2D91508DE344F676AB46 /* EndpointFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA29BEEBFD4CFCF2623591 /* EndpointFactory.swift */; };
 		31AA2E60DECD00E2B2990F26 /* RestClient+MySegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA203D93FA685145C3BCCD /* RestClient+MySegments.swift */; };
 		31AA2F6D62FB93B974F6C029 /* HttpStreamRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2574C755A12C1B5ABCF8 /* HttpStreamRequest.swift */; };
 		3B6DEF0C20EA6AE50067435E /* InMemoryMySegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE6720EA6ADF0067435E /* InMemoryMySegmentsCache.swift */; };
@@ -123,9 +124,6 @@
 		3B6DEF7D20EA6AE50067435E /* NetworkReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEF420EA6AE30067435E /* NetworkReachabilityManager.swift */; };
 		3B6DEF8020EA6AE50067435E /* RestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEF820EA6AE30067435E /* RestClient.swift */; };
 		3B6DEF8120EA6AE50067435E /* DataResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEFA20EA6AE30067435E /* DataResult.swift */; };
-		3B6DEF8220EA6AE50067435E /* DynamicTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEFC20EA6AE30067435E /* DynamicTarget.swift */; };
-		3B6DEF8320EA6AE50067435E /* EnvironmentTargetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEFD20EA6AE30067435E /* EnvironmentTargetManager.swift */; };
-		3B6DEF8420EA6AE50067435E /* Target.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEFE20EA6AE30067435E /* Target.swift */; };
 		3B6DEF8720EA6AE50067435E /* InfoUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0320EA6AE30067435E /* InfoUtils.swift */; };
 		3B6DEF8820EA6AE50067435E /* SplitChangeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0420EA6AE40067435E /* SplitChangeFetcher.swift */; };
 		3B6DEF8920EA6AE50067435E /* SynchronizedArrayQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0620EA6AE40067435E /* SynchronizedArrayQueue.swift */; };
@@ -326,6 +324,7 @@
 		31AA2574C755A12C1B5ABCF8 /* HttpStreamRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpStreamRequest.swift; sourceTree = "<group>"; };
 		31AA280A65C72BC92858422C /* SSEClientTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSEClientTest.swift; sourceTree = "<group>"; };
 		31AA2847FBCF5577DBE75BA3 /* RestClient+TrackEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+TrackEvents.swift"; sourceTree = "<group>"; };
+		31AA29BEEBFD4CFCF2623591 /* EndpointFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointFactory.swift; sourceTree = "<group>"; };
 		31AA2B308C842042CD5D4ED3 /* RestClient+SplitChanges.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+SplitChanges.swift"; sourceTree = "<group>"; };
 		31AA2B33B325F1FD8A8C1776 /* HttpDataRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpDataRequest.swift; sourceTree = "<group>"; };
 		31AA2BB572835C3E7A292EC8 /* RestClient+Metrics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+Metrics.swift"; sourceTree = "<group>"; };
@@ -439,9 +438,6 @@
 		3B6DEEF420EA6AE30067435E /* NetworkReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkReachabilityManager.swift; sourceTree = "<group>"; };
 		3B6DEEF820EA6AE30067435E /* RestClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClient.swift; sourceTree = "<group>"; };
 		3B6DEEFA20EA6AE30067435E /* DataResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataResult.swift; sourceTree = "<group>"; };
-		3B6DEEFC20EA6AE30067435E /* DynamicTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicTarget.swift; sourceTree = "<group>"; };
-		3B6DEEFD20EA6AE30067435E /* EnvironmentTargetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnvironmentTargetManager.swift; sourceTree = "<group>"; };
-		3B6DEEFE20EA6AE30067435E /* Target.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Target.swift; sourceTree = "<group>"; };
 		3B6DEF0320EA6AE30067435E /* InfoUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoUtils.swift; sourceTree = "<group>"; };
 		3B6DEF0420EA6AE40067435E /* SplitChangeFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangeFetcher.swift; sourceTree = "<group>"; };
 		3B6DEF0620EA6AE40067435E /* SynchronizedArrayQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizedArrayQueue.swift; sourceTree = "<group>"; };
@@ -1026,11 +1022,9 @@
 		3B6DEEFB20EA6AE30067435E /* Targets */ = {
 			isa = PBXGroup;
 			children = (
-				3B6DEEFC20EA6AE30067435E /* DynamicTarget.swift */,
-				3B6DEEFD20EA6AE30067435E /* EnvironmentTargetManager.swift */,
-				3B6DEEFE20EA6AE30067435E /* Target.swift */,
 				31AA2EAA5F782C4F108D7777 /* ServiceEndpoints.swift */,
 				31AA22D3DA2B022F2E7F3231 /* Endpoint.swift */,
+				31AA29BEEBFD4CFCF2623591 /* EndpointFactory.swift */,
 			);
 			path = Targets;
 			sourceTree = "<group>";
@@ -1618,7 +1612,6 @@
 				5912D1452193778600BC698C /* NotificationsHelper.swift in Sources */,
 				5959C475227B6BA70064F968 /* FactoryMonitor.swift in Sources */,
 				596A7B6E23566BE0004F6139 /* Destroyable.swift in Sources */,
-				3B6DEF8420EA6AE50067435E /* Target.swift in Sources */,
 				59FB7C1121F7572700ECC96A /* ApiKeyValidator.swift in Sources */,
 				3B6DEF2B20EA6AE50067435E /* ImpressionsHit.swift in Sources */,
 				3B6DEF4920EA6AE50067435E /* MatcherType.swift in Sources */,
@@ -1635,7 +1628,6 @@
 				3B6DEF7820EA6AE50067435E /* ErrorCode.swift in Sources */,
 				59D84BD622158A24003DA248 /* LocalhostSplitFactory.swift in Sources */,
 				3B6DEF4C20EA6AE50067435E /* SplitBase.swift in Sources */,
-				3B6DEF8220EA6AE50067435E /* DynamicTarget.swift in Sources */,
 				3B6DEF6F20EA6AE50067435E /* StartWithMatcher.swift in Sources */,
 				59BF3D3F22329C7A004D134D /* JFRandom.m in Sources */,
 				597CD338216CE9F700A15487 /* CounterMetricSample.swift in Sources */,
@@ -1712,7 +1704,6 @@
 				3B6DEF1420EA6AE50067435E /* MySegmentsFetcher.swift in Sources */,
 				3B6DEF6720EA6AE50067435E /* EqualToBooleanMatcher.swift in Sources */,
 				3B6DEF1820EA6AE50067435E /* SplitFetcher.swift in Sources */,
-				3B6DEF8320EA6AE50067435E /* EnvironmentTargetManager.swift in Sources */,
 				3B6DEF6920EA6AE50067435E /* EqualToSetMatcher.swift in Sources */,
 				31AA251394DE280C77882C76 /* HttpDataRequest.swift in Sources */,
 				31AA2821B621310140DEBEF0 /* RestClient+Metrics.swift in Sources */,
@@ -1722,6 +1713,7 @@
 				31AA22905C46031E68E70266 /* RestClient+SplitChanges.swift in Sources */,
 				31AA2F6D62FB93B974F6C029 /* HttpStreamRequest.swift in Sources */,
 				31AA2036872EEC62D9EDF4AB /* Endpoint.swift in Sources */,
+				31AA2D91508DE344F676AB46 /* EndpointFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

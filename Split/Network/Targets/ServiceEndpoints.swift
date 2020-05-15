@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ServiceEndpoints {
+@objc public class ServiceEndpoints: NSObject {
 
     private static let kSdkEndpoint = "https://sdk.split.io/api"
     private static let kEventsEndpoint = "https://events.split.io/api"
@@ -20,21 +20,22 @@ class ServiceEndpoints {
     private (set) var authServiceEndpoint: URL
     private (set) var streamingServiceEndpoint: URL
 
-    init(sdkEndpoint: URL, eventsEndpoint: URL, authServiceEndpoint: URL, streamingServiceEndpoint: URL) {
+    private init(sdkEndpoint: URL, eventsEndpoint: URL, authServiceEndpoint: URL, streamingServiceEndpoint: URL) {
         self.sdkEndpoint = sdkEndpoint
         self.eventsEndpoint = eventsEndpoint
         self.authServiceEndpoint = authServiceEndpoint
         self.streamingServiceEndpoint = streamingServiceEndpoint
     }
 
-    class Builder {
+    @objc public static func builder() -> Builder {
+        return Builder()
+    }
+
+    @objc public class Builder: NSObject {
         private var sdkEndpoint = kSdkEndpoint
         private var eventsEndpoint = kEventsEndpoint
         private var authServiceEndpoint = kAuthServiceEndpoint
         private var streamingServiceEndpoint = kStreamingEndpoint
-
-        init() {
-        }
 
         ///
         /// The rest endpoint that sdk will hit for latest features and segments.
@@ -42,7 +43,7 @@ class ServiceEndpoints {
         /// @param Endpoint MUST NOT be null
         /// @return this builder
         ///
-        func set(sdkEndpoint: String) -> Self {
+        @objc public func set(sdkEndpoint: String) -> Self {
             self.sdkEndpoint = sdkEndpoint
             return self
         }
@@ -52,7 +53,7 @@ class ServiceEndpoints {
         /// @param eventsEndpoint
         /// @return this builder
         ///
-        func set(eventsEndpoint: String) -> Self {
+        @objc public func set(eventsEndpoint: String) -> Self {
             self.eventsEndpoint = eventsEndpoint
             return self
         }
@@ -63,7 +64,7 @@ class ServiceEndpoints {
         /// @param authServiceEndpoint
         /// @return this builder
         ///
-        func set(authServiceEndpoint: String) -> Self {
+        @objc public func set(authServiceEndpoint: String) -> Self {
             self.authServiceEndpoint = authServiceEndpoint
             return self
         }
@@ -74,12 +75,12 @@ class ServiceEndpoints {
         /// @param streamingServiceEndpoint
         /// @return this builder
         ///
-        func set(streamingServiceEndpoint: String) -> Self {
+        @objc public func set(streamingServiceEndpoint: String) -> Self {
             self.streamingServiceEndpoint = streamingServiceEndpoint
             return self
         }
 
-        func build() -> ServiceEndpoints {
+        @objc public func build() -> ServiceEndpoints {
             guard let sdkUrl = URL(string: sdkEndpoint) else {
                 preconditionFailure("SDK URL is not valid")
             }

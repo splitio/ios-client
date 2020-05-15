@@ -13,7 +13,6 @@ protocol RestClientMySegments: RestClient {
 }
 
 extension DefaultRestClient: RestClientMySegments {
-
     func getMySegments(user: String, completion: @escaping (DataResult<[String]>) -> Void) {
         let completionHandler: (DataResult<[String: [Segment]]>) -> Void = { result in
             do {
@@ -27,6 +26,6 @@ extension DefaultRestClient: RestClientMySegments {
                 completion(DataResult.failure(error: error as NSError))
             }
         }
-        self.execute(target: EnvironmentTargetManager.getMySegments(user: user), completion: completionHandler)
+        self.execute(endpoint: endpointFactory.mySegmentsEndpoint, completion: completionHandler)
     }
 }

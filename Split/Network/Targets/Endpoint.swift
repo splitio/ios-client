@@ -13,11 +13,21 @@ class Endpoint {
     private (set) var url: URL
     private (set) var method: HttpMethod
     private (set) var headers = [String: String]()
-    private (set) var body: Data?
+    private (set) var errorSanitizer: (JSON, Int) -> HttpResult<JSON> = { json, statusCode in
+        guard statusCode >= 200 && statusCode <= 203 else {
+            let error = NSError(domain: InfoUtils.bundleNameKey(), code: ErrorCode.Undefined, userInfo: nil)
+            return .failure(error)
+        }
+        return .success(json)
+    }
 
     private init(baseUrl: URL, path: String) {
         self.url = baseUrl.appendingPathComponent(path)
         self.method = .get
+    }
+
+    static func builder(baseUrl: URL, path: String) -> Builder {
+        return Builder(baseUrl: baseUrl, path: path)
     }
 
     struct Builder {
@@ -39,13 +49,13 @@ class Endpoint {
             return self
         }
 
-        func set(body: Data) -> Self {
-            endpoint.body = body
+        func set(method: HttpMethod) -> Self {
+            endpoint.method = method
             return self
         }
 
-        func setBody(withJson jsonBody: String) {
-            endpoint.body = jsonBody.data(using: .utf8)
+        func build() -> Endpoint {
+            return endpoint
         }
     }
 }
