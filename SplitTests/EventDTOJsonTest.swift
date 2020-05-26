@@ -96,6 +96,26 @@ class EventDTOJsonTest: XCTestCase {
         XCTAssertEqual(9900.0000001, testProps?["value6"] as? Double)
     }
 
+    func testNonNumber() {
+
+        let event = try? basicEvent(value: 12.00001)
+        let props: [String: Any] = [
+            "valueString": "string",
+            "valueTrue": true,
+            "valueFalse": false
+        ]
+        event?.properties = props
+
+        let jsonEvent = try? Json.dynamicEncodeToJson(event!)
+        let testEvent  = try? Json.dynamicEncodeFrom(json: jsonEvent!, to: EventDTO.self)
+
+        let testProps = testEvent?.properties
+
+        XCTAssertEqual("string", testProps?["valueString"] as? String)
+        XCTAssertTrue(testProps?["valueTrue"] is Bool)
+        XCTAssertTrue(testProps?["valueFalse"] is Bool)
+    }
+
 
     func testEncode() {
 
