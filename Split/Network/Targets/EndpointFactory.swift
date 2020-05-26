@@ -9,7 +9,12 @@
 import Foundation
 
 class EndpointFactory {
-
+    static let kAuthorizationHeader = "authorization"
+    static let kSplitVersionHeader = "splitsdkversion"
+    static let kContentTypeHeader = "content-type"
+    static let kAuthorizationBearer = "Bearer"
+    static let kContentTypeJson = "application/json"
+    static let kContentTypeEventStream = "text/event-stream"
     struct EndpointsPath {
         static let splitChanges = "splitChanges"
         static let mySegments = "mySegments"
@@ -28,15 +33,18 @@ class EndpointFactory {
     let timeMetricsEndpoint: Endpoint
     let countMetricsEndpoint: Endpoint
     let gaugeMetricsEndpoint: Endpoint
+    let sseAuthenticationEndpoint: Endpoint
+    let streamingEndpoint: Endpoint
 
     init(serviceEndpoints: ServiceEndpoints, apiKey: String, userKey: String) {
         self.serviceEndpoints = serviceEndpoints
 
         let commondHeaders = [
-            "authorization": "Bearer \(apiKey)",
-            "splitsdkversion": Version.sdk
+            Self.kAuthorizationHeader: "\(Self.kAuthorizationBearer) \(apiKey)",
+            Self.kSplitVersionHeader: Version.sdk
         ]
-        let typeHeader = ["content-type": "application/json"]
+        let typeHeader = [Self.kContentTypeHeader: Self.kContentTypeJson]
+        let streamEventHeader = [Self.kContentTypeHeader: Self.kContentTypeEventStream]
 
         splitChangesEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.sdkEndpoint, path: EndpointsPath.splitChanges)
@@ -64,6 +72,14 @@ class EndpointFactory {
 
         gaugeMetricsEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.gaugeMetrics)
+                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+
+        sseAuthenticationEndpoint = Endpoint
+                .builder(baseUrl: serviceEndpoints.authServiceEndpoint)
+                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+
+        streamingEndpoint = Endpoint
+                .builder(baseUrl: serviceEndpoints.streamingServiceEndpoint)
                 .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
     }
 }

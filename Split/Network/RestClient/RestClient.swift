@@ -35,7 +35,7 @@ class DefaultRestClient {
                         parameters: parameters,
                         headers: nil,
                         body: body)
-                .getResponse(errorHandler: endpoint.errorSanitizer) { response in
+                .getResponse(errorSanitizer: endpoint.errorSanitizer) { response in
             switch response.result {
             case .success(let json):
                 if json.isNull() {
