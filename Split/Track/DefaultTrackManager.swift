@@ -44,7 +44,7 @@ class DefaultTrackManager {
         self.eventsQueueSize = config.queueSize
         self.eventsPerPush = config.eventsPerPush
         self.maxHitsSizeInBytes = config.maxHitsSizeInBytes
-        self.restClient = restClient ?? RestClient()
+        self.restClient = restClient ?? DefaultRestClient()
         self.createTaskExecutor(dispatchGroup: dispatchGroup)
         subscribeNotifications()
     }

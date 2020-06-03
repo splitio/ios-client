@@ -8,11 +8,11 @@
 
 import Foundation
 
-protocol RestClientSplitChanges: RestClientProtocol {
+protocol RestClientSplitChanges: RestClient {
     func getSplitChanges(since: Int64, completion: @escaping (DataResult<SplitChange>) -> Void)
 }
 
-extension RestClient: RestClientSplitChanges {
+extension DefaultRestClient: RestClientSplitChanges {
     func getSplitChanges(since: Int64, completion: @escaping (DataResult<SplitChange>) -> Void) {
         self.execute(target: EnvironmentTargetManager.getSplitChanges(since: since), completion: completion)
     }

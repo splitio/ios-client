@@ -8,11 +8,11 @@
 
 import Foundation
 
-protocol RestClientImpressions: RestClientProtocol {
+protocol RestClientImpressions: RestClient {
     func sendImpressions(impressions: [ImpressionsTest], completion: @escaping (DataResult<EmptyValue>) -> Void)
 }
 
-extension RestClient: RestClientImpressions {
+extension DefaultRestClient: RestClientImpressions {
     func sendImpressions(impressions: [ImpressionsTest], completion: @escaping (DataResult<EmptyValue>) -> Void) {
         self.execute(target: EnvironmentTargetManager.sendImpressions(impressions: impressions), completion: completion)
     }

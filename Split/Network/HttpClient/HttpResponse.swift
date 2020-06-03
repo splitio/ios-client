@@ -9,14 +9,12 @@ import Foundation
 
 // MARK: HttpDataResponse
 struct HttpDataResponse<Value> {
-    let request: URLRequest?
     let response: HTTPURLResponse?
     let error: Error? = nil
     let data: Data?
     let result: HttpResult<Value>
 
-    init(request: URLRequest?, response: HTTPURLResponse?, data: Data?, result: HttpResult<Value>) {
-        self.request = request
+    init(response: HTTPURLResponse?, data: Data?, result: HttpResult<Value>) {
         self.response = response
         self.data = data
         self.result = result
