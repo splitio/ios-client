@@ -65,7 +65,7 @@ class DefaultMetricsManager {
     }()
 
     convenience init(config: MetricManagerConfig = MetricManagerConfig.default) {
-        self.init(config: config, restClient: RestClient())
+        self.init(config: config, restClient: DefaultRestClient())
     }
 
     init(config: MetricManagerConfig, restClient: MetricsRestClient) {

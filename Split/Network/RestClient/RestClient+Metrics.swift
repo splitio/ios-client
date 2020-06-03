@@ -8,13 +8,13 @@
 
 import Foundation
 
-protocol MetricsRestClient: RestClientProtocol {
+protocol MetricsRestClient: RestClient {
     func sendTimeMetrics(_ times: [TimeMetric], completion: @escaping (DataResult<EmptyValue>) -> Void)
     func sendCounterMetrics(_ counters: [CounterMetric], completion: @escaping (DataResult<EmptyValue>) -> Void)
     func sendGaugeMetrics(_ gauge: MetricGauge, completion: @escaping (DataResult<EmptyValue>) -> Void)
 }
 
-extension RestClient: MetricsRestClient {
+extension DefaultRestClient: MetricsRestClient {
 
     func sendTimeMetrics(_ times: [TimeMetric], completion: @escaping (DataResult<EmptyValue>) -> Void) {
         self.execute(target: EnvironmentTargetManager.sendTimeMetrics(times), completion: completion)
