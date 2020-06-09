@@ -40,10 +40,10 @@ class BaseHttpRequest: HttpRequest {
     var error: Error?
     var retryTimes: Int = 0
 
-    var url: URL
-    var method: HttpMethod
+//    var url: URL
+//    var method: HttpMethod
     var parameters: HttpParameters?
-    var headers: HttpHeaders = [:]
+//    var headers: HttpHeaders = [:]
 
     var requestCompletionHandler: RequestCompletionHandler?
 
@@ -54,11 +54,15 @@ class BaseHttpRequest: HttpRequest {
     init(session: HttpSession, url: URL, method: HttpMethod,
          parameters: HttpParameters? = nil, headers: HttpHeaders?) {
         self.session = session
-        self.url = url
-        self.method = method
         self.parameters = parameters
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        components?.queryItems
+        var request = URLRequest(url: url)
+        request.httpMethod = method.rawValue
         if let headers = headers {
-            self.headers = headers
+            for (key, value) in headers {
+                request.setValue(value, forHTTPHeaderField: key)
+            }
         }
     }
 
