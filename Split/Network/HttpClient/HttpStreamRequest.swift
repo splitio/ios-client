@@ -1,38 +1,32 @@
 //
-// HttpDataRequest.swift
+// HttpStreamRequest.swift
 // Split
 //
-// Created by Javier L. Avrudsky on 12/05/2020.
+// Created by Javier L. Avrudsky on 04/06/2020.
 // Copyright (c) 2020 Split. All rights reserved.
 //
 
 import Foundation
-
-protocol HttpDataRequest {
+protocol HttpStreamRequest {
     var data: Data? { get }
     func appendData(_ newData: Data)
     func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>,
                      completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self
 }
 
-// MARK: HttpDataRequest
-class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
+// MARK: HttpStreamRequest
+class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
 
     var data: Data?
     var body: Data?
 
     init(session: HttpSession,
          url: URL,
-         method: HttpMethod,
-         parameters: HttpParameters? = nil,
-         headers: HttpHeaders?,
-         body: Data? = nil) {
+         headers: HttpHeaders?) {
 
-        super.init(session: session, url: url, method: method, parameters: nil, headers: headers)
+        super.init(session: session, url: url, method: .get, parameters: nil, headers: headers)
         self.session = session
         self.url = url
-        self.method = method
-        self.body = body
         if let headers = headers {
             self.headers = headers
         }
@@ -40,24 +34,11 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
 
     override func send() {
 
-        request = URLRequest(url: url)
 
-        guard var request = self.request else {
-            return
-        }
 
-        request.httpMethod = self.method.rawValue
 
-        for (key, value) in headers {
-            request.setValue(value, forHTTPHeaderField: key)
-        }
+        task = session.dataTask(with: request)
 
-        // TODO: Check this if.
-        if method.isUpload, let body = self.bodyPayload() {
-            task = session.uploadTask(with: request, from: body)
-        } else {
-            task = session.dataTask(with: request)
-        }
         task?.resume()
     }
 
@@ -77,17 +58,13 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
         requestCompletionHandler = {
             [weak self] in
 
-            guard let strongSelf = self else {
-                return
-            }
+            guard let strongSelf = self else { return }
             let result = responseSerializer.serializeResponse(strongSelf.request,
                     strongSelf.response,
                     strongSelf.data,
                     strongSelf.error)
             let dataResponse = HttpDataResponse<JSON>(data: strongSelf.data, result: result)
-            (queue ?? DispatchQueue.main).async {
-                completionHandler(dataResponse)
-            }
+            (queue ?? DispatchQueue.main).async { completionHandler(dataResponse) }
         }
 
         return self
@@ -116,15 +93,15 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
         self.response(
                 queue: DispatchQueue(label: HttpQueue.default),
                 responseSerializer:
-                DefaultHttpDataRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
+            DefaultHttpStreamRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
             completionHandler(response)
         }
         return self
     }
 }
 
-// MARK: HttpDataRequest - Private
-extension DefaultHttpDataRequest {
+// MARK: HttpStreamRequest - Private
+extension DefaultHttpStreamRequest {
     private func bodyPayload() -> Data? {
 
         if let body = self.body {
@@ -139,7 +116,7 @@ extension DefaultHttpDataRequest {
     }
 }
 
-extension DefaultHttpDataRequest: CustomStringConvertible, CustomDebugStringConvertible {
+extension DefaultHttpStreamRequest: CustomStringConvertible, CustomDebugStringConvertible {
     private var requestIsNullText: String {
         return "No description available: Null"
     }

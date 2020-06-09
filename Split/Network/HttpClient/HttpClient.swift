@@ -66,6 +66,10 @@ protocol HttpClient {
                      parameters: [String: Any]?,
                      headers: [String: String]?,
                      body: Data?) -> HttpDataRequest
+
+    func sendStreamRequest(endpoint: Endpoint,
+                     parameters: [String: Any]?,
+                     headers: [String: String]?) -> HttpDataRequest
 }
 
 extension HttpClient {
@@ -121,8 +125,7 @@ extension DefaultHttpClient: HttpSession {
     }
 }
 
-// MARK: HttpSession - Private
-
+// MARK: DefaultHttpClient - Private
 extension DefaultHttpClient {
 
     private func request(
@@ -144,8 +147,7 @@ extension DefaultHttpClient {
 
 }
 
-// MARK: HttpSession - RestClientManagerProtocol
-
+// MARK: DefaultHttpClient - HttpClient
 extension DefaultHttpClient: HttpClient {
 
     func sendRequest(endpoint: Endpoint,
@@ -165,6 +167,10 @@ extension DefaultHttpClient: HttpClient {
         request.send()
         requestManager.addRequest(request)
         return request
+    }
+
+    func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?, headers: [String: String]?) -> HttpStreamRequest {
+        fatalError("sendStreamRequest(endpoint:parameters:headers:) has not been implemented")
     }
 }
 
@@ -226,7 +232,6 @@ extension HttpRequestManager: URLSessionTaskDelegate {
 }
 
 // MARK: HttpUrlSessionDelegate - URLSessionDataDelegate
-
 extension HttpRequestManager: URLSessionDataDelegate {
     func urlSession(_ session: URLSession,
                     dataTask: URLSessionDataTask,

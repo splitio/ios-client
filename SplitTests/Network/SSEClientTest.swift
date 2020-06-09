@@ -36,19 +36,28 @@ class SSEClientTest: XCTestCase {
                     switch response.result {
                     case .success(let json):
                         if json.isNull() {
-                            completion(DataResult { return nil })
+                            completion(DataResult {
+                                return nil
+                            })
                             return
                         }
 
                         do {
                             let parsedObject = try json.decode(T.self)
-                            completion(DataResult { return parsedObject })
+                            completion(DataResult {
+                                return parsedObject
+                            })
                         } catch {
-                            completion(DataResult { throw error })
+                            completion(DataResult {
+                                throw error
+                            })
                         }
                     case .failure(let error):
-                        completion(DataResult { throw error })
+                        completion(DataResult {
+                            throw error
+                        })
                     }
 
+                }
     }
 }
