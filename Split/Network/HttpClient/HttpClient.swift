@@ -62,15 +62,16 @@ class HttpSessionConfig {
 }
 
 protocol HttpClient {
-    func sendRequest(target: Target,
-                     parameters: [String: AnyObject]?,
-                     headers: [String: String]?) -> HttpDataRequest
+    func sendRequest(endpoint: Endpoint,
+                     parameters: [String: Any]?,
+                     headers: [String: String]?,
+                     body: Data?) -> HttpDataRequest
 }
 
 extension HttpClient {
-    func sendRequest(target: Target,
-                     parameters: [String: AnyObject]? = nil) -> HttpDataRequest {
-        return sendRequest(target: target, parameters: parameters, headers: nil)
+    func sendRequest(endpoint: Endpoint,
+                     parameters: [String: Any]? = nil) -> HttpDataRequest {
+        return sendRequest(endpoint: endpoint, parameters: parameters, headers: nil, body: nil)
     }
 }
 
@@ -106,8 +107,6 @@ class DefaultHttpClient {
     deinit {
         urlSession.invalidateAndCancel()
     }
-
-
 }
 
 extension DefaultHttpClient: HttpSession {
@@ -149,22 +148,20 @@ extension DefaultHttpClient {
 
 extension DefaultHttpClient: HttpClient {
 
-    func sendRequest(target: Target,
-                     parameters: [String: AnyObject]? = nil,
-                     headers: [String: String]? = nil) -> HttpDataRequest {
-        var httpHeaders = [String: String]()
-        if let targetSpecificHeaders = target.commonHeaders {
-            httpHeaders += targetSpecificHeaders
-        }
+    func sendRequest(endpoint: Endpoint,
+                     parameters: [String: Any]? = nil,
+                     headers: [String: String]? = nil,
+                     body: Data? = nil) -> HttpDataRequest {
+        var httpHeaders = endpoint.headers
         if let headers = headers {
             httpHeaders += headers
         }
 
-        let request = self.request(target.url,
-                                   method: target.method,
+        let request = self.request(endpoint.url,
+                                   method: endpoint.method,
                                    parameters: parameters,
                                    headers: httpHeaders,
-                                   body: target.body)
+                                   body: body)
         request.send()
         requestManager.addRequest(request)
         return request
@@ -248,5 +245,10 @@ extension HttpRequestManager: URLSessionDataDelegate {
         if let request = requests.get(identifier: dataTask.taskIdentifier) as? HttpDataRequest {
             request.appendData(data)
         }
+    }
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask,
+                           didBecome streamTask: URLSessionStreamTask) {
+
     }
 }

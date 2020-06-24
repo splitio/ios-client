@@ -17,14 +17,35 @@ protocol MetricsRestClient: RestClient {
 extension DefaultRestClient: MetricsRestClient {
 
     func sendTimeMetrics(_ times: [TimeMetric], completion: @escaping (DataResult<EmptyValue>) -> Void) {
-        self.execute(target: EnvironmentTargetManager.sendTimeMetrics(times), completion: completion)
+        do {
+            self.execute(
+                    endpoint: endpointFactory.timeMetricsEndpoint,
+                    body: try Json.encodeToJsonData(times),
+                    completion: completion)
+        } catch {
+            Logger.e("Could not send time metrics. Error: " + error.localizedDescription)
+        }
     }
 
     func sendCounterMetrics(_ counters: [CounterMetric], completion: @escaping (DataResult<EmptyValue>) -> Void) {
-        self.execute(target: EnvironmentTargetManager.sendCounterMetrics(counters), completion: completion)
+        do {
+            self.execute(
+                    endpoint: endpointFactory.countMetricsEndpoint,
+                    body: try Json.encodeToJsonData(counters),
+                    completion: completion)
+        } catch {
+            Logger.e("Could not send count metrics. Error: " + error.localizedDescription)
+        }
     }
 
     func sendGaugeMetrics(_ gauge: MetricGauge, completion: @escaping (DataResult<EmptyValue>) -> Void) {
-        self.execute(target: EnvironmentTargetManager.sendGaugeMetrics(gauge), completion: completion)
+        do {
+            self.execute(
+                    endpoint: endpointFactory.gaugeMetricsEndpoint,
+                    body: try Json.encodeToJsonData(gauge),
+                    completion: completion)
+        } catch {
+            Logger.e("Could not send gauge metrics. Error: " + error.localizedDescription)
+        }
     }
 }

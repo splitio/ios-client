@@ -96,29 +96,8 @@ public class SplitClientConfig: NSObject {
 
     }
 
-    ///
-    /// Sdk endpoint URL string.
-    ///
-    @objc public var targetSdkEndPoint: String {
-        get {
-            return EnvironmentTargetManager.shared.sdkEndpoint
-        }
-        set {
-            EnvironmentTargetManager.shared.sdkEndpoint = newValue
-        }
-    }
+    @objc public var serviceEndpoints = ServiceEndpoints.builder().build()
 
-    ///
-    /// Events endpoint URL string.
-    ///
-    @objc public var targetEventsEndPoint: String {
-        get {
-            return EnvironmentTargetManager.shared.eventsEndpoint
-        }
-        set {
-            EnvironmentTargetManager.shared.eventsEndpoint = newValue
-        }
-    }
 
     ///
     /// Enables debug messages in console

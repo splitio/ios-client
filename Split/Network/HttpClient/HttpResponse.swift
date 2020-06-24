@@ -7,6 +7,20 @@
 
 import Foundation
 
+//// MARK: HttpResponse
+//struct HttpStreamResponse<Value> {
+//    let response: HTTPURLResponse?
+//    let error: Error? = nil
+//    let data: InputStream?
+//    let result: HttpResult<Value>
+//
+//    init(response: HTTPURLResponse?, data: Data?, result: HttpResult<Value>) {
+//        self.response = response
+//        self.data = data
+//        self.result = result
+//    }
+//}
+
 // MARK: HttpDataResponse
 struct HttpDataResponse<Value> {
     let response: HTTPURLResponse?
