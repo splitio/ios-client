@@ -971,7 +971,7 @@
 				3B6DEEF420EA6AE30067435E /* NetworkReachabilityManager.swift */,
 				3B6DEEF520EA6AE30067435E /* RestClient */,
 				3B6DEEF920EA6AE30067435E /* Results */,
-				3B6DEEFB20EA6AE30067435E /* Targets */,
+				3B6DEEFB20EA6AE30067435E /* Endpoints */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -1035,14 +1035,14 @@
 			path = Results;
 			sourceTree = "<group>";
 		};
-		3B6DEEFB20EA6AE30067435E /* Targets */ = {
+		3B6DEEFB20EA6AE30067435E /* Endpoints */ = {
 			isa = PBXGroup;
 			children = (
 				31AA2EAA5F782C4F108D7777 /* ServiceEndpoints.swift */,
 				31AA22D3DA2B022F2E7F3231 /* Endpoint.swift */,
 				31AA29BEEBFD4CFCF2623591 /* EndpointFactory.swift */,
 			);
-			path = Targets;
+			path = Endpoints;
 			sourceTree = "<group>";
 		};
 		3B6DEF0220EA6AE30067435E /* Utils */ = {

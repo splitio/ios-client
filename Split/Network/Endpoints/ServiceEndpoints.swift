@@ -13,7 +13,7 @@ import Foundation
     private static let kSdkEndpoint = "https://sdk.split.io/api"
     private static let kEventsEndpoint = "https://events.split.io/api"
     private static let kAuthServiceEndpoint = "https://auth.split.io/api"
-    private static let kStreamingEndpoint = "https://split-realtime.ably.io/sse"
+    private static let kStreamingEndpoint = "https://streaming.split.io/sse"
 
     private (set) var sdkEndpoint: URL
     private (set) var eventsEndpoint: URL
