@@ -231,7 +231,7 @@ extension HttpRequestManager: URLSessionDataDelegate {
         }
     }
 
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask,
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask,
                            didBecome streamTask: URLSessionStreamTask) {
     }
 }
