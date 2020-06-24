@@ -32,19 +32,16 @@ protocol HttpStreamRequestProtocol {
 }
 
 class BaseHttpRequest: HttpRequest {
-
+    var url: URL
+    var method: HttpMethod
+    var parameters: HttpParameters?
+    var headers: HttpHeaders
     var session: HttpSession
     var task: URLSessionTask?
     var request: URLRequest?
     var response: HTTPURLResponse?
     var error: Error?
     var retryTimes: Int = 0
-
-//    var url: URL
-//    var method: HttpMethod
-    var parameters: HttpParameters?
-//    var headers: HttpHeaders = [:]
-
     var requestCompletionHandler: RequestCompletionHandler?
 
     var identifier: Int {
@@ -52,12 +49,24 @@ class BaseHttpRequest: HttpRequest {
     }
 
     init(session: HttpSession, url: URL, method: HttpMethod,
-         parameters: HttpParameters? = nil, headers: HttpHeaders?) {
+         parameters: HttpParameters? = nil, headers: HttpHeaders?) throws {
+
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        if let parameters = parameters {
+            components?.queryItems = parameters.map { key, value in URLQueryItem(name: key, value: value as? String)}
+        }
+        guard let finalUrl = components?.url else {
+            throw HttpError.couldNotCreateRequest(message: "Invalid URL")
+        }
+
+        // TODO checks this values
+        self.url = finalUrl
         self.session = session
         self.parameters = parameters
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        components?.queryItems
-        var request = URLRequest(url: url)
+        self.method = method
+        self.headers = headers ?? HttpHeaders()
+
+        var request = URLRequest(url: finalUrl)
         request.httpMethod = method.rawValue
         if let headers = headers {
             for (key, value) in headers {

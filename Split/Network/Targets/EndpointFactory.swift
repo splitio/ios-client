@@ -9,13 +9,13 @@
 import Foundation
 
 class EndpointFactory {
-    static let kAuthorizationHeader = "authorization"
-    static let kSplitVersionHeader = "splitsdkversion"
-    static let kContentTypeHeader = "content-type"
-    static let kAuthorizationBearer = "Bearer"
-    static let kContentTypeJson = "application/json"
-    static let kContentTypeEventStream = "text/event-stream"
-    struct EndpointsPath {
+    private static let kAuthorizationHeader = "authorization"
+    private static let kSplitVersionHeader = "splitsdkversion"
+    private static let kContentTypeHeader = "content-type"
+    private static let kAuthorizationBearer = "Bearer"
+    private static let kContentTypeJson = "application/json"
+    private static let kContentTypeEventStream = "text/event-stream"
+    private struct EndpointsPath {
         static let splitChanges = "splitChanges"
         static let mySegments = "mySegments"
         static let impressions = "testImpressions/bulk"
@@ -80,6 +80,6 @@ class EndpointFactory {
 
         streamingEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.streamingServiceEndpoint)
-                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+                .set(method: .get).add(headers: commondHeaders).add(headers: streamEventHeader).build()
     }
 }

@@ -22,9 +22,9 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
 
     init(session: HttpSession,
          url: URL,
-         headers: HttpHeaders?) {
+         headers: HttpHeaders?) throws {
 
-        super.init(session: session, url: url, method: .get, parameters: nil, headers: headers)
+        try super.init(session: session, url: url, method: .get, parameters: nil, headers: headers)
         self.session = session
         self.url = url
         if let headers = headers {
@@ -33,13 +33,10 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
     }
 
     override func send() {
-
-
-
-
-        task = session.dataTask(with: request)
-
-        task?.resume()
+        if let request  = request {
+            task = session.dataTask(with: request)
+            task?.resume()
+        }
     }
 
     func appendData(_ newData: Data) {
@@ -51,18 +48,18 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
 
     @discardableResult
     func response(
-            queue: DispatchQueue? = nil,
-            responseSerializer: HttpDataResponseSerializer<JSON>,
-            completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
+        queue: DispatchQueue? = nil,
+        responseSerializer: HttpDataResponseSerializer<JSON>,
+        completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
 
         requestCompletionHandler = {
             [weak self] in
 
             guard let strongSelf = self else { return }
             let result = responseSerializer.serializeResponse(strongSelf.request,
-                    strongSelf.response,
-                    strongSelf.data,
-                    strongSelf.error)
+                                                              strongSelf.response,
+                                                              strongSelf.data,
+                                                              strongSelf.error)
             let dataResponse = HttpDataResponse<JSON>(data: strongSelf.data, result: result)
             (queue ?? DispatchQueue.main).async { completionHandler(dataResponse) }
         }
@@ -71,29 +68,29 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
     }
 
     static func responseSerializer(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>)
-                    -> HttpDataResponseSerializer<JSON> {
+        -> HttpDataResponseSerializer<JSON> {
 
-        return HttpDataResponseSerializer<JSON> { _, response, data, error in
-            if let error = error {
-                return .failure(error)
-            }
+            return HttpDataResponseSerializer<JSON> { _, response, data, error in
+                if let error = error {
+                    return .failure(error)
+                }
 
-            if let validData = data {
-                let json = JSON(validData)
-                return errorSanitizer(json, response!.statusCode)
-            } else {
-                return errorSanitizer(JSON(), response!.statusCode)
+                if let validData = data {
+                    let json = JSON(validData)
+                    return errorSanitizer(json, response!.statusCode)
+                } else {
+                    return errorSanitizer(JSON(), response!.statusCode)
+                }
             }
-        }
     }
 
     func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>,
                      completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
 
         self.response(
-                queue: DispatchQueue(label: HttpQueue.default),
-                responseSerializer:
-            DefaultHttpStreamRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
+            queue: DispatchQueue(label: HttpQueue.default),
+            responseSerializer:
+        DefaultHttpStreamRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
             completionHandler(response)
         }
         return self
@@ -109,7 +106,7 @@ extension DefaultHttpStreamRequest {
         }
 
         if let parameters = parameters,
-           let body = try? JSONSerialization.data(withJSONObject: parameters, options: []) {
+            let body = try? JSONSerialization.data(withJSONObject: parameters, options: []) {
             return body
         }
         return nil
@@ -128,5 +125,4 @@ extension DefaultHttpStreamRequest: CustomStringConvertible, CustomDebugStringCo
     var debugDescription: String {
         return request?.debugDescription ?? requestIsNullText
     }
-
 }

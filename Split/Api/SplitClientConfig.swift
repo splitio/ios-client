@@ -98,7 +98,6 @@ public class SplitClientConfig: NSObject {
 
     @objc public var serviceEndpoints = ServiceEndpoints.builder().build()
 
-
     ///
     /// Enables debug messages in console
     ///
