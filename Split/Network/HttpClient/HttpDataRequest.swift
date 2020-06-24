@@ -26,9 +26,9 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
          method: HttpMethod,
          parameters: HttpParameters? = nil,
          headers: HttpHeaders?,
-         body: Data? = nil) {
+         body: Data? = nil) throws {
 
-        super.init(session: session, url: url, method: method, parameters: nil, headers: headers)
+        try super.init(session: session, url: url, method: method, parameters: nil, headers: headers)
         self.session = session
         self.url = url
         self.method = method
