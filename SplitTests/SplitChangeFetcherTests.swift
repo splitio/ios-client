@@ -18,7 +18,11 @@ class SplitChangeFetcherTests: XCTestCase {
 
     override func setUp() {
         splitCache = SplitCache(fileStorage: FileStorageStub())
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: DefaultRestClient(), splitCache: splitCache)
+        let endpointFactory = EndpointFactory(serviceEndpoints: IntegrationHelper.mockServiceEndpoint,
+                                              apiKey: IntegrationHelper.dummyApiKey,
+                                              userKey: IntegrationHelper.dummyUserKey)
+        let restClient = DefaultRestClient(endpointFactory: endpointFactory)
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
     }
 
     override func tearDown() {

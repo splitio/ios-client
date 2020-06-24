@@ -10,6 +10,23 @@ import Foundation
 @testable import Split
 
 class IntegrationHelper {
+
+    static var mockServiceEndpoint: ServiceEndpoints {
+        return ServiceEndpoints.builder().set(sdkEndpoint: mockEndPoint).set(eventsEndpoint: mockEndPoint).build()
+    }
+
+    static var dummyApiKey: String {
+        return "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+    }
+
+    static var dummyFolderName: String {
+        return "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
+    }
+
+    static var dummyUserKey: String {
+        return "CUSTOMER_ID"
+    }
+
     static var mockEndPoint: String {
         return "http://localhost:8080"
     }

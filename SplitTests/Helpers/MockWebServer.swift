@@ -30,7 +30,7 @@ enum MockedMethod: String {
 
 class MockWebServer {
     private let kBaseUrl = "http://localhost"
-    var currentPort: Int = 0
+    var currentPort: Int = 8080
 
     private static var usedPorts = [Int]()
 
