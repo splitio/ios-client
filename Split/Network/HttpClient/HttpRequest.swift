@@ -7,7 +7,93 @@
 
 import Foundation
 
-// MARK: HttpDataRequest
+// TODO: Rename all wrapper classes once all URLSession component wrapped
+// MARK: HttpDataRequestWrapper
+/// This class' name is temporal
+/// It will be renamen when all clases using this
+/// and added  to test harness
+protocol HttpRequestWrapper {
+
+    typealias RequestCompletionHandler = () -> Void
+    var identifier: Int { get }
+    var url: URL { get set }
+    var method: HttpMethod { get set }
+    var parameters: HttpParameters? { get set }
+    var headers: HttpHeaders { get set }
+    var response: HttpResponse? { get }
+
+    func setResponse(_ response: HttpResponse)
+    func send()
+    func complete(withError error: Error?)
+}
+
+// MARK: BaseHttpRequestWrapper
+/// This classes will be renamed too
+class BaseHttpRequestWrapper: HttpRequestWrapper {
+
+    var url: URL
+    var method: HttpMethod
+    var parameters: HttpParameters?
+    var headers: HttpHeaders
+    var session: HttpSessionWrapper
+    var task: HttpTask?
+    var request: HttpResponse?
+    var response: HttpResponse?
+    var error: Error?
+    var retryTimes: Int = 0
+    var requestCompletionHandler: RequestCompletionHandler?
+    var urlRequest: URLRequest?
+
+    var identifier: Int {
+        return task?.identifier ?? -1
+    }
+
+    init(session: HttpSessionWrapper, url: URL, method: HttpMethod,
+         parameters: HttpParameters? = nil, headers: HttpHeaders?) throws {
+
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        if let parameters = parameters {
+            components?.queryItems = parameters.map { key, value in URLQueryItem(name: key, value: value as? String)}
+        }
+        guard let finalUrl = components?.url else {
+            throw HttpError.couldNotCreateRequest(message: "Invalid URL")
+        }
+
+        // TODO checks this values
+        self.url = finalUrl
+        self.session = session
+        self.parameters = parameters
+        self.method = method
+        self.headers = headers ?? HttpHeaders()
+
+        urlRequest = URLRequest(url: finalUrl)
+        urlRequest?.httpMethod = method.rawValue
+        if let headers = headers {
+            for (key, value) in headers {
+                urlRequest?.setValue(value, forHTTPHeaderField: key)
+            }
+        }
+    }
+
+    func send() {
+        assertionFailure("Method not implemented")
+    }
+
+    func retry() {
+        assertionFailure("Method not implemented")
+    }
+
+    func setResponse(_ response: HttpResponse) {
+        self.response = response
+    }
+
+    func complete(withError error: Error?) {
+        self.error = error
+        if let completionHandler = requestCompletionHandler {
+            completionHandler()
+        }
+    }
+}
 
 protocol HttpRequest {
 
@@ -24,11 +110,6 @@ protocol HttpRequest {
     func send()
     func retry()
     func complete(withError error: Error?)
-}
-
-protocol HttpStreamRequestProtocol {
-    var inputStream: InputStream? { get }
-    func appendData(_ newData: Data)
 }
 
 class BaseHttpRequest: HttpRequest {

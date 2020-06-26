@@ -11,6 +11,17 @@ struct HttpQueue {
     public static let `default`:String = "split-rest-queue"
 }
 
+// MARK: HTTP codes
+struct HttpCode {
+    static let requestOk = 200
+    static let multipleChoice = 300
+    static let badRequest = 400
+    static let unauthorized = 401
+    static let forbidden = 403
+    static let notFound = 404
+    static let internalServerError = 500
+}
+
 // MARK: HttpMethod
 enum HttpMethod: String, CustomStringConvertible {
     case get
@@ -74,6 +85,15 @@ extension HttpClient {
                      parameters: [String: Any]? = nil) throws -> HttpDataRequest {
         return try sendRequest(endpoint: endpoint, parameters: parameters, headers: nil, body: nil)
     }
+}
+
+/// This protocol is created to allow adding
+/// Split http classes into the test harness
+/// It will be renamed to HttpSession after all apple URL classes are wrapped
+/// and added to test harness
+// TODO: Rename HttpSessionWrapper class
+protocol HttpSessionWrapper {
+    func startDataTask(with request: HttpRequestWrapper) -> HttpTask
 }
 
 protocol HttpSession {
