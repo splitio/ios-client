@@ -71,7 +71,7 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
     @discardableResult
     func response(
             queue: DispatchQueue? = nil,
-            responseSerializer: HttpDataResponseSerializer<JSON>,
+            responseSerializer: HttpJsonDataResponseSerializer<JSON>,
             completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
 
         requestCompletionHandler = {
@@ -94,9 +94,9 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
     }
 
     static func responseSerializer(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>)
-                    -> HttpDataResponseSerializer<JSON> {
+                    -> HttpJsonDataResponseSerializer<JSON> {
 
-        return HttpDataResponseSerializer<JSON> { _, response, data, error in
+        return HttpJsonDataResponseSerializer<JSON> { _, response, data, error in
             if let error = error {
                 return .failure(error)
             }
