@@ -17,7 +17,6 @@ class SSEClientTest: XCTestCase {
     }
 
     func test() {
-        //TODO: Implement SSE client test
     }
 
     override func tearDown() {

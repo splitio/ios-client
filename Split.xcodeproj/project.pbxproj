@@ -171,6 +171,12 @@
 		592D2CFA22088606007458F9 /* SyncDictionarySingleWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592D2CF922088606007458F9 /* SyncDictionarySingleWrapper.swift */; };
 		593225F824A384B300496D8B /* EndpointFactoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593225F724A384B300496D8B /* EndpointFactoryTest.swift */; };
 		593225FA24A3855700496D8B /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593225F924A3855700496D8B /* TestHelper.swift */; };
+		593225FC24A40AA900496D8B /* HttpResponseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593225FB24A40AA900496D8B /* HttpResponseTest.swift */; };
+		593225FF24A4D8FD00496D8B /* HttpResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593225FE24A4D8FC00496D8B /* HttpResponse.swift */; };
+		5932260124A4E91800496D8B /* HttpStreamRequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5932260024A4E91800496D8B /* HttpStreamRequestTest.swift */; };
+		5932260324A512FB00496D8B /* HttpSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5932260224A512FB00496D8B /* HttpSessionMock.swift */; };
+		5932260524A516FA00496D8B /* HttpTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5932260424A516FA00496D8B /* HttpTask.swift */; };
+		5932260724A5325A00496D8B /* HttpTaskMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5932260624A5325900496D8B /* HttpTaskMock.swift */; };
 		5935FDEC226E26E300A23FA6 /* SplitHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5935FDEB226E26E300A23FA6 /* SplitHelper.swift */; };
 		593AE9F3226F4068000D61B0 /* MySegmentsFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593AE9F1226F4068000D61B0 /* MySegmentsFetcherTests.swift */; };
 		593AE9FC226F4825000D61B0 /* RestClientStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593AE9FB226F4825000D61B0 /* RestClientStub.swift */; };
@@ -494,6 +500,12 @@
 		592D2CF922088606007458F9 /* SyncDictionarySingleWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncDictionarySingleWrapper.swift; sourceTree = "<group>"; };
 		593225F724A384B300496D8B /* EndpointFactoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointFactoryTest.swift; sourceTree = "<group>"; };
 		593225F924A3855700496D8B /* TestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
+		593225FB24A40AA900496D8B /* HttpResponseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpResponseTest.swift; sourceTree = "<group>"; };
+		593225FE24A4D8FC00496D8B /* HttpResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpResponse.swift; sourceTree = "<group>"; };
+		5932260024A4E91800496D8B /* HttpStreamRequestTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpStreamRequestTest.swift; sourceTree = "<group>"; };
+		5932260224A512FB00496D8B /* HttpSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpSessionMock.swift; sourceTree = "<group>"; };
+		5932260424A516FA00496D8B /* HttpTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpTask.swift; sourceTree = "<group>"; };
+		5932260624A5325900496D8B /* HttpTaskMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpTaskMock.swift; sourceTree = "<group>"; };
 		5935FDEB226E26E300A23FA6 /* SplitHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitHelper.swift; sourceTree = "<group>"; };
 		593AE9F1226F4068000D61B0 /* MySegmentsFetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentsFetcherTests.swift; sourceTree = "<group>"; };
 		593AE9FB226F4825000D61B0 /* RestClientStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestClientStub.swift; sourceTree = "<group>"; };
@@ -1005,7 +1017,9 @@
 			children = (
 				3B6DEEF120EA6AE30067435E /* HttpRequest.swift */,
 				3B6DEEF220EA6AE30067435E /* HttpDataResponse.swift */,
+				593225FE24A4D8FC00496D8B /* HttpResponse.swift */,
 				3B6DEEF320EA6AE30067435E /* HttpClient.swift */,
+				5932260424A516FA00496D8B /* HttpTask.swift */,
 				31AA2B33B325F1FD8A8C1776 /* HttpDataRequest.swift */,
 				31AA2744A2006D558FCBE8CE /* HttpStreamResponse.swift */,
 				31AA215F3C0E2305966CD52F /* HttpStreamRequest.swift */,
@@ -1142,6 +1156,8 @@
 			children = (
 				5919017A24A27629005BD12A /* EndpointTest.swift */,
 				5919017C24A28E1D005BD12A /* HttpRequestListTest.swift */,
+				593225FB24A40AA900496D8B /* HttpResponseTest.swift */,
+				5932260024A4E91800496D8B /* HttpStreamRequestTest.swift */,
 				593225F724A384B300496D8B /* EndpointFactoryTest.swift */,
 			);
 			path = HttpClient;
@@ -1242,6 +1258,8 @@
 			children = (
 				593AE9FB226F4825000D61B0 /* RestClientStub.swift */,
 				5919017F24A2949B005BD12A /* HttpRequestMock.swift */,
+				5932260224A512FB00496D8B /* HttpSessionMock.swift */,
+				5932260624A5325900496D8B /* HttpTaskMock.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -1655,6 +1673,7 @@
 				3B6DEF0E20EA6AE50067435E /* MySegmentsCache.swift in Sources */,
 				3B6DEF1620EA6AE50067435E /* DefaultRefreshableMySegmentsFetcher.swift in Sources */,
 				3B6DEF7820EA6AE50067435E /* ErrorCode.swift in Sources */,
+				5932260524A516FA00496D8B /* HttpTask.swift in Sources */,
 				59D84BD622158A24003DA248 /* LocalhostSplitFactory.swift in Sources */,
 				3B6DEF4C20EA6AE50067435E /* SplitBase.swift in Sources */,
 				3B6DEF6F20EA6AE50067435E /* StartWithMatcher.swift in Sources */,
@@ -1692,6 +1711,7 @@
 				59FB7C202200A4B200ECC96A /* ValidatorMessageLogger.swift in Sources */,
 				3B6DEF6B20EA6AE50067435E /* InSegmentMatcher.swift in Sources */,
 				59B8B8B0220C6E3F003E0D5A /* ValidationErrorInfo.swift in Sources */,
+				593225FF24A4D8FD00496D8B /* HttpResponse.swift in Sources */,
 				3B6DEF5B20EA6AE50067435E /* SplitInternalEvent.swift in Sources */,
 				59FB7C332203126400ECC96A /* DefaultSplitFactoryBuilder.swift in Sources */,
 				3B6DEF7B20EA6AE50067435E /* HttpDataResponse.swift in Sources */,
@@ -1772,6 +1792,7 @@
 				598EDE80224BD238005D4762 /* SplitFetcherStub.swift in Sources */,
 				59FB7C1C21F7AE2E00ECC96A /* SplitChangeValidatorTests.swift in Sources */,
 				5912D1492195F25200BC698C /* MySegmentsCacheStubs.swift in Sources */,
+				5932260724A5325A00496D8B /* HttpTaskMock.swift in Sources */,
 				594677E422CFF30B00F94E58 /* TreatmentManagerTest.swift in Sources */,
 				592C6ABD211B718E002D120C /* DatesTests.swift in Sources */,
 				5912D14B2195F3C900BC698C /* FileStorageStub.swift in Sources */,
@@ -1779,6 +1800,7 @@
 				590DF9CF213EB95D0082B94F /* SplitCacheStub.swift in Sources */,
 				59D84BE7221AE775003DA248 /* LocalhostManagerTests.swift in Sources */,
 				59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */,
+				5932260124A4E91800496D8B /* HttpStreamRequestTest.swift in Sources */,
 				5946783522E110A700F94E58 /* MockWebServer.swift in Sources */,
 				594677E622CFFA2D00F94E58 /* MetricsManagerStub.swift in Sources */,
 				5955633F2294AECF00907C2D /* TrackManagerTest.swift in Sources */,
@@ -1797,6 +1819,7 @@
 				5959C482228074800064F968 /* ValidationMessageLoggerStub.swift in Sources */,
 				59B8B8AC220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift in Sources */,
 				5946783A22E1147600F94E58 /* SplitIntegrationTest.swift in Sources */,
+				593225FC24A40AA900496D8B /* HttpResponseTest.swift in Sources */,
 				5959C477227B89820064F968 /* FactoryMonitorTest.swift in Sources */,
 				592C6ABE211B718E002D120C /* ArrayBlockingQueueTest.swift in Sources */,
 				5919017D24A28E1D005BD12A /* HttpRequestListTest.swift in Sources */,
@@ -1806,6 +1829,7 @@
 				596A7B732358E142004F6139 /* SplitSdkTimeoutTest.swift in Sources */,
 				59DD34B42236989700FA9545 /* FolderApiKeyTests.swift in Sources */,
 				599EA57F2266708D006CBA89 /* LocalhostYamlParserTest.swift in Sources */,
+				5932260324A512FB00496D8B /* HttpSessionMock.swift in Sources */,
 				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
 				599407E022403BE9003B85CC /* InMemorySplitCacheTrafficTypesTests.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
