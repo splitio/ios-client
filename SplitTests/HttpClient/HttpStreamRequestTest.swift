@@ -22,7 +22,7 @@ class HttpStreamRequestTest: XCTestCase {
 
         let parameters: HttpParameters = ["p1": "v1", "p2": 2]
         let headers: HttpHeaders = ["h1": "v1", "h2": "v2"]
-        let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, headers: headers, parameters: parameters)
+        let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, parameters: parameters, headers: headers)
 
         XCTAssertEqual(url, httpRequest.url)
         XCTAssertEqual("v1", httpRequest.parameters!["p1"] as! String)
@@ -35,7 +35,7 @@ class HttpStreamRequestTest: XCTestCase {
     func testRequestEnquedOnSend() throws {
         // When a request is sent, it has to be created in
         // in an http session
-        let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, headers: nil, parameters: nil)
+        let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, parameters: nil, headers: nil)
 
         httpRequest.send()
 
@@ -52,10 +52,10 @@ class HttpStreamRequestTest: XCTestCase {
         var receivedData = ""
         var closedOk = false
         let onCloseExpectation = XCTestExpectation(description: "close request")
-        let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, headers: nil, parameters: nil)
+        let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, parameters: nil, headers: nil)
 
         _ = httpRequest.getResponse(responseHandler: { response in
-            responseIsSuccess = response.isSuccess
+            responseIsSuccess = response.result.isSuccess
 
         }, incomingDataHandler: { data in
             receivedData.append(data.stringRepresentation)
@@ -87,10 +87,10 @@ class HttpStreamRequestTest: XCTestCase {
         var responseIsSuccess = true
         var receivedData = ""
         let onResponseExpectation = XCTestExpectation(description: "close request")
-        let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, headers: nil, parameters: nil)
+        let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, parameters: nil, headers: nil)
 
         _ = httpRequest.getResponse(responseHandler: { response in
-            responseIsSuccess = response.isSuccess
+            responseIsSuccess = response.result.isSuccess
             onResponseExpectation.fulfill()
 
         }, incomingDataHandler: { data in

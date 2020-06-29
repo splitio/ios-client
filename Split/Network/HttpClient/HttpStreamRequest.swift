@@ -28,17 +28,13 @@ class DefaultHttpStreamRequest: BaseHttpRequestWrapper, HttpStreamRequest {
     var incomingDataHandler: IncomingDataHandler?
     var closeHandler: CloseHandler?
 
-    init(session: HttpSessionWrapper, url: URL, headers: HttpHeaders?, parameters: HttpParameters?) throws {
+    init(session: HttpSessionWrapper, url: URL, parameters: HttpParameters?, headers: HttpHeaders?) throws {
         try super.init(session: session, url: url, method: .get, parameters: parameters, headers: headers)
 
         self.url = url
         if let headers = headers {
             self.headers = headers
         }
-    }
-
-    override func send() {
-        task = session.startDataTask(with: self)
     }
 
     func notifyIncomingData(_ data: Data) {
