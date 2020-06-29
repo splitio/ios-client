@@ -14,12 +14,14 @@ import Foundation
 // MARK: HttpResponse
 struct HttpResponse {
     let code: Int
+    let result: HttpResultWrapper
 
-    var isSuccess: Bool {
-        return code >= HttpCode.requestOk && code < HttpCode.multipleChoice
-    }
-
-    init(code: Int) {
+    init(code: Int, data: Data? = nil) {
         self.code = code
+        if code >= HttpCode.requestOk && code < HttpCode.multipleChoice {
+            self.result = HttpResultWrapper.success(Json(data))
+        } else {
+            self.result = HttpResultWrapper.failure
+        }
     }
 }

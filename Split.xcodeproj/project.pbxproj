@@ -177,6 +177,7 @@
 		5932260324A512FB00496D8B /* HttpSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5932260224A512FB00496D8B /* HttpSessionMock.swift */; };
 		5932260524A516FA00496D8B /* HttpTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5932260424A516FA00496D8B /* HttpTask.swift */; };
 		5932260724A5325A00496D8B /* HttpTaskMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5932260624A5325900496D8B /* HttpTaskMock.swift */; };
+		5932260A24A66F3D00496D8B /* HttpDataRequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5932260924A66F3D00496D8B /* HttpDataRequestTest.swift */; };
 		5935FDEC226E26E300A23FA6 /* SplitHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5935FDEB226E26E300A23FA6 /* SplitHelper.swift */; };
 		593AE9F3226F4068000D61B0 /* MySegmentsFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593AE9F1226F4068000D61B0 /* MySegmentsFetcherTests.swift */; };
 		593AE9FC226F4825000D61B0 /* RestClientStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593AE9FB226F4825000D61B0 /* RestClientStub.swift */; };
@@ -506,6 +507,7 @@
 		5932260224A512FB00496D8B /* HttpSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpSessionMock.swift; sourceTree = "<group>"; };
 		5932260424A516FA00496D8B /* HttpTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpTask.swift; sourceTree = "<group>"; };
 		5932260624A5325900496D8B /* HttpTaskMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpTaskMock.swift; sourceTree = "<group>"; };
+		5932260924A66F3D00496D8B /* HttpDataRequestTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpDataRequestTest.swift; sourceTree = "<group>"; };
 		5935FDEB226E26E300A23FA6 /* SplitHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitHelper.swift; sourceTree = "<group>"; };
 		593AE9F1226F4068000D61B0 /* MySegmentsFetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentsFetcherTests.swift; sourceTree = "<group>"; };
 		593AE9FB226F4825000D61B0 /* RestClientStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestClientStub.swift; sourceTree = "<group>"; };
@@ -1158,6 +1160,7 @@
 				5919017C24A28E1D005BD12A /* HttpRequestListTest.swift */,
 				593225FB24A40AA900496D8B /* HttpResponseTest.swift */,
 				5932260024A4E91800496D8B /* HttpStreamRequestTest.swift */,
+				5932260924A66F3D00496D8B /* HttpDataRequestTest.swift */,
 				593225F724A384B300496D8B /* EndpointFactoryTest.swift */,
 			);
 			path = HttpClient;
@@ -1852,6 +1855,7 @@
 				5919018024A2949B005BD12A /* HttpRequestMock.swift in Sources */,
 				59FB7C1A21F7ACF300ECC96A /* SplitValidatorTests.swift in Sources */,
 				597848BB21BB072B00ABB4A6 /* SplitCacheTests.swift in Sources */,
+				5932260A24A66F3D00496D8B /* HttpDataRequestTest.swift in Sources */,
 				593AE9FF226F5B98000D61B0 /* SplitChangeFetcherTests.swift in Sources */,
 				31AA21DE01A000A7C30630F2 /* SSEClientTest.swift in Sources */,
 			);

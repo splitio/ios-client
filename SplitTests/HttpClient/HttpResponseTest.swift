@@ -18,7 +18,7 @@ class HttpResponseTest: XCTestCase {
         // Create http response code > 200 and < 300 should be SUCCESS
         let  response = HttpResponse(code: 200)
 
-        XCTAssertTrue(response.isSuccess)
+        XCTAssertTrue(response.result.isSuccess)
     }
 
 
@@ -28,7 +28,7 @@ class HttpResponseTest: XCTestCase {
         // Check values received
         let  response = HttpResponse(code: 299)
 
-        XCTAssertTrue(response.isSuccess)
+        XCTAssertTrue(response.result.isSuccess)
     }
 
 
@@ -37,14 +37,14 @@ class HttpResponseTest: XCTestCase {
         // Create http response code < 104 should not be considered SUCCESSs
         let  response = HttpResponse(code: 104)
 
-        XCTAssertFalse(response.isSuccess)
+        XCTAssertFalse(response.result.isSuccess)
     }
 
     func testHttp300() {
         // Create http response code > 299 should be considered ERROR
         let  response = HttpResponse(code: 300)
 
-        XCTAssertFalse(response.isSuccess)
+        XCTAssertFalse(response.result.isSuccess)
     }
 
 

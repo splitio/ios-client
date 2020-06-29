@@ -14,7 +14,7 @@ import Foundation
 /// and added  to test harness
 protocol HttpRequestWrapper {
 
-    typealias RequestCompletionHandler = () -> Void
+    typealias RequestCompletionHandler = (HttpResponse) -> Void
     var identifier: Int { get }
     var url: URL { get set }
     var method: HttpMethod { get set }
@@ -22,9 +22,8 @@ protocol HttpRequestWrapper {
     var headers: HttpHeaders { get set }
     var response: HttpResponse? { get }
 
-    func setResponse(_ response: HttpResponse)
     func send()
-    func complete(withError error: Error?)
+    func complete(response: HttpResponse)
 }
 
 // MARK: BaseHttpRequestWrapper
@@ -37,7 +36,6 @@ class BaseHttpRequestWrapper: HttpRequestWrapper {
     var headers: HttpHeaders
     var session: HttpSessionWrapper
     var task: HttpTask?
-    var request: HttpResponse?
     var response: HttpResponse?
     var error: Error?
     var retryTimes: Int = 0
@@ -76,21 +74,12 @@ class BaseHttpRequestWrapper: HttpRequestWrapper {
     }
 
     func send() {
-        assertionFailure("Method not implemented")
+        task = session.startDataTask(with: self)
     }
 
-    func retry() {
-        assertionFailure("Method not implemented")
-    }
-
-    func setResponse(_ response: HttpResponse) {
-        self.response = response
-    }
-
-    func complete(withError error: Error?) {
-        self.error = error
+    func complete(response: HttpResponse) {
         if let completionHandler = requestCompletionHandler {
-            completionHandler()
+            completionHandler(response)
         }
     }
 }

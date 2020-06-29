@@ -8,6 +8,65 @@
 
 import Foundation
 
+protocol HttpDataRequestWrapper {
+    var data: Data? { get }
+    var body: Data? { get }
+    func appendData(_ newData: Data)
+    func getResponse(completionHandler: @escaping (HttpResponse) -> Void) -> Self
+}
+
+// MARK: HttpDataRequest
+class DefaultHttpDataRequestWrapper: BaseHttpRequestWrapper, HttpDataRequestWrapper {
+
+    var data: Data?
+    var body: Data?
+    init(session: HttpSessionWrapper,
+         url: URL,
+         method: HttpMethod,
+         parameters: HttpParameters? = nil,
+         headers: HttpHeaders?,
+         body: Data? = nil) throws {
+
+        try super.init(session: session, url: url, method: method, parameters: nil, headers: headers)
+        self.session = session
+        self.url = url
+        self.method = method
+        self.body = body
+        self.parameters = parameters
+        if let headers = headers {
+            self.headers = headers
+        }
+    }
+
+    func appendData(_ newData: Data) {
+        if data == nil {
+            data = Data()
+        }
+        data!.append(newData)
+    }
+
+    func getResponse(completionHandler: @escaping (HttpResponse) -> Void) -> Self {
+        requestCompletionHandler = completionHandler
+        return self
+    }
+}
+
+// MARK: HttpDataRequest - Private
+extension DefaultHttpDataRequestWrapper {
+    private func bodyPayload() -> Data? {
+
+        if let body = self.body {
+            return body
+        }
+
+        if let parameters = parameters,
+           let body = try? JSONSerialization.data(withJSONObject: parameters, options: []) {
+            return body
+        }
+        return nil
+    }
+}
+
 protocol HttpDataRequest {
     var data: Data? { get }
     func appendData(_ newData: Data)
