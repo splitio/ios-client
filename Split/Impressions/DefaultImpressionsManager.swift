@@ -93,7 +93,7 @@ extension DefaultImpressionsManager {
     }
 
     private func sendImpressions() {
-        let impressionsHits = self.impressionsHits.all
+        let impressionsHits = self.impressionsHits.takeAll()
         for (_, impressionsHit) in impressionsHits {
             sendImpressions(impressionsHit: impressionsHit)
         }

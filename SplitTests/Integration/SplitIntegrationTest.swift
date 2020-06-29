@@ -142,6 +142,7 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertEqual(10, tracksHits().count)
         XCTAssertNotNil(event99)
         XCTAssertNil(event100)
+        XCTAssertEqual(3, impressions.count)
 
         let semaphore = DispatchSemaphore(value: 0)
         client?.destroy(completion: {
