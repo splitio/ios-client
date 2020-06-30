@@ -10,12 +10,17 @@ import XCTest
 @testable import Split
 
 class SplitIntegrationTests: XCTestCase {
-    
+
+    let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+    let dataFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
+    let matchingKey = "CUSTOMER_ID"
+    let trafficType = "account"
     let kNeverRefreshRate = 9999999
     var webServer: MockWebServer!
     var splitChange: SplitChange?
     var serverUrl = ""
     var trackReqIndex = 0
+    var impHit = [[ImpressionsTest]]()
 
     var trExp = [XCTestExpectation]()
     
@@ -37,6 +42,10 @@ class SplitIntegrationTests: XCTestCase {
         webServer = MockWebServer()
         webServer.routeGet(path: "/mySegments/:user_id", data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}")
         webServer.routeGet(path: "/splitChanges?since=:param", data: try? Json.encodeToJson(splitChange))
+        webServer.route(method: .post, path: "/testImpressions/bulk") { request in
+            self.impHit.append(try! TestUtils.impressionsFromHit(request: request))
+            return MockedResponse(code: 200, data: nil)
+        }
         webServer.route(method: .post, path: "/events/bulk") { request in
             let index = self.getAndUpdateReqIndex()
             if index < self.trExp.count {
@@ -53,10 +62,6 @@ class SplitIntegrationTests: XCTestCase {
     }
     
     func testControlTreatment() throws {
-        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
-        let dataFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
-        let matchingKey = "CUSTOMER_ID"
-        let trafficType = "account"
         var impressions = [String:Impression]()
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
@@ -143,6 +148,53 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertNotNil(event99)
         XCTAssertNil(event100)
         XCTAssertEqual(3, impressions.count)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client?.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+        factory = nil
+    }
+
+    func testImpressionsCount() throws {
+
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 999999
+        splitConfig.segmentsRefreshRate = 999999
+        splitConfig.impressionRefreshRate = 2
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.trafficType = trafficType
+        splitConfig.eventsPerPush = 999999
+        splitConfig.eventsQueueSize = 999999
+        splitConfig.eventsPushRate = 999999
+        splitConfig.targetSdkEndPoint = serverUrl
+        splitConfig.targetEventsEndPoint = serverUrl
+
+        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let builder = DefaultSplitFactoryBuilder()
+        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+
+        let client = factory?.client
+
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+
+        client?.on(event: SplitEvent.sdkReady) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        wait(for: [sdkReadyExpectation], timeout: 40)
+
+        for _ in 0..<2 {
+            _ = client?.getTreatment("FACUNDO_TEST")
+            _ = client?.getTreatmentWithConfig("Welcome_Page_UI")
+            _ = client?.getTreatments(splits: ["testing222", "NO_EXISTING_FEATURE1", "NO_EXISTING_FEATURE2"], attributes: nil)
+            sleep(2)
+        }
+
+        sleep(8)
+        let impCount = impHit.reduce(0, {  $0 + $1.count })
+        XCTAssertEqual(6, impCount)
 
         let semaphore = DispatchSemaphore(value: 0)
         client?.destroy(completion: {
