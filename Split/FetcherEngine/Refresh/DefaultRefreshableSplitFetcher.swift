@@ -104,7 +104,7 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
                 if changeNumber != -1 {
                     let timestamp = strongSelf.splitCache.getTimestamp()
                     let elapsedTime = Int(Date().timeIntervalSince1970) - timestamp
-                    if elapsedTime > strongSelf.cacheExpiration {
+                    if timestamp > 0 && elapsedTime > strongSelf.cacheExpiration {
                         changeNumber = -1
                         strongSelf.splitCache.clear()
                     }
