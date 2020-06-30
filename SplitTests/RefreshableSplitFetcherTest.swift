@@ -78,6 +78,24 @@ class RefreshableSplitFetcherTest: XCTestCase {
         XCTAssertEqual(splitCache.getChangeNumber(), -1)
     }
 
+    func testNoExpirationValueAvailableCache() {
+        let expiration: Int = 60 * 60 * 24 * 5 // Five days
+        let fetcher = DefaultRefreshableSplitFetcher(splitChangeFetcher: splitChangeFetcher,
+                splitCache: splitCache,
+                interval: 1,
+                cacheExpiration: expiration,
+                dispatchGroup: nil,
+                eventsManager: SplitEventsManagerStub())
+        let expectation = XCTestExpectation(description: "Clear")
+        splitChangeFetcher.fetchExpectation = expectation
+        splitCache.timestamp = 0 // No value
+        fetcher.start()
+
+        wait(for: [expectation], timeout: 40)
+        XCTAssertEqual(splitCache.clearCallCount, 0)
+        XCTAssertEqual(splitCache.getChangeNumber(), 1000)
+    }
+
     private func generateSplits() -> [Split] {
         var splits = [Split]()
         for i in 1..<10 {
