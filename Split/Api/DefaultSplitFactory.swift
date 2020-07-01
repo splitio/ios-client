@@ -56,7 +56,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let refreshableSplitFetcher = DefaultRefreshableSplitFetcher(
             splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: config.featuresRefreshRate,
-            eventsManager: eventsManager)
+            cacheExpiration: config.cacheExpirationInSeconds, eventsManager: eventsManager)
 
         let mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache)
         let refreshableMySegmentsFetcher = DefaultRefreshableMySegmentsFetcher(
