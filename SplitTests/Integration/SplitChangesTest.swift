@@ -64,7 +64,7 @@ class SplitChangesTest: XCTestCase {
         }
 
         webServer.route(method: .post, path: "/testImpressions/bulk") { request in
-            self.impHit = try? self.impressionsFromHit(request: request)
+            self.impHit = try? TestUtils.impressionsFromHit(request: request)
             self.impExp.fulfill()
             return MockedResponse(code: 200, data: nil)
         }
@@ -188,14 +188,6 @@ class SplitChangesTest: XCTestCase {
 
     private func impressionsHits() -> [ClientRequest] {
         return webServer.receivedRequests.filter { $0.path == "/testImpressions/bulk"}
-    }
-
-    private func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
-        return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
-    }
-
-    private func impressionsFromHit(request: ClientRequest) throws -> [ImpressionsTest] {
-        return try buildImpressionsFromJson(content: request.data!)
     }
 
     private func getAndIncrement() -> Int {
