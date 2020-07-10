@@ -25,7 +25,7 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
     var incomingDataHandler: IncomingDataHandler?
     var closeHandler: CloseHandler?
 
-    init(session: HttpSessionWrapper, url: URL, parameters: HttpParameters?, headers: HttpHeaders?) throws {
+    init(session: HttpSession, url: URL, parameters: HttpParameters?, headers: HttpHeaders?) throws {
         try super.init(session: session, url: url, method: .get, parameters: parameters, headers: headers)
     }
 

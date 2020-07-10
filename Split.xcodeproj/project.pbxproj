@@ -120,7 +120,6 @@
 		3B6DEF7120EA6AE50067435E /* DefaultSplitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEE020EA6AE30067435E /* DefaultSplitManager.swift */; };
 		3B6DEF7220EA6AE50067435E /* RestClientConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEE420EA6AE30067435E /* RestClientConfiguration.swift */; };
 		3B6DEF7320EA6AE50067435E /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEE620EA6AE30067435E /* Json.swift */; };
-		3B6DEF7820EA6AE50067435E /* ErrorCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEED20EA6AE30067435E /* ErrorCode.swift */; };
 		3B6DEF7A20EA6AE50067435E /* HttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEF120EA6AE30067435E /* HttpRequest.swift */; };
 		3B6DEF7B20EA6AE50067435E /* HttpDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEF220EA6AE30067435E /* HttpDataResponse.swift */; };
 		3B6DEF7C20EA6AE50067435E /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEF320EA6AE30067435E /* HttpClient.swift */; };
@@ -458,7 +457,6 @@
 		3B6DEEE020EA6AE30067435E /* DefaultSplitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultSplitManager.swift; sourceTree = "<group>"; };
 		3B6DEEE420EA6AE30067435E /* RestClientConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClientConfiguration.swift; sourceTree = "<group>"; };
 		3B6DEEE620EA6AE30067435E /* Json.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Json.swift; sourceTree = "<group>"; };
-		3B6DEEED20EA6AE30067435E /* ErrorCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorCode.swift; sourceTree = "<group>"; };
 		3B6DEEF120EA6AE30067435E /* HttpRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequest.swift; sourceTree = "<group>"; };
 		3B6DEEF220EA6AE30067435E /* HttpDataResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpDataResponse.swift; sourceTree = "<group>"; };
 		3B6DEEF320EA6AE30067435E /* HttpClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
@@ -1029,7 +1027,6 @@
 		3B6DEEEC20EA6AE30067435E /* Errors */ = {
 			isa = PBXGroup;
 			children = (
-				3B6DEEED20EA6AE30067435E /* ErrorCode.swift */,
 			);
 			path = Errors;
 			sourceTree = "<group>";
@@ -1707,7 +1704,6 @@
 				3B6DEF1A20EA6AE50067435E /* EventDTO.swift in Sources */,
 				3B6DEF0E20EA6AE50067435E /* MySegmentsCache.swift in Sources */,
 				3B6DEF1620EA6AE50067435E /* DefaultRefreshableMySegmentsFetcher.swift in Sources */,
-				3B6DEF7820EA6AE50067435E /* ErrorCode.swift in Sources */,
 				5932260524A516FA00496D8B /* HttpTask.swift in Sources */,
 				59D84BD622158A24003DA248 /* LocalhostSplitFactory.swift in Sources */,
 				3B6DEF4C20EA6AE50067435E /* SplitBase.swift in Sources */,

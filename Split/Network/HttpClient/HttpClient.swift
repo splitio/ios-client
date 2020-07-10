@@ -96,11 +96,11 @@ class DefaultHttpClient {
 
     private var urlSession: URLSession
 
-    private var httpSession: HttpSessionWrapper
+    private var httpSession: HttpSession
     private var requestManager: HttpRequestManager
 
     init(configuration: HttpSessionConfig = HttpSessionConfig.default,
-         session: HttpSessionWrapper? = nil,
+         session: HttpSession? = nil,
          requestManager: HttpRequestManager? = nil) {
 
         let urlSessionConfig = URLSessionConfiguration.default
@@ -119,7 +119,7 @@ class DefaultHttpClient {
             self.httpSession = httpSession
         } else {
             let delegate = self.requestManager as? URLSessionDelegate
-            self.httpSession = DefaultHttpSessionWrapper(urlSession: URLSession(
+            self.httpSession = DefaultHttpSession(urlSession: URLSession(
                     configuration: urlSessionConfig, delegate: delegate, delegateQueue: nil))
         }
 

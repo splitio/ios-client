@@ -13,13 +13,6 @@ class Endpoint {
     private (set) var url: URL
     private (set) var method: HttpMethod
     private (set) var headers = [String: String]()
-    private (set) var errorSanitizer: (JSON, Int) -> HttpResult<JSON> = { json, statusCode in
-        guard statusCode >= 200 && statusCode <= 203 else {
-            let error = NSError(domain: InfoUtils.bundleNameKey(), code: ErrorCode.Undefined, userInfo: nil)
-            return .failure(error)
-        }
-        return .success(json)
-    }
 
     private init(baseUrl: URL, path: String?) {
         if let path = path {

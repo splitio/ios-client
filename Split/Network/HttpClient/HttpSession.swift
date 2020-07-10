@@ -12,13 +12,12 @@ import Foundation
 /// Split http classes into the test harness
 /// It will be renamed to HttpSession after all apple URL classes are wrapped
 /// and added to test harness
-// TODO: Rename HttpSessionWrapper class
-protocol HttpSessionWrapper {
+protocol HttpSession {
     func startTask(with request: HttpRequest) -> HttpTask?
     func finalize()
 }
 
-class DefaultHttpSessionWrapper: HttpSessionWrapper {
+class DefaultHttpSession: HttpSession {
 
     var urlSession: URLSession
 
