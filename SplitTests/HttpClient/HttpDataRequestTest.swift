@@ -120,7 +120,7 @@ class HttpDataRequestTest: XCTestCase {
             responseIsSuccess = true
         }, errorHandler: { error in
             errorHasOcurred = true
-            theError = error as? HttpError
+            theError = error as HttpError
             onCloseExpectation.fulfill()
         })
 

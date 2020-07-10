@@ -27,11 +27,6 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
 
     init(session: HttpSessionWrapper, url: URL, parameters: HttpParameters?, headers: HttpHeaders?) throws {
         try super.init(session: session, url: url, method: .get, parameters: parameters, headers: headers)
-
-        self.url = url
-        if let headers = headers {
-            self.headers = headers
-        }
     }
 
     override func notifyIncomingData(_ data: Data) {
