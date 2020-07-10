@@ -35,7 +35,7 @@ class BaseHttpRequest: HttpRequest {
     private (set) var method: HttpMethod
     private (set) var parameters: HttpParameters?
     private (set) var headers: HttpHeaders
-    private (set) var session: HttpSessionWrapper
+    private (set) var session: HttpSession
     private (set) var task: HttpTask?
     private (set) var error: Error?
     var requestCompletionHandler: RequestCompletionHandler?
@@ -46,7 +46,7 @@ class BaseHttpRequest: HttpRequest {
         return task?.identifier ?? -1
     }
 
-    init(session: HttpSessionWrapper, url: URL, method: HttpMethod,
+    init(session: HttpSession, url: URL, method: HttpMethod,
          parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
 
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)

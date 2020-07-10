@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class HttpSessionMock: HttpSessionWrapper {
+class HttpSessionMock: HttpSession {
 
     func finalize() {
     }
