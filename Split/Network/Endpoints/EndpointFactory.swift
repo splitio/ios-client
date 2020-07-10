@@ -10,7 +10,7 @@ import Foundation
 
 class EndpointFactory {
     private static let kAuthorizationHeader = "authorization"
-    private static let kSplitVersionHeader = "splitsdkversion"
+    private static let kSplitVersionHeader = "SplitSdkVersion"
     private static let kContentTypeHeader = "content-type"
     private static let kAuthorizationBearer = "Bearer"
     private static let kContentTypeJson = "application/json"
