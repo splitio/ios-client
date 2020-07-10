@@ -101,7 +101,7 @@ class SplitIntegrationTests: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
         
-        wait(for: [sdkReadyExpectation], timeout: 40)
+        wait(for: [sdkReadyExpectation], timeout: 20)
         
         let t1 = client?.getTreatment("FACUNDO_TEST")
         let t2 = client?.getTreatment("NO_EXISTING_FEATURE")
@@ -159,6 +159,8 @@ class SplitIntegrationTests: XCTestCase {
 
     func testImpressionsCount() throws {
 
+        let endpoints = ServiceEndpoints.builder().set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 999999
         splitConfig.segmentsRefreshRate = 999999
@@ -168,8 +170,10 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.eventsPerPush = 999999
         splitConfig.eventsQueueSize = 999999
         splitConfig.eventsPushRate = 999999
-        splitConfig.targetSdkEndPoint = serverUrl
-        splitConfig.targetEventsEndPoint = serverUrl
+        splitConfig.serviceEndpoints = endpoints
+
+//        splitConfig.targetSdkEndPoint = serverUrl
+//        splitConfig.targetEventsEndPoint = serverUrl
 
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()

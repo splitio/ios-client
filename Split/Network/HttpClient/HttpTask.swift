@@ -12,6 +12,7 @@ import Foundation
 /// It is intended to wrap URLSessionTask to allow testing easly
 protocol HttpTask {
     var identifier: Int { get }
+    func cancel()
 }
 
 class HttpDataTask: HttpTask {
@@ -20,10 +21,14 @@ class HttpDataTask: HttpTask {
         return urlSessionTask.taskIdentifier
     }
 
-    private (set) var urlSessionTask: URLSessionTask
+    private let urlSessionTask: URLSessionTask
 
-    init(urlSessionTask: URLSessionTask) {
-        self.urlSessionTask = urlSessionTask
+    init(sessionTask: URLSessionTask) {
+        self.urlSessionTask = sessionTask
+    }
+
+    func cancel() {
+        urlSessionTask.cancel()
     }
 
 }

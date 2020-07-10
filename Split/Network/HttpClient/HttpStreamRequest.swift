@@ -8,21 +8,18 @@
 
 import Foundation
 
-protocol HttpStreamRequest {
+protocol HttpStreamRequest: HttpRequest {
     typealias ResponseHandler = (HttpResponse) -> Void
     typealias IncomingDataHandler = (Data) -> Void
     typealias CloseHandler = () -> Void
 
-    func notify(response: HttpResponse)
-    func notifyClose()
-    func notifyIncomingData(_ data: Data)
     func getResponse(responseHandler: @escaping ResponseHandler,
                      incomingDataHandler: @escaping IncomingDataHandler,
                      closeHandler: @escaping CloseHandler) -> Self
 }
 
 // MARK: HttpStreamRequest
-class DefaultHttpStreamRequest: BaseHttpRequestWrapper, HttpStreamRequest {
+class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
 
     var responseHandler: ResponseHandler?
     var incomingDataHandler: IncomingDataHandler?
@@ -37,7 +34,7 @@ class DefaultHttpStreamRequest: BaseHttpRequestWrapper, HttpStreamRequest {
         }
     }
 
-    func notifyIncomingData(_ data: Data) {
+    override func notifyIncomingData(_ data: Data) {
         if let incomingDataHandler = self.incomingDataHandler {
             incomingDataHandler(data)
         }
@@ -66,14 +63,16 @@ class DefaultHttpStreamRequest: BaseHttpRequestWrapper, HttpStreamRequest {
             closeHandler: closeHandler)
     }
 
-    func notify(response: HttpResponse) {
-        if let responseHandler = self.responseHandler {
-            responseHandler(response)
+    override func setResponse(code: Int) {
+        if let responseHandler  = self.responseHandler {
+            responseHandler(HttpResponse(code: code))
         }
     }
 
-    func notifyClose() {
-        if let closeHandler = self.closeHandler {
+    override func complete(error: HttpError?) {
+        if let error = error, let errorHandler = self.requestErrorHandler {
+            errorHandler(error)
+        } else if let closeHandler = self.closeHandler {
             closeHandler()
         }
     }

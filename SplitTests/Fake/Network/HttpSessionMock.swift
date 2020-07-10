@@ -10,8 +10,12 @@ import Foundation
 @testable import Split
 
 class HttpSessionMock: HttpSessionWrapper {
+
+    func finalize() {
+    }
+
     private (set) var dataTaskCallCount: Int = 0
-    func startDataTask(with request: HttpRequestWrapper) -> HttpTask {
+    func startTask(with request: HttpRequest) -> HttpTask? {
         dataTaskCallCount+=1
         return HttpTaskMock(identifier: 100)
     }
