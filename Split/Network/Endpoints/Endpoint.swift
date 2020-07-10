@@ -34,7 +34,7 @@ class Endpoint {
         return Builder(baseUrl: baseUrl, path: path)
     }
 
-struct Builder {
+    struct Builder {
         private var endpoint: Endpoint
 
         init(baseUrl: URL, path: String?) {
