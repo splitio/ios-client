@@ -7,39 +7,41 @@
 
 import Foundation
 
-// TODO: Rename all wrapper classes once all URLSession component wrapped
-// MARK: HttpDataRequestWrapper
-/// This class' name is temporal
-/// It will be renamen when all clases using this
-/// and added  to test harness
-protocol HttpRequestWrapper {
-
+protocol HttpRequest {
     typealias RequestCompletionHandler = (HttpResponse) -> Void
+    typealias RequestErrorHandler = (HttpError) -> Void
+
     var identifier: Int { get }
     var url: URL { get set }
     var method: HttpMethod { get set }
     var parameters: HttpParameters? { get set }
     var headers: HttpHeaders { get set }
-    var response: HttpResponse? { get }
+    var body: Data? { get }
+    var responseCode: Int { get }
 
     func send()
-    func complete(response: HttpResponse)
+    func setResponse(code: Int)
+    func notifyIncomingData(_ data: Data)
+    func complete(error: HttpError?)
+
 }
 
 // MARK: BaseHttpRequestWrapper
 /// This classes will be renamed too
-class BaseHttpRequestWrapper: HttpRequestWrapper {
+class BaseHttpRequest: HttpRequest {
 
+    var body: Data?
+    private (set) var responseCode: Int = 1
     var url: URL
     var method: HttpMethod
     var parameters: HttpParameters?
     var headers: HttpHeaders
     var session: HttpSessionWrapper
     var task: HttpTask?
-    var response: HttpResponse?
     var error: Error?
     var retryTimes: Int = 0
     var requestCompletionHandler: RequestCompletionHandler?
+    var requestErrorHandler: RequestErrorHandler?
     var urlRequest: URLRequest?
 
     var identifier: Int {
@@ -47,11 +49,11 @@ class BaseHttpRequestWrapper: HttpRequestWrapper {
     }
 
     init(session: HttpSessionWrapper, url: URL, method: HttpMethod,
-         parameters: HttpParameters? = nil, headers: HttpHeaders?) throws {
+         parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
 
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
         if let parameters = parameters {
-            components?.queryItems = parameters.map { key, value in URLQueryItem(name: key, value: value as? String)}
+            components?.queryItems = parameters.map { key, value in URLQueryItem(name: key, value: "\(value)")}
         }
         guard let finalUrl = components?.url else {
             throw HttpError.couldNotCreateRequest(message: "Invalid URL")
@@ -63,6 +65,7 @@ class BaseHttpRequestWrapper: HttpRequestWrapper {
         self.parameters = parameters
         self.method = method
         self.headers = headers ?? HttpHeaders()
+        self.body = body
 
         urlRequest = URLRequest(url: finalUrl)
         urlRequest?.httpMethod = method.rawValue
@@ -74,93 +77,18 @@ class BaseHttpRequestWrapper: HttpRequestWrapper {
     }
 
     func send() {
-        task = session.startDataTask(with: self)
+        task = session.startTask(with: self)
     }
 
-    func complete(response: HttpResponse) {
-        if let completionHandler = requestCompletionHandler {
-            completionHandler(response)
-        }
-    }
-}
-
-protocol HttpRequest {
-
-    typealias RequestCompletionHandler = () -> Void
-    var identifier: Int { get }
-    var url: URL { get set }
-    var method: HttpMethod { get set }
-    var parameters: HttpParameters? { get set }
-    var headers: HttpHeaders { get set }
-    var response: HTTPURLResponse? { get }
-    var retryTimes: Int { get set }
-
-    func setResponse(_ response: HTTPURLResponse)
-    func send()
-    func retry()
-    func complete(withError error: Error?)
-}
-
-class BaseHttpRequest: HttpRequest {
-    var url: URL
-    var method: HttpMethod
-    var parameters: HttpParameters?
-    var headers: HttpHeaders
-    var session: HttpSession
-    var task: URLSessionTask?
-    var request: URLRequest?
-    var response: HTTPURLResponse?
-    var error: Error?
-    var retryTimes: Int = 0
-    var requestCompletionHandler: RequestCompletionHandler?
-
-    var identifier: Int {
-        return task?.taskIdentifier ?? -1
+    func setResponse(code: Int) {
+        responseCode = code
     }
 
-    init(session: HttpSession, url: URL, method: HttpMethod,
-         parameters: HttpParameters? = nil, headers: HttpHeaders?) throws {
-
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        if let parameters = parameters {
-            components?.queryItems = parameters.map { key, value in URLQueryItem(name: key, value: value as? String)}
-        }
-        guard let finalUrl = components?.url else {
-            throw HttpError.couldNotCreateRequest(message: "Invalid URL")
-        }
-
-        // TODO checks this values
-        self.url = finalUrl
-        self.session = session
-        self.parameters = parameters
-        self.method = method
-        self.headers = headers ?? HttpHeaders()
-
-        var request = URLRequest(url: finalUrl)
-        request.httpMethod = method.rawValue
-        if let headers = headers {
-            for (key, value) in headers {
-                request.setValue(value, forHTTPHeaderField: key)
-            }
-        }
+    func complete(error: HttpError?) {
+        fatalError()
     }
 
-    func send() {
-        assertionFailure("Method not implemented")
-    }
-
-    func retry() {
-        assertionFailure("Method not implemented")
-    }
-
-    func setResponse(_ response: HTTPURLResponse) {
-        self.response = response
-    }
-
-    func complete(withError error: Error?) {
-        self.error = error
-        if let completionHandler = requestCompletionHandler {
-            completionHandler()
-        }
+    func notifyIncomingData(_ data: Data) {
+        fatalError()
     }
 }

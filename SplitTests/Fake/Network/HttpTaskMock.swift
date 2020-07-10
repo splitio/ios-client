@@ -16,4 +16,7 @@ class HttpTaskMock: HttpTask {
         self.identifier = identifier
     }
 
+    func cancel() {
+    }
+
 }

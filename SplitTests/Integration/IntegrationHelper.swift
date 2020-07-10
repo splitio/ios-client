@@ -39,6 +39,25 @@ class IntegrationHelper {
         return "{\"splits\":[], \"since\": 9567456937865, \"till\": 9567456937869 }"
     }
 
+    static func emptySplitChanges(since: Int, till: Int) -> String {
+        return "{\"splits\":[], \"since\": \(since), \"till\": \(till) }"
+    }
+
+    static func dummyImpressions() -> String {
+        return """
+        [{\"testName\": \"test1\", \"keyImpressions\":[
+        {
+        \"feature\": \"test1\",
+        \"keyName\": \"thekey\",
+        \"treatment\": \"on\",
+        \"timestamp\": 111,
+        \"changeNumber\": 999,
+        \"label\": \"default rule\"
+        }
+        ]}]
+        """
+    }
+
     static func buildImpressionKey(impression: Impression) -> String {
         return buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
     }

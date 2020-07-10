@@ -66,11 +66,11 @@ class HttpStreamRequestTest: XCTestCase {
         })
 
         httpRequest.send()
-        httpRequest.notify(response: HttpResponse(code: 200))
+        httpRequest.setResponse(code: 200)
+        httpRequest.complete(error: nil)
         for i in 0..<5 {
             httpRequest.notifyIncomingData(Data("a\(i)".utf8))
         }
-        httpRequest.notifyClose()
 
         wait(for: [onCloseExpectation], timeout: 5)
 
@@ -100,7 +100,8 @@ class HttpStreamRequestTest: XCTestCase {
         })
 
         httpRequest.send()
-        httpRequest.notify(response: HttpResponse(code: 400))
+        httpRequest.setResponse(code: 400)
+        httpRequest.complete(error: nil)
 
         wait(for: [onResponseExpectation], timeout: 5)
 

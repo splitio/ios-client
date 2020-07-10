@@ -32,12 +32,12 @@ class DefaultRestClient {
                     completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
 
         do {
-        _ = try httpClient.sendRequest(
+        _ = try httpClient.sendRequestWrapper(
                         endpoint: endpoint,
                         parameters: parameters,
                         headers: nil,
                         body: body)
-                .getResponse(errorSanitizer: endpoint.errorSanitizer) { response in
+            .getResponse(completionHandler: { response in
             switch response.result {
             case .success(let json):
                 if json.isNull() {
@@ -51,10 +51,12 @@ class DefaultRestClient {
                 } catch {
                     completion(DataResult { throw error })
                 }
-            case .failure(let error):
-                completion(DataResult { throw error })
+            case .failure:
+                completion(DataResult { throw HttpError.unknown(message: "unknown") })
             }
-        }
+            }, errorHandler: {error in
+                completion(DataResult { throw error })
+            })
         } catch HttpError.couldNotCreateRequest(let message) {
             Logger.e("An error has ocurred while sending request: \(message)" )
         } catch {

@@ -18,17 +18,17 @@ class HttpDataRequestTest: XCTestCase {
     }
 
     func testRequestCreation() throws {
-
+        // Testing parameter setup on request creation
         let parameters: HttpParameters = ["p1": "v1", "p2": 2]
         let headers: HttpHeaders = ["h1": "v1", "h2": "v2"]
         let httpRequest = try DefaultHttpDataRequestWrapper(session: httpSession, url: url, method: .get, parameters: parameters, headers: headers)
 
-        XCTAssertEqual(url, httpRequest.url)
         XCTAssertEqual("v1", httpRequest.parameters!["p1"] as! String)
         XCTAssertEqual(2, httpRequest.parameters!["p2"] as! Int)
         XCTAssertEqual("v1", httpRequest.headers["h1"])
         XCTAssertEqual("v2", httpRequest.headers["h2"])
         XCTAssertEqual(headers, httpRequest.headers)
+        XCTAssertTrue("http://split.com?p2=2&p1=v1" == httpRequest.url.absoluteString || "http://split.com?p1=v1&p2=2" == httpRequest.url.absoluteString)
     }
 
     func testRequestEnquedOnSend() throws {
@@ -38,65 +38,101 @@ class HttpDataRequestTest: XCTestCase {
 
         httpRequest.send()
 
-       XCTAssertEqual(1, httpSession.dataTaskCallCount)
+        XCTAssertEqual(1, httpSession.dataTaskCallCount)
 
     }
 
     func testOnResponseCompletedOk() throws {
-        // On response completed request should fire responseHandler closure
-        // and incomingDataHandler when new data arrives
-        // so, we test that closures are called on that scenario
-
+        // On response completed request should fire completion handler
+        // so, we test that closure are called on that scenario having
+        // the corresponding received data
         var responseIsSuccess = false
-        var receivedData = ""
-        var closedOk = false
-        let onCloseExpectation = XCTestExpectation(description: "close request")
+        let textData = "{\"splits\":[], \"since\":1, \"till\":2}"
+        var receivedData: SplitChange? = nil
+        let onCloseExpectation = XCTestExpectation(description: "complete request")
         let httpRequest = try DefaultHttpDataRequestWrapper(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
 
-        _ = httpRequest.getResponse(responseHandler: { response in
-            responseIsSuccess = response.isSuccess
+        _ = httpRequest.getResponse(completionHandler: { response in
+            responseIsSuccess = response.result.isSuccess
+            do {
+                receivedData = try response.result.value?.decode(SplitChange.self)
+            } catch {
+                print(error)
+            }
             onCloseExpectation.fulfill()
 
+        }, errorHandler: { error in
         })
 
         httpRequest.send()
-        httpRequest.notifyClose()
+
+        httpRequest.notifyIncomingData(Data(textData.utf8))
+        httpRequest.setResponse(code: 200)
+        httpRequest.complete(error: nil)
 
         wait(for: [onCloseExpectation], timeout: 5)
 
         XCTAssertTrue(responseIsSuccess)
-        XCTAssertEqual("a0a1a2a3a4", receivedData)
-        XCTAssertTrue(closedOk)
+        XCTAssertEqual(0, receivedData?.splits?.count)
+        XCTAssertEqual(1, receivedData?.since)
+        XCTAssertEqual(2, receivedData?.till)
     }
 
-//    func testErrorResponse() throws {
-//        // On error request should fire only responseHandler closure
-//        // and onDataReceived when new data arrives
-//        // so, we test that closures are called on that scenario
-//
-//        var responseIsSuccess = true
-//        var receivedData = ""
-//        let onResponseExpectation = XCTestExpectation(description: "close request")
-//        let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, headers: nil, parameters: nil)
-//
-//        _ = httpRequest.getResponse(responseHandler: { response in
-//            responseIsSuccess = response.isSuccess
-//            onResponseExpectation.fulfill()
-//
-//        }, incomingDataHandler: { data in
-//            receivedData.append(data.stringRepresentation)
-//
-//        }, closeHandler: {
-//        })
-//
-//        httpRequest.send()
-//        httpRequest.notify(response: HttpResponse(code: 400))
-//
-//        wait(for: [onResponseExpectation], timeout: 5)
-//
-//        XCTAssertFalse(responseIsSuccess)
-//        XCTAssertEqual("", receivedData)
-//    }
+    func testOnResponseCompletedError() throws {
+        // On response completed request should fire completion handler
+        // we test that closure called on that scenario
+        // simulating a failed response
+
+        var responseIsSuccess = true
+        var receivedData: Json? = nil
+        let onCloseExpectation = XCTestExpectation(description: "complete request")
+        let httpRequest = try DefaultHttpDataRequestWrapper(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
+
+        _ = httpRequest.getResponse(completionHandler: { response in
+            responseIsSuccess = response.result.isSuccess
+            receivedData = response.result.value
+            onCloseExpectation.fulfill()
+        }, errorHandler: { error in
+        })
+
+        httpRequest.send()
+
+        httpRequest.setResponse(code: 500)
+        httpRequest.complete(error: nil)
+
+        wait(for: [onCloseExpectation], timeout: 5)
+
+        XCTAssertFalse(responseIsSuccess)
+        XCTAssertNil(receivedData)
+    }
+
+    func testError() throws {
+        // On error while running request should fire
+        // error handler closure.
+
+        var responseIsSuccess = false
+        var errorHasOcurred = false
+        var theError: HttpError?
+        let onCloseExpectation = XCTestExpectation(description: "complete request")
+        let httpRequest = try DefaultHttpDataRequestWrapper(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
+
+        _ = httpRequest.getResponse(completionHandler: { response in
+            responseIsSuccess = true
+        }, errorHandler: { error in
+            errorHasOcurred = true
+            theError = error as? HttpError
+            onCloseExpectation.fulfill()
+        })
+
+        httpRequest.send()
+        httpRequest.complete(error: HttpError.couldNotCreateRequest(message: "Req error"))
+
+        wait(for: [onCloseExpectation], timeout: 5)
+
+        XCTAssertFalse(responseIsSuccess)
+        XCTAssertTrue(errorHasOcurred)
+        XCTAssertEqual("Req error", theError?.message)
+    }
 
     override func tearDown() {
     }
