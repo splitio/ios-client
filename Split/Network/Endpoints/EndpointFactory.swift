@@ -76,7 +76,7 @@ class EndpointFactory {
 
         sseAuthenticationEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.authServiceEndpoint)
-                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+                .set(method: .get).add(headers: commondHeaders).add(headers: typeHeader).build()
 
         streamingEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.streamingServiceEndpoint)
