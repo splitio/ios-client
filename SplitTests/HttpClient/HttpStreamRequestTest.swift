@@ -24,7 +24,6 @@ class HttpStreamRequestTest: XCTestCase {
         let headers: HttpHeaders = ["h1": "v1", "h2": "v2"]
         let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, parameters: parameters, headers: headers)
 
-        XCTAssertEqual(url, httpRequest.url)
         XCTAssertEqual("v1", httpRequest.parameters!["p1"] as! String)
         XCTAssertEqual(2, httpRequest.parameters!["p2"] as! Int)
         XCTAssertEqual("v1", httpRequest.headers["h1"])
