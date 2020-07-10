@@ -21,8 +21,6 @@ extension HttpError {
             return message
         case .unknown(let message):
             return message
-        default:
-            return "An unknown error has occurred"
         }
     }
 }

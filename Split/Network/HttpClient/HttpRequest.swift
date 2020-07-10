@@ -12,10 +12,10 @@ protocol HttpRequest {
     typealias RequestErrorHandler = (HttpError) -> Void
 
     var identifier: Int { get }
-    var url: URL { get set }
-    var method: HttpMethod { get set }
-    var parameters: HttpParameters? { get set }
-    var headers: HttpHeaders { get set }
+    var url: URL { get }
+    var method: HttpMethod { get }
+    var parameters: HttpParameters? { get }
+    var headers: HttpHeaders { get }
     var body: Data? { get }
     var responseCode: Int { get }
 
@@ -26,23 +26,21 @@ protocol HttpRequest {
 
 }
 
-// MARK: BaseHttpRequestWrapper
-/// This classes will be renamed too
+// MARK: BaseHttpRequest
 class BaseHttpRequest: HttpRequest {
 
-    var body: Data?
     private (set) var responseCode: Int = 1
-    var url: URL
-    var method: HttpMethod
-    var parameters: HttpParameters?
-    var headers: HttpHeaders
-    var session: HttpSessionWrapper
-    var task: HttpTask?
-    var error: Error?
-    var retryTimes: Int = 0
+    private (set) var url: URL
+    private (set) var body: Data?
+    private (set) var method: HttpMethod
+    private (set) var parameters: HttpParameters?
+    private (set) var headers: HttpHeaders
+    private (set) var session: HttpSessionWrapper
+    private (set) var task: HttpTask?
+    private (set) var error: Error?
     var requestCompletionHandler: RequestCompletionHandler?
     var requestErrorHandler: RequestErrorHandler?
-    var urlRequest: URLRequest?
+    private (set) var urlRequest: URLRequest?
 
     var identifier: Int {
         return task?.identifier ?? -1
@@ -59,7 +57,6 @@ class BaseHttpRequest: HttpRequest {
             throw HttpError.couldNotCreateRequest(message: "Invalid URL")
         }
 
-        // TODO checks this values
         self.url = finalUrl
         self.session = session
         self.parameters = parameters
