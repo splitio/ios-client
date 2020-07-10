@@ -7,6 +7,8 @@
 //
 
 import Foundation
+
+// MARK: HttpStreamRequest
 protocol HttpStreamRequest {
     var data: Data? { get }
     func appendData(_ newData: Data)
@@ -14,7 +16,7 @@ protocol HttpStreamRequest {
                      completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self
 }
 
-// MARK: HttpStreamRequest
+// MARK: DefaultHttpStreamRequest
 class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
 
     var data: Data?
