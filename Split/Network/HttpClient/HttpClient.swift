@@ -75,7 +75,7 @@ class HttpSessionConfig {
 protocol HttpClient {
 
     func sendRequestWrapper(endpoint: Endpoint, parameters: [String: Any]?,
-                            headers: [String: String]?, body: Data?) throws -> HttpDataRequestWrapper
+                            headers: [String: String]?, body: Data?) throws -> HttpDataRequest
 
     func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?,
                            headers: [String: String]?) throws -> HttpStreamRequest
@@ -83,7 +83,7 @@ protocol HttpClient {
 
 extension HttpClient {
     func sendRequestWrapper(endpoint: Endpoint, parameters: [String: Any]? = nil,
-                            headers: [String: String]? = nil) throws -> HttpDataRequestWrapper {
+                            headers: [String: String]? = nil) throws -> HttpDataRequest {
         return try sendRequestWrapper(endpoint: endpoint, parameters: parameters, headers: headers, body: nil)
     }
 }
@@ -137,7 +137,7 @@ class DefaultHttpClient {
 extension DefaultHttpClient {
 
     private func createRequest(_ url: URL, method: HttpMethod = .get, parameters: HttpParameters? = nil,
-                               headers: HttpHeaders? = nil, body: Data? = nil) throws -> HttpDataRequestWrapper {
+                               headers: HttpHeaders? = nil, body: Data? = nil) throws -> HttpDataRequest {
         let request = try DefaultHttpDataRequestWrapper(session: httpSession, url: url, method: method,
                                                         parameters: parameters, headers: headers, body: body)
         return request
@@ -156,7 +156,7 @@ extension DefaultHttpClient {
 extension DefaultHttpClient: HttpClient {
 
     func sendRequestWrapper(endpoint: Endpoint, parameters: [String: Any]?, headers: [String: String]?,
-                            body: Data?) throws -> HttpDataRequestWrapper {
+                            body: Data?) throws -> HttpDataRequest {
         var httpHeaders = endpoint.headers
         if let headers = headers {
             httpHeaders += headers
