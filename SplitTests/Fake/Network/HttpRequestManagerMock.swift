@@ -30,7 +30,7 @@ class HttpRequestManagerMock: HttpRequestManager {
     func append(data: Data, to taskIdentifier: Int) {
         appendDataCallCount+=1
 
-        if let r = request as? HttpDataRequestWrapper {
+        if let r = request as? HttpDataRequest {
             r.notifyIncomingData(data)
         } else if let r = request as? HttpStreamRequest {
             r.notifyIncomingData(data)

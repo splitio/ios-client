@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol HttpDataRequestWrapper: HttpRequest {
+protocol HttpDataRequest: HttpRequest {
     var data: Data? { get }
     func notifyIncomingData(_ data: Data)
     func getResponse(completionHandler: @escaping RequestCompletionHandler,
@@ -16,7 +16,7 @@ protocol HttpDataRequestWrapper: HttpRequest {
 }
 
 // MARK: HttpDataRequest
-class DefaultHttpDataRequestWrapper: BaseHttpRequest, HttpDataRequestWrapper {
+class DefaultHttpDataRequestWrapper: BaseHttpRequest, HttpDataRequest {
 
     private (set) var data: Data?
 

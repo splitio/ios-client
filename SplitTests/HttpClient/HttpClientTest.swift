@@ -95,7 +95,7 @@ class HttpClientTest: XCTestCase {
         requestManager.complete(taskIdentifier: 1, error: nil)
         wait(for: [expectation], timeout: 10)
 
-        let impSent = try Json((requestManager.request as? HttpDataRequestWrapper)?.body).decode([ImpressionsTest].self)
+        let impSent = try Json((requestManager.request as? HttpDataRequest)?.body).decode([ImpressionsTest].self)
 
         XCTAssertTrue(isSuccess)
         XCTAssertEqual(1, httpSession.dataTaskCallCount)
