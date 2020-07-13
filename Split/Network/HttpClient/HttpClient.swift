@@ -74,9 +74,9 @@ class HttpSessionConfig {
 
 protocol HttpClient {
 
-    func sendRequestWrapper(endpoint: Endpoint, parameters: [String: Any]?,
-                            headers: [String: String]?, body: Data?) throws -> HttpDataRequest
-
+    func sendRequest(endpoint: Endpoint, parameters: [String: Any]?,
+                     headers: [String: String]?, body: Data?) throws -> HttpDataRequest
+    
     func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?,
                            headers: [String: String]?) throws -> HttpStreamRequest
 }
@@ -84,7 +84,7 @@ protocol HttpClient {
 extension HttpClient {
     func sendRequestWrapper(endpoint: Endpoint, parameters: [String: Any]? = nil,
                             headers: [String: String]? = nil) throws -> HttpDataRequest {
-        return try sendRequestWrapper(endpoint: endpoint, parameters: parameters, headers: headers, body: nil)
+        return try sendRequest(endpoint: endpoint, parameters: parameters, headers: headers, body: nil)
     }
 }
 
@@ -155,7 +155,7 @@ extension DefaultHttpClient {
 // MARK: DefaultHttpClient - HttpClient
 extension DefaultHttpClient: HttpClient {
 
-    func sendRequestWrapper(endpoint: Endpoint, parameters: [String: Any]?, headers: [String: String]?,
+    func sendRequest(endpoint: Endpoint, parameters: [String: Any]?, headers: [String: String]?,
                             body: Data?) throws -> HttpDataRequest {
         var httpHeaders = endpoint.headers
         if let headers = headers {
