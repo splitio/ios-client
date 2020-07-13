@@ -39,7 +39,7 @@ class HttpClientTest: XCTestCase {
         var splitsChange: SplitChange? = nil
         let dummyChanges = Data(IntegrationHelper.emptySplitChanges(since: 1, till: 2).utf8)
         let expectation = XCTestExpectation(description: "complete req")
-        _ = try httpClient.sendRequestWrapper(endpoint: factory.splitChangesEndpoint, parameters:["since": 100]).getResponse(completionHandler: { response in
+        _ = try httpClient.sendRequest(endpoint: factory.splitChangesEndpoint, parameters:["since": 100]).getResponse(completionHandler: { response in
             splitsChange = try? response.result.value?.decode(SplitChange.self)
             expectation.fulfill()
         }, errorHandler: { error in })
@@ -59,7 +59,7 @@ class HttpClientTest: XCTestCase {
         // When an error occurred errorHandler closure should be called
         var theError: HttpError?
         let expectation = XCTestExpectation(description: "complete req err")
-        _ = try httpClient.sendRequestWrapper(endpoint: factory.splitChangesEndpoint, parameters:["since": 100])
+        _ = try httpClient.sendRequest(endpoint: factory.splitChangesEndpoint, parameters:["since": 100])
             .getResponse(completionHandler: { response in },
                          errorHandler: { error in
                             theError = error
@@ -83,7 +83,7 @@ class HttpClientTest: XCTestCase {
         var isSuccess = false
         let dummyImpressions = Data(IntegrationHelper.dummyImpressions().utf8)
         let expectation = XCTestExpectation(description: "complete req")
-        _ = try httpClient.sendRequestWrapper(endpoint: factory.impressionsEndpoint,
+        _ = try httpClient.sendRequest(endpoint: factory.impressionsEndpoint,
                                               parameters: nil,
                                               headers: nil,
                                               body: dummyImpressions).getResponse(completionHandler: { response in

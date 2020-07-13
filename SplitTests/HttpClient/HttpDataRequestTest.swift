@@ -21,7 +21,7 @@ class HttpDataRequestTest: XCTestCase {
         // Testing parameter setup on request creation
         let parameters: HttpParameters = ["p1": "v1", "p2": 2]
         let headers: HttpHeaders = ["h1": "v1", "h2": "v2"]
-        let httpRequest = try DefaultHttpDataRequestWrapper(session: httpSession, url: url, method: .get, parameters: parameters, headers: headers)
+        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: url, method: .get, parameters: parameters, headers: headers)
 
         XCTAssertEqual("v1", httpRequest.parameters!["p1"] as! String)
         XCTAssertEqual(2, httpRequest.parameters!["p2"] as! Int)
@@ -34,7 +34,7 @@ class HttpDataRequestTest: XCTestCase {
     func testRequestEnquedOnSend() throws {
         // When a request is sent, it has to be created in
         // in an http session
-        let httpRequest = try DefaultHttpDataRequestWrapper(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
+        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
 
         httpRequest.send()
 
@@ -50,7 +50,7 @@ class HttpDataRequestTest: XCTestCase {
         let textData = "{\"splits\":[], \"since\":1, \"till\":2}"
         var receivedData: SplitChange? = nil
         let onCloseExpectation = XCTestExpectation(description: "complete request")
-        let httpRequest = try DefaultHttpDataRequestWrapper(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
+        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
 
         _ = httpRequest.getResponse(completionHandler: { response in
             responseIsSuccess = response.result.isSuccess
@@ -86,7 +86,7 @@ class HttpDataRequestTest: XCTestCase {
         var responseIsSuccess = true
         var receivedData: Json? = nil
         let onCloseExpectation = XCTestExpectation(description: "complete request")
-        let httpRequest = try DefaultHttpDataRequestWrapper(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
+        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
 
         _ = httpRequest.getResponse(completionHandler: { response in
             responseIsSuccess = response.result.isSuccess
@@ -114,7 +114,7 @@ class HttpDataRequestTest: XCTestCase {
         var errorHasOcurred = false
         var theError: HttpError?
         let onCloseExpectation = XCTestExpectation(description: "complete request")
-        let httpRequest = try DefaultHttpDataRequestWrapper(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
+        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
 
         _ = httpRequest.getResponse(completionHandler: { response in
             responseIsSuccess = true

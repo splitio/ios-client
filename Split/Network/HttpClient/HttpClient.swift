@@ -82,7 +82,7 @@ protocol HttpClient {
 }
 
 extension HttpClient {
-    func sendRequestWrapper(endpoint: Endpoint, parameters: [String: Any]? = nil,
+    func sendRequest(endpoint: Endpoint, parameters: [String: Any]? = nil,
                             headers: [String: String]? = nil) throws -> HttpDataRequest {
         return try sendRequest(endpoint: endpoint, parameters: parameters, headers: headers, body: nil)
     }
@@ -138,7 +138,7 @@ extension DefaultHttpClient {
 
     private func createRequest(_ url: URL, method: HttpMethod = .get, parameters: HttpParameters? = nil,
                                headers: HttpHeaders? = nil, body: Data? = nil) throws -> HttpDataRequest {
-        let request = try DefaultHttpDataRequestWrapper(session: httpSession, url: url, method: method,
+        let request = try DefaultHttpDataRequest(session: httpSession, url: url, method: method,
                                                         parameters: parameters, headers: headers, body: body)
         return request
     }
