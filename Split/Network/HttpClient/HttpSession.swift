@@ -27,11 +27,11 @@ class DefaultHttpSession: HttpSession {
 
     func startTask(with request: HttpRequest) -> HttpTask? {
 
-        guard let requestWrapper = request as? BaseHttpRequest else {
+        guard let request = request as? BaseHttpRequest else {
             return nil
         }
 
-        guard let task = createSessionTask(request: requestWrapper, body: request.body)  else {
+        guard let task = createSessionTask(request: request, body: request.body)  else {
             return nil
         }
         task.resume()
