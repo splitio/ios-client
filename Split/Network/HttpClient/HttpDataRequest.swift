@@ -16,7 +16,7 @@ protocol HttpDataRequest: HttpRequest {
 }
 
 // MARK: HttpDataRequest
-class DefaultHttpDataRequestWrapper: BaseHttpRequest, HttpDataRequest {
+class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
 
     private (set) var data: Data?
 
