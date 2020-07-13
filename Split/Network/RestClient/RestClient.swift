@@ -32,7 +32,7 @@ class DefaultRestClient {
                     completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
 
         do {
-        _ = try httpClient.sendRequestWrapper(
+        _ = try httpClient.sendRequest(
                         endpoint: endpoint,
                         parameters: parameters,
                         headers: nil,
