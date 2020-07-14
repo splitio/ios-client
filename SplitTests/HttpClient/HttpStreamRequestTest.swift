@@ -62,6 +62,7 @@ class HttpStreamRequestTest: XCTestCase {
         }, closeHandler: {
             closedOk = true
             onCloseExpectation.fulfill()
+        }, errorHandler: { error in
         })
 
         httpRequest.send()
@@ -96,6 +97,7 @@ class HttpStreamRequestTest: XCTestCase {
             receivedData.append(data.stringRepresentation)
 
         }, closeHandler: {
+        }, errorHandler: { error in
         })
 
         httpRequest.send()

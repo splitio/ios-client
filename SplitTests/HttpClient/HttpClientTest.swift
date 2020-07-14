@@ -27,7 +27,7 @@ class HttpClientTest: XCTestCase {
                                        requestManager: requestManager)
         serviceEndpoints = ServiceEndpoints.builder().build()
         factory = EndpointFactory(serviceEndpoints: serviceEndpoints,
-                                      apiKey: CommonValues.apiKey, userKey: CommonValues.userKey)
+                                  apiKey: CommonValues.apiKey, userKey: CommonValues.userKey)
     }
 
     func testDataRequest() throws {
@@ -84,12 +84,12 @@ class HttpClientTest: XCTestCase {
         let dummyImpressions = Data(IntegrationHelper.dummyImpressions().utf8)
         let expectation = XCTestExpectation(description: "complete req")
         _ = try httpClient.sendRequest(endpoint: factory.impressionsEndpoint,
-                                              parameters: nil,
-                                              headers: nil,
-                                              body: dummyImpressions).getResponse(completionHandler: { response in
-                                                isSuccess = response.result.isSuccess
-            expectation.fulfill()
-        }, errorHandler: { error in })
+                                       parameters: nil,
+                                       headers: nil,
+                                       body: dummyImpressions).getResponse(completionHandler: { response in
+                                        isSuccess = response.result.isSuccess
+                                        expectation.fulfill()
+                                       }, errorHandler: { error in })
 
         _ = requestManager.set(responseCode: 200, to: 1)
         requestManager.complete(taskIdentifier: 1, error: nil)
@@ -134,6 +134,8 @@ class HttpClientTest: XCTestCase {
                closeHandler: {
                 closedOk = true
                 closeExp.fulfill()
+            },
+               errorHandler: { error in
             })
 
         requestManager.append(data: data, to: 1)
