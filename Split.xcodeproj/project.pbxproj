@@ -288,6 +288,7 @@
 		59EFD2FB24B8EF6F0052920D /* HttpRequestMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EFD2FA24B8EF6F0052920D /* HttpRequestMock.swift */; };
 		59EFD30224BCA3F20052920D /* HttpStreamRequestMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EFD30124BCA3F20052920D /* HttpStreamRequestMock.swift */; };
 		59EFD30424BCA7460052920D /* HttpClientMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EFD30324BCA7460052920D /* HttpClientMock.swift */; };
+		59EFD30724BCE4810052920D /* SseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EFD30624BCE4810052920D /* SseClient.swift */; };
 		59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA7D215578F400A51997 /* ImpressionsFile.swift */; };
 		59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */; };
 		59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */; };
@@ -628,6 +629,7 @@
 		59EFD2FA24B8EF6F0052920D /* HttpRequestMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequestMock.swift; sourceTree = "<group>"; };
 		59EFD30124BCA3F20052920D /* HttpStreamRequestMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpStreamRequestMock.swift; sourceTree = "<group>"; };
 		59EFD30324BCA7460052920D /* HttpClientMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClientMock.swift; sourceTree = "<group>"; };
+		59EFD30624BCE4810052920D /* SseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SseClient.swift; sourceTree = "<group>"; };
 		59F6AA7D215578F400A51997 /* ImpressionsFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsFile.swift; sourceTree = "<group>"; };
 		59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTest.swift; sourceTree = "<group>"; };
 		59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyCounter.swift; sourceTree = "<group>"; };
@@ -1000,6 +1002,7 @@
 		3B6DEEE220EA6AE30067435E /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				59EFD30524BCE3CF0052920D /* Streaming */,
 				3B6DEEE320EA6AE30067435E /* Configuration */,
 				3B6DEEE520EA6AE30067435E /* DataParsing */,
 				3B6DEEEC20EA6AE30067435E /* Errors */,
@@ -1206,6 +1209,7 @@
 				59F6AA99215E941E00A51997 /* MetricsTests */,
 				59FB7C1221F78BF400ECC96A /* ValidatorsTests */,
 				59FB7C262202454700ECC96A /* Localhost */,
+				31AA215C368D12E69FE80703 /* Streaming */,
 				593AE9FE226F5B98000D61B0 /* SplitChangeFetcherTests.swift */,
 				593AE9F1226F4068000D61B0 /* MySegmentsFetcherTests.swift */,
 				598EDE7322493008005D4762 /* SplitConfigurationsParsingTest.swift */,
@@ -1234,7 +1238,6 @@
 				599A6E2C22F8C65500D3D68C /* ImpressionsManagerTest.swift */,
 				594677E322CFF30B00F94E58 /* TreatmentManagerTest.swift */,
 				59BF90B8239A75520007A896 /* VersionTest.swift */,
-				31AA215C368D12E69FE80703 /* Streaming */,
 				59AD7AC92465C32D00F5B0B4 /* EventDTOJsonTest.swift */,
 				59AD7AC22461D36400F5B0B4 /* RefreshableSplitFetcherTest.swift */,
 			);
@@ -1349,6 +1352,14 @@
 				59BF3D3A22329C7A004D134D /* JFRandom.m */,
 			);
 			path = JFBCrypt;
+			sourceTree = "<group>";
+		};
+		59EFD30524BCE3CF0052920D /* Streaming */ = {
+			isa = PBXGroup;
+			children = (
+				59EFD30624BCE4810052920D /* SseClient.swift */,
+			);
+			path = Streaming;
 			sourceTree = "<group>";
 		};
 		59F6AA94215E69A600A51997 /* Metrics */ = {
@@ -1682,6 +1693,7 @@
 				3B6DEF3120EA6AE50067435E /* LegacyHash.swift in Sources */,
 				59EFD2F224B5F9C80052920D /* HttpRequestList.swift in Sources */,
 				599EA57922666B84006CBA89 /* YAMLParser.swift in Sources */,
+				59EFD30724BCE4810052920D /* SseClient.swift in Sources */,
 				3B6DEF8720EA6AE50067435E /* InfoUtils.swift in Sources */,
 				599EA57522666B84006CBA89 /* YAMLOperators.swift in Sources */,
 				3B6DEF2120EA6AE50067435E /* HttpSplitChangeFetcher.swift in Sources */,
