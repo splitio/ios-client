@@ -70,6 +70,7 @@ class HttpSessionConfig {
         return HttpSessionConfig()
     }()
     var connectionTimeOut: TimeInterval = 30
+    var readTimeout: TimeInterval = 60
 }
 
 protocol HttpClient {
@@ -83,7 +84,7 @@ protocol HttpClient {
 
 extension HttpClient {
     func sendRequest(endpoint: Endpoint, parameters: [String: Any]? = nil,
-                            headers: [String: String]? = nil) throws -> HttpDataRequest {
+                     headers: [String: String]? = nil) throws -> HttpDataRequest {
         return try sendRequest(endpoint: endpoint, parameters: parameters, headers: headers, body: nil)
     }
 }
@@ -94,8 +95,6 @@ class DefaultHttpClient {
         return DefaultHttpClient()
     }()
 
-    private var urlSession: URLSession
-
     private var httpSession: HttpSession
     private var requestManager: HttpRequestManager
 
@@ -105,7 +104,7 @@ class DefaultHttpClient {
 
         let urlSessionConfig = URLSessionConfiguration.default
 
-        urlSessionConfig.timeoutIntervalForResource = configuration.connectionTimeOut
+        urlSessionConfig.timeoutIntervalForResource = configuration.readTimeout
         urlSessionConfig.timeoutIntervalForRequest = configuration.connectionTimeOut
         urlSessionConfig.httpMaximumConnectionsPerHost = 100
 
@@ -120,12 +119,8 @@ class DefaultHttpClient {
         } else {
             let delegate = self.requestManager as? URLSessionDelegate
             self.httpSession = DefaultHttpSession(urlSession: URLSession(
-                    configuration: urlSessionConfig, delegate: delegate, delegateQueue: nil))
+                configuration: urlSessionConfig, delegate: delegate, delegateQueue: nil))
         }
-
-        // TODO: Removed this line an variable once replaced
-        urlSession = URLSession(configuration: urlSessionConfig,
-                                delegate: requestManager as? DefaultHttpRequestManager, delegateQueue: nil)
     }
 
     deinit {
@@ -139,7 +134,7 @@ extension DefaultHttpClient {
     private func createRequest(_ url: URL, method: HttpMethod = .get, parameters: HttpParameters? = nil,
                                headers: HttpHeaders? = nil, body: Data? = nil) throws -> HttpDataRequest {
         let request = try DefaultHttpDataRequest(session: httpSession, url: url, method: method,
-                                                        parameters: parameters, headers: headers, body: body)
+                                                 parameters: parameters, headers: headers, body: body)
         return request
     }
 
@@ -156,7 +151,7 @@ extension DefaultHttpClient {
 extension DefaultHttpClient: HttpClient {
 
     func sendRequest(endpoint: Endpoint, parameters: [String: Any]?, headers: [String: String]?,
-                            body: Data?) throws -> HttpDataRequest {
+                     body: Data?) throws -> HttpDataRequest {
         var httpHeaders = endpoint.headers
         if let headers = headers {
             httpHeaders += headers

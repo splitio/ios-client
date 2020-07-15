@@ -92,7 +92,6 @@ class SseClient {
 // MARK: Private
 extension SseClient {
     private func createChannelsQueryString(channels: [String]) -> String {
-        // TODO: Implement this method
-        return "dummychannel"
+        return channels.joined(separator: ",")
     }
 }
