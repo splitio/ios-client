@@ -230,4 +230,37 @@ class SseClientTest: XCTestCase {
     override func tearDown() {
     }
 
+
+    /// The following code is used while developing streaming feature/
+    /// TODO: Remove when implementation is finished
+//    func testRConnect() {
+//        let channels = [""]
+//        let token = ""
+//        let serviceEndpoints =  ServiceEndpoints.builder().build()
+//        let sseEndpoint = EndpointFactory(serviceEndpoints: serviceEndpoints,
+//        apiKey: "", userKey: "javi").streamingEndpoint
+//        var httpSessionConfig = HttpSessionConfig()
+//        httpSessionConfig.readTimeout = 80
+//
+//        let realHttpClient = DefaultHttpClient(configuration: httpSessionConfig)
+//        let localSseClient = SseClient(endpoint: sseEndpoint, httpClient: DefaultHttpClient.shared)
+//        localSseClient.onOpenHandler = {
+//            print("conn oppened!!!!!")
+//        }
+//
+//        localSseClient.onErrorHandler = { isRec in
+//            print("conn error!!!!! \(isRec)")
+//        }
+//
+//        localSseClient.onMessageHandler =  { message in
+//            print("msg received: \(message.stringRepresentation)")
+//        }
+//
+//        localSseClient.onDisconnectHandler = {
+//            print("diconnected")
+//        }
+//        localSseClient.connect(token: token, channels: channels)
+//        sleep(90000)
+//    }
+
 }
