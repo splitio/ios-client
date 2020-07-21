@@ -9,12 +9,12 @@
 import Foundation
 
 class EndpointFactory {
-    private static let kAuthorizationHeader = "authorization"
-    private static let kSplitVersionHeader = "SplitSdkVersion"
-    private static let kContentTypeHeader = "content-type"
+    private static let kAuthorizationHeader = "Authorization"
+    private static let kSplitVersionHeader = "SplitSDKVersion"
+    private static let kContentTypeHeader = "Content-Type"
     private static let kAuthorizationBearer = "Bearer"
     private static let kContentTypeJson = "application/json"
-    private static let kContentTypeEventStream = "text/event-stream"
+    private static let kContentTypeEventStream = "text/event-Stream"
     private struct EndpointsPath {
         static let splitChanges = "splitChanges"
         static let mySegments = "mySegments"
