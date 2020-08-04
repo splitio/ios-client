@@ -9,7 +9,7 @@
 import Foundation
 
 
-struct SplitFilter {
+public struct SplitFilter {
     enum FilterType: CustomStringConvertible {
         case byName
         case byPrefix
