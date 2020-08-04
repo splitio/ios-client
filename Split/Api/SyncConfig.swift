@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct SyncConfig {
+@objc public class SyncConfig: NSObject {
     private (set) var filters: [SplitFilter]
 
     init(filters: [SplitFilter]) {
