@@ -30,9 +30,32 @@ protocol SplitValidator {
     func validateSplit(name: String) -> ValidationErrorInfo?
 }
 
+struct SplitNameValidator {
+    func validate(name: String?) -> ValidationErrorInfo? {
+
+        if name == nil {
+            return ValidationErrorInfo(error: .some,
+                                       message: "you passed a null split name, split name must be a non-empty string")
+        }
+
+        if name!.isEmpty() {
+            return ValidationErrorInfo(error: .some,
+                                       message: "you passed an empty split name, split name must be a non-empty string")
+        }
+
+        if name!.trimmingCharacters(in: .whitespacesAndNewlines) != name! {
+            return ValidationErrorInfo(warning: .splitNameShouldBeTrimmed,
+                                       message: "split name '\(name!)' has extra whitespace, trimming")
+        }
+
+        return nil
+    }
+}
+
 class DefaultSplitValidator: SplitValidator {
 
     let splitCache: SplitCacheProtocol
+    let splitNameValidator = SplitNameValidator()
 
     init(splitCache: SplitCacheProtocol) {
         self.splitCache = splitCache
