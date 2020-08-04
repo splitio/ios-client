@@ -8,8 +8,7 @@
 
 import Foundation
 
-
-public struct SplitFilter {
+@objc public class SplitFilter: NSObject {
     enum FilterType: CustomStringConvertible {
         case byName
         case byPrefix
