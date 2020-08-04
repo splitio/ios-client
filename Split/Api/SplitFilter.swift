@@ -9,9 +9,9 @@
 import Foundation
 
 @objc public class SplitFilter: NSObject {
-    enum FilterType: CustomStringConvertible {
-        case byName
-        case byPrefix
+    enum FilterType: Int, CustomStringConvertible {
+        case byName = 0
+        case byPrefix = 1
 
         var description: String {
             switch self {
@@ -50,7 +50,7 @@ import Foundation
     // Also is not public to force SDK users to use static functions "byName" and "byPrefix"
     init(type: FilterType, values: [String]) {
         self.type = type
-        self.values = values
+        self.values = values.map {$0.trimmingCharacters(in: .whitespacesAndNewlines) }
     }
 
     public static func byName(_ values: [String]) -> SplitFilter {
