@@ -21,6 +21,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
     private var defaultClient: SplitClient!
     private let defaultManager: SplitManager
+    private let filterBuilder = FilterBuilder()
 
     public var client: SplitClient {
         return defaultClient
@@ -52,7 +53,15 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
-        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
+        var splitFilterQueryString = ""
+        do {
+            splitFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
+        } catch {
+            // TODO: To rethrow exception it's necessary to change method signature. Check path to follow here
+        }
+        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(),
+                                                      splitCache: splitCache,
+                                                      defaultQueryString: splitFilterQueryString)
 
         let refreshableSplitFetcher = DefaultRefreshableSplitFetcher(
             splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: config.featuresRefreshRate,

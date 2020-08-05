@@ -9,11 +9,12 @@
 import Foundation
 
 protocol RestClientSplitChanges: RestClientProtocol {
-    func getSplitChanges(since: Int64, completion: @escaping (DataResult<SplitChange>) -> Void)
+    func getSplitChanges(since: Int64, queryString: String, completion: @escaping (DataResult<SplitChange>) -> Void)
 }
 
 extension RestClient: RestClientSplitChanges {
-    func getSplitChanges(since: Int64, completion: @escaping (DataResult<SplitChange>) -> Void) {
-        self.execute(target: EnvironmentTargetManager.getSplitChanges(since: since), completion: completion)
+    func getSplitChanges(since: Int64, queryString: String, completion: @escaping (DataResult<SplitChange>) -> Void) {
+        self.execute(target: EnvironmentTargetManager.getSplitChanges(since: since, queryString: queryString),
+                     completion: completion)
     }
 }

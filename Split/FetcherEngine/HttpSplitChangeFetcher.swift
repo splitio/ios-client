@@ -18,11 +18,13 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
     private let restClient: RestClientSplitChanges
     private let splitChangeCache: SplitChangeCache
     private let splitChangeValidator: SplitChangeValidator
+    private let defaultQueryString: String
 
-    init(restClient: RestClientSplitChanges, splitCache: SplitCacheProtocol) {
+    init(restClient: RestClientSplitChanges, splitCache: SplitCacheProtocol, defaultQueryString: String) {
         self.restClient = restClient
         self.splitChangeCache = SplitChangeCache(splitCache: splitCache)
         self.splitChangeValidator = DefaultSplitChangeValidator()
+        self.defaultQueryString = defaultQueryString
     }
 
     func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
@@ -37,7 +39,7 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
             let semaphore = DispatchSemaphore(value: 0)
             var requestResult: DataResult<SplitChange>?
             let fetchStartTime = Date().unixTimestampInMiliseconds()
-            restClient.getSplitChanges(since: since) { result in
+            restClient.getSplitChanges(since: since, queryString: defaultQueryString) { result in
                 metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime,
                                     for: Metrics.Time.splitChangeFetcherGet)
                 metricsManager.count(delta: 1, for: Metrics.Counter.splitChangeFetcherStatus200)

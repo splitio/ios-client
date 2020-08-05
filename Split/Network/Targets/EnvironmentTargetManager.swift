@@ -43,10 +43,10 @@ class EnvironmentTargetManager {
         eventsBaseURL = URL(string: kDefaultEventsBaseUrl)!
     }
 
-    public static func getSplitChanges(since: Int64) -> Target {
+    public static func getSplitChanges(since: Int64, queryString: String) -> Target {
         return DynamicTarget(shared.sdkBaseUrl,
                              shared.eventsBaseURL,
-                             DynamicTarget.DynamicTargetStatus.getSplitChanges(since: since))
+                             DynamicTarget.DynamicTargetStatus.getSplitChanges(since: since, queryString: queryString))
     }
 
     public static func getMySegments(user: String) -> Target {
