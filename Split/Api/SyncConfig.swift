@@ -27,7 +27,7 @@ import Foundation
             builderFilters.forEach { filter in
                 let validatedValues = filter.values.filter { value in
                  if self.splitValidator.validate(name: value) != nil {
-                     Logger.w("Warning: Malformed \(value) value. Filter ignored: \(value)")
+                     Logger.w("Warning: Malformed value in filter ignored: \(value)")
                      return false
                  }
                  return true
