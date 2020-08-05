@@ -27,14 +27,16 @@ import Foundation
             builderFilters.forEach { filter in
                 let validatedValues = filter.values.filter { value in
                  if self.splitValidator.validate(name: value) != nil {
-                     Logger.w("Warning: Malformed \(value) value. Filter ignored: \(value)")
+                     Logger.w("Warning: Malformed value in filter ignored: \(value)")
                      return false
                  }
                  return true
                 }
-                if validatedValues.count > 0 {
-                    validatedFilters.append(SplitFilter(type: filter.type, values: validatedValues))
+                if validatedValues.count == 0 {
+                    Logger.w("Warning: filter of type \(filter.type) is empty. The filter is ignored")
+                    return
                 }
+                validatedFilters.append(SplitFilter(type: filter.type, values: validatedValues))
             }
             return SyncConfig(filters: validatedFilters)
         }
