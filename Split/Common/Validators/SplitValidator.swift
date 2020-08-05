@@ -30,14 +30,7 @@ protocol SplitValidator {
     func validateSplit(name: String) -> ValidationErrorInfo?
 }
 
-class DefaultSplitValidator: SplitValidator {
-
-    let splitCache: SplitCacheProtocol
-
-    init(splitCache: SplitCacheProtocol) {
-        self.splitCache = splitCache
-    }
-
+struct SplitNameValidator {
     func validate(name: String?) -> ValidationErrorInfo? {
 
         if name == nil {
@@ -56,6 +49,20 @@ class DefaultSplitValidator: SplitValidator {
         }
 
         return nil
+    }
+}
+
+class DefaultSplitValidator: SplitValidator {
+
+    let splitCache: SplitCacheProtocol
+    let splitNameValidator = SplitNameValidator()
+
+    init(splitCache: SplitCacheProtocol) {
+        self.splitCache = splitCache
+    }
+
+    func validate(name: String?) -> ValidationErrorInfo? {
+        return splitNameValidator.validate(name: name)
     }
 
     func validateSplit(name: String) -> ValidationErrorInfo? {
