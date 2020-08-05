@@ -32,11 +32,11 @@ import Foundation
                  }
                  return true
                 }
-                if validatedValues.count == 0 {
+                if validatedValues.count > 0 {
+                    validatedFilters.append(SplitFilter(type: filter.type, values: validatedValues))
+                } else {
                     Logger.w("Warning: filter of type \(filter.type) is empty. The filter is ignored")
-                    return
                 }
-                validatedFilters.append(SplitFilter(type: filter.type, values: validatedValues))
             }
             return SyncConfig(filters: validatedFilters)
         }
