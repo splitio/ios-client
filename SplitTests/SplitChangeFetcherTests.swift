@@ -18,7 +18,7 @@ class SplitChangeFetcherTests: XCTestCase {
 
     override func setUp() {
         splitCache = SplitCache(fileStorage: FileStorageStub())
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache, defaultQueryString: "")
     }
 
     override func tearDown() {
@@ -30,7 +30,7 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: getChanges(fileName: "splitchanges_1"))
         
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "")
         var response: SplitChange? = nil
         do {
             response = try splitChangeFetcher.fetch(since: -1)
@@ -47,7 +47,7 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: getChanges(fileName: "splitchanges_2"))
         
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "")
         var response: SplitChange? = nil
         do {
             response = try splitChangeFetcher.fetch(since: -1)
@@ -78,7 +78,7 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: getChanges(fileName: "splitchanges_3"))
         
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "")
         var response: SplitChange?
         var errorHasOccurred = false
         do {
