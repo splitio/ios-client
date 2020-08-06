@@ -83,7 +83,7 @@ class SplitCacheStub: SplitCacheProtocol {
     }
 
     func setQueryString(_ queryString: String) {
-        self.setQueryString(queryString)
+        self.queryString = queryString
     }
 
     func getQueryString() -> String {
