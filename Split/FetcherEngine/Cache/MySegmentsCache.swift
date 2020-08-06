@@ -31,7 +31,7 @@ class MySegmentsCache: MySegmentsCacheProtocol {
         self.matchingKey = matchingKey
         self.fileStorage = fileStorage
         self.inMemoryCache = initialInMemoryCache()
-        NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) {
+        DefaultNotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) {
             DispatchQueue.global().async { [weak self] in
                 guard let strongSelf = self else {
                     return
@@ -77,7 +77,7 @@ extension MySegmentsCache {
             let mySegmentsFile = try Json.encodeFrom(json: jsonContent, to: MySegmentsFile.self)
             inMemoryCache = InMemoryMySegmentsCache(segments: Set(mySegmentsFile.segments))
         } catch {
-            Logger.e("Error while loading Splits from disk")
+            Logger.e("Error while loading My segments from disk")
         }
         return inMemoryCache
     }
@@ -88,7 +88,7 @@ extension MySegmentsCache {
             let jsonSplits = try Json.encodeToJson(splitsFile)
             fileStorage.write(fileName: fileNameForCurrentMatchingKey(), content: jsonSplits)
         } catch {
-            Logger.e("Could not save splits on disk")
+            Logger.e("Could not save my segments to disk")
         }
     }
 }

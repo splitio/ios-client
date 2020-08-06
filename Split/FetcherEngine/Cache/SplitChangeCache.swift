@@ -26,7 +26,7 @@ class  SplitChangeCache: SplitChangeCacheProtocol {
             for split in splitChange.splits! {
                 _ = self.splitCache?.addSplit(splitName: split.name!, split: split)
             }
-            self.splitCache?.setTimestamp(timestamp: Int(Date().timeIntervalSince1970))
+            self.splitCache?.setTimestamp(Int(Date().timeIntervalSince1970))
         }
         return true
     }
