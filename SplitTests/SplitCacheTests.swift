@@ -87,7 +87,7 @@ class SplitCacheTests: XCTestCase {
         let timestamp = 999
 
         splitCache.addSplit(splitName: "n", split: Split())
-        splitCache.setTimestamp(timestamp: timestamp)
+        splitCache.setTimestamp(timestamp)
         splitCache.setQueryString(queryString)
         splitCache.setChangeNumber(changeNumber)
 

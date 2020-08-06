@@ -91,7 +91,7 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
         return timestamp
     }
 
-    func setTimestamp(timestamp: Int) {
+    func setTimestamp(_ timestamp: Int) {
         self.timestamp = timestamp
     }
 }
