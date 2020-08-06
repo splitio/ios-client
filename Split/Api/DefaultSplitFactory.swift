@@ -63,9 +63,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                       splitCache: splitCache,
                                                       defaultQueryString: splitsFilterQueryString)
 
-        SplitFilterCacheUpdater.update(filters: config.sync.filters, currentQueryString: splitsFilterQueryString,
-                                       splitCache: splitCache)
-
         let refreshableSplitFetcher = DefaultRefreshableSplitFetcher(
             splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: config.featuresRefreshRate,
             cacheExpiration: config.cacheExpirationInSeconds, eventsManager: eventsManager)
