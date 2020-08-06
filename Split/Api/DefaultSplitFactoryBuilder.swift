@@ -111,7 +111,7 @@ import Foundation
                                             config: config ?? SplitClientConfig(),
                                             bundle: bundle)
         } else {
-            factory = DefaultSplitFactory(apiKey: apiKey!,
+            factory = try? DefaultSplitFactory(apiKey: apiKey!,
                                    key: finalKey,
                                    config: config ?? SplitClientConfig())
         }

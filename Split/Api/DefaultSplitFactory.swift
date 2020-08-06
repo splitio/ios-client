@@ -35,7 +35,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return Version.sdk
     }
 
-    init(apiKey: String, key: Key, config: SplitClientConfig) {
+    init(apiKey: String, key: Key, config: SplitClientConfig) throws {
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? config.defaultDataFolder
 
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
@@ -53,12 +53,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
-        var splitsFilterQueryString = ""
-        do {
-            splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
-        } catch {
-            // TODO: To rethrow exception it's necessary to change method signature. Check path to follow here
-        }
+        let splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
         let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(),
                                                       splitCache: splitCache,
                                                       defaultQueryString: splitsFilterQueryString)

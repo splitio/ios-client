@@ -49,6 +49,7 @@ class FilterBuilder {
                 can be specified at most. You passed \(filter.values.count)
                 . Please consider reducing the amount or using prefixes to target specific groups of splits.
                 """
+                Logger.e(message)
                 throw MaxFilterValuesExcededError(message: message)
             }
             queryString.append("&\(filter.type.queryStringField)=\(deduptedValues.sorted().joined(separator: ","))")
