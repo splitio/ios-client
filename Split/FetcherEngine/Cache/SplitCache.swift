@@ -83,8 +83,8 @@ class SplitCache: SplitCacheProtocol {
         return inMemoryCache.getTimestamp()
     }
 
-    func setTimestamp(timestamp: Int) {
-        inMemoryCache.setTimestamp(timestamp: timestamp)
+    func setTimestamp(_ timestamp: Int) {
+        inMemoryCache.setTimestamp(timestamp)
     }
 
     func setQueryString(_ queryString: String) {
