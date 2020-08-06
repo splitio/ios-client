@@ -44,7 +44,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         config.apiKey = apiKey
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
-        let splitCache = SplitCache(fileStorage: fileStorage)
+        let splitCache = SplitCache(fileStorage: fileStorage, notificationHelper: DefaultNotificationHelper.instance)
         let manager = DefaultSplitManager(splitCache: splitCache)
         defaultManager = manager
 
@@ -53,15 +53,18 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
-        var splitFilterQueryString = ""
+        var splitsFilterQueryString = ""
         do {
-            splitFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
+            splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
         } catch {
             // TODO: To rethrow exception it's necessary to change method signature. Check path to follow here
         }
         let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(),
                                                       splitCache: splitCache,
-                                                      defaultQueryString: splitFilterQueryString)
+                                                      defaultQueryString: splitsFilterQueryString)
+
+        SplitFilterCacheUpdater.update(filters: config.sync.filters, currentQueryString: splitsFilterQueryString,
+                                       splitCache: splitCache)
 
         let refreshableSplitFetcher = DefaultRefreshableSplitFetcher(
             splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: config.featuresRefreshRate,
