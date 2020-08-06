@@ -21,6 +21,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
     private var defaultClient: SplitClient!
     private let defaultManager: SplitManager
+    private let filterBuilder = FilterBuilder()
 
     public var client: SplitClient {
         return defaultClient
@@ -34,7 +35,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return Version.sdk
     }
 
-    init(apiKey: String, key: Key, config: SplitClientConfig) {
+    init(apiKey: String, key: Key, config: SplitClientConfig) throws {
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? config.defaultDataFolder
 
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
@@ -43,7 +44,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         config.apiKey = apiKey
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
-        let splitCache = SplitCache(fileStorage: fileStorage)
+        let splitCache = SplitCache(fileStorage: fileStorage, notificationHelper: DefaultNotificationHelper.instance)
         let manager = DefaultSplitManager(splitCache: splitCache)
         defaultManager = manager
 
@@ -52,7 +53,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
-        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache)
+        let splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
+        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(),
+                                                      splitCache: splitCache,
+                                                      defaultQueryString: splitsFilterQueryString)
 
         let refreshableSplitFetcher = DefaultRefreshableSplitFetcher(
             splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: config.featuresRefreshRate,

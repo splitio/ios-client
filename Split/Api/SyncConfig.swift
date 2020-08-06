@@ -22,7 +22,7 @@ import Foundation
     public class Builder {
         private let splitValidator = SplitNameValidator()
         private var builderFilters = [SplitFilter]()
-        func build() -> SyncConfig {
+        public func build() -> SyncConfig {
             var validatedFilters = [SplitFilter]()
             builderFilters.forEach { filter in
                 let validatedValues = filter.values.filter { value in
