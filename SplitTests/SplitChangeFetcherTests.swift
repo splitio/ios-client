@@ -17,7 +17,7 @@ class SplitChangeFetcherTests: XCTestCase {
     var splitCache: SplitCache!
 
     override func setUp() {
-        splitCache = SplitCache(fileStorage: FileStorageStub())
+        splitCache = SplitCache(fileStorage: FileStorageStub(), notificationHelper: DefaultNotificationHelper.instance)
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: RestClient(), splitCache: splitCache, defaultQueryString: "")
     }
 

@@ -17,10 +17,12 @@ class SplitCacheStub: SplitCacheProtocol {
     private var changeNumber: Int64
     private var splits: [String:Split]
     var timestamp = 0
+    private var queryString = ""
 
     var clearCallCount = 0
-    init(splits: [Split], changeNumber: Int64) {
+    init(splits: [Split], changeNumber: Int64, queryString: String = "") {
         self.changeNumber = changeNumber
+        self.queryString = queryString
         self.splits = [String:Split]()
         for split in splits {
             self.splits[split.name!.lowercased()] = split
@@ -31,8 +33,8 @@ class SplitCacheStub: SplitCacheProtocol {
         splits[splitName.lowercased()] = split
     }
     
-    func removeSplit(splitName: String) {
-        splits.removeValue(forKey: splitName.lowercased())
+    func deleteSplit(name: String) {
+        splits.removeValue(forKey: name.lowercased())
     }
     
     func setChangeNumber(_ changeNumber: Int64) {
@@ -78,5 +80,13 @@ class SplitCacheStub: SplitCacheProtocol {
 
     func setTimestamp(timestamp: Int) {
         self.timestamp = timestamp
+    }
+
+    func setQueryString(_ queryString: String) {
+        self.setQueryString(queryString)
+    }
+
+    func getQueryString() -> String {
+        return queryString
     }
 }

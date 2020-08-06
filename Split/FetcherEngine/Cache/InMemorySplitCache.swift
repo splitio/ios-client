@@ -14,14 +14,16 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
     private var queue: DispatchQueue
     private var splits: [String: Split]
     private var changeNumber: Int64
+    private var queryString: String = ""
     private var trafficTypes = [String: Int]()
     private var timestamp: Int = 0
 
-    init(splits: [String: Split] = [:], changeNumber: Int64 = -1, timestamp: Int? = 0) {
+    init(splits: [String: Split] = [:], changeNumber: Int64 = -1, timestamp: Int? = 0, queryString: String = "") {
         self.queue = DispatchQueue(label: queueName, attributes: .concurrent)
         self.splits = [:]
         self.changeNumber = changeNumber
         self.timestamp = timestamp ?? 0
+        self.queryString = queryString
         super.init()
         initSplits(splits: splits)
     }
@@ -129,5 +131,17 @@ extension InMemorySplitCache {
         } else {
             trafficTypes.removeValue(forKey: trafficType)
         }
+    }
+
+    func setQueryString(_ queryString: String) {
+        self.queryString = queryString
+    }
+
+    func getQueryString() -> String {
+        return queryString
+    }
+
+    func deleteSplit(name: String) {
+        splits.removeValue(forKey: name)
     }
 }
