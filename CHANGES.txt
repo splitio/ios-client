@@ -1,5 +1,6 @@
-2.5.3: (Jun 29, 2020)
+2.5.3: (Jun 30, 2020)
 - Fixed issue duplicating sent impressions
+- Fixed issue when rounding float values in json encoding/decoding
 
 2.5.2: (Jan 24, 2020)
 - Fixed some memory issues
