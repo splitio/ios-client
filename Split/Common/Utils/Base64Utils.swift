@@ -28,6 +28,7 @@ class Base64Utils {
             let appStr = kOffsetString[kOffsetString.index(kOffsetString.startIndex, offsetBy: kOffsetLenght - mod4)]
             finalBase64 = "\(base64NoSlash)\(appStr)"
         }
-        return Data(base64Encoded: finalBase64, options: Data.Base64DecodingOptions.init(rawValue: 0))?.stringRepresentation
+        return Data(base64Encoded: finalBase64,
+                    options: Data.Base64DecodingOptions.init(rawValue: 0))?.stringRepresentation
     }
 }
