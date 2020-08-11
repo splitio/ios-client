@@ -9,6 +9,7 @@
 import Foundation
 
 enum HttpError: Error {
+    case authenticationFailed
     case couldNotCreateRequest(message: String)
     case unknown(message: String)
 }
@@ -17,6 +18,8 @@ enum HttpError: Error {
 extension HttpError {
     var message: String {
         switch self {
+        case .authenticationFailed:
+            return "Authentication error"
         case .couldNotCreateRequest(let message):
             return message
         case .unknown(let message):

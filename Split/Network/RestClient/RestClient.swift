@@ -52,7 +52,12 @@ class DefaultRestClient {
                     completion(DataResult { throw error })
                 }
             case .failure:
-                completion(DataResult { throw HttpError.unknown(message: "unknown") })
+                completion(DataResult {
+                    if [401, 403].contains(response.code) {
+                        throw HttpError.authenticationFailed
+                    }
+                    throw HttpError.unknown(message: "unknown")
+                })
             }
             }, errorHandler: {error in
                 completion(DataResult { throw error })

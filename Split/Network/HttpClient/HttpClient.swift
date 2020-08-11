@@ -77,7 +77,7 @@ protocol HttpClient {
 
     func sendRequest(endpoint: Endpoint, parameters: [String: Any]?,
                      headers: [String: String]?, body: Data?) throws -> HttpDataRequest
-    
+
     func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?,
                            headers: [String: String]?) throws -> HttpStreamRequest
 }
