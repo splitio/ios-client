@@ -53,10 +53,13 @@ import Foundation
         self.values = values.map {$0.trimmingCharacters(in: .whitespacesAndNewlines) }
     }
 
+    
+    @objc(byName:)
     public static func byName(_ values: [String]) -> SplitFilter {
         return SplitFilter(type: .byName, values: values)
     }
 
+    @objc(byPrefix:)
     public static func byPrefix(_ values: [String]) -> SplitFilter {
         return SplitFilter(type: .byPrefix, values: values)
     }
