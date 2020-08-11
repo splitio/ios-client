@@ -9,7 +9,7 @@ import Foundation
 
 class DynamicTarget: Target {
     enum DynamicTargetStatus {
-        case getSplitChanges(since: Int64, queryString: String = "")
+        case getSplitChanges(since: Int64, queryString: String)
         case getMySegments(user: String)
         case sendImpressions
         case sendTrackEvents
