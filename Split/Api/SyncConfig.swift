@@ -15,13 +15,17 @@ import Foundation
         self.filters = filters
     }
 
+    @objc(builder)
     public static func builder() -> Builder {
         return Builder()
     }
 
-    public class Builder {
+    @objc(SyncConfigBuilder)
+    public class Builder: NSObject {
         private let splitValidator = SplitNameValidator()
         private var builderFilters = [SplitFilter]()
+
+        @objc(build)
         public func build() -> SyncConfig {
             var validatedFilters = [SplitFilter]()
             builderFilters.forEach { filter in
@@ -41,6 +45,8 @@ import Foundation
             return SyncConfig(filters: validatedFilters)
         }
 
+        @discardableResult
+        @objc(addSplitFilter:)
         public func addSplitFilter(_ filter: SplitFilter) -> SyncConfig.Builder {
             builderFilters.append(filter)
             return self
