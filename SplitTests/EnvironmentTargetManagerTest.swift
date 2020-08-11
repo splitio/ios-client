@@ -21,7 +21,7 @@ class EnvironmentTargetManagerTest: XCTestCase {
     func testEmptySplitsFilterQueryString() {
 
         let target = DynamicTarget(
-            url, url, DynamicTarget.DynamicTargetStatus.getSplitChanges(since: -1))
+            url, url, DynamicTarget.DynamicTargetStatus.getSplitChanges(since: -1, queryString: ""))
 
         XCTAssertEqual("\(url.absoluteString)/splitChanges?since=-1", target.url.absoluteString)
 
