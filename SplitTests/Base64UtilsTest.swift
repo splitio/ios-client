@@ -40,15 +40,6 @@ class Base64UtilsTest: XCTestCase {
         XCTAssertNil(decoded)
     }
 
-    func testEmpty() {
-        let expDecoded = ""
-        let encoded = ""
-
-        let decoded = Base64Utils.decodeBase64URL(base64: encoded)
-
-        XCTAssertEqual(expDecoded, decoded)
-    }
-
     override func tearDown() {
 
     }
