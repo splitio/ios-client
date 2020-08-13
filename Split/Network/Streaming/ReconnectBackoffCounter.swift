@@ -25,11 +25,9 @@ public class ReconnectBackoffCounter {
         let decimalResult = pow(base, attemptCount.getAndAdd(1))
 
         var retryTime = Self.kMaxTimeLimitInSecs
-        print("dec: \(decimalResult) ---> \(self.attemptCount.value)" )
         if !decimalResult.isNaN, decimalResult < Decimal(Self.kMaxTimeLimitInSecs) {
             retryTime = (decimalResult as NSDecimalNumber).intValue
         }
-        print("ret: \(retryTime)" )
         return retryTime
     }
 
