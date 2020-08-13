@@ -216,6 +216,10 @@
 		595AD25524E477B600A7B750 /* NotificationParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25424E477B600A7B750 /* NotificationParserTest.swift */; };
 		595AD25724E56E6200A7B750 /* EventStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25624E56E6200A7B750 /* EventStreamParser.swift */; };
 		595AD25924E59E6200A7B750 /* EventStreamParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25824E59E6200A7B750 /* EventStreamParserTest.swift */; };
+		595AD25B24E5C00100A7B750 /* SseConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25A24E5C00100A7B750 /* SseConnectionManager.swift */; };
+		595AD25D24E5C61C00A7B750 /* ReconnectBackoffCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25C24E5C61C00A7B750 /* ReconnectBackoffCounter.swift */; };
+		595AD25F24E5D16300A7B750 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25E24E5D16300A7B750 /* Atomic.swift */; };
+		595AD26124E5D48500A7B750 /* ReconnectBackoffCounterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD26024E5D48500A7B750 /* ReconnectBackoffCounterTest.swift */; };
 		595B66CD231D91100030F330 /* SplitChangesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595B66CC231D91100030F330 /* SplitChangesTest.swift */; };
 		595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 595B66CE231DB0720030F330 /* splitchanges_int_test.json */; };
 		596A7B5E234395C1004F6139 /* IntegrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B5D234395C1004F6139 /* IntegrationHelper.swift */; };
@@ -571,6 +575,10 @@
 		595AD25424E477B600A7B750 /* NotificationParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationParserTest.swift; sourceTree = "<group>"; };
 		595AD25624E56E6200A7B750 /* EventStreamParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStreamParser.swift; sourceTree = "<group>"; };
 		595AD25824E59E6200A7B750 /* EventStreamParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStreamParserTest.swift; sourceTree = "<group>"; };
+		595AD25A24E5C00100A7B750 /* SseConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseConnectionManager.swift; sourceTree = "<group>"; };
+		595AD25C24E5C61C00A7B750 /* ReconnectBackoffCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectBackoffCounter.swift; sourceTree = "<group>"; };
+		595AD25E24E5D16300A7B750 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
+		595AD26024E5D48500A7B750 /* ReconnectBackoffCounterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectBackoffCounterTest.swift; sourceTree = "<group>"; };
 		595B66CC231D91100030F330 /* SplitChangesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangesTest.swift; sourceTree = "<group>"; };
 		595B66CE231DB0720030F330 /* splitchanges_int_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_int_test.json; sourceTree = "<group>"; };
 		596A7B5D234395C1004F6139 /* IntegrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHelper.swift; sourceTree = "<group>"; };
@@ -712,6 +720,7 @@
 			isa = PBXGroup;
 			children = (
 				31AA280A65C72BC92858422C /* SseClientTest.swift */,
+				595AD26024E5D48500A7B750 /* ReconnectBackoffCounterTest.swift */,
 				595AD20B24DDCB0E00A7B750 /* SseAuthenticatorTest.swift */,
 				595AD21424E1CD4600A7B750 /* JwtTokenParserTest.swift */,
 				595AD25424E477B600A7B750 /* NotificationParserTest.swift */,
@@ -1132,6 +1141,7 @@
 				59BF3D26223132E1004D134D /* DataFolderFactory.swift */,
 				5935FDEB226E26E300A23FA6 /* SplitHelper.swift */,
 				595AD24A24E30C0C00A7B750 /* Base64Utils.swift */,
+				595AD25E24E5D16300A7B750 /* Atomic.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1394,6 +1404,8 @@
 				595AD24E24E41A7B00A7B750 /* SseNotifications.swift */,
 				595AD20724DDC66500A7B750 /* SseAuthenticator.swift */,
 				59EFD30624BCE4810052920D /* SseClient.swift */,
+				595AD25A24E5C00100A7B750 /* SseConnectionManager.swift */,
+				595AD25C24E5C61C00A7B750 /* ReconnectBackoffCounter.swift */,
 				595AD25624E56E6200A7B750 /* EventStreamParser.swift */,
 				595AD21024E1750300A7B750 /* JwtTokenParser.swift */,
 				595AD25224E441AA00A7B750 /* NotificationParser.swift */,
@@ -1772,6 +1784,7 @@
 				59BF3D3F22329C7A004D134D /* JFRandom.m in Sources */,
 				597CD338216CE9F700A15487 /* CounterMetricSample.swift in Sources */,
 				3B6DEF6420EA6AE50067435E /* DateTime.swift in Sources */,
+				595AD25D24E5C61C00A7B750 /* ReconnectBackoffCounter.swift in Sources */,
 				3B6DEF4720EA6AE50067435E /* MatcherGroup.swift in Sources */,
 				59FB7BCA21DFE0A500ECC96A /* String+Utils.swift in Sources */,
 				3B6DEF6520EA6AE50067435E /* DependencyMatcher.swift in Sources */,
@@ -1812,6 +1825,7 @@
 				3B6DEF7B20EA6AE50067435E /* HttpDataResponse.swift in Sources */,
 				59FB7C3122030EFA00ECC96A /* SplitFactoryBuilder.swift in Sources */,
 				590DF9EE215038200082B94F /* SyncDictionaryCollectionWrapper.swift in Sources */,
+				595AD25F24E5D16300A7B750 /* Atomic.swift in Sources */,
 				3B6DEF6620EA6AE50067435E /* EndsWithMatcher.swift in Sources */,
 				3B6DEF4B20EA6AE50067435E /* Split.swift in Sources */,
 				3B6DEF6A20EA6AE50067435E /* GreaterThanOrEqualToMatcher.swift in Sources */,
@@ -1855,6 +1869,7 @@
 				31AA2785C12C110A50A5FD4E /* RestClient+TrackEvents.swift in Sources */,
 				31AA2E60DECD00E2B2990F26 /* RestClient+MySegments.swift in Sources */,
 				31AA2C1F4964CD9D0769D021 /* RestClient+Impressions.swift in Sources */,
+				595AD25B24E5C00100A7B750 /* SseConnectionManager.swift in Sources */,
 				31AA22905C46031E68E70266 /* RestClient+SplitChanges.swift in Sources */,
 				31AA2036872EEC62D9EDF4AB /* Endpoint.swift in Sources */,
 				31AA2D91508DE344F676AB46 /* EndpointFactory.swift in Sources */,
@@ -1893,6 +1908,7 @@
 				59FB7C1C21F7AE2E00ECC96A /* SplitChangeValidatorTests.swift in Sources */,
 				5912D1492195F25200BC698C /* MySegmentsCacheStubs.swift in Sources */,
 				5932260724A5325A00496D8B /* HttpTaskMock.swift in Sources */,
+				595AD26124E5D48500A7B750 /* ReconnectBackoffCounterTest.swift in Sources */,
 				594677E422CFF30B00F94E58 /* TreatmentManagerTest.swift in Sources */,
 				59EFD2ED24B4B05E0052920D /* HttpClientTest.swift in Sources */,
 				592C6ABD211B718E002D120C /* DatesTests.swift in Sources */,
