@@ -214,6 +214,8 @@
 		595AD25124E4404C00A7B750 /* SseNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD24E24E41A7B00A7B750 /* SseNotifications.swift */; };
 		595AD25324E441AA00A7B750 /* NotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25224E441AA00A7B750 /* NotificationParser.swift */; };
 		595AD25524E477B600A7B750 /* NotificationParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25424E477B600A7B750 /* NotificationParserTest.swift */; };
+		595AD25724E56E6200A7B750 /* EventStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25624E56E6200A7B750 /* EventStreamParser.swift */; };
+		595AD25924E59E6200A7B750 /* EventStreamParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25824E59E6200A7B750 /* EventStreamParserTest.swift */; };
 		595B66CD231D91100030F330 /* SplitChangesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595B66CC231D91100030F330 /* SplitChangesTest.swift */; };
 		595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 595B66CE231DB0720030F330 /* splitchanges_int_test.json */; };
 		596A7B5E234395C1004F6139 /* IntegrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B5D234395C1004F6139 /* IntegrationHelper.swift */; };
@@ -567,6 +569,8 @@
 		595AD24E24E41A7B00A7B750 /* SseNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseNotifications.swift; sourceTree = "<group>"; };
 		595AD25224E441AA00A7B750 /* NotificationParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationParser.swift; sourceTree = "<group>"; };
 		595AD25424E477B600A7B750 /* NotificationParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationParserTest.swift; sourceTree = "<group>"; };
+		595AD25624E56E6200A7B750 /* EventStreamParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStreamParser.swift; sourceTree = "<group>"; };
+		595AD25824E59E6200A7B750 /* EventStreamParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStreamParserTest.swift; sourceTree = "<group>"; };
 		595B66CC231D91100030F330 /* SplitChangesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangesTest.swift; sourceTree = "<group>"; };
 		595B66CE231DB0720030F330 /* splitchanges_int_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_int_test.json; sourceTree = "<group>"; };
 		596A7B5D234395C1004F6139 /* IntegrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHelper.swift; sourceTree = "<group>"; };
@@ -711,6 +715,7 @@
 				595AD20B24DDCB0E00A7B750 /* SseAuthenticatorTest.swift */,
 				595AD21424E1CD4600A7B750 /* JwtTokenParserTest.swift */,
 				595AD25424E477B600A7B750 /* NotificationParserTest.swift */,
+				595AD25824E59E6200A7B750 /* EventStreamParserTest.swift */,
 			);
 			path = Streaming;
 			sourceTree = "<group>";
@@ -1389,6 +1394,7 @@
 				595AD24E24E41A7B00A7B750 /* SseNotifications.swift */,
 				595AD20724DDC66500A7B750 /* SseAuthenticator.swift */,
 				59EFD30624BCE4810052920D /* SseClient.swift */,
+				595AD25624E56E6200A7B750 /* EventStreamParser.swift */,
 				595AD21024E1750300A7B750 /* JwtTokenParser.swift */,
 				595AD25224E441AA00A7B750 /* NotificationParser.swift */,
 			);
@@ -1718,6 +1724,7 @@
 				3B6DEF6C20EA6AE50067435E /* LessThanOrEqualToMatcher.swift in Sources */,
 				3B6DEF3320EA6AE50067435E /* Partition.swift in Sources */,
 				3B6DEF2A20EA6AE50067435E /* ImpressionsConstants.swift in Sources */,
+				595AD25724E56E6200A7B750 /* EventStreamParser.swift in Sources */,
 				3B6DEF2820EA6AE50067435E /* Impression.swift in Sources */,
 				3B6DEF3D20EA6AE50067435E /* BetweenMatcherData.swift in Sources */,
 				3B6DEF2220EA6AE50067435E /* SplitView.swift in Sources */,
@@ -1936,6 +1943,7 @@
 				597CD33A216D022F00A15487 /* MetricsManagerTests.swift in Sources */,
 				593AE9FC226F4825000D61B0 /* RestClientStub.swift in Sources */,
 				596A7B71235729B5004F6139 /* DestroyTest.swift in Sources */,
+				595AD25924E59E6200A7B750 /* EventStreamParserTest.swift in Sources */,
 				596A7B602343D83C004F6139 /* SplitChangesServerErrorTest.swift in Sources */,
 				596A7B672344E967004F6139 /* TrackTest.swift in Sources */,
 				593225FA24A3855700496D8B /* TestHelper.swift in Sources */,
