@@ -37,7 +37,7 @@ extension RestClientStub: RestClientProtocol {
 }
 
 extension RestClientStub: RestClientSplitChanges {
-    func getSplitChanges(since: Int64, completion: @escaping (DataResult<SplitChange>) -> Void) {
+    func getSplitChanges(since: Int64, queryString: String, completion: @escaping (DataResult<SplitChange>) -> Void) {
         completion(DataResult.success(value: splitChange))
     }
 }

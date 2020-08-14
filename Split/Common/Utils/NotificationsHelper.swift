@@ -22,13 +22,18 @@ enum AppNotification: String {
 /// The main goal is to replace @obj functions based handler with Swift closures,
 /// that way the code becomes streight and simple.
 
-class NotificationHelper {
+protocol NotificationHelper {
+    func addObserver(for notification: AppNotification, action: @escaping ObserverAction)
+    func removeAllObservers()
+}
+
+class DefaultNotificationHelper: NotificationHelper {
 
     private let queue = DispatchQueue(label: UUID.init().uuidString, attributes: .concurrent)
     private var actions = [String: [ObserverAction]]()
 
-    static let instance: NotificationHelper = {
-        return NotificationHelper()
+    static let instance: DefaultNotificationHelper = {
+        return DefaultNotificationHelper()
     }()
 
     private init() {

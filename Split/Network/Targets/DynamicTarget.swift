@@ -9,7 +9,7 @@ import Foundation
 
 class DynamicTarget: Target {
     enum DynamicTargetStatus {
-        case getSplitChanges(since: Int64)
+        case getSplitChanges(since: Int64, queryString: String)
         case getMySegments(user: String)
         case sendImpressions
         case sendTrackEvents
@@ -32,7 +32,6 @@ class DynamicTarget: Target {
     init(_ sdkBaseUrl: URL, _ eventsBaseURL: URL, _ status: DynamicTargetStatus) {
         self.sdkBaseUrl = sdkBaseUrl
         self.eventsBaseURL = eventsBaseURL
-
         if let token = SecureDataStore.shared.getToken() {
             self.commonHeaders = [
                 "authorization": "Bearer " + token,
@@ -68,9 +67,9 @@ class DynamicTarget: Target {
 
     public var url: URL {
         switch self.internalStatus {
-        case .getSplitChanges(let since):
+        case .getSplitChanges(let since, let queryString):
             let url = sdkBaseUrl.appendingPathComponent("splitChanges")
-            let params = "?since=\(since)"
+            let params = "?since=\(since)\(queryString)"
             return URL(string: params.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!, relativeTo: url)!
 
         case .getMySegments(let user):
