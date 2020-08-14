@@ -62,16 +62,17 @@ class HttpSessionConfig {
 }
 
 protocol HttpClient {
-    func sendRequest(endpoint: Endpoint,
-                     parameters: [String: Any]?,
-                     headers: [String: String]?,
-                     body: Data?) -> HttpDataRequest
+    func sendRequest(endpoint: Endpoint, parameters: [String: Any]?,
+                     headers: [String: String]?, body: Data?) throws -> HttpDataRequest
+
+    func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?,
+                           headers: [String: String]?) -> HttpDataRequest
 }
 
 extension HttpClient {
     func sendRequest(endpoint: Endpoint,
-                     parameters: [String: Any]? = nil) -> HttpDataRequest {
-        return sendRequest(endpoint: endpoint, parameters: parameters, headers: nil, body: nil)
+                     parameters: [String: Any]? = nil) throws -> HttpDataRequest {
+        return try sendRequest(endpoint: endpoint, parameters: parameters, headers: nil, body: nil)
     }
 }
 
@@ -88,8 +89,8 @@ class DefaultHttpClient {
         return DefaultHttpClient()
     }()
 
-    var urlSession: URLSession
-    var requestManager: HttpRequestManager
+    private var urlSession: URLSession
+    private var requestManager: HttpRequestManager
 
     init(configuration: HttpSessionConfig = HttpSessionConfig.default) {
 
@@ -101,7 +102,7 @@ class DefaultHttpClient {
 
         requestManager = HttpRequestManager()
         urlSession = URLSession(configuration: urlSessionConfig,
-                delegate: requestManager, delegateQueue: nil)
+                                delegate: requestManager, delegateQueue: nil)
     }
 
     deinit {
@@ -110,64 +111,51 @@ class DefaultHttpClient {
 }
 
 extension DefaultHttpClient: HttpSession {
-
     func dataTask(with request: URLRequest) -> URLSessionTask {
         return urlSession.dataTask(with: request)
     }
 
-    func uploadTask(with request: URLRequest,
-                    from bodyData: Data) -> URLSessionUploadTask {
+    func uploadTask(with request: URLRequest, from bodyData: Data) -> URLSessionUploadTask {
         return urlSession.uploadTask(with: request, from: bodyData)
     }
 }
 
-// MARK: HttpSession - Private
-
+// MARK: DefaultHttpClient - Private
 extension DefaultHttpClient {
 
-    private func request(
-        _ url: URL,
-        method: HttpMethod = .get,
-        parameters: HttpParameters? = nil,
-        headers: HttpHeaders? = nil,
-        body: Data? = nil)
-        -> DefaultHttpDataRequest {
-        let request = DefaultHttpDataRequest(session: self,
-                                      url: url,
-                                      method: method,
-                                      parameters: parameters,
-                                      headers: headers,
-                                      body: body)
-
+    private func request(_ url: URL, method: HttpMethod = .get, parameters: HttpParameters? = nil,
+                         headers: HttpHeaders? = nil, body: Data? = nil) throws -> DefaultHttpDataRequest {
+        let request = try DefaultHttpDataRequest(session: self, url: url, method: method,
+                                                 parameters: parameters, headers: headers, body: body)
         return request
     }
 
 }
 
-// MARK: HttpSession - RestClientManagerProtocol
-
+// MARK: DefaultHttpClient - HttpClient
 extension DefaultHttpClient: HttpClient {
 
-    func sendRequest(endpoint: Endpoint,
-                     parameters: [String: Any]? = nil,
-                     headers: [String: String]? = nil,
-                     body: Data? = nil) -> HttpDataRequest {
+    func sendRequest(endpoint: Endpoint, parameters: [String: Any]? = nil,
+                     headers: [String: String]? = nil, body: Data? = nil) throws -> HttpDataRequest {
         var httpHeaders = endpoint.headers
         if let headers = headers {
             httpHeaders += headers
         }
 
-        let request = self.request(endpoint.url,
-                                   method: endpoint.method,
-                                   parameters: parameters,
-                                   headers: httpHeaders,
-                                   body: body)
+        let request = try self.request(endpoint.url, method: endpoint.method, parameters: parameters,
+                                       headers: httpHeaders, body: body)
         request.send()
         requestManager.addRequest(request)
         return request
     }
+
+    func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?,
+                           headers: [String: String]?) -> HttpDataRequest {
+        fatalError()
+    }
 }
 
+// MARK: Request list
 class HttpRequestList {
     private let queueName = "split.http-request-queue"
     private var queue: DispatchQueue
@@ -216,7 +204,6 @@ class HttpRequestManager: NSObject {
 }
 
 // MARK: HttpRequestManager - URLSessionTaskDelegate
-
 extension HttpRequestManager: URLSessionTaskDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let request = requests.take(identifier: task.taskIdentifier) {
@@ -226,11 +213,8 @@ extension HttpRequestManager: URLSessionTaskDelegate {
 }
 
 // MARK: HttpUrlSessionDelegate - URLSessionDataDelegate
-
 extension HttpRequestManager: URLSessionDataDelegate {
-    func urlSession(_ session: URLSession,
-                    dataTask: URLSessionDataTask,
-                    didReceive response: URLResponse,
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         if let request = requests.get(identifier: dataTask.taskIdentifier),
             let response = response as? HTTPURLResponse {
@@ -249,6 +233,5 @@ extension HttpRequestManager: URLSessionDataDelegate {
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask,
                            didBecome streamTask: URLSessionStreamTask) {
-
     }
 }

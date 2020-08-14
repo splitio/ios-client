@@ -14,12 +14,13 @@ class SSEClientTest: XCTestCase {
     var httpClient: HttpClient?
 
     override func setUp() {
-
     }
 
     func test() {
-//        let url = URL(string: "https://split-realtime.ably.io/sse")
-//        let target = DynamicTarget(u)
-//        let r = httpClient?.sendRequest(target: <#T##Target##Split.Target#>)
+        //TODO: Implement SSE client test
     }
+
+    override func tearDown() {
+    }
+
 }
