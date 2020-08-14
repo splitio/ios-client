@@ -9,9 +9,9 @@
 import Foundation
 
 class EndpointFactory {
-    private static let kAuthorizationHeader = "authorization"
-    private static let kSplitVersionHeader = "splitsdkversion"
-    private static let kContentTypeHeader = "content-type"
+    private static let kAuthorizationHeader = "Authorization"
+    private static let kSplitVersionHeader = "SplitSDKVersion"
+    private static let kContentTypeHeader = "Content-Type"
     private static let kAuthorizationBearer = "Bearer"
     private static let kContentTypeJson = "application/json"
     private static let kContentTypeEventStream = "text/event-stream"
@@ -76,7 +76,7 @@ class EndpointFactory {
 
         sseAuthenticationEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.authServiceEndpoint)
-                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+                .set(method: .get).add(headers: commondHeaders).add(headers: typeHeader).build()
 
         streamingEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.streamingServiceEndpoint)
