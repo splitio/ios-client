@@ -18,7 +18,7 @@ protocol HttpStreamRequest: HttpRequest {
                      closeHandler: @escaping CloseHandler) -> Self
 }
 
-// MARK: HttpStreamRequest
+// MARK: DefaultHttpStreamRequest
 class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
 
     var responseHandler: ResponseHandler?
