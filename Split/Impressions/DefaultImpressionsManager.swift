@@ -93,17 +93,17 @@ extension DefaultImpressionsManager {
     }
 
     private func sendImpressions() {
-        let impressionsHits = self.impressionsHits.all
+        let impressionsHits = self.impressionsHits.takeAll()
         for (_, impressionsHit) in impressionsHits {
             sendImpressions(impressionsHit: impressionsHit)
         }
     }
 
     private func sendImpressions(impressionsHit: ImpressionsHit) {
-        if impressionsHits.count == 0 { return }
+
+        if impressionsHit.impressions.count == 0 { return }
         if restClient.isSdkServerAvailable() {
             impressionsHit.addAttempt()
-
             restClient.sendImpressions(impressions: impressionsHit.impressions, completion: { result in
                 do {
                     _ = try result.unwrap()
