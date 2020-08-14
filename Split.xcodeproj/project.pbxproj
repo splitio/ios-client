@@ -220,6 +220,7 @@
 		595AD25D24E5C61C00A7B750 /* ReconnectBackoffCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25C24E5C61C00A7B750 /* ReconnectBackoffCounter.swift */; };
 		595AD25F24E5D16300A7B750 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25E24E5D16300A7B750 /* Atomic.swift */; };
 		595AD26124E5D48500A7B750 /* ReconnectBackoffCounterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD26024E5D48500A7B750 /* ReconnectBackoffCounterTest.swift */; };
+		595AD26524E6C3D200A7B750 /* Timers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD26424E6C3D200A7B750 /* Timers.swift */; };
 		595B66CD231D91100030F330 /* SplitChangesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595B66CC231D91100030F330 /* SplitChangesTest.swift */; };
 		595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 595B66CE231DB0720030F330 /* splitchanges_int_test.json */; };
 		596A7B5E234395C1004F6139 /* IntegrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B5D234395C1004F6139 /* IntegrationHelper.swift */; };
@@ -579,6 +580,7 @@
 		595AD25C24E5C61C00A7B750 /* ReconnectBackoffCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectBackoffCounter.swift; sourceTree = "<group>"; };
 		595AD25E24E5D16300A7B750 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		595AD26024E5D48500A7B750 /* ReconnectBackoffCounterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectBackoffCounterTest.swift; sourceTree = "<group>"; };
+		595AD26424E6C3D200A7B750 /* Timers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timers.swift; sourceTree = "<group>"; };
 		595B66CC231D91100030F330 /* SplitChangesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangesTest.swift; sourceTree = "<group>"; };
 		595B66CE231DB0720030F330 /* splitchanges_int_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_int_test.json; sourceTree = "<group>"; };
 		596A7B5D234395C1004F6139 /* IntegrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHelper.swift; sourceTree = "<group>"; };
@@ -1404,6 +1406,7 @@
 				595AD24E24E41A7B00A7B750 /* SseNotifications.swift */,
 				595AD20724DDC66500A7B750 /* SseAuthenticator.swift */,
 				59EFD30624BCE4810052920D /* SseClient.swift */,
+				595AD26424E6C3D200A7B750 /* Timers.swift */,
 				595AD25A24E5C00100A7B750 /* SseConnectionManager.swift */,
 				595AD25C24E5C61C00A7B750 /* ReconnectBackoffCounter.swift */,
 				595AD25624E56E6200A7B750 /* EventStreamParser.swift */,
@@ -1784,6 +1787,7 @@
 				59BF3D3F22329C7A004D134D /* JFRandom.m in Sources */,
 				597CD338216CE9F700A15487 /* CounterMetricSample.swift in Sources */,
 				3B6DEF6420EA6AE50067435E /* DateTime.swift in Sources */,
+				595AD26524E6C3D200A7B750 /* Timers.swift in Sources */,
 				595AD25D24E5C61C00A7B750 /* ReconnectBackoffCounter.swift in Sources */,
 				3B6DEF4720EA6AE50067435E /* MatcherGroup.swift in Sources */,
 				59FB7BCA21DFE0A500ECC96A /* String+Utils.swift in Sources */,
