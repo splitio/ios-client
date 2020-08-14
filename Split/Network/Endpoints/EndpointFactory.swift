@@ -14,7 +14,7 @@ class EndpointFactory {
     private static let kContentTypeHeader = "Content-Type"
     private static let kAuthorizationBearer = "Bearer"
     private static let kContentTypeJson = "application/json"
-    private static let kContentTypeEventStream = "text/event-Stream"
+    private static let kContentTypeEventStream = "text/event-stream"
     private struct EndpointsPath {
         static let splitChanges = "splitChanges"
         static let mySegments = "mySegments"
