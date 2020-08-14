@@ -191,6 +191,14 @@
 		5959C482228074800064F968 /* ValidationMessageLoggerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5959C481228074800064F968 /* ValidationMessageLoggerStub.swift */; };
 		5959C486228C429A0064F968 /* Array+DynamicCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5959C485228C429A0064F968 /* Array+DynamicCodable.swift */; };
 		5959C488228C4B160064F968 /* Dictionary+DynamicCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5959C487228C4B160064F968 /* Dictionary+DynamicCodable.swift */; };
+		595AD1F324D994EA00A7B750 /* SplitFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD1F224D994EA00A7B750 /* SplitFilter.swift */; };
+		595AD1F524D9994800A7B750 /* SyncConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD1F424D9994800A7B750 /* SyncConfig.swift */; };
+		595AD1F824D9CDFB00A7B750 /* SyncConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD1F724D9CDFB00A7B750 /* SyncConfigTest.swift */; };
+		595AD1FA24D9E40C00A7B750 /* FilterBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD1F924D9E40C00A7B750 /* FilterBuilder.swift */; };
+		595AD1FC24D9ED4C00A7B750 /* FilterBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD1FB24D9ED4C00A7B750 /* FilterBuilderTest.swift */; };
+		595AD1FE24DAE3A400A7B750 /* EnvironmentTargetManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD1FD24DAE3A400A7B750 /* EnvironmentTargetManagerTest.swift */; };
+		595AD20024DAF61700A7B750 /* FetchSpecificSplitsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD1FF24DAF61700A7B750 /* FetchSpecificSplitsTest.swift */; };
+		595AD20224DC39F800A7B750 /* NotificationHelperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD20124DC39F800A7B750 /* NotificationHelperStub.swift */; };
 		595B66CD231D91100030F330 /* SplitChangesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595B66CC231D91100030F330 /* SplitChangesTest.swift */; };
 		595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 595B66CE231DB0720030F330 /* splitchanges_int_test.json */; };
 		596A7B5E234395C1004F6139 /* IntegrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A7B5D234395C1004F6139 /* IntegrationHelper.swift */; };
@@ -511,6 +519,14 @@
 		5959C481228074800064F968 /* ValidationMessageLoggerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationMessageLoggerStub.swift; sourceTree = "<group>"; };
 		5959C485228C429A0064F968 /* Array+DynamicCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+DynamicCodable.swift"; sourceTree = "<group>"; };
 		5959C487228C4B160064F968 /* Dictionary+DynamicCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dictionary+DynamicCodable.swift"; sourceTree = "<group>"; };
+		595AD1F224D994EA00A7B750 /* SplitFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFilter.swift; sourceTree = "<group>"; };
+		595AD1F424D9994800A7B750 /* SyncConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConfig.swift; sourceTree = "<group>"; };
+		595AD1F724D9CDFB00A7B750 /* SyncConfigTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConfigTest.swift; sourceTree = "<group>"; };
+		595AD1F924D9E40C00A7B750 /* FilterBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterBuilder.swift; sourceTree = "<group>"; };
+		595AD1FB24D9ED4C00A7B750 /* FilterBuilderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterBuilderTest.swift; sourceTree = "<group>"; };
+		595AD1FD24DAE3A400A7B750 /* EnvironmentTargetManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentTargetManagerTest.swift; sourceTree = "<group>"; };
+		595AD1FF24DAF61700A7B750 /* FetchSpecificSplitsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchSpecificSplitsTest.swift; sourceTree = "<group>"; };
+		595AD20124DC39F800A7B750 /* NotificationHelperStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHelperStub.swift; sourceTree = "<group>"; };
 		595B66CC231D91100030F330 /* SplitChangesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitChangesTest.swift; sourceTree = "<group>"; };
 		595B66CE231DB0720030F330 /* splitchanges_int_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_int_test.json; sourceTree = "<group>"; };
 		596A7B5D234395C1004F6139 /* IntegrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHelper.swift; sourceTree = "<group>"; };
@@ -764,6 +780,9 @@
 				598EDE77224BB3E9005D4762 /* InternalSplitClient.swift */,
 				598EDE83224CE2C4005D4762 /* SplitResult.swift */,
 				596A7B6D23566BE0004F6139 /* Destroyable.swift */,
+				595AD1F224D994EA00A7B750 /* SplitFilter.swift */,
+				595AD1F424D9994800A7B750 /* SyncConfig.swift */,
+				595AD1F924D9E40C00A7B750 /* FilterBuilder.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -1105,6 +1124,7 @@
 				594677E922D4D44300F94E58 /* ImpressionsManagerStub.swift */,
 				59AD7AC42461D63500F5B0B4 /* SplitChangeFetcherStub.swift */,
 				31AA279035168CE07F14D769 /* SplitEventsManagerStub.swift */,
+				595AD20124DC39F800A7B750 /* NotificationHelperStub.swift */,
 			);
 			path = Fake;
 			sourceTree = "<group>";
@@ -1137,6 +1157,7 @@
 		592C6AA6211B6C99002D120C /* SplitTests */ = {
 			isa = PBXGroup;
 			children = (
+				595AD1F624D9CDE400A7B750 /* SplitFilter */,
 				599A6E3222FC67BF00D3D68C /* Integration */,
 				5912D150219A005400BC698C /* Helpers */,
 				590DF9CD213EB92D0082B94F /* Fake */,
@@ -1146,6 +1167,7 @@
 				59FB7C1221F78BF400ECC96A /* ValidatorsTests */,
 				59FB7C262202454700ECC96A /* Localhost */,
 				593AE9FE226F5B98000D61B0 /* SplitChangeFetcherTests.swift */,
+				595AD1FD24DAE3A400A7B750 /* EnvironmentTargetManagerTest.swift */,
 				593AE9F1226F4068000D61B0 /* MySegmentsFetcherTests.swift */,
 				598EDE7322493008005D4762 /* SplitConfigurationsParsingTest.swift */,
 				59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */,
@@ -1232,6 +1254,15 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
+		595AD1F624D9CDE400A7B750 /* SplitFilter */ = {
+			isa = PBXGroup;
+			children = (
+				595AD1F724D9CDFB00A7B750 /* SyncConfigTest.swift */,
+				595AD1FB24D9ED4C00A7B750 /* FilterBuilderTest.swift */,
+			);
+			path = SplitFilter;
+			sourceTree = "<group>";
+		};
 		595B66D2231DB8690030F330 /* Integration */ = {
 			isa = PBXGroup;
 			children = (
@@ -1244,6 +1275,7 @@
 			isa = PBXGroup;
 			children = (
 				5946783922E1147600F94E58 /* SplitIntegrationTest.swift */,
+				595AD1FF24DAF61700A7B750 /* FetchSpecificSplitsTest.swift */,
 				596A7B722358E142004F6139 /* SplitSdkTimeoutTest.swift */,
 				595B66CC231D91100030F330 /* SplitChangesTest.swift */,
 				596A7B612343F848004F6139 /* MySegmentUpadatedTest.swift */,
@@ -1553,6 +1585,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				595AD1F524D9994800A7B750 /* SyncConfig.swift in Sources */,
 				3B6DEF2920EA6AE50067435E /* DefaultImpressionsManager.swift in Sources */,
 				59FB7C0B21F0FF1700ECC96A /* ValidationConfig.swift in Sources */,
 				3B6DEF1C20EA6AE50067435E /* EventsHit.swift in Sources */,
@@ -1659,6 +1692,7 @@
 				3B6DEF6520EA6AE50067435E /* DependencyMatcher.swift in Sources */,
 				3B6DEF4620EA6AE50067435E /* MatcherCombiner.swift in Sources */,
 				59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */,
+				595AD1FA24D9E40C00A7B750 /* FilterBuilder.swift in Sources */,
 				3B6DEF4F20EA6AE50067435E /* TrafficType.swift in Sources */,
 				3B6DEF8020EA6AE50067435E /* RestClient.swift in Sources */,
 				59BF3D27223132E1004D134D /* DataFolderFactory.swift in Sources */,
@@ -1697,6 +1731,7 @@
 				3B6DEF5820EA6AE50067435E /* SplitEvent.swift in Sources */,
 				599EA57822666B84006CBA89 /* YAMLResult.swift in Sources */,
 				594677E222CFA7E300F94E58 /* DefaultTreatmentManager.swift in Sources */,
+				595AD1F324D994EA00A7B750 /* SplitFilter.swift in Sources */,
 				59D84BDA2215A589003DA248 /* LocalhostSplitFetcher.swift in Sources */,
 				3B6DEF1220EA6AE50067435E /* SplitChangeCache.swift in Sources */,
 				59BF3D3E22329C7A004D134D /* JFBCrypt.m in Sources */,
@@ -1745,11 +1780,13 @@
 				596A7B652344C1EF004F6139 /* MySegmentServerErrorTest.swift in Sources */,
 				5959C480228051CA0064F968 /* SplitManagerStub.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
+				595AD20224DC39F800A7B750 /* NotificationHelperStub.swift in Sources */,
 				599A6E2D22F8C65500D3D68C /* ImpressionsManagerTest.swift in Sources */,
 				5982D9C421B04FA400230F44 /* MySegmentsCacheTests.swift in Sources */,
 				598EDE7E224BD1A6005D4762 /* MySegmentsFetcherStub.swift in Sources */,
 				59AD7ACA2465C32D00F5B0B4 /* EventDTOJsonTest.swift in Sources */,
 				59FB7C1621F79B8200ECC96A /* EventTypeNameHelper.swift in Sources */,
+				595AD20024DAF61700A7B750 /* FetchSpecificSplitsTest.swift in Sources */,
 				593AE9F3226F4068000D61B0 /* MySegmentsFetcherTests.swift in Sources */,
 				5959C479227B89980064F968 /* FactoryRegistryTest.swift in Sources */,
 				599A6E3422FC681600D3D68C /* FlushTest.swift in Sources */,
@@ -1791,6 +1828,7 @@
 				596A7B732358E142004F6139 /* SplitSdkTimeoutTest.swift in Sources */,
 				59DD34B42236989700FA9545 /* FolderApiKeyTests.swift in Sources */,
 				599EA57F2266708D006CBA89 /* LocalhostYamlParserTest.swift in Sources */,
+				595AD1F824D9CDFB00A7B750 /* SyncConfigTest.swift in Sources */,
 				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
 				599407E022403BE9003B85CC /* InMemorySplitCacheTrafficTypesTests.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
@@ -1802,7 +1840,9 @@
 				5919C64821C7D45B00EC35B8 /* SplitHelper.swift in Sources */,
 				59FB7C1821F7ABEF00ECC96A /* ApiKeyValidatorTests.swift in Sources */,
 				59BF3D372231A698004D134D /* BCryptTests.swift in Sources */,
+				595AD1FC24D9ED4C00A7B750 /* FilterBuilderTest.swift in Sources */,
 				596A7B622343F848004F6139 /* MySegmentUpadatedTest.swift in Sources */,
+				595AD1FE24DAE3A400A7B750 /* EnvironmentTargetManagerTest.swift in Sources */,
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				594677EA22D4D44300F94E58 /* ImpressionsManagerStub.swift in Sources */,
 				59AD7AC52461D63500F5B0B4 /* SplitChangeFetcherStub.swift in Sources */,
