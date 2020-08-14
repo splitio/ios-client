@@ -21,19 +21,23 @@ class Endpoint {
         return .success(json)
     }
 
-    private init(baseUrl: URL, path: String) {
-        self.url = baseUrl.appendingPathComponent(path)
+    private init(baseUrl: URL, path: String?) {
+        if let path = path {
+            self.url = baseUrl.appendingPathComponent(path)
+        } else {
+            self.url = baseUrl
+        }
         self.method = .get
     }
 
-    static func builder(baseUrl: URL, path: String) -> Builder {
+    static func builder(baseUrl: URL, path: String? = nil) -> Builder {
         return Builder(baseUrl: baseUrl, path: path)
     }
 
     struct Builder {
         private var endpoint: Endpoint
 
-        init(baseUrl: URL, path: String) {
+        init(baseUrl: URL, path: String?) {
             endpoint = Endpoint(baseUrl: baseUrl, path: path)
         }
 

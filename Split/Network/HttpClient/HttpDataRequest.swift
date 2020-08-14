@@ -7,10 +7,11 @@
 //
 
 import Foundation
+
 protocol HttpDataRequest {
     var data: Data? { get }
     func appendData(_ newData: Data)
-    func getResponse(errorHandler: @escaping (JSON, Int) -> HttpResult<JSON>,
+    func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>,
                      completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self
 }
 
@@ -25,9 +26,9 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
          method: HttpMethod,
          parameters: HttpParameters? = nil,
          headers: HttpHeaders?,
-         body: Data? = nil) {
+         body: Data? = nil) throws {
 
-        super.init(session: session, url: url, method: method, parameters: nil, headers: headers)
+        try super.init(session: session, url: url, method: method, parameters: nil, headers: headers)
         self.session = session
         self.url = url
         self.method = method
@@ -51,6 +52,7 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
             request.setValue(value, forHTTPHeaderField: key)
         }
 
+        // TODO: Check this if.
         if method.isUpload, let body = self.bodyPayload() {
             task = session.uploadTask(with: request, from: body)
         } else {
@@ -75,15 +77,17 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
         requestCompletionHandler = {
             [weak self] in
 
-            guard let strongSelf = self else { return }
+            guard let strongSelf = self else {
+                return
+            }
             let result = responseSerializer.serializeResponse(strongSelf.request,
                     strongSelf.response,
                     strongSelf.data,
                     strongSelf.error)
-            let dataResponse = HttpDataResponse<JSON>(
-                    response: strongSelf.response, data: strongSelf.data, result: result
-            )
-            (queue ?? DispatchQueue.main).async { completionHandler(dataResponse) }
+            let dataResponse = HttpDataResponse<JSON>(data: strongSelf.data, result: result)
+            (queue ?? DispatchQueue.main).async {
+                completionHandler(dataResponse)
+            }
         }
 
         return self
@@ -106,13 +110,13 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
         }
     }
 
-    func getResponse(errorHandler: @escaping (JSON, Int) -> HttpResult<JSON>,
+    func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>,
                      completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
 
         self.response(
                 queue: DispatchQueue(label: HttpQueue.default),
                 responseSerializer:
-            DefaultHttpDataRequest.responseSerializer(errorSanitizer: errorHandler)) { response in
+                DefaultHttpDataRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
             completionHandler(response)
         }
         return self
@@ -120,7 +124,6 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
 }
 
 // MARK: HttpDataRequest - Private
-
 extension DefaultHttpDataRequest {
     private func bodyPayload() -> Data? {
 

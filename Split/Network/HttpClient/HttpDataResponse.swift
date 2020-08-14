@@ -1,35 +1,19 @@
 //
-//  HttpResponse.swift
+//  HttpDataResponse.swift
 //  Split
 //
 //  Created by Javier L. Avrudsky on 5/23/18.
-//  Based on code from Alamofire network library
+//  Initially based on Alamofire network library API
 
 import Foundation
 
-//// MARK: HttpResponse
-//struct HttpStreamResponse<Value> {
-//    let response: HTTPURLResponse?
-//    let error: Error? = nil
-//    let data: InputStream?
-//    let result: HttpResult<Value>
-//
-//    init(response: HTTPURLResponse?, data: Data?, result: HttpResult<Value>) {
-//        self.response = response
-//        self.data = data
-//        self.result = result
-//    }
-//}
-
 // MARK: HttpDataResponse
 struct HttpDataResponse<Value> {
-    let response: HTTPURLResponse?
     let error: Error? = nil
     let data: Data?
     let result: HttpResult<Value>
 
-    init(response: HTTPURLResponse?, data: Data?, result: HttpResult<Value>) {
-        self.response = response
+    init(data: Data?, result: HttpResult<Value>) {
         self.data = data
         self.result = result
     }
@@ -40,7 +24,7 @@ enum HttpResult<Value> {
     case success(Value)
     case failure(Error)
 
-    public var isSuccess: Bool {
+    var isSuccess: Bool {
         switch self {
         case .success:
             return true
@@ -49,11 +33,11 @@ enum HttpResult<Value> {
         }
     }
 
-    public var isFailure: Bool {
+    var isFailure: Bool {
         return !isSuccess
     }
 
-    public var value: Value? {
+    var value: Value? {
         switch self {
         case .success(let value):
             return value
@@ -62,7 +46,7 @@ enum HttpResult<Value> {
         }
     }
 
-    public var error: Error? {
+    var error: Error? {
         switch self {
         case .success:
             return nil

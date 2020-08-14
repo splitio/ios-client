@@ -30,12 +30,14 @@ class DefaultRestClient {
                     parameters: [String: Any]? = nil,
                     body: Data? = nil,
                     completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
-        _ = httpClient.sendRequest(
+
+        do {
+        _ = try httpClient.sendRequest(
                         endpoint: endpoint,
                         parameters: parameters,
                         headers: nil,
                         body: body)
-                .getResponse(errorHandler: endpoint.errorSanitizer) { response in
+                .getResponse(errorSanitizer: endpoint.errorSanitizer) { response in
             switch response.result {
             case .success(let json):
                 if json.isNull() {
@@ -52,6 +54,11 @@ class DefaultRestClient {
             case .failure(let error):
                 completion(DataResult { throw error })
             }
+        }
+        } catch HttpError.couldNotCreateRequest(let message) {
+            Logger.e("An error has ocurred while sending request: \(message)" )
+        } catch {
+            Logger.e("Unexpected error while sending request")
         }
     }
 }

@@ -52,9 +52,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
-        let restClient = DefaultRestClient(
-                endpointFactory: EndpointFactory(serviceEndpoints: config.serviceEndpoints,
-                apiKey: apiKey, userKey: key.matchingKey))
+        let restClient = DefaultRestClient(endpointFactory: EndpointFactory(serviceEndpoints: config.serviceEndpoints,
+                                                                            apiKey: apiKey, userKey: key.matchingKey))
 
         /// TODO: Remove this line when metrics refactor
         DefaultMetricsManager.shared.restClient = restClient
@@ -71,12 +70,9 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         super.init()
 
-        let trackConfig = buildTrackConfig(from: config)
-        let trackManager = DefaultTrackManager(config: trackConfig, fileStorage: fileStorage, restClient: restClient)
-
-        let impressionsConfig = buildImpressionsConfig(from: config)
-        let impressionsManager = DefaultImpressionsManager(
-                config: impressionsConfig, fileStorage: fileStorage, restClient: restClient)
+        let trackManager = buildTrackManager(splitConfig: config, fileStorage: fileStorage, restClient: restClient)
+        let impressionsManager = buildImpressionsManager(splitConfig: config, fileStorage: fileStorage,
+                                                         restClient: restClient)
 
         defaultClient = DefaultSplitClient(
             config: config, key: key, splitCache: splitCache, eventsManager: eventsManager, trackManager: trackManager,
@@ -106,5 +102,17 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     private func buildImpressionsConfig(from splitConfig: SplitClientConfig) -> ImpressionManagerConfig {
         return ImpressionManagerConfig(pushRate: splitConfig.impressionRefreshRate,
                                        impressionsPerPush: splitConfig.impressionsChunkSize)
+    }
+
+    private func buildTrackManager(splitConfig: SplitClientConfig, fileStorage: FileStorage,
+                                   restClient: RestClientTrackEvents) -> TrackManager {
+        return DefaultTrackManager(config: buildTrackConfig(from: splitConfig),
+                                   fileStorage: fileStorage, restClient: restClient)
+    }
+
+    private func buildImpressionsManager(splitConfig: SplitClientConfig, fileStorage: FileStorage,
+                                         restClient: RestClientImpressions) -> ImpressionsManager {
+        return DefaultImpressionsManager(config: buildImpressionsConfig(from: splitConfig), fileStorage: fileStorage,
+                                         restClient: restClient)
     }
 }
