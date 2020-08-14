@@ -23,8 +23,17 @@ class DefaultSseConnectionManager {
     private static let kDisconnectOnBgTimeInSeconds = 60
     private static let kTokenExpiredErrorCode = 40142
 
-//    private let sseClient: SseClient
-//    private let authBackoffCounter: ReconnectBackoffCounter
-//    private let sseBackoffCounter: ReconnectBackoffCounter
+    private let sseClient: SseClient
+    private let authBackoffCounter: ReconnectBackoffCounter
+    private let sseBackoffCounter: ReconnectBackoffCounter
+    private let timersManager: TimersManager
+
+    init(sseClient: SseClient, authBackoffCounter: ReconnectBackoffCounter,
+         sseBackoffCounter: ReconnectBackoffCounter, timersManager: TimersManager) {
+        self.sseClient = sseClient
+        self.authBackoffCounter = authBackoffCounter
+        self.sseBackoffCounter = sseBackoffCounter
+        self.timersManager = timersManager
+    }
 
 }
