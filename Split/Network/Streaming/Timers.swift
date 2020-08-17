@@ -23,5 +23,6 @@ typealias TimerTriggerHandler = (SplitTimer) -> Void
 
 protocol TimersManager {
     func add(timer: SplitTimer, delayInSeconds: Int)
+    func cancel(timer: SplitTimer)
     func triggerHandler(handler: TimerTriggerHandler)
 }
