@@ -17,13 +17,18 @@ struct SseClientConstants {
     static let pushNotificationVersionValue = "1.1"
 }
 
+struct SseConnectionResult {
+    let success: Bool
+    let errorIsRecoverable: Bool
+}
+
 protocol SseClient {
+
     typealias EventHandler = () -> Void
     typealias MessageHandler = (Data) -> Void
     typealias ErrorHandler = (Bool) -> Void
 
-    func connect(token: String, channels: [String])
-    var onOpenHandler: EventHandler? { get set }
+    func connect(token: String, channels: [String]) -> SseConnectionResult
     var onErrorHandler: ErrorHandler? { get set }
     var onDisconnectHandler: EventHandler? { get set }
     var onMessageHandler: MessageHandler? { get set }
@@ -35,7 +40,6 @@ class DefaultSseClient: SseClient {
     private var queue: DispatchQueue
     private var streamRequest: HttpStreamRequest?
 
-    var onOpenHandler: SseClient.EventHandler?
     var onErrorHandler: SseClient.ErrorHandler?
     var onDisconnectHandler: SseClient.EventHandler?
     var onMessageHandler: SseClient.MessageHandler?
@@ -46,7 +50,11 @@ class DefaultSseClient: SseClient {
         self.queue = DispatchQueue(label: "Split SSE Client")
     }
 
-    func connect(token: String, channels: [String]) {
+    func connect(token: String, channels: [String]) -> SseConnectionResult {
+
+        let responseSemaphore = DispatchSemaphore(value: 0)
+        var connectionResult: SseConnectionResult?
+
         queue.async {
             let parameters: [String: Any] = [
                 SseClientConstants.pushNotificationTokenParam: token,
@@ -58,34 +66,45 @@ class DefaultSseClient: SseClient {
                 self.streamRequest = try self.httpClient.sendStreamRequest(endpoint: self.endpoint,
                                                                            parameters: parameters,
                                                                            headers: headers)
-                    .getResponse(responseHandler: { response in
-                        self.handleResponse(response)
-                    }, incomingDataHandler: { data in
-                        if let onMessage = self.onMessageHandler {
-                            onMessage(data)
-                        }
-                    }, closeHandler: {
-                        if let onDisconnect = self.onDisconnectHandler {
-                            onDisconnect()
-                        }
-                    }, errorHandler: { error in
-                        Logger.e("Error in stream request: \(error.message)")
-                        self.triggerOnError(isRecoverable: true)
-                    })
             } catch {
                 Logger.e("Error while connection to streaming: \(error.localizedDescription)")
-                self.triggerOnError(isRecoverable: false)
+                //self.triggerOnError(isRecoverable: false)
+                responseSemaphore.signal()
+                connectionResult = SseConnectionResult(success: false, errorIsRecoverable: false)
             }
+
+            if let streamRequest = self.streamRequest {
+                _ = streamRequest.getResponse(responseHandler: { response in
+
+                    connectionResult = SseConnectionResult(success: response.code == 200,
+                                                           errorIsRecoverable: response.isCredentialsError)
+                    responseSemaphore.signal()
+
+                }, incomingDataHandler: { data in
+                    self.triggerDataHandler(data: data)
+
+                }, closeHandler: {
+                    self.triggerCloseHandler()
+
+                }, errorHandler: { error in
+                    Logger.e("Error in stream request: \(error.message)")
+                    self.triggerOnError(isRecoverable: true)
+                })
+            }
+        }
+        responseSemaphore.wait()
+        return connectionResult ?? SseConnectionResult(success: false, errorIsRecoverable: false)
+    }
+
+    func triggerDataHandler(data: Data) {
+        if let onMessage = self.onMessageHandler {
+            onMessage(data)
         }
     }
 
-    func handleResponse(_ response: HttpResponse) {
-        if response.result.isSuccess {
-            if let onOpen = self.onOpenHandler {
-                onOpen()
-            }
-        } else {
-            self.triggerOnError(isRecoverable: !response.isCredentialsError)
+    func triggerCloseHandler() {
+        if let onDisconnect = self.onDisconnectHandler {
+            onDisconnect()
         }
     }
 

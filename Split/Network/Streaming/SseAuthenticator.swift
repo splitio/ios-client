@@ -8,6 +8,9 @@
 
 import Foundation
 
+///
+/// Used when HTTP response decoding
+///
 struct SseAuthToken: Decodable {
     let issuedAt: Int
     let expirationTime: Int
@@ -20,6 +23,10 @@ struct SseAuthToken: Decodable {
     }
 }
 
+///
+/// This is the JWT after being parsed and ready to use for
+/// SSE connection
+///
 struct JwtToken {
     let issuedAt: Int
     let expirationTime: Int
@@ -27,6 +34,10 @@ struct JwtToken {
     let rawToken: String
 }
 
+///
+/// SSE authenticator component returns this
+/// struct when authentication process is finished
+///
 struct SseAuthenticationResult {
     let success: Bool
     let errorIsRecoverable: Bool
@@ -34,6 +45,10 @@ struct SseAuthenticationResult {
     let jwtToken: JwtToken?
 }
 
+///
+/// Hits the Streaming authentication server
+/// to get streaming status for API key
+///
 protocol SseAuthenticator {
     func authenticate(userKey: String) -> SseAuthenticationResult
 }
