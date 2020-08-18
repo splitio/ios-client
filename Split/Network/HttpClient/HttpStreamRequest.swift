@@ -8,110 +8,68 @@
 
 import Foundation
 
-// MARK: HttpStreamRequest
-protocol HttpStreamRequest {
-    var data: Data? { get }
-    func appendData(_ newData: Data)
-    func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>,
-                     completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self
+protocol HttpStreamRequest: HttpRequest, HttpDataReceivingRequest {
+    typealias ResponseHandler = (HttpResponse) -> Void
+    typealias IncomingDataHandler = (Data) -> Void
+    typealias CloseHandler = () -> Void
+
+    func getResponse(responseHandler: @escaping ResponseHandler,
+                     incomingDataHandler: @escaping IncomingDataHandler,
+                     closeHandler: @escaping CloseHandler) -> Self
 }
 
 // MARK: DefaultHttpStreamRequest
 class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
 
-    var data: Data?
-    var body: Data?
+    var responseHandler: ResponseHandler?
+    var incomingDataHandler: IncomingDataHandler?
+    var closeHandler: CloseHandler?
 
-    init(session: HttpSession,
-         url: URL,
-         headers: HttpHeaders?) throws {
-
-        try super.init(session: session, url: url, method: .get, parameters: nil, headers: headers)
-        self.session = session
-        self.url = url
-        if let headers = headers {
-            self.headers = headers
-        }
+    init(session: HttpSession, url: URL, parameters: HttpParameters?, headers: HttpHeaders?) throws {
+        try super.init(session: session, url: url, method: .get, parameters: parameters, headers: headers)
     }
 
-    override func send() {
-        if let request  = request {
-            task = session.dataTask(with: request)
-            task?.resume()
+    override func notifyIncomingData(_ data: Data) {
+        if let incomingDataHandler = self.incomingDataHandler {
+            incomingDataHandler(data)
         }
-    }
-
-    func appendData(_ newData: Data) {
-        if data == nil {
-            data = Data()
-        }
-        data!.append(newData)
     }
 
     @discardableResult
     func response(
         queue: DispatchQueue? = nil,
-        responseSerializer: HttpDataResponseSerializer<JSON>,
-        completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
-
-        requestCompletionHandler = {
-            [weak self] in
-
-            guard let strongSelf = self else { return }
-            let result = responseSerializer.serializeResponse(strongSelf.request,
-                                                              strongSelf.response,
-                                                              strongSelf.data,
-                                                              strongSelf.error)
-            let dataResponse = HttpDataResponse<JSON>(data: strongSelf.data, result: result)
-            (queue ?? DispatchQueue.main).async { completionHandler(dataResponse) }
-        }
-
+        responseHandler: @escaping ResponseHandler,
+        incomingDataHandler: @escaping IncomingDataHandler,
+        closeHandler: @escaping CloseHandler) -> Self {
+        self.responseHandler = responseHandler
+        self.incomingDataHandler = incomingDataHandler
+        self.closeHandler = closeHandler
         return self
     }
 
-    static func responseSerializer(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>)
-        -> HttpDataResponseSerializer<JSON> {
+    func getResponse(responseHandler: @escaping ResponseHandler,
+                     incomingDataHandler: @escaping IncomingDataHandler,
+                     closeHandler: @escaping CloseHandler) -> Self {
 
-            return HttpDataResponseSerializer<JSON> { _, response, data, error in
-                if let error = error {
-                    return .failure(error)
-                }
-
-                if let validData = data {
-                    let json = JSON(validData)
-                    return errorSanitizer(json, response!.statusCode)
-                } else {
-                    return errorSanitizer(JSON(), response!.statusCode)
-                }
-            }
-    }
-
-    func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>,
-                     completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
-
-        self.response(
+        return response(
             queue: DispatchQueue(label: HttpQueue.default),
-            responseSerializer:
-        DefaultHttpStreamRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
-            completionHandler(response)
-        }
-        return self
+            responseHandler: responseHandler,
+            incomingDataHandler: incomingDataHandler,
+            closeHandler: closeHandler)
     }
-}
 
-// MARK: HttpStreamRequest - Private
-extension DefaultHttpStreamRequest {
-    private func bodyPayload() -> Data? {
-
-        if let body = self.body {
-            return body
+    override func setResponse(code: Int) {
+        if let responseHandler  = self.responseHandler {
+            responseHandler(HttpResponse(code: code))
         }
+    }
 
-        if let parameters = parameters,
-            let body = try? JSONSerialization.data(withJSONObject: parameters, options: []) {
-            return body
+    override func complete(error: HttpError?) {
+        if let error = error, let errorHandler = self.requestErrorHandler {
+            errorHandler(error)
+        } else if let closeHandler = self.closeHandler {
+            closeHandler()
         }
-        return nil
     }
 }
 
@@ -121,10 +79,10 @@ extension DefaultHttpStreamRequest: CustomStringConvertible, CustomDebugStringCo
     }
 
     var description: String {
-        return request?.description ?? requestIsNullText
+        return urlRequest?.description ?? requestIsNullText
     }
 
     var debugDescription: String {
-        return request?.debugDescription ?? requestIsNullText
+        return urlRequest?.debugDescription ?? requestIsNullText
     }
 }

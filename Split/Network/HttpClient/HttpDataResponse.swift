@@ -7,6 +7,30 @@
 
 import Foundation
 
+// MARK: HttpResultWrapper
+enum HttpResultWrapper {
+    case success(Json)
+    case failure
+
+    var isSuccess: Bool {
+        switch self {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
+    }
+
+    var value: Json? {
+        switch self {
+        case .success(let value):
+            return value
+        case .failure:
+            return nil
+        }
+    }
+}
+
 // MARK: HttpDataResponse
 struct HttpDataResponse<Value> {
     let error: Error? = nil
@@ -53,21 +77,5 @@ enum HttpResult<Value> {
         case .failure(let error):
             return error
         }
-    }
-}
-
-// MARK: Serialization
-protocol HttpDataResponseSerializerProtocol {
-    associatedtype SerializedObject
-    var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> HttpResult<SerializedObject> { get }
-}
-
-struct HttpDataResponseSerializer<Value>: HttpDataResponseSerializerProtocol {
-    typealias SerializedObject = Value
-
-    var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> HttpResult<Value>
-
-    init(serializeResponse: @escaping (URLRequest?, HTTPURLResponse?, Data?, Error?) -> HttpResult<Value>) {
-        self.serializeResponse = serializeResponse
     }
 }
