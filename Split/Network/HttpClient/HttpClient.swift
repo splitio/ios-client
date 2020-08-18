@@ -6,6 +6,11 @@
 
 import Foundation
 
+///
+/// HttpClient is main wrapper component to handle HTTP activity
+/// This file also includes some complementary HTTP client components
+///
+
 // MARK: HttpSession
 struct HttpQueue {
     public static let `default`:String = "split-rest-queue"
@@ -76,14 +81,14 @@ protocol HttpClient {
 
     func sendRequest(endpoint: Endpoint, parameters: [String: Any]?,
                      headers: [String: String]?, body: Data?) throws -> HttpDataRequest
-    
+
     func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?,
                            headers: [String: String]?) throws -> HttpStreamRequest
 }
 
 extension HttpClient {
     func sendRequest(endpoint: Endpoint, parameters: [String: Any]? = nil,
-                            headers: [String: String]? = nil) throws -> HttpDataRequest {
+                     headers: [String: String]? = nil) throws -> HttpDataRequest {
         return try sendRequest(endpoint: endpoint, parameters: parameters, headers: headers, body: nil)
     }
 }
@@ -93,8 +98,6 @@ class DefaultHttpClient {
     static let shared: DefaultHttpClient = {
         return DefaultHttpClient()
     }()
-
-    private var urlSession: URLSession
 
     private var httpSession: HttpSession
     private var requestManager: HttpRequestManager
@@ -122,10 +125,6 @@ class DefaultHttpClient {
             self.httpSession = DefaultHttpSession(urlSession: URLSession(
                     configuration: urlSessionConfig, delegate: delegate, delegateQueue: nil))
         }
-
-        // TODO: Removed this line an variable once replaced
-        urlSession = URLSession(configuration: urlSessionConfig,
-                                delegate: requestManager as? DefaultHttpRequestManager, delegateQueue: nil)
     }
 
     deinit {
@@ -156,7 +155,7 @@ extension DefaultHttpClient {
 extension DefaultHttpClient: HttpClient {
 
     func sendRequest(endpoint: Endpoint, parameters: [String: Any]?, headers: [String: String]?,
-                            body: Data?) throws -> HttpDataRequest {
+                     body: Data?) throws -> HttpDataRequest {
         var httpHeaders = endpoint.headers
         if let headers = headers {
             httpHeaders += headers
