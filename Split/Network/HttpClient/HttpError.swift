@@ -10,6 +10,7 @@ import Foundation
 
 enum HttpError: Error {
     case couldNotCreateRequest(message: String)
+    case unknown(message: String)
 }
 
 // MARK: Get message
@@ -18,8 +19,8 @@ extension HttpError {
         switch self {
         case .couldNotCreateRequest(let message):
             return message
-        default:
-            return "An unknown error has occurred"
+        case .unknown(let message):
+            return message
         }
     }
 }
