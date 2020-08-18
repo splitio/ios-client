@@ -9,12 +9,12 @@
 import Foundation
 
 protocol ReconnectBackoffCounter {
-    func getNextRetryTime() -> Int
+    func getNextRetryTime() -> Double
     func resetCounter()
 }
 
 class DefaultReconnectBackoffCounter {
-    private static let kMaxTimeLimitInSecs = 1800 // 30 minutes (30 * 60)
+    private static let kMaxTimeLimitInSecs: Double = 1800.0 // 30 minutes (30 * 60)
     private static let kRetryExponentialBase = 2
     private let backoffBase: Int
     private var attemptCount: AtomicInt
@@ -24,14 +24,14 @@ class DefaultReconnectBackoffCounter {
         self.attemptCount = AtomicInt(0)
     }
 
-    func getNextRetryTime() -> Int {
+    func getNextRetryTime() -> Double {
 
         let base = Decimal(backoffBase * Self.kRetryExponentialBase)
         let decimalResult = pow(base, attemptCount.getAndAdd(1))
 
         var retryTime = Self.kMaxTimeLimitInSecs
         if !decimalResult.isNaN, decimalResult < Decimal(Self.kMaxTimeLimitInSecs) {
-            retryTime = (decimalResult as NSDecimalNumber).intValue
+            retryTime = (decimalResult as NSDecimalNumber).doubleValue
         }
         return retryTime
     }
