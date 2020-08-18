@@ -36,7 +36,7 @@ class ReconnectBackoffCounterTest: XCTestCase {
     }
 
     private func testWithBase(base: Int, results: [Int]) {
-        let counter = ReconnectBackoffCounter(backoffBase: base);
+        let counter = DefaultReconnectBackoffCounter(backoffBase: base);
         let v1 = counter.getNextRetryTime()
         let v2 = counter.getNextRetryTime()
         let v3 = counter.getNextRetryTime()

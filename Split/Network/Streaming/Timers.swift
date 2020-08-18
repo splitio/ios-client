@@ -8,10 +8,7 @@
 
 import Foundation
 
-protocol SplitTimer {
-}
-
-enum StreamingTimer: SplitTimer {
+enum TimerName {
     case authRecconect
     case sseReconnect
     case refresahAuthToken
@@ -19,10 +16,9 @@ enum StreamingTimer: SplitTimer {
     case keepAlive
 }
 
-typealias TimerTriggerHandler = (SplitTimer) -> Void
-
 protocol TimersManager {
-    func add(timer: SplitTimer, delayInSeconds: Int)
-    func cancel(timer: SplitTimer)
-    func triggerHandler(handler: TimerTriggerHandler)
+    func add(timer: TimerName, delayInSeconds: Int)
+    func cancel(timer: TimerName)
+    func triggerHandler(handler: (TimerName) -> Void)
 }
+

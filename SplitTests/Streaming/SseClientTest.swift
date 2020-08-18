@@ -12,7 +12,7 @@ import XCTest
 
 class SseClientTest: XCTestCase {
     var httpClient: HttpClientMock!
-    var sseClient: SseClient!
+    var sseClient: DefaultSseClient!
     var streamRequest: HttpStreamRequest!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = IntegrationHelper.dummyUserKey
@@ -24,7 +24,7 @@ class SseClientTest: XCTestCase {
         httpClient = HttpClientMock(session: session)
         let sseEndpoint = EndpointFactory(serviceEndpoints: ServiceEndpoints.builder().build(),
                                           apiKey: apiKey, userKey: userKey).streamingEndpoint
-        sseClient = SseClient(endpoint: sseEndpoint, httpClient: httpClient)
+        sseClient = DefaultSseClient(endpoint: sseEndpoint, httpClient: httpClient)
     }
 
     func testConnect() {
