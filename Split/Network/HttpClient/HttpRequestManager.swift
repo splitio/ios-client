@@ -16,7 +16,6 @@ protocol HttpRequestManager {
 }
 
 class DefaultHttpRequestManager: NSObject {
-
     var requests = HttpRequestList()
 }
 
@@ -70,10 +69,7 @@ extension DefaultHttpRequestManager: HttpRequestManager {
     }
 
     func append(data: Data, to taskIdentifier: Int) {
-        // TODO: Check this if and class hiearchy
-        if let request = requests.get(identifier: taskIdentifier) as? HttpDataRequest {
-            request.notifyIncomingData(data)
-        } else if let request = requests.get(identifier: taskIdentifier) as? HttpStreamRequest {
+        if let request = requests.get(identifier: taskIdentifier) as? HttpDataReceivingRequest {
             request.notifyIncomingData(data)
         }
     }
