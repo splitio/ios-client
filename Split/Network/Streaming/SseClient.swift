@@ -17,20 +17,28 @@ struct SseClientConstants {
     static let pushNotificationVersionValue = "1.1"
 }
 
-class SseClient {
+protocol SseClient {
+    typealias EventHandler = () -> Void
+    typealias MessageHandler = (Data) -> Void
+    typealias ErrorHandler = (Bool) -> Void
+
+    func connect(token: String, channels: [String])
+    var onOpenHandler: EventHandler? { get set }
+    var onErrorHandler: ErrorHandler? { get set }
+    var onDisconnectHandler: EventHandler? { get set }
+    var onMessageHandler: MessageHandler? { get set }
+}
+
+class DefaultSseClient: SseClient {
     private let httpClient: HttpClient
     private var endpoint: Endpoint
     private var queue: DispatchQueue
     private var streamRequest: HttpStreamRequest?
 
-    typealias EventHandler = () -> Void
-    typealias MessageHandler = (Data) -> Void
-    typealias ErrorHandler = (Bool) -> Void
-
-    var onOpenHandler: EventHandler?
-    var onErrorHandler: ErrorHandler?
-    var onDisconnectHandler: EventHandler?
-    var onMessageHandler: MessageHandler?
+    var onOpenHandler: SseClient.EventHandler?
+    var onErrorHandler: SseClient.ErrorHandler?
+    var onDisconnectHandler: SseClient.EventHandler?
+    var onMessageHandler: SseClient.MessageHandler?
 
     init(endpoint: Endpoint, httpClient: HttpClient) {
         self.endpoint = endpoint
@@ -89,7 +97,7 @@ class SseClient {
 }
 
 // MARK: Private
-extension SseClient {
+extension DefaultSseClient {
     private func createChannelsQueryString(channels: [String]) -> String {
         return channels.joined(separator: ",")
     }

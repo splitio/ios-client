@@ -8,7 +8,12 @@
 
 import Foundation
 
-public class ReconnectBackoffCounter {
+protocol ReconnectBackoffCounter {
+    func getNextRetryTime() -> Int
+    func resetCounter()
+}
+
+class DefaultReconnectBackoffCounter {
     private static let kMaxTimeLimitInSecs = 1800 // 30 minutes (30 * 60)
     private static let kRetryExponentialBase = 2
     private let backoffBase: Int
