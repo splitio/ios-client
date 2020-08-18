@@ -79,19 +79,3 @@ enum HttpResult<Value> {
         }
     }
 }
-
-// MARK: Serialization
-protocol HttpDataResponseSerializer {
-    associatedtype SerializedObject
-    var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> HttpResult<SerializedObject> { get }
-}
-
-struct HttpJsonDataResponseSerializer<Value>: HttpDataResponseSerializer {
-    typealias SerializedObject = Value
-
-    var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> HttpResult<Value>
-
-    init(serializeResponse: @escaping (URLRequest?, HTTPURLResponse?, Data?, Error?) -> HttpResult<Value>) {
-        self.serializeResponse = serializeResponse
-    }
-}

@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol HttpStreamRequest: HttpRequest {
+protocol HttpStreamRequest: HttpRequest, HttpDataReceivingRequest {
     typealias ResponseHandler = (HttpResponse) -> Void
     typealias IncomingDataHandler = (Data) -> Void
     typealias CloseHandler = () -> Void
@@ -20,7 +20,7 @@ protocol HttpStreamRequest: HttpRequest {
                      errorHandler: @escaping ErrorHandler) -> Self
 }
 
-// MARK: HttpStreamRequest
+// MARK: DefaultHttpStreamRequest
 class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
 
     var responseHandler: ResponseHandler?
