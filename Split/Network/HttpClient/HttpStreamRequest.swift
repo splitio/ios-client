@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol HttpStreamRequest: HttpRequest {
+protocol HttpStreamRequest: HttpRequest, HttpDataReceivingRequest {
     typealias ResponseHandler = (HttpResponse) -> Void
     typealias IncomingDataHandler = (Data) -> Void
     typealias CloseHandler = () -> Void
