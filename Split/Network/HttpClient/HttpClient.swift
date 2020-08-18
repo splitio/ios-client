@@ -6,6 +6,11 @@
 
 import Foundation
 
+///
+/// HttpClient is main wrapper component to handle HTTP activity
+/// This file also includes some complementary HTTP client components
+///
+
 // MARK: HttpSession
 struct HttpQueue {
     public static let `default`:String = "split-rest-queue"
@@ -77,7 +82,7 @@ protocol HttpClient {
 
     func sendRequest(endpoint: Endpoint, parameters: [String: Any]?,
                      headers: [String: String]?, body: Data?) throws -> HttpDataRequest
-    
+
     func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?,
                            headers: [String: String]?) throws -> HttpStreamRequest
 }
