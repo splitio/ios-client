@@ -68,7 +68,7 @@ class DefaultSseAuthenticator: SseAuthenticator {
                 return errorResult(recoverable: true)
             }
             jwtToken = try jwtParser.parse(raw: response.token)
-        } catch HttpError.authenticationFailed {
+        } catch HttpError.clientRelated {
             return errorResult(recoverable: false)
         } catch {
             return errorResult(recoverable: true)
