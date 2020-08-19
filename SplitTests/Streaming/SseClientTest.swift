@@ -32,23 +32,23 @@ class SseClientTest: XCTestCase {
         // Here reqExp expectation is fired with delay on HttpClient mock
         // to make sure that request.setResponse which is executed when headers received
         // run after on connect. Then we wait for onOpenHandler execution
-        let conExp = XCTestExpectation(description: "connect")
+        let conExp = XCTestExpectation(description: "conn")
         let reqExp = XCTestExpectation(description: "req")
         httpClient.streamReqExp = reqExp
 
-        var connected = false
-        sseClient.onOpenHandler = {
-            connected = true
+        var result: SseConnectionResult?
+        DispatchQueue.global().async {
+            result = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
             conExp.fulfill()
         }
-        sseClient.connect(token: sseAuthToken, channels: sseChannels)
 
         wait(for: [reqExp], timeout: 5)
         let request = httpClient.httpStreamRequest!
         request.setResponse(code: 200)
+
         wait(for: [conExp], timeout: 5)
 
-        XCTAssertTrue(connected)
+        XCTAssertTrue(result?.success ?? false)
     }
 
     /// TODO: Update this test when StreamingParser implemented
@@ -67,10 +67,6 @@ class SseClientTest: XCTestCase {
         // Set the amount of simulated incoming messages
         httpClient.streamReqExp = reqExp
 
-        sseClient.onOpenHandler = {
-            conExp.fulfill()
-        }
-
         sseClient.onMessageHandler = { message in
             msgCounter+=1
             messages.append(message.stringRepresentation)
@@ -78,13 +74,16 @@ class SseClientTest: XCTestCase {
                 msgExp.fulfill()
             }
         }
-        sseClient.connect(token: sseAuthToken, channels: sseChannels)
+
+        DispatchQueue.global().async {
+              _ = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
+              conExp.fulfill()
+          }
 
         wait(for: [reqExp], timeout: 5)
         let request = httpClient.httpStreamRequest!
         request.setResponse(code: 200)
         wait(for: [conExp], timeout: 5)
-
 
         for i in 1..<4 {
             let data = Data("msg\(i)".utf8)
@@ -114,38 +113,57 @@ class SseClientTest: XCTestCase {
         // to make sure that request.setResponse which is executed when headers received
         // run after on connect.
         // On response will be called with an error http code so OnErrorHandler has to be executed
-        let errExp = XCTestExpectation(description: "error")
+        let conExp = XCTestExpectation(description: "conn")
         let reqExp = XCTestExpectation(description: "req")
         httpClient.streamReqExp = reqExp
 
-        var onErrorCalled = false
-        var isErrorRecoverable = !shouldBeRecoverable
-        sseClient.onErrorHandler = { isRecoverable in
-            onErrorCalled = true
-            isErrorRecoverable = isRecoverable
-            errExp.fulfill()
+        var result: SseConnectionResult?
+        DispatchQueue.global().async {
+            result = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
+            conExp.fulfill()
         }
-        sseClient.connect(token: sseAuthToken, channels: sseChannels)
 
         wait(for: [reqExp], timeout: 5)
         let request = httpClient.httpStreamRequest!
         request.setResponse(code: code)
-        wait(for: [errExp], timeout: 5)
+        wait(for: [conExp], timeout: 5)
 
-        XCTAssertTrue(onErrorCalled)
-        XCTAssertEqual(shouldBeRecoverable, isErrorRecoverable)
+        XCTAssertFalse(result?.success ?? true)
+        XCTAssertEqual(shouldBeRecoverable, result?.errorIsRecoverable ?? !shouldBeRecoverable)
     }
 
-    func testOnSendRequestError() {
+    func testOnErrorExceptionWhileRequest() {
+        // SSE client has to fire onErrorHandler if available when an error occurs
+        // Here reqExp expectation is fired with delay on HttpClient mock
+        // to make sure that request.setResponse which is executed when headers received
+        // run after on connect.
+        // On response will throw an exception to check if handled correctly
+        let reqExp = XCTestExpectation(description: "req")
+        httpClient.streamReqExp = reqExp
+        httpClient.throwOnSend = true
+
+
+        var result: SseConnectionResult?
+        DispatchQueue.global().async {
+            result = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
+        }
+
+        wait(for: [reqExp], timeout: 5)
+
+        XCTAssertFalse(result?.success ?? true)
+        XCTAssertEqual(false, result?.errorIsRecoverable ?? true)
+    }
+
+    func testOnErrorAfterConnectionSuccess() {
         // SSE client has to fire onErrorHandler if available when an error occurs
         // Here reqExp expectation is fired with delay on HttpClient mock
         // to make sure that request.setResponse which is executed when headers received
         // run after on connect.
         // On response will be called with an error http code so OnErrorHandler has to be executed
+        let conExp = XCTestExpectation(description: "conn")
         let errExp = XCTestExpectation(description: "error")
         let reqExp = XCTestExpectation(description: "req")
         httpClient.streamReqExp = reqExp
-        httpClient.throwOnSend = true
 
         var onErrorCalled = false
         var isErrorRecoverable = true
@@ -154,42 +172,25 @@ class SseClientTest: XCTestCase {
             isErrorRecoverable = isRecoverable
             errExp.fulfill()
         }
-        sseClient.connect(token: sseAuthToken, channels: sseChannels)
 
-        wait(for: [reqExp, errExp], timeout: 5)
-
-        XCTAssertTrue(onErrorCalled)
-        XCTAssertFalse(isErrorRecoverable)
-    }
-
-    func testOnErrorWhileRequest() {
-        // SSE client has to fire onErrorHandler if available when an error occurs
-        // Here reqExp expectation is fired with delay on HttpClient mock
-        // to make sure that request.setResponse which is executed when headers received
-        // run after on connect.
-        // On response will be called with an error http code so OnErrorHandler has to be executed
-        let errExp = XCTestExpectation(description: "error")
-        let reqExp = XCTestExpectation(description: "req")
-        httpClient.streamReqExp = reqExp
-        httpClient.throwOnSend = true
-
-        var onErrorCalled = false
-        var isErrorRecoverable = true
-        sseClient.onErrorHandler = { isRecoverable in
-            onErrorCalled = true
-            isErrorRecoverable = isRecoverable
-            errExp.fulfill()
+        var result: SseConnectionResult?
+        DispatchQueue.global().async {
+            result = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
+            conExp.fulfill()
         }
-        sseClient.connect(token: sseAuthToken, channels: sseChannels)
 
         wait(for: [reqExp], timeout: 5)
         let request = httpClient.httpStreamRequest!
+        request.setResponse(code: 200)
+        wait(for: [conExp], timeout: 5)
         request.complete(error: HttpError.unknown(message: "unknown error"))
         wait(for: [errExp], timeout: 5)
 
+        XCTAssertTrue(result?.success ?? false)
         XCTAssertTrue(onErrorCalled)
         XCTAssertFalse(isErrorRecoverable)
     }
+
 
     func testOnKeepAlive() {
         // TODO: Implement this test when stream parser complete
@@ -206,16 +207,16 @@ class SseClientTest: XCTestCase {
         httpClient.streamReqExp = reqExp
 
         var disconnected = false
-        sseClient.onOpenHandler = {
-            conExp.fulfill()
-        }
 
         sseClient.onDisconnectHandler = {
             disconnected = true
             discExp.fulfill()
         }
 
-        sseClient.connect(token: sseAuthToken, channels: sseChannels)
+        DispatchQueue.global().async {
+            _ = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
+            conExp.fulfill()
+        }
 
         wait(for: [reqExp], timeout: 5)
         let request = httpClient.httpStreamRequest!

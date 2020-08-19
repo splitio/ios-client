@@ -26,7 +26,6 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
     var responseHandler: ResponseHandler?
     var incomingDataHandler: IncomingDataHandler?
     var closeHandler: CloseHandler?
-    var errorHandler: ErrorHandler?
 
     init(session: HttpSession, url: URL, parameters: HttpParameters?, headers: HttpHeaders?) throws {
         try super.init(session: session, url: url, method: .get, parameters: parameters, headers: headers)
@@ -70,7 +69,7 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
     }
 
     override func complete(error: HttpError?) {
-        if let error = error, let errorHandler = self.requestErrorHandler {
+        if let error = error, let errorHandler = self.errorHandler {
             errorHandler(error)
         } else if let closeHandler = self.closeHandler {
             closeHandler()

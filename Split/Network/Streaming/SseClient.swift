@@ -66,18 +66,10 @@ class DefaultSseClient: SseClient {
                 self.streamRequest = try self.httpClient.sendStreamRequest(endpoint: self.endpoint,
                                                                            parameters: parameters,
                                                                            headers: headers)
-            } catch {
-                Logger.e("Error while connection to streaming: \(error.localizedDescription)")
-                //self.triggerOnError(isRecoverable: false)
-                responseSemaphore.signal()
-                connectionResult = SseConnectionResult(success: false, errorIsRecoverable: false)
-            }
-
-            if let streamRequest = self.streamRequest {
-                _ = streamRequest.getResponse(responseHandler: { response in
+                .getResponse(responseHandler: { response in
 
                     connectionResult = SseConnectionResult(success: response.code == 200,
-                                                           errorIsRecoverable: response.isCredentialsError)
+                                                           errorIsRecoverable: !response.isCredentialsError)
                     responseSemaphore.signal()
 
                 }, incomingDataHandler: { data in
@@ -90,6 +82,11 @@ class DefaultSseClient: SseClient {
                     Logger.e("Error in stream request: \(error.message)")
                     self.triggerOnError(isRecoverable: true)
                 })
+            } catch {
+                Logger.e("Error while connection to streaming: \(error.localizedDescription)")
+                //self.triggerOnError(isRecoverable: false)
+                responseSemaphore.signal()
+                connectionResult = SseConnectionResult(success: false, errorIsRecoverable: false)
             }
         }
         responseSemaphore.wait()
