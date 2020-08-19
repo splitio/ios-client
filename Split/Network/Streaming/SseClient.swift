@@ -11,7 +11,7 @@ import Foundation
 struct SseClientConstants {
     static let contentTypeHeaderStream = "Content-Type"
     static let contentTypeHeaderValueStream = "text/event-stream"
-    static let pushNotificationChannelsParam = "channel"
+    static let pushNotificationChannelsParam = "channels"
     static let pushNotificationTokenParam = "accessToken"
     static let pushNotificationVersionParam = "v"
     static let pushNotificationVersionValue = "1.1"
