@@ -26,6 +26,10 @@ protocol HttpRequest {
 
 }
 
+protocol HttpDataReceivingRequest {
+    func notifyIncomingData(_ data: Data)
+}
+
 // MARK: BaseHttpRequest
 class BaseHttpRequest: HttpRequest {
 

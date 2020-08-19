@@ -12,9 +12,9 @@ import XCTest
 
 class EndpointFactoryTest: XCTestCase {
 
-    private let kAuthorizationHeader = "authorization"
-    private let kSplitVersionHeader = "splitsdkversion"
-    private let kContentTypeHeader = "content-type"
+    private let kAuthorizationHeader = "Authorization"
+    private let kSplitVersionHeader = "SplitSDKVersion"
+    private let kContentTypeHeader = "Content-Type"
     private let kAuthorizationBearer = "Bearer \(CommonValues.apiKey)"
     private let kContentTypeJson = "application/json"
     private let kContentTypeEventStream = "text/event-stream"
@@ -116,7 +116,7 @@ class EndpointFactoryTest: XCTestCase {
         let endpointUrl = "\(serviceEndpoints.authServiceEndpoint.absoluteString)"
         let endpoint = factory.sseAuthenticationEndpoint
 
-        XCTAssertEqual(HttpMethod.post, endpoint.method)
+        XCTAssertEqual(HttpMethod.get, endpoint.method)
         XCTAssertEqual(3, endpoint.headers.count)
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
