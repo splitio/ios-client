@@ -11,9 +11,9 @@ import Foundation
 
 class ReconnectBackoffCounterStub: ReconnectBackoffCounter {
     var resetCounterCalled = false
-    var nextRetryTime: Int = 0
+    var nextRetryTime: Double = 0
 
-    func getNextRetryTime() -> Int {
+    func getNextRetryTime() -> Double {
         return nextRetryTime
     }
 

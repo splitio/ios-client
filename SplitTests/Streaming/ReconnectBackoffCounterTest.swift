@@ -16,26 +16,26 @@ class ReconnectBackoffCounterTest: XCTestCase {
     }
 
     func testBase1() {
-        let results = [1, 2, 4, 8, 30, 1]
+        let results: [Double] = [1, 2, 4, 8, 30, 1]
         testWithBase(base: 1, results: results);
     }
 
     func testBase2() {
-        let results = [1, 4, 16, 64, 256, 1]
+        let results: [Double] = [1, 4, 16, 64, 256, 1]
         testWithBase(base: 2, results: results);
     }
 
     func testBase3() {
-        let results = [1, 6, 36, 216, 1]
+        let results: [Double] = [1, 6, 36, 216, 1]
         testWithBase(base: 3, results: results);
     }
 
     func testBase8() {
-        let results = [1, 16, 256, 1800, 1]
+        let results: [Double] = [1, 16, 256, 1800, 1]
         testWithBase(base: 8, results: results);
     }
 
-    private func testWithBase(base: Int, results: [Int]) {
+    private func testWithBase(base: Int, results: [Double]) {
         let counter = DefaultReconnectBackoffCounter(backoffBase: base);
         let v1 = counter.getNextRetryTime()
         let v2 = counter.getNextRetryTime()
