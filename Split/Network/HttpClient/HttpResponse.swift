@@ -15,7 +15,9 @@ import Foundation
 struct HttpResponse {
     let code: Int
     let result: HttpResultWrapper
-
+    var isCredentialsError: Bool {
+        return HttpCode.forbidden == code || HttpCode.unauthorized == code
+    }
     init(code: Int, data: Data? = nil) {
         self.code = code
         if code >= HttpCode.requestOk && code < HttpCode.multipleChoice {

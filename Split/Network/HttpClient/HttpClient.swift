@@ -75,6 +75,7 @@ class HttpSessionConfig {
         return HttpSessionConfig()
     }()
     var connectionTimeOut: TimeInterval = 30
+    var readTimeout: TimeInterval = 60
 }
 
 protocol HttpClient {
@@ -108,7 +109,7 @@ class DefaultHttpClient {
 
         let urlSessionConfig = URLSessionConfiguration.default
 
-        urlSessionConfig.timeoutIntervalForResource = configuration.connectionTimeOut
+        urlSessionConfig.timeoutIntervalForResource = configuration.readTimeout
         urlSessionConfig.timeoutIntervalForRequest = configuration.connectionTimeOut
         urlSessionConfig.httpMaximumConnectionsPerHost = 100
 
@@ -123,7 +124,7 @@ class DefaultHttpClient {
         } else {
             let delegate = self.requestManager as? URLSessionDelegate
             self.httpSession = DefaultHttpSession(urlSession: URLSession(
-                    configuration: urlSessionConfig, delegate: delegate, delegateQueue: nil))
+                configuration: urlSessionConfig, delegate: delegate, delegateQueue: nil))
         }
     }
 
@@ -138,7 +139,7 @@ extension DefaultHttpClient {
     private func createRequest(_ url: URL, method: HttpMethod = .get, parameters: HttpParameters? = nil,
                                headers: HttpHeaders? = nil, body: Data? = nil) throws -> HttpDataRequest {
         let request = try DefaultHttpDataRequest(session: httpSession, url: url, method: method,
-                                                        parameters: parameters, headers: headers, body: body)
+                                                 parameters: parameters, headers: headers, body: body)
         return request
     }
 
