@@ -19,20 +19,19 @@ protocol SseConnectionManager {
 
 class DefaultSseConnectionManager: SseConnectionManager {
 
-
-
     private enum State {
         case disconnected
         case authenticating
         case connecting
         case connected
+        case stopped
     }
 
     var availabilityHandler: AvailabilityHandler?
-    private static let kSseKeepAliveTimeInSeconds = 70
-    private static let kReconnectTimeBeforeTokenExpInASeconds = 600
-    private static let kDisconnectOnBgTimeInSeconds = 60
-    private static let kTokenExpiredErrorCode = 40142
+    private let kSseKeepAliveTimeInSeconds = 70
+    private let kReconnectTimeBeforeTokenExpInASeconds = 600
+    private let kDisconnectOnBgTimeInSeconds = 60
+    private let kTokenExpiredErrorCode = 40142
 
     private let sseAuthenticator: SseAuthenticator
     private let sseClient: SseClient
@@ -41,9 +40,16 @@ class DefaultSseConnectionManager: SseConnectionManager {
     private let timersManager: TimersManager
     private let userKey: String
     private var currentState: State
-    private var connectionQueue = DispatchQueue(label: "Sse connnection")
+    private let connectionQueue = DispatchQueue(label: "Sse connnection")
+    private let stateQueue = DispatchQueue(label: "Sse state")
 
     private var lastJwtToken: JwtToken?
+
+    private var state: State {
+        stateQueue.sync {
+            return self.currentState
+        }
+    }
 
     init(userKey: String, sseAuthenticator: SseAuthenticator, sseClient: SseClient,
          authBackoffCounter: ReconnectBackoffCounter,
@@ -76,49 +82,59 @@ class DefaultSseConnectionManager: SseConnectionManager {
 
     // MARK: Private
     private func set(state: State) {
-        connectionQueue.sync {
+        stateQueue.sync {
             self.currentState = state
-        }
-    }
-
-    private func currentStatus() -> State {
-        connectionQueue.sync {
-            return self.currentState
         }
     }
 
     private func connect() {
         connectionQueue.async {
-            self.set(state: .authenticating)
+            if let jwt = self.authenticateToSse() {
+                self.connectToSse(jwt: jwt)
+            }
+        }
+    }
 
-            var isAuthenticated = false
-            var jwt: JwtToken?
-            while !isAuthenticated {
-                let result = self.sseAuthenticator.authenticate(userKey: self.userKey)
-                if (result.success && !result.pushEnabled) ||
-                    (!result.success && !result.errorIsRecoverable) {
-                    self.reportStreaming(isAvailable: false)
-                    self.set(state: .disconnected)
-                    // shutdown streaming
-                    return
-                }
+    private func authenticateToSse() -> JwtToken? {
+        set(state: .authenticating)
 
-                if result.success, let jwtToken = result.jwtToken {
-                    jwt = jwtToken
-                    isAuthenticated = true
-                    self.reportStreaming(isAvailable: true)
-                } else {
-                    self.reportStreaming(isAvailable: false)
-                    self.delay(seconds: self.authBackoffCounter.getNextRetryTime())
-                }
+        while true && state != .stopped {
+            let result = sseAuthenticator.authenticate(userKey: userKey)
+            if (result.success && !result.pushEnabled) ||
+                (!result.success && !result.errorIsRecoverable) {
+                reportStreaming(isAvailable: false)
+                set(state: .disconnected)
+                // shutdown streaming
+                return nil
             }
 
-            // jwt will never be null here
-            if let jwt = jwt {
-                self.set(state: .connecting)
-                self.lastJwtToken = jwt
-                self.sseClient.connect(token: jwt.rawToken, channels: jwt.channels)
+            if result.success, let jwtToken = result.jwtToken {
+                authBackoffCounter.resetCounter()
+                return jwtToken
             }
+            reportStreaming(isAvailable: false)
+            delay(seconds: authBackoffCounter.getNextRetryTime())
+        }
+        return nil
+    }
+
+    private func connectToSse(jwt: JwtToken) {
+        // This function must be called
+        // from an async queue
+        while true && state != .stopped {
+            set(state: .connecting)
+            lastJwtToken = jwt
+            let result = sseClient.connect(token: jwt.rawToken, channels: jwt.channels)
+            if result.success {
+                set(state: .connected)
+                reportStreaming(isAvailable: true)
+                timersManager.add(timer: .keepAlive, delayInSeconds: kSseKeepAliveTimeInSeconds)
+                timersManager.add(timer: .refreshAuthToken, delayInSeconds: kReconnectTimeBeforeTokenExpInASeconds)
+                sseBackoffCounter.resetCounter()
+                return
+            }
+            reportStreaming(isAvailable: false)
+            delay(seconds: sseBackoffCounter.getNextRetryTime())
         }
     }
 
@@ -132,7 +148,7 @@ class DefaultSseConnectionManager: SseConnectionManager {
         // Using this method to avoid blocking the
         // thread using sleep
         let semaphore = DispatchSemaphore(value: 0)
-        connectionQueue.asyncAfter(deadline: .now() + seconds) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + seconds) {
             semaphore.signal()
         }
         semaphore.wait()

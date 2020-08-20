@@ -9,9 +9,7 @@
 import Foundation
 
 enum TimerName {
-    case authRecconect
-    case sseReconnect
-    case refresahAuthToken
+    case refreshAuthToken
     case appHostBgDisconnect
     case keepAlive
 }

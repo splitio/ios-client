@@ -11,9 +11,11 @@ import Foundation
 
 class ReconnectBackoffCounterStub: ReconnectBackoffCounter {
     var resetCounterCalled = false
+    var retryCallCount = 0
     var nextRetryTime: Double = 0
 
     func getNextRetryTime() -> Double {
+        retryCallCount+=1
         return nextRetryTime
     }
 
