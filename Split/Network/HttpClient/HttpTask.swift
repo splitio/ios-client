@@ -9,7 +9,7 @@
 import Foundation
 
 /// Represents a network task
-/// It is intended to wrap URLSessionTask to allow testing easly
+/// It is intended to wrap URLSessionTask to allow testing easily
 protocol HttpTask {
     var identifier: Int { get }
     func cancel()

@@ -53,8 +53,8 @@ class DefaultRestClient {
                 }
             case .failure:
                 completion(DataResult {
-                    if [401, 403].contains(response.code) {
-                        throw HttpError.authenticationFailed
+                    if response.code >= 400, response.code < 500 {
+                        throw HttpError.clientRelated
                     }
                     throw HttpError.unknown(message: "unknown")
                 })
