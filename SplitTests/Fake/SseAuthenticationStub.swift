@@ -11,9 +11,15 @@ import Foundation
 
 class SseAuthenticatorStub: SseAuthenticator {
     var userKey: String?
-    var result: SseAuthenticationResult?
+    var results: [SseAuthenticationResult]?
+    private var resultIndex = 0
 
     func authenticate(userKey: String) -> SseAuthenticationResult {
-        return result!
+        self.userKey = userKey
+        let result = results![resultIndex]
+        if resultIndex < results!.count - 1 {
+            resultIndex+=1
+        }
+        return result
     }
 }

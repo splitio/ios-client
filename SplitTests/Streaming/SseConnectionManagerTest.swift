@@ -14,14 +14,19 @@ import XCTest
 class SseConnectionManagerTest: XCTestCase {
 
     var connectionManager: SseConnectionManager!
-    let sseAuthenticator = SseAuthenticatorStub()
-    let sseClient = SseClientMock()
-    let authBackoff = ReconnectBackoffCounterStub()
-    let sseBackoff = ReconnectBackoffCounterStub()
-    let timersManager = TimersManagerMock()
+    var sseAuthenticator: SseAuthenticatorStub!
+    var sseClient: SseClientMock!
+    var authBackoff: ReconnectBackoffCounterStub!
+    var sseBackoff: ReconnectBackoffCounterStub!
+    var timersManager: TimersManagerMock!
     let userKey = IntegrationHelper.dummyUserKey
 
     override func setUp() {
+        sseAuthenticator = SseAuthenticatorStub()
+        sseClient = SseClientMock()
+        authBackoff = ReconnectBackoffCounterStub()
+        sseBackoff = ReconnectBackoffCounterStub()
+        timersManager = TimersManagerMock()
         connectionManager = DefaultSseConnectionManager(userKey: userKey, sseAuthenticator: sseAuthenticator, sseClient: sseClient, authBackoffCounter: authBackoff,
                                                         sseBackoffCounter: sseBackoff, timersManager: timersManager)
 
@@ -31,24 +36,90 @@ class SseConnectionManagerTest: XCTestCase {
         // On start connection manager
         // calls authenticate with user key
         // and then sse client with jwt raw token and channels
-
         // Returning ok token with streaming enabled
-        sseAuthenticator.result = SseAuthenticationResult(success: true, errorIsRecoverable: false, pushEnabled: true, jwtToken: dummyToken())
+        // Also an expectation is added to be fullfiled when timer is added
+        // in order to avoid using sleep to wait for all process finished
+        
+        let exp = XCTestExpectation(description: "finish")
+        timersManager.addExpectationFor(timer: .keepAlive, expectation: exp)
+
+        sseAuthenticator.results = [successAuthResult()]
+        sseClient.results = [successConnResult()]
 
         connectionManager.start()
 
-        XCTAssertEqual(userKey, sseAuthenticator.userKey)
+        wait(for: [exp], timeout: 3)
+
+        XCTAssertEqual(userKey, sseAuthenticator.userKey!)
         XCTAssertEqual("thetoken", sseClient.token)
         XCTAssertEqual(2, sseClient.channels?.count)
-        XCTAssertTrue(timersManager.timerIsAdded(timer: .authRecconect))
-        XCTAssertTrue(timersManager.timerIsAdded(timer: .sseReconnect))
-        XCTAssertTrue(timersManager.timerIsAdded(timer: .refresahAuthToken))
-        XCTAssertTrue(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
+        XCTAssertEqual(0, authBackoff.retryCallCount)
+        XCTAssertEqual(0, sseBackoff.retryCallCount)
+        XCTAssertTrue(authBackoff.resetCounterCalled)
+        XCTAssertTrue(sseBackoff.resetCounterCalled)
+        XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertTrue(timersManager.timerIsAdded(timer: .keepAlive))
+        XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
+    }
+
+    func testStartAuthReintent() {
+        // On start connection manager
+        // calls authenticate with user key
+        // and then sse client with jwt raw token and channels
+        // Returning ok token with streaming enabled
+        // Also an expectation is added to be fullfiled when timer is added
+        // in order to avoid using sleep to wait for all process finished
+
+        let exp = XCTestExpectation(description: "finish")
+        timersManager.addExpectationFor(timer: .keepAlive, expectation: exp)
+
+        sseAuthenticator.results = [recoverableAuthResult(), recoverableAuthResult(), successAuthResult()]
+        sseClient.results = [recoverableConnResult(), recoverableConnResult(), successConnResult()]
+
+        connectionManager.start()
+
+        wait(for: [exp], timeout: 80)
+
+        XCTAssertEqual(userKey, sseAuthenticator.userKey!)
+        XCTAssertEqual("thetoken", sseClient.token)
+        XCTAssertEqual(2, sseClient.channels?.count)
+        XCTAssertEqual(2, authBackoff.retryCallCount)
+        XCTAssertEqual(2, sseBackoff.retryCallCount)
+        XCTAssertTrue(authBackoff.resetCounterCalled)
+        XCTAssertTrue(sseBackoff.resetCounterCalled)
+        XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
+        XCTAssertTrue(timersManager.timerIsAdded(timer: .keepAlive))
+        XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
     }
 
     override func tearDown() {
+    }
 
+    private func successAuthResult() -> SseAuthenticationResult {
+        return SseAuthenticationResult(success: true, errorIsRecoverable: false,
+                                       pushEnabled: true, jwtToken: dummyToken())
+    }
+
+    private func recoverableAuthResult() -> SseAuthenticationResult {
+        return SseAuthenticationResult(success: false, errorIsRecoverable: true,
+                                       pushEnabled: true, jwtToken: nil)
+    }
+
+    private func noRecoverableAuthResult() -> SseAuthenticationResult {
+        return SseAuthenticationResult(success: false, errorIsRecoverable: false,
+                                       pushEnabled: true, jwtToken: nil)
+    }
+
+    private func successConnResult() -> SseConnectionResult {
+        return SseConnectionResult(success: true, errorIsRecoverable: true)
+    }
+
+    private func recoverableConnResult() -> SseConnectionResult {
+        return SseConnectionResult(success: false, errorIsRecoverable: true)
+    }
+
+    private func noRecoverableConnResult() -> SseConnectionResult {
+        return SseConnectionResult(success: false, errorIsRecoverable: false)
     }
 
     private func dummyToken() -> JwtToken {

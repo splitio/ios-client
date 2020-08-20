@@ -10,8 +10,8 @@ import Foundation
 @testable import Split
 
 class SseClientMock: SseClient {
-    var result = SseConnectionResult(success: true, errorIsRecoverable: false)
-
+    var results: [SseConnectionResult]?
+    private var resultIndex = 0
     var token: String?
     var channels: [String]?
 
@@ -26,6 +26,10 @@ class SseClientMock: SseClient {
     func connect(token: String, channels: [String]) -> SseConnectionResult {
         self.token = token
         self.channels = channels
+        let result = results![resultIndex]
+        if resultIndex < results!.count - 1 {
+            resultIndex+=1
+        }
         return result
     }
 }

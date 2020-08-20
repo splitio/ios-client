@@ -28,10 +28,10 @@ class SseClientTest: XCTestCase {
     }
 
     func testConnect() {
-        // SSE client has to fire onOpenHandler if available when connection is opened
+        // SSE client returns true connections was successful.
         // Here reqExp expectation is fired with delay on HttpClient mock
         // to make sure that request.setResponse which is executed when headers received
-        // run after on connect. Then we wait for onOpenHandler execution
+        // run after on connect.
         let conExp = XCTestExpectation(description: "conn")
         let reqExp = XCTestExpectation(description: "req")
         httpClient.streamReqExp = reqExp
@@ -103,12 +103,13 @@ class SseClientTest: XCTestCase {
     }
 
     func testOnErrorNonRecoverable() {
-        // Test recoverable error (unauthorized)
+        // Test no recoverable error (client error)
         onErrorTest(code: 401, shouldBeRecoverable: false)
     }
 
     func onErrorTest(code: Int, shouldBeRecoverable: Bool) {
-        // SSE client has to fire onErrorHandler if available when an error occurs
+        // SSE client returns success = false if connection was not successful.
+        // Also the flag isRecoverable indicates if we retry to connect
         // Here reqExp expectation is fired with delay on HttpClient mock
         // to make sure that request.setResponse which is executed when headers received
         // run after on connect.
@@ -133,7 +134,7 @@ class SseClientTest: XCTestCase {
     }
 
     func testOnErrorExceptionWhileRequest() {
-        // SSE client has to fire onErrorHandler if available when an error occurs
+        // SSE client returns success = false if connection was not successful.
         // Here reqExp expectation is fired with delay on HttpClient mock
         // to make sure that request.setResponse which is executed when headers received
         // run after on connect.
@@ -156,6 +157,7 @@ class SseClientTest: XCTestCase {
 
     func testOnErrorAfterConnectionSuccess() {
         // SSE client has to fire onErrorHandler if available when an error occurs
+        // after connection was successful
         // Here reqExp expectation is fired with delay on HttpClient mock
         // to make sure that request.setResponse which is executed when headers received
         // run after on connect.
@@ -188,9 +190,8 @@ class SseClientTest: XCTestCase {
 
         XCTAssertTrue(result?.success ?? false)
         XCTAssertTrue(onErrorCalled)
-        XCTAssertFalse(isErrorRecoverable)
+        XCTAssertTrue(isErrorRecoverable)
     }
-
 
     func testOnKeepAlive() {
         // TODO: Implement this test when stream parser complete
