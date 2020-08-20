@@ -12,9 +12,12 @@ import XCTest
 protocol RestClientTest {
     func update(segments: [String]?)
     func update(change: SplitChange?)
+    func update(response: SseAuthenticationResponse?)
+    func updateFailedSseAuth(error: Error)
 }
 
 class RestClientStub {
+    private var sseAuthResult: DataResult<SseAuthenticationResponse>?
     private var segments: [String]?
     private var splitChange: SplitChange?
     private var sendTrackEventsCount = 0
@@ -55,19 +58,33 @@ extension RestClientStub: RestClientTrackEvents {
     }
 }
 
-extension RestClientStub: RestClientTest {
-    func update(segments: [String]?) {
-        self.segments = segments
-    }
-    
-    func update(change: SplitChange?) {
-        self.splitChange = change
-    }
-}
-
 extension RestClientStub: RestClientImpressions {
     func sendImpressions(impressions: [ImpressionsTest], completion: @escaping (DataResult<EmptyValue>) -> Void) {
         sendImpressionsCount+=1
         completion(DataResult.success(value: nil))
+    }
+}
+
+extension RestClientStub: RestClientSseAuthenticator {
+    func authenticate(userKey: String, completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void) {
+        completion(self.sseAuthResult!)
+    }
+}
+
+extension RestClientStub: RestClientTest {
+    func update(segments: [String]?) {
+        self.segments = segments
+    }
+
+    func update(change: SplitChange?) {
+        self.splitChange = change
+    }
+
+    func update(response: SseAuthenticationResponse?) {
+        self.sseAuthResult = DataResult.success(value: response)
+    }
+
+    func updateFailedSseAuth(error: Error) {
+        self.sseAuthResult = DataResult.failure(error: error as NSError)
     }
 }
