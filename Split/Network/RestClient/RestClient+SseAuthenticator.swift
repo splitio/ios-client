@@ -21,7 +21,7 @@ extension DefaultRestClient: RestClientSseAuthenticator {
     var kUserKeyParameter: String { "users" }
     func authenticate(userKey: String, completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void) {
         self.execute(
-            endpoint: endpointFactory.splitChangesEndpoint,
+            endpoint: endpointFactory.sseAuthenticationEndpoint,
             parameters: [kUserKeyParameter: userKey],
             completion: completion)
     }
