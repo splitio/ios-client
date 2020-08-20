@@ -52,7 +52,12 @@ class DefaultRestClient {
                     completion(DataResult { throw error })
                 }
             case .failure:
-                completion(DataResult { throw HttpError.unknown(message: "unknown") })
+                completion(DataResult {
+                    if response.code >= 400, response.code < 500 {
+                        throw HttpError.clientRelated
+                    }
+                    throw HttpError.unknown(message: "unknown")
+                })
             }
             }, errorHandler: {error in
                 completion(DataResult { throw error })

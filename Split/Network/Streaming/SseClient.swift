@@ -23,7 +23,6 @@ class SseClient {
     private var queue: DispatchQueue
     private var streamRequest: HttpStreamRequest?
 
-
     typealias EventHandler = () -> Void
     typealias MessageHandler = (Data) -> Void
     typealias ErrorHandler = (Bool) -> Void
