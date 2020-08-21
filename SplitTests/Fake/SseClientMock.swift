@@ -12,10 +12,12 @@ import Foundation
 class SseClientMock: SseClient {
     var results: [SseConnectionResult]?
     private var resultIndex = 0
+    var connectCalled = false
+    var disconnectCalled = false
     var token: String?
     var channels: [String]?
 
-    var onOpenHandler: EventHandler?
+    var onKeepAliveHandler: EventHandler?
 
     var onErrorHandler: ErrorHandler?
 
@@ -30,6 +32,30 @@ class SseClientMock: SseClient {
         if resultIndex < results!.count - 1 {
             resultIndex+=1
         }
+        connectCalled = true
         return result
+    }
+
+    func disconnect() {
+        disconnectCalled = true
+        fireOnDisconnect()
+    }
+
+    func fireOnError(isRecoverable: Bool = true) {
+        if let handler = onErrorHandler {
+            handler(isRecoverable)
+        }
+    }
+
+    func fireOnDisconnect() {
+        if let handler = onDisconnectHandler {
+            handler()
+        }
+    }
+
+    func fireOnKeepAlive() {
+        if let handler = onKeepAliveHandler {
+            handler()
+        }
     }
 }

@@ -29,7 +29,6 @@ class SseConnectionManagerTest: XCTestCase {
         timersManager = TimersManagerMock()
         connectionManager = DefaultSseConnectionManager(userKey: userKey, sseAuthenticator: sseAuthenticator, sseClient: sseClient, authBackoffCounter: authBackoff,
                                                         sseBackoffCounter: sseBackoff, timersManager: timersManager)
-
     }
 
     func testStartFullConnectionOk() {
@@ -39,9 +38,13 @@ class SseConnectionManagerTest: XCTestCase {
         // Returning ok token with streaming enabled
         // Also an expectation is added to be fullfiled when timer is added
         // in order to avoid using sleep to wait for all process finished
-        
+
         let exp = XCTestExpectation(description: "finish")
-        timersManager.addExpectationFor(timer: .keepAlive, expectation: exp)
+        var expSseAvailable = false
+        connectionManager.availabilityHandler = { isEnabled in
+            expSseAvailable = isEnabled
+            exp.fulfill()
+        }
 
         sseAuthenticator.results = [successAuthResult()]
         sseClient.results = [successConnResult()]
@@ -52,6 +55,7 @@ class SseConnectionManagerTest: XCTestCase {
 
         XCTAssertEqual(userKey, sseAuthenticator.userKey!)
         XCTAssertEqual("thetoken", sseClient.token)
+        XCTAssertTrue(expSseAvailable)
         XCTAssertEqual(2, sseClient.channels?.count)
         XCTAssertEqual(0, authBackoff.retryCallCount)
         XCTAssertEqual(0, sseBackoff.retryCallCount)
@@ -71,17 +75,26 @@ class SseConnectionManagerTest: XCTestCase {
         // in order to avoid using sleep to wait for all process finished
 
         let exp = XCTestExpectation(description: "finish")
-        timersManager.addExpectationFor(timer: .keepAlive, expectation: exp)
+        var expSseAvailable = false
+        connectionManager.availabilityHandler = { isEnabled in
+            expSseAvailable = isEnabled
+            // streaming available means test is finished
+            // so we fullfil expectation here to start assert
+            if isEnabled {
+                exp.fulfill()
+            }
+        }
 
         sseAuthenticator.results = [recoverableAuthResult(), recoverableAuthResult(), successAuthResult()]
         sseClient.results = [recoverableConnResult(), recoverableConnResult(), successConnResult()]
 
         connectionManager.start()
 
-        wait(for: [exp], timeout: 80)
+        wait(for: [exp], timeout: 3)
 
         XCTAssertEqual(userKey, sseAuthenticator.userKey!)
         XCTAssertEqual("thetoken", sseClient.token)
+        XCTAssertTrue(expSseAvailable)
         XCTAssertEqual(2, sseClient.channels?.count)
         XCTAssertEqual(2, authBackoff.retryCallCount)
         XCTAssertEqual(2, sseBackoff.retryCallCount)
@@ -92,12 +105,143 @@ class SseConnectionManagerTest: XCTestCase {
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
     }
 
+    func testStreamingDisabled() {
+        // When auth endpoint responds with streaming disabled
+        // Streaming will be turned off,
+        // so this component should notify that streaming is not available,
+        // cancel all timers and shutdown sse client
+        let exp = XCTestExpectation(description: "finish")
+        sseAuthenticator.results = [successAuthResult(pushEnabled: false)]
+
+        var expSseAvailable = true
+        connectionManager.availabilityHandler = { isEnabled in
+            expSseAvailable = isEnabled
+            exp.fulfill()
+        }
+
+        connectionManager.start()
+
+        wait(for: [exp], timeout: 3)
+        //Thread.sleep(forTimeInterval: 1)
+
+        XCTAssertEqual(userKey, sseAuthenticator.userKey!)
+        XCTAssertNil(sseClient.token)
+        XCTAssertFalse(sseClient.disconnectCalled)
+        XCTAssertFalse(expSseAvailable)
+        XCTAssertEqual(0, authBackoff.retryCallCount)
+        XCTAssertEqual(0, sseBackoff.retryCallCount)
+        XCTAssertFalse(authBackoff.resetCounterCalled)
+        XCTAssertFalse(sseBackoff.resetCounterCalled)
+        XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
+        XCTAssertFalse(timersManager.timerIsAdded(timer: .keepAlive))
+        XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
+    }
+
+    func testStop() {
+        // On stop the component should closse sse connection
+        // stops keep alive and refresh token timers
+        // and notify streaming not available
+
+        let conExp = XCTestExpectation(description: "conn")
+        let stopExp = XCTestExpectation(description: "stop")
+        var expSseAvailable = false
+        connectionManager.availabilityHandler = { isEnabled in
+            expSseAvailable = isEnabled
+            if isEnabled {
+                conExp.fulfill()
+            } else {
+                stopExp.fulfill()
+            }
+        }
+
+        sseAuthenticator.results = [successAuthResult()]
+        sseClient.results = [successConnResult()]
+
+        connectionManager.start()
+
+        wait(for: [conExp], timeout: 3)
+
+        connectionManager.stop()
+
+        wait(for: [stopExp], timeout: 3)
+
+        XCTAssertFalse(expSseAvailable)
+        XCTAssertTrue(sseClient.disconnectCalled)
+        XCTAssertTrue(timersManager.timerIsCancelled(timer: .refreshAuthToken))
+        XCTAssertTrue(timersManager.timerIsCancelled(timer: .keepAlive))
+    }
+
+    func testKeepAliveReceived() {
+        // When keep alive is received, keep alive timer should
+        // be rescheduled
+        let exp = XCTestExpectation(description: "finish")
+        connectionManager.availabilityHandler = { isEnabled in
+            exp.fulfill()
+        }
+
+        sseAuthenticator.results = [successAuthResult()]
+        sseClient.results = [successConnResult()]
+
+        connectionManager.start()
+
+        wait(for: [exp], timeout: 3)
+
+        timersManager.reset()
+
+        sseClient.fireOnKeepAlive()
+
+        XCTAssertTrue(timersManager.timerIsAdded(timer: .keepAlive))
+    }
+
+    func testOnErrorRecoverableReceived() {
+        onErrorReceived(isRecoverable: true)
+    }
+
+    func testOnErrorNoRecoverableReceived() {
+        onErrorReceived(isRecoverable: false)
+    }
+
+    private func onErrorReceived(isRecoverable: Bool) {
+        // When recoverable error is received, timers has to be
+        // cancelled, streaming disabled reported and reconnection started
+        // If error is non recoverable, reconnection should not be called
+        let conExp = XCTestExpectation(description: "conn")
+        let errorExp = XCTestExpectation(description: "finish")
+        var expSseAvailable = true
+        connectionManager.availabilityHandler = { isEnabled in
+            if isEnabled {
+                conExp.fulfill()
+            } else {
+                expSseAvailable = isEnabled
+                errorExp.fulfill()
+            }
+        }
+
+        sseAuthenticator.results = [successAuthResult()]
+        sseClient.results = [successConnResult()]
+
+        connectionManager.start()
+
+        wait(for: [conExp], timeout: 3)
+
+        timersManager.reset()
+        sseClient.connectCalled = false
+        sseClient.fireOnError(isRecoverable: isRecoverable)
+
+        wait(for: [errorExp], timeout: 3)
+
+        XCTAssertEqual(isRecoverable, sseClient.connectCalled)
+        XCTAssertFalse(expSseAvailable)
+        XCTAssertTrue(timersManager.timerIsCancelled(timer: .keepAlive))
+        XCTAssertTrue(timersManager.timerIsCancelled(timer: .refreshAuthToken))
+    }
+
     override func tearDown() {
     }
 
-    private func successAuthResult() -> SseAuthenticationResult {
+    private func successAuthResult(pushEnabled: Bool = true) -> SseAuthenticationResult {
         return SseAuthenticationResult(success: true, errorIsRecoverable: false,
-                                       pushEnabled: true, jwtToken: dummyToken())
+                                       pushEnabled: pushEnabled, jwtToken: dummyToken())
     }
 
     private func recoverableAuthResult() -> SseAuthenticationResult {

@@ -40,5 +40,15 @@ class TimersManagerMock: TimersManager {
     func addExpectationFor(timer: TimerName, expectation: XCTestExpectation) {
         expectations[timer] = expectation
     }
+
+    func reset(timer: TimerName? = nil) {
+        if let timer = timer {
+            timersAdded.remove(timer)
+            timersCancelled.remove(timer)
+        } else {
+            timersAdded.removeAll()
+            timersCancelled.removeAll()
+        }
+    }
 }
 

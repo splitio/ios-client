@@ -34,7 +34,7 @@ class DefaultSseConnectionManager: SseConnectionManager {
     private let kTokenExpiredErrorCode = 40142
 
     private let sseAuthenticator: SseAuthenticator
-    private let sseClient: SseClient
+    private var sseClient: SseClient
     private let authBackoffCounter: ReconnectBackoffCounter
     private let sseBackoffCounter: ReconnectBackoffCounter
     private let timersManager: TimersManager
@@ -61,6 +61,7 @@ class DefaultSseConnectionManager: SseConnectionManager {
         self.sseBackoffCounter = sseBackoffCounter
         self.timersManager = timersManager
         self.currentState = .disconnected
+        setupSseClient()
     }
 
     // MARK: Public
@@ -69,6 +70,10 @@ class DefaultSseConnectionManager: SseConnectionManager {
     }
 
     func stop() {
+        timersManager.cancel(timer: .keepAlive)
+        timersManager.cancel(timer: .refreshAuthToken)
+        sseClient.disconnect()
+        reportStreaming(isAvailable: false)
     }
 
     func pause() {
@@ -141,6 +146,29 @@ class DefaultSseConnectionManager: SseConnectionManager {
     private func reportStreaming(isAvailable: Bool) {
         if let handler = availabilityHandler {
             handler(isAvailable)
+        }
+    }
+
+    private func setupSseClient() {
+
+        sseClient.onKeepAliveHandler = { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.timersManager.add(timer: .keepAlive, delayInSeconds: self.kSseKeepAliveTimeInSeconds)
+        }
+
+        sseClient.onErrorHandler = { [weak self] isRecoverable in
+            guard let self = self else {
+                return
+            }
+            self.set(state: .disconnected)
+            self.timersManager.cancel(timer: .keepAlive)
+            self.timersManager.cancel(timer: .refreshAuthToken)
+            self.reportStreaming(isAvailable: false)
+            if isRecoverable {
+                self.connect()
+            }
         }
     }
 
