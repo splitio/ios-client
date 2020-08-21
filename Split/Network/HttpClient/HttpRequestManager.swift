@@ -8,6 +8,10 @@
 
 import Foundation
 
+///
+/// Stores sent requests in a list
+/// and updates them by calling corresponding handler
+/// when a delegate method from URLTask or URLSession sis called
 protocol HttpRequestManager {
     func addRequest(_ request: HttpRequest)
     func append(data: Data, to taskIdentifier: Int)
@@ -16,7 +20,6 @@ protocol HttpRequestManager {
 }
 
 class DefaultHttpRequestManager: NSObject {
-
     var requests = HttpRequestList()
 }
 
@@ -70,10 +73,7 @@ extension DefaultHttpRequestManager: HttpRequestManager {
     }
 
     func append(data: Data, to taskIdentifier: Int) {
-        // TODO: Check this if and class hiearchy
-        if let request = requests.get(identifier: taskIdentifier) as? HttpDataRequest {
-            request.notifyIncomingData(data)
-        } else if let request = requests.get(identifier: taskIdentifier) as? HttpStreamRequest {
+        if let request = requests.get(identifier: taskIdentifier) as? HttpDataReceivingRequest {
             request.notifyIncomingData(data)
         }
     }

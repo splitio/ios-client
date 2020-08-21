@@ -30,16 +30,16 @@ class NotificationParser {
         return nil
     }
 
-    func  parseSplitUpdate(jsonString: String) throws -> SplitsChangeNotification {
-        return try Json.encodeFrom(json: jsonString, to: SplitsChangeNotification.self)
+    func  parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification {
+        return try Json.encodeFrom(json: jsonString, to: SplitsUpdateNotification.self)
     }
 
     func  parseSplitKill(jsonString: String) throws -> SplitKillNotification {
         return try Json.encodeFrom(json: jsonString, to: SplitKillNotification.self)
     }
 
-    func  parseMySegmentUpdate(jsonString: String) throws -> MySegmentsChangeNotification {
-        return try Json.encodeFrom(json: jsonString, to: MySegmentsChangeNotification.self)
+    func  parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification {
+        return try Json.encodeFrom(json: jsonString, to: MySegmentsUpdateNotification.self)
     }
 
     func  parseOccupancy(jsonString: String) throws -> OccupancyNotification {

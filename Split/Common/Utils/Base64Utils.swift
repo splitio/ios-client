@@ -24,7 +24,6 @@ class Base64Utils {
         // = complement
         let mod4 = base64NoPlus.count % 4
         if mod4 > 0 {
-            //let appStr = String("====" .substring(to: String.Index(4 - mod4, within: "====")))
             let appStr = kOffsetString[kOffsetString.index(kOffsetString.startIndex, offsetBy: kOffsetLenght - mod4)]
             finalBase64 = "\(base64NoSlash)\(appStr)"
         }

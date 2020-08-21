@@ -87,7 +87,7 @@ class SseAuthenticatorTest: XCTestCase {
         let token = JwtToken(issuedAt: 100, expirationTime: 200,
                              channels: [], rawToken: "")
         let parser = JwtParserStub(token: token)
-        restClient.updateFailedSseAuth(error: HttpError.authenticationFailed)
+        restClient.updateFailedSseAuth(error: HttpError.clientRelated)
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: parser)
 
 

@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol HttpDataRequest: HttpRequest {
+protocol HttpDataRequest: HttpRequest, HttpDataReceivingRequest {
     var data: Data? { get }
     func notifyIncomingData(_ data: Data)
     func getResponse(completionHandler: @escaping RequestCompletionHandler,

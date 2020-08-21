@@ -6,6 +6,11 @@
 
 import Foundation
 
+///
+/// HttpClient is main wrapper component to handle HTTP activity
+/// This file also includes some complementary HTTP client components
+///
+
 // MARK: HttpSession
 struct HttpQueue {
     public static let `default`:String = "split-rest-queue"
