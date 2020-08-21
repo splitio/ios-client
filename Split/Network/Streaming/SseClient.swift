@@ -28,10 +28,13 @@ protocol SseClient {
     typealias MessageHandler = (Data) -> Void
     typealias ErrorHandler = (Bool) -> Void
 
-    func connect(token: String, channels: [String]) -> SseConnectionResult
+    var onKeepAliveHandler: EventHandler? { get set }
     var onErrorHandler: ErrorHandler? { get set }
     var onDisconnectHandler: EventHandler? { get set }
     var onMessageHandler: MessageHandler? { get set }
+
+    func connect(token: String, channels: [String]) -> SseConnectionResult
+    func disconnect()
 }
 
 class DefaultSseClient: SseClient {
@@ -40,6 +43,7 @@ class DefaultSseClient: SseClient {
     private var queue: DispatchQueue
     private var streamRequest: HttpStreamRequest?
 
+    var onKeepAliveHandler: SseClient.EventHandler?
     var onErrorHandler: SseClient.ErrorHandler?
     var onDisconnectHandler: SseClient.EventHandler?
     var onMessageHandler: SseClient.MessageHandler?
@@ -105,10 +109,20 @@ class DefaultSseClient: SseClient {
         }
     }
 
+    func triggerKeepAliveHandler() {
+        if let onKeepAlive = self.onKeepAliveHandler {
+            onKeepAlive()
+        }
+    }
+
     func triggerOnError(isRecoverable: Bool) {
         if let onError = self.onErrorHandler {
             onError(isRecoverable)
         }
+    }
+
+    func disconnect() {
+        // TODO: Implement this method and close method in StreamRequest!!
     }
 }
 
