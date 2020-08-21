@@ -77,12 +77,11 @@ class DefaultSseConnectionManager: SseConnectionManager {
     }
 
     func pause() {
+        // TODO: Add logic to handle background, foreground.
     }
 
     func resume() {
-    }
-
-    func availabilityHandler(streamingEnabled: Bool) {
+        // TODO: Add logic to handle background, foreground.
     }
 
     // MARK: Private
@@ -151,6 +150,14 @@ class DefaultSseConnectionManager: SseConnectionManager {
 
     private func setupSseClient() {
 
+        sseClient.onMessageHandler = {  [weak self] message in
+            guard let self = self else {
+                return
+            }
+            self.timersManager.add(timer: .keepAlive, delayInSeconds: self.kSseKeepAliveTimeInSeconds)
+            // TODO: Add logic to handle error messages when stream error messages parser implemented
+        }
+
         sseClient.onKeepAliveHandler = { [weak self] in
             guard let self = self else {
                 return
@@ -162,13 +169,17 @@ class DefaultSseConnectionManager: SseConnectionManager {
             guard let self = self else {
                 return
             }
-            self.set(state: .disconnected)
-            self.timersManager.cancel(timer: .keepAlive)
-            self.timersManager.cancel(timer: .refreshAuthToken)
-            self.reportStreaming(isAvailable: false)
-            if isRecoverable {
-                self.connect()
-            }
+            self.handleOnError(isRecoverable: isRecoverable)
+        }
+    }
+
+    private func handleOnError(isRecoverable: Bool) {
+        set(state: .disconnected)
+        timersManager.cancel(timer: .keepAlive)
+        timersManager.cancel(timer: .refreshAuthToken)
+        reportStreaming(isAvailable: false)
+        if isRecoverable {
+            connect()
         }
     }
 

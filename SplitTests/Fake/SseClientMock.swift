@@ -58,4 +58,10 @@ class SseClientMock: SseClient {
             handler()
         }
     }
+
+    func fireOnMessage(values: [String: String]) {
+        if let handler = onMessageHandler {
+            handler(values)
+        }
+    }
 }

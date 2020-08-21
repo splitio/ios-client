@@ -51,7 +51,6 @@ class SseClientTest: XCTestCase {
         XCTAssertTrue(result?.success ?? false)
     }
 
-    /// TODO: Update this test when StreamingParser implemented
     func testOnMessage() {
         // SSE client has to fire onMessageHandler if available when an incoming message
         // Here reqExp expectation is fired with delay on HttpClient mock
@@ -62,17 +61,13 @@ class SseClientTest: XCTestCase {
         let conExp = XCTestExpectation(description: "connect")
         let msgExp = XCTestExpectation(description: "message")
         let msgCount = 3
-        var msgCounter = 0
-        var messages: [String] = [String]()
+        var messages = [String: String]()
         // Set the amount of simulated incoming messages
         httpClient.streamReqExp = reqExp
 
         sseClient.onMessageHandler = { message in
-            msgCounter+=1
-            messages.append(message.stringRepresentation)
-            if msgCounter == msgCount {
-                msgExp.fulfill()
-            }
+            messages.merge(message) { (_, new) in new }
+            msgExp.fulfill()
         }
 
         DispatchQueue.global().async {
@@ -86,15 +81,17 @@ class SseClientTest: XCTestCase {
         wait(for: [conExp], timeout: 5)
 
         for i in 1..<4 {
-            let data = Data("msg\(i)".utf8)
+            let data = Data("fld\(i):msg\(i)".utf8)
             request.notifyIncomingData(data)
         }
+
+        request.notifyIncomingData(Data("".utf8))
         wait(for: [msgExp], timeout: 5)
 
         XCTAssertEqual(msgCount, messages.count)
-        XCTAssertEqual("msg1", messages[0])
-        XCTAssertEqual("msg2", messages[1])
-        XCTAssertEqual("msg3", messages[2])
+        XCTAssertEqual("msg1", messages["fld1"])
+        XCTAssertEqual("msg2", messages["fld2"])
+        XCTAssertEqual("msg3", messages["fld3"])
     }
 
     func testOnErrorRecoverable() {
@@ -194,7 +191,36 @@ class SseClientTest: XCTestCase {
     }
 
     func testOnKeepAlive() {
-        // TODO: Implement this test when stream parser complete
+        // SSE client has to fire onKeepAlive handler when keep alive token arrives
+        // Here reqExp expectation is fired with delay on HttpClient mock
+        // to make sure that request.setResponse which is executed when headers received
+        // run after on connect.
+        let conExp = XCTestExpectation(description: "conn")
+        let keepExp = XCTestExpectation(description: "error")
+        let reqExp = XCTestExpectation(description: "req")
+        httpClient.streamReqExp = reqExp
+
+        var isKeepAliveReceived = false
+        sseClient.onKeepAliveHandler = {
+            isKeepAliveReceived = true
+            keepExp.fulfill()
+        }
+
+        var result: SseConnectionResult?
+        DispatchQueue.global().async {
+            result = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
+            conExp.fulfill()
+        }
+
+        wait(for: [reqExp], timeout: 5)
+        let request = httpClient.httpStreamRequest!
+        request.setResponse(code: 200)
+        wait(for: [conExp], timeout: 5)
+        request.notifyIncomingData(Data(":keepalive".utf8))
+        wait(for: [keepExp], timeout: 5)
+
+        XCTAssertTrue(result?.success ?? false)
+        XCTAssertTrue(isKeepAliveReceived)
     }
 
     func testDisconnect() {
