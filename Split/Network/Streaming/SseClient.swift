@@ -25,7 +25,7 @@ struct SseConnectionResult {
 protocol SseClient {
 
     typealias EventHandler = () -> Void
-    typealias MessageHandler = (Data) -> Void
+    typealias MessageHandler = ([String: String]) -> Void
     typealias ErrorHandler = (Bool) -> Void
 
     var onKeepAliveHandler: EventHandler? { get set }
@@ -42,6 +42,7 @@ class DefaultSseClient: SseClient {
     private var endpoint: Endpoint
     private var queue: DispatchQueue
     private var streamRequest: HttpStreamRequest?
+    private let streamParser = EventStreamParser()
 
     var onKeepAliveHandler: SseClient.EventHandler?
     var onErrorHandler: SseClient.ErrorHandler?
@@ -60,6 +61,7 @@ class DefaultSseClient: SseClient {
         var connectionResult: SseConnectionResult?
 
         queue.async {
+            let values = SyncDictionarySingleWrapper<String, String>()
             let parameters: [String: Any] = [
                 SseClientConstants.pushNotificationTokenParam: token,
                 SseClientConstants.pushNotificationChannelsParam: self.createChannelsQueryString(channels: channels),
@@ -77,8 +79,16 @@ class DefaultSseClient: SseClient {
                     responseSemaphore.signal()
 
                 }, incomingDataHandler: { data in
-                    self.triggerDataHandler(data: data)
 
+                    if self.streamParser.parseLineAndAppendValue(streamLine: data.stringRepresentation,
+                                                                 messageValues: values) {
+                        if self.streamParser.isKeepAlive(values: values.all) {
+                            values.removeAll()
+                            self.triggerKeepAliveHandler()
+                        } else {
+                            self.triggerMessageHandler(message: values.takeAll())
+                        }
+                    }
                 }, closeHandler: {
                     self.triggerCloseHandler()
 
@@ -87,7 +97,7 @@ class DefaultSseClient: SseClient {
                     self.triggerOnError(isRecoverable: true)
                 })
             } catch {
-                Logger.e("Error while connection to streaming: \(error.localizedDescription)")
+                Logger.e("Error while connecting to streaming: \(error.localizedDescription)")
                 //self.triggerOnError(isRecoverable: false)
                 responseSemaphore.signal()
                 connectionResult = SseConnectionResult(success: false, errorIsRecoverable: false)
@@ -97,9 +107,9 @@ class DefaultSseClient: SseClient {
         return connectionResult ?? SseConnectionResult(success: false, errorIsRecoverable: false)
     }
 
-    func triggerDataHandler(data: Data) {
+    func triggerMessageHandler(message: [String: String]) {
         if let onMessage = self.onMessageHandler {
-            onMessage(data)
+            onMessage(message)
         }
     }
 

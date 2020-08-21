@@ -236,6 +236,37 @@ class SseConnectionManagerTest: XCTestCase {
         XCTAssertTrue(timersManager.timerIsCancelled(timer: .refreshAuthToken))
     }
 
+    func testOnMessageReceived() {
+        // When keep alive is received, keep alive timer should
+        // be rescheduled
+        let exp = XCTestExpectation(description: "finish")
+        connectionManager.availabilityHandler = { isEnabled in
+            exp.fulfill()
+        }
+
+        sseAuthenticator.results = [successAuthResult()]
+        sseClient.results = [successConnResult()]
+
+        connectionManager.start()
+
+        wait(for: [exp], timeout: 3)
+
+        timersManager.reset()
+
+        let values = [
+            "f1":"v1",
+            "f2":"v1",
+            "f3":"v1"
+        ]
+        sseClient.fireOnMessage(values: values)
+
+        XCTAssertTrue(timersManager.timerIsAdded(timer: .keepAlive))
+    }
+
+    // TODO: Test error messages sent by streaming provider
+    func testOnMessageStreamingErrorReceived() {
+    }
+
     override func tearDown() {
     }
 

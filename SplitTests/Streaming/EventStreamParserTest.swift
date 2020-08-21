@@ -14,68 +14,68 @@ import XCTest
 class EventStreamParserTest: XCTestCase {
 
     let parser = EventStreamParser()
-    var values: [String: String]!
+    var values: SyncDictionarySingleWrapper<String, String>!
 
     override func setUp() {
-        values = [String: String]()
+        values = SyncDictionarySingleWrapper()
     }
 
     func testParseErrorMessage() {
-        let res = parser.parseLineAndAppendValue(streamLine: "id:theid", messageValues: &values)
+        let res = parser.parseLineAndAppendValue(streamLine: "id:theid", messageValues: values)
 
         XCTAssertFalse(res);
         XCTAssertEqual(1, values.count);
-        XCTAssertEqual(values["id"], "theid");
+        XCTAssertEqual(values.all["id"], "theid");
     }
 
     func testParseColon() {
-        let res = parser.parseLineAndAppendValue(streamLine: ":", messageValues: &values)
+        let res = parser.parseLineAndAppendValue(streamLine: ":", messageValues: values)
 
         XCTAssertFalse(res);
         XCTAssertEqual(0, values.count);
     }
 
     func testParseEmptyLineNoEnd() {
-        let res = parser.parseLineAndAppendValue(streamLine: "", messageValues: &values)
+        let res = parser.parseLineAndAppendValue(streamLine: "", messageValues: values)
 
         XCTAssertFalse(res);
         XCTAssertEqual(0, values.count);
     }
 
     func testParseEnd() {
-        let res0 = parser.parseLineAndAppendValue(streamLine: "id:theid", messageValues: &values)
-        let res1 = parser.parseLineAndAppendValue(streamLine: "event:message", messageValues: &values)
-        let res2 = parser.parseLineAndAppendValue(streamLine: "data:{\"c1\":1}", messageValues: &values)
-        let res = parser.parseLineAndAppendValue(streamLine: "", messageValues: &values)
+        let res0 = parser.parseLineAndAppendValue(streamLine: "id:theid", messageValues: values)
+        let res1 = parser.parseLineAndAppendValue(streamLine: "event:message", messageValues: values)
+        let res2 = parser.parseLineAndAppendValue(streamLine: "data:{\"c1\":1}", messageValues: values)
+        let res = parser.parseLineAndAppendValue(streamLine: "", messageValues: values)
 
         XCTAssertFalse(res0);
         XCTAssertFalse(res1);
         XCTAssertFalse(res2);
         XCTAssertTrue(res);
         XCTAssertEqual(3, values.count);
-        XCTAssertEqual("theid", values["id"])
-        XCTAssertEqual("message", values["event"])
-        XCTAssertEqual("{\"c1\":1}", values["data"])
+        XCTAssertEqual("theid", values.all["id"])
+        XCTAssertEqual("message", values.all["event"])
+        XCTAssertEqual("{\"c1\":1}", values.all["data"])
     }
 
     func testParseTwoColon() {
-        let res = parser.parseLineAndAppendValue(streamLine: "id:value:value", messageValues: &values)
+        let res = parser.parseLineAndAppendValue(streamLine: "id:value:value", messageValues: values)
 
         XCTAssertFalse(res);
         XCTAssertEqual(1, values.count);
-        XCTAssertEqual("value:value", values["id"])
+        XCTAssertEqual("value:value", values.all["id"])
     }
 
     func testParseNoColon() {
-        let res = parser.parseLineAndAppendValue(streamLine: "fieldName", messageValues: &values)
+        let res = parser.parseLineAndAppendValue(streamLine: "fieldName", messageValues: values)
 
         XCTAssertFalse(res);
         XCTAssertEqual(1, values.count);
-        XCTAssertEqual("", values["fieldName"])
+        XCTAssertEqual("", values.all["fieldName"])
     }
 
     func testParseNoFieldName() {
-        let res = parser.parseLineAndAppendValue(streamLine: ":fieldName", messageValues: &values)
+        let res = parser.parseLineAndAppendValue(streamLine: ":fieldName", messageValues: values)
 
         XCTAssertFalse(res);
         XCTAssertEqual(0, values.count);
