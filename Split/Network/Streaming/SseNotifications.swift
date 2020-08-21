@@ -107,7 +107,7 @@ struct ControlNotification: NotificationTypeField {
 }
 
 /// Indicates change in MySegments
-struct MySegmentsChangeNotification: NotificationTypeField {
+struct MySegmentsUpdateNotification: NotificationTypeField {
     private (set) var type: NotificationType
     let changeNumber: Int
     let includesPayload: Bool
@@ -123,7 +123,7 @@ struct SplitKillNotification: NotificationTypeField {
 }
 
 /// indicates Split changes
-struct SplitsChangeNotification: NotificationTypeField {
+struct SplitsUpdateNotification: NotificationTypeField {
     private (set) var type: NotificationType
     let changeNumber: Int
 }
