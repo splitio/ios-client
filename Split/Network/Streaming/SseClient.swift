@@ -98,7 +98,6 @@ class DefaultSseClient: SseClient {
                 })
             } catch {
                 Logger.e("Error while connecting to streaming: \(error.localizedDescription)")
-                //self.triggerOnError(isRecoverable: false)
                 responseSemaphore.signal()
                 connectionResult = SseConnectionResult(success: false, errorIsRecoverable: false)
             }
