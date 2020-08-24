@@ -77,6 +77,7 @@ class DefaultSseConnectionManager: SseConnectionManager {
         timersManager.cancel(timer: .refreshAuthToken)
         sseClient.disconnect()
         reportStreaming(isAvailable: false)
+        set(state: .stopped)
     }
 
     func pause() {
