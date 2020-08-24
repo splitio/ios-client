@@ -27,6 +27,9 @@ class DefaultSseConnectionManager: SseConnectionManager {
         case stopped
     }
 
+    ///
+    /// Callback handler for streaming: called with true when SSE connection is opened, and false when it is closed.
+    ///
     var availabilityHandler: AvailabilityHandler?
     private let kSseKeepAliveTimeInSeconds = 70
     private let kReconnectTimeBeforeTokenExpInASeconds = 600
