@@ -13,7 +13,7 @@ protocol ReconnectBackoffCounter {
     func resetCounter()
 }
 
-class DefaultReconnectBackoffCounter {
+class DefaultReconnectBackoffCounter: ReconnectBackoffCounter {
     private static let kMaxTimeLimitInSecs: Double = 1800.0 // 30 minutes (30 * 60)
     private static let kRetryExponentialBase = 2
     private let backoffBase: Int
