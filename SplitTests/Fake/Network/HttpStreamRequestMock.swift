@@ -47,6 +47,11 @@ class HttpStreamRequestMock: HttpStreamRequest {
     }
 
     func complete(error: HttpError?) {
+        if let error = error, let errorHandler = errorHandler {
+            errorHandler(error)
+            return
+        }
+
         if let handler = closeHandler {
             handler()
         }

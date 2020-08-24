@@ -42,8 +42,8 @@ class BaseHttpRequest: HttpRequest {
     private (set) var session: HttpSession
     private (set) var task: HttpTask?
     private (set) var error: Error?
-    var requestCompletionHandler: RequestCompletionHandler?
-    var requestErrorHandler: RequestErrorHandler?
+    var completionHandler: RequestCompletionHandler?
+    var errorHandler: RequestErrorHandler?
     private (set) var urlRequest: URLRequest?
 
     var identifier: Int {
