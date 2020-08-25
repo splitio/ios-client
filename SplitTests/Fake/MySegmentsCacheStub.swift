@@ -7,14 +7,23 @@
 //
 
 import Foundation
+import XCTest
 
 @testable import Split
 
-class MySegmentCacheStub: MySegmentsCacheProtocol {
+class MySegmentsCacheStub: MySegmentsCacheProtocol {
     
     let segments: Set = ["s1", "s2", "s3"]
-    
+    var updatedSegments: [String]?
+    var clearCalled = false
+    var updateExpectation: XCTestExpectation?
+    var clearExpectation: XCTestExpectation?
+
     func setSegments(_ segments: [String]) {
+        updatedSegments = segments
+        if let exp = updateExpectation {
+            exp.fulfill()
+        }
     }
     
     func removeSegments() {
@@ -29,6 +38,10 @@ class MySegmentCacheStub: MySegmentsCacheProtocol {
     }
     
     func clear() {
+        clearCalled = true
+        if let exp = clearExpectation {
+            exp.fulfill()
+        }
     }
     
     

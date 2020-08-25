@@ -13,7 +13,7 @@ import XCTest
 
 class NotificationParserTest: XCTestCase {
 
-    let notificationParser = NotificationParser()
+    let notificationParser = DefaultSseNotificationParser()
 
     let splitsChangeNotificationMessage = """
 {\"id\":\"VSEQrcq9D8:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==\",\"timestamp\":1584554772719,\"encoding\":\"json\",\"channel\":\"MzM5Njc0ODcyNg==_MTExMzgwNjgx_splits\",\"data\":\"{\\\"type\\\":\\\"SPLIT_UPDATE\\\",\\\"changeNumber\\\":1584554772108}\"}
