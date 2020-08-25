@@ -8,7 +8,23 @@
 
 import Foundation
 
-class NotificationParser {
+protocol SseNotificationParser {
+
+    func parseIncoming(jsonString: String) -> IncomingNotification?
+
+    func  parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification
+
+    func  parseSplitKill(jsonString: String) throws -> SplitKillNotification
+
+    func  parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification
+
+    func  parseOccupancy(jsonString: String) throws -> OccupancyNotification
+
+    func  parseControl(jsonString: String) throws -> ControlNotification
+
+}
+
+class DefaultSseNotificationParser: SseNotificationParser {
 
     private static let kErrorNotificationName = "error"
 
@@ -49,9 +65,7 @@ class NotificationParser {
     func  parseControl(jsonString: String) throws -> ControlNotification {
         return try Json.encodeFrom(json: jsonString, to: ControlNotification.self)
     }
-}
 
-extension NotificationParser {
     func isError(notification: RawNotification) -> Bool {
         return Self.kErrorNotificationName == notification.name
     }

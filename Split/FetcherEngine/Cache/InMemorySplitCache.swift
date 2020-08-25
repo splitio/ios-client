@@ -92,6 +92,10 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
     func setTimestamp(timestamp: Int) {
         self.timestamp = timestamp
     }
+
+    func kill(splitName: String, defaultTreatment: String, changeNumber: Int64) {
+        
+    }
 }
 
 extension InMemorySplitCache {
