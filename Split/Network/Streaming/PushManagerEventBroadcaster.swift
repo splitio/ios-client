@@ -25,19 +25,27 @@ protocol PushManagerEventBroadcaster {
 /// to other components
 ///
 class DefaultPushManagerEventBroadcaster: PushManagerEventBroadcaster {
+    let messageQueue = DispatchQueue(label: "pushMananagerMessagerQueue",
+                                     attributes: .concurrent)
     var handlers = [IncomingMessageHandler]()
 
     func push(event: PushStatusEvent) {
-        for handler in handlers {
-            handler(event)
+        messageQueue.async {
+            for handler in self.handlers {
+                handler(event)
+            }
         }
     }
 
     func register(handler: @escaping IncomingMessageHandler) {
-        handlers.append(handler)
+        messageQueue.async (flags: .barrier) {
+            self.handlers.append(handler)
+        }
     }
 
     func stop() {
-        handlers.removeAll()
+        messageQueue.async (flags: .barrier) {
+            self.handlers.removeAll()
+        }
     }
 }
