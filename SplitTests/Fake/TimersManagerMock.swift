@@ -11,6 +11,8 @@ import XCTest
 @testable import Split
 
 class TimersManagerMock: TimersManager {
+    var triggerHandler: TimerHandler?
+
     private var timersAdded = Set<TimerName>()
     private var timersCancelled = Set<TimerName>()
     private var expectations = [TimerName: XCTestExpectation]()
@@ -24,9 +26,6 @@ class TimersManagerMock: TimersManager {
 
     func cancel(timer: TimerName) {
         timersCancelled.insert(timer)
-    }
-
-    func triggerHandler(handler: (TimerName) -> Void) {
     }
 
     func timerIsAdded(timer: TimerName) -> Bool {
