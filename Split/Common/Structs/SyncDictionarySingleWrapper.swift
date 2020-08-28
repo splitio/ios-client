@@ -77,6 +77,19 @@ class SyncDictionarySingleWrapper<K: Hashable, T> {
         }
     }
 
+    func takeValue(forKey key: K) -> T? {
+        var value: T?
+        queue.sync {
+            value = self.items[key]
+            if value != nil {
+                queue.async(flags: .barrier) {
+                    self.items.removeValue(forKey: key)
+                }
+            }
+        }
+        return value
+    }
+
     func takeAll() -> [K: T] {
         var allItems: [K: T]!
         queue.sync {
