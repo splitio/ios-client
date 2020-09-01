@@ -108,7 +108,9 @@ struct ControlNotification: NotificationTypeField {
 
 /// Indicates change in MySegments
 struct MySegmentsUpdateNotification: NotificationTypeField {
-    private (set) var type: NotificationType
+    var type: NotificationType {
+        return .mySegmentsUpdate
+    }
     let changeNumber: Int64
     let includesPayload: Bool
     let segmentList: [String]?
@@ -116,7 +118,9 @@ struct MySegmentsUpdateNotification: NotificationTypeField {
 
 /// Indicates that a Split was killed
 struct SplitKillNotification: NotificationTypeField {
-    private (set) var type: NotificationType
+    var type: NotificationType {
+        return .splitKill
+    }
     let changeNumber: Int64
     let splitName: String
     let defaultTreatment: String
@@ -124,13 +128,17 @@ struct SplitKillNotification: NotificationTypeField {
 
 /// indicates Split changes
 struct SplitsUpdateNotification: NotificationTypeField {
-    private (set) var type: NotificationType
+    var type: NotificationType {
+        return .splitUpdate
+    }
     let changeNumber: Int64
 }
 
 /// Indicates a notification related to occupancy
 struct OccupancyNotification: NotificationTypeField {
-    private (set) var type: NotificationType = .occupancy
+    var type: NotificationType {
+        return .occupancy
+    }
     struct Metrics: Decodable {
         let publishers: Int
     }
