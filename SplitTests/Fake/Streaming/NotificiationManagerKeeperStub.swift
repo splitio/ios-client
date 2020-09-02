@@ -11,7 +11,7 @@ import Foundation
 
 class NotificationManagerKeeperStub: NotificationManagerKeeper {
     var handleIncomingPresenceEventCalled = false
-    func handleIncomingPresenceEvent(notificiation: OccupancyNotification) {
+    func handleIncomingPresenceEvent(notification: OccupancyNotification) {
         handleIncomingPresenceEventCalled = true
     }
 }

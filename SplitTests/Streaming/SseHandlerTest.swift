@@ -15,6 +15,7 @@ class SseHandlerTest: XCTestCase {
     var notificationProcessor: SseNotificationProcessorStub!
     var notificationParser: SseNotificationParserStub!
     var notificationManagerKeeper: NotificationManagerKeeperStub!
+    var broadcasterChannel: PushManagerEventBroadcasterStub!
 
     var sseHandler: SseHandler!
 
@@ -22,15 +23,18 @@ class SseHandlerTest: XCTestCase {
         notificationParser = SseNotificationParserStub()
         notificationProcessor = SseNotificationProcessorStub()
         notificationManagerKeeper = NotificationManagerKeeperStub()
+        broadcasterChannel = PushManagerEventBroadcasterStub()
         sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,
                                        notificationParser: notificationParser,
-                                       notificationManagerKeeper: notificationManagerKeeper)
+                                       notificationManagerKeeper: notificationManagerKeeper,
+                                       broadcasterChannel: broadcasterChannel
+        )
     }
 
     func testIncomingSplitUpdate() {
         notificationParser.incomingNotification = IncomingNotification(type: .splitUpdate, jsonData: "dummy")
         notificationParser.splitsUpdateNotification = SplitsUpdateNotification(changeNumber: -1)
-        sseHandler.handleIncommingMessage(message: ["data": "{pepe}"])
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertTrue(notificationProcessor.processCalled)
@@ -39,7 +43,7 @@ class SseHandlerTest: XCTestCase {
     func testIncomingSplitKill() {
         notificationParser.incomingNotification = IncomingNotification(type: .splitKill, jsonData: "dummy")
         notificationParser.splitKillNotification = SplitKillNotification(changeNumber: -1, splitName: "split1", defaultTreatment: "off")
-        sseHandler.handleIncommingMessage(message: ["data": "{pepe}"])
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertTrue(notificationProcessor.processCalled)
@@ -48,7 +52,7 @@ class SseHandlerTest: XCTestCase {
     func testIncomingMySegmentsUpdate() {
         notificationParser.incomingNotification = IncomingNotification(type: .mySegmentsUpdate, jsonData: "dummy")
         notificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1, includesPayload: true, segmentList: [])
-        sseHandler.handleIncommingMessage(message: ["data": "{pepe}"])
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertTrue(notificationProcessor.processCalled)
@@ -57,10 +61,56 @@ class SseHandlerTest: XCTestCase {
     func testIncomingOccupancy() {
         notificationParser.incomingNotification = IncomingNotification(type: .occupancy, jsonData: "dummy")
         notificationParser.occupancyNotification = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 1))
-        sseHandler.handleIncommingMessage(message: ["data": "{pepe}"])
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
         XCTAssertTrue(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertFalse(notificationProcessor.processCalled)
+    }
+
+    func testIncomingLowRetryableSseError() {
+        incomingRetryableSseErrorTest(code: 40140)
+    }
+
+    func testIncomingHightRetryableSseError() {
+        incomingRetryableSseErrorTest(code: 40149)
+    }
+
+    func incomingRetryableSseErrorTest(code: Int) {
+        notificationParser.incomingNotification = IncomingNotification(type: .sseError, jsonData: "dummy")
+        notificationParser.sseErrorNotification = StreamingError(message: "", code: code, statusCode: code)
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
+
+        XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
+        XCTAssertFalse(notificationProcessor.processCalled)
+        XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.pushedEvent)
+    }
+
+    func testIncomingLowNonRetryableSseError() {
+        incomingNonRetryableSseErrorTest(code: 40000)
+    }
+
+    func testIncomingHightNonRetryableSseError() {
+        incomingNonRetryableSseErrorTest(code: 49999)
+    }
+
+    func incomingNonRetryableSseErrorTest(code: Int) {
+        notificationParser.incomingNotification = IncomingNotification(type: .sseError, jsonData: "dummy")
+        notificationParser.sseErrorNotification = StreamingError(message: "", code: code, statusCode: code)
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
+
+        XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
+        XCTAssertFalse(notificationProcessor.processCalled)
+        XCTAssertEqual(PushStatusEvent.pushNonRetryableError, broadcasterChannel.pushedEvent)
+    }
+
+    func testIncomingIgnorableSseErrorTest() {
+        notificationParser.incomingNotification = IncomingNotification(type: .sseError, jsonData: "dummy")
+        notificationParser.sseErrorNotification = StreamingError(message: "", code: 50000, statusCode: 50000)
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
+
+        XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
+        XCTAssertFalse(notificationProcessor.processCalled)
+        XCTAssertNil(broadcasterChannel.pushedEvent)
     }
 
     override func tearDown() {
