@@ -44,13 +44,13 @@ class PushManagerEventBroadcasterTest: XCTestCase {
         })
 
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 1.0) {
-            self.channel.push(event: .enablePolling)
+            self.channel.push(event: .pushSubsystemDown)
         }
         wait(for: [exp1, exp2, exp3], timeout: 5.0)
 
-        XCTAssertEqual(.enablePolling, e1)
-        XCTAssertEqual(.enablePolling, e2)
-        XCTAssertEqual(.enablePolling, e3)
+        XCTAssertEqual(.pushSubsystemDown, e1)
+        XCTAssertEqual(.pushSubsystemDown, e2)
+        XCTAssertEqual(.pushSubsystemDown, e3)
 
     }
 
@@ -66,7 +66,7 @@ class PushManagerEventBroadcasterTest: XCTestCase {
         })
 
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 0.2) {
-            self.channel.push(event: .enablePolling)
+            self.channel.push(event: .pushSubsystemDown)
         }
 
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 0.5) {
@@ -74,7 +74,7 @@ class PushManagerEventBroadcasterTest: XCTestCase {
         }
 
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 1.0) {
-            self.channel.push(event: .enablePolling)
+            self.channel.push(event: .pushSubsystemDown)
             exp1.fulfill()
         }
 

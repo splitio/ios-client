@@ -18,13 +18,15 @@ class SseClientTest: XCTestCase {
     let userKey = IntegrationHelper.dummyUserKey
     let sseAuthToken = "SSE_AUTH_TOKEN"
     let sseChannels = ["channel1", "channel2"]
+    var sseHandler: SseHandlerStub!
 
     override func setUp() {
+        sseHandler = SseHandlerStub()
         let session = HttpSessionMock()
         httpClient = HttpClientMock(session: session)
         let sseEndpoint = EndpointFactory(serviceEndpoints: ServiceEndpoints.builder().build(),
                                           apiKey: apiKey, userKey: userKey).streamingEndpoint
-        sseClient = DefaultSseClient(endpoint: sseEndpoint, httpClient: httpClient)
+        sseClient = DefaultSseClient(endpoint: sseEndpoint, httpClient: httpClient, sseHandler: sseHandler)
     }
 
     func testConnect() {
@@ -92,6 +94,7 @@ class SseClientTest: XCTestCase {
         XCTAssertEqual("msg1", messages["fld1"])
         XCTAssertEqual("msg2", messages["fld2"])
         XCTAssertEqual("msg3", messages["fld3"])
+        XCTAssertTrue(sseHandler.handleIncomingCalled)
     }
 
     func testOnErrorRecoverable() {

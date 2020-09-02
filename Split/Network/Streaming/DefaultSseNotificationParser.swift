@@ -12,15 +12,17 @@ protocol SseNotificationParser {
 
     func parseIncoming(jsonString: String) -> IncomingNotification?
 
-    func  parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification
+    func parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification
 
-    func  parseSplitKill(jsonString: String) throws -> SplitKillNotification
+    func parseSplitKill(jsonString: String) throws -> SplitKillNotification
 
-    func  parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification
+    func parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification
 
-    func  parseOccupancy(jsonString: String) throws -> OccupancyNotification
+    func parseOccupancy(jsonString: String) throws -> OccupancyNotification
 
-    func  parseControl(jsonString: String) throws -> ControlNotification
+    func parseControl(jsonString: String) throws -> ControlNotification
+
+    func parseSseError(jsonString: String) throws -> StreamingError
 
 }
 
@@ -32,7 +34,7 @@ class DefaultSseNotificationParser: SseNotificationParser {
         do {
             let rawNotification = try Json.encodeFrom(json: jsonString, to: RawNotification.self)
             if isError(notification: rawNotification) {
-                return IncomingNotification(type: .error)
+                return IncomingNotification(type: .sseError)
             }
             var type = NotificationType.occupancy
             if let notificationType = try? Json.encodeFrom(json: rawNotification.data,
@@ -46,24 +48,28 @@ class DefaultSseNotificationParser: SseNotificationParser {
         return nil
     }
 
-    func  parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification {
+    func parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification {
         return try Json.encodeFrom(json: jsonString, to: SplitsUpdateNotification.self)
     }
 
-    func  parseSplitKill(jsonString: String) throws -> SplitKillNotification {
+    func parseSplitKill(jsonString: String) throws -> SplitKillNotification {
         return try Json.encodeFrom(json: jsonString, to: SplitKillNotification.self)
     }
 
-    func  parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification {
+    func parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification {
         return try Json.encodeFrom(json: jsonString, to: MySegmentsUpdateNotification.self)
     }
 
-    func  parseOccupancy(jsonString: String) throws -> OccupancyNotification {
+    func parseOccupancy(jsonString: String) throws -> OccupancyNotification {
         return try Json.encodeFrom(json: jsonString, to: OccupancyNotification.self)
     }
 
-    func  parseControl(jsonString: String) throws -> ControlNotification {
+    func parseControl(jsonString: String) throws -> ControlNotification {
         return try Json.encodeFrom(json: jsonString, to: ControlNotification.self)
+    }
+
+    func parseSseError(jsonString: String) throws -> StreamingError {
+        return try Json.encodeFrom(json: jsonString, to: StreamingError.self)
     }
 
     func isError(notification: RawNotification) -> Bool {

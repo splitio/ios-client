@@ -111,7 +111,7 @@ class NotificationParserTest: XCTestCase {
     func testprocessError() {
         let incoming = notificationParser.parseIncoming(jsonString: errorNotificationMessage);
 
-        XCTAssertEqual(NotificationType.error, incoming?.type);
+        XCTAssertEqual(NotificationType.sseError, incoming?.type);
     }
 
     override func tearDown() {

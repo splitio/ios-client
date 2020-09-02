@@ -9,7 +9,7 @@
 import Foundation
 
 protocol SseHandler {
-    func handleIncommingMessage(message: [String: String])
+    func handleIncomingMessage(message: [String: String])
 }
 
 class DefaultSseHandler: SseHandler {
@@ -17,17 +17,20 @@ class DefaultSseHandler: SseHandler {
     let notificationProcessor: SseNotificationProcessor
     let notificationParser: SseNotificationParser
     let notificationManagerKeeper: NotificationManagerKeeper
+    let broadcasterChannel: PushManagerEventBroadcaster
 
     init(notificationProcessor: SseNotificationProcessor,
          notificationParser: SseNotificationParser,
-         notificationManagerKeeper: NotificationManagerKeeper) {
+         notificationManagerKeeper: NotificationManagerKeeper,
+         broadcasterChannel: PushManagerEventBroadcaster) {
 
         self.notificationProcessor = notificationProcessor
         self.notificationParser = notificationParser
         self.notificationManagerKeeper = notificationManagerKeeper
+        self.broadcasterChannel = broadcasterChannel
     }
 
-    func handleIncommingMessage(message: [String: String]) {
+    func handleIncomingMessage(message: [String: String]) {
         guard let data = message[kDataField] else {
             return
         }
@@ -39,12 +42,12 @@ class DefaultSseHandler: SseHandler {
         switch incomingNotification.type {
         case .control:
             print("TODO: handle control here")
-        case .error:
-            print("TODO: handle error here")
         case .occupancy:
             handleOccupancy(incomingNotification)
         case .mySegmentsUpdate, .splitKill, .splitUpdate:
             notificationProcessor.process(incomingNotification)
+        case .sseError:
+            handleSseError(incomingNotification)
         default:
             Logger.w("SSE Handler: Unknown notification")
         }
@@ -54,7 +57,21 @@ class DefaultSseHandler: SseHandler {
         if let jsonData = notification.jsonData {
             do {
                 let notification = try notificationParser.parseOccupancy(jsonString: jsonData)
-                notificationManagerKeeper.handleIncomingPresenceEvent(notificiation: notification)
+                notificationManagerKeeper.handleIncomingPresenceEvent(notification: notification)
+            } catch {
+                Logger.w("Error while handling occupancy notification")
+            }
+        }
+    }
+
+    private func handleSseError(_ notification: IncomingNotification) {
+        if let jsonData = notification.jsonData {
+            do {
+                let error = try notificationParser.parseSseError(jsonString: jsonData)
+                if error.shouldIgnore {
+                    return
+                }
+                broadcasterChannel.push(event: error.isRetryable ? .pushRetryableError : .pushNonRetryableError)
             } catch {
                 Logger.w("Error while handling occupancy notification")
             }

@@ -23,7 +23,7 @@ enum NotificationType: Decodable {
     case mySegmentsUpdate
     case splitKill
     case occupancy
-    case error
+    case sseError
     case control
     case unknown
 
@@ -136,6 +136,9 @@ struct SplitsUpdateNotification: NotificationTypeField {
 
 /// Indicates a notification related to occupancy
 struct OccupancyNotification: NotificationTypeField {
+    private let kControlPriToken = "control_pri"
+    private let kControlSecToken = "control_sec"
+    var channel: String?
     var type: NotificationType {
         return .occupancy
     }
@@ -147,11 +150,31 @@ struct OccupancyNotification: NotificationTypeField {
     enum CodingKeys: String, CodingKey {
         case metrics
     }
+
+    var isControlPriChannel: Bool {
+        return channel?.contains(kControlPriToken) ?? false
+    }
+
+    var isControlSecChannel: Bool {
+        return channel?.contains(kControlSecToken) ?? false
+    }
 }
 
 /// Indicates a streaming error related
-struct StreamingError {
+struct StreamingError: NotificationTypeField {
+    var type: NotificationType {
+        return .sseError
+    }
+
     let message: String
     let code: Int
     let statusCode: Int
+
+    var isRetryable: Bool {
+        return  code >= 40140 &&  code <= 40149
+    }
+
+    var shouldIgnore: Bool {
+        return  !(code >= 40000 && code <= 49999)
+    }
 }
