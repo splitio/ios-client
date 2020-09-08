@@ -14,36 +14,35 @@ class EventStreamParser {
     private static let kFieldSeparator: Character = ":"
     private static let kKeepAliveToken = "\(kFieldSeparator)\(kKeepAliveEvent)"
 
-    func parseLineAndAppendValue(streamLine: String, messageValues: SyncDictionarySingleWrapper<String, String>) -> Bool {
+    func parse(streamChunk: String) -> [String: String] {
 
-        let trimmedLine = streamLine.trimmingCharacters(in: .whitespacesAndNewlines)
+        var messageValues = [String: String]()
+        let messageLines = streamChunk.split(separator: "\n")
+        for messageLine in messageLines {
+            let trimmedLine = messageLine.trimmingCharacters(in: .whitespacesAndNewlines)
+            if Self.kKeepAliveToken == trimmedLine {
+                messageValues[Self.kEventField] = Self.kKeepAliveEvent
+                return messageValues
+            }
 
-        if Self.kKeepAliveToken == trimmedLine {
-            messageValues.setValue(Self.kKeepAliveEvent, forKey: Self.kEventField)
-            return true
+            if trimmedLine.isEmpty() {
+                return messageValues
+            }
+
+            guard let separatorIndex = trimmedLine.firstIndex(of: Self.kFieldSeparator) else {
+                messageValues[trimmedLine] = ""
+                return messageValues
+            }
+
+            if separatorIndex == trimmedLine.startIndex {
+                return messageValues
+            }
+
+            let field = String(trimmedLine[..<separatorIndex])
+            let value = String(trimmedLine[trimmedLine.index(after: separatorIndex)...])
+            messageValues[field] = value
         }
-
-        if trimmedLine.isEmpty(), messageValues.count == 0 {
-            return false
-        }
-
-        if trimmedLine.isEmpty() {
-            return true
-        }
-
-        guard let separatorIndex = trimmedLine.firstIndex(of: Self.kFieldSeparator) else {
-            messageValues.setValue("", forKey: trimmedLine)
-            return false
-        }
-
-        if separatorIndex == trimmedLine.startIndex {
-            return false
-        }
-
-        let field = String(trimmedLine[..<separatorIndex])
-        let value = String(trimmedLine[trimmedLine.index(after: separatorIndex)...])
-        messageValues.setValue(value, forKey: field)
-        return false
+        return messageValues
     }
 
     func isKeepAlive(values: [String: String]) -> Bool {

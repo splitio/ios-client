@@ -75,7 +75,6 @@ class HttpSessionConfig {
         return HttpSessionConfig()
     }()
     var connectionTimeOut: TimeInterval = 30
-    var readTimeout: TimeInterval = 60
 }
 
 protocol HttpClient {
@@ -109,8 +108,8 @@ class DefaultHttpClient {
 
         let urlSessionConfig = URLSessionConfiguration.default
 
-        urlSessionConfig.timeoutIntervalForResource = configuration.readTimeout
-        urlSessionConfig.timeoutIntervalForRequest = configuration.connectionTimeOut
+        urlSessionConfig.timeoutIntervalForRequest = 80//configuration.connectionTimeOut
+        urlSessionConfig.timeoutIntervalForResource = 3600
         urlSessionConfig.httpMaximumConnectionsPerHost = 100
 
         if let requestManager = requestManager {

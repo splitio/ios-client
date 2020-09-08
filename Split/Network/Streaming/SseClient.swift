@@ -23,32 +23,23 @@ struct SseConnectionResult {
 }
 
 protocol SseClient {
-
-    typealias EventHandler = () -> Void
-    typealias MessageHandler = ([String: String]) -> Void
-    typealias ErrorHandler = (Bool) -> Void
-
-    var onKeepAliveHandler: EventHandler? { get set }
-    var onErrorHandler: ErrorHandler? { get set }
-    var onDisconnectHandler: EventHandler? { get set }
-    var onMessageHandler: MessageHandler? { get set }
-
     func connect(token: String, channels: [String]) -> SseConnectionResult
     func disconnect()
 }
 
 class DefaultSseClient: SseClient {
+
+    ///
+    /// NOTE:
+    /// Keep alive is managed through timeoutRequestInverval from URLSession
+    /// when session timeouts a retryable error is pushed to event broadcaster
+
     private let httpClient: HttpClient
     private var endpoint: Endpoint
     private var queue: DispatchQueue
     private var streamRequest: HttpStreamRequest?
     private let streamParser = EventStreamParser()
     private let sseHandler: SseHandler
-
-    var onKeepAliveHandler: SseClient.EventHandler?
-    var onErrorHandler: SseClient.ErrorHandler?
-    var onDisconnectHandler: SseClient.EventHandler?
-    var onMessageHandler: SseClient.MessageHandler?
 
     init(endpoint: Endpoint, httpClient: HttpClient, sseHandler: SseHandler) {
         self.endpoint = endpoint
@@ -63,7 +54,6 @@ class DefaultSseClient: SseClient {
         var connectionResult: SseConnectionResult?
 
         queue.async {
-            let values = SyncDictionarySingleWrapper<String, String>()
             let parameters: [String: Any] = [
                 SseClientConstants.pushNotificationTokenParam: token,
                 SseClientConstants.pushNotificationChannelsParam: self.createChannelsQueryString(channels: channels),
@@ -82,21 +72,17 @@ class DefaultSseClient: SseClient {
 
                 }, incomingDataHandler: { data in
 
-                    if self.streamParser.parseLineAndAppendValue(streamLine: data.stringRepresentation,
-                                                                 messageValues: values) {
-                        if self.streamParser.isKeepAlive(values: values.all) {
-                            values.removeAll()
-                            self.triggerKeepAliveHandler()
-                        } else {
-                            self.triggerMessageHandler(message: values.takeAll())
-                        }
+                    let values = self.streamParser.parse(streamChunk: data.stringRepresentation)
+                    if !self.streamParser.isKeepAlive(values: values) {
+                        self.triggerMessageHandler(message: values)
                     }
+
                 }, closeHandler: {
-                    self.triggerCloseHandler()
+                    self.handleConnectionClosed()
 
                 }, errorHandler: { error in
                     Logger.e("Error in stream request: \(error.message)")
-                    self.triggerOnError(isRecoverable: true)
+                    self.handleError(error)
                 })
             } catch {
                 Logger.e("Error while connecting to streaming: \(error.localizedDescription)")
@@ -109,35 +95,28 @@ class DefaultSseClient: SseClient {
     }
 
     func triggerMessageHandler(message: [String: String]) {
-        // TODO: Check this message logic. Analize if SseConnectionManager (o push notification manager) should receive this
-        if let onMessage = self.onMessageHandler {
-            onMessage(message)
-        }
-        // TODO: end todo
-
         sseHandler.handleIncomingMessage(message: message)
     }
 
-    func triggerCloseHandler() {
-        if let onDisconnect = self.onDisconnectHandler {
-            onDisconnect()
-        }
+    func handleConnectionClosed() {
+        sseHandler.reportError(isRetryable: true)
     }
 
-    func triggerKeepAliveHandler() {
-        if let onKeepAlive = self.onKeepAliveHandler {
-            onKeepAlive()
-        }
+    func handleError(_ error: HttpError) {
+        sseHandler.reportError(isRetryable: !isClientRelatedError(error))
     }
 
-    func triggerOnError(isRecoverable: Bool) {
-        if let onError = self.onErrorHandler {
-            onError(isRecoverable)
+    private func isClientRelatedError(_ error: HttpError) -> Bool {
+        switch error {
+        case .clientRelated:
+            return true
+        default:
+            return false
         }
     }
 
     func disconnect() {
-        // TODO: Implement this method and close method in StreamRequest!!
+        streamRequest?.close()
     }
 }
 

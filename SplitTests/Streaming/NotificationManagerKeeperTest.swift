@@ -31,7 +31,7 @@ class NotificationManagerKeeperTest: XCTestCase {
         notification.channel = kControlPriChannel
         notificationManager.handleIncomingPresenceEvent(notification: notification)
 
-        XCTAssertEqual(PushStatusEvent.pushSubsystemDown, broadcasterChannel.pushedEvent)
+        XCTAssertEqual(PushStatusEvent.pushSubsystemDown, broadcasterChannel.lastPushedEvent)
     }
 
     func testNoAvailablePublishersInPriButAvailableInSec() {
@@ -46,14 +46,14 @@ class NotificationManagerKeeperTest: XCTestCase {
         notificationManager.handleIncomingPresenceEvent(notification: n1)
 
         // reseting stub
-        broadcasterChannel.pushedEvent = nil
+        broadcasterChannel.lastPushedEvent = nil
 
         // now no publishers in primary channel shouldn't enable polling
         var n2 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 0))
         n2.channel = kControlPriChannel
         notificationManager.handleIncomingPresenceEvent(notification: n2)
 
-        XCTAssertNil(broadcasterChannel.pushedEvent)
+        XCTAssertNil(broadcasterChannel.lastPushedEvent)
     }
 
 
@@ -69,14 +69,14 @@ class NotificationManagerKeeperTest: XCTestCase {
         notificationManager.handleIncomingPresenceEvent(notification: n1)
 
         // reseting stub
-        broadcasterChannel.pushedEvent = nil
+        broadcasterChannel.lastPushedEvent = nil
 
         // now publishers in secondary channel must disable polling
         var n2 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 1))
         n2.channel = kControlSecChannel
         notificationManager.handleIncomingPresenceEvent(notification: n2)
 
-        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.pushedEvent)
+        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
     }
 
     override func tearDown() {
