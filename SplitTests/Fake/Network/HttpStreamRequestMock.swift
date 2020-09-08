@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import XCTest
+
 @testable import Split
 
 class HttpStreamRequestMock: HttpStreamRequest {
@@ -15,6 +17,9 @@ class HttpStreamRequestMock: HttpStreamRequest {
     var incomingDataHandler: IncomingDataHandler?
     var closeHandler: CloseHandler?
     var errorHandler: ErrorHandler?
+    var closeExpectation: XCTestExpectation?
+
+    var closeCalled = false
 
     var identifier: Int = 0
 
@@ -31,6 +36,13 @@ class HttpStreamRequestMock: HttpStreamRequest {
     var responseCode: Int = 0
 
     func send() {
+    }
+
+    func close() {
+        closeCalled = true
+        if let exp = closeExpectation {
+            exp.fulfill()
+        }
     }
 
     func setResponse(code: Int) {
