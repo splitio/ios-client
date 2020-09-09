@@ -79,8 +79,36 @@ class SyncManagerTest: XCTestCase {
         XCTAssertTrue(synchronizer.startPeriodicFetchingCalled)
     }
 
-    override func tearDown() {
+    func testPushRetryableError() {
 
+        splitConfig.streamingEnabled = true
+        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
+                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+        syncManager.start()
+        broadcasterChannel.push(event: .pushRetryableError)
+
+        XCTAssertTrue(synchronizer.startPeriodicFetchingCalled)
+        XCTAssertTrue(pushManager.startCalled)
+        XCTAssertFalse(pushManager.stopCalled)
+    }
+
+    func testPushNonRetryableError() {
+
+        splitConfig.streamingEnabled = true
+        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
+                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+        syncManager.start()
+
+        // reseting start called value
+        pushManager.startCalled = false
+        broadcasterChannel.push(event: .pushNonRetryableError)
+
+        XCTAssertTrue(synchronizer.startPeriodicFetchingCalled)
+        XCTAssertFalse(pushManager.startCalled)
+        XCTAssertTrue(pushManager.stopCalled)
+    }
+
+    override func tearDown() {
     }
 }
 
