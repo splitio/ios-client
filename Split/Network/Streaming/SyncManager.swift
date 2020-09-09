@@ -56,6 +56,9 @@ class DefaultSyncManager: SyncManager {
     }
 
     func stop() {
+        pushNotificationManager.stop()
+        synchronizer.stopPeriodicFetching()
+        synchronizer.stopPeriodicRecording()
     }
 
     private func handle(pushEvent: PushStatusEvent) {
@@ -67,6 +70,7 @@ class DefaultSyncManager: SyncManager {
             synchronizer.stopPeriodicFetching()
             isPollingEnabled = false
             Logger.i("Polling disabled")
+
         case .pushSubsystemDown:
             Logger.d("Push Subsystem Down event message received.")
             if !isPollingEnabled {
@@ -74,8 +78,14 @@ class DefaultSyncManager: SyncManager {
                 synchronizer.startPeriodicFetching()
                 Logger.i("Polling enabled")
             }
-        default:
-            Logger.i("Unknown push status event \(pushEvent)")
+
+        case .pushRetryableError:
+            synchronizer.startPeriodicFetching()
+            pushNotificationManager.start()
+
+        case .pushNonRetryableError:
+            synchronizer.startPeriodicFetching()
+            pushNotificationManager.stop()
         }
     }
 }
