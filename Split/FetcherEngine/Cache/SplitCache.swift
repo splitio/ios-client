@@ -83,6 +83,10 @@ class SplitCache: SplitCacheProtocol {
     func setTimestamp(timestamp: Int) {
         inMemoryCache.setTimestamp(timestamp: timestamp)
     }
+
+    func kill(splitName: String, defaultTreatment: String, changeNumber: Int64) {
+        inMemoryCache.kill(splitName: splitName, defaultTreatment: defaultTreatment, changeNumber: changeNumber)
+    }
 }
 
 // MARK: Private

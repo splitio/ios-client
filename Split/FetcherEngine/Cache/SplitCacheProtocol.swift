@@ -19,4 +19,5 @@ protocol SplitCacheProtocol {
     func clear()
     func getTimestamp() -> Int
     func setTimestamp(timestamp: Int)
+    func kill(splitName: String, defaultTreatment: String, changeNumber: Int64)
 }

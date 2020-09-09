@@ -18,6 +18,9 @@ class SplitCacheStub: SplitCacheProtocol {
     private var splits: [String:Split]
     var timestamp = 0
 
+    var killedSplit: Split?
+    var killExpectation: XCTestExpectation?
+
     var clearCallCount = 0
     init(splits: [Split], changeNumber: Int64) {
         self.changeNumber = changeNumber
@@ -78,5 +81,16 @@ class SplitCacheStub: SplitCacheProtocol {
 
     func setTimestamp(timestamp: Int) {
         self.timestamp = timestamp
+    }
+
+    func kill(splitName: String, defaultTreatment: String, changeNumber: Int64) {
+        killedSplit = Split()
+        killedSplit?.name = splitName
+        killedSplit?.defaultTreatment = defaultTreatment
+        killedSplit?.changeNumber = changeNumber
+
+        if let exp = killExpectation {
+            exp.fulfill()
+        }
     }
 }
