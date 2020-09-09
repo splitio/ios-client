@@ -60,7 +60,7 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
                 try splitKillWorker.process(notification:
                     sseNotificationParser.parseSplitKill(jsonString: jsonData))
             } catch {
-                Logger.e("Error while parsing split update notification: \(error.localizedDescription)")
+                Logger.e("Error while parsing split kill notification: \(error.localizedDescription)")
             }
         }
     }
