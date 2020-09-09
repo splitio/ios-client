@@ -85,11 +85,7 @@ class SplitCache: SplitCacheProtocol {
     }
 
     func kill(splitName: String, defaultTreatment: String, changeNumber: Int64) {
-        if let split = inMemoryCache.getSplit(splitName: splitName) {
-            split.killed = true
-            split.changeNumber = changeNumber
-            split.defaultTreatment = defaultTreatment
-        }
+        inMemoryCache.kill(splitName: splitName, defaultTreatment: defaultTreatment, changeNumber: changeNumber)
     }
 }
 
