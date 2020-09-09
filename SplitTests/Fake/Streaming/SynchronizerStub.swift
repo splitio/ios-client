@@ -11,13 +11,70 @@ import XCTest
 @testable import Split
 
 class SynchronizerStub: Synchronizer {
+
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
     var synchronizeMySegmentsCalled = false
+    var loadAndSynchronizeSplitsCalled = false
+    var loadSplitsFromCacheCalled = false
+    var loadMySegmentsFromCacheCalled = false
+    var startPeriodicFetchingCalled = false
+    var stopPeriodicFetchingCalled = false
+    var startPeriodicRecordingCalled = false
+    var stopPeriodicRecordingCalled = false
+    var pushEventCalled = false
+    var pushImpressionCalled = false
+    var flushCalled = false
+    var destroyCalled = false
 
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
     var syncMySegmentsExp: XCTestExpectation?
+
+    
+    func loadAndSynchronizeSplits() {
+        loadAndSynchronizeSplitsCalled = true
+    }
+
+    func loadSplitsFromCache() {
+        loadSplitsFromCacheCalled = true
+    }
+
+    func loadMySegmentsFromCache() {
+        loadMySegmentsFromCacheCalled = true
+    }
+
+    func startPeriodicFetching() {
+        startPeriodicFetchingCalled = true
+    }
+
+    func stopPeriodicFetching() {
+        stopPeriodicFetchingCalled = true
+    }
+
+    func startPeriodicRecording() {
+        startPeriodicRecordingCalled = true
+    }
+
+    func stopPeriodicRecording() {
+        stopPeriodicRecordingCalled = true
+    }
+
+    func pushEvent(event: EventDTO) {
+        pushEventCalled = true
+    }
+
+    func pushImpression(impression: Impression) {
+        pushImpressionCalled = true
+    }
+
+    func flush() {
+        flushCalled = true
+    }
+
+    func destroy() {
+        destroyCalled = true
+    }
 
     func synchronizeSplits() {
         synchronizeSplitsCalled = true
