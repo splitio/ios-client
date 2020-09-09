@@ -8,7 +8,23 @@
 
 import Foundation
 
-class NotificationParser {
+protocol SseNotificationParser {
+
+    func parseIncoming(jsonString: String) -> IncomingNotification?
+
+    func parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification
+
+    func parseSplitKill(jsonString: String) throws -> SplitKillNotification
+
+    func parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification
+
+    func parseOccupancy(jsonString: String) throws -> OccupancyNotification
+
+    func parseControl(jsonString: String) throws -> ControlNotification
+
+}
+
+class DefaultSseNotificationParser: SseNotificationParser {
 
     private static let kErrorNotificationName = "error"
 
@@ -30,28 +46,26 @@ class NotificationParser {
         return nil
     }
 
-    func  parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification {
+    func parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification {
         return try Json.encodeFrom(json: jsonString, to: SplitsUpdateNotification.self)
     }
 
-    func  parseSplitKill(jsonString: String) throws -> SplitKillNotification {
+    func parseSplitKill(jsonString: String) throws -> SplitKillNotification {
         return try Json.encodeFrom(json: jsonString, to: SplitKillNotification.self)
     }
 
-    func  parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification {
+    func parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification {
         return try Json.encodeFrom(json: jsonString, to: MySegmentsUpdateNotification.self)
     }
 
-    func  parseOccupancy(jsonString: String) throws -> OccupancyNotification {
+    func parseOccupancy(jsonString: String) throws -> OccupancyNotification {
         return try Json.encodeFrom(json: jsonString, to: OccupancyNotification.self)
     }
 
-    func  parseControl(jsonString: String) throws -> ControlNotification {
+    func parseControl(jsonString: String) throws -> ControlNotification {
         return try Json.encodeFrom(json: jsonString, to: ControlNotification.self)
     }
-}
 
-extension NotificationParser {
     func isError(notification: RawNotification) -> Bool {
         return Self.kErrorNotificationName == notification.name
     }
