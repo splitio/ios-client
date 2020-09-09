@@ -94,7 +94,12 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
     }
 
     func kill(splitName: String, defaultTreatment: String, changeNumber: Int64) {
-        
+        if let split = splits[splitName], split.changeNumber ?? -1 < changeNumber {
+            split.killed = true
+            split.changeNumber = changeNumber
+            split.defaultTreatment = defaultTreatment
+            splits[splitName] = split
+        }
     }
 }
 
