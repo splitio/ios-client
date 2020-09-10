@@ -19,7 +19,7 @@ protocol PushManagerEventBroadcaster {
     typealias IncomingMessageHandler = (PushStatusEvent) -> Void
     func push(event: PushStatusEvent)
     func register(handler: @escaping IncomingMessageHandler)
-    func stop()
+    func destroy()
 }
 
 ///
@@ -45,7 +45,7 @@ class DefaultPushManagerEventBroadcaster: PushManagerEventBroadcaster {
         }
     }
 
-    func stop() {
+    func destroy() {
         messageQueue.async (flags: .barrier) {
             self.handlers.removeAll()
         }
