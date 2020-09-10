@@ -22,7 +22,7 @@ protocol TimersManager {
 }
 
 class DefaultTimersManager: TimersManager {
-    private let timersQueue = DispatchQueue(label: "SplitTimers")
+    private let timersQueue = DispatchQueue.global()
     private let timers = SyncDictionarySingleWrapper<TimerName, DispatchWorkItem>()
 
     var triggerHandler: TimerHandler?
