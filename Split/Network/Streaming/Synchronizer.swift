@@ -24,3 +24,103 @@ protocol Synchronizer {
     func flush()
     func destroy()
 }
+
+struct SplitApiFacade {
+    let splitsFetcher: SplitChangeFetcher
+    let mySegmentsFetcher: MySegmentsChangeFetcher
+    let refreshableSplitsFetcher: RefreshableSplitFetcher
+    let refreshableMySegmentsFetcher: RefreshableMySegmentsFetcher
+    let impressionsManager: ImpressionsManager
+    let trackManager: TrackManager
+}
+
+struct SplitStorageContainer {
+    let splitsCache: SplitCacheProtocol
+    let mySegmentsCache: MySegmentsCacheProtocol
+}
+
+
+class DefaultSynchronizer: Synchronizer {
+
+    let splitApiFacade: SplitApiFacade
+    let splitStorageContainer: SplitStorageContainer
+
+    let userKey: String // Matching key
+
+    init(userKey: String,
+         splitsCache: SplitCacheProtocol,
+         splitApiFacade: SplitApiFacade,
+         splitStorageContainer: SplitStorageContainer) {
+
+        self.userKey = userKey
+        self.splitApiFacade = splitApiFacade
+        self.splitStorageContainer = splitStorageContainer
+    }
+
+    func synchronizeSplits() {
+        // TODO: Check if retry apply here (as Android has)
+        _ = try? splitApiFacade.splitsFetcher.fetch(since: splitStorageContainer.splitsCache.getChangeNumber(),
+                                                    policy: .network)
+    }
+
+    func synchronizeSplits(changeNumber: Int64) {
+        // Retry?
+        if changeNumber > splitStorageContainer.splitsCache.getChangeNumber() {
+            _ = try? splitApiFacade.splitsFetcher.fetch(since: changeNumber, policy: .network)
+        }
+    }
+
+    func synchronizeMySegments() {
+        // Retry?
+        _ = try? splitApiFacade.mySegmentsFetcher.fetch(user: userKey, policy: .network)
+
+    }
+
+    func loadAndSynchronizeSplits() {
+
+    }
+
+    func loadSplitsFromCache() {
+
+    }
+
+    func loadMySegmentsFromCache() {
+
+    }
+
+    func startPeriodicFetching() {
+        splitApiFacade.refreshableSplitsFetcher.start()
+        splitApiFacade.refreshableMySegmentsFetcher.start()
+    }
+
+    func stopPeriodicFetching() {
+        splitApiFacade.refreshableSplitsFetcher.stop()
+        splitApiFacade.refreshableMySegmentsFetcher.stop()
+    }
+
+    func startPeriodicRecording() {
+
+    }
+
+    func stopPeriodicRecording() {
+
+    }
+
+    func pushEvent(event: EventDTO) {
+
+    }
+
+    func pushImpression(impression: Impression) {
+
+    }
+
+    func flush() {
+
+    }
+
+    func destroy() {
+
+    }
+
+
+}
