@@ -70,7 +70,7 @@ class PushManagerEventBroadcasterTest: XCTestCase {
         }
 
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 0.5) {
-            self.channel.stop()
+            self.channel.destroy()
         }
 
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 1.0) {
