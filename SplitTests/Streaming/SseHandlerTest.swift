@@ -67,6 +67,40 @@ class SseHandlerTest: XCTestCase {
         XCTAssertFalse(notificationProcessor.processCalled)
     }
 
+    func testIncomingControlStreamingPaused() {
+        notificationParser.incomingNotification = IncomingNotification(type: .control, jsonData: "dummy")
+        notificationParser.controlNotification = ControlNotification(type: .control, controlType: .streamingPaused)
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
+
+        XCTAssertEqual(PushStatusEvent.pushSubsystemDown, broadcasterChannel.pushedEvent)
+    }
+
+    func testIncomingControlStreamingDisabled() {
+        notificationParser.incomingNotification = IncomingNotification(type: .control, jsonData: "dummy")
+        notificationParser.controlNotification = ControlNotification(type: .control, controlType: .streamingDisabled)
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
+
+        XCTAssertEqual(PushStatusEvent.pushDisabled, broadcasterChannel.pushedEvent)
+    }
+
+    func testIncomingControlStreamingEnabled() {
+        notificationManagerKeeper.publishersCount = 1
+        notificationParser.incomingNotification = IncomingNotification(type: .control, jsonData: "dummy")
+        notificationParser.controlNotification = ControlNotification(type: .control, controlType: .streamingEnabled)
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
+
+        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.pushedEvent)
+    }
+
+    func testIncomingControlStreamingEnabledNoPublishers() {
+        notificationManagerKeeper.publishersCount = 0
+        notificationParser.incomingNotification = IncomingNotification(type: .control, jsonData: "dummy")
+        notificationParser.controlNotification = ControlNotification(type: .control, controlType: .streamingEnabled)
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
+
+        XCTAssertNil(broadcasterChannel.pushedEvent)
+    }
+
     func testIncomingLowRetryableSseError() {
         incomingRetryableSseErrorTest(code: 40140)
     }

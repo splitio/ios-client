@@ -10,6 +10,8 @@ import Foundation
 @testable import Split
 
 class NotificationManagerKeeperStub: NotificationManagerKeeper {
+    var publishersCount: Int = 0
+
     var handleIncomingPresenceEventCalled = false
     func handleIncomingPresenceEvent(notification: OccupancyNotification) {
         handleIncomingPresenceEventCalled = true

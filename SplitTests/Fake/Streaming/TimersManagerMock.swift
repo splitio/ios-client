@@ -18,14 +18,18 @@ class TimersManagerMock: TimersManager {
     private var expectations = [TimerName: XCTestExpectation]()
 
     func add(timer: TimerName, delayInSeconds: Int) {
-        timersAdded.insert(timer)
+        _ = DispatchQueue.global().sync {
+            timersAdded.insert(timer)
+        }
         if let exp = expectations[timer] {
             exp.fulfill()
         }
     }
 
     func cancel(timer: TimerName) {
-        timersCancelled.insert(timer)
+        _ = DispatchQueue.global().sync {
+            timersCancelled.insert(timer)
+        }
     }
 
     func timerIsAdded(timer: TimerName) -> Bool {
@@ -41,12 +45,14 @@ class TimersManagerMock: TimersManager {
     }
 
     func reset(timer: TimerName? = nil) {
-        if let timer = timer {
-            timersAdded.remove(timer)
-            timersCancelled.remove(timer)
-        } else {
-            timersAdded.removeAll()
-            timersCancelled.removeAll()
+        _ = DispatchQueue.global().sync {
+            if let timer = timer {
+                timersAdded.remove(timer)
+                timersCancelled.remove(timer)
+            } else {
+                timersAdded.removeAll()
+                timersCancelled.removeAll()
+            }
         }
     }
 }
