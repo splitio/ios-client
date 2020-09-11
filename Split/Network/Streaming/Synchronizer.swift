@@ -99,28 +99,32 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func startPeriodicRecording() {
-
+        splitApiFacade.impressionsManager.start()
+        splitApiFacade.trackManager.start()
     }
 
     func stopPeriodicRecording() {
-
+        splitApiFacade.impressionsManager.stop()
+        splitApiFacade.trackManager.stop()
     }
 
     func pushEvent(event: EventDTO) {
-
+        splitApiFacade.trackManager.appendEvent(event: event)
     }
 
     func pushImpression(impression: Impression) {
-
+        if let splitName = impression.feature {
+            splitApiFacade.impressionsManager.appendImpression(impression: impression, splitName: splitName)
+        }
     }
 
     func flush() {
-
+        splitApiFacade.impressionsManager.flush()
+        splitApiFacade.trackManager.flush()
     }
 
     func destroy() {
-
+        splitApiFacade.refreshableSplitsFetcher.stop()
+        splitApiFacade.refreshableMySegmentsFetcher.stop()
     }
-
-
 }
