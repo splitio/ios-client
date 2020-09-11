@@ -20,6 +20,6 @@ class PushManagerEventBroadcasterStub: PushManagerEventBroadcaster {
     func register(handler: @escaping IncomingMessageHandler) {
     }
 
-    func stop() {
+    func destroy() {
     }
 }
