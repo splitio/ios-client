@@ -26,6 +26,11 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
         initSplits(splits: splits)
     }
 
+    func load() {
+        // No actions needed here, but this entire class will be
+        // This method is empty because this class is gonna be removed in cache revamp.
+    }
+
     func addSplit(splitName: String, split: Split) {
         queue.async(flags: .barrier) {
             self.updateTrafficTypes(with: split)
