@@ -68,7 +68,9 @@ class DefaultSseHandler: SseHandler {
         if let jsonData = notification.jsonData {
             do {
                 let error = try notificationParser.parseSseError(jsonString: jsonData)
+                Logger.w("Error while handling occupancy notification: \(error.message)")
                 if error.shouldIgnore {
+                    Logger.w("Error ignored")
                     return
                 }
                 broadcasterChannel.push(event: error.isRetryable ? .pushRetryableError : .pushNonRetryableError)
