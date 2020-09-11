@@ -9,10 +9,15 @@
 import Foundation
 
 protocol NotificationManagerKeeper {
+    var publishersCount: Int { get }
     func handleIncomingPresenceEvent(notification: OccupancyNotification)
 }
 
 class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
+
+    var publishersCount: Int {
+        return priPublishers + secPublishers
+    }
 
     /// By default we consider one publisher en primary channel available
     private var priPublishers = 1

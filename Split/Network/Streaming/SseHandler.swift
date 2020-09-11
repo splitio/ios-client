@@ -41,7 +41,7 @@ class DefaultSseHandler: SseHandler {
 
         switch incomingNotification.type {
         case .control:
-            print("TODO: handle control here")
+            handleControl(incomingNotification)
         case .occupancy:
             handleOccupancy(incomingNotification)
         case .mySegmentsUpdate, .splitKill, .splitUpdate:
@@ -64,11 +64,37 @@ class DefaultSseHandler: SseHandler {
         }
     }
 
+    private func handleControl(_ notification: IncomingNotification) {
+        if let jsonData = notification.jsonData {
+            do {
+                let notification = try notificationParser.parseControl(jsonString: jsonData)
+                switch notification.controlType {
+                case .streamingPaused:
+                    broadcasterChannel.push(event: .pushSubsystemDown)
+
+                case .streamingDisabled:
+                    broadcasterChannel.push(event: .pushDisabled)
+
+                case .streamingEnabled:
+                    if notificationManagerKeeper.publishersCount > 0 {
+                        broadcasterChannel.push(event: .pushSubsystemUp)
+                    }
+
+                case .unknown:
+                    Logger.w("Unknown control notification received")
+                }
+
+            } catch {
+                Logger.w("Error while handling occupancy notification")
+            }
+        }
+    }
+
     private func handleSseError(_ notification: IncomingNotification) {
         if let jsonData = notification.jsonData {
             do {
                 let error = try notificationParser.parseSseError(jsonString: jsonData)
-                Logger.w("Error while handling streaming error notification: \(error.message)")
+                Logger.w("Streaming error notification received: \(error.message)")
                 if error.shouldIgnore {
                     Logger.w("Error ignored")
                     return
