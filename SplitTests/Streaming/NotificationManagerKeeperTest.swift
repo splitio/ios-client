@@ -29,9 +29,21 @@ class NotificationManagerKeeperTest: XCTestCase {
         // Receiving 0 publishers in primary and having 0 in sec, should enable polling
         var notification = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 0))
         notification.channel = kControlPriChannel
+        notification.timestamp = 100
         notificationManager.handleIncomingPresenceEvent(notification: notification)
 
         XCTAssertEqual(PushStatusEvent.pushSubsystemDown, broadcasterChannel.pushedEvent)
+    }
+
+    func testNoAvailablePublishersOldTimestamp() {
+        // Notification manager keeper start assuming one publisher in primary channel
+        // Receiving 0 (old timestamp) should not enable polling
+        var notification = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 0))
+        notification.channel = kControlPriChannel
+        notification.timestamp = 0
+        notificationManager.handleIncomingPresenceEvent(notification: notification)
+
+        XCTAssertNil(broadcasterChannel.pushedEvent)
     }
 
     func testNoAvailablePublishersInPriButAvailableInSec() {
@@ -66,6 +78,7 @@ class NotificationManagerKeeperTest: XCTestCase {
         // making channel pri unavailable
         var n1 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 0))
         n1.channel = kControlPriChannel
+        n1.timestamp = 50
         notificationManager.handleIncomingPresenceEvent(notification: n1)
 
         // reseting stub
@@ -74,9 +87,40 @@ class NotificationManagerKeeperTest: XCTestCase {
         // now publishers in secondary channel must disable polling
         var n2 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 1))
         n2.channel = kControlSecChannel
+        n2.timestamp = 100
         notificationManager.handleIncomingPresenceEvent(notification: n2)
 
         XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.pushedEvent)
+    }
+
+    func testSecondaryAvailableNotificationReceivedWhenNoPublishersOldTimestamp() {
+        // Notification manager keeper start assuming one publisher in primary channel
+        // Receiving 0 publishers in primary and having 0 in sec to enable polling
+        // Receiving 1 publisher in secondary channel must enable polling
+
+
+        // making channel pri unavailable
+        var n1 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 0))
+        n1.channel = kControlPriChannel
+        n1.timestamp = 50
+        notificationManager.handleIncomingPresenceEvent(notification: n1)
+
+        // now publishers in secondary channel = 0 to set last timestamp for channel sec
+        var n2 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 0))
+        n2.channel = kControlSecChannel
+        n2.timestamp = 50
+        notificationManager.handleIncomingPresenceEvent(notification: n2)
+
+        // reseting stub
+        broadcasterChannel.pushedEvent = nil
+
+        // old timestamp notification should not fire any event
+        var n3 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 1))
+        n3.channel = kControlSecChannel
+        n3.timestamp = 30
+        notificationManager.handleIncomingPresenceEvent(notification: n3)
+
+        XCTAssertNil(broadcasterChannel.pushedEvent)
     }
 
     override func tearDown() {

@@ -139,6 +139,8 @@ struct OccupancyNotification: NotificationTypeField {
     private let kControlPriToken = "control_pri"
     private let kControlSecToken = "control_sec"
     var channel: String?
+    var timestamp: Int = 0
+
     var type: NotificationType {
         return .occupancy
     }

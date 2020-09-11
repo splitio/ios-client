@@ -19,6 +19,8 @@ class DefaultSseHandler: SseHandler {
     let notificationManagerKeeper: NotificationManagerKeeper
     let broadcasterChannel: PushManagerEventBroadcaster
 
+    private var lastControlTimestamp = 0
+
     init(notificationProcessor: SseNotificationProcessor,
          notificationParser: SseNotificationParser,
          notificationManagerKeeper: NotificationManagerKeeper,
@@ -56,7 +58,8 @@ class DefaultSseHandler: SseHandler {
     private func handleOccupancy(_ notification: IncomingNotification) {
         if let jsonData = notification.jsonData {
             do {
-                let notification = try notificationParser.parseOccupancy(jsonString: jsonData)
+                let notification = try notificationParser.parseOccupancy(jsonString: jsonData,
+                                                                         timestamp: notification.timestamp)
                 notificationManagerKeeper.handleIncomingPresenceEvent(notification: notification)
             } catch {
                 Logger.w("Error while handling occupancy notification")
@@ -65,6 +68,10 @@ class DefaultSseHandler: SseHandler {
     }
 
     private func handleControl(_ notification: IncomingNotification) {
+        if notification.timestamp <= lastControlTimestamp {
+            return
+        }
+        lastControlTimestamp = notification.timestamp
         if let jsonData = notification.jsonData {
             do {
                 let notification = try notificationParser.parseControl(jsonString: jsonData)
