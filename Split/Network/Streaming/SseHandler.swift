@@ -72,13 +72,13 @@ class DefaultSseHandler: SseHandler {
             return
         }
         lastControlTimestamp = notification.timestamp
-        do {
-            if let jsonData = notification.jsonData {
+        if let jsonData = notification.jsonData {
+            do {
                 let notification = try notificationParser.parseControl(jsonString: jsonData)
                 notificationManagerKeeper.handleIncomingControl(notification: notification)
+            } catch {
+                Logger.w("Error while handling control notification")
             }
-        } catch {
-            Logger.w("Error while handling control notification")
         }
     }
 
