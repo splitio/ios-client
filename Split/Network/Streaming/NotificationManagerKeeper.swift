@@ -76,10 +76,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
     func handleIncomingPresenceEvent(notification: OccupancyNotification) {
         let channelIndex = getChannelIndex(of: notification)
 
-        if channelIndex == -1 {
-            return
-        }
-        if isOldTimestamp(notification: notification, for: channelIndex) {
+        if channelIndex == -1 || isOldTimestamp(notification: notification, for: channelIndex) {
             return
         }
         update(timestamp: notification.timestamp, for: channelIndex)
