@@ -331,7 +331,7 @@
 		59F4AA9F24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AA9E24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift */; };
 		59F4AAA124FFC94100A1C69A /* NotificationManagerKeeperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAA024FFC94100A1C69A /* NotificationManagerKeeperTest.swift */; };
 		59F4AAA324FFCD5000A1C69A /* PushManagerEventBroadcasterStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAA224FFCD5000A1C69A /* PushManagerEventBroadcasterStub.swift */; };
-		59F4AAA5250007BD00A1C69A /* SseHandlerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAA4250007BD00A1C69A /* SseHandlerStub.swift */; };
+		59F4AAAE250BA2F600A1C69A /* SseHandlerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAA4250007BD00A1C69A /* SseHandlerStub.swift */; };
 		59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA7D215578F400A51997 /* ImpressionsFile.swift */; };
 		59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */; };
 		59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */; };
@@ -791,7 +791,6 @@
 		3B6DEE5020EA6A4D0067435E = {
 			isa = PBXGroup;
 			children = (
-				59F4AAA4250007BD00A1C69A /* SseHandlerStub.swift */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
 				3B6DEE5B20EA6A4E0067435E /* Products */,
@@ -1484,6 +1483,7 @@
 		59F4AA9724FE8D7100A1C69A /* Streaming */ = {
 			isa = PBXGroup;
 			children = (
+				59F4AAA4250007BD00A1C69A /* SseHandlerStub.swift */,
 				595AD21224E1849500A7B750 /* JwtParserStub.swift */,
 				59ED408524EAB95E00EF7B09 /* SseAuthenticationStub.swift */,
 				59ED408724EABD4700EF7B09 /* SseClientMock.swift */,
@@ -1996,7 +1996,7 @@
 				59AD7ACA2465C32D00F5B0B4 /* EventDTOJsonTest.swift in Sources */,
 				59FB7C1621F79B8200ECC96A /* EventTypeNameHelper.swift in Sources */,
 				593AE9F3226F4068000D61B0 /* MySegmentsFetcherTests.swift in Sources */,
-				59F4AAA5250007BD00A1C69A /* SseHandlerStub.swift in Sources */,
+				59F4AAAE250BA2F600A1C69A /* SseHandlerStub.swift in Sources */,
 				5919017B24A27629005BD12A /* EndpointTest.swift in Sources */,
 				5959C479227B89980064F968 /* FactoryRegistryTest.swift in Sources */,
 				595AD21524E1CD4700A7B750 /* JwtTokenParserTest.swift in Sources */,
