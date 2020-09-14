@@ -29,9 +29,6 @@ class SplitCache: SplitCacheProtocol {
 
     init(fileStorage: FileStorageProtocol) {
         self.fileStorage = fileStorage
-    }
-
-    func load() {
         if let splitsFile = loadSplitFile() {
             self.inMemoryCache = buildInMemoryCache(splitsFile: splitsFile)
         }
