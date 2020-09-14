@@ -67,6 +67,14 @@ class SseHandlerTest: XCTestCase {
         XCTAssertFalse(notificationProcessor.processCalled)
     }
 
+    func testIncomingControlStreaming() {
+        notificationParser.incomingNotification = IncomingNotification(type: .control, jsonData: "dummy", timestamp: 100)
+        notificationParser.controlNotification = ControlNotification(type: .control, controlType: .streamingEnabled)
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
+
+        XCTAssertTrue(notificationManagerKeeper.handleIncomingControlCalled)
+    }
+
     func testIncomingLowRetryableSseError() {
         incomingRetryableSseErrorTest(code: 40140)
     }
