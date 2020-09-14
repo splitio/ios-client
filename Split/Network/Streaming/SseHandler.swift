@@ -72,28 +72,13 @@ class DefaultSseHandler: SseHandler {
             return
         }
         lastControlTimestamp = notification.timestamp
-        if let jsonData = notification.jsonData {
-            do {
+        do {
+            if let jsonData = notification.jsonData {
                 let notification = try notificationParser.parseControl(jsonString: jsonData)
-                switch notification.controlType {
-                case .streamingPaused:
-                    broadcasterChannel.push(event: .pushSubsystemDown)
-
-                case .streamingDisabled:
-                    broadcasterChannel.push(event: .pushDisabled)
-
-                case .streamingEnabled:
-                    if notificationManagerKeeper.publishersCount > 0 {
-                        broadcasterChannel.push(event: .pushSubsystemUp)
-                    }
-
-                case .unknown:
-                    Logger.w("Unknown control notification received")
-                }
-
-            } catch {
-                Logger.w("Error while handling occupancy notification")
+                notificationManagerKeeper.handleIncomingControl(notification: notification)
             }
+        } catch {
+            Logger.w("Error while handling control notification")
         }
     }
 
