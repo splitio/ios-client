@@ -136,9 +136,9 @@ class DefaultPushNotificationManager: PushNotificationManager {
         let result = sseClient.connect(token: jwt.rawToken, channels: jwt.channels)
         if result.success {
             set(state: .connected)
-            broadcasterChannel.push(event: .pushSubsystemUp)
             timersManager.add(timer: .refreshAuthToken, delayInSeconds: kReconnectTimeBeforeTokenExpInASeconds)
             sseBackoffCounter.resetCounter()
+            broadcasterChannel.push(event: .pushSubsystemUp)
             return true
         }
 

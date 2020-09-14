@@ -70,7 +70,7 @@ class PushNotificationManagerTest: XCTestCase {
         let exp = XCTestExpectation(description: "finish")
         broadcasterChannel.pushExpectation = exp
         // Indicates that expectation have to be fired when push function is called the second time
-        broadcasterChannel.pushExpectationTriggerCallCount = 2
+        broadcasterChannel.pushExpectationTriggerCallCount = 3
         sseAuthenticator.results = [recoverableAuthResult(), recoverableAuthResult(), successAuthResult()]
         sseClient.results = [successConnResult()]
 

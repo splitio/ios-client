@@ -43,7 +43,7 @@ class NotificationManagerKeeperTest: XCTestCase {
         notification.timestamp = 0
         notificationManager.handleIncomingPresenceEvent(notification: notification)
 
-        XCTAssertNil(broadcasterChannel.pushedEvent)
+        XCTAssertNil(broadcasterChannel.lastPushedEvent)
     }
 
     func testNoAvailablePublishersInPriButAvailableInSec() {
@@ -112,7 +112,7 @@ class NotificationManagerKeeperTest: XCTestCase {
         notificationManager.handleIncomingPresenceEvent(notification: n2)
 
         // reseting stub
-        broadcasterChannel.pushedEvent = nil
+        broadcasterChannel.lastPushedEvent = nil
 
         // old timestamp notification should not fire any event
         var n3 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 1))
@@ -120,7 +120,7 @@ class NotificationManagerKeeperTest: XCTestCase {
         n3.timestamp = 30
         notificationManager.handleIncomingPresenceEvent(notification: n3)
 
-        XCTAssertNil(broadcasterChannel.pushedEvent)
+        XCTAssertNil(broadcasterChannel.lastPushedEvent)
     }
 
     func testIncomingControlStreamingEnabled() {
@@ -131,11 +131,11 @@ class NotificationManagerKeeperTest: XCTestCase {
         notificationManager.handleIncomingPresenceEvent(notification: n1)
 
         // reseting pushed event
-        broadcasterChannel.pushedEvent = nil
+        broadcasterChannel.lastPushedEvent = nil
         let controlNotification = ControlNotification(type: .control, controlType: .streamingEnabled)
         notificationManager.handleIncomingControl(notification: controlNotification)
 
-        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.pushedEvent)
+        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
     }
 
     func testIncomingControlStreamingEnabledNoPublishers() {
@@ -146,11 +146,11 @@ class NotificationManagerKeeperTest: XCTestCase {
         notificationManager.handleIncomingPresenceEvent(notification: n1)
 
         // reseting pushed event
-        broadcasterChannel.pushedEvent = nil
+        broadcasterChannel.lastPushedEvent = nil
         let controlNotification = ControlNotification(type: .control, controlType: .streamingEnabled)
         notificationManager.handleIncomingControl(notification: controlNotification)
 
-        XCTAssertNil(broadcasterChannel.pushedEvent)
+        XCTAssertNil(broadcasterChannel.lastPushedEvent)
     }
 
     override func tearDown() {
