@@ -12,9 +12,6 @@ protocol Synchronizer {
     func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments()
-    func loadAndSynchronizeSplits()
-    func loadSplitsFromCache()
-    func loadMySegmentsFromCache()
     func startPeriodicFetching()
     func stopPeriodicFetching()
     func startPeriodicRecording()
@@ -48,7 +45,6 @@ class DefaultSynchronizer: Synchronizer {
     let userKey: String // Matching key
 
     init(userKey: String,
-         splitsCache: SplitCacheProtocol,
          splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer) {
 
@@ -77,15 +73,15 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func loadAndSynchronizeSplits() {
-
+        // Load?
+        _ = try? splitApiFacade.splitsFetcher.fetch(since: splitStorageContainer.splitsCache.getChangeNumber(),
+                                                    policy: .networkAndCache)
     }
 
     func loadSplitsFromCache() {
-
     }
 
     func loadMySegmentsFromCache() {
-
     }
 
     func startPeriodicFetching() {

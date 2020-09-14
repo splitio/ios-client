@@ -9,7 +9,6 @@
 import Foundation
 
 protocol SplitCacheProtocol {
-    func load()
     func addSplit(splitName: String, split: Split)
     func setChangeNumber(_ changeNumber: Int64)
     func getChangeNumber() -> Int64
