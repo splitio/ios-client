@@ -26,7 +26,8 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
          interval: Int,
          cacheExpiration: Int,
          dispatchGroup: DispatchGroup? = nil,
-         eventsManager: SplitEventsManager) {
+         eventsManager: SplitEventsManager,
+         checkReadyness: Bool = true) {
 
         self.splitCache = splitCache
         self.splitChangeFetcher = splitChangeFetcher
@@ -34,6 +35,7 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
         self.dispatchGroup = dispatchGroup
         self.eventsManager = eventsManager
         self.cacheExpiration = cacheExpiration
+        self.firstSplitFetchs = checkReadyness
     }
 
     func forceRefresh() {
@@ -50,23 +52,34 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
     }
 
     func start() {
-        do {
-            let splitChange = try self.splitChangeFetcher.fetch(since: -1, policy: .cacheOnly)
-            if splitChange != nil {
-                self.eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
-                firstSplitFetchs = false
-                Logger.d("SplitChanges fetched from CACHE successfully")
-            } else {
-                Logger.d("Split CACHE not found")
-            }
-        } catch {
-            Logger.e("Error trying to fetch SplitChanges from CACHE")
+        if firstSplitFetchs {
+            runFirstFetch()
         }
         startPollingForSplitChanges()
     }
 
     func stop() {
         stopPollingForSplitChanges()
+    }
+
+    func runFirstFetch() {
+        // iOS triggers sdk ready when fetching cache for now.
+        // TODO: This will change when SDK ready from cache event is added
+        do {
+            let splitChange = try self.splitChangeFetcher.fetch(since: -1, policy: .cacheOnly)
+            if splitChange != nil {
+                Logger.d("SplitChanges fetched from CACHE successfully")
+                return
+            }
+            fetchFromRemote()
+        } catch {
+            Logger.e("Error trying to fetch SplitChanges from CACHE")
+        }
+    }
+
+    private func fireSplitsAreReady() {
+        firstSplitFetchs = false
+        self.eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
     }
 
     private func startPollingForSplitChanges() {
@@ -95,36 +108,37 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
         dispatchGroup?.enter()
         let queue = DispatchQueue(label: "split-changes-queue")
         queue.async { [weak self] in
-            guard let strongSelf = self else {
+            guard let self = self else {
                 return
             }
-            do {
+            self.fetchFromRemote()
+        }
+    }
 
-                var changeNumber = strongSelf.splitCache.getChangeNumber()
-                if changeNumber != -1 {
-                    let timestamp = strongSelf.splitCache.getTimestamp()
-                    let elapsedTime = Int(Date().timeIntervalSince1970) - timestamp
-                    if timestamp > 0 && elapsedTime > strongSelf.cacheExpiration {
-                        changeNumber = -1
-                        strongSelf.splitCache.clear()
-                    }
+    func fetchFromRemote() {
+        do {
+            var changeNumber = splitCache.getChangeNumber()
+            if changeNumber != -1 {
+                let timestamp = splitCache.getTimestamp()
+                let elapsedTime = Int(Date().timeIntervalSince1970) - timestamp
+                if timestamp > 0 && elapsedTime > self.cacheExpiration {
+                    changeNumber = -1
+                    self.splitCache.clear()
                 }
-                let splitChanges =
-                    try strongSelf.splitChangeFetcher.fetch(since: changeNumber)
-                Logger.d(splitChanges.debugDescription)
-
-                strongSelf.dispatchGroup?.leave()
-
-                if strongSelf.firstSplitFetchs {
-                    strongSelf.firstSplitFetchs = false
-                    strongSelf.eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreReady)
-                } else {
-                    strongSelf.eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreUpdated)
-                }
-            } catch let error {
-                DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
-                Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
             }
+            let splitChanges = try self.splitChangeFetcher.fetch(since: changeNumber)
+            Logger.d(splitChanges.debugDescription)
+
+            dispatchGroup?.leave()
+
+            if firstSplitFetchs {
+                fireSplitsAreReady()
+            } else {
+                eventsManager.notifyInternalEvent(SplitInternalEvent.splitsAreUpdated)
+            }
+        } catch let error {
+            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
+            Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
         }
     }
 }

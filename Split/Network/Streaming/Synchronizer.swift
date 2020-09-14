@@ -41,16 +41,21 @@ class DefaultSynchronizer: Synchronizer {
 
     let splitApiFacade: SplitApiFacade
     let splitStorageContainer: SplitStorageContainer
-
+    let splitsSyncBackoff: ReconnectBackoffCounter
+    let mySegmentsSyncBackoff: ReconnectBackoffCounter
     let userKey: String // Matching key
 
     init(userKey: String,
          splitApiFacade: SplitApiFacade,
-         splitStorageContainer: SplitStorageContainer) {
+         splitStorageContainer: SplitStorageContainer,
+         splitsSyncBackoff: ReconnectBackoffCounter,
+         mySegmentsSyncBackoff: ReconnectBackoffCounter) {
 
         self.userKey = userKey
         self.splitApiFacade = splitApiFacade
         self.splitStorageContainer = splitStorageContainer
+        self.splitsSyncBackoff = splitsSyncBackoff
+        self.mySegmentsSyncBackoff = mySegmentsSyncBackoff
     }
 
     func synchronizeSplits() {
