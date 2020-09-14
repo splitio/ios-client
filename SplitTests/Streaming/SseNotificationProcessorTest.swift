@@ -36,7 +36,7 @@ class SseNotificationProcessorTest: XCTestCase {
     }
 
     func testProcessSplitUpdate() {
-        sseNotificationParser.splitsUpdateNotification = SplitsUpdateNotification(type: .splitUpdate, changeNumber: -1)
+        sseNotificationParser.splitsUpdateNotification = SplitsUpdateNotification(changeNumber: -1)
         let notification = IncomingNotification(type: .splitUpdate,
                                                 channel: nil,
                                                 jsonData: "",
@@ -47,7 +47,7 @@ class SseNotificationProcessorTest: XCTestCase {
     }
 
     func testProcessSplitUpdateNullJson() {
-        sseNotificationParser.splitsUpdateNotification = SplitsUpdateNotification(type: .splitUpdate, changeNumber: -1)
+        sseNotificationParser.splitsUpdateNotification = SplitsUpdateNotification(changeNumber: -1)
         let notification = IncomingNotification(type: .splitUpdate,
                                                 channel: nil,
                                                 jsonData: nil,
@@ -59,7 +59,7 @@ class SseNotificationProcessorTest: XCTestCase {
 
     func testProcessSplitUpdateException() {
         splitsUpdateWorker.throwException = true
-        sseNotificationParser.splitsUpdateNotification = SplitsUpdateNotification(type: .splitUpdate, changeNumber: -1)
+        sseNotificationParser.splitsUpdateNotification = SplitsUpdateNotification(changeNumber: -1)
         let notification = IncomingNotification(type: .splitUpdate,
                                                 channel: nil,
                                                 jsonData: nil,
@@ -70,8 +70,7 @@ class SseNotificationProcessorTest: XCTestCase {
     }
 
     func testProcessSplitKill() {
-        sseNotificationParser.splitKillNotification = SplitKillNotification(type: .splitKill,
-                                                                            changeNumber: -1,
+        sseNotificationParser.splitKillNotification = SplitKillNotification(changeNumber: -1,
                                                                             splitName: "split1",
                                                                             defaultTreatment: "off")
         let notification = IncomingNotification(type: .splitKill,
@@ -84,8 +83,7 @@ class SseNotificationProcessorTest: XCTestCase {
     }
 
     func testProcessSplitKillNullJson() {
-        sseNotificationParser.splitKillNotification = SplitKillNotification(type: .splitKill,
-                                                                            changeNumber: -1,
+        sseNotificationParser.splitKillNotification = SplitKillNotification(changeNumber: -1,
                                                                             splitName: "split1",
                                                                             defaultTreatment: "off")
         let notification = IncomingNotification(type: .splitKill,
@@ -99,8 +97,7 @@ class SseNotificationProcessorTest: XCTestCase {
 
     func testProcessSplitKillException() {
         splitKillWorker.throwException = true
-        sseNotificationParser.splitKillNotification = SplitKillNotification(type: .splitKill,
-                                                                            changeNumber: -1,
+        sseNotificationParser.splitKillNotification = SplitKillNotification(changeNumber: -1,
                                                                             splitName: "split1",
                                                                             defaultTreatment: "off")
         let notification = IncomingNotification(type: .splitKill,
@@ -113,10 +110,9 @@ class SseNotificationProcessorTest: XCTestCase {
     }
 
     func testProcessMySegmentsUpdate() {
-        sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(type: .mySegmentsUpdate,
-                                                                            changeNumber: -1,
-                                                                            includesPayload: false,
-                                                                            segmentList: [String]())
+        sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
+                                                                                          includesPayload: false,
+                                                                                          segmentList: [String]())
         let notification = IncomingNotification(type: .mySegmentsUpdate,
                                                 channel: nil,
                                                 jsonData: "",
@@ -127,10 +123,9 @@ class SseNotificationProcessorTest: XCTestCase {
     }
 
     func testProcessMySegmentsUpdateNullJson() {
-        sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(type: .mySegmentsUpdate,
-                                                                            changeNumber: -1,
-                                                                            includesPayload: false,
-                                                                            segmentList: [String]())
+        sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
+                                                                                          includesPayload: false,
+                                                                                          segmentList: [String]())
         let notification = IncomingNotification(type: .mySegmentsUpdate,
                                                 channel: nil,
                                                 jsonData: nil,
@@ -143,10 +138,9 @@ class SseNotificationProcessorTest: XCTestCase {
     func testProcessMySegmentsUpdateException() {
 
         mySegmentsUpdateWorker.throwException = true
-        sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(type: .mySegmentsUpdate,
-                                                                            changeNumber: -1,
-                                                                            includesPayload: false,
-                                                                            segmentList: [String]())
+        sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
+                                                                                          includesPayload: false,
+                                                                                          segmentList: [String]())
         let notification = IncomingNotification(type: .mySegmentsUpdate,
                                                 channel: nil,
                                                 jsonData: nil,

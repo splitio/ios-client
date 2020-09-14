@@ -324,6 +324,14 @@
 		59EFD30224BCA3F20052920D /* HttpStreamRequestMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EFD30124BCA3F20052920D /* HttpStreamRequestMock.swift */; };
 		59EFD30424BCA7460052920D /* HttpClientMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EFD30324BCA7460052920D /* HttpClientMock.swift */; };
 		59EFD30724BCE4810052920D /* SseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EFD30624BCE4810052920D /* SseClient.swift */; };
+		59F4AA9624FE800200A1C69A /* SseHandlerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AA9524FE800200A1C69A /* SseHandlerTest.swift */; };
+		59F4AA9924FE8DA200A1C69A /* NotificationProcessorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AA9824FE8DA200A1C69A /* NotificationProcessorStub.swift */; };
+		59F4AA9B24FE93E300A1C69A /* NotificationManagerKeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AA9A24FE93E300A1C69A /* NotificationManagerKeeper.swift */; };
+		59F4AA9D24FE966800A1C69A /* SseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AA9C24FE966800A1C69A /* SseHandler.swift */; };
+		59F4AA9F24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AA9E24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift */; };
+		59F4AAA124FFC94100A1C69A /* NotificationManagerKeeperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAA024FFC94100A1C69A /* NotificationManagerKeeperTest.swift */; };
+		59F4AAA324FFCD5000A1C69A /* PushManagerEventBroadcasterStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAA224FFCD5000A1C69A /* PushManagerEventBroadcasterStub.swift */; };
+		59F4AAAE250BA2F600A1C69A /* SseHandlerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAA4250007BD00A1C69A /* SseHandlerStub.swift */; };
 		59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA7D215578F400A51997 /* ImpressionsFile.swift */; };
 		59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */; };
 		59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */; };
@@ -700,6 +708,14 @@
 		59EFD30124BCA3F20052920D /* HttpStreamRequestMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpStreamRequestMock.swift; sourceTree = "<group>"; };
 		59EFD30324BCA7460052920D /* HttpClientMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClientMock.swift; sourceTree = "<group>"; };
 		59EFD30624BCE4810052920D /* SseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SseClient.swift; sourceTree = "<group>"; };
+		59F4AA9524FE800200A1C69A /* SseHandlerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseHandlerTest.swift; sourceTree = "<group>"; };
+		59F4AA9824FE8DA200A1C69A /* NotificationProcessorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationProcessorStub.swift; sourceTree = "<group>"; };
+		59F4AA9A24FE93E300A1C69A /* NotificationManagerKeeper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManagerKeeper.swift; sourceTree = "<group>"; };
+		59F4AA9C24FE966800A1C69A /* SseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseHandler.swift; sourceTree = "<group>"; };
+		59F4AA9E24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificiationManagerKeeperStub.swift; sourceTree = "<group>"; };
+		59F4AAA024FFC94100A1C69A /* NotificationManagerKeeperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManagerKeeperTest.swift; sourceTree = "<group>"; };
+		59F4AAA224FFCD5000A1C69A /* PushManagerEventBroadcasterStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushManagerEventBroadcasterStub.swift; sourceTree = "<group>"; };
+		59F4AAA4250007BD00A1C69A /* SseHandlerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseHandlerStub.swift; sourceTree = "<group>"; };
 		59F6AA7D215578F400A51997 /* ImpressionsFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsFile.swift; sourceTree = "<group>"; };
 		59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTest.swift; sourceTree = "<group>"; };
 		59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyCounter.swift; sourceTree = "<group>"; };
@@ -766,6 +782,8 @@
 				59B2043224F549B70092F2E9 /* SyncUpdateWorkerTest.swift */,
 				59ED408E24F06EC100EF7B09 /* TimersManagerTest.swift */,
 				59B2047524F9B8230092F2E9 /* PushManagerEventBroadcasterTest.swift */,
+				59F4AA9524FE800200A1C69A /* SseHandlerTest.swift */,
+				59F4AAA024FFC94100A1C69A /* NotificationManagerKeeperTest.swift */,
 			);
 			path = Streaming;
 			sourceTree = "<group>";
@@ -1219,6 +1237,7 @@
 		590DF9CD213EB92D0082B94F /* Fake */ = {
 			isa = PBXGroup;
 			children = (
+				59F4AA9724FE8D7100A1C69A /* Streaming */,
 				593AE9FD226F48C6000D61B0 /* Network */,
 				594677E522CFFA2D00F94E58 /* MetricsManagerStub.swift */,
 				590DF9CE213EB95D0082B94F /* SplitCacheStub.swift */,
@@ -1237,14 +1256,6 @@
 				594677E922D4D44300F94E58 /* ImpressionsManagerStub.swift */,
 				59AD7AC42461D63500F5B0B4 /* SplitChangeFetcherStub.swift */,
 				31AA279035168CE07F14D769 /* SplitEventsManagerStub.swift */,
-				595AD21224E1849500A7B750 /* JwtParserStub.swift */,
-				59ED408524EAB95E00EF7B09 /* SseAuthenticationStub.swift */,
-				59ED408724EABD4700EF7B09 /* SseClientMock.swift */,
-				59ED408B24EAF86000EF7B09 /* TimersManagerMock.swift */,
-				59ED408924EADAA100EF7B09 /* ReconnectBackoffCounterStub.swift */,
-				59B2043424F54AE40092F2E9 /* UpdateWorkerMock.swift */,
-				59B2043624F551420092F2E9 /* SseNotificationParserStub.swift */,
-				59B2043A24F568660092F2E9 /* SynchronizerStub.swift */,
 			);
 			path = Fake;
 			sourceTree = "<group>";
@@ -1463,6 +1474,27 @@
 				59B2042824F42DE80092F2E9 /* SseNotificationProcessor.swift */,
 				59B2042A24F44AB30092F2E9 /* Synchronizer.swift */,
 				59B2044024F682980092F2E9 /* PushManagerEventBroadcaster.swift */,
+				59F4AA9A24FE93E300A1C69A /* NotificationManagerKeeper.swift */,
+				59F4AA9C24FE966800A1C69A /* SseHandler.swift */,
+			);
+			path = Streaming;
+			sourceTree = "<group>";
+		};
+		59F4AA9724FE8D7100A1C69A /* Streaming */ = {
+			isa = PBXGroup;
+			children = (
+				59F4AAA4250007BD00A1C69A /* SseHandlerStub.swift */,
+				595AD21224E1849500A7B750 /* JwtParserStub.swift */,
+				59ED408524EAB95E00EF7B09 /* SseAuthenticationStub.swift */,
+				59ED408724EABD4700EF7B09 /* SseClientMock.swift */,
+				59ED408B24EAF86000EF7B09 /* TimersManagerMock.swift */,
+				59ED408924EADAA100EF7B09 /* ReconnectBackoffCounterStub.swift */,
+				59B2043424F54AE40092F2E9 /* UpdateWorkerMock.swift */,
+				59B2043624F551420092F2E9 /* SseNotificationParserStub.swift */,
+				59B2043A24F568660092F2E9 /* SynchronizerStub.swift */,
+				59F4AA9824FE8DA200A1C69A /* NotificationProcessorStub.swift */,
+				59F4AAA224FFCD5000A1C69A /* PushManagerEventBroadcasterStub.swift */,
+				59F4AA9E24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift */,
 			);
 			path = Streaming;
 			sourceTree = "<group>";
@@ -1833,6 +1865,7 @@
 				3B6DEF0E20EA6AE50067435E /* MySegmentsCache.swift in Sources */,
 				3B6DEF1620EA6AE50067435E /* DefaultRefreshableMySegmentsFetcher.swift in Sources */,
 				5932260524A516FA00496D8B /* HttpTask.swift in Sources */,
+				59F4AA9B24FE93E300A1C69A /* NotificationManagerKeeper.swift in Sources */,
 				59D84BD622158A24003DA248 /* LocalhostSplitFactory.swift in Sources */,
 				3B6DEF4C20EA6AE50067435E /* SplitBase.swift in Sources */,
 				595AD25124E4404C00A7B750 /* SseNotifications.swift in Sources */,
@@ -1867,6 +1900,7 @@
 				59EFD2F624B5FB7B0052920D /* HttpSession.swift in Sources */,
 				3B6DEF0F20EA6AE50067435E /* MySegmentsCacheProtocol.swift in Sources */,
 				3B6DEF4420EA6AE50067435E /* KeySelector.swift in Sources */,
+				59F4AA9D24FE966800A1C69A /* SseHandler.swift in Sources */,
 				598EDE82224C0437005D4762 /* QueryableMySegmentsFetcher.swift in Sources */,
 				59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */,
 				3B6DEF7120EA6AE50067435E /* DefaultSplitManager.swift in Sources */,
@@ -1951,6 +1985,7 @@
 				592C6AC6211B718E002D120C /* SplitEventsManagerTest.swift in Sources */,
 				596A7B652344C1EF004F6139 /* MySegmentServerErrorTest.swift in Sources */,
 				5959C480228051CA0064F968 /* SplitManagerStub.swift in Sources */,
+				59F4AA9624FE800200A1C69A /* SseHandlerTest.swift in Sources */,
 				59EFD2FB24B8EF6F0052920D /* HttpRequestMock.swift in Sources */,
 				59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
@@ -1961,6 +1996,7 @@
 				59AD7ACA2465C32D00F5B0B4 /* EventDTOJsonTest.swift in Sources */,
 				59FB7C1621F79B8200ECC96A /* EventTypeNameHelper.swift in Sources */,
 				593AE9F3226F4068000D61B0 /* MySegmentsFetcherTests.swift in Sources */,
+				59F4AAAE250BA2F600A1C69A /* SseHandlerStub.swift in Sources */,
 				5919017B24A27629005BD12A /* EndpointTest.swift in Sources */,
 				5959C479227B89980064F968 /* FactoryRegistryTest.swift in Sources */,
 				595AD21524E1CD4700A7B750 /* JwtTokenParserTest.swift in Sources */,
@@ -1975,6 +2011,7 @@
 				595AD26124E5D48500A7B750 /* ReconnectBackoffCounterTest.swift in Sources */,
 				594677E422CFF30B00F94E58 /* TreatmentManagerTest.swift in Sources */,
 				59EFD2ED24B4B05E0052920D /* HttpClientTest.swift in Sources */,
+				59F4AAA324FFCD5000A1C69A /* PushManagerEventBroadcasterStub.swift in Sources */,
 				592C6ABD211B718E002D120C /* DatesTests.swift in Sources */,
 				5912D14B2195F3C900BC698C /* FileStorageStub.swift in Sources */,
 				59F6AA9B215E9DA100A51997 /* LatencyCounterTests.swift in Sources */,
@@ -1995,6 +2032,7 @@
 				59B2043324F549B70092F2E9 /* SyncUpdateWorkerTest.swift in Sources */,
 				5912D14F2199FD8600BC698C /* LegacyHashingTest.swift in Sources */,
 				59FB7C282202457D00ECC96A /* LocalhostParserTests.swift in Sources */,
+				59F4AAA124FFC94100A1C69A /* NotificationManagerKeeperTest.swift in Sources */,
 				59D84BDC2215CD52003DA248 /* LocalhostSplitFetcherTests.swift in Sources */,
 				599EA5852268E9C2006CBA89 /* LocalhostTests.swift in Sources */,
 				5912D152219A022000BC698C /* CsvHelper.swift in Sources */,
@@ -2024,9 +2062,11 @@
 				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
 				599407E022403BE9003B85CC /* InMemorySplitCacheTrafficTypesTests.swift in Sources */,
 				59B2047624F9B8230092F2E9 /* PushManagerEventBroadcasterTest.swift in Sources */,
+				59F4AA9924FE8DA200A1C69A /* NotificationProcessorStub.swift in Sources */,
 				595AD21324E1849500A7B750 /* JwtParserStub.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
 				597CD33A216D022F00A15487 /* MetricsManagerTests.swift in Sources */,
+				59F4AA9F24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift in Sources */,
 				593AE9FC226F4825000D61B0 /* RestClientStub.swift in Sources */,
 				596A7B71235729B5004F6139 /* DestroyTest.swift in Sources */,
 				595AD25924E59E6200A7B750 /* EventStreamParserTest.swift in Sources */,
