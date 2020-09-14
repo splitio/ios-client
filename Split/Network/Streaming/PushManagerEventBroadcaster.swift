@@ -9,8 +9,11 @@
 import Foundation
 
 enum PushStatusEvent {
-    case disablePolling
-    case enablePolling
+    case pushSubsystemUp
+    case pushSubsystemDown
+    case pushRetryableError
+    case pushNonRetryableError
+    case pushDisabled
 }
 
 protocol PushManagerEventBroadcaster {

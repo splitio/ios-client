@@ -23,7 +23,7 @@ enum NotificationType: Decodable {
     case mySegmentsUpdate
     case splitKill
     case occupancy
-    case error
+    case sseError
     case control
     case unknown
 
@@ -108,7 +108,9 @@ struct ControlNotification: NotificationTypeField {
 
 /// Indicates change in MySegments
 struct MySegmentsUpdateNotification: NotificationTypeField {
-    private (set) var type: NotificationType
+    var type: NotificationType {
+        return .mySegmentsUpdate
+    }
     let changeNumber: Int64
     let includesPayload: Bool
     let segmentList: [String]?
@@ -116,7 +118,9 @@ struct MySegmentsUpdateNotification: NotificationTypeField {
 
 /// Indicates that a Split was killed
 struct SplitKillNotification: NotificationTypeField {
-    private (set) var type: NotificationType
+    var type: NotificationType {
+        return .splitKill
+    }
     let changeNumber: Int64
     let splitName: String
     let defaultTreatment: String
@@ -124,13 +128,22 @@ struct SplitKillNotification: NotificationTypeField {
 
 /// indicates Split changes
 struct SplitsUpdateNotification: NotificationTypeField {
-    private (set) var type: NotificationType
+    var type: NotificationType {
+        return .splitUpdate
+    }
     let changeNumber: Int64
 }
 
 /// Indicates a notification related to occupancy
 struct OccupancyNotification: NotificationTypeField {
-    private (set) var type: NotificationType = .occupancy
+    private let kControlPriToken = "control_pri"
+    private let kControlSecToken = "control_sec"
+    var channel: String?
+    var timestamp: Int = 0
+
+    var type: NotificationType {
+        return .occupancy
+    }
     struct Metrics: Decodable {
         let publishers: Int
     }
@@ -139,11 +152,31 @@ struct OccupancyNotification: NotificationTypeField {
     enum CodingKeys: String, CodingKey {
         case metrics
     }
+
+    var isControlPriChannel: Bool {
+        return channel?.contains(kControlPriToken) ?? false
+    }
+
+    var isControlSecChannel: Bool {
+        return channel?.contains(kControlSecToken) ?? false
+    }
 }
 
 /// Indicates a streaming error related
-struct StreamingError {
+struct StreamingError: NotificationTypeField {
+    var type: NotificationType {
+        return .sseError
+    }
+
     let message: String
     let code: Int
     let statusCode: Int
+
+    var isRetryable: Bool {
+        return  code >= 40140 &&  code <= 40149
+    }
+
+    var shouldIgnore: Bool {
+        return  !(code >= 40000 && code <= 49999)
+    }
 }

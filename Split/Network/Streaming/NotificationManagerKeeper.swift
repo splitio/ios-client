@@ -1,0 +1,142 @@
+//
+//  NotificationManagerKeeper.swift
+//  Split
+//
+//  Created by Javier L. Avrudsky on 01/09/2020.
+//  Copyright © 2020 Split. All rights reserved.
+//
+
+import Foundation
+
+protocol NotificationManagerKeeper {
+    func handleIncomingPresenceEvent(notification: OccupancyNotification)
+    func handleIncomingControl(notification: ControlNotification)
+}
+
+class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
+
+    struct PublishersInfo {
+        var count: Int
+        var lastTimestamp: Int
+    }
+
+    let kChannelPriIndex = 0
+    let kChannelSecIndex = 1
+
+    /// By default we consider one publisher en primary channel available
+    private var publishersInfo = [
+        PublishersInfo(count: 1, lastTimestamp: 0),
+        PublishersInfo(count: 0, lastTimestamp: 0)
+    ]
+
+    private var publishersCount: Int {
+        var count = 0
+        DispatchQueue.global().sync {
+            count = publishersInfo[kChannelPriIndex].count + publishersInfo[kChannelSecIndex].count
+        }
+        return count
+    }
+
+    private var broadcasterChannel: PushManagerEventBroadcaster
+
+    private var streamingActive = true
+    private var isStreamingActive: Bool {
+        var active = false
+        DispatchQueue.global().sync {
+            active = streamingActive
+        }
+        return active
+    }
+
+    init(broadcasterChannel: PushManagerEventBroadcaster) {
+        self.broadcasterChannel = broadcasterChannel
+    }
+
+    func handleIncomingControl(notification: ControlNotification) {
+        switch notification.controlType {
+        case .streamingPaused:
+            updateStreamingState(active: false)
+            broadcasterChannel.push(event: .pushSubsystemDown)
+
+        case .streamingDisabled:
+            updateStreamingState(active: false)
+            broadcasterChannel.push(event: .pushDisabled)
+
+        case .streamingEnabled:
+            updateStreamingState(active: true)
+            if publishersCount > 0 {
+                broadcasterChannel.push(event: .pushSubsystemUp)
+            }
+
+        case .unknown:
+            Logger.w("Unknown control notification received")
+        }
+    }
+
+    func handleIncomingPresenceEvent(notification: OccupancyNotification) {
+        let channelIndex = getChannelIndex(of: notification)
+
+        if channelIndex == -1 || isOldTimestamp(notification: notification, for: channelIndex) {
+            return
+        }
+        update(timestamp: notification.timestamp, for: channelIndex)
+        let prevPublishersCount = publishersCount
+        update(count: notification.metrics.publishers, for: channelIndex)
+
+        if publishersCount == 0 && prevPublishersCount > 0 {
+            broadcasterChannel.push(event: .pushSubsystemDown)
+            return
+        }
+
+        if publishersCount > 0 && prevPublishersCount == 0 && isStreamingActive {
+            broadcasterChannel.push(event: .pushSubsystemUp)
+            return
+        }
+    }
+
+    private func isOldTimestamp(notification: OccupancyNotification, for channelIndex: Int) -> Bool {
+        var timestamp = 0
+        DispatchQueue.global().sync {
+            timestamp =  publishersInfo[channelIndex].lastTimestamp
+        }
+        return timestamp >= notification.timestamp
+    }
+
+    private func update(count: Int, for channelIndex: Int) {
+        DispatchQueue.global().sync {
+            publishersInfo[channelIndex].count = count
+        }
+    }
+
+    private func update(timestamp: Int, for channelIndex: Int) {
+        DispatchQueue.global().sync {
+            publishersInfo[channelIndex].lastTimestamp = timestamp
+        }
+    }
+
+    private func publishers(in channelIndex: Int) -> Int {
+        var count = 0
+        DispatchQueue.global().sync {
+            count =  publishersInfo[channelIndex].count
+        }
+        return count
+    }
+
+    private func getChannelIndex(of notification: OccupancyNotification) -> Int {
+        if notification.isControlPriChannel {
+            return kChannelPriIndex
+        } else if notification.isControlSecChannel {
+            return kChannelSecIndex
+        } else {
+            Logger.w("Unknown occupancy channel \(notification.channel ?? "null")")
+            return -1
+        }
+    }
+
+    private func updateStreamingState(active: Bool) {
+        DispatchQueue.global().sync {
+            streamingActive = active
+        }
+    }
+
+}

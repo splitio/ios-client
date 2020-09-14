@@ -46,8 +46,7 @@ class NotificationParserTest: XCTestCase {
     override func setUp() {
     }
 
-
-    func testprocessSplitUpdate() throws {
+    func testProcessSplitUpdate() throws {
         let incoming = notificationParser.parseIncoming(jsonString: splitsChangeNotificationMessage);
         let splitUpdate = try notificationParser.parseSplitUpdate(jsonString: incoming!.jsonData!);
 
@@ -56,7 +55,7 @@ class NotificationParserTest: XCTestCase {
     }
 
 
-    func testprocessSplitKill() throws {
+    func testProcessSplitKill() throws {
         let incoming = notificationParser.parseIncoming(jsonString: splitKillNotificationMessage);
         let splitKill = try notificationParser.parseSplitKill(jsonString: incoming!.jsonData!);
 
@@ -66,7 +65,7 @@ class NotificationParserTest: XCTestCase {
     }
 
 
-    func testprocessMySegmentUpdate() throws {
+    func testProcessMySegmentUpdate() throws {
         let incoming = notificationParser.parseIncoming(jsonString: mySegmentsUpdateNotificationMessage);
         let mySegmentUpdate = try notificationParser.parseMySegmentUpdate(jsonString: incoming!.jsonData!);
 
@@ -76,7 +75,7 @@ class NotificationParserTest: XCTestCase {
     }
 
 
-    func testprocessMySegmentUpdateInline() throws {
+    func testProcessMySegmentUpdateInline() throws {
         let incoming = notificationParser.parseIncoming(jsonString: mySegmentUpdateInlineNotificationMessage);
         let mySegmentUpdate = try notificationParser.parseMySegmentUpdate(jsonString: incoming!.jsonData!);
 
@@ -89,17 +88,17 @@ class NotificationParserTest: XCTestCase {
     }
 
 
-    func testprocessOccupancy() throws {
+    func testProcessOccupancy() throws {
         let incoming = notificationParser.parseIncoming(jsonString: occupancyNotificationMessage);
 
-        let notification = try notificationParser.parseOccupancy(jsonString: incoming!.jsonData!);
+        let notification = try notificationParser.parseOccupancy(jsonString: incoming!.jsonData!, timestamp: 5);
 
         XCTAssertEqual(NotificationType.occupancy, notification.type);
         XCTAssertEqual(1, notification.metrics.publishers);
+        XCTAssertEqual(5, notification.timestamp);
     }
 
-
-    func testprocessControl() throws {
+    func testProcessControl() throws {
         let incoming = notificationParser.parseIncoming(jsonString: controlNotificationMessage);
         let notification = try notificationParser.parseControl(jsonString: incoming!.jsonData!);
 
@@ -108,10 +107,10 @@ class NotificationParserTest: XCTestCase {
     }
 
 
-    func testprocessError() {
+    func testProcessError() {
         let incoming = notificationParser.parseIncoming(jsonString: errorNotificationMessage);
 
-        XCTAssertEqual(NotificationType.error, incoming?.type);
+        XCTAssertEqual(NotificationType.sseError, incoming?.type);
     }
 
     override func tearDown() {

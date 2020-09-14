@@ -33,7 +33,7 @@ class SyncUpdateWorker: XCTestCase {
     }
 
     func testSplitUpdateWorker() throws {
-        let notification = SplitsUpdateNotification(type: .splitUpdate, changeNumber: -1)
+        let notification = SplitsUpdateNotification(changeNumber: -1)
         let exp = XCTestExpectation(description: "exp")
         synchronizer.syncSplitsChangeNumberExp = exp
 
@@ -44,8 +44,7 @@ class SyncUpdateWorker: XCTestCase {
     }
 
     func testSplitKillWorker() throws {
-        let notification = SplitKillNotification(type: .splitKill,
-                                                 changeNumber: 100,
+        let notification = SplitKillNotification(changeNumber: 100,
                                                  splitName: "split1",
                                                  defaultTreatment: "off")
 
@@ -66,8 +65,7 @@ class SyncUpdateWorker: XCTestCase {
     }
 
     func testMySegmentsUpdateWorkerWithPayload() throws {
-        let notification = MySegmentsUpdateNotification(type: .mySegmentsUpdate,
-                                                        changeNumber: 100,
+        let notification = MySegmentsUpdateNotification(changeNumber: 100,
                                                         includesPayload: true,
                                                         segmentList: ["s1", "s2"])
 
@@ -87,8 +85,7 @@ class SyncUpdateWorker: XCTestCase {
     }
 
     func testMySegmentsUpdateWorkerWithPayloadNil() throws {
-        let notification = MySegmentsUpdateNotification(type: .mySegmentsUpdate,
-                                                        changeNumber: 100,
+        let notification = MySegmentsUpdateNotification(changeNumber: 100,
                                                         includesPayload: true,
                                                         segmentList: nil)
 
@@ -105,8 +102,7 @@ class SyncUpdateWorker: XCTestCase {
     }
 
     func testMySegmentsUpdateWorkerNoPayload() throws {
-        let notification = MySegmentsUpdateNotification(type: .mySegmentsUpdate,
-                                                        changeNumber: 100,
+        let notification = MySegmentsUpdateNotification(changeNumber: 100,
                                                         includesPayload: false,
                                                         segmentList: nil)
 

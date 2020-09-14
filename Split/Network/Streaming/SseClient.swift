@@ -43,15 +43,17 @@ class DefaultSseClient: SseClient {
     private var queue: DispatchQueue
     private var streamRequest: HttpStreamRequest?
     private let streamParser = EventStreamParser()
+    private let sseHandler: SseHandler
 
     var onKeepAliveHandler: SseClient.EventHandler?
     var onErrorHandler: SseClient.ErrorHandler?
     var onDisconnectHandler: SseClient.EventHandler?
     var onMessageHandler: SseClient.MessageHandler?
 
-    init(endpoint: Endpoint, httpClient: HttpClient) {
+    init(endpoint: Endpoint, httpClient: HttpClient, sseHandler: SseHandler) {
         self.endpoint = endpoint
         self.httpClient = httpClient
+        self.sseHandler = sseHandler
         self.queue = DispatchQueue(label: "Split SSE Client")
     }
 
@@ -107,9 +109,13 @@ class DefaultSseClient: SseClient {
     }
 
     func triggerMessageHandler(message: [String: String]) {
+        // TODO: Check this message logic. Analize if SseConnectionManager (o push notification manager) should receive this
         if let onMessage = self.onMessageHandler {
             onMessage(message)
         }
+        // TODO: end todo
+
+        sseHandler.handleIncomingMessage(message: message)
     }
 
     func triggerCloseHandler() {
