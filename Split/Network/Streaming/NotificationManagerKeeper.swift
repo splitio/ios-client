@@ -80,16 +80,15 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
             return
         }
         update(timestamp: notification.timestamp, for: channelIndex)
-        let prevPriPublishers = publishers(in: kChannelPriIndex)
-        let prevSecPublishers = publishers(in: kChannelSecIndex)
+        let prevPublishersCount = publishersCount
         update(count: notification.metrics.publishers, for: channelIndex)
 
-        if publishersCount == 0 && prevPriPublishers + prevSecPublishers > 0 {
+        if publishersCount == 0 && prevPublishersCount > 0 {
             broadcasterChannel.push(event: .pushSubsystemDown)
             return
         }
 
-        if publishersCount > 0 && prevPriPublishers + prevSecPublishers == 0 && isStreamingActive {
+        if publishersCount > 0 && prevPublishersCount == 0 && isStreamingActive {
             broadcasterChannel.push(event: .pushSubsystemUp)
             return
         }
