@@ -26,9 +26,16 @@ class DefaultHttpRequestManager: NSObject {
 // MARK: HttpRequestManager - URLSessionTaskDelegate
 extension DefaultHttpRequestManager: URLSessionTaskDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+
         var httpError: HttpError?
-        if let error = error {
-            httpError = HttpError.unknown(message: error.localizedDescription)
+        if let error = error as NSError? {
+            let code = Int32(truncatingIfNeeded: error.code)
+            switch code {
+            case CFNetworkErrors.cfurlErrorTimedOut.rawValue:
+                httpError = HttpError.requestTimeOut
+            default:
+                httpError = HttpError.unknown(message: error.localizedDescription)
+            }
         }
         complete(taskIdentifier: task.taskIdentifier, error: httpError)
     }

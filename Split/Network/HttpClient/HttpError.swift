@@ -9,6 +9,7 @@
 import Foundation
 
 enum HttpError: Error {
+    case requestTimeOut
     case clientRelated
     case couldNotCreateRequest(message: String)
     case unknown(message: String)
@@ -24,6 +25,8 @@ extension HttpError {
             return message
         case .unknown(let message):
             return message
+        case .requestTimeOut:
+            return "Request Time Out"
         }
     }
 }

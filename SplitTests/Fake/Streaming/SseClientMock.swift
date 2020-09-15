@@ -17,14 +17,6 @@ class SseClientMock: SseClient {
     var token: String?
     var channels: [String]?
 
-    var onKeepAliveHandler: EventHandler?
-
-    var onErrorHandler: ErrorHandler?
-
-    var onDisconnectHandler: EventHandler?
-
-    var onMessageHandler: MessageHandler?
-
     func connect(token: String, channels: [String]) -> SseConnectionResult {
         self.token = token
         self.channels = channels
@@ -38,30 +30,6 @@ class SseClientMock: SseClient {
 
     func disconnect() {
         disconnectCalled = true
-        fireOnDisconnect()
-    }
-
-    func fireOnError(isRecoverable: Bool = true) {
-        if let handler = onErrorHandler {
-            handler(isRecoverable)
-        }
-    }
-
-    func fireOnDisconnect() {
-        if let handler = onDisconnectHandler {
-            handler()
-        }
-    }
-
-    func fireOnKeepAlive() {
-        if let handler = onKeepAliveHandler {
-            handler()
-        }
-    }
-
-    func fireOnMessage(values: [String: String]) {
-        if let handler = onMessageHandler {
-            handler(values)
-        }
+//        fireOnDisconnect()
     }
 }

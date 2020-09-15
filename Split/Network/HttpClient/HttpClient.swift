@@ -71,11 +71,12 @@ typealias HttpParameters = [String: Any]
 typealias HttpHeaders = [String: String]
 
 class HttpSessionConfig {
+    static let kDefaultConnectionTimeout: TimeInterval = 30
+
     static let  `default`: HttpSessionConfig = {
         return HttpSessionConfig()
     }()
-    var connectionTimeOut: TimeInterval = 30
-    var readTimeout: TimeInterval = 60
+    var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
 }
 
 protocol HttpClient {
@@ -109,9 +110,7 @@ class DefaultHttpClient {
 
         let urlSessionConfig = URLSessionConfiguration.default
 
-        urlSessionConfig.timeoutIntervalForResource = configuration.readTimeout
         urlSessionConfig.timeoutIntervalForRequest = configuration.connectionTimeOut
-        urlSessionConfig.httpMaximumConnectionsPerHost = 100
 
         if let requestManager = requestManager {
             self.requestManager = requestManager
