@@ -20,6 +20,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private enum State {
         case disconnected
         case authenticating
+        case authenticated
         case connecting
         case connected
         case stopped
@@ -37,16 +38,11 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let userKey: String
     private var currentState: State
-    private let connectionQueue = DispatchQueue(label: "Sse connnection")
-    private let stateQueue = DispatchQueue(label: "Sse state")
+    private let connectionQueue = DispatchQueue(label: "Sse connnection", target: DispatchQueue.global())
 
     private var lastJwtToken: JwtToken?
 
-    private var state: State {
-        stateQueue.sync {
-            return self.currentState
-        }
-    }
+    private var state: Atomic<State> = Atomic(.disconnected)
 
     init(userKey: String, sseAuthenticator: SseAuthenticator, sseClient: SseClient,
          sseBackoffCounter: ReconnectBackoffCounter,
@@ -66,11 +62,11 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     func stop() {
+        state.set(.stopped)
         timersManager.cancel(timer: .refreshAuthToken)
         timersManager.cancel(timer: .appHostBgDisconnect)
         sseClient.disconnect()
         broadcasterChannel.push(event: .pushSubsystemDown)
-        set(state: .stopped)
     }
 
     func pause() {
@@ -81,20 +77,13 @@ class DefaultPushNotificationManager: PushNotificationManager {
         // TODO: Add logic to handle background, foreground.
     }
 
-    // MARK: Private
-    private func set(state: State) {
-        stateQueue.sync {
-            self.currentState = state
-        }
-    }
-
     private func connect() {
         connectionQueue.async {
-            while self.state != .stopped && self.state != .connected {
+            while !([State.stopped, State.connected].contains(self.state.value)) {
                 if let jwt = self.authenticateToSse(), self.connectToSse(jwt: jwt) {
                     return
                 }
-                if self.state == .stopped {
+                if self.state.value == .stopped {
                     return
                 }
                 ThreadUtils.delay(seconds: self.sseBackoffCounter.getNextRetryTime())
@@ -103,43 +92,57 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     private func authenticateToSse() -> JwtToken? {
-        set(state: .authenticating)
+
+        // If status has changed to stopped
+        // then stop the process.
+        if state.getAndSet(.authenticating) == .stopped {
+            state.set(.stopped)
+            return nil
+        }
 
         let result = sseAuthenticator.authenticate(userKey: userKey)
         if result.success && !result.pushEnabled {
             broadcasterChannel.push(event: .pushSubsystemDown)
-            set(state: .stopped)
+            state.set(.stopped)
             return nil
         }
 
         if !result.success && !result.errorIsRecoverable {
             broadcasterChannel.push(event: .pushNonRetryableError)
-            set(state: .disconnected)
+            state.set(.stopped)
             return nil
         }
 
-        if result.success, let jwtToken = result.jwtToken {
+        if result.success, let jwtToken = result.jwtToken, state.getAndSet(.authenticated) != .stopped {
             return jwtToken
         }
 
-        set(state: .disconnected)
+        if state.getAndSet(.disconnected) == .stopped {
+            state.set(.stopped)
+            return nil
+        }
         broadcasterChannel.push(event: .pushRetryableError)
         return nil
     }
 
     private func connectToSse(jwt: JwtToken) -> Bool {
-        // This function must be called
-        // from an async queue
 
-        set(state: .connecting)
+        if state.getAndSet(.connecting) == .stopped {
+            state.set(.stopped)
+            return false
+        }
+
         lastJwtToken = jwt
         let result = sseClient.connect(token: jwt.rawToken, channels: jwt.channels)
-        if result.success {
-            set(state: .connected)
-            broadcasterChannel.push(event: .pushSubsystemUp)
+        if result.success, state.getAndSet(.connected) != .stopped {
             timersManager.add(timer: .refreshAuthToken, delayInSeconds: kReconnectTimeBeforeTokenExpInASeconds)
             sseBackoffCounter.resetCounter()
+            broadcasterChannel.push(event: .pushSubsystemUp)
             return true
+        }
+
+        if state.value == .stopped {
+            return false
         }
 
         broadcasterChannel.push(event: result.errorIsRecoverable ? .pushRetryableError : .pushNonRetryableError)

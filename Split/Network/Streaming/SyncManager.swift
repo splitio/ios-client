@@ -21,7 +21,7 @@ class DefaultSyncManager: SyncManager {
     private let synchronizer: Synchronizer
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let pushNotificationManager: PushNotificationManager
-    private var isPollingEnabled = false
+    private var isPollingEnabled: Atomic<Bool> = Atomic(false)
 
     init(splitConfig: SplitClientConfig, pushNotificationManager: PushNotificationManager,
          synchronizer: Synchronizer, broadcasterChannel: PushManagerEventBroadcaster) {
@@ -32,8 +32,10 @@ class DefaultSyncManager: SyncManager {
     }
 
     func start() {
-        synchronizer.runInitialSynchronization()
-        isPollingEnabled = !splitConfig.streamingEnabled
+        //synchronizer.loadAndSynchronizeSplits()
+        //synchronizer.loadMySegmentsFromCache()
+        //synchronizer.synchronizeMySegments()
+        isPollingEnabled.set(!splitConfig.streamingEnabled)
         if splitConfig.streamingEnabled {
             broadcasterChannel.register() { event in
                 self.handle(pushEvent: event)
@@ -66,24 +68,27 @@ class DefaultSyncManager: SyncManager {
             synchronizer.synchronizeSplits()
             synchronizer.synchronizeMySegments()
             synchronizer.stopPeriodicFetching()
-            isPollingEnabled = false
+            isPollingEnabled.set(false)
             Logger.i("Polling disabled")
 
         case .pushSubsystemDown:
             Logger.d("Push Subsystem Down event message received.")
-            if !isPollingEnabled {
-                isPollingEnabled = true
-                synchronizer.startPeriodicFetching()
-                Logger.i("Polling enabled")
-            }
+            enablePolling()
 
         case .pushRetryableError:
-            synchronizer.startPeriodicFetching()
+            enablePolling()
             pushNotificationManager.start()
 
-        case .pushNonRetryableError:
-            synchronizer.startPeriodicFetching()
+        case .pushNonRetryableError, .pushDisabled:
+            enablePolling()
             pushNotificationManager.stop()
+        }
+    }
+
+    private func enablePolling() {
+        if !isPollingEnabled.getAndSet(true) {
+            synchronizer.startPeriodicFetching()
+            Logger.i("Polling enabled")
         }
     }
 }

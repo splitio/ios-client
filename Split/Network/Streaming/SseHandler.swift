@@ -20,6 +20,8 @@ class DefaultSseHandler: SseHandler {
     let notificationManagerKeeper: NotificationManagerKeeper
     let broadcasterChannel: PushManagerEventBroadcaster
 
+    private var lastControlTimestamp = 0
+
     init(notificationProcessor: SseNotificationProcessor,
          notificationParser: SseNotificationParser,
          notificationManagerKeeper: NotificationManagerKeeper,
@@ -42,7 +44,7 @@ class DefaultSseHandler: SseHandler {
 
         switch incomingNotification.type {
         case .control:
-            print("TODO: handle control here")
+            handleControl(incomingNotification)
         case .occupancy:
             handleOccupancy(incomingNotification)
         case .mySegmentsUpdate, .splitKill, .splitUpdate:
@@ -61,10 +63,26 @@ class DefaultSseHandler: SseHandler {
     private func handleOccupancy(_ notification: IncomingNotification) {
         if let jsonData = notification.jsonData {
             do {
-                let notification = try notificationParser.parseOccupancy(jsonString: jsonData)
+                let notification = try notificationParser.parseOccupancy(jsonString: jsonData,
+                                                                         timestamp: notification.timestamp)
                 notificationManagerKeeper.handleIncomingPresenceEvent(notification: notification)
             } catch {
                 Logger.w("Error while handling occupancy notification")
+            }
+        }
+    }
+
+    private func handleControl(_ notification: IncomingNotification) {
+        if notification.timestamp <= lastControlTimestamp {
+            return
+        }
+        lastControlTimestamp = notification.timestamp
+        if let jsonData = notification.jsonData {
+            do {
+                let notification = try notificationParser.parseControl(jsonString: jsonData)
+                notificationManagerKeeper.handleIncomingControl(notification: notification)
+            } catch {
+                Logger.w("Error while handling control notification")
             }
         }
     }
@@ -73,12 +91,14 @@ class DefaultSseHandler: SseHandler {
         if let jsonData = notification.jsonData {
             do {
                 let error = try notificationParser.parseSseError(jsonString: jsonData)
+                Logger.w("Streaming error notification received: \(error.message)")
                 if error.shouldIgnore {
+                    Logger.w("Error ignored")
                     return
                 }
                 broadcasterChannel.push(event: error.isRetryable ? .pushRetryableError : .pushNonRetryableError)
             } catch {
-                Logger.w("Error while handling occupancy notification")
+                Logger.w("Error while parsing streaming error notification")
             }
         }
     }
