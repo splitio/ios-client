@@ -34,7 +34,6 @@ final class DefaultRefreshableMySegmentsFetcher: NSObject, RefreshableMySegments
         self.mySegmentsChangeFetcher = mySegmentsChangeFetcher
         self.interval = interval
         self.dispatchGroup = dispatchGroup
-
         self._eventsManager = eventsManager
     }
 
@@ -47,19 +46,22 @@ final class DefaultRefreshableMySegmentsFetcher: NSObject, RefreshableMySegments
     }
 
     func start() {
+        startPollingForMySegmentsChanges()
+    }
+
+    func runInitialFetch() {
         do {
             let mySegments = try self.mySegmentsChangeFetcher.fetch(user: self.matchingKey, policy: .cacheOnly)
             if mySegments != nil {
                 Logger.d("Segments Changes fetched from CACHE successfully")
                 self._eventsManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreReady)
                 firstMySegmentsFetch = false
-            } else {
-                Logger.d("Segments CACHE not found")
+                return
             }
+            fetchFromRemote()
         } catch {
             Logger.e("Error trying to fetch MySegmentsChanges from CACHE")
         }
-        startPollingForMySegmentsChanges()
     }
 
     func stop() {
@@ -92,30 +94,35 @@ final class DefaultRefreshableMySegmentsFetcher: NSObject, RefreshableMySegments
         dispatchGroup?.enter()
         let queue = DispatchQueue(label: "split-segments-queue")
         queue.async { [weak self] in
-            guard let strongSelf = self else {
+            guard let self = self else {
                 return
             }
-            do {
+            self.fetchFromRemote()
+        }
+    }
 
-                let segments = try strongSelf.mySegmentsChangeFetcher.fetch(user: strongSelf.matchingKey)
-                Logger.d(segments.debugDescription)
-                strongSelf.dispatchGroup?.leave()
-
-                if strongSelf.firstMySegmentsFetch {
-                    strongSelf.firstMySegmentsFetch = false
-                    strongSelf._eventsManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreReady)
-                } else {
-                    strongSelf._eventsManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreUpdated)
-                }
-
-            } catch let error {
-                DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherException)
-                Logger.e("Problem fetching mySegments: %@", error.localizedDescription)
-            }
+    private func fetchFromRemote() {
+        do {
+            let segments = try self.mySegmentsChangeFetcher.fetch(user: self.matchingKey)
+            Logger.d(segments.debugDescription)
+            self.dispatchGroup?.leave()
+            fireMySegmentsEvent()
+        } catch let error {
+            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherException)
+            Logger.e("Problem fetching mySegments: %@", error.localizedDescription)
         }
     }
 
     func isInSegments(name: String) -> Bool {
         return mySegmentsCache.isInSegments(name: name)
+    }
+
+    private func fireMySegmentsEvent() {
+        if self.firstMySegmentsFetch {
+            self.firstMySegmentsFetch = false
+            self._eventsManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreReady)
+        } else {
+            self._eventsManager.notifyInternalEvent(SplitInternalEvent.mySegmentsAreUpdated)
+        }
     }
 }
