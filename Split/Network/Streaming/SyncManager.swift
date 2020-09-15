@@ -83,7 +83,7 @@ class DefaultSyncManager: SyncManager {
             synchronizer.startPeriodicFetching()
             pushNotificationManager.start()
 
-        case .pushNonRetryableError:
+        case .pushNonRetryableError, .pushDisabled:
             synchronizer.startPeriodicFetching()
             pushNotificationManager.stop()
         }
