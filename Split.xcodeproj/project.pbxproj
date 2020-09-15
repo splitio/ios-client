@@ -798,7 +798,6 @@
 		3B6DEE5020EA6A4D0067435E = {
 			isa = PBXGroup;
 			children = (
-				59F4AAA4250007BD00A1C69A /* SseHandlerStub.swift */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
 				3B6DEE5B20EA6A4E0067435E /* Products */,
@@ -1492,6 +1491,7 @@
 		59F4AA9724FE8D7100A1C69A /* Streaming */ = {
 			isa = PBXGroup;
 			children = (
+				59F4AAA4250007BD00A1C69A /* SseHandlerStub.swift */,
 				595AD21224E1849500A7B750 /* JwtParserStub.swift */,
 				59ED408524EAB95E00EF7B09 /* SseAuthenticationStub.swift */,
 				59ED408724EABD4700EF7B09 /* SseClientMock.swift */,

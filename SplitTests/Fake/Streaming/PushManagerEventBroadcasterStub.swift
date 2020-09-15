@@ -34,6 +34,6 @@ class PushManagerEventBroadcasterStub: PushManagerEventBroadcaster {
         registeredHandler = handler
     }
 
-    func stop() {
+    func destroy() {
     }
 }

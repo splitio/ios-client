@@ -18,7 +18,7 @@ protocol SseNotificationParser {
 
     func parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification
 
-    func parseOccupancy(jsonString: String) throws -> OccupancyNotification
+    func parseOccupancy(jsonString: String, timestamp: Int) throws -> OccupancyNotification
 
     func parseControl(jsonString: String) throws -> ControlNotification
 
@@ -60,8 +60,10 @@ class DefaultSseNotificationParser: SseNotificationParser {
         return try Json.encodeFrom(json: jsonString, to: MySegmentsUpdateNotification.self)
     }
 
-    func parseOccupancy(jsonString: String) throws -> OccupancyNotification {
-        return try Json.encodeFrom(json: jsonString, to: OccupancyNotification.self)
+    func parseOccupancy(jsonString: String, timestamp: Int) throws -> OccupancyNotification {
+        var notification = try Json.encodeFrom(json: jsonString, to: OccupancyNotification.self)
+        notification.timestamp = timestamp
+        return notification
     }
 
     func parseControl(jsonString: String) throws -> ControlNotification {
