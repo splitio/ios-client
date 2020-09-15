@@ -9,7 +9,6 @@
 import Foundation
 
 protocol SplitFetcher {
-    func runInitialFetch()
     func fetch(splitName: String) -> Split?
     func fetchAll() -> [Split]?
     func forceRefresh()
