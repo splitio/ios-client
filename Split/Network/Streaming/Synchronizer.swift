@@ -9,6 +9,7 @@
 import Foundation
 
 protocol Synchronizer {
+    func runInitialSynchronization()
     func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments()
@@ -58,6 +59,11 @@ class DefaultSynchronizer: Synchronizer {
         self.mySegmentsSyncBackoff = mySegmentsSyncBackoff
     }
 
+    func runInitialSynchronization() {
+        splitApiFacade.refreshableSplitsFetcher.runInitialFetch()
+        splitApiFacade.refreshableMySegmentsFetcher.runInitialFetch()
+    }
+
     func synchronizeSplits() {
         // TODO: Check if retry apply here (as Android has)
         _ = try? splitApiFacade.splitsFetcher.fetch(since: splitStorageContainer.splitsCache.getChangeNumber(),
@@ -81,12 +87,6 @@ class DefaultSynchronizer: Synchronizer {
         // Load?
         _ = try? splitApiFacade.splitsFetcher.fetch(since: splitStorageContainer.splitsCache.getChangeNumber(),
                                                     policy: .networkAndCache)
-    }
-
-    func loadSplitsFromCache() {
-    }
-
-    func loadMySegmentsFromCache() {
     }
 
     func startPeriodicFetching() {
