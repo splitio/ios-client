@@ -62,13 +62,11 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     func stop() {
+        state.set(.stopped)
         timersManager.cancel(timer: .refreshAuthToken)
         timersManager.cancel(timer: .appHostBgDisconnect)
         sseClient.disconnect()
         broadcasterChannel.push(event: .pushSubsystemDown)
-        state.mutate { newValue in
-            newValue = .stopped
-        }
     }
 
     func pause() {
