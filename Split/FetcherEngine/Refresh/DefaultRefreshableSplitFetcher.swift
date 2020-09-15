@@ -129,7 +129,7 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
             let splitChanges = try self.splitChangeFetcher.fetch(since: changeNumber)
             Logger.d(splitChanges.debugDescription)
 
-            dispatchGroup?.leave()s
+            dispatchGroup?.leave()
             fireSplitsEvent()
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)

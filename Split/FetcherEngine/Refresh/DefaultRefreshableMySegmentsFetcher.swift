@@ -105,7 +105,6 @@ final class DefaultRefreshableMySegmentsFetcher: NSObject, RefreshableMySegments
         do {
             let segments = try self.mySegmentsChangeFetcher.fetch(user: self.matchingKey)
             Logger.d(segments.debugDescription)
-            self.dispatchGroup?.leave()
             fireMySegmentsEvent()
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherException)

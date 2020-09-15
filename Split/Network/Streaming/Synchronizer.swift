@@ -37,7 +37,6 @@ struct SplitStorageContainer {
     let mySegmentsCache: MySegmentsCacheProtocol
 }
 
-
 class DefaultSynchronizer: Synchronizer {
 
     let splitApiFacade: SplitApiFacade
@@ -60,8 +59,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func runInitialSynchronization() {
-        splitApiFacade.refreshableSplitsFetcher.runInitialFetch()
-        splitApiFacade.refreshableMySegmentsFetcher.runInitialFetch()
+        
     }
 
     func synchronizeSplits() {
