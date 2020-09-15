@@ -10,6 +10,7 @@ import Foundation
 
 protocol SseHandler {
     func handleIncomingMessage(message: [String: String])
+    func reportError(isRetryable: Bool)
 }
 
 class DefaultSseHandler: SseHandler {
@@ -53,6 +54,10 @@ class DefaultSseHandler: SseHandler {
         default:
             Logger.w("SSE Handler: Unknown notification")
         }
+    }
+
+    func reportError(isRetryable: Bool) {
+        broadcasterChannel.push(event: isRetryable ? .pushRetryableError : .pushNonRetryableError)
     }
 
     private func handleOccupancy(_ notification: IncomingNotification) {

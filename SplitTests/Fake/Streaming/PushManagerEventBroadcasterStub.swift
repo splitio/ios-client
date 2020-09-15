@@ -7,14 +7,23 @@
 //
 
 import Foundation
+import XCTest
 @testable import Split
 
 class PushManagerEventBroadcasterStub: PushManagerEventBroadcaster {
-
-    var pushedEvent: PushStatusEvent?
+    private var pushExpectationCallCount = 0
+    var pushExpectationTriggerCallCount = 1
+    var pushExpectation: XCTestExpectation?
+    var lastPushedEvent: PushStatusEvent?
+    var pushedEvents = [PushStatusEvent]()
 
     func push(event: PushStatusEvent) {
-        pushedEvent = event
+        lastPushedEvent = event
+        pushedEvents.append(event)
+        pushExpectationCallCount+=1
+        if pushExpectationCallCount == pushExpectationTriggerCallCount, let exp = pushExpectation {
+            exp.fulfill()
+        }
     }
 
     func register(handler: @escaping IncomingMessageHandler) {

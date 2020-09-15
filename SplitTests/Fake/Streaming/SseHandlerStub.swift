@@ -7,11 +7,32 @@
 //
 
 import Foundation
+import XCTest
+
 @testable import Split
 
 class SseHandlerStub: SseHandler {
+
+    var errorExpectation: XCTestExpectation?
+    var messageExpectation: XCTestExpectation?
+
+
+    var errorReportedCalled = false
+    var errorRetryableReported = false
+    func reportError(isRetryable: Bool) {
+        errorReportedCalled = true
+        errorRetryableReported = isRetryable
+        if let exp = errorExpectation {
+            exp.fulfill()
+        }
+    }
+
     var handleIncomingCalled = false
     func handleIncomingMessage(message: [String : String]) {
         handleIncomingCalled = true
+        print("Stub SSE Handler message arrived: \(message)")
+        if let exp = messageExpectation {
+            exp.fulfill()
+        }
     }
 }

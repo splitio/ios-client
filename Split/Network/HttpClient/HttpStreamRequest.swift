@@ -18,6 +18,8 @@ protocol HttpStreamRequest: HttpRequest, HttpDataReceivingRequest {
                      incomingDataHandler: @escaping IncomingDataHandler,
                      closeHandler: @escaping CloseHandler,
                      errorHandler: @escaping ErrorHandler) -> Self
+
+    func close()
 }
 
 // MARK: DefaultHttpStreamRequest
@@ -60,6 +62,10 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
             incomingDataHandler: incomingDataHandler,
             closeHandler: closeHandler,
             errorHandler: errorHandler)
+    }
+
+    func close() {
+        task?.cancel()
     }
 
     override func setResponse(code: Int) {

@@ -90,7 +90,7 @@ class SseHandlerTest: XCTestCase {
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertFalse(notificationProcessor.processCalled)
-        XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.pushedEvent)
+        XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.lastPushedEvent)
     }
 
     func testIncomingLowNonRetryableSseError() {
@@ -108,7 +108,7 @@ class SseHandlerTest: XCTestCase {
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertFalse(notificationProcessor.processCalled)
-        XCTAssertEqual(PushStatusEvent.pushNonRetryableError, broadcasterChannel.pushedEvent)
+        XCTAssertEqual(PushStatusEvent.pushNonRetryableError, broadcasterChannel.lastPushedEvent)
     }
 
     func testIncomingIgnorableSseErrorTest() {
@@ -118,7 +118,7 @@ class SseHandlerTest: XCTestCase {
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertFalse(notificationProcessor.processCalled)
-        XCTAssertNil(broadcasterChannel.pushedEvent)
+        XCTAssertNil(broadcasterChannel.lastPushedEvent)
     }
 
     override func tearDown() {
