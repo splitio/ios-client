@@ -12,6 +12,7 @@ import XCTest
 
 class SynchronizerStub: Synchronizer {
 
+    var initialSynchronizationCalled = false
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
     var synchronizeMySegmentsCalled = false
@@ -31,7 +32,10 @@ class SynchronizerStub: Synchronizer {
     var syncSplitsChangeNumberExp: XCTestExpectation?
     var syncMySegmentsExp: XCTestExpectation?
 
-    
+    func runInitialSynchronization() {
+        initialSynchronizationCalled = true
+    }
+
     func loadAndSynchronizeSplits() {
         loadAndSynchronizeSplitsCalled = true
     }
