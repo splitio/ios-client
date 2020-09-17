@@ -340,6 +340,7 @@
 		59F4AAB52512581200A1C69A /* MySegmentsSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAB42512581100A1C69A /* MySegmentsSyncWorkerTest.swift */; };
 		59F4AAB725128B7000A1C69A /* SplitsSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAB625128B7000A1C69A /* SplitsSyncWorkerTest.swift */; };
 		59F4AAB925129CC500A1C69A /* MySegmentsChangeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAB825129CC500A1C69A /* MySegmentsChangeFetcher.swift */; };
+		59F4AABB2512ACA100A1C69A /* PeriodicSyncWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AABA2512ACA100A1C69A /* PeriodicSyncWorker.swift */; };
 		59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA7D215578F400A51997 /* ImpressionsFile.swift */; };
 		59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */; };
 		59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */; };
@@ -732,6 +733,7 @@
 		59F4AAB42512581100A1C69A /* MySegmentsSyncWorkerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsSyncWorkerTest.swift; sourceTree = "<group>"; };
 		59F4AAB625128B7000A1C69A /* SplitsSyncWorkerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsSyncWorkerTest.swift; sourceTree = "<group>"; };
 		59F4AAB825129CC500A1C69A /* MySegmentsChangeFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsChangeFetcher.swift; sourceTree = "<group>"; };
+		59F4AABA2512ACA100A1C69A /* PeriodicSyncWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeriodicSyncWorker.swift; sourceTree = "<group>"; };
 		59F6AA7D215578F400A51997 /* ImpressionsFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsFile.swift; sourceTree = "<group>"; };
 		59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTest.swift; sourceTree = "<group>"; };
 		59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyCounter.swift; sourceTree = "<group>"; };
@@ -884,6 +886,7 @@
 				3B6DEE7220EA6ADF0067435E /* DefaultRefreshableMySegmentsFetcher.swift */,
 				59F4AAB225114A6700A1C69A /* SyncWorker.swift */,
 				3B6DEE7320EA6ADF0067435E /* DefaultRefreshableSplitFetcher.swift */,
+				59F4AABA2512ACA100A1C69A /* PeriodicSyncWorker.swift */,
 				3B6DEE7420EA6ADF0067435E /* SplitFetcher.swift */,
 				590DF9D5214065880082B94F /* LocalSplitFetcher.swift */,
 				59D84BD92215A589003DA248 /* LocalhostSplitFetcher.swift */,
@@ -1904,6 +1907,7 @@
 				595AD25D24E5C61C00A7B750 /* ReconnectBackoffCounter.swift in Sources */,
 				3B6DEF4720EA6AE50067435E /* MatcherGroup.swift in Sources */,
 				59FB7BCA21DFE0A500ECC96A /* String+Utils.swift in Sources */,
+				59F4AABB2512ACA100A1C69A /* PeriodicSyncWorker.swift in Sources */,
 				3B6DEF6520EA6AE50067435E /* DependencyMatcher.swift in Sources */,
 				3B6DEF4620EA6AE50067435E /* MatcherCombiner.swift in Sources */,
 				59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */,

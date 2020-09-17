@@ -19,12 +19,12 @@ class RetryableSyncWorker: SyncWorker {
 
     var completion: SyncCompletion?
     private var reconnectBackoffCounter: ReconnectBackoffCounter
-    private var splitEventsManager: SplitEventsManager
-    private var firstMySegmentsFetch = Atomic<Bool>(true)
+    private var splitEventsManager: SplitEventsManager?
+    private var isFirstFetch = Atomic<Bool>(true)
     private var isRunning = Atomic<Bool>(false)
     private let loopQueue = DispatchQueue.global()
 
-    init(eventsManager: SplitEventsManager,
+    init(eventsManager: SplitEventsManager? = nil,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
 
         self.splitEventsManager = eventsManager
@@ -59,8 +59,8 @@ class RetryableSyncWorker: SyncWorker {
     }
 
     func fireReadyIsNeeded(event: SplitInternalEvent) {
-        if firstMySegmentsFetch.getAndSet(false) {
-            splitEventsManager.notifyInternalEvent(event)
+        if isFirstFetch.getAndSet(false) {
+            splitEventsManager?.notifyInternalEvent(event)
         }
     }
 
@@ -145,6 +145,42 @@ class RetryableSplitsSyncWorker: RetryableSyncWorker {
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
             Logger.e("Problem fetching splits: %@", error.localizedDescription)
+        }
+        return false
+    }
+}
+
+class RetryableSplitsUpdateWorker: RetryableSyncWorker {
+
+    private let splitChangeFetcher: SplitChangeFetcher
+    private let splitCache: SplitCacheProtocol
+    private let changeNumber: Int64
+
+    init(splitChangeFetcher: SplitChangeFetcher,
+         splitCache: SplitCacheProtocol,
+         changeNumber: Int64,
+         eventsManager: SplitEventsManager,
+         reconnectBackoffCounter: ReconnectBackoffCounter) {
+
+        self.splitChangeFetcher = splitChangeFetcher
+        self.splitCache = splitCache
+        self.changeNumber = changeNumber
+        super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
+    }
+
+    override func fetchFromRemote() -> Bool {
+        do {
+            if changeNumber < splitCache.getChangeNumber() {
+                return true
+            }
+            if let splitChanges = try self.splitChangeFetcher.fetch(since: changeNumber) {
+                resetBackoffCounter()
+                Logger.d(splitChanges.debugDescription)
+                return true
+            }
+        } catch let error {
+            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
+            Logger.e("Problem updating splits: %@", error.localizedDescription)
         }
         return false
     }
