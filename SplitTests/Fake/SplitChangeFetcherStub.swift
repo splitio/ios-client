@@ -19,6 +19,7 @@ class SplitChangeFetcherStub: SplitChangeFetcher {
     var changes: [SplitChange?]?
 
     func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
+        fetchCallCount+=1
         self.since = since
         var change: SplitChange?
         if let changes = self.changes {
@@ -31,7 +32,6 @@ class SplitChangeFetcherStub: SplitChangeFetcher {
             change?.splits = [Split]()
             change?.since = since + 100
             change?.till = since + 200
-            fetchCallCount+=1
         }
         if let exp = fetchExpectation {
             exp.fulfill()

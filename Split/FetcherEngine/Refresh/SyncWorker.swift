@@ -159,13 +159,12 @@ class RetryableSplitsUpdateWorker: RetryableSyncWorker {
     init(splitChangeFetcher: SplitChangeFetcher,
          splitCache: SplitCacheProtocol,
          changeNumber: Int64,
-         eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
 
         self.splitChangeFetcher = splitChangeFetcher
         self.splitCache = splitCache
         self.changeNumber = changeNumber
-        super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
+        super.init(reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() -> Bool {

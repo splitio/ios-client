@@ -341,6 +341,7 @@
 		59F4AAB725128B7000A1C69A /* SplitsSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAB625128B7000A1C69A /* SplitsSyncWorkerTest.swift */; };
 		59F4AAB925129CC500A1C69A /* MySegmentsChangeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAB825129CC500A1C69A /* MySegmentsChangeFetcher.swift */; };
 		59F4AABB2512ACA100A1C69A /* PeriodicSyncWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AABA2512ACA100A1C69A /* PeriodicSyncWorker.swift */; };
+		59F4AABD2513A2E900A1C69A /* SplitsUpdateWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AABC2513A2E800A1C69A /* SplitsUpdateWorkerTest.swift */; };
 		59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA7D215578F400A51997 /* ImpressionsFile.swift */; };
 		59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */; };
 		59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */; };
@@ -734,6 +735,7 @@
 		59F4AAB625128B7000A1C69A /* SplitsSyncWorkerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsSyncWorkerTest.swift; sourceTree = "<group>"; };
 		59F4AAB825129CC500A1C69A /* MySegmentsChangeFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsChangeFetcher.swift; sourceTree = "<group>"; };
 		59F4AABA2512ACA100A1C69A /* PeriodicSyncWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeriodicSyncWorker.swift; sourceTree = "<group>"; };
+		59F4AABC2513A2E800A1C69A /* SplitsUpdateWorkerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsUpdateWorkerTest.swift; sourceTree = "<group>"; };
 		59F6AA7D215578F400A51997 /* ImpressionsFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsFile.swift; sourceTree = "<group>"; };
 		59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTest.swift; sourceTree = "<group>"; };
 		59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyCounter.swift; sourceTree = "<group>"; };
@@ -1369,6 +1371,7 @@
 				595AD24C24E324D100A7B750 /* Base64UtilsTest.swift */,
 				59F4AAB42512581100A1C69A /* MySegmentsSyncWorkerTest.swift */,
 				59F4AAB625128B7000A1C69A /* SplitsSyncWorkerTest.swift */,
+				59F4AABC2513A2E800A1C69A /* SplitsUpdateWorkerTest.swift */,
 			);
 			path = SplitTests;
 			sourceTree = "<group>";
@@ -2116,6 +2119,7 @@
 				596A7B622343F848004F6139 /* MySegmentUpadatedTest.swift in Sources */,
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				59ED408424EAB8C900EF7B09 /* PushNotificationManagerTest.swift in Sources */,
+				59F4AABD2513A2E900A1C69A /* SplitsUpdateWorkerTest.swift in Sources */,
 				594677EA22D4D44300F94E58 /* ImpressionsManagerStub.swift in Sources */,
 				59AD7AC52461D63500F5B0B4 /* SplitChangeFetcherStub.swift in Sources */,
 				59B2043724F551420092F2E9 /* SseNotificationParserStub.swift in Sources */,
