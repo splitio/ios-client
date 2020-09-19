@@ -139,5 +139,4 @@ class SplitsUpdateWorkerTest: XCTestCase {
         split.name = name
         return split
     }
-
 }

@@ -42,6 +42,9 @@ class SplitEventsManagerMock: SplitEventsManager {
     }
     
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
+        if event == .sdkReady {
+            return isSdkReadyFired
+        }
         return true
     }
     

@@ -1,5 +1,5 @@
 //
-//  SyncWorker.swift
+//  RetryableSyncWorker.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 15-Sep-2020
@@ -8,14 +8,14 @@
 
 import Foundation
 
-protocol SyncWorker {
+protocol RetryableSyncWorker {
     typealias SyncCompletion = (Bool) -> Void
     var completion: SyncCompletion? { get set }
     func start()
     func stop()
 }
 
-class RetryableSyncWorker: SyncWorker {
+class BaseRetryableSyncWorker: RetryableSyncWorker {
 
     var completion: SyncCompletion?
     private var reconnectBackoffCounter: ReconnectBackoffCounter
@@ -74,7 +74,7 @@ class RetryableSyncWorker: SyncWorker {
     }
 }
 
-class RetryableMySegmentsSyncWorker: RetryableSyncWorker {
+class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
 
     private let mySegmentsChangeFetcher: MySegmentsChangeFetcher
     private let matchingKey: String
@@ -107,7 +107,7 @@ class RetryableMySegmentsSyncWorker: RetryableSyncWorker {
     }
 }
 
-class RetryableSplitsSyncWorker: RetryableSyncWorker {
+class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
 
     private let splitChangeFetcher: SplitChangeFetcher
     private let splitCache: SplitCacheProtocol
@@ -150,7 +150,7 @@ class RetryableSplitsSyncWorker: RetryableSyncWorker {
     }
 }
 
-class RetryableSplitsUpdateWorker: RetryableSyncWorker {
+class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
 
     private let splitChangeFetcher: SplitChangeFetcher
     private let splitCache: SplitCacheProtocol

@@ -37,6 +37,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
 
     func testOneTimeFetchSuccess() {
 
+        mySegmentsFetcher.allSegments = [["s1", "s2"]]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in
