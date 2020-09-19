@@ -10,9 +10,11 @@ import Foundation
 @testable import Split
 
 class MySegmentsChangeFetcherStub: MySegmentsChangeFetcher {
+    var fetchMySegmentsCount = 0
     private var segmentsIndex = -1
     var allSegments: [[String]?]?
     func fetch(user: String, policy: FecthingPolicy) throws -> [String]? {
+        fetchMySegmentsCount+=1
         var segments: [String]? = nil
         if let allSegments = self.allSegments {
             if  segmentsIndex < allSegments.count - 1 {

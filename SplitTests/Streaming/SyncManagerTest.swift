@@ -32,7 +32,7 @@ class SyncManagerTest: XCTestCase {
                                          synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
         syncManager.start()
 
-        XCTAssertTrue(synchronizer.synchronizeMySegmentsCalled)
+        XCTAssertTrue(synchronizer.initialSynchronizationCalled)
         XCTAssertNotNil(broadcasterChannel.registeredHandler)
         XCTAssertTrue(pushManager.startCalled)
         XCTAssertTrue(synchronizer.startPeriodicRecordingCalled)
@@ -46,7 +46,7 @@ class SyncManagerTest: XCTestCase {
                                          synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
         syncManager.start()
 
-        XCTAssertTrue(synchronizer.synchronizeMySegmentsCalled)
+        XCTAssertTrue(synchronizer.initialSynchronizationCalled)
         XCTAssertNil(broadcasterChannel.registeredHandler)
         XCTAssertFalse(pushManager.startCalled)
         XCTAssertTrue(synchronizer.startPeriodicRecordingCalled)

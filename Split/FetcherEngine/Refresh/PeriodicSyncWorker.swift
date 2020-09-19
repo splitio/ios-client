@@ -7,16 +7,59 @@
 //
 
 import Foundation
+protocol PeriodicTimer {
+    func trigger()
+    func cancel()
+    func handler( _ handler: @escaping () -> Void)
+}
 
+class DefaultPeriodicTimer: PeriodicTimer {
 
-class PeriodicSyncWorker {
+    private var fetchTimer: DispatchSourceTimer
 
-    var fetchTimer: DispatchSourceTimer?
-    private let interval: Int
+    init(interval seconds: Int) {
+        fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
+        fetchTimer.schedule(deadline: .now(), repeating: .seconds(seconds))
+    }
+
+    func trigger() {
+        fetchTimer.resume()
+    }
+
+    func cancel() {
+        fetchTimer.cancel()
+    }
+
+    func handler( _ handler: @escaping () -> Void) {
+        fetchTimer.setEventHandler(handler: handler)
+    }
+}
+
+protocol PeriodicSyncWorker {
+//    typealias SyncCompletion = (Bool) -> Void
+//    var completion: SyncCompletion? { get set }
+    func start()
+    func stop()
+}
+
+class BasePeriodicSyncWorker: PeriodicSyncWorker {
+
+    private var fetchTimer: PeriodicTimer
     private let fetchQueue = DispatchQueue.global()
+    private let eventsManager: SplitEventsManager
 
-    init(interval: Int) {
-        self.interval = interval
+    init(timer: PeriodicTimer,
+         eventsManager: SplitEventsManager) {
+        self.eventsManager = eventsManager
+        self.fetchTimer = timer
+        self.fetchTimer.handler { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.fetchQueue.async {
+                self.fetchFromRemote()
+            }
+        }
     }
 
     func start() {
@@ -28,27 +71,15 @@ class PeriodicSyncWorker {
     }
 
     private func startPeriodicFetch() {
-        fetchTimer = DispatchSource.makeTimerSource(queue: fetchQueue)
-        if let timer = fetchTimer {
-            timer.schedule(deadline: .now(), repeating: .seconds(self.interval))
-            timer.setEventHandler { [weak self] in
-                guard let self = self else {
-                    return
-                }
-                self.fetchQueue.async { [weak self] in
-                    guard let self = self else {
-                        return
-                    }
-                    self.fetchFromRemote()
-                }
-            }
-            timer.resume()
-        }
+        fetchTimer.trigger()
     }
 
     private func stopPeriodicFetch() {
-        fetchTimer?.cancel()
-        fetchTimer = nil
+        fetchTimer.cancel()
+    }
+
+    func isSdkReadyFired() -> Bool {
+        return eventsManager.eventAlreadyTriggered(event: .sdkReady)
     }
 
     func fetchFromRemote() {
@@ -56,26 +87,25 @@ class PeriodicSyncWorker {
     }
 }
 
-class PeriodicSplitsSyncWorker: PeriodicSyncWorker {
+class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
     private let splitChangeFetcher: SplitChangeFetcher
     private let splitCache: SplitCacheProtocol
-    private let splitEventsManager: SplitEventsManager
 
     init(splitChangeFetcher: SplitChangeFetcher,
          splitCache: SplitCacheProtocol,
-         interval: Int,
-         splitEventsManager: SplitEventsManager) {
+         timer: PeriodicTimer,
+         eventsManager: SplitEventsManager) {
 
         self.splitCache = splitCache
         self.splitChangeFetcher = splitChangeFetcher
-        self.splitEventsManager = splitEventsManager
-        super.init(interval: interval)
+        super.init(timer: timer,
+                   eventsManager: eventsManager)
     }
 
     override func fetchFromRemote() {
         // Polling should be done once sdk ready is fired in initial sync
-        if !splitEventsManager.eventAlreadyTriggered(event: .sdkReady) {
+        if !isSdkReadyFired() {
             return
         }
         do {
@@ -88,24 +118,30 @@ class PeriodicSplitsSyncWorker: PeriodicSyncWorker {
     }
 }
 
-class PeriodicMySegmentsSyncWorker: PeriodicSyncWorker {
+class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
 
     private let mySegmentsFetcher: MySegmentsChangeFetcher
     private let mySegmentsCache: MySegmentsCacheProtocol
     private let userKey: String
 
     init(userKey: String,
-        mySegmentsFetcher: MySegmentsChangeFetcher,
+         mySegmentsFetcher: MySegmentsChangeFetcher,
          mySegmentsCache: MySegmentsCacheProtocol,
-         interval: Int) {
+         timer: PeriodicTimer,
+         eventsManager: SplitEventsManager) {
 
         self.userKey = userKey
         self.mySegmentsFetcher = mySegmentsFetcher
         self.mySegmentsCache = mySegmentsCache
-        super.init(interval: interval)
+        super.init(timer: timer,
+                   eventsManager: eventsManager)
     }
 
     override func fetchFromRemote() {
+        // Polling should be done once sdk ready is fired in initial sync
+        if !isSdkReadyFired() {
+            return
+        }
         do {
             let segments = try mySegmentsFetcher.fetch(user: userKey)
             Logger.d(segments.debugDescription)

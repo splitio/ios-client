@@ -25,11 +25,12 @@ protocol Synchronizer {
 
 struct SplitApiFacade {
     let splitsFetcher: SplitChangeFetcher
-    let mySegmentsFetcher: MySegmentsChangeFetcher
-    let refreshableSplitsFetcher: RefreshableSplitFetcher
-    let refreshableMySegmentsFetcher: RefreshableMySegmentsFetcher
     let impressionsManager: ImpressionsManager
     let trackManager: TrackManager
+    let splitsSyncWorker: RetryableSyncWorker
+    let mySegmentsSyncWorker: RetryableSyncWorker
+    let periodicSplitsSyncWorker: PeriodicSyncWorker
+    let periodicMySegmentsSyncWorker: PeriodicSyncWorker
 }
 
 struct SplitStorageContainer {
@@ -39,62 +40,53 @@ struct SplitStorageContainer {
 
 class DefaultSynchronizer: Synchronizer {
 
-    let splitApiFacade: SplitApiFacade
-    let splitStorageContainer: SplitStorageContainer
-    let splitsSyncBackoff: ReconnectBackoffCounter
-    let mySegmentsSyncBackoff: ReconnectBackoffCounter
-    let userKey: String // Matching key
+    private let splitApiFacade: SplitApiFacade
+    private let splitStorageContainer: SplitStorageContainer
+    private let syncTasksByChangeNumber = SyncDictionarySingleWrapper<Int64, RetryableSplitsUpdateWorker>()
 
-    init(userKey: String,
-         splitApiFacade: SplitApiFacade,
-         splitStorageContainer: SplitStorageContainer,
-         splitsSyncBackoff: ReconnectBackoffCounter,
-         mySegmentsSyncBackoff: ReconnectBackoffCounter) {
-
-        self.userKey = userKey
+    init(splitApiFacade: SplitApiFacade,
+         splitStorageContainer: SplitStorageContainer) {
         self.splitApiFacade = splitApiFacade
         self.splitStorageContainer = splitStorageContainer
-        self.splitsSyncBackoff = splitsSyncBackoff
-        self.mySegmentsSyncBackoff = mySegmentsSyncBackoff
     }
 
     func runInitialSynchronization() {
-        
+        splitApiFacade.splitsSyncWorker.start()
+        splitApiFacade.mySegmentsSyncWorker.start()
     }
 
     func synchronizeSplits() {
-        // TODO: Check if retry apply here (as Android has)
-        _ = try? splitApiFacade.splitsFetcher.fetch(since: splitStorageContainer.splitsCache.getChangeNumber(),
-                                                    policy: .network)
+        splitApiFacade.splitsSyncWorker.start()
     }
 
     func synchronizeSplits(changeNumber: Int64) {
-        // Retry?
-        if changeNumber > splitStorageContainer.splitsCache.getChangeNumber() {
-            _ = try? splitApiFacade.splitsFetcher.fetch(since: changeNumber, policy: .network)
+        if syncTasksByChangeNumber.value(forKey: changeNumber) != nil {
+            let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: 1)
+            let worker = RetryableSplitsUpdateWorker(splitChangeFetcher: splitApiFacade.splitsFetcher,
+                                                     splitCache: splitStorageContainer.splitsCache,
+                                                     changeNumber: changeNumber,
+                                                     reconnectBackoffCounter: reconnectBackoff)
+            syncTasksByChangeNumber.setValue(worker, forKey: changeNumber)
+            worker.completion = {[weak self] success in
+                if let self = self {
+                    self.syncTasksByChangeNumber.removeValue(forKey: changeNumber)
+                }
+            }
         }
     }
 
     func synchronizeMySegments() {
-        // Retry?
-        _ = try? splitApiFacade.mySegmentsFetcher.fetch(user: userKey, policy: .network)
-
-    }
-
-    func loadAndSynchronizeSplits() {
-        // Load?
-        _ = try? splitApiFacade.splitsFetcher.fetch(since: splitStorageContainer.splitsCache.getChangeNumber(),
-                                                    policy: .networkAndCache)
+        splitApiFacade.mySegmentsSyncWorker.start()
     }
 
     func startPeriodicFetching() {
-        splitApiFacade.refreshableSplitsFetcher.start()
-        splitApiFacade.refreshableMySegmentsFetcher.start()
+        splitApiFacade.periodicSplitsSyncWorker.start()
+        splitApiFacade.periodicMySegmentsSyncWorker.start()
     }
 
     func stopPeriodicFetching() {
-        splitApiFacade.refreshableSplitsFetcher.stop()
-        splitApiFacade.refreshableMySegmentsFetcher.stop()
+        splitApiFacade.periodicSplitsSyncWorker.stop()
+        splitApiFacade.periodicMySegmentsSyncWorker.stop()
     }
 
     func startPeriodicRecording() {
@@ -123,7 +115,13 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func destroy() {
-        splitApiFacade.refreshableSplitsFetcher.stop()
-        splitApiFacade.refreshableMySegmentsFetcher.stop()
+        splitApiFacade.splitsSyncWorker.stop()
+        splitApiFacade.mySegmentsSyncWorker.stop()
+        splitApiFacade.periodicSplitsSyncWorker.stop()
+        splitApiFacade.periodicMySegmentsSyncWorker.stop()
+        let updateTasks = syncTasksByChangeNumber.takeAll()
+        for task in updateTasks.values {
+            task.stop()
+        }
     }
 }

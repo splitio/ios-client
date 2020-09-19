@@ -16,9 +16,6 @@ class SynchronizerStub: Synchronizer {
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
     var synchronizeMySegmentsCalled = false
-    var loadAndSynchronizeSplitsCalled = false
-    var loadSplitsFromCacheCalled = false
-    var loadMySegmentsFromCacheCalled = false
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
     var startPeriodicRecordingCalled = false
@@ -34,18 +31,6 @@ class SynchronizerStub: Synchronizer {
 
     func runInitialSynchronization() {
         initialSynchronizationCalled = true
-    }
-
-    func loadAndSynchronizeSplits() {
-        loadAndSynchronizeSplitsCalled = true
-    }
-
-    func loadSplitsFromCache() {
-        loadSplitsFromCacheCalled = true
-    }
-
-    func loadMySegmentsFromCache() {
-        loadMySegmentsFromCacheCalled = true
     }
 
     func startPeriodicFetching() {

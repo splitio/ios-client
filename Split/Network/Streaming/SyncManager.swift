@@ -32,12 +32,11 @@ class DefaultSyncManager: SyncManager {
     }
 
     func start() {
-        //synchronizer.loadAndSynchronizeSplits()
-        //synchronizer.loadMySegmentsFromCache()
-        //synchronizer.synchronizeMySegments()
+
+        synchronizer.runInitialSynchronization()
         isPollingEnabled.set(!splitConfig.streamingEnabled)
         if splitConfig.streamingEnabled {
-            broadcasterChannel.register() { event in
+            broadcasterChannel.register { event in
                 self.handle(pushEvent: event)
             }
             pushNotificationManager.start()
