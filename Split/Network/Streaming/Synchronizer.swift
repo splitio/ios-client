@@ -42,12 +42,18 @@ class DefaultSynchronizer: Synchronizer {
 
     private let splitApiFacade: SplitApiFacade
     private let splitStorageContainer: SplitStorageContainer
-    private let syncTasksByChangeNumber = SyncDictionarySingleWrapper<Int64, RetryableSplitsUpdateWorker>()
+    private let syncWorkerFactory: SyncWorkerFactory
+    private let syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
 
     init(splitApiFacade: SplitApiFacade,
-         splitStorageContainer: SplitStorageContainer) {
+         splitStorageContainer: SplitStorageContainer,
+         syncWorkerFactory: SyncWorkerFactory = DefaultSyncWorkerFactory(),
+         syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
+        = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()) {
         self.splitApiFacade = splitApiFacade
         self.splitStorageContainer = splitStorageContainer
+        self.syncWorkerFactory = syncWorkerFactory
+        self.syncTaskByChangeNumberCatalog = syncTaskByChangeNumberCatalog
     }
 
     func runInitialSynchronization() {
@@ -60,16 +66,18 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func synchronizeSplits(changeNumber: Int64) {
-        if syncTasksByChangeNumber.value(forKey: changeNumber) != nil {
+        if syncTaskByChangeNumberCatalog.value(forKey: changeNumber) == nil {
             let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: 1)
-            let worker = RetryableSplitsUpdateWorker(splitChangeFetcher: splitApiFacade.splitsFetcher,
-                                                     splitCache: splitStorageContainer.splitsCache,
-                                                     changeNumber: changeNumber,
-                                                     reconnectBackoffCounter: reconnectBackoff)
-            syncTasksByChangeNumber.setValue(worker, forKey: changeNumber)
+            var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(
+                splitChangeFetcher: splitApiFacade.splitsFetcher,
+                splitCache: splitStorageContainer.splitsCache,
+                changeNumber: changeNumber,
+                reconnectBackoffCounter: reconnectBackoff)
+            syncTaskByChangeNumberCatalog.setValue(worker, forKey: changeNumber)
+            worker.start()
             worker.completion = {[weak self] success in
                 if let self = self {
-                    self.syncTasksByChangeNumber.removeValue(forKey: changeNumber)
+                    self.syncTaskByChangeNumberCatalog.removeValue(forKey: changeNumber)
                 }
             }
         }
@@ -119,7 +127,7 @@ class DefaultSynchronizer: Synchronizer {
         splitApiFacade.mySegmentsSyncWorker.stop()
         splitApiFacade.periodicSplitsSyncWorker.stop()
         splitApiFacade.periodicMySegmentsSyncWorker.stop()
-        let updateTasks = syncTasksByChangeNumber.takeAll()
+        let updateTasks = syncTaskByChangeNumberCatalog.takeAll()
         for task in updateTasks.values {
             task.stop()
         }
