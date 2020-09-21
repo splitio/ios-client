@@ -24,6 +24,9 @@ class SynchronizerTest: XCTestCase {
     var splitsCache: SplitCacheProtocol!
     var mySegmentsCache: MySegmentsCacheProtocol!
 
+    var updateWorkerCatalog = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()
+    var syncWorkerFactory = SyncWorkerFactoryStub()
+
     var synchronizer: Synchronizer!
 
     override func setUp() {
@@ -39,13 +42,16 @@ class SynchronizerTest: XCTestCase {
         mySegmentsCache = MySegmentsCacheStub()
 
         let apiFacade = SplitApiFacade(splitsFetcher: splitsFetcher, impressionsManager: impressionsManager,
-                                            trackManager: trackManager, splitsSyncWorker: splitsSyncWorker,
-                                            mySegmentsSyncWorker: mySegmentsSyncWorker,
-                                            periodicSplitsSyncWorker: periodicSplitsSyncWorker,
-                                            periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker)
+                                       trackManager: trackManager, splitsSyncWorker: splitsSyncWorker,
+                                       mySegmentsSyncWorker: mySegmentsSyncWorker,
+                                       periodicSplitsSyncWorker: periodicSplitsSyncWorker,
+                                       periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker)
         let storageContainer = SplitStorageContainer(splitsCache: splitsCache, mySegmentsCache: mySegmentsCache)
 
-        synchronizer = DefaultSynchronizer(splitApiFacade: apiFacade, splitStorageContainer: storageContainer)
+        synchronizer = DefaultSynchronizer(splitApiFacade: apiFacade,
+                                           splitStorageContainer: storageContainer,
+                                           syncWorkerFactory: syncWorkerFactory,
+                                           syncTaskByChangeNumberCatalog: updateWorkerCatalog)
     }
 
     func testRunInitialSync() {
@@ -72,9 +78,24 @@ class SynchronizerTest: XCTestCase {
 
     func testSynchronizeSplitsWithChangeNumber() {
 
-        synchronizer.synchronizeSplits(changeNumber: 100)
+        let sw1 = RetryableSyncWorkerStub()
+        let sw2 = RetryableSyncWorkerStub()
 
-        // TODO
+        syncWorkerFactory.retryableSplitsUpdateWorkers = [sw1, sw2]
+        synchronizer.synchronizeSplits(changeNumber: 101)
+        synchronizer.synchronizeSplits(changeNumber: 102)
+
+        let initialSyncCount = updateWorkerCatalog.count
+        sw1.completion?(true)
+        let oneCompletedSyncCount = updateWorkerCatalog.count
+        sw2.completion?(true)
+
+        XCTAssertEqual(2, initialSyncCount)
+        XCTAssertEqual(1, oneCompletedSyncCount)
+        XCTAssertEqual(0, updateWorkerCatalog.count)
+
+        XCTAssertFalse(sw1.stopCalled)
+        XCTAssertFalse(sw2.stopCalled)
     }
 
     func testStartPeriodicFetching() {
@@ -118,16 +139,23 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testDestroy() {
+
+        let sw1 = RetryableSyncWorkerStub()
+        let sw2 = RetryableSyncWorkerStub()
+
+        syncWorkerFactory.retryableSplitsUpdateWorkers = [sw1, sw2]
+        synchronizer.synchronizeSplits(changeNumber: 101)
+        synchronizer.synchronizeSplits(changeNumber: 102)
+
         synchronizer.destroy()
 
         XCTAssertTrue(splitsSyncWorker.stopCalled)
         XCTAssertTrue(mySegmentsSyncWorker.stopCalled)
         XCTAssertTrue(periodicSplitsSyncWorker.stopCalled)
         XCTAssertTrue(periodicMySegmentsSyncWorker.stopCalled)
-//        let updateTasks = syncTasksByChangeNumber.takeAll()
-//        for task in updateTasks.values {
-//            task.stop()
-//        }
+        XCTAssertTrue(sw1.stopCalled)
+        XCTAssertTrue(sw2.stopCalled)
+        XCTAssertEqual(0, updateWorkerCatalog.count)
     }
 
     override func tearDown() {
