@@ -13,7 +13,7 @@ import XCTest
 
 class MySegmentsCacheStub: MySegmentsCacheProtocol {
     
-    let segments: Set = ["s1", "s2", "s3"]
+    var segments: Set = ["s1", "s2", "s3"]
     var updatedSegments: [String]?
     var clearCalled = false
     var updateExpectation: XCTestExpectation?
@@ -21,6 +21,7 @@ class MySegmentsCacheStub: MySegmentsCacheProtocol {
 
     func setSegments(_ segments: [String]) {
         updatedSegments = segments
+        self.segments = Set(segments)
         if let exp = updateExpectation {
             exp.fulfill()
         }
@@ -34,7 +35,7 @@ class MySegmentsCacheStub: MySegmentsCacheProtocol {
     }
     
     func isInSegments(name: String) -> Bool {
-        return true
+        return segments.contains(name)
     }
     
     func clear() {

@@ -170,9 +170,11 @@ public class SplitClientConfig: NSObject {
     ///
     let cacheExpirationInSeconds = 864000
 
+    let defaultPushReconnectionBackoffBase = 1
 
     ///
-    /// Whether we should attempt to use streaming or not. If the variable is false, the SDK will start in polling mode and stay that way.
+    /// Whether we should attempt to use streaming or not. If the variable is false,
+    /// the SDK will start in polling mode and stay that way.
     /// Default: true
     ///
     @objc public var streamingEnabled = true

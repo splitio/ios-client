@@ -159,8 +159,6 @@ class SplitIntegrationTests: XCTestCase {
 
     func testImpressionsCount() throws {
 
-        let endpoints = ServiceEndpoints.builder().set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
-
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 999999
         splitConfig.segmentsRefreshRate = 999999

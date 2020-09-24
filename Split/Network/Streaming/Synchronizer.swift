@@ -23,17 +23,8 @@ protocol Synchronizer {
     func destroy()
 }
 
-struct SplitApiFacade {
-    let splitsFetcher: SplitChangeFetcher
-    let impressionsManager: ImpressionsManager
-    let trackManager: TrackManager
-    let splitsSyncWorker: RetryableSyncWorker
-    let mySegmentsSyncWorker: RetryableSyncWorker
-    let periodicSplitsSyncWorker: PeriodicSyncWorker
-    let periodicMySegmentsSyncWorker: PeriodicSyncWorker
-}
-
 struct SplitStorageContainer {
+    let fileStorage: FileStorageProtocol
     let splitsCache: SplitCacheProtocol
     let mySegmentsCache: MySegmentsCacheProtocol
 }
