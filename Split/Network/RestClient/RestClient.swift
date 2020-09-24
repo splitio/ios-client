@@ -1,9 +1,9 @@
 //
-//  Api.swift
-//  SwiftSeedProject
+//  RestClient.swift
+//  Split
 //
-//  Created by Brian Sztamfater on 9/19/17.
-//  Copyright © 2017 Split Software. All rights reserved.
+//  Created by Javier Avrudsky on 22-Sep-2020.
+//  Copyright © 2020 Split Software. All rights reserved.
 //
 
 import Foundation

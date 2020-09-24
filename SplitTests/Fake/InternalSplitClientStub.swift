@@ -11,14 +11,10 @@ import Foundation
 
 class InternalSplitClientStub: InternalSplitClient {
 
-    var splitFetcher: SplitFetcher?
-    var mySegmentsFetcher: MySegmentsFetcher?
-    
-    init(splitFetcher: SplitFetcher, mySegmentsFetcher: MySegmentsFetcher) {
-        self.splitFetcher = splitFetcher
-        self.mySegmentsFetcher = mySegmentsFetcher
+    var storageContainer: SplitStorageContainer?
+    init(storageContainer: SplitStorageContainer) {
+        self.storageContainer = storageContainer
     }
-    
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
         return ""
     }

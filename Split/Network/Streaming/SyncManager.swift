@@ -32,7 +32,6 @@ class DefaultSyncManager: SyncManager {
     }
 
     func start() {
-
         synchronizer.runInitialSynchronization()
         isPollingEnabled.set(!splitConfig.streamingEnabled)
         if splitConfig.streamingEnabled {

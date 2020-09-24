@@ -92,6 +92,7 @@ class SplitChangesTest: XCTestCase {
         splitConfig.impressionRefreshRate = splitConfig.featuresRefreshRate * 6
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
+        splitConfig.streamingEnabled = false
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
         .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         splitConfig.impressionListener = { impression in
@@ -160,7 +161,6 @@ class SplitChangesTest: XCTestCase {
 
     private func  responseSlitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
-
 
         var prevChangeNumber: Int64 = 0
         for i in 0..<4 {
