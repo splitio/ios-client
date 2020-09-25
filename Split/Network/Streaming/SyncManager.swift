@@ -33,7 +33,7 @@ class DefaultSyncManager: SyncManager {
 
     func start() {
 
-        synchronizer.runInitialSynchronization()
+        synchronizer.syncAll()
         isPollingEnabled.set(!splitConfig.streamingEnabled)
         if splitConfig.streamingEnabled {
             broadcasterChannel.register { event in
