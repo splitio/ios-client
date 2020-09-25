@@ -9,7 +9,7 @@
 import Foundation
 
 protocol Synchronizer {
-    func runInitialSynchronization()
+    func syncAll()
     func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments()
@@ -56,7 +56,7 @@ class DefaultSynchronizer: Synchronizer {
         self.syncTaskByChangeNumberCatalog = syncTaskByChangeNumberCatalog
     }
 
-    func runInitialSynchronization() {
+    func syncAll() {
         splitApiFacade.splitsSyncWorker.start()
         splitApiFacade.mySegmentsSyncWorker.start()
     }
