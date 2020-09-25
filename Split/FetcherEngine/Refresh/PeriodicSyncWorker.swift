@@ -15,19 +15,36 @@ protocol PeriodicTimer {
 
 class DefaultPeriodicTimer: PeriodicTimer {
 
+    private var interval: Int
     private var fetchTimer: DispatchSourceTimer
+    private var isRunning: Atomic<Bool>
 
     init(interval seconds: Int) {
+        self.interval = seconds
+        self.isRunning = Atomic(false)
         fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
-        fetchTimer.schedule(deadline: .now(), repeating: .seconds(seconds))
+//        if #available(iOS 10.0, *) {
+//            fetchTimer.activate()
+//            Logger.d("INIT TIMER TRigger")
+//        }
+         Logger.d("INIT TIMER TRigger")
     }
 
     func trigger() {
-        fetchTimer.resume()
+        Logger.d("TIMER TRigger")
+        if !isRunning.getAndSet(true) {
+            Logger.d("TIMER TRigger IN")
+            fetchTimer.schedule(deadline: .now(), repeating: .seconds(interval))
+            fetchTimer.resume()
+        }
     }
 
     func cancel() {
-        fetchTimer.cancel()
+        Logger.d("TIMER CANCEL")
+        if isRunning.getAndSet(false) {
+            Logger.d("TIMER CANCEL IN")
+            fetchTimer.suspend()
+        }
     }
 
     func handler( _ handler: @escaping () -> Void) {
@@ -36,8 +53,8 @@ class DefaultPeriodicTimer: PeriodicTimer {
 }
 
 protocol PeriodicSyncWorker {
-//    typealias SyncCompletion = (Bool) -> Void
-//    var completion: SyncCompletion? { get set }
+    //    typealias SyncCompletion = (Bool) -> Void
+    //    var completion: SyncCompletion? { get set }
     func start()
     func stop()
 }
@@ -109,8 +126,9 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         do {
-            let splitChanges = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber())
-            Logger.d(splitChanges.debugDescription)
+            let _ = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber())
+            //Logger.d(splitChanges.debugDescription)
+            Logger.d("Fetching splits")
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
             Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)

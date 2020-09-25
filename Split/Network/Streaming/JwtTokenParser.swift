@@ -44,7 +44,7 @@ struct DefaultJwtTokenParser: JwtTokenParser {
             let channelList = try Json.encodeFrom(json: authToken.channels, to: [String: [String]].self)
             let processedChannels: [String] = channelList.compactMap {
                 if $0.value.contains(Self.kPublishersChannelMetadata) {
-                    return "\(Self.kPublishersChannelMetadata)\($0.key)"
+                    return "\(Self.kPublishersCannelPrefix)\($0.key)"
                 }
                 return $0.key
             }

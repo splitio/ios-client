@@ -68,16 +68,19 @@ class DefaultSseClient: SseClient {
 
                     connectionResult = SseConnectionResult(success: response.code == 200,
                                                            errorIsRecoverable: !response.isCredentialsError)
+                    Logger.d("Streaming connected")
                     responseSemaphore.signal()
 
                 }, incomingDataHandler: { data in
 
                     let values = self.streamParser.parse(streamChunk: data.stringRepresentation)
                     if !self.streamParser.isKeepAlive(values: values) {
+                        Logger.d("Push message received: \(values)")
                         self.triggerMessageHandler(message: values)
                     }
 
                 }, closeHandler: {
+                    Logger.d("Streaming connection closed")
                     self.handleConnectionClosed()
 
                 }, errorHandler: { error in

@@ -20,7 +20,7 @@ class Base64Utils {
         let base64NoPlus = base64.replacingOccurrences(of: "-", with: "+")
         // Replace _
        let base64NoSlash = base64NoPlus.replacingOccurrences(of: "_", with: "/")
-        var finalBase64 = ""
+        var finalBase64 = base64NoSlash
         // = complement
         let mod4 = base64NoPlus.count % 4
         if mod4 > 0 {

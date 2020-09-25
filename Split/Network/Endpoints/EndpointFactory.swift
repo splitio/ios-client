@@ -16,6 +16,7 @@ class EndpointFactory {
     private static let kContentTypeJson = "application/json"
     private static let kContentTypeEventStream = "text/event-stream"
     private struct EndpointsPath {
+        static let sseAuth = "auth"
         static let splitChanges = "splitChanges"
         static let mySegments = "mySegments"
         static let impressions = "testImpressions/bulk"
@@ -75,7 +76,7 @@ class EndpointFactory {
                 .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
         sseAuthenticationEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.authServiceEndpoint)
+            .builder(baseUrl: serviceEndpoints.authServiceEndpoint, path: EndpointsPath.sseAuth)
                 .set(method: .get).add(headers: commondHeaders).add(headers: typeHeader).build()
 
         streamingEndpoint = Endpoint
