@@ -115,7 +115,7 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
         }
     }
 
-    func fetchFromRemote() {
+    private func fetchFromRemote() {
         do {
             var changeNumber = splitCache.getChangeNumber()
             if changeNumber != -1 {
