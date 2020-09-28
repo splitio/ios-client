@@ -86,7 +86,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
                 if self.state.value == .stopped {
                     return
                 }
-                self.delay(seconds: self.sseBackoffCounter.getNextRetryTime())
+                ThreadUtils.delay(seconds: self.sseBackoffCounter.getNextRetryTime())
             }
         }
     }
@@ -147,15 +147,5 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
         broadcasterChannel.push(event: result.errorIsRecoverable ? .pushRetryableError : .pushNonRetryableError)
         return false
-    }
-
-    private func delay(seconds: Double) {
-        // Using this method to avoid blocking the
-        // thread using sleep
-        let semaphore = DispatchSemaphore(value: 0)
-        DispatchQueue.global().asyncAfter(deadline: .now() + seconds) {
-            semaphore.signal()
-        }
-        semaphore.wait()
     }
 }

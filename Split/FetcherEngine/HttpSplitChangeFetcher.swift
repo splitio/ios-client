@@ -11,6 +11,7 @@ import Foundation
 public enum FecthingPolicy {
     case cacheOnly
     case networkAndCache
+    case network
 }
 
 class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
@@ -29,9 +30,11 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
 
         if policy == .cacheOnly {
             return splitChangeCache.getChanges(since: -1)
-        } else if !restClient.isSdkServerAvailable() {
+        } else if policy == .networkAndCache && !restClient.isSdkServerAvailable() {
             Logger.d("Server is not reachable. Split updates will be delayed until host is reachable")
             return splitChangeCache.getChanges(since: -1)
+        } else if policy == .network && !restClient.isSdkServerAvailable() {
+            return nil
         } else {
             let metricsManager = DefaultMetricsManager.shared
             let semaphore = DispatchSemaphore(value: 0)

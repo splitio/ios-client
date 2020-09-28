@@ -254,8 +254,11 @@ class TreatmentManagerTest: XCTestCase {
         let key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
         client = InternalSplitClientStub(splitFetcher: splitFetcher, mySegmentsFetcher: mySegmentsFetcher)
         let evaluator = DefaultEvaluator(splitClient: client)
-        
-        return DefaultTreatmentManager(evaluator: evaluator, key: key, splitConfig: SplitClientConfig(), eventsManager: SplitEventsManagerMock(), impressionsManager: impressionsManager, metricsManager: DefaultMetricsManager.shared, keyValidator: DefaultKeyValidator(), splitValidator: DefaultSplitValidator(splitCache: splitCache), validationLogger: validationLogger)
+
+        let eventsManager = SplitEventsManagerMock()
+        eventsManager.isSegmentsReadyFired = true
+        eventsManager.isSplitsReadyFired = true
+        return DefaultTreatmentManager(evaluator: evaluator, key: key, splitConfig: SplitClientConfig(), eventsManager: eventsManager, impressionsManager: impressionsManager, metricsManager: DefaultMetricsManager.shared, keyValidator: DefaultKeyValidator(), splitValidator: DefaultSplitValidator(splitCache: splitCache), validationLogger: validationLogger)
     }
     
     func loadSplitsFile() -> [Split] {
