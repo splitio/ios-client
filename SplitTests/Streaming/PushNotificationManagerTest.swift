@@ -28,7 +28,7 @@ class PushNotificationManagerTest: XCTestCase {
         timersManager = TimersManagerMock()
         broadcasterChannel = PushManagerEventBroadcasterStub()
         pnManager = DefaultPushNotificationManager(userKey: userKey, sseAuthenticator: sseAuthenticator, sseClient: sseClient,
-                                                        sseBackoffCounter: sseBackoff, broadcasterChannel: broadcasterChannel, timersManager: timersManager)
+                                                   sseBackoffCounter: sseBackoff, broadcasterChannel: broadcasterChannel, timersManager: timersManager)
     }
 
     func testStartFullConnectionOk() {
@@ -120,34 +120,34 @@ class PushNotificationManagerTest: XCTestCase {
     }
 
     func testStarBothReintent() {
-           // On start connection manager
-           // calls authenticate with user key
-           // and then sse client with jwt raw token and channels
-           // Returning ok token with streaming enabled
-           // Also an expectation is added to be fullfiled when timer is added
-           // in order to avoid using sleep to wait for all process finished
+        // On start connection manager
+        // calls authenticate with user key
+        // and then sse client with jwt raw token and channels
+        // Returning ok token with streaming enabled
+        // Also an expectation is added to be fullfiled when timer is added
+        // in order to avoid using sleep to wait for all process finished
 
-           let exp = XCTestExpectation(description: "finish")
-           broadcasterChannel.pushExpectation = exp
-           // Indicates that expectation have to be fired when push function is called the second time
-           broadcasterChannel.pushExpectationTriggerCallCount = 5
-           sseAuthenticator.results = [recoverableAuthResult(), recoverableAuthResult(), successAuthResult()]
-           sseClient.results = [recoverableConnResult(), recoverableConnResult(), successConnResult()]
+        let exp = XCTestExpectation(description: "finish")
+        broadcasterChannel.pushExpectation = exp
+        // Indicates that expectation have to be fired when push function is called the second time
+        broadcasterChannel.pushExpectationTriggerCallCount = 5
+        sseAuthenticator.results = [recoverableAuthResult(), recoverableAuthResult(), successAuthResult()]
+        sseClient.results = [recoverableConnResult(), recoverableConnResult(), successConnResult()]
 
-           pnManager.start()
+        pnManager.start()
 
-           wait(for: [exp], timeout: 3)
+        wait(for: [exp], timeout: 3)
 
-           XCTAssertEqual(userKey, sseAuthenticator.userKey!)
-           XCTAssertEqual("thetoken", sseClient.token)
-           XCTAssertEqual(2, sseClient.channels?.count)
-           XCTAssertEqual(4, sseBackoff.retryCallCount)
-           XCTAssertTrue(sseBackoff.resetCounterCalled)
-           XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
-           XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
-           XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.pushedEvents[0])
-           XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
-       }
+        XCTAssertEqual(userKey, sseAuthenticator.userKey!)
+        XCTAssertEqual("thetoken", sseClient.token)
+        XCTAssertEqual(2, sseClient.channels?.count)
+        XCTAssertEqual(4, sseBackoff.retryCallCount)
+        XCTAssertTrue(sseBackoff.resetCounterCalled)
+        XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
+        XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
+        XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.pushedEvents[0])
+        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
+    }
 
     func testStreamingDisabled() {
         // When auth endpoint responds with streaming disabled
