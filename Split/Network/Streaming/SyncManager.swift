@@ -64,8 +64,7 @@ class DefaultSyncManager: SyncManager {
         switch pushEvent {
         case .pushSubsystemUp:
             Logger.d("Push Subsystem Up event message received.")
-            synchronizer.synchronizeSplits()
-            synchronizer.synchronizeMySegments()
+            synchronizer.syncAll()
             synchronizer.stopPeriodicFetching()
             isPollingEnabled.set(false)
             Logger.i("Polling disabled")
