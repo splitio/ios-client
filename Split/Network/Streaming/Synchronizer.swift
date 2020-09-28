@@ -66,7 +66,13 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func synchronizeSplits(changeNumber: Int64) {
+
+        if changeNumber <= splitStorageContainer.splitsCache.getChangeNumber() {
+            return
+        }
+
         if syncTaskByChangeNumberCatalog.value(forKey: changeNumber) == nil {
+            // TODO: Replace constant 1 with config value. (Integration PR)
             let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: 1)
             var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(
                 splitChangeFetcher: splitApiFacade.splitsFetcher,
