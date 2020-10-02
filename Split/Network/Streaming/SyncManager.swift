@@ -55,9 +55,7 @@ class DefaultSyncManager: SyncManager {
     }
 
     func stop() {
-        pushNotificationManager.stop()
-        synchronizer.stopPeriodicFetching()
-        synchronizer.stopPeriodicRecording()
+        synchronizer.destroy()
     }
 
     private func handle(pushEvent: PushStatusEvent) {

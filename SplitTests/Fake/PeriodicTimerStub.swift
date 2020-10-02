@@ -17,7 +17,10 @@ class PeriodicTimerStub: PeriodicTimer {
     func trigger() {
     }
 
-    func cancel() {
+    func stop() {
+    }
+
+    func destroy() {
     }
 
     func handler( _ handler: @escaping () -> Void) {
