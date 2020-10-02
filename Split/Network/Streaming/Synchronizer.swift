@@ -124,6 +124,8 @@ class DefaultSynchronizer: Synchronizer {
         splitApiFacade.mySegmentsSyncWorker.stop()
         splitApiFacade.periodicSplitsSyncWorker.stop()
         splitApiFacade.periodicMySegmentsSyncWorker.stop()
+        splitApiFacade.periodicSplitsSyncWorker.destroy()
+        splitApiFacade.periodicMySegmentsSyncWorker.destroy()
         let updateTasks = syncTaskByChangeNumberCatalog.takeAll()
         for task in updateTasks.values {
             task.stop()

@@ -9,7 +9,8 @@
 import Foundation
 protocol PeriodicTimer {
     func trigger()
-    func cancel()
+    func stop()
+    func destroy()
     func handler( _ handler: @escaping () -> Void)
 }
 
@@ -32,10 +33,14 @@ class DefaultPeriodicTimer: PeriodicTimer {
         }
     }
 
-    func cancel() {
+    func stop() {
         if isRunning.getAndSet(false) {
             fetchTimer.suspend()
         }
+    }
+
+    func destroy() {
+        fetchTimer.cancel()
     }
 
     func handler( _ handler: @escaping () -> Void) {
@@ -48,6 +53,7 @@ protocol PeriodicSyncWorker {
     //    var completion: SyncCompletion? { get set }
     func start()
     func stop()
+    func destroy()
 }
 
 class BasePeriodicSyncWorker: PeriodicSyncWorker {
@@ -78,12 +84,16 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
         stopPeriodicFetch()
     }
 
+    func destroy() {
+        fetchTimer.destroy()
+    }
+
     private func startPeriodicFetch() {
         fetchTimer.trigger()
     }
 
     private func stopPeriodicFetch() {
-        fetchTimer.cancel()
+        fetchTimer.stop()
     }
 
     func isSdkReadyFired() -> Bool {
