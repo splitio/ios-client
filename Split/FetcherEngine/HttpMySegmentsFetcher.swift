@@ -21,6 +21,9 @@ class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
     func fetch(user: String, policy: FecthingPolicy) throws -> [String]? {
         if policy == .cacheOnly {
             return self.mySegmentsCache?.getSegments()
+        } else if policy == .networkAndCache && !restClient.isSdkServerAvailable() {
+            Logger.d("Server is not reachable. My segment updates will be delayed until host is reachable")
+            return self.mySegmentsCache?.getSegments()
         } else if !self.restClient.isSdkServerAvailable() {
             Logger.d("Server is not reachable. My segment updates will be delayed until host is reachable")
             return self.mySegmentsCache?.getSegments()

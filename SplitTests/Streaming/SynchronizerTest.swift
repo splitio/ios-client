@@ -56,7 +56,7 @@ class SynchronizerTest: XCTestCase {
 
     func testRunInitialSync() {
 
-        synchronizer.runInitialSynchronization()
+        synchronizer.syncAll()
 
         XCTAssertTrue(splitsSyncWorker.startCalled)
         XCTAssertTrue(mySegmentsSyncWorker.startCalled)
