@@ -23,26 +23,17 @@ class DefaultPeriodicTimer: PeriodicTimer {
         self.interval = seconds
         self.isRunning = Atomic(false)
         fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
-//        if #available(iOS 10.0, *) {
-//            fetchTimer.activate()
-//            Logger.d("INIT TIMER TRigger")
-//        }
-         Logger.d("INIT TIMER TRigger")
     }
 
     func trigger() {
-        Logger.d("TIMER TRigger")
         if !isRunning.getAndSet(true) {
-            Logger.d("TIMER TRigger IN")
             fetchTimer.schedule(deadline: .now(), repeating: .seconds(interval))
             fetchTimer.resume()
         }
     }
 
     func cancel() {
-        Logger.d("TIMER CANCEL")
         if isRunning.getAndSet(false) {
-            Logger.d("TIMER CANCEL IN")
             fetchTimer.suspend()
         }
     }
