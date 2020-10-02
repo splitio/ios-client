@@ -9,7 +9,7 @@
 import Foundation
 
 protocol Synchronizer {
-    func runInitialSynchronization()
+    func syncAll()
     func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments()
@@ -47,7 +47,7 @@ class DefaultSynchronizer: Synchronizer {
         self.syncTaskByChangeNumberCatalog = syncTaskByChangeNumberCatalog
     }
 
-    func runInitialSynchronization() {
+    func syncAll() {
         splitApiFacade.splitsSyncWorker.start()
         splitApiFacade.mySegmentsSyncWorker.start()
     }
@@ -57,7 +57,13 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func synchronizeSplits(changeNumber: Int64) {
+
+        if changeNumber <= splitStorageContainer.splitsCache.getChangeNumber() {
+            return
+        }
+
         if syncTaskByChangeNumberCatalog.value(forKey: changeNumber) == nil {
+            // TODO: Replace constant 1 with config value. (Integration PR)
             let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: 1)
             var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(
                 splitChangeFetcher: splitApiFacade.splitsFetcher,

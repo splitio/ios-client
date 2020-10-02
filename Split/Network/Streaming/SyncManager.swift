@@ -32,7 +32,8 @@ class DefaultSyncManager: SyncManager {
     }
 
     func start() {
-        synchronizer.runInitialSynchronization()
+
+        synchronizer.syncAll()
         isPollingEnabled.set(!splitConfig.streamingEnabled)
         if splitConfig.streamingEnabled {
             broadcasterChannel.register { event in
@@ -63,8 +64,7 @@ class DefaultSyncManager: SyncManager {
         switch pushEvent {
         case .pushSubsystemUp:
             Logger.d("Push Subsystem Up event message received.")
-            synchronizer.synchronizeSplits()
-            synchronizer.synchronizeMySegments()
+            synchronizer.syncAll()
             synchronizer.stopPeriodicFetching()
             isPollingEnabled.set(false)
             Logger.i("Polling disabled")

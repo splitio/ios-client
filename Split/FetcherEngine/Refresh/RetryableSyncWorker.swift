@@ -15,6 +15,12 @@ protocol RetryableSyncWorker {
     func stop()
 }
 
+///
+/// Base clase to extend by the classes that retrieves data
+/// from servers
+/// This class retryies when fetching is not possible do to
+/// nettwork connection and http server errors
+///
 class BaseRetryableSyncWorker: RetryableSyncWorker {
 
     var completion: SyncCompletion?
@@ -74,6 +80,10 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     }
 }
 
+///
+/// Retrieves segments changes or a user key
+/// Also triggers MY SEGMENTS READY event when first fetch is succesful
+///
 class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
 
     private let mySegmentsChangeFetcher: MySegmentsChangeFetcher
@@ -107,6 +117,10 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
     }
 }
 
+///
+/// Retrieves split changes using stored change number.
+/// Also triggers SPLIT READY event when first fetch is succesful
+///
 class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
 
     private let splitChangeFetcher: SplitChangeFetcher
@@ -150,6 +164,9 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     }
 }
 
+///
+/// Retrieves split changes when change number passed as parameter is bigger than stored change number.
+///
 class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
 
     private let splitChangeFetcher: SplitChangeFetcher

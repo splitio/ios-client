@@ -29,7 +29,7 @@ class SynchronizerStub: Synchronizer {
     var syncSplitsChangeNumberExp: XCTestExpectation?
     var syncMySegmentsExp: XCTestExpectation?
 
-    func runInitialSynchronization() {
+    func syncAll() {
         initialSynchronizationCalled = true
     }
 
