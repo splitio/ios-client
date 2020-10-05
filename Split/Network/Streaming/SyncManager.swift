@@ -55,6 +55,7 @@ class DefaultSyncManager: SyncManager {
     }
 
     func stop() {
+        pushNotificationManager.stop()
         synchronizer.destroy()
     }
 
