@@ -104,6 +104,18 @@ class SyncManagerTest: XCTestCase {
         XCTAssertTrue(pushManager.stopCalled)
     }
 
+    func testStop() {
+
+        splitConfig.streamingEnabled = true
+        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
+                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+        syncManager.start()
+        syncManager.stop()
+
+        XCTAssertTrue(synchronizer.destroyCalled)
+        XCTAssertTrue(pushManager.stopCalled)
+    }
+
     override func tearDown() {
 
     }
