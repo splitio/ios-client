@@ -189,7 +189,8 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
             if changeNumber < splitCache.getChangeNumber() {
                 return true
             }
-            if let splitChanges = try self.splitChangeFetcher.fetch(since: changeNumber) {
+
+            if let splitChanges = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber()) {
                 resetBackoffCounter()
                 Logger.d(splitChanges.debugDescription)
                 return true

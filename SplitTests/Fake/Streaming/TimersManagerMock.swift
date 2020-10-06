@@ -18,7 +18,7 @@ class TimersManagerMock: TimersManager {
     private var expectations = [TimerName: XCTestExpectation]()
 
     func add(timer: TimerName, delayInSeconds: Int) {
-        DispatchQueue.global().sync {
+        _ = DispatchQueue.global().sync {
             self.timersAdded.insert(timer)
         }
         if let exp = expectations[timer] {
@@ -27,7 +27,7 @@ class TimersManagerMock: TimersManager {
     }
 
     func cancel(timer: TimerName) {
-        DispatchQueue.global().sync {
+        _ = DispatchQueue.global().sync {
             self.timersCancelled.insert(timer)
         }
     }

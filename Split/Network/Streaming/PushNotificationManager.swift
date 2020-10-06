@@ -102,18 +102,21 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
         let result = sseAuthenticator.authenticate(userKey: userKey)
         if result.success && !result.pushEnabled {
+            Logger.d("Streaming disabled for api key")
             broadcasterChannel.push(event: .pushSubsystemDown)
             state.set(.stopped)
             return nil
         }
 
         if !result.success && !result.errorIsRecoverable {
+            Logger.d("Streaming auth error. Retrying.")
             broadcasterChannel.push(event: .pushNonRetryableError)
             state.set(.stopped)
             return nil
         }
 
         if result.success, let jwtToken = result.jwtToken, state.getAndSet(.authenticated) != .stopped {
+            Logger.d("Streaming authentication success.")
             return jwtToken
         }
 

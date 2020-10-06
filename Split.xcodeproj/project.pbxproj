@@ -350,6 +350,8 @@
 		59F4AACA2515461B00A1C69A /* TrackManagerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAC92515461B00A1C69A /* TrackManagerStub.swift */; };
 		59F4AACE2518CEB200A1C69A /* RetryableSplitsUpdateWorkerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AACD2518CEB200A1C69A /* RetryableSplitsUpdateWorkerFactory.swift */; };
 		59F4AAD02518D4BB00A1C69A /* SyncWorkerFactoryStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AACF2518D4BA00A1C69A /* SyncWorkerFactoryStub.swift */; };
+		59F4AAD4251A7F4700A1C69A /* SplitApiFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAD3251A7F4700A1C69A /* SplitApiFacade.swift */; };
+		59F4AAD6251A8C3E00A1C69A /* SyncManagerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAD5251A8C3D00A1C69A /* SyncManagerBuilder.swift */; };
 		59F6AA7F215578F500A51997 /* ImpressionsFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA7D215578F400A51997 /* ImpressionsFile.swift */; };
 		59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */; };
 		59F6AA96215E6A5F00A51997 /* LatencyCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */; };
@@ -752,6 +754,8 @@
 		59F4AAC92515461B00A1C69A /* TrackManagerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackManagerStub.swift; sourceTree = "<group>"; };
 		59F4AACD2518CEB200A1C69A /* RetryableSplitsUpdateWorkerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryableSplitsUpdateWorkerFactory.swift; sourceTree = "<group>"; };
 		59F4AACF2518D4BA00A1C69A /* SyncWorkerFactoryStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncWorkerFactoryStub.swift; sourceTree = "<group>"; };
+		59F4AAD3251A7F4700A1C69A /* SplitApiFacade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitApiFacade.swift; sourceTree = "<group>"; };
+		59F4AAD5251A8C3D00A1C69A /* SyncManagerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManagerBuilder.swift; sourceTree = "<group>"; };
 		59F6AA7D215578F400A51997 /* ImpressionsFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsFile.swift; sourceTree = "<group>"; };
 		59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTest.swift; sourceTree = "<group>"; };
 		59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyCounter.swift; sourceTree = "<group>"; };
@@ -943,6 +947,7 @@
 				3B6DEE8120EA6ADF0067435E /* SplitView.swift */,
 				3B6DEE7D20EA6ADF0067435E /* SplitError.swift */,
 				3B6DEE8320EA6AE00067435E /* DefaultSplitFactory.swift */,
+				59F4AAD3251A7F4700A1C69A /* SplitApiFacade.swift */,
 				3B6DEECA20EA6AE30067435E /* SplitFactory.swift */,
 				3B6DEEE020EA6AE30067435E /* DefaultSplitManager.swift */,
 				3B6DEE9C20EA6AE10067435E /* SplitManager.swift */,
@@ -1529,6 +1534,7 @@
 				59F4AA9A24FE93E300A1C69A /* NotificationManagerKeeper.swift */,
 				59F4AA9C24FE966800A1C69A /* SseHandler.swift */,
 				59F4AACD2518CEB200A1C69A /* RetryableSplitsUpdateWorkerFactory.swift */,
+				59F4AAD5251A8C3D00A1C69A /* SyncManagerBuilder.swift */,
 			);
 			path = Streaming;
 			sourceTree = "<group>";
@@ -1856,6 +1862,7 @@
 				599EA57A22666B84006CBA89 /* YAMLRegex.swift in Sources */,
 				3B6DEF8120EA6AE50067435E /* DataResult.swift in Sources */,
 				59F6AAA9215EBD4400A51997 /* CounterMetric.swift in Sources */,
+				59F4AAD4251A7F4700A1C69A /* SplitApiFacade.swift in Sources */,
 				3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */,
 				3B6DEF5420EA6AE50067435E /* SplitEventExecutorFactory.swift in Sources */,
 				3B6DEF3020EA6AE50067435E /* Evaluator.swift in Sources */,
@@ -1975,6 +1982,7 @@
 				595AD20824DDC66500A7B750 /* SseAuthenticator.swift in Sources */,
 				3B6DEF7B20EA6AE50067435E /* HttpDataResponse.swift in Sources */,
 				59FB7C3122030EFA00ECC96A /* SplitFactoryBuilder.swift in Sources */,
+				59F4AAD6251A8C3E00A1C69A /* SyncManagerBuilder.swift in Sources */,
 				590DF9EE215038200082B94F /* SyncDictionaryCollectionWrapper.swift in Sources */,
 				595AD25F24E5D16300A7B750 /* Atomic.swift in Sources */,
 				3B6DEF6620EA6AE50067435E /* EndsWithMatcher.swift in Sources */,

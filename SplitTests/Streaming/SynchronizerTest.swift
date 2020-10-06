@@ -46,7 +46,7 @@ class SynchronizerTest: XCTestCase {
                                        mySegmentsSyncWorker: mySegmentsSyncWorker,
                                        periodicSplitsSyncWorker: periodicSplitsSyncWorker,
                                        periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker)
-        let storageContainer = SplitStorageContainer(splitsCache: splitsCache, mySegmentsCache: mySegmentsCache)
+        let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsCache: splitsCache, mySegmentsCache: mySegmentsCache)
 
         synchronizer = DefaultSynchronizer(splitApiFacade: apiFacade,
                                            splitStorageContainer: storageContainer,

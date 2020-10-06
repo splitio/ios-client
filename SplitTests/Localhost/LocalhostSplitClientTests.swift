@@ -24,7 +24,10 @@ class LocalhostSplitClientTests: XCTestCase {
         config.refreshInterval = 0
         let fetcher = LocalhostSplitFetcher(fileStorage: storage, splitCache: splitCache, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
         fetcher.forceRefresh()
-        client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), splitFetcher: fetcher)
+        let storageContainer = SplitStorageContainer(fileStorage: storage,
+                                                     splitsCache: splitCache,
+                                                     mySegmentsCache: InMemoryMySegmentsCache(segments: Set()))
+        client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), storageContainer: storageContainer)
     }
     
     override func tearDown() {

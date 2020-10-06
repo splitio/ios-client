@@ -113,7 +113,7 @@ class EndpointFactoryTest: XCTestCase {
     }
 
     func testStreamingAuthEndpoint() {
-        let endpointUrl = "\(serviceEndpoints.authServiceEndpoint.absoluteString)"
+        let endpointUrl = "\(serviceEndpoints.authServiceEndpoint.absoluteString)/auth"
         let endpoint = factory.sseAuthenticationEndpoint
 
         XCTAssertEqual(HttpMethod.get, endpoint.method)
