@@ -17,6 +17,7 @@ class SplitChangesTest: XCTestCase {
     var reqChangesIndex = 0
     var serverUrl = ""
     let kMatchingKey = "CUSTOMER_ID"
+    var factory: SplitFactory?
 
     let spExp = [
         XCTestExpectation(description: "upd 0"),
@@ -92,6 +93,7 @@ class SplitChangesTest: XCTestCase {
         splitConfig.impressionRefreshRate = splitConfig.featuresRefreshRate * 6
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
+        splitConfig.streamingEnabled = false
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
         .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         splitConfig.impressionListener = { impression in
@@ -100,7 +102,7 @@ class SplitChangesTest: XCTestCase {
         
         let key: Key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory!.client
 
@@ -155,12 +157,10 @@ class SplitChangesTest: XCTestCase {
             _ = semaphore.signal()
         })
         semaphore.wait()
-        factory = nil
     }
 
     private func  responseSlitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
-
 
         var prevChangeNumber: Int64 = 0
         for i in 0..<4 {

@@ -29,6 +29,7 @@ class PeriodicSyncWorkerStub: PeriodicSyncWorker {
 
     var startCalled = false
     var stopCalled = false
+    var destroyCalled = false
 
     func start() {
         startCalled = true
@@ -36,5 +37,9 @@ class PeriodicSyncWorkerStub: PeriodicSyncWorker {
 
     func stop() {
         stopCalled = true
+    }
+
+    func destroy() {
+        destroyCalled = true
     }
 }

@@ -43,21 +43,16 @@ import Foundation
 
 public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitClient {
 
-    var mySegmentsFetcher: MySegmentsFetcher?
+    var storageContainer: SplitStorageContainer?
 
-    var splitFetcher: SplitFetcher? {
-        return refreshableSplitFetcher
-    }
-
-    private let refreshableSplitFetcher: RefreshableSplitFetcher?
     private let eventsManager: SplitEventsManager?
     private var evaluator: Evaluator!
     private let key: Key
 
-    init(key: Key, splitFetcher: RefreshableSplitFetcher, eventsManager: SplitEventsManager? = nil) {
-        self.refreshableSplitFetcher = splitFetcher
+    init(key: Key, storageContainer: SplitStorageContainer, eventsManager: SplitEventsManager? = nil) {
         self.eventsManager = eventsManager
         self.key = key
+        self.storageContainer = storageContainer
         super.init()
         self.evaluator = DefaultEvaluator(splitClient: self)
     }
@@ -148,7 +143,6 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
     }
 
     public func destroy(completion: (() -> Void)?) {
-        refreshableSplitFetcher?.stop()
         completion?()
     }
 

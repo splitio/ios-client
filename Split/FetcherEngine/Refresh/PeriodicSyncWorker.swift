@@ -9,24 +9,37 @@
 import Foundation
 protocol PeriodicTimer {
     func trigger()
-    func cancel()
+    func stop()
+    func destroy()
     func handler( _ handler: @escaping () -> Void)
 }
 
 class DefaultPeriodicTimer: PeriodicTimer {
 
+    private var interval: Int
     private var fetchTimer: DispatchSourceTimer
+    private var isRunning: Atomic<Bool>
 
     init(interval seconds: Int) {
+        self.interval = seconds
+        self.isRunning = Atomic(false)
         fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
-        fetchTimer.schedule(deadline: .now(), repeating: .seconds(seconds))
     }
 
     func trigger() {
-        fetchTimer.resume()
+        if !isRunning.getAndSet(true) {
+            fetchTimer.schedule(deadline: .now(), repeating: .seconds(interval))
+            fetchTimer.resume()
+        }
     }
 
-    func cancel() {
+    func stop() {
+        if isRunning.getAndSet(false) {
+            fetchTimer.suspend()
+        }
+    }
+
+    func destroy() {
         fetchTimer.cancel()
     }
 
@@ -36,10 +49,11 @@ class DefaultPeriodicTimer: PeriodicTimer {
 }
 
 protocol PeriodicSyncWorker {
-//    typealias SyncCompletion = (Bool) -> Void
-//    var completion: SyncCompletion? { get set }
+    //    typealias SyncCompletion = (Bool) -> Void
+    //    var completion: SyncCompletion? { get set }
     func start()
     func stop()
+    func destroy()
 }
 
 class BasePeriodicSyncWorker: PeriodicSyncWorker {
@@ -70,12 +84,16 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
         stopPeriodicFetch()
     }
 
+    func destroy() {
+        fetchTimer.destroy()
+    }
+
     private func startPeriodicFetch() {
         fetchTimer.trigger()
     }
 
     private func stopPeriodicFetch() {
-        fetchTimer.cancel()
+        fetchTimer.stop()
     }
 
     func isSdkReadyFired() -> Bool {
@@ -109,8 +127,8 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         do {
-            let splitChanges = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber())
-            Logger.d(splitChanges.debugDescription)
+            let _ = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber())
+            Logger.d("Fetching splits")
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
             Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)

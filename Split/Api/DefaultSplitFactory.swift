@@ -19,15 +19,15 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return Version.semantic
     }
 
-    private var defaultClient: SplitClient!
-    private let defaultManager: SplitManager
+    private var defaultClient: SplitClient?
+    private var defaultManager: SplitManager?
 
     public var client: SplitClient {
-        return defaultClient
+        return defaultClient!
     }
 
     public var manager: SplitManager {
-        return defaultManager
+        return defaultManager!
     }
 
     public var version: String {
@@ -35,6 +35,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     init(apiKey: String, key: Key, config: SplitClientConfig) {
+        super.init()
+
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? config.defaultDataFolder
 
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
@@ -42,54 +44,44 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         MetricManagerConfig.default.defaultDataFolderName = dataFolderName
 
         config.apiKey = apiKey
-        let fileStorage = FileStorage(dataFolderName: dataFolderName)
-        let splitCache = SplitCache(fileStorage: fileStorage)
-        let manager = DefaultSplitManager(splitCache: splitCache)
-        defaultManager = manager
+        let storageContainer = buildStorageContainer(userKey: key.matchingKey,
+                                                     dataFolderName: dataFolderName)
 
-        let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
+        let manager = DefaultSplitManager(splitCache: storageContainer.splitsCache)
+        defaultManager = manager
 
         let eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
-        let restClient = DefaultRestClient(endpointFactory: EndpointFactory(serviceEndpoints: config.serviceEndpoints,
-                                                                            apiKey: apiKey, userKey: key.matchingKey))
+        let  endpointFactory = EndpointFactory(serviceEndpoints: config.serviceEndpoints,
+                                               apiKey: apiKey, userKey: key.matchingKey)
+        let restClient = DefaultRestClient(endpointFactory: endpointFactory)
 
         /// TODO: Remove this line when metrics refactor
         DefaultMetricsManager.shared.restClient = restClient
-        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
 
-        let refreshableSplitFetcher = DefaultRefreshableSplitFetcher(
-            splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: config.featuresRefreshRate,
-            cacheExpiration: config.cacheExpirationInSeconds, eventsManager: eventsManager)
-
-        let mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: mySegmentsCache)
-        let refreshableMySegmentsFetcher = DefaultRefreshableMySegmentsFetcher(
-            matchingKey: key.matchingKey, mySegmentsChangeFetcher: mySegmentsFetcher, mySegmentsCache: mySegmentsCache,
-            interval: config.segmentsRefreshRate, eventsManager: eventsManager)
-
-        super.init()
-
-        let trackManager = buildTrackManager(splitConfig: config, fileStorage: fileStorage, restClient: restClient)
-        let impressionsManager = buildImpressionsManager(splitConfig: config, fileStorage: fileStorage,
+        let trackManager = buildTrackManager(splitConfig: config, fileStorage: storageContainer.fileStorage,
+                                             restClient: restClient)
+        let impressionsManager = buildImpressionsManager(splitConfig: config, fileStorage: storageContainer.fileStorage,
                                                          restClient: restClient)
 
+        let apiFacade = SplitApiFacade.builder().setUserKey(key.matchingKey).setSplitConfig(config)
+            .setRestClient(restClient).setEventsManager(eventsManager).setImpressionsManager(impressionsManager)
+            .setTrackManager(trackManager).setStorageContainer(storageContainer).build()
+
+        let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
+            .setRestClient(restClient).setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade)
+            .setSplitConfig(config).build()
+
         defaultClient = DefaultSplitClient(
-            config: config, key: key, splitCache: splitCache, eventsManager: eventsManager, trackManager: trackManager,
-            impressionsManager: impressionsManager, refreshableSplitFetcher: refreshableSplitFetcher,
-            refreshableMySegmentsFetcher: refreshableMySegmentsFetcher, destroyHandler: {
-                refreshableMySegmentsFetcher.stop()
-                refreshableSplitFetcher.stop()
-                impressionsManager.stop()
-                trackManager.stop()
+            config: config, key: key, apiFacade: apiFacade, storageContainer: storageContainer,
+            eventsManager: eventsManager, destroyHandler: {
+                syncManager.stop()
                 manager.destroy()
         })
 
-        eventsManager.getExecutorResources().setClient(client: defaultClient)
-        refreshableSplitFetcher.start()
-        refreshableMySegmentsFetcher.start()
-        trackManager.start()
-        impressionsManager.start()
+        eventsManager.getExecutorResources().setClient(client: defaultClient!)
+        syncManager.start()
     }
 
     private func buildTrackConfig(from splitConfig: SplitClientConfig) -> TrackManagerConfig {
@@ -104,15 +96,25 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                        impressionsPerPush: splitConfig.impressionsChunkSize)
     }
 
-    private func buildTrackManager(splitConfig: SplitClientConfig, fileStorage: FileStorage,
+    private func buildTrackManager(splitConfig: SplitClientConfig, fileStorage: FileStorageProtocol,
                                    restClient: RestClientTrackEvents) -> TrackManager {
         return DefaultTrackManager(config: buildTrackConfig(from: splitConfig),
                                    fileStorage: fileStorage, restClient: restClient)
     }
 
-    private func buildImpressionsManager(splitConfig: SplitClientConfig, fileStorage: FileStorage,
+    private func buildImpressionsManager(splitConfig: SplitClientConfig, fileStorage: FileStorageProtocol,
                                          restClient: RestClientImpressions) -> ImpressionsManager {
         return DefaultImpressionsManager(config: buildImpressionsConfig(from: splitConfig), fileStorage: fileStorage,
                                          restClient: restClient)
+    }
+
+    private func buildStorageContainer(userKey: String,
+                                       dataFolderName: String) -> SplitStorageContainer {
+        let fileStorage = FileStorage(dataFolderName: dataFolderName)
+        let mySegmentsCache = MySegmentsCache(matchingKey: userKey, fileStorage: fileStorage)
+        let splitsCache = SplitCache(fileStorage: fileStorage)
+        return SplitStorageContainer(fileStorage: fileStorage,
+                                     splitsCache: splitsCache,
+                                     mySegmentsCache: mySegmentsCache)
     }
 }

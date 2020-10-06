@@ -18,9 +18,13 @@ class EvaluatorTests: XCTestCase {
     override func setUp() {
         if evaluator == nil {
             let mySegments = ["s1", "s2", "test_copy"]
-            let splitFetcher: SplitFetcher = SplitFetcherStub(splits: loadSplitsFile())
-            let mySegmentsFetcher: MySegmentsFetcher = MySegmentsFetcherStub(mySegments: mySegments)
-            client = InternalSplitClientStub(splitFetcher: splitFetcher, mySegmentsFetcher: mySegmentsFetcher)
+
+            let splits = loadSplitsFile()
+            let splitCache = SplitCacheStub(splits: splits, changeNumber: 100)
+            let mySegmentsCache = MySegmentsCacheStub()
+            mySegmentsCache.setSegments(mySegments)
+            let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsCache: splitCache, mySegmentsCache: mySegmentsCache)
+            client = InternalSplitClientStub(storageContainer: storageContainer)
             evaluator = DefaultEvaluator(splitClient: client)
         }
     }
@@ -89,7 +93,7 @@ class EvaluatorTests: XCTestCase {
     func testKilledSplit() {
         var result: EvaluationResult!
         let matchingKey = "anyKey"
-        let splitName = "Test"
+        let splitName = "OldTest"
         do {
             result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
         } catch {
@@ -368,22 +372,27 @@ class EvaluatorTests: XCTestCase {
     
     func customEvaluator(splitFile fileName: String) -> Evaluator {
         let mySegments: [String] = []
-        var splits: [Split] = []
+        var splits: [String: Split] = [:]
         if let split = loadSplit(splitName: fileName) {
-            splits.append(split)
+            splits[split.name!] = split
         }
-        let splitFetcher: SplitFetcher = SplitFetcherStub(splits: splits)
-        let mySegmentsFetcher: MySegmentsFetcher = MySegmentsFetcherStub(mySegments: mySegments)
-        let client: InternalSplitClient = InternalSplitClientStub(splitFetcher: splitFetcher, mySegmentsFetcher: mySegmentsFetcher)
+        let splitCache = InMemorySplitCache(splits: splits, changeNumber: 100, timestamp: 100)
+        let mySegmentsCache = InMemoryMySegmentsCache(segments: Set(mySegments))
+        let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
+                                                     splitsCache: splitCache, mySegmentsCache: mySegmentsCache)
+        client = InternalSplitClientStub(storageContainer: storageContainer)
         evaluator = DefaultEvaluator(splitClient: client)
         return evaluator
     }
     
     func customEvaluator(split: Split) -> Evaluator {
-        let mySegments: [String] = []
-        let splitFetcher: SplitFetcher = SplitFetcherStub(splits: [split])
-        let mySegmentsFetcher: MySegmentsFetcher = MySegmentsFetcherStub(mySegments: mySegments)
-        let client: InternalSplitClient = InternalSplitClientStub(splitFetcher: splitFetcher, mySegmentsFetcher: mySegmentsFetcher)
+        let splitCache = SplitCacheStub(splits: [split], changeNumber: 100)
+        let mySegmentsCache = MySegmentsCacheStub()
+        mySegmentsCache.setSegments([])
+        let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
+                                                     splitsCache: splitCache,
+                                                     mySegmentsCache: mySegmentsCache)
+        client = InternalSplitClientStub(storageContainer: storageContainer)
         evaluator = DefaultEvaluator(splitClient: client)
         return evaluator
     }

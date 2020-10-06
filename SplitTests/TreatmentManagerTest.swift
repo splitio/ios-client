@@ -14,9 +14,9 @@ class TreatmentManagerTest: XCTestCase {
     
     var validationLogger: ValidationMessageLogger!
     var impressionsManager: ImpressionsManager!
-    var splitFetcher: SplitFetcher!
-    var mySegmentsFetcher: MySegmentsFetcher!
     var splitCache: SplitCacheProtocol!
+    var mySegmentsCache: MySegmentsCacheProtocol!
+    var storageContainer: SplitStorageContainer!
     var client: InternalSplitClient!
     
     var impressionsManagerStub: ImpressionsManagerStub {
@@ -32,12 +32,14 @@ class TreatmentManagerTest: XCTestCase {
         
         impressionsManager = ImpressionsManagerStub()
         validationLogger = ValidationMessageLoggerStub()
-        if splitFetcher == nil {
+        if storageContainer == nil {
             let splits = loadSplitsFile()
             let mySegments = ["s1", "s2", "test_copy"]
             splitCache = SplitCacheStub(splits: splits, changeNumber: -1)
-            splitFetcher = SplitFetcherStub(splits: splits)
-            mySegmentsFetcher = MySegmentsFetcherStub(mySegments: mySegments)
+            mySegmentsCache = InMemoryMySegmentsCache(segments: Set(mySegments))
+            storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
+                                                     splitsCache: splitCache,
+                                                     mySegmentsCache: mySegmentsCache)
         }
     }
     
@@ -93,7 +95,7 @@ class TreatmentManagerTest: XCTestCase {
     
     func testKilledSplitWithConfig() {
         let matchingKey = "the_key"
-        let splitName = "Test"
+        let splitName = "OldTest"
         
         
         let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
@@ -117,14 +119,14 @@ class TreatmentManagerTest: XCTestCase {
     
     func testBasicEvaluations() {
         let matchingKey = "thekey"
-        let splitNames = ["FACUNDO_TEST", "testo2222", "Test"]
+        let splitNames = ["FACUNDO_TEST", "testo2222", "OldTest"]
         
         let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
         let splitResults = treatmentManager.getTreatmentsWithConfig(splits: splitNames, attributes: nil)
         
         let r1 = splitResults["FACUNDO_TEST"]
         let r2 = splitResults["testo2222"]
-        let r3 = splitResults["Test"]
+        let r3 = splitResults["OldTest"]
         
         let impressionsCount = impressionsManagerStub.impressions.count
         let imp1 = impressionsManagerStub.impressions[splitNames[0]]
@@ -252,13 +254,17 @@ class TreatmentManagerTest: XCTestCase {
     
     func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil) -> TreatmentManager {
         let key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
-        client = InternalSplitClientStub(splitFetcher: splitFetcher, mySegmentsFetcher: mySegmentsFetcher)
+        client = InternalSplitClientStub(storageContainer: storageContainer)
         let evaluator = DefaultEvaluator(splitClient: client)
 
         let eventsManager = SplitEventsManagerMock()
         eventsManager.isSegmentsReadyFired = true
         eventsManager.isSplitsReadyFired = true
-        return DefaultTreatmentManager(evaluator: evaluator, key: key, splitConfig: SplitClientConfig(), eventsManager: eventsManager, impressionsManager: impressionsManager, metricsManager: DefaultMetricsManager.shared, keyValidator: DefaultKeyValidator(), splitValidator: DefaultSplitValidator(splitCache: splitCache), validationLogger: validationLogger)
+        return DefaultTreatmentManager(evaluator: evaluator, key: key, splitConfig: SplitClientConfig(),
+                                       eventsManager: eventsManager, impressionsManager: impressionsManager,
+                                       metricsManager: DefaultMetricsManager.shared, keyValidator: DefaultKeyValidator(),
+                                       splitValidator: DefaultSplitValidator(splitCache: splitCache),
+                                       validationLogger: validationLogger)
     }
     
     func loadSplitsFile() -> [Split] {
