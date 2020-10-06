@@ -66,7 +66,7 @@ class DefaultSyncManager: SyncManager {
             synchronizer.syncAll()
             synchronizer.stopPeriodicFetching()
             isPollingEnabled.set(false)
-            Logger.i("Polling disabled")
+            Logger.i("Polling disabled for api key")
 
         case .pushSubsystemDown:
             Logger.d("Push Subsystem Down event message received.")
