@@ -127,6 +127,16 @@ class StreamingOccupancyTest: XCTestCase {
         let mySegHitAfterPriEnabled = mySegHitCount
         let splitHitAfterPriEnabled = splitsHitCount
 
+        // Sending old timestamp notification. Nothing should change
+        timestamp-=2000
+        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: timestamp,
+                                                                                    publishers: 0,
+                                                                                    channel: kPrimaryChannel))
+        justWait() // if polling enabled on hit should occur
+
+        let mySegHitAfterOldPriEnabled = mySegHitCount
+        let splitHitAfterOldPriEnabled = splitsHitCount
+
         // Hits > 0 means polling enabled (channel pri and sec disabled)
         XCTAssertTrue(splitHitAfterDisabled > 0)
         XCTAssertTrue(mySegHitAfterDisabled > 0)
@@ -142,6 +152,10 @@ class StreamingOccupancyTest: XCTestCase {
         // Hits == 0 means polling disabled (streaming enabled channel pri)
         XCTAssertEqual(0, mySegHitAfterPriEnabled)
         XCTAssertEqual(0, splitHitAfterPriEnabled)
+
+        // Hits == 0 means polling disabled (streaming enabled channel pri)
+        XCTAssertEqual(0, mySegHitAfterOldPriEnabled)
+        XCTAssertEqual(0, splitHitAfterOldPriEnabled)
 
     }
 
