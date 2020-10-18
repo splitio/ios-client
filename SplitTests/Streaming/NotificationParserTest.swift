@@ -91,7 +91,8 @@ class NotificationParserTest: XCTestCase {
     func testProcessOccupancy() throws {
         let incoming = notificationParser.parseIncoming(jsonString: occupancyNotificationMessage);
 
-        let notification = try notificationParser.parseOccupancy(jsonString: incoming!.jsonData!, timestamp: 5);
+        let notification = try notificationParser.parseOccupancy(jsonString: incoming!.jsonData!,
+                                                                 timestamp: 5, channel: "control_pri");
 
         XCTAssertEqual(NotificationType.occupancy, notification.type);
         XCTAssertEqual(1, notification.metrics.publishers);
