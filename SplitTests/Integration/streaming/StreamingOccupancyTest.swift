@@ -30,6 +30,9 @@ class StreamingOccupancyTest: XCTestCase {
     var mySegExpIndex = 0
     var splitsExpIndex = 0
 
+    var waitForSplitChangesHit = true
+    var waitForMySegmentsHit = false
+
     override func setUp() {
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -80,7 +83,7 @@ class StreamingOccupancyTest: XCTestCase {
         streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: timestamp,
                                                                                     publishers: 0,
                                                                                     channel: kPrimaryChannel))
-
+        waitForHits()
         wait(for: [mySegExps[mySegExpIndex], splitsChangesExps[splitsExpIndex]], timeout: 7)
         let mySegHitAfterDisabled = mySegHitCount
         let splitHitAfterDisabled = splitsHitCount
@@ -91,20 +94,22 @@ class StreamingOccupancyTest: XCTestCase {
         streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: timestamp,
                                                                                     publishers: 1,
                                                                                     channel: kSecondaryChannel))
-        waitForHits() // wait for polling to stop
+        justWait() // wait for polling to stop
         mySegHitCount = 0
         splitsHitCount = 0
-        waitForHits() // wait a while to confirm no hits
+        justWait() // wait a while to confirm no hits
+
         let mySegHitAfterSecEnabled = mySegHitCount
         let splitHitAfterSecEnabled = splitsHitCount
 
-        // Should disable streaming in secondary channel
+        // Should disable streaming in secondary channel and enable polling
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: timestamp,
                                                                                     publishers: 0,
                                                                                     channel: kSecondaryChannel))
         mySegHitCount = 0
         splitsHitCount = 0
+        waitForHits()
         wait(for: [mySegExps[mySegExpIndex], splitsChangesExps[splitsExpIndex]], timeout: 7) // expectations for hits when polling enabled
         let mySegHitAfterSecDisabled = mySegHitCount
         let splitHitAfterSecDisabled = splitsHitCount
@@ -114,10 +119,10 @@ class StreamingOccupancyTest: XCTestCase {
         streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: timestamp,
                                                                                     publishers: 1,
                                                                                     channel: kPrimaryChannel))
-        waitForHits() // wait for polling to stop
+        justWait() // wait for polling to stop
         mySegHitCount = 0
         splitsHitCount = 0
-        waitForHits() // if polling enabled on hit should occur
+        justWait() // if polling enabled on hit should occur
 
         let mySegHitAfterPriEnabled = mySegHitCount
         let splitHitAfterPriEnabled = splitsHitCount
@@ -140,13 +145,20 @@ class StreamingOccupancyTest: XCTestCase {
 
     }
 
+    private func waitForHits() {
+        waitForMySegmentsHit = true
+        waitForSplitChangesHit = true
+    }
+
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
+                self.splitsHitCount+=1
                 self.checkHist(inSplits: true)
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges.utf8))
             case let(urlString) where urlString.contains("mySegments"):
+                self.mySegHitCount+=1
                 self.checkHist(inSplits: false)
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             case let(urlString) where urlString.contains("auth"):
@@ -167,7 +179,7 @@ class StreamingOccupancyTest: XCTestCase {
         }
     }
 
-    private func waitForHits() {
+    private func justWait() {
         sleep(UInt32(Double(self.kRefreshRate) * 2))
     }
 
@@ -180,17 +192,21 @@ class StreamingOccupancyTest: XCTestCase {
     func waitLoop(inSplits: Bool) {
         var out = false
         while(!out) {
-            self.waitForHits()
+            justWait()
             let hits = inSplits ? self.splitsHitCount : self.mySegHitCount
             out = hits > 0
             if inSplits {
-                self.splitsHitCount = 0
-                mySegExps[mySegExpIndex].fulfill()
-                mySegExpIndex+=1
+                if waitForMySegmentsHit {
+                    waitForMySegmentsHit = false
+                    mySegExps[mySegExpIndex].fulfill()
+                    mySegExpIndex+=1
+                }
             } else {
-                self.mySegHitCount = 0
-                splitsChangesExps[splitsExpIndex].fulfill()
-                splitsExpIndex+=1
+                if waitForSplitChangesHit {
+                    waitForSplitChangesHit = false
+                    splitsChangesExps[splitsExpIndex].fulfill()
+                    splitsExpIndex+=1
+                }
             }
         }
     }
