@@ -17,6 +17,8 @@ import Foundation
 ///
 @objc public class DefaultSplitFactoryBuilder: NSObject, SplitFactoryBuilder {
 
+    private var reachabilityChecker: HostReachabilityChecker?
+    private var httpClient: HttpClient?
     private var bundle: Bundle = Bundle.main
     private var apiKey: String?
     private var matchingKey: String?
@@ -70,6 +72,16 @@ import Foundation
         return self
     }
 
+    func setHttpClient(_ httpClient: HttpClient) -> SplitFactoryBuilder {
+        self.httpClient = httpClient
+        return self
+    }
+
+    func setReachabilityChecker(_ checker: HostReachabilityChecker) -> SplitFactoryBuilder {
+        self.reachabilityChecker = checker
+        return self
+    }
+
     public func build() -> SplitFactory? {
 
         if let errorInfo = apiKeyValidator.validate(apiKey: apiKey) {
@@ -90,7 +102,7 @@ import Foundation
             let errorInfo = ValidationErrorInfo(
                 error: ValidationError.some,
                 message: "You already have \(factoryCount) \(factoryCount == 1 ? "factory" : "factories") with this " +
-                "API Key. We recommend keeping only one instance of the factory at all times (Singleton pattern) and " +
+                    "API Key. We recommend keeping only one instance of the factory at all times (Singleton pattern) and " +
                 "reusing it throughout your application.")
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
 
@@ -98,7 +110,7 @@ import Foundation
             let errorInfo = ValidationErrorInfo(
                 error: ValidationError.some,
                 message: "You already have an instance of the Split factory. Make sure you definitely want this " +
-                "additional instance. We recommend keeping only one instance of the factory at all times " +
+                    "additional instance. We recommend keeping only one instance of the factory at all times " +
                 "(Singleton pattern) and reusing it throughout your application.")
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
         }
@@ -112,8 +124,10 @@ import Foundation
                                             bundle: bundle)
         } else {
             factory = DefaultSplitFactory(apiKey: apiKey!,
-                                   key: finalKey,
-                                   config: config ?? SplitClientConfig())
+                                          key: finalKey,
+                                          config: config ?? SplitClientConfig(),
+                                          httpClient: httpClient,
+                                          reachabilityChecker: reachabilityChecker)
         }
 
         DefaultSplitFactoryBuilder.factoryMonitor.register(instance: factory, for: apiKey!)

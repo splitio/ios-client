@@ -19,6 +19,7 @@ struct SplitApiFacade {
     let mySegmentsSyncWorker: RetryableSyncWorker
     let periodicSplitsSyncWorker: PeriodicSyncWorker
     let periodicMySegmentsSyncWorker: PeriodicSyncWorker
+    let streamingHttpClient: HttpClient?
 }
 
 class SplitApiFacadeBuilder {
@@ -30,6 +31,7 @@ class SplitApiFacadeBuilder {
     private var impressionsManager: ImpressionsManager?
     private var trackManager: TrackManager?
     private var storageContainer: SplitStorageContainer?
+    private var streamingHttpClient: HttpClient?
 
     func setUserKey(_ userKey: String) -> SplitApiFacadeBuilder {
         self.userKey = userKey
@@ -63,6 +65,11 @@ class SplitApiFacadeBuilder {
 
     func setStorageContainer(_ storageContainer: SplitStorageContainer) -> SplitApiFacadeBuilder {
         self.storageContainer = storageContainer
+        return self
+    }
+
+    func setStreamingHttpClient(_ httpClient: HttpClient) -> SplitApiFacadeBuilder {
+        self.streamingHttpClient = httpClient
         return self
     }
 
@@ -113,6 +120,7 @@ class SplitApiFacadeBuilder {
             splitsFetcher: splitsChangeFetcher, impressionsManager: impressionsManager,
             trackManager: trackManager, splitsSyncWorker: splitsSyncWorker, mySegmentsSyncWorker: mySegmentsWorker,
             periodicSplitsSyncWorker: periodicSplitsSyncWorker,
-            periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker)
+            periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker,
+            streamingHttpClient: streamingHttpClient)
     }
 }
