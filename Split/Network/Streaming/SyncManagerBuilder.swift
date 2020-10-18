@@ -61,10 +61,11 @@ class SyncManagerBuilder {
 
         let synchronizer = DefaultSynchronizer(splitApiFacade: apiFacade, splitStorageContainer: storageContainer)
         let sseHttpConfig = HttpSessionConfig()
-        sseHttpConfig.connectionTimeOut = 80 // TODO: Change for a setting
+        sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
+        let sseHttpClient = apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
         let broadcasterChannel = DefaultPushManagerEventBroadcaster()
         let notificationManagerKeeper = DefaultNotificationManagerKeeper(broadcasterChannel: broadcasterChannel)
-        let sseHttpClient = DefaultHttpClient(configuration: sseHttpConfig)
+
         let notificationProcessor =  DefaultSseNotificationProcessor(
             notificationParser: DefaultSseNotificationParser(),
             splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer),

@@ -146,6 +146,13 @@ public class SplitClientConfig: NSObject {
     @objc public var isLabelsEnabled = true
 
     ///
+    /// Whether we should attempt to use streaming or not. If the variable is false,
+    /// the SDK will start in polling mode and stay that way.
+    /// Default: true
+    ///
+    @objc public var streamingEnabled = true
+
+    ///
     /// Maximum length matching / bucketing key. Internal config
     ///
     let maximumKeyLength = 250
@@ -172,11 +179,6 @@ public class SplitClientConfig: NSObject {
 
     let defaultPushReconnectionBackoffBase = 1
 
-    ///
-    /// Whether we should attempt to use streaming or not. If the variable is false,
-    /// the SDK will start in polling mode and stay that way.
-    /// Default: true
-    ///
-    @objc public var streamingEnabled = true
+    let sseHttpClientConnectionTimeOut: TimeInterval = 80
 
 }

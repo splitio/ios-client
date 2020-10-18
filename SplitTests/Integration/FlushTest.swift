@@ -122,7 +122,11 @@ class FlushTests: XCTestCase {
     }
     
     private func tracksHits() -> [ClientRequest] {
-        return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
+        var req: [ClientRequest]!
+        DispatchQueue.global().sync {
+            req = webServer.receivedRequests
+        }
+        return req.filter { $0.path == "/events/bulk"}
     }
 
     private func getLastTrackEventJsonHit() -> String {

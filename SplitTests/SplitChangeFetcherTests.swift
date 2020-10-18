@@ -32,7 +32,7 @@ class SplitChangeFetcherTests: XCTestCase {
         
         let restClient: RestClientSplitChanges = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
-        restClientTest.update(change: getChanges(fileName: "splitchanges_1"))
+        restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_1"))
         
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange? = nil
@@ -49,7 +49,7 @@ class SplitChangeFetcherTests: XCTestCase {
     func testChangeFetch() {
         let restClient: RestClientSplitChanges = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
-        restClientTest.update(change: getChanges(fileName: "splitchanges_2"))
+        restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_2"))
         
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange? = nil
@@ -80,7 +80,7 @@ class SplitChangeFetcherTests: XCTestCase {
     func testSplitsTillAndSince() {
         let restClient: RestClientSplitChanges = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
-        restClientTest.update(change: getChanges(fileName: "splitchanges_3"))
+        restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_3"))
         
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange?
@@ -92,13 +92,5 @@ class SplitChangeFetcherTests: XCTestCase {
         }
         XCTAssertTrue(errorHasOccurred, "An exception should be raised")
         XCTAssertTrue(response == nil, "Response should be nil")
-    }
-    
-    func getChanges(fileName: String) -> SplitChange? {
-        var change: SplitChange?
-        if let content = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json") {
-            change = try? Json.encodeFrom(json: content, to: SplitChange.self)
-        }
-        return change
     }
 }

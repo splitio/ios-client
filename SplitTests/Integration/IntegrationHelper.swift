@@ -94,4 +94,41 @@ class IntegrationHelper {
         }
         return nil
     }
+
+    static func dummySseResponse() -> String {
+        return """
+        {
+        \"pushEnabled\": true,
+        \"token\": \"eyJhbGciOiJIUzI1NiIsImtpZCI6IjVZOU05US45QnJtR0EiLCJ0eXAiOiJKV1QifQ.eyJ4LWFibHktY2FwYWJpbGl0eSI6IntcIk16TTVOamMwT0RjeU5nPT1fTVRFeE16Z3dOamd4X01UY3dOVEkyTVRNME1nPT1fbXlTZWdtZW50c1wiOltcInN1YnNjcmliZVwiXSxcIk16TTVOamMwT0RjeU5nPT1fTVRFeE16Z3dOamd4X3NwbGl0c1wiOltcInN1YnNjcmliZVwiXSxcImNvbnRyb2xfcHJpXCI6W1wic3Vic2NyaWJlXCIsXCJjaGFubmVsLW1ldGFkYXRhOnB1Ymxpc2hlcnNcIl0sXCJjb250cm9sX3NlY1wiOltcInN1YnNjcmliZVwiLFwiY2hhbm5lbC1tZXRhZGF0YTpwdWJsaXNoZXJzXCJdfSIsIngtYWJseS1jbGllbnRJZCI6ImNsaWVudElkIiwiZXhwIjoxNjAyMjY5NjU1LCJpYXQiOjE2MDIyNjYwNTV9.nRtxU6WPt4sdgxcV3TD21pYwymbKI1nSamTI72GDZFw"
+        }
+        """
+    }
+
+
+    static func sseDisabledResponse() -> String {
+        return """
+        {
+        \"pushEnabled\": false
+        }
+        """
+    }
+
+    static func getChanges(fileName: String) -> SplitChange? {
+        var change: SplitChange?
+        if let content = FileHelper.readDataFromFile(sourceClass: IntegrationHelper(), name: fileName, type: "json") {
+            change = try? Json.encodeFrom(json: content, to: SplitChange.self)
+        }
+        return change
+    }
+
+    static func mySegments(names: [String]) -> String {
+        var segments = ""
+        for (index, name) in names.enumerated() {
+            segments.append("{\"id\":\"id\(name)\", \"name\":\"\(name)\"}")
+            if index < names.count - 1 {
+                segments.append(",")
+            }
+        }
+        return "{\"mySegments\":[\(segments)]}"
+    }
 }

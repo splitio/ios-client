@@ -64,7 +64,8 @@ class DefaultSseHandler: SseHandler {
         if let jsonData = notification.jsonData {
             do {
                 let notification = try notificationParser.parseOccupancy(jsonString: jsonData,
-                                                                         timestamp: notification.timestamp)
+                                                                         timestamp: notification.timestamp,
+                                                                         channel: notification.channel ?? "")
                 notificationManagerKeeper.handleIncomingPresenceEvent(notification: notification)
             } catch {
                 Logger.w("Error while handling occupancy notification")
