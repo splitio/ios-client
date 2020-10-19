@@ -38,6 +38,15 @@ class StreamingIntegrationHelper {
         """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
     }
 
+    static func mySegmentWithPayloadMessage(timestamp: Int, segment: String) -> String {
+        return """
+        id:cf74eb42-f687-48e4-ad18-af2125110aac
+        event:message
+        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MTExMzgwNjgx_MTcwNTI2MTM0Mg==_mySegments","data":"{\\"type\\":\\"MY_SEGMENTS_UPDATE\\",\\"changeNumber\\":2000, \\"includesPayload\\":true, \\"segmentList\\":[\\"$SEGMENT$\\"]}"}
+        """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
+        .replacingOccurrences(of: "$SEGMENT$", with: "\(segment)")
+    }
+
     static func occupancyMessage(timestamp: Int, publishers: Int, channel: String) -> String {
         return """
         id:cf74eb42-f687-48e4-ad18-af2125110aac
@@ -46,5 +55,14 @@ class StreamingIntegrationHelper {
         """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
             .replacingOccurrences(of: "$CHANNEL$", with: "\(channel)")
             .replacingOccurrences(of: "$PUBLISHERS$", with: "\(publishers)")
+    }
+
+    static func controlMessage(timestamp: Int, controlType: String) -> String {
+        return """
+        id:cf74eb42-f687-48e4-ad18-af2125110aac
+        event:message
+        data:{ "id": "Y1XJoAm7No:0:0",  "clientId": "EORI49J_FSJKA2",  "timestamp": $TIMESTAMP$,  "encoding": "json",  "channel": "control_pri",  "data": "{\\"type\\":\\"CONTROL\\",\\"controlType\\":\\"$CONTROL_TYPE$\\"}"}
+        """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
+            .replacingOccurrences(of: "$CONTROL_TYPE$", with: "\(controlType)")
     }
 }
