@@ -102,8 +102,8 @@ import Foundation
             let errorInfo = ValidationErrorInfo(
                 error: ValidationError.some,
                 message: "You already have \(factoryCount) \(factoryCount == 1 ? "factory" : "factories") with this " +
-                    "API Key. We recommend keeping only one instance of the factory at all times (Singleton pattern) and " +
-                "reusing it throughout your application.")
+                    "API Key. We recommend keeping only one instance of the factory at all times " +
+                "(Singleton pattern) and reusing it throughout your application.")
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
 
         } else if DefaultSplitFactoryBuilder.factoryMonitor.allCount > 0 {

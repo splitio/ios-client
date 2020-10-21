@@ -153,6 +153,14 @@ public class SplitClientConfig: NSObject {
     @objc public var streamingEnabled = true
 
     ///
+    /// How many seconds to wait before re attempting the whole connection flow
+    /// Hard upper limit: 30 minutes (no configurable)
+
+    /// Default: 1
+    ///
+    @objc public var pushRetryBackoffBase = 1
+
+    ///
     /// Maximum length matching / bucketing key. Internal config
     ///
     let maximumKeyLength = 250
@@ -177,8 +185,8 @@ public class SplitClientConfig: NSObject {
     ///
     let cacheExpirationInSeconds = 864000
 
-    let defaultPushReconnectionBackoffBase = 1
-
     let sseHttpClientConnectionTimeOut: TimeInterval = 80
+
+    var generalRetryBackoffBase = 1
 
 }
