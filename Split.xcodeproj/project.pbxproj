@@ -158,7 +158,7 @@
 		5921ED3125378ECD000D6C8B /* StreamingInitTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED3025378ECD000D6C8B /* StreamingInitTest.swift */; };
 		5921ED3325379AA3000D6C8B /* ReachabilityMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED3225379AA3000D6C8B /* ReachabilityMock.swift */; };
 		5921ED362537B277000D6C8B /* StreamingDisabledTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED352537B277000D6C8B /* StreamingDisabledTest.swift */; };
-		5921ED3A2538C57D000D6C8B /* StreamingConnFail5xx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED392538C57D000D6C8B /* StreamingConnFail5xx.swift */; };
+		5921ED3A2538C57D000D6C8B /* StreamingConnFail5xxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED392538C57D000D6C8B /* StreamingConnFail5xxTest.swift */; };
 		5921ED3C2538D2DA000D6C8B /* StreamingAuthFail5xxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED3B2538D2DA000D6C8B /* StreamingAuthFail5xxTest.swift */; };
 		5921ED3E2538E3F8000D6C8B /* StreamingAuthFail4xxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED3D2538E3F8000D6C8B /* StreamingAuthFail4xxTest.swift */; };
 		5921ED402538E8BF000D6C8B /* StreamingSplitsSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED3F2538E8BF000D6C8B /* StreamingSplitsSyncTest.swift */; };
@@ -583,7 +583,7 @@
 		5921ED3025378ECD000D6C8B /* StreamingInitTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingInitTest.swift; sourceTree = "<group>"; };
 		5921ED3225379AA3000D6C8B /* ReachabilityMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReachabilityMock.swift; sourceTree = "<group>"; };
 		5921ED352537B277000D6C8B /* StreamingDisabledTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingDisabledTest.swift; sourceTree = "<group>"; };
-		5921ED392538C57D000D6C8B /* StreamingConnFail5xx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingConnFail5xx.swift; sourceTree = "<group>"; };
+		5921ED392538C57D000D6C8B /* StreamingConnFail5xxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingConnFail5xxTest.swift; sourceTree = "<group>"; };
 		5921ED3B2538D2DA000D6C8B /* StreamingAuthFail5xxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingAuthFail5xxTest.swift; sourceTree = "<group>"; };
 		5921ED3D2538E3F8000D6C8B /* StreamingAuthFail4xxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingAuthFail4xxTest.swift; sourceTree = "<group>"; };
 		5921ED3F2538E8BF000D6C8B /* StreamingSplitsSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSplitsSyncTest.swift; sourceTree = "<group>"; };
@@ -1402,7 +1402,7 @@
 			children = (
 				5921ED3025378ECD000D6C8B /* StreamingInitTest.swift */,
 				5921ED352537B277000D6C8B /* StreamingDisabledTest.swift */,
-				5921ED392538C57D000D6C8B /* StreamingConnFail5xx.swift */,
+				5921ED392538C57D000D6C8B /* StreamingConnFail5xxTest.swift */,
 				5921ED3B2538D2DA000D6C8B /* StreamingAuthFail5xxTest.swift */,
 				5921ED3D2538E3F8000D6C8B /* StreamingAuthFail4xxTest.swift */,
 				5921ED3F2538E8BF000D6C8B /* StreamingSplitsSyncTest.swift */,
@@ -2160,7 +2160,7 @@
 				59F4AA9624FE800200A1C69A /* SseHandlerTest.swift in Sources */,
 				59F4AAB925129CC500A1C69A /* MySegmentsChangeFetcher.swift in Sources */,
 				59EFD2FB24B8EF6F0052920D /* HttpRequestMock.swift in Sources */,
-				5921ED3A2538C57D000D6C8B /* StreamingConnFail5xx.swift in Sources */,
+				5921ED3A2538C57D000D6C8B /* StreamingConnFail5xxTest.swift in Sources */,
 				59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
 				59B2043B24F568660092F2E9 /* SynchronizerStub.swift in Sources */,
