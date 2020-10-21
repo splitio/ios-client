@@ -59,7 +59,8 @@ class SyncManagerBuilder {
                 fatalError("Some parameter is null when creating Sync Manager")
         }
 
-        let synchronizer = DefaultSynchronizer(splitApiFacade: apiFacade, splitStorageContainer: storageContainer)
+        let synchronizer = DefaultSynchronizer(splitConfig: config, splitApiFacade: apiFacade,
+                                               splitStorageContainer: storageContainer)
         let sseHttpConfig = HttpSessionConfig()
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
         let sseHttpClient = apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
