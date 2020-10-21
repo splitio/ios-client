@@ -9,12 +9,12 @@
 import Foundation
 
 protocol SseHandler {
+    func isConnectionConfirmed(message: [String: String]) -> Bool
     func handleIncomingMessage(message: [String: String])
     func reportError(isRetryable: Bool)
 }
 
 class DefaultSseHandler: SseHandler {
-    private let kDataField = "data"
     let notificationProcessor: SseNotificationProcessor
     let notificationParser: SseNotificationParser
     let notificationManagerKeeper: NotificationManagerKeeper
@@ -33,22 +33,32 @@ class DefaultSseHandler: SseHandler {
         self.broadcasterChannel = broadcasterChannel
     }
 
+    func isConnectionConfirmed(message: [String: String]) -> Bool {
+        if message[EventStreamParser.kIdField] != nil && message[EventStreamParser.kDataField] == nil &&
+                message[EventStreamParser.kEventField] == nil {
+            return true
+        }
+        return message[EventStreamParser.kDataField] != nil && !notificationParser.isError(event: message)
+    }
+
     func handleIncomingMessage(message: [String: String]) {
-        guard let data = message[kDataField] else {
+        guard let data = message[EventStreamParser.kDataField] else {
             return
         }
 
         guard let incomingNotification = notificationParser.parseIncoming(jsonString: data) else {
             return
         }
-
+        Logger.d("IncomingNotification: \(incomingNotification.type)")
         switch incomingNotification.type {
         case .control:
             handleControl(incomingNotification)
         case .occupancy:
             handleOccupancy(incomingNotification)
         case .mySegmentsUpdate, .splitKill, .splitUpdate:
-            notificationProcessor.process(incomingNotification)
+            if notificationManagerKeeper.isStreamingActive {
+                notificationProcessor.process(incomingNotification)
+            }
         case .sseError:
             handleSseError(incomingNotification)
         default:

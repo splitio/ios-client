@@ -126,8 +126,7 @@ class DefaultRefreshableSplitFetcher: RefreshableSplitFetcher {
                     self.splitCache.clear()
                 }
             }
-            let splitChanges = try self.splitChangeFetcher.fetch(since: changeNumber)
-            Logger.d(splitChanges.debugDescription)
+            _ = try self.splitChangeFetcher.fetch(since: changeNumber)
 
             dispatchGroup?.leave()
             fireSplitsEvent()

@@ -40,7 +40,7 @@ class StreamingControlTest: XCTestCase {
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
-    func testInit() {
+    func testControl() {
 
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = kRefreshRate
@@ -50,6 +50,7 @@ class StreamingControlTest: XCTestCase {
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
         splitConfig.eventsPushRate = 5
+        splitConfig.isDebugModeEnabled = true
 
         let splitName = "workm"
 
@@ -94,34 +95,37 @@ class StreamingControlTest: XCTestCase {
         justWait() // allow to my segments be updated
         let treatmentPaused = client.getTreatment(splitName)
 
-
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
                                                                                   controlType: "STREAMING_ENABLED"))
-
+        justWait() // allow polling to stop
         timestamp+=1000
+        print("t1")
         streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
                                                                                                segment: "new_segment"))
+
+print("t2")
         justWait() // allow to my segments be updated
         let treatmentEnabled = client.getTreatment(splitName)
 
-
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
-                                                                                  controlType: "STREAMING_DISABLEd"))
+                                                                                  controlType: "STREAMING_DISABLED"))
 
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
                                                                                                segment: "new_segment"))
         waitForHits()
         wait(for: [mySegExps[mySegExpIndex],  splitsChangesExps[splitsExpIndex]], timeout: 7)
+
+        justWait()
         let treatmentDisabled = client.getTreatment(splitName)
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual("on", treatmentReady)
         XCTAssertEqual("on", treatmentPaused)
         XCTAssertEqual("free", treatmentEnabled)
-        XCTAssertEqual("free", treatmentDisabled)
+        XCTAssertEqual("on", treatmentDisabled)
     }
 
     private func waitForHits() {
@@ -133,11 +137,11 @@ class StreamingControlTest: XCTestCase {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
-
-                if self.splitsHitCount == 0 {
+                let hit = self.splitsHitCount
+                self.splitsHitCount+=1
+                if hit == 0 {
                     return TestDispatcherResponse(code: 200, data: Data(self.splitChanges().utf8))
                 }
-                self.splitsHitCount+=1
                 self.checkHist(inSplits: true)
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges.utf8))
             case let(urlString) where urlString.contains("mySegments"):
@@ -163,7 +167,7 @@ class StreamingControlTest: XCTestCase {
     }
 
     private func justWait() {
-        sleep(UInt32(Double(self.kRefreshRate) * 2))
+        ThreadUtils.delay(seconds: Double(self.kRefreshRate) * 2.0)
     }
 
     private func checkHist(inSplits: Bool) {

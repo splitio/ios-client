@@ -9,7 +9,9 @@
 import Foundation
 
 class EventStreamParser {
-    private static let kEventField = "event"
+    static let kIdField = "id"
+    static let kDataField = "data"
+    static let kEventField = "event"
     private static let kKeepAliveEvent = "keepalive"
     private static let kFieldSeparator: Character = ":"
     private static let kKeepAliveToken = "\(kFieldSeparator)\(kKeepAliveEvent)"

@@ -21,18 +21,21 @@ class DefaultSyncManager: SyncManager {
     private let synchronizer: Synchronizer
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let pushNotificationManager: PushNotificationManager
+    private let reconnectStreamingTimer: BackoffCounterTimer
+    
     private var isPollingEnabled: Atomic<Bool> = Atomic(false)
 
     init(splitConfig: SplitClientConfig, pushNotificationManager: PushNotificationManager,
+         reconnectStreamingTimer: BackoffCounterTimer,
          synchronizer: Synchronizer, broadcasterChannel: PushManagerEventBroadcaster) {
         self.splitConfig = splitConfig
         self.pushNotificationManager = pushNotificationManager
         self.synchronizer = synchronizer
         self.broadcasterChannel = broadcasterChannel
+        self.reconnectStreamingTimer = reconnectStreamingTimer
     }
 
     func start() {
-
         synchronizer.syncAll()
         isPollingEnabled.set(!splitConfig.streamingEnabled)
         if splitConfig.streamingEnabled {
@@ -55,6 +58,7 @@ class DefaultSyncManager: SyncManager {
     }
 
     func stop() {
+        reconnectStreamingTimer.cancel()
         pushNotificationManager.stop()
         synchronizer.destroy()
     }
@@ -63,6 +67,7 @@ class DefaultSyncManager: SyncManager {
         switch pushEvent {
         case .pushSubsystemUp:
             Logger.d("Push Subsystem Up event message received.")
+            reconnectStreamingTimer.cancel()
             synchronizer.syncAll()
             synchronizer.stopPeriodicFetching()
             isPollingEnabled.set(false)
@@ -70,13 +75,20 @@ class DefaultSyncManager: SyncManager {
 
         case .pushSubsystemDown:
             Logger.d("Push Subsystem Down event message received.")
+            reconnectStreamingTimer.cancel()
             enablePolling()
+            pushNotificationManager.stop()
 
         case .pushRetryableError:
+            Logger.d("Push recoverable event message received.")
             enablePolling()
-            pushNotificationManager.start()
+            reconnectStreamingTimer.schedule {
+                self.pushNotificationManager.start()
+            }
 
-        case .pushNonRetryableError, .pushDisabled:
+        case .pushNonRetryableError:
+            Logger.d("Push non recoverable event message received.")
+            reconnectStreamingTimer.cancel()
             enablePolling()
             pushNotificationManager.stop()
         }

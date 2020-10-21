@@ -1,23 +1,23 @@
 //
-// StreamingInitTest.swift
-// Split
+//  StreamingConnFail5xx.swift
+//  SplitTests
 //
-// Created by Javier L. Avrudsky on 14-Oct-2020.
-// Copyright (c) 2020 Split. All rights reserved.
+//  Created by Javier L. Avrudsky on 15/10/2020.
+//  Copyright © 2020 Split. All rights reserved.
 //
 
 import XCTest
 @testable import Split
 
-class StreamingConnFail5Test: XCTestCase {
+class StreamingConnFail5xxTest: XCTestCase {
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = IntegrationHelper.dummyUserKey
-    var isSseAuthHit = false
-    var isSseHit = false
+    var isSseConnected = false
     var streamingBinding: TestStreamResponseBinding?
     let sseExp = XCTestExpectation(description: "Sse conn")
     let kMaxSseConnRetries = 3
+    var sseConnHits = 0
 
     override func setUp() {
         let session = HttpSessionMock()
@@ -27,15 +27,12 @@ class StreamingConnFail5Test: XCTestCase {
     }
 
     func testInit() {
-
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 30
-        splitConfig.segmentsRefreshRate = 30
-        splitConfig.impressionRefreshRate = 30
+        splitConfig.featuresRefreshRate = 999999
+        splitConfig.segmentsRefreshRate = 999999
+        splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
-        splitConfig.eventsPerPush = 10
-        splitConfig.eventsQueueSize = 100
-        splitConfig.eventsPushRate = 5
+        splitConfig.eventsPushRate = 999999
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -64,9 +61,8 @@ class StreamingConnFail5Test: XCTestCase {
 
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
-        XCTAssertTrue(isSseAuthHit)
-        XCTAssertTrue(isSseHit)
-
+        XCTAssertEqual(3, sseConnHits)
+        XCTAssertTrue(isSseConnected)
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
@@ -77,7 +73,6 @@ class StreamingConnFail5Test: XCTestCase {
             case let(urlString) where urlString.contains("mySegments"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             case let(urlString) where urlString.contains("auth"):
-                self.isSseAuthHit = true
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             default:
                 return TestDispatcherResponse(code: 500)
@@ -87,8 +82,16 @@ class StreamingConnFail5Test: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            self.isSseHit = true
+            self.sseConnHits+=1
+            if self.sseConnHits < self.kMaxSseConnRetries {
+                let bind = TestStreamResponseBinding.createFor(request: request, code: 500)
+                DispatchQueue.global().asyncAfter(deadline: .now() + 0.3) {
+                    bind.complete(error: nil)
+                }
+                return bind
+            }
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            self.isSseConnected = true
             self.sseExp.fulfill()
             return self.streamingBinding!
         }

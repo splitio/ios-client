@@ -30,6 +30,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
     var changes: String!
     var mySegments = [String]()
     var exps = [XCTestExpectation]()
+    var sseExp = XCTestExpectation()
     let kInitialChangeNumber = 1000
 
     override func setUp() {
@@ -72,23 +73,27 @@ class StreamingMySegmentsSyncTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation], timeout: expTimeout)
+        wait(for: [sdkReadyExpectation, sseExp], timeout: expTimeout)
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
 
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[0]))
         wait(for: [exps[1]], timeout: expTimeout)
-        let treatmentFirst = client.getTreatment(splitName)
 
+        justWait() // wait to my segments be updated
+        let treatmentFirst = client.getTreatment(splitName)
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[1]))
         wait(for: [exps[2]], timeout: expTimeout)
-        let treatmentSec = client.getTreatment(splitName)
 
+        justWait() // wait to my segments be updated
+        let treatmentSec = client.getTreatment(splitName)
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[2]))
         wait(for: [exps[3]], timeout: expTimeout)
+
+        justWait() // wait to my segments be updated
         let treatmentOld = client.getTreatment(splitName)
 
         XCTAssertEqual("on", treatmentReady)
@@ -118,7 +123,9 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                 DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
                     exp.fulfill()
                 }
-                return TestDispatcherResponse(code: 200, data: Data(self.mySegments[hitNumber].utf8))
+                let respData = self.mySegments[hitNumber]
+                print("my segments resp: \(respData)")
+                return TestDispatcherResponse(code: 200, data: Data(respData.utf8))
 
             case let(urlString) where urlString.contains("auth"):
                 self.sseAuthHits+=1
@@ -133,10 +140,12 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         return { request in
             self.sseConnHits+=1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                self.sseExp.fulfill()
+            }
             return self.streamingBinding!
         }
     }
-
 
     private func loadChanges() {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
@@ -150,6 +159,10 @@ class StreamingMySegmentsSyncTest: XCTestCase {
             mySegments.append(IntegrationHelper.emptyMySegments)
         }
         mySegments.insert(IntegrationHelper.mySegments(names: ["new_segment"]), at: 2)
+    }
+
+    private func justWait() {
+        ThreadUtils.delay(seconds: 1)
     }
 }
 

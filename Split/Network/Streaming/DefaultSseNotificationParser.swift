@@ -24,6 +24,8 @@ protocol SseNotificationParser {
 
     func parseSseError(jsonString: String) throws -> StreamingError
 
+    func isError(event: [String: String]) -> Bool
+
 }
 
 class DefaultSseNotificationParser: SseNotificationParser {
@@ -42,7 +44,7 @@ class DefaultSseNotificationParser: SseNotificationParser {
                 type = notificationType.type
             }
             return IncomingNotification(type: type, channel: rawNotification.channel,
-                                        jsonData: rawNotification.data, timestamp: rawNotification.timestamp)
+                                        jsonData: rawNotification.data, timestamp: rawNotification.timestamp ?? 0)
         } catch {
             Logger.e("Unexpected error while parsing streaming notification \(error.localizedDescription)")
         }
@@ -78,5 +80,9 @@ class DefaultSseNotificationParser: SseNotificationParser {
 
     func isError(notification: RawNotification) -> Bool {
         return Self.kErrorNotificationName == notification.name
+    }
+
+    func isError(event: [String: String]) -> Bool {
+        return event[EventStreamParser.kEventField] == Self.kErrorNotificationName
     }
 }
