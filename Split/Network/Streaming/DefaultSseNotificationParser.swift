@@ -42,7 +42,7 @@ class DefaultSseNotificationParser: SseNotificationParser {
                 type = notificationType.type
             }
             return IncomingNotification(type: type, channel: rawNotification.channel,
-                                        jsonData: rawNotification.data, timestamp: rawNotification.timestamp)
+                                        jsonData: rawNotification.data, timestamp: rawNotification.timestamp ?? 0)
         } catch {
             Logger.e("Unexpected error while parsing streaming notification \(error.localizedDescription)")
         }

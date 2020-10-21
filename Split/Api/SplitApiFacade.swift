@@ -92,7 +92,7 @@ class SplitApiFacadeBuilder {
         let mySegmentsFetcher: MySegmentsChangeFetcher
             = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: storageContainer.mySegmentsCache)
 
-        let backoffBase =  splitConfig.defaultPushReconnectionBackoffBase
+        let backoffBase =  splitConfig.generalRetryBackoffBase
 
         let splitsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
         let splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitsChangeFetcher,
