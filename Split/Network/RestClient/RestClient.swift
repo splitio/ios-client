@@ -32,7 +32,7 @@ class DefaultRestClient {
     // MARK: - Private Properties
     private let httpClient: HttpClient
     let endpointFactory: EndpointFactory
-    private let reachabilityChecker:  HostReachabilityChecker
+    private let reachabilityChecker: HostReachabilityChecker
 
     // MARK: - Designated Initializer
     init(httpClient: HttpClient = RestClientConfiguration.httpClient,

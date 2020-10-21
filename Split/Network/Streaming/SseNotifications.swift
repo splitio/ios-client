@@ -14,8 +14,8 @@ import Foundation
 /// "data" field contains IncomingNotification
 struct RawNotification: Decodable {
     let name: String?
-    let channel: String
-    let timestamp: Int
+    let channel: String?
+    let timestamp: Int?
     let data: String
 }
 

@@ -59,7 +59,8 @@ class SyncManagerBuilder {
                 fatalError("Some parameter is null when creating Sync Manager")
         }
 
-        let synchronizer = DefaultSynchronizer(splitApiFacade: apiFacade, splitStorageContainer: storageContainer)
+        let synchronizer = DefaultSynchronizer(splitConfig: config, splitApiFacade: apiFacade,
+                                               splitStorageContainer: storageContainer)
         let sseHttpConfig = HttpSessionConfig()
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
         let sseHttpClient = apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
@@ -82,7 +83,7 @@ class SyncManagerBuilder {
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: DefaultJwtTokenParser())
         let sseClient = DefaultSseClient(endpoint: endpointFactory.streamingEndpoint,
                                          httpClient: sseHttpClient, sseHandler: sseHandler)
-        let sseBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: config.defaultPushReconnectionBackoffBase)
+        let sseBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: config.pushRetryBackoffBase)
 
         let pushManager = DefaultPushNotificationManager(
             userKey: userKey, sseAuthenticator: sseAuthenticator, sseClient: sseClient,
