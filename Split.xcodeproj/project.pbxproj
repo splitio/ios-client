@@ -158,7 +158,7 @@
 		5921ED3125378ECD000D6C8B /* StreamingInitTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED3025378ECD000D6C8B /* StreamingInitTest.swift */; };
 		5921ED3325379AA3000D6C8B /* ReachabilityMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED3225379AA3000D6C8B /* ReachabilityMock.swift */; };
 		5921ED362537B277000D6C8B /* StreamingDisabledTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED352537B277000D6C8B /* StreamingDisabledTest.swift */; };
-		5921ED3A2538C57D000D6C8B /* StreamingConnFail5xx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED392538C57D000D6C8B /* StreamingConnFail5xx.swift */; };
+		5921ED3A2538C57D000D6C8B /* StreamingConnFail5xxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED392538C57D000D6C8B /* StreamingConnFail5xxTest.swift */; };
 		5921ED3C2538D2DA000D6C8B /* StreamingAuthFail5xxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED3B2538D2DA000D6C8B /* StreamingAuthFail5xxTest.swift */; };
 		5921ED3E2538E3F8000D6C8B /* StreamingAuthFail4xxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED3D2538E3F8000D6C8B /* StreamingAuthFail4xxTest.swift */; };
 		5921ED402538E8BF000D6C8B /* StreamingSplitsSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED3F2538E8BF000D6C8B /* StreamingSplitsSyncTest.swift */; };
@@ -206,6 +206,8 @@
 		594F5F55253A1A6500A945B4 /* StreamingSplitKillTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F54253A1A6500A945B4 /* StreamingSplitKillTest.swift */; };
 		594F5F58253A340F00A945B4 /* StreamingOccupancyTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F57253A340F00A945B4 /* StreamingOccupancyTest.swift */; };
 		594F5F5A253CFC2D00A945B4 /* StreamingControlTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F59253CFC2D00A945B4 /* StreamingControlTest.swift */; };
+		594F5F5C253F163A00A945B4 /* BackoffCounterTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F5B253F163A00A945B4 /* BackoffCounterTimer.swift */; };
+		594F5F5E253F641000A945B4 /* BackoffCounterTimerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F5D253F641000A945B4 /* BackoffCounterTimerStub.swift */; };
 		5955633F2294AECF00907C2D /* TrackManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5955633E2294AECF00907C2D /* TrackManagerTest.swift */; };
 		5959C46E2278D9AD0064F968 /* segment_conta_condition.json in Resources */ = {isa = PBXBuildFile; fileRef = 5959C46D2278D9AD0064F968 /* segment_conta_condition.json */; };
 		5959C4722279EBBC0064F968 /* in_segment_condition_split.json in Resources */ = {isa = PBXBuildFile; fileRef = 5959C4712279EBBC0064F968 /* in_segment_condition_split.json */; };
@@ -583,7 +585,7 @@
 		5921ED3025378ECD000D6C8B /* StreamingInitTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingInitTest.swift; sourceTree = "<group>"; };
 		5921ED3225379AA3000D6C8B /* ReachabilityMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReachabilityMock.swift; sourceTree = "<group>"; };
 		5921ED352537B277000D6C8B /* StreamingDisabledTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingDisabledTest.swift; sourceTree = "<group>"; };
-		5921ED392538C57D000D6C8B /* StreamingConnFail5xx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingConnFail5xx.swift; sourceTree = "<group>"; };
+		5921ED392538C57D000D6C8B /* StreamingConnFail5xxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingConnFail5xxTest.swift; sourceTree = "<group>"; };
 		5921ED3B2538D2DA000D6C8B /* StreamingAuthFail5xxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingAuthFail5xxTest.swift; sourceTree = "<group>"; };
 		5921ED3D2538E3F8000D6C8B /* StreamingAuthFail4xxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingAuthFail4xxTest.swift; sourceTree = "<group>"; };
 		5921ED3F2538E8BF000D6C8B /* StreamingSplitsSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSplitsSyncTest.swift; sourceTree = "<group>"; };
@@ -633,6 +635,8 @@
 		594F5F54253A1A6500A945B4 /* StreamingSplitKillTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSplitKillTest.swift; sourceTree = "<group>"; };
 		594F5F57253A340F00A945B4 /* StreamingOccupancyTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingOccupancyTest.swift; sourceTree = "<group>"; };
 		594F5F59253CFC2D00A945B4 /* StreamingControlTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingControlTest.swift; sourceTree = "<group>"; };
+		594F5F5B253F163A00A945B4 /* BackoffCounterTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackoffCounterTimer.swift; sourceTree = "<group>"; };
+		594F5F5D253F641000A945B4 /* BackoffCounterTimerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackoffCounterTimerStub.swift; sourceTree = "<group>"; };
 		5955633E2294AECF00907C2D /* TrackManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackManagerTest.swift; sourceTree = "<group>"; };
 		5959C46D2278D9AD0064F968 /* segment_conta_condition.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = segment_conta_condition.json; sourceTree = "<group>"; };
 		5959C4712279EBBC0064F968 /* in_segment_condition_split.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = in_segment_condition_split.json; sourceTree = "<group>"; };
@@ -1353,6 +1357,7 @@
 				59F4AAC72515436400A1C69A /* SyncWorkerStub.swift */,
 				59F4AAC92515461B00A1C69A /* TrackManagerStub.swift */,
 				59F4AACF2518D4BA00A1C69A /* SyncWorkerFactoryStub.swift */,
+				594F5F5D253F641000A945B4 /* BackoffCounterTimerStub.swift */,
 			);
 			path = Fake;
 			sourceTree = "<group>";
@@ -1402,7 +1407,7 @@
 			children = (
 				5921ED3025378ECD000D6C8B /* StreamingInitTest.swift */,
 				5921ED352537B277000D6C8B /* StreamingDisabledTest.swift */,
-				5921ED392538C57D000D6C8B /* StreamingConnFail5xx.swift */,
+				5921ED392538C57D000D6C8B /* StreamingConnFail5xxTest.swift */,
 				5921ED3B2538D2DA000D6C8B /* StreamingAuthFail5xxTest.swift */,
 				5921ED3D2538E3F8000D6C8B /* StreamingAuthFail4xxTest.swift */,
 				5921ED3F2538E8BF000D6C8B /* StreamingSplitsSyncTest.swift */,
@@ -1603,6 +1608,7 @@
 				59F4AA9C24FE966800A1C69A /* SseHandler.swift */,
 				59F4AACD2518CEB200A1C69A /* RetryableSplitsUpdateWorkerFactory.swift */,
 				59F4AAD5251A8C3D00A1C69A /* SyncManagerBuilder.swift */,
+				594F5F5B253F163A00A945B4 /* BackoffCounterTimer.swift */,
 			);
 			path = Streaming;
 			sourceTree = "<group>";
@@ -1966,6 +1972,7 @@
 				3B6DEF3020EA6AE50067435E /* Evaluator.swift in Sources */,
 				598EDE78224BB3E9005D4762 /* InternalSplitClient.swift in Sources */,
 				3B6DEF6020EA6AE50067435E /* BetweenMatcher.swift in Sources */,
+				594F5F5C253F163A00A945B4 /* BackoffCounterTimer.swift in Sources */,
 				3B6DEF3720EA6AE50067435E /* SplitManager.swift in Sources */,
 				599EA57B22666B84006CBA89 /* Yaml.swift in Sources */,
 				3B6DEF3A20EA6AE50067435E /* Dictionary+Extensions.swift in Sources */,
@@ -2160,7 +2167,7 @@
 				59F4AA9624FE800200A1C69A /* SseHandlerTest.swift in Sources */,
 				59F4AAB925129CC500A1C69A /* MySegmentsChangeFetcher.swift in Sources */,
 				59EFD2FB24B8EF6F0052920D /* HttpRequestMock.swift in Sources */,
-				5921ED3A2538C57D000D6C8B /* StreamingConnFail5xx.swift in Sources */,
+				5921ED3A2538C57D000D6C8B /* StreamingConnFail5xxTest.swift in Sources */,
 				59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
 				59B2043B24F568660092F2E9 /* SynchronizerStub.swift in Sources */,
@@ -2248,6 +2255,7 @@
 				59ED408C24EAF86000EF7B09 /* TimersManagerMock.swift in Sources */,
 				5932260324A512FB00496D8B /* HttpSessionMock.swift in Sources */,
 				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
+				594F5F5E253F641000A945B4 /* BackoffCounterTimerStub.swift in Sources */,
 				599407E022403BE9003B85CC /* InMemorySplitCacheTrafficTypesTests.swift in Sources */,
 				59F4AAC12513C2EC00A1C69A /* PeriodicTimerStub.swift in Sources */,
 				594F5F58253A340F00A945B4 /* StreamingOccupancyTest.swift in Sources */,

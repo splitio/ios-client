@@ -16,7 +16,6 @@ class PushNotificationManagerTest: XCTestCase {
     var pnManager: PushNotificationManager!
     var sseAuthenticator: SseAuthenticatorStub!
     var sseClient: SseClientMock!
-    var sseBackoff: ReconnectBackoffCounterStub!
     var timersManager: TimersManagerMock!
     var broadcasterChannel: PushManagerEventBroadcasterStub!
     let userKey = IntegrationHelper.dummyUserKey
@@ -24,11 +23,10 @@ class PushNotificationManagerTest: XCTestCase {
     override func setUp() {
         sseAuthenticator = SseAuthenticatorStub()
         sseClient = SseClientMock()
-        sseBackoff = ReconnectBackoffCounterStub()
         timersManager = TimersManagerMock()
         broadcasterChannel = PushManagerEventBroadcasterStub()
         pnManager = DefaultPushNotificationManager(userKey: userKey, sseAuthenticator: sseAuthenticator, sseClient: sseClient,
-                                                   sseBackoffCounter: sseBackoff, broadcasterChannel: broadcasterChannel, timersManager: timersManager)
+                                                   broadcasterChannel: broadcasterChannel, timersManager: timersManager)
     }
 
     func testStartFullConnectionOk() {
@@ -43,7 +41,7 @@ class PushNotificationManagerTest: XCTestCase {
 
         broadcasterChannel.pushExpectation = exp
         sseAuthenticator.results = [successAuthResult()]
-        sseClient.results = [successConnResult()]
+        sseClient.results = [true]
 
         pnManager.start()
 
@@ -52,8 +50,6 @@ class PushNotificationManagerTest: XCTestCase {
         XCTAssertEqual(userKey, sseAuthenticator.userKey!)
         XCTAssertEqual("thetoken", sseClient.token)
         XCTAssertEqual(2, sseClient.channels?.count)
-        XCTAssertEqual(0, sseBackoff.retryCallCount)
-        XCTAssertTrue(sseBackoff.resetCounterCalled)
         XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
         XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
@@ -70,83 +66,45 @@ class PushNotificationManagerTest: XCTestCase {
         let exp = XCTestExpectation(description: "finish")
         broadcasterChannel.pushExpectation = exp
         // Indicates that expectation have to be fired when push function is called the second time
-        broadcasterChannel.pushExpectationTriggerCallCount = 3
-        sseAuthenticator.results = [recoverableAuthResult(), recoverableAuthResult(), successAuthResult()]
-        sseClient.results = [successConnResult()]
+        broadcasterChannel.pushExpectationTriggerCallCount = 1
+        sseAuthenticator.results = [recoverableAuthResult()]
 
         pnManager.start()
 
         wait(for: [exp], timeout: 3)
 
         XCTAssertEqual(userKey, sseAuthenticator.userKey!)
-        XCTAssertEqual("thetoken", sseClient.token)
-        XCTAssertEqual(2, sseClient.channels?.count)
-        XCTAssertEqual(2, sseBackoff.retryCallCount)
-        XCTAssertTrue(sseBackoff.resetCounterCalled)
-        XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
-        XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
-        XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.pushedEvents[0])
-        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
+        XCTAssertFalse(sseClient.connectCalled)
+        XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
+        XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect)) // ??
+        XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.lastPushedEvent)
     }
 
     func testStartSseReintent() {
         // On start connection manager
         // calls authenticate with user key
         // and then sse client with jwt raw token and channels
-        // Returning ok token with streaming enabled
+        // Calling success handler when streaming enabled
         // Also an expectation is added to be fullfiled when timer is added
         // in order to avoid using sleep to wait for all process finished
 
         let exp = XCTestExpectation(description: "finish")
         broadcasterChannel.pushExpectation = exp
         // Indicates that expectation have to be fired when push function is called the second time
-        broadcasterChannel.pushExpectationTriggerCallCount = 3
+        broadcasterChannel.pushExpectationTriggerCallCount = 1
         sseAuthenticator.results = [successAuthResult()]
-        sseClient.results = [recoverableConnResult(), recoverableConnResult(), successConnResult()]
+        sseClient.results = [false]
 
         pnManager.start()
 
-        wait(for: [exp], timeout: 3)
+        sleep(1)
 
-        XCTAssertEqual(userKey, sseAuthenticator.userKey!)
+        XCTAssertEqual(userKey, sseAuthenticator.userKey)
         XCTAssertEqual("thetoken", sseClient.token)
         XCTAssertEqual(2, sseClient.channels?.count)
-        XCTAssertEqual(2, sseBackoff.retryCallCount)
-        XCTAssertTrue(sseBackoff.resetCounterCalled)
-        XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
+        XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
-        XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.pushedEvents[0])
-        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
-    }
-
-    func testStarBothReintent() {
-        // On start connection manager
-        // calls authenticate with user key
-        // and then sse client with jwt raw token and channels
-        // Returning ok token with streaming enabled
-        // Also an expectation is added to be fullfiled when timer is added
-        // in order to avoid using sleep to wait for all process finished
-
-        let exp = XCTestExpectation(description: "finish")
-        broadcasterChannel.pushExpectation = exp
-        // Indicates that expectation have to be fired when push function is called the second time
-        broadcasterChannel.pushExpectationTriggerCallCount = 5
-        sseAuthenticator.results = [recoverableAuthResult(), recoverableAuthResult(), successAuthResult()]
-        sseClient.results = [recoverableConnResult(), recoverableConnResult(), successConnResult()]
-
-        pnManager.start()
-
-        wait(for: [exp], timeout: 3)
-
-        XCTAssertEqual(userKey, sseAuthenticator.userKey!)
-        XCTAssertEqual("thetoken", sseClient.token)
-        XCTAssertEqual(2, sseClient.channels?.count)
-        XCTAssertEqual(4, sseBackoff.retryCallCount)
-        XCTAssertTrue(sseBackoff.resetCounterCalled)
-        XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
-        XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
-        XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.pushedEvents[0])
-        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
+        XCTAssertNil(broadcasterChannel.lastPushedEvent)
     }
 
     func testStreamingDisabled() {
@@ -166,15 +124,13 @@ class PushNotificationManagerTest: XCTestCase {
         XCTAssertEqual(userKey, sseAuthenticator.userKey!)
         XCTAssertNil(sseClient.token)
         XCTAssertFalse(sseClient.disconnectCalled)
-        XCTAssertEqual(0, sseBackoff.retryCallCount)
-        XCTAssertFalse(sseBackoff.resetCounterCalled)
         XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
         XCTAssertEqual(PushStatusEvent.pushSubsystemDown, broadcasterChannel.lastPushedEvent)
     }
 
     func testStop() {
-        // On stop the component should closse sse connection
+        // On stop the component should close sse connection
         // stops keep alive and refresh token timers
         // and notify streaming not available
 
@@ -183,7 +139,7 @@ class PushNotificationManagerTest: XCTestCase {
         broadcasterChannel.pushExpectation = conExp
 
         sseAuthenticator.results = [successAuthResult()]
-        sseClient.results = [successConnResult()]
+        sseClient.results = [true]
 
         pnManager.start()
 
@@ -214,18 +170,6 @@ class PushNotificationManagerTest: XCTestCase {
     private func noRecoverableAuthResult() -> SseAuthenticationResult {
         return SseAuthenticationResult(success: false, errorIsRecoverable: false,
                                        pushEnabled: true, jwtToken: nil)
-    }
-
-    private func successConnResult() -> SseConnectionResult {
-        return SseConnectionResult(success: true, errorIsRecoverable: true)
-    }
-
-    private func recoverableConnResult() -> SseConnectionResult {
-        return SseConnectionResult(success: false, errorIsRecoverable: true)
-    }
-
-    private func noRecoverableConnResult() -> SseConnectionResult {
-        return SseConnectionResult(success: false, errorIsRecoverable: false)
     }
 
     private func dummyToken() -> JwtToken {
