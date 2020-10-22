@@ -19,6 +19,7 @@ struct SplitApiFacade {
     let mySegmentsSyncWorker: RetryableSyncWorker
     let periodicSplitsSyncWorker: PeriodicSyncWorker
     let periodicMySegmentsSyncWorker: PeriodicSyncWorker
+    let streamingHttpClient: HttpClient?
 }
 
 class SplitApiFacadeBuilder {
@@ -30,6 +31,7 @@ class SplitApiFacadeBuilder {
     private var impressionsManager: ImpressionsManager?
     private var trackManager: TrackManager?
     private var storageContainer: SplitStorageContainer?
+    private var streamingHttpClient: HttpClient?
     private var splitsQueryString: String = ""
 
     func setUserKey(_ userKey: String) -> SplitApiFacadeBuilder {
@@ -67,6 +69,11 @@ class SplitApiFacadeBuilder {
         return self
     }
 
+    func setStreamingHttpClient(_ httpClient: HttpClient) -> SplitApiFacadeBuilder {
+        self.streamingHttpClient = httpClient
+        return self
+    }
+
     func setSplitsQueryString(_ queryString: String) -> SplitApiFacadeBuilder {
         self.splitsQueryString = queryString
         return self
@@ -92,7 +99,7 @@ class SplitApiFacadeBuilder {
         let mySegmentsFetcher: MySegmentsChangeFetcher
             = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: storageContainer.mySegmentsCache)
 
-        let backoffBase =  splitConfig.defaultPushReconnectionBackoffBase
+        let backoffBase =  splitConfig.generalRetryBackoffBase
 
         let splitsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
         let splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitsChangeFetcher,
@@ -120,6 +127,7 @@ class SplitApiFacadeBuilder {
             splitsFetcher: splitsChangeFetcher, impressionsManager: impressionsManager,
             trackManager: trackManager, splitsSyncWorker: splitsSyncWorker, mySegmentsSyncWorker: mySegmentsWorker,
             periodicSplitsSyncWorker: periodicSplitsSyncWorker,
-            periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker)
+            periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker,
+            streamingHttpClient: streamingHttpClient)
     }
 }

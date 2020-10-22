@@ -35,12 +35,15 @@ class DefaultSynchronizer: Synchronizer {
     private let splitStorageContainer: SplitStorageContainer
     private let syncWorkerFactory: SyncWorkerFactory
     private let syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
+    private let splitConfig: SplitClientConfig
 
-    init(splitApiFacade: SplitApiFacade,
+    init(splitConfig: SplitClientConfig,
+         splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory = DefaultSyncWorkerFactory(),
          syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
         = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()) {
+        self.splitConfig = splitConfig
         self.splitApiFacade = splitApiFacade
         self.splitStorageContainer = splitStorageContainer
         self.syncWorkerFactory = syncWorkerFactory
@@ -63,8 +66,7 @@ class DefaultSynchronizer: Synchronizer {
         }
 
         if syncTaskByChangeNumberCatalog.value(forKey: changeNumber) == nil {
-            // TODO: Replace constant 1 with config value. (Integration PR)
-            let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: 1)
+            let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
             var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(
                 splitChangeFetcher: splitApiFacade.splitsFetcher,
                 splitCache: splitStorageContainer.splitsCache,

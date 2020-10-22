@@ -35,8 +35,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return Version.sdk
     }
 
-    init(apiKey: String, key: Key, config: SplitClientConfig) throws {
-
+    init(apiKey: String, key: Key, config: SplitClientConfig, httpClient: HttpClient?,
+         reachabilityChecker: HostReachabilityChecker?) throws {
         super.init()
 
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? config.defaultDataFolder
@@ -57,9 +57,11 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
         let  endpointFactory = EndpointFactory(serviceEndpoints: config.serviceEndpoints,
-                                               apiKey: apiKey, userKey: key.matchingKey,
-                                               splitsQueryString: splitsFilterQueryString)
-        let restClient = DefaultRestClient(endpointFactory: endpointFactory)
+                                               apiKey: apiKey, userKey: key.matchingKey,  splitsQueryString: splitsFilterQueryString)
+
+        let restClient = DefaultRestClient(httpClient: httpClient ?? DefaultHttpClient.shared,
+                                           endpointFactory: endpointFactory,
+                                           reachabilityChecker: reachabilityChecker ?? ReachabilityWrapper())
 
         /// TODO: Remove this line when metrics refactor
         DefaultMetricsManager.shared.restClient = restClient
@@ -69,10 +71,16 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let impressionsManager = buildImpressionsManager(splitConfig: config, fileStorage: storageContainer.fileStorage,
                                                          restClient: restClient)
 
-        let apiFacade = SplitApiFacade.builder().setUserKey(key.matchingKey).setSplitConfig(config)
+        let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(key.matchingKey).setSplitConfig(config)
             .setRestClient(restClient).setEventsManager(eventsManager).setImpressionsManager(impressionsManager)
             .setTrackManager(trackManager).setStorageContainer(storageContainer)
-            .setSplitsQueryString(splitsFilterQueryString).build()
+            .setSplitsQueryString(splitsFilterQueryString)
+
+        if let httpClient = httpClient {
+            _ = apiFacadeBuilder.setStreamingHttpClient(httpClient)
+        }
+
+        let apiFacade = apiFacadeBuilder.build()
 
         let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
             .setRestClient(restClient).setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade)

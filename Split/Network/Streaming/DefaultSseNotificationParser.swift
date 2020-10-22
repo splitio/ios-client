@@ -18,7 +18,7 @@ protocol SseNotificationParser {
 
     func parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification
 
-    func parseOccupancy(jsonString: String, timestamp: Int) throws -> OccupancyNotification
+    func parseOccupancy(jsonString: String, timestamp: Int, channel: String) throws -> OccupancyNotification
 
     func parseControl(jsonString: String) throws -> ControlNotification
 
@@ -41,7 +41,8 @@ class DefaultSseNotificationParser: SseNotificationParser {
                                                            to: NotificationTypeValue.self) {
                 type = notificationType.type
             }
-            return IncomingNotification(type: type, jsonData: rawNotification.data)
+            return IncomingNotification(type: type, channel: rawNotification.channel,
+                                        jsonData: rawNotification.data, timestamp: rawNotification.timestamp ?? 0)
         } catch {
             Logger.e("Unexpected error while parsing streaming notification \(error.localizedDescription)")
         }
@@ -60,8 +61,9 @@ class DefaultSseNotificationParser: SseNotificationParser {
         return try Json.encodeFrom(json: jsonString, to: MySegmentsUpdateNotification.self)
     }
 
-    func parseOccupancy(jsonString: String, timestamp: Int) throws -> OccupancyNotification {
+    func parseOccupancy(jsonString: String, timestamp: Int, channel: String) throws -> OccupancyNotification {
         var notification = try Json.encodeFrom(json: jsonString, to: OccupancyNotification.self)
+        notification.channel = channel
         notification.timestamp = timestamp
         return notification
     }

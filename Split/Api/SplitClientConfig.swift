@@ -150,6 +150,19 @@ public class SplitClientConfig: NSObject {
     /// Use the SyncConfig builder and Split Filter class to build correct filters
     ///
     @objc public var sync = SyncConfig.builder().build()
+    /// Whether we should attempt to use streaming or not. If the variable is false,
+    /// the SDK will start in polling mode and stay that way.
+    /// Default: true
+    ///
+    @objc public var streamingEnabled = true
+
+    ///
+    /// How many seconds to wait before re attempting the whole connection flow
+    /// Hard upper limit: 30 minutes (no configurable)
+
+    /// Default: 1
+    ///
+    @objc public var pushRetryBackoffBase = 1
 
     ///
     /// Maximum length matching / bucketing key. Internal config
@@ -176,13 +189,8 @@ public class SplitClientConfig: NSObject {
     ///
     let cacheExpirationInSeconds = 864000
 
-    let defaultPushReconnectionBackoffBase = 1
+    let sseHttpClientConnectionTimeOut: TimeInterval = 80
 
-    ///
-    /// Whether we should attempt to use streaming or not. If the variable is false,
-    /// the SDK will start in polling mode and stay that way.
-    /// Default: true
-    ///
-    @objc public var streamingEnabled = true
+    var generalRetryBackoffBase = 1
 
 }

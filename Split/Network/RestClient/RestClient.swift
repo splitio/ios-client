@@ -15,15 +15,32 @@ protocol RestClient {
     func isSdkServerAvailable() -> Bool
 }
 
+protocol HostReachabilityChecker {
+    func isReachable(path url: String) -> Bool
+}
+
+class ReachabilityWrapper: HostReachabilityChecker {
+    func isReachable(path url: String) -> Bool {
+        if let reachabilityManager = NetworkReachabilityManager(host: url) {
+            return reachabilityManager.isReachable
+        }
+        return false
+    }
+}
+
 class DefaultRestClient {
     // MARK: - Private Properties
     private let httpClient: HttpClient
     let endpointFactory: EndpointFactory
+    private let reachabilityChecker: HostReachabilityChecker
 
     // MARK: - Designated Initializer
-    init(httpClient: HttpClient = RestClientConfiguration.httpClient, endpointFactory: EndpointFactory) {
+    init(httpClient: HttpClient = RestClientConfiguration.httpClient,
+         endpointFactory: EndpointFactory,
+         reachabilityChecker: HostReachabilityChecker = ReachabilityWrapper()) {
         self.httpClient = httpClient
         self.endpointFactory = endpointFactory
+        self.reachabilityChecker = reachabilityChecker
     }
 
     func execute<T>(endpoint: Endpoint,
@@ -76,10 +93,7 @@ extension DefaultRestClient: RestClient {
     }
 
     func isServerAvailable(path url: String) -> Bool {
-        if let reachabilityManager = NetworkReachabilityManager(host: url) {
-            return reachabilityManager.isReachable
-        }
-        return false
+        return reachabilityChecker.isReachable(path: url)
     }
 
     func isEventsServerAvailable() -> Bool {
