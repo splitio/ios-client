@@ -1,5 +1,5 @@
 //
-//  CsvHelper.swift
+//  FileHelper.swift
 //  SplitTests
 //
 //  Created by Javier L. Avrudsky on 11/16/2018.
@@ -15,6 +15,7 @@ class FileHelper {
         guard let filepath = Bundle(for: type(of: sourceClass) as! AnyClass).path(forResource: name, ofType: fileType) else {
             return nil
         }
+
         do {
             return try String(contentsOfFile: filepath, encoding: .utf8)
         } catch {

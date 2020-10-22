@@ -33,7 +33,7 @@ class SplitChangeFetcherTests: XCTestCase {
 
         let restClient: RestClientSplitChanges = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
-        restClientTest.update(change: getChanges(fileName: "splitchanges_1"))
+        restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_1"))
 
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "")
         var response: SplitChange? = nil
@@ -50,7 +50,7 @@ class SplitChangeFetcherTests: XCTestCase {
     func testChangeFetch() {
         let restClient: RestClientSplitChanges = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
-        restClientTest.update(change: getChanges(fileName: "splitchanges_2"))
+        restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_2"))
 
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "")
         var response: SplitChange? = nil
@@ -81,7 +81,7 @@ class SplitChangeFetcherTests: XCTestCase {
     func testSplitsTillAndSince() {
         let restClient: RestClientSplitChanges = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
-        restClientTest.update(change: getChanges(fileName: "splitchanges_3"))
+        restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_3"))
 
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "")
         var response: SplitChange?

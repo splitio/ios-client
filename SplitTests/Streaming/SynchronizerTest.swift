@@ -45,13 +45,15 @@ class SynchronizerTest: XCTestCase {
                                        trackManager: trackManager, splitsSyncWorker: splitsSyncWorker,
                                        mySegmentsSyncWorker: mySegmentsSyncWorker,
                                        periodicSplitsSyncWorker: periodicSplitsSyncWorker,
-                                       periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker)
+                                       periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker,
+                                       streamingHttpClient: nil)
         let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsCache: splitsCache, mySegmentsCache: mySegmentsCache)
 
-        synchronizer = DefaultSynchronizer(splitApiFacade: apiFacade,
-                                           splitStorageContainer: storageContainer,
-                                           syncWorkerFactory: syncWorkerFactory,
-                                           syncTaskByChangeNumberCatalog: updateWorkerCatalog)
+        synchronizer = DefaultSynchronizer(splitConfig: SplitClientConfig(),
+            splitApiFacade: apiFacade,
+            splitStorageContainer: storageContainer,
+            syncWorkerFactory: syncWorkerFactory,
+            syncTaskByChangeNumberCatalog: updateWorkerCatalog)
     }
 
     func testRunInitialSync() {
