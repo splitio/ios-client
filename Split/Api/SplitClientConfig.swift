@@ -146,6 +146,12 @@ public class SplitClientConfig: NSObject {
     @objc public var isLabelsEnabled = true
 
     ///
+    /// Allows  to pass a list of filters for the splits that will be downloaded
+    /// Use the SyncConfig builder and Split Filter class to build correct filters
+    ///
+    @objc public var sync = SyncConfig.builder().build()
+
+    ///
     /// Maximum length matching / bucketing key. Internal config
     ///
     let maximumKeyLength = 250

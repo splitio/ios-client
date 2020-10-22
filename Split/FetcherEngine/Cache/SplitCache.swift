@@ -16,10 +16,11 @@ import Foundation
 
 class SplitCache: SplitCacheProtocol {
 
-    private struct SplitsFile: Codable {
+    struct SplitsFile: Codable {
         var splits: [String: Split]
         var changeNumber: Int64
         var timestamp: Int? = 0
+        var queryString: String? = ""
     }
 
     let kSplitsFileName: String = "SPLITIO.splits"
@@ -27,12 +28,12 @@ class SplitCache: SplitCacheProtocol {
     private var inMemoryCache: InMemorySplitCache =
         InMemorySplitCache(splits: [String: Split](), changeNumber: -1, timestamp: 0)
 
-    init(fileStorage: FileStorageProtocol) {
+    init(fileStorage: FileStorageProtocol, notificationHelper: NotificationHelper) {
         self.fileStorage = fileStorage
         if let splitsFile = loadSplitFile() {
             self.inMemoryCache = buildInMemoryCache(splitsFile: splitsFile)
         }
-        NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) {
+        notificationHelper.addObserver(for: AppNotification.didEnterBackground) {
             DispatchQueue.global().async { [weak self] in
                 guard let strongSelf = self else {
                     return
@@ -80,8 +81,20 @@ class SplitCache: SplitCacheProtocol {
         return inMemoryCache.getTimestamp()
     }
 
-    func setTimestamp(timestamp: Int) {
-        inMemoryCache.setTimestamp(timestamp: timestamp)
+    func setTimestamp(_ timestamp: Int) {
+        inMemoryCache.setTimestamp(timestamp)
+    }
+
+    func setQueryString(_ queryString: String) {
+        inMemoryCache.setQueryString(queryString)
+    }
+
+    func getQueryString() -> String {
+        return inMemoryCache.getQueryString()
+    }
+
+    func deleteSplit(name: String) {
+        inMemoryCache.deleteSplit(name: name)
     }
 
     func kill(splitName: String, defaultTreatment: String, changeNumber: Int64) {
@@ -94,7 +107,8 @@ extension SplitCache {
     private func buildInMemoryCache(splitsFile: SplitsFile) -> InMemorySplitCache {
         return InMemorySplitCache(splits: splitsFile.splits,
                                   changeNumber: splitsFile.changeNumber,
-                                  timestamp: splitsFile.timestamp)
+                                  timestamp: splitsFile.timestamp,
+                                  queryString: splitsFile.queryString ?? "")
     }
 
     private func loadSplitFile() -> SplitsFile? {
@@ -110,12 +124,13 @@ extension SplitCache {
     }
 
     private func saveSplits() {
-        let splitsFile = SplitsFile(splits: getSplits(), changeNumber: getChangeNumber(), timestamp: getTimestamp())
+        let splitsFile = SplitsFile(splits: getSplits(), changeNumber: getChangeNumber(),
+                                    timestamp: getTimestamp(), queryString: getQueryString())
         do {
             let jsonSplits = try Json.encodeToJson(splitsFile)
             fileStorage.write(fileName: kSplitsFileName, content: jsonSplits)
         } catch {
-            Logger.e("Could not save splits on disk")
+            Logger.e("Could not save splits to disk")
         }
     }
 }

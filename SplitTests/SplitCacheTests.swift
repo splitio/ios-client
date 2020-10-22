@@ -14,12 +14,13 @@ class SplitCacheTests: XCTestCase {
     
     var splitCache: SplitCacheProtocol!
     let initialChangeNumber: Int64 = 44
-
+    let storedQueryString = "&p=stored"
+    let notificationHelper = NotificationHelperStub()
+    let fileStorage = FileStorageStub()
     override func setUp() {
         let fileContent = initialSplitFile()
-        let fileStorage = FileStorageStub()
         fileStorage.write(fileName: "SPLITIO.splits", content: fileContent)
-        splitCache = SplitCache(fileStorage: fileStorage)
+        splitCache = SplitCache(fileStorage: fileStorage, notificationHelper: notificationHelper)
     }
 
     override func tearDown() {
@@ -60,6 +61,49 @@ class SplitCacheTests: XCTestCase {
         splitCache.setChangeNumber(newChangeNumber)
         XCTAssertEqual(splitCache.getChangeNumber(), newChangeNumber, "Change number should be \(initialChangeNumber)")
     }
+
+    func testStoredQueryString() {
+        XCTAssertEqual(splitCache.getQueryString(), storedQueryString, "Querystring should be \(storedQueryString)")
+    }
+
+    func testQueryStringUpdate() {
+        let newQueryString: String = "&p=new"
+        splitCache.setQueryString(newQueryString)
+        XCTAssertEqual(splitCache.getQueryString(), newQueryString, "Querystring should be \(newQueryString)")
+    }
+
+    func testNoQueryStringStored() {
+        let fileContent = noQueryStringFile()
+        let fileStorage = FileStorageStub()
+        fileStorage.write(fileName: "SPLITIO.splits", content: fileContent)
+        let splitCache = SplitCache(fileStorage: fileStorage, notificationHelper: DefaultNotificationHelper.instance)
+        XCTAssertEqual(splitCache.getQueryString(), "", "Querystring should be empty")
+    }
+
+    func testSaveToDisk() {
+
+        let queryString = "p=1"
+        let changeNumber: Int64 = 33
+        let timestamp = 999
+
+        splitCache.addSplit(splitName: "n", split: Split())
+        splitCache.setTimestamp(timestamp)
+        splitCache.setQueryString(queryString)
+        splitCache.setChangeNumber(changeNumber)
+
+        notificationHelper.trigger(notification: .didEnterBackground)
+
+        // Wait to finish async write
+        sleep(1)
+
+        let savedFile =  try? Json.encodeFrom(json: fileStorage.read(fileName: "SPLITIO.splits") ?? "", to: SplitCache.SplitsFile.self)
+
+        XCTAssertEqual(4, savedFile?.splits.count)
+        XCTAssertEqual(queryString, savedFile?.queryString)
+        XCTAssertEqual(changeNumber, savedFile?.changeNumber)
+        XCTAssertEqual(timestamp, savedFile?.timestamp)
+
+    }
     
     func createSplit(name: String) -> Split {
         let jsonSplit = "{\"name\":\"\(name)\", \"status\":\"active\"}"
@@ -68,7 +112,11 @@ class SplitCacheTests: XCTestCase {
     }
     
     func initialSplitFile() -> String {
-        return "{ \"changeNumber\":\(initialChangeNumber), \"splits\": {\"split0\": {\"name\":\"split0\", \"status\":\"active\"}, \"split1\": {\"name\":\"split1\", \"status\":\"active\"}, \"split2\": {\"name\":\"split2\", \"status\":\"active\"}}}"
+        return "{ \"changeNumber\":\(initialChangeNumber), \"queryString\": \"\(storedQueryString)\",\"splits\": {\"split0\": {\"name\":\"split0\", \"status\":\"active\"}, \"split1\": {\"name\":\"split1\", \"status\":\"active\"}, \"split2\": {\"name\":\"split2\", \"status\":\"active\"}}}"
+    }
+
+    func noQueryStringFile() -> String {
+        return "{ \"changeNumber\":\(initialChangeNumber), \"splits\": {\"split0\": {\"name\":\"split0\", \"status\":\"active\"}}}"
     }
 
 }
