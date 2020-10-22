@@ -25,7 +25,8 @@ class EndpointFactoryTest: XCTestCase {
     override func setUp() {
         serviceEndpoints = ServiceEndpoints.builder().build()
         factory = EndpointFactory(serviceEndpoints: serviceEndpoints,
-                                      apiKey: CommonValues.apiKey, userKey: CommonValues.userKey)
+                                      apiKey: CommonValues.apiKey, userKey: CommonValues.userKey,
+                                      splitsQueryString: "")
     }
 
     func testMySegmentsEndpoint() {

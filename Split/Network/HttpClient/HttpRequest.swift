@@ -54,9 +54,15 @@ class BaseHttpRequest: HttpRequest {
          parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
 
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        let initialQueryItems = components?.queryItems
         if let parameters = parameters {
             components?.queryItems = parameters.map { key, value in URLQueryItem(name: key, value: "\(value)")}
         }
+
+        if let initialQueryItems = initialQueryItems {
+            components?.queryItems?.append(contentsOf: initialQueryItems)
+        }
+
         guard let finalUrl = components?.url else {
             throw HttpError.couldNotCreateRequest(message: "Invalid URL")
         }

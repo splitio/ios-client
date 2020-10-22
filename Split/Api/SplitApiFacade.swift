@@ -30,6 +30,7 @@ class SplitApiFacadeBuilder {
     private var impressionsManager: ImpressionsManager?
     private var trackManager: TrackManager?
     private var storageContainer: SplitStorageContainer?
+    private var splitsQueryString: String = ""
 
     func setUserKey(_ userKey: String) -> SplitApiFacadeBuilder {
         self.userKey = userKey
@@ -66,6 +67,11 @@ class SplitApiFacadeBuilder {
         return self
     }
 
+    func setSplitsQueryString(_ queryString: String) -> SplitApiFacadeBuilder {
+        self.splitsQueryString = queryString
+        return self
+    }
+
     func build() -> SplitApiFacade {
 
         guard let userKey = self.userKey,
@@ -80,7 +86,8 @@ class SplitApiFacadeBuilder {
         }
 
         let splitsChangeFetcher: SplitChangeFetcher
-            = HttpSplitChangeFetcher(restClient: restClient, splitCache: storageContainer.splitsCache)
+            = HttpSplitChangeFetcher(restClient: restClient, splitCache: storageContainer.splitsCache,
+                                     defaultQueryString: splitsQueryString)
 
         let mySegmentsFetcher: MySegmentsChangeFetcher
             = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: storageContainer.mySegmentsCache)
