@@ -288,14 +288,14 @@ extension DefaultMetricsManager {
 extension DefaultMetricsManager {
 
     private func subscribeNotifications() {
-        NotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
+        DefaultNotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
             guard let strongSelf = self else {
                 return
             }
             strongSelf.loadDataFromDisk()
         }
 
-        NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
+        DefaultNotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
             guard let strongSelf = self else {
                 return
             }

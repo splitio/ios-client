@@ -58,7 +58,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     }
 
     deinit {
-        NotificationHelper.instance.removeAllObservers()
+        DefaultNotificationHelper.instance.removeAllObservers()
     }
 }
 
