@@ -162,7 +162,14 @@ public class SplitClientConfig: NSObject {
 
     /// Default: 1
     ///
-    @objc public var pushRetryBackoffBase = 1
+
+    @objc public var pushRetryBackoffBase = 1 {
+        didSet {
+            if pushRetryBackoffBase < 1 || pushRetryBackoffBase > 1800 {
+                pushRetryBackoffBase = 1
+            }
+        }
+    }
 
     ///
     /// Maximum length matching / bucketing key. Internal config

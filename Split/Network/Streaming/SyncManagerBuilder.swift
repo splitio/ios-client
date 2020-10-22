@@ -89,7 +89,7 @@ class SyncManagerBuilder {
             broadcasterChannel: broadcasterChannel,
             timersManager: DefaultTimersManager())
 
-        let sseBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: config.generalRetryBackoffBase)
+        let sseBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: config.pushRetryBackoffBase)
         let sseBackoffTimer = DefaultBackoffCounterTimer(reconnectBackoffCounter: sseBackoffCounter)
 
         return DefaultSyncManager(splitConfig: config, pushNotificationManager: pushManager,
