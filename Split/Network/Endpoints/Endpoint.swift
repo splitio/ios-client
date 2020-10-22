@@ -14,24 +14,31 @@ class Endpoint {
     private (set) var method: HttpMethod
     private (set) var headers = [String: String]()
 
-    private init(baseUrl: URL, path: String?) {
+    private init(baseUrl: URL, path: String?, defaultQueryString: String? = nil) {
+        var url = baseUrl
         if let path = path {
-            self.url = baseUrl.appendingPathComponent(path)
-        } else {
-            self.url = baseUrl
+            url = baseUrl.appendingPathComponent(path)
         }
+
+        if var queryString = defaultQueryString, let from = queryString.firstIndex(of: "&") {
+            let to = queryString.index(from, offsetBy: 1)
+            queryString = queryString.replacingOccurrences(of: "&", with: "?",
+                                                           options: .caseInsensitive, range: from..<to)
+            url = URL(string: "\(url.absoluteString)\(queryString)") ?? url
+        }
+        self.url = url
         self.method = .get
     }
 
-    static func builder(baseUrl: URL, path: String? = nil) -> Builder {
-        return Builder(baseUrl: baseUrl, path: path)
+    static func builder(baseUrl: URL, path: String? = nil, defaultQueryString: String? = nil) -> Builder {
+        return Builder(baseUrl: baseUrl, path: path, defaultQueryString: defaultQueryString)
     }
 
     struct Builder {
         private var endpoint: Endpoint
 
-        init(baseUrl: URL, path: String?) {
-            endpoint = Endpoint(baseUrl: baseUrl, path: path)
+        init(baseUrl: URL, path: String?, defaultQueryString: String? = nil) {
+            endpoint = Endpoint(baseUrl: baseUrl, path: path, defaultQueryString: defaultQueryString)
         }
 
         func add(header: String, withValue value: String) -> Self {

@@ -177,13 +177,13 @@ extension DefaultImpressionsManager {
 // MARK: Background / Foreground
 extension DefaultImpressionsManager {
     func subscribeNotifications() {
-        NotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
+        DefaultNotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
             if let self = self {
                 self.loadImpressionsFromDisk()
             }
         }
 
-        NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
+        DefaultNotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
             if let self = self {
                 self.saveImpressionsToDisk()
             }

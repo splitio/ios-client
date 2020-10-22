@@ -146,6 +146,10 @@ public class SplitClientConfig: NSObject {
     @objc public var isLabelsEnabled = true
 
     ///
+    /// Allows  to pass a list of filters for the splits that will be downloaded
+    /// Use the SyncConfig builder and Split Filter class to build correct filters
+    ///
+    @objc public var sync = SyncConfig.builder().build()
     /// Whether we should attempt to use streaming or not. If the variable is false,
     /// the SDK will start in polling mode and stay that way.
     /// Default: true
