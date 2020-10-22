@@ -117,17 +117,17 @@ import Foundation
 
         let finalKey = Key(matchingKey: matchingKey!, bucketingKey: bucketingKey)
 
-        var factory: SplitFactory!
+        var factory: SplitFactory?
         if apiKey?.uppercased() == kApiKeyLocalhost {
             factory = LocalhostSplitFactory(key: finalKey,
                                             config: config ?? SplitClientConfig(),
                                             bundle: bundle)
         } else {
-            factory = DefaultSplitFactory(apiKey: apiKey!,
-                                          key: finalKey,
-                                          config: config ?? SplitClientConfig(),
-                                          httpClient: httpClient,
-                                          reachabilityChecker: reachabilityChecker)
+            factory = try? DefaultSplitFactory(apiKey: apiKey!,
+                                              key: finalKey,
+                                              config: config ?? SplitClientConfig(),
+                                              httpClient: httpClient,
+                                              reachabilityChecker: reachabilityChecker)
         }
 
         DefaultSplitFactoryBuilder.factoryMonitor.register(instance: factory, for: apiKey!)

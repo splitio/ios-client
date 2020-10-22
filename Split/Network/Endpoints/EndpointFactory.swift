@@ -37,7 +37,7 @@ class EndpointFactory {
     let sseAuthenticationEndpoint: Endpoint
     let streamingEndpoint: Endpoint
 
-    init(serviceEndpoints: ServiceEndpoints, apiKey: String, userKey: String) {
+    init(serviceEndpoints: ServiceEndpoints, apiKey: String, userKey: String, splitsQueryString: String) {
         self.serviceEndpoints = serviceEndpoints
 
         let commondHeaders = [
@@ -48,8 +48,9 @@ class EndpointFactory {
         let streamEventHeader = [Self.kContentTypeHeader: Self.kContentTypeEventStream]
 
         splitChangesEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.sdkEndpoint, path: EndpointsPath.splitChanges)
-                .add(headers: commondHeaders).add(headers: typeHeader).build()
+            .builder(baseUrl: serviceEndpoints.sdkEndpoint, path: EndpointsPath.splitChanges,
+                     defaultQueryString: splitsQueryString)
+            .add(headers: commondHeaders).add(headers: typeHeader).build()
 
         mySegmentsEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.sdkEndpoint, path: "\(EndpointsPath.mySegments)/\(userKey)")

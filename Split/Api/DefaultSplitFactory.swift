@@ -21,6 +21,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
     private var defaultClient: SplitClient?
     private var defaultManager: SplitManager?
+    private let filterBuilder = FilterBuilder()
 
     public var client: SplitClient {
         return defaultClient!
@@ -35,7 +36,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     init(apiKey: String, key: Key, config: SplitClientConfig, httpClient: HttpClient?,
-         reachabilityChecker: HostReachabilityChecker?) {
+         reachabilityChecker: HostReachabilityChecker?) throws {
         super.init()
 
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? config.defaultDataFolder
@@ -54,8 +55,9 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
+        let splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
         let  endpointFactory = EndpointFactory(serviceEndpoints: config.serviceEndpoints,
-                                               apiKey: apiKey, userKey: key.matchingKey)
+                                               apiKey: apiKey, userKey: key.matchingKey,  splitsQueryString: splitsFilterQueryString)
 
         let restClient = DefaultRestClient(httpClient: httpClient ?? DefaultHttpClient.shared,
                                            endpointFactory: endpointFactory,
@@ -72,6 +74,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(key.matchingKey).setSplitConfig(config)
             .setRestClient(restClient).setEventsManager(eventsManager).setImpressionsManager(impressionsManager)
             .setTrackManager(trackManager).setStorageContainer(storageContainer)
+            .setSplitsQueryString(splitsFilterQueryString)
 
         if let httpClient = httpClient {
             _ = apiFacadeBuilder.setStreamingHttpClient(httpClient)
@@ -122,7 +125,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                        dataFolderName: String) -> SplitStorageContainer {
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
         let mySegmentsCache = MySegmentsCache(matchingKey: userKey, fileStorage: fileStorage)
-        let splitsCache = SplitCache(fileStorage: fileStorage)
+        let splitsCache = SplitCache(fileStorage: fileStorage, notificationHelper: DefaultNotificationHelper.instance)
         return SplitStorageContainer(fileStorage: fileStorage,
                                      splitsCache: splitsCache,
                                      mySegmentsCache: mySegmentsCache)

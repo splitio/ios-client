@@ -81,7 +81,7 @@ class StreamingControlTest: XCTestCase {
         let treatmentReady = client.getTreatment(splitName)
 
         justWait() // wait to allow sync all
-        
+
         // Should disable streaming
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
@@ -212,5 +212,3 @@ print("t2")
         return (try? Json.encodeToJson(change)) ?? IntegrationHelper.emptySplitChanges
     }
 }
-
-
