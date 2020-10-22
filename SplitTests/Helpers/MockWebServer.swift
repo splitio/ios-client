@@ -12,6 +12,7 @@ import Swifter
 struct ClientRequest {
     var identifier: String
     var path: String
+    var queryString: String?
     var data: String?
     var method: String
 }
@@ -78,6 +79,7 @@ class MockWebServer {
                 let clientRequest = ClientRequest(
                     identifier:  self.buildRequestIdentifier(request: request),
                     path: request.path,
+                    queryString: self.buildQueryString(request: request),
                     data: self.bytesToString(bytes: request.body),
                     method: request.method)
 
@@ -128,6 +130,20 @@ class MockWebServer {
         print("identifier: \(identifier)")
         return identifier
 
+    }
+
+    private func buildQueryString(request: HttpRequest) -> String {
+
+        var queryString = ""
+        for (pname, pvalue) in request.queryParams {
+            if queryString == "" {
+                queryString.append("?")
+            } else {
+                queryString.append("&")
+            }
+            queryString.append("\(pname)=\(pvalue)")
+        }
+        return queryString
     }
 
     func start() {

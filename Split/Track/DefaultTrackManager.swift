@@ -229,13 +229,13 @@ extension DefaultTrackManager {
 // MARK: Background / Foreground
 extension DefaultTrackManager {
     func subscribeNotifications() {
-        NotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
+        DefaultNotificationHelper.instance.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
             if let self = self {
                 self.loadEventsFromDisk()
             }
         }
 
-        NotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
+        DefaultNotificationHelper.instance.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
 
             if let self = self {
                 self.saveEventsToDisk()

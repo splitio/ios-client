@@ -133,11 +133,12 @@ class StreamingControlTest: XCTestCase {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
-
-                if self.splitsHitCount == 0 {
+                let hit = self.splitsHitCount
+                self.splitsHitCount+=1
+                if hit == 0 {
                     return TestDispatcherResponse(code: 200, data: Data(self.splitChanges().utf8))
                 }
-                self.splitsHitCount+=1
+
                 self.checkHist(inSplits: true)
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges.utf8))
             case let(urlString) where urlString.contains("mySegments"):
