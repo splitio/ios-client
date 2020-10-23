@@ -11,6 +11,7 @@ import Foundation
 
 class NotificationManagerKeeperStub: NotificationManagerKeeper {
     private var publishersCount: Int = 0
+    var isStreamingActive: Bool = true
 
     var handleIncomingPresenceEventCalled = false
     var handleIncomingControlCalled = false

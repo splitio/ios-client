@@ -15,8 +15,8 @@ import Foundation
 struct HttpResponse {
     let code: Int
     let result: HttpResultWrapper
-    var isCredentialsError: Bool {
-        return HttpCode.forbidden == code || HttpCode.unauthorized == code
+    var isClientError: Bool {
+        return code >= HttpCode.badRequest && code < HttpCode.internalServerError
     }
     init(code: Int, data: Data? = nil) {
         self.code = code

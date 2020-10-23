@@ -83,14 +83,17 @@ class SyncManagerBuilder {
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: DefaultJwtTokenParser())
         let sseClient = DefaultSseClient(endpoint: endpointFactory.streamingEndpoint,
                                          httpClient: sseHttpClient, sseHandler: sseHandler)
-        let sseBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: config.pushRetryBackoffBase)
 
         let pushManager = DefaultPushNotificationManager(
             userKey: userKey, sseAuthenticator: sseAuthenticator, sseClient: sseClient,
-            sseBackoffCounter: sseBackoffCounter, broadcasterChannel: broadcasterChannel,
+            broadcasterChannel: broadcasterChannel,
             timersManager: DefaultTimersManager())
 
+        let sseBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: config.pushRetryBackoffBase)
+        let sseBackoffTimer = DefaultBackoffCounterTimer(reconnectBackoffCounter: sseBackoffCounter)
+
         return DefaultSyncManager(splitConfig: config, pushNotificationManager: pushManager,
+                                  reconnectStreamingTimer: sseBackoffTimer,
                                   synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
     }
 }

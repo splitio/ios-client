@@ -30,13 +30,14 @@ class StreamingSplitKillTest: XCTestCase {
         loadChanges()
     }
 
-    func testInit() {
+    func testSplitKill() {
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
+        splitConfig.isDebugModeEnabled = true
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -61,17 +62,27 @@ class StreamingSplitKillTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation, sseConnExp, exps[1]], timeout: expTimeout)
+        wait(for: [sdkReadyExpectation, sseConnExp], timeout: expTimeout)
+        streamingBinding?.push(message: ":keepalive") // send keep alive to confirm streaming connection ok
+
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
 
+        while splitsChangesHits < 2 && mySegmentsHits < 2 {
+            ThreadUtils.delay(seconds: 1) // wait for sync all
+        }
+
         streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "free",
+            StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
                                                          timestamp: numbers[splitsChangesHits],
                                                          changeNumber: numbers[splitsChangesHits + 1]))
 
         wait(for: [exps[2]], timeout: expTimeout)
+
+        ThreadUtils.delay(seconds: 1.0) // wait to let spliit be updated
+        print("tK 1")
         let treatmentKill = client.getTreatment(splitName)
+        print("tK 12")
 
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
@@ -81,14 +92,15 @@ class StreamingSplitKillTest: XCTestCase {
         let treatmentNoKill = client.getTreatment(splitName)
 
         streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "free",
+            StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
                                                          timestamp: numbers[0],
                                                          changeNumber: numbers[1]))
-        sleep(2) // The server should not be hit here
+
+        ThreadUtils.delay(seconds: 2.0) // The server should not be hit here
         let treatmentOldKill = client.getTreatment(splitName)
 
         XCTAssertEqual("on", treatmentReady)
-        XCTAssertEqual("free", treatmentKill)
+        XCTAssertEqual("conta", treatmentKill)
         XCTAssertEqual("on", treatmentNoKill)
         XCTAssertEqual("on", treatmentOldKill)
     }
@@ -103,9 +115,12 @@ class StreamingSplitKillTest: XCTestCase {
                 DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
                     exp.fulfill()
                 }
-                return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
+                let changes = self.changes[hitNumber]
+                print("Hit: \(hitNumber) ---> \(changes.replacingOccurrences(of: "\n", with: ""))")
+                return TestDispatcherResponse(code: 200, data: Data(changes.utf8))
 
             case let(urlString) where urlString.contains("mySegments"):
+                self.mySegmentsHits+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
 
             case let(urlString) where urlString.contains("auth"):
@@ -119,7 +134,9 @@ class StreamingSplitKillTest: XCTestCase {
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            self.sseConnExp.fulfill()
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                self.sseConnExp.fulfill()
+            }
             return self.streamingBinding!
         }
     }
@@ -132,7 +149,7 @@ class StreamingSplitKillTest: XCTestCase {
 
         if killed {
             split?.killed = true
-            split?.defaultTreatment = "free"
+            split?.defaultTreatment = "conta"
         }
         return (try? Json.encodeToJson(change)) ?? ""
     }
@@ -144,8 +161,6 @@ class StreamingSplitKillTest: XCTestCase {
                                     till: self.numbers[i + 1])
             changes.insert(change, at: i)
         }
-
-
     }
 }
 

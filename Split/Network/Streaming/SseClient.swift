@@ -17,13 +17,9 @@ struct SseClientConstants {
     static let pushNotificationVersionValue = "1.1"
 }
 
-struct SseConnectionResult {
-    let success: Bool
-    let errorIsRecoverable: Bool
-}
-
 protocol SseClient {
-    func connect(token: String, channels: [String]) -> SseConnectionResult
+    typealias SuccessHandler = () -> Void
+    func connect(token: String, channels: [String], success: @escaping SuccessHandler)
     func disconnect()
 }
 
@@ -41,6 +37,7 @@ class DefaultSseClient: SseClient {
     private let streamParser = EventStreamParser()
     private let sseHandler: SseHandler
 
+
     init(endpoint: Endpoint, httpClient: HttpClient, sseHandler: SseHandler) {
         self.endpoint = endpoint
         self.httpClient = httpClient
@@ -48,11 +45,9 @@ class DefaultSseClient: SseClient {
         self.queue = DispatchQueue(label: "Split SSE Client")
     }
 
-    func connect(token: String, channels: [String]) -> SseConnectionResult {
+    func connect(token: String, channels: [String], success: @escaping SuccessHandler) {
 
-        let responseSemaphore = DispatchSemaphore(value: 0)
-        var connectionResult: SseConnectionResult?
-
+        var isFirstMessage = true
         queue.async {
             let parameters: [String: Any] = [
                 SseClientConstants.pushNotificationTokenParam: token,
@@ -65,15 +60,25 @@ class DefaultSseClient: SseClient {
                                                                            parameters: parameters,
                                                                            headers: headers)
                 .getResponse(responseHandler: { response in
-
-                    connectionResult = SseConnectionResult(success: response.code == 200,
-                                                           errorIsRecoverable: !response.isCredentialsError)
+                    if response.code != 200 {
+                        self.handleError(retryable: !response.isClientError)
+                        return
+                    }
                     Logger.d("Streaming connected")
-                    responseSemaphore.signal()
 
                 }, incomingDataHandler: { data in
 
                     let values = self.streamParser.parse(streamChunk: data.stringRepresentation)
+
+                    if isFirstMessage {
+                        isFirstMessage = false
+                        if self.isConnectionConfirmed(message: values) {
+                            success()
+                        } else {
+                            self.sseHandler.reportError(isRetryable: true)
+                            return
+                        }
+                    }
                     if !self.streamParser.isKeepAlive(values: values) {
                         Logger.d("Push message received: \(values)")
                         self.triggerMessageHandler(message: values)
@@ -89,16 +94,21 @@ class DefaultSseClient: SseClient {
                 })
             } catch {
                 Logger.e("Error while connecting to streaming: \(error.localizedDescription)")
-                responseSemaphore.signal()
-                connectionResult = SseConnectionResult(success: false, errorIsRecoverable: false)
+                self.handleError(retryable: false)
             }
         }
-        responseSemaphore.wait()
-        return connectionResult ?? SseConnectionResult(success: false, errorIsRecoverable: false)
+    }
+
+    func isConnectionConfirmed(message: [String: String]) -> Bool {
+        return streamParser.isKeepAlive(values: message) || sseHandler.isConnectionConfirmed(message: message)
     }
 
     func triggerMessageHandler(message: [String: String]) {
         sseHandler.handleIncomingMessage(message: message)
+    }
+
+    func handleError(retryable: Bool) {
+        sseHandler.reportError(isRetryable: retryable)
     }
 
     func handleConnectionClosed() {
