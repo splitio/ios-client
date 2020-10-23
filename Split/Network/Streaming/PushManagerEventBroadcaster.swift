@@ -13,6 +13,7 @@ enum PushStatusEvent {
     case pushSubsystemDown
     case pushRetryableError
     case pushNonRetryableError
+    case pushSubsystemPaused
 }
 
 protocol PushManagerEventBroadcaster {
