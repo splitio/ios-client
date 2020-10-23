@@ -79,10 +79,14 @@ class DefaultSseNotificationParser: SseNotificationParser {
     }
 
     func isError(notification: RawNotification) -> Bool {
-        return Self.kErrorNotificationName == notification.name
+        return Self.kErrorNotificationName == notification.name?.lowercased()
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     func isError(event: [String: String]) -> Bool {
-        return event[EventStreamParser.kEventField] == Self.kErrorNotificationName
+        return event[EventStreamParser.kEventField]?
+            .lowercased()
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            == Self.kErrorNotificationName
     }
 }
