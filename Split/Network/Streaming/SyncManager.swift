@@ -73,13 +73,13 @@ class DefaultSyncManager: SyncManager {
             isPollingEnabled.set(false)
             Logger.i("Polling disabled")
 
-        case .pushSubsystemPaused:
-            Logger.d("Push Subsystem Paused event message received.")
+        case .pushSubsystemDown:
+            Logger.d("Push Subsystem Down event message received.")
             reconnectStreamingTimer.cancel()
             enablePolling()
 
-        case .pushSubsystemDown:
-            Logger.d("Push Subsystem Down event message received.")
+        case .pushSubsystemDisabled:
+            Logger.d("Push Subsystem Disabled event message received.")
             stopStreaming()
 
         case .pushRetryableError:
