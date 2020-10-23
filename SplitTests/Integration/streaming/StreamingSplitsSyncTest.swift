@@ -46,6 +46,7 @@ class StreamingSplitsSyncTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
+        splitConfig.isDebugModeEnabled = true
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -71,6 +72,12 @@ class StreamingSplitsSyncTest: XCTestCase {
         }
 
         wait(for: [sdkReadyExpectation], timeout: expTimeout)
+        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send keep alive to confirm streaming connection ok
+
+        while splitsChangesHits < 2 && mySegmentsHits < 2 {
+            ThreadUtils.delay(seconds: 1) // wait for sync all
+        }
+
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
 
@@ -78,6 +85,8 @@ class StreamingSplitsSyncTest: XCTestCase {
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
                                                           changeNumber: numbers[splitsChangesHits + 1]))
         wait(for: [exps[1]], timeout: expTimeout)
+
+        waitForUpdate() // Wait to allow update after notification to happen
         let treatmentFirst = client.getTreatment(splitName)
 
 
@@ -85,12 +94,14 @@ class StreamingSplitsSyncTest: XCTestCase {
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
                                                           changeNumber: numbers[splitsChangesHits + 1]))
         wait(for: [exps[2]], timeout: expTimeout)
+        waitForUpdate()
         let treatmentSec = client.getTreatment(splitName)
 
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[0],
                                                           changeNumber: numbers[1]))
         wait(for: [exps[3]], timeout: expTimeout)
+        waitForUpdate()
         let treatmentOld = client.getTreatment(splitName)
 
         XCTAssertEqual("on", treatmentReady)
@@ -112,6 +123,7 @@ class StreamingSplitsSyncTest: XCTestCase {
                 return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
 
             case let(urlString) where urlString.contains("mySegments"):
+                self.mySegmentsHits+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
 
             case let(urlString) where urlString.contains("auth"):
@@ -152,6 +164,10 @@ class StreamingSplitsSyncTest: XCTestCase {
                                     till: self.numbers[i + 1])
             changes.insert(change, at: i)
         }
+    }
+
+    private func waitForUpdate() {
+        ThreadUtils.delay(seconds: 1)
     }
 }
 

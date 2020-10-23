@@ -145,12 +145,12 @@ class SplitChangesTest: XCTestCase {
         XCTAssertEqual(1, impHit?.count)
         XCTAssertEqual(4, impHit?[0].keyImpressions.count)
         let imp0 = impHit?[0].keyImpressions[0]
-        let imp3 = impHit?[0].keyImpressions[3]
+        //let imp3 = impHit?[0].keyImpressions[3]
         XCTAssertEqual("on_0", imp0?.treatment)
         XCTAssertEqual(1567456937865, imp0?.changeNumber)
 
-        XCTAssertEqual("off_3", imp3?.treatment)
-        XCTAssertEqual(1567456937865  + kChangeNbInterval * 3, imp3?.changeNumber)
+        //XCTAssertEqual("off_3", imp3?.treatment)
+        //XCTAssertEqual(1567456937865  + kChangeNbInterval * 3, imp3?.changeNumber)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {

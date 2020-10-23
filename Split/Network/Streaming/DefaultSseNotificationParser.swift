@@ -24,6 +24,8 @@ protocol SseNotificationParser {
 
     func parseSseError(jsonString: String) throws -> StreamingError
 
+    func isError(event: [String: String]) -> Bool
+
 }
 
 class DefaultSseNotificationParser: SseNotificationParser {
@@ -78,5 +80,9 @@ class DefaultSseNotificationParser: SseNotificationParser {
 
     func isError(notification: RawNotification) -> Bool {
         return Self.kErrorNotificationName == notification.name
+    }
+
+    func isError(event: [String: String]) -> Bool {
+        return event[EventStreamParser.kEventField] == Self.kErrorNotificationName
     }
 }

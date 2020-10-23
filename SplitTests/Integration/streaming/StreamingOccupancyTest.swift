@@ -74,7 +74,7 @@ class StreamingOccupancyTest: XCTestCase {
         }
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
-
+        streamingBinding?.push(message: ":keepalive") // to confirm streaming connection ok
         sleep(1) // wait 1 sec to be sure that first syncall after sse conn is done
         mySegHitCount = 0
         splitsHitCount = 0
@@ -87,7 +87,6 @@ class StreamingOccupancyTest: XCTestCase {
         wait(for: [mySegExps[mySegExpIndex], splitsChangesExps[splitsExpIndex]], timeout: 7)
         let mySegHitAfterDisabled = mySegHitCount
         let splitHitAfterDisabled = splitsHitCount
-
 
         // Should enable streaming in secondary channel
         timestamp+=1000

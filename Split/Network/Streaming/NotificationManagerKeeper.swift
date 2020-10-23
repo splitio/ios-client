@@ -9,6 +9,7 @@
 import Foundation
 
 protocol NotificationManagerKeeper {
+    var isStreamingActive: Bool { get }
     func handleIncomingPresenceEvent(notification: OccupancyNotification)
     func handleIncomingControl(notification: ControlNotification)
 }
@@ -40,7 +41,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
     private var broadcasterChannel: PushManagerEventBroadcaster
 
     private var streamingActive = true
-    private var isStreamingActive: Bool {
+    var isStreamingActive: Bool {
         var active = false
         DispatchQueue.global().sync {
             active = streamingActive
@@ -60,7 +61,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
 
         case .streamingDisabled:
             updateStreamingState(active: false)
-            broadcasterChannel.push(event: .pushDisabled)
+            broadcasterChannel.push(event: .pushSubsystemDisabled)
 
         case .streamingEnabled:
             updateStreamingState(active: true)
@@ -135,6 +136,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
 
     private func updateStreamingState(active: Bool) {
         DispatchQueue.global().sync {
+            Logger.d("Streaming active = \(active)")
             streamingActive = active
         }
     }

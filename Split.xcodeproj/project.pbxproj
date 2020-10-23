@@ -206,6 +206,8 @@
 		594F5F55253A1A6500A945B4 /* StreamingSplitKillTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F54253A1A6500A945B4 /* StreamingSplitKillTest.swift */; };
 		594F5F58253A340F00A945B4 /* StreamingOccupancyTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F57253A340F00A945B4 /* StreamingOccupancyTest.swift */; };
 		594F5F5A253CFC2D00A945B4 /* StreamingControlTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F59253CFC2D00A945B4 /* StreamingControlTest.swift */; };
+		594F5F5C253F163A00A945B4 /* BackoffCounterTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F5B253F163A00A945B4 /* BackoffCounterTimer.swift */; };
+		594F5F5E253F641000A945B4 /* BackoffCounterTimerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F5D253F641000A945B4 /* BackoffCounterTimerStub.swift */; };
 		5955633F2294AECF00907C2D /* TrackManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5955633E2294AECF00907C2D /* TrackManagerTest.swift */; };
 		5959C46E2278D9AD0064F968 /* segment_conta_condition.json in Resources */ = {isa = PBXBuildFile; fileRef = 5959C46D2278D9AD0064F968 /* segment_conta_condition.json */; };
 		5959C4722279EBBC0064F968 /* in_segment_condition_split.json in Resources */ = {isa = PBXBuildFile; fileRef = 5959C4712279EBBC0064F968 /* in_segment_condition_split.json */; };
@@ -640,6 +642,8 @@
 		594F5F54253A1A6500A945B4 /* StreamingSplitKillTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSplitKillTest.swift; sourceTree = "<group>"; };
 		594F5F57253A340F00A945B4 /* StreamingOccupancyTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingOccupancyTest.swift; sourceTree = "<group>"; };
 		594F5F59253CFC2D00A945B4 /* StreamingControlTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingControlTest.swift; sourceTree = "<group>"; };
+		594F5F5B253F163A00A945B4 /* BackoffCounterTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackoffCounterTimer.swift; sourceTree = "<group>"; };
+		594F5F5D253F641000A945B4 /* BackoffCounterTimerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackoffCounterTimerStub.swift; sourceTree = "<group>"; };
 		5955633E2294AECF00907C2D /* TrackManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackManagerTest.swift; sourceTree = "<group>"; };
 		5959C46D2278D9AD0064F968 /* segment_conta_condition.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = segment_conta_condition.json; sourceTree = "<group>"; };
 		5959C4712279EBBC0064F968 /* in_segment_condition_split.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = in_segment_condition_split.json; sourceTree = "<group>"; };
@@ -1370,6 +1374,7 @@
 				59F4AAC72515436400A1C69A /* SyncWorkerStub.swift */,
 				59F4AAC92515461B00A1C69A /* TrackManagerStub.swift */,
 				59F4AACF2518D4BA00A1C69A /* SyncWorkerFactoryStub.swift */,
+				594F5F5D253F641000A945B4 /* BackoffCounterTimerStub.swift */,
 				595AD20124DC39F800A7B750 /* NotificationHelperStub.swift */,
 			);
 			path = Fake;
@@ -1632,6 +1637,7 @@
 				59F4AA9C24FE966800A1C69A /* SseHandler.swift */,
 				59F4AACD2518CEB200A1C69A /* RetryableSplitsUpdateWorkerFactory.swift */,
 				59F4AAD5251A8C3D00A1C69A /* SyncManagerBuilder.swift */,
+				594F5F5B253F163A00A945B4 /* BackoffCounterTimer.swift */,
 			);
 			path = Streaming;
 			sourceTree = "<group>";
@@ -1996,6 +2002,7 @@
 				3B6DEF3020EA6AE50067435E /* Evaluator.swift in Sources */,
 				598EDE78224BB3E9005D4762 /* InternalSplitClient.swift in Sources */,
 				3B6DEF6020EA6AE50067435E /* BetweenMatcher.swift in Sources */,
+				594F5F5C253F163A00A945B4 /* BackoffCounterTimer.swift in Sources */,
 				3B6DEF3720EA6AE50067435E /* SplitManager.swift in Sources */,
 				599EA57B22666B84006CBA89 /* Yaml.swift in Sources */,
 				3B6DEF3A20EA6AE50067435E /* Dictionary+Extensions.swift in Sources */,
@@ -2283,6 +2290,7 @@
 				5932260324A512FB00496D8B /* HttpSessionMock.swift in Sources */,
 				595AD1F824D9CDFB00A7B750 /* SyncConfigTest.swift in Sources */,
 				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
+				594F5F5E253F641000A945B4 /* BackoffCounterTimerStub.swift in Sources */,
 				599407E022403BE9003B85CC /* InMemorySplitCacheTrafficTypesTests.swift in Sources */,
 				59F4AAC12513C2EC00A1C69A /* PeriodicTimerStub.swift in Sources */,
 				594F5F58253A340F00A945B4 /* StreamingOccupancyTest.swift in Sources */,

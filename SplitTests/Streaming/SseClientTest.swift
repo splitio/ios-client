@@ -37,20 +37,24 @@ class SseClientTest: XCTestCase {
         let conExp = XCTestExpectation(description: "conn")
         let reqExp = XCTestExpectation(description: "req")
         httpClient.streamReqExp = reqExp
+        var connected = false
 
-        var result: SseConnectionResult?
-        DispatchQueue.global().async {
-            result = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
+            connected = true
             conExp.fulfill()
         }
 
-        wait(for: [reqExp], timeout: 5)
-        let request = httpClient.httpStreamRequest!
+        let request = self.httpClient.httpStreamRequest!
         request.setResponse(code: 200)
+
+        wait(for: [reqExp], timeout: 5)
+
+        request.notifyIncomingData(Data(":keepalive\n".utf8))
+
 
         wait(for: [conExp], timeout: 5)
 
-        XCTAssertTrue(result?.success ?? false)
+        XCTAssertTrue(connected)
     }
 
     func testOnMessage() {
@@ -67,20 +71,18 @@ class SseClientTest: XCTestCase {
         httpClient.streamReqExp = reqExp
 
         sseHandler.messageExpectation = msgExp
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
+            conExp.fulfill()
+        }
 
-        DispatchQueue.global().async {
-              _ = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
-              conExp.fulfill()
-          }
-
-        wait(for: [reqExp], timeout: 5)
         let request = httpClient.httpStreamRequest!
         request.setResponse(code: 200)
-        wait(for: [conExp], timeout: 5)
+        wait(for: [reqExp], timeout: 5)
 
+        request.notifyIncomingData(Data(":keepalive".utf8))
         request.notifyIncomingData(Data("message".utf8))
 
-        wait(for: [msgExp], timeout: 5)
+        wait(for: [conExp, msgExp], timeout: 5)
 
         XCTAssertTrue(sseHandler.handleIncomingCalled)
     }
@@ -102,23 +104,20 @@ class SseClientTest: XCTestCase {
         // to make sure that request.setResponse which is executed when headers received
         // run after on connect.
         // On response will be called with an error http code so OnErrorHandler has to be executed
-        let conExp = XCTestExpectation(description: "conn")
         let reqExp = XCTestExpectation(description: "req")
         httpClient.streamReqExp = reqExp
-
-        var result: SseConnectionResult?
-        DispatchQueue.global().async {
-            result = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
-            conExp.fulfill()
+        var connected = false
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
+            connected = true
         }
 
-        wait(for: [reqExp], timeout: 5)
+        sleep(1)
         let request = httpClient.httpStreamRequest!
         request.setResponse(code: code)
-        wait(for: [conExp], timeout: 5)
+        wait(for: [reqExp], timeout: 5)
 
-        XCTAssertFalse(result?.success ?? true)
-        XCTAssertEqual(shouldBeRecoverable, result?.errorIsRecoverable ?? !shouldBeRecoverable)
+        XCTAssertFalse(connected)
+        XCTAssertEqual(sseHandler.errorRetryableReported, shouldBeRecoverable)
     }
 
     func testOnErrorExceptionWhileRequest() {
@@ -131,16 +130,12 @@ class SseClientTest: XCTestCase {
         httpClient.streamReqExp = reqExp
         httpClient.throwOnSend = true
 
-
-        var result: SseConnectionResult?
-        DispatchQueue.global().async {
-            result = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
         }
 
         wait(for: [reqExp], timeout: 5)
 
-        XCTAssertFalse(result?.success ?? true)
-        XCTAssertEqual(false, result?.errorIsRecoverable ?? true)
+        XCTAssertFalse(sseHandler.errorRetryableReported)
     }
 
     func testOnErrorAfterConnectionSuccess() {
@@ -155,20 +150,23 @@ class SseClientTest: XCTestCase {
         let reqExp = XCTestExpectation(description: "req")
         httpClient.streamReqExp = reqExp
         sseHandler.errorExpectation = errExp
-        var result: SseConnectionResult?
-        DispatchQueue.global().async {
-            result = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
+
+        var connected = false
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
+            connected = true
             conExp.fulfill()
         }
 
-        wait(for: [reqExp], timeout: 5)
         let request = httpClient.httpStreamRequest!
         request.setResponse(code: 200)
+        wait(for: [reqExp], timeout: 5)
+
+        request.notifyIncomingData(Data(":keepalive".utf8))
         wait(for: [conExp], timeout: 5)
         request.complete(error: HttpError.unknown(message: "unknown error"))
         wait(for: [errExp], timeout: 5)
 
-        XCTAssertTrue(result?.success ?? false)
+        XCTAssertTrue(connected)
         XCTAssertTrue(sseHandler.errorReportedCalled)
         XCTAssertTrue(sseHandler.errorRetryableReported)
     }
@@ -185,14 +183,15 @@ class SseClientTest: XCTestCase {
 
         sseHandler.errorExpectation = discExp
 
-        DispatchQueue.global().async {
-            _ = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
             conExp.fulfill()
         }
 
-        wait(for: [reqExp], timeout: 5)
         let request = httpClient.httpStreamRequest!
         request.setResponse(code: 200)
+        wait(for: [reqExp], timeout: 5)
+
+        request.notifyIncomingData(Data(":keepalive".utf8))
         wait(for: [conExp], timeout: 5)
         request.complete(error: nil)
         wait(for: [discExp], timeout: 5)
@@ -215,15 +214,17 @@ class SseClientTest: XCTestCase {
         requestMock.closeExpectation = discExp
         httpClient.httpStreamRequest = requestMock
 
-        DispatchQueue.global().async {
-            _ = self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels)
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
             conExp.fulfill()
         }
 
+        let request = httpClient.httpStreamRequest!
+        request.setResponse(code: 200)
         wait(for: [reqExp], timeout: 5)
 
-        requestMock.setResponse(code: 200)
+        request.notifyIncomingData(Data(":keepalive".utf8))
         wait(for: [conExp], timeout: 5)
+
         sseClient.disconnect()
         wait(for: [discExp], timeout: 5)
 
@@ -232,26 +233,4 @@ class SseClientTest: XCTestCase {
 
     override func tearDown() {
     }
-
-
-    /// The following code is used while developing streaming feature/
-    /// TODO: Remove when implementation is finished
-//    func testRConnect() {
-//        let channels = ["MzM5Njc0ODcyNg==_MTExMzgwNjgx_splits", "MzM5Njc0ODcyNg==_MTExMzgwNjgx_MTcwNTI2MTM0Mg==_mySegments", "control_pri", "control_sec"]
-//        let token = "eyJhbGciOiJIUzI1NiIsImtpZCI6IjVZOU05US45QnJtR0EiLCJ0eXAiOiJKV1QifQ.eyJ4LWFibHktY2FwYWJpbGl0eSI6IntcIk16TTVOamMwT0RjeU5nPT1fTVRFeE16Z3dOamd4X01UY3dOVEkyTVRNME1nPT1fbXlTZWdtZW50c1wiOltcInN1YnNjcmliZVwiXSxcIk16TTVOamMwT0RjeU5nPT1fTVRFeE16Z3dOamd4X3NwbGl0c1wiOltcInN1YnNjcmliZVwiXSxcImNvbnRyb2xfcHJpXCI6W1wic3Vic2NyaWJlXCIsXCJjaGFubmVsLW1ldGFkYXRhOnB1Ymxpc2hlcnNcIl0sXCJjb250cm9sX3NlY1wiOltcInN1YnNjcmliZVwiLFwiY2hhbm5lbC1tZXRhZGF0YTpwdWJsaXNoZXJzXCJdfSIsIngtYWJseS1jbGllbnRJZCI6ImNsaWVudElkIiwiZXhwIjoxNTk5NDk3MTEwLCJpYXQiOjE1OTk0OTM1MTB9.OgaNs1OdDrIXyYews_oJBrSv3VyZG2ArkZuutzh1MtI"
-//        let serviceEndpoints =  ServiceEndpoints.builder().build()
-//        let sseEndpoint = EndpointFactory(serviceEndpoints: serviceEndpoints,
-//        apiKey: "", userKey: "javi").streamingEndpoint
-//        var httpSessionConfig = HttpSessionConfig()
-//        httpSessionConfig.connectionTimeOut = 80
-//
-//        let realHttpClient = DefaultHttpClient(configuration: httpSessionConfig)
-//        let localSseClient = DefaultSseClient(endpoint: sseEndpoint,
-//                                              httpClient: realHttpClient, sseHandler: SseHandlerStub())
-//
-//        localSseClient.connect(token: token, channels: channels)
-//        print("connected at: \(Date().description)")
-//        sleep(90000)
-//    }
-
 }

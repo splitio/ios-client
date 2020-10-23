@@ -18,6 +18,7 @@ class SseNotificationParserStub: SseNotificationParser {
     var occupancyNotification: OccupancyNotification?
     var controlNotification: ControlNotification?
     var sseErrorNotification: StreamingError?
+    var isError = false
 
 
     func parseIncoming(jsonString: String) -> IncomingNotification? {
@@ -46,5 +47,9 @@ class SseNotificationParserStub: SseNotificationParser {
 
     func parseSseError(jsonString: String) throws -> StreamingError {
         return sseErrorNotification!
+    }
+
+    func isError(event: [String : String]) -> Bool {
+        return isError
     }
 }

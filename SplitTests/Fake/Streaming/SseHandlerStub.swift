@@ -15,6 +15,7 @@ class SseHandlerStub: SseHandler {
 
     var errorExpectation: XCTestExpectation?
     var messageExpectation: XCTestExpectation?
+    var isConfirmed = true
 
 
     var errorReportedCalled = false
@@ -34,5 +35,9 @@ class SseHandlerStub: SseHandler {
         if let exp = messageExpectation {
             exp.fulfill()
         }
+    }
+
+    func isConnectionConfirmed(message: [String: String]) -> Bool {
+        return isConfirmed
     }
 }
