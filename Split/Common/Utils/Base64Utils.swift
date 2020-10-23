@@ -9,7 +9,6 @@
 import Foundation
 
 class Base64Utils {
-    static let  kOffsetString = "===="
     static let kOffsetLenght = 4
     class func decodeBase64URL(base64: String?) -> String? {
         guard let base64 = base64 else {
@@ -24,7 +23,7 @@ class Base64Utils {
         // = complement
         let mod4 = base64NoPlus.count % 4
         if mod4 > 0 {
-            let appStr = kOffsetString[kOffsetString.index(kOffsetString.startIndex, offsetBy: kOffsetLenght - mod4)]
+            let appStr = String(repeating: "=", count: 4 - mod4)
             finalBase64 = "\(base64NoSlash)\(appStr)"
         }
         return Data(base64Encoded: finalBase64,
