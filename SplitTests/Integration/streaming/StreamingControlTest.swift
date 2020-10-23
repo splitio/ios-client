@@ -100,11 +100,9 @@ class StreamingControlTest: XCTestCase {
                                                                                   controlType: "STREAMING_ENABLED"))
         justWait() // allow polling to stop
         timestamp+=1000
-        print("t1")
+
         streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
                                                                                                segment: "new_segment"))
-
-print("t2")
         justWait() // allow to my segments be updated
         let treatmentEnabled = client.getTreatment(splitName)
 
