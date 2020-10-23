@@ -77,7 +77,10 @@ class DefaultSyncManager: SyncManager {
             Logger.d("Push Subsystem Down event message received.")
             reconnectStreamingTimer.cancel()
             enablePolling()
-            pushNotificationManager.stop()
+
+        case .pushSubsystemDisabled:
+            Logger.d("Push Subsystem Disabled event message received.")
+            stopStreaming()
 
         case .pushRetryableError:
             Logger.d("Push recoverable event message received.")
@@ -88,10 +91,14 @@ class DefaultSyncManager: SyncManager {
 
         case .pushNonRetryableError:
             Logger.d("Push non recoverable event message received.")
-            reconnectStreamingTimer.cancel()
-            enablePolling()
-            pushNotificationManager.stop()
+            stopStreaming()
         }
+    }
+
+    private func stopStreaming() {
+        reconnectStreamingTimer.cancel()
+        enablePolling()
+        pushNotificationManager.stop()
     }
 
     private func enablePolling() {
