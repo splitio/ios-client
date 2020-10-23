@@ -126,7 +126,7 @@ class PushNotificationManagerTest: XCTestCase {
         XCTAssertFalse(sseClient.disconnectCalled)
         XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
-        XCTAssertEqual(PushStatusEvent.pushSubsystemDown, broadcasterChannel.lastPushedEvent)
+        XCTAssertEqual(PushStatusEvent.pushSubsystemDisabled, broadcasterChannel.lastPushedEvent)
     }
 
     func testStop() {
