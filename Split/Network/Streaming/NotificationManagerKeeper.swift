@@ -57,11 +57,11 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
         switch notification.controlType {
         case .streamingPaused:
             updateStreamingState(active: false)
-            broadcasterChannel.push(event: .pushSubsystemPaused)
+            broadcasterChannel.push(event: .pushSubsystemDown)
 
         case .streamingDisabled:
             updateStreamingState(active: false)
-            broadcasterChannel.push(event: .pushSubsystemDown)
+            broadcasterChannel.push(event: .pushSubsystemDisabled)
 
         case .streamingEnabled:
             updateStreamingState(active: true)

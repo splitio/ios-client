@@ -74,7 +74,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
         let result = sseAuthenticator.authenticate(userKey: userKey)
         if result.success && !result.pushEnabled {
             Logger.d("Streaming disabled for api key")
-            broadcasterChannel.push(event: .pushSubsystemDown)
+            broadcasterChannel.push(event: .pushSubsystemDisabled)
             isStopped.set(true)
             return
         }
