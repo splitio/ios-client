@@ -30,7 +30,7 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
         self.defaultQueryString = defaultQueryString
     }
 
-    func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
+    func fetch(since: Int64, policy: FecthingPolicy, clearCache: Bool) throws -> SplitChange? {
 
         if policy == .cacheOnly {
             return splitChangeCache.getChanges(since: -1)
@@ -57,7 +57,7 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
                 splitChangeValidator.validate(change) == nil else {
                 throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
             }
-            if defaultQueryString != splitCache.getQueryString() {
+            if defaultQueryString != splitCache.getQueryString() || clearCache {
                 splitCache.setQueryString(defaultQueryString)
                 splitCache.clear()
             }
