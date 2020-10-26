@@ -19,15 +19,13 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
     private let restClient: RestClientSplitChanges
     private let splitChangeCache: SplitChangeCache
     private let splitChangeValidator: SplitChangeValidator
-    private let defaultQueryString: String
     private let splitCache: SplitCacheProtocol
 
-    init(restClient: RestClientSplitChanges, splitCache: SplitCacheProtocol, defaultQueryString: String) {
+    init(restClient: RestClientSplitChanges, splitCache: SplitCacheProtocol) {
         self.restClient = restClient
         self.splitCache = splitCache
         self.splitChangeCache = SplitChangeCache(splitCache: splitCache)
         self.splitChangeValidator = DefaultSplitChangeValidator()
-        self.defaultQueryString = defaultQueryString
     }
 
     func fetch(since: Int64, policy: FecthingPolicy, clearCache: Bool) throws -> SplitChange? {
@@ -57,8 +55,7 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
                 splitChangeValidator.validate(change) == nil else {
                 throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
             }
-            if defaultQueryString != splitCache.getQueryString() || clearCache {
-                splitCache.setQueryString(defaultQueryString)
+            if clearCache {
                 splitCache.clear()
             }
             _ = self.splitChangeCache.addChange(splitChange: change)

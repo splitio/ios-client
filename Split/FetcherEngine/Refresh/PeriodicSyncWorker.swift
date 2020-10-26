@@ -127,7 +127,9 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         do {
-            _ = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber())
+            _ = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber(),
+                                                  policy: .network,
+                                                  clearCache: false)
             Logger.d("Fetching splits")
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)

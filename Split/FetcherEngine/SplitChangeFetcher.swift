@@ -12,9 +12,9 @@ protocol SplitChangeFetcher {
     func fetch(since: Int64, policy: FecthingPolicy, clearCache: Bool) throws -> SplitChange?
 }
 
-extension SplitChangeFetcher {
-    func fetch(since: Int64, policy: FecthingPolicy = .networkAndCache, clearCache: Bool = false)
-        throws -> SplitChange? {
-        return try fetch(since: since, policy: policy, clearCache: clearCache)
-    }
-}
+//extension SplitChangeFetcher {
+//    func fetch(since: Int64, policy: FecthingPolicy = .networkAndCache, clearCache: Bool = false)
+//        throws -> SplitChange? {
+//        return try fetch(since: since, policy: policy, clearCache: clearCache)
+//    }
+//}
