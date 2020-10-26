@@ -17,11 +17,13 @@ class SplitChangeFetcherStub: SplitChangeFetcher {
 
     var changeResponseIndex = -1
     var changes: [SplitChange?]?
+    var clearCacheParams = [Bool]()
 
-    func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
+    func fetch(since: Int64, policy: FecthingPolicy, clearCache: Bool) throws -> SplitChange? {
         fetchCallCount+=1
         self.since = since
         var change: SplitChange?
+        self.clearCacheParams.append(clearCache)
         if let changes = self.changes {
             if changeResponseIndex + 1 < changes.count {
                 changeResponseIndex+=1

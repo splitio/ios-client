@@ -126,16 +126,19 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     private let splitChangeFetcher: SplitChangeFetcher
     private let splitCache: SplitCacheProtocol
     private let cacheExpiration: Int
+    private let defaultQueryString: String
 
     init(splitChangeFetcher: SplitChangeFetcher,
          splitCache: SplitCacheProtocol,
          cacheExpiration: Int,
+         defaultQueryString: String,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
 
         self.splitChangeFetcher = splitChangeFetcher
         self.splitCache = splitCache
         self.cacheExpiration = cacheExpiration
+        self.defaultQueryString = defaultQueryString
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
@@ -151,7 +154,13 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                     clearCache = true
                 }
             }
-            if let splitChanges = try self.splitChangeFetcher.fetch(since: changeNumber, clearCache: clearCache) {
+            clearCache = clearCache || defaultQueryString != splitCache.getQueryString()
+            if let splitChanges = try self.splitChangeFetcher.fetch(since: changeNumber,
+                                                                    policy: .network,
+                                                                    clearCache: clearCache) {
+                if clearCache {
+                    splitCache.setQueryString(defaultQueryString)
+                }
                 fireReadyIsNeeded(event: SplitInternalEvent.splitsAreReady)
                 resetBackoffCounter()
                 Logger.d(splitChanges.debugDescription)
@@ -191,7 +200,9 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                 return true
             }
 
-            if let splitChanges = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber()) {
+            if let splitChanges = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber(),
+                                                                    policy: .network,
+                                                                    clearCache: false) {
                 resetBackoffCounter()
                 Logger.d(splitChanges.debugDescription)
                 return true
