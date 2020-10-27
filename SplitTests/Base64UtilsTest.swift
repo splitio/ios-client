@@ -40,6 +40,14 @@ class Base64UtilsTest: XCTestCase {
         XCTAssertNil(decoded)
     }
 
+    func testRealToken() {
+        let token = "eyJ4LWFibHktY2FwYWJpbGl0eSI6IntcIk1qRXlNekE1TURZeE1nPT1fTWpVNE5qYzJOekk0TUE9PV9NVGs1TlRnM09UTTFfbXlTZWdtZW50c1wiOltcInN1YnNjcmliZVwiXSxcIk1qRXlNekE1TURZeE1nPT1fTWpVNE5qYzJOekk0TUE9PV9zcGxpdHNcIjpbXCJzdWJzY3JpYmVcIl0sXCJjb250cm9sX3ByaVwiOltcInN1YnNjcmliZVwiLFwiY2hhbm5lbC1tZXRhZGF0YTpwdWJsaXNoZXJzXCJdLFwiY29udHJvbF9zZWNcIjpbXCJzdWJzY3JpYmVcIixcImNoYW5uZWwtbWV0YWRhdGE6cHVibGlzaGVyc1wiXX0iLCJ4LWFibHktY2xpZW50SWQiOiJjbGllbnRJZCIsImV4cCI6MTYwMzQwODUwNywiaWF0IjoxNjAzNDA0OTA3fQ=="
+
+        let dec = Data(base64Encoded: token, options: Data.Base64DecodingOptions.init(rawValue: 0))
+
+        XCTAssertNotNil(dec)
+    }
+
     override func tearDown() {
 
     }

@@ -31,7 +31,8 @@ import Foundation
         return Builder()
     }
 
-    @objc public class Builder: NSObject {
+    @objc(ServiceEndpointsBuilder)
+    public class Builder: NSObject {
         private var sdkEndpoint = kSdkEndpoint
         private var eventsEndpoint = kEventsEndpoint
         private var authServiceEndpoint = kAuthServiceEndpoint
@@ -43,7 +44,9 @@ import Foundation
         /// @param Endpoint MUST NOT be null
         /// @return this builder
         ///
-        @objc public func set(sdkEndpoint: String) -> Self {
+
+        @objc(setSdkEndpoint:)
+        public func set(sdkEndpoint: String) -> Self {
             self.sdkEndpoint = sdkEndpoint
             return self
         }
@@ -53,7 +56,8 @@ import Foundation
         /// @param eventsEndpoint
         /// @return this builder
         ///
-        @objc public func set(eventsEndpoint: String) -> Self {
+        @objc(setEventsEndpoint:)
+        public func set(eventsEndpoint: String) -> Self {
             self.eventsEndpoint = eventsEndpoint
             return self
         }
@@ -64,7 +68,8 @@ import Foundation
         /// @param authServiceEndpoint
         /// @return this builder
         ///
-        @objc public func set(authServiceEndpoint: String) -> Self {
+        @objc(setAuthServiceEndpoint:)
+        public func set(authServiceEndpoint: String) -> Self {
             self.authServiceEndpoint = authServiceEndpoint
             return self
         }
@@ -75,7 +80,8 @@ import Foundation
         /// @param streamingServiceEndpoint
         /// @return this builder
         ///
-        @objc public func set(streamingServiceEndpoint: String) -> Self {
+        @objc(setStreamingServiceEndpoint:)
+        public func set(streamingServiceEndpoint: String) -> Self {
             self.streamingServiceEndpoint = streamingServiceEndpoint
             return self
         }

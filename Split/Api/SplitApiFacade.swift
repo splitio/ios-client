@@ -93,8 +93,7 @@ class SplitApiFacadeBuilder {
         }
 
         let splitsChangeFetcher: SplitChangeFetcher
-            = HttpSplitChangeFetcher(restClient: restClient, splitCache: storageContainer.splitsCache,
-                                     defaultQueryString: splitsQueryString)
+            = HttpSplitChangeFetcher(restClient: restClient, splitCache: storageContainer.splitsCache)
 
         let mySegmentsFetcher: MySegmentsChangeFetcher
             = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: storageContainer.mySegmentsCache)
@@ -105,6 +104,7 @@ class SplitApiFacadeBuilder {
         let splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitsChangeFetcher,
                                                          splitCache: storageContainer.splitsCache,
                                                          cacheExpiration: splitConfig.cacheExpirationInSeconds,
+                                                         defaultQueryString: splitsQueryString,
                                                          eventsManager: eventsManager,
                                                          reconnectBackoffCounter: splitsBackoffCounter)
 
