@@ -32,6 +32,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitChangeFetcher,
                                                      splitCache: splitCache,
                                                      cacheExpiration: 100,
+                                                     defaultQueryString: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter)
 
@@ -47,7 +48,7 @@ class SplitsSyncWorkerTest: XCTestCase {
 
         XCTAssertTrue(resultIsSuccess)
         XCTAssertEqual(0, backoffCounter.retryCallCount)
-        XCTAssertEqual(0, splitCache.clearCallCount)
+        XCTAssertFalse(splitChangeFetcher.clearCacheParams.last ?? true)
         XCTAssertTrue(eventsManager.isSplitsReadyFired)
     }
 
@@ -55,6 +56,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitChangeFetcher,
                                                      splitCache: splitCache,
                                                      cacheExpiration: 100,
+                                                     defaultQueryString: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter)
 
@@ -82,6 +84,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitChangeFetcher,
                                                      splitCache: splitCache,
                                                      cacheExpiration: 100,
+                                                     defaultQueryString: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter)
 
@@ -113,6 +116,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitChangeFetcher,
                                                      splitCache: splitCache,
                                                      cacheExpiration: expiration,
+                                                     defaultQueryString: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter)
 
@@ -133,7 +137,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         wait(for: [exp], timeout: 3)
 
         XCTAssertTrue(resultIsSuccess)
-        XCTAssertEqual(1, splitCache.clearCallCount)
+        XCTAssertTrue(splitChangeFetcher.clearCacheParams.last ?? false)
         XCTAssertEqual(0, backoffCounter.retryCallCount)
         XCTAssertTrue(eventsManager.isSplitsReadyFired)
     }
@@ -144,6 +148,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitChangeFetcher,
                                                      splitCache: splitCache,
                                                      cacheExpiration: expiration,
+                                                     defaultQueryString: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter)
 
@@ -164,8 +169,107 @@ class SplitsSyncWorkerTest: XCTestCase {
         wait(for: [exp], timeout: 3)
 
         XCTAssertTrue(resultIsSuccess)
-        XCTAssertEqual(0, splitCache.clearCallCount)
+        XCTAssertFalse(splitChangeFetcher.clearCacheParams.last ?? true)
         XCTAssertTrue(eventsManager.isSplitsReadyFired)
+    }
+
+    func testChangedQueryString() {
+
+        let expiration = 10000
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitChangeFetcher,
+                                                     splitCache: splitCache,
+                                                     cacheExpiration: expiration,
+                                                     defaultQueryString: "&q=1",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter)
+
+        let change = SplitChange()
+        change.splits = []
+        change.since = 100
+        change.till = 200
+        splitCache.timestamp = Int(Date().timeIntervalSince1970) - expiration / 2 // Non Expired cache
+        splitChangeFetcher.changes = [change]
+        splitCache.setQueryString("&q=2")
+        var resultIsSuccess = false
+        let exp = XCTestExpectation(description: "exp")
+        splitsSyncWorker.completion = { success in
+            resultIsSuccess = success
+            exp.fulfill()
+        }
+        splitsSyncWorker.start()
+
+        wait(for: [exp], timeout: 3)
+
+        XCTAssertTrue(resultIsSuccess)
+        XCTAssertTrue(splitChangeFetcher.clearCacheParams.last ?? false)
+        XCTAssertTrue(eventsManager.isSplitsReadyFired)
+        XCTAssertEqual("&q=1", splitCache.getQueryString())
+    }
+
+    func testNoChangedQueryString() {
+
+        let expiration = 10000
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitChangeFetcher,
+                                                     splitCache: splitCache,
+                                                     cacheExpiration: expiration,
+                                                     defaultQueryString: "&q=1",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter)
+
+        let change = SplitChange()
+        change.splits = []
+        change.since = 100
+        change.till = 200
+        splitCache.timestamp = Int(Date().timeIntervalSince1970) - expiration / 2 // Non Expired cache
+        splitChangeFetcher.changes = [change]
+        splitCache.setQueryString("&q=1")
+        var resultIsSuccess = false
+        let exp = XCTestExpectation(description: "exp")
+        splitsSyncWorker.completion = { success in
+            resultIsSuccess = success
+            exp.fulfill()
+        }
+        splitsSyncWorker.start()
+
+        wait(for: [exp], timeout: 3)
+
+        XCTAssertTrue(resultIsSuccess)
+        XCTAssertFalse(splitChangeFetcher.clearCacheParams.last ?? true)
+        XCTAssertTrue(eventsManager.isSplitsReadyFired)
+    }
+
+    func testClearExpiredCacheAndChangedQs() {
+
+        let expiration = 1000
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitChangeFetcher,
+                                                     splitCache: splitCache,
+                                                     cacheExpiration: expiration,
+                                                     defaultQueryString: "&q=1",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter)
+
+        let change = SplitChange()
+        change.splits = []
+        change.since = 100
+        change.till = 200
+        splitCache.setQueryString("")
+        splitCache.timestamp = Int(Date().timeIntervalSince1970) - expiration * 2 // Expired cache
+        splitChangeFetcher.changes = [change]
+        var resultIsSuccess = false
+        let exp = XCTestExpectation(description: "exp")
+        splitsSyncWorker.completion = { success in
+            resultIsSuccess = success
+            exp.fulfill()
+        }
+        splitsSyncWorker.start()
+
+        wait(for: [exp], timeout: 3)
+
+        XCTAssertTrue(resultIsSuccess)
+        XCTAssertTrue(splitChangeFetcher.clearCacheParams.last ?? false)
+        XCTAssertEqual(0, backoffCounter.retryCallCount)
+        XCTAssertTrue(eventsManager.isSplitsReadyFired)
+        XCTAssertEqual("&q=1", splitCache.getQueryString())
     }
 
     override func tearDown() {

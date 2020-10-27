@@ -126,31 +126,41 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     private let splitChangeFetcher: SplitChangeFetcher
     private let splitCache: SplitCacheProtocol
     private let cacheExpiration: Int
+    private let defaultQueryString: String
 
     init(splitChangeFetcher: SplitChangeFetcher,
          splitCache: SplitCacheProtocol,
          cacheExpiration: Int,
+         defaultQueryString: String,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
 
         self.splitChangeFetcher = splitChangeFetcher
         self.splitCache = splitCache
         self.cacheExpiration = cacheExpiration
+        self.defaultQueryString = defaultQueryString
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() -> Bool {
         do {
             var changeNumber = splitCache.getChangeNumber()
+            var clearCache = false
             if changeNumber != -1 {
                 let timestamp = splitCache.getTimestamp()
                 let elapsedTime = Int(Date().timeIntervalSince1970) - timestamp
                 if timestamp > 0 && elapsedTime > self.cacheExpiration {
                     changeNumber = -1
-                    self.splitCache.clear()
+                    clearCache = true
                 }
             }
-            if let splitChanges = try self.splitChangeFetcher.fetch(since: changeNumber) {
+            clearCache = clearCache || defaultQueryString != splitCache.getQueryString()
+            if let splitChanges = try self.splitChangeFetcher.fetch(since: changeNumber,
+                                                                    policy: .network,
+                                                                    clearCache: clearCache) {
+                if clearCache {
+                    splitCache.setQueryString(defaultQueryString)
+                }
                 fireReadyIsNeeded(event: SplitInternalEvent.splitsAreReady)
                 resetBackoffCounter()
                 Logger.d(splitChanges.debugDescription)
@@ -190,7 +200,9 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                 return true
             }
 
-            if let splitChanges = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber()) {
+            if let splitChanges = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber(),
+                                                                    policy: .network,
+                                                                    clearCache: false) {
                 resetBackoffCounter()
                 Logger.d(splitChanges.debugDescription)
                 return true

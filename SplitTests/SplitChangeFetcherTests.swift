@@ -23,7 +23,7 @@ class SplitChangeFetcherTests: XCTestCase {
                                               userKey: IntegrationHelper.dummyUserKey,
                                               splitsQueryString: "")
         let restClient = DefaultRestClient(endpointFactory: endpointFactory)
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "")
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
     }
 
     override func tearDown() {
@@ -35,10 +35,10 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_1"))
 
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "")
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange? = nil
         do {
-            response = try splitChangeFetcher.fetch(since: -1)
+            response = try splitChangeFetcher.fetch(since: -1, policy: .networkAndCache, clearCache: false)
         } catch {
         }
         XCTAssertTrue(response != nil, "Response should not be nil")
@@ -52,10 +52,10 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_2"))
 
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "")
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange? = nil
         do {
-            response = try splitChangeFetcher.fetch(since: -1)
+            response = try splitChangeFetcher.fetch(since: -1, policy: .networkAndCache, clearCache: false)
         } catch {
         }
 
@@ -83,74 +83,16 @@ class SplitChangeFetcherTests: XCTestCase {
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_3"))
 
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "")
+        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange?
         var errorHasOccurred = false
         do {
-            response = try splitChangeFetcher.fetch(since: -1)
+            response = try splitChangeFetcher.fetch(since: -1, policy: .networkAndCache, clearCache: false)
         } catch {
             errorHasOccurred = true
         }
         XCTAssertTrue(errorHasOccurred, "An exception should be raised")
         XCTAssertTrue(response == nil, "Response should be nil")
-    }
-
-    func testSplitsQueryStringChanged() {
-        // When querystring changes
-        // Old splits has to be removed and querystring updated
-
-        let restClient: RestClientSplitChanges = RestClientStub()
-        let restClientTest: RestClientTest = restClient as! RestClientTest
-
-        let newSplit = Split()
-        newSplit.name = "new"
-        let c = SplitChange()
-        c.splits = [newSplit]
-        c.since = 300
-        c.till = 400
-        restClientTest.update(change: c)
-        let split = Split()
-        split.name = "toberemoved"
-        let splitCache = SplitCacheStub(splits: [split], changeNumber: 100, queryString: "q=2")
-
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "q=1")
-        do {
-            _ = try splitChangeFetcher.fetch(since: -1)
-        } catch {
-        }
-        XCTAssertEqual(1, splitCache.getSplits().values.filter { $0.name == "new" }.count)
-        XCTAssertEqual(0, splitCache.getSplits().values.filter { $0.name == "toberemoved" }.count)
-        XCTAssertEqual(1, splitCache.getSplits().count)
-        XCTAssertEqual("q=1", splitCache.getQueryString())
-    }
-
-
-    func testSplitsQueryStringHasNotChanged() {
-        // When querystring doesn't change
-        // Old splits has to be maintained and querystring don't change
-        let restClient: RestClientSplitChanges = RestClientStub()
-        let restClientTest: RestClientTest = restClient as! RestClientTest
-
-        let newSplit = Split()
-        newSplit.name = "new"
-        let c = SplitChange()
-        c.splits = [newSplit]
-        c.since = 300
-        c.till = 400
-        restClientTest.update(change: c)
-        let split = Split()
-        split.name = "tomaintain"
-        let splitCache = SplitCacheStub(splits: [split], changeNumber: 100, queryString: "q=1")
-
-        splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache, defaultQueryString: "q=1")
-        do {
-            _ = try splitChangeFetcher.fetch(since: -1)
-        } catch {
-        }
-        XCTAssertEqual(1, splitCache.getSplits().values.filter { $0.name == "new" }.count)
-        XCTAssertEqual(1, splitCache.getSplits().values.filter { $0.name == "tomaintain" }.count)
-        XCTAssertEqual(2, splitCache.getSplits().count)
-        XCTAssertEqual("q=1", splitCache.getQueryString())
     }
 
     func getChanges(fileName: String) -> SplitChange? {

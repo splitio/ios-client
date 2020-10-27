@@ -11,8 +11,6 @@ import Foundation
 protocol PushNotificationManager {
     func start()
     func stop()
-    func pause()
-    func resume()
 }
 
 class DefaultPushNotificationManager: PushNotificationManager {
@@ -50,14 +48,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
         timersManager.cancel(timer: .refreshAuthToken)
         timersManager.cancel(timer: .appHostBgDisconnect)
         sseClient.disconnect()
-    }
-
-    func pause() {
-        // TODO: Add logic to handle background, foreground.
-    }
-
-    func resume() {
-        // TODO: Add logic to handle background, foreground.
     }
 
     private func connect() {
