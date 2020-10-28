@@ -15,7 +15,7 @@ import Foundation
 struct RawNotification: Decodable {
     let name: String?
     let channel: String?
-    let timestamp: Int?
+    let timestamp: Int64?
     let data: String
 }
 
@@ -67,9 +67,9 @@ struct IncomingNotification {
     let type: NotificationType
     let channel: String?
     let jsonData: String?
-    let timestamp: Int
+    let timestamp: Int64
 
-    init(type: NotificationType, channel: String? = nil, jsonData: String? = nil, timestamp: Int = 0) {
+    init(type: NotificationType, channel: String? = nil, jsonData: String? = nil, timestamp: Int64 = 0) {
         self.type = type
         self.channel = channel
         self.jsonData = jsonData
@@ -141,7 +141,7 @@ struct OccupancyNotification: NotificationTypeField {
     private let kControlPriToken = "control_pri"
     private let kControlSecToken = "control_sec"
     var channel: String?
-    var timestamp: Int = 0
+    var timestamp: Int64 = 0
 
     var type: NotificationType {
         return .occupancy

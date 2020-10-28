@@ -37,7 +37,7 @@ class SseNotificationParserStub: SseNotificationParser {
         return mySegmentsUpdateNotification!
     }
 
-    func parseOccupancy(jsonString: String, timestamp: Int, channel: String) throws -> OccupancyNotification {
+    func parseOccupancy(jsonString: String, timestamp: Int64, channel: String) throws -> OccupancyNotification {
         return occupancyNotification!
     }
 
