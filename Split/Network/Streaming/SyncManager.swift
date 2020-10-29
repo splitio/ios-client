@@ -69,8 +69,8 @@ class DefaultSyncManager: SyncManager {
 
     func resume() {
         isPaused.set(false)
-        pushNotificationManager.resume()
         synchronizer.resume()
+        pushNotificationManager.resume()
     }
 
     func stop() {
