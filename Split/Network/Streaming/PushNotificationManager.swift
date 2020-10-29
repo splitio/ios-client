@@ -52,31 +52,30 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func pause() {
         Logger.d("Push notification manager paused")
         isPaused.set(true)
+        isConnecting.set(false)
         sseClient.disconnect()
     }
 
     func resume() {
         Logger.d("Push notification manager resumed")
         isPaused.set(false)
-        if isStopped.value || sseClient.isConnectionOpened || isConnecting.value {
-            return
-        }
         connect()
     }
 
     func stop() {
         isStopped.set(true)
         timersManager.cancel(timer: .refreshAuthToken)
-        timersManager.cancel(timer: .appHostBgDisconnect)
         sseClient.disconnect()
     }
 
     private func connect() {
-        if isStopped.value || isPaused.value || isConnecting.value {
+        if isStopped.value || isPaused.value ||
+            isConnecting.value || sseClient.isConnectionOpened {
             return
         }
-        isConnecting.set(true)
+
         connectionQueue.async {
+            self.isConnecting.set(true)
             self.connectToSse()
         }
     }
@@ -86,33 +85,40 @@ class DefaultPushNotificationManager: PushNotificationManager {
         let result = sseAuthenticator.authenticate(userKey: userKey)
         if result.success && !result.pushEnabled {
             Logger.d("Streaming disabled for api key")
-            broadcasterChannel.push(event: .pushSubsystemDisabled)
             isStopped.set(true)
+            isConnecting.set(false)
+            broadcasterChannel.push(event: .pushSubsystemDisabled)
             return
         }
 
         if !result.success && !result.errorIsRecoverable {
             Logger.d("Streaming client error. Please check your API key")
             isStopped.set(true)
+            isConnecting.set(false)
             broadcasterChannel.push(event: .pushNonRetryableError)
             return
         }
 
         if !result.success && result.errorIsRecoverable {
             Logger.d("Streaming auth error. Retrying")
+            isConnecting.set(false)
             broadcasterChannel.push(event: .pushRetryableError)
             return
         }
 
         guard let jwt = result.jwtToken else {
+            Logger.d("Invalid JWT")
+            isConnecting.set(false)
             return
         }
         Logger.d("Streaming authentication success")
 
         if isStopped.value {
             Logger.d("Streaming stopped. Aborting connection")
+            isConnecting.set(false)
             return
         }
+
         self.sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { success in
             if success {
                 self.handleSubsystemUp()
@@ -132,15 +138,8 @@ class DefaultPushNotificationManager: PushNotificationManager {
             case .refreshAuthToken:
                 self.sseClient.disconnect()
                 self.connect()
-            case .appHostBgDisconnect:
-                // This should be called only if bg capabilities are
-                // enabled, so if not paused the timer has been fired
-                // when app is running. In this case it should be ignored
-                if self.isPaused.value {
-                    Logger.d("Disconnecting SSE client while in background")
-                    self.timersManager.cancel(timer: .refreshAuthToken)
-                    self.sseClient.disconnect()
-                }
+            default:
+                Logger.d("No handler or timer: \(timerName)")
             }
         }
     }

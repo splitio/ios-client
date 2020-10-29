@@ -85,7 +85,6 @@ class DefaultSseClient: SseClient {
                             completion(false)
                             self.isConnected.set(false)
                             self.sseHandler.reportError(isRetryable: true)
-                            return
                         }
                     }
                     if !self.streamParser.isKeepAlive(values: values) {
@@ -129,6 +128,7 @@ class DefaultSseClient: SseClient {
     }
 
     func handleError(_ error: HttpError) {
+        self.isConnected.set(false)
         sseHandler.reportError(isRetryable: !isClientRelatedError(error))
     }
 
