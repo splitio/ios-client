@@ -16,7 +16,7 @@ final class Atomic<T> {
     }
 
     var value: T {
-            return queue.sync { self.currentValue }
+        return queue.sync { self.currentValue }
     }
 
     func mutate(_ transformation: (inout T) -> Void) {
