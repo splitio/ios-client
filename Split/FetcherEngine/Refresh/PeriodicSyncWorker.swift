@@ -52,6 +52,8 @@ protocol PeriodicSyncWorker {
     //    typealias SyncCompletion = (Bool) -> Void
     //    var completion: SyncCompletion? { get set }
     func start()
+    func pause()
+    func resume()
     func stop()
     func destroy()
 }
@@ -61,6 +63,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     private var fetchTimer: PeriodicTimer
     private let fetchQueue = DispatchQueue.global()
     private let eventsManager: SplitEventsManager
+    private var isPaused: Atomic<Bool> = Atomic(false)
 
     init(timer: PeriodicTimer,
          eventsManager: SplitEventsManager) {
@@ -68,6 +71,9 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
         self.fetchTimer = timer
         self.fetchTimer.handler { [weak self] in
             guard let self = self else {
+                return
+            }
+            if self.isPaused.value {
                 return
             }
             self.fetchQueue.async {
@@ -78,6 +84,14 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
 
     func start() {
         startPeriodicFetch()
+    }
+
+    func pause() {
+        isPaused.set(true)
+    }
+
+    func resume() {
+        isPaused.set(false)
     }
 
     func stop() {

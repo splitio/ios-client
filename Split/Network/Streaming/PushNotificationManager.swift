@@ -10,6 +10,8 @@ import Foundation
 
 protocol PushNotificationManager {
     func start()
+    func pause()
+    func resume()
     func stop()
 }
 
@@ -22,12 +24,15 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     private let sseAuthenticator: SseAuthenticator
     private var sseClient: SseClient
-    private let timersManager: TimersManager
+    private var timersManager: TimersManager
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let userKey: String
+
     private let connectionQueue = DispatchQueue(label: "Sse connnection", target: DispatchQueue.global())
 
     private var isStopped: Atomic<Bool> = Atomic(false)
+    private var isPaused: Atomic<Bool> = Atomic(false)
+    private var isConnecting: Atomic<Bool> = Atomic(false)
 
     init(userKey: String, sseAuthenticator: SseAuthenticator, sseClient: SseClient,
          broadcasterChannel: PushManagerEventBroadcaster, timersManager: TimersManager) {
@@ -36,10 +41,26 @@ class DefaultPushNotificationManager: PushNotificationManager {
         self.sseClient = sseClient
         self.broadcasterChannel = broadcasterChannel
         self.timersManager = timersManager
+        self.timersManager.triggerHandler = timerHandler()
     }
 
     // MARK: Public
     func start() {
+        connect()
+    }
+
+    func pause() {
+        Logger.d("Push notification manager paused")
+        isPaused.set(true)
+        sseClient.disconnect()
+    }
+
+    func resume() {
+        Logger.d("Push notification manager resumed")
+        isPaused.set(false)
+        if isStopped.value || sseClient.isConnectionOpened || isConnecting.value {
+            return
+        }
         connect()
     }
 
@@ -51,9 +72,10 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     private func connect() {
-        if self.isStopped.value {
+        if isStopped.value || isPaused.value || isConnecting.value {
             return
         }
+        isConnecting.set(true)
         connectionQueue.async {
             self.connectToSse()
         }
@@ -91,13 +113,35 @@ class DefaultPushNotificationManager: PushNotificationManager {
             Logger.d("Streaming stopped. Aborting connection")
             return
         }
-        self.sseClient.connect(token: jwt.rawToken, channels: jwt.channels) {
-            self.handleSubsystemUp()
+        self.sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { success in
+            if success {
+                self.handleSubsystemUp()
+            }
+            self.isConnecting.set(false)
         }
     }
 
     private func handleSubsystemUp() {
         self.timersManager.add(timer: .refreshAuthToken, delayInSeconds: kReconnectTimeBeforeTokenExpInASeconds)
         self.broadcasterChannel.push(event: .pushSubsystemUp)
+    }
+
+    private func timerHandler() -> TimersManager.TimerHandler {
+        return { timerName in
+            switch timerName {
+            case .refreshAuthToken:
+                self.sseClient.disconnect()
+                self.connect()
+            case .appHostBgDisconnect:
+                // This should be called only if bg capabilities are
+                // enabled, so if not paused the timer has been fired
+                // when app is running. In this case it should be ignored
+                if self.isPaused.value {
+                    Logger.d("Disconnecting SSE client while in background")
+                    self.timersManager.cancel(timer: .refreshAuthToken)
+                    self.sseClient.disconnect()
+                }
+            }
+        }
     }
 }
