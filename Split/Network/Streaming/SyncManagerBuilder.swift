@@ -94,6 +94,7 @@ class SyncManagerBuilder {
 
         return DefaultSyncManager(splitConfig: config, pushNotificationManager: pushManager,
                                   reconnectStreamingTimer: sseBackoffTimer,
+                                  notificationHelper: DefaultNotificationHelper.instance,
                                   synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
     }
 }

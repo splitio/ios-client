@@ -19,6 +19,8 @@ protocol Synchronizer {
     func stopPeriodicRecording()
     func pushEvent(event: EventDTO)
     func pushImpression(impression: Impression)
+    func pause()
+    func resume()
     func flush()
     func destroy()
 }
@@ -114,6 +116,16 @@ class DefaultSynchronizer: Synchronizer {
         if let splitName = impression.feature {
             splitApiFacade.impressionsManager.appendImpression(impression: impression, splitName: splitName)
         }
+    }
+
+    func pause() {
+        splitApiFacade.periodicSplitsSyncWorker.pause()
+        splitApiFacade.periodicMySegmentsSyncWorker.pause()
+    }
+
+    func resume() {
+        splitApiFacade.periodicSplitsSyncWorker.resume()
+        splitApiFacade.periodicMySegmentsSyncWorker.resume()
     }
 
     func flush() {
