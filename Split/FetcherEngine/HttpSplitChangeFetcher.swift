@@ -72,7 +72,6 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
         }
         semaphore.wait()
 
-
         do {
             if let change: SplitChange = try requestResult?.unwrap(),
                 splitChangeValidator.validate(change) == nil {
@@ -84,23 +83,3 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
         return nil
     }
 }
-
-//            let metricsManager = DefaultMetricsManager.shared
-//            let semaphore = DispatchSemaphore(value: 0)
-//            var requestResult: DataResult<SplitChange>?
-//            let fetchStartTime = Date().unixTimestampInMiliseconds()
-//            restClient.getSplitChanges(since: since) { result in
-//                metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime,
-//                                    for: Metrics.Time.splitChangeFetcherGet)
-//                metricsManager.count(delta: 1, for: Metrics.Counter.splitChangeFetcherStatus200)
-//                requestResult = result
-//                semaphore.signal()
-//            }
-//            semaphore.wait()
-//
-//
-//
-//            guard let change: SplitChange = try requestResult?.unwrap(),
-//                splitChangeValidator.validate(change) == nil else {
-//                throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
-//            }
