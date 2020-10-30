@@ -197,15 +197,20 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
     override func fetchFromRemote() -> Bool {
         do {
             if changeNumber < splitCache.getChangeNumber() {
+                resetBackoffCounter()
                 return true
             }
 
             if let splitChanges = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber(),
                                                                     policy: .network,
                                                                     clearCache: false) {
-                resetBackoffCounter()
-                Logger.d(splitChanges.debugDescription)
-                return true
+
+                if changeNumber <= splitChanges.till ?? -1 {
+                    resetBackoffCounter()
+                    Logger.d(splitChanges.debugDescription)
+                    return true
+                }
+                Logger.d("Split changes are not update date yet")
             }
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
