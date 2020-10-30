@@ -197,6 +197,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
     override func fetchFromRemote() -> Bool {
         do {
             if changeNumber < splitCache.getChangeNumber() {
+                resetBackoffCounter()
                 return true
             }
 
