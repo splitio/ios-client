@@ -22,17 +22,29 @@ class DefaultSyncManager: SyncManager {
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let pushNotificationManager: PushNotificationManager
     private let reconnectStreamingTimer: BackoffCounterTimer
-    
     private var isPollingEnabled: Atomic<Bool> = Atomic(false)
+    private var isPaused: Atomic<Bool> = Atomic(false)
 
     init(splitConfig: SplitClientConfig, pushNotificationManager: PushNotificationManager,
-         reconnectStreamingTimer: BackoffCounterTimer,
+         reconnectStreamingTimer: BackoffCounterTimer, notificationHelper: NotificationHelper,
          synchronizer: Synchronizer, broadcasterChannel: PushManagerEventBroadcaster) {
         self.splitConfig = splitConfig
         self.pushNotificationManager = pushNotificationManager
         self.synchronizer = synchronizer
         self.broadcasterChannel = broadcasterChannel
         self.reconnectStreamingTimer = reconnectStreamingTimer
+
+        notificationHelper.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
+            if let self = self {
+                self.resume()
+            }
+        }
+
+        notificationHelper.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
+            if let self = self {
+                self.pause()
+            }
+        }
     }
 
     func start() {
@@ -50,11 +62,15 @@ class DefaultSyncManager: SyncManager {
     }
 
     func pause() {
-        // TODO: Implement fg/bg logic
+        isPaused.set(true)
+        pushNotificationManager.pause()
+        synchronizer.pause()
     }
 
     func resume() {
-        // TODO: implement fg/bg logic
+        isPaused.set(false)
+        synchronizer.resume()
+        pushNotificationManager.resume()
     }
 
     func stop() {
@@ -64,6 +80,10 @@ class DefaultSyncManager: SyncManager {
     }
 
     private func handle(pushEvent: PushStatusEvent) {
+        if isPaused.value {
+            return
+        }
+
         switch pushEvent {
         case .pushSubsystemUp:
             Logger.d("Push Subsystem Up event message received.")

@@ -16,11 +16,11 @@ class SseClientMock: SseClient {
     var disconnectCalled = false
     var token: String?
     var channels: [String]?
-    var successHandler: SuccessHandler?
+    var successHandler: CompletionHandler?
     var results: [Bool]?
 
-    func connect(token: String, channels: [String], success: @escaping SuccessHandler) {
-        self.successHandler = success
+    func connect(token: String, channels: [String], completion: @escaping CompletionHandler) {
+        self.successHandler = completion
         self.token = token
         self.channels = channels
         let result = results![resultIndex]
@@ -29,7 +29,7 @@ class SseClientMock: SseClient {
         }
         connectCalled = true
         if result {
-            success()
+            completion()
         }
     }
 

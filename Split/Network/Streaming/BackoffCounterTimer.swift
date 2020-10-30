@@ -23,7 +23,7 @@ class DefaultBackoffCounterTimer: BackoffCounterTimer {
         self.reconnectBackoffCounter = reconnectBackoffCounter
     }
 
-    func schedule(handler: @escaping () ->  Void) {
+    func schedule(handler: @escaping () -> Void) {
         if workItem != nil, isScheduled.getAndSet(true) {
             return
         }
