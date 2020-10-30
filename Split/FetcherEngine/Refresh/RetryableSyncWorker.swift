@@ -209,6 +209,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                     Logger.d(splitChanges.debugDescription)
                     return true
                 }
+                Logger.d("Split changes are not update date yet")
             }
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
