@@ -46,7 +46,7 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
                     throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
                 }
 
-                if newSince == newTill,s newTill >= since {
+                if newSince == newTill, newTill >= nextSince {
                     if clearCache {
                         splitCache.clear()
                     }
