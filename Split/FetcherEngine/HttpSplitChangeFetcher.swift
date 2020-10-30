@@ -40,17 +40,20 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
         } else {
 
             var nextSince = since
+            var cacheCleared = false
             while true {
                 let splitChange: SplitChange? = doFetch(since: nextSince)
                 guard let change = splitChange, let newSince = change.since, let newTill = change.till else {
                     throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
                 }
 
+                if clearCache && !cacheCleared {
+                    splitCache.clear()
+                    cacheCleared = true
+                }
+                _ = self.splitChangeCache.addChange(splitChange: change)
+
                 if newSince == newTill, newTill >= nextSince {
-                    if clearCache {
-                        splitCache.clear()
-                    }
-                    _ = self.splitChangeCache.addChange(splitChange: change)
                     return change
                 }
                 nextSince = newTill
