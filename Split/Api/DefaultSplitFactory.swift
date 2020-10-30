@@ -57,7 +57,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
         let  endpointFactory = EndpointFactory(serviceEndpoints: config.serviceEndpoints,
-                                               apiKey: apiKey, userKey: key.matchingKey,  splitsQueryString: splitsFilterQueryString)
+                                               apiKey: apiKey, userKey: key.matchingKey,
+                                               splitsQueryString: splitsFilterQueryString)
 
         let restClient = DefaultRestClient(httpClient: httpClient ?? DefaultHttpClient.shared,
                                            endpointFactory: endpointFactory,

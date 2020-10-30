@@ -20,7 +20,7 @@ class DefaultSseHandler: SseHandler {
     let notificationManagerKeeper: NotificationManagerKeeper
     let broadcasterChannel: PushManagerEventBroadcaster
 
-    private var lastControlTimestamp = 0
+    private var lastControlTimestamp: Int64 = 0
 
     init(notificationProcessor: SseNotificationProcessor,
          notificationParser: SseNotificationParser,

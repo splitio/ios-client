@@ -10,6 +10,8 @@ import Foundation
 
 protocol PushNotificationManager {
     func start()
+    func pause()
+    func resume()
     func stop()
 }
 
@@ -22,12 +24,15 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     private let sseAuthenticator: SseAuthenticator
     private var sseClient: SseClient
-    private let timersManager: TimersManager
+    private var timersManager: TimersManager
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let userKey: String
+
     private let connectionQueue = DispatchQueue(label: "Sse connnection", target: DispatchQueue.global())
 
     private var isStopped: Atomic<Bool> = Atomic(false)
+    private var isPaused: Atomic<Bool> = Atomic(false)
+    private var isConnecting: Atomic<Bool> = Atomic(false)
 
     init(userKey: String, sseAuthenticator: SseAuthenticator, sseClient: SseClient,
          broadcasterChannel: PushManagerEventBroadcaster, timersManager: TimersManager) {
@@ -36,6 +41,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
         self.sseClient = sseClient
         self.broadcasterChannel = broadcasterChannel
         self.timersManager = timersManager
+        self.timersManager.triggerHandler = timerHandler()
     }
 
     // MARK: Public
@@ -43,18 +49,33 @@ class DefaultPushNotificationManager: PushNotificationManager {
         connect()
     }
 
+    func pause() {
+        Logger.d("Push notification manager paused")
+        isPaused.set(true)
+        isConnecting.set(false)
+        sseClient.disconnect()
+    }
+
+    func resume() {
+        Logger.d("Push notification manager resumed")
+        isPaused.set(false)
+        connect()
+    }
+
     func stop() {
         isStopped.set(true)
         timersManager.cancel(timer: .refreshAuthToken)
-        timersManager.cancel(timer: .appHostBgDisconnect)
         sseClient.disconnect()
     }
 
     private func connect() {
-        if self.isStopped.value {
+        if isStopped.value || isPaused.value ||
+            isConnecting.value || sseClient.isConnectionOpened {
             return
         }
+
         connectionQueue.async {
+            self.isConnecting.set(true)
             self.connectToSse()
         }
     }
@@ -64,40 +85,62 @@ class DefaultPushNotificationManager: PushNotificationManager {
         let result = sseAuthenticator.authenticate(userKey: userKey)
         if result.success && !result.pushEnabled {
             Logger.d("Streaming disabled for api key")
-            broadcasterChannel.push(event: .pushSubsystemDisabled)
             isStopped.set(true)
+            isConnecting.set(false)
+            broadcasterChannel.push(event: .pushSubsystemDisabled)
             return
         }
 
         if !result.success && !result.errorIsRecoverable {
             Logger.d("Streaming client error. Please check your API key")
             isStopped.set(true)
+            isConnecting.set(false)
             broadcasterChannel.push(event: .pushNonRetryableError)
             return
         }
 
         if !result.success && result.errorIsRecoverable {
             Logger.d("Streaming auth error. Retrying")
+            isConnecting.set(false)
             broadcasterChannel.push(event: .pushRetryableError)
             return
         }
 
         guard let jwt = result.jwtToken else {
+            Logger.d("Invalid JWT")
+            isConnecting.set(false)
             return
         }
         Logger.d("Streaming authentication success")
 
         if isStopped.value {
             Logger.d("Streaming stopped. Aborting connection")
+            isConnecting.set(false)
             return
         }
-        self.sseClient.connect(token: jwt.rawToken, channels: jwt.channels) {
-            self.handleSubsystemUp()
+
+        self.sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { success in
+            if success {
+                self.handleSubsystemUp()
+            }
+            self.isConnecting.set(false)
         }
     }
 
     private func handleSubsystemUp() {
         self.timersManager.add(timer: .refreshAuthToken, delayInSeconds: kReconnectTimeBeforeTokenExpInASeconds)
         self.broadcasterChannel.push(event: .pushSubsystemUp)
+    }
+
+    private func timerHandler() -> TimersManager.TimerHandler {
+        return { timerName in
+            switch timerName {
+            case .refreshAuthToken:
+                self.sseClient.disconnect()
+                self.connect()
+            default:
+                Logger.d("No handler or timer: \(timerName)")
+            }
+        }
     }
 }

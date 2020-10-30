@@ -18,7 +18,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
 
     struct PublishersInfo {
         var count: Int
-        var lastTimestamp: Int
+        var lastTimestamp: Int64
     }
 
     let kChannelPriIndex = 0
@@ -96,7 +96,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
     }
 
     private func isOldTimestamp(notification: OccupancyNotification, for channelIndex: Int) -> Bool {
-        var timestamp = 0
+        var timestamp: Int64 = 0
         DispatchQueue.global().sync {
             timestamp =  publishersInfo[channelIndex].lastTimestamp
         }
@@ -109,7 +109,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
         }
     }
 
-    private func update(timestamp: Int, for channelIndex: Int) {
+    private func update(timestamp: Int64, for channelIndex: Int) {
         DispatchQueue.global().sync {
             publishersInfo[channelIndex].lastTimestamp = timestamp
         }

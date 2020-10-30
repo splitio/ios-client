@@ -18,9 +18,10 @@ struct SseClientConstants {
 }
 
 protocol SseClient {
-    typealias SuccessHandler = () -> Void
-    func connect(token: String, channels: [String], success: @escaping SuccessHandler)
+    typealias CompletionHandler = (Bool) -> Void
+    func connect(token: String, channels: [String], completion: @escaping CompletionHandler)
     func disconnect()
+    var isConnectionOpened: Bool { get }
 }
 
 class DefaultSseClient: SseClient {
@@ -36,7 +37,11 @@ class DefaultSseClient: SseClient {
     private var streamRequest: HttpStreamRequest?
     private let streamParser = EventStreamParser()
     private let sseHandler: SseHandler
-
+    private var isDisconnectCalled: Atomic<Bool> = Atomic(false)
+    private var isConnected: Atomic<Bool> = Atomic(false)
+    var isConnectionOpened: Bool {
+        return isConnected.value
+    }
 
     init(endpoint: Endpoint, httpClient: HttpClient, sseHandler: SseHandler) {
         self.endpoint = endpoint
@@ -45,7 +50,7 @@ class DefaultSseClient: SseClient {
         self.queue = DispatchQueue(label: "Split SSE Client")
     }
 
-    func connect(token: String, channels: [String], success: @escaping SuccessHandler) {
+    func connect(token: String, channels: [String], completion: @escaping CompletionHandler) {
 
         var isFirstMessage = true
         queue.async {
@@ -61,6 +66,7 @@ class DefaultSseClient: SseClient {
                                                                            headers: headers)
                 .getResponse(responseHandler: { response in
                     if response.code != 200 {
+                        completion(false)
                         self.handleError(retryable: !response.isClientError)
                         return
                     }
@@ -73,10 +79,12 @@ class DefaultSseClient: SseClient {
                     if isFirstMessage {
                         isFirstMessage = false
                         if self.isConnectionConfirmed(message: values) {
-                            success()
+                            completion(true)
+                            self.isConnected.set(true)
                         } else {
+                            completion(false)
+                            self.isConnected.set(false)
                             self.sseHandler.reportError(isRetryable: true)
-                            return
                         }
                     }
                     if !self.streamParser.isKeepAlive(values: values) {
@@ -86,7 +94,9 @@ class DefaultSseClient: SseClient {
 
                 }, closeHandler: {
                     Logger.d("Streaming connection closed")
-                    self.handleConnectionClosed()
+                    if !self.isDisconnectCalled.value {
+                        self.handleConnectionClosed()
+                    }
 
                 }, errorHandler: { error in
                     Logger.e("Error in stream request: \(error.message)")
@@ -108,14 +118,17 @@ class DefaultSseClient: SseClient {
     }
 
     func handleError(retryable: Bool) {
+        self.isConnected.set(false)
         sseHandler.reportError(isRetryable: retryable)
     }
 
     func handleConnectionClosed() {
+        self.isConnected.set(false)
         sseHandler.reportError(isRetryable: true)
     }
 
     func handleError(_ error: HttpError) {
+        self.isConnected.set(false)
         sseHandler.reportError(isRetryable: !isClientRelatedError(error))
     }
 
@@ -129,6 +142,9 @@ class DefaultSseClient: SseClient {
     }
 
     func disconnect() {
+        Logger.d("Disconnecting SSE client")
+        isDisconnectCalled.set(true)
+        isConnected.set(false)
         streamRequest?.close()
     }
 }
