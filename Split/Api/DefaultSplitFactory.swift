@@ -19,23 +19,26 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return Version.semantic
     }
 
-    private var defaultClient: SplitClient!
-    private let defaultManager: SplitManager
+    private var defaultClient: SplitClient?
+    private var defaultManager: SplitManager?
     private let filterBuilder = FilterBuilder()
 
     public var client: SplitClient {
-        return defaultClient
+        return defaultClient!
     }
 
     public var manager: SplitManager {
-        return defaultManager
+        return defaultManager!
     }
 
     public var version: String {
         return Version.sdk
     }
 
-    init(apiKey: String, key: Key, config: SplitClientConfig) throws {
+    init(apiKey: String, key: Key, config: SplitClientConfig, httpClient: HttpClient?,
+         reachabilityChecker: HostReachabilityChecker?) throws {
+        super.init()
+
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? config.defaultDataFolder
 
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
@@ -43,54 +46,56 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         MetricManagerConfig.default.defaultDataFolderName = dataFolderName
 
         config.apiKey = apiKey
-        let fileStorage = FileStorage(dataFolderName: dataFolderName)
-        let splitCache = SplitCache(fileStorage: fileStorage, notificationHelper: DefaultNotificationHelper.instance)
-        let manager = DefaultSplitManager(splitCache: splitCache)
-        defaultManager = manager
+        let storageContainer = buildStorageContainer(userKey: key.matchingKey,
+                                                     dataFolderName: dataFolderName)
 
-        let mySegmentsCache = MySegmentsCache(matchingKey: key.matchingKey, fileStorage: fileStorage)
+        let manager = DefaultSplitManager(splitCache: storageContainer.splitsCache)
+        defaultManager = manager
 
         let eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
 
         let splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
-        let httpSplitFetcher = HttpSplitChangeFetcher(restClient: RestClient(),
-                                                      splitCache: splitCache,
-                                                      defaultQueryString: splitsFilterQueryString)
+        let  endpointFactory = EndpointFactory(serviceEndpoints: config.serviceEndpoints,
+                                               apiKey: apiKey, userKey: key.matchingKey,
+                                               splitsQueryString: splitsFilterQueryString)
 
-        let refreshableSplitFetcher = DefaultRefreshableSplitFetcher(
-            splitChangeFetcher: httpSplitFetcher, splitCache: splitCache, interval: config.featuresRefreshRate,
-            cacheExpiration: config.cacheExpirationInSeconds, eventsManager: eventsManager)
+        let restClient = DefaultRestClient(httpClient: httpClient ?? DefaultHttpClient.shared,
+                                           endpointFactory: endpointFactory,
+                                           reachabilityChecker: reachabilityChecker ?? ReachabilityWrapper())
 
-        let mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: mySegmentsCache)
-        let refreshableMySegmentsFetcher = DefaultRefreshableMySegmentsFetcher(
-            matchingKey: key.matchingKey, mySegmentsChangeFetcher: mySegmentsFetcher, mySegmentsCache: mySegmentsCache,
-            interval: config.segmentsRefreshRate, eventsManager: eventsManager)
+        /// TODO: Remove this line when metrics refactor
+        DefaultMetricsManager.shared.restClient = restClient
 
-        super.init()
+        let trackManager = buildTrackManager(splitConfig: config, fileStorage: storageContainer.fileStorage,
+                                             restClient: restClient)
+        let impressionsManager = buildImpressionsManager(splitConfig: config, fileStorage: storageContainer.fileStorage,
+                                                         restClient: restClient)
 
-        let trackConfig = buildTrackConfig(from: config)
-        let trackManager = DefaultTrackManager(config: trackConfig, fileStorage: fileStorage)
+        let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(key.matchingKey).setSplitConfig(config)
+            .setRestClient(restClient).setEventsManager(eventsManager).setImpressionsManager(impressionsManager)
+            .setTrackManager(trackManager).setStorageContainer(storageContainer)
+            .setSplitsQueryString(splitsFilterQueryString)
 
-        let impressionsConfig = buildImpressionsConfig(from: config)
-        let impressionsManager = DefaultImpressionsManager(config: impressionsConfig, fileStorage: fileStorage)
+        if let httpClient = httpClient {
+            _ = apiFacadeBuilder.setStreamingHttpClient(httpClient)
+        }
+
+        let apiFacade = apiFacadeBuilder.build()
+
+        let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
+            .setRestClient(restClient).setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade)
+            .setSplitConfig(config).build()
 
         defaultClient = DefaultSplitClient(
-            config: config, key: key, splitCache: splitCache, eventsManager: eventsManager, trackManager: trackManager,
-            impressionsManager: impressionsManager, refreshableSplitFetcher: refreshableSplitFetcher,
-            refreshableMySegmentsFetcher: refreshableMySegmentsFetcher, destroyHandler: {
-                refreshableMySegmentsFetcher.stop()
-                refreshableSplitFetcher.stop()
-                impressionsManager.stop()
-                trackManager.stop()
+            config: config, key: key, apiFacade: apiFacade, storageContainer: storageContainer,
+            eventsManager: eventsManager, destroyHandler: {
+                syncManager.stop()
                 manager.destroy()
         })
 
-        eventsManager.getExecutorResources().setClient(client: defaultClient)
-        refreshableSplitFetcher.start()
-        refreshableMySegmentsFetcher.start()
-        trackManager.start()
-        impressionsManager.start()
+        eventsManager.getExecutorResources().setClient(client: defaultClient!)
+        syncManager.start()
     }
 
     private func buildTrackConfig(from splitConfig: SplitClientConfig) -> TrackManagerConfig {
@@ -103,5 +108,27 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     private func buildImpressionsConfig(from splitConfig: SplitClientConfig) -> ImpressionManagerConfig {
         return ImpressionManagerConfig(pushRate: splitConfig.impressionRefreshRate,
                                        impressionsPerPush: splitConfig.impressionsChunkSize)
+    }
+
+    private func buildTrackManager(splitConfig: SplitClientConfig, fileStorage: FileStorageProtocol,
+                                   restClient: RestClientTrackEvents) -> TrackManager {
+        return DefaultTrackManager(config: buildTrackConfig(from: splitConfig),
+                                   fileStorage: fileStorage, restClient: restClient)
+    }
+
+    private func buildImpressionsManager(splitConfig: SplitClientConfig, fileStorage: FileStorageProtocol,
+                                         restClient: RestClientImpressions) -> ImpressionsManager {
+        return DefaultImpressionsManager(config: buildImpressionsConfig(from: splitConfig), fileStorage: fileStorage,
+                                         restClient: restClient)
+    }
+
+    private func buildStorageContainer(userKey: String,
+                                       dataFolderName: String) -> SplitStorageContainer {
+        let fileStorage = FileStorage(dataFolderName: dataFolderName)
+        let mySegmentsCache = MySegmentsCache(matchingKey: userKey, fileStorage: fileStorage)
+        let splitsCache = SplitCache(fileStorage: fileStorage, notificationHelper: DefaultNotificationHelper.instance)
+        return SplitStorageContainer(fileStorage: fileStorage,
+                                     splitsCache: splitsCache,
+                                     mySegmentsCache: mySegmentsCache)
     }
 }

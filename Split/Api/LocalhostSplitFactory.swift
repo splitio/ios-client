@@ -25,6 +25,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
     private let localhostClient: SplitClient
     private let localhostManager: SplitManager
     private let eventsManager: SplitEventsManager
+    private let splitFetcher: RefreshableSplitFetcher
 
     public var client: SplitClient {
         return localhostClient
@@ -47,12 +48,15 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
             .sanitizeForFolderName(config.localhostDataFolder))
 
         let splitCache: SplitCacheProtocol = InMemorySplitCache()
-        let splitFetcher: RefreshableSplitFetcher = LocalhostSplitFetcher(fileStorage: fileStorage,
-                                                               splitCache: splitCache,
-                                                               eventsManager: eventsManager,
-                                                               splitsFileName: config.splitFile,
-                                                               bundle: bundle)
-        localhostClient = LocalhostSplitClient(key: key, splitFetcher: splitFetcher, eventsManager: eventsManager)
+        splitFetcher = LocalhostSplitFetcher(fileStorage: fileStorage,
+                                             splitCache: splitCache,
+                                             eventsManager: eventsManager,
+                                             splitsFileName: config.splitFile,
+                                             bundle: bundle)
+        let storageContainer = SplitStorageContainer(fileStorage: fileStorage, splitsCache: splitCache,
+                                                     mySegmentsCache: InMemoryMySegmentsCache(segments: Set()))
+        localhostClient = LocalhostSplitClient(key: key, storageContainer: storageContainer,
+                                               eventsManager: eventsManager)
         eventsManager.getExecutorResources().setClient(client: localhostClient)
         localhostManager = DefaultSplitManager(splitCache: splitCache)
     }

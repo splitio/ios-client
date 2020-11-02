@@ -31,10 +31,7 @@ class FileStorage: FileStorageProtocol {
 
                 if let data = content {
                     try data.write(to: fileURL, atomically: false, encoding: .utf8)
-                    if Logger.shared.isDebugModeEnabled {
-                        let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
-                        Logger.d(fileContent)
-                    }
+                    Logger.d("Wrote file \(fileName)")
                 }
             } catch {
                 Logger.e("File Storage - write: " + error.localizedDescription)
