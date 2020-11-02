@@ -2,76 +2,28 @@
 //  HttpResponse.swift
 //  Split
 //
-//  Created by Javier L. Avrudsky on 5/23/18.
-//  Based on code from Alamofire network library
+//  Created by Javier L. Avrudsky on 25/06/2020.
+//  Copyright © 2020 Split. All rights reserved.
+//
 
 import Foundation
 
-// MARK: HttpDataResponse
-struct HttpDataResponse<Value> {
-    let request: URLRequest?
-    let response: HTTPURLResponse?
-    let error: Error? = nil
-    let data: Data?
-    let result: HttpResult<Value>
-
-    init(request: URLRequest?, response: HTTPURLResponse?, data: Data?, result: HttpResult<Value>) {
-        self.request = request
-        self.response = response
-        self.data = data
-        self.result = result
+/// Stands a base clase for Http responses
+/// It has a http error code and a default error check based on
+/// Http response code
+// MARK: HttpResponse
+struct HttpResponse {
+    let code: Int
+    let result: HttpResultWrapper
+    var isClientError: Bool {
+        return code >= HttpCode.badRequest && code < HttpCode.internalServerError
     }
-}
-
-// MARK: HttpResult
-enum HttpResult<Value> {
-    case success(Value)
-    case failure(Error)
-
-    public var isSuccess: Bool {
-        switch self {
-        case .success:
-            return true
-        case .failure:
-            return false
+    init(code: Int, data: Data? = nil) {
+        self.code = code
+        if code >= HttpCode.requestOk && code < HttpCode.multipleChoice {
+            self.result = HttpResultWrapper.success(Json(data))
+        } else {
+            self.result = HttpResultWrapper.failure
         }
-    }
-
-    public var isFailure: Bool {
-        return !isSuccess
-    }
-
-    public var value: Value? {
-        switch self {
-        case .success(let value):
-            return value
-        case .failure:
-            return nil
-        }
-    }
-
-    public var error: Error? {
-        switch self {
-        case .success:
-            return nil
-        case .failure(let error):
-            return error
-        }
-    }
-}
-
-// MARK: Serialization
-protocol HttpDataResponseSerializerProtocol {
-    associatedtype SerializedObject
-    var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> HttpResult<SerializedObject> { get }
-}
-
-struct HttpDataResponseSerializer<Value>: HttpDataResponseSerializerProtocol {
-    typealias SerializedObject = Value
-
-    var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> HttpResult<Value>
-
-    init(serializeResponse: @escaping (URLRequest?, HTTPURLResponse?, Data?, Error?) -> HttpResult<Value>) {
-        self.serializeResponse = serializeResponse
     }
 }

@@ -16,7 +16,12 @@ class MySegmentsFetcherTests: XCTestCase {
     var mySegmentsFetcher: MySegmentsChangeFetcher!
 
     override func setUp() {
-        mySegmentsFetcher = HttpMySegmentsFetcher(restClient: RestClient(), mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
+        let endpointFactory = EndpointFactory(serviceEndpoints: IntegrationHelper.mockServiceEndpoint,
+                                              apiKey: IntegrationHelper.dummyApiKey,
+                                              userKey: IntegrationHelper.dummyUserKey,
+                                              splitsQueryString: "")
+        mySegmentsFetcher = HttpMySegmentsFetcher(restClient: DefaultRestClient(endpointFactory: endpointFactory),
+                                                  mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
     }
 
     override func tearDown() {

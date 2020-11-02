@@ -8,11 +8,11 @@
 
 import Foundation
 
-public protocol MySegmentsChangeFetcher {
+protocol MySegmentsChangeFetcher {
     func fetch(user: String, policy: FecthingPolicy) throws -> [String]?
 }
 
-public extension MySegmentsChangeFetcher {
+extension MySegmentsChangeFetcher {
     func fetch(user: String, policy: FecthingPolicy = .networkAndCache) throws -> [String]? {
         return try fetch(user: user, policy: policy)
     }

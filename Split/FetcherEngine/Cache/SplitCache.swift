@@ -25,10 +25,8 @@ class SplitCache: SplitCacheProtocol {
 
     let kSplitsFileName: String = "SPLITIO.splits"
     private let fileStorage: FileStorageProtocol
-    private var inMemoryCache: InMemorySplitCache = InMemorySplitCache(splits: [String: Split](),
-                                                                       changeNumber: -1,
-                                                                       timestamp: 0,
-                                                                       queryString: "")
+    private var inMemoryCache: InMemorySplitCache =
+        InMemorySplitCache(splits: [String: Split](), changeNumber: -1, timestamp: 0)
 
     init(fileStorage: FileStorageProtocol, notificationHelper: NotificationHelper) {
         self.fileStorage = fileStorage
@@ -97,6 +95,10 @@ class SplitCache: SplitCacheProtocol {
 
     func deleteSplit(name: String) {
         inMemoryCache.deleteSplit(name: name)
+    }
+
+    func kill(splitName: String, defaultTreatment: String, changeNumber: Int64) {
+        inMemoryCache.kill(splitName: splitName, defaultTreatment: defaultTreatment, changeNumber: changeNumber)
     }
 }
 

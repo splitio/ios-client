@@ -31,7 +31,7 @@ enum MockedMethod: String {
 
 class MockWebServer {
     private let kBaseUrl = "http://localhost"
-    var currentPort: Int = 0
+    var currentPort: Int = 8080
 
     private static var usedPorts = [Int]()
 
@@ -40,11 +40,21 @@ class MockWebServer {
     }
 
     let httpServer: HttpServer
-    var receivedRequests: [ClientRequest]
+    private var receivedClientRequests: [ClientRequest]
+
+    var receivedRequests: [ClientRequest] {
+        var requests: [ClientRequest]!
+        DispatchQueue.global().sync {
+            requests = self.receivedClientRequests
+        }
+        return requests
+    }
+
+
     
     init() {
         httpServer = HttpServer()
-        receivedRequests = [ClientRequest]()
+        receivedClientRequests = [ClientRequest]()
         currentPort = randomPort()
     }
     
@@ -74,7 +84,7 @@ class MockWebServer {
                     method: request.method)
 
                 DispatchQueue.global().sync {
-                    self.receivedRequests.append(clientRequest)
+                    self.receivedClientRequests.append(clientRequest)
                 }
 
                 if let requestHandler = requestHandler {

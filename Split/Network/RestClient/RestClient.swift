@@ -1,33 +1,60 @@
 //
-//  Api.swift
-//  SwiftSeedProject
+//  RestClient.swift
+//  Split
 //
-//  Created by Brian Sztamfater on 9/19/17.
-//  Copyright © 2017 Split Software. All rights reserved.
+//  Created by Javier Avrudsky on 22-Sep-2020.
+//  Copyright © 2020 Split Software. All rights reserved.
 //
 
 import Foundation
 
-protocol RestClientProtocol {
+protocol RestClient {
     func isServerAvailable(_ url: URL) -> Bool
     func isServerAvailable(path url: String) -> Bool
     func isEventsServerAvailable() -> Bool
     func isSdkServerAvailable() -> Bool
 }
 
-/*@objc public final */
-class RestClient: NSObject {
+protocol HostReachabilityChecker {
+    func isReachable(path url: String) -> Bool
+}
+
+class ReachabilityWrapper: HostReachabilityChecker {
+    func isReachable(path url: String) -> Bool {
+        if let reachabilityManager = NetworkReachabilityManager(host: url) {
+            return reachabilityManager.isReachable
+        }
+        return false
+    }
+}
+
+class DefaultRestClient {
     // MARK: - Private Properties
-    private let manager: RestClientManagerProtocol
+    private let httpClient: HttpClient
+    let endpointFactory: EndpointFactory
+    private let reachabilityChecker: HostReachabilityChecker
 
     // MARK: - Designated Initializer
-    init(manager: RestClientManagerProtocol = RestClientConfiguration.manager) {
-        self.manager = manager
+    init(httpClient: HttpClient = RestClientConfiguration.httpClient,
+         endpointFactory: EndpointFactory,
+         reachabilityChecker: HostReachabilityChecker = ReachabilityWrapper()) {
+        self.httpClient = httpClient
+        self.endpointFactory = endpointFactory
+        self.reachabilityChecker = reachabilityChecker
     }
 
-    // MARK: - Private Functions
-    private func start<T: Any>(target: Target, completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
-        _ = manager.sendRequest(target: target).getResponse(errorSanitizer: target.errorSanitizer) { response in
+    func execute<T>(endpoint: Endpoint,
+                    parameters: [String: Any]? = nil,
+                    body: Data? = nil,
+                    completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
+
+        do {
+        _ = try httpClient.sendRequest(
+                        endpoint: endpoint,
+                        parameters: parameters,
+                        headers: nil,
+                        body: body)
+            .getResponse(completionHandler: { response in
             switch response.result {
             case .success(let json):
                 if json.isNull() {
@@ -41,35 +68,39 @@ class RestClient: NSObject {
                 } catch {
                     completion(DataResult { throw error })
                 }
-            case .failure(let error):
-                completion(DataResult { throw error })
+            case .failure:
+                completion(DataResult {
+                    if response.code >= 400, response.code < 500 {
+                        throw HttpError.clientRelated
+                    }
+                    throw HttpError.unknown(message: "unknown")
+                })
             }
+            }, errorHandler: {error in
+                completion(DataResult { throw error })
+            })
+        } catch HttpError.couldNotCreateRequest(let message) {
+            Logger.e("An error has ocurred while sending request: \(message)" )
+        } catch {
+            Logger.e("Unexpected error while sending request")
         }
-    }
-
-    // MARK: - Internal Functions
-    internal func execute<T>(target: Target, completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
-        self.start(target: target, completion: completion)
     }
 }
 
-extension RestClient: RestClientProtocol {
+extension DefaultRestClient: RestClient {
     func isServerAvailable(_ url: URL) -> Bool {
         return self.isServerAvailable(path: url.absoluteString)
     }
 
     func isServerAvailable(path url: String) -> Bool {
-        if let reachabilityManager = NetworkReachabilityManager(host: url) {
-            return reachabilityManager.isReachable
-        }
-        return false
+        return reachabilityChecker.isReachable(path: url)
     }
 
     func isEventsServerAvailable() -> Bool {
-        return self.isServerAvailable(EnvironmentTargetManager.shared.eventsBaseURL)
+        return self.isServerAvailable(endpointFactory.serviceEndpoints.eventsEndpoint)
     }
 
     func isSdkServerAvailable() -> Bool {
-        return self.isServerAvailable(EnvironmentTargetManager.shared.sdkBaseUrl)
+        return self.isServerAvailable(endpointFactory.serviceEndpoints.sdkEndpoint)
     }
 }

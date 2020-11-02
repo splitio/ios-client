@@ -22,10 +22,10 @@ class  SplitChangeCache: SplitChangeCacheProtocol {
         }
 
         queue.sync {
-            _ = self.splitCache?.setChangeNumber(splitChange.till!)
             for split in splitChange.splits! {
                 _ = self.splitCache?.addSplit(splitName: split.name!, split: split)
             }
+            _ = self.splitCache?.setChangeNumber(splitChange.till!)
             self.splitCache?.setTimestamp(Int(Date().timeIntervalSince1970))
         }
         return true

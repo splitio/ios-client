@@ -55,8 +55,8 @@ class FlushTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 1000
-        splitConfig.targetSdkEndPoint = serverUrl
-        splitConfig.targetEventsEndPoint = serverUrl
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
@@ -122,7 +122,11 @@ class FlushTests: XCTestCase {
     }
     
     private func tracksHits() -> [ClientRequest] {
-        return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
+        var req: [ClientRequest]!
+        DispatchQueue.global().sync {
+            req = webServer.receivedRequests
+        }
+        return req.filter { $0.path == "/events/bulk"}
     }
 
     private func getLastTrackEventJsonHit() -> String {

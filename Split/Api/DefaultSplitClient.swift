@@ -13,17 +13,7 @@ typealias DestroyHandler = () -> Void
 
 public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClient {
 
-    var splitFetcher: SplitFetcher? {
-        return refreshableSplitFetcher
-    }
-
-    var mySegmentsFetcher: MySegmentsFetcher? {
-        return refreshableMySegmentsFetcher
-    }
-
-    private var refreshableSplitFetcher: RefreshableSplitFetcher?
-    private var refreshableMySegmentsFetcher: RefreshableMySegmentsFetcher?
-
+    private (set) var storageContainer: SplitStorageContainer?
     private var key: Key
     private let config: SplitClientConfig
 
@@ -40,31 +30,28 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
     init(config: SplitClientConfig,
          key: Key,
-         splitCache: SplitCache,
+         apiFacade: SplitApiFacade,
+         storageContainer: SplitStorageContainer,
          eventsManager: SplitEventsManager,
-         trackManager: TrackManager,
-         impressionsManager: ImpressionsManager,
-         refreshableSplitFetcher: RefreshableSplitFetcher,
-         refreshableMySegmentsFetcher: RefreshableMySegmentsFetcher,
          destroyHandler: @escaping DestroyHandler) {
 
         self.config = config
         self.key = key
-        self.impressionsManager = impressionsManager
-        self.trackManager = trackManager
+        self.impressionsManager = apiFacade.impressionsManager
+        self.trackManager = apiFacade.trackManager
         self.factoryDestroyHandler = destroyHandler
-        self.eventValidator = DefaultEventValidator(splitCache: splitCache)
+        self.eventValidator = DefaultEventValidator(splitCache: storageContainer.splitsCache)
         self.validationLogger = DefaultValidationMessageLogger()
         self.eventsManager = eventsManager
-        self.refreshableMySegmentsFetcher = refreshableMySegmentsFetcher
-        self.refreshableSplitFetcher = refreshableSplitFetcher
+        self.storageContainer = storageContainer
 
         super.init()
 
         self.treatmentManager = DefaultTreatmentManager(
             evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager,
             impressionsManager: impressionsManager, metricsManager: DefaultMetricsManager.shared,
-            keyValidator: DefaultKeyValidator(), splitValidator: DefaultSplitValidator(splitCache: splitCache),
+            keyValidator: DefaultKeyValidator(),
+            splitValidator: DefaultSplitValidator(splitCache: storageContainer.splitsCache),
             validationLogger: validationLogger)
 
         Logger.i("iOS Split SDK initialized!")
