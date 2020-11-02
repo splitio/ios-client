@@ -90,8 +90,8 @@ class SplitChangesServerErrorTest: XCTestCase {
         splitConfig.impressionRefreshRate = kNeverRefreshRate
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
-        splitConfig.targetSdkEndPoint = serverUrl
-        splitConfig.targetEventsEndPoint = serverUrl
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()

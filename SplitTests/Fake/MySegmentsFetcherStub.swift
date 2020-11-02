@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class MySegmentsFetcherStub: MySegmentsFetcher, QueryableMySegmentsFetcher {
-
     var mySegments: Set<String>
     
     init(mySegments: [String]) {

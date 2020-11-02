@@ -7,209 +7,95 @@
 
 import Foundation
 
-// MARK: HttpDataRequest
+protocol HttpRequest {
+    typealias RequestCompletionHandler = (HttpResponse) -> Void
+    typealias RequestErrorHandler = (HttpError) -> Void
 
-protocol HttpRequestProtocol {
-
-    typealias RequestCompletionHandler = () -> Void
     var identifier: Int { get }
-    var url: URL { get set }
-    var method: HttpMethod { get set }
-    var parameters: HttpParameters? { get set }
-    var headers: HttpHeaders { get set }
-    var response: HTTPURLResponse? { get }
-    var retryTimes: Int { get set }
+    var url: URL { get }
+    var method: HttpMethod { get }
+    var parameters: HttpParameters? { get }
+    var headers: HttpHeaders { get }
+    var body: Data? { get }
+    var responseCode: Int { get }
 
-    func setResponse(_ response: HTTPURLResponse)
     func send()
-    func retry()
-    func complete(withError error: Error?)
+    func setResponse(code: Int)
+    func notifyIncomingData(_ data: Data)
+    func complete(error: HttpError?)
 
 }
 
-protocol HttpDataRequestProtocol {
-    var data: Data? { get }
-    func appendData(_ newData: Data)
+protocol HttpDataReceivingRequest {
+    func notifyIncomingData(_ data: Data)
 }
 
-class HttpRequest: HttpRequestProtocol {
+// MARK: BaseHttpRequest
+class BaseHttpRequest: HttpRequest {
 
-    var httpSession: HttpSession
-    var task: URLSessionTask!
-    var request: URLRequest!
-    var response: HTTPURLResponse?
-    var error: Error?
-    var retryTimes: Int = 0
-
-    var url: URL
-    var method: HttpMethod
-    var parameters: HttpParameters?
-    var headers: HttpHeaders = [:]
-
-    var requestCompletionHandler: RequestCompletionHandler?
+    private (set) var responseCode: Int = 1
+    private (set) var url: URL
+    private (set) var body: Data?
+    private (set) var method: HttpMethod
+    private (set) var parameters: HttpParameters?
+    private (set) var headers: HttpHeaders
+    private (set) var session: HttpSession
+    private (set) var task: HttpTask?
+    private (set) var error: Error?
+    var completionHandler: RequestCompletionHandler?
+    var errorHandler: RequestErrorHandler?
+    private (set) var urlRequest: URLRequest?
 
     var identifier: Int {
-        return task.taskIdentifier
+        return task?.identifier ?? -1
     }
 
     init(session: HttpSession, url: URL, method: HttpMethod,
-         parameters: HttpParameters? = nil, headers: HttpHeaders?) {
-        self.httpSession = session
-        self.url = url
-        self.method = method
+         parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
+
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        let initialQueryItems = components?.queryItems
+        if let parameters = parameters {
+            components?.queryItems = parameters.map { key, value in URLQueryItem(name: key, value: "\(value)")}
+        }
+
+        if let initialQueryItems = initialQueryItems {
+            components?.queryItems?.append(contentsOf: initialQueryItems)
+        }
+
+        guard let finalUrl = components?.url else {
+            throw HttpError.couldNotCreateRequest(message: "Invalid URL")
+        }
+
+        self.url = finalUrl
+        self.session = session
         self.parameters = parameters
+        self.method = method
+        self.headers = headers ?? HttpHeaders()
+        self.body = body
+
+        urlRequest = URLRequest(url: finalUrl)
+        urlRequest?.httpMethod = method.rawValue
         if let headers = headers {
-            self.headers = headers
+            for (key, value) in headers {
+                urlRequest?.setValue(value, forHTTPHeaderField: key)
+            }
         }
     }
 
     func send() {
-        assertionFailure("Method not implemented")
+        task = session.startTask(with: self)
     }
 
-    func retry() {
-        assertionFailure("Method not implemented")
+    func setResponse(code: Int) {
+        responseCode = code
     }
 
-    func setResponse(_ response: HTTPURLResponse) {
-        self.response = response
+    func complete(error: HttpError?) {
+        fatalError()
     }
 
-    func complete(withError error: Error?) {
-        self.error = error
-        if let completionHandler = requestCompletionHandler {
-            completionHandler()
-        }
+    func notifyIncomingData(_ data: Data) {
+        fatalError()
     }
-}
-
-// MARK: HttpDataRequest
-class HttpDataRequest: HttpRequest, HttpDataRequestProtocol {
-
-    var data: Data?
-    var body: Data?
-
-    init(session: HttpSession,
-         url: URL,
-         method: HttpMethod,
-         parameters: HttpParameters? = nil,
-         headers: HttpHeaders?,
-         body: Data? = nil) {
-
-        super.init(session: session, url: url, method: method, parameters: nil, headers: headers)
-        self.httpSession = session
-        self.url = url
-        self.method = method
-        self.body = body
-        if let headers = headers {
-            self.headers = headers
-        }
-    }
-
-    override func send() {
-        request = URLRequest(url: url)
-        request.httpMethod = self.method.rawValue
-
-        for (key, value) in headers {
-            request.setValue(value, forHTTPHeaderField: key)
-        }
-
-        if method.isUpload, let body = self.bodyPayload() {
-            task = httpSession.uploadTask(with: request, from: body)
-        } else {
-            task = httpSession.dataTask(with: request)
-        }
-        task.resume()
-    }
-
-    func appendData(_ newData: Data) {
-        if data == nil {
-            data = Data()
-        }
-        data!.append(newData)
-    }
-
-    @discardableResult
-    public func response(
-        queue: DispatchQueue? = nil,
-        responseSerializer: HttpDataResponseSerializer<JSON>,
-        completionHandler: @escaping (HttpDataResponse<JSON>) -> Void)
-        -> Self {
-        requestCompletionHandler = {
-            [weak self] in
-
-            guard let strongSelf = self else { return }
-            let result = responseSerializer.serializeResponse(strongSelf.request,
-                                                              strongSelf.response,
-                                                              strongSelf.data,
-                                                              strongSelf.error)
-            let dataResponse = HttpDataResponse<JSON>(
-                request: strongSelf.request, response: strongSelf.response, data: strongSelf.data, result: result
-            )
-            (queue ?? DispatchQueue.main).async { completionHandler(dataResponse) }
-        }
-
-        return self
-    }
-}
-
-// MARK: HttpDataRequest - RestClientRequestProtocol
-extension HttpDataRequest: RestClientRequestProtocol {
-
-    static func responseSerializer(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>)
-        -> HttpDataResponseSerializer<JSON> {
-
-        return HttpDataResponseSerializer<JSON> { _, response, data, error in
-            if let error = error {
-                return .failure(error)
-            }
-
-            if let validData = data {
-                let json = JSON(validData)
-                return errorSanitizer(json, response!.statusCode)
-            } else {
-                return errorSanitizer(JSON(), response!.statusCode)
-            }
-        }
-    }
-
-    func getResponse(errorSanitizer: @escaping (JSON, Int) -> HttpResult<JSON>,
-                     completionHandler: @escaping (HttpDataResponse<JSON>) -> Void) -> Self {
-
-        self.response(
-            queue: DispatchQueue(label: HttpQueue.default),
-            responseSerializer: HttpDataRequest.responseSerializer(errorSanitizer: errorSanitizer)) { response in
-            completionHandler(response)
-        }
-        return self
-    }
-
-}
-
-// MARK: HttpDataRequest - Private
-
-extension HttpDataRequest {
-    private func bodyPayload() -> Data? {
-
-        if let body = self.body {
-            return body
-        }
-
-        if let parameters = parameters,
-            let body = try? JSONSerialization.data(withJSONObject: parameters, options: []) {
-            return body
-        }
-        return nil
-    }
-}
-
-extension HttpDataRequest: CustomStringConvertible, CustomDebugStringConvertible {
-    var description: String {
-        return request.description
-    }
-
-    var debugDescription: String {
-        return request.debugDescription
-    }
-
 }

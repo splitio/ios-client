@@ -87,8 +87,8 @@ class FetchSpecificSplitsTest: XCTestCase {
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
         splitConfig.eventsPushRate = 5
-        splitConfig.targetSdkEndPoint = serverUrl
-        splitConfig.targetEventsEndPoint = serverUrl
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         splitConfig.sync = syncConfig
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)

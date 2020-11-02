@@ -74,9 +74,19 @@ extension Json {
         return encoded!
     }
 
+    static func encodeToJsonData<T: Encodable>(_ data: T) throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        return try encoder.encode(data)
+    }
+
     static func dynamicEncodeToJson<T: DynamicEncodable>(_ data: T) throws -> String {
         let jsonData = try JSONSerialization.data(withJSONObject: data.toJsonObject(), options: [])
         return String(data: jsonData, encoding: .utf8)!
+    }
+
+    static func dynamicEncodeToJsonData<T: DynamicEncodable>(_ data: T) throws -> Data {
+        return try JSONSerialization.data(withJSONObject: data.toJsonObject(), options: [])
     }
 
     static func dynamicEncodeFrom<T: DynamicDecodable>(json: String, to type: T.Type) throws -> T {

@@ -37,14 +37,14 @@ class DefaultTrackManager {
     private var eventBytesCount: Int = 0
 
     init(dispatchGroup: DispatchGroup? = nil, config: TrackManagerConfig, fileStorage: FileStorageProtocol,
-         restClient: RestClientTrackEvents? = nil) {
+         restClient: RestClientTrackEvents) {
         self.eventsFileStorage = fileStorage
         self.eventsFirstPushWindow = config.firstPushWindow
         self.eventsPushRate = config.pushRate
         self.eventsQueueSize = config.queueSize
         self.eventsPerPush = config.eventsPerPush
         self.maxHitsSizeInBytes = config.maxHitsSizeInBytes
-        self.restClient = restClient ?? RestClient()
+        self.restClient = restClient
         self.createTaskExecutor(dispatchGroup: dispatchGroup)
         subscribeNotifications()
     }
