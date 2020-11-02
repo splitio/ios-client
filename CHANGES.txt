@@ -1,3 +1,6 @@
+2.7.0: (Nov 02, 2020)
+- Added support for the new Split streaming architecture. When enabled (default), the SDK will not poll for updates but instead receive notifications every time there's a change in your environments, allowing to process those much quicker. If disabled or in the event of an issue, the SDK will fallback to the known polling mechanism to provide a seamless experience.
+
 2.6.0: (Ago 11, 2020)
 - Added `syncConfig.addFilter()` method to SDK configuration to pass a list of filters for the splits that will be downloaded. Read more in our docs.
 

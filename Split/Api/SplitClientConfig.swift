@@ -96,29 +96,7 @@ public class SplitClientConfig: NSObject {
 
     }
 
-    ///
-    /// Sdk endpoint URL string.
-    ///
-    @objc public var targetSdkEndPoint: String {
-        get {
-            return EnvironmentTargetManager.shared.sdkEndpoint
-        }
-        set {
-            EnvironmentTargetManager.shared.sdkEndpoint = newValue
-        }
-    }
-
-    ///
-    /// Events endpoint URL string.
-    ///
-    @objc public var targetEventsEndPoint: String {
-        get {
-            return EnvironmentTargetManager.shared.eventsEndpoint
-        }
-        set {
-            EnvironmentTargetManager.shared.eventsEndpoint = newValue
-        }
-    }
+    @objc public var serviceEndpoints = ServiceEndpoints.builder().build()
 
     ///
     /// Enables debug messages in console
@@ -172,6 +150,28 @@ public class SplitClientConfig: NSObject {
     /// Use the SyncConfig builder and Split Filter class to build correct filters
     ///
     @objc public var sync = SyncConfig.builder().build()
+    /// Whether we should attempt to use streaming or not. If the variable is false,
+    /// the SDK will start in polling mode and stay that way.
+    /// Default: true
+    ///
+    @objc public var streamingEnabled = true
+
+    ///
+    /// How many seconds to wait before re attempting the whole connection flow
+    /// Hard upper limit: 30 minutes (no configurable)
+
+    /// Default: 1
+    ///
+
+    @objc public var pushRetryBackoffBase = 1 {
+        didSet {
+            if pushRetryBackoffBase < 1 || pushRetryBackoffBase > 1800 {
+                Logger.w("pushRetryBackoffBase must be a value in seconds between 1 and 1800 (30 minutes). " +
+                    "Resetting it to 1 second")
+                pushRetryBackoffBase = 1
+            }
+        }
+    }
 
     ///
     /// Maximum length matching / bucketing key. Internal config
@@ -197,5 +197,9 @@ public class SplitClientConfig: NSObject {
     /// Time to consider that cache has expired
     ///
     let cacheExpirationInSeconds = 864000
+
+    let sseHttpClientConnectionTimeOut: TimeInterval = 80
+
+    var generalRetryBackoffBase = 1
 
 }

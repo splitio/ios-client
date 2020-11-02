@@ -14,13 +14,27 @@ class SplitChangeFetcherStub: SplitChangeFetcher {
     var fetchExpectation: XCTestExpectation?
     var since: Int64 = -1
     var fetchCallCount = 0
-    func fetch(since: Int64, policy: FecthingPolicy) throws -> SplitChange? {
-        self.since = since
-        let change = SplitChange()
-        change.splits = [Split]()
-        change.since = since + 100
-        change.till = since + 200
+
+    var changeResponseIndex = -1
+    var changes: [SplitChange?]?
+    var clearCacheParams = [Bool]()
+
+    func fetch(since: Int64, policy: FecthingPolicy, clearCache: Bool) throws -> SplitChange? {
         fetchCallCount+=1
+        self.since = since
+        var change: SplitChange?
+        self.clearCacheParams.append(clearCache)
+        if let changes = self.changes {
+            if changeResponseIndex + 1 < changes.count {
+                changeResponseIndex+=1
+            }
+            change = changes[changeResponseIndex]
+        } else {
+            change = SplitChange()
+            change?.splits = [Split]()
+            change?.since = since + 100
+            change?.till = since + 200
+        }
         if let exp = fetchExpectation {
             exp.fulfill()
         }
