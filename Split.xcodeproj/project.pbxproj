@@ -330,6 +330,7 @@
 		59D84BE3221734F5003DA248 /* LocalhostSplitClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */; };
 		59D84BE7221AE775003DA248 /* LocalhostManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */; };
 		59DD34B42236989700FA9545 /* FolderApiKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DD34B32236989700FA9545 /* FolderApiKeyTests.swift */; };
+		59E6A38A25557C8D005DE642 /* split_cache.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */; };
 		59ED408424EAB8C900EF7B09 /* PushNotificationManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59ED408324EAB8C900EF7B09 /* PushNotificationManagerTest.swift */; };
 		59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59ED408524EAB95E00EF7B09 /* SseAuthenticationStub.swift */; };
 		59ED408824EABD4700EF7B09 /* SseClientMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59ED408724EABD4700EF7B09 /* SseClientMock.swift */; };
@@ -762,6 +763,7 @@
 		59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitClientTests.swift; sourceTree = "<group>"; };
 		59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostManagerTests.swift; sourceTree = "<group>"; };
 		59DD34B32236989700FA9545 /* FolderApiKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderApiKeyTests.swift; sourceTree = "<group>"; };
+		59E6A38925557C8D005DE642 /* split_cache.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache.xcdatamodel; sourceTree = "<group>"; };
 		59ED408324EAB8C900EF7B09 /* PushNotificationManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManagerTest.swift; sourceTree = "<group>"; };
 		59ED408524EAB95E00EF7B09 /* SseAuthenticationStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseAuthenticationStub.swift; sourceTree = "<group>"; };
 		59ED408724EABD4700EF7B09 /* SseClientMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseClientMock.swift; sourceTree = "<group>"; };
@@ -1327,6 +1329,7 @@
 			children = (
 				3B6DEF0920EA6AE40067435E /* FileStorage.swift */,
 				5912D1462194715500BC698C /* FileStorageProtocol.swift */,
+				59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -2086,6 +2089,7 @@
 				595AD24B24E30C0C00A7B750 /* Base64Utils.swift in Sources */,
 				3B6DEF4520EA6AE50067435E /* Matcher.swift in Sources */,
 				59FB7C0D21F6099500ECC96A /* EventValidator.swift in Sources */,
+				59E6A38A25557C8D005DE642 /* split_cache.xcdatamodeld in Sources */,
 				3B6DEF3C20EA6AE50067435E /* MySegmentsChangeFetcher.swift in Sources */,
 				3B6DEF3920EA6AE50067435E /* Date+Utils.swift in Sources */,
 				59EFD2F624B5FB7B0052920D /* HttpSession.swift in Sources */,
@@ -2677,6 +2681,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				59E6A38925557C8D005DE642 /* split_cache.xcdatamodel */,
+			);
+			currentVersion = 59E6A38925557C8D005DE642 /* split_cache.xcdatamodel */;
+			path = split_cache.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 3B6DEE5120EA6A4D0067435E /* Project object */;
 }

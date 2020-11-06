@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E266" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Events" representedClassName="EventEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="body" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="status" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="uid" optional="YES" attributeType="UUID" usesScalarValueType="NO">
+            <userInfo>
+                <entry key="key" value="value"/>
+            </userInfo>
+        </attribute>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="uid"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="GeneralInfo" representedClassName="GeneralInfoEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="longValue" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="stringValue" attributeType="String"/>
+        <attribute name="updatedAt" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="name"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="Impressions" representedClassName="ImpressionEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="body" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="status" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="uid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="uid"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="MySegments" representedClassName="MySegmentEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="segmentList" attributeType="String"/>
+        <attribute name="updatedAt" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="userKey" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="userKey"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="Splits" representedClassName="SplitEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="body" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="testName" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="name"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <elements>
+        <element name="MySegments" positionX="-226.27734375" positionY="-237.1171875" width="128" height="88"/>
+        <element name="Splits" positionX="-95.48828125" positionY="-119.859375" width="128" height="88"/>
+        <element name="Impressions" positionX="-265.90234375" positionY="-118.63671875" width="128" height="118"/>
+        <element name="Events" positionX="-394.56640625" positionY="-244.453125" width="128" height="118"/>
+        <element name="GeneralInfo" positionX="-68.07421875" positionY="-234.640625" width="128" height="103"/>
+    </elements>
+</model>
