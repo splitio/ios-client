@@ -16,20 +16,30 @@ protocol MySegmentsStorage {
 }
 
 class DefaultMySegmentsStorage: MySegmentsStorage {
-     
-    func loadLocal() {
 
+    var inMemoryMySegments: ConcurrentSet<String>
+    let persistenStorage: PersistentMySegmentsStorage
+
+    init(persistentMySegmentsStorage: PersistentMySegmentsStorage) {
+        persistenStorage = persistentMySegmentsStorage
+        inMemoryMySegments = ConcurrentSet<String>()
+    }
+
+    func loadLocal() {
+        inMemoryMySegments.set(persistenStorage.getSnapshot())
     }
 
     func getAll() -> Set<String> {
-        return Set()
+        return inMemoryMySegments.all
     }
 
     func set(_ segments: [String]) {
-
+        inMemoryMySegments.set(segments)
+        persistenStorage.set(segments)
     }
 
     func clear() {
-
+        inMemoryMySegments.removeAll()
+        persistenStorage.set([String]())
     }
 }
