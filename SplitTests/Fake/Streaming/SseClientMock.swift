@@ -10,6 +10,8 @@ import Foundation
 @testable import Split
 
 class SseClientMock: SseClient {
+    var isConnectionOpened: Bool = true
+
 
     private var resultIndex = 0
     var connectCalled = false
@@ -29,7 +31,7 @@ class SseClientMock: SseClient {
         }
         connectCalled = true
         if result {
-            completion()
+            completion(true)
         }
     }
 

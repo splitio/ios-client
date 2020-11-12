@@ -32,6 +32,7 @@ class SyncManagerTest: XCTestCase {
         splitConfig.streamingEnabled = true
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
                                          synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
         syncManager.start()
 
@@ -47,6 +48,7 @@ class SyncManagerTest: XCTestCase {
         splitConfig.streamingEnabled = false
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
                                          synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
         syncManager.start()
 
@@ -62,6 +64,7 @@ class SyncManagerTest: XCTestCase {
         splitConfig.streamingEnabled = true
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
                                          synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
         syncManager.start()
         broadcasterChannel.push(event: .pushSubsystemUp)
@@ -74,6 +77,7 @@ class SyncManagerTest: XCTestCase {
         splitConfig.streamingEnabled = true
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
                                          synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
         syncManager.start()
         broadcasterChannel.push(event: .pushSubsystemDown)
@@ -86,6 +90,7 @@ class SyncManagerTest: XCTestCase {
         splitConfig.streamingEnabled = true
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
                                          synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
         syncManager.start()
         broadcasterChannel.push(event: .pushRetryableError)
@@ -100,6 +105,7 @@ class SyncManagerTest: XCTestCase {
         splitConfig.streamingEnabled = true
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
                                          synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
         syncManager.start()
 
@@ -117,6 +123,7 @@ class SyncManagerTest: XCTestCase {
         splitConfig.streamingEnabled = true
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
                                          synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
         syncManager.start()
         syncManager.stop()
