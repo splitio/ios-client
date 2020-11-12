@@ -130,6 +130,12 @@
 		3B6DEF8B20EA6AE50067435E /* FileStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0920EA6AE40067435E /* FileStorage.swift */; };
 		3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */; };
 		5903C497210A5E0900A754B0 /* SynchronizedArrayWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* SynchronizedArrayWrapper.swift */; };
+		5905D4CA2555F99D006DA3B1 /* GeneralInfoEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C02555F99D006DA3B1 /* GeneralInfoEntity.swift */; };
+		5905D4CC2555F99D006DA3B1 /* ImpressionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C22555F99D006DA3B1 /* ImpressionEntity.swift */; };
+		5905D4CE2555F99D006DA3B1 /* EventEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C42555F99D006DA3B1 /* EventEntity.swift */; };
+		5905D4D02555F99D006DA3B1 /* MySegmentEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C62555F99D006DA3B1 /* MySegmentEntity.swift */; };
+		5905D4D22555F99D006DA3B1 /* SplitEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C82555F99D006DA3B1 /* SplitEntity.swift */; };
+		5905D4D82555FE74006DA3B1 /* SplitDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4D72555FE74006DA3B1 /* SplitDatabase.swift */; };
 		590DF9CA213DAC9D0082B94F /* splits.json in Resources */ = {isa = PBXBuildFile; fileRef = 590DF9C9213DAC9D0082B94F /* splits.json */; };
 		590DF9CC213EB7D50082B94F /* SplitManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590DF9CB213EB7D50082B94F /* SplitManagerTest.swift */; };
 		590DF9CF213EB95D0082B94F /* SplitCacheStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590DF9CE213EB95D0082B94F /* SplitCacheStub.swift */; };
@@ -330,6 +336,7 @@
 		59D84BE3221734F5003DA248 /* LocalhostSplitClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */; };
 		59D84BE7221AE775003DA248 /* LocalhostManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */; };
 		59DD34B42236989700FA9545 /* FolderApiKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DD34B32236989700FA9545 /* FolderApiKeyTests.swift */; };
+		59E6A38A25557C8D005DE642 /* split_cache.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */; };
 		59ED408424EAB8C900EF7B09 /* PushNotificationManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59ED408324EAB8C900EF7B09 /* PushNotificationManagerTest.swift */; };
 		59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59ED408524EAB95E00EF7B09 /* SseAuthenticationStub.swift */; };
 		59ED408824EABD4700EF7B09 /* SseClientMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59ED408724EABD4700EF7B09 /* SseClientMock.swift */; };
@@ -561,6 +568,12 @@
 		3B6DEF0920EA6AE40067435E /* FileStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileStorage.swift; sourceTree = "<group>"; };
 		3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEventActionTask.swift; sourceTree = "<group>"; };
 		5903C496210A5E0900A754B0 /* SynchronizedArrayWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizedArrayWrapper.swift; sourceTree = "<group>"; };
+		5905D4C02555F99D006DA3B1 /* GeneralInfoEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoEntity.swift; sourceTree = "<group>"; };
+		5905D4C22555F99D006DA3B1 /* ImpressionEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionEntity.swift; sourceTree = "<group>"; };
+		5905D4C42555F99D006DA3B1 /* EventEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEntity.swift; sourceTree = "<group>"; };
+		5905D4C62555F99D006DA3B1 /* MySegmentEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentEntity.swift; sourceTree = "<group>"; };
+		5905D4C82555F99D006DA3B1 /* SplitEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEntity.swift; sourceTree = "<group>"; };
+		5905D4D72555FE74006DA3B1 /* SplitDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDatabase.swift; sourceTree = "<group>"; };
 		590DF9C9213DAC9D0082B94F /* splits.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splits.json; sourceTree = "<group>"; };
 		590DF9CB213EB7D50082B94F /* SplitManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitManagerTest.swift; sourceTree = "<group>"; };
 		590DF9CE213EB95D0082B94F /* SplitCacheStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitCacheStub.swift; sourceTree = "<group>"; };
@@ -762,6 +775,7 @@
 		59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitClientTests.swift; sourceTree = "<group>"; };
 		59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostManagerTests.swift; sourceTree = "<group>"; };
 		59DD34B32236989700FA9545 /* FolderApiKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderApiKeyTests.swift; sourceTree = "<group>"; };
+		59E6A38925557C8D005DE642 /* split_cache.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache.xcdatamodel; sourceTree = "<group>"; };
 		59ED408324EAB8C900EF7B09 /* PushNotificationManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManagerTest.swift; sourceTree = "<group>"; };
 		59ED408524EAB95E00EF7B09 /* SseAuthenticationStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseAuthenticationStub.swift; sourceTree = "<group>"; };
 		59ED408724EABD4700EF7B09 /* SseClientMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseClientMock.swift; sourceTree = "<group>"; };
@@ -1325,10 +1339,25 @@
 		3B6DEF0720EA6AE40067435E /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				5905D4D62555F9D7006DA3B1 /* models */,
 				3B6DEF0920EA6AE40067435E /* FileStorage.swift */,
 				5912D1462194715500BC698C /* FileStorageProtocol.swift */,
+				59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */,
+				5905D4D72555FE74006DA3B1 /* SplitDatabase.swift */,
 			);
 			path = Storage;
+			sourceTree = "<group>";
+		};
+		5905D4D62555F9D7006DA3B1 /* models */ = {
+			isa = PBXGroup;
+			children = (
+				5905D4C02555F99D006DA3B1 /* GeneralInfoEntity.swift */,
+				5905D4C22555F99D006DA3B1 /* ImpressionEntity.swift */,
+				5905D4C42555F99D006DA3B1 /* EventEntity.swift */,
+				5905D4C62555F99D006DA3B1 /* MySegmentEntity.swift */,
+				5905D4C82555F99D006DA3B1 /* SplitEntity.swift */,
+			);
+			path = models;
 			sourceTree = "<group>";
 		};
 		590DF9962125F6900082B94F /* Frameworks */ = {
@@ -2029,6 +2058,7 @@
 				5935FDEC226E26E300A23FA6 /* SplitHelper.swift in Sources */,
 				3B6DEF5A20EA6AE50067435E /* SplitEventTask.swift in Sources */,
 				59F4AAB1250FFF9A00A1C69A /* ThreadUtils.swift in Sources */,
+				5905D4CE2555F99D006DA3B1 /* EventEntity.swift in Sources */,
 				3B6DEF8920EA6AE50067435E /* SynchronizedArrayQueue.swift in Sources */,
 				3B6DEF3520EA6AE50067435E /* SecureDataStore.swift in Sources */,
 				3B6DEF2720EA6AE50067435E /* Logger.swift in Sources */,
@@ -2061,6 +2091,7 @@
 				59BF3D3F22329C7A004D134D /* JFRandom.m in Sources */,
 				597CD338216CE9F700A15487 /* CounterMetricSample.swift in Sources */,
 				3B6DEF6420EA6AE50067435E /* DateTime.swift in Sources */,
+				5905D4D02555F99D006DA3B1 /* MySegmentEntity.swift in Sources */,
 				595AD26524E6C3D200A7B750 /* Timers.swift in Sources */,
 				595AD25D24E5C61C00A7B750 /* ReconnectBackoffCounter.swift in Sources */,
 				3B6DEF4720EA6AE50067435E /* MatcherGroup.swift in Sources */,
@@ -2086,6 +2117,7 @@
 				595AD24B24E30C0C00A7B750 /* Base64Utils.swift in Sources */,
 				3B6DEF4520EA6AE50067435E /* Matcher.swift in Sources */,
 				59FB7C0D21F6099500ECC96A /* EventValidator.swift in Sources */,
+				59E6A38A25557C8D005DE642 /* split_cache.xcdatamodeld in Sources */,
 				3B6DEF3C20EA6AE50067435E /* MySegmentsChangeFetcher.swift in Sources */,
 				3B6DEF3920EA6AE50067435E /* Date+Utils.swift in Sources */,
 				59EFD2F624B5FB7B0052920D /* HttpSession.swift in Sources */,
@@ -2100,6 +2132,7 @@
 				59F6AAAB215EBD4400A51997 /* TimeMetric.swift in Sources */,
 				59FB7C202200A4B200ECC96A /* ValidatorMessageLogger.swift in Sources */,
 				3B6DEF6B20EA6AE50067435E /* InSegmentMatcher.swift in Sources */,
+				5905D4CC2555F99D006DA3B1 /* ImpressionEntity.swift in Sources */,
 				59B8B8B0220C6E3F003E0D5A /* ValidationErrorInfo.swift in Sources */,
 				593225FF24A4D8FD00496D8B /* HttpResponse.swift in Sources */,
 				3B6DEF5B20EA6AE50067435E /* SplitInternalEvent.swift in Sources */,
@@ -2107,6 +2140,7 @@
 				595AD20824DDC66500A7B750 /* SseAuthenticator.swift in Sources */,
 				3B6DEF7B20EA6AE50067435E /* HttpDataResponse.swift in Sources */,
 				59FB7C3122030EFA00ECC96A /* SplitFactoryBuilder.swift in Sources */,
+				5905D4CA2555F99D006DA3B1 /* GeneralInfoEntity.swift in Sources */,
 				59F4AAD6251A8C3E00A1C69A /* SyncManagerBuilder.swift in Sources */,
 				590DF9EE215038200082B94F /* SyncDictionaryCollectionWrapper.swift in Sources */,
 				595AD25F24E5D16300A7B750 /* Atomic.swift in Sources */,
@@ -2120,6 +2154,7 @@
 				59D84BDA2215A589003DA248 /* LocalhostSplitFetcher.swift in Sources */,
 				3B6DEF1220EA6AE50067435E /* SplitChangeCache.swift in Sources */,
 				59BF3D3E22329C7A004D134D /* JFBCrypt.m in Sources */,
+				5905D4D82555FE74006DA3B1 /* SplitDatabase.swift in Sources */,
 				3B6DEF8820EA6AE50067435E /* SplitChangeFetcher.swift in Sources */,
 				59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */,
 				3B6DEF6220EA6AE50067435E /* ContainsAnyOfSetMatcher.swift in Sources */,
@@ -2131,6 +2166,7 @@
 				59B2044324F8FE9A0092F2E9 /* PushManagerEventBroadcaster.swift in Sources */,
 				599EA57722666B84006CBA89 /* YAMLTokenizer.swift in Sources */,
 				3B6DEF5F20EA6AE50067435E /* BaseMatcher.swift in Sources */,
+				5905D4D22555F99D006DA3B1 /* SplitEntity.swift in Sources */,
 				59D84BD422158A07003DA248 /* LocalhostSplitClient.swift in Sources */,
 				3B6DEF1D20EA6AE50067435E /* PeriodicTaskManager.swift in Sources */,
 				5903C497210A5E0900A754B0 /* SynchronizedArrayWrapper.swift in Sources */,
@@ -2677,6 +2713,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				59E6A38925557C8D005DE642 /* split_cache.xcdatamodel */,
+			);
+			currentVersion = 59E6A38925557C8D005DE642 /* split_cache.xcdatamodel */;
+			path = split_cache.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 3B6DEE5120EA6A4D0067435E /* Project object */;
 }
