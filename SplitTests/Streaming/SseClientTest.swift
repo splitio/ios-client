@@ -39,8 +39,8 @@ class SseClientTest: XCTestCase {
         httpClient.streamReqExp = reqExp
         var connected = false
 
-        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
-            connected = true
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
+            connected = success
             conExp.fulfill()
         }
 
@@ -71,7 +71,7 @@ class SseClientTest: XCTestCase {
         httpClient.streamReqExp = reqExp
 
         sseHandler.messageExpectation = msgExp
-        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
             conExp.fulfill()
         }
 
@@ -107,7 +107,7 @@ class SseClientTest: XCTestCase {
         let reqExp = XCTestExpectation(description: "req")
         httpClient.streamReqExp = reqExp
         var connected = false
-        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
             connected = true
         }
 
@@ -130,7 +130,7 @@ class SseClientTest: XCTestCase {
         httpClient.streamReqExp = reqExp
         httpClient.throwOnSend = true
 
-        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
         }
 
         wait(for: [reqExp], timeout: 5)
@@ -152,7 +152,7 @@ class SseClientTest: XCTestCase {
         sseHandler.errorExpectation = errExp
 
         var connected = false
-        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
             connected = true
             conExp.fulfill()
         }
@@ -183,7 +183,7 @@ class SseClientTest: XCTestCase {
 
         sseHandler.errorExpectation = discExp
 
-        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
             conExp.fulfill()
         }
 
@@ -214,7 +214,7 @@ class SseClientTest: XCTestCase {
         requestMock.closeExpectation = discExp
         httpClient.httpStreamRequest = requestMock
 
-        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) {
+        self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
             conExp.fulfill()
         }
 

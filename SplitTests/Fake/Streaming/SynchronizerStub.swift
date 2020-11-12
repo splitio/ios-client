@@ -85,4 +85,10 @@ class SynchronizerStub: Synchronizer {
             exp.fulfill()
         }
     }
+
+    func pause() {
+    }
+
+    func resume() {
+    }
 }
