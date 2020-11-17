@@ -9,11 +9,9 @@
 import Foundation
 import CoreData
 
-protocol EventDao {
-    func insert(_ event: EventDTO)
-    func getBy(updatedAt: Int64, status: Int, maxRows: Int) -> [EventDTO]
-    func update(ids: [String], newStatus: Int)
-    func delete(_ events: [EventDTO])
+struct StorageRecordStatus {
+    static let active: Int32 = 0
+    static let deleted: Int32 = 1
 }
 
 protocol ImpressionDao {
@@ -40,22 +38,23 @@ protocol MySegmentsDao {
 protocol SplitDatabase {
     var splitDao: SplitDao? { get }
     var mySegmentDao: MySegmentsDao? { get }
-    var eventDao: EventDao? { get }
+    var eventDao: EventDao { get }
     var impressionDao: ImpressionDao? { get }
 }
 
 class DefaultSplitDatabase: SplitDatabase {
     var splitDao: SplitDao?
     var mySegmentDao: MySegmentsDao?
-    var eventDao: EventDao?
+    var eventDao: EventDao
     var impressionDao: ImpressionDao?
 
     private let kDataModelName = "SplitCache"
     private let kDataModelExtentsion = "momd"
     private let kDatabaseExtension = "sqlite"
     private let managedObjContext: NSManagedObjectContext
+    private let coreDataHelper: CoreDataHelper
 
-    init(databaseName: String, completionClosure: @escaping () -> ()) {
+    init(databaseName: String, completionClosure: @escaping () -> Void) {
 
         guard let modelUrl = Bundle.main.url(forResource: kDataModelName, withExtension: kDataModelExtentsion) else {
             fatalError("Error loading model from bundle")
@@ -67,24 +66,28 @@ class DefaultSplitDatabase: SplitDatabase {
 
         let persistenceCoordinator = NSPersistentStoreCoordinator(managedObjectModel: modelFile)
 
-        managedObjContext = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.mainQueueConcurrencyType)
+        managedObjContext = NSManagedObjectContext(
+            concurrencyType: NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType)
         managedObjContext.persistentStoreCoordinator = persistenceCoordinator
 
-        let queue = DispatchQueue.global(qos: DispatchQoS.QoSClass.background)
-        queue.async {
-            guard let docURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {
-                fatalError("Unable to resolve document directory")
-            }
-            let databaseUrl = docURL.appendingPathComponent("\(databaseName).\(self.kDatabaseExtension)")
-            do {
-                try persistenceCoordinator.addPersistentStore(ofType: NSSQLiteStoreType,
-                                                              configurationName: nil,
-                                                              at: databaseUrl, options: nil)
-                // TODO: Check this call
-                DispatchQueue.main.sync(execute: completionClosure)
-            } catch {
-                fatalError("Error migrating store: \(error)")
-            }
+        guard let docURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {
+            fatalError("Unable to resolve document directory")
         }
+        let databaseUrl = docURL.appendingPathComponent("\(databaseName).\(self.kDatabaseExtension)")
+        do {
+            try persistenceCoordinator.addPersistentStore(ofType: NSSQLiteStoreType,
+                                                          configurationName: nil,
+                                                          at: databaseUrl, options: nil)
+
+            coreDataHelper = CoreDataHelper(managedObjectContext: managedObjContext)
+            eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper)
+            
+            // TODO: Check this call
+            DispatchQueue.main.sync(execute: completionClosure)
+        } catch {
+            fatalError("Error migrating store: \(error)")
+        }
+
+
     }
 }
