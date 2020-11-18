@@ -75,7 +75,10 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func updateWithoutChecks(split: Split) {
-
+        if let splitName = split.name {
+            inMemorySplits.setValue(split, forKey: splitName)
+            persistentStorage.update(split: split)
+        }
     }
 
     func isValidTrafficType(name: String) -> Bool {
