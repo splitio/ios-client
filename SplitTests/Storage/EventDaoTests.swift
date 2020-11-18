@@ -25,12 +25,6 @@ class EventDaoTests: XCTestCase {
 
     }
 
-
-//    func insert(_ event: EventDTO)
-//       func getBy(updatedAt: Int64, status: Int32, maxRows: Int) -> [EventDTO]
-//       func update(ids: [String], newStatus: Int32)
-//       func delete(_ events: [EventDTO])
-
     func testInsertGet() {
 
         let loadedEvents = eventDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
