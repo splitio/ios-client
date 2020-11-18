@@ -10,6 +10,7 @@ import Foundation
 
 protocol PersistentSplitsStorage {
     func update(splitChange: ProcessedSplitChange)
+    func update(split: Split)
     func getFilterQueryString() -> String
     func getSplitsSnapshot() -> SplitsSnapshot
     func getAll() -> [Split]
