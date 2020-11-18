@@ -9,6 +9,7 @@
 import Foundation
 
 protocol PersistentEventsStorage {
+    func delete(_ events: [EventDTO])
     func pop(count: Int) -> [EventDTO]
     func push(event: EventDTO)
     func getCritical() -> [EventDTO]
@@ -27,7 +28,9 @@ class DefaultEventsStorage: PersistentEventsStorage {
 
     func pop(count: Int) -> [EventDTO] {
         let createdAt = Date().unixTimestamp() - self.expirationPeriod
-        return eventDao.getBy(createdAt: createdAt, status: StorageRecordStatus.active, maxRows: count)
+        let events = eventDao.getBy(createdAt: createdAt, status: StorageRecordStatus.active, maxRows: count)
+        eventDao.update(ids: events.compactMap { $0.storageId }, newStatus: StorageRecordStatus.deleted)
+        return events
     }
 
     func push(event: EventDTO) {
@@ -44,6 +47,9 @@ class DefaultEventsStorage: PersistentEventsStorage {
             return
         }
         eventDao.update(ids: events.compactMap { return $0.storageId }, newStatus: StorageRecordStatus.active)
+    }
 
+    func delete(_ events: [EventDTO]) {
+        eventDao.delete(events)
     }
 }
