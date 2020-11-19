@@ -148,7 +148,10 @@ extension DefaultSplitClient {
             return false
         }
 
-        let trafficType = trafficType ?? config.trafficType
+        guard let trafficType = trafficType ?? config.trafficType else {
+            return false
+        }
+
         if let errorInfo = eventValidator.validate(key: self.key.matchingKey,
                                                    trafficTypeName: trafficType,
                                                    eventTypeId: trafficType,
@@ -184,7 +187,7 @@ extension DefaultSplitClient {
             }
         }
 
-        let event = EventDTO(trafficType: trafficType!.lowercased(), eventType: eventType)
+        let event = EventDTO(trafficType: trafficType, eventType: eventType)
         event.key = self.key.matchingKey
         event.value = value
         event.timestamp = Date().unixTimestampInMiliseconds()

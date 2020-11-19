@@ -82,7 +82,7 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func isValidTrafficType(name: String) -> Bool {
-        return trafficTypes.value(forKey: name.lowercased()) != nil
+        return trafficTypes.value(forKey: name) != nil
     }
 
     func clear() {
