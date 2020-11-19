@@ -218,7 +218,6 @@
 		594677E822D4CAB300F94E58 /* ImpressionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594677E722D4CAB300F94E58 /* ImpressionsManager.swift */; };
 		594677EA22D4D44300F94E58 /* ImpressionsManagerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594677E922D4D44300F94E58 /* ImpressionsManagerStub.swift */; };
 		5946783522E110A700F94E58 /* MockWebServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5946783422E110A600F94E58 /* MockWebServer.swift */; };
-		5946783822E1144400F94E58 /* Swifter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5946783722E1144400F94E58 /* Swifter.framework */; };
 		5946783A22E1147600F94E58 /* SplitIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5946783922E1147600F94E58 /* SplitIntegrationTest.swift */; };
 		594F5F532539E36400A945B4 /* StreamingMySegmentsSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F522539E36400A945B4 /* StreamingMySegmentsSyncTest.swift */; };
 		594F5F55253A1A6500A945B4 /* StreamingSplitKillTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F54253A1A6500A945B4 /* StreamingSplitKillTest.swift */; };
@@ -430,6 +429,7 @@
 		59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */; };
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
+		955428D12567358B00331356 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 955428D02567358B00331356 /* Swifter */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -912,7 +912,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				592C6AAA211B6C99002D120C /* Split.framework in Frameworks */,
-				5946783822E1144400F94E58 /* Swifter.framework in Frameworks */,
+				955428D12567358B00331356 /* Swifter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1896,6 +1896,8 @@
 			dependencies = (
 			);
 			name = Split;
+			packageProductDependencies = (
+			);
 			productName = Split;
 			productReference = 3B6DEE5A20EA6A4E0067435E /* Split.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1926,7 +1928,6 @@
 				592C6AA2211B6C99002D120C /* Frameworks */,
 				592C6AA3211B6C99002D120C /* Resources */,
 				592C6AF2211CBED7002D120C /* CopyFiles */,
-				5946783622E1110600F94E58 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1934,6 +1935,9 @@
 				592C6AAC211B6C99002D120C /* PBXTargetDependency */,
 			);
 			name = SplitTests;
+			packageProductDependencies = (
+				955428D02567358B00331356 /* Swifter */,
+			);
 			productName = SplitTests;
 			productReference = 592C6AA5211B6C99002D120C /* SplitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -1971,6 +1975,9 @@
 				en,
 			);
 			mainGroup = 3B6DEE5020EA6A4D0067435E;
+			packageReferences = (
+				955428CF2567358B00331356 /* XCRemoteSwiftPackageReference "swifter" */,
+			);
 			productRefGroup = 3B6DEE5B20EA6A4E0067435E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2039,25 +2046,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		5946783622E1110600F94E58 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/Swifter.framework",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Swifter.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
-		};
 		598F9BE1230DAEBC00F0E4C0 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2742,11 +2730,7 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_STYLE = Automatic;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2772,11 +2756,7 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_STYLE = Automatic;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2833,6 +2813,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		955428CF2567358B00331356 /* XCRemoteSwiftPackageReference "swifter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/httpswift/swifter";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		955428D02567358B00331356 /* Swifter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 955428CF2567358B00331356 /* XCRemoteSwiftPackageReference "swifter" */;
+			productName = Swifter;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */ = {
