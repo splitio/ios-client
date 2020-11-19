@@ -29,6 +29,7 @@ Podfile.lock
 
 ## Carthage
 Carthage/
+carthage.sh
 
 ## OSX
 .DS_Store
