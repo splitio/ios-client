@@ -23,6 +23,7 @@ class PushNotificationManagerTest: XCTestCase {
     override func setUp() {
         sseAuthenticator = SseAuthenticatorStub()
         sseClient = SseClientMock()
+        sseClient.isConnectionOpened = false
         timersManager = TimersManagerMock()
         broadcasterChannel = PushManagerEventBroadcasterStub()
         pnManager = DefaultPushNotificationManager(userKey: userKey, sseAuthenticator: sseAuthenticator, sseClient: sseClient,
@@ -47,7 +48,7 @@ class PushNotificationManagerTest: XCTestCase {
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(userKey, sseAuthenticator.userKey!)
+        XCTAssertEqual(userKey, sseAuthenticator.userKey)
         XCTAssertEqual("thetoken", sseClient.token)
         XCTAssertEqual(2, sseClient.channels?.count)
         XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
@@ -73,7 +74,7 @@ class PushNotificationManagerTest: XCTestCase {
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(userKey, sseAuthenticator.userKey!)
+        XCTAssertEqual(userKey, sseAuthenticator.userKey)
         XCTAssertFalse(sseClient.connectCalled)
         XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect)) // ??
@@ -151,7 +152,6 @@ class PushNotificationManagerTest: XCTestCase {
 
         XCTAssertTrue(sseClient.disconnectCalled)
         XCTAssertTrue(timersManager.timerIsCancelled(timer: .refreshAuthToken))
-        XCTAssertTrue(timersManager.timerIsCancelled(timer: .appHostBgDisconnect))
     }
 
     override func tearDown() {
