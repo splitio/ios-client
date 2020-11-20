@@ -82,7 +82,7 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
     func exists(trafficType: String) -> Bool {
         var exists = false
         queue.sync {
-            exists = (self.trafficTypes[trafficType.lowercased()] != nil)
+            exists = (self.trafficTypes[trafficType] != nil)
         }
         return exists
     }
@@ -112,7 +112,7 @@ extension InMemorySplitCache {
         }
     }
     private func updateTrafficTypes(with split: Split) {
-        if let trafficTypeName = split.trafficTypeName?.lowercased(),
+        if let trafficTypeName = split.trafficTypeName,
             let status = split.status,
             let splitName = split.name {
             if status == .active {
@@ -127,13 +127,13 @@ extension InMemorySplitCache {
     }
 
     private func addTrafficType(name: String) {
-        let trafficType = name.lowercased()
+        let trafficType = name
         let newCount = (trafficTypes[trafficType] ?? 0) + 1
         trafficTypes[trafficType] = newCount
     }
 
     private func removeTrafficType(name: String) {
-        let trafficType = name.lowercased()
+        let trafficType = name
         let newCount = (trafficTypes[trafficType] ?? 0) - 1
         if newCount > 0 {
             trafficTypes[trafficType] = newCount

@@ -204,6 +204,17 @@ class SplitsStorageTest: XCTestCase {
         XCTAssertTrue(splitsStorage.isValidTrafficType(name: "mytt"))
     }
 
+    func testUpdateSplit() {
+        persistentStorage.snapshot = getTestSnapshot()
+        splitsStorage.loadLocal()
+        let s0 = newSplit(name: "s0", status: .active, trafficType: "ttupdated")
+        splitsStorage.updateWithoutChecks(split: s0)
+        let updatedSplit = splitsStorage.get(name: "s0")
+
+        XCTAssertTrue(persistentStorage.updateSplitCalled)
+        XCTAssertEqual("ttupdated", updatedSplit?.trafficTypeName ?? "")
+    }
+
 
     private func dummySnapshot() -> SplitsSnapshot {
         return SplitsSnapshot(changeNumber: dummyChangeNumber, splits: [],

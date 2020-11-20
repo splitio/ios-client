@@ -75,11 +75,14 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func updateWithoutChecks(split: Split) {
-
+        if let splitName = split.name {
+            inMemorySplits.setValue(split, forKey: splitName)
+            persistentStorage.update(split: split)
+        }
     }
 
     func isValidTrafficType(name: String) -> Bool {
-        return trafficTypes.value(forKey: name.lowercased()) != nil
+        return trafficTypes.value(forKey: name) != nil
     }
 
     func clear() {
@@ -89,19 +92,16 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     private func increaseTrafficTypeCount(name: String) {
-        let lowercaseName = name.lowercased()
-        let count = countForTrafficType(name: lowercaseName) + 1
-        trafficTypes.setValue(count, forKey: lowercaseName)
+        let count = countForTrafficType(name: name) + 1
+        trafficTypes.setValue(count, forKey: name)
     }
 
     private func decreaseTrafficTypeCount(name: String) {
-        let lowercaseName = name.lowercased()
-
-        let count = countForTrafficType(name: lowercaseName)
+        let count = countForTrafficType(name: name)
         if count > 1 {
-            trafficTypes.setValue(count - 1, forKey: lowercaseName)
+            trafficTypes.setValue(count - 1, forKey: name)
         } else {
-            trafficTypes.removeValue(forKey: lowercaseName)
+            trafficTypes.removeValue(forKey: name)
         }
     }
 
