@@ -141,7 +141,7 @@ class StreamingControlTest: XCTestCase {
                     return TestDispatcherResponse(code: 200, data: Data(self.splitChanges().utf8))
                 }
                 self.checkHist(inSplits: true)
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges.utf8))
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             case let(urlString) where urlString.contains("mySegments"):
                 self.mySegHitCount+=1
                 self.checkHist(inSplits: false)
