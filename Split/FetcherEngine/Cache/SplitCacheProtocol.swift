@@ -16,7 +16,6 @@ protocol SplitCacheProtocol {
     func getSplits() -> [String: Split]
     func getAllSplits() -> [Split]
     func exists(trafficType: String) -> Bool
-    func exists(lowercasedTrafficType: String) -> Bool 
     func clear()
     func getTimestamp() -> Int
     func setTimestamp(_ timestamp: Int)
