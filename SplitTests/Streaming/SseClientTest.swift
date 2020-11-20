@@ -108,7 +108,7 @@ class SseClientTest: XCTestCase {
         httpClient.streamReqExp = reqExp
         var connected = false
         self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
-            connected = true
+            connected = success
         }
 
         sleep(1)

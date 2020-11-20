@@ -112,7 +112,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                 if hitNumber == 0 {
                     change = self.changes
                 } else {
-                    change = IntegrationHelper.emptySplitChanges
+                    change = IntegrationHelper.emptySplitChanges(since: 100, till: 100)
                 }
                 return TestDispatcherResponse(code: 200, data: Data(change.utf8))
 
@@ -150,7 +150,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
     private func loadChanges() {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.since = 500
-        change?.till = 1000
+        change?.till = 500
         changes = (try? Json.encodeToJson(change)) ?? IntegrationHelper.emptySplitChanges
     }
 

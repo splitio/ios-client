@@ -169,7 +169,7 @@ class StreamingOccupancyTest: XCTestCase {
             case let(urlString) where urlString.contains("splitChanges"):
                 self.splitsHitCount+=1
                 self.checkHist(inSplits: true)
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges.utf8))
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             case let(urlString) where urlString.contains("mySegments"):
                 self.mySegHitCount+=1
                 self.checkHist(inSplits: false)

@@ -47,7 +47,7 @@ class StreamingSplitKillTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let  expTimeout:  TimeInterval = 5
+        let expTimeout:  TimeInterval = 5
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         for i in 0..<4 {
@@ -71,30 +71,34 @@ class StreamingSplitKillTest: XCTestCase {
         while splitsChangesHits < 2 && mySegmentsHits < 2 {
             ThreadUtils.delay(seconds: 1) // wait for sync all
         }
-
+        ThreadUtils.delay(seconds: 1)
+        print("Killing split")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
                                                          timestamp: numbers[splitsChangesHits],
-                                                         changeNumber: numbers[splitsChangesHits + 1]))
+                                                         changeNumber: numbers[splitsChangesHits]))
 
         wait(for: [exps[2]], timeout: expTimeout)
 
         ThreadUtils.delay(seconds: 1.0) // wait to let spliit be updated
-        print("tK 1")
+        
         let treatmentKill = client.getTreatment(splitName)
-        print("tK 12")
+        print("after kill eval")
 
+        print("Updating split")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
-                                                          changeNumber: numbers[splitsChangesHits + 1]))
+                                                          changeNumber: numbers[splitsChangesHits]))
 
         wait(for: [exps[3]], timeout: expTimeout)
         let treatmentNoKill = client.getTreatment(splitName)
-
+        print("after update eval")
+        
+        
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
                                                          timestamp: numbers[0],
-                                                         changeNumber: numbers[1]))
+                                                         changeNumber: numbers[0]))
 
         ThreadUtils.delay(seconds: 2.0) // The server should not be hit here
         let treatmentOldKill = client.getTreatment(splitName)
@@ -111,13 +115,14 @@ class StreamingSplitKillTest: XCTestCase {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.splitsChangesHits
                 self.splitsChangesHits+=1
-                let exp = self.exps[hitNumber]
-                DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                    exp.fulfill()
+                if hitNumber < self.exps.count {
+                    let exp = self.exps[hitNumber]
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                        exp.fulfill()
+                    }
+                    return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
                 }
-                let changes = self.changes[hitNumber]
-                print("Hit: \(hitNumber) ---> \(changes.replacingOccurrences(of: "\n", with: ""))")
-                return TestDispatcherResponse(code: 200, data: Data(changes.utf8))
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8))
 
             case let(urlString) where urlString.contains("mySegments"):
                 self.mySegmentsHits+=1
@@ -158,7 +163,7 @@ class StreamingSplitKillTest: XCTestCase {
         for i in 0..<4 {
             let change = getChanges(killed: (i == 2),
                                     since: self.numbers[i],
-                                    till: self.numbers[i + 1])
+                                    till: self.numbers[i])
             changes.insert(change, at: i)
         }
     }

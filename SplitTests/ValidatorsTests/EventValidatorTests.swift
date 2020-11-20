@@ -156,7 +156,7 @@ class EventValidatorTests: XCTestCase {
         XCTAssertNil(errorInfo?.error)
         XCTAssertNil(errorInfo?.errorMessage)
         XCTAssertEqual(errorInfo?.warnings.count, 1)
-        XCTAssertEqual("Traffic Type nocached does not have any corresponding Splits in this environment, make sure you’re tracking your events to a valid traffic type defined in the Split console", errorInfo?.warnings.values.map ({$0})[0])
+        XCTAssertEqual("traffic_type_name nocached does not have any corresponding Splits in this environment, make sure you’re tracking your events to a valid traffic type defined in the Split console", errorInfo?.warnings.values.map ({$0})[0])
         XCTAssertTrue(errorInfo?.hasWarning(.trafficTypeWithoutSplitInEnvironment) ?? false)
     }
 
@@ -169,7 +169,7 @@ class EventValidatorTests: XCTestCase {
         XCTAssertTrue(errorInfo?.hasWarning(.trafficTypeWithoutSplitInEnvironment) ?? false)
         XCTAssertTrue(errorInfo?.hasWarning(.trafficTypeNameHasUppercaseChars) ?? false)
         XCTAssertEqual("traffic_type_name should be all lowercase - converting string to lowercase", errorInfo?.warnings[.trafficTypeNameHasUppercaseChars])
-        XCTAssertEqual("Traffic Type noCached does not have any corresponding Splits in this environment, make sure you’re tracking your events to a valid traffic type defined in the Split console", errorInfo?.warnings[.trafficTypeWithoutSplitInEnvironment])
+        XCTAssertEqual("traffic_type_name nocached does not have any corresponding Splits in this environment, make sure you’re tracking your events to a valid traffic type defined in the Split console", errorInfo?.warnings[.trafficTypeWithoutSplitInEnvironment])
 
 
     }
