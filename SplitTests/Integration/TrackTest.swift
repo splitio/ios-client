@@ -52,7 +52,7 @@ class TrackTest: XCTestCase {
         }
 
         webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9567456937865, \"till\": 9567456937869 }")
+            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9999999999999, \"till\": 9999999999999 }")
         }
 
         webServer.route(method: .post, path: "/events/bulk") { request in
