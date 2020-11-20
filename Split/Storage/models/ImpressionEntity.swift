@@ -16,8 +16,9 @@ class ImpressionEntity: NSManagedObject {
         return NSFetchRequest<ImpressionEntity>(entityName: "Impressions")
     }
 
-    @NSManaged public var body: String?
+    @NSManaged public var storageId: String
+    @NSManaged public var body: String
     @NSManaged public var createdAt: Int64
     @NSManaged public var status: Int32
-    @NSManaged public var testName: String?
+    @NSManaged public var testName: String
 }

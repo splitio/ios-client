@@ -10,12 +10,15 @@ import Foundation
 @testable import Split
 
 class SplitDatabaseStub: SplitDatabase {
-        var splitDao: SplitDao?
-        var mySegmentDao: MySegmentsDao?
-        var eventDao: EventDao
-        var impressionDao: ImpressionDao?
-
-    init(eventDao: EventDao) {
+    
+    var splitDao: SplitDao?
+    var mySegmentDao: MySegmentsDao?
+    var eventDao: EventDao
+    var impressionDao: ImpressionDao
+    
+    init(eventDao: EventDao,
+         impressionDao: ImpressionDao) {
         self.eventDao = eventDao
+        self.impressionDao = impressionDao
     }
 }

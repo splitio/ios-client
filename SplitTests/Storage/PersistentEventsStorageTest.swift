@@ -15,15 +15,10 @@ class PersistentEventsStorageTests: XCTestCase {
     var eventsStorage: PersistentEventsStorage!
     var eventDao: EventDaoStub!
 
-//    func delete(_ events: [EventDTO])
-//    func pop(count: Int) -> [EventDTO]
-//    func push(event: EventDTO)
-//    func getCritical() -> [EventDTO]
-//    func setActive(_ events: [EventDTO])
-
     override func setUp() {
         eventDao = EventDaoStub()
-        eventsStorage = DefaultEventsStorage(database: SplitDatabaseStub(eventDao: eventDao), expirationPeriod: 100)
+        eventsStorage = DefaultEventsStorage(database: SplitDatabaseStub(eventDao: eventDao,
+                                                                         impressionDao: ImpressionDaoStub()), expirationPeriod: 100)
 
     }
 

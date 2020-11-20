@@ -81,7 +81,7 @@ class StreamingDisabledTest: XCTestCase {
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 self.splitsChangesHitCount+=1
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges.utf8))
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             case let(urlString) where urlString.contains("mySegments"):
                 self.mySegmentsHitCount+=1
                 if self.mySegmentsHitCount > 3 {
