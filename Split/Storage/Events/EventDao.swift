@@ -33,7 +33,7 @@ class CoreDataEventDao: EventDao {
                 obj.status = StorageRecordStatus.active
                 coreDataHelper.save()
             } catch {
-                Logger.e("An error occurred while loading events from storage: \(error.localizedDescription)")
+                Logger.e("An error occurred while inserting events in storage: \(error.localizedDescription)")
             }
         }
     }
