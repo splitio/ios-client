@@ -205,7 +205,9 @@ class SplitIntegrationTests: XCTestCase {
     }
 
     private func loadSplitsChangeFile() -> SplitChange? {
-        return loadSplitChangeFile(name: "splitchanges_1")
+        let change = loadSplitChangeFile(name: "splitchanges_1")
+        change?.since = change?.till
+        return change
     }
 
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
