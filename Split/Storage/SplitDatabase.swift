@@ -14,13 +14,6 @@ struct StorageRecordStatus {
     static let deleted: Int32 = 1
 }
 
-protocol ImpressionDao {
-    func insert(_ impression: Impression)
-    func getBy(updatedAt: Int64, status: Int, maxRows: Int) -> [Impression]
-    func update(ids: [String], newStatus: Int)
-    func delete(_ impressions: [Impression])
-}
-
 protocol SplitDao {
     func insert(_ splits: [Split])
     func getAll() -> [Split]
@@ -39,14 +32,14 @@ protocol SplitDatabase {
     var splitDao: SplitDao? { get }
     var mySegmentDao: MySegmentsDao? { get }
     var eventDao: EventDao { get }
-    var impressionDao: ImpressionDao? { get }
+    var impressionDao: ImpressionDao { get }
 }
 
 class DefaultSplitDatabase: SplitDatabase {
     var splitDao: SplitDao?
     var mySegmentDao: MySegmentsDao?
     var eventDao: EventDao
-    var impressionDao: ImpressionDao?
+    var impressionDao: ImpressionDao
 
     private let kDataModelName = "SplitCache"
     private let kDataModelExtentsion = "momd"
@@ -81,6 +74,7 @@ class DefaultSplitDatabase: SplitDatabase {
 
             coreDataHelper = CoreDataHelper(managedObjectContext: managedObjContext)
             eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper)
+            impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper)
             
             // TODO: Check this call
             DispatchQueue.main.sync(execute: completionClosure)
