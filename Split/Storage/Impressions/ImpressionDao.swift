@@ -27,7 +27,13 @@ class CoreDataImpressionDao: ImpressionDao {
     func insert(_ impression: Impression) {
         if let obj = coreDataHelper.create(entity: .impression) as? ImpressionEntity {
             do {
+                guard let testName = impression.feature else {
+                    // This should never happen
+                    Logger.d("Impression without test name descarted")
+                    return
+                }
                 obj.storageId = coreDataHelper.generateId()
+                obj.testName = testName
                 obj.body = try Json.encodeToJson(impression)
                 obj.createdAt = Date().unixTimestamp()
                 obj.status = StorageRecordStatus.active
