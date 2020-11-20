@@ -66,13 +66,15 @@ class MySegmentUpdatedTest: XCTestCase {
         }
 
         webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
+            var since: Int64 = 0
             if self.isFirstChangesReq {
                 self.isFirstChangesReq = false
                 let change = self.responseSlitChanges()[0]
+                since = change.till ?? 0
                 let jsonChanges = try? Json.encodeToJson(change)
                 return MockedResponse(code: 200, data: jsonChanges)
             }
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9567456937865, \"till\": 9567456937869 }")
+            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": \(since), \"till\": \(since) }")
         }
 
         webServer.route(method: .post, path: "/testImpressions/bulk") { request in
