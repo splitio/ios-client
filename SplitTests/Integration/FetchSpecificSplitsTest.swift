@@ -20,6 +20,7 @@ class FetchSpecificSplitsTest: XCTestCase {
     var splitChange: SplitChange?
     var serverUrl = ""
     var splitsRequestUrl = ""
+    var lastChangeNumber = 0
     
     override func setUp() {
         if splitChange == nil {
@@ -37,7 +38,8 @@ class FetchSpecificSplitsTest: XCTestCase {
         webServer.routeGet(path: "/mySegments/:user_id", data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}")
         webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
             self.splitsRequestUrl = "\(self.serverUrl)\(request.path)\(request.queryString ?? "")"
-            return MockedResponse(code: 200, data: IntegrationHelper.emptySplitChanges)
+            let since = self.lastChangeNumber
+            return MockedResponse(code: 200, data: IntegrationHelper.emptySplitChanges(since: since, till: since))
         }
         webServer.route(method: .post, path: "/testImpressions/bulk") { request in
             return MockedResponse(code: 200, data: nil)
@@ -118,8 +120,6 @@ class FetchSpecificSplitsTest: XCTestCase {
         semaphore.wait()
         factory = nil
     }
-
-
     
     private func loadSplitsChangeFile() -> SplitChange? {
         return loadSplitChangeFile(name: "splitchanges_1")
@@ -128,6 +128,7 @@ class FetchSpecificSplitsTest: XCTestCase {
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
             let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+            self.lastChangeNumber = Int(change.till ?? 0)
             return change
         }
         return nil
