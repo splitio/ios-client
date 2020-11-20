@@ -10,8 +10,8 @@ import Foundation
 import CoreData
 
 struct StorageRecordStatus {
-    static let active: Int32 = 0
-    static let deleted: Int32 = 1
+    static let active: Int32 = 0 // The record should be considered to be sent to the server
+    static let deleted: Int32 = 1 // The record will be deleted if post succeded
 }
 
 protocol SplitDao {
