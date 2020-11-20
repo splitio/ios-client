@@ -88,8 +88,8 @@ class DefaultEventValidator: EventValidator {
                 "traffic_type_name should be all lowercase - converting string to lowercase")
         }
 
-        if !splitCache.exists(trafficType: trafficTypeName!) {
-            let message = "Traffic Type \(trafficTypeName!) does not have any corresponding " +
+        if !splitCache.exists(lowercasedTrafficType: trafficTypeName!) {
+            let message = "traffic_type_name \(trafficTypeName!) does not have any corresponding " +
                 "Splits in this environment, make sure you’re tracking " +
             "your events to a valid traffic type defined in the Split console"
 

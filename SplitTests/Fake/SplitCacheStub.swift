@@ -11,7 +11,7 @@ import XCTest
 @testable import Split
 
 class SplitCacheStub: SplitCacheProtocol {
-
+    
     var clearExpectation: XCTestExpectation?
     var onSplitsUpdatedHandler: (([Split]) -> Void)? = nil
     private var changeNumber: Int64
@@ -74,6 +74,10 @@ class SplitCacheStub: SplitCacheProtocol {
     }
 
     func exists(trafficType: String) -> Bool {
+        return true
+    }
+    
+    func exists(lowercasedTrafficType: String) -> Bool {
         return true
     }
 
