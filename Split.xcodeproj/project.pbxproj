@@ -430,6 +430,11 @@
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
 		955428D12567358B00331356 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 955428D02567358B00331356 /* Swifter */; };
+		955428D6256810D300331356 /* ImpressionDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428D5256810D300331356 /* ImpressionDao.swift */; };
+		955428DA256810EC00331356 /* PersistentImpressionsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428D9256810EC00331356 /* PersistentImpressionsStorage.swift */; };
+		955428E02568155B00331356 /* PersistentImpressionsStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */; };
+		955428E4256815B200331356 /* ImpressionDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428E3256815B200331356 /* ImpressionDaoTests.swift */; };
+		955428E82568176C00331356 /* ImpressionDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428E72568176C00331356 /* ImpressionDaoStub.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -889,6 +894,11 @@
 		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		955428D5256810D300331356 /* ImpressionDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionDao.swift; sourceTree = "<group>"; };
+		955428D9256810EC00331356 /* PersistentImpressionsStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentImpressionsStorage.swift; sourceTree = "<group>"; };
+		955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentImpressionsStorageTest.swift; sourceTree = "<group>"; };
+		955428E3256815B200331356 /* ImpressionDaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionDaoTests.swift; sourceTree = "<group>"; };
+		955428E72568176C00331356 /* ImpressionDaoStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionDaoStub.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1380,6 +1390,7 @@
 		3B6DEF0720EA6AE40067435E /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				955428D425680FA600331356 /* Impressions */,
 				5905D4F8255D77A2006DA3B1 /* Events */,
 				5905D4E9255B3C9C006DA3B1 /* Splits */,
 				5905D4DD2559C950006DA3B1 /* MySegments */,
@@ -1416,7 +1427,9 @@
 			isa = PBXGroup;
 			children = (
 				59F65F002562FF71005FE8C9 /* EventDaoTests.swift */,
+				955428E3256815B200331356 /* ImpressionDaoTests.swift */,
 				59F65F0525654EBB005FE8C9 /* PersistentEventsStorageTest.swift */,
+				955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */,
 				5905D4E4255B2395006DA3B1 /* MySegmentsStorageTests.swift */,
 				5905D4F2255C587F006DA3B1 /* SplitsStorageTests.swift */,
 			);
@@ -1430,6 +1443,7 @@
 				5905D4F4255C596C006DA3B1 /* PersistentSplitsStorageStub.swift */,
 				59F65F03256300CA005FE8C9 /* IntegrationCoreDataHelper.swift */,
 				59F65F0725654F44005FE8C9 /* EventDaoStub.swift */,
+				955428E72568176C00331356 /* ImpressionDaoStub.swift */,
 				59F65F09256568CF005FE8C9 /* SplitDatabaseStub.swift */,
 			);
 			path = Storage;
@@ -1864,6 +1878,15 @@
 			path = Localhost;
 			sourceTree = "<group>";
 		};
+		955428D425680FA600331356 /* Impressions */ = {
+			isa = PBXGroup;
+			children = (
+				955428D5256810D300331356 /* ImpressionDao.swift */,
+				955428D9256810EC00331356 /* PersistentImpressionsStorage.swift */,
+			);
+			path = Impressions;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -2253,6 +2276,7 @@
 				5905D4D82555FE74006DA3B1 /* SplitDatabase.swift in Sources */,
 				3B6DEF8820EA6AE50067435E /* SplitChangeFetcher.swift in Sources */,
 				59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */,
+				955428D6256810D300331356 /* ImpressionDao.swift in Sources */,
 				5905D4DF2559CA95006DA3B1 /* ConcurrentSet.swift in Sources */,
 				3B6DEF6220EA6AE50067435E /* ContainsAnyOfSetMatcher.swift in Sources */,
 				595AD20A24DDC77C00A7B750 /* RestClient+SseAuthenticator.swift in Sources */,
@@ -2261,6 +2285,7 @@
 				590DF9D4214028800082B94F /* SplitView+StringConvertible.swift in Sources */,
 				3B6DEF2520EA6AE50067435E /* Version.swift in Sources */,
 				59B2044324F8FE9A0092F2E9 /* PushManagerEventBroadcaster.swift in Sources */,
+				955428DA256810EC00331356 /* PersistentImpressionsStorage.swift in Sources */,
 				599EA57722666B84006CBA89 /* YAMLTokenizer.swift in Sources */,
 				3B6DEF5F20EA6AE50067435E /* BaseMatcher.swift in Sources */,
 				5905D4D22555F99D006DA3B1 /* SplitEntity.swift in Sources */,
@@ -2349,12 +2374,14 @@
 				595AD21524E1CD4700A7B750 /* JwtTokenParserTest.swift in Sources */,
 				599A6E3422FC681600D3D68C /* FlushTest.swift in Sources */,
 				59B8B8AA220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift in Sources */,
+				955428E4256815B200331356 /* ImpressionDaoTests.swift in Sources */,
 				590DF9CC213EB7D50082B94F /* SplitManagerTest.swift in Sources */,
 				59ED408A24EADAA100EF7B09 /* ReconnectBackoffCounterStub.swift in Sources */,
 				598EDE80224BD238005D4762 /* SplitFetcherStub.swift in Sources */,
 				59FB7C1C21F7AE2E00ECC96A /* SplitChangeValidatorTests.swift in Sources */,
 				59F4AAC62515425200A1C69A /* SynchronizerTest.swift in Sources */,
 				5912D1492195F25200BC698C /* MySegmentsCacheStub.swift in Sources */,
+				955428E82568176C00331356 /* ImpressionDaoStub.swift in Sources */,
 				5932260724A5325A00496D8B /* HttpTaskMock.swift in Sources */,
 				595AD26124E5D48500A7B750 /* ReconnectBackoffCounterTest.swift in Sources */,
 				594677E422CFF30B00F94E58 /* TreatmentManagerTest.swift in Sources */,
@@ -2388,6 +2415,7 @@
 				59F4AAA124FFC94100A1C69A /* NotificationManagerKeeperTest.swift in Sources */,
 				59D84BDC2215CD52003DA248 /* LocalhostSplitFetcherTests.swift in Sources */,
 				599EA5852268E9C2006CBA89 /* LocalhostTests.swift in Sources */,
+				955428E02568155B00331356 /* PersistentImpressionsStorageTest.swift in Sources */,
 				5912D152219A022000BC698C /* CsvHelper.swift in Sources */,
 				59F4AABF2513A97B00A1C69A /* PeriodicSplitsSyncWorkerTest.swift in Sources */,
 				5982D934219F3D2E00230F44 /* MatcherEvalTests.swift in Sources */,
