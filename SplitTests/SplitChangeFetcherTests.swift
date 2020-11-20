@@ -33,7 +33,7 @@ class SplitChangeFetcherTests: XCTestCase {
 
         let restClient: RestClientSplitChanges = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
-        restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_1"))
+        restClientTest.update(change: self.getChanges(fileName: "splitchanges_1"))
 
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange? = nil
@@ -50,7 +50,7 @@ class SplitChangeFetcherTests: XCTestCase {
     func testChangeFetch() {
         let restClient: RestClientSplitChanges = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
-        restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_2"))
+        restClientTest.update(change: self.getChanges(fileName: "splitchanges_2"))
 
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange? = nil
@@ -72,7 +72,7 @@ class SplitChangeFetcherTests: XCTestCase {
             XCTAssertNotNil(split.configurations, "Configurations should not be nil")
             XCTAssertNotNil(split.configurations?["on"])
             XCTAssertNotNil(split.configurations?["off"])
-            XCTAssertEqual(response.since, -1, "Since should be -1")
+            XCTAssertEqual(response.since, 1506703262916, "Since should be -1")
             XCTAssertEqual(response.till, 1506703262916, "Check till value")
             XCTAssertNil(split.algo, "Algo should be nil")
         }
@@ -81,7 +81,7 @@ class SplitChangeFetcherTests: XCTestCase {
     func testSplitsTillAndSince() {
         let restClient: RestClientSplitChanges = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
-        restClientTest.update(change: IntegrationHelper.getChanges(fileName: "splitchanges_3"))
+        restClientTest.update(change: self.getChanges(fileName: "splitchanges_3"))
 
         splitChangeFetcher = HttpSplitChangeFetcher(restClient: restClient, splitCache: splitCache)
         var response: SplitChange?
@@ -99,6 +99,7 @@ class SplitChangeFetcherTests: XCTestCase {
         var change: SplitChange?
         if let content = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json") {
             change = try? Json.encodeFrom(json: content, to: SplitChange.self)
+            change?.since = change?.till
         }
         return change
     }
