@@ -17,6 +17,7 @@ class MySegmentServerErrorTest: XCTestCase {
     var reqSegmentsIndex = 0
     var isFirstChangesReq = true
     var serverUrl = ""
+    var lastChangeNumber = 0
 
     let sgExp = [
         XCTestExpectation(description: "upd 0"),
@@ -67,10 +68,12 @@ class MySegmentServerErrorTest: XCTestCase {
             if self.isFirstChangesReq {
                 self.isFirstChangesReq = false
                 let change = self.responseSlitChanges()[0]
+                self.lastChangeNumber = Int(change.till ?? 0)
                 let jsonChanges = try? Json.encodeToJson(change)
                 return MockedResponse(code: 200, data: jsonChanges)
             }
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9567456937865, \"till\": 9567456937869 }")
+            let since = self.lastChangeNumber
+            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": \(since), \"till\": \(since) }")
         }
 
         webServer.route(method: .post, path: "/testImpressions/bulk") { request in
