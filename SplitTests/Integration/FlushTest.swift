@@ -189,6 +189,7 @@ class FlushTests: XCTestCase {
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
             let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+            change.till = change.since ?? 0
             return change
         }
         return nil
