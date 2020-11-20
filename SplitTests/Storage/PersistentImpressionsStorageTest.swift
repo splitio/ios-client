@@ -59,8 +59,9 @@ class PersistentImpressionsStorageTests: XCTestCase {
 
     func createImpressions() -> [Impression] {
         var impressions = [Impression]()
-        for i in 0..<20 {
+        for _ in 0..<20 {
             let impression = Impression()
+            impression.storageId = UUID().uuidString
             impression.feature = "f1"
             impression.keyName = "key1"
             impression.treatment = "t1"
@@ -68,7 +69,6 @@ class PersistentImpressionsStorageTests: XCTestCase {
             impression.changeNumber = 1000
             impression.label = "t1"
             impression.attributes = ["pepe": 1]
-            impressions.append(impression)
             impressions.append(impression)
         }
         return impressions

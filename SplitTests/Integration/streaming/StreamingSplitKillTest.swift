@@ -47,7 +47,7 @@ class StreamingSplitKillTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let  expTimeout:  TimeInterval = 5
+        let expTimeout:  TimeInterval = 5
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         for i in 0..<4 {
@@ -158,7 +158,7 @@ class StreamingSplitKillTest: XCTestCase {
         for i in 0..<4 {
             let change = getChanges(killed: (i == 2),
                                     since: self.numbers[i],
-                                    till: self.numbers[i + 1])
+                                    till: self.numbers[i])
             changes.insert(change, at: i)
         }
     }
