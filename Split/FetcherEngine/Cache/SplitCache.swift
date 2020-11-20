@@ -70,10 +70,6 @@ class SplitCache: SplitCacheProtocol {
     func exists(trafficType: String) -> Bool {
         return inMemoryCache.exists(trafficType: trafficType)
     }
-    
-    func exists(lowercasedTrafficType: String) -> Bool {
-        return inMemoryCache.exists(lowercasedTrafficType: lowercasedTrafficType)
-    }
 
     func clear() {
         inMemoryCache.clear()
