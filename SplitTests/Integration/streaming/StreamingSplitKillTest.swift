@@ -71,7 +71,8 @@ class StreamingSplitKillTest: XCTestCase {
         while splitsChangesHits < 2 && mySegmentsHits < 2 {
             ThreadUtils.delay(seconds: 1) // wait for sync all
         }
-
+        ThreadUtils.delay(seconds: 1)
+        print("Killing split")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
                                                          timestamp: numbers[splitsChangesHits],
@@ -80,21 +81,24 @@ class StreamingSplitKillTest: XCTestCase {
         wait(for: [exps[2]], timeout: expTimeout)
 
         ThreadUtils.delay(seconds: 1.0) // wait to let spliit be updated
-        print("tK 1")
+        
         let treatmentKill = client.getTreatment(splitName)
-        print("tK 12")
+        print("after kill eval")
 
+        print("Updating split")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
                                                           changeNumber: numbers[splitsChangesHits]))
 
         wait(for: [exps[3]], timeout: expTimeout)
         let treatmentNoKill = client.getTreatment(splitName)
-
+        print("after update eval")
+        
+        
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
                                                          timestamp: numbers[0],
-                                                         changeNumber: numbers[1]))
+                                                         changeNumber: numbers[0]))
 
         ThreadUtils.delay(seconds: 2.0) // The server should not be hit here
         let treatmentOldKill = client.getTreatment(splitName)
