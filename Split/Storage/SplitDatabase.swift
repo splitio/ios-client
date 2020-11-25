@@ -14,13 +14,6 @@ struct StorageRecordStatus {
     static let deleted: Int32 = 1 // The record will be deleted if post succeded
 }
 
-protocol SplitDao {
-    func insert(_ splits: [Split])
-    func getAll() -> [Split]
-    func update(ids: [String], newStatus: Int)
-    func deleteAll()
-}
-
 protocol MySegmentsDao {
     func getBy(userKey: String) -> [String]
     func update(userKey: String, segmentList: [String])
