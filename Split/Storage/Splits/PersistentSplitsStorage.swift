@@ -18,3 +18,35 @@ protocol PersistentSplitsStorage {
     func clear()
     func close()
 }
+
+class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
+
+    func update(splitChange: ProcessedSplitChange) {
+    }
+    
+    func update(split: Split) {
+    }
+    
+    func getFilterQueryString() -> String {
+        return ""
+    }
+    
+    func getSplitsSnapshot() -> SplitsSnapshot {
+        return SplitsSnapshot(changeNumber: -1, splits: [], updateTimestamp: 1, splitsFilterQueryString: "")
+    }
+    
+    func getAll() -> [Split] {
+        return []
+    }
+    
+    func delete(splitNames: [String]) {
+    }
+    
+    func clear() {
+    }
+    
+    func close() {
+    }
+    
+    
+}

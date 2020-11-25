@@ -39,19 +39,12 @@ class CoreDataEventDao: EventDao {
     }
 
     func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [EventDTO] {
-        var result = [EventDTO]()
         let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
         let entities = coreDataHelper.fetch(entity: .event,
                                             where: predicate,
                                             rowLimit: maxRows).compactMap { return $0 as? EventEntity }
 
-        entities.forEach { entity in
-            if let model = try? mapEntityToModel(entity) {
-                result.append(model)
-            }
-        }
-
-        return result
+        return entities.compactMap { return try? mapEntityToModel($0) }
     }
 
     func update(ids: [String], newStatus: Int32) {
@@ -68,7 +61,7 @@ class CoreDataEventDao: EventDao {
         coreDataHelper.delete(entity: .event, by: "storageId", values: events.map { $0.storageId ?? "" })
     }
 
-    func mapEntityToModel(_ entity: EventEntity) throws -> EventDTO {
+    private func mapEntityToModel(_ entity: EventEntity) throws -> EventDTO {
         let model = try Json.dynamicEncodeFrom(json: entity.body, to: EventDTO.self)
         model.storageId = entity.storageId
         return model

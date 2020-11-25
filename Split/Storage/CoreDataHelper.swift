@@ -16,9 +16,12 @@ enum CoreDataEntity: String {
 
 class CoreDataHelper {
     let managedObjectContext: NSManagedObjectContext
+    let persistentCoordinator: NSPersistentStoreCoordinator
 
-    init(managedObjectContext: NSManagedObjectContext) {
+    init(managedObjectContext: NSManagedObjectContext,
+         persistentCoordinator: NSPersistentStoreCoordinator) {
         self.managedObjectContext = managedObjectContext
+        self.persistentCoordinator = persistentCoordinator
     }
 
     func create(entity: CoreDataEntity) -> NSManagedObject {
@@ -27,18 +30,7 @@ class CoreDataHelper {
     }
 
     func delete(entity: CoreDataEntity, by field: String, values: [String]) {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity.rawValue)
-        fetchRequest.predicate = NSPredicate(format: "\(field) IN %@", values)
-        do {
-            if let entities = try managedObjectContext.fetch(fetchRequest) as? [NSManagedObject] {
-                for entity in entities {
-                    managedObjectContext.delete(entity)
-                }
-                try managedObjectContext.save()
-            }
-        } catch {
-            Logger.e("Error while deleting \(entity.rawValue) entities from storage: \(error.localizedDescription)")
-        }
+        delete(entity: entity, predicate: NSPredicate(format: "\(field) IN %@", values))
     }
 
     func save() {
@@ -67,6 +59,24 @@ class CoreDataHelper {
         } catch {
             Logger.e("Error while loading \(entity.rawValue) objects from storage: \(error.localizedDescription)")
             return []
+        }
+    }
+    
+    func deleteAll(entity: CoreDataEntity) {
+        delete(entity: entity)
+    }
+    
+    private func delete(entity: CoreDataEntity, predicate: NSPredicate? = nil) {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entity.rawValue)
+        if let predicate = predicate {
+            fetchRequest.predicate = predicate
+        }
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+        do {
+            try persistentCoordinator.execute(deleteRequest, with: managedObjectContext)
+        } catch {
+            Logger.e("Error while deleting \(entity.rawValue) entities from storage: \(error.localizedDescription)")
         }
     }
 }
