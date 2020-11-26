@@ -32,3 +32,6 @@ Carthage/
 
 ## OSX
 .DS_Store
+
+## SPM
+.build/

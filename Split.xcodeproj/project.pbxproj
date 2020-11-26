@@ -312,11 +312,6 @@
 		59B8B8B0220C6E3F003E0D5A /* ValidationErrorInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8AF220C6E3F003E0D5A /* ValidationErrorInfo.swift */; };
 		59BF3D27223132E1004D134D /* DataFolderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BF3D26223132E1004D134D /* DataFolderFactory.swift */; };
 		59BF3D372231A698004D134D /* BCryptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BF3D362231A698004D134D /* BCryptTests.swift */; };
-		59BF3D3D22329C7A004D134D /* JFBCrypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BF3D3822329C79004D134D /* JFBCrypt.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		59BF3D3E22329C7A004D134D /* JFBCrypt.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BF3D3922329C7A004D134D /* JFBCrypt.m */; };
-		59BF3D3F22329C7A004D134D /* JFRandom.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BF3D3A22329C7A004D134D /* JFRandom.m */; };
-		59BF3D4022329C7A004D134D /* JFGC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BF3D3B22329C7A004D134D /* JFGC.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		59BF3D4122329C7A004D134D /* JFRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BF3D3C22329C7A004D134D /* JFRandom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59BF3D432232A663004D134D /* Split.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BF3D422232A663004D134D /* Split.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59BF90B9239A75520007A896 /* VersionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BF90B8239A75520007A896 /* VersionTest.swift */; };
 		59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C492FA216695D500F5F774 /* Murmur3HashingTest.swift */; };
@@ -403,6 +398,11 @@
 		59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */; };
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
+		D15FC7B3256F4DC3002B7E22 /* JFBCrypt.h in Headers */ = {isa = PBXBuildFile; fileRef = D15FC7AE256F4DC3002B7E22 /* JFBCrypt.h */; };
+		D15FC7B4256F4DC3002B7E22 /* JFRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = D15FC7AF256F4DC3002B7E22 /* JFRandom.h */; };
+		D15FC7B5256F4DC3002B7E22 /* JFGC.h in Headers */ = {isa = PBXBuildFile; fileRef = D15FC7B0256F4DC3002B7E22 /* JFGC.h */; };
+		D15FC7B6256F4DC3002B7E22 /* JFRandom.m in Sources */ = {isa = PBXBuildFile; fileRef = D15FC7B1256F4DC3002B7E22 /* JFRandom.m */; };
+		D15FC7B7256F4DC3002B7E22 /* JFBCrypt.m in Sources */ = {isa = PBXBuildFile; fileRef = D15FC7B2256F4DC3002B7E22 /* JFBCrypt.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -744,11 +744,6 @@
 		59B8B8AF220C6E3F003E0D5A /* ValidationErrorInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationErrorInfo.swift; sourceTree = "<group>"; };
 		59BF3D26223132E1004D134D /* DataFolderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataFolderFactory.swift; sourceTree = "<group>"; };
 		59BF3D362231A698004D134D /* BCryptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BCryptTests.swift; sourceTree = "<group>"; };
-		59BF3D3822329C79004D134D /* JFBCrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JFBCrypt.h; sourceTree = "<group>"; };
-		59BF3D3922329C7A004D134D /* JFBCrypt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JFBCrypt.m; sourceTree = "<group>"; };
-		59BF3D3A22329C7A004D134D /* JFRandom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JFRandom.m; sourceTree = "<group>"; };
-		59BF3D3B22329C7A004D134D /* JFGC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JFGC.h; sourceTree = "<group>"; };
-		59BF3D3C22329C7A004D134D /* JFRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JFRandom.h; sourceTree = "<group>"; };
 		59BF3D422232A663004D134D /* Split.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Split.h; sourceTree = "<group>"; };
 		59BF90B8239A75520007A896 /* VersionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionTest.swift; sourceTree = "<group>"; };
 		59C492FA216695D500F5F774 /* Murmur3HashingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Murmur3HashingTest.swift; sourceTree = "<group>"; };
@@ -835,6 +830,11 @@
 		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		D15FC7AE256F4DC3002B7E22 /* JFBCrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JFBCrypt.h; sourceTree = "<group>"; };
+		D15FC7AF256F4DC3002B7E22 /* JFRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JFRandom.h; sourceTree = "<group>"; };
+		D15FC7B0256F4DC3002B7E22 /* JFGC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JFGC.h; sourceTree = "<group>"; };
+		D15FC7B1256F4DC3002B7E22 /* JFRandom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JFRandom.m; sourceTree = "<group>"; };
+		D15FC7B2256F4DC3002B7E22 /* JFBCrypt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JFBCrypt.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1598,11 +1598,7 @@
 		59BF3D2C22313E82004D134D /* JFBCrypt */ = {
 			isa = PBXGroup;
 			children = (
-				59BF3D3822329C79004D134D /* JFBCrypt.h */,
-				59BF3D3922329C7A004D134D /* JFBCrypt.m */,
-				59BF3D3B22329C7A004D134D /* JFGC.h */,
-				59BF3D3C22329C7A004D134D /* JFRandom.h */,
-				59BF3D3A22329C7A004D134D /* JFRandom.m */,
+				D15FC7AD256F4DC3002B7E22 /* include */,
 			);
 			path = JFBCrypt;
 			sourceTree = "<group>";
@@ -1735,6 +1731,18 @@
 			path = Localhost;
 			sourceTree = "<group>";
 		};
+		D15FC7AD256F4DC3002B7E22 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				D15FC7AE256F4DC3002B7E22 /* JFBCrypt.h */,
+				D15FC7B2256F4DC3002B7E22 /* JFBCrypt.m */,
+				D15FC7B0256F4DC3002B7E22 /* JFGC.h */,
+				D15FC7AF256F4DC3002B7E22 /* JFRandom.h */,
+				D15FC7B1256F4DC3002B7E22 /* JFRandom.m */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1742,10 +1750,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59BF3D3D22329C7A004D134D /* JFBCrypt.h in Headers */,
+				D15FC7B3256F4DC3002B7E22 /* JFBCrypt.h in Headers */,
 				59BF3D432232A663004D134D /* Split.h in Headers */,
-				59BF3D4122329C7A004D134D /* JFRandom.h in Headers */,
-				59BF3D4022329C7A004D134D /* JFGC.h in Headers */,
+				D15FC7B5256F4DC3002B7E22 /* JFGC.h in Headers */,
+				D15FC7B4256F4DC3002B7E22 /* JFRandom.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1962,6 +1970,7 @@
 				3B6DEF1F20EA6AE50067435E /* SplitError.swift in Sources */,
 				3B6DEF5220EA6AE50067435E /* UserDefinedSegmentMatcherData.swift in Sources */,
 				59FB7BD521E7C64700ECC96A /* SplitValidator.swift in Sources */,
+				D15FC7B7256F4DC3002B7E22 /* JFBCrypt.m in Sources */,
 				3B6DEF6E20EA6AE50067435E /* PartOfSetMatcher.swift in Sources */,
 				59F6AA8721558BEB00A51997 /* ImpressionsTest.swift in Sources */,
 				3B6DEF8B20EA6AE50067435E /* FileStorage.swift in Sources */,
@@ -1994,6 +2003,7 @@
 				3B6DEF6020EA6AE50067435E /* BetweenMatcher.swift in Sources */,
 				594F5F5C253F163A00A945B4 /* BackoffCounterTimer.swift in Sources */,
 				3B6DEF3720EA6AE50067435E /* SplitManager.swift in Sources */,
+				D15FC7B6256F4DC3002B7E22 /* JFRandom.m in Sources */,
 				599EA57B22666B84006CBA89 /* Yaml.swift in Sources */,
 				3B6DEF3A20EA6AE50067435E /* Dictionary+Extensions.swift in Sources */,
 				3B6DEF2620EA6AE50067435E /* SplitClientConfig.swift in Sources */,
@@ -2058,7 +2068,6 @@
 				3B6DEF4C20EA6AE50067435E /* SplitBase.swift in Sources */,
 				595AD25124E4404C00A7B750 /* SseNotifications.swift in Sources */,
 				3B6DEF6F20EA6AE50067435E /* StartWithMatcher.swift in Sources */,
-				59BF3D3F22329C7A004D134D /* JFRandom.m in Sources */,
 				597CD338216CE9F700A15487 /* CounterMetricSample.swift in Sources */,
 				3B6DEF6420EA6AE50067435E /* DateTime.swift in Sources */,
 				595AD26524E6C3D200A7B750 /* Timers.swift in Sources */,
@@ -2119,7 +2128,6 @@
 				595AD1F324D994EA00A7B750 /* SplitFilter.swift in Sources */,
 				59D84BDA2215A589003DA248 /* LocalhostSplitFetcher.swift in Sources */,
 				3B6DEF1220EA6AE50067435E /* SplitChangeCache.swift in Sources */,
-				59BF3D3E22329C7A004D134D /* JFBCrypt.m in Sources */,
 				3B6DEF8820EA6AE50067435E /* SplitChangeFetcher.swift in Sources */,
 				59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */,
 				3B6DEF6220EA6AE50067435E /* ContainsAnyOfSetMatcher.swift in Sources */,
