@@ -9,6 +9,10 @@ let package = Package(
         .library(
             name: "Split",
             targets: ["Split"]
+        ),
+        .library(
+            name: "JFBCrypt",
+            targets: ["JFBCrypt"]
         )
     ],
     targets: [
