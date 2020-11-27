@@ -86,16 +86,6 @@ class InMemorySplitCache: NSObject, SplitCacheProtocol {
         }
         return exists
     }
-    
-    func exists(lowercasedTrafficType: String) -> Bool {
-        var exists = false
-        queue.sync {
-            exists = (self.trafficTypes.keys
-                        .map { return $0.lowercased() }
-                        .filter { return $0 == lowercasedTrafficType.lowercased() }.count > 0)
-        }
-        return exists
-    }
 
     func getTimestamp() -> Int {
         return timestamp

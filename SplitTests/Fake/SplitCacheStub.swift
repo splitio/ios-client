@@ -76,10 +76,6 @@ class SplitCacheStub: SplitCacheProtocol {
     func exists(trafficType: String) -> Bool {
         return true
     }
-    
-    func exists(lowercasedTrafficType: String) -> Bool {
-        return true
-    }
 
     func getTimestamp() -> Int {
         return timestamp
