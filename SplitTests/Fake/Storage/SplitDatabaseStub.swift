@@ -11,14 +11,19 @@ import Foundation
 
 class SplitDatabaseStub: SplitDatabase {
     
-    var splitDao: SplitDao?
+    var splitDao: SplitDao
     var mySegmentDao: MySegmentsDao?
     var eventDao: EventDao
     var impressionDao: ImpressionDao
+    var generalInfoDao: GeneralInfoDao
     
     init(eventDao: EventDao,
-         impressionDao: ImpressionDao) {
+         impressionDao: ImpressionDao,
+         generalInfoDao: GeneralInfoDao,
+         splitDao: SplitDao) {
         self.eventDao = eventDao
         self.impressionDao = impressionDao
+        self.splitDao = splitDao
+        self.generalInfoDao = generalInfoDao
     }
 }

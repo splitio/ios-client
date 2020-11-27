@@ -20,33 +20,49 @@ protocol PersistentSplitsStorage {
 }
 
 class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
+    
+    private let splitDao: SplitDao
+    private let generalInfoDao: GeneralInfoDao
+
+    init(database: SplitDatabase) {
+        self.splitDao = database.splitDao
+        self.generalInfoDao = database.generalInfoDao
+    }
 
     func update(splitChange: ProcessedSplitChange) {
+        splitDao.insertOrUpdate(splits: splitChange.activeSplits)
+        splitDao.delete(splitChange.archivedSplits.compactMap { return $0.name })
+        generalInfoDao.update(info: .splitsChangeNumber, longValue: splitChange.changeNumber)
+        generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: splitChange.updateTimestamp)
     }
     
     func update(split: Split) {
+        splitDao.insertOrUpdate(split: split)
     }
     
     func getFilterQueryString() -> String {
-        return ""
+        return generalInfoDao.stringValue(info: .splitsFilterQueryString) ?? ""
     }
     
     func getSplitsSnapshot() -> SplitsSnapshot {
-        return SplitsSnapshot(changeNumber: -1, splits: [], updateTimestamp: 1, splitsFilterQueryString: "")
+        return SplitsSnapshot(changeNumber: generalInfoDao.longValue(info: .splitsChangeNumber) ?? -1,
+                              splits: splitDao.getAll(),
+                              updateTimestamp: generalInfoDao.longValue(info: .splitsUpdateTimestamp) ?? 0,
+                              splitsFilterQueryString: getFilterQueryString())
     }
     
     func getAll() -> [Split] {
-        return []
+        return splitDao.getAll()
     }
     
     func delete(splitNames: [String]) {
+        splitDao.delete(splitNames)
     }
     
     func clear() {
+        splitDao.deleteAll()
     }
     
     func close() {
     }
-    
-    
 }

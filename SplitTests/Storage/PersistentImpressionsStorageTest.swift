@@ -18,7 +18,9 @@ class PersistentImpressionsStorageTests: XCTestCase {
     override func setUp() {
         impressionDao = ImpressionDaoStub()
         impressionsStorage = DefaultImpressionsStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
-                                                                                   impressionDao: impressionDao), expirationPeriod: 100)
+                                                                                   impressionDao: impressionDao,
+                                                                                   generalInfoDao: GeneralInfoDaoStub(),
+                                                                                   splitDao: SplitDaoStub()), expirationPeriod: 100)
 
     }
 

@@ -16,51 +16,75 @@ protocol EventDao {
     func delete(_ events: [EventDTO])
 }
 
-class CoreDataEventDao: EventDao {
-
+class CoreDataEventDao: BaseCoreDataDao, EventDao {
+    
     let coreDataHelper: CoreDataHelper
-
+    
     init(coreDataHelper: CoreDataHelper) {
         self.coreDataHelper = coreDataHelper
+        super.init()
     }
-
+    
     func insert(_ event: EventDTO) {
-        if let obj = coreDataHelper.create(entity: .event) as? EventEntity {
-            do {
-                obj.storageId = coreDataHelper.generateId()
-                obj.body = try Json.dynamicEncodeToJson(event)
-                obj.createdAt = Date().unixTimestamp()
-                obj.status = StorageRecordStatus.active
-                coreDataHelper.save()
-            } catch {
-                Logger.e("An error occurred while inserting events in storage: \(error.localizedDescription)")
+        executeAsync { [weak self] in
+            guard let self = self else {
+                return
+            }
+
+            if let obj = self.coreDataHelper.create(entity: .event) as? EventEntity {
+                do {
+                    obj.storageId = self.coreDataHelper.generateId()
+                    obj.body = try Json.dynamicEncodeToJson(event)
+                    obj.createdAt = Date().unixTimestamp()
+                    obj.status = StorageRecordStatus.active
+                    self.coreDataHelper.save()
+                } catch {
+                    Logger.e("An error occurred while inserting events in storage: \(error.localizedDescription)")
+                }
             }
         }
     }
-
+    
     func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [EventDTO] {
-        let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
-        let entities = coreDataHelper.fetch(entity: .event,
-                                            where: predicate,
-                                            rowLimit: maxRows).compactMap { return $0 as? EventEntity }
-
-        return entities.compactMap { return try? mapEntityToModel($0) }
+        var events: [EventDTO]?
+        execute { [weak self] in
+            guard let self = self else {
+                return
+            }
+            let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
+            let entities = self.coreDataHelper.fetch(entity: .event,
+                                                     where: predicate,
+                                                     rowLimit: maxRows).compactMap { return $0 as? EventEntity }
+            
+            events = entities.compactMap { return try? self.mapEntityToModel($0) }
+        }
+        return events ?? []
     }
-
+    
     func update(ids: [String], newStatus: Int32) {
         let predicate = NSPredicate(format: "storageId IN %@", ids)
-        let entities = coreDataHelper.fetch(entity: .event,
-                                            where: predicate).compactMap { return $0 as? EventEntity }
-        for entity in entities {
-            entity.status = newStatus
+        executeAsync { [weak self] in
+            guard let self = self else {
+                return
+            }
+            let entities = self.coreDataHelper.fetch(entity: .event,
+                                                where: predicate).compactMap { return $0 as? EventEntity }
+            for entity in entities {
+                entity.status = newStatus
+            }
+            self.coreDataHelper.save()
         }
-        coreDataHelper.save()
     }
-
+    
     func delete(_ events: [EventDTO]) {
-        coreDataHelper.delete(entity: .event, by: "storageId", values: events.map { $0.storageId ?? "" })
+        executeAsync { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.coreDataHelper.delete(entity: .event, by: "storageId", values: events.map { $0.storageId ?? "" })
+        }
     }
-
+    
     private func mapEntityToModel(_ entity: EventEntity) throws -> EventDTO {
         let model = try Json.dynamicEncodeFrom(json: entity.body, to: EventDTO.self)
         model.storageId = entity.storageId

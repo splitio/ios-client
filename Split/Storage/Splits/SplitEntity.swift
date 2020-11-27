@@ -16,7 +16,7 @@ class SplitEntity: NSManagedObject {
         return NSFetchRequest<SplitEntity>(entityName: "Splits")
     }
 
-    @NSManaged public var body: String?
-    @NSManaged public var name: String?
+    @NSManaged public var body: String
+    @NSManaged public var name: String
     @NSManaged public var updatedAt: Int64
 }
