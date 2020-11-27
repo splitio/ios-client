@@ -42,16 +42,11 @@ class BaseCoreDataDao {
     }
 }
 
-protocol MySegmentsDao {
-    func getBy(userKey: String) -> [String]
-    func update(userKey: String, segmentList: [String])
-}
-
 // TODO: dao components will not be null
 // gonna change on implementation
 protocol SplitDatabase {
     var splitDao: SplitDao { get }
-    var mySegmentDao: MySegmentsDao? { get }
+    var mySegmentsDao: MySegmentsDao { get }
     var eventDao: EventDao { get }
     var impressionDao: ImpressionDao { get }
     var generalInfoDao: GeneralInfoDao { get }
@@ -59,7 +54,7 @@ protocol SplitDatabase {
 
 class CoreDataSplitDatabase: SplitDatabase {
     var splitDao: SplitDao
-    var mySegmentDao: MySegmentsDao?
+    var mySegmentsDao: MySegmentsDao
     var eventDao: EventDao
     var impressionDao: ImpressionDao
     var generalInfoDao: GeneralInfoDao
@@ -101,6 +96,7 @@ class CoreDataSplitDatabase: SplitDatabase {
             eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper)
             impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper)
             generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
+            mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper)
             
             // TODO: Check this call
             DispatchQueue.main.sync(execute: completionClosure)

@@ -20,7 +20,8 @@ class PersistentImpressionsStorageTests: XCTestCase {
         impressionsStorage = DefaultImpressionsStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
                                                                                    impressionDao: impressionDao,
                                                                                    generalInfoDao: GeneralInfoDaoStub(),
-                                                                                   splitDao: SplitDaoStub()), expirationPeriod: 100)
+                                                                                   splitDao: SplitDaoStub(),
+                                                                                   mySegmentsDao: MySegmentsDaoStub()), expirationPeriod: 100)
 
     }
 
