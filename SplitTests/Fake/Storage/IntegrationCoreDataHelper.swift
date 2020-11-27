@@ -48,6 +48,6 @@ class IntegrationCoreDataHelper  {
             fatalError("Error migrating store: \(error)")
         }
         sempaphore.wait()
-        return CoreDataHelper(managedObjectContext: managedObjContext)
+        return CoreDataHelper(managedObjectContext: managedObjContext, persistentCoordinator: persistenceCoordinator)
     }
 }

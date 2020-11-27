@@ -17,7 +17,7 @@ class GeneralInfoEntity: NSManagedObject {
     }
 
     @NSManaged public var longValue: Int64
-    @NSManaged public var name: String?
+    @NSManaged public var name: String
     @NSManaged public var stringValue: String?
     @NSManaged public var updatedAt: Int64
 }

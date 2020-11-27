@@ -16,62 +16,85 @@ protocol ImpressionDao {
     func delete(_ impressions: [Impression])
 }
 
-class CoreDataImpressionDao: ImpressionDao {
+class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
 
     let coreDataHelper: CoreDataHelper
 
     init(coreDataHelper: CoreDataHelper) {
         self.coreDataHelper = coreDataHelper
+        super.init()
     }
 
     func insert(_ impression: Impression) {
-        if let obj = coreDataHelper.create(entity: .impression) as? ImpressionEntity {
-            do {
-                guard let testName = impression.feature else {
-                    // This should never happen
-                    Logger.d("Impression without test name descarted")
-                    return
+        executeAsync { [weak self] in
+            guard let self = self else {
+                return
+            }
+            
+            if let obj = self.coreDataHelper.create(entity: .impression) as? ImpressionEntity {
+                do {
+                    guard let testName = impression.feature else {
+                        // This should never happen
+                        Logger.d("Impression without test name descarted")
+                        return
+                    }
+                    obj.storageId = self.coreDataHelper.generateId()
+                    obj.testName = testName
+                    obj.body = try Json.encodeToJson(impression)
+                    obj.createdAt = Date().unixTimestamp()
+                    obj.status = StorageRecordStatus.active
+                    self.coreDataHelper.save()
+                } catch {
+                    Logger.e("An error occurred while inserting impressions in storage: \(error.localizedDescription)")
                 }
-                obj.storageId = coreDataHelper.generateId()
-                obj.testName = testName
-                obj.body = try Json.encodeToJson(impression)
-                obj.createdAt = Date().unixTimestamp()
-                obj.status = StorageRecordStatus.active
-                coreDataHelper.save()
-            } catch {
-                Logger.e("An error occurred while inserting impressions in storage: \(error.localizedDescription)")
             }
         }
     }
 
     func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [Impression] {
         var result = [Impression]()
-        let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
-        let entities = coreDataHelper.fetch(entity: .impression,
-                                            where: predicate,
-                                            rowLimit: maxRows).compactMap { return $0 as? ImpressionEntity }
+        execute { [weak self] in
+            guard let self = self else {
+                return
+            }
+            
+            let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
+            let entities = self.coreDataHelper.fetch(entity: .impression,
+                                                where: predicate,
+                                                rowLimit: maxRows).compactMap { return $0 as? ImpressionEntity }
 
-        entities.forEach { entity in
-            if let model = try? mapEntityToModel(entity) {
-                result.append(model)
+            entities.forEach { entity in
+                if let model = try? self.mapEntityToModel(entity) {
+                    result.append(model)
+                }
             }
         }
-
         return result
     }
 
     func update(ids: [String], newStatus: Int32) {
         let predicate = NSPredicate(format: "storageId IN %@", ids)
-        let entities = coreDataHelper.fetch(entity: .impression,
-                                            where: predicate).compactMap { return $0 as? ImpressionEntity }
-        for entity in entities {
-            entity.status = newStatus
+        
+        executeAsync { [weak self] in
+            guard let self = self else {
+                return
+            }
+            let entities = self.coreDataHelper.fetch(entity: .impression,
+                                                     where: predicate).compactMap { return $0 as? ImpressionEntity }
+            for entity in entities {
+                entity.status = newStatus
+            }
+            self.coreDataHelper.save()
         }
-        coreDataHelper.save()
     }
 
     func delete(_ impressions: [Impression]) {
-        coreDataHelper.delete(entity: .impression, by: "storageId", values: impressions.map { $0.storageId ?? "" })
+        executeAsync { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.coreDataHelper.delete(entity: .impression, by: "storageId", values: impressions.map { $0.storageId ?? "" })
+        }
     }
 
     func mapEntityToModel(_ entity: ImpressionEntity) throws -> Impression {

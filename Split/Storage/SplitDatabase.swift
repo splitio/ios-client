@@ -14,6 +14,34 @@ struct StorageRecordStatus {
     static let deleted: Int32 = 1 // The record will be deleted if post succeded
 }
 
+/// Specific to CoreData
+protocol CoreDataDao {
+    var dbDispatchQueue: DispatchQueue { get }
+    func execute(_ operation: @escaping ()->Void)
+    func executeAsync(_ operation: @escaping ()->Void)
+}
+
+/// Base clase for CoreDataDao to enforce running all
+/// database operation in the same serial queue to avoid threading issues
+class BaseCoreDataDao {
+    var dbDispatchQueue: DispatchQueue
+    init() {
+        dbDispatchQueue = DispatchQueue(label: "SplitCoreDataCache", target: DispatchQueue.global())
+    }
+
+    func execute(_ operation: @escaping ()->Void) {
+        dbDispatchQueue.sync {
+            operation()
+        }
+    }
+    
+    func executeAsync(_ operation: @escaping ()->Void) {
+        dbDispatchQueue.async {
+            operation()
+        }
+    }
+}
+
 protocol MySegmentsDao {
     func getBy(userKey: String) -> [String]
     func update(userKey: String, segmentList: [String])
@@ -22,17 +50,19 @@ protocol MySegmentsDao {
 // TODO: dao components will not be null
 // gonna change on implementation
 protocol SplitDatabase {
-    var splitDao: SplitDao? { get }
+    var splitDao: SplitDao { get }
     var mySegmentDao: MySegmentsDao? { get }
     var eventDao: EventDao { get }
     var impressionDao: ImpressionDao { get }
+    var generalInfoDao: GeneralInfoDao { get }
 }
 
-class DefaultSplitDatabase: SplitDatabase {
-    var splitDao: SplitDao?
+class CoreDataSplitDatabase: SplitDatabase {
+    var splitDao: SplitDao
     var mySegmentDao: MySegmentsDao?
     var eventDao: EventDao
     var impressionDao: ImpressionDao
+    var generalInfoDao: GeneralInfoDao
 
     private let kDataModelName = "SplitCache"
     private let kDataModelExtentsion = "momd"
@@ -65,16 +95,17 @@ class DefaultSplitDatabase: SplitDatabase {
                                                           configurationName: nil,
                                                           at: databaseUrl, options: nil)
 
-            coreDataHelper = CoreDataHelper(managedObjectContext: managedObjContext)
+            coreDataHelper = CoreDataHelper(managedObjectContext: managedObjContext,
+                                            persistentCoordinator: persistenceCoordinator)
+            splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper)
             eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper)
             impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper)
+            generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
             
             // TODO: Check this call
             DispatchQueue.main.sync(execute: completionClosure)
         } catch {
             fatalError("Error migrating store: \(error)")
         }
-
-
     }
 }
