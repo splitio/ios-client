@@ -80,7 +80,7 @@ class StreamingAuthFail4xxTest: XCTestCase {
                 if self.splitsChangesHits > 1 {
                     self.splitsChgExp.fulfill()
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges.utf8))
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             case let(urlString) where urlString.contains("mySegments"):
                 self.mySegmentsHits+=1
                 if self.mySegmentsHits > 1 {
@@ -105,5 +105,4 @@ class StreamingAuthFail4xxTest: XCTestCase {
     }
 
 }
-
 
