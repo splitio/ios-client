@@ -7,4 +7,6 @@
 //
 // This file is used to make JFBCrypt available through Swift Package Manager
 
-@_exported import JFBCrypt
+#if SWIFT_PACKAGE
+    @_exported import JFBCrypt
+#endif
