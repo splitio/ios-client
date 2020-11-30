@@ -6,13 +6,38 @@ let package = Package(
     name: "Split",
     platforms: [.iOS(.v9)],
     products: [
-        .library(name: "Split", targets: ["Split"])
+        .library(name: "Split", targets: ["Split"]),
+        .library(name: "JFBCrypt", targets: ["JFBCrypt"])
     ],
     dependencies: [
-            .package(url: "https://github.com/httpswift/swifter.git", from: "1.5.0"),
-        ],
+        .package(name: "Swifter", url: "https://github.com/httpswift/swifter.git", from: "1.5.0")
+    ],
     targets: [
-        .target(name: "Split")
-        .testTarget(name: "SplitTests")
+        .target(
+            name: "Split",
+            dependencies: ["JFBCrypt"],
+            path: "Split",
+            exclude: [
+                "Common/Utils/JFBCrypt/",
+                "Common/Yaml/LICENSE",
+                "Info.plist",
+                "Split.h"
+            ]
+        ),
+        .target(
+            name: "JFBCrypt",
+            path: "Split/Common/Utils/JFBCrypt",
+            publicHeadersPath: "."
+        ),
+        .testTarget(
+            name: "SplitTests",
+            dependencies: ["Swifter"],
+            path: "SplitTests",
+            exclude: [
+                "Info.plist"
+            ],
+            resources: [
+                .copy("Resources")]
+        ),
     ]
 )
