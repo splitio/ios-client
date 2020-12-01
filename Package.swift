@@ -7,7 +7,7 @@ let package = Package(
     platforms: [.iOS(.v9)],
     products: [
         .library(name: "Split", targets: ["Split"]),
-        .library(name: "JFBCrypt", targets: ["JFBCrypt"])
+//        .library(name: "JFBCrypt", targets: ["JFBCrypt"])
     ],
     dependencies: [
         .package(name: "Swifter", url: "https://github.com/httpswift/swifter.git", from: "1.5.0")
