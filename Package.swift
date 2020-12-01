@@ -27,16 +27,6 @@ let package = Package(
             name: "JFBCrypt",
             path: "Split/Common/Utils/JFBCrypt",
             publicHeadersPath: "."
-        ),
-        .testTarget(
-            name: "SplitTests",
-            dependencies: ["Swifter"],
-            path: "SplitTests",
-            exclude: [
-                "Info.plist"
-            ],
-            resources: [
-                .copy("Resources")]
-        ),
+        )
     ]
 )
