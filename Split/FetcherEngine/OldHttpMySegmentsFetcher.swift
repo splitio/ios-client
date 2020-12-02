@@ -8,7 +8,7 @@
 
 import Foundation
 
-class HttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
+class OldHttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
 
     private let restClient: RestClientMySegments
     private let mySegmentsCache: MySegmentsCacheProtocol?
