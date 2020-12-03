@@ -61,7 +61,7 @@ class SplitChangesTest: XCTestCase {
             } else if index == self.spExp.count {
                 self.spExp[index - 1].fulfill()
             }
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9567456937865, \"till\": 9567456937869 }")
+            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9999999999999, \"till\": 9999999999999 }")
         }
 
         webServer.route(method: .post, path: "/testImpressions/bulk") { request in
@@ -165,9 +165,10 @@ class SplitChangesTest: XCTestCase {
         var prevChangeNumber: Int64 = 0
         for i in 0..<4 {
             let c = loadSplitsChangeFile()!
+            c.since = c.till
             if prevChangeNumber != 0 {
-                c.since = prevChangeNumber
-                c.till = prevChangeNumber + kChangeNbInterval
+                c.till = prevChangeNumber  + kChangeNbInterval
+                c.since = c.till
             }
             prevChangeNumber = c.till!
             let split = c.splits![0]

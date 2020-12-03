@@ -42,4 +42,10 @@ class PeriodicSyncWorkerStub: PeriodicSyncWorker {
     func destroy() {
         destroyCalled = true
     }
+
+    func pause() {
+    }
+
+    func resume() {
+    }
 }

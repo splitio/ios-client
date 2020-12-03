@@ -15,6 +15,7 @@ class SplitChangesServerErrorTest: XCTestCase {
     var webServer: MockWebServer!
     let kChangeNbInterval: Int64 = 86400
     var reqChangesIndex = 0
+    var lastChangeNumber: Int64 = 0
 
     let spExp = [
         XCTestExpectation(description: "upd 0"),
@@ -63,7 +64,8 @@ class SplitChangesServerErrorTest: XCTestCase {
             } else if index == self.spExp.count {
                 self.spExp[index - 1].fulfill()
             }
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9567456937865, \"till\": 9567456937869 }")
+            let since = self.lastChangeNumber
+            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": \(since), \"till\": \(since) }")
         }
 
         webServer.routePost(path: "/testImpressions/bulk")
@@ -132,14 +134,15 @@ class SplitChangesServerErrorTest: XCTestCase {
         var changes = [SplitChange]()
 
 
-        var prevChangeNumber: Int64 = 0
+        
         for i in 0..<2 {
             let c = loadSplitsChangeFile()!
-            if prevChangeNumber != 0 {
-                c.since = prevChangeNumber
-                c.till = prevChangeNumber + kChangeNbInterval
-            }
+            var prevChangeNumber = c.since ?? 0
+            c.since = prevChangeNumber + kChangeNbInterval
+            c.till = c.since!
+            
             prevChangeNumber = c.till!
+            lastChangeNumber = prevChangeNumber
             let split = c.splits![0]
             let even = ((i + 2) % 2 == 0)
             split.changeNumber = prevChangeNumber
