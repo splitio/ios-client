@@ -89,7 +89,7 @@ class DefaultEventValidator: EventValidator {
         }
 
         if !splitCache.exists(trafficType: trafficTypeName!) {
-            let message = "Traffic Type \(trafficTypeName!) does not have any corresponding " +
+            let message = "traffic_type_name \(trafficTypeName!) does not have any corresponding " +
                 "Splits in this environment, make sure you’re tracking " +
             "your events to a valid traffic type defined in the Split console"
 

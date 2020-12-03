@@ -11,7 +11,7 @@ import XCTest
 @testable import Split
 
 class SplitCacheStub: SplitCacheProtocol {
-
+    
     var clearExpectation: XCTestExpectation?
     var onSplitsUpdatedHandler: (([Split]) -> Void)? = nil
     private var changeNumber: Int64

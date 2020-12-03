@@ -20,6 +20,7 @@ class DestroyTests: XCTestCase {
     var splitChangesHitCount = 0
     var mySegmentsHitCount = 0
     var serverUrl = ""
+    var lastChangeNumber = 1
 
     var impressions: [Impression]!
     var events: [EventDTO]!
@@ -48,9 +49,11 @@ class DestroyTests: XCTestCase {
         webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
 
             self.splitChangesHitCount+=1
+            let since = self.lastChangeNumber
             return MockedResponse(code: 200,
                                   data: self.splitChangesHitCount == 1 ?
-                                    try? Json.encodeToJson(self.splitChange) : IntegrationHelper.emptySplitChanges)
+                                    try? Json.encodeToJson(self.splitChange)
+                                    : IntegrationHelper.emptySplitChanges(since: since, till: since))
         }
 
         webServer.route(method: .post, path: "/events/bulk") { request in
@@ -224,6 +227,7 @@ class DestroyTests: XCTestCase {
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
             let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+            lastChangeNumber = Int(change.till ?? 0)
             return change
         }
         return nil
