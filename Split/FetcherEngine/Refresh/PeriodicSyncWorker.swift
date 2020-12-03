@@ -119,6 +119,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 }
 
+@available(*, deprecated, message: "This class will be remove in next PR")
 class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
     private let splitChangeFetcher: SplitChangeFetcher
@@ -131,6 +132,40 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
         self.splitCache = splitCache
         self.splitChangeFetcher = splitChangeFetcher
+        super.init(timer: timer,
+                   eventsManager: eventsManager)
+    }
+
+    override func fetchFromRemote() {
+        // Polling should be done once sdk ready is fired in initial sync
+        if !isSdkReadyFired() {
+            return
+        }
+        do {
+            _ = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber(),
+                                                  policy: .network,
+                                                  clearCache: false)
+            Logger.d("Fetching splits")
+        } catch let error {
+            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
+            Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
+        }
+    }
+}
+
+/// TODO: Rename this class when removing ald periodic sync worker on integration
+class RevampPeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
+
+    private let splitFetcher: SplitFetcher
+    private let splitsStorage: SplitsStorage
+
+    init(splitFetcher: SplitFetcher,
+         splitsStorage: SplitsStorage,
+         timer: PeriodicTimer,
+         eventsManager: SplitEventsManager) {
+
+        self.splitFetcher = splitFetcher
+        self.splitsStorage = splitsStorage
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }
