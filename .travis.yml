@@ -25,4 +25,4 @@ before_script:
 
 script:
   - swiftlint
-  - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" -derivedDataPath "${BUILD_FOLDER}" build  | xcpretty
+  - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" TEST_AFTER_BUILD=YES -derivedDataPath "${BUILD_FOLDER}" -configuration Debug build test | xcpretty
