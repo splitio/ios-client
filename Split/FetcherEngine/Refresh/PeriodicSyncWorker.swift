@@ -153,19 +153,22 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
     }
 }
 
-/// TODO: Rename this class when removing ald periodic sync worker on integration
+/// TODO: Rename this class when removing old periodic sync worker on integration
 class RevampPeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
-    private let splitFetcher: SplitFetcher
+    private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
+    private let splitChangeProcessor: SplitChangeProcessor
 
-    init(splitFetcher: SplitFetcher,
+    init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
+         splitChangeProcessor: SplitChangeProcessor,
          timer: PeriodicTimer,
          eventsManager: SplitEventsManager) {
 
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
+        self.splitChangeProcessor = splitChangeProcessor
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }
@@ -176,10 +179,10 @@ class RevampPeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         do {
-            _ = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber(),
-                                                  policy: .network,
-                                                  clearCache: false)
             Logger.d("Fetching splits")
+            if let change = try self.splitFetcher.execute(since: splitsStorage.changeNumber) {
+                splitsStorage.update(splitChange: splitChangeProcessor.process(change))
+            }
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
             Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)

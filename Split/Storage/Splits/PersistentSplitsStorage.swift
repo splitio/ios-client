@@ -11,6 +11,7 @@ import Foundation
 protocol PersistentSplitsStorage {
     func update(splitChange: ProcessedSplitChange)
     func update(split: Split)
+    func update(filterQueryString: String)
     func getFilterQueryString() -> String
     func getSplitsSnapshot() -> SplitsSnapshot
     func getAll() -> [Split]
@@ -37,6 +38,10 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
     
     func update(split: Split) {
         splitDao.insertOrUpdate(split: split)
+    }
+    
+    func update(filterQueryString: String) {
+        generalInfoDao.update(info: .splitsFilterQueryString, stringValue: filterQueryString)
     }
     
     func getFilterQueryString() -> String {

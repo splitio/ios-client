@@ -9,15 +9,16 @@
 import Foundation
 
 protocol SplitsStorage {
-    var changeNumber: Int64 { get set }
-    var updateTimestamp: Int64 { get set }
-    var splitsFilterQueryString: String { get set }
+    var changeNumber: Int64 { get }
+    var updateTimestamp: Int64 { get }
+    var splitsFilterQueryString: String { get }
 
     func loadLocal()
     func get(name: String) -> Split?
     func getMany(splits: [String]) -> [String: Split]
     func getAll() -> [String: Split]
     func update(splitChange: ProcessedSplitChange)
+    func update(filterQueryString: String)
     func updateWithoutChecks(split: Split)
     func isValidTrafficType(name: String) -> Bool
     func clear()
@@ -28,9 +29,9 @@ class DefaultSplitsStorage: SplitsStorage {
     private var inMemorySplits: SyncDictionarySingleWrapper<String, Split>
     private var trafficTypes: SyncDictionarySingleWrapper<String, Int>
 
-    var changeNumber: Int64 = -1
-    var updateTimestamp: Int64 = -1
-    var splitsFilterQueryString: String = ""
+    private (set) var changeNumber: Int64 = -1
+    private (set) var updateTimestamp: Int64 = -1
+    private (set) var splitsFilterQueryString: String = ""
 
     init(persistentSplitsStorage: PersistentSplitsStorage) {
         self.persistentStorage = persistentSplitsStorage
@@ -65,13 +66,16 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func update(splitChange: ProcessedSplitChange) {
-
         processUpdated(splits: splitChange.activeSplits, active: true)
         processUpdated(splits: splitChange.archivedSplits, active: false)
 
         changeNumber = splitChange.changeNumber
         updateTimestamp = splitChange.updateTimestamp
         persistentStorage.update(splitChange: splitChange)
+    }
+    
+    func update(filterQueryString: String) {
+        self.persistentStorage.update(filterQueryString: splitsFilterQueryString)
     }
 
     func updateWithoutChecks(split: Split) {
