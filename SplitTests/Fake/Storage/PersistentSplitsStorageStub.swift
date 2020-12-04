@@ -21,6 +21,8 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var clearCalled = false
     var closeCalled = false
     var updateSplitCalled = false
+    
+    var filterQueryString = ""
 
     func getFilterQueryString() -> String {
         return snapshot.splitsFilterQueryString
@@ -33,6 +35,10 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     func update(split: Split) {
         updateSplitCalled  = true
+    }
+    
+    func update(filterQueryString: String) {
+        self.filterQueryString = filterQueryString
     }
 
     func getSplitsSnapshot() -> SplitsSnapshot {

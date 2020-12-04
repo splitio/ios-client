@@ -16,9 +16,11 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
 
     private let restClient: RestClientSplitChanges
     private let splitChangeValidator: SplitChangeValidator
+    private let metricsManager: MetricsManager
 
-    init(restClient: RestClientSplitChanges) {
+    init(restClient: RestClientSplitChanges, metricsManager: MetricsManager) {
         self.restClient = restClient
+        self.metricsManager = metricsManager
         self.splitChangeValidator = DefaultSplitChangeValidator()
     }
 
@@ -45,7 +47,7 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
     }
 
     private func doFetch(since: Int64) -> SplitChange? {
-        let metricsManager = DefaultMetricsManager.shared
+        let metricsManager = self.metricsManager
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SplitChange>?
         let fetchStartTime = Date().unixTimestampInMiliseconds()

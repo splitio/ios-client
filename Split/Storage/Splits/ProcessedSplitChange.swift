@@ -14,3 +14,7 @@ struct ProcessedSplitChange {
     let changeNumber: Int64
     let updateTimestamp: Int64
 }
+
+protocol SplitChangeProcessor {
+    func process(_ splitChange: SplitChange) -> ProcessedSplitChange
+}
