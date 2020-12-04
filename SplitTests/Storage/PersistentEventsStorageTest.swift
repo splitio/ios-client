@@ -18,7 +18,9 @@ class PersistentEventsStorageTests: XCTestCase {
     override func setUp() {
         eventDao = EventDaoStub()
         eventsStorage = DefaultEventsStorage(database: SplitDatabaseStub(eventDao: eventDao,
-                                                                         impressionDao: ImpressionDaoStub()), expirationPeriod: 100)
+                                                                         impressionDao: ImpressionDaoStub(),
+                                                                         generalInfoDao: GeneralInfoDaoStub(),
+                                                                         splitDao: SplitDaoStub()), expirationPeriod: 100)
 
     }
 
