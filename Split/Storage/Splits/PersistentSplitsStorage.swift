@@ -16,7 +16,6 @@ protocol PersistentSplitsStorage {
     func getAll() -> [Split]
     func delete(splitNames: [String])
     func clear()
-    func close()
 }
 
 class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
@@ -61,8 +60,5 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
     
     func clear() {
         splitDao.deleteAll()
-    }
-    
-    func close() {
     }
 }
