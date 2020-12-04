@@ -118,7 +118,7 @@ class StreamingSplitsSyncTest: XCTestCase {
                 self.splitsChangesHits+=1
                 if hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
                         exp.fulfill()
                     }
                     return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
