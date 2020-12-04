@@ -20,7 +20,7 @@ class MySegmentsFetcherTests: XCTestCase {
                                               apiKey: IntegrationHelper.dummyApiKey,
                                               userKey: IntegrationHelper.dummyUserKey,
                                               splitsQueryString: "")
-        mySegmentsFetcher = HttpMySegmentsFetcher(restClient: DefaultRestClient(endpointFactory: endpointFactory),
+        mySegmentsFetcher = OldHttpMySegmentsFetcher(restClient: DefaultRestClient(endpointFactory: endpointFactory),
                                                   mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
     }
 
@@ -31,7 +31,7 @@ class MySegmentsFetcherTests: XCTestCase {
         let restClient: RestClientMySegments = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(segments: ["splitters"])
-        mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
+        mySegmentsFetcher = OldHttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
         var response: [String]? = nil
         do {
             response = try mySegmentsFetcher.fetch(user: "test")
@@ -49,7 +49,7 @@ class MySegmentsFetcherTests: XCTestCase {
         let restClient: RestClientMySegments = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(segments: ["test", "test1"])
-        mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
+        mySegmentsFetcher = OldHttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
         var response: [String]? = nil
         do {
             response = try mySegmentsFetcher.fetch(user: "test")
@@ -68,7 +68,7 @@ class MySegmentsFetcherTests: XCTestCase {
         let restClient: RestClientMySegments = RestClientStub()
         let restClientTest: RestClientTest = restClient as! RestClientTest
         restClientTest.update(segments: [])
-        mySegmentsFetcher = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
+        mySegmentsFetcher = OldHttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: InMemoryMySegmentsCache(segments: Set<String>()))
         var response: [String]? = nil
         do {
             response = try mySegmentsFetcher.fetch(user: "test")

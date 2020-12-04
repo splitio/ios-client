@@ -96,7 +96,7 @@ class SplitApiFacadeBuilder {
             = HttpSplitChangeFetcher(restClient: restClient, splitCache: storageContainer.splitsCache)
 
         let mySegmentsFetcher: MySegmentsChangeFetcher
-            = HttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: storageContainer.mySegmentsCache)
+            = OldHttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: storageContainer.mySegmentsCache)
 
         let backoffBase =  splitConfig.generalRetryBackoffBase
 
