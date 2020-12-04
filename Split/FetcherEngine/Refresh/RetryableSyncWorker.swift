@@ -22,32 +22,32 @@ protocol RetryableSyncWorker {
 /// nettwork connection and http server errors
 ///
 class BaseRetryableSyncWorker: RetryableSyncWorker {
-
+    
     var completion: SyncCompletion?
     private var reconnectBackoffCounter: ReconnectBackoffCounter
     private var splitEventsManager: SplitEventsManager?
     private var isFirstFetch = Atomic<Bool>(true)
     private var isRunning = Atomic<Bool>(false)
     private let loopQueue = DispatchQueue.global()
-
+    
     init(eventsManager: SplitEventsManager? = nil,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
-
+        
         self.splitEventsManager = eventsManager
         self.reconnectBackoffCounter = reconnectBackoffCounter
     }
-
+    
     func start() {
         isRunning.set(true)
         loopQueue.async {
             self.fetchFromRemoteLoop()
         }
     }
-
+    
     func stop() {
         isRunning.set(false)
     }
-
+    
     private func fetchFromRemoteLoop() {
         var success = false
         while isRunning.value, !success {
@@ -63,17 +63,17 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
             handler(success)
         }
     }
-
+    
     func fireReadyIsNeeded(event: SplitInternalEvent) {
         if isFirstFetch.getAndSet(false) {
             splitEventsManager?.notifyInternalEvent(event)
         }
     }
-
+    
     func resetBackoffCounter() {
         reconnectBackoffCounter.resetCounter()
     }
-
+    
     // This methods should be overrided by child class
     func fetchFromRemote() -> Bool {
         fatalError("fetch from remote not overriden")
@@ -85,22 +85,22 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
 /// Also triggers MY SEGMENTS READY event when first fetch is succesful
 ///
 class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
-
+    
     private let mySegmentsChangeFetcher: MySegmentsChangeFetcher
     private let matchingKey: String
     private let mySegmentsCache: MySegmentsCacheProtocol
-
+    
     init(matchingKey: String, mySegmentsChangeFetcher: MySegmentsChangeFetcher,
          mySegmentsCache: MySegmentsCacheProtocol,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
-
+        
         self.matchingKey = matchingKey
         self.mySegmentsCache = mySegmentsCache
         self.mySegmentsChangeFetcher = mySegmentsChangeFetcher
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
-
+    
     override func fetchFromRemote() -> Bool {
         do {
             if let segments = try self.mySegmentsChangeFetcher.fetch(user: self.matchingKey, policy: .network) {
@@ -117,31 +117,29 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
     }
 }
 
-///
-/// Retrieves split changes using stored change number.
-/// Also triggers SPLIT READY event when first fetch is succesful
-///
+/// TODO: Remove on storage revamp integration
+@available(*, deprecated, message: "Gonna be replaced by RevampRetryableSyncWorker on new components integration")
 class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
-
+    
     private let splitChangeFetcher: SplitChangeFetcher
     private let splitCache: SplitCacheProtocol
     private let cacheExpiration: Int
     private let defaultQueryString: String
-
+    
     init(splitChangeFetcher: SplitChangeFetcher,
          splitCache: SplitCacheProtocol,
          cacheExpiration: Int,
          defaultQueryString: String,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
-
+        
         self.splitChangeFetcher = splitChangeFetcher
         self.splitCache = splitCache
         self.cacheExpiration = cacheExpiration
         self.defaultQueryString = defaultQueryString
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
-
+    
     override func fetchFromRemote() -> Bool {
         do {
             var changeNumber = splitCache.getChangeNumber()
@@ -160,6 +158,66 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                                                                     clearCache: clearCache) {
                 if clearCache {
                     splitCache.setQueryString(defaultQueryString)
+                }
+                fireReadyIsNeeded(event: SplitInternalEvent.splitsAreReady)
+                resetBackoffCounter()
+                Logger.d(splitChanges.debugDescription)
+                return true
+            }
+        } catch let error {
+            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
+            Logger.e("Problem fetching splits: %@", error.localizedDescription)
+        }
+        return false
+    }
+}
+
+///
+/// Retrieves split changes using stored change number.
+/// Also triggers SPLIT READY event when first fetch is succesful
+/// TODO: Rename when remove Old  RetryableSplitsSyncWorker
+class RevampRetryableSplitsSyncWorker: BaseRetryableSyncWorker {
+
+    private let splitFetcher: HttpSplitFetcher
+    private let splitsStorage: SplitsStorage
+    private let splitChangeProcessor: SplitChangeProcessor
+    private let cacheExpiration: Int
+    private let defaultQueryString: String
+
+    init(splitFetcher: HttpSplitFetcher,
+         splitsStorage: SplitsStorage,
+         splitChangeProcessor: SplitChangeProcessor,
+         cacheExpiration: Int,
+         defaultQueryString: String,
+         eventsManager: SplitEventsManager,
+         reconnectBackoffCounter: ReconnectBackoffCounter) {
+
+        self.splitFetcher = splitFetcher
+        self.splitsStorage = splitsStorage
+        self.splitChangeProcessor = splitChangeProcessor
+        self.cacheExpiration = cacheExpiration
+        self.defaultQueryString = defaultQueryString
+        super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
+    }
+
+    override func fetchFromRemote() -> Bool {
+        do {
+            var changeNumber = splitsStorage.changeNumber
+            var clearCache = false
+            if changeNumber != -1 {
+                let timestamp = splitsStorage.updateTimestamp
+                let elapsedTime = Int64(Date().timeIntervalSince1970) - timestamp
+                if timestamp > 0 && elapsedTime > self.cacheExpiration {
+                    changeNumber = -1
+                    clearCache = true
+                }
+            }
+            clearCache = clearCache || defaultQueryString != splitsStorage.splitsFilterQueryString
+            if let splitChanges = try self.splitFetcher.execute(since: changeNumber) {
+                splitsStorage.update(splitChange: splitChangeProcessor.process(splitChanges))
+                if clearCache {
+                    splitsStorage.clear()
+                    splitsStorage.update(filterQueryString: defaultQueryString)
                 }
                 fireReadyIsNeeded(event: SplitInternalEvent.splitsAreReady)
                 resetBackoffCounter()
