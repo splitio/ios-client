@@ -119,6 +119,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 }
 
+@available(*, deprecated, message: "This class will be remove in next PR")
 class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
     private let splitChangeFetcher: SplitChangeFetcher
@@ -145,6 +146,43 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
                                                   policy: .network,
                                                   clearCache: false)
             Logger.d("Fetching splits")
+        } catch let error {
+            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
+            Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
+        }
+    }
+}
+
+/// TODO: Rename this class when removing old periodic sync worker on integration
+class RevampPeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
+
+    private let splitFetcher: HttpSplitFetcher
+    private let splitsStorage: SplitsStorage
+    private let splitChangeProcessor: SplitChangeProcessor
+
+    init(splitFetcher: HttpSplitFetcher,
+         splitsStorage: SplitsStorage,
+         splitChangeProcessor: SplitChangeProcessor,
+         timer: PeriodicTimer,
+         eventsManager: SplitEventsManager) {
+
+        self.splitFetcher = splitFetcher
+        self.splitsStorage = splitsStorage
+        self.splitChangeProcessor = splitChangeProcessor
+        super.init(timer: timer,
+                   eventsManager: eventsManager)
+    }
+
+    override func fetchFromRemote() {
+        // Polling should be done once sdk ready is fired in initial sync
+        if !isSdkReadyFired() {
+            return
+        }
+        do {
+            Logger.d("Fetching splits")
+            if let change = try self.splitFetcher.execute(since: splitsStorage.changeNumber) {
+                splitsStorage.update(splitChange: splitChangeProcessor.process(change))
+            }
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
             Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
