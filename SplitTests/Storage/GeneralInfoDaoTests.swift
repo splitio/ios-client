@@ -15,8 +15,6 @@ class GeneralInfoDaoTest: XCTestCase {
     
     var generalInfoDao: GeneralInfoDao!
     
-    // TODO: Research delete test in inMemoryDb
-    
     override func setUp() {
         generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test"))
     }
