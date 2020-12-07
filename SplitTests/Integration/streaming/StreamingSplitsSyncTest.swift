@@ -46,7 +46,7 @@ class StreamingSplitsSyncTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        splitConfig.isDebugModeEnabled = true
+        //splitConfig.isDebugModeEnabled = true
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -170,7 +170,7 @@ class StreamingSplitsSyncTest: XCTestCase {
     }
 
     private func waitForUpdate() {
-        ThreadUtils.delay(seconds: 1)
+        ThreadUtils.delay(seconds: 2)
     }
 }
 
