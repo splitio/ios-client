@@ -37,7 +37,7 @@ class StreamingSplitKillTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        splitConfig.isDebugModeEnabled = true
+        //splitConfig.isDebugModeEnabled = true
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
