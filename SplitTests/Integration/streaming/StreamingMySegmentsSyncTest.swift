@@ -162,7 +162,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
     }
 
     private func justWait() {
-        ThreadUtils.delay(seconds: 1)
+        ThreadUtils.delay(seconds: 2)
     }
 }
 
