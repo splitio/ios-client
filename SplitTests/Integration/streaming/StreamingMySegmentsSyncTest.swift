@@ -120,11 +120,10 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                 let hitNumber = self.mySegmentsHits
                 self.mySegmentsHits+=1
                 let exp = self.exps[hitNumber]
+                let respData = self.mySegments[hitNumber]
                 DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
                     exp.fulfill()
                 }
-                let respData = self.mySegments[hitNumber]
-                print("my segments resp: \(respData)")
                 return TestDispatcherResponse(code: 200, data: Data(respData.utf8))
 
             case let(urlString) where urlString.contains("auth"):
