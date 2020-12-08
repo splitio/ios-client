@@ -116,15 +116,12 @@ class StreamingSplitsSyncTest: XCTestCase {
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.splitsChangesHits
-                print("hitNumber: \(hitNumber)")
                 self.splitsChangesHits+=1
                 if hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                        print("exp sp: \(hitNumber)")
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
                         exp.fulfill()
                     }
-                    //print("Ch: \(self.changes[hitNumber].utf8)")
                     return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8))

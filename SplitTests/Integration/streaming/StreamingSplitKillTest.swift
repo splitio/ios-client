@@ -15,7 +15,6 @@ class StreamingSplitKillTest: XCTestCase {
     let userKey = IntegrationHelper.dummyUserKey
     var streamingBinding: TestStreamResponseBinding?
     let sseConnExp = XCTestExpectation(description: "sseConnExp")
-    var mySegmentsHits = 0
     var splitsChangesHits = 0
     var numbers = [500, 1000, 2000, 3000, 4000]
     var changes = [String]()
@@ -109,7 +108,7 @@ class StreamingSplitKillTest: XCTestCase {
                 self.splitsChangesHits+=1
                 if hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
                         exp.fulfill()
                     }
                     return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
@@ -117,7 +116,6 @@ class StreamingSplitKillTest: XCTestCase {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8))
 
             case let(urlString) where urlString.contains("mySegments"):
-                self.mySegmentsHits+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
 
             case let(urlString) where urlString.contains("auth"):
