@@ -76,7 +76,7 @@ class DefaultSynchronizer: Synchronizer {
                 reconnectBackoffCounter: reconnectBackoff)
             syncTaskByChangeNumberCatalog.setValue(worker, forKey: changeNumber)
             worker.start()
-            worker.completion = {[weak self] success in
+            worker.completion = {[weak self] _ in
                 if let self = self {
                     self.syncTaskByChangeNumberCatalog.removeValue(forKey: changeNumber)
                 }

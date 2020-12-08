@@ -41,13 +41,13 @@ class DefaultPushManagerEventBroadcaster: PushManagerEventBroadcaster {
     }
 
     func register(handler: @escaping IncomingMessageHandler) {
-        messageQueue.async (flags: .barrier) {
+        messageQueue.async(flags: .barrier) {
             self.handlers.append(handler)
         }
     }
 
     func destroy() {
-        messageQueue.async (flags: .barrier) {
+        messageQueue.async(flags: .barrier) {
             self.handlers.removeAll()
         }
     }

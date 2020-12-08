@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+//swiftlint:disable inclusive_language
 enum MatcherType: String, Codable {
 
     case allKeys = "ALL_KEYS"
