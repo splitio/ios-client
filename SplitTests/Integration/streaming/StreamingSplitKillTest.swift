@@ -56,15 +56,18 @@ class StreamingSplitKillTest: XCTestCase {
         }
 
         client.on(event: SplitEvent.sdkReady) {
+            print("READY")
             sdkReadyExpectation.fulfill()
         }
 
         client.on(event: SplitEvent.sdkReadyTimedOut) {
+            print("TIMEOUT")
             sdkReadyExpectation.fulfill()
         }
 
         wait(for: [sdkReadyExpectation, sseConnExp, curExp()], timeout: expTimeout)
         
+        print("KEEPAL")
         streamingBinding?.push(message: ":keepalive") // send keep alive to confirm streaming connection ok
         wait(for: [curExp()], timeout: expTimeout)
 
@@ -106,6 +109,7 @@ class StreamingSplitKillTest: XCTestCase {
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.getAndUpdateHit()
+                print("HIT: \(hitNumber)")
                 if hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
                     DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
