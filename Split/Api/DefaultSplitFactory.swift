@@ -87,12 +87,11 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             .setRestClient(restClient).setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade)
             .setSplitConfig(config).build()
 
-        defaultClient = DefaultSplitClient(
-            config: config, key: key, apiFacade: apiFacade, storageContainer: storageContainer,
-            eventsManager: eventsManager, destroyHandler: {
+        defaultClient = DefaultSplitClient(config: config, key: key, apiFacade: apiFacade,
+                                           storageContainer: storageContainer, eventsManager: eventsManager) {
                 syncManager.stop()
                 manager.destroy()
-        })
+        }
 
         eventsManager.getExecutorResources().setClient(client: defaultClient!)
         syncManager.start()

@@ -8,7 +8,7 @@
 
  import Foundation
 
-// swiftlint:disable cyclomatic_complexity function_body_length
+// swiftlint:disable cyclomatic_complexity function_body_length inclusive_language
  class Matcher: NSObject, Codable {
 
     var keySelector: KeySelector?

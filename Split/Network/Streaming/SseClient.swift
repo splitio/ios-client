@@ -62,8 +62,7 @@ class DefaultSseClient: SseClient {
             let headers = [SseClientConstants.contentTypeHeaderStream: SseClientConstants.contentTypeHeaderValueStream]
             do {
                 self.streamRequest = try self.httpClient.sendStreamRequest(endpoint: self.endpoint,
-                                                                           parameters: parameters,
-                                                                           headers: headers)
+                                                          parameters: parameters, headers: headers)
                 .getResponse(responseHandler: { response in
                     if response.code != 200 {
                         completion(false)

@@ -8,6 +8,7 @@
 // Generated using Sourcery 0.11.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
+//swiftlint:disable inclusive_language
 extension BetweenMatcherData {
   override public var debugDescription: String {
     var output: String = "BetweenMatcherData {\n"

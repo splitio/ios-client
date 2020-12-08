@@ -21,9 +21,9 @@ class Endpoint {
         }
 
         if var queryString = defaultQueryString, let from = queryString.firstIndex(of: "&") {
-            let to = queryString.index(from, offsetBy: 1)
+            let upperLimit = queryString.index(from, offsetBy: 1)
             queryString = queryString.replacingOccurrences(of: "&", with: "?",
-                                                           options: .caseInsensitive, range: from..<to)
+                                                           options: .caseInsensitive, range: from..<upperLimit)
             url = URL(string: "\(url.absoluteString)\(queryString)") ?? url
         }
         self.url = url
