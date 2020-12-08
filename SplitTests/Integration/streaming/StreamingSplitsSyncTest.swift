@@ -119,7 +119,7 @@ class StreamingSplitsSyncTest: XCTestCase {
                 let hitNumber = self.getAndUpdateHit()
                 if hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         exp.fulfill()
                     }
                     return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
@@ -143,7 +143,6 @@ class StreamingSplitsSyncTest: XCTestCase {
             self.sseConnHits+=1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                print("SSEE!!")
                 self.sseExp.fulfill()
             }
             return self.streamingBinding!
