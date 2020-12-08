@@ -34,6 +34,7 @@ class StreamingSplitsSyncTest: XCTestCase {
     var expIndex: Int = 0
 
     override func setUp() {
+        expIndex = 0
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -180,8 +181,11 @@ class StreamingSplitsSyncTest: XCTestCase {
     }
     
     private func curExp() -> XCTestExpectation {
-        let index = expIndex
-        expIndex+=1
+        var index = 0
+        DispatchQueue.global().sync {
+            index = self.expIndex
+            self.expIndex+=1
+        }
         return exps[index]
     }
 }
