@@ -28,8 +28,10 @@ class StreamingSplitsSyncTest: XCTestCase {
     var treatments = ["on", "on", "free", "conta", "off"]
     var numbers = [500, 1000, 2000, 3000, 4000]
     var changes = [String]()
+    var sseExp: XCTestExpectation!
     var exps = [XCTestExpectation]()
     let kInitialChangeNumber = 1000
+    var expIndex: Int = 0
 
     override func setUp() {
         let session = HttpSessionMock()
@@ -47,6 +49,8 @@ class StreamingSplitsSyncTest: XCTestCase {
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
         //splitConfig.isDebugModeEnabled = true
+        
+        sseExp = XCTestExpectation()
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -56,10 +60,10 @@ class StreamingSplitsSyncTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let  expTimeout:  TimeInterval = 5
+        let expTimeout:  TimeInterval = 5
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-        for i in 0..<4 {
+        for i in 0..<5 {
             exps.append(XCTestExpectation(description: "Exp changes \(i)"))
         }
 
@@ -71,38 +75,35 @@ class StreamingSplitsSyncTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation], timeout: expTimeout)
-        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send keep alive to confirm streaming connection ok
-
-        while splitsChangesHits < 2 && mySegmentsHits < 2 {
-            ThreadUtils.delay(seconds: 1) // wait for sync all
-        }
+        wait(for: [sdkReadyExpectation, sseExp, curExp()], timeout: expTimeout)
+        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
+        
+        wait(for: [curExp()], timeout: expTimeout)
 
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
-
+        print("treatmentReady: \(treatmentReady)")
         streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
-                                                          changeNumber: numbers[splitsChangesHits + 1]))
-        wait(for: [exps[1]], timeout: expTimeout)
+            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[2],
+                                                          changeNumber: numbers[2]))
+        wait(for: [curExp()], timeout: expTimeout)
 
-        waitForUpdate() // Wait to allow update after notification to happen
         let treatmentFirst = client.getTreatment(splitName)
-
+        print("treatmentFirst: \(treatmentFirst)")
 
         streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
-                                                          changeNumber: numbers[splitsChangesHits + 1]))
-        wait(for: [exps[2]], timeout: expTimeout)
-        waitForUpdate()
+            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[3],
+                                                          changeNumber: numbers[3]))
+        wait(for: [curExp()], timeout: expTimeout)
         let treatmentSec = client.getTreatment(splitName)
+        print("treatmentSec: \(treatmentSec)")
 
         streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[0],
-                                                          changeNumber: numbers[1]))
-        wait(for: [exps[3]], timeout: expTimeout)
+            StreamingIntegrationHelper.splitUpdateMessage(timestamp: 100,
+                                                          changeNumber: 100))
         waitForUpdate()
         let treatmentOld = client.getTreatment(splitName)
+        print("treatmentOld: \(treatmentOld)")
 
         XCTAssertEqual("on", treatmentReady)
         XCTAssertEqual("free", treatmentFirst)
@@ -115,12 +116,15 @@ class StreamingSplitsSyncTest: XCTestCase {
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.splitsChangesHits
+                print("hitNumber: \(hitNumber)")
                 self.splitsChangesHits+=1
                 if hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
                     DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                        print("exp sp: \(hitNumber)")
                         exp.fulfill()
                     }
+                    //print("Ch: \(self.changes[hitNumber].utf8)")
                     return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8))
@@ -139,7 +143,12 @@ class StreamingSplitsSyncTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
+            self.sseConnHits+=1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                print("SSEE!!")
+                self.sseExp.fulfill()
+            }
             return self.streamingBinding!
         }
     }
@@ -161,7 +170,7 @@ class StreamingSplitsSyncTest: XCTestCase {
     }
 
     private func loadChanges() {
-        for i in 0..<4 {
+        for i in 0..<5 {
             let change = getChanges(withTreatment: self.treatments[i],
                                     since: self.numbers[i],
                                     till: self.numbers[i])
@@ -171,6 +180,12 @@ class StreamingSplitsSyncTest: XCTestCase {
 
     private func waitForUpdate() {
         ThreadUtils.delay(seconds: 2)
+    }
+    
+    private func curExp() -> XCTestExpectation {
+        let index = expIndex
+        expIndex+=1
+        return exps[index]
     }
 }
 

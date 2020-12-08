@@ -32,6 +32,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
     var exps = [XCTestExpectation]()
     var sseExp = XCTestExpectation()
     let kInitialChangeNumber = 1000
+    var expIndex = 0
 
     override func setUp() {
         let session = HttpSessionMock()
@@ -49,6 +50,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
+        splitConfig.isDebugModeEnabled = true
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -66,6 +68,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         }
 
         client.on(event: SplitEvent.sdkReady) {
+            print("READY!!")
             sdkReadyExpectation.fulfill()
         }
 
@@ -73,25 +76,33 @@ class StreamingMySegmentsSyncTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation, sseExp], timeout: expTimeout)
+        wait(for: [sdkReadyExpectation, sseExp, curExp()], timeout: expTimeout)
+        
+        // Sending first push to enable streaming
+        streamingBinding?.push(message: ":keepalive")
+        wait(for: [curExp()], timeout: expTimeout)
+        
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
+        print("treatmentReady")
 
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[0]))
-        wait(for: [exps[1]], timeout: expTimeout)
+        wait(for: [curExp()], timeout: expTimeout)
 
         justWait() // wait to my segments be updated
         let treatmentFirst = client.getTreatment(splitName)
+        print("treatmentFirst")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[1]))
-        wait(for: [exps[2]], timeout: expTimeout)
+        wait(for: [curExp()], timeout: expTimeout)
 
         justWait() // wait to my segments be updated
         let treatmentSec = client.getTreatment(splitName)
+        print("treatmentSec")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[2]))
-        wait(for: [exps[3]], timeout: expTimeout)
+        wait(for: [curExp()], timeout: expTimeout)
 
         justWait() // wait to my segments be updated
         let treatmentOld = client.getTreatment(splitName)
@@ -117,7 +128,9 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                 return TestDispatcherResponse(code: 200, data: Data(change.utf8))
 
             case let(urlString) where urlString.contains("mySegments"):
+                
                 let hitNumber = self.mySegmentsHits
+                print("hit: \(hitNumber)")
                 self.mySegmentsHits+=1
                 let exp = self.exps[hitNumber]
                 let respData = self.mySegments[hitNumber]
@@ -140,6 +153,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
             self.sseConnHits+=1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                print("SSEE!!")
                 self.sseExp.fulfill()
             }
             return self.streamingBinding!
@@ -161,7 +175,14 @@ class StreamingMySegmentsSyncTest: XCTestCase {
     }
 
     private func justWait() {
-        ThreadUtils.delay(seconds: 2)
+        //ThreadUtils.delay(seconds: 2)
+    }
+    
+    private func curExp() -> XCTestExpectation {
+        let index = expIndex
+        print("exp: \(index)")
+        expIndex+=1
+        return exps[index]
     }
 }
 
