@@ -116,8 +116,7 @@ class StreamingSplitsSyncTest: XCTestCase {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
-                let hitNumber = self.splitsChangesHits
-                self.splitsChangesHits+=1
+                let hitNumber = self.getAndUpdateHit()
                 if hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
                     DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
@@ -187,6 +186,15 @@ class StreamingSplitsSyncTest: XCTestCase {
             self.expIndex+=1
         }
         return exps[index]
+    }
+    
+    private func getAndUpdateHit() -> Int {
+        var hitNumber = 0
+        DispatchQueue.global().sync {
+            hitNumber = self.splitsChangesHits
+            self.splitsChangesHits+=1
+        }
+        return hitNumber
     }
 }
 
