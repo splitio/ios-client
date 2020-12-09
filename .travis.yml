@@ -2,11 +2,11 @@ language: swift
 
 osx_image: xcode12.2
 
-#addons:
-  #homebrew:
-    #packages:
-      #- swiftlint
-    #update: true
+addons:
+  homebrew:
+    packages:
+      - awscli@1
+    update: true
 
 env:
   global:
@@ -17,27 +17,17 @@ env:
     - OS=13.2.2
     - LINTER_PKG_PATH="/tmp/SwiftLint.pkg"
     - LINTER_PKG_URL="https://github.com/realm/SwiftLint/releases/download/0.34.0/SwiftLint.pkg"
-    
 
 before_script:
   - DESTINATION="platform=${PLATFORM},OS=${OS},name=${NAME}"
   - BUILD_FOLDER='SplitApp'
   - LOG_FOLDER='buildlog'
-  - LOG_FILE="${LOG_FOLDER}\ios-${TRAVIS_BRANCH}_${TRAVIS_COMMIT}_build.log"
-  - mkdir "${BUILD_FOLDER}"
-  - mkdir "${LOG_FOLDER}"
+  - LOG_FILE="${LOG_FOLDER}/ios-${TRAVIS_BRANCH}_${TRAVIS_COMMIT}_build.log"
+  - mkdir -p "${BUILD_FOLDER}"
+  - mkdir -p "${LOG_FOLDER}"
 
 script:
   - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" TEST_AFTER_BUILD=YES -only-testing:SplitTests/StreamingSplitKillTest -only-testing:SplitTests/StreamingMySegmentsSyncTest -only-testing:SplitTests/StreamingSplitsSyncTest -derivedDataPath "${BUILD_FOLDER}" -configuration Debug build test | tee "${LOG_FILE}" | xcpretty
 
-deploy:
-  - provider: s3
-    edge: true
-    access_key_id: ${AWS_ACCESS_KEY_ID}
-    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
-    bucket: aws-development-split-public
-    region: us-east-1
-    local_dir: ${LOG_FOLDER}/
-    upload-dir: mobile/ios
-    on:
-      branch: $TRAVIS_BRANCH
+after_script:
+  - aws --region us-east-1 s3 cp "${LOG_FILE}" s3://aws-development-split-public/mobile/ios/
