@@ -24,8 +24,7 @@ before_script:
   - mkdir "${BUILD_FOLDER}"
 
 script:
-  #- swiftlint
   - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" TEST_AFTER_BUILD=YES -only-testing:SplitTests/StreamingSplitKillTest -only-testing:SplitTests/StreamingMySegmentsSyncTest -only-testing:SplitTests/StreamingSplitsSyncTest -derivedDataPath "${BUILD_FOLDER}" -configuration Debug build test | tee ./xcodebuild.log | xcpretty
 
-  after_script:
+after_script:
   - cat ./xcodebuild.log
