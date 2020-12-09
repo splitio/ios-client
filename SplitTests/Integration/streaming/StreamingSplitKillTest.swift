@@ -142,7 +142,7 @@ class StreamingSplitKillTest: XCTestCase {
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
                 self.sseConnExp.fulfill()
             }
             return self.streamingBinding!

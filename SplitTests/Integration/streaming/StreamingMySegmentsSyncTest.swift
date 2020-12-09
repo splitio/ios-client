@@ -135,7 +135,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                 let exp = self.exps[hitNumber]
                 let respData = self.mySegments[hitNumber]
                 if hitNumber < self.exps.count {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
                         exp.fulfill()
                     }
                 }
