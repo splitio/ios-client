@@ -122,7 +122,7 @@ class StreamingSplitsSyncTest: XCTestCase {
                 if hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
                     IntegrationHelper.tlog("sssc hit: \(hitNumber)")
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 0.5, qos: .userInitiated) {
                         IntegrationHelper.tlog("sssc hit: \(hitNumber)")
                         exp.fulfill()
                     }
