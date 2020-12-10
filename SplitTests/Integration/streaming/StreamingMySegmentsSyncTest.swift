@@ -61,7 +61,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let  expTimeout:  TimeInterval = 5
+        let  expTimeout:  TimeInterval = 100
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         for i in 0..<5 {
