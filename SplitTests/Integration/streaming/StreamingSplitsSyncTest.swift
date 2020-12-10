@@ -61,7 +61,7 @@ class StreamingSplitsSyncTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let expTimeout:  TimeInterval = 10
+        let expTimeout:  TimeInterval = 100
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         for i in 0..<5 {
@@ -69,10 +69,12 @@ class StreamingSplitsSyncTest: XCTestCase {
         }
 
         client.on(event: SplitEvent.sdkReady) {
+            IntegrationHelper.tlog("sssc READY")
             sdkReadyExpectation.fulfill()
         }
 
         client.on(event: SplitEvent.sdkReadyTimedOut) {
+            IntegrationHelper.tlog("sssc TIMEOUT")
             sdkReadyExpectation.fulfill()
         }
 
@@ -119,7 +121,9 @@ class StreamingSplitsSyncTest: XCTestCase {
                 let hitNumber = self.getAndUpdateHit()
                 if hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
+                    IntegrationHelper.tlog("sssc hit: \(hitNumber)")
                     DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+                        IntegrationHelper.tlog("sssc hit: \(hitNumber)")
                         exp.fulfill()
                     }
                     return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
