@@ -32,9 +32,10 @@ class StreamingSplitsSyncTest: XCTestCase {
     var exps = [XCTestExpectation]()
     let kInitialChangeNumber = 1000
     var expIndex: Int = 0
+    var queue = DispatchQueue(label: "hol", qos: .userInteractive)
 
     override func setUp() {
-        expIndex = 0
+        expIndex = 1
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -119,11 +120,11 @@ class StreamingSplitsSyncTest: XCTestCase {
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.getAndUpdateHit()
-                if hitNumber < self.exps.count {
+                if hitNumber > 0, hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
                     IntegrationHelper.tlog("sssc hit: \(hitNumber)")
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 0.5, qos: .userInitiated) {
-                        IntegrationHelper.tlog("sssc hit: \(hitNumber)")
+                    self.queue.asyncAfter(deadline: .now() + 0.5) {
+                        IntegrationHelper.tlog("sssc exp: \(hitNumber)")
                         exp.fulfill()
                     }
                     return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
