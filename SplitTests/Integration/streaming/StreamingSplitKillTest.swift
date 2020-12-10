@@ -52,22 +52,22 @@ class StreamingSplitKillTest: XCTestCase {
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         for i in 0..<4 {
-            exps.append(XCTestExpectation(description: "Exp changes \(i)"))
+            exps.insert(XCTestExpectation(description: "Exp changes \(i)"), at: i)
         }
 
         client.on(event: SplitEvent.sdkReady) {
-            print("READY")
+            IntegrationHelper.tlog("READY")
             sdkReadyExpectation.fulfill()
         }
 
         client.on(event: SplitEvent.sdkReadyTimedOut) {
-            print("TIMEOUT")
+            IntegrationHelper.tlog("TIMEOUT")
             sdkReadyExpectation.fulfill()
         }
 
         wait(for: [sdkReadyExpectation, sseConnExp, curExp()], timeout: expTimeout)
         
-        print("KEEPAL")
+        IntegrationHelper.tlog("KEEPAL")
         streamingBinding?.push(message: ":keepalive") // send keep alive to confirm streaming connection ok
         wait(for: [curExp()], timeout: expTimeout)
 
@@ -109,10 +109,11 @@ class StreamingSplitKillTest: XCTestCase {
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.getAndUpdateHit()
-                print("HIT: \(hitNumber)")
+                IntegrationHelper.tlog("sc hit: \(hitNumber)")
                 if hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
                     DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+                        IntegrationHelper.tlog("sc exp: \(hitNumber)")
                         exp.fulfill()
                     }
                     return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))

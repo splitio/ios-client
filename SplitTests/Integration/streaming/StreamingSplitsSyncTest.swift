@@ -65,7 +65,7 @@ class StreamingSplitsSyncTest: XCTestCase {
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         for i in 0..<5 {
-            exps.append(XCTestExpectation(description: "Exp changes \(i)"))
+            exps.insert(XCTestExpectation(description: "Exp changes \(i)"), at: i)
         }
 
         client.on(event: SplitEvent.sdkReady) {
