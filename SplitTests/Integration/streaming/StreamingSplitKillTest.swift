@@ -21,9 +21,10 @@ class StreamingSplitKillTest: XCTestCase {
     var exps = [XCTestExpectation]()
     let kInitialChangeNumber = 1000
     var expIndex: Int = 0
+    var queue = DispatchQueue(label: "hol", qos: .userInteractive)
 
     override func setUp() {
-        expIndex = 0
+        expIndex = 1
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -65,7 +66,7 @@ class StreamingSplitKillTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation, sseConnExp, curExp()], timeout: expTimeout)
+        wait(for: [sdkReadyExpectation, sseConnExp], timeout: expTimeout)
         
         IntegrationHelper.tlog("KEEPAL")
         streamingBinding?.push(message: ":keepalive") // send keep alive to confirm streaming connection ok
@@ -110,9 +111,9 @@ class StreamingSplitKillTest: XCTestCase {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.getAndUpdateHit()
                 IntegrationHelper.tlog("sc hit: \(hitNumber)")
-                if hitNumber < self.exps.count {
+                if hitNumber > 0, hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 0.5, qos: .userInitiated) {
+                    self.queue.asyncAfter(deadline: .now() + 0.5) {
                         IntegrationHelper.tlog("sc exp: \(hitNumber)")
                         exp.fulfill()
                     }
