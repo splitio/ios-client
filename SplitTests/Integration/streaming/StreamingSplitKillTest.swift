@@ -112,7 +112,7 @@ class StreamingSplitKillTest: XCTestCase {
                 IntegrationHelper.tlog("sc hit: \(hitNumber)")
                 if hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 0.5, qos: .userInitiated) {
                         IntegrationHelper.tlog("sc exp: \(hitNumber)")
                         exp.fulfill()
                     }
