@@ -63,7 +63,6 @@ class StreamingSplitKillTest: XCTestCase {
 
         client.on(event: SplitEvent.sdkReadyTimedOut) {
             IntegrationHelper.tlog("TIMEOUT")
-            sdkReadyExpectation.fulfill()
         }
 
         wait(for: [sdkReadyExpectation, sseConnExp], timeout: expTimeout)
