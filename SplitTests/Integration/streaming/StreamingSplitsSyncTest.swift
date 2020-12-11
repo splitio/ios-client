@@ -34,6 +34,7 @@ class StreamingSplitsSyncTest: XCTestCase {
     let kInitialChangeNumber = 1000
     var expIndex: Int = 0
     var queue = DispatchQueue(label: "hol", qos: .userInteractive)
+    let expCount = 5
 
     override func setUp() {
         expIndex = 1
@@ -67,7 +68,7 @@ class StreamingSplitsSyncTest: XCTestCase {
         let expTimeout:  TimeInterval = 100
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-        for i in 0..<5 {
+        for i in 0..<expCount {
             exps.insert(XCTestExpectation(description: "Exp changes \(i)"), at: i)
         }
 
@@ -80,9 +81,11 @@ class StreamingSplitsSyncTest: XCTestCase {
             IntegrationHelper.tlog("sssc TIMEOUT")
         }
 
+        IntegrationHelper.tlog("step 0")
         wait(for: [sdkReadyExpectation, sseExp], timeout: expTimeout)
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
         
+        IntegrationHelper.tlog("step 1")
         wait(for: [curExp()], timeout: expTimeout)
 
         let splitName = "workm"
@@ -91,6 +94,8 @@ class StreamingSplitsSyncTest: XCTestCase {
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[2],
                                                           changeNumber: numbers[2]))
+        
+        IntegrationHelper.tlog("step 2")
         wait(for: [curExp()], timeout: expTimeout)
 
         let treatmentFirst = client.getTreatment(splitName)
@@ -99,6 +104,8 @@ class StreamingSplitsSyncTest: XCTestCase {
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[3],
                                                           changeNumber: numbers[3]))
+        
+        IntegrationHelper.tlog("step 3")
         wait(for: [curExp()], timeout: expTimeout)
         let treatmentSec = client.getTreatment(splitName)
         print("treatmentSec: \(treatmentSec)")
@@ -106,6 +113,7 @@ class StreamingSplitsSyncTest: XCTestCase {
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: 100,
                                                           changeNumber: 100))
+        IntegrationHelper.tlog("step 4")
         waitForUpdate()
         let treatmentOld = client.getTreatment(splitName)
         print("treatmentOld: \(treatmentOld)")
@@ -129,10 +137,10 @@ class StreamingSplitsSyncTest: XCTestCase {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.getAndUpdateHit()
                 IntegrationHelper.tlog("sssc hit: \(hitNumber)")
-                if hitNumber > 0, hitNumber < self.exps.count {
+                if hitNumber > 0, hitNumber < self.expCount {
                     let exp = self.getExp()
-                    self.queue.async {
-                        sleep(1)
+                    IntegrationHelper.tlog("sssc should fire exp for hit: \(hitNumber)")
+                    self.queue.asyncAfter(deadline: .now() + 0.5) {
                         IntegrationHelper.tlog("sssc exp: \(hitNumber)")
                         exp.fulfill()
                     }
@@ -192,8 +200,8 @@ class StreamingSplitsSyncTest: XCTestCase {
     }
     
     private func curExp() -> XCTestExpectation {
-        var index = 0
-        DispatchQueue.global().sync {
+        var index = 1
+        queue.sync {
             index = self.expIndex
             self.expIndex+=1
         }
@@ -202,7 +210,7 @@ class StreamingSplitsSyncTest: XCTestCase {
     
     private func getExp() -> XCTestExpectation {
         var exp: XCTestExpectation!
-        DispatchQueue.global().sync {
+        queue.sync {
             exp = self.exps[self.expIndex - 1]
         }
         return exp
@@ -210,12 +218,13 @@ class StreamingSplitsSyncTest: XCTestCase {
     
     private func getAndUpdateHit() -> Int {
         var hitNumber = 0
-        DispatchQueue.global().sync {
+        queue.sync {
             hitNumber = self.splitsChangesHits
             self.splitsChangesHits+=1
         }
         return hitNumber
     }
+
 }
 
 
