@@ -79,7 +79,7 @@ class StreamingSplitsSyncTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation, sseExp, curExp()], timeout: expTimeout)
+        wait(for: [sdkReadyExpectation, sseExp], timeout: expTimeout)
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
         
         wait(for: [curExp()], timeout: expTimeout)
@@ -115,6 +115,13 @@ class StreamingSplitsSyncTest: XCTestCase {
         XCTAssertEqual("conta", treatmentOld)
     }
 
+    private func getChanges(for hitNumber: Int) -> Data {
+        if hitNumber < exps.count {
+            return Data(self.changes[hitNumber].utf8)
+        }
+        return Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8)
+    }
+    
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             switch request.url.absoluteString {
@@ -127,9 +134,8 @@ class StreamingSplitsSyncTest: XCTestCase {
                         IntegrationHelper.tlog("sssc exp: \(hitNumber)")
                         exp.fulfill()
                     }
-                    return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8))
+                return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
 
             case let(urlString) where urlString.contains("mySegments"):
                 self.mySegmentsHits+=1
