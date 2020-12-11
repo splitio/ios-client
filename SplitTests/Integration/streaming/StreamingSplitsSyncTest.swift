@@ -127,10 +127,11 @@ class StreamingSplitsSyncTest: XCTestCase {
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.getAndUpdateHit()
+                IntegrationHelper.tlog("sssc hit: \(hitNumber)")
                 if hitNumber > 0, hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
-                    IntegrationHelper.tlog("sssc hit: \(hitNumber)")
-                    self.queue.asyncAfter(deadline: .now() + 0.5) {
+                    self.queue.async {
+                        sleep(1)
                         IntegrationHelper.tlog("sssc exp: \(hitNumber)")
                         exp.fulfill()
                     }
