@@ -104,6 +104,13 @@ class StreamingSplitKillTest: XCTestCase {
         XCTAssertEqual("on", treatmentNoKill)
         XCTAssertEqual("on", treatmentOldKill)
     }
+    
+    private func getChanges(for hitNumber: Int) -> Data {
+        if hitNumber < exps.count {
+            return Data(self.changes[hitNumber].utf8)
+        }
+        return Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8)
+    }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
@@ -117,9 +124,8 @@ class StreamingSplitKillTest: XCTestCase {
                         IntegrationHelper.tlog("sc exp: \(hitNumber)")
                         exp.fulfill()
                     }
-                    return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8))
+                return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
 
             case let(urlString) where urlString.contains("mySegments"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
