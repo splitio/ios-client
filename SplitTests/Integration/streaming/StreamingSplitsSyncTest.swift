@@ -37,6 +37,7 @@ class StreamingSplitsSyncTest: XCTestCase {
 
     override func setUp() {
         expIndex = 1
+        splitsChangesHits = 0
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -77,7 +78,6 @@ class StreamingSplitsSyncTest: XCTestCase {
 
         client.on(event: SplitEvent.sdkReadyTimedOut) {
             IntegrationHelper.tlog("sssc TIMEOUT")
-            sdkReadyExpectation.fulfill()
         }
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: expTimeout)
@@ -130,7 +130,7 @@ class StreamingSplitsSyncTest: XCTestCase {
                 let hitNumber = self.getAndUpdateHit()
                 IntegrationHelper.tlog("sssc hit: \(hitNumber)")
                 if hitNumber > 0, hitNumber < self.exps.count {
-                    let exp = self.exps[hitNumber]
+                    let exp = self.getExp()
                     self.queue.async {
                         sleep(1)
                         IntegrationHelper.tlog("sssc exp: \(hitNumber)")
@@ -198,6 +198,14 @@ class StreamingSplitsSyncTest: XCTestCase {
             self.expIndex+=1
         }
         return exps[index]
+    }
+    
+    private func getExp() -> XCTestExpectation {
+        var exp: XCTestExpectation!
+        DispatchQueue.global().sync {
+            exp = self.exps[self.expIndex - 1]
+        }
+        return exp
     }
     
     private func getAndUpdateHit() -> Int {
