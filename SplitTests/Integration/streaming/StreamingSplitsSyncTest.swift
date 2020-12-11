@@ -30,11 +30,13 @@ class StreamingSplitsSyncTest: XCTestCase {
     var numbers = [500, 1000, 2000, 3000, 4000]
     var changes = [String]()
     var sseExp: XCTestExpectation!
-    var exps = [XCTestExpectation]()
+    var exps = [DispatchSemaphore]()
     let kInitialChangeNumber = 1000
     var expIndex: Int = 0
     var queue = DispatchQueue(label: "hol", qos: .userInteractive)
     let expCount = 5
+
+    
 
     override func setUp() {
         expIndex = 1
@@ -65,11 +67,12 @@ class StreamingSplitsSyncTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let expTimeout:  TimeInterval = 100
+        let expTimeout = DispatchTime(uptimeNanoseconds: 100000000)
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         for i in 0..<expCount {
-            exps.insert(XCTestExpectation(description: "Exp changes \(i)"), at: i)
+            ///exps.insert(XCTestExpectation(description: "Exp changes \(i)"), at: i)
+            exps.insert(DispatchSemaphore(value: 1), at: i)
         }
 
         client.on(event: SplitEvent.sdkReady) {
@@ -82,11 +85,13 @@ class StreamingSplitsSyncTest: XCTestCase {
         }
 
         IntegrationHelper.tlog("step 0")
-        wait(for: [sdkReadyExpectation, sseExp], timeout: expTimeout)
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 100)
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
         
+        waitForUpdate(secs: 1)
         IntegrationHelper.tlog("step 1")
-        wait(for: [curExp()], timeout: expTimeout)
+        //wait(for: [curExp()], timeout: expTimeout)
+        curExp().wait(timeout: expTimeout)
 
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
@@ -94,9 +99,10 @@ class StreamingSplitsSyncTest: XCTestCase {
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[2],
                                                           changeNumber: numbers[2]))
-        
+        waitForUpdate(secs: 1)
         IntegrationHelper.tlog("step 2")
-        wait(for: [curExp()], timeout: expTimeout)
+        //wait(for: [curExp()], timeout: expTimeout)
+        curExp().wait(timeout: expTimeout)
 
         let treatmentFirst = client.getTreatment(splitName)
         print("treatmentFirst: \(treatmentFirst)")
@@ -104,9 +110,11 @@ class StreamingSplitsSyncTest: XCTestCase {
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[3],
                                                           changeNumber: numbers[3]))
-        
+        waitForUpdate(secs: 1)
         IntegrationHelper.tlog("step 3")
-        wait(for: [curExp()], timeout: expTimeout)
+        //sleep(1)
+        //wait(for: [curExp()], timeout: expTimeout)
+        curExp().wait(timeout: expTimeout)
         let treatmentSec = client.getTreatment(splitName)
         print("treatmentSec: \(treatmentSec)")
 
@@ -142,7 +150,8 @@ class StreamingSplitsSyncTest: XCTestCase {
                     IntegrationHelper.tlog("sssc should fire exp for hit: \(hitNumber)")
                     self.queue.asyncAfter(deadline: .now() + 0.5) {
                         IntegrationHelper.tlog("sssc exp: \(hitNumber)")
-                        exp.fulfill()
+                        //exp.fulfill()
+                        exp.signal()
                     }
                 }
                 return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
@@ -195,24 +204,26 @@ class StreamingSplitsSyncTest: XCTestCase {
         }
     }
 
-    private func waitForUpdate() {
-        ThreadUtils.delay(seconds: 2)
+    private func waitForUpdate(secs: Double = 2.0) {
+        ThreadUtils.delay(seconds: secs)
     }
     
-    private func curExp() -> XCTestExpectation {
+    private func curExp() -> DispatchSemaphore {
         var index = 1
         queue.sync {
             index = self.expIndex
             self.expIndex+=1
         }
+        IntegrationHelper.tlog("CUR EXP: \(index)")
         return exps[index]
     }
     
-    private func getExp() -> XCTestExpectation {
-        var exp: XCTestExpectation!
+    private func getExp() -> DispatchSemaphore {
+        var exp: DispatchSemaphore!
         queue.sync {
             exp = self.exps[self.expIndex - 1]
         }
+        IntegrationHelper.tlog("get EXP: \(self.expIndex - 1)")
         return exp
     }
     
