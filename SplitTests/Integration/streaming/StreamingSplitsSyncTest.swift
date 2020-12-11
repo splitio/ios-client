@@ -25,6 +25,7 @@ class StreamingSplitsSyncTest: XCTestCase {
     var splitsChangesHits = 0
     // treaments "on" -> sdk ready, "on" -> full ssync streaming
     // , "free", "contra", "off" -> Push messages
+
     var treatments = ["on", "on", "free", "conta", "off"]
     var numbers = [500, 1000, 2000, 3000, 4000]
     var changes = [String]()
