@@ -18,16 +18,23 @@ env:
     - LINTER_PKG_PATH="/tmp/SwiftLint.pkg"
     - LINTER_PKG_URL="https://github.com/realm/SwiftLint/releases/download/0.34.0/SwiftLint.pkg"
 
-before_script:
-  - DESTINATION="platform=${PLATFORM},OS=${OS},name=${NAME}"
-  - BUILD_FOLDER='SplitApp'
-  - LOG_FOLDER='buildlog'
-  - LOG_FILE="${LOG_FOLDER}/ios-${TRAVIS_BRANCH}_${TRAVIS_COMMIT}_build.log"
-  - mkdir -p "${BUILD_FOLDER}"
-  - mkdir -p "${LOG_FOLDER}"
+jobs:
+  include:
+    - stage: build
+      before_script:
+        - DESTINATION="platform=${PLATFORM},OS=${OS},name=${NAME}"
+        - BUILD_FOLDER='SplitApp'
+        - LOG_FOLDER='buildlog'
+        - LOG_FILE="${LOG_FOLDER}/ios-${TRAVIS_BRANCH}_${TRAVIS_COMMIT}_build.log"
+        - mkdir -p "${BUILD_FOLDER}"
+        - mkdir -p "${LOG_FOLDER}"
 
-script:
-  - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" TEST_AFTER_BUILD=YES -only-testing:SplitTests/StreamingSplitKillTest -only-testing:SplitTests/StreamingMySegmentsSyncTest -only-testing:SplitTests/StreamingSplitsSyncTest -derivedDataPath "${BUILD_FOLDER}" -configuration Debug build test | tee "${LOG_FILE}" | xcpretty
+      script:
+        - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" TEST_AFTER_BUILD=YES -only-testing:SplitTests/StreamingSplitKillTest -only-testing:SplitTests/StreamingMySegmentsSyncTest -only-testing:SplitTests/StreamingSplitsSyncTest -derivedDataPath "${BUILD_FOLDER}" -configuration Debug build test | tee "${LOG_FILE}" | xcpretty
 
-after_script:
-  - /usr/local/opt/awscli@1/bin/aws --region us-east-1 s3 cp "${LOG_FILE}" s3://aws-development-split-public/mobile/ios/
+      after_script:
+        - /usr/local/opt/awscli@1/bin/aws --region us-east-1 s3 cp "${LOG_FILE}" s3://aws-development-split-public/mobile/ios/
+
+stages:
+  - name: build
+    if: (type = pull_request) OR (branch = master) OR (branch = development)
