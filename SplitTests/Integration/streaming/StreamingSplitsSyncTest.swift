@@ -209,7 +209,6 @@ class StreamingSplitsSyncTest: XCTestCase {
     }
 
     private func waitForUpdate(secs: UInt32 = 2) {
-        //ThreadUtils.delay(seconds: secs)
         sleep(secs)
     }
     
