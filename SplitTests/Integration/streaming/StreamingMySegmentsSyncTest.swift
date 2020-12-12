@@ -29,13 +29,14 @@ class StreamingMySegmentsSyncTest: XCTestCase {
     var numbers = [500, 1000, 2000, 3000, 4000]
     var changes: String!
     var mySegments = [String]()
-    var exps = [XCTestExpectation]()
     var sseExp = XCTestExpectation()
     let kInitialChangeNumber = 1000
-    var expIndex = 0
+    var exp1: XCTestExpectation!
+    var exp2: XCTestExpectation!
+    var exp3: XCTestExpectation!
+    let expCount = 3
 
     override func setUp() {
-        expIndex = 0
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -45,6 +46,11 @@ class StreamingMySegmentsSyncTest: XCTestCase {
     }
 
     func testInit() {
+        
+        exp1 = XCTestExpectation(description: "Exp1")
+        exp2 = XCTestExpectation(description: "Exp2")
+        exp3 = XCTestExpectation(description: "Exp3")
+        
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
@@ -64,9 +70,6 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         let  expTimeout:  TimeInterval = 100
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-        for i in 0..<5 {
-            exps.insert(XCTestExpectation(description: "Exp changes \(i)"), at: i)
-        }
 
         client.on(event: SplitEvent.sdkReady) {
             print("READY!!")
@@ -77,11 +80,12 @@ class StreamingMySegmentsSyncTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation, sseExp, curExp()], timeout: expTimeout)
+        wait(for: [sdkReadyExpectation, sseExp], timeout: expTimeout)
         
         // Sending first push to enable streaming
         streamingBinding?.push(message: ":keepalive")
-        wait(for: [curExp()], timeout: expTimeout)
+        wait(for: [exp1], timeout: expTimeout)
+        waitForUpdate(secs: 1)
         
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
@@ -89,23 +93,21 @@ class StreamingMySegmentsSyncTest: XCTestCase {
 
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[0]))
-        wait(for: [curExp()], timeout: expTimeout)
-
-        justWait() // wait to my segments be updated
+        wait(for: [exp2], timeout: expTimeout)
+        waitForUpdate(secs: 1)
+        
         let treatmentFirst = client.getTreatment(splitName)
         print("treatmentFirst")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[1]))
-        wait(for: [curExp()], timeout: expTimeout)
+        wait(for: [exp3], timeout: expTimeout)
+        waitForUpdate(secs: 1)
 
-        justWait() // wait to my segments be updated
         let treatmentSec = client.getTreatment(splitName)
         print("treatmentSec")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[2]))
-        wait(for: [curExp()], timeout: expTimeout)
-
-        justWait() // wait to my segments be updated
+        waitForUpdate(secs: 2)
         let treatmentOld = client.getTreatment(splitName)
 
         XCTAssertEqual("on", treatmentReady)
@@ -132,10 +134,17 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                 
                 let hitNumber = self.mySegmentsHits
                 self.mySegmentsHits+=1
-                let exp = self.exps[hitNumber]
+                
                 let respData = self.mySegments[hitNumber]
-                if hitNumber < self.exps.count {
-                    exp.fulfill()
+                switch hitNumber {
+                case 1:
+                    self.exp1.fulfill()
+                case 2:
+                    self.self.exp2.fulfill()
+                case 3:
+                    self.exp3.fulfill()
+                default:
+                    print("Exp no fired \(hitNumber)")
                 }
                 return TestDispatcherResponse(code: 200, data: Data(respData.utf8))
 
@@ -174,17 +183,9 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         mySegments.insert(IntegrationHelper.mySegments(names: ["new_segment"]), at: 2)
     }
 
-    private func justWait() {
-        ThreadUtils.delay(seconds: 1)
-    }
-    
-    private func curExp() -> XCTestExpectation {
-        var index = 0
-        DispatchQueue.global().sync {
-            index = self.expIndex
-            self.expIndex+=1
-        }
-        return exps[index]
+    private func waitForUpdate(secs: UInt32 = 2) {
+        //ThreadUtils.delay(seconds: secs)
+        sleep(secs)
     }
 }
 
