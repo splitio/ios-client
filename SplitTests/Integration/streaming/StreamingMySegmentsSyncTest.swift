@@ -51,7 +51,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        splitConfig.isDebugModeEnabled = true
+        //splitConfig.isDebugModeEnabled = true
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -135,9 +135,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                 let exp = self.exps[hitNumber]
                 let respData = self.mySegments[hitNumber]
                 if hitNumber < self.exps.count {
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 0.5, qos: .userInitiated) {
-                        exp.fulfill()
-                    }
+                    exp.fulfill()
                 }
                 return TestDispatcherResponse(code: 200, data: Data(respData.utf8))
 
@@ -177,7 +175,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
     }
 
     private func justWait() {
-        //ThreadUtils.delay(seconds: 2)
+        ThreadUtils.delay(seconds: 1)
     }
     
     private func curExp() -> XCTestExpectation {

@@ -88,10 +88,11 @@ class StreamingSplitsSyncTest: XCTestCase {
         wait(for: [sdkReadyExpectation, sseExp], timeout: 100)
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
         
-        waitForUpdate(secs: 1) // Wait for signal BUT give travis time to fire it
+         // Wait for signal BUT give travis time to fire it
         IntegrationHelper.tlog("step 1")
         //wait(for: [curExp()], timeout: expTimeout)
         _ = curExp().wait(timeout: DispatchTime.now() + expTimeout)
+        waitForUpdate(secs: 1)
 
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
@@ -99,10 +100,10 @@ class StreamingSplitsSyncTest: XCTestCase {
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[2],
                                                           changeNumber: numbers[2]))
-        waitForUpdate(secs: 1)
         IntegrationHelper.tlog("step 2")
         //wait(for: [curExp()], timeout: expTimeout)
         _ = curExp().wait(timeout: DispatchTime.now() + expTimeout)
+        waitForUpdate(secs: 1)
 
         let treatmentFirst = client.getTreatment(splitName)
         print("treatmentFirst: \(treatmentFirst)")
@@ -110,11 +111,11 @@ class StreamingSplitsSyncTest: XCTestCase {
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[3],
                                                           changeNumber: numbers[3]))
-        waitForUpdate(secs: 1)
         IntegrationHelper.tlog("step 3")
         //sleep(1)
         //wait(for: [curExp()], timeout: expTimeout)
         _ = curExp().wait(timeout: DispatchTime.now() + expTimeout)
+        waitForUpdate(secs: 1)
         let treatmentSec = client.getTreatment(splitName)
         print("treatmentSec: \(treatmentSec)")
 
@@ -148,11 +149,8 @@ class StreamingSplitsSyncTest: XCTestCase {
                 if hitNumber > 0, hitNumber < self.expCount {
                     let exp = self.getExp()
                     IntegrationHelper.tlog("sssc should fire exp for hit: \(hitNumber)")
-                    self.queue.asyncAfter(deadline: .now() + 0.5) {
-                        IntegrationHelper.tlog("sssc exp: \(hitNumber)")
-                        //exp.fulfill()
-                        exp.signal()
-                    }
+                    IntegrationHelper.tlog("sssc exp: \(hitNumber)")
+                    exp.signal()
                 }
                 return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
 
