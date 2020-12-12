@@ -30,16 +30,14 @@ class StreamingSplitsSyncTest: XCTestCase {
     var numbers = [500, 1000, 2000, 3000, 4000]
     var changes = [String]()
     var sseExp: XCTestExpectation!
-    var exps = [DispatchSemaphore]()
     let kInitialChangeNumber = 1000
-    var expIndex: Int = 0
-    var queue = DispatchQueue(label: "hol", qos: .userInteractive)
-    let expCount = 5
-
     
+    var exp1: XCTestExpectation!
+    var exp2: XCTestExpectation!
+    var exp3: XCTestExpectation!
+    let expCount = 3
 
     override func setUp() {
-        expIndex = 1
         splitsChangesHits = 0
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -49,6 +47,7 @@ class StreamingSplitsSyncTest: XCTestCase {
     }
 
     func testInit() {
+        
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
@@ -58,6 +57,10 @@ class StreamingSplitsSyncTest: XCTestCase {
         //splitConfig.isDebugModeEnabled = true
         
         sseExp = XCTestExpectation()
+        
+        exp1 = XCTestExpectation(description: "Exp1")
+        exp2 = XCTestExpectation(description: "Exp2")
+        exp3 = XCTestExpectation(description: "Exp3")
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -70,10 +73,7 @@ class StreamingSplitsSyncTest: XCTestCase {
         let expTimeout = 5.0
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-        for i in 0..<expCount {
-            ///exps.insert(XCTestExpectation(description: "Exp changes \(i)"), at: i)
-            exps.insert(DispatchSemaphore(value: 0), at: i)
-        }
+        
 
         client.on(event: SplitEvent.sdkReady) {
             IntegrationHelper.tlog("sssc READY")
@@ -90,31 +90,29 @@ class StreamingSplitsSyncTest: XCTestCase {
         
          // Wait for signal BUT give travis time to fire it
         IntegrationHelper.tlog("step 1")
-        //wait(for: [curExp()], timeout: expTimeout)
-        _ = curExp().wait(timeout: DispatchTime.now() + expTimeout)
+        wait(for: [exp1], timeout: expTimeout)
         waitForUpdate(secs: 1)
 
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
         print("treatmentReady: \(treatmentReady)")
+        waitForUpdate(secs: 1)
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[2],
                                                           changeNumber: numbers[2]))
         IntegrationHelper.tlog("step 2")
-        //wait(for: [curExp()], timeout: expTimeout)
-        _ = curExp().wait(timeout: DispatchTime.now() + expTimeout)
+        wait(for: [exp2], timeout: expTimeout)
         waitForUpdate(secs: 1)
 
         let treatmentFirst = client.getTreatment(splitName)
         print("treatmentFirst: \(treatmentFirst)")
+        waitForUpdate(secs: 1)
 
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[3],
                                                           changeNumber: numbers[3]))
         IntegrationHelper.tlog("step 3")
-        //sleep(1)
-        //wait(for: [curExp()], timeout: expTimeout)
-        _ = curExp().wait(timeout: DispatchTime.now() + expTimeout)
+        wait(for: [exp3], timeout: expTimeout)
         waitForUpdate(secs: 1)
         let treatmentSec = client.getTreatment(splitName)
         print("treatmentSec: \(treatmentSec)")
@@ -134,7 +132,8 @@ class StreamingSplitsSyncTest: XCTestCase {
     }
 
     private func getChanges(for hitNumber: Int) -> Data {
-        if hitNumber < exps.count {
+        if hitNumber <= expCount {
+            IntegrationHelper.tlog("changes \(hitNumber)")
             return Data(self.changes[hitNumber].utf8)
         }
         return Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8)
@@ -146,12 +145,19 @@ class StreamingSplitsSyncTest: XCTestCase {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.getAndUpdateHit()
                 IntegrationHelper.tlog("sssc hit: \(hitNumber)")
-                if hitNumber > 0, hitNumber < self.expCount {
-                    let exp = self.getExp()
-                    IntegrationHelper.tlog("sssc should fire exp for hit: \(hitNumber)")
-                    IntegrationHelper.tlog("sssc exp: \(hitNumber)")
-                    exp.signal()
+                IntegrationHelper.tlog("sssc should fire exp for hit: \(hitNumber)")
+                IntegrationHelper.tlog("sssc exp: \(hitNumber)")
+                switch hitNumber {
+                case 1:
+                    self.exp1.fulfill()
+                case 2:
+                    self.self.exp2.fulfill()
+                case 3:
+                    self.exp3.fulfill()
+                default:
+                    print("Exp no fired \(hitNumber)")
                 }
+                
                 return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
 
             case let(urlString) where urlString.contains("mySegments"):
@@ -202,32 +208,14 @@ class StreamingSplitsSyncTest: XCTestCase {
         }
     }
 
-    private func waitForUpdate(secs: Double = 2.0) {
-        ThreadUtils.delay(seconds: secs)
-    }
-    
-    private func curExp() -> DispatchSemaphore {
-        var index = 1
-        queue.sync {
-            index = self.expIndex
-            self.expIndex+=1
-        }
-        IntegrationHelper.tlog("CUR EXP: \(index)")
-        return exps[index]
-    }
-    
-    private func getExp() -> DispatchSemaphore {
-        var exp: DispatchSemaphore!
-        queue.sync {
-            exp = self.exps[self.expIndex - 1]
-        }
-        IntegrationHelper.tlog("get EXP: \(self.expIndex - 1)")
-        return exp
+    private func waitForUpdate(secs: UInt32 = 2) {
+        //ThreadUtils.delay(seconds: secs)
+        sleep(secs)
     }
     
     private func getAndUpdateHit() -> Int {
         var hitNumber = 0
-        queue.sync {
+        DispatchQueue.global().sync {
             hitNumber = self.splitsChangesHits
             self.splitsChangesHits+=1
         }
