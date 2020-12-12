@@ -67,12 +67,12 @@ class StreamingSplitsSyncTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let expTimeout = DispatchTime(uptimeNanoseconds: 100000000)
+        let expTimeout = 5.0
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         for i in 0..<expCount {
             ///exps.insert(XCTestExpectation(description: "Exp changes \(i)"), at: i)
-            exps.insert(DispatchSemaphore(value: 1), at: i)
+            exps.insert(DispatchSemaphore(value: 0), at: i)
         }
 
         client.on(event: SplitEvent.sdkReady) {
@@ -88,10 +88,10 @@ class StreamingSplitsSyncTest: XCTestCase {
         wait(for: [sdkReadyExpectation, sseExp], timeout: 100)
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
         
-        waitForUpdate(secs: 1)
+        waitForUpdate(secs: 1) // Wait for signal BUT give travis time to fire it
         IntegrationHelper.tlog("step 1")
         //wait(for: [curExp()], timeout: expTimeout)
-        curExp().wait(timeout: expTimeout)
+        _ = curExp().wait(timeout: DispatchTime.now() + expTimeout)
 
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
@@ -102,7 +102,7 @@ class StreamingSplitsSyncTest: XCTestCase {
         waitForUpdate(secs: 1)
         IntegrationHelper.tlog("step 2")
         //wait(for: [curExp()], timeout: expTimeout)
-        curExp().wait(timeout: expTimeout)
+        _ = curExp().wait(timeout: DispatchTime.now() + expTimeout)
 
         let treatmentFirst = client.getTreatment(splitName)
         print("treatmentFirst: \(treatmentFirst)")
@@ -114,7 +114,7 @@ class StreamingSplitsSyncTest: XCTestCase {
         IntegrationHelper.tlog("step 3")
         //sleep(1)
         //wait(for: [curExp()], timeout: expTimeout)
-        curExp().wait(timeout: expTimeout)
+        _ = curExp().wait(timeout: DispatchTime.now() + expTimeout)
         let treatmentSec = client.getTreatment(splitName)
         print("treatmentSec: \(treatmentSec)")
 
