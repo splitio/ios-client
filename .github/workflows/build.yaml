@@ -1,12 +1,9 @@
 name: Build and Test app
 
 on:
-  push:
-    branches:
-      - INFRA-3482
-    pull_requests:
-      - master
-      - development
+  pull_requests:
+    - master
+    - development
 
 jobs:
   build:
