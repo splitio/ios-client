@@ -2,8 +2,9 @@ name: Build and Test app
 
 on:
   pull_requests:
-    - master
-    - development
+    branches:
+      - master
+      - development
 
 jobs:
   build:
