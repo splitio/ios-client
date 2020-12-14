@@ -1,6 +1,6 @@
 language: swift
 
-osx_image: xcode11.2
+osx_image: xcode12.2
 
 addons:
   homebrew:
@@ -18,11 +18,20 @@ env:
     - LINTER_PKG_PATH="/tmp/SwiftLint.pkg"
     - LINTER_PKG_URL="https://github.com/realm/SwiftLint/releases/download/0.34.0/SwiftLint.pkg"
 
-before_script:
-  - DESTINATION="platform=${PLATFORM},OS=${OS},name=${NAME}"
-  - BUILD_FOLDER='SplitApp'
-  - mkdir "${BUILD_FOLDER}"
+jobs:
+  include:
+    - stage: build
+      before_script:
+        - DESTINATION="platform=${PLATFORM},OS=${OS},name=${NAME}"
+        - BUILD_FOLDER='SplitApp'
+        - LOG_FOLDER='buildlog'
+        - LOG_FILE="${LOG_FOLDER}/ios-${TRAVIS_BRANCH}_${TRAVIS_COMMIT}_build.log"
+        - mkdir -p "${BUILD_FOLDER}"
+        - mkdir -p "${LOG_FOLDER}"
 
-script:
-  - swiftlint
-  - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" -derivedDataPath "${BUILD_FOLDER}" build  | xcpretty
+      script:
+        - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" TEST_AFTER_BUILD=YES -derivedDataPath "${BUILD_FOLDER}" -configuration Debug build test | xcpretty
+
+stages:
+  - name: build
+    if: (type = pull_request) OR (branch = master) OR (branch = development)
