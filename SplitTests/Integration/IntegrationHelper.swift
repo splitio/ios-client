@@ -131,4 +131,8 @@ class IntegrationHelper {
         }
         return "{\"mySegments\":[\(segments)]}"
     }
+    
+    static func tlog(_ message: String) {
+        print("TRVLOG -> \(message)")
+    }
 }
