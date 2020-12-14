@@ -8,6 +8,7 @@
 
 import Foundation
 
+// swiftlint:disable inclusive_language
 class WhitelistMatcherData: NSObject, Codable {
     var whitelist: [String]?
 }

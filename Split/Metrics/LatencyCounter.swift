@@ -6,6 +6,8 @@
 //  Copyright © 2018 Split. All rights reserved.
 //
 
+import Foundation
+
 /**
  * Tracks latencies per bucket of time.
  * Each bucket represent a latency greater than the one before
@@ -35,8 +37,6 @@
  * (22) 4,987.89
  * (23) 7,481.83
  */
-import Foundation
-
 class LatencyCounter {
 
     // Removed first bucket (1000) for practical
