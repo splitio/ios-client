@@ -72,7 +72,6 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
 
         client.on(event: SplitEvent.sdkReady) {
-            print("READY!!")
             sdkReadyExpectation.fulfill()
         }
 
@@ -89,7 +88,6 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
-        print("treatmentReady")
 
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[0]))
@@ -97,14 +95,13 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         waitForUpdate(secs: 1)
         
         let treatmentFirst = client.getTreatment(splitName)
-        print("treatmentFirst")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[1]))
         wait(for: [exp3], timeout: expTimeout)
         waitForUpdate(secs: 1)
 
         let treatmentSec = client.getTreatment(splitName)
-        print("treatmentSec")
+
         streamingBinding?.push(message:
             StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[2]))
         waitForUpdate(secs: 2)
@@ -144,7 +141,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                 case 3:
                     self.exp3.fulfill()
                 default:
-                    print("Exp no fired \(hitNumber)")
+                    IntegrationHelper.tlog("Exp no fired \(hitNumber)")
                 }
                 return TestDispatcherResponse(code: 200, data: Data(respData.utf8))
 
@@ -162,7 +159,6 @@ class StreamingMySegmentsSyncTest: XCTestCase {
             self.sseConnHits+=1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                print("SSEE!!")
                 self.sseExp.fulfill()
             }
             return self.streamingBinding!
@@ -184,7 +180,6 @@ class StreamingMySegmentsSyncTest: XCTestCase {
     }
 
     private func waitForUpdate(secs: UInt32 = 2) {
-        //ThreadUtils.delay(seconds: secs)
         sleep(secs)
     }
 }

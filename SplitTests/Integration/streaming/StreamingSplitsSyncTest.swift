@@ -76,7 +76,6 @@ class StreamingSplitsSyncTest: XCTestCase {
         
 
         client.on(event: SplitEvent.sdkReady) {
-            IntegrationHelper.tlog("sssc READY")
             sdkReadyExpectation.fulfill()
         }
 
@@ -89,41 +88,33 @@ class StreamingSplitsSyncTest: XCTestCase {
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
         
          // Wait for signal BUT give travis time to fire it
-        IntegrationHelper.tlog("step 1")
         wait(for: [exp1], timeout: expTimeout)
         waitForUpdate(secs: 1)
 
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
-        print("treatmentReady: \(treatmentReady)")
         waitForUpdate(secs: 1)
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[2],
                                                           changeNumber: numbers[2]))
-        IntegrationHelper.tlog("step 2")
         wait(for: [exp2], timeout: expTimeout)
         waitForUpdate(secs: 1)
 
         let treatmentFirst = client.getTreatment(splitName)
-        print("treatmentFirst: \(treatmentFirst)")
         waitForUpdate(secs: 1)
 
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[3],
                                                           changeNumber: numbers[3]))
-        IntegrationHelper.tlog("step 3")
         wait(for: [exp3], timeout: expTimeout)
         waitForUpdate(secs: 1)
         let treatmentSec = client.getTreatment(splitName)
-        print("treatmentSec: \(treatmentSec)")
 
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: 100,
                                                           changeNumber: 100))
-        IntegrationHelper.tlog("step 4")
         waitForUpdate()
         let treatmentOld = client.getTreatment(splitName)
-        print("treatmentOld: \(treatmentOld)")
 
         XCTAssertEqual("on", treatmentReady)
         XCTAssertEqual("free", treatmentFirst)
@@ -144,9 +135,6 @@ class StreamingSplitsSyncTest: XCTestCase {
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.getAndUpdateHit()
-                IntegrationHelper.tlog("sssc hit: \(hitNumber)")
-                IntegrationHelper.tlog("sssc should fire exp for hit: \(hitNumber)")
-                IntegrationHelper.tlog("sssc exp: \(hitNumber)")
                 switch hitNumber {
                 case 1:
                     self.exp1.fulfill()
@@ -155,7 +143,7 @@ class StreamingSplitsSyncTest: XCTestCase {
                 case 3:
                     self.exp3.fulfill()
                 default:
-                    print("Exp no fired \(hitNumber)")
+                    IntegrationHelper.tlog("Exp no fired \(hitNumber)")
                 }
                 
                 return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
