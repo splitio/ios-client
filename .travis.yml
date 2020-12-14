@@ -5,7 +5,7 @@ osx_image: xcode12.2
 addons:
   homebrew:
     packages:
-      - awscli@1
+      - swiftlint
     update: true
 
 env:
@@ -30,10 +30,7 @@ jobs:
         - mkdir -p "${LOG_FOLDER}"
 
       script:
-        - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" TEST_AFTER_BUILD=YES -only-testing:SplitTests/StreamingSplitKillTest -only-testing:SplitTests/StreamingMySegmentsSyncTest -only-testing:SplitTests/StreamingSplitsSyncTest -derivedDataPath "${BUILD_FOLDER}" -configuration Debug build test | tee "${LOG_FILE}" | xcpretty
-
-      after_script:
-        - /usr/local/opt/awscli@1/bin/aws --region us-east-1 s3 cp "${LOG_FILE}" s3://aws-development-split-public/mobile/ios/
+        - set -o pipefail && xcodebuild -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -project "${PROJECT}" -scheme "${SCHEME}" -destination "${DESTINATION}" TEST_AFTER_BUILD=YES -derivedDataPath "${BUILD_FOLDER}" -configuration Debug build test | xcpretty
 
 stages:
   - name: build
