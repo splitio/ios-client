@@ -48,14 +48,12 @@ class DefaultEventValidator: EventValidator {
         }
 
         guard let nonNullTrafficTypeName = trafficTypeName else {
-            return ValidationErrorInfo(error: .some,
-                                       message: "you passed a null or undefined traffic_type_name, " +
+            return ValidationErrorInfo(error: .some, message: "you passed a null or undefined traffic_type_name, " +
                 "traffic_type_name must be a non-empty string")
         }
 
         if nonNullTrafficTypeName.isEmpty() {
-            return ValidationErrorInfo(error: .some,
-                                       message: "you passed an empty traffic_type_name, " +
+            return ValidationErrorInfo(error: .some, message: "you passed an empty traffic_type_name, " +
                 "traffic_type_name must be a non-empty string")
         }
 
@@ -90,7 +88,7 @@ class DefaultEventValidator: EventValidator {
             lowercasedTrafficType = nonNullTrafficTypeName.lowercased()
         }
 
-        if !splitCache.exists(trafficType: trafficTypeName!) {
+        if !splitCache.exists(trafficType: lowercasedTrafficType) {
             let message = "traffic_type_name \(trafficTypeName!) does not have any corresponding " +
                 "Splits in this environment, make sure you’re tracking " +
             "your events to a valid traffic type defined in the Split console"
