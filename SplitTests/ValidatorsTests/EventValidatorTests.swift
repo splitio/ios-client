@@ -169,7 +169,7 @@ class EventValidatorTests: XCTestCase {
         XCTAssertTrue(errorInfo?.hasWarning(.trafficTypeWithoutSplitInEnvironment) ?? false)
         XCTAssertTrue(errorInfo?.hasWarning(.trafficTypeNameHasUppercaseChars) ?? false)
         XCTAssertEqual("traffic_type_name should be all lowercase - converting string to lowercase", errorInfo?.warnings[.trafficTypeNameHasUppercaseChars])
-        XCTAssertEqual("traffic_type_name nocached does not have any corresponding Splits in this environment, make sure you’re tracking your events to a valid traffic type defined in the Split console", errorInfo?.warnings[.trafficTypeWithoutSplitInEnvironment])
+        XCTAssertEqual("traffic_type_name noCached does not have any corresponding Splits in this environment, make sure you’re tracking your events to a valid traffic type defined in the Split console", errorInfo?.warnings[.trafficTypeWithoutSplitInEnvironment])
 
 
     }
