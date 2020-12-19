@@ -1,6 +1,6 @@
 //
 //  RestClient+Impressions.swift
-//  SwiftSeedProject
+//  Split
 //
 //  Created by Javier Avrudsky on 6/4/18.
 //  Copyright © 2018 Split Software. All rights reserved.

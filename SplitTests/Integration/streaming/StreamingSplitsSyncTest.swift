@@ -25,13 +25,20 @@ class StreamingSplitsSyncTest: XCTestCase {
     var splitsChangesHits = 0
     // treaments "on" -> sdk ready, "on" -> full ssync streaming
     // , "free", "contra", "off" -> Push messages
+
     var treatments = ["on", "on", "free", "conta", "off"]
     var numbers = [500, 1000, 2000, 3000, 4000]
     var changes = [String]()
-    var exps = [XCTestExpectation]()
+    var sseExp: XCTestExpectation!
     let kInitialChangeNumber = 1000
+    
+    var exp1: XCTestExpectation!
+    var exp2: XCTestExpectation!
+    var exp3: XCTestExpectation!
+    let expCount = 3
 
     override func setUp() {
+        splitsChangesHits = 0
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -40,13 +47,20 @@ class StreamingSplitsSyncTest: XCTestCase {
     }
 
     func testInit() {
+        
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        splitConfig.isDebugModeEnabled = true
+        //splitConfig.isDebugModeEnabled = true
+        
+        sseExp = XCTestExpectation()
+        
+        exp1 = XCTestExpectation(description: "Exp1")
+        exp2 = XCTestExpectation(description: "Exp2")
+        exp3 = XCTestExpectation(description: "Exp3")
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -56,51 +70,49 @@ class StreamingSplitsSyncTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let  expTimeout:  TimeInterval = 5
+        let expTimeout = 5.0
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-        for i in 0..<4 {
-            exps.append(XCTestExpectation(description: "Exp changes \(i)"))
-        }
+        
 
         client.on(event: SplitEvent.sdkReady) {
             sdkReadyExpectation.fulfill()
         }
 
         client.on(event: SplitEvent.sdkReadyTimedOut) {
-            sdkReadyExpectation.fulfill()
+            IntegrationHelper.tlog("sssc TIMEOUT")
         }
 
-        wait(for: [sdkReadyExpectation], timeout: expTimeout)
-        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send keep alive to confirm streaming connection ok
-
-        while splitsChangesHits < 2 && mySegmentsHits < 2 {
-            ThreadUtils.delay(seconds: 1) // wait for sync all
-        }
+        IntegrationHelper.tlog("step 0")
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 100)
+        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
+        
+         // Wait for signal BUT give travis time to fire it
+        wait(for: [exp1], timeout: expTimeout)
+        waitForUpdate(secs: 1)
 
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
-
+        waitForUpdate(secs: 1)
         streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
-                                                          changeNumber: numbers[splitsChangesHits + 1]))
-        wait(for: [exps[1]], timeout: expTimeout)
+            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[2],
+                                                          changeNumber: numbers[2]))
+        wait(for: [exp2], timeout: expTimeout)
+        waitForUpdate(secs: 1)
 
-        waitForUpdate() // Wait to allow update after notification to happen
         let treatmentFirst = client.getTreatment(splitName)
-
+        waitForUpdate(secs: 1)
 
         streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
-                                                          changeNumber: numbers[splitsChangesHits + 1]))
-        wait(for: [exps[2]], timeout: expTimeout)
-        waitForUpdate()
+            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[3],
+                                                          changeNumber: numbers[3]))
+        wait(for: [exp3], timeout: expTimeout)
+        waitForUpdate(secs: 1)
         let treatmentSec = client.getTreatment(splitName)
 
         streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[0],
-                                                          changeNumber: numbers[1]))
-        wait(for: [exps[3]], timeout: expTimeout)
+            StreamingIntegrationHelper.splitUpdateMessage(timestamp: 100,
+                                                          changeNumber: 100))
         waitForUpdate()
         let treatmentOld = client.getTreatment(splitName)
 
@@ -110,20 +122,31 @@ class StreamingSplitsSyncTest: XCTestCase {
         XCTAssertEqual("conta", treatmentOld)
     }
 
+    private func getChanges(for hitNumber: Int) -> Data {
+        if hitNumber <= expCount {
+            IntegrationHelper.tlog("changes \(hitNumber)")
+            return Data(self.changes[hitNumber].utf8)
+        }
+        return Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8)
+    }
+    
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
-                let hitNumber = self.splitsChangesHits
-                self.splitsChangesHits+=1
-                if hitNumber < self.exps.count {
-                    let exp = self.exps[hitNumber]
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                        exp.fulfill()
-                    }
-                    return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
+                let hitNumber = self.getAndUpdateHit()
+                switch hitNumber {
+                case 1:
+                    self.exp1.fulfill()
+                case 2:
+                    self.self.exp2.fulfill()
+                case 3:
+                    self.exp3.fulfill()
+                default:
+                    IntegrationHelper.tlog("Exp no fired \(hitNumber)")
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8))
+                
+                return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
 
             case let(urlString) where urlString.contains("mySegments"):
                 self.mySegmentsHits+=1
@@ -139,7 +162,11 @@ class StreamingSplitsSyncTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
+            self.sseConnHits+=1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                self.sseExp.fulfill()
+            }
             return self.streamingBinding!
         }
     }
@@ -161,7 +188,7 @@ class StreamingSplitsSyncTest: XCTestCase {
     }
 
     private func loadChanges() {
-        for i in 0..<4 {
+        for i in 0..<5 {
             let change = getChanges(withTreatment: self.treatments[i],
                                     since: self.numbers[i],
                                     till: self.numbers[i])
@@ -169,10 +196,21 @@ class StreamingSplitsSyncTest: XCTestCase {
         }
     }
 
-    private func waitForUpdate() {
-        ThreadUtils.delay(seconds: 1)
+    private func waitForUpdate(secs: UInt32 = 2) {
+        sleep(secs)
     }
+    
+    private func getAndUpdateHit() -> Int {
+        var hitNumber = 0
+        DispatchQueue.global().sync {
+            hitNumber = self.splitsChangesHits
+            self.splitsChangesHits+=1
+        }
+        return hitNumber
+    }
+
 }
+
 
 
 
