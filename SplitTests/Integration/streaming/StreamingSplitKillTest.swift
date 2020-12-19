@@ -15,14 +15,16 @@ class StreamingSplitKillTest: XCTestCase {
     let userKey = IntegrationHelper.dummyUserKey
     var streamingBinding: TestStreamResponseBinding?
     let sseConnExp = XCTestExpectation(description: "sseConnExp")
-    var mySegmentsHits = 0
     var splitsChangesHits = 0
     var numbers = [500, 1000, 2000, 3000, 4000]
     var changes = [String]()
     var exps = [XCTestExpectation]()
     let kInitialChangeNumber = 1000
+    var expIndex: Int = 0
+    var queue = DispatchQueue(label: "hol", qos: .userInteractive)
 
     override func setUp() {
+        expIndex = 1
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -37,7 +39,7 @@ class StreamingSplitKillTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        splitConfig.isDebugModeEnabled = true
+        //splitConfig.isDebugModeEnabled = true
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -47,53 +49,47 @@ class StreamingSplitKillTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let expTimeout:  TimeInterval = 5
+        let expTimeout:  TimeInterval = 100
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         for i in 0..<4 {
-            exps.append(XCTestExpectation(description: "Exp changes \(i)"))
+            exps.insert(XCTestExpectation(description: "Exp changes \(i)"), at: i)
         }
 
         client.on(event: SplitEvent.sdkReady) {
+            IntegrationHelper.tlog("READY")
             sdkReadyExpectation.fulfill()
         }
 
         client.on(event: SplitEvent.sdkReadyTimedOut) {
-            sdkReadyExpectation.fulfill()
+            IntegrationHelper.tlog("TIMEOUT")
         }
 
         wait(for: [sdkReadyExpectation, sseConnExp], timeout: expTimeout)
+        
+        IntegrationHelper.tlog("KEEPAL")
         streamingBinding?.push(message: ":keepalive") // send keep alive to confirm streaming connection ok
+        wait(for: [curExp()], timeout: expTimeout)
 
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
 
-        while splitsChangesHits < 2 && mySegmentsHits < 2 {
-            ThreadUtils.delay(seconds: 1) // wait for sync all
-        }
-        ThreadUtils.delay(seconds: 1)
-        print("Killing split")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
                                                          timestamp: numbers[splitsChangesHits],
                                                          changeNumber: numbers[splitsChangesHits]))
 
-        wait(for: [exps[2]], timeout: expTimeout)
-
-        ThreadUtils.delay(seconds: 1.0) // wait to let spliit be updated
+        wait(for: [curExp()], timeout: expTimeout)
         
         let treatmentKill = client.getTreatment(splitName)
-        print("after kill eval")
 
         print("Updating split")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
                                                           changeNumber: numbers[splitsChangesHits]))
 
-        wait(for: [exps[3]], timeout: expTimeout)
+        wait(for: [curExp()], timeout: expTimeout)
         let treatmentNoKill = client.getTreatment(splitName)
-        print("after update eval")
-        
         
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
@@ -108,24 +104,30 @@ class StreamingSplitKillTest: XCTestCase {
         XCTAssertEqual("on", treatmentNoKill)
         XCTAssertEqual("on", treatmentOldKill)
     }
+    
+    private func getChanges(for hitNumber: Int) -> Data {
+        if hitNumber < exps.count {
+            return Data(self.changes[hitNumber].utf8)
+        }
+        return Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8)
+    }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
-                let hitNumber = self.splitsChangesHits
-                self.splitsChangesHits+=1
-                if hitNumber < self.exps.count {
+                let hitNumber = self.getAndUpdateHit()
+                IntegrationHelper.tlog("sc hit: \(hitNumber)")
+                if hitNumber > 0, hitNumber < self.exps.count {
                     let exp = self.exps[hitNumber]
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                    self.queue.asyncAfter(deadline: .now() + 0.5) {
+                        IntegrationHelper.tlog("sc exp: \(hitNumber)")
                         exp.fulfill()
                     }
-                    return TestDispatcherResponse(code: 200, data: Data(self.changes[hitNumber].utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8))
+                return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
 
             case let(urlString) where urlString.contains("mySegments"):
-                self.mySegmentsHits+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
 
             case let(urlString) where urlString.contains("auth"):
@@ -134,6 +136,15 @@ class StreamingSplitKillTest: XCTestCase {
                 return TestDispatcherResponse(code: 500)
             }
         }
+    }
+    
+    private func getAndUpdateHit() -> Int {
+        var hitNumber = 0
+        DispatchQueue.global().sync {
+            hitNumber = self.splitsChangesHits
+            self.splitsChangesHits+=1
+        }
+        return hitNumber
     }
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
@@ -167,8 +178,16 @@ class StreamingSplitKillTest: XCTestCase {
             changes.insert(change, at: i)
         }
     }
+    
+    private func curExp() -> XCTestExpectation {
+        var index = 0
+        DispatchQueue.global().sync {
+            index = self.expIndex
+            self.expIndex+=1
+        }
+        return exps[index]
+    }
 }
-
 
 
 

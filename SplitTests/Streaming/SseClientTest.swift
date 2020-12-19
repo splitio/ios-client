@@ -153,7 +153,7 @@ class SseClientTest: XCTestCase {
 
         var connected = false
         self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
-            connected = true
+            connected = success
             conExp.fulfill()
         }
 

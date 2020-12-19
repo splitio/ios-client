@@ -19,11 +19,11 @@ class InMemorySplitCacheTests: XCTestCase {
         splitCache = InMemorySplitCache()
         let jsonSplit = "{\"name\":\"test\", \"status\":\"active\"}"
         let split1 = try? JSON.encodeFrom(json: jsonSplit, to: Split.self)
-        _  = splitCache.addSplit(splitName: split1!.name!, split: split1!)
+        splitCache.addSplit(splitName: split1!.name!, split: split1!)
         
         let jsonSplit2 = "{\"name\":\"test2\", \"status\":\"archived\"}"
         let split2 = try? JSON.encodeFrom(json: jsonSplit2, to: Split.self)
-        _  = splitCache.addSplit(splitName: split2!.name!, split: split2!)
+        splitCache.addSplit(splitName: split2!.name!, split: split2!)
     }
     
     override func tearDown() {

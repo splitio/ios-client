@@ -25,11 +25,6 @@ class Logger {
     }
 
     var isVerboseModeEnabled: Bool {
-        set {
-            queue.async(flags: .barrier) {
-                self.isVerboseEnabled = newValue
-            }
-        }
         get {
             var isEnabled = false
             queue.sync {
@@ -37,20 +32,25 @@ class Logger {
             }
             return isEnabled
         }
+        set {
+            queue.async(flags: .barrier) {
+                self.isVerboseEnabled = newValue
+            }
+        }
     }
 
     var isDebugModeEnabled: Bool {
-        set {
-            queue.async(flags: .barrier) {
-                self.isDebugEnabled = newValue
-            }
-        }
         get {
             var isEnabled = false
             queue.sync {
                 isEnabled = self.isDebugEnabled
             }
             return isEnabled
+        }
+        set {
+            queue.async(flags: .barrier) {
+                self.isDebugEnabled = newValue
+            }
         }
     }
 
