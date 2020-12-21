@@ -33,7 +33,6 @@ class DefaultHttpEventsRecorder: HttpEventsRecorder {
         restClient.sendTrackEvents(events: items, completion: { result in
             do {
                 _ = try result.unwrap()
-                Logger.d("Event posted successfully")
             } catch {
                 Logger.e("Event error: \(String(describing: error))")
                 httpError = HttpError.unknown(message: error.localizedDescription)
