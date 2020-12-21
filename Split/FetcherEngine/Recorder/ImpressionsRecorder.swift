@@ -33,7 +33,6 @@ class DefaultHttpImpressionsRecorder: HttpImpressionsRecorder {
         restClient.sendImpressions(impressions: items, completion: { result in
             do {
                 _ = try result.unwrap()
-                Logger.d("Impression posted successfully")
             } catch {
                 Logger.e("Impression error: \(String(describing: error))")
                 httpError = HttpError.unknown(message: error.localizedDescription)
