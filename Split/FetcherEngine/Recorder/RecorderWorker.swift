@@ -14,7 +14,7 @@ protocol RecorderWorker {
 
 protocol RecorderSyncHelper {
     associatedtype Item
-    // Push an item and hecks if max queue size is reached
+    // Push an item and checks if max queue size is reached
     func pushAndCheckFlush(_ item: Item) -> Bool
 }
 
