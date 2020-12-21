@@ -1,5 +1,5 @@
 //
-//  HttpEventsRecorder.swift
+//  HttpImpressionsRecorder.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 18/12/2020.
@@ -8,34 +8,34 @@
 
 import Foundation
 
-protocol HttpEventsRecorder {
-    func execute(_ items: [EventDTO]) throws
+protocol HttpImpressionsRecorder {
+    func execute(_ items: [ImpressionsTest]) throws
 }
 
-class DefaultHttpEventsRecorder: HttpEventsRecorder {
+class DefaultHttpImpressionsRecorder: HttpImpressionsRecorder {
 
-    private let restClient: RestClientTrackEvents
+    private let restClient: RestClientImpressions
 
-    init(restClient: RestClientTrackEvents) {
+    init(restClient: RestClientImpressions) {
         self.restClient = restClient
     }
 
-    func execute(_ items: [EventDTO]) throws {
+    func execute(_ items: [ImpressionsTest]) throws {
 
         if !restClient.isSdkServerAvailable() {
-            Logger.d("Server is not reachable. Events sending will be delayed when host is reachable")
+            Logger.d("Server is not reachable. Impressions sending will be delayed when host is reachable")
             throw HttpError.serverUnavailable
         }
 
         let semaphore = DispatchSemaphore(value: 0)
         var httpError: HttpError?
 
-        restClient.sendTrackEvents(events: items, completion: { result in
+        restClient.sendImpressions(impressions: items, completion: { result in
             do {
                 _ = try result.unwrap()
-                Logger.d("Event posted successfully")
+                Logger.d("Impression posted successfully")
             } catch {
-                Logger.e("Event error: \(String(describing: error))")
+                Logger.e("Impression error: \(String(describing: error))")
                 httpError = HttpError.unknown(message: error.localizedDescription)
             }
             semaphore.signal()
