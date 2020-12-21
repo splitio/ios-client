@@ -15,35 +15,35 @@ protocol MySegmentsDao {
 }
 
 class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
-    
+
     let coreDataHelper: CoreDataHelper
-    
+
     init(coreDataHelper: CoreDataHelper) {
         self.coreDataHelper = coreDataHelper
         super.init()
     }
-    
+
     func getBy(userKey: String) -> [String] {
         var mySegments = [String]()
         execute { [weak self] in
             guard let self = self else {
                 return
             }
-            
+
             if let entity = self.getByUserKey(userKey) {
                 mySegments.append(contentsOf: self.mapEntityToModel(entity))
             }
         }
         return mySegments
     }
-    
+
     func update(userKey: String, segmentList: [String]) {
-        
+
         executeAsync { [weak self] in
             guard let self = self else {
                 return
             }
-            
+
             if let entity = self.getByUserKey(userKey) ??
                 self.coreDataHelper.create(entity: .mySegment) as? MySegmentEntity {
                 entity.userKey = userKey
@@ -52,7 +52,7 @@ class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
             }
         }
     }
-    
+
     private func getByUserKey(_ userKey: String) -> MySegmentEntity? {
         let predicate = NSPredicate(format: "userKey == %@", userKey)
         let entities = self.coreDataHelper.fetch(entity: .mySegment,
@@ -62,7 +62,7 @@ class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
         }
         return nil
     }
-    
+
     private func mapEntityToModel(_ entity: MySegmentEntity) -> [String] {
         if let parsedSegmentList = entity.segmentList?.split(separator: ",") {
             return parsedSegmentList.map { String($0) }

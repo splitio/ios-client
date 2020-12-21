@@ -43,7 +43,7 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
             }
             nextSince = newTill
         }
-        
+
     }
 
     private func doFetch(since: Int64) -> SplitChange? {

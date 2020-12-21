@@ -8,23 +8,21 @@
 
 import Foundation
 
-/// TODO: Rename to HttpMySegmentsFetcher in new PR
-/// This name is to make PR review easier before remaing
-protocol NewHttpMySegmentsFetcher {
+protocol HttpMySegmentsFetcher {
     func execute(userKey: String) throws -> [String]?
 }
 
-class DefaultHttpMySegmentsFetcher: NewHttpMySegmentsFetcher {
-    
+class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
+
     private let restClient: RestClientMySegments
     private let metricsManager: MetricsManager
-    
+
     init(restClient: RestClientMySegments,
          metricsManager: MetricsManager) {
         self.restClient = restClient
         self.metricsManager = metricsManager
     }
-    
+
     func execute(userKey: String) throws -> [String]? {
         if !restClient.isSdkServerAvailable() {
             Logger.d("Server is not reachable. My segment updates will be delayed until host is reachable")

@@ -14,7 +14,7 @@ import XCTest
 class HttpMySegmentsFetcherTests: XCTestCase {
     
     var restClient: RestClientStub!
-    var fetcher: NewHttpMySegmentsFetcher!
+    var fetcher: HttpMySegmentsFetcher!
     var metricsManager: MetricsManagerStub!
     
     override func setUp() {
