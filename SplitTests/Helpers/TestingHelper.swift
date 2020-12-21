@@ -25,4 +25,29 @@ struct TestingHelper {
         }
         return events
     }
+
+    static func createImpressions(feature: String = "split", count: Int = 10) -> [Impression] {
+        var impressions = [Impression]()
+        for _ in 0..<count {
+            let impression = Impression()
+            impression.feature = feature
+            impression.keyName = "key1"
+            impression.treatment = "t1"
+            impression.time = 1000
+            impression.changeNumber = 1000
+            impression.label = "t1"
+            impression.attributes = ["pepe": 1]
+            impressions.append(impression)
+        }
+        return impressions
+    }
+
+    static func createTestImpressions(count: Int = 10) -> [ImpressionsTest] {
+        var impressions = [ImpressionsTest]()
+        for _ in 0..<count {
+            let impressionTest = try! Json.encodeFrom(json: "{\"testName\":\"T1\", \"keyImpressions\":[]}", to: ImpressionsTest.self)
+            impressions.append(impressionTest)
+        }
+        return impressions
+    }
 }
