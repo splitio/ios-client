@@ -22,11 +22,11 @@ class DefaultPersistentMySegmentsStorage: PersistentMySegmentsStorage {
         self.userKey = userKey
         self.mySegmentsDao = database.mySegmentsDao
     }
-    
+
     func set(_ segments: [String]) {
         mySegmentsDao.update(userKey: userKey, segmentList: segments)
     }
-    
+
     func getSnapshot() -> [String] {
         return mySegmentsDao.getBy(userKey: userKey)
     }

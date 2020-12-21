@@ -62,11 +62,11 @@ class CoreDataHelper {
             return []
         }
     }
-    
+
     func deleteAll(entity: CoreDataEntity) {
         delete(entity: entity)
     }
-    
+
     private func delete(entity: CoreDataEntity, predicate: NSPredicate? = nil) {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entity.rawValue)
         if let predicate = predicate {
