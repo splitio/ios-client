@@ -22,32 +22,32 @@ protocol RetryableSyncWorker {
 /// nettwork connection and http server errors
 ///
 class BaseRetryableSyncWorker: RetryableSyncWorker {
-    
+
     var completion: SyncCompletion?
     private var reconnectBackoffCounter: ReconnectBackoffCounter
     private var splitEventsManager: SplitEventsManager?
     private var isFirstFetch = Atomic<Bool>(true)
     private var isRunning = Atomic<Bool>(false)
     private let loopQueue = DispatchQueue.global()
-    
+
     init(eventsManager: SplitEventsManager? = nil,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
-        
+
         self.splitEventsManager = eventsManager
         self.reconnectBackoffCounter = reconnectBackoffCounter
     }
-    
+
     func start() {
         isRunning.set(true)
         loopQueue.async {
             self.fetchFromRemoteLoop()
         }
     }
-    
+
     func stop() {
         isRunning.set(false)
     }
-    
+
     private func fetchFromRemoteLoop() {
         var success = false
         while isRunning.value, !success {
@@ -63,17 +63,17 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
             handler(success)
         }
     }
-    
+
     func fireReadyIsNeeded(event: SplitInternalEvent) {
         if isFirstFetch.getAndSet(false) {
             splitEventsManager?.notifyInternalEvent(event)
         }
     }
-    
+
     func resetBackoffCounter() {
         reconnectBackoffCounter.resetCounter()
     }
-    
+
     // This methods should be overrided by child class
     func fetchFromRemote() -> Bool {
         fatalError("fetch from remote not overriden")
@@ -85,22 +85,22 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
 /// Also triggers MY SEGMENTS READY event when first fetch is succesful
 ///
 class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
-    
+
     private let mySegmentsChangeFetcher: MySegmentsChangeFetcher
     private let matchingKey: String
     private let mySegmentsCache: MySegmentsCacheProtocol
-    
+
     init(matchingKey: String, mySegmentsChangeFetcher: MySegmentsChangeFetcher,
          mySegmentsCache: MySegmentsCacheProtocol,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
-        
+
         self.matchingKey = matchingKey
         self.mySegmentsCache = mySegmentsCache
         self.mySegmentsChangeFetcher = mySegmentsChangeFetcher
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
-    
+
     override func fetchFromRemote() -> Bool {
         do {
             if let segments = try self.mySegmentsChangeFetcher.fetch(user: self.matchingKey, policy: .network) {
@@ -120,26 +120,26 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
 /// TODO: Remove on storage revamp integration
 @available(*, deprecated, message: "Gonna be replaced by RevampRetryableSyncWorker on new components integration")
 class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
-    
+
     private let splitChangeFetcher: SplitChangeFetcher
     private let splitCache: SplitCacheProtocol
     private let cacheExpiration: Int
     private let defaultQueryString: String
-    
+
     init(splitChangeFetcher: SplitChangeFetcher,
          splitCache: SplitCacheProtocol,
          cacheExpiration: Int,
          defaultQueryString: String,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
-        
+
         self.splitChangeFetcher = splitChangeFetcher
         self.splitCache = splitCache
         self.cacheExpiration = cacheExpiration
         self.defaultQueryString = defaultQueryString
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
-    
+
     override func fetchFromRemote() -> Bool {
         do {
             var changeNumber = splitCache.getChangeNumber()
@@ -277,3 +277,4 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         return false
     }
 }
+
