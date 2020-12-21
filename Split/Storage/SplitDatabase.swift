@@ -17,8 +17,8 @@ struct StorageRecordStatus {
 /// Specific to CoreData
 protocol CoreDataDao {
     var dbDispatchQueue: DispatchQueue { get }
-    func execute(_ operation: @escaping ()->Void)
-    func executeAsync(_ operation: @escaping ()->Void)
+    func execute(_ operation: @escaping () -> Void)
+    func executeAsync(_ operation: @escaping () -> Void)
 }
 
 /// Base clase for CoreDataDao to enforce running all
@@ -29,21 +29,19 @@ class BaseCoreDataDao {
         dbDispatchQueue = DispatchQueue(label: "SplitCoreDataCache", target: DispatchQueue.global())
     }
 
-    func execute(_ operation: @escaping ()->Void) {
+    func execute(_ operation: @escaping () -> Void) {
         dbDispatchQueue.sync {
             operation()
         }
     }
-    
-    func executeAsync(_ operation: @escaping ()->Void) {
+
+    func executeAsync(_ operation: @escaping () -> Void) {
         dbDispatchQueue.async {
             operation()
         }
     }
 }
 
-// TODO: dao components will not be null
-// gonna change on implementation
 protocol SplitDatabase {
     var splitDao: SplitDao { get }
     var mySegmentsDao: MySegmentsDao { get }
@@ -97,8 +95,7 @@ class CoreDataSplitDatabase: SplitDatabase {
             impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper)
             generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
             mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper)
-            
-            // TODO: Check this call
+
             DispatchQueue.main.sync(execute: completionClosure)
         } catch {
             fatalError("Error migrating store: \(error)")

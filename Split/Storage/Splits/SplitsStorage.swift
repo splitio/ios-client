@@ -73,7 +73,7 @@ class DefaultSplitsStorage: SplitsStorage {
         updateTimestamp = splitChange.updateTimestamp
         persistentStorage.update(splitChange: splitChange)
     }
-    
+
     func update(filterQueryString: String) {
         self.persistentStorage.update(filterQueryString: splitsFilterQueryString)
     }

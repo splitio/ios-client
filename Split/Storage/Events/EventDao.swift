@@ -17,14 +17,14 @@ protocol EventDao {
 }
 
 class CoreDataEventDao: BaseCoreDataDao, EventDao {
-    
+
     let coreDataHelper: CoreDataHelper
-    
+
     init(coreDataHelper: CoreDataHelper) {
         self.coreDataHelper = coreDataHelper
         super.init()
     }
-    
+
     func insert(_ event: EventDTO) {
         executeAsync { [weak self] in
             guard let self = self else {
@@ -44,7 +44,7 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
             }
         }
     }
-    
+
     func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [EventDTO] {
         var events: [EventDTO]?
         execute { [weak self] in
@@ -55,12 +55,12 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
             let entities = self.coreDataHelper.fetch(entity: .event,
                                                      where: predicate,
                                                      rowLimit: maxRows).compactMap { return $0 as? EventEntity }
-            
+
             events = entities.compactMap { return try? self.mapEntityToModel($0) }
         }
         return events ?? []
     }
-    
+
     func update(ids: [String], newStatus: Int32) {
         let predicate = NSPredicate(format: "storageId IN %@", ids)
         executeAsync { [weak self] in
@@ -75,7 +75,7 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
             self.coreDataHelper.save()
         }
     }
-    
+
     func delete(_ events: [EventDTO]) {
         executeAsync { [weak self] in
             guard let self = self else {
@@ -84,7 +84,7 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
             self.coreDataHelper.delete(entity: .event, by: "storageId", values: events.map { $0.storageId ?? "" })
         }
     }
-    
+
     private func mapEntityToModel(_ entity: EventEntity) throws -> EventDTO {
         let model = try Json.dynamicEncodeFrom(json: entity.body, to: EventDTO.self)
         model.storageId = entity.storageId

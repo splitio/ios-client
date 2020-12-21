@@ -30,7 +30,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
             guard let self = self else {
                 return
             }
-            
+
             if let obj = self.coreDataHelper.create(entity: .impression) as? ImpressionEntity {
                 do {
                     guard let testName = impression.feature else {
@@ -57,7 +57,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
             guard let self = self else {
                 return
             }
-            
+
             let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
             let entities = self.coreDataHelper.fetch(entity: .impression,
                                                 where: predicate,
@@ -74,7 +74,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
 
     func update(ids: [String], newStatus: Int32) {
         let predicate = NSPredicate(format: "storageId IN %@", ids)
-        
+
         executeAsync { [weak self] in
             guard let self = self else {
                 return
@@ -93,7 +93,8 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
             guard let self = self else {
                 return
             }
-            self.coreDataHelper.delete(entity: .impression, by: "storageId", values: impressions.map { $0.storageId ?? "" })
+            self.coreDataHelper.delete(entity: .impression, by: "storageId",
+                                       values: impressions.map { $0.storageId ?? "" })
         }
     }
 

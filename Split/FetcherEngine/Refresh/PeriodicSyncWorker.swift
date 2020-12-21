@@ -230,4 +230,3 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         }
     }
 }
-
