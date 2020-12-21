@@ -16,19 +16,26 @@ protocol PeriodicTimer {
 
 class DefaultPeriodicTimer: PeriodicTimer {
 
-    private var interval: Int
+    private let deadLineInSecs: Int
+    private let intervalInSecs: Int
     private var fetchTimer: DispatchSourceTimer
     private var isRunning: Atomic<Bool>
 
-    init(interval seconds: Int) {
-        self.interval = seconds
+    init(deadline deadlineInSecs: Int, interval intervalInSecs: Int) {
+        self.deadLineInSecs = deadlineInSecs
+        self.intervalInSecs = intervalInSecs
         self.isRunning = Atomic(false)
         fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
     }
 
+    convenience init(interval intervalInSecs: Int) {
+        self.init(deadline: 0, interval: intervalInSecs)
+    }
+
     func trigger() {
         if !isRunning.getAndSet(true) {
-            fetchTimer.schedule(deadline: .now(), repeating: .seconds(interval))
+            fetchTimer.schedule(deadline: .now() + .seconds(deadLineInSecs),
+                                repeating: .seconds(intervalInSecs))
             fetchTimer.resume()
         }
     }
@@ -223,3 +230,4 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         }
     }
 }
+

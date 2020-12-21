@@ -1,0 +1,28 @@
+//
+//  TestingHelper.swift
+//  SplitTests
+//
+//  Created by Javier Avrudsky on 19/12/2020.
+//  Copyright © 2020 Split. All rights reserved.
+//
+
+import Foundation
+@testable import Split
+
+struct TestingHelper {
+    static func createEvents(count: Int = 10) -> [EventDTO] {
+        var events = [EventDTO]()
+        for i in 0..<count {
+            let event = EventDTO(trafficType: "name", eventType: "type")
+            event.storageId = "event\(i)"
+            event.key = "key1"
+            event.eventTypeId = "type1"
+            event.trafficTypeName = "name1"
+            event.value = (i % 2 > 0 ? 1.0 : 0.0)
+            event.timestamp = 1000
+            event.properties = ["f": i]
+            events.append(event)
+        }
+        return events
+    }
+}
