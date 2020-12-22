@@ -1,4 +1,4 @@
-2.8.0: (Dec 14, 2020)
+2.8.0: (Dec 22, 2020)
 - Added support for Swift Packager Manager. Thanks @bsarrazin!
 
 2.7.0: (Nov 02, 2020)
