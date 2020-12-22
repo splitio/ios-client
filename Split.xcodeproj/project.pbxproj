@@ -198,7 +198,6 @@
 		594677E822D4CAB300F94E58 /* ImpressionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594677E722D4CAB300F94E58 /* ImpressionsManager.swift */; };
 		594677EA22D4D44300F94E58 /* ImpressionsManagerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594677E922D4D44300F94E58 /* ImpressionsManagerStub.swift */; };
 		5946783522E110A700F94E58 /* MockWebServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5946783422E110A600F94E58 /* MockWebServer.swift */; };
-		5946783822E1144400F94E58 /* Swifter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5946783722E1144400F94E58 /* Swifter.framework */; };
 		5946783A22E1147600F94E58 /* SplitIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5946783922E1147600F94E58 /* SplitIntegrationTest.swift */; };
 		594F5F532539E36400A945B4 /* StreamingMySegmentsSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F522539E36400A945B4 /* StreamingMySegmentsSyncTest.swift */; };
 		594F5F55253A1A6500A945B4 /* StreamingSplitKillTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F54253A1A6500A945B4 /* StreamingSplitKillTest.swift */; };
@@ -356,7 +355,6 @@
 		59F4AAA82508120500A1C69A /* SyncManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAA72508120500A1C69A /* SyncManagerTest.swift */; };
 		59F4AAAA2508131D00A1C69A /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAA92508131D00A1C69A /* SyncManager.swift */; };
 		59F4AAAC2508FD0D00A1C69A /* PushNotificationManagerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAAB2508FD0D00A1C69A /* PushNotificationManagerStub.swift */; };
-		59F4AAB1250FFF9A00A1C69A /* ThreadUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAB0250FFF9A00A1C69A /* ThreadUtils.swift */; };
 		59F4AAB325114A6700A1C69A /* RetryableSyncWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAB225114A6700A1C69A /* RetryableSyncWorker.swift */; };
 		59F4AAB52512581200A1C69A /* MySegmentsSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAB42512581100A1C69A /* MySegmentsSyncWorkerTest.swift */; };
 		59F4AAB725128B7000A1C69A /* SplitsSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAB625128B7000A1C69A /* SplitsSyncWorkerTest.swift */; };
@@ -403,6 +401,8 @@
 		59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */; };
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
+		954F9BB225759BBE00140B81 /* ThreadUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9BB125759BBE00140B81 /* ThreadUtils.swift */; };
+		955428D12567358B00331356 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 955428D02567358B00331356 /* Swifter */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -788,7 +788,6 @@
 		59F4AAA72508120500A1C69A /* SyncManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManagerTest.swift; sourceTree = "<group>"; };
 		59F4AAA92508131D00A1C69A /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		59F4AAAB2508FD0D00A1C69A /* PushNotificationManagerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManagerStub.swift; sourceTree = "<group>"; };
-		59F4AAB0250FFF9A00A1C69A /* ThreadUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadUtils.swift; sourceTree = "<group>"; };
 		59F4AAB225114A6700A1C69A /* RetryableSyncWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetryableSyncWorker.swift; sourceTree = "<group>"; };
 		59F4AAB42512581100A1C69A /* MySegmentsSyncWorkerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsSyncWorkerTest.swift; sourceTree = "<group>"; };
 		59F4AAB625128B7000A1C69A /* SplitsSyncWorkerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsSyncWorkerTest.swift; sourceTree = "<group>"; };
@@ -835,6 +834,10 @@
 		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		954F9BB125759BBE00140B81 /* ThreadUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadUtils.swift; sourceTree = "<group>"; };
+		954F9BBC25759C4800140B81 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = SOURCE_ROOT; };
+		954F9BBF2575A1AB00140B81 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		954F9BC32575A7DF00140B81 /* Exports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exports.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -858,7 +861,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				592C6AAA211B6C99002D120C /* Split.framework in Frameworks */,
-				5946783822E1144400F94E58 /* Swifter.framework in Frameworks */,
+				955428D12567358B00331356 /* Swifter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -910,6 +913,7 @@
 		3B6DEE5C20EA6A4E0067435E /* Split */ = {
 			isa = PBXGroup;
 			children = (
+				954F9BBC25759C4800140B81 /* Package.swift */,
 				59163B11216396EF00C7AA57 /* Common */,
 				3B6DEEA420EA6AE20067435E /* Models */,
 				3B6DEE8020EA6ADF0067435E /* Api */,
@@ -927,7 +931,6 @@
 				59FB7C3A220378F600ECC96A /* Localhost */,
 				59BF3D422232A663004D134D /* Split.h */,
 				3B6DEE5E20EA6A4E0067435E /* Info.plist */,
-				59F4AAB0250FFF9A00A1C69A /* ThreadUtils.swift */,
 			);
 			path = Split;
 			sourceTree = "<group>";
@@ -1297,6 +1300,7 @@
 			isa = PBXGroup;
 			children = (
 				59BF3D2C22313E82004D134D /* JFBCrypt */,
+				954F9BB125759BBE00140B81 /* ThreadUtils.swift */,
 				3B6DEE7B20EA6ADF0067435E /* PeriodicTaskManager.swift */,
 				3B6DEE8420EA6AE00067435E /* Version.swift */,
 				3B6DEE8620EA6AE00067435E /* Logger.swift */,
@@ -1334,6 +1338,7 @@
 		590DF9962125F6900082B94F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				954F9BBF2575A1AB00140B81 /* UIKit.framework */,
 				5946783722E1144400F94E58 /* Swifter.framework */,
 			);
 			name = Frameworks;
@@ -1394,6 +1399,7 @@
 				3B6DEF0220EA6AE30067435E /* Utils */,
 				3B6DEF0520EA6AE40067435E /* Structs */,
 				3B6DEE9D20EA6AE10067435E /* Extensions */,
+				954F9BC32575A7DF00140B81 /* Exports.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1767,6 +1773,8 @@
 			dependencies = (
 			);
 			name = Split;
+			packageProductDependencies = (
+			);
 			productName = Split;
 			productReference = 3B6DEE5A20EA6A4E0067435E /* Split.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1797,7 +1805,6 @@
 				592C6AA2211B6C99002D120C /* Frameworks */,
 				592C6AA3211B6C99002D120C /* Resources */,
 				592C6AF2211CBED7002D120C /* CopyFiles */,
-				5946783622E1110600F94E58 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1805,6 +1812,9 @@
 				592C6AAC211B6C99002D120C /* PBXTargetDependency */,
 			);
 			name = SplitTests;
+			packageProductDependencies = (
+				955428D02567358B00331356 /* Swifter */,
+			);
 			productName = SplitTests;
 			productReference = 592C6AA5211B6C99002D120C /* SplitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -1842,6 +1852,9 @@
 				en,
 			);
 			mainGroup = 3B6DEE5020EA6A4D0067435E;
+			packageReferences = (
+				955428CF2567358B00331356 /* XCRemoteSwiftPackageReference "swifter" */,
+			);
 			productRefGroup = 3B6DEE5B20EA6A4E0067435E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1910,25 +1923,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		5946783622E1110600F94E58 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/Swifter.framework",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Swifter.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
-		};
 		598F9BE1230DAEBC00F0E4C0 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2028,7 +2022,6 @@
 				3B6DEF2120EA6AE50067435E /* HttpSplitChangeFetcher.swift in Sources */,
 				5935FDEC226E26E300A23FA6 /* SplitHelper.swift in Sources */,
 				3B6DEF5A20EA6AE50067435E /* SplitEventTask.swift in Sources */,
-				59F4AAB1250FFF9A00A1C69A /* ThreadUtils.swift in Sources */,
 				3B6DEF8920EA6AE50067435E /* SynchronizedArrayQueue.swift in Sources */,
 				3B6DEF3520EA6AE50067435E /* SecureDataStore.swift in Sources */,
 				3B6DEF2720EA6AE50067435E /* Logger.swift in Sources */,
@@ -2049,6 +2042,7 @@
 				3B6DEF3F20EA6AE50067435E /* ConditionType.swift in Sources */,
 				3B6DEF1120EA6AE50067435E /* SplitCacheProtocol.swift in Sources */,
 				5959C486228C429A0064F968 /* Array+DynamicCodable.swift in Sources */,
+				954F9BB225759BBE00140B81 /* ThreadUtils.swift in Sources */,
 				3B6DEF3B20EA6AE50067435E /* Dictionary+JSON.swift in Sources */,
 				3B6DEF1A20EA6AE50067435E /* EventDTO.swift in Sources */,
 				3B6DEF0E20EA6AE50067435E /* MySegmentsCache.swift in Sources */,
@@ -2586,11 +2580,7 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_STYLE = Automatic;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2616,11 +2606,7 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_STYLE = Automatic;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2677,6 +2663,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		955428CF2567358B00331356 /* XCRemoteSwiftPackageReference "swifter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/httpswift/swifter";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		955428D02567358B00331356 /* Swifter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 955428CF2567358B00331356 /* XCRemoteSwiftPackageReference "swifter" */;
+			productName = Swifter;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3B6DEE5120EA6A4D0067435E /* Project object */;
 }

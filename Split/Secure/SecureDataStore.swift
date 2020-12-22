@@ -42,7 +42,7 @@ class SecureDataStore {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: Asset.accessToken.rawValue,
             kSecValueData as String: valueData,
-            kSecAttrAccessible as String: kSecAttrAccessibleAlways
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
         ]
 
         let resultCode = SecItemAdd(queryAdd as CFDictionary, nil)
