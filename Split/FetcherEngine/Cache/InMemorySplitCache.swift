@@ -8,6 +8,7 @@
 
 import Foundation
 
+@available(*, deprecated, message: "To be removed in integration PR")
 class InMemorySplitCache: NSObject, SplitCacheProtocol {
 
     private let queueName = "split.inmemcache-queue.splits"

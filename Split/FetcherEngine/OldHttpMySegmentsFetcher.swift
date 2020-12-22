@@ -8,6 +8,7 @@
 
 import Foundation
 
+@available(*, deprecated, message: "To be removed in integration PR")
 class OldHttpMySegmentsFetcher: NSObject, MySegmentsChangeFetcher {
 
     private let restClient: RestClientMySegments

@@ -6,6 +6,7 @@
 
 import Foundation
 
+@available(*, deprecated, message: "To be removed in integration PR")
 class  SplitChangeCache: SplitChangeCacheProtocol {
 
     private let queue = DispatchQueue(label: "io.Split.FetcherEngine.Cache.SplitChangeCache.SyncQueue")
