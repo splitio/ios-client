@@ -7,6 +7,7 @@
 
 import Foundation
 
+@available(*, deprecated, message: "To be removed in integration PR")
 protocol SplitChangeCacheProtocol {
 
     func addChange(splitChange: SplitChange) -> Bool

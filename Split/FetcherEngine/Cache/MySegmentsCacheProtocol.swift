@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+@available(*, deprecated, message: "To be removed in integration PR")
 protocol MySegmentsCacheProtocol {
     func setSegments(_ segments: [String])
     func removeSegments()
