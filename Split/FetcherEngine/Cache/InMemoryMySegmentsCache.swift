@@ -8,6 +8,7 @@
 
 import Foundation
 
+@available(*, deprecated, message: "To be removed in integration PR")
 class InMemoryMySegmentsCache: MySegmentsCacheProtocol {
     private let queueName = "split.inmemcache-queue.mysegments"
     private var queue: DispatchQueue

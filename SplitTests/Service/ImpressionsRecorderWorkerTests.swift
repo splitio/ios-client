@@ -15,9 +15,12 @@ class ImpressionsRecorderWorkerTests: XCTestCase {
     var worker: ImpressionsRecorderWorker!
     var impressionStorage: PersistentImpressionsStorageStub!
     var impressionsRecorder: HttpImpressionsRecorderStub!
-    var dummyImpressions = TestingHelper.createImpressions(count: 11)
+    var dummyImpressions: [Impression]!
+
 
     override func setUp() {
+        dummyImpressions = TestingHelper.createImpressions(count: 5)
+        dummyImpressions.append(contentsOf: TestingHelper.createImpressions(feature: "split1", count: 6))
         impressionStorage = PersistentImpressionsStorageStub()
         impressionsRecorder = HttpImpressionsRecorderStub()
         worker = ImpressionsRecorderWorker(impressionsStorage: impressionStorage,
@@ -33,7 +36,7 @@ class ImpressionsRecorderWorkerTests: XCTestCase {
         worker.flush()
 
         XCTAssertEqual(6, impressionsRecorder.executeCallCount)
-        XCTAssertEqual(11, impressionsRecorder.impressionsSent.count)
+        XCTAssertEqual(11, impressionsRecorder.impressionsSent.flatMap { $0.keyImpressions }.count)
         XCTAssertEqual(0, impressionStorage.storedImpressions.count)
     }
 
@@ -48,7 +51,7 @@ class ImpressionsRecorderWorkerTests: XCTestCase {
 
         XCTAssertEqual(6, impressionsRecorder.executeCallCount)
         XCTAssertEqual(2, impressionStorage.storedImpressions.count)
-        XCTAssertEqual(9, impressionsRecorder.impressionsSent.count)
+        XCTAssertEqual(9, impressionsRecorder.impressionsSent.flatMap { $0.keyImpressions }.count)
     }
 
     func testSendOneImpression() {

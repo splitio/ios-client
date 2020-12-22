@@ -28,8 +28,9 @@ struct TestingHelper {
 
     static func createImpressions(feature: String = "split", count: Int = 10) -> [Impression] {
         var impressions = [Impression]()
-        for _ in 0..<count {
+        for i in 0..<count {
             let impression = Impression()
+            impression.storageId = "\(feature)_impression\(i)"
             impression.feature = feature
             impression.keyName = "key1"
             impression.treatment = "t1"

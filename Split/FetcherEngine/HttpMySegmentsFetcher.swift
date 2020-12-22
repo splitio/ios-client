@@ -1,5 +1,5 @@
 //
-//  NewHttpMySegmentsFetcher.swift
+//  HttpMySegmentsFetcher.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 02-Dic-2020
