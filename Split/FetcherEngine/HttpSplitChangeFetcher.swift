@@ -8,12 +8,14 @@
 
 import Foundation
 
+@available(*, deprecated, message: "To be removed in integration PR")
 public enum FecthingPolicy {
     case cacheOnly
     case networkAndCache
     case network
 }
 
+@available(*, deprecated, message: "To be removed in integration PR")
 class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
 
     private let restClient: RestClientSplitChanges

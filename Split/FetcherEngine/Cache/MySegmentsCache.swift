@@ -14,7 +14,7 @@ import Foundation
 /// from the server and it is saved to disk when application goes to background.
 /// In order to separate segments from different matching keys
 /// there is one file per each one of them.
-
+@available(*, deprecated, message: "To be removed in integration PR")
 class MySegmentsCache: MySegmentsCacheProtocol {
 
     private struct MySegmentsFile: Codable {

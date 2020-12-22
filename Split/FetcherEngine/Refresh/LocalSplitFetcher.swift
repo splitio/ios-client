@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+@available(*, deprecated, message: "Storage revamp. Check localhost on integration")
 class LocalSplitFetcher: SplitFetcher {
 
     private let splitCache: SplitCacheProtocol

@@ -8,6 +8,7 @@
 
 import Foundation
 
+@available(*, deprecated, message: "To be removed in integration PR")
 protocol SplitCacheProtocol {
     func addSplit(splitName: String, split: Split)
     func setChangeNumber(_ changeNumber: Int64)

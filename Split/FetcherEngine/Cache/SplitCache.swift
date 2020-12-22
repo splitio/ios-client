@@ -14,6 +14,7 @@ import Foundation
 /// In memory splits are updated each time new information is retrieved
 /// from the server and it is saved to disk when application goes to background.
 
+@available(*, deprecated, message: "To be removed in integration PR")
 class SplitCache: SplitCacheProtocol {
 
     struct SplitsFile: Codable {

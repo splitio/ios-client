@@ -1,10 +1,8 @@
 //
 //  HttpSplitFetcher.swift
-//  Pods
+//  Split
 //
-//  Created by Brian Sztamfater on 19/9/17.
-//
-//
+//  Created by Javier Avrudsky on 02-Dic-2020
 
 import Foundation
 

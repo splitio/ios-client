@@ -8,6 +8,7 @@
 
 import Foundation
 
+@available(*, deprecated, message: "To be removed in integration PR")
 protocol SplitChangeFetcher {
     func fetch(since: Int64, policy: FecthingPolicy, clearCache: Bool) throws -> SplitChange?
 }
