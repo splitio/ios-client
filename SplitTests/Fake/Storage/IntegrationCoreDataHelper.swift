@@ -12,7 +12,7 @@ import CoreData
 
 class IntegrationCoreDataHelper  {
 
-    static func get(databaseName: String) -> CoreDataHelper {
+    static func get(databaseName: String, dispatchQueue: DispatchQueue) -> CoreDataHelper {
         let sempaphore = DispatchSemaphore(value: 0)
         guard let modelUrl = Bundle(for: CoreDataHelper.self).url(forResource: "split_cache",
                                                                                           withExtension: "momd") else {
@@ -30,8 +30,12 @@ class IntegrationCoreDataHelper  {
 
         let persistenceCoordinator = NSPersistentStoreCoordinator(managedObjectModel: modelFile)
 
-        let managedObjContext = NSManagedObjectContext(
-            concurrencyType: NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType)
+        var ctx: NSManagedObjectContext?
+        dispatchQueue.sync {
+            ctx = NSManagedObjectContext(
+                concurrencyType: NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType)
+        }
+        let managedObjContext = ctx!
         managedObjContext.persistentStoreCoordinator = persistenceCoordinator
 
         guard let docURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {

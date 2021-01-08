@@ -43,7 +43,7 @@ class SplitChangeFetcherTests: XCTestCase {
         }
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
-            XCTAssertTrue(response.splits!.count > 0, "Split count should be greater than 0")
+            XCTAssertTrue(response.splits.count > 0, "Split count should be greater than 0")
         }
     }
 
@@ -61,8 +61,8 @@ class SplitChangeFetcherTests: XCTestCase {
 
         XCTAssertTrue(response != nil, "Response should not be nil")
         if let response = response {
-            XCTAssertEqual(response.splits!.count, 1, "Splits count should be 1")
-            let split = response.splits![0];
+            XCTAssertEqual(response.splits.count, 1, "Splits count should be 1")
+            let split = response.splits[0];
             XCTAssertEqual(split.name, "FACUNDO_TEST", "Split name value")
             XCTAssertFalse(split.killed!, "Split killed value should be false")
             XCTAssertEqual(split.status, .active, "Split status should be 'Active'")
@@ -99,7 +99,7 @@ class SplitChangeFetcherTests: XCTestCase {
         var change: SplitChange?
         if let content = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json") {
             change = try? Json.encodeFrom(json: content, to: SplitChange.self)
-            change?.since = change?.till
+            change?.since = change?.till ?? -1
         }
         return change
     }

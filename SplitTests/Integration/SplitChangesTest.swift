@@ -170,8 +170,8 @@ class SplitChangesTest: XCTestCase {
                 c.till = prevChangeNumber  + kChangeNbInterval
                 c.since = c.till
             }
-            prevChangeNumber = c.till!
-            let split = c.splits![0]
+            prevChangeNumber = c.till
+            let split = c.splits[0]
             let even = ((i + 2) % 2 == 0)
             split.changeNumber = prevChangeNumber
             split.conditions![0].partitions![0].treatment = "on_\(i)"

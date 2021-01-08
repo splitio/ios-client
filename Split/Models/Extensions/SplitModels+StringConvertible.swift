@@ -247,26 +247,14 @@ extension Split {
 }
 
 extension SplitChange {
-  override public var debugDescription: String {
-    var output: String = "SplitChange {\n"
-    if let splits = splits {
-      output+="splits = \(splits) \n"
-    } else {
-      output+="splits = nil\n"
+    override public var debugDescription: String {
+        var output: String = "SplitChange {\n"
+        output+="splits = \(splits) \n"
+        output+="since = \(since) \n"
+        output+="till = \(till) \n"
+        output+="}"
+        return output
     }
-    if let since = since {
-      output+="since = \(since) \n"
-    } else {
-      output+="since = nil\n"
-    }
-    if let till = till {
-      output+="till = \(till) \n"
-    } else {
-      output+="till = nil\n"
-    }
-    output+="}"
-    return output
-  }
 }
 
 extension Treatment {

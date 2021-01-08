@@ -19,13 +19,14 @@ class LocalhostSplitClientTests: XCTestCase {
         eventsManager = SplitEventsManagerMock()
         let fileName = "localhost.splits"
         let storage = FileStorageStub()
-        var config = LocalhostSplitFetcherConfig()
-        let splitCache = InMemorySplitCache()
+        var config = YamlSplitStorageConfig()
         config.refreshInterval = 0
-        let fetcher = LocalhostSplitFetcher(fileStorage: storage, splitCache: splitCache, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
-        fetcher.forceRefresh()
+        let splitsStorage = YamlSplitsStorage(fileStorage: storage, config: config,
+                                                      eventsManager: eventsManager, splitsFileName: fileName,
+                                                      bundle: Bundle(for: type(of: self)))
+        splitsStorage.loadLocal()
         let storageContainer = SplitStorageContainer(fileStorage: storage,
-                                                     splitsCache: splitCache,
+                                                     splitsStorage: splitsStorage,
                                                      mySegmentsCache: InMemoryMySegmentsCache(segments: Set()))
         client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), storageContainer: storageContainer)
     }

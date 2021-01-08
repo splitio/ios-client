@@ -12,7 +12,7 @@ struct SplitApiFacade {
     static func builder() -> SplitApiFacadeBuilder {
         return SplitApiFacadeBuilder()
     }
-    let splitsFetcher: SplitChangeFetcher
+    //let splitsFetcher: SplitChangeFetcher
     let impressionsManager: ImpressionsManager
     let trackManager: TrackManager
     let splitsSyncWorker: RetryableSyncWorker
@@ -92,21 +92,32 @@ class SplitApiFacadeBuilder {
                 fatalError("Some parameter is null when creating Split Api Facade")
         }
 
-        let splitsChangeFetcher: SplitChangeFetcher
-            = HttpSplitChangeFetcher(restClient: restClient, splitCache: storageContainer.splitsCache)
+        let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
+                                                    metricsManager: DefaultMetricsManager.shared)
 
         let mySegmentsFetcher: MySegmentsChangeFetcher
             = OldHttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: storageContainer.mySegmentsCache)
 
         let backoffBase =  splitConfig.generalRetryBackoffBase
+        let splitChangeProcessor = DefaultSplitChangeProcessor()
 
         let splitsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
-        let splitsSyncWorker = RetryableSplitsSyncWorker(splitChangeFetcher: splitsChangeFetcher,
-                                                         splitCache: storageContainer.splitsCache,
+        let splitsSyncWorker = RevampRetryableSplitsSyncWorker(splitFetcher: splitsFetcher,
+                                                               splitsStorage: storageContainer.splitsStorage,
+                                                               splitChangeProcessor: splitChangeProcessor,
                                                          cacheExpiration: splitConfig.cacheExpirationInSeconds,
                                                          defaultQueryString: splitsQueryString,
                                                          eventsManager: eventsManager,
                                                          reconnectBackoffCounter: splitsBackoffCounter)
+
+
+//        splitFetcher: HttpSplitFetcher,
+//             splitsStorage: SplitsStorage,
+//             splitChangeProcessor: SplitChangeProcessor,
+//             cacheExpiration: Int,
+//             defaultQueryString: String,
+//             eventsManager: SplitEventsManager,
+//             reconnectBackoffCounter: ReconnectBackoffCounter
 
         let mySegmentsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
         let mySegmentsWorker = RetryableMySegmentsSyncWorker(matchingKey: userKey,
@@ -115,8 +126,9 @@ class SplitApiFacadeBuilder {
                                                              eventsManager: eventsManager,
                                                              reconnectBackoffCounter: mySegmentsBackoffCounter)
 
-        let periodicSplitsSyncWorker = PeriodicSplitsSyncWorker(
-            splitChangeFetcher: splitsChangeFetcher, splitCache: storageContainer.splitsCache,
+        let periodicSplitsSyncWorker = RevampPeriodicSplitsSyncWorker(
+            splitFetcher: splitsFetcher, splitsStorage: storageContainer.splitsStorage,
+            splitChangeProcessor: splitChangeProcessor,
             timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate), eventsManager: eventsManager)
 
         let periodicMySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(
@@ -124,7 +136,8 @@ class SplitApiFacadeBuilder {
             timer: DefaultPeriodicTimer(interval: splitConfig.segmentsRefreshRate), eventsManager: eventsManager)
 
         return SplitApiFacade(
-            splitsFetcher: splitsChangeFetcher, impressionsManager: impressionsManager,
+            //splitsFetcher: splitsChangeFetcher,
+            impressionsManager: impressionsManager,
             trackManager: trackManager, splitsSyncWorker: splitsSyncWorker, mySegmentsSyncWorker: mySegmentsWorker,
             periodicSplitsSyncWorker: periodicSplitsSyncWorker,
             periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker,

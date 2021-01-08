@@ -36,26 +36,23 @@ class HttpSplitFetcherTests: XCTestCase {
         XCTAssertFalse(metricsManager.timeCalled)
     }
     
-    func testSuccessFulFetch() throws {
+    func testSuccessFullFetch() throws {
         restClient.isServerAvailable = true
         restClient.update(changes: [newChange(since: 1, till: 2), newChange(since: 2, till: 2)])
         
         let c = try fetcher.execute(since: 1)
         
-        XCTAssertEqual(2, c?.since)
-        XCTAssertEqual(2, c?.till)
-        XCTAssertEqual(0, c?.splits?.count)
+        XCTAssertEqual(1, c.since)
+        XCTAssertEqual(2, c.till)
+        XCTAssertEqual(0, c.splits.count)
         XCTAssertTrue(metricsManager.countCalled)
         XCTAssertTrue(metricsManager.timeCalled)
     }
     
     func newChange(since: Int64, till: Int64, splits: [Split] = []) -> SplitChange {
-        let change = SplitChange()
-        change.splits = []
-        change.since = since
-        change.till = till
-        return change
+        return SplitChange(splits: [], since: since, till: till)
     }
+
     override func tearDown() {
     }
 }

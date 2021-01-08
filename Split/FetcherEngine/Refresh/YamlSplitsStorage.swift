@@ -1,31 +1,36 @@
 //
-//  LocalhostSplitFetcher.swift
+//  YamlSplitsStorage.swift
 //  Split
 //
-//  Created by Javier L. Avrudsky on 14/02/2019.
-//  Copyright © 2019 Split. All rights reserved.
+//  Created by Javier Avrudsky on 05/01/2021.
+//  Copyright © 2021 Split. All rights reserved.
 //
 
 import Foundation
 
-struct LocalhostSplitFetcherConfig {
+struct YamlSplitStorageConfig {
     var refreshInterval: Int = 10
 }
 
-class LocalhostSplitFetcher: RefreshableSplitFetcher {
+class YamlSplitsStorage: SplitsStorage {
+
+    var changeNumber: Int64
+
+    var updateTimestamp: Int64
+
+    var splitsFilterQueryString: String
 
     private let refreshInterval: Int
     private let eventsManager: SplitEventsManager
     private let fileStorage: FileStorageProtocol
-    private let splitCache: SplitCacheProtocol
     private var taskExecutor: PeriodicTaskExecutor?
     private var fileParser: LocalhostSplitsParser!
     private let supportedExtensions = ["yaml", "yml", "splits"]
     private let fileName: String
+    private let inMemorySplits = SyncDictionarySingleWrapper<String, Split>()
 
     init(fileStorage: FileStorageProtocol,
-         splitCache: SplitCacheProtocol,
-         config: LocalhostSplitFetcherConfig = LocalhostSplitFetcherConfig(),
+         config: YamlSplitStorageConfig = YamlSplitStorageConfig(),
          eventsManager: SplitEventsManager,
          splitsFileName: String, bundle: Bundle) {
 
@@ -33,7 +38,9 @@ class LocalhostSplitFetcher: RefreshableSplitFetcher {
         self.fileStorage = fileStorage
         self.refreshInterval = config.refreshInterval
         self.eventsManager = eventsManager
-        self.splitCache = splitCache
+        self.changeNumber = -1
+        self.updateTimestamp = 1
+        self.splitsFilterQueryString = ""
 
         let fileName = splitsFileName
         guard let fileInfo = splitFileName(fileName) else {
@@ -75,16 +82,38 @@ class LocalhostSplitFetcher: RefreshableSplitFetcher {
         }
     }
 
-    func forceRefresh() {
+    func loadLocal() {
         loadFile(name: fileName)
     }
 
-    func fetch(splitName: String) -> Split? {
-        return splitCache.getSplit(splitName: splitName)
+    func get(name: String) -> Split? {
+        inMemorySplits.value(forKey: name)
     }
 
-    func fetchAll() -> [Split]? {
-        return splitCache.getAllSplits()
+    func getMany(splits: [String]) -> [String : Split] {
+        let names = Set(splits)
+        return inMemorySplits.all.filter { return names.contains($0.key) }
+    }
+
+    func getAll() -> [String : Split] {
+        return inMemorySplits.all
+    }
+
+    func update(splitChange: ProcessedSplitChange) {
+    }
+
+    func update(filterQueryString: String) {
+    }
+
+    func updateWithoutChecks(split: Split) {
+    }
+
+    func isValidTrafficType(name: String) -> Bool {
+        return true
+    }
+
+    func clear() {
+        inMemorySplits.removeAll()
     }
 
     func start() {
@@ -104,8 +133,8 @@ class LocalhostSplitFetcher: RefreshableSplitFetcher {
             dispatchGroup: nil,
             config: config,
             triggerAction: {[weak self] in
-                if let strongSelf = self {
-                    strongSelf.loadFile(name: fileName)
+                if let self = self {
+                    self.loadFile(name: fileName)
                 }
             }
         )
@@ -113,17 +142,17 @@ class LocalhostSplitFetcher: RefreshableSplitFetcher {
 
     @discardableResult
     private func loadFile(name: String) -> Bool {
-        if let content = fileStorage.read(fileName: name), !content.isEmpty, let parser = self.fileParser {
-            let loadedSplits = parser.parseContent(content)
-            splitCache.clear()
-            for (splitName, split) in loadedSplits {
-                splitCache.addSplit(splitName: splitName, split: split)
-            }
-            if loadedSplits.count > 0 {
-                return true
-            }
+        inMemorySplits.removeAll()
+        guard let content = fileStorage.read(fileName: name), let parser = self.fileParser else {
+            return false
         }
-        return false
+        let loadedSplits = parser.parseContent(content)
+        if loadedSplits.count < 1 {
+            return false
+        }
+
+        inMemorySplits.setValues(loadedSplits)
+        return true
     }
 
     private func parser(for type: String) -> LocalhostSplitsParser {

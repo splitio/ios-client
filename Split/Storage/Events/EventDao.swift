@@ -18,13 +18,6 @@ protocol EventDao {
 
 class CoreDataEventDao: BaseCoreDataDao, EventDao {
 
-    let coreDataHelper: CoreDataHelper
-
-    init(coreDataHelper: CoreDataHelper) {
-        self.coreDataHelper = coreDataHelper
-        super.init()
-    }
-
     func insert(_ event: EventDTO) {
         executeAsync { [weak self] in
             guard let self = self else {
