@@ -16,13 +16,6 @@ protocol MySegmentsDao {
 
 class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
 
-    let coreDataHelper: CoreDataHelper
-
-    init(coreDataHelper: CoreDataHelper) {
-        self.coreDataHelper = coreDataHelper
-        super.init()
-    }
-
     func getBy(userKey: String) -> [String] {
         var mySegments = [String]()
         execute { [weak self] in

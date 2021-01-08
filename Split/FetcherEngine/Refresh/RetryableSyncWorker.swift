@@ -212,17 +212,25 @@ class RevampRetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                     clearCache = true
                 }
             }
-            clearCache = clearCache || defaultQueryString != splitsStorage.splitsFilterQueryString
-            if let splitChanges = try self.splitFetcher.execute(since: changeNumber) {
-                splitsStorage.update(splitChange: splitChangeProcessor.process(splitChanges))
+            var firstFetch = true
+            var nextSince = changeNumber
+            while true {
+                clearCache = (clearCache || defaultQueryString != splitsStorage.splitsFilterQueryString) && firstFetch
+                let splitChange = try self.splitFetcher.execute(since: nextSince)
+                let newSince = splitChange.since
+                let newTill = splitChange.till
                 if clearCache {
                     splitsStorage.clear()
                     splitsStorage.update(filterQueryString: defaultQueryString)
                 }
-                fireReadyIsNeeded(event: SplitInternalEvent.splitsAreReady)
-                resetBackoffCounter()
-                Logger.d(splitChanges.debugDescription)
-                return true
+                firstFetch = false
+                splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))
+                if newSince == newTill, newTill >= nextSince {
+                    fireReadyIsNeeded(event: SplitInternalEvent.splitsAreReady)
+                    resetBackoffCounter()
+                    return true
+                }
+                nextSince = newTill
             }
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
@@ -263,7 +271,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                                                     policy: .network,
                                                                     clearCache: false) {
 
-                if changeNumber <= splitChanges.till ?? -1 {
+                if changeNumber <= splitChanges.till {
                     resetBackoffCounter()
                     Logger.d(splitChanges.debugDescription)
                     return true
@@ -277,3 +285,51 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         return false
     }
 }
+
+class RevampRetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
+
+    private let splitsFetcher: HttpSplitFetcher
+    private let splitsStorage: SplitsStorage
+    private let splitChangeProcessor: SplitChangeProcessor
+    private let changeNumber: Int64
+
+    init(splitsFetcher: HttpSplitFetcher,
+         splitsStorage: SplitsStorage,
+         splitChangeProcessor: SplitChangeProcessor,
+         changeNumber: Int64,
+         reconnectBackoffCounter: ReconnectBackoffCounter) {
+
+        self.splitsFetcher = splitsFetcher
+        self.splitsStorage = splitsStorage
+        self.splitChangeProcessor = splitChangeProcessor
+        self.changeNumber = changeNumber
+        super.init(reconnectBackoffCounter: reconnectBackoffCounter)
+    }
+
+    override func fetchFromRemote() -> Bool {
+        do {
+            if changeNumber < splitsStorage.changeNumber {
+                resetBackoffCounter()
+                return true
+            }
+            var nextSince = changeNumber
+            while true {
+                let splitChange = try self.splitsFetcher.execute(since: nextSince)
+                let newSince = splitChange.since
+                let newTill = splitChange.till
+                splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))
+                if newSince == newTill, newTill >= nextSince {
+                    resetBackoffCounter()
+                    return true
+                }
+                nextSince = newTill
+            }
+        } catch let error {
+            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
+            Logger.e("Problem updating splits: %@", error.localizedDescription)
+        }
+        Logger.d("Split changes are not updated yet")
+        return false
+    }
+}
+

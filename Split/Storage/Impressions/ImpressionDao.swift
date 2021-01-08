@@ -18,13 +18,6 @@ protocol ImpressionDao {
 
 class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
 
-    let coreDataHelper: CoreDataHelper
-
-    init(coreDataHelper: CoreDataHelper) {
-        self.coreDataHelper = coreDataHelper
-        super.init()
-    }
-
     func insert(_ impression: Impression) {
         executeAsync { [weak self] in
             guard let self = self else {

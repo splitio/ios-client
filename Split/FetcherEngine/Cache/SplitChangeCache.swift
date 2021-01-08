@@ -23,10 +23,10 @@ class  SplitChangeCache: SplitChangeCacheProtocol {
         }
 
         queue.sync {
-            for split in splitChange.splits! {
+            for split in splitChange.splits {
                 _ = self.splitCache?.addSplit(splitName: split.name!, split: split)
             }
-            _ = self.splitCache?.setChangeNumber(splitChange.till!)
+            _ = self.splitCache?.setChangeNumber(splitChange.till)
             self.splitCache?.setTimestamp(Int(Date().timeIntervalSince1970))
         }
         return true
@@ -41,16 +41,16 @@ class  SplitChangeCache: SplitChangeCacheProtocol {
         var splitChange: SplitChange?
         queue.sync {
             let changeNumber = splitCache.getChangeNumber()
-            if changeNumber != -1 {
-                splitChange = SplitChange()
-                splitChange!.since = since
-                splitChange!.till = changeNumber
-                splitChange!.splits = []
-
-                if since == -1 || since < changeNumber {
-                    splitChange!.splits = splitCache.getAllSplits()
-                }
-            }
+//            if changeNumber != -1 {
+//                splitChange = SplitChange()
+//                splitChange!.since = since
+//                splitChange!.till = changeNumber
+//                splitChange!.splits = []
+//
+//                if since == -1 || since < changeNumber {
+//                    splitChange!.splits = splitCache.getAllSplits()
+//                }
+//            }
         }
         return splitChange
     }

@@ -24,8 +24,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitFetcher = HttpSplitFetcherStub()
         splitStorage = SplitsStorageStub()
         splitStorage.changeNumber = 100
-        let change = SplitChange()
-        change.since = splitStorage.changeNumber
+        let change = SplitChange(splits: [], since: splitStorage.changeNumber, till: splitStorage.changeNumber)
         splitChangeProcessor = SplitChangeProcessorStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
@@ -43,10 +42,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                            reconnectBackoffCounter: backoffCounter)
 
         var resultIsSuccess = false
-        let change = SplitChange()
-        change.splits = []
-        change.since = 100
-        change.till = 200
+        let change = SplitChange(splits: [], since: 200, till: 200)
         splitFetcher.splitChanges = [change]
         let exp = XCTestExpectation(description: "exp")
         splitsSyncWorker.completion = { success in
@@ -72,10 +68,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                            eventsManager: eventsManager,
                                                            reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange()
-        change.splits = []
-        change.since = 100
-        change.till = 200
+        let change = SplitChange(splits: [], since: 200, till: 200)
         splitFetcher.splitChanges = [nil, nil, change]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
@@ -101,10 +94,6 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                            eventsManager: eventsManager,
                                                            reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange()
-        change.splits = []
-        change.since = 100
-        change.till = 200
         splitFetcher.splitChanges = [nil]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
@@ -134,10 +123,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                            eventsManager: eventsManager,
                                                            reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange()
-        change.splits = []
-        change.since = 100
-        change.till = 200
+        let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Date().timeIntervalSince1970) - Int64(expiration * 2) // Expired cache
         splitFetcher.splitChanges = [change]
         var resultIsSuccess = false
@@ -167,10 +153,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                            eventsManager: eventsManager,
                                                            reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange()
-        change.splits = []
-        change.since = 100
-        change.till = 200
+        let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Date().timeIntervalSince1970) - Int64(expiration / 2) // Non Expired cache
         splitFetcher.splitChanges = [change]
         var resultIsSuccess = false
@@ -198,10 +181,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                            eventsManager: eventsManager,
                                                            reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange()
-        change.splits = []
-        change.since = 100
-        change.till = 200
+        let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Int(Date().timeIntervalSince1970) - expiration / 2) // Non Expired cache
         splitFetcher.splitChanges = [change]
         splitStorage.splitsFilterQueryString = "&q=2"
@@ -232,10 +212,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                            eventsManager: eventsManager,
                                                            reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange()
-        change.splits = []
-        change.since = 100
-        change.till = 200
+        let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Int(Date().timeIntervalSince1970) - expiration / 2) // Non Expired cache
         splitFetcher.splitChanges = [change]
         splitStorage.splitsFilterQueryString = "&q=1"
@@ -265,10 +242,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                            eventsManager: eventsManager,
                                                            reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange()
-        change.splits = []
-        change.since = 100
-        change.till = 200
+        let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.splitsFilterQueryString = ""
         splitStorage.updateTimestamp = Int64(Int(Date().timeIntervalSince1970) - expiration * 2) // Expired cache
         splitFetcher.splitChanges = [change]
