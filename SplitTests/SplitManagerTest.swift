@@ -15,15 +15,17 @@ class SplitManagerTest: XCTestCase {
     
     var loadedSplits: [Split]!
     var manager: SplitManager!
-    var cache: SplitCacheProtocol!
+    var splitsStorage: SplitsStorageStub!
     
     override func setUp() {
         let bundle = Bundle(for: type(of: self))
         let path = bundle.path(forResource: "splits", ofType: "json")!
         let json = try? Data(contentsOf: URL(fileURLWithPath: path)).stringRepresentation
         loadedSplits = try? JSON.encodeFrom(json: json!, to: [Split].self)
-        cache = SplitCacheStub(splits: loadedSplits!, changeNumber:1)
-        manager = DefaultSplitManager(splitCache: cache)
+        splitsStorage = SplitsStorageStub()
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: loadedSplits, archivedSplits: [],
+                                                               changeNumber: 1, updateTimestamp: 100))
+        manager = DefaultSplitManager(splitsStorage: splitsStorage)
     }
     
     override func tearDown() {
@@ -84,8 +86,8 @@ class SplitManagerTest: XCTestCase {
         let bundle = Bundle(for: type(of: self))
         let path = bundle.path(forResource: "split_sample_feature6", ofType: "json")!
         let newSplit = try! JSON(Data(contentsOf: URL(fileURLWithPath: path))).decode(Split.self)!
-        _ = cache.addSplit(splitName: newSplit.name!, split: newSplit)
-        _ = cache.setChangeNumber(2)
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [newSplit], archivedSplits: [],
+                                                               changeNumber: 2, updateTimestamp: 200))
         let splits = manager.splits
         let names = manager.splitNames
         XCTAssertEqual(splits.count, 7, "Added one split count")

@@ -55,10 +55,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
                                                          changeNumber: 100,
                                                          reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange()
-        change.splits = []
-        change.since = 100
-        change.till = 200
+        let change = SplitChange(splits: [], since: 100, till: 200)
         splitChangeFetcher.changes = [nil, nil, change]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
@@ -81,10 +78,6 @@ class SplitsUpdateWorkerTest: XCTestCase {
                                                          changeNumber: 100,
                                                          reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange()
-        change.splits = []
-        change.since = 100
-        change.till = 200
         splitChangeFetcher.changes = [nil]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
@@ -110,10 +103,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
                                                          changeNumber: 100,
                                                          reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange()
-        change.splits = []
-        change.since = 100
-        change.till = 200
+        let change = SplitChange(splits: [], since: 100, till: 200)
         splitCache.setChangeNumber(1000)
         splitChangeFetcher.changes = [change]
         var resultIsSuccess = false

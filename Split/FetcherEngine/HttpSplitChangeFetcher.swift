@@ -20,14 +20,12 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
 
     private let restClient: RestClientSplitChanges
     private let splitChangeCache: SplitChangeCache
-    private let splitChangeValidator: SplitChangeValidator
     private let splitCache: SplitCacheProtocol
 
     init(restClient: RestClientSplitChanges, splitCache: SplitCacheProtocol) {
         self.restClient = restClient
         self.splitCache = splitCache
         self.splitChangeCache = SplitChangeCache(splitCache: splitCache)
-        self.splitChangeValidator = DefaultSplitChangeValidator()
     }
 
     func fetch(since: Int64, policy: FecthingPolicy, clearCache: Bool) throws -> SplitChange? {
@@ -44,10 +42,17 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
             var nextSince = since
             var cacheCleared = false
             while true {
-                let splitChange: SplitChange? = doFetch(since: nextSince)
-                guard let change = splitChange, let newSince = change.since, let newTill = change.till else {
+//                let splitChange: SplitChange? = doFetch(since: nextSince)
+////                guard let change = splitChange, let newSince = change.since, let newTill = change.till else {
+////                    throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
+////                }
+
+                guard let change = doFetch(since: nextSince) else {
                     throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
                 }
+
+                let newSince = change.since
+                let newTill = change.till
 
                 if clearCache && !cacheCleared {
                     splitCache.clear()
@@ -78,8 +83,7 @@ class HttpSplitChangeFetcher: NSObject, SplitChangeFetcher {
         semaphore.wait()
 
         do {
-            if let change: SplitChange = try requestResult?.unwrap(),
-                splitChangeValidator.validate(change) == nil {
+            if let change: SplitChange = try requestResult?.unwrap(){
                 return change
             }
         } catch {

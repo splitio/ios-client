@@ -24,9 +24,11 @@ protocol CoreDataDao {
 /// Base clase for CoreDataDao to enforce running all
 /// database operation in the same serial queue to avoid threading issues
 class BaseCoreDataDao {
-    var dbDispatchQueue: DispatchQueue
-    init() {
-        dbDispatchQueue = DispatchQueue(label: "SplitCoreDataCache", target: DispatchQueue.global())
+    let coreDataHelper: CoreDataHelper
+    let dbDispatchQueue: DispatchQueue
+    init(coreDataHelper: CoreDataHelper, dispatchQueue: DispatchQueue) {
+        self.coreDataHelper = coreDataHelper
+        self.dbDispatchQueue = dispatchQueue
     }
 
     func execute(_ operation: @escaping () -> Void) {
@@ -51,13 +53,14 @@ protocol SplitDatabase {
 }
 
 class CoreDataSplitDatabase: SplitDatabase {
+    private let dispatchQueue = DispatchQueue(label: "SplitCoreDataCache", target: DispatchQueue.global())
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao
     var eventDao: EventDao
     var impressionDao: ImpressionDao
     var generalInfoDao: GeneralInfoDao
 
-    private let kDataModelName = "SplitCache"
+    private let kDataModelName = "split_cache"
     private let kDataModelExtentsion = "momd"
     private let kDatabaseExtension = "sqlite"
     private let managedObjContext: NSManagedObjectContext
@@ -65,7 +68,8 @@ class CoreDataSplitDatabase: SplitDatabase {
 
     init(databaseName: String, completionClosure: @escaping () -> Void) {
 
-        guard let modelUrl = Bundle.main.url(forResource: kDataModelName, withExtension: kDataModelExtentsion) else {
+        let bundle = Bundle(for: type(of: self))
+        guard let modelUrl = bundle.url(forResource: kDataModelName, withExtension: kDataModelExtentsion) else {
             fatalError("Error loading model from bundle")
         }
 
@@ -74,14 +78,25 @@ class CoreDataSplitDatabase: SplitDatabase {
         }
 
         let persistenceCoordinator = NSPersistentStoreCoordinator(managedObjectModel: modelFile)
+        var createdManagedObjContext: NSManagedObjectContext?
+        // Managed object context should be created in some queue that operations run
+        dispatchQueue.sync {
+            createdManagedObjContext = NSManagedObjectContext(
+                concurrencyType: NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType)
+        }
 
-        managedObjContext = NSManagedObjectContext(
-            concurrencyType: NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType)
+        if let context = createdManagedObjContext {
+            managedObjContext = context
+        } else {
+            fatalError("Could not create context for cache database")
+        }
+
         managedObjContext.persistentStoreCoordinator = persistenceCoordinator
 
         guard let docURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {
             fatalError("Unable to resolve document directory")
         }
+
         let databaseUrl = docURL.appendingPathComponent("\(databaseName).\(self.kDatabaseExtension)")
         do {
             try persistenceCoordinator.addPersistentStore(ofType: NSSQLiteStoreType,
@@ -90,13 +105,13 @@ class CoreDataSplitDatabase: SplitDatabase {
 
             coreDataHelper = CoreDataHelper(managedObjectContext: managedObjContext,
                                             persistentCoordinator: persistenceCoordinator)
-            splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper)
-            eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper)
-            impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper)
-            generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
-            mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper)
+            splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper, dispatchQueue: dispatchQueue)
+            eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper, dispatchQueue: dispatchQueue)
+            impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper, dispatchQueue: dispatchQueue)
+            generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper, dispatchQueue: dispatchQueue)
+            mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper, dispatchQueue: dispatchQueue)
 
-            DispatchQueue.main.sync(execute: completionClosure)
+            DispatchQueue.global().async(execute: completionClosure)
         } catch {
             fatalError("Error migrating store: \(error)")
         }

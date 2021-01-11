@@ -16,7 +16,10 @@ class MySegmentsDaoTests: XCTestCase {
     var mySegmentsDao: MySegmentsDao!
     
     override func setUp() {
-        mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test"))
+        let queue = DispatchQueue(label: "my segments dao test")
+        mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
+                                                                                  dispatchQueue: queue),
+                                    dispatchQueue: queue)
     }
     
     func testUpdateGet() {

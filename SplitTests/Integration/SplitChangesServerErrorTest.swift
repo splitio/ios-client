@@ -137,13 +137,13 @@ class SplitChangesServerErrorTest: XCTestCase {
         
         for i in 0..<2 {
             let c = loadSplitsChangeFile()!
-            var prevChangeNumber = c.since ?? 0
+            var prevChangeNumber = c.since
             c.since = prevChangeNumber + kChangeNbInterval
-            c.till = c.since!
+            c.till = c.since
             
-            prevChangeNumber = c.till!
+            prevChangeNumber = c.till
             lastChangeNumber = prevChangeNumber
-            let split = c.splits![0]
+            let split = c.splits[0]
             let even = ((i + 2) % 2 == 0)
             split.changeNumber = prevChangeNumber
             split.conditions![0].partitions![0].treatment = "on_\(i)"

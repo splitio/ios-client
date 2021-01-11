@@ -51,4 +51,12 @@ struct TestingHelper {
         }
         return impressions
     }
+
+    static func createSplit(name: String, trafficType: String = "t1", status: Status = .active) -> Split {
+        let split = Split()
+        split.name = name
+        split.trafficTypeName = trafficType
+        split.status = status
+        return split
+    }
 }

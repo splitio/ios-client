@@ -18,12 +18,6 @@ protocol SplitDao {
 }
 
 class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
-    let coreDataHelper: CoreDataHelper
-
-    init(coreDataHelper: CoreDataHelper) {
-        self.coreDataHelper = coreDataHelper
-        super.init()
-    }
 
     func insertOrUpdate(splits: [Split]) {
         executeAsync { [weak self] in

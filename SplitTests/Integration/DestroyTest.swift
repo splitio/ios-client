@@ -128,7 +128,7 @@ class DestroyTests: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
         
-        wait(for: [sdkReadyExpectation], timeout: 400000.0)
+        wait(for: [sdkReadyExpectation], timeout: 10)
 
         let treatmentBeforeDestroy = client?.getTreatment(splitName)
         let treatmentWithConfigBeforeDestroy = client?.getTreatmentWithConfig(splitName)

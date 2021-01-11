@@ -18,7 +18,10 @@ class SplitDaoTests: XCTestCase {
     // TODO: Research delete test in inMemoryDb
     
     override func setUp() {
-        splitDao = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test"))
+        let queue = DispatchQueue(label: "split dao test")
+        splitDao = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
+                                                                                  dispatchQueue: queue),
+                                    dispatchQueue: queue)
         let splits = createSplits()
         splitDao.insertOrUpdate(splits: splits)
     }

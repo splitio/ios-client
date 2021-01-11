@@ -36,7 +36,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     init(apiKey: String, key: Key, config: SplitClientConfig, httpClient: HttpClient?,
-         reachabilityChecker: HostReachabilityChecker?) throws {
+         reachabilityChecker: HostReachabilityChecker?,
+         testDatabase: SplitDatabase? = nil) throws {
         super.init()
 
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? config.defaultDataFolder
@@ -47,9 +48,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         config.apiKey = apiKey
         let storageContainer = buildStorageContainer(userKey: key.matchingKey,
-                                                     dataFolderName: dataFolderName)
+                                                     dataFolderName: dataFolderName,
+                                                     testDatabase: testDatabase)
 
-        let manager = DefaultSplitManager(splitCache: storageContainer.splitsCache)
+        let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)
         defaultManager = manager
 
         let eventsManager = DefaultSplitEventsManager(config: config)
@@ -82,10 +84,11 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         }
 
         let apiFacade = apiFacadeBuilder.build()
+        let splitFetcher = DefaultHttpSplitFetcher(restClient: restClient, metricsManager: DefaultMetricsManager.shared)
 
         let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
             .setRestClient(restClient).setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade)
-            .setSplitConfig(config).build()
+            .setSplitConfig(config).setSplitFetcher(splitFetcher).build()
 
         defaultClient = DefaultSplitClient(config: config, key: key, apiFacade: apiFacade,
                                            storageContainer: storageContainer, eventsManager: eventsManager) {
@@ -122,12 +125,31 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     private func buildStorageContainer(userKey: String,
-                                       dataFolderName: String) -> SplitStorageContainer {
+                                       dataFolderName: String,
+                                       testDatabase: SplitDatabase?) -> SplitStorageContainer {
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
+
+        var database: SplitDatabase?
+        if testDatabase == nil {
+            let semaphore = DispatchSemaphore(value: 0)
+            database = CoreDataSplitDatabase(databaseName: dataFolderName) {
+                semaphore.signal()
+            }
+            semaphore.wait()
+
+        } else {
+            database = testDatabase
+        }
+
+        guard let splitDatabase = database else {
+            fatalError("Couldn't create split database")
+        }
+
+        let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
+        let splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentSplitsStorage)
         let mySegmentsCache = MySegmentsCache(matchingKey: userKey, fileStorage: fileStorage)
-        let splitsCache = SplitCache(fileStorage: fileStorage, notificationHelper: DefaultNotificationHelper.instance)
         return SplitStorageContainer(fileStorage: fileStorage,
-                                     splitsCache: splitsCache,
+                                     splitsStorage: splitsStorage,
                                      mySegmentsCache: mySegmentsCache)
     }
 }

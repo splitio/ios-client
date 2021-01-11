@@ -30,10 +30,7 @@ class SplitChangeFetcherStub: SplitChangeFetcher {
             }
             change = changes[changeResponseIndex]
         } else {
-            change = SplitChange()
-            change?.splits = [Split]()
-            change?.since = since + 100
-            change?.till = since + 200
+            change = SplitChange(splits: [], since: since + 100, till: since + 200)
         }
         if let exp = fetchExpectation {
             exp.fulfill()

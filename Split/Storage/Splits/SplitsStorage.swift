@@ -42,7 +42,7 @@ class DefaultSplitsStorage: SplitsStorage {
     func loadLocal() {
         let snapshot = persistentStorage.getSplitsSnapshot()
         snapshot.splits.forEach { split in
-            guard let splitName = split.name else {
+            guard let splitName = split.name?.lowercased() else {
                 return
             }
             inMemorySplits.setValue(split, forKey: splitName)
@@ -53,11 +53,11 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func get(name: String) -> Split? {
-        return inMemorySplits.value(forKey: name)
+        return inMemorySplits.value(forKey: name.lowercased())
     }
 
     func getMany(splits: [String]) -> [String: Split] {
-        let filter = Set(splits)
+        let filter = Set(splits.compactMap { $0.lowercased() })
         return inMemorySplits.all.filter { splitName, _ in return filter.contains(splitName) }
     }
 
@@ -79,7 +79,7 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func updateWithoutChecks(split: Split) {
-        if let splitName = split.name {
+        if let splitName = split.name?.lowercased() {
             inMemorySplits.setValue(split, forKey: splitName)
             persistentStorage.update(split: split)
         }
@@ -115,7 +115,7 @@ class DefaultSplitsStorage: SplitsStorage {
 
     private func processUpdated(splits: [Split], active: Bool) {
         for split in splits {
-            guard let splitName = split.name  else {
+            guard let splitName = split.name?.lowercased()  else {
                 Logger.e("Invalid split name received while updating splits")
                 continue
             }
