@@ -19,17 +19,21 @@ class SyncUpdateWorker: XCTestCase {
     var splitKillWorker: SplitKillWorker!
 
     var synchronizer: SynchronizerStub!
-    var splitCache: SplitCacheStub!
+    var splitsStorage: SplitsStorageStub!
     var mySegmentsCache: MySegmentsCacheStub!
 
     override func setUp() {
         synchronizer = SynchronizerStub()
-        splitCache = SplitCacheStub(splits: [Split](), changeNumber: 100)
+        splitsStorage = SplitsStorageStub()
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "split1")],
+                                                               archivedSplits: [],
+                                                               changeNumber: 100,
+                                                               updateTimestamp: 100))
         mySegmentsCache = MySegmentsCacheStub()
 
         splitsUpdateWorker = SplitsUpdateWorker(synchronizer: synchronizer)
         mySegmentsUpdateWorker =  MySegmentsUpdateWorker(synchronizer: synchronizer, mySegmentsCache: mySegmentsCache)
-        splitKillWorker = SplitKillWorker(synchronizer: synchronizer, splitCache: splitCache)
+        splitKillWorker = SplitKillWorker(synchronizer: synchronizer, splitsStorage: splitsStorage)
     }
 
     func testSplitUpdateWorker() throws {
@@ -51,16 +55,16 @@ class SyncUpdateWorker: XCTestCase {
         let exp = XCTestExpectation(description: "exp")
         let exp1 = XCTestExpectation(description: "exp1")
         synchronizer.syncSplitsChangeNumberExp = exp
-        splitCache.killExpectation = exp1
+        splitsStorage.updatedWithoutChecksExp = exp1
 
 
         try splitKillWorker.process(notification: notification)
 
         wait(for: [exp, exp1], timeout: 3)
 
-        XCTAssertEqual("split1", splitCache.killedSplit?.name)
-        XCTAssertEqual("off", splitCache.killedSplit?.defaultTreatment)
-        XCTAssertEqual(100, splitCache.killedSplit?.changeNumber)
+        XCTAssertEqual("split1", splitsStorage.updatedWithoutChecksSplit?.name)
+        XCTAssertEqual("off", splitsStorage.updatedWithoutChecksSplit?.defaultTreatment)
+        XCTAssertEqual(100, splitsStorage.updatedWithoutChecksSplit?.changeNumber)
         XCTAssertTrue(synchronizer.synchronizeSplitsChangeNumberCalled)
     }
 

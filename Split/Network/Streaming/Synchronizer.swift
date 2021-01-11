@@ -27,7 +27,7 @@ protocol Synchronizer {
 
 struct SplitStorageContainer {
     let fileStorage: FileStorageProtocol
-    let splitsCache: SplitCacheProtocol
+    let splitsStorage: SplitsStorage
     let mySegmentsCache: MySegmentsCacheProtocol
 }
 
@@ -42,7 +42,7 @@ class DefaultSynchronizer: Synchronizer {
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer,
-         syncWorkerFactory: SyncWorkerFactory = DefaultSyncWorkerFactory(),
+         syncWorkerFactory: SyncWorkerFactory,
          syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
         = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()) {
         self.splitConfig = splitConfig
@@ -63,17 +63,14 @@ class DefaultSynchronizer: Synchronizer {
 
     func synchronizeSplits(changeNumber: Int64) {
 
-        if changeNumber <= splitStorageContainer.splitsCache.getChangeNumber() {
+        if changeNumber <= splitStorageContainer.splitsStorage.changeNumber {
             return
         }
 
         if syncTaskByChangeNumberCatalog.value(forKey: changeNumber) == nil {
             let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
-            var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(
-                splitChangeFetcher: splitApiFacade.splitsFetcher,
-                splitCache: splitStorageContainer.splitsCache,
-                changeNumber: changeNumber,
-                reconnectBackoffCounter: reconnectBackoff)
+            var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(changeNumber: changeNumber,
+                                                                             reconnectBackoffCounter: reconnectBackoff)
             syncTaskByChangeNumberCatalog.setValue(worker, forKey: changeNumber)
             worker.start()
             worker.completion = {[weak self] _ in

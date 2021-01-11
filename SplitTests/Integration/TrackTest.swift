@@ -181,7 +181,7 @@ class TrackTest: XCTestCase {
         var changes = [SplitChange]()
 
         let c = loadSplitsChangeFile()!
-        let split = c.splits![0]
+        let split = c.splits[0]
         let inSegmentOneCondition = inSegmentCondition(name: "segment1")
         inSegmentOneCondition.partitions![0].treatment = "on_s1"
         inSegmentOneCondition.partitions![0].size = 100

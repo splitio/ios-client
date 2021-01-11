@@ -187,9 +187,19 @@ class RevampPeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         }
         do {
             Logger.d("Fetching splits")
-            if let change = try self.splitFetcher.execute(since: splitsStorage.changeNumber) {
-                splitsStorage.update(splitChange: splitChangeProcessor.process(change))
+            var nextSince = splitsStorage.changeNumber
+            var exit = false
+            while !exit {
+                let splitChange = try self.splitFetcher.execute(since: nextSince)
+                let newSince = splitChange.since
+                let newTill = splitChange.till
+                splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))
+                if newSince == newTill, newTill >= nextSince {
+                    exit = true
+                }
+                nextSince = newTill
             }
+
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
             Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)

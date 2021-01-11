@@ -14,10 +14,11 @@ class SplitValidatorTests: XCTestCase {
     var validator: SplitValidator!
     
     override func setUp() {
-        
-        let splitCache: SplitCacheProtocol = InMemorySplitCache()
-        splitCache.addSplit(splitName: "split1", split: createSplit(name: "split1"))
-        validator = DefaultSplitValidator(splitCache: splitCache)
+        let splitsStorage = SplitsStorageStub()
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [createSplit(name: "split1")],
+                                                               archivedSplits: [],
+                                                               changeNumber: 100, updateTimestamp: 100))
+        validator = DefaultSplitValidator(splitsStorage: splitsStorage)
     }
     
     override func tearDown() {

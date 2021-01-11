@@ -14,7 +14,7 @@ class TreatmentManagerTest: XCTestCase {
     
     var validationLogger: ValidationMessageLogger!
     var impressionsManager: ImpressionsManager!
-    var splitCache: SplitCacheProtocol!
+    var splitsStorage: SplitsStorage!
     var mySegmentsCache: MySegmentsCacheProtocol!
     var storageContainer: SplitStorageContainer!
     var client: InternalSplitClient!
@@ -35,10 +35,12 @@ class TreatmentManagerTest: XCTestCase {
         if storageContainer == nil {
             let splits = loadSplitsFile()
             let mySegments = ["s1", "s2", "test_copy"]
-            splitCache = SplitCacheStub(splits: splits, changeNumber: -1)
+            splitsStorage = SplitsStorageStub()
+            splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [],
+                                                                   changeNumber: -1, updateTimestamp: 100))
             mySegmentsCache = InMemoryMySegmentsCache(segments: Set(mySegments))
             storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
-                                                     splitsCache: splitCache,
+                                                     splitsStorage: splitsStorage,
                                                      mySegmentsCache: mySegmentsCache)
         }
     }
@@ -263,7 +265,7 @@ class TreatmentManagerTest: XCTestCase {
         return DefaultTreatmentManager(evaluator: evaluator, key: key, splitConfig: SplitClientConfig(),
                                        eventsManager: eventsManager, impressionsManager: impressionsManager,
                                        metricsManager: DefaultMetricsManager.shared, keyValidator: DefaultKeyValidator(),
-                                       splitValidator: DefaultSplitValidator(splitCache: splitCache),
+                                       splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
                                        validationLogger: validationLogger)
     }
     
@@ -273,9 +275,8 @@ class TreatmentManagerTest: XCTestCase {
     
     func loadSplitFile(name fileName: String) -> [Split] {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.encodeFrom(json: file, to: SplitChange.self),
-            let splits = change.splits {
-            return splits
+           let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+            return change.splits
         }
         return [Split]()
     }

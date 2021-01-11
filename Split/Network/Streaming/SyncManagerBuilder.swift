@@ -16,6 +16,7 @@ class SyncManagerBuilder {
     private var storageContainer: SplitStorageContainer?
     private var endpointFactory: EndpointFactory?
     private var restClient: DefaultRestClient?
+    private var splitFetcher: HttpSplitFetcher?
 
     func setUserKey(_ userKey: String) -> SyncManagerBuilder {
         self.userKey = userKey
@@ -47,6 +48,11 @@ class SyncManagerBuilder {
         return self
     }
 
+    func setSplitFetcher(_ splitFetcher: HttpSplitFetcher) -> SyncManagerBuilder {
+        self.splitFetcher = splitFetcher
+        return self
+    }
+
     func build() -> SyncManager {
 
         guard let userKey = self.userKey,
@@ -54,13 +60,18 @@ class SyncManagerBuilder {
             let apiFacade = self.splitApiFacade,
             let restClient = self.restClient,
             let endpointFactory = self.endpointFactory,
+            let splitFetcher = self.splitFetcher,
             let storageContainer = self.storageContainer
             else {
                 fatalError("Some parameter is null when creating Sync Manager")
         }
 
+        let syncWorkerFactory = DefaultSyncWorkerFactory(splitFetcher: splitFetcher,
+                                                         splitsStorage: storageContainer.splitsStorage,
+                                                         splitChangeProcessor: DefaultSplitChangeProcessor())
         let synchronizer = DefaultSynchronizer(splitConfig: config, splitApiFacade: apiFacade,
-                                               splitStorageContainer: storageContainer)
+                                               splitStorageContainer: storageContainer,
+                                               syncWorkerFactory: syncWorkerFactory)
         let sseHttpConfig = HttpSessionConfig()
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
         let sseHttpClient = apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
@@ -71,7 +82,7 @@ class SyncManagerBuilder {
             notificationParser: DefaultSseNotificationParser(),
             splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer),
             splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
-                                             splitCache: storageContainer.splitsCache),
+                                             splitsStorage: storageContainer.splitsStorage),
             mySegmentsUpdateWorker: MySegmentsUpdateWorker(synchronizer: synchronizer,
                                                            mySegmentsCache: storageContainer.mySegmentsCache))
 

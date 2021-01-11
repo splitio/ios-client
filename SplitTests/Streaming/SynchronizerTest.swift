@@ -13,7 +13,7 @@ import XCTest
 
 class SynchronizerTest: XCTestCase {
 
-    var splitsFetcher: SplitChangeFetcher!
+    var splitsFetcher: HttpSplitFetcherStub!
     var impressionsManager: ImpressionsManagerStub!
     var trackManager: TrackManagerStub!
     var splitsSyncWorker: RetryableSyncWorkerStub!
@@ -21,7 +21,7 @@ class SynchronizerTest: XCTestCase {
     var periodicSplitsSyncWorker: PeriodicSyncWorkerStub!
     var periodicMySegmentsSyncWorker: PeriodicSyncWorkerStub!
 
-    var splitsCache: SplitCacheProtocol!
+    var splitsStorage: SplitsStorageStub!
     var mySegmentsCache: MySegmentsCacheProtocol!
 
     var updateWorkerCatalog = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()
@@ -30,7 +30,7 @@ class SynchronizerTest: XCTestCase {
     var synchronizer: Synchronizer!
 
     override func setUp() {
-        splitsFetcher = SplitChangeFetcherStub()
+        splitsFetcher = HttpSplitFetcherStub()
         impressionsManager = ImpressionsManagerStub()
         trackManager = TrackManagerStub()
         splitsSyncWorker = RetryableSyncWorkerStub()
@@ -38,16 +38,18 @@ class SynchronizerTest: XCTestCase {
         periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
         periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
 
-        splitsCache = SplitCacheStub(splits: [], changeNumber: 100)
+        splitsStorage = SplitsStorageStub()
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
+                                                               changeNumber: 100, updateTimestamp: 100))
         mySegmentsCache = MySegmentsCacheStub()
 
-        let apiFacade = SplitApiFacade(splitsFetcher: splitsFetcher, impressionsManager: impressionsManager,
+        let apiFacade = SplitApiFacade(impressionsManager: impressionsManager,
                                        trackManager: trackManager, splitsSyncWorker: splitsSyncWorker,
                                        mySegmentsSyncWorker: mySegmentsSyncWorker,
                                        periodicSplitsSyncWorker: periodicSplitsSyncWorker,
                                        periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker,
                                        streamingHttpClient: nil)
-        let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsCache: splitsCache, mySegmentsCache: mySegmentsCache)
+        let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsStorage: splitsStorage, mySegmentsCache: mySegmentsCache)
 
         synchronizer = DefaultSynchronizer(splitConfig: SplitClientConfig(),
             splitApiFacade: apiFacade,

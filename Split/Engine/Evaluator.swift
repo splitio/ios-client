@@ -37,7 +37,7 @@ class DefaultEvaluator: Evaluator {
     func evalTreatment(matchingKey: String, bucketingKey: String?,
                        splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
 
-        guard let split = splitClient?.storageContainer?.splitsCache.getSplit(splitName: splitName),
+        guard let split = splitClient?.storageContainer?.splitsStorage.get(name: splitName),
             split.status != .archived else {
                 Logger.w("The SPLIT definition for '\(splitName)' has not been found")
                 return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)

@@ -40,7 +40,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         self.impressionsManager = apiFacade.impressionsManager
         self.trackManager = apiFacade.trackManager
         self.factoryDestroyHandler = destroyHandler
-        self.eventValidator = DefaultEventValidator(splitCache: storageContainer.splitsCache)
+        self.eventValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
         self.validationLogger = DefaultValidationMessageLogger()
         self.eventsManager = eventsManager
         self.storageContainer = storageContainer
@@ -51,7 +51,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
             evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager,
             impressionsManager: impressionsManager, metricsManager: DefaultMetricsManager.shared,
             keyValidator: DefaultKeyValidator(),
-            splitValidator: DefaultSplitValidator(splitCache: storageContainer.splitsCache),
+            splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
             validationLogger: validationLogger)
 
         Logger.i("iOS Split SDK initialized!")
