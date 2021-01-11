@@ -126,40 +126,6 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 }
 
-@available(*, deprecated, message: "This class will be remove in next PR")
-class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
-
-    private let splitChangeFetcher: SplitChangeFetcher
-    private let splitCache: SplitCacheProtocol
-
-    init(splitChangeFetcher: SplitChangeFetcher,
-         splitCache: SplitCacheProtocol,
-         timer: PeriodicTimer,
-         eventsManager: SplitEventsManager) {
-
-        self.splitCache = splitCache
-        self.splitChangeFetcher = splitChangeFetcher
-        super.init(timer: timer,
-                   eventsManager: eventsManager)
-    }
-
-    override func fetchFromRemote() {
-        // Polling should be done once sdk ready is fired in initial sync
-        if !isSdkReadyFired() {
-            return
-        }
-        do {
-            _ = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber(),
-                                                  policy: .network,
-                                                  clearCache: false)
-            Logger.d("Fetching splits")
-        } catch let error {
-            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
-            Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
-        }
-    }
-}
-
 /// TODO: Rename this class when removing old periodic sync worker on integration
 class RevampPeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
@@ -209,19 +175,22 @@ class RevampPeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
 class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
 
-    private let mySegmentsFetcher: MySegmentsChangeFetcher
-    private let mySegmentsCache: MySegmentsCacheProtocol
+    private let mySegmentsFetcher: HttpMySegmentsFetcher
+    private let mySegmentsStorage: MySegmentsStorage
     private let userKey: String
+    private let metricsManager: MetricsManager
 
     init(userKey: String,
-         mySegmentsFetcher: MySegmentsChangeFetcher,
-         mySegmentsCache: MySegmentsCacheProtocol,
+         mySegmentsFetcher: HttpMySegmentsFetcher,
+         mySegmentsStorage: MySegmentsStorage,
+         metricsManager: MetricsManager,
          timer: PeriodicTimer,
          eventsManager: SplitEventsManager) {
 
         self.userKey = userKey
         self.mySegmentsFetcher = mySegmentsFetcher
-        self.mySegmentsCache = mySegmentsCache
+        self.mySegmentsStorage = mySegmentsStorage
+        self.metricsManager = metricsManager
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }
@@ -232,10 +201,12 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         do {
-            let segments = try mySegmentsFetcher.fetch(user: userKey)
-            Logger.d(segments.debugDescription)
+            if let segments = try mySegmentsFetcher.execute(userKey: userKey) {
+                mySegmentsStorage.set(segments)
+                Logger.d(segments.debugDescription)
+            }
         } catch let error {
-            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
+            metricsManager.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherException)
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
         }
     }

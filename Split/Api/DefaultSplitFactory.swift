@@ -147,9 +147,11 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
         let splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentSplitsStorage)
-        let mySegmentsCache = MySegmentsCache(matchingKey: userKey, fileStorage: fileStorage)
+
+        let persistentMySegmentsStorage = DefaultPersistentMySegmentsStorage(userKey: userKey, database: splitDatabase)
+        let mySegmentsStorage = DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
         return SplitStorageContainer(fileStorage: fileStorage,
                                      splitsStorage: splitsStorage,
-                                     mySegmentsCache: mySegmentsCache)
+                                     mySegmentsStorage: mySegmentsStorage)
     }
 }

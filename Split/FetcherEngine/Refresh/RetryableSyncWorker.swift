@@ -86,25 +86,29 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
 ///
 class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
 
-    private let mySegmentsChangeFetcher: MySegmentsChangeFetcher
-    private let matchingKey: String
-    private let mySegmentsCache: MySegmentsCacheProtocol
+    private let mySegmentsFetcher: HttpMySegmentsFetcher
+    private let userKey: String
+    private let mySegmentsStorage: MySegmentsStorage
+    private let metricsManager: MetricsManager
 
-    init(matchingKey: String, mySegmentsChangeFetcher: MySegmentsChangeFetcher,
-         mySegmentsCache: MySegmentsCacheProtocol,
+    init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
+         mySegmentsStorage: MySegmentsStorage,
+         metricsManager: MetricsManager,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
 
-        self.matchingKey = matchingKey
-        self.mySegmentsCache = mySegmentsCache
-        self.mySegmentsChangeFetcher = mySegmentsChangeFetcher
+        self.userKey = userKey
+        self.mySegmentsStorage = mySegmentsStorage
+        self.mySegmentsFetcher = mySegmentsFetcher
+        self.metricsManager = metricsManager
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() -> Bool {
         do {
-            if let segments = try self.mySegmentsChangeFetcher.fetch(user: self.matchingKey, policy: .network) {
+            if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey) {
                 Logger.d(segments.debugDescription)
+                mySegmentsStorage.set(segments)
                 fireReadyIsNeeded(event: SplitInternalEvent.mySegmentsAreReady)
                 resetBackoffCounter()
                 return true

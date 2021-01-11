@@ -43,10 +43,10 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
 
     private let synchronizer: Synchronizer
-    private let mySegmentsCache: MySegmentsCacheProtocol
-    init(synchronizer: Synchronizer, mySegmentsCache: MySegmentsCacheProtocol) {
+    private let mySegmentsStorage: MySegmentsStorage
+    init(synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage) {
         self.synchronizer = synchronizer
-        self.mySegmentsCache = mySegmentsCache
+        self.mySegmentsStorage = mySegmentsStorage
         super.init(queueName: "MySegmentsUpdateWorker")
     }
 
@@ -59,9 +59,9 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
     private func process(_ notification: MySegmentsUpdateNotification) {
         if notification.includesPayload {
             if let segmentList = notification.segmentList {
-                mySegmentsCache.setSegments(segmentList)
+                mySegmentsStorage.set(segmentList)
             } else {
-                mySegmentsCache.clear()
+                mySegmentsStorage.clear()
             }
         } else {
             synchronizer.synchronizeMySegments()

@@ -95,8 +95,8 @@ class SplitApiFacadeBuilder {
         let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
                                                     metricsManager: DefaultMetricsManager.shared)
 
-        let mySegmentsFetcher: MySegmentsChangeFetcher
-            = OldHttpMySegmentsFetcher(restClient: restClient, mySegmentsCache: storageContainer.mySegmentsCache)
+        let mySegmentsFetcher: HttpMySegmentsFetcher
+            = DefaultHttpMySegmentsFetcher(restClient: restClient, metricsManager: DefaultMetricsManager.shared)
 
         let backoffBase =  splitConfig.generalRetryBackoffBase
         let splitChangeProcessor = DefaultSplitChangeProcessor()
@@ -110,19 +110,10 @@ class SplitApiFacadeBuilder {
                                                          eventsManager: eventsManager,
                                                          reconnectBackoffCounter: splitsBackoffCounter)
 
-
-//        splitFetcher: HttpSplitFetcher,
-//             splitsStorage: SplitsStorage,
-//             splitChangeProcessor: SplitChangeProcessor,
-//             cacheExpiration: Int,
-//             defaultQueryString: String,
-//             eventsManager: SplitEventsManager,
-//             reconnectBackoffCounter: ReconnectBackoffCounter
-
         let mySegmentsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
-        let mySegmentsWorker = RetryableMySegmentsSyncWorker(matchingKey: userKey,
-                                                             mySegmentsChangeFetcher: mySegmentsFetcher,
-                                                             mySegmentsCache: storageContainer.mySegmentsCache,
+        let mySegmentsWorker = RetryableMySegmentsSyncWorker(userKey: userKey, mySegmentsFetcher: mySegmentsFetcher,
+                                                             mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                                             metricsManager: DefaultMetricsManager.shared,
                                                              eventsManager: eventsManager,
                                                              reconnectBackoffCounter: mySegmentsBackoffCounter)
 
@@ -132,7 +123,8 @@ class SplitApiFacadeBuilder {
             timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate), eventsManager: eventsManager)
 
         let periodicMySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(
-            userKey: userKey, mySegmentsFetcher: mySegmentsFetcher, mySegmentsCache: storageContainer.mySegmentsCache,
+            userKey: userKey, mySegmentsFetcher: mySegmentsFetcher,
+            mySegmentsStorage: storageContainer.mySegmentsStorage, metricsManager: DefaultMetricsManager.shared,
             timer: DefaultPeriodicTimer(interval: splitConfig.segmentsRefreshRate), eventsManager: eventsManager)
 
         return SplitApiFacade(

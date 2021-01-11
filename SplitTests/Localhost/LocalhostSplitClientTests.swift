@@ -27,7 +27,7 @@ class LocalhostSplitClientTests: XCTestCase {
         splitsStorage.loadLocal()
         let storageContainer = SplitStorageContainer(fileStorage: storage,
                                                      splitsStorage: splitsStorage,
-                                                     mySegmentsCache: InMemoryMySegmentsCache(segments: Set()))
+                                                     mySegmentsStorage: MySegmentsStorageStub())
         client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), storageContainer: storageContainer)
     }
     

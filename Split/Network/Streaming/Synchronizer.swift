@@ -28,7 +28,7 @@ protocol Synchronizer {
 struct SplitStorageContainer {
     let fileStorage: FileStorageProtocol
     let splitsStorage: SplitsStorage
-    let mySegmentsCache: MySegmentsCacheProtocol
+    let mySegmentsStorage: MySegmentsStorage
 }
 
 class DefaultSynchronizer: Synchronizer {
