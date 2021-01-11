@@ -22,7 +22,7 @@ class SynchronizerTest: XCTestCase {
     var periodicMySegmentsSyncWorker: PeriodicSyncWorkerStub!
 
     var splitsStorage: SplitsStorageStub!
-    var mySegmentsCache: MySegmentsCacheProtocol!
+    var mySegmentsStorage: MySegmentsStorageStub!
 
     var updateWorkerCatalog = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()
     var syncWorkerFactory = SyncWorkerFactoryStub()
@@ -41,7 +41,7 @@ class SynchronizerTest: XCTestCase {
         splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
-        mySegmentsCache = MySegmentsCacheStub()
+        mySegmentsStorage = MySegmentsStorageStub()
 
         let apiFacade = SplitApiFacade(impressionsManager: impressionsManager,
                                        trackManager: trackManager, splitsSyncWorker: splitsSyncWorker,
@@ -49,7 +49,8 @@ class SynchronizerTest: XCTestCase {
                                        periodicSplitsSyncWorker: periodicSplitsSyncWorker,
                                        periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker,
                                        streamingHttpClient: nil)
-        let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsStorage: splitsStorage, mySegmentsCache: mySegmentsCache)
+        let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsStorage: splitsStorage,
+                                                     mySegmentsStorage: mySegmentsStorage)
 
         synchronizer = DefaultSynchronizer(splitConfig: SplitClientConfig(),
             splitApiFacade: apiFacade,
