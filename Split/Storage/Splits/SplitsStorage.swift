@@ -41,12 +41,10 @@ class DefaultSplitsStorage: SplitsStorage {
 
     func loadLocal() {
         let snapshot = persistentStorage.getSplitsSnapshot()
-        snapshot.splits.forEach { split in
-            guard let splitName = split.name?.lowercased() else {
-                return
-            }
-            inMemorySplits.setValue(split, forKey: splitName)
-        }
+        let active = snapshot.splits.filter { $0.status == .active }
+        let archived = snapshot.splits.filter { $0.status == .archived }
+        processUpdated(splits: active, active: true)
+        processUpdated(splits: archived, active: false)
         changeNumber = snapshot.changeNumber
         updateTimestamp = snapshot.updateTimestamp
         splitsFilterQueryString = snapshot.splitsFilterQueryString
