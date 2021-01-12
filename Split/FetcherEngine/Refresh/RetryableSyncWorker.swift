@@ -121,61 +121,6 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
     }
 }
 
-/// TODO: Remove on storage revamp integration
-@available(*, deprecated, message: "Gonna be replaced by RevampRetryableSyncWorker on new components integration")
-class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
-
-    private let splitChangeFetcher: SplitChangeFetcher
-    private let splitCache: SplitCacheProtocol
-    private let cacheExpiration: Int
-    private let defaultQueryString: String
-
-    init(splitChangeFetcher: SplitChangeFetcher,
-         splitCache: SplitCacheProtocol,
-         cacheExpiration: Int,
-         defaultQueryString: String,
-         eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter) {
-
-        self.splitChangeFetcher = splitChangeFetcher
-        self.splitCache = splitCache
-        self.cacheExpiration = cacheExpiration
-        self.defaultQueryString = defaultQueryString
-        super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
-    }
-
-    override func fetchFromRemote() -> Bool {
-        do {
-            var changeNumber = splitCache.getChangeNumber()
-            var clearCache = false
-            if changeNumber != -1 {
-                let timestamp = splitCache.getTimestamp()
-                let elapsedTime = Int(Date().timeIntervalSince1970) - timestamp
-                if timestamp > 0 && elapsedTime > self.cacheExpiration {
-                    changeNumber = -1
-                    clearCache = true
-                }
-            }
-            clearCache = clearCache || defaultQueryString != splitCache.getQueryString()
-            if let splitChanges = try self.splitChangeFetcher.fetch(since: changeNumber,
-                                                                    policy: .network,
-                                                                    clearCache: clearCache) {
-                if clearCache {
-                    splitCache.setQueryString(defaultQueryString)
-                }
-                fireReadyIsNeeded(event: SplitInternalEvent.splitsAreReady)
-                resetBackoffCounter()
-                Logger.d(splitChanges.debugDescription)
-                return true
-            }
-        } catch let error {
-            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
-            Logger.e("Problem fetching splits: %@", error.localizedDescription)
-        }
-        return false
-    }
-}
-
 ///
 /// Retrieves split changes using stored change number.
 /// Also triggers SPLIT READY event when first fetch is succesful
@@ -239,52 +184,6 @@ class RevampRetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
             Logger.e("Problem fetching splits: %@", error.localizedDescription)
-        }
-        return false
-    }
-}
-
-///
-/// Retrieves split changes when change number passed as parameter is bigger than stored change number.
-///
-class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
-
-    private let splitChangeFetcher: SplitChangeFetcher
-    private let splitCache: SplitCacheProtocol
-    private let changeNumber: Int64
-
-    init(splitChangeFetcher: SplitChangeFetcher,
-         splitCache: SplitCacheProtocol,
-         changeNumber: Int64,
-         reconnectBackoffCounter: ReconnectBackoffCounter) {
-
-        self.splitChangeFetcher = splitChangeFetcher
-        self.splitCache = splitCache
-        self.changeNumber = changeNumber
-        super.init(reconnectBackoffCounter: reconnectBackoffCounter)
-    }
-
-    override func fetchFromRemote() -> Bool {
-        do {
-            if changeNumber < splitCache.getChangeNumber() {
-                resetBackoffCounter()
-                return true
-            }
-
-            if let splitChanges = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber(),
-                                                                    policy: .network,
-                                                                    clearCache: false) {
-
-                if changeNumber <= splitChanges.till {
-                    resetBackoffCounter()
-                    Logger.d(splitChanges.debugDescription)
-                    return true
-                }
-                Logger.d("Split changes are not update date yet")
-            }
-        } catch let error {
-            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
-            Logger.e("Problem updating splits: %@", error.localizedDescription)
         }
         return false
     }
