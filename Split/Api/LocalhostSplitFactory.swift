@@ -51,9 +51,8 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
                                           eventsManager: eventsManager,
                                           splitsFileName: config.splitFile,
                                           bundle: bundle)
-        let storageContainer = SplitStorageContainer(fileStorage: fileStorage, splitsStorage: splitsStorage,
-                                                     mySegmentsStorage: EmptyMySegmentsStorage())
-        localhostClient = LocalhostSplitClient(key: key, storageContainer: storageContainer,
+
+        localhostClient = LocalhostSplitClient(key: key, splitsStorage: splitsStorage,
                                                eventsManager: eventsManager)
         eventsManager.getExecutorResources().setClient(client: localhostClient)
         localhostManager = DefaultSplitManager(splitsStorage: splitsStorage)

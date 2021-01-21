@@ -15,5 +15,6 @@ class EventEntity: NSManagedObject {
     @NSManaged public var storageId: String
     @NSManaged public var body: String
     @NSManaged public var createdAt: Int64
+    @NSManaged public var sizeInBytes: Int
     @NSManaged public var status: Int32
 }

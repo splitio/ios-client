@@ -446,6 +446,7 @@
 		95F3F06725ACDE0400084AF8 /* EmptyMySegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F06625ACDE0400084AF8 /* EmptyMySegmentsStorage.swift */; };
 		95F3F06F25ACE20200084AF8 /* MySegmentsStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F06E25ACE20200084AF8 /* MySegmentsStorageStub.swift */; };
 		95F3F07325ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F07225ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift */; };
+		95F3F09525AE1F3800084AF8 /* ServiceConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -924,6 +925,7 @@
 		95F3F06625ACDE0400084AF8 /* EmptyMySegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyMySegmentsStorage.swift; sourceTree = "<group>"; };
 		95F3F06E25ACE20200084AF8 /* MySegmentsStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsStorageStub.swift; sourceTree = "<group>"; };
 		95F3F07225ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpMySegmentsFetcherStub.swift; sourceTree = "<group>"; };
+		95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceConstants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1546,6 +1548,7 @@
 				3B6DEF0520EA6AE40067435E /* Structs */,
 				3B6DEE9D20EA6AE10067435E /* Extensions */,
 				954F9BC32575A7DF00140B81 /* Exports.swift */,
+				95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -2187,6 +2190,7 @@
 				59F6AAA9215EBD4400A51997 /* CounterMetric.swift in Sources */,
 				59F4AAD4251A7F4700A1C69A /* SplitApiFacade.swift in Sources */,
 				3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */,
+				95F3F09525AE1F3800084AF8 /* ServiceConstants.swift in Sources */,
 				3B6DEF5420EA6AE50067435E /* SplitEventExecutorFactory.swift in Sources */,
 				3B6DEF3020EA6AE50067435E /* Evaluator.swift in Sources */,
 				598EDE78224BB3E9005D4762 /* InternalSplitClient.swift in Sources */,
