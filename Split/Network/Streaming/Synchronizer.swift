@@ -8,7 +8,11 @@
 
 import Foundation
 
-protocol Synchronizer {
+protocol ImpressionLogger {
+    func pushImpression(impression: Impression)
+}
+
+protocol Synchronizer: ImpressionLogger {
     func syncAll()
     func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
@@ -18,7 +22,6 @@ protocol Synchronizer {
     func startPeriodicRecording()
     func stopPeriodicRecording()
     func pushEvent(event: EventDTO)
-    func pushImpression(impression: Impression)
     func pause()
     func resume()
     func flush()
@@ -29,6 +32,7 @@ struct SplitStorageContainer {
     let fileStorage: FileStorageProtocol
     let splitsStorage: SplitsStorage
     let mySegmentsStorage: MySegmentsStorage
+    let impressionsStorage: PersistentImpressionsStorage
 }
 
 class DefaultSynchronizer: Synchronizer {
@@ -38,11 +42,20 @@ class DefaultSynchronizer: Synchronizer {
     private let syncWorkerFactory: SyncWorkerFactory
     private let syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
     private let splitConfig: SplitClientConfig
+    private let impressionsSyncHelper: ImpressionsRecorderSyncHelper
+
+    private let periodicSplitsSyncWorker: PeriodicSyncWorker
+    private let periodicMySegmentsSyncWorker: PeriodicSyncWorker
+    private let splitsSyncWorker: RetryableSyncWorker
+    private let mySegmentsSyncWorker: RetryableSyncWorker
+    private let periodicImpressionsRecorderWoker: PeriodicRecorderWorker
+    private let trackManager: TrackManager
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
+         impressionsSyncHelper: ImpressionsRecorderSyncHelper,
          syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
         = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()) {
         self.splitConfig = splitConfig
@@ -50,15 +63,24 @@ class DefaultSynchronizer: Synchronizer {
         self.splitStorageContainer = splitStorageContainer
         self.syncWorkerFactory = syncWorkerFactory
         self.syncTaskByChangeNumberCatalog = syncTaskByChangeNumberCatalog
+        self.impressionsSyncHelper = impressionsSyncHelper
+
+
+        periodicSplitsSyncWorker = syncWorkerFactory.createPeriodicSplitsSyncWorker()
+        periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker()
+        splitsSyncWorker = syncWorkerFactory.createRetryableSplitsSyncWorker()
+        mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker()
+        periodicImpressionsRecorderWoker = syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
+        trackManager = splitApiFacade.trackManager
     }
 
     func syncAll() {
-        splitApiFacade.splitsSyncWorker.start()
-        splitApiFacade.mySegmentsSyncWorker.start()
+        splitsSyncWorker.start()
+        mySegmentsSyncWorker.start()
     }
 
     func synchronizeSplits() {
-        splitApiFacade.splitsSyncWorker.start()
+        splitsSyncWorker.start()
     }
 
     func synchronizeSplits(changeNumber: Int64) {
@@ -82,61 +104,59 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func synchronizeMySegments() {
-        splitApiFacade.mySegmentsSyncWorker.start()
+        mySegmentsSyncWorker.start()
     }
 
     func startPeriodicFetching() {
-        splitApiFacade.periodicSplitsSyncWorker.start()
-        splitApiFacade.periodicMySegmentsSyncWorker.start()
+        periodicSplitsSyncWorker.start()
+        periodicMySegmentsSyncWorker.start()
     }
 
     func stopPeriodicFetching() {
-        splitApiFacade.periodicSplitsSyncWorker.stop()
-        splitApiFacade.periodicMySegmentsSyncWorker.stop()
+        periodicSplitsSyncWorker.stop()
+        periodicMySegmentsSyncWorker.stop()
     }
 
     func startPeriodicRecording() {
-        splitApiFacade.impressionsManager.start()
-        splitApiFacade.trackManager.start()
+        periodicImpressionsRecorderWoker.start()
+        trackManager.start()
     }
 
     func stopPeriodicRecording() {
-        splitApiFacade.impressionsManager.stop()
-        splitApiFacade.trackManager.stop()
+        periodicImpressionsRecorderWoker.stop()
+        trackManager.stop()
     }
 
     func pushEvent(event: EventDTO) {
-        splitApiFacade.trackManager.appendEvent(event: event)
+        trackManager.appendEvent(event: event)
     }
 
     func pushImpression(impression: Impression) {
-        if let splitName = impression.feature {
-            splitApiFacade.impressionsManager.appendImpression(impression: impression, splitName: splitName)
-        }
+        splitStorageContainer.impressionsStorage.push(impression: impression)
     }
 
     func pause() {
-        splitApiFacade.periodicSplitsSyncWorker.pause()
-        splitApiFacade.periodicMySegmentsSyncWorker.pause()
+        periodicSplitsSyncWorker.pause()
+        periodicMySegmentsSyncWorker.pause()
     }
 
     func resume() {
-        splitApiFacade.periodicSplitsSyncWorker.resume()
-        splitApiFacade.periodicMySegmentsSyncWorker.resume()
+        periodicSplitsSyncWorker.resume()
+        periodicMySegmentsSyncWorker.resume()
     }
 
     func flush() {
-        splitApiFacade.impressionsManager.flush()
-        splitApiFacade.trackManager.flush()
+        impressionsManager.flush()
+        trackManager.flush()
     }
 
     func destroy() {
-        splitApiFacade.splitsSyncWorker.stop()
-        splitApiFacade.mySegmentsSyncWorker.stop()
-        splitApiFacade.periodicSplitsSyncWorker.stop()
-        splitApiFacade.periodicMySegmentsSyncWorker.stop()
-        splitApiFacade.periodicSplitsSyncWorker.destroy()
-        splitApiFacade.periodicMySegmentsSyncWorker.destroy()
+        splitsSyncWorker.stop()
+        mySegmentsSyncWorker.stop()
+        periodicSplitsSyncWorker.stop()
+        periodicMySegmentsSyncWorker.stop()
+        periodicSplitsSyncWorker.destroy()
+        periodicMySegmentsSyncWorker.destroy()
         let updateTasks = syncTaskByChangeNumberCatalog.takeAll()
         for task in updateTasks.values {
             task.stop()
