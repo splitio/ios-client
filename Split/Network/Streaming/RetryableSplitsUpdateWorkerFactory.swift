@@ -23,7 +23,9 @@ protocol SyncWorkerFactory {
     
     func createPeriodicMySegmentsSyncWorker() -> PeriodicSyncWorker
     
-    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> PeriodicRecorderWorker
+    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> PeriodicRecorderWorker
+
+    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> RecorderWorker
 }
 
 class DefaultSyncWorkerFactory: SyncWorkerFactory {
@@ -100,12 +102,18 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
             timer: DefaultPeriodicTimer(interval: splitConfig.segmentsRefreshRate), eventsManager: eventsManager)
     }
     
-    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> PeriodicRecorderWorker {
+    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> PeriodicRecorderWorker {
         let impressionWorker = ImpressionsRecorderWorker(impressionsStorage: storageContainer.impressionsStorage,
                                                          impressionsRecorder: apiFacade.impressionsRecorder,
                                                          impressionsPerPush: Int(splitConfig.impressionsChunkSize))
         
         let timer = DefaultPeriodicTimer(deadline: 0, interval: splitConfig.impressionRefreshRate)
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: impressionWorker)
+    }
+
+    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> RecorderWorker {
+        return ImpressionsRecorderWorker(impressionsStorage: storageContainer.impressionsStorage,
+                                                         impressionsRecorder: apiFacade.impressionsRecorder,
+                                                         impressionsPerPush: Int(splitConfig.impressionsChunkSize))
     }
 }

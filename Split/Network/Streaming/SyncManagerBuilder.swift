@@ -17,7 +17,6 @@ class SyncManagerBuilder {
     private var endpointFactory: EndpointFactory?
     private var synchronizer: Synchronizer?
 
-
     func setUserKey(_ userKey: String) -> SyncManagerBuilder {
         self.userKey = userKey
         return self
@@ -59,7 +58,6 @@ class SyncManagerBuilder {
             else {
                 fatalError("Some parameter is null when creating Sync Manager")
         }
-
 
         let sseHttpConfig = HttpSessionConfig()
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut

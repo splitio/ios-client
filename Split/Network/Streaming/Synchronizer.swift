@@ -49,6 +49,7 @@ class DefaultSynchronizer: Synchronizer {
     private let splitsSyncWorker: RetryableSyncWorker
     private let mySegmentsSyncWorker: RetryableSyncWorker
     private let periodicImpressionsRecorderWoker: PeriodicRecorderWorker
+    private let flusherImpressionsRecorderWorker: RecorderWorker
     private let trackManager: TrackManager
 
     init(splitConfig: SplitClientConfig,
@@ -70,7 +71,8 @@ class DefaultSynchronizer: Synchronizer {
         periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker()
         splitsSyncWorker = syncWorkerFactory.createRetryableSplitsSyncWorker()
         mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker()
-        periodicImpressionsRecorderWoker = syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
+        flusherImpressionsRecorderWorker = syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
+        periodicImpressionsRecorderWoker = syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
         trackManager = splitApiFacade.trackManager
     }
 
@@ -146,7 +148,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func flush() {
-        impressionsManager.flush()
+        flusherImpressionsRecorderWorker.flush()
         trackManager.flush()
     }
 

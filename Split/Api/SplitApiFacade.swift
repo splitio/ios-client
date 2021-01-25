@@ -26,7 +26,7 @@ class SplitApiFacadeBuilder {
     private var userKey: String?
     private var splitConfig: SplitClientConfig?
     private var eventsManager: SplitEventsManager?
-    private var restClient: DefaultRestClient?
+    private var restClient: SplitApiRestClient?
     private var trackManager: TrackManager?
     private var storageContainer: SplitStorageContainer?
     private var streamingHttpClient: HttpClient?
@@ -47,7 +47,7 @@ class SplitApiFacadeBuilder {
         return self
     }
 
-    func setRestClient(_ restClient: DefaultRestClient) -> SplitApiFacadeBuilder {
+    func setRestClient(_ restClient: SplitApiRestClient) -> SplitApiFacadeBuilder {
         self.restClient = restClient
         return self
     }
