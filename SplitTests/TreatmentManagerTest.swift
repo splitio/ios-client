@@ -15,7 +15,7 @@ class TreatmentManagerTest: XCTestCase {
     var validationLogger: ValidationMessageLogger!
     var impressionsManager: ImpressionsManager!
     var splitsStorage: SplitsStorage!
-    var mySegmentsCache: MySegmentsCacheProtocol!
+    var mySegmentsStorage: MySegmentsStorageStub!
     var storageContainer: SplitStorageContainer!
     var client: InternalSplitClient!
     
@@ -38,10 +38,11 @@ class TreatmentManagerTest: XCTestCase {
             splitsStorage = SplitsStorageStub()
             splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [],
                                                                    changeNumber: -1, updateTimestamp: 100))
-            mySegmentsCache = InMemoryMySegmentsCache(segments: Set(mySegments))
+            mySegmentsStorage = MySegmentsStorageStub()
+            mySegmentsStorage.set(mySegments)
             storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
                                                      splitsStorage: splitsStorage,
-                                                     mySegmentsCache: mySegmentsCache)
+                                                     mySegmentsStorage: mySegmentsStorage)
         }
     }
     

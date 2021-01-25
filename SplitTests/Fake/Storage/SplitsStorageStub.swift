@@ -48,6 +48,8 @@ class SplitsStorageStub: SplitsStorage {
         updatedSplitChange = splitChange
         let active = splitChange.activeSplits
         let archived = splitChange.archivedSplits
+        changeNumber = splitChange.changeNumber
+        updateTimestamp = splitChange.updateTimestamp
         active.forEach {
             inMemorySplits.setValue($0, forKey: $0.name?.lowercased() ?? "")
         }

@@ -84,7 +84,7 @@ class SyncManagerBuilder {
             splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
                                              splitsStorage: storageContainer.splitsStorage),
             mySegmentsUpdateWorker: MySegmentsUpdateWorker(synchronizer: synchronizer,
-                                                           mySegmentsCache: storageContainer.mySegmentsCache))
+                                                           mySegmentsStorage: storageContainer.mySegmentsStorage))
 
         let sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,
                                            notificationParser: DefaultSseNotificationParser(),

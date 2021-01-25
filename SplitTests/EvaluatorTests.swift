@@ -22,9 +22,9 @@ class EvaluatorTests: XCTestCase {
             let splits = loadSplitsFile()
             let splitsStorage = SplitsStorageStub()
             splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
-            let mySegmentsCache = MySegmentsCacheStub()
-            mySegmentsCache.setSegments(mySegments)
-            let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsStorage: splitsStorage, mySegmentsCache: mySegmentsCache)
+            let mySegmentsStorage = MySegmentsStorageStub()
+            mySegmentsStorage.set(mySegments)
+            let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
             client = InternalSplitClientStub(storageContainer: storageContainer)
             evaluator = DefaultEvaluator(splitClient: client)
         }
@@ -375,9 +375,10 @@ class EvaluatorTests: XCTestCase {
         let split = loadSplit(splitName: fileName)!
         let splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
-        let mySegmentsCache = InMemoryMySegmentsCache(segments: Set(mySegments))
+        let mySegmentsStorage = MySegmentsStorageStub()
+        mySegmentsStorage.set(mySegments)
         let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
-                                                     splitsStorage: splitsStorage, mySegmentsCache: mySegmentsCache)
+                                                     splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
         client = InternalSplitClientStub(storageContainer: storageContainer)
         evaluator = DefaultEvaluator(splitClient: client)
         return evaluator
@@ -386,11 +387,11 @@ class EvaluatorTests: XCTestCase {
     func customEvaluator(split: Split) -> Evaluator {
         let splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
-        let mySegmentsCache = MySegmentsCacheStub()
-        mySegmentsCache.setSegments([])
+        let mySegmentsStorage = MySegmentsStorageStub()
+        mySegmentsStorage.set([])
         let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
                                                      splitsStorage: splitsStorage,
-                                                     mySegmentsCache: mySegmentsCache)
+                                                     mySegmentsStorage: mySegmentsStorage)
         client = InternalSplitClientStub(storageContainer: storageContainer)
         evaluator = DefaultEvaluator(splitClient: client)
         return evaluator

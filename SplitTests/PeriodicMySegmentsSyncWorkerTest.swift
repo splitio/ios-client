@@ -13,16 +13,16 @@ import XCTest
 
 class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
 
-    var mySegmentsChangeFetcher: MySegmentsChangeFetcherStub!
-    var mySegmentsCache: MySegmentsCacheStub!
+    var mySegmentsFetcher: HttpMySegmentsFetcherStub!
+    var mySegmentsStorage: MySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
     var mySegmentsSyncWorker: PeriodicMySegmentsSyncWorker!
     let userKey = "CUSTOMER_ID"
 
     override func setUp() {
-        mySegmentsChangeFetcher = MySegmentsChangeFetcherStub()
-        mySegmentsCache = MySegmentsCacheStub()
+        mySegmentsFetcher = HttpMySegmentsFetcherStub()
+        mySegmentsStorage = MySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
@@ -33,8 +33,9 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
         mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(userKey: userKey,
-                                                            mySegmentsFetcher: mySegmentsChangeFetcher,
-                                                            mySegmentsCache: mySegmentsCache,
+                                                            mySegmentsFetcher: mySegmentsFetcher,
+                                                            mySegmentsStorage: mySegmentsStorage,
+                                                            metricsManager: MetricsManagerStub(),
                                                             timer: timer,
                                                             eventsManager: eventsManager)
 
@@ -45,7 +46,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         }
         sleep(1)
 
-        XCTAssertEqual(5, mySegmentsChangeFetcher.fetchMySegmentsCount)
+        XCTAssertEqual(5, mySegmentsFetcher.fetchMySegmentsCount)
     }
 
     func testNoSdkReadyFetch() {
@@ -53,8 +54,9 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
         mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(userKey: userKey,
-                                                            mySegmentsFetcher: mySegmentsChangeFetcher,
-                                                            mySegmentsCache: mySegmentsCache,
+                                                            mySegmentsFetcher: mySegmentsFetcher,
+                                                            mySegmentsStorage: mySegmentsStorage,
+                                                            metricsManager: MetricsManagerStub(),
                                                             timer: timer,
                                                             eventsManager: eventsManager)
 
@@ -64,6 +66,6 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
             timer.timerHandler?()
         }
 
-        XCTAssertEqual(0, mySegmentsChangeFetcher.fetchMySegmentsCount)
+        XCTAssertEqual(0, mySegmentsFetcher.fetchMySegmentsCount)
     }
 }

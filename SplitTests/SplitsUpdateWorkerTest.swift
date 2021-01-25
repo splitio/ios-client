@@ -13,15 +13,18 @@ import XCTest
 
 class SplitsUpdateWorkerTest: XCTestCase {
 
-    var splitChangeFetcher: SplitChangeFetcherStub!
-    var splitCache: SplitCacheStub!
+    var splitFetcher: HttpSplitFetcherStub!
+    var splitsStorage: SplitsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
-    var splitsUpdateWorker: RetryableSplitsUpdateWorker!
+    var splitsUpdateWorker: RevampRetryableSplitsUpdateWorker!
 
     override func setUp() {
-        splitChangeFetcher = SplitChangeFetcherStub()
-        splitCache = SplitCacheStub(splits: [Split](), changeNumber: 100)
+        splitFetcher = HttpSplitFetcherStub()
+        splitFetcher.splitChanges = [SplitChange(splits: [], since: 102, till: 102)]
+        splitsStorage = SplitsStorageStub()
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [Split](), archivedSplits: [],
+                                                  changeNumber: 100, updateTimestamp: 0))
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
@@ -29,8 +32,9 @@ class SplitsUpdateWorkerTest: XCTestCase {
 
     func testOneTimeFetchSuccess() {
         // Cache expiration timestamp set to 0 (no clearing cache)
-        splitsUpdateWorker = RetryableSplitsUpdateWorker(splitChangeFetcher: splitChangeFetcher,
-                                                         splitCache: splitCache,
+        splitsUpdateWorker = RevampRetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
+                                                               splitsStorage: splitsStorage,
+                                                               splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          changeNumber: 101,
                                                          reconnectBackoffCounter: backoffCounter)
 
@@ -45,18 +49,19 @@ class SplitsUpdateWorkerTest: XCTestCase {
         wait(for: [exp], timeout: 3)
 
         XCTAssertTrue(resultIsSuccess)
-        XCTAssertEqual(1, splitChangeFetcher.fetchCallCount)
+        XCTAssertEqual(1, splitFetcher.fetchCallCount)
         XCTAssertEqual(0, backoffCounter.retryCallCount)
     }
 
     func testRetryAndSuccess() {
-        splitsUpdateWorker = RetryableSplitsUpdateWorker(splitChangeFetcher: splitChangeFetcher,
-                                                         splitCache: splitCache,
+        splitsUpdateWorker = RevampRetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
+                                                               splitsStorage: splitsStorage,
+                                                               splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          changeNumber: 100,
                                                          reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange(splits: [], since: 100, till: 200)
-        splitChangeFetcher.changes = [nil, nil, change]
+        let change = SplitChange(splits: [], since: 200, till: 200)
+        splitFetcher.splitChanges = [nil, nil, change]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         splitsUpdateWorker.completion = { success in
@@ -69,16 +74,17 @@ class SplitsUpdateWorkerTest: XCTestCase {
 
         XCTAssertTrue(resultIsSuccess)
         XCTAssertEqual(2, backoffCounter.retryCallCount)
-        XCTAssertEqual(3, splitChangeFetcher.fetchCallCount)
+        XCTAssertEqual(3, splitFetcher.fetchCallCount)
     }
 
     func testStopNoSuccess() {
-        splitsUpdateWorker = RetryableSplitsUpdateWorker(splitChangeFetcher: splitChangeFetcher,
-                                                         splitCache: splitCache,
+        splitsUpdateWorker = RevampRetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
+                                                               splitsStorage: splitsStorage,
+                                                               splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          changeNumber: 100,
                                                          reconnectBackoffCounter: backoffCounter)
 
-        splitChangeFetcher.changes = [nil]
+        splitFetcher.splitChanges = [nil]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         splitsUpdateWorker.completion = { success in
@@ -93,19 +99,19 @@ class SplitsUpdateWorkerTest: XCTestCase {
 
         XCTAssertFalse(resultIsSuccess)
         XCTAssertTrue(1 < backoffCounter.retryCallCount)
-        XCTAssertTrue(1 < splitChangeFetcher.fetchCallCount)
+        XCTAssertTrue(1 < splitFetcher.fetchCallCount)
     }
 
     func testOldChangeNumber() {
 
-        splitsUpdateWorker = RetryableSplitsUpdateWorker(splitChangeFetcher: splitChangeFetcher,
-                                                         splitCache: splitCache,
-                                                         changeNumber: 100,
+        splitsUpdateWorker = RevampRetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
+                                                               splitsStorage: splitsStorage,
+                                                               splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                         changeNumber: 99,
                                                          reconnectBackoffCounter: backoffCounter)
 
-        let change = SplitChange(splits: [], since: 100, till: 200)
-        splitCache.setChangeNumber(1000)
-        splitChangeFetcher.changes = [change]
+        let change = SplitChange(splits: [], since: 100, till: 100)
+        splitFetcher.splitChanges = [change]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         splitsUpdateWorker.completion = { success in
@@ -118,7 +124,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
 
         XCTAssertTrue(resultIsSuccess)
         XCTAssertEqual(0, backoffCounter.retryCallCount)
-        XCTAssertEqual(0, splitChangeFetcher.fetchCallCount)
+        XCTAssertEqual(0, splitFetcher.fetchCallCount)
     }
 
     override func tearDown() {
