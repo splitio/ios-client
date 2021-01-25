@@ -82,21 +82,33 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         }
 
         let apiFacade = apiFacadeBuilder.build()
-        let splitFetcher = DefaultHttpSplitFetcher(restClient: restClient, metricsManager: DefaultMetricsManager.shared)
 
-        let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
-            .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade)
-            .setSplitConfig(config).build()
+        let impressionsFlushChecker = DefaultRecorderFlushChecker(maxQueueSize: config.impressionsQueueSize,
+                                                                  maxQueueSizeInBytes: config.impressionsQueueSize)
 
-        let impressionsFlushChecker = DefaultRecorderFlushChecker(maxQueueSize: config.impressionsQueueSize, maxQueueSizeInBytes: config.impressionsQueueSize)
         let impressionsSyncHelper = ImpressionsRecorderSyncHelper(impressionsStorage: storageContainer.impressionsStorage,
                                                                    accumulator: impressionsFlushChecker)
+
+        let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: key.matchingKey,
+                                 splitConfig: config,
+                                 splitsFilterQueryString: splitsFilterQueryString,
+                                 apiFacade: apiFacade,
+                                 storageContainer: storageContainer,
+                                 splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                 eventsManager: eventsManager)
+
         let synchronizer = DefaultSynchronizer(splitConfig: config, splitApiFacade: apiFacade,
                                                splitStorageContainer: storageContainer,
-                                               syncWorkerFactory: syncWorkerFactory, impressionsSyncHelper: impressionsSyncHelper)
+                                               syncWorkerFactory: syncWorkerFactory,
+                                               impressionsSyncHelper: impressionsSyncHelper)
+
+        let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
+            .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
+            .setSplitConfig(config).build()
 
         defaultClient = DefaultSplitClient(config: config, key: key, apiFacade: apiFacade,
-                                           storageContainer: storageContainer, synchronizer: synchronizer, eventsManager: eventsManager) {
+                                           storageContainer: storageContainer,
+                                           synchronizer: synchronizer, eventsManager: eventsManager) {
                 syncManager.stop()
                 manager.destroy()
         }

@@ -10,6 +10,13 @@ import Foundation
 @testable import Split
 
 class SyncWorkerFactoryStub: SyncWorkerFactory {
+    var impressionsRecorderWorker = RecorderWorkerStub()
+    var periodicImpressionsRecorderWorker = PeriodicRecorderWorkerStub()
+    var trackManager = TrackManagerStub()
+    var splitsSyncWorker = RetryableSyncWorkerStub()
+    var mySegmentsSyncWorker = RetryableSyncWorkerStub()
+    var periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
+    var periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
 
     private var retryableWorkerIndex = -1
     var retryableSplitsUpdateWorkers: [RetryableSyncWorker] = [RetryableSyncWorkerStub()]
@@ -23,5 +30,29 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
         }
 
         return retryableSplitsUpdateWorkers[retryableWorkerIndex]
+    }
+
+    func createRetryableSplitsSyncWorker() -> RetryableSyncWorker {
+        return splitsSyncWorker
+    }
+
+    func createPeriodicSplitsSyncWorker() -> PeriodicSyncWorker {
+        return periodicSplitsSyncWorker
+    }
+
+    func createRetryableMySegmentsSyncWorker() -> RetryableSyncWorker {
+        return mySegmentsSyncWorker
+    }
+
+    func createPeriodicMySegmentsSyncWorker() -> PeriodicSyncWorker {
+        return periodicMySegmentsSyncWorker
+    }
+
+    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> PeriodicRecorderWorker {
+        return periodicImpressionsRecorderWorker
+    }
+
+    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> RecorderWorker {
+        return impressionsRecorderWorker
     }
 }

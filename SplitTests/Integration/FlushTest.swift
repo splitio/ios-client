@@ -60,7 +60,8 @@ class FlushTests: XCTestCase {
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        var factory = builder.setApiKey(apiKey).setKey(key)
+            .setConfig(splitConfig).build()
         
         let client = factory?.client
         
@@ -189,7 +190,7 @@ class FlushTests: XCTestCase {
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
             let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
-            change.till = change.since ?? 0
+            change.till = Int64(Int(change.since))
             return change
         }
         return nil

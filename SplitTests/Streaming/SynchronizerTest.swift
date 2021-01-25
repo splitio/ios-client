@@ -14,7 +14,8 @@ import XCTest
 class SynchronizerTest: XCTestCase {
 
     var splitsFetcher: HttpSplitFetcherStub!
-    var impressionsManager: ImpressionsManagerStub!
+    var periodicImpressionsRecorderWorker: PeriodicRecorderWorkerStub!
+    var impressionsRecorderWorker: RecorderWorkerStub!
     var trackManager: TrackManagerStub!
     var splitsSyncWorker: RetryableSyncWorkerStub!
     var mySegmentsSyncWorker: RetryableSyncWorkerStub!
@@ -25,37 +26,55 @@ class SynchronizerTest: XCTestCase {
     var mySegmentsStorage: MySegmentsStorageStub!
 
     var updateWorkerCatalog = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()
-    var syncWorkerFactory = SyncWorkerFactoryStub()
+    var syncWorkerFactory: SyncWorkerFactoryStub!
 
     var synchronizer: Synchronizer!
 
     override func setUp() {
         splitsFetcher = HttpSplitFetcherStub()
-        impressionsManager = ImpressionsManagerStub()
+
         trackManager = TrackManagerStub()
         splitsSyncWorker = RetryableSyncWorkerStub()
         mySegmentsSyncWorker = RetryableSyncWorkerStub()
         periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
         periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
+        periodicImpressionsRecorderWorker = PeriodicRecorderWorkerStub()
+        impressionsRecorderWorker = RecorderWorkerStub()
+
+        syncWorkerFactory = SyncWorkerFactoryStub()
+
+        syncWorkerFactory.trackManager = trackManager
+        syncWorkerFactory.splitsSyncWorker = splitsSyncWorker
+        syncWorkerFactory.mySegmentsSyncWorker = mySegmentsSyncWorker
+        syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
+        syncWorkerFactory.periodicMySegmentsSyncWorker = periodicMySegmentsSyncWorker
+        syncWorkerFactory.periodicImpressionsRecorderWorker = periodicImpressionsRecorderWorker
+        syncWorkerFactory.impressionsRecorderWorker = impressionsRecorderWorker
+
 
         splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
         mySegmentsStorage = MySegmentsStorageStub()
 
-        let apiFacade = SplitApiFacade(impressionsManager: impressionsManager,
-                                       trackManager: trackManager, splitsSyncWorker: splitsSyncWorker,
-                                       mySegmentsSyncWorker: mySegmentsSyncWorker,
-                                       periodicSplitsSyncWorker: periodicSplitsSyncWorker,
-                                       periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker,
-                                       streamingHttpClient: nil)
         let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsStorage: splitsStorage,
-                                                     mySegmentsStorage: mySegmentsStorage)
+                                                     mySegmentsStorage: mySegmentsStorage, impressionsStorage: PersistentImpressionsStorageStub())
+
+        let apiFacade = SplitApiFacade.builder()
+            .setUserKey("userKey")
+            .setRestClient(RestClientStub())
+            .setSplitConfig(SplitClientConfig())
+            .setEventsManager(SplitEventsManagerStub())
+            .setTrackManager(trackManager)
+            .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
+            .build()
 
         synchronizer = DefaultSynchronizer(splitConfig: SplitClientConfig(),
             splitApiFacade: apiFacade,
             splitStorageContainer: storageContainer,
             syncWorkerFactory: syncWorkerFactory,
+            impressionsSyncHelper: ImpressionsRecorderSyncHelper(impressionsStorage: PersistentImpressionsStorageStub(),
+                                                                 accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
             syncTaskByChangeNumberCatalog: updateWorkerCatalog)
     }
 
@@ -123,7 +142,7 @@ class SynchronizerTest: XCTestCase {
 
         synchronizer.startPeriodicRecording()
 
-        XCTAssertTrue(impressionsManager.startCalled)
+        XCTAssertTrue(periodicImpressionsRecorderWorker.startCalled)
         XCTAssertTrue(trackManager.startCalled)
     }
 
@@ -131,7 +150,7 @@ class SynchronizerTest: XCTestCase {
 
         synchronizer.stopPeriodicRecording()
 
-        XCTAssertTrue(impressionsManager.stopCalled)
+        XCTAssertTrue(periodicImpressionsRecorderWorker.stopCalled)
         XCTAssertTrue(trackManager.stopCalled)
     }
 
@@ -139,7 +158,7 @@ class SynchronizerTest: XCTestCase {
 
         synchronizer.flush()
 
-        XCTAssertTrue(impressionsManager.flushCalled)
+        XCTAssertTrue(impressionsRecorderWorker.flushCalled)
         XCTAssertTrue(trackManager.flushCalled)
     }
 

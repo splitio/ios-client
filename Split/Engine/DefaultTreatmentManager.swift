@@ -182,6 +182,7 @@ class DefaultTreatmentManager: TreatmentManager {
     private func logImpression(label: String, changeNumber: Int64? = nil,
                                treatment: String, splitName: String, attributes: [String: Any]? = nil) {
         let impression: Impression = Impression()
+        impression.feature = splitName
         impression.keyName = key.matchingKey
         impression.bucketingKey = key.bucketingKey
         impression.label = (splitConfig.isLabelsEnabled ? label : nil)
