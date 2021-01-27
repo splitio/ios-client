@@ -12,7 +12,8 @@ import Foundation
 class SyncWorkerFactoryStub: SyncWorkerFactory {
     var impressionsRecorderWorker = RecorderWorkerStub()
     var periodicImpressionsRecorderWorker = PeriodicRecorderWorkerStub()
-    var trackManager = TrackManagerStub()
+    var eventsRecorderWorker = RecorderWorkerStub()
+    var periodicEventsRecorderWorker = PeriodicRecorderWorkerStub()
     var splitsSyncWorker = RetryableSyncWorkerStub()
     var mySegmentsSyncWorker = RetryableSyncWorkerStub()
     var periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
@@ -54,5 +55,13 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
 
     func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> RecorderWorker {
         return impressionsRecorderWorker
+    }
+
+    func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper) -> PeriodicRecorderWorker {
+        return periodicEventsRecorderWorker
+    }
+
+    func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper) -> RecorderWorker {
+        return eventsRecorderWorker
     }
 }
