@@ -59,4 +59,10 @@ struct TestingHelper {
         split.status = status
         return split
     }
+
+    static func createTestDatabase(name: String) -> SplitDatabase {
+        let queue = DispatchQueue(label: name, target: DispatchQueue.global())
+        let helper = IntegrationCoreDataHelper.get(databaseName: "trackTestDb", dispatchQueue: queue)
+        return CoreDataSplitDatabase(coreDataHelper: helper, dispatchQueue: queue)
+    }
 }

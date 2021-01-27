@@ -40,7 +40,8 @@ class TreatmentManagerTest: XCTestCase {
             storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
                                                      splitsStorage: splitsStorage,
                                                      mySegmentsStorage: mySegmentsStorage,
-                                                     impressionsStorage: PersistentImpressionsStorageStub())
+                                                     impressionsStorage: PersistentImpressionsStorageStub(),
+                                                     eventsStorage: PersistentEventsStorageStub())
         }
     }
     

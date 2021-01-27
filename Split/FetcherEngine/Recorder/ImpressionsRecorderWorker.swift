@@ -32,20 +32,18 @@ class ImpressionsRecorderWorker: RecorderWorker {
         var failedImpressions = [Impression]()
         repeat {
             let impressions = impressionsStorage.pop(count: impressionsPerPush)
-            if impressions.count == 0 {
-                return
-            }
             rowCount = impressions.count
-            Logger.d("Sending impressions")
-
-            do {
-                _ = try impressionsRecorder.execute(group(impressions: impressions))
-                // Removing sent impressions
-                impressionsStorage.delete(impressions)
-                Logger.d("Impression posted successfully")
-            } catch let error {
-                Logger.e("Impression error: \(String(describing: error))")
-                failedImpressions.append(contentsOf: impressions)
+            if rowCount > 0 {
+                Logger.d("Sending impressions")
+                do {
+                    _ = try impressionsRecorder.execute(group(impressions: impressions))
+                    // Removing sent impressions
+                    impressionsStorage.delete(impressions)
+                    Logger.d("Impression posted successfully")
+                } catch let error {
+                    Logger.e("Impression error: \(String(describing: error))")
+                    failedImpressions.append(contentsOf: impressions)
+                }
             }
         } while rowCount == impressionsPerPush
         // Activate non sent impressions to retry in next iteration

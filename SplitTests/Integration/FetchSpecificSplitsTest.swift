@@ -11,9 +11,8 @@ import XCTest
 
 class FetchSpecificSplitsTest: XCTestCase {
 
-    let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
-    let dataFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
-    let matchingKey = "CUSTOMER_ID"
+    let apiKey = IntegrationHelper.dummyApiKey
+    let matchingKey = IntegrationHelper.dummyUserKey
     let trafficType = "account"
     let kNeverRefreshRate = 9999999
     var webServer: MockWebServer!
@@ -95,6 +94,7 @@ class FetchSpecificSplitsTest: XCTestCase {
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
+        builder.setTestDatabase(TestingHelper.createTestDatabase(name: "FetchSpecificSplit"))
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory?.client
@@ -128,7 +128,7 @@ class FetchSpecificSplitsTest: XCTestCase {
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
             let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
-            self.lastChangeNumber = Int(change.till ?? 0)
+            self.lastChangeNumber = Int(change.till)
             return change
         }
         return nil

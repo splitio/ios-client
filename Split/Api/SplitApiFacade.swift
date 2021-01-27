@@ -16,8 +16,8 @@ struct SplitApiFacade {
     let splitsFetcher: HttpSplitFetcher
     let mySegmentsFetcher: HttpMySegmentsFetcher
     let impressionsRecorder: HttpImpressionsRecorder
+    let eventsRecorder: HttpEventsRecorder
     let streamingHttpClient: HttpClient?
-    let trackManager: TrackManager
     let sseAuthenticator: SseAuthenticator
 }
 
@@ -27,7 +27,6 @@ class SplitApiFacadeBuilder {
     private var splitConfig: SplitClientConfig?
     private var eventsManager: SplitEventsManager?
     private var restClient: SplitApiRestClient?
-    private var trackManager: TrackManager?
     private var storageContainer: SplitStorageContainer?
     private var streamingHttpClient: HttpClient?
     private var splitsQueryString: String = ""
@@ -52,11 +51,6 @@ class SplitApiFacadeBuilder {
         return self
     }
 
-    func setTrackManager(_ trackManager: TrackManager) -> SplitApiFacadeBuilder {
-        self.trackManager = trackManager
-        return self
-    }
-
     func setStorageContainer(_ storageContainer: SplitStorageContainer) -> SplitApiFacadeBuilder {
         self.storageContainer = storageContainer
         return self
@@ -74,8 +68,7 @@ class SplitApiFacadeBuilder {
 
     func build() -> SplitApiFacade {
 
-        guard let restClient = self.restClient,
-            let trackManager = self.trackManager
+        guard let restClient = self.restClient
             else {
                 fatalError("Some parameter is null when creating Split Api Facade")
         }
@@ -88,11 +81,12 @@ class SplitApiFacadeBuilder {
 
 
         let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
+        let eventsRecorder = DefaultHttpEventsRecorder(restClient: restClient)
 
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: DefaultJwtTokenParser())
         
 
         return SplitApiFacade(splitsFetcher: splitsFetcher, mySegmentsFetcher: mySegmentsFetcher, impressionsRecorder: impressionsRecorder,
-                              streamingHttpClient: self.streamingHttpClient, trackManager: trackManager, sseAuthenticator: sseAuthenticator)
+                              eventsRecorder: eventsRecorder, streamingHttpClient: self.streamingHttpClient, sseAuthenticator: sseAuthenticator)
     }
 }
