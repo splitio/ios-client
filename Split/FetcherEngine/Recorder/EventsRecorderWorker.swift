@@ -49,7 +49,6 @@ class EventsRecorderWorker: RecorderWorker {
         } while rowCount == eventsPerPush
         // Activate non sent events to retry in next iteration
         eventsStorage.setActive(failedEvents)
-        eventsStorage.setActive(failedEvents)
         if let syncHelper = eventsSyncHelper {
             syncHelper.updateAccumulator(count: failedEvents.count,
                                          bytes: failedEvents.reduce(0, { $0 + $1.sizeInBytes }))
