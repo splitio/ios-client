@@ -43,16 +43,20 @@ import Foundation
 
 public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitClient {
 
-    var storageContainer: SplitStorageContainer?
+
+    var splitsStorage: SplitsStorage?
+    var mySegmentsStorage: MySegmentsStorage?
+
 
     private let eventsManager: SplitEventsManager?
     private var evaluator: Evaluator!
     private let key: Key
 
-    init(key: Key, storageContainer: SplitStorageContainer, eventsManager: SplitEventsManager? = nil) {
+    init(key: Key, splitsStorage: SplitsStorage, eventsManager: SplitEventsManager? = nil) {
         self.eventsManager = eventsManager
         self.key = key
-        self.storageContainer = storageContainer
+        self.splitsStorage = splitsStorage
+        self.mySegmentsStorage = EmptyMySegmentsStorage()
         super.init()
         self.evaluator = DefaultEvaluator(splitClient: self)
     }

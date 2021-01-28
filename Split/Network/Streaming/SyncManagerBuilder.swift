@@ -15,8 +15,7 @@ class SyncManagerBuilder {
     private var splitApiFacade: SplitApiFacade?
     private var storageContainer: SplitStorageContainer?
     private var endpointFactory: EndpointFactory?
-    private var restClient: DefaultRestClient?
-    private var splitFetcher: HttpSplitFetcher?
+    private var synchronizer: Synchronizer?
 
     func setUserKey(_ userKey: String) -> SyncManagerBuilder {
         self.userKey = userKey
@@ -43,13 +42,8 @@ class SyncManagerBuilder {
         return self
     }
 
-    func setRestClient(_ restClient: DefaultRestClient) -> SyncManagerBuilder {
-        self.restClient = restClient
-        return self
-    }
-
-    func setSplitFetcher(_ splitFetcher: HttpSplitFetcher) -> SyncManagerBuilder {
-        self.splitFetcher = splitFetcher
+    func setSynchronizer(_ synchronizer: Synchronizer) -> SyncManagerBuilder {
+        self.synchronizer = synchronizer
         return self
     }
 
@@ -58,20 +52,13 @@ class SyncManagerBuilder {
         guard let userKey = self.userKey,
             let config = self.splitConfig,
             let apiFacade = self.splitApiFacade,
-            let restClient = self.restClient,
             let endpointFactory = self.endpointFactory,
-            let splitFetcher = self.splitFetcher,
+            let synchronizer = self.synchronizer,
             let storageContainer = self.storageContainer
             else {
                 fatalError("Some parameter is null when creating Sync Manager")
         }
 
-        let syncWorkerFactory = DefaultSyncWorkerFactory(splitFetcher: splitFetcher,
-                                                         splitsStorage: storageContainer.splitsStorage,
-                                                         splitChangeProcessor: DefaultSplitChangeProcessor())
-        let synchronizer = DefaultSynchronizer(splitConfig: config, splitApiFacade: apiFacade,
-                                               splitStorageContainer: storageContainer,
-                                               syncWorkerFactory: syncWorkerFactory)
         let sseHttpConfig = HttpSessionConfig()
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
         let sseHttpClient = apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
@@ -91,7 +78,7 @@ class SyncManagerBuilder {
                                            notificationManagerKeeper: notificationManagerKeeper,
                                            broadcasterChannel: broadcasterChannel)
 
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: DefaultJwtTokenParser())
+        let sseAuthenticator = apiFacade.sseAuthenticator
         let sseClient = DefaultSseClient(endpoint: endpointFactory.streamingEndpoint,
                                          httpClient: sseHttpClient, sseHandler: sseHandler)
 

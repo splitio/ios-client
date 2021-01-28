@@ -10,8 +10,10 @@ import Foundation
 @testable import Split
 
 class RecorderWorkerStub: RecorderWorker {
+    var flushCalled = false
     var flushCallCount = 0
     func flush() {
+        flushCalled = true
         flushCallCount+=1
     }
 }

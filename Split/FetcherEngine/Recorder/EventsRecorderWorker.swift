@@ -13,14 +13,17 @@ class EventsRecorderWorker: RecorderWorker {
     private let eventsStorage: PersistentEventsStorage
     private let eventsRecorder: HttpEventsRecorder
     private let eventsPerPush: Int
+    private let eventsSyncHelper: EventsRecorderSyncHelper?
 
     init(eventsStorage: PersistentEventsStorage,
          eventsRecorder: HttpEventsRecorder,
-         eventsPerPush: Int) {
+         eventsPerPush: Int,
+         eventsSyncHelper: EventsRecorderSyncHelper? = nil) {
 
         self.eventsStorage = eventsStorage
         self.eventsRecorder = eventsRecorder
         self.eventsPerPush = eventsPerPush
+        self.eventsSyncHelper = eventsSyncHelper
     }
 
     func flush() {
@@ -46,5 +49,9 @@ class EventsRecorderWorker: RecorderWorker {
         } while rowCount == eventsPerPush
         // Activate non sent events to retry in next iteration
         eventsStorage.setActive(failedEvents)
+        if let syncHelper = eventsSyncHelper {
+            syncHelper.updateAccumulator(count: failedEvents.count,
+                                         bytes: failedEvents.reduce(0, { $0 + $1.sizeInBytes }))
+        }
     }
 }

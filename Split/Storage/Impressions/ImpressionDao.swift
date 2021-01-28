@@ -66,6 +66,10 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
     }
 
     func update(ids: [String], newStatus: Int32) {
+        if ids.count == 0 {
+            return
+        }
+     
         let predicate = NSPredicate(format: "storageId IN %@", ids)
 
         executeAsync { [weak self] in
@@ -94,6 +98,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
     func mapEntityToModel(_ entity: ImpressionEntity) throws -> Impression {
         let model = try Json.encodeFrom(json: entity.body, to: Impression.self)
         model.storageId = entity.storageId
+        model.feature = entity.testName
         return model
     }
 }

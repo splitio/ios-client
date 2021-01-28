@@ -24,8 +24,7 @@ class EvaluatorTests: XCTestCase {
             splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
             let mySegmentsStorage = MySegmentsStorageStub()
             mySegmentsStorage.set(mySegments)
-            let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
-            client = InternalSplitClientStub(storageContainer: storageContainer)
+            client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
             evaluator = DefaultEvaluator(splitClient: client)
         }
     }
@@ -377,9 +376,7 @@ class EvaluatorTests: XCTestCase {
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
         let mySegmentsStorage = MySegmentsStorageStub()
         mySegmentsStorage.set(mySegments)
-        let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
-                                                     splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
-        client = InternalSplitClientStub(storageContainer: storageContainer)
+        client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
         evaluator = DefaultEvaluator(splitClient: client)
         return evaluator
     }
@@ -389,10 +386,7 @@ class EvaluatorTests: XCTestCase {
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
         let mySegmentsStorage = MySegmentsStorageStub()
         mySegmentsStorage.set([])
-        let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
-                                                     splitsStorage: splitsStorage,
-                                                     mySegmentsStorage: mySegmentsStorage)
-        client = InternalSplitClientStub(storageContainer: storageContainer)
+        client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
         evaluator = DefaultEvaluator(splitClient: client)
         return evaluator
     }
