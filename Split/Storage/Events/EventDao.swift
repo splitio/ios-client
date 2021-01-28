@@ -81,6 +81,7 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
     private func mapEntityToModel(_ entity: EventEntity) throws -> EventDTO {
         let model = try Json.dynamicEncodeFrom(json: entity.body, to: EventDTO.self)
         model.storageId = entity.storageId
+        model.sizeInBytes = entity.sizeInBytes
         return model
     }
 }

@@ -13,13 +13,19 @@ typealias DestroyHandler = () -> Void
 
 public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClient {
 
-    private (set) var storageContainer: SplitStorageContainer?
+    var splitsStorage: SplitsStorage? {
+        return storageContainer.splitsStorage
+    }
+    var mySegmentsStorage: MySegmentsStorage? {
+        return storageContainer.mySegmentsStorage
+    }
+    private var storageContainer: SplitStorageContainer
     private var key: Key
     private let config: SplitClientConfig
 
     private var eventsManager: SplitEventsManager
     private var trackManager: TrackManager
-    private var impressionsManager: ImpressionsManager
+    private var synchronizer: Synchronizer
 
     private let eventValidator: EventValidator
     private let validationLogger: ValidationMessageLogger
@@ -32,12 +38,13 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
          key: Key,
          apiFacade: SplitApiFacade,
          storageContainer: SplitStorageContainer,
+         synchronizer: Synchronizer,
          eventsManager: SplitEventsManager,
          destroyHandler: @escaping DestroyHandler) {
 
         self.config = config
         self.key = key
-        self.impressionsManager = apiFacade.impressionsManager
+        self.synchronizer = synchronizer
         self.trackManager = apiFacade.trackManager
         self.factoryDestroyHandler = destroyHandler
         self.eventValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
@@ -49,7 +56,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
         self.treatmentManager = DefaultTreatmentManager(
             evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager,
-            impressionsManager: impressionsManager, metricsManager: DefaultMetricsManager.shared,
+            impressionLogger: synchronizer, metricsManager: DefaultMetricsManager.shared,
             keyValidator: DefaultKeyValidator(),
             splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
             validationLogger: validationLogger)
@@ -218,7 +225,7 @@ extension DefaultSplitClient {
 extension DefaultSplitClient {
 
     private func syncFlush() {
-        self.impressionsManager.flush()
+        self.synchronizer.flush()
         self.trackManager.flush()
         DefaultMetricsManager.shared.flush()
     }

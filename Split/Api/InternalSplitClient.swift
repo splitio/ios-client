@@ -14,5 +14,6 @@ import Foundation
 /// until we can do a refactor in many classes
 ///
 protocol InternalSplitClient: SplitClient {
-    var storageContainer: SplitStorageContainer? { get }
+    var splitsStorage: SplitsStorage? { get }
+    var mySegmentsStorage: MySegmentsStorage? { get }
 }

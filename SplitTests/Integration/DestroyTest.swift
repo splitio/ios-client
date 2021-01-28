@@ -227,7 +227,7 @@ class DestroyTests: XCTestCase {
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
             let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
-            lastChangeNumber = Int(change.till ?? 0)
+            lastChangeNumber = Int(change.till)
             return change
         }
         return nil

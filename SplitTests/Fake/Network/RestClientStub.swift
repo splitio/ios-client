@@ -17,7 +17,7 @@ protocol RestClientTest {
     func updateFailedSseAuth(error: Error)
 }
 
-class RestClientStub {
+class RestClientStub: SplitApiRestClient {
     private var sseAuthResult: DataResult<SseAuthenticationResponse>?
     private var segments: [String]?
     private var splitChanges: [SplitChange] = []
@@ -81,6 +81,17 @@ extension RestClientStub: RestClientImpressions {
 extension RestClientStub: RestClientSseAuthenticator {
     func authenticate(userKey: String, completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void) {
         completion(self.sseAuthResult!)
+    }
+}
+
+extension RestClientStub: MetricsRestClient {
+    func sendTimeMetrics(_ times: [TimeMetric], completion: @escaping (DataResult<EmptyValue>) -> Void) {
+    }
+
+    func sendCounterMetrics(_ counters: [CounterMetric], completion: @escaping (DataResult<EmptyValue>) -> Void) {
+    }
+
+    func sendGaugeMetrics(_ gauge: MetricGauge, completion: @escaping (DataResult<EmptyValue>) -> Void) {
     }
 }
 

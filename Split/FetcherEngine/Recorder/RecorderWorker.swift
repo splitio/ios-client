@@ -16,6 +16,7 @@ protocol RecorderSyncHelper {
     associatedtype Item
     // Push an item and checks if max queue size is reached
     func pushAndCheckFlush(_ item: Item) -> Bool
+    func updateAccumulator(count: Int, bytes: Int)
 }
 
 class EventsRecorderSyncHelper: RecorderSyncHelper {
@@ -36,10 +37,40 @@ class EventsRecorderSyncHelper: RecorderSyncHelper {
         }
         return accumulator.checkIfFlushIsNeeded(sizeInBytes: item.sizeInBytes)
     }
+
+    func updateAccumulator(count: Int, bytes: Int) {
+        accumulator.update(count: count, bytes: bytes)
+    }
+}
+
+class ImpressionsRecorderSyncHelper: RecorderSyncHelper {
+
+    private let impressionsStorage: PersistentImpressionsStorage
+    private let accumulator: RecorderFlushChecker
+
+    init(impressionsStorage: PersistentImpressionsStorage,
+         accumulator: RecorderFlushChecker) {
+        self.impressionsStorage = impressionsStorage
+        self.accumulator = accumulator
+    }
+
+    func pushAndCheckFlush(_ item: Impression) -> Bool {
+
+        DispatchQueue.global().async {
+            self.impressionsStorage.push(impression: item)
+        }
+        // TODO: Replace by config constant
+        return accumulator.checkIfFlushIsNeeded(sizeInBytes: 150)
+    }
+
+    func updateAccumulator(count: Int, bytes: Int) {
+        accumulator.update(count: count, bytes: bytes)
+    }
 }
 
 protocol RecorderFlushChecker {
     func checkIfFlushIsNeeded(sizeInBytes: Int) -> Bool
+    func update(count: Int, bytes: Int)
 }
 
 class DefaultRecorderFlushChecker: RecorderFlushChecker {
@@ -59,10 +90,13 @@ class DefaultRecorderFlushChecker: RecorderFlushChecker {
         let pushCount = pushedCount.addAndGet(1)
         let pushBytes = totalPushedSizeInBytes.addAndGet(sizeInBytes)
         if pushCount >= maxQueueSize || pushBytes >= maxQueueSizeInBytes {
-            pushedCount.set(0)
-            totalPushedSizeInBytes.set(0)
             return true
         }
         return false
+    }
+
+    func update(count: Int, bytes: Int) {
+        pushedCount.set(count)
+        totalPushedSizeInBytes.set(bytes)
     }
 }

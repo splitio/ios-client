@@ -12,14 +12,13 @@ struct SplitApiFacade {
     static func builder() -> SplitApiFacadeBuilder {
         return SplitApiFacadeBuilder()
     }
-    //let splitsFetcher: SplitChangeFetcher
-    let impressionsManager: ImpressionsManager
-    let trackManager: TrackManager
-    let splitsSyncWorker: RetryableSyncWorker
-    let mySegmentsSyncWorker: RetryableSyncWorker
-    let periodicSplitsSyncWorker: PeriodicSyncWorker
-    let periodicMySegmentsSyncWorker: PeriodicSyncWorker
+
+    let splitsFetcher: HttpSplitFetcher
+    let mySegmentsFetcher: HttpMySegmentsFetcher
+    let impressionsRecorder: HttpImpressionsRecorder
     let streamingHttpClient: HttpClient?
+    let trackManager: TrackManager
+    let sseAuthenticator: SseAuthenticator
 }
 
 class SplitApiFacadeBuilder {
@@ -27,8 +26,7 @@ class SplitApiFacadeBuilder {
     private var userKey: String?
     private var splitConfig: SplitClientConfig?
     private var eventsManager: SplitEventsManager?
-    private var restClient: DefaultRestClient?
-    private var impressionsManager: ImpressionsManager?
+    private var restClient: SplitApiRestClient?
     private var trackManager: TrackManager?
     private var storageContainer: SplitStorageContainer?
     private var streamingHttpClient: HttpClient?
@@ -49,13 +47,8 @@ class SplitApiFacadeBuilder {
         return self
     }
 
-    func setRestClient(_ restClient: DefaultRestClient) -> SplitApiFacadeBuilder {
+    func setRestClient(_ restClient: SplitApiRestClient) -> SplitApiFacadeBuilder {
         self.restClient = restClient
-        return self
-    }
-
-    func setImpressionsManager(_ impressionsManager: ImpressionsManager) -> SplitApiFacadeBuilder {
-        self.impressionsManager = impressionsManager
         return self
     }
 
@@ -81,13 +74,8 @@ class SplitApiFacadeBuilder {
 
     func build() -> SplitApiFacade {
 
-        guard let userKey = self.userKey,
-            let splitConfig = self.splitConfig,
-            let eventsManager = self.eventsManager,
-            let restClient = self.restClient,
-            let impressionsManager = self.impressionsManager,
-            let trackManager = self.trackManager,
-            let storageContainer = self.storageContainer
+        guard let restClient = self.restClient,
+            let trackManager = self.trackManager
             else {
                 fatalError("Some parameter is null when creating Split Api Facade")
         }
@@ -98,41 +86,13 @@ class SplitApiFacadeBuilder {
         let mySegmentsFetcher: HttpMySegmentsFetcher
             = DefaultHttpMySegmentsFetcher(restClient: restClient, metricsManager: DefaultMetricsManager.shared)
 
-        let backoffBase =  splitConfig.generalRetryBackoffBase
-        let splitChangeProcessor = DefaultSplitChangeProcessor()
 
-        let splitsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
-        let splitsSyncWorker = RevampRetryableSplitsSyncWorker(splitFetcher: splitsFetcher,
-                                                               splitsStorage: storageContainer.splitsStorage,
-                                                               splitChangeProcessor: splitChangeProcessor,
-                                                         cacheExpiration: splitConfig.cacheExpirationInSeconds,
-                                                         defaultQueryString: splitsQueryString,
-                                                         eventsManager: eventsManager,
-                                                         reconnectBackoffCounter: splitsBackoffCounter)
+        let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
 
-        let mySegmentsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
-        let mySegmentsWorker = RetryableMySegmentsSyncWorker(userKey: userKey, mySegmentsFetcher: mySegmentsFetcher,
-                                                             mySegmentsStorage: storageContainer.mySegmentsStorage,
-                                                             metricsManager: DefaultMetricsManager.shared,
-                                                             eventsManager: eventsManager,
-                                                             reconnectBackoffCounter: mySegmentsBackoffCounter)
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: DefaultJwtTokenParser())
+        
 
-        let periodicSplitsSyncWorker = RevampPeriodicSplitsSyncWorker(
-            splitFetcher: splitsFetcher, splitsStorage: storageContainer.splitsStorage,
-            splitChangeProcessor: splitChangeProcessor,
-            timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate), eventsManager: eventsManager)
-
-        let periodicMySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(
-            userKey: userKey, mySegmentsFetcher: mySegmentsFetcher,
-            mySegmentsStorage: storageContainer.mySegmentsStorage, metricsManager: DefaultMetricsManager.shared,
-            timer: DefaultPeriodicTimer(interval: splitConfig.segmentsRefreshRate), eventsManager: eventsManager)
-
-        return SplitApiFacade(
-            //splitsFetcher: splitsChangeFetcher,
-            impressionsManager: impressionsManager,
-            trackManager: trackManager, splitsSyncWorker: splitsSyncWorker, mySegmentsSyncWorker: mySegmentsWorker,
-            periodicSplitsSyncWorker: periodicSplitsSyncWorker,
-            periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker,
-            streamingHttpClient: streamingHttpClient)
+        return SplitApiFacade(splitsFetcher: splitsFetcher, mySegmentsFetcher: mySegmentsFetcher, impressionsRecorder: impressionsRecorder,
+                              streamingHttpClient: self.streamingHttpClient, trackManager: trackManager, sseAuthenticator: sseAuthenticator)
     }
 }

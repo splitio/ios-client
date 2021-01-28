@@ -25,10 +25,7 @@ class LocalhostSplitClientTests: XCTestCase {
                                                       eventsManager: eventsManager, splitsFileName: fileName,
                                                       bundle: Bundle(for: type(of: self)))
         splitsStorage.loadLocal()
-        let storageContainer = SplitStorageContainer(fileStorage: storage,
-                                                     splitsStorage: splitsStorage,
-                                                     mySegmentsStorage: MySegmentsStorageStub())
-        client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), storageContainer: storageContainer)
+        client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), splitsStorage: splitsStorage, eventsManager: eventsManager)
     }
     
     override func tearDown() {

@@ -13,14 +13,18 @@ class ImpressionsRecorderWorker: RecorderWorker {
     private let impressionsStorage: PersistentImpressionsStorage
     private let impressionsRecorder: HttpImpressionsRecorder
     private let impressionsPerPush: Int
+    private let impressionsSyncHelper: ImpressionsRecorderSyncHelper?
 
     init(impressionsStorage: PersistentImpressionsStorage,
          impressionsRecorder: HttpImpressionsRecorder,
-         impressionsPerPush: Int) {
+         impressionsPerPush: Int,
+         impressionsSyncHelper: ImpressionsRecorderSyncHelper? = nil) {
 
         self.impressionsStorage = impressionsStorage
         self.impressionsRecorder = impressionsRecorder
         self.impressionsPerPush = impressionsPerPush
+        self.impressionsSyncHelper = impressionsSyncHelper
+
     }
 
     func flush() {
@@ -46,6 +50,12 @@ class ImpressionsRecorderWorker: RecorderWorker {
         } while rowCount == impressionsPerPush
         // Activate non sent impressions to retry in next iteration
         impressionsStorage.setActive(failedImpressions)
+        if let syncHelper = impressionsSyncHelper {
+            syncHelper.updateAccumulator(count: failedImpressions.count,
+                                         bytes: failedImpressions.count *
+                                            ServiceConstants.estimatedImpressionSizeInBytes)
+        }
+
     }
 
     private func group(impressions: [Impression]) -> [ImpressionsTest] {

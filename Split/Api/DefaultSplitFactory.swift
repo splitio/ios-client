@@ -71,11 +71,9 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let trackManager = buildTrackManager(splitConfig: config, fileStorage: storageContainer.fileStorage,
                                              restClient: restClient)
-        let impressionsManager = buildImpressionsManager(splitConfig: config, fileStorage: storageContainer.fileStorage,
-                                                         restClient: restClient)
 
         let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(key.matchingKey).setSplitConfig(config)
-            .setRestClient(restClient).setEventsManager(eventsManager).setImpressionsManager(impressionsManager)
+            .setRestClient(restClient).setEventsManager(eventsManager)
             .setTrackManager(trackManager).setStorageContainer(storageContainer)
             .setSplitsQueryString(splitsFilterQueryString)
 
@@ -84,14 +82,33 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         }
 
         let apiFacade = apiFacadeBuilder.build()
-        let splitFetcher = DefaultHttpSplitFetcher(restClient: restClient, metricsManager: DefaultMetricsManager.shared)
+
+        let impressionsFlushChecker = DefaultRecorderFlushChecker(maxQueueSize: config.impressionsQueueSize,
+                                                                  maxQueueSizeInBytes: config.impressionsQueueSize)
+
+        let impressionsSyncHelper = ImpressionsRecorderSyncHelper(impressionsStorage: storageContainer.impressionsStorage,
+                                                                   accumulator: impressionsFlushChecker)
+
+        let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: key.matchingKey,
+                                 splitConfig: config,
+                                 splitsFilterQueryString: splitsFilterQueryString,
+                                 apiFacade: apiFacade,
+                                 storageContainer: storageContainer,
+                                 splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                 eventsManager: eventsManager)
+
+        let synchronizer = DefaultSynchronizer(splitConfig: config, splitApiFacade: apiFacade,
+                                               splitStorageContainer: storageContainer,
+                                               syncWorkerFactory: syncWorkerFactory,
+                                               impressionsSyncHelper: impressionsSyncHelper)
 
         let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
-            .setRestClient(restClient).setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade)
-            .setSplitConfig(config).setSplitFetcher(splitFetcher).build()
+            .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
+            .setSplitConfig(config).build()
 
         defaultClient = DefaultSplitClient(config: config, key: key, apiFacade: apiFacade,
-                                           storageContainer: storageContainer, eventsManager: eventsManager) {
+                                           storageContainer: storageContainer,
+                                           synchronizer: synchronizer, eventsManager: eventsManager) {
                 syncManager.stop()
                 manager.destroy()
         }
@@ -107,21 +124,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             maxHitsSizeInBytes: splitConfig.maxEventsQueueMemorySizeInBytes)
     }
 
-    private func buildImpressionsConfig(from splitConfig: SplitClientConfig) -> ImpressionManagerConfig {
-        return ImpressionManagerConfig(pushRate: splitConfig.impressionRefreshRate,
-                                       impressionsPerPush: splitConfig.impressionsChunkSize)
-    }
-
     private func buildTrackManager(splitConfig: SplitClientConfig, fileStorage: FileStorageProtocol,
                                    restClient: RestClientTrackEvents) -> TrackManager {
         return DefaultTrackManager(config: buildTrackConfig(from: splitConfig),
                                    fileStorage: fileStorage, restClient: restClient)
-    }
-
-    private func buildImpressionsManager(splitConfig: SplitClientConfig, fileStorage: FileStorageProtocol,
-                                         restClient: RestClientImpressions) -> ImpressionsManager {
-        return DefaultImpressionsManager(config: buildImpressionsConfig(from: splitConfig), fileStorage: fileStorage,
-                                         restClient: restClient)
     }
 
     private func buildStorageContainer(userKey: String,
@@ -150,8 +156,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let persistentMySegmentsStorage = DefaultPersistentMySegmentsStorage(userKey: userKey, database: splitDatabase)
         let mySegmentsStorage = DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
+
+        let impressionsStorage = DefaultImpressionsStorage(database: splitDatabase,
+                                                           expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+
         return SplitStorageContainer(fileStorage: fileStorage,
                                      splitsStorage: splitsStorage,
-                                     mySegmentsStorage: mySegmentsStorage)
+                                     mySegmentsStorage: mySegmentsStorage,
+                                     impressionsStorage: impressionsStorage)
     }
 }
