@@ -80,13 +80,5 @@ class CoreDataHelper {
         } catch {
             Logger.e("Error while deleting \(entity.rawValue) entities from storage: \(error.localizedDescription)")
         }
-
-        //        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        //
-        //        do {
-        //            try persistentCoordinator.execute(deleteRequest, with: managedObjectContext)
-        //        } catch {
-        //            Logger.e("Error while deleting \(entity.rawValue) entities from storage: \(error.localizedDescription)")
-        //        }
     }
 }
