@@ -59,9 +59,6 @@ class CoreDataSplitDatabase: SplitDatabase {
     var impressionDao: ImpressionDao
     var generalInfoDao: GeneralInfoDao
 
-    private let kDataModelName = "split_cache"
-    private let kDataModelExtentsion = "momd"
-    private let kDatabaseExtension = "sqlite"
     private let coreDataHelper: CoreDataHelper
 
     init(coreDataHelper: CoreDataHelper, dispatchQueue: DispatchQueue) {
