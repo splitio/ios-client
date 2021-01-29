@@ -70,6 +70,9 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
     }
 
     func delete(_ events: [EventDTO]) {
+        if events.count == 0 {
+            return
+        }
         executeAsync { [weak self] in
             guard let self = self else {
                 return

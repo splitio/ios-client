@@ -59,6 +59,7 @@ class TrackTest: XCTestCase {
             var code: Int = 0
             self.queue.sync {
                 let index = self.getAndIncrement()
+                print("Hit: \(index)")
                 if index > 0, index < 4 {
                     code = 500
                 } else {
@@ -98,15 +99,18 @@ class TrackTest: XCTestCase {
         splitConfig.impressionRefreshRate = kNeverRefreshRate
         splitConfig.eventsPushRate = 5
         splitConfig.eventsPerPush = 5
+        splitConfig.eventsFirstPushWindow = 5
         splitConfig.eventsQueueSize = 10000
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
         .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
-        
+
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
-        let builder = DefaultSplitFactoryBuilder()
-        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        let builder: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        builder.setTestDatabase(TestingHelper.createTestDatabase(name: "TrackTest"))
+        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig)
+            .build()
         
         let client = factory!.client
 
@@ -156,17 +160,17 @@ class TrackTest: XCTestCase {
         XCTAssertEqual("custom", e1?.trafficTypeName)
         XCTAssertEqual(0.0, e1?.value)
         XCTAssertEqual("event1", e1?.eventTypeId)
-        XCTAssertEqual(0, e1?.properties?["value"] as! Int)
+        XCTAssertEqual(0, e1?.properties?["value"] as? Int ?? -1)
 
         XCTAssertEqual("custom", e2?.trafficTypeName)
         XCTAssertEqual(2.0, e2?.value)
         XCTAssertEqual("event2", e2?.eventTypeId)
-        XCTAssertEqual(2, e2?.properties?["value"] as! Int)
+        XCTAssertEqual(2, e2?.properties?["value"] as? Int ?? -1)
 
         XCTAssertEqual("custom", e3?.trafficTypeName)
         XCTAssertEqual(3.0, e3?.value)
         XCTAssertEqual("event3", e3?.eventTypeId)
-        XCTAssertEqual(3, e3?.properties?["value"] as! Int)
+        XCTAssertEqual(3, e3?.properties?["value"] as? Int ?? -1)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -224,9 +228,10 @@ class TrackTest: XCTestCase {
     }
 
     private func findEvent(type: String, value: Double) -> EventDTO? {
+        if trackHits.count == 0 { return nil }
         var e: EventDTO?
         var i = 0
-        while e == nil, i < 3 {
+        while e == nil, i < trackHits.count {
             e = trackHits[i].first(where: { $0.eventTypeId == type && $0.value == value } )
             i+=1
         }

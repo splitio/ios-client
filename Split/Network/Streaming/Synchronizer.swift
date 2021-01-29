@@ -33,6 +33,7 @@ struct SplitStorageContainer {
     let splitsStorage: SplitsStorage
     let mySegmentsStorage: MySegmentsStorage
     let impressionsStorage: PersistentImpressionsStorage
+    let eventsStorage: PersistentEventsStorage
 }
 
 class DefaultSynchronizer: Synchronizer {
@@ -50,13 +51,16 @@ class DefaultSynchronizer: Synchronizer {
     private let mySegmentsSyncWorker: RetryableSyncWorker
     private let periodicImpressionsRecorderWoker: PeriodicRecorderWorker
     private let flusherImpressionsRecorderWorker: RecorderWorker
-    private let trackManager: TrackManager
+    private let periodicEventsRecorderWoker: PeriodicRecorderWorker
+    private let flusherEventsRecorderWorker: RecorderWorker
+    private let eventsSyncHelper: EventsRecorderSyncHelper
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
          impressionsSyncHelper: ImpressionsRecorderSyncHelper,
+         eventsSyncHelper: EventsRecorderSyncHelper,
          syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
         = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()) {
         self.splitConfig = splitConfig
@@ -64,16 +68,16 @@ class DefaultSynchronizer: Synchronizer {
         self.splitStorageContainer = splitStorageContainer
         self.syncWorkerFactory = syncWorkerFactory
         self.syncTaskByChangeNumberCatalog = syncTaskByChangeNumberCatalog
+        self.periodicSplitsSyncWorker = syncWorkerFactory.createPeriodicSplitsSyncWorker()
+        self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker()
+        self.splitsSyncWorker = syncWorkerFactory.createRetryableSplitsSyncWorker()
+        self.mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker()
+        self.flusherImpressionsRecorderWorker = syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
+        self.periodicImpressionsRecorderWoker = syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
+        self.flusherEventsRecorderWorker = syncWorkerFactory.createEventsRecorderWorker(syncHelper: eventsSyncHelper)
+        self.periodicEventsRecorderWoker = syncWorkerFactory.createPeriodicEventsRecorderWorker(syncHelper: eventsSyncHelper)
         self.impressionsSyncHelper = impressionsSyncHelper
-
-
-        periodicSplitsSyncWorker = syncWorkerFactory.createPeriodicSplitsSyncWorker()
-        periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker()
-        splitsSyncWorker = syncWorkerFactory.createRetryableSplitsSyncWorker()
-        mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker()
-        flusherImpressionsRecorderWorker = syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
-        periodicImpressionsRecorderWoker = syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
-        trackManager = splitApiFacade.trackManager
+        self.eventsSyncHelper = eventsSyncHelper
     }
 
     func syncAll() {
@@ -121,20 +125,24 @@ class DefaultSynchronizer: Synchronizer {
 
     func startPeriodicRecording() {
         periodicImpressionsRecorderWoker.start()
-        trackManager.start()
+        periodicEventsRecorderWoker.start()
     }
 
     func stopPeriodicRecording() {
         periodicImpressionsRecorderWoker.stop()
-        trackManager.stop()
+        periodicEventsRecorderWoker.stop()
     }
 
     func pushEvent(event: EventDTO) {
-        trackManager.appendEvent(event: event)
+        if eventsSyncHelper.pushAndCheckFlush(event) {
+            flusherEventsRecorderWorker.flush()
+        }
     }
 
     func pushImpression(impression: Impression) {
-        splitStorageContainer.impressionsStorage.push(impression: impression)
+        if impressionsSyncHelper.pushAndCheckFlush(impression) {
+            flusherImpressionsRecorderWorker.flush()
+        }
     }
 
     func pause() {
@@ -149,7 +157,7 @@ class DefaultSynchronizer: Synchronizer {
 
     func flush() {
         flusherImpressionsRecorderWorker.flush()
-        trackManager.flush()
+        flusherEventsRecorderWorker.flush()
     }
 
     func destroy() {
@@ -159,6 +167,8 @@ class DefaultSynchronizer: Synchronizer {
         periodicMySegmentsSyncWorker.stop()
         periodicSplitsSyncWorker.destroy()
         periodicMySegmentsSyncWorker.destroy()
+        periodicImpressionsRecorderWoker.destroy()
+        periodicEventsRecorderWoker.destroy()
         let updateTasks = syncTaskByChangeNumberCatalog.takeAll()
         for task in updateTasks.values {
             task.stop()
