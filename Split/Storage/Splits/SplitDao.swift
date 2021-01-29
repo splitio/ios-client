@@ -18,25 +18,19 @@ protocol SplitDao {
 }
 
 class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
-    let coreDataHelper: CoreDataHelper
-    
-    init(coreDataHelper: CoreDataHelper) {
-        self.coreDataHelper = coreDataHelper
-        super.init()
-    }
-    
+
     func insertOrUpdate(splits: [Split]) {
         executeAsync { [weak self] in
             guard let self = self else {
                 return
             }
-            
+
             for split in splits {
                 self.insertOrUpdate(split)
             }
         }
     }
-    
+
     func insertOrUpdate(split: Split) {
         executeAsync { [weak self] in
             if let self = self {
@@ -44,22 +38,26 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             }
         }
     }
-    
+
     func getAll() -> [Split] {
         var splits: [Split]?
         execute { [weak self] in
             guard let self = self else {
                 return
             }
-            
+
             splits = self.coreDataHelper.fetch(entity: .split)
                 .compactMap { return $0 as? SplitEntity }
                 .compactMap { return try? self.mapEntityToModel($0) }
         }
         return splits ?? []
     }
-    
+
     func delete(_ splits: [String]) {
+        if splits.count == 0 {
+            return
+        }
+
         executeAsync { [weak self] in
             guard let self = self else {
                 return
@@ -67,7 +65,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             self.coreDataHelper.delete(entity: .split, by: "name", values: splits)
         }
     }
-    
+
     func deleteAll() {
         executeAsync { [weak self] in
             guard let self = self else {
@@ -76,7 +74,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             self.coreDataHelper.deleteAll(entity: .split)
         }
     }
-    
+
     private func insertOrUpdate(_ split: Split) {
         if let splitName = split.name,
            let obj = self.getBy(name: splitName) ?? self.coreDataHelper.create(entity: .split) as? SplitEntity {
@@ -92,14 +90,14 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             }
         }
     }
-    
+
     private func getBy(name: String) -> SplitEntity? {
         let predicate = NSPredicate(format: "name == %@", name)
         let entities = coreDataHelper.fetch(entity: .split,
                                             where: predicate).compactMap { return $0 as? SplitEntity }
         return entities.count > 0 ? entities[0] : nil
     }
-    
+
     private func mapEntityToModel(_ entity: SplitEntity) throws -> Split {
         let model = try Json.encodeFrom(json: entity.body, to: Split.self)
         return model

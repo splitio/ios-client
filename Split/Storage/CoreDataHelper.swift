@@ -62,20 +62,21 @@ class CoreDataHelper {
             return []
         }
     }
-    
+
     func deleteAll(entity: CoreDataEntity) {
         delete(entity: entity)
     }
-    
+
     private func delete(entity: CoreDataEntity, predicate: NSPredicate? = nil) {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entity.rawValue)
         if let predicate = predicate {
             fetchRequest.predicate = predicate
         }
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-
         do {
-            try persistentCoordinator.execute(deleteRequest, with: managedObjectContext)
+            let entities = try managedObjectContext.fetch(fetchRequest).compactMap { return $0 as? NSManagedObject }
+            for entity in entities {
+                managedObjectContext.delete(entity)
+            }
         } catch {
             Logger.e("Error while deleting \(entity.rawValue) entities from storage: \(error.localizedDescription)")
         }

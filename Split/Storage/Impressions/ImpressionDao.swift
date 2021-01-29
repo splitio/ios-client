@@ -18,19 +18,12 @@ protocol ImpressionDao {
 
 class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
 
-    let coreDataHelper: CoreDataHelper
-
-    init(coreDataHelper: CoreDataHelper) {
-        self.coreDataHelper = coreDataHelper
-        super.init()
-    }
-
     func insert(_ impression: Impression) {
         executeAsync { [weak self] in
             guard let self = self else {
                 return
             }
-            
+
             if let obj = self.coreDataHelper.create(entity: .impression) as? ImpressionEntity {
                 do {
                     guard let testName = impression.feature else {
@@ -57,7 +50,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
             guard let self = self else {
                 return
             }
-            
+
             let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
             let entities = self.coreDataHelper.fetch(entity: .impression,
                                                 where: predicate,
@@ -73,8 +66,12 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
     }
 
     func update(ids: [String], newStatus: Int32) {
+        if ids.count == 0 {
+            return
+        }
+     
         let predicate = NSPredicate(format: "storageId IN %@", ids)
-        
+
         executeAsync { [weak self] in
             guard let self = self else {
                 return
@@ -89,17 +86,22 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
     }
 
     func delete(_ impressions: [Impression]) {
+        if impressions.count == 0 {
+            return
+        }
         executeAsync { [weak self] in
             guard let self = self else {
                 return
             }
-            self.coreDataHelper.delete(entity: .impression, by: "storageId", values: impressions.map { $0.storageId ?? "" })
+            self.coreDataHelper.delete(entity: .impression, by: "storageId",
+                                       values: impressions.map { $0.storageId ?? "" })
         }
     }
 
     func mapEntityToModel(_ entity: ImpressionEntity) throws -> Impression {
         let model = try Json.encodeFrom(json: entity.body, to: Impression.self)
         model.storageId = entity.storageId
+        model.feature = entity.testName
         return model
     }
 }

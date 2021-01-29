@@ -15,7 +15,7 @@ class HttpSplitFetcherStub: HttpSplitFetcher {
     var hitIndex = 0
     var fetchCallCount: Int = 0
     
-    func execute(since: Int64) throws -> SplitChange? {
+    func execute(since: Int64) throws -> SplitChange {
         fetchCallCount+=1
         if let e = httpError {
             throw e
@@ -23,12 +23,21 @@ class HttpSplitFetcherStub: HttpSplitFetcher {
         let hit = hitIndex
         hitIndex+=1
         if splitChanges.count == 0 {
-            return nil
+            throw GenericError.unknown(message: "null split changes")
         }
 
         if splitChanges.count > hit {
-            return splitChanges[hit]
+            if let change = splitChanges[hit] {
+                return change
+            } else {
+                throw GenericError.unknown(message: "null split changes")
+            }
         }
-        return splitChanges[splitChanges.count - 1]
+
+        if let change = splitChanges[splitChanges.count - 1] {
+            return change
+        } else {
+            throw GenericError.unknown(message: "null split changes")
+        }
     }
 }

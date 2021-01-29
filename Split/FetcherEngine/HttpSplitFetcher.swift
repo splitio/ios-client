@@ -1,52 +1,32 @@
 //
 //  HttpSplitFetcher.swift
-//  Pods
+//  Split
 //
-//  Created by Brian Sztamfater on 19/9/17.
-//
-//
+//  Created by Javier Avrudsky on 02-Dic-2020
 
 import Foundation
 
 protocol HttpSplitFetcher {
-    func execute(since: Int64) throws -> SplitChange?
+    func execute(since: Int64) throws -> SplitChange
 }
 
 class DefaultHttpSplitFetcher: HttpSplitFetcher {
 
     private let restClient: RestClientSplitChanges
-    private let splitChangeValidator: SplitChangeValidator
     private let metricsManager: MetricsManager
 
     init(restClient: RestClientSplitChanges, metricsManager: MetricsManager) {
         self.restClient = restClient
         self.metricsManager = metricsManager
-        self.splitChangeValidator = DefaultSplitChangeValidator()
     }
 
-    func execute(since: Int64) throws -> SplitChange? {
+    func execute(since: Int64) throws -> SplitChange {
 
         if !restClient.isSdkServerAvailable() {
             Logger.d("Server is not reachable. Split updates will be delayed until host is reachable")
             throw HttpError.serverUnavailable
         }
 
-        var nextSince = since
-        while true {
-            let splitChange: SplitChange? = doFetch(since: nextSince)
-            guard let change = splitChange, let newSince = change.since, let newTill = change.till else {
-                throw NSError(domain: "Null split changes", code: -1, userInfo: nil)
-            }
-
-            if newSince == newTill, newTill >= nextSince {
-                return change
-            }
-            nextSince = newTill
-        }
-        
-    }
-
-    private func doFetch(since: Int64) -> SplitChange? {
         let metricsManager = self.metricsManager
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SplitChange>?
@@ -61,13 +41,15 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
         semaphore.wait()
 
         do {
-            if let change: SplitChange = try requestResult?.unwrap(),
-                splitChangeValidator.validate(change) == nil {
+            if let change: SplitChange = try requestResult?.unwrap() {
                 return change
+            } else {
+                throw GenericError.unknown(message: "Null split changes retrieved")
             }
         } catch {
-            return nil
+            Logger.e("Error while retrieving split definitions: \(error.localizedDescription)")
+            throw error
         }
-        return nil
     }
+
 }

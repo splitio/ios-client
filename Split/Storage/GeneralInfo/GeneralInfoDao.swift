@@ -22,16 +22,8 @@ protocol GeneralInfoDao {
     func longValue(info: GeneralInfo) -> Int64?
 }
 
-
 class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
-    
-    let coreDataHelper: CoreDataHelper
-    
-    init(coreDataHelper: CoreDataHelper) {
-        self.coreDataHelper = coreDataHelper
-        super.init()
-    }
-    
+
     func update(info: GeneralInfo, stringValue: String) {
         executeAsync { [weak self] in
             guard let self = self else {
@@ -40,16 +32,16 @@ class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
             self.update(info: info, stringValue: stringValue, longValue: nil)
         }
     }
-    
+
     func update(info: GeneralInfo, longValue: Int64) {
         executeAsync { [weak self] in
             guard let self = self else {
                 return
             }
-            self.update(info: info, stringValue: nil, longValue: longValue)
+            self.update(info: info, stringValue: "", longValue: longValue)
         }
     }
-    
+
     func stringValue(info: GeneralInfo) -> String? {
         var value: String?
         execute { [weak self] in
@@ -75,17 +67,17 @@ class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
         }
         return value
     }
-    
+
     private func update(info: GeneralInfo, stringValue: String?, longValue: Int64?) {
         if let obj = get(for: info) ?? coreDataHelper.create(entity: .generalInfo) as? GeneralInfoEntity {
             obj.name = info.rawValue
-            obj.stringValue = stringValue
+            obj.stringValue = stringValue ?? ""
             obj.longValue = longValue ?? 0
             obj.updatedAt = Date().unixTimestamp()
             coreDataHelper.save()
         }
     }
-    
+
     private func get(for info: GeneralInfo) -> GeneralInfoEntity? {
         let predicate = NSPredicate(format: "name == %@", info.rawValue)
         let entities = coreDataHelper.fetch(entity: .generalInfo,
