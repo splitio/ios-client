@@ -33,11 +33,11 @@ class DefaultEventValidator: EventValidator {
     private let kTrackEventNameValidationPattern = ValidationConfig.default.trackEventNamePattern
 
     var keyValidator: KeyValidator
-    var splitCache: SplitCacheProtocol
+    var splitsStorage: SplitsStorage
 
-    init(splitCache: SplitCacheProtocol) {
+    init(splitsStorage: SplitsStorage) {
         keyValidator = DefaultKeyValidator()
-        self.splitCache = splitCache
+        self.splitsStorage = splitsStorage
     }
 
     func validate(key: String?, trafficTypeName: String?,
@@ -88,7 +88,7 @@ class DefaultEventValidator: EventValidator {
             lowercasedTrafficType = nonNullTrafficTypeName.lowercased()
         }
 
-        if !splitCache.exists(trafficType: lowercasedTrafficType) {
+        if !splitsStorage.isValidTrafficType(name: lowercasedTrafficType) {
             let message = "traffic_type_name \(trafficTypeName!) does not have any corresponding " +
                 "Splits in this environment, make sure you’re tracking " +
             "your events to a valid traffic type defined in the Split console"

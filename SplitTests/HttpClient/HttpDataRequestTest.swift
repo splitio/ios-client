@@ -73,7 +73,7 @@ class HttpDataRequestTest: XCTestCase {
         wait(for: [onCloseExpectation], timeout: 5)
 
         XCTAssertTrue(responseIsSuccess)
-        XCTAssertEqual(0, receivedData?.splits?.count)
+        XCTAssertEqual(0, receivedData?.splits.count)
         XCTAssertEqual(1, receivedData?.since)
         XCTAssertEqual(2, receivedData?.till)
     }

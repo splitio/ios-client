@@ -20,7 +20,7 @@ protocol PersistentSplitsStorage {
 }
 
 class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
-    
+
     private let splitDao: SplitDao
     private let generalInfoDao: GeneralInfoDao
 
@@ -35,34 +35,34 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
         generalInfoDao.update(info: .splitsChangeNumber, longValue: splitChange.changeNumber)
         generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: splitChange.updateTimestamp)
     }
-    
+
     func update(split: Split) {
         splitDao.insertOrUpdate(split: split)
     }
-    
+
     func update(filterQueryString: String) {
         generalInfoDao.update(info: .splitsFilterQueryString, stringValue: filterQueryString)
     }
-    
+
     func getFilterQueryString() -> String {
         return generalInfoDao.stringValue(info: .splitsFilterQueryString) ?? ""
     }
-    
+
     func getSplitsSnapshot() -> SplitsSnapshot {
         return SplitsSnapshot(changeNumber: generalInfoDao.longValue(info: .splitsChangeNumber) ?? -1,
                               splits: splitDao.getAll(),
                               updateTimestamp: generalInfoDao.longValue(info: .splitsUpdateTimestamp) ?? 0,
                               splitsFilterQueryString: getFilterQueryString())
     }
-    
+
     func getAll() -> [Split] {
         return splitDao.getAll()
     }
-    
+
     func delete(splitNames: [String]) {
         splitDao.delete(splitNames)
     }
-    
+
     func clear() {
         splitDao.deleteAll()
     }

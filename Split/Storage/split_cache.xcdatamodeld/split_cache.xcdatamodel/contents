@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17511" systemVersion="19H15" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="19H15" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Event" representedClassName="EventEntity" syncable="YES">
         <attribute name="body" attributeType="String"/>
         <attribute name="createdAt" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="sizeInBytes" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="status" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="storageId" optional="YES" attributeType="String"/>
         <uniquenessConstraints>
@@ -55,7 +56,7 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="Event" positionX="-394.56640625" positionY="-244.453125" width="128" height="103"/>
+        <element name="Event" positionX="-394.56640625" positionY="-244.453125" width="128" height="118"/>
         <element name="GeneralInfo" positionX="-68.07421875" positionY="-234.640625" width="128" height="103"/>
         <element name="Impression" positionX="-265.90234375" positionY="-118.63671875" width="128" height="118"/>
         <element name="MySegment" positionX="-226.27734375" positionY="-237.1171875" width="128" height="88"/>
