@@ -31,20 +31,18 @@ class EventsRecorderWorker: RecorderWorker {
         var failedEvents = [EventDTO]()
         repeat {
             let events = eventsStorage.pop(count: eventsPerPush)
-            if events.count == 0 {
-                return
-            }
             rowCount = events.count
-            Logger.d("Sending events")
-
-            do {
-                _ = try eventsRecorder.execute(events)
-                // Removing sent events
-                eventsStorage.delete(events)
-                Logger.d("Event posted successfully")
-            } catch let error {
-                Logger.e("Event error: \(String(describing: error))")
-                failedEvents.append(contentsOf: events)
+            if rowCount > 0 {
+                Logger.d("Sending events")
+                do {
+                    _ = try eventsRecorder.execute(events)
+                    // Removing sent events
+                    eventsStorage.delete(events)
+                    Logger.d("Event posted successfully")
+                } catch let error {
+                    Logger.e("Event error: \(String(describing: error))")
+                    failedEvents.append(contentsOf: events)
+                }
             }
         } while rowCount == eventsPerPush
         // Activate non sent events to retry in next iteration

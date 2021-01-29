@@ -24,7 +24,6 @@
 		3B6DEF1B20EA6AE50067435E /* EventsFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7920EA6ADF0067435E /* EventsFile.swift */; };
 		3B6DEF1C20EA6AE50067435E /* EventsHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7A20EA6ADF0067435E /* EventsHit.swift */; };
 		3B6DEF1D20EA6AE50067435E /* PeriodicTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7B20EA6ADF0067435E /* PeriodicTaskManager.swift */; };
-		3B6DEF1E20EA6AE50067435E /* DefaultTrackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7C20EA6ADF0067435E /* DefaultTrackManager.swift */; };
 		3B6DEF1F20EA6AE50067435E /* SplitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7D20EA6ADF0067435E /* SplitError.swift */; };
 		3B6DEF2020EA6AE50067435E /* DefaultSplitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7E20EA6ADF0067435E /* DefaultSplitClient.swift */; };
 		3B6DEF2220EA6AE50067435E /* SplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8120EA6ADF0067435E /* SplitView.swift */; };
@@ -201,7 +200,6 @@
 		594F5F5A253CFC2D00A945B4 /* StreamingControlTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F59253CFC2D00A945B4 /* StreamingControlTest.swift */; };
 		594F5F5C253F163A00A945B4 /* BackoffCounterTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F5B253F163A00A945B4 /* BackoffCounterTimer.swift */; };
 		594F5F5E253F641000A945B4 /* BackoffCounterTimerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F5D253F641000A945B4 /* BackoffCounterTimerStub.swift */; };
-		5955633F2294AECF00907C2D /* TrackManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5955633E2294AECF00907C2D /* TrackManagerTest.swift */; };
 		5959C46E2278D9AD0064F968 /* segment_conta_condition.json in Resources */ = {isa = PBXBuildFile; fileRef = 5959C46D2278D9AD0064F968 /* segment_conta_condition.json */; };
 		5959C4722279EBBC0064F968 /* in_segment_condition_split.json in Resources */ = {isa = PBXBuildFile; fileRef = 5959C4712279EBBC0064F968 /* in_segment_condition_split.json */; };
 		5959C475227B6BA70064F968 /* FactoryMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5959C474227B6BA70064F968 /* FactoryMonitor.swift */; };
@@ -284,7 +282,6 @@
 		599EDAF52270AD6700D7DACB /* wrong_format.yaml in Resources */ = {isa = PBXBuildFile; fileRef = 599EDAF42270AD6700D7DACB /* wrong_format.yaml */; };
 		59AD7ACA2465C32D00F5B0B4 /* EventDTOJsonTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AD7AC92465C32D00F5B0B4 /* EventDTOJsonTest.swift */; };
 		59AD7ACC246C9DAE00F5B0B4 /* ServiceEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2EAA5F782C4F108D7777 /* ServiceEndpoints.swift */; };
-		59AD7FD322F38BEF00F569C3 /* TrackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AD7FD222F38BEF00F569C3 /* TrackManager.swift */; };
 		59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B2042624F4171E0092F2E9 /* SyncUpdateWorker.swift */; };
 		59B2042924F42DE80092F2E9 /* SseNotificationProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B2042824F42DE80092F2E9 /* SseNotificationProcessor.swift */; };
 		59B2042B24F44AB30092F2E9 /* Synchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B2042A24F44AB30092F2E9 /* Synchronizer.swift */; };
@@ -355,7 +352,6 @@
 		59F4AAC42513EFF800A1C69A /* PeriodicMySegmentsSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAC32513EFF700A1C69A /* PeriodicMySegmentsSyncWorkerTest.swift */; };
 		59F4AAC62515425200A1C69A /* SynchronizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAC52515425100A1C69A /* SynchronizerTest.swift */; };
 		59F4AAC82515436400A1C69A /* SyncWorkerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAC72515436400A1C69A /* SyncWorkerStub.swift */; };
-		59F4AACA2515461B00A1C69A /* TrackManagerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAC92515461B00A1C69A /* TrackManagerStub.swift */; };
 		59F4AACE2518CEB200A1C69A /* RetryableSplitsUpdateWorkerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AACD2518CEB200A1C69A /* RetryableSplitsUpdateWorkerFactory.swift */; };
 		59F4AAD02518D4BB00A1C69A /* SyncWorkerFactoryStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AACF2518D4BA00A1C69A /* SyncWorkerFactoryStub.swift */; };
 		59F4AAD4251A7F4700A1C69A /* SplitApiFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAD3251A7F4700A1C69A /* SplitApiFacade.swift */; };
@@ -420,6 +416,7 @@
 		955428E02568155B00331356 /* PersistentImpressionsStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */; };
 		955428E4256815B200331356 /* ImpressionDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428E3256815B200331356 /* ImpressionDaoTests.swift */; };
 		955428E82568176C00331356 /* ImpressionDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428E72568176C00331356 /* ImpressionDaoStub.swift */; };
+		955892AB25C187EA00F67FBA /* CoreDataContextBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955892AA25C187EA00F67FBA /* CoreDataContextBuilder.swift */; };
 		955A5A50258D04DF00CAEE9F /* EventsRecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A5A4C258D04DF00CAEE9F /* EventsRecorderWorker.swift */; };
 		955A5A51258D04DF00CAEE9F /* PeriodicRecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A5A4D258D04DF00CAEE9F /* PeriodicRecorderWorker.swift */; };
 		955A5A52258D04DF00CAEE9F /* RecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A5A4E258D04DF00CAEE9F /* RecorderWorker.swift */; };
@@ -495,7 +492,6 @@
 		3B6DEE7920EA6ADF0067435E /* EventsFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsFile.swift; sourceTree = "<group>"; };
 		3B6DEE7A20EA6ADF0067435E /* EventsHit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsHit.swift; sourceTree = "<group>"; };
 		3B6DEE7B20EA6ADF0067435E /* PeriodicTaskManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeriodicTaskManager.swift; sourceTree = "<group>"; };
-		3B6DEE7C20EA6ADF0067435E /* DefaultTrackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultTrackManager.swift; sourceTree = "<group>"; };
 		3B6DEE7D20EA6ADF0067435E /* SplitError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitError.swift; sourceTree = "<group>"; };
 		3B6DEE7E20EA6ADF0067435E /* DefaultSplitClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultSplitClient.swift; sourceTree = "<group>"; };
 		3B6DEE8120EA6ADF0067435E /* SplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitView.swift; sourceTree = "<group>"; };
@@ -675,7 +671,6 @@
 		594F5F59253CFC2D00A945B4 /* StreamingControlTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingControlTest.swift; sourceTree = "<group>"; };
 		594F5F5B253F163A00A945B4 /* BackoffCounterTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackoffCounterTimer.swift; sourceTree = "<group>"; };
 		594F5F5D253F641000A945B4 /* BackoffCounterTimerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackoffCounterTimerStub.swift; sourceTree = "<group>"; };
-		5955633E2294AECF00907C2D /* TrackManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackManagerTest.swift; sourceTree = "<group>"; };
 		5959C46D2278D9AD0064F968 /* segment_conta_condition.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = segment_conta_condition.json; sourceTree = "<group>"; };
 		5959C4712279EBBC0064F968 /* in_segment_condition_split.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = in_segment_condition_split.json; sourceTree = "<group>"; };
 		5959C474227B6BA70064F968 /* FactoryMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactoryMonitor.swift; sourceTree = "<group>"; };
@@ -757,7 +752,6 @@
 		599EDAF22270A15B00D7DACB /* localhost.splits */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = localhost.splits; sourceTree = "<group>"; };
 		599EDAF42270AD6700D7DACB /* wrong_format.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = wrong_format.yaml; sourceTree = "<group>"; };
 		59AD7AC92465C32D00F5B0B4 /* EventDTOJsonTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDTOJsonTest.swift; sourceTree = "<group>"; };
-		59AD7FD222F38BEF00F569C3 /* TrackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackManager.swift; sourceTree = "<group>"; };
 		59B2042624F4171E0092F2E9 /* SyncUpdateWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUpdateWorker.swift; sourceTree = "<group>"; };
 		59B2042824F42DE80092F2E9 /* SseNotificationProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseNotificationProcessor.swift; sourceTree = "<group>"; };
 		59B2042A24F44AB30092F2E9 /* Synchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Synchronizer.swift; sourceTree = "<group>"; };
@@ -828,7 +822,6 @@
 		59F4AAC32513EFF700A1C69A /* PeriodicMySegmentsSyncWorkerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeriodicMySegmentsSyncWorkerTest.swift; sourceTree = "<group>"; };
 		59F4AAC52515425100A1C69A /* SynchronizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizerTest.swift; sourceTree = "<group>"; };
 		59F4AAC72515436400A1C69A /* SyncWorkerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncWorkerStub.swift; sourceTree = "<group>"; };
-		59F4AAC92515461B00A1C69A /* TrackManagerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackManagerStub.swift; sourceTree = "<group>"; };
 		59F4AACD2518CEB200A1C69A /* RetryableSplitsUpdateWorkerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryableSplitsUpdateWorkerFactory.swift; sourceTree = "<group>"; };
 		59F4AACF2518D4BA00A1C69A /* SyncWorkerFactoryStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncWorkerFactoryStub.swift; sourceTree = "<group>"; };
 		59F4AAD3251A7F4700A1C69A /* SplitApiFacade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitApiFacade.swift; sourceTree = "<group>"; };
@@ -895,6 +888,7 @@
 		955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentImpressionsStorageTest.swift; sourceTree = "<group>"; };
 		955428E3256815B200331356 /* ImpressionDaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionDaoTests.swift; sourceTree = "<group>"; };
 		955428E72568176C00331356 /* ImpressionDaoStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionDaoStub.swift; sourceTree = "<group>"; };
+		955892AA25C187EA00F67FBA /* CoreDataContextBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataContextBuilder.swift; sourceTree = "<group>"; };
 		955A5A4C258D04DF00CAEE9F /* EventsRecorderWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsRecorderWorker.swift; sourceTree = "<group>"; };
 		955A5A4D258D04DF00CAEE9F /* PeriodicRecorderWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeriodicRecorderWorker.swift; sourceTree = "<group>"; };
 		955A5A4E258D04DF00CAEE9F /* RecorderWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderWorker.swift; sourceTree = "<group>"; };
@@ -1042,8 +1036,6 @@
 			isa = PBXGroup;
 			children = (
 				3B6DEE7720EA6ADF0067435E /* Models */,
-				3B6DEE7C20EA6ADF0067435E /* DefaultTrackManager.swift */,
-				59AD7FD222F38BEF00F569C3 /* TrackManager.swift */,
 			);
 			path = Track;
 			sourceTree = "<group>";
@@ -1396,6 +1388,7 @@
 				5912D1462194715500BC698C /* FileStorageProtocol.swift */,
 				59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */,
 				5905D4D72555FE74006DA3B1 /* SplitDatabase.swift */,
+				955892AA25C187EA00F67FBA /* CoreDataContextBuilder.swift */,
 				59F65EFD2562C215005FE8C9 /* CoreDataHelper.swift */,
 			);
 			path = Storage;
@@ -1504,7 +1497,6 @@
 				59F4AAC02513C2EC00A1C69A /* PeriodicTimerStub.swift */,
 				31AA279035168CE07F14D769 /* SplitEventsManagerStub.swift */,
 				59F4AAC72515436400A1C69A /* SyncWorkerStub.swift */,
-				59F4AAC92515461B00A1C69A /* TrackManagerStub.swift */,
 				59F4AACF2518D4BA00A1C69A /* SyncWorkerFactoryStub.swift */,
 				594F5F5D253F641000A945B4 /* BackoffCounterTimerStub.swift */,
 				595AD20124DC39F800A7B750 /* NotificationHelperStub.swift */,
@@ -1608,7 +1600,6 @@
 				59DD34B32236989700FA9545 /* FolderApiKeyTests.swift */,
 				5959C476227B89820064F968 /* FactoryMonitorTest.swift */,
 				5959C478227B89980064F968 /* FactoryRegistryTest.swift */,
-				5955633E2294AECF00907C2D /* TrackManagerTest.swift */,
 				594677E322CFF30B00F94E58 /* TreatmentManagerTest.swift */,
 				59BF90B8239A75520007A896 /* VersionTest.swift */,
 				59AD7AC92465C32D00F5B0B4 /* EventDTOJsonTest.swift */,
@@ -2264,7 +2255,6 @@
 				3B6DEF4F20EA6AE50067435E /* TrafficType.swift in Sources */,
 				3B6DEF8020EA6AE50067435E /* RestClient.swift in Sources */,
 				59BF3D27223132E1004D134D /* DataFolderFactory.swift in Sources */,
-				59AD7FD322F38BEF00F569C3 /* TrackManager.swift in Sources */,
 				3B6DEF7020EA6AE50067435E /* Whitelist.swift in Sources */,
 				3B6DEF6320EA6AE50067435E /* ContainsStringMatcher.swift in Sources */,
 				594677E022CFA4CF00F94E58 /* TreatmentManager.swift in Sources */,
@@ -2334,8 +2324,8 @@
 				3B6DEF1D20EA6AE50067435E /* PeriodicTaskManager.swift in Sources */,
 				5903C497210A5E0900A754B0 /* SynchronizedArrayWrapper.swift in Sources */,
 				3B6DEF2F20EA6AE50067435E /* EvaluatorError.swift in Sources */,
+				955892AB25C187EA00F67FBA /* CoreDataContextBuilder.swift in Sources */,
 				3B6DEF2D20EA6AE50067435E /* SplitConstants.swift in Sources */,
-				3B6DEF1E20EA6AE50067435E /* DefaultTrackManager.swift in Sources */,
 				3B6DEF5320EA6AE50067435E /* WhitelistMatcherData.swift in Sources */,
 				3B6DEF5D20EA6AE50067435E /* SplitFactory.swift in Sources */,
 				3B6DEF2020EA6AE50067435E /* DefaultSplitClient.swift in Sources */,
@@ -2406,7 +2396,6 @@
 				59FB7C1621F79B8200ECC96A /* EventTypeNameHelper.swift in Sources */,
 				594F5F55253A1A6500A945B4 /* StreamingSplitKillTest.swift in Sources */,
 				595AD20024DAF61700A7B750 /* FetchSpecificSplitsTest.swift in Sources */,
-				59F4AACA2515461B00A1C69A /* TrackManagerStub.swift in Sources */,
 				59F4AAA5250007BD00A1C69A /* SseHandlerStub.swift in Sources */,
 				59F4AAA82508120500A1C69A /* SyncManagerTest.swift in Sources */,
 				5919017B24A27629005BD12A /* EndpointTest.swift in Sources */,
@@ -2448,7 +2437,6 @@
 				5946783522E110A700F94E58 /* MockWebServer.swift in Sources */,
 				954F9B26257175E100140B81 /* PersistentMySegmentsStorageTests.swift in Sources */,
 				594677E622CFFA2D00F94E58 /* MetricsManagerStub.swift in Sources */,
-				5955633F2294AECF00907C2D /* TrackManagerTest.swift in Sources */,
 				595AD24D24E324D200A7B750 /* Base64UtilsTest.swift in Sources */,
 				599EDAF12270970500D7DACB /* SplitEventsManagerMock.swift in Sources */,
 				596A7B5E234395C1004F6139 /* IntegrationHelper.swift in Sources */,

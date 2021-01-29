@@ -16,7 +16,7 @@ class SplitChangesTest: XCTestCase {
     let kChangeNbInterval: Int64 = 86400
     var reqChangesIndex = 0
     var serverUrl = ""
-    let kMatchingKey = "CUSTOMER_ID"
+    let kMatchingKey = IntegrationHelper.dummyUserKey
     var factory: SplitFactory?
 
     let spExp = [
@@ -80,7 +80,7 @@ class SplitChangesTest: XCTestCase {
     // MARK: Test
     /// Getting changes from server and test treatments and change number
     func test() throws {
-        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_b"
+        let apiKey = IntegrationHelper.dummyApiKey
         let trafficType = "client"
         var impressions = [String:Impression]()
         var treatments = [String]()
@@ -102,6 +102,7 @@ class SplitChangesTest: XCTestCase {
         
         let key: Key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
+        builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesTest"))
         factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory!.client
@@ -122,35 +123,35 @@ class SplitChangesTest: XCTestCase {
 
         wait(for: [impExp], timeout: 40)
 
-        var impLis = [Impression]()
-        impLis.append(impressions[IntegrationHelper.buildImpressionKey(key: kMatchingKey,
-                                                                       splitName: "test_feature", treatment: "on_0")] ?? Impression())
-        impLis.append(impressions[IntegrationHelper.buildImpressionKey(key: kMatchingKey,
-                                                                       splitName: "test_feature", treatment: "off_1")] ?? Impression())
-        impLis.append(impressions[IntegrationHelper.buildImpressionKey(key: kMatchingKey,
-                                                                       splitName: "test_feature", treatment: "on_2")] ?? Impression())
+
+        let impLis0 = impressions[IntegrationHelper.buildImpressionKey(key: kMatchingKey,
+                                                                       splitName: "test_feature", treatment: "on_0")] ?? Impression()
+        let impLis1 = impressions[IntegrationHelper.buildImpressionKey(key: kMatchingKey,
+                                                                       splitName: "test_feature", treatment: "off_1")] ?? Impression()
+        let impLis2 = impressions[IntegrationHelper.buildImpressionKey(key: kMatchingKey,
+                                                                       splitName: "test_feature", treatment: "on_2")] ?? Impression()
 
         XCTAssertTrue(sdkReadyFired)
         for i in 0..<4 {
             let even = ((i + 2) % 2 == 0)
             XCTAssertEqual((even ? "on_\(i)" : "off_\(i)"), treatments[i])
         }
-        XCTAssertNotNil(impLis[0])
-
-        XCTAssertNotNil(impLis[1])
-        XCTAssertNotNil(impLis[2])
-        XCTAssertEqual(1567456937865, impLis[0].changeNumber)
-        XCTAssertEqual(1567456937865 + kChangeNbInterval, impLis[1].changeNumber)
-        XCTAssertEqual(1567456937865 + kChangeNbInterval * 2, impLis[2].changeNumber)
+        XCTAssertNotNil(impLis0)
+        XCTAssertNotNil(impLis1)
+        XCTAssertNotNil(impLis2)
+        XCTAssertEqual(1567456937865, impLis0.changeNumber)
+        XCTAssertEqual(1567456937865 + kChangeNbInterval, impLis1.changeNumber)
+        XCTAssertEqual(1567456937865 + kChangeNbInterval * 2, impLis2.changeNumber)
         XCTAssertEqual(1, impHit?.count)
         XCTAssertEqual(4, impHit?[0].keyImpressions.count)
-        let imp0 = impHit?[0].keyImpressions[0]
-        //let imp3 = impHit?[0].keyImpressions[3]
-        XCTAssertEqual("on_0", imp0?.treatment)
-        XCTAssertEqual(1567456937865, imp0?.changeNumber)
-
-        //XCTAssertEqual("off_3", imp3?.treatment)
-        //XCTAssertEqual(1567456937865  + kChangeNbInterval * 3, imp3?.changeNumber)
+//        let imp0 = impHit?[0].keyImpressions[0]
+        var onImp: Impression?
+        let onImpArr = impHit?.flatMap { return $0.keyImpressions }.filter { $0.treatment == "on_0" }
+        if onImpArr?.count == 1 {
+            onImp = onImpArr?[0]
+        }
+        XCTAssertEqual("on_0", onImp?.treatment)
+        XCTAssertEqual(1567456937865, onImp?.changeNumber)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {

@@ -24,7 +24,6 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private let config: SplitClientConfig
 
     private var eventsManager: SplitEventsManager
-    private var trackManager: TrackManager
     private var synchronizer: Synchronizer
 
     private let eventValidator: EventValidator
@@ -45,7 +44,6 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         self.config = config
         self.key = key
         self.synchronizer = synchronizer
-        self.trackManager = apiFacade.trackManager
         self.factoryDestroyHandler = destroyHandler
         self.eventValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
         self.validationLogger = DefaultValidationMessageLogger()
@@ -200,7 +198,7 @@ extension DefaultSplitClient {
         event.timestamp = Date().unixTimestampInMiliseconds()
         event.properties = validatedProps
         event.sizeInBytes = totalSizeInBytes
-        trackManager.appendEvent(event: event)
+        synchronizer.pushEvent(event: event)
 
         return true
     }
@@ -226,7 +224,6 @@ extension DefaultSplitClient {
 
     private func syncFlush() {
         self.synchronizer.flush()
-        self.trackManager.flush()
         DefaultMetricsManager.shared.flush()
     }
 

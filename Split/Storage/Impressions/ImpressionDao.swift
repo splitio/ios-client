@@ -86,6 +86,9 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
     }
 
     func delete(_ impressions: [Impression]) {
+        if impressions.count == 0 {
+            return
+        }
         executeAsync { [weak self] in
             guard let self = self else {
                 return

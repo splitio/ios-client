@@ -54,6 +54,10 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
     }
 
     func delete(_ splits: [String]) {
+        if splits.count == 0 {
+            return
+        }
+
         executeAsync { [weak self] in
             guard let self = self else {
                 return
