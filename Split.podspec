@@ -15,5 +15,6 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.frameworks = 'Foundation'
   s.swift_versions = ['4.0', '4.2', '5.0', '5.1', '5.2', '5.3']
   s.source_files = 'Split/**/*.{swift}','Split/Common/Utils/JFBCrypt/*.{h,m}'
+  s.resources = "Split/Storage/split_cache.xcdatamodeld"
 
 end
