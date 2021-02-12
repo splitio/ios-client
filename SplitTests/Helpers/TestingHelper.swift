@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 
 struct TestingHelper {
-    static func createEvents(count: Int = 10) -> [EventDTO] {
+    static func createEvents(count: Int = 10, timestamp: Int64 = 1000) -> [EventDTO] {
         var events = [EventDTO]()
         for i in 0..<count {
             let event = EventDTO(trafficType: "name", eventType: "type")
@@ -19,14 +19,14 @@ struct TestingHelper {
             event.eventTypeId = "type1"
             event.trafficTypeName = "name1"
             event.value = (i % 2 > 0 ? 1.0 : 0.0)
-            event.timestamp = 1000
+            event.timestamp = timestamp
             event.properties = ["f": i]
             events.append(event)
         }
         return events
     }
 
-    static func createImpressions(feature: String = "split", count: Int = 10) -> [Impression] {
+    static func createImpressions(feature: String = "split", count: Int = 10, time: Int64 = 100) -> [Impression] {
         var impressions = [Impression]()
         for i in 0..<count {
             let impression = Impression()
@@ -34,7 +34,7 @@ struct TestingHelper {
             impression.feature = feature
             impression.keyName = "key1"
             impression.treatment = "t1"
-            impression.time = 1000
+            impression.time = time
             impression.changeNumber = 1000
             impression.label = "t1"
             impression.attributes = ["pepe": 1]
@@ -71,7 +71,7 @@ struct TestingHelper {
         do {
             for i in 0..<testCount {
                 let testName = "T\(i)"
-                let impJson = try Json.encodeToJson(createImpressions(feature: testName, count: impressionsPerTest))
+                let impJson = try Json.encodeToJson(createImpressions(feature: testName, count: impressionsPerTest, time: Date().unixTimestamp()))
                 let impressionTest = try Json.encodeFrom(json: "{\"testName\":\"\(testName)\", \"keyImpressions\":\(impJson)}", to: ImpressionsTest.self)
                 let uId = "id\(i)"
                 hits[uId] = ImpressionsHit(identifier: uId, impressions: [impressionTest])
@@ -89,7 +89,7 @@ struct TestingHelper {
     static func createLegacyEventsFileContent(count: Int) -> String {
         var hits = [String: EventsHit]()
         for i in 0..<count {
-            let events = createEvents(count: count)
+            let events = createEvents(count: count, timestamp: Date().unixTimestamp())
             let uId = "id\(i)"
             hits[uId] = EventsHit(identifier: uId, events: events)
         }
