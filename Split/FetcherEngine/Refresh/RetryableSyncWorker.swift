@@ -215,7 +215,7 @@ class RevampRetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                 resetBackoffCounter()
                 return true
             }
-            var nextSince = changeNumber
+            var nextSince = splitsStorage.changeNumber
             while true {
                 let splitChange = try self.splitsFetcher.execute(since: nextSince)
                 let newSince = splitChange.since
