@@ -43,10 +43,8 @@ import Foundation
 
 public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitClient {
 
-
     var splitsStorage: SplitsStorage?
     var mySegmentsStorage: MySegmentsStorage?
-
 
     private let eventsManager: SplitEventsManager?
     private var evaluator: Evaluator!
