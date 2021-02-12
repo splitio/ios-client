@@ -79,14 +79,14 @@ class SplitApiFacadeBuilder {
         let mySegmentsFetcher: HttpMySegmentsFetcher
             = DefaultHttpMySegmentsFetcher(restClient: restClient, metricsManager: DefaultMetricsManager.shared)
 
-
         let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
         let eventsRecorder = DefaultHttpEventsRecorder(restClient: restClient)
 
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: DefaultJwtTokenParser())
-        
 
-        return SplitApiFacade(splitsFetcher: splitsFetcher, mySegmentsFetcher: mySegmentsFetcher, impressionsRecorder: impressionsRecorder,
-                              eventsRecorder: eventsRecorder, streamingHttpClient: self.streamingHttpClient, sseAuthenticator: sseAuthenticator)
+        return SplitApiFacade(splitsFetcher: splitsFetcher, mySegmentsFetcher: mySegmentsFetcher,
+                              impressionsRecorder: impressionsRecorder,
+                              eventsRecorder: eventsRecorder, streamingHttpClient: self.streamingHttpClient,
+                              sseAuthenticator: sseAuthenticator)
     }
 }

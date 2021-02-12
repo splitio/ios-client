@@ -73,10 +73,13 @@ class DefaultSynchronizer: Synchronizer {
         self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker()
         self.splitsSyncWorker = syncWorkerFactory.createRetryableSplitsSyncWorker()
         self.mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker()
-        self.flusherImpressionsRecorderWorker = syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
-        self.periodicImpressionsRecorderWoker = syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
+        self.flusherImpressionsRecorderWorker =
+            syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
+        self.periodicImpressionsRecorderWoker =
+            syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
         self.flusherEventsRecorderWorker = syncWorkerFactory.createEventsRecorderWorker(syncHelper: eventsSyncHelper)
-        self.periodicEventsRecorderWoker = syncWorkerFactory.createPeriodicEventsRecorderWorker(syncHelper: eventsSyncHelper)
+        self.periodicEventsRecorderWoker =
+            syncWorkerFactory.createPeriodicEventsRecorderWorker(syncHelper: eventsSyncHelper)
         self.impressionsSyncHelper = impressionsSyncHelper
         self.eventsSyncHelper = eventsSyncHelper
     }
