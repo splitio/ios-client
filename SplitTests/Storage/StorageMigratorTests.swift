@@ -16,13 +16,18 @@ class StorageMigratorTests: XCTestCase {
     var fileStorage: FileStorageStub!
     var splitDatabase: SplitDatabase!
     var migrator: StorageMigrator!
+    let userKey = IntegrationHelper.dummyUserKey
     let kImpressionsFileName: String = "SPLITIO.impressions"
     let kEventsFileName: String = "SPLITIO.events_track"
+    let kSplitsFileName: String = "SPLITIO.splits"
+    var mySegmentsFileName: String!
+
 
     override func setUp() {
         splitDatabase = TestingHelper.createTestDatabase(name: "storage_migrator_test")
         fileStorage = FileStorageStub()
-        migrator = DefaultStorageMigrator(fileStorage: fileStorage, splitDatabase: splitDatabase)
+        migrator = DefaultStorageMigrator(fileStorage: fileStorage, splitDatabase: splitDatabase, userKey: userKey)
+        mySegmentsFileName = "SPLITIO.mySegments_\(userKey)"
     }
 
     func testSuccessfulMigration() {
@@ -44,6 +49,8 @@ class StorageMigratorTests: XCTestCase {
         XCTAssertEqual(100, impressions.count)
         XCTAssertNil(fileStorage.read(fileName: kImpressionsFileName))
         XCTAssertNil(fileStorage.read(fileName: kEventsFileName))
+        XCTAssertNil(fileStorage.read(fileName: kSplitsFileName))
+        XCTAssertNil(fileStorage.read(fileName: mySegmentsFileName))
     }
 
     func testEmptyMigration() {
@@ -58,6 +65,8 @@ class StorageMigratorTests: XCTestCase {
         XCTAssertEqual(0, impressions.count)
         XCTAssertNil(fileStorage.read(fileName: kImpressionsFileName))
         XCTAssertNil(fileStorage.read(fileName: kEventsFileName))
+        XCTAssertNil(fileStorage.read(fileName: kSplitsFileName))
+        XCTAssertNil(fileStorage.read(fileName: mySegmentsFileName))
     }
 
     func testOudatedFilesMigration() {
@@ -79,6 +88,8 @@ class StorageMigratorTests: XCTestCase {
         XCTAssertEqual(0, impressions.count)
         XCTAssertNil(fileStorage.read(fileName: kImpressionsFileName))
         XCTAssertNil(fileStorage.read(fileName: kEventsFileName))
+        XCTAssertNil(fileStorage.read(fileName: kSplitsFileName))
+        XCTAssertNil(fileStorage.read(fileName: mySegmentsFileName))
     }
 
     func testErrorOnMigration() {
@@ -97,6 +108,8 @@ class StorageMigratorTests: XCTestCase {
         XCTAssertEqual(0, impressions.count)
         XCTAssertNil(fileStorage.read(fileName: kImpressionsFileName))
         XCTAssertNil(fileStorage.read(fileName: kEventsFileName))
+        XCTAssertNil(fileStorage.read(fileName: kSplitsFileName))
+        XCTAssertNil(fileStorage.read(fileName: mySegmentsFileName))
     }
 
     override func tearDown() {

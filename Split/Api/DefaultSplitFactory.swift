@@ -51,7 +51,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                      dataFolderName: dataFolderName,
                                                      testDatabase: testDatabase)
 
-        migrateStorageIfNeeded(storageContainer: storageContainer)
+        migrateStorageIfNeeded(storageContainer: storageContainer, userKey: key.matchingKey)
 
         let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)
         defaultManager = manager
@@ -163,9 +163,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                      eventsStorage: eventsStorage)
     }
 
-    private func migrateStorageIfNeeded(storageContainer: SplitStorageContainer) {
+    private func migrateStorageIfNeeded(storageContainer: SplitStorageContainer, userKey: String) {
         let storageMigrator = DefaultStorageMigrator(fileStorage: storageContainer.fileStorage,
-                                                     splitDatabase: storageContainer.splitDatabase)
+                                                     splitDatabase: storageContainer.splitDatabase,
+                                                     userKey: userKey)
         _ = storageMigrator.runMigrationIfNeeded()
     }
 }

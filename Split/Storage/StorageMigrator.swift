@@ -102,14 +102,18 @@ class DefaultStorageMigrator: StorageMigrator {
 
     let queue = DispatchQueue(label: "Split storage migration", target: .global())
 
-    let fileStorage: FileStorageProtocol
-    let splitDatabase: SplitDatabase
-    let kImpressionsFileName: String = "SPLITIO.impressions"
-    let kEventsFileName: String = "SPLITIO.events_track"
+    private let fileStorage: FileStorageProtocol
+    private let splitDatabase: SplitDatabase
+    private let kImpressionsFileName: String = "SPLITIO.impressions"
+    private let kEventsFileName: String = "SPLITIO.events_track"
+    private let kSplitsFileName: String = "SPLITIO.splits"
+    private let kMySegmentsFileNamePrefix  = "SPLITIO.mySegments"
+    private let mySegmentsFileName: String
 
-    init(fileStorage: FileStorageProtocol, splitDatabase: SplitDatabase) {
+    init(fileStorage: FileStorageProtocol, splitDatabase: SplitDatabase, userKey: String) {
         self.fileStorage = fileStorage
         self.splitDatabase = splitDatabase
+        self.mySegmentsFileName = "\(kMySegmentsFileNamePrefix)_\(userKey)"
     }
 
     func runMigrationIfNeeded() -> Bool {
@@ -197,6 +201,8 @@ class DefaultStorageMigrator: StorageMigrator {
     private func deleteFiles() {
         fileStorage.delete(fileName: kImpressionsFileName)
         fileStorage.delete(fileName: kEventsFileName)
+        fileStorage.delete(fileName: kSplitsFileName)
+        fileStorage.delete(fileName: mySegmentsFileName)
     }
 
     private func isOutdated(_ timestamp: Int64) -> Bool {
