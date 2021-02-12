@@ -42,7 +42,6 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     private let eventsManager: SplitEventsManager
     private let splitsFilterQueryString: String
 
-
     init(userKey: String,
          splitConfig: SplitClientConfig,
          splitsFilterQueryString: String,
@@ -71,10 +70,9 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                                            reconnectBackoffCounter: backoffCounter)
     }
 
-
     func createRetryableSplitsUpdateWorker(changeNumber: Int64,
                                            reconnectBackoffCounter: ReconnectBackoffCounter) -> RetryableSyncWorker {
-        return RevampRetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
+        return RetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
                                                  splitsStorage: storageContainer.splitsStorage,
                                                  splitChangeProcessor: splitChangeProcessor,
                                                  changeNumber: changeNumber,
@@ -126,7 +124,8 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                                          eventsRecorder: apiFacade.eventsRecorder,
                                                          eventsPerPush: Int(splitConfig.eventsPerPush))
 
-        let timer = DefaultPeriodicTimer(deadline: splitConfig.eventsFirstPushWindow, interval: splitConfig.eventsPushRate)
+        let timer = DefaultPeriodicTimer(deadline: splitConfig.eventsFirstPushWindow,
+                                         interval: splitConfig.eventsPushRate)
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: eventsWorker)
     }
 

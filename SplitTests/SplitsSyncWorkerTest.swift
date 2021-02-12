@@ -24,7 +24,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitFetcher = HttpSplitFetcherStub()
         splitStorage = SplitsStorageStub()
         splitStorage.changeNumber = 100
-        let change = SplitChange(splits: [], since: splitStorage.changeNumber, till: splitStorage.changeNumber)
+        let _ = SplitChange(splits: [], since: splitStorage.changeNumber, till: splitStorage.changeNumber)
         splitChangeProcessor = SplitChangeProcessorStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
