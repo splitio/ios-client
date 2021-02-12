@@ -62,7 +62,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
 
     func createRetryableSplitsSyncWorker() -> RetryableSyncWorker {
         let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
-        return RevampRetryableSplitsSyncWorker(splitFetcher: apiFacade.splitsFetcher,
+        return RetryableSplitsSyncWorker(splitFetcher: apiFacade.splitsFetcher,
                                         splitsStorage: storageContainer.splitsStorage,
                                                            splitChangeProcessor: splitChangeProcessor,
                                                            cacheExpiration: splitConfig.cacheExpirationInSeconds,

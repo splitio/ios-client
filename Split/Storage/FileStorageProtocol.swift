@@ -13,4 +13,6 @@ protocol FileStorageProtocol {
     func write(fileName: String, content: String?)
     func delete(fileName: String)
     func readWithProperties(fileName: String) -> String?
+    func getAllIds() -> [String]?
+    func lastModifiedDate(fileName: String) -> Int64
 }

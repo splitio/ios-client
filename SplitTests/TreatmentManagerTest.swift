@@ -37,7 +37,8 @@ class TreatmentManagerTest: XCTestCase {
                                                                    changeNumber: -1, updateTimestamp: 100))
             mySegmentsStorage = MySegmentsStorageStub()
             mySegmentsStorage.set(mySegments)
-            storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
+            storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
+                                                     fileStorage: FileStorageStub(),
                                                      splitsStorage: splitsStorage,
                                                      mySegmentsStorage: mySegmentsStorage,
                                                      impressionsStorage: PersistentImpressionsStorageStub(),

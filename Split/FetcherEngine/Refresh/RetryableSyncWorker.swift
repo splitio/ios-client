@@ -125,7 +125,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
 /// Retrieves split changes using stored change number.
 /// Also triggers SPLIT READY event when first fetch is succesful
 /// TODO: Rename when remove Old  RetryableSplitsSyncWorker
-class RevampRetryableSplitsSyncWorker: BaseRetryableSyncWorker {
+class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
