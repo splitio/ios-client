@@ -8,6 +8,7 @@
 
 import Foundation
 
+// TODO: Remove @objc
 @objc class Split: NSObject, SplitBase, Codable {
     var name: String?
     var seed: Int?
