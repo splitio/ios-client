@@ -18,7 +18,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     var splitChangeProcessor: SplitChangeProcessorStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
-    var splitsSyncWorker: RevampRetryableSplitsSyncWorker!
+    var splitsSyncWorker: RetryableSplitsSyncWorker!
 
     override func setUp() {
         splitFetcher = HttpSplitFetcherStub()
@@ -33,7 +33,7 @@ class SplitsSyncWorkerTest: XCTestCase {
 
     func testOneTimeFetchSuccess() {
         // Cache expiration timestamp set to 0 (no clearing cache)
-        splitsSyncWorker = RevampRetryableSplitsSyncWorker(splitFetcher: splitFetcher,
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                            splitsStorage: splitStorage,
                                                            splitChangeProcessor: splitChangeProcessor,
                                                            cacheExpiration: 100,
@@ -60,7 +60,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     }
 
     func testRetryAndSuccess() {
-        splitsSyncWorker = RevampRetryableSplitsSyncWorker(splitFetcher: splitFetcher,
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                            splitsStorage: splitStorage,
                                                            splitChangeProcessor: splitChangeProcessor,
                                                            cacheExpiration: 100,
@@ -86,7 +86,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     }
 
     func testStopNoSuccess() {
-        splitsSyncWorker = RevampRetryableSplitsSyncWorker(splitFetcher: splitFetcher,
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                            splitsStorage: splitStorage,
                                                            splitChangeProcessor: splitChangeProcessor,
                                                            cacheExpiration: 100,
@@ -115,7 +115,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     func testClearExpiredCache() {
 
         let expiration = 1000
-        splitsSyncWorker = RevampRetryableSplitsSyncWorker(splitFetcher: splitFetcher,
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                            splitsStorage: splitStorage,
                                                            splitChangeProcessor: splitChangeProcessor,
                                                            cacheExpiration: 100,
@@ -145,7 +145,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     func testNoClearNonExpiredCache() {
 
         let expiration = 1000
-        splitsSyncWorker = RevampRetryableSplitsSyncWorker(splitFetcher: splitFetcher,
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                            splitsStorage: splitStorage,
                                                            splitChangeProcessor: splitChangeProcessor,
                                                            cacheExpiration: 2000,
@@ -173,7 +173,7 @@ class SplitsSyncWorkerTest: XCTestCase {
 
     func testChangedQueryString() {
         let expiration = 10000
-        splitsSyncWorker = RevampRetryableSplitsSyncWorker(splitFetcher: splitFetcher,
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                            splitsStorage: splitStorage,
                                                            splitChangeProcessor: splitChangeProcessor,
                                                            cacheExpiration: 100,
@@ -204,7 +204,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     func testNoChangedQueryString() {
 
         let expiration = 10000
-        splitsSyncWorker = RevampRetryableSplitsSyncWorker(splitFetcher: splitFetcher,
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                            splitsStorage: splitStorage,
                                                            splitChangeProcessor: splitChangeProcessor,
                                                            cacheExpiration: 100,
@@ -234,7 +234,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     func testClearExpiredCacheAndChangedQs() {
 
         let expiration = 1000
-        splitsSyncWorker = RevampRetryableSplitsSyncWorker(splitFetcher: splitFetcher,
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                            splitsStorage: splitStorage,
                                                            splitChangeProcessor: splitChangeProcessor,
                                                            cacheExpiration: 100,

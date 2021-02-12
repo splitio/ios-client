@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'Split'
   s.module_name      = 'Split'
-  s.version          = '2.8.0'
+  s.version          = '2.9.0-rc1'
   s.summary          = 'iOS SDK for Split'
   s.description      = <<-DESC
 This SDK is designed to work with Split, the platform for controlled rollouts, serving features to your users via the Split feature flag to manage your complete customer experience.
@@ -15,5 +15,6 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.frameworks = 'Foundation'
   s.swift_versions = ['4.0', '4.2', '5.0', '5.1', '5.2', '5.3']
   s.source_files = 'Split/**/*.{swift}','Split/Common/Utils/JFBCrypt/*.{h,m}'
+  s.resources = "Split/Storage/split_cache.xcdatamodeld"
 
 end

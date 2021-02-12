@@ -10,13 +10,15 @@ import Foundation
 @testable import Split
 
 class FileStorageStub: FileStorageProtocol {
-    
+
     private var queue: DispatchQueue
     private var files: [String: String]
+    var lastModified: [String: Int64]
     
     init(){
         queue = DispatchQueue(label: NSUUID().uuidString, attributes: .concurrent)
         files = [String: String]()
+        lastModified = [String: Int64]()
     }
     
     func read(fileName: String) -> String? {
@@ -35,7 +37,7 @@ class FileStorageStub: FileStorageProtocol {
     }
     
     func delete(fileName: String) {
-        queue.async(flags: .barrier) {
+        queue.sync {
             self.files.removeValue(forKey: fileName)
         }
     }
@@ -46,5 +48,13 @@ class FileStorageStub: FileStorageProtocol {
             content = files[fileName]
         }
         return content
+    }
+
+    func lastModifiedDate(fileName: String) -> Int64 {
+        return lastModified[fileName] ?? Date().unixTimestamp()
+    }
+
+    func getAllIds() -> [String]? {
+        return files.keys.map { $0 }
     }
 }
