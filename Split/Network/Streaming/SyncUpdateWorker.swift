@@ -43,10 +43,10 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
 
     private let synchronizer: Synchronizer
-    private let mySegmentsCache: MySegmentsCacheProtocol
-    init(synchronizer: Synchronizer, mySegmentsCache: MySegmentsCacheProtocol) {
+    private let mySegmentsStorage: MySegmentsStorage
+    init(synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage) {
         self.synchronizer = synchronizer
-        self.mySegmentsCache = mySegmentsCache
+        self.mySegmentsStorage = mySegmentsStorage
         super.init(queueName: "MySegmentsUpdateWorker")
     }
 
@@ -59,9 +59,9 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
     private func process(_ notification: MySegmentsUpdateNotification) {
         if notification.includesPayload {
             if let segmentList = notification.segmentList {
-                mySegmentsCache.setSegments(segmentList)
+                mySegmentsStorage.set(segmentList)
             } else {
-                mySegmentsCache.clear()
+                mySegmentsStorage.clear()
             }
         } else {
             synchronizer.synchronizeMySegments()
@@ -72,11 +72,11 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
 class SplitKillWorker: UpdateWorker<SplitKillNotification> {
 
     private let synchronizer: Synchronizer
-    private let splitCache: SplitCacheProtocol
+    private let splitsStorage: SplitsStorage
 
-    init(synchronizer: Synchronizer, splitCache: SplitCacheProtocol) {
+    init(synchronizer: Synchronizer, splitsStorage: SplitsStorage) {
         self.synchronizer = synchronizer
-        self.splitCache = splitCache
+        self.splitsStorage = splitsStorage
         super.init(queueName: "SplitKillWorker")
     }
 
@@ -87,9 +87,19 @@ class SplitKillWorker: UpdateWorker<SplitKillNotification> {
     }
 
     private func process(_ notification: SplitKillNotification) {
-        splitCache.kill(splitName: notification.splitName,
-                        defaultTreatment: notification.defaultTreatment,
-                        changeNumber: notification.changeNumber)
+
+        guard let splitToKill = splitsStorage.get(name: notification.splitName) else {
+            return
+
+        }
+
+        if splitToKill.changeNumber ?? -1 > notification.changeNumber {
+            return
+        }
+        splitToKill.defaultTreatment = notification.defaultTreatment
+        splitToKill.changeNumber = notification.changeNumber
+        splitToKill.killed = true
+        splitsStorage.updateWithoutChecks(split: splitToKill)
         synchronizer.synchronizeSplits(changeNumber: notification.changeNumber)
     }
 }

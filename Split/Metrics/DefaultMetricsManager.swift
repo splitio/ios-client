@@ -41,7 +41,7 @@ class MetricManagerConfig {
     var defaultDataFolderName: String = "split_data"
 }
 
-class DefaultMetricsManager {
+class DefaultMetricsManager: MetricsManager {
     /// TODO: Improve this class implementation by removing singleton to allow passing common RestClient to constructor
     /// This improvement will be in a future PR to avoid more changes in this one.
     private var lastPostTime: Int64 = Date().unixTimestamp()

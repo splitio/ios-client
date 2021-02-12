@@ -13,46 +13,74 @@ import XCTest
 
 class SynchronizerTest: XCTestCase {
 
-    var splitsFetcher: SplitChangeFetcher!
-    var impressionsManager: ImpressionsManagerStub!
-    var trackManager: TrackManagerStub!
+    var splitsFetcher: HttpSplitFetcherStub!
+    var periodicImpressionsRecorderWorker: PeriodicRecorderWorkerStub!
+    var impressionsRecorderWorker: RecorderWorkerStub!
+    var periodicEventsRecorderWorker: PeriodicRecorderWorkerStub!
+    var eventsRecorderWorker: RecorderWorkerStub!
     var splitsSyncWorker: RetryableSyncWorkerStub!
     var mySegmentsSyncWorker: RetryableSyncWorkerStub!
     var periodicSplitsSyncWorker: PeriodicSyncWorkerStub!
     var periodicMySegmentsSyncWorker: PeriodicSyncWorkerStub!
 
-    var splitsCache: SplitCacheProtocol!
-    var mySegmentsCache: MySegmentsCacheProtocol!
+    var splitsStorage: SplitsStorageStub!
+    var mySegmentsStorage: MySegmentsStorageStub!
 
     var updateWorkerCatalog = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()
-    var syncWorkerFactory = SyncWorkerFactoryStub()
+    var syncWorkerFactory: SyncWorkerFactoryStub!
 
     var synchronizer: Synchronizer!
 
     override func setUp() {
-        splitsFetcher = SplitChangeFetcherStub()
-        impressionsManager = ImpressionsManagerStub()
-        trackManager = TrackManagerStub()
+        splitsFetcher = HttpSplitFetcherStub()
+
         splitsSyncWorker = RetryableSyncWorkerStub()
         mySegmentsSyncWorker = RetryableSyncWorkerStub()
         periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
         periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
+        periodicImpressionsRecorderWorker = PeriodicRecorderWorkerStub()
+        impressionsRecorderWorker = RecorderWorkerStub()
+        periodicEventsRecorderWorker = PeriodicRecorderWorkerStub()
+        eventsRecorderWorker = RecorderWorkerStub()
 
-        splitsCache = SplitCacheStub(splits: [], changeNumber: 100)
-        mySegmentsCache = MySegmentsCacheStub()
+        syncWorkerFactory = SyncWorkerFactoryStub()
 
-        let apiFacade = SplitApiFacade(splitsFetcher: splitsFetcher, impressionsManager: impressionsManager,
-                                       trackManager: trackManager, splitsSyncWorker: splitsSyncWorker,
-                                       mySegmentsSyncWorker: mySegmentsSyncWorker,
-                                       periodicSplitsSyncWorker: periodicSplitsSyncWorker,
-                                       periodicMySegmentsSyncWorker: periodicMySegmentsSyncWorker,
-                                       streamingHttpClient: nil)
-        let storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(), splitsCache: splitsCache, mySegmentsCache: mySegmentsCache)
+        syncWorkerFactory.splitsSyncWorker = splitsSyncWorker
+        syncWorkerFactory.mySegmentsSyncWorker = mySegmentsSyncWorker
+        syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
+        syncWorkerFactory.periodicMySegmentsSyncWorker = periodicMySegmentsSyncWorker
+        syncWorkerFactory.periodicImpressionsRecorderWorker = periodicImpressionsRecorderWorker
+        syncWorkerFactory.impressionsRecorderWorker = impressionsRecorderWorker
+        syncWorkerFactory.periodicEventsRecorderWorker = periodicEventsRecorderWorker
+        syncWorkerFactory.eventsRecorderWorker = eventsRecorderWorker
+
+
+        splitsStorage = SplitsStorageStub()
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
+                                                               changeNumber: 100, updateTimestamp: 100))
+        mySegmentsStorage = MySegmentsStorageStub()
+
+        let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
+                                                     fileStorage: FileStorageStub(), splitsStorage: splitsStorage,
+                                                     mySegmentsStorage: mySegmentsStorage, impressionsStorage: PersistentImpressionsStorageStub(),
+                                                     eventsStorage: PersistentEventsStorageStub())
+
+        let apiFacade = SplitApiFacade.builder()
+            .setUserKey("userKey")
+            .setRestClient(RestClientStub())
+            .setSplitConfig(SplitClientConfig())
+            .setEventsManager(SplitEventsManagerStub())
+            .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
+            .build()
 
         synchronizer = DefaultSynchronizer(splitConfig: SplitClientConfig(),
             splitApiFacade: apiFacade,
             splitStorageContainer: storageContainer,
             syncWorkerFactory: syncWorkerFactory,
+            impressionsSyncHelper: ImpressionsRecorderSyncHelper(impressionsStorage: PersistentImpressionsStorageStub(),
+                                                                 accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
+            eventsSyncHelper: EventsRecorderSyncHelper(eventsStorage: PersistentEventsStorageStub(),
+                                                                 accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
             syncTaskByChangeNumberCatalog: updateWorkerCatalog)
     }
 
@@ -120,24 +148,24 @@ class SynchronizerTest: XCTestCase {
 
         synchronizer.startPeriodicRecording()
 
-        XCTAssertTrue(impressionsManager.startCalled)
-        XCTAssertTrue(trackManager.startCalled)
+        XCTAssertTrue(periodicImpressionsRecorderWorker.startCalled)
+        XCTAssertTrue(periodicEventsRecorderWorker.startCalled)
     }
 
     func testStopPeriodicRecording() {
 
         synchronizer.stopPeriodicRecording()
 
-        XCTAssertTrue(impressionsManager.stopCalled)
-        XCTAssertTrue(trackManager.stopCalled)
+        XCTAssertTrue(periodicImpressionsRecorderWorker.stopCalled)
+        XCTAssertTrue(periodicEventsRecorderWorker.stopCalled)
     }
 
     func testFlush() {
 
         synchronizer.flush()
 
-        XCTAssertTrue(impressionsManager.flushCalled)
-        XCTAssertTrue(trackManager.flushCalled)
+        XCTAssertTrue(impressionsRecorderWorker.flushCalled)
+        XCTAssertTrue(eventsRecorderWorker.flushCalled)
     }
 
     func testDestroy() {

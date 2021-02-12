@@ -12,7 +12,7 @@ class DefaultTreatmentManager: TreatmentManager {
 
     private let key: Key
     private let metricsManager: DefaultMetricsManager
-    private let impressionsManager: ImpressionsManager
+    private let impressionLogger: ImpressionLogger
     private let eventsManager: SplitEventsManager
     private let keyValidator: KeyValidator
     private let splitValidator: SplitValidator
@@ -25,7 +25,7 @@ class DefaultTreatmentManager: TreatmentManager {
          key: Key,
          splitConfig: SplitClientConfig,
          eventsManager: SplitEventsManager,
-         impressionsManager: ImpressionsManager,
+         impressionLogger: ImpressionLogger,
          metricsManager: DefaultMetricsManager,
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
@@ -35,7 +35,7 @@ class DefaultTreatmentManager: TreatmentManager {
         self.splitConfig = splitConfig
         self.evaluator = evaluator
         self.eventsManager = eventsManager
-        self.impressionsManager = impressionsManager
+        self.impressionLogger = impressionLogger
         self.metricsManager = metricsManager
         self.keyValidator = keyValidator
         self.splitValidator = splitValidator
@@ -182,13 +182,14 @@ class DefaultTreatmentManager: TreatmentManager {
     private func logImpression(label: String, changeNumber: Int64? = nil,
                                treatment: String, splitName: String, attributes: [String: Any]? = nil) {
         let impression: Impression = Impression()
+        impression.feature = splitName
         impression.keyName = key.matchingKey
         impression.bucketingKey = key.bucketingKey
         impression.label = (splitConfig.isLabelsEnabled ? label : nil)
         impression.changeNumber = changeNumber
         impression.treatment = treatment
         impression.time = Date().unixTimestampInMiliseconds()
-        impressionsManager.appendImpression(impression: impression, splitName: splitName)
+        impressionLogger.pushImpression(impression: impression)
 
         if let externalImpressionHandler = splitConfig.impressionListener {
             impression.feature = splitName

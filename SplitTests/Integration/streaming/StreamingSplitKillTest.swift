@@ -23,6 +23,11 @@ class StreamingSplitKillTest: XCTestCase {
     var expIndex: Int = 0
     var queue = DispatchQueue(label: "hol", qos: .userInteractive)
 
+    var exp1: XCTestExpectation!
+    var exp2: XCTestExpectation!
+    var exp3: XCTestExpectation!
+    var exp4: XCTestExpectation!
+
     override func setUp() {
         expIndex = 1
         let session = HttpSessionMock()
@@ -49,12 +54,13 @@ class StreamingSplitKillTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let expTimeout:  TimeInterval = 100
+        let expTimeout:  TimeInterval = 5
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-        for i in 0..<4 {
-            exps.insert(XCTestExpectation(description: "Exp changes \(i)"), at: i)
-        }
+        exp1 = XCTestExpectation(description: "Exp1")
+        exp2 = XCTestExpectation(description: "Exp2")
+        exp3 = XCTestExpectation(description: "Exp3")
+        exp4 = XCTestExpectation(description: "Exp4")
 
         client.on(event: SplitEvent.sdkReady) {
             IntegrationHelper.tlog("READY")
@@ -69,7 +75,8 @@ class StreamingSplitKillTest: XCTestCase {
         
         IntegrationHelper.tlog("KEEPAL")
         streamingBinding?.push(message: ":keepalive") // send keep alive to confirm streaming connection ok
-        wait(for: [curExp()], timeout: expTimeout)
+        wait(for: [exp1], timeout: expTimeout)
+        waitForUpdate(secs: 1)
 
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
@@ -79,15 +86,18 @@ class StreamingSplitKillTest: XCTestCase {
                                                          timestamp: numbers[splitsChangesHits],
                                                          changeNumber: numbers[splitsChangesHits]))
 
-        wait(for: [curExp()], timeout: expTimeout)
+        wait(for: [exp2], timeout: expTimeout)
+        waitForUpdate(secs: 1)
         
         let treatmentKill = client.getTreatment(splitName)
 
+        print("Updating split")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
                                                           changeNumber: numbers[splitsChangesHits]))
 
-        wait(for: [curExp()], timeout: expTimeout)
+        wait(for: [exp3], timeout: expTimeout)
+        waitForUpdate(secs: 1)
         let treatmentNoKill = client.getTreatment(splitName)
         
         streamingBinding?.push(message:
@@ -105,7 +115,7 @@ class StreamingSplitKillTest: XCTestCase {
     }
     
     private func getChanges(for hitNumber: Int) -> Data {
-        if hitNumber < exps.count {
+        if hitNumber < 4 {
             return Data(self.changes[hitNumber].utf8)
         }
         return Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8)
@@ -117,12 +127,15 @@ class StreamingSplitKillTest: XCTestCase {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.getAndUpdateHit()
                 IntegrationHelper.tlog("sc hit: \(hitNumber)")
-                if hitNumber > 0, hitNumber < self.exps.count {
-                    let exp = self.exps[hitNumber]
-                    self.queue.asyncAfter(deadline: .now() + 0.5) {
-                        IntegrationHelper.tlog("sc exp: \(hitNumber)")
-                        exp.fulfill()
-                    }
+                switch hitNumber {
+                case 1:
+                    self.exp1.fulfill()
+                case 2:
+                    self.exp2.fulfill()
+                case 3:
+                    self.exp3.fulfill()
+                default:
+                    IntegrationHelper.tlog("Exp no fired \(hitNumber)")
                 }
                 return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
 
@@ -160,8 +173,8 @@ class StreamingSplitKillTest: XCTestCase {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.since = Int64(since)
         change?.till = Int64(till)
-        let split = change?.splits?[0]
-
+        let split = change?.splits[0]
+        split?.changeNumber = Int64(since)
         if killed {
             split?.killed = true
             split?.defaultTreatment = "conta"
@@ -178,13 +191,8 @@ class StreamingSplitKillTest: XCTestCase {
         }
     }
     
-    private func curExp() -> XCTestExpectation {
-        var index = 0
-        DispatchQueue.global().sync {
-            index = self.expIndex
-            self.expIndex+=1
-        }
-        return exps[index]
+    private func waitForUpdate(secs: UInt32 = 2) {
+        sleep(secs)
     }
 }
 
