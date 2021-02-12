@@ -29,6 +29,7 @@ protocol Synchronizer: ImpressionLogger {
 }
 
 struct SplitStorageContainer {
+    let splitDatabase: SplitDatabase
     let fileStorage: FileStorageProtocol
     let splitsStorage: SplitsStorage
     let mySegmentsStorage: MySegmentsStorage
