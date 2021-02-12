@@ -39,6 +39,7 @@ class CoreDataHelperBuilder {
             fatalError("Could not create context for cache database")
         }
 
+        managedObjContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         managedObjContext.persistentStoreCoordinator = persistenceCoordinator
 
         guard let docURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {
