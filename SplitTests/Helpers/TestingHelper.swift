@@ -65,4 +65,38 @@ struct TestingHelper {
         let helper = IntegrationCoreDataHelper.get(databaseName: "trackTestDb", dispatchQueue: queue)
         return CoreDataSplitDatabase(coreDataHelper: helper, dispatchQueue: queue)
     }
+
+    static func createLegacyImpressionsFileContent(testCount: Int, impressionsPerTest: Int) -> String {
+        var hits = [String: ImpressionsHit]()
+        do {
+            for i in 0..<testCount {
+                let testName = "T\(i)"
+                let impJson = try Json.encodeToJson(createImpressions(feature: testName, count: impressionsPerTest))
+                let impressionTest = try Json.encodeFrom(json: "{\"testName\":\"\(testName)\", \"keyImpressions\":\(impJson)}", to: ImpressionsTest.self)
+                let uId = "id\(i)"
+                hits[uId] = ImpressionsHit(identifier: uId, impressions: [impressionTest])
+            }
+        } catch {
+            return ""
+        }
+
+        let file = ImpressionsFile()
+        file.currentHit = ImpressionsHit(identifier: "id\(testCount)", impressions: [])
+        file.oldHits = hits
+        return (try? Json.encodeToJson(file)) ?? ""
+    }
+
+    static func createLegacyEventsFileContent(count: Int) -> String {
+        var hits = [String: EventsHit]()
+        for i in 0..<count {
+            let events = createEvents(count: count)
+            let uId = "id\(i)"
+            hits[uId] = EventsHit(identifier: uId, events: events)
+        }
+
+        let file = EventsFile()
+        file.currentHit = EventsHit(identifier: "id\(count)", events: [])
+        file.oldHits = hits
+        return (try? Json.dynamicEncodeToJson(file)) ?? ""
+    }
 }

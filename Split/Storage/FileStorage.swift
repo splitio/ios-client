@@ -83,6 +83,19 @@ class FileStorage: FileStorageProtocol {
         return nil
     }
 
+    func lastModifiedDate(fileName: String) -> Int64 {
+        if let dataFolderUrl = getDataFolder() {
+            do {
+                let fileURL = dataFolderUrl.appendingPathComponent(fileName)
+                let resources = try fileURL.resourceValues(forKeys: [.creationDateKey])
+                return resources.creationDate?.unixTimestamp() ?? 0
+            } catch {
+                Logger.w("File Storage - readWithProperties: " + error.localizedDescription)
+            }
+        }
+        return 0
+    }
+
     private func getDataFolder() -> URL? {
 
         if dataFolderUrl != nil {
