@@ -13,15 +13,12 @@ import XCTest
 class TreatmentManagerTest: XCTestCase {
     
     var validationLogger: ValidationMessageLogger!
-    var impressionsManager: ImpressionsManager!
-    var splitCache: SplitCacheProtocol!
-    var mySegmentsCache: MySegmentsCacheProtocol!
+    var splitsStorage: SplitsStorage!
+    var mySegmentsStorage: MySegmentsStorageStub!
     var storageContainer: SplitStorageContainer!
     var client: InternalSplitClient!
     
-    var impressionsManagerStub: ImpressionsManagerStub {
-        return impressionsManager as! ImpressionsManagerStub
-    }
+    var impressionsLogger: ImpressionsLoggerStub!
     
     var validationLoggerStub: ValidationMessageLoggerStub {
         return validationLogger as! ValidationMessageLoggerStub
@@ -30,16 +27,22 @@ class TreatmentManagerTest: XCTestCase {
     
     override func setUp() {
         
-        impressionsManager = ImpressionsManagerStub()
+        impressionsLogger = ImpressionsLoggerStub()
         validationLogger = ValidationMessageLoggerStub()
         if storageContainer == nil {
             let splits = loadSplitsFile()
             let mySegments = ["s1", "s2", "test_copy"]
-            splitCache = SplitCacheStub(splits: splits, changeNumber: -1)
-            mySegmentsCache = InMemoryMySegmentsCache(segments: Set(mySegments))
-            storageContainer = SplitStorageContainer(fileStorage: FileStorageStub(),
-                                                     splitsCache: splitCache,
-                                                     mySegmentsCache: mySegmentsCache)
+            splitsStorage = SplitsStorageStub()
+            splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [],
+                                                                   changeNumber: -1, updateTimestamp: 100))
+            mySegmentsStorage = MySegmentsStorageStub()
+            mySegmentsStorage.set(mySegments)
+            storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
+                                                     fileStorage: FileStorageStub(),
+                                                     splitsStorage: splitsStorage,
+                                                     mySegmentsStorage: mySegmentsStorage,
+                                                     impressionsStorage: PersistentImpressionsStorageStub(),
+                                                     eventsStorage: PersistentEventsStorageStub())
         }
     }
     
@@ -53,7 +56,7 @@ class TreatmentManagerTest: XCTestCase {
         
         let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
         let splitResult = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil)
-        let impression = impressionsManagerStub.impressions[splitName]
+        let impression = impressionsLogger.impressions[splitName]
         
         
         XCTAssertNotNil(splitResult)
@@ -76,7 +79,7 @@ class TreatmentManagerTest: XCTestCase {
         
         let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
         let splitResult = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil)
-        let impression = impressionsManagerStub.impressions[splitName]
+        let impression = impressionsLogger.impressions[splitName]
         
         
         XCTAssertNotNil(splitResult)
@@ -100,7 +103,7 @@ class TreatmentManagerTest: XCTestCase {
         
         let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
         let splitResult = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil)
-        let impression = impressionsManagerStub.impressions[splitName]
+        let impression = impressionsLogger.impressions[splitName]
         
         
         XCTAssertNotNil(splitResult)
@@ -128,10 +131,10 @@ class TreatmentManagerTest: XCTestCase {
         let r2 = splitResults["testo2222"]
         let r3 = splitResults["OldTest"]
         
-        let impressionsCount = impressionsManagerStub.impressions.count
-        let imp1 = impressionsManagerStub.impressions[splitNames[0]]
-        let imp2 = impressionsManagerStub.impressions[splitNames[1]]
-        let imp3 = impressionsManagerStub.impressions[splitNames[2]]
+        let impressionsCount = impressionsLogger.impressions.count
+        let imp1 = impressionsLogger.impressions[splitNames[0]]
+        let imp2 = impressionsLogger.impressions[splitNames[1]]
+        let imp3 = impressionsLogger.impressions[splitNames[2]]
         
         XCTAssertNotNil(r1)
         XCTAssertEqual("off", r1?.treatment)
@@ -171,7 +174,7 @@ class TreatmentManagerTest: XCTestCase {
         let splitResults = treatmentManager.getTreatmentsWithConfig(splits: splitNames, attributes: nil)
         
         
-        XCTAssertEqual(0, impressionsManagerStub.impressions.count)
+        XCTAssertEqual(0, impressionsLogger.impressions.count)
         assertControl(splitList: splitNames, treatment: treatment, treatmentList: treatmentList, splitResult: splitResult, splitResultList: splitResults)
         
         XCTAssertFalse(validationLoggerStub.hasError)
@@ -192,7 +195,7 @@ class TreatmentManagerTest: XCTestCase {
         let splitResults = treatmentManager.getTreatmentsWithConfig(splits: splitNames, attributes: nil)
         
         
-        XCTAssertEqual(0, impressionsManagerStub.impressions.count)
+        XCTAssertEqual(0, impressionsLogger.impressions.count)
         assertControl(splitList: splitNames, treatment: treatment, treatmentList: treatmentList, splitResult: splitResult, splitResultList: splitResults)
         XCTAssertTrue(validationLoggerStub.hasError)
         XCTAssertFalse(validationLoggerStub.hasWarnings)
@@ -211,7 +214,7 @@ class TreatmentManagerTest: XCTestCase {
         let splitResults = treatmentManager.getTreatmentsWithConfig(splits: splitNames, attributes: nil)
         
         
-        XCTAssertEqual(0, impressionsManagerStub.impressions.count)
+        XCTAssertEqual(0, impressionsLogger.impressions.count)
         assertControl(splitList: splitNames, treatment: treatment, treatmentList: treatmentList, splitResult: splitResult, splitResultList: splitResults)
         XCTAssertTrue(validationLoggerStub.hasError)
         XCTAssertFalse(validationLoggerStub.hasWarnings)
@@ -229,7 +232,7 @@ class TreatmentManagerTest: XCTestCase {
         let splitResult = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil)
         let splitResults = treatmentManager.getTreatmentsWithConfig(splits: splitNames, attributes: nil)
         
-        XCTAssertEqual(0, impressionsManagerStub.impressions.count)
+        XCTAssertEqual(0, impressionsLogger.impressions.count)
         assertControl(splitList: splitNames, treatment: treatment, treatmentList: treatmentList, splitResult: splitResult, splitResultList: splitResults)
         XCTAssertTrue(validationLoggerStub.hasError)
         XCTAssertFalse(validationLoggerStub.hasWarnings)
@@ -254,16 +257,16 @@ class TreatmentManagerTest: XCTestCase {
     
     func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil) -> TreatmentManager {
         let key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
-        client = InternalSplitClientStub(storageContainer: storageContainer)
+        client = InternalSplitClientStub(splitsStorage: storageContainer.splitsStorage, mySegmentsStorage: storageContainer.mySegmentsStorage)
         let evaluator = DefaultEvaluator(splitClient: client)
 
         let eventsManager = SplitEventsManagerMock()
         eventsManager.isSegmentsReadyFired = true
         eventsManager.isSplitsReadyFired = true
         return DefaultTreatmentManager(evaluator: evaluator, key: key, splitConfig: SplitClientConfig(),
-                                       eventsManager: eventsManager, impressionsManager: impressionsManager,
+                                       eventsManager: eventsManager, impressionLogger: impressionsLogger,
                                        metricsManager: DefaultMetricsManager.shared, keyValidator: DefaultKeyValidator(),
-                                       splitValidator: DefaultSplitValidator(splitCache: splitCache),
+                                       splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
                                        validationLogger: validationLogger)
     }
     
@@ -273,9 +276,8 @@ class TreatmentManagerTest: XCTestCase {
     
     func loadSplitFile(name fileName: String) -> [Split] {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.encodeFrom(json: file, to: SplitChange.self),
-            let splits = change.splits {
-            return splits
+           let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+            return change.splits
         }
         return [Split]()
     }

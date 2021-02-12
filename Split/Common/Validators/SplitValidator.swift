@@ -54,11 +54,11 @@ struct SplitNameValidator {
 
 class DefaultSplitValidator: SplitValidator {
 
-    let splitCache: SplitCacheProtocol
+    let splitsStorage: SplitsStorage
     let splitNameValidator = SplitNameValidator()
 
-    init(splitCache: SplitCacheProtocol) {
-        self.splitCache = splitCache
+    init(splitsStorage: SplitsStorage) {
+        self.splitsStorage = splitsStorage
     }
 
     func validate(name: String?) -> ValidationErrorInfo? {
@@ -66,7 +66,7 @@ class DefaultSplitValidator: SplitValidator {
     }
 
     func validateSplit(name: String) -> ValidationErrorInfo? {
-        if splitCache.getSplit(splitName: name) == nil {
+        if splitsStorage.get(name: name) == nil {
             return ValidationErrorInfo(warning: .nonExistingSplit,
                                        message: "you passed '\(name)' that does not exist in this environment, " +
                 "please double check what Splits exist in the web console.")

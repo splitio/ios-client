@@ -17,6 +17,9 @@ class VersionTest: XCTestCase {
         let semanticVersion = Version.semantic
         let sdkVersion = Version.sdk
 
+        if semanticVersion.contains("SNAPSHOT") {
+            return
+        }
         XCTAssertEqual(3, semanticVersion.split(separator: ".").count)
         XCTAssertEqual(3, sdkVersion.split(separator: ".").count)
         XCTAssertTrue(sdkVersion.split(separator: ".")[0].contains("ios"))

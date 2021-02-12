@@ -15,7 +15,7 @@ class SyncManagerBuilder {
     private var splitApiFacade: SplitApiFacade?
     private var storageContainer: SplitStorageContainer?
     private var endpointFactory: EndpointFactory?
-    private var restClient: DefaultRestClient?
+    private var synchronizer: Synchronizer?
 
     func setUserKey(_ userKey: String) -> SyncManagerBuilder {
         self.userKey = userKey
@@ -42,8 +42,8 @@ class SyncManagerBuilder {
         return self
     }
 
-    func setRestClient(_ restClient: DefaultRestClient) -> SyncManagerBuilder {
-        self.restClient = restClient
+    func setSynchronizer(_ synchronizer: Synchronizer) -> SyncManagerBuilder {
+        self.synchronizer = synchronizer
         return self
     }
 
@@ -52,15 +52,13 @@ class SyncManagerBuilder {
         guard let userKey = self.userKey,
             let config = self.splitConfig,
             let apiFacade = self.splitApiFacade,
-            let restClient = self.restClient,
             let endpointFactory = self.endpointFactory,
+            let synchronizer = self.synchronizer,
             let storageContainer = self.storageContainer
             else {
                 fatalError("Some parameter is null when creating Sync Manager")
         }
 
-        let synchronizer = DefaultSynchronizer(splitConfig: config, splitApiFacade: apiFacade,
-                                               splitStorageContainer: storageContainer)
         let sseHttpConfig = HttpSessionConfig()
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
         let sseHttpClient = apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
@@ -71,16 +69,16 @@ class SyncManagerBuilder {
             notificationParser: DefaultSseNotificationParser(),
             splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer),
             splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
-                                             splitCache: storageContainer.splitsCache),
+                                             splitsStorage: storageContainer.splitsStorage),
             mySegmentsUpdateWorker: MySegmentsUpdateWorker(synchronizer: synchronizer,
-                                                           mySegmentsCache: storageContainer.mySegmentsCache))
+                                                           mySegmentsStorage: storageContainer.mySegmentsStorage))
 
         let sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,
                                            notificationParser: DefaultSseNotificationParser(),
                                            notificationManagerKeeper: notificationManagerKeeper,
                                            broadcasterChannel: broadcasterChannel)
 
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: DefaultJwtTokenParser())
+        let sseAuthenticator = apiFacade.sseAuthenticator
         let sseClient = DefaultSseClient(endpoint: endpointFactory.streamingEndpoint,
                                          httpClient: sseHttpClient, sseHandler: sseHandler)
 

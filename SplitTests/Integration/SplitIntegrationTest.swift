@@ -125,7 +125,6 @@ class SplitIntegrationTests: XCTestCase {
         let event99 = IntegrationHelper.getTrackEventBy(value: 99.0, trackHits: tracksHits())
         let event100 = IntegrationHelper.getTrackEventBy(value: 100.0, trackHits: tracksHits())
 
-        XCTAssertTrue(existsFolder(name: dataFolderName))
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertEqual("off", t1)
@@ -173,6 +172,7 @@ class SplitIntegrationTests: XCTestCase {
 
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
+        builder.setTestDatabase(TestingHelper.createTestDatabase(name: "IntegrationTest"))
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
 
         let client = factory?.client
@@ -206,7 +206,7 @@ class SplitIntegrationTests: XCTestCase {
 
     private func loadSplitsChangeFile() -> SplitChange? {
         let change = loadSplitChangeFile(name: "splitchanges_1")
-        change?.since = change?.till
+        change?.since = change?.till ?? -1
         return change
     }
 
@@ -216,17 +216,6 @@ class SplitIntegrationTests: XCTestCase {
             return change
         }
         return nil
-    }
-
-    private func existsFolder(name: String) -> Bool {
-        let fileManager = FileManager.default
-        do {
-            let cachesDirectory = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor:nil, create:false)
-            let folder = cachesDirectory.appendingPathComponent(name)
-            return fileManager.fileExists(atPath: folder.path)
-        } catch {
-        }
-        return false
     }
 
     private func tracksHits() -> [ClientRequest] {

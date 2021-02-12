@@ -68,7 +68,7 @@ class MySegmentServerErrorTest: XCTestCase {
             if self.isFirstChangesReq {
                 self.isFirstChangesReq = false
                 let change = self.responseSlitChanges()[0]
-                self.lastChangeNumber = Int(change.till ?? 0)
+                self.lastChangeNumber = Int(change.till)
                 let jsonChanges = try? Json.encodeToJson(change)
                 return MockedResponse(code: 200, data: jsonChanges)
             }
@@ -146,7 +146,7 @@ class MySegmentServerErrorTest: XCTestCase {
         
         
         let c = loadSplitsChangeFile()!
-        let split = c.splits![0]
+        let split = c.splits[0]
         let inSegmentOneCondition = inSegmentCondition(name: "segment1")
         inSegmentOneCondition.partitions![0].treatment = "on_s1"
         inSegmentOneCondition.partitions![0].size = 100

@@ -21,13 +21,17 @@ class SseNotificationProcessorTest: XCTestCase {
 
     override func setUp() {
         let synchronizer = SynchronizerStub()
-        let splitCache = SplitCacheStub(splits: [Split](), changeNumber: 100)
-        let mySegmentsCache = MySegmentsCacheStub()
+        let splitsStorage = SplitsStorageStub()
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [],
+                                                               archivedSplits: [],
+                                                               changeNumber: 100,
+                                                               updateTimestamp: 100))
+        let mySegmentsStorage = MySegmentsStorageStub()
 
         sseNotificationParser = SseNotificationParserStub()
         splitsUpdateWorker = SplitsUpdateWorkerMock(synchronizer: synchronizer)
-        mySegmentsUpdateWorker =  MySegmentsUpdateWorkerMock(synchronizer: synchronizer, mySegmentsCache: mySegmentsCache)
-        splitKillWorker = SplitKillWorkerMock(synchronizer: synchronizer, splitCache: splitCache)
+        mySegmentsUpdateWorker =  MySegmentsUpdateWorkerMock(synchronizer: synchronizer, mySegmentsStorage: mySegmentsStorage)
+        splitKillWorker = SplitKillWorkerMock(synchronizer: synchronizer, splitsStorage: splitsStorage)
 
         notificationProcessor = DefaultSseNotificationProcessor(notificationParser: sseNotificationParser,
                                                                 splitsUpdateWorker: splitsUpdateWorker,

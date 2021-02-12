@@ -19,17 +19,21 @@ class SyncUpdateWorker: XCTestCase {
     var splitKillWorker: SplitKillWorker!
 
     var synchronizer: SynchronizerStub!
-    var splitCache: SplitCacheStub!
-    var mySegmentsCache: MySegmentsCacheStub!
+    var splitsStorage: SplitsStorageStub!
+    var mySegmentsStorage: MySegmentsStorageStub!
 
     override func setUp() {
         synchronizer = SynchronizerStub()
-        splitCache = SplitCacheStub(splits: [Split](), changeNumber: 100)
-        mySegmentsCache = MySegmentsCacheStub()
+        splitsStorage = SplitsStorageStub()
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "split1")],
+                                                               archivedSplits: [],
+                                                               changeNumber: 100,
+                                                               updateTimestamp: 100))
+        mySegmentsStorage = MySegmentsStorageStub()
 
         splitsUpdateWorker = SplitsUpdateWorker(synchronizer: synchronizer)
-        mySegmentsUpdateWorker =  MySegmentsUpdateWorker(synchronizer: synchronizer, mySegmentsCache: mySegmentsCache)
-        splitKillWorker = SplitKillWorker(synchronizer: synchronizer, splitCache: splitCache)
+        mySegmentsUpdateWorker =  MySegmentsUpdateWorker(synchronizer: synchronizer, mySegmentsStorage: mySegmentsStorage)
+        splitKillWorker = SplitKillWorker(synchronizer: synchronizer, splitsStorage: splitsStorage)
     }
 
     func testSplitUpdateWorker() throws {
@@ -51,16 +55,16 @@ class SyncUpdateWorker: XCTestCase {
         let exp = XCTestExpectation(description: "exp")
         let exp1 = XCTestExpectation(description: "exp1")
         synchronizer.syncSplitsChangeNumberExp = exp
-        splitCache.killExpectation = exp1
+        splitsStorage.updatedWithoutChecksExp = exp1
 
 
         try splitKillWorker.process(notification: notification)
 
         wait(for: [exp, exp1], timeout: 3)
 
-        XCTAssertEqual("split1", splitCache.killedSplit?.name)
-        XCTAssertEqual("off", splitCache.killedSplit?.defaultTreatment)
-        XCTAssertEqual(100, splitCache.killedSplit?.changeNumber)
+        XCTAssertEqual("split1", splitsStorage.updatedWithoutChecksSplit?.name)
+        XCTAssertEqual("off", splitsStorage.updatedWithoutChecksSplit?.defaultTreatment)
+        XCTAssertEqual(100, splitsStorage.updatedWithoutChecksSplit?.changeNumber)
         XCTAssertTrue(synchronizer.synchronizeSplitsChangeNumberCalled)
     }
 
@@ -70,17 +74,17 @@ class SyncUpdateWorker: XCTestCase {
                                                         segmentList: ["s1", "s2"])
 
         let exp = XCTestExpectation(description: "exp")
-        mySegmentsCache.updateExpectation = exp
+        mySegmentsStorage.updateExpectation = exp
 
 
         try mySegmentsUpdateWorker.process(notification: notification)
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(2, mySegmentsCache.updatedSegments?.count)
-        XCTAssertEqual(1, mySegmentsCache.updatedSegments?.filter { $0 == "s1" }.count)
-        XCTAssertEqual(1, mySegmentsCache.updatedSegments?.filter { $0 == "s2" }.count)
-        XCTAssertFalse(mySegmentsCache.clearCalled)
+        XCTAssertEqual(2, mySegmentsStorage.updatedSegments?.count)
+        XCTAssertEqual(1, mySegmentsStorage.updatedSegments?.filter { $0 == "s1" }.count)
+        XCTAssertEqual(1, mySegmentsStorage.updatedSegments?.filter { $0 == "s2" }.count)
+        XCTAssertFalse(mySegmentsStorage.clearCalled)
         XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
     }
 
@@ -90,14 +94,14 @@ class SyncUpdateWorker: XCTestCase {
                                                         segmentList: nil)
 
         let exp = XCTestExpectation(description: "exp")
-        mySegmentsCache.clearExpectation = exp
+        mySegmentsStorage.clearExpectation = exp
 
         try mySegmentsUpdateWorker.process(notification: notification)
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertNil(mySegmentsCache.updatedSegments)
-        XCTAssertTrue(mySegmentsCache.clearCalled)
+        XCTAssertNil(mySegmentsStorage.updatedSegments)
+        XCTAssertTrue(mySegmentsStorage.clearCalled)
         XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
     }
 
@@ -113,8 +117,8 @@ class SyncUpdateWorker: XCTestCase {
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertNil(mySegmentsCache.updatedSegments)
-        XCTAssertFalse(mySegmentsCache.clearCalled)
+        XCTAssertNil(mySegmentsStorage.updatedSegments)
+        XCTAssertFalse(mySegmentsStorage.clearCalled)
         XCTAssertTrue(synchronizer.synchronizeMySegmentsCalled)
     }
 
