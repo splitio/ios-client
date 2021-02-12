@@ -144,7 +144,7 @@ class DefaultStorageMigrator: StorageMigrator {
     }
 
     private func migrateImpressions() {
-        let impressionDao = splitDatabase.impressionDao
+
         guard let hitsJson = fileStorage.read(fileName: kImpressionsFileName) else {
             return
         }
@@ -152,28 +152,26 @@ class DefaultStorageMigrator: StorageMigrator {
         do {
             let hitsFile = try Json.encodeFrom(json: hitsJson, to: ImpressionsFile.self)
             let tests: [ImpressionsTest] = hitsFile.oldHits?.compactMap { $0.value.impressions }.flatMap { $0 } ?? []
-            var impressions = [Impression]()
-            for test in tests {
-                for imp in test.keyImpressions {
-                    imp.feature = test.testName
-                    impressions.append(imp)
-                }
-            }
-            let currentTests = hitsFile.currentHit?.impressions.compactMap { $0 } ?? []
-            for test in currentTests {
-                for imp in test.keyImpressions {
-                    imp.feature = test.testName
-                    impressions.append(imp)
-                }
-            }
+            insertImpressions(tests)
 
-            impressions.forEach { impression in
-                impressionDao.insert(impression)
-            }
+            let currentTests = hitsFile.currentHit?.impressions.compactMap { $0 } ?? []
+            insertImpressions(currentTests)
 
         } catch {
             Logger.w("Avoiding impressions migration")
             return
+        }
+    }
+
+    private func insertImpressions(_ tests: [ImpressionsTest]) {
+        let impressionDao = splitDatabase.impressionDao
+        for test in tests {
+            for impression in test.keyImpressions {
+                if !isOutdated(impression.time ?? 0) {
+                    impression.feature = test.testName
+                    impressionDao.insert(impression)
+                }
+            }
         }
     }
 
@@ -189,7 +187,9 @@ class DefaultStorageMigrator: StorageMigrator {
             events += hitsFile.currentHit?.events ?? []
 
             events.forEach { event in
-                eventDao.insert(event)
+                if !isOutdated(event.timestamp ?? 0) {
+                    eventDao.insert(event)
+                }
             }
 
         } catch {
