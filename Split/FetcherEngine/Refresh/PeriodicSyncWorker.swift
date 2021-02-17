@@ -126,7 +126,6 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 }
 
-/// TODO: Rename this class when removing old periodic sync worker on integration
 class RevampPeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
     private let splitFetcher: HttpSplitFetcher

@@ -59,8 +59,7 @@ class ImpressionsRecorderSyncHelper: RecorderSyncHelper {
         DispatchQueue.global().async {
             self.impressionsStorage.push(impression: item)
         }
-        // TODO: Replace by config constant
-        return accumulator.checkIfFlushIsNeeded(sizeInBytes: 150)
+        return accumulator.checkIfFlushIsNeeded(sizeInBytes: ServiceConstants.estimatedImpressionSizeInBytes)
     }
 
     func updateAccumulator(count: Int, bytes: Int) {

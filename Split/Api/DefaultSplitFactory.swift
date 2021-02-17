@@ -48,8 +48,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         config.apiKey = apiKey
         let storageContainer = try buildStorageContainer(userKey: key.matchingKey,
-                                                     dataFolderName: dataFolderName,
-                                                     testDatabase: testDatabase)
+                                                         dataFolderName: dataFolderName,
+                                                         testDatabase: testDatabase)
 
         migrateStorageIfNeeded(storageContainer: storageContainer, userKey: key.matchingKey)
 
@@ -85,22 +85,23 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let impressionsFlushChecker = DefaultRecorderFlushChecker(maxQueueSize: config.impressionsQueueSize,
                                                                   maxQueueSizeInBytes: config.impressionsQueueSize)
 
-        let impressionsSyncHelper = ImpressionsRecorderSyncHelper(impressionsStorage: storageContainer.impressionsStorage,
-                                                                   accumulator: impressionsFlushChecker)
+        let impressionsSyncHelper
+            = ImpressionsRecorderSyncHelper(impressionsStorage: storageContainer.impressionsStorage,
+                                            accumulator: impressionsFlushChecker)
 
-
-        let eventsFlushChecker = DefaultRecorderFlushChecker(maxQueueSize: Int(config.eventsQueueSize),
-                                                                  maxQueueSizeInBytes: config.maxEventsQueueMemorySizeInBytes)
+        let eventsFlushChecker
+            = DefaultRecorderFlushChecker(maxQueueSize: Int(config.eventsQueueSize),
+                                          maxQueueSizeInBytes: config.maxEventsQueueMemorySizeInBytes)
         let eventsSyncHelper = EventsRecorderSyncHelper(eventsStorage: storageContainer.eventsStorage,
-                                                                   accumulator: eventsFlushChecker)
+                                                        accumulator: eventsFlushChecker)
 
         let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: key.matchingKey,
-                                 splitConfig: config,
-                                 splitsFilterQueryString: splitsFilterQueryString,
-                                 apiFacade: apiFacade,
-                                 storageContainer: storageContainer,
-                                 splitChangeProcessor: DefaultSplitChangeProcessor(),
-                                 eventsManager: eventsManager)
+                                                         splitConfig: config,
+                                                         splitsFilterQueryString: splitsFilterQueryString,
+                                                         apiFacade: apiFacade,
+                                                         storageContainer: storageContainer,
+                                                         splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                         eventsManager: eventsManager)
 
         let synchronizer = DefaultSynchronizer(splitConfig: config, splitApiFacade: apiFacade,
                                                splitStorageContainer: storageContainer,
@@ -115,8 +116,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         defaultClient = DefaultSplitClient(config: config, key: key, apiFacade: apiFacade,
                                            storageContainer: storageContainer,
                                            synchronizer: synchronizer, eventsManager: eventsManager) {
-                syncManager.stop()
-                manager.destroy()
+            syncManager.stop()
+            manager.destroy()
         }
 
         eventsManager.getExecutorResources().setClient(client: defaultClient!)
@@ -131,7 +132,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         var database: SplitDatabase?
 
         if testDatabase == nil {
-            guard let helper = CoreDataHelperBuilder.build(databaseName: dataFolderName, dispatchQueue: dispatchQueue) else {
+            guard let helper = CoreDataHelperBuilder.build(databaseName: dataFolderName,
+                                                           dispatchQueue: dispatchQueue) else {
                 throw GenericError.coultNotCreateCache
             }
             database = CoreDataSplitDatabase(coreDataHelper: helper, dispatchQueue: dispatchQueue)
@@ -149,11 +151,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let persistentMySegmentsStorage = DefaultPersistentMySegmentsStorage(userKey: userKey, database: splitDatabase)
         let mySegmentsStorage = DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
 
-        let impressionsStorage = DefaultImpressionsStorage(database: splitDatabase,
-                                                           expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+        let impressionsStorage
+            = DefaultImpressionsStorage(database: splitDatabase,
+                                        expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
 
-        let eventsStorage = DefaultEventsStorage(database: splitDatabase,
-                                                           expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+        let eventsStorage
+            = DefaultEventsStorage(database: splitDatabase,
+                                   expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
 
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      fileStorage: fileStorage,
