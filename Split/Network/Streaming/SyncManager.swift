@@ -48,7 +48,9 @@ class DefaultSyncManager: SyncManager {
     }
 
     func start() {
-        synchronizer.syncAll()
+        synchronizer.loadAndSynchronizeSplits()
+        synchronizer.loadMySegmentsFromCache()
+        synchronizer.synchronizeMySegments()
         isPollingEnabled.set(!splitConfig.streamingEnabled)
         if splitConfig.streamingEnabled {
             broadcasterChannel.register { event in
