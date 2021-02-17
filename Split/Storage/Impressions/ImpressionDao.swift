@@ -69,7 +69,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
         if ids.count == 0 {
             return
         }
-     
+
         let predicate = NSPredicate(format: "storageId IN %@", ids)
 
         executeAsync { [weak self] in

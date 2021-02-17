@@ -90,12 +90,12 @@ class YamlSplitsStorage: SplitsStorage {
         inMemorySplits.value(forKey: name)
     }
 
-    func getMany(splits: [String]) -> [String : Split] {
+    func getMany(splits: [String]) -> [String: Split] {
         let names = Set(splits)
         return inMemorySplits.all.filter { return names.contains($0.key) }
     }
 
-    func getAll() -> [String : Split] {
+    func getAll() -> [String: Split] {
         return inMemorySplits.all
     }
 
