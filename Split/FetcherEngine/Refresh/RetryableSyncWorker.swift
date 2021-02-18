@@ -224,7 +224,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                 let newSince = splitChange.since
                 let newTill = splitChange.till
                 splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))
-                if newSince == newTill, newTill >= nextSince {
+                if newSince == newTill, newTill >= changeNumber {
                     resetBackoffCounter()
                     return true
                 }
