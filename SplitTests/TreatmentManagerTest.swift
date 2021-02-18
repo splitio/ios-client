@@ -40,6 +40,7 @@ class TreatmentManagerTest: XCTestCase {
             storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      fileStorage: FileStorageStub(),
                                                      splitsStorage: splitsStorage,
+                                                     persistentSplitsStorage: PersistentSplitsStorageStub(),
                                                      mySegmentsStorage: mySegmentsStorage,
                                                      impressionsStorage: PersistentImpressionsStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub())

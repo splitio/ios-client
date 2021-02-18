@@ -16,6 +16,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     var processedSplitChange: ProcessedSplitChange?
 
+    var getAllCalled = false
     var updateCalled = false
     var deleteCalled = false
     var clearCalled = false
@@ -23,6 +24,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var updateSplitCalled = false
     
     var filterQueryString = ""
+    var splits = [String: Split]()
 
     func getFilterQueryString() -> String {
         return snapshot.splitsFilterQueryString
@@ -35,10 +37,15 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     func update(split: Split) {
         updateSplitCalled  = true
+        splits[split.name ?? ""] = split
+        snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: splits.values.compactMap { $0 },
+                                  updateTimestamp: snapshot.updateTimestamp, splitsFilterQueryString: filterQueryString)
     }
     
     func update(filterQueryString: String) {
         self.filterQueryString = filterQueryString
+        snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: snapshot.splits,
+                                  updateTimestamp: snapshot.updateTimestamp, splitsFilterQueryString: filterQueryString)
     }
 
     func getSplitsSnapshot() -> SplitsSnapshot {
@@ -46,18 +53,19 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     }
 
     func getAll() -> [Split] {
+        getAllCalled = true
         return snapshot.splits
     }
 
     func delete(splitNames: [String]) {
-        deleteCalled = false
+        deleteCalled = true
     }
 
     func clear() {
-        clearCalled = false
+        clearCalled = true
     }
 
     func close() {
-        closeCalled = false
+        closeCalled = true
     }
 }

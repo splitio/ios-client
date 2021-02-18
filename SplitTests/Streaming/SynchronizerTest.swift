@@ -22,6 +22,7 @@ class SynchronizerTest: XCTestCase {
     var mySegmentsSyncWorker: RetryableSyncWorkerStub!
     var periodicSplitsSyncWorker: PeriodicSyncWorkerStub!
     var periodicMySegmentsSyncWorker: PeriodicSyncWorkerStub!
+    var persistentSplitsStorage: PersistentSplitsStorageStub!
 
     var splitsStorage: SplitsStorageStub!
     var mySegmentsStorage: MySegmentsStorageStub!
@@ -32,6 +33,7 @@ class SynchronizerTest: XCTestCase {
     var synchronizer: Synchronizer!
 
     override func setUp() {
+        persistentSplitsStorage = PersistentSplitsStorageStub()
         splitsFetcher = HttpSplitFetcherStub()
 
         splitsSyncWorker = RetryableSyncWorkerStub()
@@ -62,6 +64,7 @@ class SynchronizerTest: XCTestCase {
 
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      fileStorage: FileStorageStub(), splitsStorage: splitsStorage,
+                                                     persistentSplitsStorage: persistentSplitsStorage,
                                                      mySegmentsStorage: mySegmentsStorage, impressionsStorage: PersistentImpressionsStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub())
 
@@ -73,7 +76,9 @@ class SynchronizerTest: XCTestCase {
             .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
             .build()
 
-        synchronizer = DefaultSynchronizer(splitConfig: SplitClientConfig(),
+        let config =  SplitClientConfig()
+        config.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
+        synchronizer = DefaultSynchronizer(splitConfig: config,
             splitApiFacade: apiFacade,
             splitStorageContainer: storageContainer,
             syncWorkerFactory: syncWorkerFactory,
@@ -81,10 +86,10 @@ class SynchronizerTest: XCTestCase {
                                                                  accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
             eventsSyncHelper: EventsRecorderSyncHelper(eventsStorage: PersistentEventsStorageStub(),
                                                                  accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
-            syncTaskByChangeNumberCatalog: updateWorkerCatalog)
+            syncTaskByChangeNumberCatalog: updateWorkerCatalog, splitsFilterQueryString: "")
     }
 
-    func testRunInitialSync() {
+    func testSyncAll() {
 
         synchronizer.syncAll()
 
@@ -97,6 +102,27 @@ class SynchronizerTest: XCTestCase {
         synchronizer.synchronizeSplits()
 
         XCTAssertTrue(splitsSyncWorker.startCalled)
+    }
+
+    func testLoadAndSyncSplits() {
+        persistentSplitsStorage.update(filterQueryString: "?p=1")
+        persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "SPLIT_TO_DELETE"))
+        synchronizer.loadAndSynchronizeSplits()
+
+        ThreadUtils.delay(seconds: 0.2)
+
+        XCTAssertTrue(persistentSplitsStorage.getAllCalled)
+        XCTAssertTrue(persistentSplitsStorage.deleteCalled)
+        XCTAssertTrue(splitsStorage.loadLocalCalled)
+    }
+
+    func testLoadMySegmentsFromCache() {
+
+        synchronizer.loadMySegmentsFromCache()
+
+        ThreadUtils.delay(seconds: 0.2)
+
+        XCTAssertTrue(mySegmentsStorage.loadLocalCalled)
     }
 
     func testSynchronizeMySegments() {
