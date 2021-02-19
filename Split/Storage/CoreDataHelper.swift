@@ -73,9 +73,13 @@ class CoreDataHelper {
             fetchRequest.predicate = predicate
         }
         do {
-            let entities = try managedObjectContext.fetch(fetchRequest).compactMap { return $0 as? NSManagedObject }
-            for entity in entities {
-                managedObjectContext.delete(entity)
+            var entities = try managedObjectContext.fetch(fetchRequest)//.compactMap { return $0 as? NSManagedObject }
+            let count = entities.count
+            for _ in 0..<count {
+                if let entity = entities[0] as? NSManagedObject {
+                    entities.remove(at: 0)
+                    managedObjectContext.delete(entity)
+                }
             }
         } catch {
             Logger.e("Error while deleting \(entity.rawValue) entities from storage: \(error.localizedDescription)")

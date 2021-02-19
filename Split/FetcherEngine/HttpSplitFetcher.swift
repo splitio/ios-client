@@ -7,7 +7,7 @@
 import Foundation
 
 protocol HttpSplitFetcher {
-    func execute(since: Int64) throws -> SplitChange
+    func execute(since: Int64, headers: HttpHeaders?) throws -> SplitChange
 }
 
 class DefaultHttpSplitFetcher: HttpSplitFetcher {
@@ -20,7 +20,7 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
         self.metricsManager = metricsManager
     }
 
-    func execute(since: Int64) throws -> SplitChange {
+    func execute(since: Int64, headers: HttpHeaders? = nil) throws -> SplitChange {
 
         if !restClient.isSdkServerAvailable() {
             Logger.d("Server is not reachable. Split updates will be delayed until host is reachable")
@@ -31,7 +31,7 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SplitChange>?
         let fetchStartTime = Date().unixTimestampInMiliseconds()
-        restClient.getSplitChanges(since: since) { result in
+        restClient.getSplitChanges(since: since, headers: headers) { result in
             metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime,
                                 for: Metrics.Time.splitChangeFetcherGet)
             metricsManager.count(delta: 1, for: Metrics.Counter.splitChangeFetcherStatus200)

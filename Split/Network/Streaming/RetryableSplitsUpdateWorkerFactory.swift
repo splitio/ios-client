@@ -91,7 +91,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     }
 
     func createPeriodicSplitsSyncWorker() -> PeriodicSyncWorker {
-        return  RevampPeriodicSplitsSyncWorker(
+        return  PeriodicSplitsSyncWorker(
             splitFetcher: apiFacade.splitsFetcher, splitsStorage: storageContainer.splitsStorage,
             splitChangeProcessor: splitChangeProcessor,
             timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate), eventsManager: eventsManager)

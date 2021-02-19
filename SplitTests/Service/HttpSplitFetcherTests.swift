@@ -27,7 +27,7 @@ class HttpSplitFetcherTests: XCTestCase {
         restClient.isServerAvailable = false
         var isError = false
         do {
-            let _ = try fetcher.execute(since: 1)
+            let _ = try fetcher.execute(since: 1, headers: nil)
         } catch {
             isError = true
         }
@@ -40,7 +40,7 @@ class HttpSplitFetcherTests: XCTestCase {
         restClient.isServerAvailable = true
         restClient.update(changes: [newChange(since: 1, till: 2), newChange(since: 2, till: 2)])
         
-        let c = try fetcher.execute(since: 1)
+        let c = try fetcher.execute(since: 1, headers: nil)
         
         XCTAssertEqual(1, c.since)
         XCTAssertEqual(2, c.till)
