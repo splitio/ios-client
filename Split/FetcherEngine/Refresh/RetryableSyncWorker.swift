@@ -177,7 +177,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                 }
                 firstFetch = false
                 splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))
-                if newSince == newTill, newTill >= nextSince {
+                if newSince == newTill, newTill >= changeNumber {
                     fireReadyIsNeeded(event: SplitInternalEvent.splitsAreReady)
                     resetBackoffCounter()
                     return true
