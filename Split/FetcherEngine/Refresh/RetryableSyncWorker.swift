@@ -168,7 +168,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             var nextSince = changeNumber
             while true {
                 clearCache = clearCache && firstFetch
-                let splitChange = try self.splitFetcher.execute(since: nextSince)
+                let splitChange = try self.splitFetcher.execute(since: nextSince, headers: nil)
                 let newSince = splitChange.since
                 let newTill = splitChange.till
                 if clearCache {
@@ -198,6 +198,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
     private let splitsStorage: SplitsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let changeNumber: Int64
+    private let controlNoCacheHeader = [ServiceConstants.CacheControlHeader: ServiceConstants.CacheControlNoCache]
 
     init(splitsFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
@@ -220,7 +221,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
             }
             var nextSince = splitsStorage.changeNumber
             while true {
-                let splitChange = try self.splitsFetcher.execute(since: nextSince)
+                let splitChange = try self.splitsFetcher.execute(since: nextSince, headers: controlNoCacheHeader)
                 let newSince = splitChange.since
                 let newTill = splitChange.till
                 splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))

@@ -126,7 +126,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 }
 
-class RevampPeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
+class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
@@ -155,7 +155,7 @@ class RevampPeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             var nextSince = splitsStorage.changeNumber
             var exit = false
             while !exit {
-                let splitChange = try self.splitFetcher.execute(since: nextSince)
+                let splitChange = try self.splitFetcher.execute(since: nextSince, headers: nil)
                 let newSince = splitChange.since
                 let newTill = splitChange.till
                 splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))

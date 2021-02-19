@@ -17,7 +17,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
     var splitsStorage: SplitsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
-    var splitsSyncWorker: RevampPeriodicSplitsSyncWorker!
+    var splitsSyncWorker: PeriodicSplitsSyncWorker!
     var splitChangeProcessor: SplitChangeProcessorStub!
 
     override func setUp() {
@@ -33,7 +33,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         eventsManager.isSplitsReadyFired = true
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
-        splitsSyncWorker = RevampPeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
+        splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
                                                           splitsStorage: splitsStorage,
                                                           splitChangeProcessor: splitChangeProcessor,
                                                           timer: timer,
@@ -53,7 +53,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         eventsManager.isSplitsReadyFired = false
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
-        splitsSyncWorker = RevampPeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
+        splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
                                                           splitsStorage: splitsStorage,
                                                           splitChangeProcessor: splitChangeProcessor,
                                                           timer: timer,
