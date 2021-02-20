@@ -73,7 +73,7 @@ class CoreDataHelper {
             fetchRequest.predicate = predicate
         }
         do {
-            var entities = try managedObjectContext.fetch(fetchRequest)//.compactMap { return $0 as? NSManagedObject }
+            var entities = try managedObjectContext.fetch(fetchRequest)
             let count = entities.count
             for _ in 0..<count {
                 if let entity = entities[0] as? NSManagedObject {

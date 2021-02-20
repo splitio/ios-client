@@ -14,7 +14,23 @@ class Condition: NSObject, Codable {
     var matcherGroup: MatcherGroup?
     var partitions: [Partition]?
     var label: String?
-    weak var client: InternalSplitClient?
+    private let clientQueue = DispatchQueue(label: "split-condition", target: DispatchQueue.global())
+    private weak var wrappedClient: InternalSplitClient?
+    var client: InternalSplitClient? {
+        get {
+            var localClient: InternalSplitClient?
+            clientQueue.sync {
+                localClient = wrappedClient
+            }
+            return localClient
+        }
+
+        set {
+            clientQueue.sync {
+                wrappedClient = newValue
+            }
+        }
+    }
 
     enum CodingKeys: String, CodingKey {
         case conditionType
