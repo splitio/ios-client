@@ -219,9 +219,8 @@ class DefaultSynchronizer: Synchronizer {
                 continue
             }
 
-            if !namesToKeep.contains(splitName) {
-                toDelete.append(splitName)
-            } else if let prefix = getPrefix(for: splitName), !prefixesToKeep.contains(prefix) {
+            let prefix = getPrefix(for: splitName) ?? ""
+            if !namesToKeep.contains(splitName), (prefix == "" || !prefixesToKeep.contains(prefix)) {
                 toDelete.append(splitName)
             }
 
@@ -233,7 +232,8 @@ class DefaultSynchronizer: Synchronizer {
 
     private func getPrefix(for splitName: String) -> String? {
         let kPrefixSeparator = "__"
-        if let range = splitName.range(of: kPrefixSeparator), range.lowerBound != splitName.startIndex, range.upperBound != splitName.endIndex {
+        if let range = splitName.range(of: kPrefixSeparator),
+           range.lowerBound != splitName.startIndex, range.upperBound != splitName.endIndex {
             return String(splitName[range.upperBound...])
         }
         return nil
