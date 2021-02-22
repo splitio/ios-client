@@ -13,6 +13,8 @@ protocol ImpressionLogger {
 }
 
 protocol Synchronizer: ImpressionLogger {
+    func loadAndSynchronizeSplits()
+    func loadMySegmentsFromCache()
     func syncAll()
     func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
@@ -32,6 +34,7 @@ struct SplitStorageContainer {
     let splitDatabase: SplitDatabase
     let fileStorage: FileStorageProtocol
     let splitsStorage: SplitsStorage
+    let persistentSplitsStorage: PersistentSplitsStorage
     let mySegmentsStorage: MySegmentsStorage
     let impressionsStorage: PersistentImpressionsStorage
     let eventsStorage: PersistentEventsStorage
@@ -55,6 +58,7 @@ class DefaultSynchronizer: Synchronizer {
     private let periodicEventsRecorderWoker: PeriodicRecorderWorker
     private let flusherEventsRecorderWorker: RecorderWorker
     private let eventsSyncHelper: EventsRecorderSyncHelper
+    private let splitsFilterQueryString: String
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -63,7 +67,8 @@ class DefaultSynchronizer: Synchronizer {
          impressionsSyncHelper: ImpressionsRecorderSyncHelper,
          eventsSyncHelper: EventsRecorderSyncHelper,
          syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
-        = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()) {
+        = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>(),
+         splitsFilterQueryString: String) {
         self.splitConfig = splitConfig
         self.splitApiFacade = splitApiFacade
         self.splitStorageContainer = splitStorageContainer
@@ -82,11 +87,27 @@ class DefaultSynchronizer: Synchronizer {
             syncWorkerFactory.createPeriodicEventsRecorderWorker(syncHelper: eventsSyncHelper)
         self.impressionsSyncHelper = impressionsSyncHelper
         self.eventsSyncHelper = eventsSyncHelper
+        self.splitsFilterQueryString = splitsFilterQueryString
+    }
+
+    func loadAndSynchronizeSplits() {
+        DispatchQueue.global().async {
+            self.filterSplitsInCache()
+            self.splitStorageContainer.splitsStorage.loadLocal()
+            self.synchronizeSplits()
+        }
+
+    }
+
+    func loadMySegmentsFromCache() {
+        DispatchQueue.global().async {
+            self.splitStorageContainer.mySegmentsStorage.loadLocal()
+        }
     }
 
     func syncAll() {
-        splitsSyncWorker.start()
-        mySegmentsSyncWorker.start()
+        synchronizeSplits()
+        synchronizeMySegments()
     }
 
     func synchronizeSplits() {
@@ -177,5 +198,44 @@ class DefaultSynchronizer: Synchronizer {
         for task in updateTasks.values {
             task.stop()
         }
+    }
+
+    private func filterSplitsInCache() {
+        let splitsStorage = splitStorageContainer.persistentSplitsStorage
+        let currentSplitsQueryString = splitsFilterQueryString
+        if currentSplitsQueryString == splitsStorage.getFilterQueryString() {
+            return
+        }
+
+        let filters = splitConfig.sync.filters
+        let namesToKeep = Set(filters.filter { $0.type == .byName }.flatMap { $0.values })
+        let prefixesToKeep = Set(filters.filter { $0.type == .byPrefix }.flatMap { $0.values })
+
+        let splitsInCache = splitsStorage.getAll()
+        var toDelete = [String]()
+
+        for split in splitsInCache {
+            guard let splitName = split.name else {
+                continue
+            }
+
+            let prefix = getPrefix(for: splitName) ?? ""
+            if !namesToKeep.contains(splitName), (prefix == "" || !prefixesToKeep.contains(prefix)) {
+                toDelete.append(splitName)
+            }
+
+        }
+        if toDelete.count > 0 {
+            splitsStorage.delete(splitNames: toDelete)
+        }
+    }
+
+    private func getPrefix(for splitName: String) -> String? {
+        let kPrefixSeparator = "__"
+        if let range = splitName.range(of: kPrefixSeparator),
+           range.lowerBound != splitName.startIndex, range.upperBound != splitName.endIndex {
+            return String(splitName[range.upperBound...])
+        }
+        return nil
     }
 }

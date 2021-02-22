@@ -157,10 +157,17 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                     clearCache = true
                 }
             }
+
+            if defaultQueryString != splitsStorage.splitsFilterQueryString {
+                splitsStorage.update(filterQueryString: defaultQueryString)
+                changeNumber = -1
+                clearCache = true
+            }
+
             var firstFetch = true
             var nextSince = changeNumber
             while true {
-                clearCache = (clearCache || defaultQueryString != splitsStorage.splitsFilterQueryString) && firstFetch
+                clearCache = clearCache && firstFetch
                 let splitChange = try self.splitFetcher.execute(since: nextSince)
                 let newSince = splitChange.since
                 let newTill = splitChange.till
@@ -211,7 +218,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                 resetBackoffCounter()
                 return true
             }
-            var nextSince = changeNumber
+            var nextSince = splitsStorage.changeNumber
             while true {
                 let splitChange = try self.splitsFetcher.execute(since: nextSince)
                 let newSince = splitChange.since

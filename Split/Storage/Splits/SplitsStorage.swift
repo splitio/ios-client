@@ -73,7 +73,8 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func update(filterQueryString: String) {
-        self.persistentStorage.update(filterQueryString: splitsFilterQueryString)
+        splitsFilterQueryString = filterQueryString
+        self.persistentStorage.update(filterQueryString: filterQueryString)
     }
 
     func updateWithoutChecks(split: Split) {
