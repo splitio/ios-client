@@ -21,7 +21,7 @@
     var dependencyMatcherData: DependencyMatcherData?
     var booleanMatcherData: Bool?
     var stringMatcherData: String?
-    private let clientQueue = DispatchQueue(label: "split-condition", target: DispatchQueue.global())
+    private let clientQueue = DispatchQueue(label: "split-matcher", target: DispatchQueue.global())
     private weak var wrappedClient: InternalSplitClient?
     var client: InternalSplitClient? {
         get {
