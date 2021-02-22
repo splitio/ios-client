@@ -19,7 +19,8 @@ class SplitsStorageStub: SplitsStorage {
     var updateTimestamp: Int64 = 0
     
     var splitsFilterQueryString: String = ""
-    
+
+    var loadLocalCalled = false
     var clearCalled = false
 
     var updatedWithoutChecksSplit: Split?
@@ -28,7 +29,7 @@ class SplitsStorageStub: SplitsStorage {
     private let inMemorySplits = SyncDictionarySingleWrapper<String, Split>()
     
     func loadLocal() {
-        
+        loadLocalCalled = true
     }
     
     func get(name: String) -> Split? {
