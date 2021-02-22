@@ -15,7 +15,7 @@ class HttpSplitFetcherStub: HttpSplitFetcher {
     var hitIndex = 0
     var fetchCallCount: Int = 0
     
-    func execute(since: Int64) throws -> SplitChange {
+    func execute(since: Int64, headers: HttpHeaders?) throws -> SplitChange {
         fetchCallCount+=1
         if let e = httpError {
             throw e

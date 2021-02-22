@@ -48,7 +48,7 @@ final class Atomic<T> {
 }
 
 final class AtomicInt {
-    private let queue = DispatchQueue.global()
+    private let queue = DispatchQueue(label: "split-atomic-int", target: DispatchQueue.global())
     private var curValue: Int
     init(_ value: Int) {
         self.curValue = value

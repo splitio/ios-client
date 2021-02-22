@@ -29,16 +29,20 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
 
     func getResponse(completionHandler: @escaping RequestCompletionHandler,
                      errorHandler: @escaping RequestErrorHandler) -> Self {
-        self.completionHandler = completionHandler
-        self.errorHandler = errorHandler
+        requestQueue.sync {
+            self.completionHandler = completionHandler
+            self.errorHandler = errorHandler
+        }
         return self
     }
 
     override func complete(error: HttpError?) {
-        if let error = error, let errorHandler = errorHandler {
-            errorHandler(error)
-        } else if let completionHandler = completionHandler {
-            completionHandler(HttpResponse(code: responseCode, data: data))
+        requestQueue.async(flags: .barrier) {
+            if let error = error, let errorHandler = self.errorHandler {
+                errorHandler(error)
+            } else if let completionHandler = self.completionHandler {
+                completionHandler(HttpResponse(code: self.responseCode, data: self.data))
+            }
         }
     }
 }

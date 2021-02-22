@@ -50,13 +50,14 @@ class DefaultRestClient: SplitApiRestClient {
     func execute<T>(endpoint: Endpoint,
                     parameters: [String: Any]? = nil,
                     body: Data? = nil,
+                    headers: HttpHeaders? = nil,
                     completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
 
         do {
         _ = try httpClient.sendRequest(
                         endpoint: endpoint,
                         parameters: parameters,
-                        headers: nil,
+                        headers: headers,
                         body: body)
             .getResponse(completionHandler: { response in
             switch response.result {
