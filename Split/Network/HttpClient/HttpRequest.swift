@@ -42,6 +42,7 @@ class BaseHttpRequest: HttpRequest {
     private (set) var session: HttpSession
     private (set) var task: HttpTask?
     private (set) var error: Error?
+    var requestQueue = DispatchQueue(label: "split-http-base-request", attributes: .concurrent)
     var completionHandler: RequestCompletionHandler?
     var errorHandler: RequestErrorHandler?
     private (set) var urlRequest: URLRequest?
@@ -84,7 +85,9 @@ class BaseHttpRequest: HttpRequest {
     }
 
     func send() {
-        task = session.startTask(with: self)
+        requestQueue.sync {
+            task = session.startTask(with: self)
+        }
     }
 
     func setResponse(code: Int) {
