@@ -17,8 +17,7 @@ class CoreDataHelperBuilder {
 
     static func build(databaseName: String, dispatchQueue: DispatchQueue) -> CoreDataHelper? {
 
-        //let bundle = Bundle(for: type(of: self))
-        let bundle = Bundle(for: CoreDataHelperBuilder.self)
+        let bundle = Bundle.split
         guard let modelUrl = bundle.url(forResource: kDataModelName, withExtension: kDataModelExtentsion) else {
             fatalError("Error loading model from bundle")
         }
