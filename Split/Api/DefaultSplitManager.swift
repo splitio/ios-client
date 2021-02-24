@@ -16,7 +16,7 @@ import Foundation
     private let splitsStorage: SplitsStorage
     private let splitValidator: SplitValidator
     private let validationLogger: ValidationMessageLogger
-    private var isManagerDestroyed = false
+    private var isManagerDestroyed = Atomic(false)
 
     init(splitsStorage: SplitsStorage) {
         self.splitsStorage = splitsStorage
@@ -100,13 +100,13 @@ import Foundation
 extension DefaultSplitManager: Destroyable {
 
     func checkAndLogIfDestroyed(logTag: String) -> Bool {
-        if isManagerDestroyed {
+        if isManagerDestroyed.value {
             validationLogger.e(message: "Manager has already been destroyed - no calls possible", tag: logTag)
         }
-        return isManagerDestroyed
+        return isManagerDestroyed.value
     }
 
     func destroy() {
-        isManagerDestroyed = true
+        isManagerDestroyed.set(true)
     }
 }
