@@ -24,6 +24,9 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private var eventMySegmentsAreReady: Bool
     private var eventSplitsAreReady: Bool
 
+    private var eventLocalMySegmentsAreLoaded: Bool
+    private var eventLocalSplitsAreLoaded: Bool
+
     private var sdkReadyTimeStart: Int64
 
     private var suscriptions = [SplitEvent: [SplitEventTask]]()
@@ -36,6 +39,9 @@ class DefaultSplitEventsManager: SplitEventsManager {
         queueReadingRefreshTime = 300
         eventMySegmentsAreReady = false
         eventSplitsAreReady = false
+        eventLocalMySegmentsAreLoaded = false
+        eventLocalSplitsAreLoaded = false
+
         executorResources = SplitEventExecutorResources()
         executionTimes = [String: Int]()
         registerMaxAllowedExecutionTimesPerEvent()
@@ -110,6 +116,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private func registerMaxAllowedExecutionTimesPerEvent() {
 
         executionTimes = [ SplitEvent.sdkReady.toString(): 1,
+                           SplitEvent.sdkReadyFromCache.toString(): 1,
                            SplitEvent.sdkReadyTimedOut.toString(): 1]
     }
 
@@ -135,6 +142,18 @@ class DefaultSplitEventsManager: SplitEventsManager {
                     DefaultMetricsManager.shared.time(microseconds: Date().unixTimestampInMiliseconds()
                         - self.sdkReadyTimeStart, for: Metrics.Time.sdkReady)
                     self.trigger(event: SplitEvent.sdkReady)
+                }
+
+            case .mySegmentsLoadedFromCache:
+                self.eventLocalMySegmentsAreLoaded = true
+                if self.eventLocalSplitsAreLoaded {
+                    self.trigger(event: SplitEvent.sdkReadyFromCache)
+                }
+
+            case .splitsLoadedFromCache:
+                self.eventLocalSplitsAreLoaded = true
+                if self.eventLocalMySegmentsAreLoaded {
+                    self.trigger(event: SplitEvent.sdkReadyFromCache)
                 }
 
             case .sdkReadyTimeoutReached:
