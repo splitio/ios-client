@@ -89,8 +89,13 @@ class SplitIntegrationTests: XCTestCase {
         let manager = factory?.manager
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        var sdkReadyFromCacheFired = false
         var timeOutFired = false
         var sdkReadyFired = false
+
+        client?.on(event: SplitEvent.sdkReadyFromCache) {
+            sdkReadyFromCacheFired = true
+        }
 
         client?.on(event: SplitEvent.sdkReady) {
             sdkReadyFired = true
@@ -126,6 +131,7 @@ class SplitIntegrationTests: XCTestCase {
         let event99 = IntegrationHelper.getTrackEventBy(value: 99.0, trackHits: tracksHits())
         let event100 = IntegrationHelper.getTrackEventBy(value: 100.0, trackHits: tracksHits())
 
+        XCTAssertTrue(sdkReadyFromCacheFired)
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertEqual("off", t1)
