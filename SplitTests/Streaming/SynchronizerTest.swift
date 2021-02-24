@@ -32,7 +32,11 @@ class SynchronizerTest: XCTestCase {
 
     var synchronizer: Synchronizer!
 
+    var eventsManager: SplitEventsManagerStub!
+
     override func setUp() {
+
+        eventsManager = SplitEventsManagerStub()
         persistentSplitsStorage = PersistentSplitsStorageStub()
         splitsFetcher = HttpSplitFetcherStub()
 
@@ -86,7 +90,7 @@ class SynchronizerTest: XCTestCase {
                                                                  accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
             eventsSyncHelper: EventsRecorderSyncHelper(eventsStorage: PersistentEventsStorageStub(),
                                                                  accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
-            syncTaskByChangeNumberCatalog: updateWorkerCatalog, splitsFilterQueryString: "")
+            syncTaskByChangeNumberCatalog: updateWorkerCatalog, splitsFilterQueryString: "", splitEventsManager: eventsManager)
     }
 
     func testSyncAll() {
@@ -114,6 +118,7 @@ class SynchronizerTest: XCTestCase {
         XCTAssertTrue(persistentSplitsStorage.getAllCalled)
         XCTAssertTrue(persistentSplitsStorage.deleteCalled)
         XCTAssertTrue(splitsStorage.loadLocalCalled)
+        XCTAssertEqual(1, eventsManager.splitsLoadedEventFiredCount)
     }
 
     func testLoadMySegmentsFromCache() {
@@ -123,6 +128,7 @@ class SynchronizerTest: XCTestCase {
         ThreadUtils.delay(seconds: 0.2)
 
         XCTAssertTrue(mySegmentsStorage.loadLocalCalled)
+        XCTAssertEqual(1, eventsManager.mySegmentsLoadedEventFiredCount)
     }
 
     func testSynchronizeMySegments() {
