@@ -95,10 +95,13 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func loadAndSynchronizeSplits() {
+        let splitsStorage = self.splitStorageContainer.splitsStorage
         DispatchQueue.global().async {
             self.filterSplitsInCache()
-            self.splitStorageContainer.splitsStorage.loadLocal()
-            self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
+            splitsStorage.loadLocal()
+            if splitsStorage.getAll().count > 0 {
+                self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
+            }
             self.synchronizeSplits()
         }
     }
@@ -232,6 +235,7 @@ class DefaultSynchronizer: Synchronizer {
         }
         if toDelete.count > 0 {
             splitsStorage.delete(splitNames: toDelete)
+            splitStorageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
         }
     }
 

@@ -108,7 +108,9 @@ class SynchronizerTest: XCTestCase {
         XCTAssertTrue(splitsSyncWorker.startCalled)
     }
 
-    func testLoadAndSyncSplits() {
+    func testLoadAndSyncSplitsClearedOnLoadBecauseNotInFilter() {
+        // Existent splits does not belong to split filter on config so they gonna be deleted because filter has changed
+        persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "pepe"))
         persistentSplitsStorage.update(filterQueryString: "?p=1")
         persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "SPLIT_TO_DELETE"))
         synchronizer.loadAndSynchronizeSplits()
@@ -117,6 +119,20 @@ class SynchronizerTest: XCTestCase {
 
         XCTAssertTrue(persistentSplitsStorage.getAllCalled)
         XCTAssertTrue(persistentSplitsStorage.deleteCalled)
+        XCTAssertTrue(splitsStorage.loadLocalCalled)
+        XCTAssertEqual(0, eventsManager.splitsLoadedEventFiredCount)
+    }
+
+    func testLoadAndSyncSplitsNoClearedOnLoad() {
+        // Splits filter doesn't vary so splits don't gonna be removed
+        // loaded splits > 0, ready from cache should be fired
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "new_pepe")],
+                                                  archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
+        persistentSplitsStorage.update(filterQueryString: "")
+        synchronizer.loadAndSynchronizeSplits()
+
+        ThreadUtils.delay(seconds: 0.2)
+
         XCTAssertTrue(splitsStorage.loadLocalCalled)
         XCTAssertEqual(1, eventsManager.splitsLoadedEventFiredCount)
     }
