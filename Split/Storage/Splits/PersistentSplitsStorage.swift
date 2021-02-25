@@ -64,6 +64,7 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
     }
 
     func clear() {
+        generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
         splitDao.deleteAll()
     }
 }

@@ -83,8 +83,9 @@ import Foundation
         return self
     }
 
-    func setTestDatabase(_ database: SplitDatabase) {
+    func setTestDatabase(_ database: SplitDatabase) -> SplitFactoryBuilder {
         self.testDatabase = database
+        return self
     }
 
     public func build() -> SplitFactory? {

@@ -199,7 +199,8 @@ class DefaultTreatmentManager: TreatmentManager {
     }
 
     private func isSdkReady() -> Bool {
-        return eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady)
+        return eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache) ||
+            eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady)
     }
 
     func checkAndLogIfDestroyed(logTag: String) -> Bool {
