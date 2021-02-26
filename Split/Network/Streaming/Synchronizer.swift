@@ -59,6 +59,7 @@ class DefaultSynchronizer: Synchronizer {
     private let flusherEventsRecorderWorker: RecorderWorker
     private let eventsSyncHelper: EventsRecorderSyncHelper
     private let splitsFilterQueryString: String
+    private let splitEventsManager: SplitEventsManager
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -68,7 +69,9 @@ class DefaultSynchronizer: Synchronizer {
          eventsSyncHelper: EventsRecorderSyncHelper,
          syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
         = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>(),
-         splitsFilterQueryString: String) {
+         splitsFilterQueryString: String,
+         splitEventsManager: SplitEventsManager) {
+
         self.splitConfig = splitConfig
         self.splitApiFacade = splitApiFacade
         self.splitStorageContainer = splitStorageContainer
@@ -88,20 +91,25 @@ class DefaultSynchronizer: Synchronizer {
         self.impressionsSyncHelper = impressionsSyncHelper
         self.eventsSyncHelper = eventsSyncHelper
         self.splitsFilterQueryString = splitsFilterQueryString
+        self.splitEventsManager = splitEventsManager
     }
 
     func loadAndSynchronizeSplits() {
+        let splitsStorage = self.splitStorageContainer.splitsStorage
         DispatchQueue.global().async {
             self.filterSplitsInCache()
-            self.splitStorageContainer.splitsStorage.loadLocal()
+            splitsStorage.loadLocal()
+            if splitsStorage.getAll().count > 0 {
+                self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
+            }
             self.synchronizeSplits()
         }
-
     }
 
     func loadMySegmentsFromCache() {
         DispatchQueue.global().async {
             self.splitStorageContainer.mySegmentsStorage.loadLocal()
+            self.splitEventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
         }
     }
 
@@ -227,6 +235,7 @@ class DefaultSynchronizer: Synchronizer {
         }
         if toDelete.count > 0 {
             splitsStorage.delete(splitNames: toDelete)
+            splitStorageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
         }
     }
 
