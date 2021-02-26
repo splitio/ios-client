@@ -13,14 +13,14 @@ import Foundation
 ///
 @objc public class DefaultSplitManager: NSObject, SplitManager {
 
-    private let splitCache: SplitCacheProtocol
+    private let splitsStorage: SplitsStorage
     private let splitValidator: SplitValidator
     private let validationLogger: ValidationMessageLogger
-    private var isManagerDestroyed = false
+    private var isManagerDestroyed = Atomic(false)
 
-    init(splitCache: SplitCacheProtocol) {
-        self.splitCache = splitCache
-        self.splitValidator = DefaultSplitValidator(splitCache: splitCache)
+    init(splitsStorage: SplitsStorage) {
+        self.splitsStorage = splitsStorage
+        self.splitValidator = DefaultSplitValidator(splitsStorage: splitsStorage)
         self.validationLogger = DefaultValidationMessageLogger()
         super.init()
     }
@@ -31,7 +31,7 @@ import Foundation
             return [SplitView]()
         }
 
-        let splits = splitCache.getAllSplits()
+        let splits = splitsStorage.getAll().values
 
         return splits.filter { $0.status == .active }
             .map { split in
@@ -100,13 +100,13 @@ import Foundation
 extension DefaultSplitManager: Destroyable {
 
     func checkAndLogIfDestroyed(logTag: String) -> Bool {
-        if isManagerDestroyed {
+        if isManagerDestroyed.value {
             validationLogger.e(message: "Manager has already been destroyed - no calls possible", tag: logTag)
         }
-        return isManagerDestroyed
+        return isManagerDestroyed.value
     }
 
     func destroy() {
-        isManagerDestroyed = true
+        isManagerDestroyed.set(true)
     }
 }

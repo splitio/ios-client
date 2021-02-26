@@ -18,12 +18,13 @@ class LocalhostManagerTests: XCTestCase {
     override func setUp() {
         eventsManager = SplitEventsManagerMock()
         let storage: FileStorageProtocol = FileStorageStub()
-        var config = LocalhostSplitFetcherConfig()
-        let splitCache: SplitCacheProtocol = InMemorySplitCache()
+        var config = YamlSplitStorageConfig()
         config.refreshInterval = 0
-        let fetcher: SplitFetcher = LocalhostSplitFetcher(fileStorage: storage, splitCache: splitCache, config: config, eventsManager: eventsManager, splitsFileName: fileName, bundle: Bundle(for: type(of: self)))
-        fetcher.forceRefresh()
-        manager = DefaultSplitManager(splitCache: splitCache)
+        let splitsStorage = YamlSplitsStorage(fileStorage: storage, config: config,
+                                                      eventsManager: eventsManager, splitsFileName: fileName,
+                                                      bundle: Bundle(for: type(of: self)))
+        splitsStorage.loadLocal()
+        manager = DefaultSplitManager(splitsStorage: splitsStorage)
     }
 
     override func tearDown() {

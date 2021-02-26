@@ -16,19 +16,26 @@ protocol PeriodicTimer {
 
 class DefaultPeriodicTimer: PeriodicTimer {
 
-    private var interval: Int
+    private let deadLineInSecs: Int
+    private let intervalInSecs: Int
     private var fetchTimer: DispatchSourceTimer
     private var isRunning: Atomic<Bool>
 
-    init(interval seconds: Int) {
-        self.interval = seconds
+    init(deadline deadlineInSecs: Int, interval intervalInSecs: Int) {
+        self.deadLineInSecs = deadlineInSecs
+        self.intervalInSecs = intervalInSecs
         self.isRunning = Atomic(false)
         fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
     }
 
+    convenience init(interval intervalInSecs: Int) {
+        self.init(deadline: 0, interval: intervalInSecs)
+    }
+
     func trigger() {
         if !isRunning.getAndSet(true) {
-            fetchTimer.schedule(deadline: .now(), repeating: .seconds(interval))
+            fetchTimer.schedule(deadline: .now() + .seconds(deadLineInSecs),
+                                repeating: .seconds(intervalInSecs))
             fetchTimer.resume()
         }
     }
@@ -121,16 +128,19 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
 
 class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
-    private let splitChangeFetcher: SplitChangeFetcher
-    private let splitCache: SplitCacheProtocol
+    private let splitFetcher: HttpSplitFetcher
+    private let splitsStorage: SplitsStorage
+    private let splitChangeProcessor: SplitChangeProcessor
 
-    init(splitChangeFetcher: SplitChangeFetcher,
-         splitCache: SplitCacheProtocol,
+    init(splitFetcher: HttpSplitFetcher,
+         splitsStorage: SplitsStorage,
+         splitChangeProcessor: SplitChangeProcessor,
          timer: PeriodicTimer,
          eventsManager: SplitEventsManager) {
 
-        self.splitCache = splitCache
-        self.splitChangeFetcher = splitChangeFetcher
+        self.splitFetcher = splitFetcher
+        self.splitsStorage = splitsStorage
+        self.splitChangeProcessor = splitChangeProcessor
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }
@@ -141,10 +151,20 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         do {
-            _ = try self.splitChangeFetcher.fetch(since: splitCache.getChangeNumber(),
-                                                  policy: .network,
-                                                  clearCache: false)
             Logger.d("Fetching splits")
+            var nextSince = splitsStorage.changeNumber
+            var exit = false
+            while !exit {
+                let splitChange = try self.splitFetcher.execute(since: nextSince, headers: nil)
+                let newSince = splitChange.since
+                let newTill = splitChange.till
+                splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))
+                if newSince == newTill, newTill >= nextSince {
+                    exit = true
+                }
+                nextSince = newTill
+            }
+
         } catch let error {
             DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
             Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
@@ -154,19 +174,22 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
 class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
 
-    private let mySegmentsFetcher: MySegmentsChangeFetcher
-    private let mySegmentsCache: MySegmentsCacheProtocol
+    private let mySegmentsFetcher: HttpMySegmentsFetcher
+    private let mySegmentsStorage: MySegmentsStorage
     private let userKey: String
+    private let metricsManager: MetricsManager
 
     init(userKey: String,
-         mySegmentsFetcher: MySegmentsChangeFetcher,
-         mySegmentsCache: MySegmentsCacheProtocol,
+         mySegmentsFetcher: HttpMySegmentsFetcher,
+         mySegmentsStorage: MySegmentsStorage,
+         metricsManager: MetricsManager,
          timer: PeriodicTimer,
          eventsManager: SplitEventsManager) {
 
         self.userKey = userKey
         self.mySegmentsFetcher = mySegmentsFetcher
-        self.mySegmentsCache = mySegmentsCache
+        self.mySegmentsStorage = mySegmentsStorage
+        self.metricsManager = metricsManager
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }
@@ -177,10 +200,12 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         do {
-            let segments = try mySegmentsFetcher.fetch(user: userKey)
-            Logger.d(segments.debugDescription)
+            if let segments = try mySegmentsFetcher.execute(userKey: userKey) {
+                mySegmentsStorage.set(segments)
+                Logger.d(segments.debugDescription)
+            }
         } catch let error {
-            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
+            metricsManager.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherException)
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
         }
     }

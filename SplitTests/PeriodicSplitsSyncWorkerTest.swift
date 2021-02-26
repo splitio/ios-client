@@ -13,15 +13,17 @@ import XCTest
 
 class PeriodicSplitsSyncWorkerTest: XCTestCase {
 
-    var splitChangeFetcher: SplitChangeFetcherStub!
-    var splitCache: SplitCacheStub!
+    var splitFetcher: HttpSplitFetcherStub!
+    var splitsStorage: SplitsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
     var splitsSyncWorker: PeriodicSplitsSyncWorker!
+    var splitChangeProcessor: SplitChangeProcessorStub!
 
     override func setUp() {
-        splitChangeFetcher = SplitChangeFetcherStub()
-        splitCache = SplitCacheStub(splits: [Split](), changeNumber: 100)
+        splitFetcher = HttpSplitFetcherStub()
+        splitsStorage = SplitsStorageStub()
+        splitChangeProcessor = SplitChangeProcessorStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
@@ -31,10 +33,11 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         eventsManager.isSplitsReadyFired = true
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
-        splitsSyncWorker = PeriodicSplitsSyncWorker(splitChangeFetcher: splitChangeFetcher,
-                                                    splitCache: splitCache,
-                                                    timer: timer,
-                                                    eventsManager: eventsManager)
+        splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
+                                                          splitsStorage: splitsStorage,
+                                                          splitChangeProcessor: splitChangeProcessor,
+                                                          timer: timer,
+                                                          eventsManager: eventsManager)
 
         splitsSyncWorker.start()
 
@@ -43,17 +46,18 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         }
 
         sleep(1)
-        XCTAssertEqual(5, splitChangeFetcher.fetchCallCount)
+        XCTAssertEqual(5, splitFetcher.fetchCallCount)
     }
 
     func testNoSdkReadyFetch() {
         eventsManager.isSplitsReadyFired = false
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
-        splitsSyncWorker = PeriodicSplitsSyncWorker(splitChangeFetcher: splitChangeFetcher,
-                                                    splitCache: splitCache,
-                                                    timer: timer,
-                                                    eventsManager: eventsManager)
+        splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
+                                                          splitsStorage: splitsStorage,
+                                                          splitChangeProcessor: splitChangeProcessor,
+                                                          timer: timer,
+                                                          eventsManager: eventsManager)
 
         splitsSyncWorker.start()
 
@@ -61,7 +65,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
             timer.timerHandler?()
         }
 
-        XCTAssertEqual(0, splitChangeFetcher.fetchCallCount)
+        XCTAssertEqual(0, splitFetcher.fetchCallCount)
     }
 
     private func createSplit(name: String) -> Split {

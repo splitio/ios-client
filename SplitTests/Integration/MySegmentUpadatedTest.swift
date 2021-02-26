@@ -70,7 +70,7 @@ class MySegmentUpdatedTest: XCTestCase {
             if self.isFirstChangesReq {
                 self.isFirstChangesReq = false
                 let change = self.responseSlitChanges()[0]
-                since = change.till ?? 0
+                since = change.till
                 let jsonChanges = try? Json.encodeToJson(change)
                 return MockedResponse(code: 200, data: jsonChanges)
             }
@@ -164,7 +164,7 @@ class MySegmentUpdatedTest: XCTestCase {
         var changes = [SplitChange]()
         
         let c = loadSplitsChangeFile()!
-        let split = c.splits![0]
+        let split = c.splits[0]
         let inSegmentOneCondition = inSegmentCondition(name: "segment1")
         inSegmentOneCondition.partitions![0].treatment = "on_s1"
         inSegmentOneCondition.partitions![0].size = 100

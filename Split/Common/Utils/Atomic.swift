@@ -48,7 +48,7 @@ final class Atomic<T> {
 }
 
 final class AtomicInt {
-    private let queue = DispatchQueue.global()
+    private let queue = DispatchQueue(label: "split-atomic-int", target: DispatchQueue.global())
     private var curValue: Int
     init(_ value: Int) {
         self.curValue = value
@@ -65,6 +65,21 @@ final class AtomicInt {
             self.curValue+=addValue
         }
         return oldValue
+    }
+
+    func addAndGet(_ addValue: Int) -> Int {
+        var newValue: Int = 0
+        queue.sync {
+            self.curValue+=addValue
+            newValue = self.curValue
+        }
+        return newValue
+    }
+
+    func set(_ newValue: Int) {
+        queue.sync {
+            self.curValue = newValue
+        }
     }
 
     func mutate(_ transformation: (inout Int) -> Void) {

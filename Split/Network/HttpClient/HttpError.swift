@@ -9,6 +9,7 @@
 import Foundation
 
 enum HttpError: Error {
+    case serverUnavailable
     case requestTimeOut
     case clientRelated
     case couldNotCreateRequest(message: String)
@@ -19,6 +20,8 @@ enum HttpError: Error {
 extension HttpError {
     var message: String {
         switch self {
+        case .serverUnavailable:
+            return "Server is unavailable"
         case .clientRelated:
             return "Authentication error"
         case .couldNotCreateRequest(let message):

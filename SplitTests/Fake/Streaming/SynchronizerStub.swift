@@ -12,7 +12,11 @@ import XCTest
 
 class SynchronizerStub: Synchronizer {
 
-    var initialSynchronizationCalled = false
+
+
+    var loadAndSynchronizeSplitsCalled = false
+    var loadMySegmentsFromCacheCalled = false
+    var syncAllCalled = false
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
     var synchronizeMySegmentsCalled = false
@@ -29,8 +33,16 @@ class SynchronizerStub: Synchronizer {
     var syncSplitsChangeNumberExp: XCTestExpectation?
     var syncMySegmentsExp: XCTestExpectation?
 
+    func loadAndSynchronizeSplits() {
+        loadAndSynchronizeSplitsCalled = true
+    }
+
+    func loadMySegmentsFromCache() {
+        loadMySegmentsFromCacheCalled = true
+    }
+
     func syncAll() {
-        initialSynchronizationCalled = true
+        syncAllCalled = true
     }
 
     func startPeriodicFetching() {
