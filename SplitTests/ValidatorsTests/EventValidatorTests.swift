@@ -18,11 +18,11 @@ class EventValidatorTests: XCTestCase {
         let split2 = newSplit(trafficType: "other")
         let split3 = newSplit(trafficType: "archivedtraffictype", status: .archived)
 
-        let splitCache = InMemorySplitCache()
-        splitCache.addSplit(splitName: split1.name!, split: split1)
-        splitCache.addSplit(splitName: split2.name!, split: split2)
-        splitCache.addSplit(splitName: split3.name!, split: split3)
-        validator = DefaultEventValidator(splitCache: splitCache)
+        let splitsStorage = SplitsStorageStub()
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split1, split2],
+                                                               archivedSplits: [split3], changeNumber: 100,
+                                                               updateTimestamp: 100))
+        validator = DefaultEventValidator(splitsStorage: splitsStorage)
     }
 
     override func tearDown() {

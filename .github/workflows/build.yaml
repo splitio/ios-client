@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - development
+      - storage_revamp_baseline
 
 jobs:
   build:

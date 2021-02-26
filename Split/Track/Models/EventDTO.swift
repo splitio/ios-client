@@ -8,7 +8,7 @@
 import Foundation
 
 class EventDTO: DynamicCodable {
-
+    var storageId: String?
     var key: String?
     var eventTypeId: String
     var trafficTypeName: String

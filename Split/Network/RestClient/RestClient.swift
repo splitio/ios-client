@@ -15,6 +15,10 @@ protocol RestClient {
     func isSdkServerAvailable() -> Bool
 }
 
+protocol SplitApiRestClient: RestClientSplitChanges, RestClientMySegments, RestClientImpressions,
+                             RestClientTrackEvents, RestClientSseAuthenticator, MetricsRestClient {
+}
+
 protocol HostReachabilityChecker {
     func isReachable(path url: String) -> Bool
 }
@@ -28,7 +32,7 @@ class ReachabilityWrapper: HostReachabilityChecker {
     }
 }
 
-class DefaultRestClient {
+class DefaultRestClient: SplitApiRestClient {
     // MARK: - Private Properties
     private let httpClient: HttpClient
     let endpointFactory: EndpointFactory
@@ -46,13 +50,14 @@ class DefaultRestClient {
     func execute<T>(endpoint: Endpoint,
                     parameters: [String: Any]? = nil,
                     body: Data? = nil,
+                    headers: HttpHeaders? = nil,
                     completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
 
         do {
         _ = try httpClient.sendRequest(
                         endpoint: endpoint,
                         parameters: parameters,
-                        headers: nil,
+                        headers: headers,
                         body: body)
             .getResponse(completionHandler: { response in
             switch response.result {

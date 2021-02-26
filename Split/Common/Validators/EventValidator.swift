@@ -33,11 +33,11 @@ class DefaultEventValidator: EventValidator {
     private let kTrackEventNameValidationPattern = ValidationConfig.default.trackEventNamePattern
 
     var keyValidator: KeyValidator
-    var splitCache: SplitCacheProtocol
+    var splitsStorage: SplitsStorage
 
-    init(splitCache: SplitCacheProtocol) {
+    init(splitsStorage: SplitsStorage) {
         keyValidator = DefaultKeyValidator()
-        self.splitCache = splitCache
+        self.splitsStorage = splitsStorage
     }
 
     func validate(key: String?, trafficTypeName: String?,
@@ -47,31 +47,29 @@ class DefaultEventValidator: EventValidator {
             return resultInfo
         }
 
-        if trafficTypeName == nil {
-            return ValidationErrorInfo(error: .some,
-                                       message: "you passed a null or undefined traffic_type_name, " +
+        guard let nonNullTrafficTypeName = trafficTypeName else {
+            return ValidationErrorInfo(error: .some, message: "you passed a null or undefined traffic_type_name, " +
                 "traffic_type_name must be a non-empty string")
         }
 
-        if trafficTypeName!.isEmpty() {
-            return ValidationErrorInfo(error: .some,
-                                       message: "you passed an empty traffic_type_name, " +
+        if nonNullTrafficTypeName.isEmpty() {
+            return ValidationErrorInfo(error: .some, message: "you passed an empty traffic_type_name, " +
                 "traffic_type_name must be a non-empty string")
         }
 
-        if eventTypeId == nil {
+        guard let nonNullEventTypeId = eventTypeId else {
             return ValidationErrorInfo(error: .some,
                                        message: "you passed a null or undefined event_type, " +
                 "event_type must be a non-empty String")
         }
 
-        if eventTypeId!.isEmpty() {
+        if nonNullEventTypeId.isEmpty() {
             return ValidationErrorInfo(error: .some,
                                        message: "you passed an empty event_type, " +
                 "event_type must be a non-empty String")
         }
 
-        if !isTypeValid(eventTypeId!) {
+        if !isTypeValid(nonNullEventTypeId) {
             return ValidationErrorInfo(error: .some,
                                        message:
                 "you passed \(eventTypeId ?? "null"), event name must adhere " +
@@ -82,13 +80,15 @@ class DefaultEventValidator: EventValidator {
         }
 
         var validationInfo: ValidationErrorInfo?
-        if trafficTypeName!.hasUpperCaseChar() {
+        var lowercasedTrafficType = nonNullTrafficTypeName
+        if nonNullTrafficTypeName.hasUpperCaseChar() {
             validationInfo = ValidationErrorInfo(warning: .trafficTypeNameHasUppercaseChars,
                                                  message:
                 "traffic_type_name should be all lowercase - converting string to lowercase")
+            lowercasedTrafficType = nonNullTrafficTypeName.lowercased()
         }
 
-        if !splitCache.exists(trafficType: trafficTypeName!) {
+        if !splitsStorage.isValidTrafficType(name: lowercasedTrafficType) {
             let message = "traffic_type_name \(trafficTypeName!) does not have any corresponding " +
                 "Splits in this environment, make sure you’re tracking " +
             "your events to a valid traffic type defined in the Split console"

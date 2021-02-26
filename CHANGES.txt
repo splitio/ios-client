@@ -1,3 +1,7 @@
+2.9.0: (Feb 26, 2021)
+- Updated cache mechanism to use code data store instead of plain json files
+- Fixed some threading race conditions in http and backoff count components
+
 2.8.0: (Dec 22, 2020)
 - Added support for Swift Packager Manager. Thanks @bsarrazin!
 

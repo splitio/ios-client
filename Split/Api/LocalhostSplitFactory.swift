@@ -25,7 +25,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
     private let localhostClient: SplitClient
     private let localhostManager: SplitManager
     private let eventsManager: SplitEventsManager
-    private let splitFetcher: RefreshableSplitFetcher
+    private let splitsStorage: SplitsStorage
 
     public var client: SplitClient {
         return localhostClient
@@ -45,19 +45,16 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         eventsManager.start()
 
         let fileStorage = FileStorage(dataFolderName: DataFolderFactory()
-            .sanitizeForFolderName(config.localhostDataFolder))
+                                        .sanitizeForFolderName(config.localhostDataFolder))
 
-        let splitCache: SplitCacheProtocol = InMemorySplitCache()
-        splitFetcher = LocalhostSplitFetcher(fileStorage: fileStorage,
-                                             splitCache: splitCache,
-                                             eventsManager: eventsManager,
-                                             splitsFileName: config.splitFile,
-                                             bundle: bundle)
-        let storageContainer = SplitStorageContainer(fileStorage: fileStorage, splitsCache: splitCache,
-                                                     mySegmentsCache: InMemoryMySegmentsCache(segments: Set()))
-        localhostClient = LocalhostSplitClient(key: key, storageContainer: storageContainer,
+        splitsStorage = YamlSplitsStorage(fileStorage: fileStorage,
+                                          eventsManager: eventsManager,
+                                          splitsFileName: config.splitFile,
+                                          bundle: bundle)
+
+        localhostClient = LocalhostSplitClient(key: key, splitsStorage: splitsStorage,
                                                eventsManager: eventsManager)
         eventsManager.getExecutorResources().setClient(client: localhostClient)
-        localhostManager = DefaultSplitManager(splitCache: splitCache)
+        localhostManager = DefaultSplitManager(splitsStorage: splitsStorage)
     }
 }
