@@ -108,7 +108,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                syncWorkerFactory: syncWorkerFactory,
                                                impressionsSyncHelper: impressionsSyncHelper,
                                                eventsSyncHelper: eventsSyncHelper,
-                                               splitsFilterQueryString: splitsFilterQueryString)
+                                               splitsFilterQueryString: splitsFilterQueryString,
+                                               splitEventsManager: eventsManager)
 
         let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
             .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
