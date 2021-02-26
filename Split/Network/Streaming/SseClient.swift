@@ -98,7 +98,7 @@ class DefaultSseClient: SseClient {
                     }
 
                 }, errorHandler: { error in
-                    Logger.e("Error in stream request: \(error.message)")
+                    Logger.d("Streaming disconnected: \(error.localizedDescription)")
                     self.handleError(error)
                 })
             } catch {
