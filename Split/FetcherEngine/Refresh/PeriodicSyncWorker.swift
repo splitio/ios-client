@@ -131,6 +131,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
     private let splitChangeProcessor: SplitChangeProcessor
+    private let syncHelper: SplitsSyncHelper
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
@@ -141,6 +142,9 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.splitChangeProcessor = splitChangeProcessor
+        self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
+                                           splitsStorage: splitsStorage,
+                                           splitChangeProcessor: splitChangeProcessor)
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }
@@ -150,25 +154,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         if !isSdkReadyFired() {
             return
         }
-        do {
-            Logger.d("Fetching splits")
-            var nextSince = splitsStorage.changeNumber
-            var exit = false
-            while !exit {
-                let splitChange = try self.splitFetcher.execute(since: nextSince, headers: nil)
-                let newSince = splitChange.since
-                let newTill = splitChange.till
-                splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))
-                if newSince == newTill, newTill >= nextSince {
-                    exit = true
-                }
-                nextSince = newTill
-            }
-
-        } catch let error {
-            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
-            Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
-        }
+        _ = syncHelper.sync(since: splitsStorage.changeNumber)
     }
 }
 
