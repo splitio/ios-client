@@ -153,11 +153,11 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         var changeNumber = splitsStorage.changeNumber
         var clearCache = false
         if changeNumber != -1 {
-            let timestamp = splitsStorage.updateTimestamp
-            let elapsedTime = Int64(Date().timeIntervalSince1970) - timestamp
-            if timestamp > 0 && elapsedTime > self.cacheExpiration {
-                changeNumber = -1
-                clearCache = true
+            if syncHelper.cacheHasExpired(storedChangeNumber: changeNumber,
+                                          updateTimestamp: splitsStorage.updateTimestamp,
+                                          cacheExpirationInSeconds: Int64(cacheExpiration)) {
+                    changeNumber = -1
+                    clearCache = true
             }
         }
 
