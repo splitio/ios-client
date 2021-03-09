@@ -425,6 +425,7 @@
 		957E676625E7F8D7006F5B19 /* ReadyFromCacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E676525E7F8D7006F5B19 /* ReadyFromCacheTest.swift */; };
 		957E67A525F01E7D006F5B19 /* BackgroundSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E67A425F01E7D006F5B19 /* BackgroundSynchronizer.swift */; };
 		957E67AC25F66123006F5B19 /* SplitsSyncHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E67AB25F66123006F5B19 /* SplitsSyncHelper.swift */; };
+		957E67B025F6B3E1006F5B19 /* BackgroundSyncWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */; };
 		95F3EFEC258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3EFEB258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift */; };
 		95F3EFF0258D2AFE00084AF8 /* PeriodicRecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3EFEF258D2AFE00084AF8 /* PeriodicRecorderWorker.swift */; };
 		95F3EFF4258D2C0300084AF8 /* RecorderWorkerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3EFF3258D2C0300084AF8 /* RecorderWorkerStub.swift */; };
@@ -901,6 +902,7 @@
 		957E676525E7F8D7006F5B19 /* ReadyFromCacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyFromCacheTest.swift; sourceTree = "<group>"; };
 		957E67A425F01E7D006F5B19 /* BackgroundSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSynchronizer.swift; sourceTree = "<group>"; };
 		957E67AB25F66123006F5B19 /* SplitsSyncHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsSyncHelper.swift; sourceTree = "<group>"; };
+		957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundSyncWorker.swift; sourceTree = "<group>"; };
 		95F3EFEB258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderFlusherCheckerTests.swift; sourceTree = "<group>"; };
 		95F3EFEF258D2AFE00084AF8 /* PeriodicRecorderWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodicRecorderWorker.swift; sourceTree = "<group>"; };
 		95F3EFF3258D2C0300084AF8 /* RecorderWorkerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderWorkerStub.swift; sourceTree = "<group>"; };
@@ -1032,6 +1034,7 @@
 			isa = PBXGroup;
 			children = (
 				59F4AAB225114A6700A1C69A /* RetryableSyncWorker.swift */,
+				957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */,
 				957E67AB25F66123006F5B19 /* SplitsSyncHelper.swift */,
 				59F4AABA2512ACA100A1C69A /* PeriodicSyncWorker.swift */,
 				598EDE81224C0437005D4762 /* QueryableMySegmentsFetcher.swift */,
@@ -2187,6 +2190,7 @@
 				3B6DEF3720EA6AE50067435E /* SplitManager.swift in Sources */,
 				599EA57B22666B84006CBA89 /* Yaml.swift in Sources */,
 				3B6DEF3A20EA6AE50067435E /* Dictionary+Extensions.swift in Sources */,
+				957E67B025F6B3E1006F5B19 /* BackgroundSyncWorker.swift in Sources */,
 				3B6DEF2620EA6AE50067435E /* SplitClientConfig.swift in Sources */,
 				59163B07215EC7A600C7AA57 /* DefaultMetricsManager.swift in Sources */,
 				3B6DEF3220EA6AE50067435E /* Murmur3Hash.swift in Sources */,
