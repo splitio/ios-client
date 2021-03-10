@@ -193,8 +193,10 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func flush() {
-        flusherImpressionsRecorderWorker.flush()
-        flusherEventsRecorderWorker.flush()
+        DispatchQueue.global().async {
+            self.flusherImpressionsRecorderWorker.flush()
+            self.flusherEventsRecorderWorker.flush()
+        }
     }
 
     func destroy() {
