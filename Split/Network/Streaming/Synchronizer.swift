@@ -167,14 +167,18 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func pushEvent(event: EventDTO) {
-        if eventsSyncHelper.pushAndCheckFlush(event) {
-            flusherEventsRecorderWorker.flush()
+        DispatchQueue.global().async {
+            if self.eventsSyncHelper.pushAndCheckFlush(event) {
+                self.flusherEventsRecorderWorker.flush()
+            }
         }
     }
 
     func pushImpression(impression: Impression) {
-        if impressionsSyncHelper.pushAndCheckFlush(impression) {
-            flusherImpressionsRecorderWorker.flush()
+        DispatchQueue.global().async {
+            if self.impressionsSyncHelper.pushAndCheckFlush(impression) {
+                self.flusherImpressionsRecorderWorker.flush()
+            }
         }
     }
 
