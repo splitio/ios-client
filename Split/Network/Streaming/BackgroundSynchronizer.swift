@@ -7,15 +7,17 @@
 //
 
 import Foundation
+import BackgroundTasks
 
-public class BackgroundSynchronizer {
+class BackgroundSynchronizer {
 
-    let splitsSyncWorker: BackgroundSynchronizer
-    let mySegmentsSyncWorker: BackgroundSynchronizer
-    let eventsRecorderWorker: RecorderWorker
-    let impressionsRecorderWorker: RecorderWorker
+    private let splitsSyncWorker: BackgroundSyncWorker
+    private let mySegmentsSyncWorker: BackgroundSyncWorker
+    private let eventsRecorderWorker: RecorderWorker
+    private let impressionsRecorderWorker: RecorderWorker
+    private let kTaskIdentifier = "io.split.bg-sync.task"
 
-    init(splitsSyncWorker: BackgroundSynchronizer, mySegmentsSyncWorker: BackgroundSynchronizer,
+    init(splitsSyncWorker: BackgroundSyncWorker, mySegmentsSyncWorker: BackgroundSyncWorker,
          eventsRecorderWorker: RecorderWorker, impressionsRecorderWorker: RecorderWorker) {
         self.splitsSyncWorker = splitsSyncWorker
         self.mySegmentsSyncWorker = mySegmentsSyncWorker
@@ -23,15 +25,35 @@ public class BackgroundSynchronizer {
         self.impressionsRecorderWorker = impressionsRecorderWorker
     }
 
-    func executeSync() {
+    func schedule() {
+        if #available(iOS 13.0, *) {
+            BGTaskScheduler.shared.register(
+                forTaskWithIdentifier: kTaskIdentifier,
+                using: nil) { task in
+                let operationQueue = self.syncOperation()
+                task.expirationHandler = {
+                    task.setTaskCompleted(success: false)
+                    operationQueue.cancelAllOperations()
+                }
+
+                operationQueue.addBarrierBlock {
+                    task.setTaskCompleted(success: true)
+                }
+            }
+        } else {
+            Logger.w("Backround sync only available for iOS 13+")
+        }
+    }
+
+    private func syncOperation() -> OperationQueue {
         let operationQueue = OperationQueue()
 
         operationQueue.addOperation {
-            self.splitsSyncWorker.executeSync()
+            self.splitsSyncWorker.execute()
         }
 
         operationQueue.addOperation {
-            self.mySegmentsSyncWorker.executeSync()
+            self.mySegmentsSyncWorker.execute()
         }
 
         operationQueue.addOperation {
@@ -41,5 +63,6 @@ public class BackgroundSynchronizer {
         operationQueue.addOperation {
             self.impressionsRecorderWorker.flush()
         }
+        return operationQueue
     }
 }
