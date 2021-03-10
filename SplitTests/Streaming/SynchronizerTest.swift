@@ -211,7 +211,7 @@ class SynchronizerTest: XCTestCase {
     func testFlush() {
 
         synchronizer.flush()
-
+        sleep(1)
         XCTAssertTrue(impressionsRecorderWorker.flushCalled)
         XCTAssertTrue(eventsRecorderWorker.flushCalled)
     }
