@@ -41,7 +41,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
                     obj.status = StorageRecordStatus.active
                     self.coreDataHelper.save()
                 } catch {
-                    Logger.e("An error occurred while inserting impressions in storage: \(error.localizedDescription)")
+                    Logger.e("Error occurred while inserting impressions in storage: \(error.localizedDescription)")
                 }
             }
         }

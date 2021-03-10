@@ -76,8 +76,9 @@ class DefaultRecorderFlushChecker: RecorderFlushChecker {
 
     private let maxQueueSize: Int
     private let maxQueueSizeInBytes: Int
-    private var pushedCount = AtomicInt(0)
-    private var totalPushedSizeInBytes = AtomicInt(0)
+    private var pushedCount = 0
+    private var totalPushedSizeInBytes = 0
+    private var queue = DispatchQueue(label: "test", target: DispatchQueue.global())
 
     init(maxQueueSize: Int,
          maxQueueSizeInBytes: Int) {
@@ -86,8 +87,14 @@ class DefaultRecorderFlushChecker: RecorderFlushChecker {
     }
 
     func checkIfFlushIsNeeded(sizeInBytes: Int) -> Bool {
-        let pushCount = pushedCount.addAndGet(1)
-        let pushBytes = totalPushedSizeInBytes.addAndGet(sizeInBytes)
+
+        var pushCount = 0
+        var pushBytes = 0
+        queue.sync {
+            pushCount = pushedCount
+            pushBytes = totalPushedSizeInBytes
+        }
+
         if pushCount >= maxQueueSize || pushBytes >= maxQueueSizeInBytes {
             return true
         }
@@ -95,7 +102,14 @@ class DefaultRecorderFlushChecker: RecorderFlushChecker {
     }
 
     func update(count: Int, bytes: Int) {
-        pushedCount.set(count)
-        totalPushedSizeInBytes.set(bytes)
+        pushedCount = count
+        totalPushedSizeInBytes = bytes
+    }
+
+    private func incrementCounters() {
+        queue.async {
+            self.pushedCount+=1
+            self.totalPushedSizeInBytes+=1
+        }
     }
 }
