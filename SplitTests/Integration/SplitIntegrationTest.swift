@@ -125,7 +125,6 @@ class SplitIntegrationTests: XCTestCase {
         }
 
         wait(for: trExp, timeout: 30)
-        ThreadUtils.delay(seconds: 0.5)
 
         let event1 = IntegrationHelper.getTrackEventBy(value: 1.0, trackHits: tracksHits())
         let event100 = IntegrationHelper.getTrackEventBy(value: 100.0, trackHits: tracksHits())
@@ -148,9 +147,9 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertNotNil(i3)
         XCTAssertEqual(1505162627437, i3?.changeNumber)
         XCTAssertEqual("not in split", i1?.label) // TODO: Uncomment when impressions split name is added to impression listener
-        XCTAssertEqual(11, tracksHits().count)
+        XCTAssertEqual(10, tracksHits().count)
         XCTAssertNotNil(event1)
-        XCTAssertNotNil(event100)
+        XCTAssertNil(event100)
         XCTAssertEqual(3, impressions.count)
 
         let semaphore = DispatchSemaphore(value: 0)
