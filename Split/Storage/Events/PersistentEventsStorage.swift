@@ -22,6 +22,7 @@ class DefaultEventsStorage: PersistentEventsStorage {
     private let expirationPeriod: Int64
 
     init(database: SplitDatabase, expirationPeriod: Int64) {
+
         self.eventDao = database.eventDao
         self.expirationPeriod = expirationPeriod
     }

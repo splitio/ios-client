@@ -63,7 +63,6 @@ struct Json {
 extension Json {
     static func encodeToJson<T: Encodable>(_ data: T) throws -> String {
         let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
         let jsonData = try encoder.encode(data)
         return String(data: jsonData, encoding: .utf8)!
     }
@@ -76,7 +75,6 @@ extension Json {
 
     static func encodeToJsonData<T: Encodable>(_ data: T) throws -> Data {
         let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
         return try encoder.encode(data)
     }
 
@@ -97,3 +95,14 @@ extension Json {
 }
 
 typealias JSON = Json
+
+class JsonWrapper {
+    let encoder: JSONEncoder
+    init() {
+        encoder = JSONEncoder()
+    }
+    func encodeToJson<T: Encodable>(_ data: T) throws -> String {
+        let jsonData = try encoder.encode(data)
+        return String(data: jsonData, encoding: .utf8) ?? ""
+    }
+}
