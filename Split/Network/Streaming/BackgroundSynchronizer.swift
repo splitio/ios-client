@@ -15,7 +15,8 @@ class BackgroundSynchronizer {
     private let mySegmentsSyncWorker: BackgroundSyncWorker
     private let eventsRecorderWorker: RecorderWorker
     private let impressionsRecorderWorker: RecorderWorker
-    private let kTaskIdentifier = "io.split.bg-sync.task"
+    private static let kTaskIdentifier = "io.split.bg-sync.task"
+    private static let kTimeInterval = 15.0 * 60
 
     init(splitsSyncWorker: BackgroundSyncWorker, mySegmentsSyncWorker: BackgroundSyncWorker,
          eventsRecorderWorker: RecorderWorker, impressionsRecorderWorker: RecorderWorker) {
@@ -27,8 +28,9 @@ class BackgroundSynchronizer {
 
     func schedule() {
         if #available(iOS 13.0, *) {
+            self.scheduleNextSync()
             BGTaskScheduler.shared.register(
-                forTaskWithIdentifier: kTaskIdentifier,
+                forTaskWithIdentifier: BackgroundSynchronizer.kTaskIdentifier,
                 using: nil) { task in
                 let operationQueue = self.syncOperation()
                 task.expirationHandler = {
@@ -65,4 +67,17 @@ class BackgroundSynchronizer {
         }
         return operationQueue
     }
+
+    private func scheduleNextSync() {
+        if #available(iOS 13.0, *) {
+            let request = BGAppRefreshTaskRequest(identifier: BackgroundSynchronizer.kTaskIdentifier)
+            request.earliestBeginDate = Date(timeIntervalSinceNow: BackgroundSynchronizer.kTimeInterval)
+
+            do {
+                try BGTaskScheduler.shared.submit(request)
+            } catch {
+                print("Could not schedule Split background sync task: \(error)")
+            }
+        }
+     }
 }

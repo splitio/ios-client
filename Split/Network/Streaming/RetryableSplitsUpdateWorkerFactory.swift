@@ -135,4 +135,10 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                                        eventsPerPush: Int(splitConfig.eventsPerPush))
 
     }
+
+    func createBackgroundSplitsSyncWorker() -> BackgroundSyncWorker {
+        return BackgroundSplitsSyncWorker(splitFetcher:  apiFacade.splitsFetcher, splitsStorage: storageContainer.splitsStorage,
+                                                   splitChangeProcessor: SplitChangeProcessor(),
+                                                    cacheExpiration: Int64(splitConfig.cacheExpirationInSeconds))
+    }
 }
