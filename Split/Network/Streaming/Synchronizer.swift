@@ -60,6 +60,7 @@ class DefaultSynchronizer: Synchronizer {
     private let eventsSyncHelper: EventsRecorderSyncHelper
     private let splitsFilterQueryString: String
     private let splitEventsManager: SplitEventsManager
+    private let flushQueue = DispatchQueue(label: "split-flush-queue", target: DispatchQueue.global())
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -167,7 +168,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func pushEvent(event: EventDTO) {
-        DispatchQueue.global().async {
+        flushQueue.async {
             if self.eventsSyncHelper.pushAndCheckFlush(event) {
                 self.eventsSyncHelper.resetAccumulator()
                 self.flusherEventsRecorderWorker.flush()
@@ -176,7 +177,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func pushImpression(impression: Impression) {
-        DispatchQueue.global().async {
+        flushQueue.async {
             if self.impressionsSyncHelper.pushAndCheckFlush(impression) {
                 self.impressionsSyncHelper.resetAccumulator()
                 self.flusherImpressionsRecorderWorker.flush()
@@ -196,7 +197,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func flush() {
-        DispatchQueue.global().async {
+        flushQueue.async {
             self.eventsSyncHelper.resetAccumulator()
             self.impressionsSyncHelper.resetAccumulator()
             self.flusherImpressionsRecorderWorker.flush()
