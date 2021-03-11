@@ -169,6 +169,7 @@ class DefaultSynchronizer: Synchronizer {
     func pushEvent(event: EventDTO) {
         DispatchQueue.global().async {
             if self.eventsSyncHelper.pushAndCheckFlush(event) {
+                self.eventsSyncHelper.resetAccumulator()
                 self.flusherEventsRecorderWorker.flush()
             }
         }
@@ -177,7 +178,9 @@ class DefaultSynchronizer: Synchronizer {
     func pushImpression(impression: Impression) {
         DispatchQueue.global().async {
             if self.impressionsSyncHelper.pushAndCheckFlush(impression) {
+                self.impressionsSyncHelper.resetAccumulator()
                 self.flusherImpressionsRecorderWorker.flush()
+
             }
         }
     }
@@ -194,6 +197,8 @@ class DefaultSynchronizer: Synchronizer {
 
     func flush() {
         DispatchQueue.global().async {
+            self.eventsSyncHelper.resetAccumulator()
+            self.impressionsSyncHelper.resetAccumulator()
             self.flusherImpressionsRecorderWorker.flush()
             self.flusherEventsRecorderWorker.flush()
         }
