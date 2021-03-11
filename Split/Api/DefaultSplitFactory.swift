@@ -36,8 +36,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     init(apiKey: String, key: Key, config: SplitClientConfig, httpClient: HttpClient?,
-         reachabilityChecker: HostReachabilityChecker?,
-         testDatabase: SplitDatabase? = nil) throws {
+         reachabilityChecker: HostReachabilityChecker?, testDatabase: SplitDatabase? = nil) throws {
         super.init()
 
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? config.defaultDataFolder
@@ -47,9 +46,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         MetricManagerConfig.default.defaultDataFolderName = dataFolderName
 
         config.apiKey = apiKey
-        let storageContainer = try buildStorageContainer(userKey: key.matchingKey,
-                                                         dataFolderName: dataFolderName,
-                                                         testDatabase: testDatabase)
+        let storageContainer = try buildStorageContainer(
+            userKey: key.matchingKey, dataFolderName: dataFolderName, testDatabase: testDatabase)
 
         migrateStorageIfNeeded(storageContainer: storageContainer, userKey: key.matchingKey)
 
@@ -71,10 +69,9 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         /// TODO: Remove this line when metrics refactor
         DefaultMetricsManager.shared.restClient = restClient
 
-        let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(key.matchingKey).setSplitConfig(config)
-            .setRestClient(restClient).setEventsManager(eventsManager)
-            .setStorageContainer(storageContainer)
-            .setSplitsQueryString(splitsFilterQueryString)
+        let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(key.matchingKey)
+            .setSplitConfig(config).setRestClient(restClient).setEventsManager(eventsManager)
+            .setStorageContainer(storageContainer).setSplitsQueryString(splitsFilterQueryString)
 
         if let httpClient = httpClient {
             _ = apiFacadeBuilder.setStreamingHttpClient(httpClient)
@@ -85,9 +82,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let impressionsFlushChecker = DefaultRecorderFlushChecker(maxQueueSize: config.impressionsQueueSize,
                                                                   maxQueueSizeInBytes: config.impressionsQueueSize)
 
-        let impressionsSyncHelper
-            = ImpressionsRecorderSyncHelper(impressionsStorage: storageContainer.impressionsStorage,
-                                            accumulator: impressionsFlushChecker)
+        let impressionsSyncHelper = ImpressionsRecorderSyncHelper(
+            impressionsStorage: storageContainer.impressionsStorage, accumulator: impressionsFlushChecker)
 
         let eventsFlushChecker
             = DefaultRecorderFlushChecker(maxQueueSize: Int(config.eventsQueueSize),
@@ -109,7 +105,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                impressionsSyncHelper: impressionsSyncHelper,
                                                eventsSyncHelper: eventsSyncHelper,
                                                splitsFilterQueryString: splitsFilterQueryString,
-                                               splitEventsManager: eventsManager)
+                                               splitEventsManager: eventsManager,
+                                               backBackgroundSynchronizer: buildBgSynchronizer())
 
         let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
             .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
@@ -175,5 +172,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                      splitDatabase: storageContainer.splitDatabase,
                                                      userKey: userKey)
         _ = storageMigrator.runMigrationIfNeeded()
+    }
+
+    private func buildBgSynchronizer() -> BackgroundSynchronizer? {
+        if #available(iOS 13.0, *) {
+            let splitsBgSyncWorker = 
+            return BackgroundSynchronizer()
+        }
+        return nil
     }
 }

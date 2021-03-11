@@ -173,6 +173,12 @@ public class SplitClientConfig: NSObject {
         }
     }
 
+    /// When set to true app sync is done
+    /// using android resources event while app is in background.
+    /// Otherwise synchronization only occurs while app
+    /// is in foreground
+    @objc public var synchronizeInBackground = false
+
     ///
     /// Maximum length matching / bucketing key. Internal config
     ///
