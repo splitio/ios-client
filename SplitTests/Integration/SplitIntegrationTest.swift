@@ -44,6 +44,7 @@ class SplitIntegrationTests: XCTestCase {
         webServer.routeGet(path: "/splitChanges?since=:param", data: try? Json.encodeToJson(splitChange))
         webServer.route(method: .post, path: "/testImpressions/bulk") { request in
             self.impHit.append(try! TestUtils.impressionsFromHit(request: request))
+
             return MockedResponse(code: 200, data: nil)
         }
         webServer.route(method: .post, path: "/events/bulk") { request in
@@ -72,7 +73,9 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
-        splitConfig.eventsPushRate = 5
+        splitConfig.eventsPushRate = 999999
+        splitConfig.eventsFirstPushWindow = 999
+        splitConfig.isDebugModeEnabled = true
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
         .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
 
@@ -123,7 +126,7 @@ class SplitIntegrationTests: XCTestCase {
 
         wait(for: trExp, timeout: 30)
 
-        let event99 = IntegrationHelper.getTrackEventBy(value: 99.0, trackHits: tracksHits())
+        let event1 = IntegrationHelper.getTrackEventBy(value: 1.0, trackHits: tracksHits())
         let event100 = IntegrationHelper.getTrackEventBy(value: 100.0, trackHits: tracksHits())
 
         XCTAssertTrue(sdkReadyFired)
@@ -145,7 +148,7 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertEqual(1505162627437, i3?.changeNumber)
         XCTAssertEqual("not in split", i1?.label) // TODO: Uncomment when impressions split name is added to impression listener
         XCTAssertEqual(10, tracksHits().count)
-        XCTAssertNotNil(event99)
+        XCTAssertNotNil(event1)
         XCTAssertNil(event100)
         XCTAssertEqual(3, impressions.count)
 
@@ -173,7 +176,7 @@ class SplitIntegrationTests: XCTestCase {
 
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        builder.setTestDatabase(TestingHelper.createTestDatabase(name: "IntegrationTest"))
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "IntegrationTest"))
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
 
         let client = factory?.client
