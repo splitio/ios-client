@@ -10,6 +10,7 @@ import Foundation
 @testable import Split
 
 class SyncWorkerFactoryStub: SyncWorkerFactory {
+
     var impressionsRecorderWorker = RecorderWorkerStub()
     var periodicImpressionsRecorderWorker = PeriodicRecorderWorkerStub()
     var eventsRecorderWorker = RecorderWorkerStub()
@@ -49,19 +50,19 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
         return periodicMySegmentsSyncWorker
     }
 
-    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> PeriodicRecorderWorker {
+    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> PeriodicRecorderWorker {
         return periodicImpressionsRecorderWorker
     }
 
-    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> RecorderWorker {
+    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker {
         return impressionsRecorderWorker
     }
 
-    func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper) -> PeriodicRecorderWorker {
+    func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker {
         return periodicEventsRecorderWorker
     }
 
-    func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper) -> RecorderWorker {
+    func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> RecorderWorker {
         return eventsRecorderWorker
     }
 }

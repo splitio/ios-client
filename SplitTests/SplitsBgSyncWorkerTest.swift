@@ -1,0 +1,102 @@
+//
+//  SplitsBgSyncWorkerTest.swift
+//  SplitTests
+//
+//  Created by Javier L. Avrudsky on 16/09/2020.
+//  Copyright © 2020 Split. All rights reserved.
+//
+
+import Foundation
+
+import XCTest
+@testable import Split
+
+class SplitsBgSyncWorkerTest: XCTestCase {
+
+    var splitFetcher: HttpSplitFetcherStub!
+    var splitStorage: SplitsStorageStub!
+    var splitChangeProcessor: SplitChangeProcessorStub!
+    var splitsSyncWorker: BackgroundSyncWorker!
+
+    override func setUp() {
+        splitFetcher = HttpSplitFetcherStub()
+        splitStorage = SplitsStorageStub()
+        splitStorage.changeNumber = 100
+        let _ = SplitChange(splits: [], since: splitStorage.changeNumber, till: splitStorage.changeNumber)
+        splitChangeProcessor = SplitChangeProcessorStub()
+    }
+
+    func testFetchSuccess() {
+        // Cache expiration timestamp set to 0 (no clearing cache)
+        splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
+                                                      splitsStorage: splitStorage,
+                                                      splitChangeProcessor: splitChangeProcessor,
+                                                      cacheExpiration: 100)
+
+        let change = SplitChange(splits: [], since: 200, till: 200)
+        splitFetcher.splitChanges = [change]
+
+        splitsSyncWorker.execute()
+
+        XCTAssertFalse(splitStorage.clearCalled)
+        XCTAssertNotNil(splitStorage.updatedSplitChange)
+    }
+
+    func testFetchFail() {
+        // Cache expiration timestamp set to 0 (no clearing cache)
+        splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
+                                                      splitsStorage: splitStorage,
+                                                      splitChangeProcessor: splitChangeProcessor,
+                                                      cacheExpiration: 100)
+
+        splitFetcher.httpError = HttpError.clientRelated
+
+        splitsSyncWorker.execute()
+
+        XCTAssertFalse(splitStorage.clearCalled)
+        XCTAssertNotNil(splitStorage.updatedSplitChange)
+    }
+
+    func testClearExpiredCache() {
+
+        let expiration = 1000
+        splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
+                                                      splitsStorage: splitStorage,
+                                                      splitChangeProcessor: splitChangeProcessor,
+                                                      cacheExpiration: 100)
+
+        let change = SplitChange(splits: [], since: 200, till: 200)
+        splitStorage.updateTimestamp = Int64(Date().timeIntervalSince1970) - Int64(expiration * 2) // Expired cache
+        splitFetcher.splitChanges = [change]
+
+        splitsSyncWorker.execute()
+
+        XCTAssertTrue(splitStorage.clearCalled)
+    }
+
+    func testNoClearNonExpiredCache() {
+
+        let expiration = 1000
+        splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
+                                                           splitsStorage: splitStorage,
+                                                           splitChangeProcessor: splitChangeProcessor,
+                                                           cacheExpiration: 2000)
+
+        let change = SplitChange(splits: [], since: 200, till: 200)
+        splitStorage.updateTimestamp = Int64(Date().timeIntervalSince1970) - Int64(expiration / 2) // Non Expired cache
+        splitFetcher.splitChanges = [change]
+        splitsSyncWorker.execute()
+
+        XCTAssertFalse(splitStorage.clearCalled)
+    }
+
+    override func tearDown() {
+    }
+
+    private func createSplit(name: String) -> Split {
+        let split = Split()
+        split.name = name
+        return split
+    }
+
+}
