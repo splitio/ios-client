@@ -54,7 +54,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
         splitsSyncWorker.execute()
 
         XCTAssertFalse(splitStorage.clearCalled)
-        XCTAssertNotNil(splitStorage.updatedSplitChange)
+        XCTAssertNil(splitStorage.updatedSplitChange)
     }
 
     func testClearExpiredCache() {
