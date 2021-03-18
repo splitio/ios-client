@@ -46,7 +46,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         MetricManagerConfig.default.defaultDataFolderName = dataFolderName
 
         config.apiKey = apiKey
-        let storageContainer = try buildStorageContainer(
+        let storageContainer = try SplitFactoryHelper.buildStorageContainer(
             userKey: key.matchingKey, dataFolderName: dataFolderName, testDatabase: testDatabase)
 
         migrateStorageIfNeeded(storageContainer: storageContainer, userKey: key.matchingKey)
@@ -105,8 +105,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                impressionsSyncHelper: impressionsSyncHelper,
                                                eventsSyncHelper: eventsSyncHelper,
                                                splitsFilterQueryString: splitsFilterQueryString,
-                                               splitEventsManager: eventsManager,
-                                               backBackgroundSynchronizer: buildBgSynchronizer())
+                                               splitEventsManager: eventsManager)
 
         let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
             .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
@@ -123,62 +122,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         syncManager.start()
     }
 
-    private func buildStorageContainer(userKey: String,
-                                       dataFolderName: String,
-                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
-        let fileStorage = FileStorage(dataFolderName: dataFolderName)
-        let dispatchQueue = DispatchQueue(label: "SplitCoreDataCache", target: DispatchQueue.global())
-        var database: SplitDatabase?
-
-        if testDatabase == nil {
-            guard let helper = CoreDataHelperBuilder.build(databaseName: dataFolderName,
-                                                           dispatchQueue: dispatchQueue) else {
-                throw GenericError.coultNotCreateCache
-            }
-            database = CoreDataSplitDatabase(coreDataHelper: helper, dispatchQueue: dispatchQueue)
-        } else {
-            database = testDatabase
-        }
-
-        guard let splitDatabase = database else {
-            throw GenericError.coultNotCreateCache
-        }
-
-        let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
-        let splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentSplitsStorage)
-
-        let persistentMySegmentsStorage = DefaultPersistentMySegmentsStorage(userKey: userKey, database: splitDatabase)
-        let mySegmentsStorage = DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
-
-        let impressionsStorage
-            = DefaultImpressionsStorage(database: splitDatabase,
-                                        expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
-
-        let eventsStorage
-            = DefaultEventsStorage(database: splitDatabase,
-                                   expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
-
-        return SplitStorageContainer(splitDatabase: splitDatabase,
-                                     fileStorage: fileStorage,
-                                     splitsStorage: splitsStorage,
-                                     persistentSplitsStorage: persistentSplitsStorage,
-                                     mySegmentsStorage: mySegmentsStorage,
-                                     impressionsStorage: impressionsStorage,
-                                     eventsStorage: eventsStorage)
-    }
-
     private func migrateStorageIfNeeded(storageContainer: SplitStorageContainer, userKey: String) {
         let storageMigrator = DefaultStorageMigrator(fileStorage: storageContainer.fileStorage,
                                                      splitDatabase: storageContainer.splitDatabase,
                                                      userKey: userKey)
         _ = storageMigrator.runMigrationIfNeeded()
-    }
-
-    private func buildBgSynchronizer() -> BackgroundSynchronizer? {
-        if #available(iOS 13.0, *) {
-            let splitsBgSyncWorker = 
-            return BackgroundSynchronizer()
-        }
-        return nil
     }
 }

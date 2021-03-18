@@ -44,7 +44,7 @@ public class SplitClientConfig: NSObject {
     ///
     /// Default queue size for impressions. Default: 30K
     ///
-    @objc public var impressionsQueueSize: Int = 30000
+    @objc public var impressionsQueueSize: Int = ServiceConstants.impressionsQueueSize
 
     ///
     /// Timeout for HTTP calls in seconds. Default 30 seconds
@@ -76,7 +76,7 @@ public class SplitClientConfig: NSObject {
     ///
     /// The amount of events to send in a POST request. Default: 2000
     ///
-    @objc public var eventsPerPush: Int = 2000
+    @objc public var eventsPerPush: Int = ServiceConstants.eventsPerPush
 
     ///
     /// The schedule time for metrics flush after the first one. Default:  1800 seconds (30 minutes)
@@ -187,7 +187,7 @@ public class SplitClientConfig: NSObject {
     ///
     /// Default folder to store cached data
     ///
-    let defaultDataFolder = "split_data"
+    let defaultDataFolder = ServiceConstants.defaultDataFolder
 
     ///
     /// Max events queue memory size in bytes (5mb)
@@ -202,7 +202,7 @@ public class SplitClientConfig: NSObject {
     ///
     /// Time to consider that cache has expired
     ///
-    let cacheExpirationInSeconds = 864000
+    let cacheExpirationInSeconds = ServiceConstants.cacheExpirationInSeconds
 
     let sseHttpClientConnectionTimeOut: TimeInterval = 80
 
