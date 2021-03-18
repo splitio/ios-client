@@ -60,7 +60,6 @@ class DefaultSynchronizer: Synchronizer {
     private let eventsSyncHelper: EventsRecorderSyncHelper
     private let splitsFilterQueryString: String
     private let splitEventsManager: SplitEventsManager
-    private let backgroundSynchronizer: BackgroundSynchronizer?
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -71,8 +70,7 @@ class DefaultSynchronizer: Synchronizer {
          syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
         = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
-         splitEventsManager: SplitEventsManager,
-         backgroundSynchronizer: BackgroundSynchronizer?) {
+         splitEventsManager: SplitEventsManager) {
 
         self.splitConfig = splitConfig
         self.splitApiFacade = splitApiFacade
@@ -94,8 +92,6 @@ class DefaultSynchronizer: Synchronizer {
         self.eventsSyncHelper = eventsSyncHelper
         self.splitsFilterQueryString = splitsFilterQueryString
         self.splitEventsManager = splitEventsManager
-        self.backgroundSynchronizer = backgroundSynchronizer
-        scheduleBackgroundSyncIfEnabled()
     }
 
     func loadAndSynchronizeSplits() {
@@ -250,13 +246,5 @@ class DefaultSynchronizer: Synchronizer {
             return String(splitName[range.upperBound...])
         }
         return nil
-    }
-
-    private func scheduleBackgroundSyncIfEnabled() {
-        if #available(iOS 13.0, *) {
-            if splitConfig.synchronizeInBackground {
-                backgroundSynchronizer?.schedule()
-            }
-        }
     }
 }
