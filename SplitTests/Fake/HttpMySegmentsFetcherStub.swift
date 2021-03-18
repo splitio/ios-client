@@ -13,7 +13,12 @@ class HttpMySegmentsFetcherStub: HttpMySegmentsFetcher {
     var fetchMySegmentsCount = 0
     private var segmentsIndex = -1
     var allSegments: [[String]?]?
+    var httpError: HttpError?
     func execute(userKey: String) throws -> [String]? {
+
+        if let error = httpError {
+            throw error
+        }
         fetchMySegmentsCount+=1
         var segments: [String]? = nil
         if let allSegments = self.allSegments {

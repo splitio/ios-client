@@ -420,6 +420,8 @@
 		955A5A51258D04DF00CAEE9F /* PeriodicRecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A5A4D258D04DF00CAEE9F /* PeriodicRecorderWorker.swift */; };
 		955A5A52258D04DF00CAEE9F /* RecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A5A4E258D04DF00CAEE9F /* RecorderWorker.swift */; };
 		955A5A53258D04DF00CAEE9F /* EventsRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A5A4F258D04DF00CAEE9F /* EventsRecorder.swift */; };
+		95649FBA2603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95649FB92603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift */; };
+		95649FBE260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95649FBD260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift */; };
 		957E666625D5B0EC006F5B19 /* StorageMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E666525D5B0EC006F5B19 /* StorageMigrator.swift */; };
 		957E667A25D5DD73006F5B19 /* StorageMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E667925D5DD73006F5B19 /* StorageMigratorTests.swift */; };
 		957E674C25E48753006F5B19 /* Bundle+Finder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E674B25E48753006F5B19 /* Bundle+Finder.swift */; };
@@ -898,6 +900,8 @@
 		955A5A4D258D04DF00CAEE9F /* PeriodicRecorderWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeriodicRecorderWorker.swift; sourceTree = "<group>"; };
 		955A5A4E258D04DF00CAEE9F /* RecorderWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderWorker.swift; sourceTree = "<group>"; };
 		955A5A4F258D04DF00CAEE9F /* EventsRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsRecorder.swift; sourceTree = "<group>"; };
+		95649FB92603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsBgSyncWorkerTest.swift; sourceTree = "<group>"; };
+		95649FBD260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentsBgSyncWorkerTest.swift; sourceTree = "<group>"; };
 		957E666525D5B0EC006F5B19 /* StorageMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageMigrator.swift; sourceTree = "<group>"; };
 		957E667925D5DD73006F5B19 /* StorageMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageMigratorTests.swift; sourceTree = "<group>"; };
 		957E674B25E48753006F5B19 /* Bundle+Finder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Finder.swift"; sourceTree = "<group>"; };
@@ -1621,7 +1625,9 @@
 				59AD7AC92465C32D00F5B0B4 /* EventDTOJsonTest.swift */,
 				595AD24C24E324D100A7B750 /* Base64UtilsTest.swift */,
 				59F4AAB42512581100A1C69A /* MySegmentsSyncWorkerTest.swift */,
+				95649FBD260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift */,
 				59F4AAB625128B7000A1C69A /* SplitsSyncWorkerTest.swift */,
+				95649FB92603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift */,
 				59F4AABE2513A97B00A1C69A /* PeriodicSplitsSyncWorkerTest.swift */,
 				59F4AAC32513EFF700A1C69A /* PeriodicMySegmentsSyncWorkerTest.swift */,
 				59F4AABC2513A2E800A1C69A /* SplitsUpdateWorkerTest.swift */,
@@ -2413,6 +2419,7 @@
 				95F3EFEC258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift in Sources */,
 				59F65F012562FF71005FE8C9 /* EventDaoTests.swift in Sources */,
 				954F9C75257961C100140B81 /* HttpSplitFetcherStub.swift in Sources */,
+				95649FBE260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift in Sources */,
 				59AD7ACA2465C32D00F5B0B4 /* EventDTOJsonTest.swift in Sources */,
 				5905D4F5255C596C006DA3B1 /* PersistentSplitsStorageStub.swift in Sources */,
 				59FB7C1621F79B8200ECC96A /* EventTypeNameHelper.swift in Sources */,
@@ -2553,6 +2560,7 @@
 				595B66CD231D91100030F330 /* SplitChangesTest.swift in Sources */,
 				5959C47C228050750064F968 /* SplitFactoryStub.swift in Sources */,
 				5921ED3325379AA3000D6C8B /* ReachabilityMock.swift in Sources */,
+				95649FBA2603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift in Sources */,
 				59F65F04256300CA005FE8C9 /* IntegrationCoreDataHelper.swift in Sources */,
 				957E667A25D5DD73006F5B19 /* StorageMigratorTests.swift in Sources */,
 				59F4AAD02518D4BB00A1C69A /* SyncWorkerFactoryStub.swift in Sources */,
