@@ -11,11 +11,14 @@ import Foundation
     case sdkReady
     case sdkReadyTimedOut
     case sdkReadyFromCache
+    case sdkUpdate
 
     func toString() -> String {
         switch self {
         case .sdkReady:
             return "SDK_READY"
+        case .sdkUpdate:
+            return "SDK_UPDATE"
         case .sdkReadyTimedOut:
             return "SDK_READY_TIMED_OUT"
         case .sdkReadyFromCache:

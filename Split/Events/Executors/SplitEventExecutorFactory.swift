@@ -11,6 +11,6 @@ class SplitEventExecutorFactory {
     static func factory(event: SplitEvent,
                         task: SplitEventTask,
                         resources: SplitEventExecutorResources) -> SplitEventExecutorProtocol {
-        return SplitEventExecutorWithClient(task: task, client: resources.getClient())
+        return SplitEventExecutorWithClient(task: task, client: resources.client)
     }
 }

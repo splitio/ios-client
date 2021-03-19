@@ -9,7 +9,9 @@
 import Foundation
 @testable import Split
 class SplitEventsManagerStub: SplitEventsManager {
+
     var splitsLoadedEventFiredCount = 0
+    var executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
     var mySegmentsLoadedEventFiredCount = 0
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         switch event {
@@ -22,14 +24,13 @@ class SplitEventsManagerStub: SplitEventsManager {
         }
     }
 
-    func getExecutorResources() -> SplitEventExecutorResources {
-        fatalError("getExecutorResources() has not been implemented")
-    }
-
     func register(event: SplitEvent, task: SplitEventTask) {
     }
 
     func start() {
+    }
+
+    func stop() {
     }
 
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
