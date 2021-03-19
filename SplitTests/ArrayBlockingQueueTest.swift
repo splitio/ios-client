@@ -27,17 +27,13 @@ class ArrayBlockingQueueTests: XCTestCase {
         abqt.append("STR_2")
         abqt.append("STR_3")
         
-        abqt.take(completion: {(element:String) -> Void in
-            assert(element == "STR_1")
-        })
+        let str1 = abqt.take()
+        let str2 = abqt.take()
+        let str3 = abqt.take()
         
-        abqt.take(completion: {(element:String) -> Void in
-            assert(element == "STR_2")
-        })
-        
-        abqt.take(completion: {(element:String) -> Void in
-            assert(element == "STR_3")
-        })
+        XCTAssertEqual("STR_1", str1)
+        XCTAssertEqual("STR_2", str2)
+        XCTAssertEqual("STR_3", str3)
         
     }
 }
