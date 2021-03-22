@@ -136,15 +136,12 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
         self.triggered.append(event)
         switch event {
-        case .splitsUpdated:
+        case .splitsUpdated, .mySegmentsUpdated:
             if isTriggered(external: .sdkReady) {
                 trigger(event: .sdkUpdated)
                 return
             }
             self.triggerSdkReadyIfNeeded()
-
-        case .mySegmentsUpdated:
-            triggerSdkReadyIfNeeded()
 
         case .mySegmentsLoadedFromCache, .splitsLoadedFromCache:
             if isTriggered(internal: .splitsLoadedFromCache), isTriggered(internal: .mySegmentsLoadedFromCache) {
