@@ -189,7 +189,7 @@ class SplitEventsManagerTest: XCTestCase {
         
     }
 
-    func testSdkUpdate() {
+    func testSdkUpdateSplits() {
         let sdkUpdatedExp = XCTestExpectation()
 
         let client =  SplitClientStub()
@@ -203,6 +203,39 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
+
+        let expectation = XCTestExpectation(description: "SDK Readky triggered")
+        DispatchQueue.global().async {
+            while !self.shouldStop {
+                sleep(UInt32(self.intervalExecutionTime))
+                self.maxExecutionTime -= self.intervalExecutionTime
+                if eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) || self.currentTimestamp() > self.maxExecutionTime {
+                    self.shouldStop = true;
+                    expectation.fulfill()
+                }
+            }
+        }
+        wait(for: [expectation, sdkUpdatedExp], timeout: expectationTimeOut)
+
+        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
+        XCTAssertTrue(updatedTask.taskTriggered, "SDK Update should be triggered");
+        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+    }
+
+    func testSdkUpdateMySegments() {
+        let sdkUpdatedExp = XCTestExpectation()
+
+        let client =  SplitClientStub()
+        let config: SplitClientConfig = SplitClientConfig()
+        let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
+        eventManager.executorResources.client = client
+        let updatedTask = sdkTask(exp: sdkUpdatedExp)
+        eventManager.register(event: .sdkUpdated, task: updatedTask)
+        eventManager.start()
+
+        eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
+        eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
+        eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
 
         let expectation = XCTestExpectation(description: "SDK Readky triggered")
         DispatchQueue.global().async {
