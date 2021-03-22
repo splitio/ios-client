@@ -109,7 +109,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey) {
                 Logger.d(segments.debugDescription)
                 mySegmentsStorage.set(segments)
-                fireReadyIsNeeded(event: SplitInternalEvent.mySegmentsAreReady)
+                fireReadyIsNeeded(event: SplitInternalEvent.mySegmentsUpdated)
                 resetBackoffCounter()
                 return true
             }
@@ -168,7 +168,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         }
 
         if syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache) {
-            fireReadyIsNeeded(event: SplitInternalEvent.splitsAreReady)
+            fireReadyIsNeeded(event: SplitInternalEvent.splitsUpdated)
             resetBackoffCounter()
             return true
         }
