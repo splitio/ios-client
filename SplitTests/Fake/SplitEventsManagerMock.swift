@@ -21,9 +21,9 @@ class SplitEventsManagerMock: SplitEventsManager {
     
     func notifyInternalEvent(_ event:SplitInternalEvent) {
         switch event {
-        case .mySegmentsAreReady:
+        case .mySegmentsUpdated:
             isSegmentsReadyFired = true
-        case .splitsAreReady:
+        case .splitsUpdated:
             isSplitsReadyFired = true
         case .sdkReadyTimeoutReached:
             isSdkTimeoutFired = true

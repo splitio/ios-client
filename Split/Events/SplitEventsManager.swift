@@ -123,7 +123,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private func registerMaxAllowedExecutionTimesPerEvent() {
 
         executionTimes = [ SplitEvent.sdkReady.toString(): 1,
-                           SplitEvent.sdkUpdate.toString(): -1,
+                           SplitEvent.sdkUpdated.toString(): -1,
                            SplitEvent.sdkReadyFromCache.toString(): 1,
                            SplitEvent.sdkReadyTimedOut.toString(): 1]
     }
@@ -136,14 +136,14 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
         self.triggered.append(event)
         switch event {
-        case .splitsAreReady:
+        case .splitsUpdated:
             if isTriggered(external: .sdkReady) {
-                trigger(event: .sdkUpdate)
+                trigger(event: .sdkUpdated)
                 return
             }
             self.triggerSdkReadyIfNeeded()
 
-        case .mySegmentsAreReady:
+        case .mySegmentsUpdated:
             triggerSdkReadyIfNeeded()
 
         case .mySegmentsLoadedFromCache, .splitsLoadedFromCache:
@@ -167,8 +167,8 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     private func triggerSdkReadyIfNeeded() {
-        if isTriggered(internal: .mySegmentsAreReady),
-           isTriggered(internal: .splitsAreReady),
+        if isTriggered(internal: .mySegmentsUpdated),
+           isTriggered(internal: .splitsUpdated),
            !isTriggered(external: .sdkReady) {
             self.saveMetrics()
             self.trigger(event: SplitEvent.sdkReady)
@@ -179,7 +179,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
         // If executionTimes is zero, maximum executions has been reached
         if executionTimes[event.toString()] == 0 {
             return
-
         }
 
         // If executionTimes is grater than zero, maximum executions decrease 1
@@ -197,9 +196,10 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     private func executeTask(event: SplitEvent, task: SplitEventTask) {
         DispatchQueue.main.async {
-            let executor: SplitEventExecutorProtocol = SplitEventExecutorFactory.factory(event: event,
-                                                                                         task: task,
-                                                                                         resources: self.executorResources)
+            let executor: SplitEventExecutorProtocol
+                = SplitEventExecutorFactory.factory(event: event,
+                                                    task: task,
+                                                    resources: self.executorResources)
             executor.execute()
         }
     }

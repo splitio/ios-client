@@ -74,8 +74,8 @@ class YamlSplitsStorage: SplitsStorage {
         }
 
         logFileInfo(name: fileName)
-        eventsManager.notifyInternalEvent(.mySegmentsAreReady)
-        eventsManager.notifyInternalEvent(.splitsAreReady)
+        eventsManager.notifyInternalEvent(.mySegmentsUpdated)
+        eventsManager.notifyInternalEvent(.splitsUpdated)
         if refreshInterval > 0 {
             self.taskExecutor = createTaskExecutor()
             self.start()
