@@ -75,7 +75,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         return RetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
                                                  splitsStorage: storageContainer.splitsStorage,
                                                  splitChangeProcessor: splitChangeProcessor,
-                                                 changeNumber: changeNumber,
+                                                 changeNumber: changeNumber, eventsManager: eventsManager,
                                                  reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
