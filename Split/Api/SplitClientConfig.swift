@@ -99,6 +99,18 @@ public class SplitClientConfig: NSObject {
     @objc public var serviceEndpoints = ServiceEndpoints.builder().build()
 
     ///
+    /// Enables/disables info messages in console, enabled by default.
+    ///
+    @objc public var isInfoModeEnabled: Bool {
+        get {
+            return Logger.shared.isInfoModeEnabled
+        }
+        set {
+            Logger.shared.isInfoModeEnabled = newValue
+        }
+    }
+    
+    ///
     /// Enables debug messages in console
     ///
     @objc public var isDebugModeEnabled: Bool {

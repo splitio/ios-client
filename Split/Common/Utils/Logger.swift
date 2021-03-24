@@ -15,6 +15,7 @@ class Logger {
 
     private var isVerboseEnabled = false
     private var isDebugEnabled = false
+    private var isInfoEnabled = true // Enabled by default
 
     enum Level: String {
         case verbose = "VERBOSE"
@@ -53,6 +54,21 @@ class Logger {
             }
         }
     }
+    
+    var isInfoModeEnabled: Bool {
+        get {
+            var isEnabled = true
+            queue.sync {
+                isEnabled = self.isInfoEnabled
+            }
+            return isEnabled
+        }
+        set {
+            queue.async(flags: .barrier) {
+                self.isInfoEnabled = newValue
+            }
+        }
+    }
 
     static let shared: Logger = {
         let instance = Logger()
@@ -65,7 +81,10 @@ class Logger {
     }
 
     private func log(level: Logger.Level, msg: String, _ ctx: Any ...) {
-
+        if !isInfoModeEnabled && level == Logger.Level.info {
+            return
+        }
+        
         if !isDebugModeEnabled && level == Logger.Level.debug {
             return
         }
