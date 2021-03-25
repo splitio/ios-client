@@ -44,9 +44,11 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
 
     private let synchronizer: Synchronizer
     private let mySegmentsStorage: MySegmentsStorage
+    var changesChecker: MySegmentsChangesChecker
     init(synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
+        self.changesChecker = DefaultMySegmentsChangesChecker()
         super.init(queueName: "MySegmentsUpdateWorker")
     }
 
@@ -59,7 +61,11 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
     private func process(_ notification: MySegmentsUpdateNotification) {
         if notification.includesPayload {
             if let segmentList = notification.segmentList {
-                mySegmentsStorage.set(segmentList)
+                let oldSegments = mySegmentsStorage.getAll()
+                if changesChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segmentList) {
+                    mySegmentsStorage.set(segmentList)
+                    synchronizer.notifiySegmentsUpdated()
+                }
             } else {
                 mySegmentsStorage.clear()
             }
@@ -93,13 +99,14 @@ class SplitKillWorker: UpdateWorker<SplitKillNotification> {
 
         }
 
-        if splitToKill.changeNumber ?? -1 > notification.changeNumber {
+        if splitToKill.changeNumber ?? -1 >= notification.changeNumber {
             return
         }
         splitToKill.defaultTreatment = notification.defaultTreatment
         splitToKill.changeNumber = notification.changeNumber
         splitToKill.killed = true
         splitsStorage.updateWithoutChecks(split: splitToKill)
+        synchronizer.notifySplitsUpdated()
         synchronizer.synchronizeSplits(changeNumber: notification.changeNumber)
     }
 }
