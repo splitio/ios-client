@@ -18,7 +18,10 @@ protocol ImpressionDao {
 
 class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
 
+    let json = JsonWrapper()
+
     func insert(_ impression: Impression) {
+
         executeAsync { [weak self] in
             guard let self = self else {
                 return
@@ -33,7 +36,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
                     }
                     obj.storageId = self.coreDataHelper.generateId()
                     obj.testName = testName
-                    obj.body = try Json.encodeToJson(impression)
+                    obj.body = try self.json.encodeToJson(impression)
                     obj.createdAt = Date().unixTimestamp()
                     obj.status = StorageRecordStatus.active
                     self.coreDataHelper.save()
