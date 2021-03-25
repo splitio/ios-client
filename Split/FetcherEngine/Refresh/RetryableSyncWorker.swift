@@ -108,7 +108,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
         self.mySegmentsStorage = mySegmentsStorage
         self.mySegmentsFetcher = mySegmentsFetcher
         self.metricsManager = metricsManager
-        self.changeChecker = MySegmentsChangesChecker()
+        self.changeChecker = DefaultMySegmentsChangesChecker()
 
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
@@ -142,6 +142,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     private let cacheExpiration: Int
     private let defaultQueryString: String
     private let syncHelper: SplitsSyncHelper
+    var changeChecker: SplitsChangesChecker
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
@@ -156,6 +157,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         self.splitChangeProcessor = splitChangeProcessor
         self.cacheExpiration = cacheExpiration
         self.defaultQueryString = defaultQueryString
+        self.changeChecker = DefaultSplitsChangesChecker()
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor)
@@ -181,8 +183,11 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         }
 
         if syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache) {
-            // No need to check for a change because this only used for initial sync
-            notifySplitsUpdated()
+            if !isSdkReadyTriggered() ||
+                changeChecker.splitsHaveChanged(oldChangeNumber: changeNumber,
+                                                newChangeNumber: splitsStorage.changeNumber) {
+                notifySplitsUpdated()
+            }
             resetBackoffCounter()
             return true
         }
@@ -213,7 +218,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         self.splitChangeProcessor = splitChangeProcessor
         self.changeNumber = changeNumber
         self.eventsManager = eventsManager
-        self.changeChecker = SplitsChangesChecker()
+        self.changeChecker = DefaultSplitsChangesChecker()
 
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitsFetcher,
                                            splitsStorage: splitsStorage,

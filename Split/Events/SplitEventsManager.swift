@@ -28,7 +28,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private var suscriptions = [SplitEvent: [SplitEventTask]]()
     private var executionTimes: [String: Int]
     private var triggered: [SplitInternalEvent]
-    private let processQueue = DispatchQueue(label: "splits-sdk-events-queue", target: DispatchQueue.global())
+    private let processQueue = DispatchQueue(label: "splits-sdk-events-queue")
     private var isStarted: Bool
 
     init(config: SplitClientConfig) {
@@ -131,9 +131,9 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private func processEvents() {
         // This function has to run on processQueue, set when creating the dispatch source
         guard let event = eventsQueue.take() else {
+
             return
         }
-
         self.triggered.append(event)
         switch event {
         case .splitsUpdated, .mySegmentsUpdated:

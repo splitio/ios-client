@@ -8,14 +8,22 @@
 
 import Foundation
 
-struct SplitsChangesChecker {
+protocol SplitsChangesChecker {
+    func splitsHaveChanged(oldChangeNumber: Int64, newChangeNumber: Int64) -> Bool
+}
+
+protocol MySegmentsChangesChecker {
+    func mySegmentsHaveChanged(old: [String], new: [String]) -> Bool
+}
+
+struct DefaultSplitsChangesChecker: SplitsChangesChecker {
     func splitsHaveChanged(oldChangeNumber: Int64, newChangeNumber: Int64) -> Bool {
         return oldChangeNumber < newChangeNumber
     }
 }
 
-struct MySegmentsChangesChecker {
+struct DefaultMySegmentsChangesChecker: MySegmentsChangesChecker {
     func mySegmentsHaveChanged(old: [String], new: [String]) -> Bool {
-        return old.count == new.count && old.sorted() == new.sorted()
+        return !(old.count == new.count && old.sorted() == new.sorted())
     }
 }

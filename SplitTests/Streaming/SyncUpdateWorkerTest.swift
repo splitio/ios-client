@@ -21,10 +21,12 @@ class SyncUpdateWorker: XCTestCase {
     var synchronizer: SynchronizerStub!
     var splitsStorage: SplitsStorageStub!
     var mySegmentsStorage: MySegmentsStorageStub!
+    var mySegmentsChangesChecker: MySegmentsChangesCheckerMock!
 
     override func setUp() {
         synchronizer = SynchronizerStub()
         splitsStorage = SplitsStorageStub()
+        mySegmentsChangesChecker = MySegmentsChangesCheckerMock()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "split1")],
                                                                archivedSplits: [],
                                                                changeNumber: 100,
@@ -32,7 +34,9 @@ class SyncUpdateWorker: XCTestCase {
         mySegmentsStorage = MySegmentsStorageStub()
 
         splitsUpdateWorker = SplitsUpdateWorker(synchronizer: synchronizer)
+
         mySegmentsUpdateWorker =  MySegmentsUpdateWorker(synchronizer: synchronizer, mySegmentsStorage: mySegmentsStorage)
+        mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
         splitKillWorker = SplitKillWorker(synchronizer: synchronizer, splitsStorage: splitsStorage)
     }
 
@@ -68,15 +72,17 @@ class SyncUpdateWorker: XCTestCase {
         XCTAssertTrue(synchronizer.synchronizeSplitsChangeNumberCalled)
     }
 
-    func testMySegmentsUpdateWorkerWithPayload() throws {
+    func testMySegmentsUpdateWorkerWithPayloadChanged() throws {
+
+
         let notification = MySegmentsUpdateNotification(changeNumber: 100,
                                                         includesPayload: true,
                                                         segmentList: ["s1", "s2"])
 
         let exp = XCTestExpectation(description: "exp")
         mySegmentsStorage.updateExpectation = exp
-
-
+        mySegmentsChangesChecker.haveChanged = true
+        mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
         try mySegmentsUpdateWorker.process(notification: notification)
 
         wait(for: [exp], timeout: 3)
@@ -85,6 +91,23 @@ class SyncUpdateWorker: XCTestCase {
         XCTAssertEqual(1, mySegmentsStorage.updatedSegments?.filter { $0 == "s1" }.count)
         XCTAssertEqual(1, mySegmentsStorage.updatedSegments?.filter { $0 == "s2" }.count)
         XCTAssertFalse(mySegmentsStorage.clearCalled)
+        XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
+        XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
+    }
+
+    func testMySegmentsUpdateWorkerWithPayloadWithoutChanges() throws {
+
+
+        let notification = MySegmentsUpdateNotification(changeNumber: 100,
+                                                        includesPayload: true,
+                                                        segmentList: ["s1", "s2"])
+
+        mySegmentsChangesChecker.haveChanged = false
+        mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
+        try mySegmentsUpdateWorker.process(notification: notification)
+
+        XCTAssertNil(mySegmentsStorage.updatedSegments)
+        XCTAssertFalse(synchronizer.notifyMySegmentsUpdatedCalled)
         XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
     }
 

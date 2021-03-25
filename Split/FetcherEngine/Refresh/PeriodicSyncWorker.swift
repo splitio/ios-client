@@ -151,7 +151,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.splitChangeProcessor = splitChangeProcessor
-        self.changeChecker = SplitsChangesChecker()
+        self.changeChecker = DefaultSplitsChangesChecker()
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor)
@@ -166,7 +166,8 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         }
         let storedChangeNumber = splitsStorage.changeNumber
         if syncHelper.sync(since: splitsStorage.changeNumber) {
-            if changeChecker.splitsHaveChanged(oldChangeNumber: storedChangeNumber, newChangeNumber: splitsStorage.changeNumber) {
+            if changeChecker.splitsHaveChanged(oldChangeNumber: storedChangeNumber,
+                                               newChangeNumber: splitsStorage.changeNumber) {
                 notifySplitsUpdated()
             }
         }
@@ -192,7 +193,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         self.mySegmentsFetcher = mySegmentsFetcher
         self.mySegmentsStorage = mySegmentsStorage
         self.metricsManager = metricsManager
-        changeChecker = MySegmentsChangesChecker()
+        changeChecker = DefaultMySegmentsChangesChecker()
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }
