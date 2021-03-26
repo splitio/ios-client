@@ -64,7 +64,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
                 }
                 return MockedResponse(code: 200, data: json)
             }
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9999999999999, \"till\": 9999999999999 }")
+            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 999999, \"till\": 999999 }")
 
         }
 
@@ -78,7 +78,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
             } else if index == self.spExp.count {
                 self.spExp[index - 1].fulfill()
             }
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9999999999999, \"till\": 9999999999999 }")
+            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 999999, \"till\": 999999 }")
         }
 
         webServer.route(method: .post, path: "/testImpressions/bulk") { request in
