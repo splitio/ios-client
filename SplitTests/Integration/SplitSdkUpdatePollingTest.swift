@@ -103,8 +103,8 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.segmentsRefreshRate = 99999
-        splitConfig.featuresRefreshRate = 99999999999
-        splitConfig.impressionRefreshRate = 9999999999
+        splitConfig.featuresRefreshRate = 99999
+        splitConfig.impressionRefreshRate = 99999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
         splitConfig.streamingEnabled = false
