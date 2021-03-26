@@ -18,6 +18,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
     var serverUrl = ""
     let kMatchingKey = IntegrationHelper.dummyUserKey
     var factory: SplitFactory?
+    var mySegmentsHits = 0
 
     let spExp = [
         XCTestExpectation(description: "upd 0"),
@@ -47,9 +48,25 @@ class SplitSdkUpdatePollingTest: XCTestCase {
             responses.append(MockedResponse(code: 200, data: try? Json.encodeToJson(data)))
         }
 
-        webServer.routeGet(path: "/mySegments/:user_id",
-                           data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, "
-                            + "{ \"id\":\"id1\", \"name\":\"segment2\"}]}")
+        webServer.route(method: .get, path: "/mySegments/:user_id") { request in
+
+            self.mySegmentsHits+=1
+            let hit = self.mySegmentsHits
+            var json = IntegrationHelper.emptyMySegments
+            if hit > 2 {
+                var mySegments = [Segment]()
+                for i in 1...hit {
+                    mySegments.append(Segment(id: "\(i)", name: "segment\(i)"))
+                }
+
+                if let segments = try? Json.encodeToJson(mySegments) {
+                    json = "{\"mySegments\": \(segments)}"
+                }
+                return MockedResponse(code: 200, data: json)
+            }
+            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9999999999999, \"till\": 9999999999999 }")
+
+        }
 
         webServer.route(method: .get, path: "/splitChanges") { request in
             let index = self.getAndIncrement()
@@ -167,9 +184,6 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         }
 
         wait(for: [sdkReady, sdkUpdate], timeout: 30)
-
-        // wait for sdk update
-        ThreadUtils.delay(seconds: 1.0)
 
         XCTAssertTrue(sdkReadyFired)
         XCTAssertTrue(sdkUpdatedFired)
