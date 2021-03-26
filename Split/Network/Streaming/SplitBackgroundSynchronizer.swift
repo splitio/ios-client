@@ -9,23 +9,74 @@
 import Foundation
 import BackgroundTasks
 
+
 @objc public class SplitBackgroundSynchronizer: NSObject {
 
     @objc public static let shared = SplitBackgroundSynchronizer()
 
+
+    private let taskId = "io.split.bg-sync.task"
+    private static let kTimeInterval = 15.0 * 60
+
+
+
+    // keys = [ApiKey: UserKey]
+    @objc public func schedule(keys: [String: String],
+                               serviceEndpoints: ServiceEndpoints? = nil) {
+        if #available(iOS 13.0, *) {
+            BGTaskScheduler.shared.register(
+                forTaskWithIdentifier: taskId,
+                using: nil) { task in
+                let operationQueue = OperationQueue()
+                for (apiKey, userKey) in keys {
+                    let executor = BackgroundSyncExecutor(apiKey: apiKey, userKey: userKey)
+                    executor.execute(operationQueue: operationQueue)
+                }
+
+                task.expirationHandler = {
+                    task.setTaskCompleted(success: false)
+                    operationQueue.cancelAllOperations()
+                }
+
+                operationQueue.addBarrierBlock {
+                    self.scheduleNextSync(taskId: self.taskId)
+                    task.setTaskCompleted(success: true)
+                }
+            }
+            scheduleNextSync(taskId: taskId)
+        } else {
+            Logger.w("Background sync only available for iOS 13+")
+        }
+    }
+
+    private func scheduleNextSync(taskId: String) {
+        if #available(iOS 13.0, *) {
+            print("Scheduling \(taskId)")
+            let request = BGAppRefreshTaskRequest(identifier: taskId)
+            request.earliestBeginDate = Date(timeIntervalSinceNow: SplitBackgroundSynchronizer.kTimeInterval)
+
+            do {
+                try BGTaskScheduler.shared.submit(request)
+            } catch {
+                print("Could not schedule Split background sync task: \(error)")
+            }
+        }
+    }
+}
+
+struct BackgroundSyncExecutor {
     private var splitsSyncWorker: BackgroundSyncWorker?
     private var mySegmentsSyncWorker: BackgroundSyncWorker?
     private var eventsRecorderWorker: RecorderWorker?
     private var impressionsRecorderWorker: RecorderWorker?
-    private static let kTimeInterval = 15.0 * 60
 
-    func create(apiKey: String, userKey: Key,
+    init(apiKey: String, userKey: String,
                 serviceEndpoints: ServiceEndpoints? = nil) {
 
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
 
         guard let storageContainer = try? SplitFactoryHelper.buildStorageContainer(
-                userKey: userKey.matchingKey, dataFolderName: dataFolderName, testDatabase: nil) else {
+                userKey: userKey, dataFolderName: dataFolderName, testDatabase: nil) else {
             return
         }
 
@@ -34,7 +85,7 @@ import BackgroundTasks
 
         let endpoints = serviceEndpoints ?? ServiceEndpoints.builder().build()
         let  endpointFactory = EndpointFactory(serviceEndpoints: endpoints,
-                                               apiKey: apiKey, userKey: userKey.matchingKey,
+                                               apiKey: apiKey, userKey: userKey,
                                                splitsQueryString: splitsFilterQueryString)
 
         let restClient = DefaultRestClient(httpClient: DefaultHttpClient.shared,
@@ -54,7 +105,7 @@ import BackgroundTasks
                                                            cacheExpiration: cacheExpiration)
 
         self.mySegmentsSyncWorker = BackgroundMySegmentsSyncWorker(
-            userKey: userKey.matchingKey, mySegmentsFetcher: mySegmentsFetcher,
+            userKey: userKey, mySegmentsFetcher: mySegmentsFetcher,
             mySegmentsStorage: storageContainer.mySegmentsStorage)
 
         let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
@@ -69,34 +120,7 @@ import BackgroundTasks
             impressionsPerPush: ServiceConstants.impressionsQueueSize)
     }
 
-    @objc public func schedule(apiKey: String, userKey: Key,
-                               taskId: String, serviceEndpoints: ServiceEndpoints? = nil) {
-        if #available(iOS 13.0, *) {
-            print("Registering \(taskId)")
-            BGTaskScheduler.shared.register(
-                forTaskWithIdentifier: taskId,
-                using: nil) { task in
-                self.create(apiKey: apiKey, userKey: userKey, serviceEndpoints: serviceEndpoints)
-                let operationQueue = self.syncOperation()
-                task.expirationHandler = {
-                    task.setTaskCompleted(success: false)
-                    operationQueue.cancelAllOperations()
-                }
-
-                operationQueue.addBarrierBlock {
-                    self.scheduleNextSync(taskId: taskId)
-                    task.setTaskCompleted(success: true)
-                }
-            }
-            scheduleNextSync(taskId: taskId)
-        } else {
-            Logger.w("Background sync only available for iOS 13+")
-        }
-    }
-
-    private func syncOperation() -> OperationQueue {
-
-        let operationQueue = OperationQueue()
+    func execute(operationQueue: OperationQueue) {
 
         operationQueue.addOperation {
             self.splitsSyncWorker?.execute()
@@ -112,21 +136,6 @@ import BackgroundTasks
 
         operationQueue.addOperation {
             self.impressionsRecorderWorker?.flush()
-        }
-        return operationQueue
-    }
-
-    private func scheduleNextSync(taskId: String) {
-        if #available(iOS 13.0, *) {
-            print("Scheduling \(taskId)")
-            let request = BGAppRefreshTaskRequest(identifier: taskId)
-            request.earliestBeginDate = Date(timeIntervalSinceNow: SplitBackgroundSynchronizer.kTimeInterval)
-
-            do {
-                try BGTaskScheduler.shared.submit(request)
-            } catch {
-                print("Could not schedule Split background sync task: \(error)")
-            }
         }
     }
 }
