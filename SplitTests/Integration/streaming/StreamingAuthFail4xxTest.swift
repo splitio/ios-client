@@ -43,6 +43,7 @@ class StreamingAuthFail4xxTest: XCTestCase {
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "pepe1"))
         let factory = builder.setApiKey(apiKey).setKey(key)
             .setConfig(splitConfig).build()!
 
