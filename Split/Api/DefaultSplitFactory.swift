@@ -59,7 +59,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
         let  endpointFactory = EndpointFactory(serviceEndpoints: config.serviceEndpoints,
-                                               apiKey: apiKey, userKey: key.matchingKey,
+                                               apiKey: apiKey,
                                                splitsQueryString: splitsFilterQueryString)
 
         let restClient = DefaultRestClient(httpClient: httpClient ?? DefaultHttpClient.shared,
@@ -111,6 +111,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
             .setSplitConfig(config).build()
 
+        setupBgSync(config: config, apiKey: apiKey, userKey: key.matchingKey)
+
         defaultClient = DefaultSplitClient(config: config, key: key, apiFacade: apiFacade,
                                            storageContainer: storageContainer,
                                            synchronizer: synchronizer, eventsManager: eventsManager) {
@@ -127,5 +129,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                      splitDatabase: storageContainer.splitDatabase,
                                                      userKey: userKey)
         _ = storageMigrator.runMigrationIfNeeded()
+    }
+
+    private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
+        if config.synchronizeInBackground {
+            SplitBackgroundSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)
+        } else {
+            SplitBackgroundSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)
+        }
     }
 }
