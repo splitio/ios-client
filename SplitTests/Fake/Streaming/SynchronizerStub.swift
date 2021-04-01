@@ -28,7 +28,7 @@ class SynchronizerStub: Synchronizer {
     var destroyCalled = false
 
     var notifyMySegmentsUpdatedCalled = false
-    var notifySplitsUpdatedCalled = false
+    var notifySplitKilledCalled = false
 
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
@@ -109,7 +109,7 @@ class SynchronizerStub: Synchronizer {
         notifyMySegmentsUpdatedCalled = true
     }
 
-    func notifySplitsUpdated() {
-        notifySplitsUpdatedCalled = true
+    func notifySplitKilled() {
+        notifySplitKilledCalled = true
     }
 }
