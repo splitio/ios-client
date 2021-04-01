@@ -13,4 +13,5 @@ public enum SplitInternalEvent {
     case mySegmentsLoadedFromCache
     case splitsLoadedFromCache
     case sdkReadyTimeoutReached
+    case splitKilledNotification
 }
