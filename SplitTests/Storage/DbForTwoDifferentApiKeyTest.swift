@@ -37,28 +37,16 @@ class DbForDifferentApiKeysTest: XCTestCase {
 
     var splitsChangesExp: XCTestExpectation?
 
-    let sseExp = XCTestExpectation(description: "Sse conn")
-    let kPrimaryChannel = "control_pri"
-    let kSecondaryChannel = "control_sec"
-
-    var mySegHitCount = 0
-    var splitsHitCount = 0
-
-    let kRefreshRate = 1
-
-    var mySegExps = [XCTestExpectation]()
-
-    var mySegExpIndex = 0
-    var splitsExpIndex = 0
-
-    var waitForSplitChangesHit = true
-    var waitForMySegmentsHit = false
+    var sseExp: [XCTestExpectation]!
+    var sseExpIndex = 0
 
     override func setUp() {
         timestamp = 100
     }
 
-    func initialization() {
+    func testInitialization() {
+        sseExpIndex = 0
+        sseExp = [XCTestExpectation(), XCTestExpectation()]
         // Factory 1
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.sdkReadyTimeOut = 60000
@@ -75,22 +63,24 @@ class DbForDifferentApiKeysTest: XCTestCase {
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient1)
         _ = builder.setReachabilityChecker(ReachabilityMock())
-        let factory = builder.setApiKey(apiKey1).setKey(key)
+        factory1 = builder.setApiKey(apiKey1).setKey(key)
             .setConfig(splitConfig).build()!
 
         let client1 = factory1.client
 
-        var sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        let sdkReadyExpectation1 = XCTestExpectation(description: "SDK READY Expectation")
 
         client1.on(event: SplitEvent.sdkReady) {
-            sdkReadyExpectation.fulfill()
+            sdkReadyExpectation1.fulfill()
         }
 
         client1.on(event: SplitEvent.sdkReadyTimedOut) {
-            sdkReadyExpectation.fulfill()
+            sdkReadyExpectation1.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
+        wait(for: [sdkReadyExpectation1, sseExp[0]], timeout: 20)
+        streamingBinding?.push(message: ":keepalive")
+        testSplitsUpdate(changeNumber: changeNumberF2)
 
         let t1Split1 = client1.getTreatment("split1")
         let t1Split2 = client1.getTreatment("split2")
@@ -98,7 +88,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
         client1.destroy()
 
         // Factory 2
-        let reqManager2 = HttpRequestManagerTestDispatcher(dispatcher: buildBasicDispatcher(factoryNumber: 1),
+        let reqManager2 = HttpRequestManagerTestDispatcher(dispatcher: buildBasicDispatcher(factoryNumber: 2),
                                                           streamingHandler: buildStreamingHandler())
         httpClient2 = DefaultHttpClient(session: session, requestManager: reqManager2)
 
@@ -106,69 +96,46 @@ class DbForDifferentApiKeysTest: XCTestCase {
         let builder2 = DefaultSplitFactoryBuilder()
         _ = builder2.setHttpClient(httpClient2)
         _ = builder2.setReachabilityChecker(ReachabilityMock())
-        let factory2 = builder2.setApiKey(apiKey1).setKey(key)
+        let factory2 = builder2.setApiKey(apiKey2).setKey(key)
             .setConfig(splitConfig).build()!
 
         let client2 = factory2.client
 
-        sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        let sdkReadyExpectation2 = XCTestExpectation(description: "SDK READY Expectation")
 
-        client1.on(event: SplitEvent.sdkReady) {
-            sdkReadyExpectation.fulfill()
+        client2.on(event: SplitEvent.sdkReady) {
+            sdkReadyExpectation2.fulfill()
         }
 
-        client1.on(event: SplitEvent.sdkReadyTimedOut) {
-            sdkReadyExpectation.fulfill()
+        client2.on(event: SplitEvent.sdkReadyTimedOut) {
+            sdkReadyExpectation2.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
+        wait(for: [sdkReadyExpectation2, sseExp[1]], timeout: 20)
 
-        let t2Split1 = client1.getTreatment("split1")
-        let t2Split2 = client1.getTreatment("split2")
+        let t2Split1 = client2.getTreatment("split1")
+        let t2Split2 = client2.getTreatment("split2")
 
         streamingBinding?.push(message: ":keepalive")
-//        waitForHits()
-//        wait(for: [mySegExps[mySegExpIndex],  splitsChangesExps[splitsExpIndex]], timeout: 7)
-//
-//        timestamp+=1000
-//        streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
-//                                                                                               segment: "new_segment"))
-//        justWait() // allow to my segments be updated
-//        let treatmentPaused = client.getTreatment(splitName)
-//
-//        timestamp+=1000
-//        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
-//                                                                                  controlType: "STREAMING_ENABLED"))
-//        justWait() // allow polling to stop
-//        timestamp+=1000
-//
-//        streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
-//                                                                                               segment: "new_segment"))
-//        justWait() // allow to my segments be updated
-//        let treatmentEnabled = client.getTreatment(splitName)
-//
-//        timestamp+=1000
-//        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
-//                                                                                  controlType: "STREAMING_DISABLED"))
-//
-//        timestamp+=1000
-//        streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
-//                                                                                               segment: "new_segment"))
-//        waitForHits()
-//        wait(for: [mySegExps[mySegExpIndex],  splitsChangesExps[splitsExpIndex]], timeout: 7)
-//
-//        justWait()
+
+        testSplitsUpdate(changeNumber: changeNumberF2)
 
         XCTAssertEqual("on", t1Split1)
-        XCTAssertEqual("on", t1Split1)
-        XCTAssertEqual("free", t2Split1)
-        XCTAssertEqual("on", t2Split1)
+        XCTAssertEqual("control", t1Split2)
+        XCTAssertEqual(-1, firstChangeNumbers[1])
+        XCTAssertEqual(changeNumberF1, lastChangeNumbers[1])
+
+        XCTAssertEqual("control", t2Split1)
+        XCTAssertEqual("on", t2Split2)
+        XCTAssertEqual(-1, firstChangeNumbers[2])
+        XCTAssertEqual(changeNumberF2, lastChangeNumbers[2])
     }
 
     private func testSplitsUpdate(changeNumber: Int64) {
         splitsChangesExp = XCTestExpectation()
         streamingBinding?.push(message: StreamingIntegrationHelper.splitUpdateMessage(timestamp: nextTimestamp(), changeNumber: Int(changeNumber)))
-        wait(for: [splitsChangesExp], 4)
+        wait(for: [splitsChangesExp!], timeout: 4)
+        ThreadUtils.delay(seconds: 0.2)
     }
 
     private func buildBasicDispatcher(factoryNumber: Int) -> HttpClientTestDispatcher {
@@ -177,7 +144,6 @@ class DbForDifferentApiKeysTest: XCTestCase {
             case let(urlString) where urlString.contains("splitChanges"):
                 let respChangeNumber = Self.changeNumberBase + Int64(factoryNumber)
                 self.lastChangeNumbers[factoryNumber] = request.parameters?["since"] as? Int64 ?? 0
-                self.splitsHitCount+=1
                 if self.lastChangeNumbers[factoryNumber] == -1 {
                     self.firstChangeNumbers[factoryNumber] = -1
                     return TestDispatcherResponse(code: 200, data: Data(self.splitChanges(factoryNumber: factoryNumber).utf8))
@@ -199,7 +165,9 @@ class DbForDifferentApiKeysTest: XCTestCase {
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            self.sseExp.fulfill()
+            let exp = self.sseExp[self.sseExpIndex]
+            self.sseExpIndex+=1
+            exp.fulfill()
             return self.streamingBinding!
         }
     }
