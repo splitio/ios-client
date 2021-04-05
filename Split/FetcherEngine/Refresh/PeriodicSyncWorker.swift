@@ -124,6 +124,14 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     func fetchFromRemote() {
         fatalError("fetch from remote not implemented")
     }
+
+    func notifyMySegmentsUpdated() {
+        eventsManager.notifyInternalEvent(.mySegmentsUpdated)
+    }
+
+    func notifySplitsUpdated() {
+        eventsManager.notifyInternalEvent(.splitsUpdated)
+    }
 }
 
 class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
@@ -131,6 +139,8 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
     private let splitChangeProcessor: SplitChangeProcessor
+    private let syncHelper: SplitsSyncHelper
+    var changeChecker: SplitsChangesChecker
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
@@ -141,6 +151,10 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.splitChangeProcessor = splitChangeProcessor
+        self.changeChecker = DefaultSplitsChangesChecker()
+        self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
+                                           splitsStorage: splitsStorage,
+                                           splitChangeProcessor: splitChangeProcessor)
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }
@@ -150,24 +164,12 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         if !isSdkReadyFired() {
             return
         }
-        do {
-            Logger.d("Fetching splits")
-            var nextSince = splitsStorage.changeNumber
-            var exit = false
-            while !exit {
-                let splitChange = try self.splitFetcher.execute(since: nextSince, headers: nil)
-                let newSince = splitChange.since
-                let newTill = splitChange.till
-                splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))
-                if newSince == newTill, newTill >= nextSince {
-                    exit = true
-                }
-                nextSince = newTill
+        let storedChangeNumber = splitsStorage.changeNumber
+        if syncHelper.sync(since: splitsStorage.changeNumber) {
+            if changeChecker.splitsHaveChanged(oldChangeNumber: storedChangeNumber,
+                                               newChangeNumber: splitsStorage.changeNumber) {
+                notifySplitsUpdated()
             }
-
-        } catch let error {
-            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
-            Logger.e("Problem fetching splitChanges: %@", error.localizedDescription)
         }
     }
 }
@@ -178,6 +180,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
     private let mySegmentsStorage: MySegmentsStorage
     private let userKey: String
     private let metricsManager: MetricsManager
+    var changeChecker: MySegmentsChangesChecker
 
     init(userKey: String,
          mySegmentsFetcher: HttpMySegmentsFetcher,
@@ -190,6 +193,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         self.mySegmentsFetcher = mySegmentsFetcher
         self.mySegmentsStorage = mySegmentsStorage
         self.metricsManager = metricsManager
+        changeChecker = DefaultMySegmentsChangesChecker()
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }
@@ -200,8 +204,12 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         do {
+            let oldSegments = mySegmentsStorage.getAll()
             if let segments = try mySegmentsFetcher.execute(userKey: userKey) {
-                mySegmentsStorage.set(segments)
+                if changeChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segments) {
+                    mySegmentsStorage.set(segments)
+                    notifyMySegmentsUpdated()
+                }
                 Logger.d(segments.debugDescription)
             }
         } catch let error {

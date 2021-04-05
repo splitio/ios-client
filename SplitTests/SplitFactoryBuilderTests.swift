@@ -65,7 +65,8 @@ class SplitFactoryBuilderTests: XCTestCase {
     }
     
     func testNullKey() {
-        let builder: SplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "pepe1"))
         let factory = builder
             .setApiKey("pepe")
             .setMatchingKey("pepe")
@@ -74,7 +75,8 @@ class SplitFactoryBuilderTests: XCTestCase {
     }
 
     func testKey() {
-        let builder: SplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "pepe1"))
         let factory = builder
             .setApiKey("pepe")
             .setKey(Key(matchingKey: "pepe"))
@@ -85,6 +87,9 @@ class SplitFactoryBuilderTests: XCTestCase {
     func testMultiFactorySameKey() {
         let builder1: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
         let builder2: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
+
+        _ = builder1.setTestDatabase(TestingHelper.createTestDatabase(name: "pepe1"))
+        _ = builder2.setTestDatabase(TestingHelper.createTestDatabase(name: "pepe2"))
         
         let logger = ValidationMessageLoggerStub()
         builder2.validationLogger = logger
@@ -111,6 +116,9 @@ class SplitFactoryBuilderTests: XCTestCase {
     func testMultiFactoryTwoSameKey() {
         let builder1: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
         let builder2: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
+
+        _ = builder1.setTestDatabase(TestingHelper.createTestDatabase(name: "pepe1"))
+        _ = builder2.setTestDatabase(TestingHelper.createTestDatabase(name: "pepe2"))
         
         let logger = ValidationMessageLoggerStub()
         builder2.validationLogger = logger
@@ -138,6 +146,9 @@ class SplitFactoryBuilderTests: XCTestCase {
     func testMultiFactoryDifferentKey() {
         let builder1: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
         let builder2: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
+
+        _ = builder1.setTestDatabase(TestingHelper.createTestDatabase(name: "pepe1"))
+        _ = builder2.setTestDatabase(TestingHelper.createTestDatabase(name: "pepe2"))
         
         let logger = ValidationMessageLoggerStub()
         builder2.validationLogger = logger
