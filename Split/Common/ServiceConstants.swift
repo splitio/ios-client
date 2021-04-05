@@ -13,4 +13,8 @@ struct ServiceConstants {
     static let recordedDataExpirationPeriodInSeconds: Int64 = 3600 * 24 * 90 // 90 days
     static let CacheControlHeader = "Cache-Control"
     static let CacheControlNoCache = "no-cache"
+    static let eventsPerPush: Int = 2000
+    static let impressionsQueueSize: Int = 30000
+    static let defaultDataFolder = "split_data"
+    static let cacheExpirationInSeconds = 864000
 }

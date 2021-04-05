@@ -9,13 +9,9 @@ import Foundation
 
 /// A thread-safe array.
 class SynchronizedArrayQueue<T> {
-    fileprivate let queue = DispatchQueue(label: "io.Split.Structs.ArraySerialBlockingQueue", attributes: .concurrent)
-    fileprivate var array = [T]()
-    fileprivate var firstAppend = true
-}
-
-// MARK: - Mutable
-extension SynchronizedArrayQueue {
+    private let queue = DispatchQueue(label: "io.Split.Structs.ArraySerialBlockingQueue", attributes: .concurrent)
+    private var array = [T]()
+    private var firstAppend = true
 
     // Adds a new element at the end of the array.
     func append( _ element: T) {
@@ -25,17 +21,13 @@ extension SynchronizedArrayQueue {
     }
 
     // Removes and returns the element at the specified position.
-    func take(completion: ((T) -> Void)? = nil) {
+    func take() -> T? {
+        var element: T?
         queue.sync {
-            guard !array.isEmpty else {
-                return
-            }
-
-            let element = self.array.remove(at: 0)
-
-            DispatchQueue.main.async {
-                completion?(element)
+            if !array.isEmpty {
+                element = self.array.remove(at: 0)
             }
         }
+        return element
     }
 }
