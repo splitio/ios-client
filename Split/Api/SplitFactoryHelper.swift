@@ -10,8 +10,8 @@ import Foundation
 
 struct SplitFactoryHelper {
     static func buildStorageContainer(userKey: String,
-                                       dataFolderName: String,
-                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
+                                      dataFolderName: String,
+                                      testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
         let dispatchQueue = DispatchQueue(label: "SplitCoreDataCache", target: DispatchQueue.global())
         var database: SplitDatabase?
