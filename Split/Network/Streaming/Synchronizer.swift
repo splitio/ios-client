@@ -25,7 +25,7 @@ protocol Synchronizer: ImpressionLogger {
     func stopPeriodicRecording()
     func pushEvent(event: EventDTO)
     func notifiySegmentsUpdated()
-    func notifySplitsUpdated()
+    func notifySplitKilled()
     func pause()
     func resume()
     func flush()
@@ -188,8 +188,8 @@ class DefaultSynchronizer: Synchronizer {
         splitEventsManager.notifyInternalEvent(.mySegmentsUpdated)
     }
 
-    func notifySplitsUpdated() {
-        splitEventsManager.notifyInternalEvent(.splitsUpdated)
+    func notifySplitKilled() {
+        splitEventsManager.notifyInternalEvent(.splitKilledNotification)
     }
 
     func pause() {

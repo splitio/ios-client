@@ -131,7 +131,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private func processEvents() {
         // This function has to run on processQueue, set when creating the dispatch source
         guard let event = eventsQueue.take() else {
-
             return
         }
         self.triggered.append(event)
@@ -147,7 +146,11 @@ class DefaultSplitEventsManager: SplitEventsManager {
             if isTriggered(internal: .splitsLoadedFromCache), isTriggered(internal: .mySegmentsLoadedFromCache) {
                 trigger(event: SplitEvent.sdkReadyFromCache)
             }
-
+        case .splitKilledNotification:
+            if isTriggered(external: .sdkReady) {
+                trigger(event: .sdkUpdated)
+                return
+            }
         case .sdkReadyTimeoutReached:
             if !isTriggered(external: .sdkReady) {
                 trigger(event: SplitEvent.sdkReadyTimedOut)
