@@ -1,11 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'Split'
   s.module_name      = 'Split'
-<<<<<<< HEAD
   s.version          = '2.9.2'
-=======
-  s.version          = '2.9.1'
->>>>>>> e158d85a604c95cd67ef884fc80f7120cd90bc04
   s.summary          = 'iOS SDK for Split'
   s.description      = <<-DESC
 This SDK is designed to work with Split, the platform for controlled rollouts, serving features to your users via the Split feature flag to manage your complete customer experience.
