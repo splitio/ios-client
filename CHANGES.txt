@@ -2,7 +2,7 @@
 - Added SDK Updated event to notify when Splits or My Segments change
 
 2.9.1: (Mar 10, 2021)
-- Fixed performance issue when pushing data to local storage
+- Fixed performance issue when pushing data to local storage and flushing data
 
 2.9.0: (Feb 26, 2021)
 - Updated cache mechanism to use code data store instead of plain json files

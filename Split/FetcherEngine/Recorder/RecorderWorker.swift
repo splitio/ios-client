@@ -17,6 +17,7 @@ protocol RecorderSyncHelper {
     // Push an item and checks if max queue size is reached
     func pushAndCheckFlush(_ item: Item) -> Bool
     func updateAccumulator(count: Int, bytes: Int)
+    func resetAccumulator()
 }
 
 class EventsRecorderSyncHelper: RecorderSyncHelper {
@@ -33,6 +34,10 @@ class EventsRecorderSyncHelper: RecorderSyncHelper {
     func pushAndCheckFlush(_ item: EventDTO) -> Bool {
         self.eventsStorage.push(event: item)
         return accumulator.checkIfFlushIsNeeded(sizeInBytes: item.sizeInBytes)
+    }
+
+    func resetAccumulator() {
+        updateAccumulator(count: 0, bytes: 0)
     }
 
     func updateAccumulator(count: Int, bytes: Int) {
@@ -54,6 +59,10 @@ class ImpressionsRecorderSyncHelper: RecorderSyncHelper {
     func pushAndCheckFlush(_ item: Impression) -> Bool {
         self.impressionsStorage.push(impression: item)
         return accumulator.checkIfFlushIsNeeded(sizeInBytes: ServiceConstants.estimatedImpressionSizeInBytes)
+    }
+
+    func resetAccumulator() {
+        updateAccumulator(count: 0, bytes: 0)
     }
 
     func updateAccumulator(count: Int, bytes: Int) {
@@ -81,17 +90,11 @@ class DefaultRecorderFlushChecker: RecorderFlushChecker {
     }
 
     func checkIfFlushIsNeeded(sizeInBytes: Int) -> Bool {
-        var pushCount = 0
-        var pushBytes = 0
         var flush = false
         queue.sync {
             pushedCount+=1
             totalPushedSizeInBytes+=sizeInBytes
-            pushCount = pushedCount
-            pushBytes = totalPushedSizeInBytes
-            if pushCount >= maxQueueSize || pushBytes >= maxQueueSizeInBytes {
-                self.pushedCount = 0
-                self.totalPushedSizeInBytes = 0
+            if self.pushedCount >= maxQueueSize || self.totalPushedSizeInBytes >= maxQueueSizeInBytes {
                 flush = true
             }
         }
