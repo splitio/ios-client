@@ -1,4 +1,4 @@
-2.9.2: (Abr 7, 2021)
+2.10.0: (Abr 9, 2021)
 - Added SDK Updated event to notify when Splits or My Segments change
 
 2.9.1: (Mar 10, 2021)
