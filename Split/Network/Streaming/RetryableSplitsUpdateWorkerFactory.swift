@@ -23,13 +23,13 @@ protocol SyncWorkerFactory {
 
     func createPeriodicMySegmentsSyncWorker() -> PeriodicSyncWorker
 
-    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> PeriodicRecorderWorker
+    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> PeriodicRecorderWorker
 
-    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> RecorderWorker
+    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker
 
-    func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper) -> PeriodicRecorderWorker
+    func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker
 
-    func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper) -> RecorderWorker
+    func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> RecorderWorker
 }
 
 class DefaultSyncWorkerFactory: SyncWorkerFactory {
@@ -75,7 +75,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         return RetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
                                                  splitsStorage: storageContainer.splitsStorage,
                                                  splitChangeProcessor: splitChangeProcessor,
-                                                 changeNumber: changeNumber,
+                                                 changeNumber: changeNumber, eventsManager: eventsManager,
                                                  reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
@@ -104,35 +104,39 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
             timer: DefaultPeriodicTimer(interval: splitConfig.segmentsRefreshRate), eventsManager: eventsManager)
     }
 
-    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> PeriodicRecorderWorker {
+    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> PeriodicRecorderWorker {
         let impressionWorker = ImpressionsRecorderWorker(impressionsStorage: storageContainer.impressionsStorage,
                                                          impressionsRecorder: apiFacade.impressionsRecorder,
-                                                         impressionsPerPush: Int(splitConfig.impressionsChunkSize))
+                                                         impressionsPerPush: Int(splitConfig.impressionsChunkSize),
+                                                         impressionsSyncHelper: syncHelper)
 
         let timer = DefaultPeriodicTimer(deadline: 0, interval: splitConfig.impressionRefreshRate)
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: impressionWorker)
     }
 
-    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper) -> RecorderWorker {
+    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker {
         return ImpressionsRecorderWorker(impressionsStorage: storageContainer.impressionsStorage,
-                                                         impressionsRecorder: apiFacade.impressionsRecorder,
-                                                         impressionsPerPush: Int(splitConfig.impressionsChunkSize))
+                                         impressionsRecorder: apiFacade.impressionsRecorder,
+                                         impressionsPerPush: Int(splitConfig.impressionsChunkSize),
+                                         impressionsSyncHelper: syncHelper)
     }
 
-    func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper) -> PeriodicRecorderWorker {
+    func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker {
         let eventsWorker = EventsRecorderWorker(eventsStorage: storageContainer.eventsStorage,
                                                          eventsRecorder: apiFacade.eventsRecorder,
-                                                         eventsPerPush: Int(splitConfig.eventsPerPush))
+                                                         eventsPerPush: Int(splitConfig.eventsPerPush),
+                                                         eventsSyncHelper: syncHelper)
 
         let timer = DefaultPeriodicTimer(deadline: splitConfig.eventsFirstPushWindow,
                                          interval: splitConfig.eventsPushRate)
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: eventsWorker)
     }
 
-    func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper) -> RecorderWorker {
+    func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> RecorderWorker {
         return EventsRecorderWorker(eventsStorage: storageContainer.eventsStorage,
                                                        eventsRecorder: apiFacade.eventsRecorder,
-                                                       eventsPerPush: Int(splitConfig.eventsPerPush))
+                                                       eventsPerPush: Int(splitConfig.eventsPerPush),
+                                                       eventsSyncHelper: syncHelper)
 
     }
 }

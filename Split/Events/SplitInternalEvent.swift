@@ -8,11 +8,10 @@
 import Foundation
 
 public enum SplitInternalEvent {
-    case mySegmentsAreReady
-    case splitsAreReady
+    case mySegmentsUpdated
+    case splitsUpdated
     case mySegmentsLoadedFromCache
     case splitsLoadedFromCache
     case sdkReadyTimeoutReached
-    case splitsAreUpdated
-    case mySegmentsAreUpdated
+    case splitKilledNotification
 }
