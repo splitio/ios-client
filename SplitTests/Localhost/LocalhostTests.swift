@@ -192,7 +192,9 @@ class LocalhostTests: XCTestCase {
     }
     
     func testDefaultFactoryCreation() {
-        let factory = DefaultSplitFactoryBuilder().setApiKey("no_localhost_key").setMatchingKey("pepe").build() as? DefaultSplitFactory
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "GralIntegrationTest"))
+        let factory = builder.setApiKey("no_localhost_key").setMatchingKey("pepe").build() as? DefaultSplitFactory
         XCTAssertNotNil(factory)
     }
 

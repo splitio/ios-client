@@ -58,6 +58,7 @@ class StreamingControlTest: XCTestCase {
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
         let factory = builder.setApiKey(apiKey).setKey(key)
             .setConfig(splitConfig).build()!
 

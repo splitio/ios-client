@@ -107,6 +107,7 @@ class DestroyTests: XCTestCase {
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "GralIntegrationTest"))
         let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory?.client
@@ -144,7 +145,7 @@ class DestroyTests: XCTestCase {
             _ = semaphore.signal()
         })
         semaphore.wait()
-        sleep(15)
+        sleep(1)
 
         let trackHitCounterBeforeDestroy = trackHitCounter
         let impressionsHitCountBeforeDestroy = impressionsHitCount
@@ -153,7 +154,7 @@ class DestroyTests: XCTestCase {
 
         clearCounters()
 
-        sleep(10)
+        sleep(1)
 
         let trackHitCounterAfterDestroy = trackHitCounter
         let impressionsHitCountAfterDestroy = impressionsHitCount

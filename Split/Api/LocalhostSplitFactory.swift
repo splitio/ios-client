@@ -54,7 +54,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
 
         localhostClient = LocalhostSplitClient(key: key, splitsStorage: splitsStorage,
                                                eventsManager: eventsManager)
-        eventsManager.getExecutorResources().setClient(client: localhostClient)
+        eventsManager.executorResources.client = localhostClient
         localhostManager = DefaultSplitManager(splitsStorage: splitsStorage)
     }
 }
