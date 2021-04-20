@@ -12,8 +12,6 @@ import XCTest
 
 class SynchronizerStub: Synchronizer {
 
-
-
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
     var syncAllCalled = false
@@ -28,6 +26,9 @@ class SynchronizerStub: Synchronizer {
     var pushImpressionCalled = false
     var flushCalled = false
     var destroyCalled = false
+
+    var notifyMySegmentsUpdatedCalled = false
+    var notifySplitKilledCalled = false
 
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
@@ -102,5 +103,13 @@ class SynchronizerStub: Synchronizer {
     }
 
     func resume() {
+    }
+
+    func notifiySegmentsUpdated() {
+        notifyMySegmentsUpdatedCalled = true
+    }
+
+    func notifySplitKilled() {
+        notifySplitKilledCalled = true
     }
 }

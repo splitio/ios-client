@@ -19,7 +19,7 @@ protocol EventDao {
 class CoreDataEventDao: BaseCoreDataDao, EventDao {
 
     func insert(_ event: EventDTO) {
-        executeAsync { [weak self] in
+        execute { [weak self] in
             guard let self = self else {
                 return
             }
@@ -56,7 +56,7 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
 
     func update(ids: [String], newStatus: Int32) {
         let predicate = NSPredicate(format: "storageId IN %@", ids)
-        executeAsync { [weak self] in
+        execute { [weak self] in
             guard let self = self else {
                 return
             }
@@ -73,7 +73,7 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
         if events.count == 0 {
             return
         }
-        executeAsync { [weak self] in
+        execute { [weak self] in
             guard let self = self else {
                 return
             }

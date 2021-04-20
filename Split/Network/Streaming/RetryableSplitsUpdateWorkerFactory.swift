@@ -75,7 +75,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         return RetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
                                                  splitsStorage: storageContainer.splitsStorage,
                                                  splitChangeProcessor: splitChangeProcessor,
-                                                 changeNumber: changeNumber,
+                                                 changeNumber: changeNumber, eventsManager: eventsManager,
                                                  reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
@@ -116,8 +116,9 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
 
     func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker {
         return ImpressionsRecorderWorker(impressionsStorage: storageContainer.impressionsStorage,
-                                                         impressionsRecorder: apiFacade.impressionsRecorder,
-                                                         impressionsPerPush: Int(splitConfig.impressionsChunkSize))
+                                         impressionsRecorder: apiFacade.impressionsRecorder,
+                                         impressionsPerPush: Int(splitConfig.impressionsChunkSize),
+                                         impressionsSyncHelper: syncHelper)
     }
 
     func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker {

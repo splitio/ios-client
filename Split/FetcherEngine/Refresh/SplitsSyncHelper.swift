@@ -33,7 +33,7 @@ class SplitsSyncHelper {
                 let splitChange = try self.splitFetcher.execute(since: nextSince, headers: headers)
                 let newSince = splitChange.since
                 let newTill = splitChange.till
-                if clearBeforeUpdate {
+                if clearCache {
                     splitsStorage.clear()
                 }
                 firstFetch = false

@@ -25,12 +25,12 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
 
     var completion: SyncCompletion?
     private var reconnectBackoffCounter: ReconnectBackoffCounter
-    private var splitEventsManager: SplitEventsManager?
+    private var splitEventsManager: SplitEventsManager
     private var isFirstFetch = Atomic<Bool>(true)
     private var isRunning = Atomic<Bool>(false)
     private let loopQueue = DispatchQueue.global()
 
-    init(eventsManager: SplitEventsManager? = nil,
+    init(eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
 
         self.splitEventsManager = eventsManager
@@ -64,10 +64,16 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
         }
     }
 
-    func fireReadyIsNeeded(event: SplitInternalEvent) {
-        if isFirstFetch.getAndSet(false) {
-            splitEventsManager?.notifyInternalEvent(event)
-        }
+    func notifySplitsUpdated() {
+        splitEventsManager.notifyInternalEvent(.splitsUpdated)
+    }
+
+    func notifyMySegmentsUpdated() {
+        splitEventsManager.notifyInternalEvent(.mySegmentsUpdated)
+    }
+
+    func isSdkReadyTriggered() -> Bool {
+        return self.splitEventsManager.eventAlreadyTriggered(event: .sdkReady)
     }
 
     func resetBackoffCounter() {
@@ -90,6 +96,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
     private let userKey: String
     private let mySegmentsStorage: MySegmentsStorage
     private let metricsManager: MetricsManager
+    var changeChecker: MySegmentsChangesChecker
 
     init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
          mySegmentsStorage: MySegmentsStorage,
@@ -101,15 +108,21 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
         self.mySegmentsStorage = mySegmentsStorage
         self.mySegmentsFetcher = mySegmentsFetcher
         self.metricsManager = metricsManager
+        self.changeChecker = DefaultMySegmentsChangesChecker()
+
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() -> Bool {
         do {
+            let oldSegments = mySegmentsStorage.getAll()
             if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey) {
                 Logger.d(segments.debugDescription)
-                mySegmentsStorage.set(segments)
-                fireReadyIsNeeded(event: SplitInternalEvent.mySegmentsAreReady)
+                if !isSdkReadyTriggered() ||
+                    changeChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segments) {
+                    mySegmentsStorage.set(segments)
+                    notifyMySegmentsUpdated()
+                }
                 resetBackoffCounter()
                 return true
             }
@@ -129,6 +142,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     private let cacheExpiration: Int
     private let defaultQueryString: String
     private let syncHelper: SplitsSyncHelper
+    var changeChecker: SplitsChangesChecker
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
@@ -143,6 +157,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         self.splitChangeProcessor = splitChangeProcessor
         self.cacheExpiration = cacheExpiration
         self.defaultQueryString = defaultQueryString
+        self.changeChecker = DefaultSplitsChangesChecker()
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor)
@@ -168,7 +183,11 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         }
 
         if syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache) {
-            fireReadyIsNeeded(event: SplitInternalEvent.splitsAreReady)
+            if !isSdkReadyTriggered() ||
+                changeChecker.splitsHaveChanged(oldChangeNumber: changeNumber,
+                                                newChangeNumber: splitsStorage.changeNumber) {
+                notifySplitsUpdated()
+            }
             resetBackoffCounter()
             return true
         }
@@ -184,26 +203,37 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
     private let changeNumber: Int64
     private let controlNoCacheHeader = [ServiceConstants.CacheControlHeader: ServiceConstants.CacheControlNoCache]
     private let syncHelper: SplitsSyncHelper
+    private let eventsManager: SplitEventsManager
+    var changeChecker: SplitsChangesChecker
 
     init(splitsFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          changeNumber: Int64,
+         eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
 
         self.splitsFetcher = splitsFetcher
         self.splitsStorage = splitsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.changeNumber = changeNumber
+        self.eventsManager = eventsManager
+        self.changeChecker = DefaultSplitsChangesChecker()
+
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitsFetcher,
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor)
-        super.init(reconnectBackoffCounter: reconnectBackoffCounter)
+        super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() -> Bool {
-        if changeNumber < splitsStorage.changeNumber ||
+        let storedChangeNumber = splitsStorage.changeNumber
+        if changeNumber < storedChangeNumber ||
            syncHelper.sync(since: splitsStorage.changeNumber, clearBeforeUpdate: false, headers: controlNoCacheHeader) {
+            if changeChecker.splitsHaveChanged(oldChangeNumber: storedChangeNumber,
+                                                     newChangeNumber: splitsStorage.changeNumber) {
+                notifySplitsUpdated()
+            }
             resetBackoffCounter()
             return true
         }

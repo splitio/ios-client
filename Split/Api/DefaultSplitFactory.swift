@@ -120,7 +120,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             manager.destroy()
         }
 
-        eventsManager.getExecutorResources().setClient(client: defaultClient!)
+        eventsManager.executorResources.client = defaultClient
         syncManager.start()
     }
 

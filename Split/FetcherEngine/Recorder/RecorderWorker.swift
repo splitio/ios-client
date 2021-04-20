@@ -17,6 +17,7 @@ protocol RecorderSyncHelper {
     // Push an item and checks if max queue size is reached
     func pushAndCheckFlush(_ item: Item) -> Bool
     func updateAccumulator(count: Int, bytes: Int)
+    func resetAccumulator()
 }
 
 class EventsRecorderSyncHelper: RecorderSyncHelper {
@@ -31,11 +32,12 @@ class EventsRecorderSyncHelper: RecorderSyncHelper {
     }
 
     func pushAndCheckFlush(_ item: EventDTO) -> Bool {
-
-        DispatchQueue.global().async {
-            self.eventsStorage.push(event: item)
-        }
+        self.eventsStorage.push(event: item)
         return accumulator.checkIfFlushIsNeeded(sizeInBytes: item.sizeInBytes)
+    }
+
+    func resetAccumulator() {
+        updateAccumulator(count: 0, bytes: 0)
     }
 
     func updateAccumulator(count: Int, bytes: Int) {
@@ -55,11 +57,12 @@ class ImpressionsRecorderSyncHelper: RecorderSyncHelper {
     }
 
     func pushAndCheckFlush(_ item: Impression) -> Bool {
-
-        DispatchQueue.global().async {
-            self.impressionsStorage.push(impression: item)
-        }
+        self.impressionsStorage.push(impression: item)
         return accumulator.checkIfFlushIsNeeded(sizeInBytes: ServiceConstants.estimatedImpressionSizeInBytes)
+    }
+
+    func resetAccumulator() {
+        updateAccumulator(count: 0, bytes: 0)
     }
 
     func updateAccumulator(count: Int, bytes: Int) {
@@ -76,8 +79,9 @@ class DefaultRecorderFlushChecker: RecorderFlushChecker {
 
     private let maxQueueSize: Int
     private let maxQueueSizeInBytes: Int
-    private var pushedCount = AtomicInt(0)
-    private var totalPushedSizeInBytes = AtomicInt(0)
+    private var pushedCount = 0
+    private var totalPushedSizeInBytes = 0
+    private var queue = DispatchQueue(label: "split-recorder-worker", target: DispatchQueue.global())
 
     init(maxQueueSize: Int,
          maxQueueSizeInBytes: Int) {
@@ -86,16 +90,21 @@ class DefaultRecorderFlushChecker: RecorderFlushChecker {
     }
 
     func checkIfFlushIsNeeded(sizeInBytes: Int) -> Bool {
-        let pushCount = pushedCount.addAndGet(1)
-        let pushBytes = totalPushedSizeInBytes.addAndGet(sizeInBytes)
-        if pushCount >= maxQueueSize || pushBytes >= maxQueueSizeInBytes {
-            return true
+        var flush = false
+        queue.sync {
+            pushedCount+=1
+            totalPushedSizeInBytes+=sizeInBytes
+            if self.pushedCount >= maxQueueSize || self.totalPushedSizeInBytes >= maxQueueSizeInBytes {
+                flush = true
+            }
         }
-        return false
+        return flush
     }
 
     func update(count: Int, bytes: Int) {
-        pushedCount.set(count)
-        totalPushedSizeInBytes.set(bytes)
+        queue.sync {
+            pushedCount = count
+            totalPushedSizeInBytes = bytes
+        }
     }
 }
