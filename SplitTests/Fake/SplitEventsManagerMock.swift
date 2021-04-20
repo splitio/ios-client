@@ -10,7 +10,8 @@ import Foundation
 @testable import Split
 
 class SplitEventsManagerMock: SplitEventsManager {
-    
+
+    let executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
     var isSdkReadyFired: Bool {
         return isSegmentsReadyFired && isSplitsReadyFired
     }
@@ -20,9 +21,9 @@ class SplitEventsManagerMock: SplitEventsManager {
     
     func notifyInternalEvent(_ event:SplitInternalEvent) {
         switch event {
-        case .mySegmentsAreReady:
+        case .mySegmentsUpdated:
             isSegmentsReadyFired = true
-        case .splitsAreReady:
+        case .splitsUpdated:
             isSplitsReadyFired = true
         case .sdkReadyTimeoutReached:
             isSdkTimeoutFired = true
@@ -30,15 +31,15 @@ class SplitEventsManagerMock: SplitEventsManager {
             print("\(event)")
         }
     }
-    
-    func getExecutorResources() -> SplitEventExecutorResources {
-        return SplitEventExecutorResources()
-    }
+
     
     func register(event: SplitEvent, task: SplitEventTask) {
     }
     
     func start() {
+    }
+
+    func stop() {
     }
     
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {

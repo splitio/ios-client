@@ -38,7 +38,6 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
                                                             metricsManager: MetricsManagerStub(),
                                                             timer: timer,
                                                             eventsManager: eventsManager)
-
         mySegmentsSyncWorker.start()
 
         for _ in 0..<5 {

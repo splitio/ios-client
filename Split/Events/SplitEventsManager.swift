@@ -8,42 +8,39 @@
 import Foundation
 
 protocol SplitEventsManager {
+    var executorResources: SplitEventExecutorResources { get }
     func notifyInternalEvent(_ event: SplitInternalEvent)
-    func getExecutorResources() -> SplitEventExecutorResources
     func register(event: SplitEvent, task: SplitEventTask)
     func start()
+    func stop()
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
     func getExecutionTimes() -> [String: Int]
 }
 
 class DefaultSplitEventsManager: SplitEventsManager {
-    private let queue: SynchronizedArrayQueue<SplitInternalEvent>
-    private var queueReadingTimer: DispatchSourceTimer?
-    private let queueReadingRefreshTime: Int
-
-    private var eventMySegmentsAreReady: Bool
-    private var eventSplitsAreReady: Bool
-
-    private var eventLocalMySegmentsAreLoaded: Bool
-    private var eventLocalSplitsAreLoaded: Bool
+    let executorResources: SplitEventExecutorResources
+    private let eventsQueue: SynchronizedArrayQueue<SplitInternalEvent>
+    private var eventsReadingTimer: DispatchSourceTimer
+    private let readingRefreshTime: Int
 
     private var sdkReadyTimeStart: Int64
 
     private var suscriptions = [SplitEvent: [SplitEventTask]]()
-    private let executorResources: SplitEventExecutorResources?
     private var executionTimes: [String: Int]
+    private var triggered: [SplitInternalEvent]
+    private let processQueue = DispatchQueue(label: "splits-sdk-events-queue")
+    private var isStarted: Bool
 
     init(config: SplitClientConfig) {
-        sdkReadyTimeStart = Date().unixTimestampInMiliseconds()
-        queue = SynchronizedArrayQueue<SplitInternalEvent>()
-        queueReadingRefreshTime = 300
-        eventMySegmentsAreReady = false
-        eventSplitsAreReady = false
-        eventLocalMySegmentsAreLoaded = false
-        eventLocalSplitsAreLoaded = false
+        self.isStarted = false
+        self.eventsReadingTimer = DispatchSource.makeTimerSource(queue: processQueue)
+        self.sdkReadyTimeStart = Date().unixTimestampInMiliseconds()
+        self.eventsQueue = SynchronizedArrayQueue<SplitInternalEvent>()
+        self.readingRefreshTime = 300
+        self.triggered = [SplitInternalEvent]()
 
-        executorResources = SplitEventExecutorResources()
-        executionTimes = [String: Int]()
+        self.executorResources = SplitEventExecutorResources()
+        self.executionTimes = [String: Int]()
         registerMaxAllowedExecutionTimesPerEvent()
 
         if config.sdkReadyTimeOut > 0 {
@@ -52,21 +49,16 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 self.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
             })
         }
-
     }
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        queue.append(event)
-    }
-
-    func getExecutorResources() -> SplitEventExecutorResources {
-        return executorResources!
+        processQueue.async {
+            self.eventsQueue.append(event)
+        }
     }
 
     func register(event: SplitEvent, task: SplitEventTask) {
-        let queue = DispatchQueue(label: "io.Split.Register.SplitEventTask")
-        queue.sync {
-
+        processQueue.sync {
             // If event is already triggered, execute the task
             if self.executionTimes[event.toString()] != nil && self.executionTimes[event.toString()] == 0 {
                 executeTask(event: event, task: task)
@@ -82,32 +74,47 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     func start() {
-        let queue = DispatchQueue(label: "io.Split.Reading.Queue")
-        queueReadingTimer = DispatchSource.makeTimerSource(queue: queue)
-        queueReadingTimer!.schedule(deadline: .now(), repeating: .milliseconds(queueReadingRefreshTime))
-        queueReadingTimer!.setEventHandler { [weak self] in
-            guard let strongSelf = self else {
+        let timer = self.eventsReadingTimer
+        processQueue.sync {
+            if self.isStarted {
                 return
             }
-            guard strongSelf.queueReadingTimer != nil else {
-                strongSelf.stopReadingQueue()
-                return
+            self.isStarted = true
+
+            timer.schedule(deadline: .now(), repeating: .milliseconds(readingRefreshTime))
+            timer.setEventHandler { [weak self] in
+                guard let self = self else {
+                    return
+                }
+                self.processEvents()
             }
-            strongSelf.processEvents()
+            eventsReadingTimer.resume()
         }
-        queueReadingTimer!.resume()
     }
 
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
-        if let times = executionTimes[event.toString()] {
-            return times == 0
+        var isTriggered = false
+        processQueue.sync {
+            isTriggered = self.isTriggered(external: event)
         }
-        return false
+        return isTriggered
     }
 
     func getExecutionTimes() -> [String: Int] {
-        return executionTimes
+        var times: [String: Int]?
+        processQueue.sync {
+            times = executionTimes
+        }
+        return times ?? [String: Int]()
     }
+
+    func stop() {
+        processQueue.sync {
+            eventsReadingTimer.cancel()
+        }
+    }
+
+    // MARK: Private
 
     /**
      * This method should registering the allowed maximum times of event trigger
@@ -116,81 +123,93 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private func registerMaxAllowedExecutionTimesPerEvent() {
 
         executionTimes = [ SplitEvent.sdkReady.toString(): 1,
+                           SplitEvent.sdkUpdated.toString(): -1,
                            SplitEvent.sdkReadyFromCache.toString(): 1,
                            SplitEvent.sdkReadyTimedOut.toString(): 1]
     }
 
-    private func stopReadingQueue() {
-        queueReadingTimer?.cancel()
-        queueReadingTimer = nil
+    private func processEvents() {
+        // This function has to run on processQueue, set when creating the dispatch source
+        guard let event = eventsQueue.take() else {
+            return
+        }
+        self.triggered.append(event)
+        switch event {
+        case .splitsUpdated, .mySegmentsUpdated:
+            if isTriggered(external: .sdkReady) {
+                trigger(event: .sdkUpdated)
+                return
+            }
+            self.triggerSdkReadyIfNeeded()
+
+        case .mySegmentsLoadedFromCache, .splitsLoadedFromCache:
+            if isTriggered(internal: .splitsLoadedFromCache), isTriggered(internal: .mySegmentsLoadedFromCache) {
+                trigger(event: SplitEvent.sdkReadyFromCache)
+            }
+        case .splitKilledNotification:
+            if isTriggered(external: .sdkReady) {
+                trigger(event: .sdkUpdated)
+                return
+            }
+        case .sdkReadyTimeoutReached:
+            if !isTriggered(external: .sdkReady) {
+                trigger(event: SplitEvent.sdkReadyTimedOut)
+            }
+        }
     }
 
-    private func processEvents() {
-        self.queue.take(completion: {(element: SplitInternalEvent) -> Void in
-            switch element {
-            case .mySegmentsAreReady:
-                self.eventMySegmentsAreReady = true
-                if self.eventSplitsAreReady {
-                    DefaultMetricsManager.shared.time(microseconds: Date().unixTimestampInMiliseconds()
-                        - self.sdkReadyTimeStart, for: Metrics.Time.sdkReady)
-                    self.trigger(event: SplitEvent.sdkReady)
-                }
+    // MARK: Helper functions.
+    func isTriggered(external event: SplitEvent) -> Bool {
+        if let times = executionTimes[event.toString()] {
+            return (times == 0)
+        }
+        return false
+    }
 
-            case .splitsAreReady:
-                self.eventSplitsAreReady = true
-                if self.eventMySegmentsAreReady {
-                    DefaultMetricsManager.shared.time(microseconds: Date().unixTimestampInMiliseconds()
-                        - self.sdkReadyTimeStart, for: Metrics.Time.sdkReady)
-                    self.trigger(event: SplitEvent.sdkReady)
-                }
-
-            case .mySegmentsLoadedFromCache:
-                self.eventLocalMySegmentsAreLoaded = true
-                if self.eventLocalSplitsAreLoaded {
-                    self.trigger(event: SplitEvent.sdkReadyFromCache)
-                }
-
-            case .splitsLoadedFromCache:
-                self.eventLocalSplitsAreLoaded = true
-                if self.eventLocalMySegmentsAreLoaded {
-                    self.trigger(event: SplitEvent.sdkReadyFromCache)
-                }
-
-            case .sdkReadyTimeoutReached:
-                if !self.eventSplitsAreReady || !self.eventMySegmentsAreReady {
-                    self.trigger(event: SplitEvent.sdkReadyTimedOut)
-                }
-            case .splitsAreUpdated:
-                Logger.d("splitsAreUpdated event fired")
-
-            case .mySegmentsAreUpdated:
-                Logger.d("mySegmentsAreUpdated event fired")
-            }
-        })
+    private func triggerSdkReadyIfNeeded() {
+        if isTriggered(internal: .mySegmentsUpdated),
+           isTriggered(internal: .splitsUpdated),
+           !isTriggered(external: .sdkReady) {
+            self.saveMetrics()
+            self.trigger(event: SplitEvent.sdkReady)
+        }
     }
 
     private func trigger(event: SplitEvent) {
-
         // If executionTimes is zero, maximum executions has been reached
-        if self.executionTimes[event.toString()] == 0 {
+        if executionTimes[event.toString()] == 0 {
             return
-            // If executionTimes is grater than zero, maximum executions decrease 1
-        } else if self.executionTimes[event.toString()]! > 0 {
-            self.executionTimes[event.toString()]! = self.executionTimes[event.toString()]! - 1
-        } //If executionTimes is lower than zero, execute it without limitation
+        }
 
-        if self.suscriptions[event] != nil {
-            for task in self.suscriptions[event]! {
+        // If executionTimes is grater than zero, maximum executions decrease 1
+        if let times = executionTimes[event.toString()], times > 0 {
+            self.executionTimes[event.toString()] = times - 1
+        }
+
+        //If executionTimes is lower than zero, execute it without limitation
+        if let subscriptions = self.suscriptions[event] {
+            for task in subscriptions {
                 executeTask(event: event, task: task)
             }
         }
     }
 
     private func executeTask(event: SplitEvent, task: SplitEventTask) {
-        let executor: SplitEventExecutorProtocol = SplitEventExecutorFactory.factory(event: event,
-                                                                                     task: task,
-                                                                                     resources: self.executorResources!)
-        executor.execute()
+        DispatchQueue.main.async {
+            let executor: SplitEventExecutorProtocol
+                = SplitEventExecutorFactory.factory(event: event,
+                                                    task: task,
+                                                    resources: self.executorResources)
+            executor.execute()
+        }
     }
 
+    private func isTriggered(internal event: SplitInternalEvent) -> Bool {
+        return triggered.filter { $0 == event }.count > 0
+    }
+
+    private func saveMetrics() {
+        DefaultMetricsManager.shared.time(microseconds: Date().unixTimestampInMiliseconds()
+            - self.sdkReadyTimeStart, for: Metrics.Time.sdkReady)
+    }
 }

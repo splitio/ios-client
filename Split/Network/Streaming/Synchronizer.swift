@@ -24,6 +24,8 @@ protocol Synchronizer: ImpressionLogger {
     func startPeriodicRecording()
     func stopPeriodicRecording()
     func pushEvent(event: EventDTO)
+    func notifiySegmentsUpdated()
+    func notifySplitKilled()
     func pause()
     func resume()
     func flush()
@@ -60,6 +62,7 @@ class DefaultSynchronizer: Synchronizer {
     private let eventsSyncHelper: EventsRecorderSyncHelper
     private let splitsFilterQueryString: String
     private let splitEventsManager: SplitEventsManager
+    private let flushQueue = DispatchQueue(label: "split-flush-queue", target: DispatchQueue.global())
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -167,15 +170,30 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func pushEvent(event: EventDTO) {
-        if eventsSyncHelper.pushAndCheckFlush(event) {
-            flusherEventsRecorderWorker.flush()
+        flushQueue.async {
+            if self.eventsSyncHelper.pushAndCheckFlush(event) {
+                self.flusherEventsRecorderWorker.flush()
+                self.eventsSyncHelper.resetAccumulator()
+            }
         }
     }
 
     func pushImpression(impression: Impression) {
-        if impressionsSyncHelper.pushAndCheckFlush(impression) {
-            flusherImpressionsRecorderWorker.flush()
+        flushQueue.async {
+            if self.impressionsSyncHelper.pushAndCheckFlush(impression) {
+                self.flusherImpressionsRecorderWorker.flush()
+                self.impressionsSyncHelper.resetAccumulator()
+
+            }
         }
+    }
+
+    func notifiySegmentsUpdated() {
+        splitEventsManager.notifyInternalEvent(.mySegmentsUpdated)
+    }
+
+    func notifySplitKilled() {
+        splitEventsManager.notifyInternalEvent(.splitKilledNotification)
     }
 
     func pause() {
@@ -189,8 +207,12 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func flush() {
-        flusherImpressionsRecorderWorker.flush()
-        flusherEventsRecorderWorker.flush()
+        flushQueue.async {
+            self.flusherImpressionsRecorderWorker.flush()
+            self.flusherEventsRecorderWorker.flush()
+            self.eventsSyncHelper.resetAccumulator()
+            self.impressionsSyncHelper.resetAccumulator()
+        }
     }
 
     func destroy() {

@@ -40,7 +40,7 @@ class CoreDataHelper {
     }
 
     func save() {
-        managedObjectContext.perform {
+        managedObjectContext.performAndWait {
             do {
                 if self.managedObjectContext.hasChanges {
                     try self.managedObjectContext.save()
@@ -80,7 +80,8 @@ class CoreDataHelper {
     }
 
     private func delete(entity: CoreDataEntity, predicate: NSPredicate? = nil) {
-        managedObjectContext.perform {
+
+        managedObjectContext.performAndWait {
             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entity.rawValue)
             if let predicate = predicate {
                 fetchRequest.predicate = predicate

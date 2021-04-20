@@ -33,9 +33,10 @@ class SplitsUpdateWorkerTest: XCTestCase {
     func testOneTimeFetchSuccess() {
         // Cache expiration timestamp set to 0 (no clearing cache)
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
-                                                               splitsStorage: splitsStorage,
-                                                               splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                         splitsStorage: splitsStorage,
+                                                         splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          changeNumber: 101,
+                                                         eventsManager: eventsManager,
                                                          reconnectBackoffCounter: backoffCounter)
 
         var resultIsSuccess = false
@@ -55,9 +56,10 @@ class SplitsUpdateWorkerTest: XCTestCase {
 
     func testRetryAndSuccess() {
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
-                                                               splitsStorage: splitsStorage,
-                                                               splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                         splitsStorage: splitsStorage,
+                                                         splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          changeNumber: 100,
+                                                         eventsManager: eventsManager,
                                                          reconnectBackoffCounter: backoffCounter)
 
         let change = SplitChange(splits: [], since: 200, till: 200)
@@ -79,9 +81,10 @@ class SplitsUpdateWorkerTest: XCTestCase {
 
     func testStopNoSuccess() {
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
-                                                               splitsStorage: splitsStorage,
-                                                               splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                         splitsStorage: splitsStorage,
+                                                         splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          changeNumber: 100,
+                                                         eventsManager: eventsManager,
                                                          reconnectBackoffCounter: backoffCounter)
 
         splitFetcher.splitChanges = [nil]
@@ -105,9 +108,10 @@ class SplitsUpdateWorkerTest: XCTestCase {
     func testOldChangeNumber() {
 
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
-                                                               splitsStorage: splitsStorage,
-                                                               splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                         splitsStorage: splitsStorage,
+                                                         splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          changeNumber: 99,
+                                                         eventsManager: eventsManager,
                                                          reconnectBackoffCounter: backoffCounter)
 
         let change = SplitChange(splits: [], since: 100, till: 100)
