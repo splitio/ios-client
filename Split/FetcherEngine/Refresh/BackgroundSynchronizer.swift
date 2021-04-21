@@ -43,20 +43,20 @@ import BackgroundTasks
         globalStorage.remove(item: .backgroundSyncSchedule)
     }
 
-    // keys = [ApiKey: UserKey]
     @objc public func schedule(serviceEndpoints: ServiceEndpoints? = nil) {
         if #available(iOS 13.0, *) {
-
-            BGTaskScheduler.shared.register(
+            let syncList = self.getSyncTaskMap()
+            if syncList.isEmpty {
+                return
+            }
+            let success = BGTaskScheduler.shared.register(
                 forTaskWithIdentifier: taskId, using: nil) { task in
-                let syncList = self.getSyncTaskMap()
-                if syncList.count == 0 {
-                    return
-                }
                 let operationQueue = OperationQueue()
                 for item in syncList.values {
                     do {
-                        let executor = try BackgroundSyncExecutor(apiKey: item.apiKey, userKeys: Array(item.userKeys))
+                        let executor = try BackgroundSyncExecutor(apiKey: item.apiKey,
+                                                                  userKeys: Array(item.userKeys),
+                                                                  serviceEndpoints: serviceEndpoints)
                         executor.execute(operationQueue: operationQueue)
                     } catch {
                         Logger.d("Could not create background synchronizer for api key: \(item.apiKey)")
@@ -72,6 +72,11 @@ import BackgroundTasks
                     self.scheduleNextSync(taskId: self.taskId)
                     task.setTaskCompleted(success: true)
                 }
+            }
+            if !success {
+                Logger.e("Couldn't register task for background execution, please check if the task " +
+                            "identifier \(taskId) was added to BGTaskSchedulerPermittedIdentifiers in your plist")
+                return
             }
             scheduleNextSync(taskId: taskId)
         } else {
@@ -110,24 +115,16 @@ struct BackgroundSyncExecutor {
          serviceEndpoints: ServiceEndpoints? = nil) throws {
 
         self.userKeys = userKeys
+
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
-
-        // Using "" as key because My Segment storage property will not be used
-        // TODO: Update storage container when using multipley key for a client
-        guard let storageContainer = try? SplitFactoryHelper.buildStorageContainer(
-                userKey: "", dataFolderName: dataFolderName, testDatabase: nil) else {
-            throw GenericError.unknown(message: "Could not create storage container")
+        guard let splitDatabase = try? SplitFactoryHelper.openDatabase(dataFolderName: dataFolderName) else {
+            throw GenericError.couldNotCreateCache
         }
-
-        splitDatabase = storageContainer.splitDatabase
-
-        let splitsFilterQueryString = storageContainer.splitDatabase
-            .generalInfoDao.stringValue(info: .splitsFilterQueryString) ?? ""
-
+        let splitsStorage = SplitFactoryHelper.openPersistentSplitsStorage(database: splitDatabase)
         let endpoints = serviceEndpoints ?? ServiceEndpoints.builder().build()
         let  endpointFactory = EndpointFactory(serviceEndpoints: endpoints,
                                                apiKey: apiKey,
-                                               splitsQueryString: splitsFilterQueryString)
+                                               splitsQueryString: splitsStorage.getFilterQueryString())
 
         let restClient = DefaultRestClient(httpClient: DefaultHttpClient.shared,
                                            endpointFactory: endpointFactory,
@@ -141,20 +138,23 @@ struct BackgroundSyncExecutor {
 
         let cacheExpiration = Int64(ServiceConstants.cacheExpirationInSeconds)
         self.splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitsFetcher,
-                                                           splitsStorage: storageContainer.splitsStorage,
+                                                           persistentSplitsStorage: splitsStorage,
                                                            splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                            cacheExpiration: cacheExpiration)
 
         let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
         let eventsRecorder = DefaultHttpEventsRecorder(restClient: restClient)
 
-        self.eventsRecorderWorker = EventsRecorderWorker(eventsStorage: storageContainer.eventsStorage,
+        self.eventsRecorderWorker =
+            EventsRecorderWorker(eventsStorage: SplitFactoryHelper.openEventsStorage(database: splitDatabase),
                                                          eventsRecorder: eventsRecorder,
                                                          eventsPerPush: ServiceConstants.eventsPerPush)
         self.impressionsRecorderWorker = ImpressionsRecorderWorker(
-            impressionsStorage: storageContainer.impressionsStorage,
+            impressionsStorage: SplitFactoryHelper.openImpressionsStorage(database: splitDatabase),
             impressionsRecorder: impressionsRecorder,
             impressionsPerPush: ServiceConstants.impressionsQueueSize)
+
+        self.splitDatabase = splitDatabase
     }
 
     func execute(operationQueue: OperationQueue) {
@@ -165,11 +165,9 @@ struct BackgroundSyncExecutor {
 
         operationQueue.addOperation {
             for userKey in self.userKeys {
-                let persistentMySegmentsStorage =
-                    DefaultPersistentMySegmentsStorage(userKey: userKey,
-                                                       database: self.splitDatabase)
                 let mySegmentsStorage =
-                    DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
+                    SplitFactoryHelper.openPersistentMySegmentsStorage(database: splitDatabase,
+                                                                       userKey: userKey)
 
                 let mySegmentsSyncWorker = BackgroundMySegmentsSyncWorker(
                     userKey: userKey, mySegmentsFetcher: self.mySegmentsFetcher,
