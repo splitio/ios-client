@@ -32,9 +32,14 @@ import BackgroundTasks
     }
 
     @objc public func unregister(apiKey: String, userKey: String) {
-        let syncMap = getSyncTaskMap()
+        var syncMap = getSyncTaskMap()
         if var item = syncMap[apiKey], item.userKeys.contains(userKey) == true {
             item.userKeys.remove(userKey)
+            if item.userKeys.count > 0 {
+                syncMap[apiKey] = item
+            } else {
+                syncMap.removeValue(forKey: apiKey)
+            }
             globalStorage.set(item: syncMap, for: .backgroundSyncSchedule)
         }
     }
@@ -45,13 +50,15 @@ import BackgroundTasks
 
     @objc public func schedule(serviceEndpoints: ServiceEndpoints? = nil) {
         if #available(iOS 13.0, *) {
-            let syncList = self.getSyncTaskMap()
-            if syncList.isEmpty {
-                return
-            }
             let success = BGTaskScheduler.shared.register(
                 forTaskWithIdentifier: taskId, using: nil) { task in
+
                 let operationQueue = OperationQueue()
+                let syncList = self.getSyncTaskMap()
+                if syncList.isEmpty {
+                    task.setTaskCompleted(success: true)
+                    return
+                }
                 for item in syncList.values {
                     do {
                         let executor = try BackgroundSyncExecutor(apiKey: item.apiKey,
