@@ -1,5 +1,5 @@
 //
-//  BackgroundSynchronizer.swift
+//  SplitBgSynchronizer.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 03/03/2021.
@@ -9,32 +9,34 @@
 import Foundation
 import BackgroundTasks
 
-@objc public class SplitBackgroundSynchronizer: NSObject {
+@objc public class SplitBgSynchronizer: NSObject {
 
-    @objc public static let shared = SplitBackgroundSynchronizer()
+    @objc public static let shared = SplitBgSynchronizer()
 
     private struct SyncItem: Codable {
         let apiKey: String
-        var userKeys: Set<String> = Set()
+        var userKeys: [String: Int64] = [:] // UserKey, Timestamp
     }
 
     private typealias BgSyncSchedule = [String: SyncItem]
     private let taskId = "io.split.bg-sync.task"
     private static let kTimeInterval = ServiceConstants.backgroundSyncPeriod
+    static let kRegistrationExpiration = 3600 * 24 * 90 // 90 days
+
     var globalStorage: KeyValueStorage = GlobalSecureStorage.shared
 
     @objc public func register(apiKey: String, userKey: String) {
         var syncMap = getSyncTaskMap()
         var syncItem = syncMap[apiKey] ?? SyncItem(apiKey: apiKey)
-        syncItem.userKeys.insert(userKey)
+        syncItem.userKeys[userKey] = Date().unixTimestamp()
         syncMap[apiKey] = syncItem
         globalStorage.set(item: syncMap, for: .backgroundSyncSchedule)
     }
 
     @objc public func unregister(apiKey: String, userKey: String) {
         var syncMap = getSyncTaskMap()
-        if var item = syncMap[apiKey], item.userKeys.contains(userKey) == true {
-            item.userKeys.remove(userKey)
+        if var item = syncMap[apiKey], item.userKeys[userKey] != nil {
+            item.userKeys.removeValue(forKey: userKey)
             if item.userKeys.count > 0 {
                 syncMap[apiKey] = item
             } else {
@@ -62,7 +64,7 @@ import BackgroundTasks
                 for item in syncList.values {
                     do {
                         let executor = try BackgroundSyncExecutor(apiKey: item.apiKey,
-                                                                  userKeys: Array(item.userKeys),
+                                                                  userKeys: item.userKeys,
                                                                   serviceEndpoints: serviceEndpoints)
                         executor.execute(operationQueue: operationQueue)
                     } catch {
@@ -93,9 +95,8 @@ import BackgroundTasks
 
     private func scheduleNextSync(taskId: String) {
         if #available(iOS 13.0, *) {
-            print("Scheduling \(taskId)")
             let request = BGAppRefreshTaskRequest(identifier: taskId)
-            request.earliestBeginDate = Date(timeIntervalSinceNow: SplitBackgroundSynchronizer.kTimeInterval)
+            request.earliestBeginDate = Date(timeIntervalSinceNow: SplitBgSynchronizer.kTimeInterval)
 
             do {
                 try BGTaskScheduler.shared.submit(request)
@@ -115,12 +116,14 @@ struct BackgroundSyncExecutor {
     private let splitsSyncWorker: BackgroundSyncWorker
     private let eventsRecorderWorker: RecorderWorker
     private let impressionsRecorderWorker: RecorderWorker
-    private let userKeys: [String]
+    private let apiKey: String
+    private let userKeys: [String: Int64]
     private let mySegmentsFetcher: HttpMySegmentsFetcher
 
-    init(apiKey: String, userKeys: [String],
+    init(apiKey: String, userKeys: [String: Int64],
          serviceEndpoints: ServiceEndpoints? = nil) throws {
 
+        self.apiKey = apiKey
         self.userKeys = userKeys
 
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
@@ -171,7 +174,12 @@ struct BackgroundSyncExecutor {
         }
 
         operationQueue.addOperation {
-            for userKey in self.userKeys {
+            for (userKey, timestamp) in self.userKeys {
+                if isExpired(timestamp: timestamp) {
+                    SplitBgSynchronizer.shared.unregister(apiKey: self.apiKey, userKey: userKey)
+                    return
+                }
+
                 let mySegmentsStorage =
                     SplitFactoryHelper.openPersistentMySegmentsStorage(database: splitDatabase,
                                                                        userKey: userKey)
@@ -190,5 +198,9 @@ struct BackgroundSyncExecutor {
         operationQueue.addOperation {
             self.impressionsRecorderWorker.flush()
         }
+    }
+
+    func isExpired(timestamp: Int64) -> Bool {
+        return Date().unixTimestamp() - timestamp > SplitBgSynchronizer.kRegistrationExpiration
     }
 }
