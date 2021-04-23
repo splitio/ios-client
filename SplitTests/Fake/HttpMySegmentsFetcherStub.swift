@@ -14,7 +14,7 @@ class HttpMySegmentsFetcherStub: HttpMySegmentsFetcher {
     private var segmentsIndex = -1
     var allSegments: [[String]?]?
     var httpError: HttpError?
-    func execute(userKey: String) throws -> [String]? {
+    func execute(userKey: String, headers: [String: String]?) throws -> [String]? {
 
         if let error = httpError {
             throw error

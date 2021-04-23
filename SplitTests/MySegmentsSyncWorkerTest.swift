@@ -32,7 +32,8 @@ class MySegmentsSyncWorkerTest: XCTestCase {
             mySegmentsFetcher: mySegmentsFetcher,
             mySegmentsStorage: mySegmentsStorage, metricsManager: MetricsManagerStub(),
             eventsManager: eventsManager,
-            reconnectBackoffCounter: backoffCounter)
+            reconnectBackoffCounter: backoffCounter,
+            avoidCache: false)
     }
 
     func testOneTimeFetchSuccess() {
