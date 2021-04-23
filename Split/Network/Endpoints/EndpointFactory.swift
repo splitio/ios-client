@@ -28,7 +28,6 @@ class EndpointFactory {
 
     let serviceEndpoints: ServiceEndpoints
     let splitChangesEndpoint: Endpoint
-    let mySegmentsEndpoint: Endpoint
     let impressionsEndpoint: Endpoint
     let eventsEndpoint: Endpoint
     let timeMetricsEndpoint: Endpoint
@@ -36,25 +35,20 @@ class EndpointFactory {
     let gaugeMetricsEndpoint: Endpoint
     let sseAuthenticationEndpoint: Endpoint
     let streamingEndpoint: Endpoint
+    let apiKey: String
 
-    init(serviceEndpoints: ServiceEndpoints, apiKey: String, userKey: String, splitsQueryString: String) {
+    init(serviceEndpoints: ServiceEndpoints, apiKey: String, splitsQueryString: String) {
+        self.apiKey = apiKey
         self.serviceEndpoints = serviceEndpoints
 
-        let commondHeaders = [
-            Self.kAuthorizationHeader: "\(Self.kAuthorizationBearer) \(apiKey)",
-            Self.kSplitVersionHeader: Version.sdk
-        ]
-        let typeHeader = [Self.kContentTypeHeader: Self.kContentTypeJson]
+        let commondHeaders = Self.basicHeaders(apiKey: apiKey)
+        let typeHeader = Self.typeHeader()
         let streamEventHeader = [Self.kContentTypeHeader: Self.kContentTypeEventStream]
 
         splitChangesEndpoint = Endpoint
             .builder(baseUrl: serviceEndpoints.sdkEndpoint, path: EndpointsPath.splitChanges,
                      defaultQueryString: splitsQueryString)
             .add(headers: commondHeaders).add(headers: typeHeader).build()
-
-        mySegmentsEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.sdkEndpoint, path: "\(EndpointsPath.mySegments)/\(userKey)")
-                .add(headers: commondHeaders).add(headers: typeHeader).build()
 
         impressionsEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.impressions)
@@ -83,5 +77,24 @@ class EndpointFactory {
         streamingEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.streamingServiceEndpoint)
                 .set(method: .get).add(headers: commondHeaders).add(headers: streamEventHeader).build()
+    }
+
+    func mySegmentsEndpoint(userKey: String) -> Endpoint {
+        let commonHeaders = Self.basicHeaders(apiKey: self.apiKey)
+        let typeHeader = Self.typeHeader()
+        return Endpoint
+            .builder(baseUrl: serviceEndpoints.sdkEndpoint, path: "\(EndpointsPath.mySegments)/\(userKey)")
+            .add(headers: commonHeaders).add(headers: typeHeader).build()
+    }
+
+    private static func basicHeaders(apiKey: String) -> [String: String] {
+        return [
+            Self.kAuthorizationHeader: "\(Self.kAuthorizationBearer) \(apiKey)",
+            Self.kSplitVersionHeader: Version.sdk
+        ]
+    }
+
+    private static func typeHeader() -> [String: String] {
+        return [Self.kContentTypeHeader: Self.kContentTypeJson]
     }
 }

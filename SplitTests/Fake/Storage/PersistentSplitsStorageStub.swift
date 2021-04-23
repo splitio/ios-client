@@ -11,6 +11,9 @@ import Foundation
 
 class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
+    var changeNumber: Int64 = -1
+    var updateTimestamp: Int64 = 0
+
     var snapshot: SplitsSnapshot = SplitsSnapshot(changeNumber: -1, splits: [Split](),
                                                   updateTimestamp: -1, splitsFilterQueryString: "")
 
@@ -67,5 +70,13 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     func close() {
         closeCalled = true
+    }
+    
+    func getChangeNumber() -> Int64 {
+        return changeNumber
+    }
+
+    func getUpdateTimestamp() -> Int64 {
+        return updateTimestamp
     }
 }
