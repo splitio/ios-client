@@ -426,7 +426,7 @@
 		956D17CD260D1B700037F575 /* ChangesCheckerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17CC260D1B700037F575 /* ChangesCheckerMock.swift */; };
 		956D17D1260D266E0037F575 /* SplitsChangesCheckerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17D0260D266E0037F575 /* SplitsChangesCheckerTest.swift */; };
 		956D17D7260D28320037F575 /* MySegmentsChangeChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17D6260D28320037F575 /* MySegmentsChangeChecker.swift */; };
-		95726075262F548500350CCA /* BackgroundSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95726074262F548500350CCA /* BackgroundSynchronizer.swift */; };
+		95726075262F548500350CCA /* SplitBgSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95726074262F548500350CCA /* SplitBgSynchronizer.swift */; };
 		957E666625D5B0EC006F5B19 /* StorageMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E666525D5B0EC006F5B19 /* StorageMigrator.swift */; };
 		957E667A25D5DD73006F5B19 /* StorageMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E667925D5DD73006F5B19 /* StorageMigratorTests.swift */; };
 		957E674C25E48753006F5B19 /* Bundle+Finder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E674B25E48753006F5B19 /* Bundle+Finder.swift */; };
@@ -916,7 +916,7 @@
 		956D17CC260D1B700037F575 /* ChangesCheckerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangesCheckerMock.swift; sourceTree = "<group>"; };
 		956D17D0260D266E0037F575 /* SplitsChangesCheckerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsChangesCheckerTest.swift; sourceTree = "<group>"; };
 		956D17D6260D28320037F575 /* MySegmentsChangeChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsChangeChecker.swift; sourceTree = "<group>"; };
-		95726074262F548500350CCA /* BackgroundSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSynchronizer.swift; sourceTree = "<group>"; };
+		95726074262F548500350CCA /* SplitBgSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitBgSynchronizer.swift; sourceTree = "<group>"; };
 		957E666525D5B0EC006F5B19 /* StorageMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageMigrator.swift; sourceTree = "<group>"; };
 		957E667925D5DD73006F5B19 /* StorageMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageMigratorTests.swift; sourceTree = "<group>"; };
 		957E674B25E48753006F5B19 /* Bundle+Finder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Finder.swift"; sourceTree = "<group>"; };
@@ -1067,7 +1067,7 @@
 				95F3F05C25A4A70100084AF8 /* YamlSplitsStorage.swift */,
 				95F3F06625ACDE0400084AF8 /* EmptyMySegmentsStorage.swift */,
 				95DFD14B260A156000776E0A /* ChangesChecker.swift */,
-				95726074262F548500350CCA /* BackgroundSynchronizer.swift */,
+				95726074262F548500350CCA /* SplitBgSynchronizer.swift */,
 			);
 			path = Refresh;
 			sourceTree = "<group>";
@@ -2297,7 +2297,7 @@
 				3B6DEF1A20EA6AE50067435E /* EventDTO.swift in Sources */,
 				5932260524A516FA00496D8B /* HttpTask.swift in Sources */,
 				59F4AA9B24FE93E300A1C69A /* NotificationManagerKeeper.swift in Sources */,
-				95726075262F548500350CCA /* BackgroundSynchronizer.swift in Sources */,
+				95726075262F548500350CCA /* SplitBgSynchronizer.swift in Sources */,
 				59D84BD622158A24003DA248 /* LocalhostSplitFactory.swift in Sources */,
 				3B6DEF4C20EA6AE50067435E /* SplitBase.swift in Sources */,
 				595AD25124E4404C00A7B750 /* SseNotifications.swift in Sources */,
