@@ -9,11 +9,15 @@
 import Foundation
 
 protocol RestClientMySegments: RestClient {
-    func getMySegments(user: String, completion: @escaping (DataResult<[String]>) -> Void)
+    func getMySegments(user: String,
+                       headers: [String: String]?,
+                       completion: @escaping (DataResult<[String]>) -> Void)
 }
 
 extension DefaultRestClient: RestClientMySegments {
-    func getMySegments(user: String, completion: @escaping (DataResult<[String]>) -> Void) {
+    func getMySegments(user: String,
+                       headers: [String: String]? = nil,
+                       completion: @escaping (DataResult<[String]>) -> Void) {
         let completionHandler: (DataResult<[String: [Segment]]>) -> Void = { result in
             do {
                 let data = try result.unwrap()
@@ -26,6 +30,8 @@ extension DefaultRestClient: RestClientMySegments {
                 completion(DataResult.failure(error: error as NSError))
             }
         }
-        self.execute(endpoint: endpointFactory.mySegmentsEndpoint, completion: completionHandler)
+        self.execute(endpoint: endpointFactory.mySegmentsEndpoint,
+                     headers: headers,
+                     completion: completionHandler)
     }
 }
