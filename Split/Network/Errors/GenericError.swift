@@ -9,7 +9,7 @@
 import Foundation
 
 enum GenericError: Error {
-    case coultNotCreateCache
+    case couldNotCreateCache
     case unknown(message: String)
 }
 
@@ -17,7 +17,7 @@ enum GenericError: Error {
 extension GenericError {
     var message: String {
         switch self {
-        case .coultNotCreateCache:
+        case .couldNotCreateCache:
             return "Error creating cache db"
         case .unknown(let message):
             return message

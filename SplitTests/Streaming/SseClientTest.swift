@@ -25,7 +25,7 @@ class SseClientTest: XCTestCase {
         let session = HttpSessionMock()
         httpClient = HttpClientMock(session: session)
         let sseEndpoint = EndpointFactory(serviceEndpoints: ServiceEndpoints.builder().build(),
-                                          apiKey: apiKey, userKey: userKey, splitsQueryString: "").streamingEndpoint
+                                          apiKey: apiKey, splitsQueryString: "").streamingEndpoint
         sseClient = DefaultSseClient(endpoint: sseEndpoint, httpClient: httpClient, sseHandler: sseHandler)
     }
 
