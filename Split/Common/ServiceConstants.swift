@@ -11,12 +11,12 @@ import Foundation
 struct ServiceConstants {
     static let estimatedImpressionSizeInBytes = 150
     static let recordedDataExpirationPeriodInSeconds: Int64 = 3600 * 24 * 90 // 90 days
-    static let CacheControlHeader = "Cache-Control"
-    static let CacheControlNoCache = "no-cache"
+    static let cacheControlHeader = "Cache-Control"
+    static let cacheControlNoCache = "no-cache"
     static let eventsPerPush: Int = 2000
     static let impressionsQueueSize: Int = 30000
     static let defaultDataFolder = "split_data"
     static let cacheExpirationInSeconds = 864000
-    static let controlNoCacheHeader = [ServiceConstants.CacheControlHeader: ServiceConstants.CacheControlNoCache]
+    static let controlNoCacheHeader = [ServiceConstants.cacheControlHeader: ServiceConstants.cacheControlNoCache]
     static let backgroundSyncPeriod = 15.0 * 60 // 15 min
 }

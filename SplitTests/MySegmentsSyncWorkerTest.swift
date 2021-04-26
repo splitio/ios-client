@@ -121,7 +121,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         XCTAssertTrue(resultIsSuccess)
         XCTAssertEqual(0, backoffCounter.retryCallCount)
         XCTAssertTrue(eventsManager.isSegmentsReadyFired)
-        XCTAssertEqual(ServiceConstants.CacheControlNoCache, headers?[ServiceConstants.CacheControlHeader])
+        XCTAssertEqual(ServiceConstants.cacheControlNoCache, headers?[ServiceConstants.cacheControlHeader])
     }
 
     override func tearDown() {
