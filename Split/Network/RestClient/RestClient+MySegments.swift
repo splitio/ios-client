@@ -26,6 +26,6 @@ extension DefaultRestClient: RestClientMySegments {
                 completion(DataResult.failure(error: error as NSError))
             }
         }
-        self.execute(endpoint: endpointFactory.mySegmentsEndpoint, completion: completionHandler)
+        self.execute(endpoint: endpointFactory.mySegmentsEndpoint(userKey: user), completion: completionHandler)
     }
 }
