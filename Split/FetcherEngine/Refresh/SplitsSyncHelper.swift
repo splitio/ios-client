@@ -11,11 +11,11 @@ import Foundation
 class SplitsSyncHelper {
 
     private let splitFetcher: HttpSplitFetcher
-    private let splitsStorage: SplitsStorage
+    private let splitsStorage: SyncSplitsStorage
     private let splitChangeProcessor: SplitChangeProcessor
 
     init(splitFetcher: HttpSplitFetcher,
-         splitsStorage: SplitsStorage,
+         splitsStorage: SyncSplitsStorage,
          splitChangeProcessor: SplitChangeProcessor) {
 
         self.splitFetcher = splitFetcher

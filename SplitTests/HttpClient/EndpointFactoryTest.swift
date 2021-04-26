@@ -25,13 +25,13 @@ class EndpointFactoryTest: XCTestCase {
     override func setUp() {
         serviceEndpoints = ServiceEndpoints.builder().build()
         factory = EndpointFactory(serviceEndpoints: serviceEndpoints,
-                                      apiKey: CommonValues.apiKey, userKey: CommonValues.userKey,
+                                      apiKey: CommonValues.apiKey,
                                       splitsQueryString: "")
     }
 
     func testMySegmentsEndpoint() {
         let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/mySegments/\(CommonValues.userKey)"
-        let endpoint = factory.mySegmentsEndpoint
+        let endpoint = factory.mySegmentsEndpoint(userKey: CommonValues.userKey)
 
         XCTAssertEqual(HttpMethod.get, endpoint.method)
         XCTAssertEqual(3, endpoint.headers.count)
