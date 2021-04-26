@@ -19,6 +19,8 @@ class PushNotificationManagerTest: XCTestCase {
     var timersManager: TimersManagerMock!
     var broadcasterChannel: PushManagerEventBroadcasterStub!
     let userKey = IntegrationHelper.dummyUserKey
+    var jwtParser: JwtTokenParser!
+    let rawToken = "the_token"
 
     override func setUp() {
         sseAuthenticator = SseAuthenticatorStub()
@@ -26,6 +28,7 @@ class PushNotificationManagerTest: XCTestCase {
         sseClient.isConnectionOpened = false
         timersManager = TimersManagerMock()
         broadcasterChannel = PushManagerEventBroadcasterStub()
+
         pnManager = DefaultPushNotificationManager(userKey: userKey, sseAuthenticator: sseAuthenticator, sseClient: sseClient,
                                                    broadcasterChannel: broadcasterChannel, timersManager: timersManager)
     }
@@ -37,6 +40,7 @@ class PushNotificationManagerTest: XCTestCase {
         // Returning ok token with streaming enabled
         // Also an expectation is added to be fullfiled when timer is added
         // in order to avoid using sleep to wait for all process finished
+        pnManager.jwtParser = JwtParserStub(token: dummyToken())
 
         let exp = XCTestExpectation(description: "finish")
 
@@ -49,7 +53,7 @@ class PushNotificationManagerTest: XCTestCase {
         wait(for: [exp], timeout: 3)
 
         XCTAssertEqual(userKey, sseAuthenticator.userKey)
-        XCTAssertEqual("thetoken", sseClient.token)
+        XCTAssertEqual(rawToken, sseClient.token)
         XCTAssertEqual(2, sseClient.channels?.count)
         XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
         XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
@@ -88,7 +92,7 @@ class PushNotificationManagerTest: XCTestCase {
         // Calling success handler when streaming enabled
         // Also an expectation is added to be fullfiled when timer is added
         // in order to avoid using sleep to wait for all process finished
-
+        pnManager.jwtParser = JwtParserStub(token: dummyToken())
         let exp = XCTestExpectation(description: "finish")
         broadcasterChannel.pushExpectation = exp
         // Indicates that expectation have to be fired when push function is called the second time
@@ -101,7 +105,7 @@ class PushNotificationManagerTest: XCTestCase {
         sleep(1)
 
         XCTAssertEqual(userKey, sseAuthenticator.userKey)
-        XCTAssertEqual("thetoken", sseClient.token)
+        XCTAssertEqual(rawToken, sseClient.token)
         XCTAssertEqual(2, sseClient.channels?.count)
         XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
@@ -134,7 +138,7 @@ class PushNotificationManagerTest: XCTestCase {
         // On stop the component should close sse connection
         // stops keep alive and refresh token timers
         // and notify streaming not available
-
+        pnManager.jwtParser = JwtParserStub(token: dummyToken())
         let conExp = XCTestExpectation(description: "conn")
         broadcasterChannel.pushExpectationTriggerCallCount = 1
         broadcasterChannel.pushExpectation = conExp
@@ -159,21 +163,21 @@ class PushNotificationManagerTest: XCTestCase {
 
     private func successAuthResult(pushEnabled: Bool = true) -> SseAuthenticationResult {
         return SseAuthenticationResult(success: true, errorIsRecoverable: false,
-                                       pushEnabled: pushEnabled, jwtToken: dummyToken())
+                                       pushEnabled: pushEnabled, rawToken: rawToken)
     }
 
     private func recoverableAuthResult() -> SseAuthenticationResult {
         return SseAuthenticationResult(success: false, errorIsRecoverable: true,
-                                       pushEnabled: true, jwtToken: nil)
+                                       pushEnabled: true, rawToken: nil)
     }
 
     private func noRecoverableAuthResult() -> SseAuthenticationResult {
         return SseAuthenticationResult(success: false, errorIsRecoverable: false,
-                                       pushEnabled: true, jwtToken: nil)
+                                       pushEnabled: true, rawToken: nil)
     }
 
     private func dummyToken() -> JwtToken {
-        return JwtToken(issuedAt: 1000, expirationTime: 10000, channels: ["ch1", "ch2"], rawToken: "thetoken")
+        return JwtToken(issuedAt: 1000, expirationTime: 10000, channels: ["ch1", "ch2"], rawToken:rawToken)
     }
 
 }

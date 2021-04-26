@@ -82,7 +82,7 @@ class SplitApiFacadeBuilder {
         let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
         let eventsRecorder = DefaultHttpEventsRecorder(restClient: restClient)
 
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: DefaultJwtTokenParser())
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
 
         return SplitApiFacade(splitsFetcher: splitsFetcher, mySegmentsFetcher: mySegmentsFetcher,
                               impressionsRecorder: impressionsRecorder,

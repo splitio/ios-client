@@ -9,6 +9,8 @@
 import Foundation
 
 protocol PushNotificationManager {
+    // Visible for testing. Make possible to inject stub
+    var jwtParser: JwtTokenParser { get set }
     func start()
     func pause()
     func resume()
@@ -33,6 +35,8 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private var isStopped: Atomic<Bool> = Atomic(false)
     private var isPaused: Atomic<Bool> = Atomic(false)
     private var isConnecting: Atomic<Bool> = Atomic(false)
+
+    var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
 
     init(userKey: String, sseAuthenticator: SseAuthenticator, sseClient: SseClient,
          broadcasterChannel: PushManagerEventBroadcaster, timersManager: TimersManager) {
@@ -100,24 +104,26 @@ class DefaultPushNotificationManager: PushNotificationManager {
         }
 
         if !result.success && result.errorIsRecoverable {
-            Logger.d("Streaming auth error. Retrying")
-            isConnecting.set(false)
-            broadcasterChannel.push(event: .pushRetryableError)
+            notifyRecoverableError(message: "Streaming auth error. Retrying")
             return
         }
 
-        guard let jwt = result.jwtToken else {
-            Logger.d("Invalid JWT")
-            isConnecting.set(false)
+        guard let rawToken = result.rawToken else {
+            notifyRecoverableError(message: "Invalid raw JWT")
             return
         }
-        Logger.d("Streaming authentication success")
+
+        guard let jwt = try? jwtParser.parse(raw: rawToken) else {
+            notifyRecoverableError(message: "Error parsing JWT")
+            return
+        }
 
         if isStopped.value {
             Logger.d("Streaming stopped. Aborting connection")
             isConnecting.set(false)
             return
         }
+        Logger.d("Streaming authentication success")
 
         self.sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { success in
             if success {
@@ -125,6 +131,12 @@ class DefaultPushNotificationManager: PushNotificationManager {
             }
             self.isConnecting.set(false)
         }
+    }
+
+    private func notifyRecoverableError(message: String) {
+        Logger.d(message)
+        isConnecting.set(false)
+        broadcasterChannel.push(event: .pushRetryableError)
     }
 
     private func handleSubsystemUp() {
