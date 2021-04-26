@@ -28,7 +28,7 @@ class BackgroundMySegmentsSyncWorker: BackgroundSyncWorker {
 
     func execute() {
         do {
-            if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey) {
+            if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: nil) {
                 mySegmentsStorage.set(segments)
             }
         } catch let error {
