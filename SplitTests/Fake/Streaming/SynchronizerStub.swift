@@ -18,6 +18,7 @@ class SynchronizerStub: Synchronizer {
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
     var synchronizeMySegmentsCalled = false
+    var forceMySegmentsSyncCalled = false
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
     var startPeriodicRecordingCalled = false
@@ -33,6 +34,7 @@ class SynchronizerStub: Synchronizer {
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
     var syncMySegmentsExp: XCTestExpectation?
+    var forceMySegmentsSyncExp: XCTestExpectation?
 
     func loadAndSynchronizeSplits() {
         loadAndSynchronizeSplitsCalled = true
@@ -95,6 +97,13 @@ class SynchronizerStub: Synchronizer {
     func synchronizeMySegments() {
         synchronizeMySegmentsCalled = true
         if let exp = syncMySegmentsExp {
+            exp.fulfill()
+        }
+    }
+
+    func forceMySegmentsSync() {
+        forceMySegmentsSyncCalled = true
+        if let exp = forceMySegmentsSyncExp {
             exp.fulfill()
         }
     }

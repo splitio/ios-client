@@ -17,5 +17,6 @@ struct ServiceConstants {
     static let impressionsQueueSize: Int = 30000
     static let defaultDataFolder = "split_data"
     static let cacheExpirationInSeconds = 864000
+    static let controlNoCacheHeader = [ServiceConstants.CacheControlHeader: ServiceConstants.CacheControlNoCache]
     static let backgroundSyncPeriod = 15.0 * 60 // 15 min
 }

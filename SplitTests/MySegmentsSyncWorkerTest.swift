@@ -32,7 +32,8 @@ class MySegmentsSyncWorkerTest: XCTestCase {
             mySegmentsFetcher: mySegmentsFetcher,
             mySegmentsStorage: mySegmentsStorage, metricsManager: MetricsManagerStub(),
             eventsManager: eventsManager,
-            reconnectBackoffCounter: backoffCounter)
+            reconnectBackoffCounter: backoffCounter,
+            avoidCache: false)
     }
 
     func testOneTimeFetchSuccess() {
@@ -51,6 +52,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         XCTAssertTrue(resultIsSuccess)
         XCTAssertEqual(0, backoffCounter.retryCallCount)
         XCTAssertTrue(eventsManager.isSegmentsReadyFired)
+        XCTAssertEqual(0, mySegmentsFetcher.headerList.count)
     }
 
     func testRetryAndSuccess() {
@@ -89,6 +91,37 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         XCTAssertFalse(resultIsSuccess)
         XCTAssertTrue(1 < backoffCounter.retryCallCount)
         XCTAssertFalse(eventsManager.isSegmentsReadyFired)
+    }
+
+    func testNoCacheHeader() {
+        mySegmentsSyncWorker = RetryableMySegmentsSyncWorker(
+            userKey: "CUSTOMER_ID",
+            mySegmentsFetcher: mySegmentsFetcher,
+            mySegmentsStorage: mySegmentsStorage, metricsManager: MetricsManagerStub(),
+            eventsManager: eventsManager,
+            reconnectBackoffCounter: backoffCounter,
+            avoidCache: true)
+
+        mySegmentsFetcher.allSegments = [["s1", "s2"]]
+        var resultIsSuccess = false
+        let exp = XCTestExpectation(description: "exp")
+        mySegmentsSyncWorker.completion = { success in
+            resultIsSuccess = success
+            exp.fulfill()
+        }
+        mySegmentsSyncWorker.start()
+
+        wait(for: [exp], timeout: 3)
+
+        var headers: [String: String]? = nil
+
+        if mySegmentsFetcher.headerList.count > 0 {
+            headers = mySegmentsFetcher.headerList[0]
+        }
+        XCTAssertTrue(resultIsSuccess)
+        XCTAssertEqual(0, backoffCounter.retryCallCount)
+        XCTAssertTrue(eventsManager.isSegmentsReadyFired)
+        XCTAssertEqual(ServiceConstants.CacheControlNoCache, headers?[ServiceConstants.CacheControlHeader])
     }
 
     override func tearDown() {

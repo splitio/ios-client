@@ -9,7 +9,7 @@
 import Foundation
 
 protocol HttpMySegmentsFetcher {
-    func execute(userKey: String) throws -> [String]?
+    func execute(userKey: String, headers: [String: String]?) throws -> [String]?
 }
 
 class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
@@ -23,7 +23,7 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
         self.metricsManager = metricsManager
     }
 
-    func execute(userKey: String) throws -> [String]? {
+    func execute(userKey: String, headers: [String: String]? = nil) throws -> [String]? {
         if !restClient.isSdkServerAvailable() {
             Logger.d("Server is not reachable. My segment updates will be delayed until host is reachable")
             throw HttpError.serverUnavailable
@@ -32,7 +32,7 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<[String]>?
         let fetchStartTime = Date().unixTimestampInMiliseconds()
-        restClient.getMySegments(user: userKey) { [weak self] result in
+        restClient.getMySegments(user: userKey, headers: headers) { [weak self] result in
             guard let self = self else {
                 return
             }

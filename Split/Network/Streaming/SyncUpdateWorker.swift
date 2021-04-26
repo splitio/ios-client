@@ -70,7 +70,7 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
                 mySegmentsStorage.clear()
             }
         } else {
-            synchronizer.synchronizeMySegments()
+            synchronizer.forceMySegmentsSync()
         }
     }
 }
