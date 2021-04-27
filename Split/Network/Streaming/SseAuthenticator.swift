@@ -42,7 +42,7 @@ struct SseAuthenticationResult {
     let success: Bool
     let errorIsRecoverable: Bool
     let pushEnabled: Bool
-    let jwtToken: JwtToken?
+    let rawToken: String?
 }
 
 ///
@@ -56,18 +56,14 @@ protocol SseAuthenticator {
 class DefaultSseAuthenticator: SseAuthenticator {
 
     private let restClient: RestClientSseAuthenticator
-    private let jwtParser: JwtTokenParser
 
-    init(restClient: RestClientSseAuthenticator,
-         jwtParser: JwtTokenParser) {
+    init(restClient: RestClientSseAuthenticator) {
         self.restClient = restClient
-        self.jwtParser = jwtParser
     }
 
     func authenticate(userKey: String) -> SseAuthenticationResult {
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SseAuthenticationResponse>?
-        let jwtToken: JwtToken
 
         restClient.authenticate(userKey: userKey) { result in
             requestResult = result
@@ -82,14 +78,18 @@ class DefaultSseAuthenticator: SseAuthenticator {
             } else {
                 return errorResult(recoverable: true)
             }
-            jwtToken = try jwtParser.parse(raw: response.token)
+
         } catch HttpError.clientRelated {
             return errorResult(recoverable: false)
         } catch {
             return errorResult(recoverable: true)
         }
+
+        if response.pushEnabled, response.token ?? "" == "" {
+            return errorResult(recoverable: true)
+        }
         return SseAuthenticationResult(success: true, errorIsRecoverable: false,
-                                       pushEnabled: response.pushEnabled, jwtToken: jwtToken)
+                                       pushEnabled: response.pushEnabled, rawToken: response.token)
     }
 }
 
@@ -97,6 +97,6 @@ class DefaultSseAuthenticator: SseAuthenticator {
 extension DefaultSseAuthenticator {
     private func errorResult(recoverable: Bool) -> SseAuthenticationResult {
         return SseAuthenticationResult(success: false, errorIsRecoverable: recoverable,
-                                       pushEnabled: false, jwtToken: nil)
+                                       pushEnabled: false, rawToken: nil)
     }
 }
