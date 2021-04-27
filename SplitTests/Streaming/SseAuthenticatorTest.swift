@@ -17,88 +17,79 @@ class SseAuthenticatorTest: XCTestCase {
     
     let restClient = RestClientStub()
     let kUserKey = IntegrationHelper.dummyUserKey
+
+    let rawToken = "this_token_raw"
     
     override func setUp() {
     }
     
     func testSuccesfulRequest() {
         // Check successful response
-        // Using parser mock to avoid sending real token string to create sse response
-        let token = JwtToken(issuedAt: 100, expirationTime: 200,
-                             channels: ["channel1", "channel2"], rawToken: "therawtoken")
-        let parser = JwtParserStub(token: token)
-        let response = SseAuthenticationResponse(pushEnabled: true, token: "")
+
+        let response = SseAuthenticationResponse(pushEnabled: true, token:rawToken)
         restClient.update(response: response)
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: parser)
-        
-        
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
+
         let result = sseAuthenticator.authenticate(userKey: kUserKey)
-        let expToken = result.jwtToken
 
         XCTAssertEqual(true, result.pushEnabled)
         XCTAssertEqual(true, result.success)
-        XCTAssertEqual(expToken?.issuedAt, token.issuedAt)
-        XCTAssertEqual(expToken?.expirationTime, token.expirationTime)
-        XCTAssertEqual(expToken?.channels.count, token.channels.count)
-        XCTAssertEqual(expToken?.rawToken, token.rawToken)
+        XCTAssertEqual(rawToken, result.rawToken)
     }
 
-    func testTokenParserError() {
-        // Check token error response
-        // Using parser mock to avoid sending real token string to create sse response
-        let parser = JwtParserStub(error: JwtTokenError.tokenIsInvalid)
+    func testEmptyTokenResponse() {
+        // Check empty token error response
         let response = SseAuthenticationResponse(pushEnabled: true, token: "")
         restClient.update(response: response)
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: parser)
-
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
 
         let result = sseAuthenticator.authenticate(userKey: kUserKey)
-        let expToken = result.jwtToken
 
         XCTAssertEqual(false, result.success)
         XCTAssertEqual(false, result.pushEnabled)
+        XCTAssertEqual(nil, result.rawToken)
+    }
 
-        XCTAssertNil(expToken)
+    func testNullTokenResponse() {
+        // Check null token error response
+        let response = SseAuthenticationResponse(pushEnabled: true, token: nil)
+        restClient.update(response: response)
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
+
+        let result = sseAuthenticator.authenticate(userKey: kUserKey)
+
+        XCTAssertEqual(false, result.success)
+        XCTAssertEqual(false, result.pushEnabled)
+        XCTAssertEqual(nil, result.rawToken)
     }
 
     func testRecoverableError() {
         // Check token error response
         // If no credentials error, error is recoverable
-        let token = JwtToken(issuedAt: 100, expirationTime: 200,
-                             channels: [], rawToken: "")
-        let parser = JwtParserStub(token: token)
         restClient.updateFailedSseAuth(error: HttpError.unknown(message: "unknown"))
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: parser)
-
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
 
         let result = sseAuthenticator.authenticate(userKey: kUserKey)
-        let expToken = result.jwtToken
 
         XCTAssertEqual(false, result.success)
         XCTAssertEqual(true, result.errorIsRecoverable)
         XCTAssertEqual(false, result.pushEnabled)
-
-        XCTAssertNil(expToken)
+        XCTAssertNil(result.rawToken)
     }
 
     func testNoRecoverableError() {
         // Check token error response
         // If no credentials error, error is recoverable
-        let token = JwtToken(issuedAt: 100, expirationTime: 200,
-                             channels: [], rawToken: "")
-        let parser = JwtParserStub(token: token)
         restClient.updateFailedSseAuth(error: HttpError.clientRelated)
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient, jwtParser: parser)
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
 
 
         let result = sseAuthenticator.authenticate(userKey: kUserKey)
-        let expToken = result.jwtToken
 
         XCTAssertEqual(false, result.success)
         XCTAssertEqual(false, result.errorIsRecoverable)
         XCTAssertEqual(false, result.pushEnabled)
-
-        XCTAssertNil(expToken)
+        XCTAssertNil(result.rawToken)
     }
     
     override func tearDown() {
