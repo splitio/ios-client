@@ -1,3 +1,8 @@
+2.11.0: (Abr 27, 2021)
+- Added the ability to synchronize data when the host application is closed or in background
+- Fixed small issue with jwt and streaming disabled
+- Updated my segments fetch to avoid cache when update push notification is received
+
 2.10.0: (Abr 9, 2021)
 - Added SDK Updated event to notify when Splits or My Segments change
 
