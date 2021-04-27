@@ -10,7 +10,7 @@ import Foundation
 
 struct SseAuthenticationResponse: Decodable {
     let pushEnabled: Bool
-    let token: String
+    let token: String?
 }
 
 protocol RestClientSseAuthenticator: RestClient {
