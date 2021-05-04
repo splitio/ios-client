@@ -10,40 +10,17 @@ import Foundation
 
 struct SplitFactoryHelper {
     static func buildStorageContainer(userKey: String,
-                                       dataFolderName: String,
-                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
+                                      dataFolderName: String,
+                                      testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
-        let dispatchQueue = DispatchQueue(label: "SplitCoreDataCache", target: DispatchQueue.global())
-        var database: SplitDatabase?
 
-        if testDatabase == nil {
-            guard let helper = CoreDataHelperBuilder.build(databaseName: dataFolderName,
-                                                           dispatchQueue: dispatchQueue) else {
-                throw GenericError.coultNotCreateCache
-            }
-            database = CoreDataSplitDatabase(coreDataHelper: helper, dispatchQueue: dispatchQueue)
-        } else {
-            database = testDatabase
-        }
-
-        guard let splitDatabase = database else {
-            throw GenericError.coultNotCreateCache
-        }
+        let splitDatabase = try openDatabase(dataFolderName: dataFolderName, testDatabase: testDatabase)
 
         let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
-        let splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentSplitsStorage)
-
-        let persistentMySegmentsStorage = DefaultPersistentMySegmentsStorage(userKey: userKey, database: splitDatabase)
-        let mySegmentsStorage = DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
-
-        let impressionsStorage
-            = DefaultImpressionsStorage(database: splitDatabase,
-                                        expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
-
-        let eventsStorage
-            = DefaultEventsStorage(database: splitDatabase,
-                                   expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
-
+        let splitsStorage = openSplitsStorage(database: splitDatabase)
+        let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase, userKey: userKey)
+        let impressionsStorage = openImpressionsStorage(database: splitDatabase)
+        let eventsStorage = openEventsStorage(database: splitDatabase)
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      fileStorage: fileStorage,
                                      splitsStorage: splitsStorage,
@@ -51,5 +28,47 @@ struct SplitFactoryHelper {
                                      mySegmentsStorage: mySegmentsStorage,
                                      impressionsStorage: impressionsStorage,
                                      eventsStorage: eventsStorage)
+    }
+
+    static func openDatabase(dataFolderName: String,
+                             testDatabase: SplitDatabase? = nil) throws -> SplitDatabase {
+
+        if let database = testDatabase {
+            return database
+        }
+
+        let dispatchQueue = DispatchQueue(label: "SplitCoreDataCache", target: DispatchQueue.global())
+        guard let helper = CoreDataHelperBuilder.build(databaseName: dataFolderName,
+                                                       dispatchQueue: dispatchQueue) else {
+            throw GenericError.couldNotCreateCache
+        }
+        return CoreDataSplitDatabase(coreDataHelper: helper, dispatchQueue: dispatchQueue)
+    }
+
+    static func openPersistentSplitsStorage(database: SplitDatabase) -> PersistentSplitsStorage {
+        return DefaultPersistentSplitsStorage(database: database)
+    }
+
+    static func openSplitsStorage(database: SplitDatabase) -> SplitsStorage {
+        return DefaultSplitsStorage(persistentSplitsStorage: openPersistentSplitsStorage(database: database))
+    }
+
+    static func openPersistentMySegmentsStorage(database: SplitDatabase, userKey: String) -> PersistentMySegmentsStorage {
+        return DefaultPersistentMySegmentsStorage(userKey: userKey, database: database)
+    }
+
+    static func openMySegmentsStorage(database: SplitDatabase, userKey: String) -> MySegmentsStorage {
+        let persistentMySegmentsStorage = openPersistentMySegmentsStorage(database: database, userKey: userKey)
+        return DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
+    }
+
+    static func openImpressionsStorage(database: SplitDatabase) -> PersistentImpressionsStorage {
+        return DefaultImpressionsStorage(database: database,
+                                         expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+    }
+
+    static func openEventsStorage(database: SplitDatabase) -> PersistentEventsStorage {
+        return DefaultEventsStorage(database: database,
+                                         expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
     }
 }

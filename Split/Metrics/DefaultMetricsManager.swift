@@ -126,9 +126,8 @@ extension DefaultMetricsManager {
 
     private func sendTimes() {
 
-        // TODO: This check must be removed on class refactor
         guard let restClient = self.restClient else {
-            preconditionFailure("Rest client not initialized")
+            return
         }
 
         if timesCache.count == 0 {
@@ -197,9 +196,9 @@ extension DefaultMetricsManager {
 
     private func sendCounters() {
 
-        // TODO: This check must be removed on class refactor
         guard let restClient = self.restClient else {
-            preconditionFailure("Rest client not initialized")
+            Logger.e("Rest client not available. Avoiding sending metrics")
+            return
         }
 
         if countersCache.count == 0 {

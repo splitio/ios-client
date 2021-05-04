@@ -134,7 +134,7 @@ class SyncUpdateWorker: XCTestCase {
                                                         segmentList: nil)
 
         let exp = XCTestExpectation(description: "exp")
-        synchronizer.syncMySegmentsExp = exp
+        synchronizer.forceMySegmentsSyncExp = exp
 
         try mySegmentsUpdateWorker.process(notification: notification)
 
@@ -142,7 +142,7 @@ class SyncUpdateWorker: XCTestCase {
 
         XCTAssertNil(mySegmentsStorage.updatedSegments)
         XCTAssertFalse(mySegmentsStorage.clearCalled)
-        XCTAssertTrue(synchronizer.synchronizeMySegmentsCalled)
+        XCTAssertTrue(synchronizer.forceMySegmentsSyncCalled)
     }
 
     override func tearDown() {

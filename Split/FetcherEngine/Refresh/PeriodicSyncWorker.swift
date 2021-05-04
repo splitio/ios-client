@@ -205,7 +205,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         }
         do {
             let oldSegments = mySegmentsStorage.getAll()
-            if let segments = try mySegmentsFetcher.execute(userKey: userKey) {
+            if let segments = try mySegmentsFetcher.execute(userKey: userKey, headers: nil) {
                 if changeChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segments) {
                     mySegmentsStorage.set(segments)
                     notifyMySegmentsUpdated()

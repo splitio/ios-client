@@ -27,7 +27,7 @@ class HttpMySegmentsFetcherTests: XCTestCase {
         restClient.isServerAvailable = false
         var isError = false
         do {
-            let _ = try fetcher.execute(userKey: "user")
+            let _ = try fetcher.execute(userKey: "user", headers: nil)
         } catch {
             isError = true
         }
@@ -40,7 +40,7 @@ class HttpMySegmentsFetcherTests: XCTestCase {
         restClient.isServerAvailable = true
         restClient.update(segments: ["s1", "s2", "s3"])
         
-        let c = try fetcher.execute(userKey: "user")
+        let c = try fetcher.execute(userKey: "user", headers: nil)
         
         XCTAssertEqual(3, c?.count)
         XCTAssertTrue(metricsManager.countCalled)

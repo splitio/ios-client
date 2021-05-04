@@ -19,6 +19,7 @@ protocol Synchronizer: ImpressionLogger {
     func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments()
+    func forceMySegmentsSync()
     func startPeriodicFetching()
     func stopPeriodicFetching()
     func startPeriodicRecording()
@@ -55,6 +56,7 @@ class DefaultSynchronizer: Synchronizer {
     private let periodicMySegmentsSyncWorker: PeriodicSyncWorker
     private let splitsSyncWorker: RetryableSyncWorker
     private let mySegmentsSyncWorker: RetryableSyncWorker
+    private let mySegmentsForcedSyncWorker: RetryableSyncWorker
     private let periodicImpressionsRecorderWoker: PeriodicRecorderWorker
     private let flusherImpressionsRecorderWorker: RecorderWorker
     private let periodicEventsRecorderWoker: PeriodicRecorderWorker
@@ -83,7 +85,8 @@ class DefaultSynchronizer: Synchronizer {
         self.periodicSplitsSyncWorker = syncWorkerFactory.createPeriodicSplitsSyncWorker()
         self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker()
         self.splitsSyncWorker = syncWorkerFactory.createRetryableSplitsSyncWorker()
-        self.mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker()
+        self.mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(avoidCache: false)
+        self.mySegmentsForcedSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(avoidCache: true)
         self.flusherImpressionsRecorderWorker =
             syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
         self.periodicImpressionsRecorderWoker =
@@ -147,6 +150,10 @@ class DefaultSynchronizer: Synchronizer {
 
     func synchronizeMySegments() {
         mySegmentsSyncWorker.start()
+    }
+
+    func forceMySegmentsSync() {
+        mySegmentsForcedSyncWorker.start()
     }
 
     func startPeriodicFetching() {
@@ -220,6 +227,7 @@ class DefaultSynchronizer: Synchronizer {
         mySegmentsSyncWorker.stop()
         periodicSplitsSyncWorker.stop()
         periodicMySegmentsSyncWorker.stop()
+        mySegmentsForcedSyncWorker.stop()
         periodicSplitsSyncWorker.destroy()
         periodicMySegmentsSyncWorker.destroy()
         periodicImpressionsRecorderWoker.destroy()
