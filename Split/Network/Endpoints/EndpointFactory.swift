@@ -15,6 +15,8 @@ class EndpointFactory {
     private static let kAuthorizationBearer = "Bearer"
     private static let kContentTypeJson = "application/json"
     private static let kContentTypeEventStream = "text/event-stream"
+    private static let kAblySplitSdkClientKey = "SplitSDKClientKey"
+    private static let kAblySplitSdkClientKeyLength = 4
     private struct EndpointsPath {
         static let sseAuth = "auth"
         static let splitChanges = "splitChanges"
@@ -90,7 +92,8 @@ class EndpointFactory {
     private static func basicHeaders(apiKey: String) -> [String: String] {
         return [
             Self.kAuthorizationHeader: "\(Self.kAuthorizationBearer) \(apiKey)",
-            Self.kSplitVersionHeader: Version.sdk
+            Self.kSplitVersionHeader: Version.sdk,
+            Self.kAblySplitSdkClientKey: String(apiKey.suffix(kAblySplitSdkClientKeyLength))
         ]
     }
 
