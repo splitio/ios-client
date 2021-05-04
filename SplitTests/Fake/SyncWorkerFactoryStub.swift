@@ -42,7 +42,7 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
         return periodicSplitsSyncWorker
     }
 
-    func createRetryableMySegmentsSyncWorker() -> RetryableSyncWorker {
+    func createRetryableMySegmentsSyncWorker(avoidCache: Bool) -> RetryableSyncWorker {
         return mySegmentsSyncWorker
     }
 

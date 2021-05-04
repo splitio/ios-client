@@ -14,13 +14,13 @@ import XCTest
 class SplitsBgSyncWorkerTest: XCTestCase {
 
     var splitFetcher: HttpSplitFetcherStub!
-    var splitStorage: SplitsStorageStub!
+    var splitStorage: PersistentSplitsStorageStub!
     var splitChangeProcessor: SplitChangeProcessorStub!
     var splitsSyncWorker: BackgroundSyncWorker!
 
     override func setUp() {
         splitFetcher = HttpSplitFetcherStub()
-        splitStorage = SplitsStorageStub()
+        splitStorage = PersistentSplitsStorageStub()
         splitStorage.changeNumber = 100
         let _ = SplitChange(splits: [], since: splitStorage.changeNumber, till: splitStorage.changeNumber)
         splitChangeProcessor = SplitChangeProcessorStub()
@@ -29,7 +29,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
     func testFetchSuccess() {
         // Cache expiration timestamp set to 0 (no clearing cache)
         splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                      splitsStorage: splitStorage,
+                                                      persistentSplitsStorage: splitStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
                                                       cacheExpiration: 100)
 
@@ -39,13 +39,13 @@ class SplitsBgSyncWorkerTest: XCTestCase {
         splitsSyncWorker.execute()
 
         XCTAssertFalse(splitStorage.clearCalled)
-        XCTAssertNotNil(splitStorage.updatedSplitChange)
+        XCTAssertNotNil(splitStorage.processedSplitChange)
     }
 
     func testFetchFail() {
         // Cache expiration timestamp set to 0 (no clearing cache)
         splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                      splitsStorage: splitStorage,
+                                                      persistentSplitsStorage: splitStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
                                                       cacheExpiration: 100)
 
@@ -54,14 +54,14 @@ class SplitsBgSyncWorkerTest: XCTestCase {
         splitsSyncWorker.execute()
 
         XCTAssertFalse(splitStorage.clearCalled)
-        XCTAssertNil(splitStorage.updatedSplitChange)
+        XCTAssertNil(splitStorage.processedSplitChange)
     }
 
     func testClearExpiredCache() {
 
         let expiration = 1000
         splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                      splitsStorage: splitStorage,
+                                                      persistentSplitsStorage: splitStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
                                                       cacheExpiration: 100)
 
@@ -78,7 +78,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
 
         let expiration = 1000
         splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                           splitsStorage: splitStorage,
+                                                      persistentSplitsStorage: splitStorage,
                                                            splitChangeProcessor: splitChangeProcessor,
                                                            cacheExpiration: 2000)
 

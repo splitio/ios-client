@@ -8,7 +8,12 @@
 
 import Foundation
 
-protocol SplitsStorage {
+protocol SyncSplitsStorage {
+    func update(splitChange: ProcessedSplitChange)
+    func clear()
+}
+
+protocol SplitsStorage: SyncSplitsStorage {
     var changeNumber: Int64 { get }
     var updateTimestamp: Int64 { get }
     var splitsFilterQueryString: String { get }
@@ -143,5 +148,22 @@ class DefaultSplitsStorage: SplitsStorage {
                 inMemorySplits.removeValue(forKey: splitName)
             }
         }
+    }
+}
+
+class BackgroundSyncSplitsStorage: SyncSplitsStorage {
+
+    private var persistentStorage: PersistentSplitsStorage
+
+    init(persistentSplitsStorage: PersistentSplitsStorage) {
+        self.persistentStorage = persistentSplitsStorage
+    }
+
+    func update(splitChange: ProcessedSplitChange) {
+        persistentStorage.update(splitChange: splitChange)
+    }
+
+    func clear() {
+        persistentStorage.clear()
     }
 }

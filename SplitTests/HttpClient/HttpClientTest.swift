@@ -27,7 +27,7 @@ class HttpClientTest: XCTestCase {
                                        requestManager: requestManager)
         serviceEndpoints = ServiceEndpoints.builder().build()
         factory = EndpointFactory(serviceEndpoints: serviceEndpoints,
-                                  apiKey: CommonValues.apiKey, userKey: CommonValues.userKey,
+                                  apiKey: CommonValues.apiKey,
                                   splitsQueryString: "")
     }
 

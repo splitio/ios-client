@@ -11,11 +11,11 @@ import Foundation
 class SplitsSyncHelper {
 
     private let splitFetcher: HttpSplitFetcher
-    private let splitsStorage: SplitsStorage
+    private let splitsStorage: SyncSplitsStorage
     private let splitChangeProcessor: SplitChangeProcessor
 
     init(splitFetcher: HttpSplitFetcher,
-         splitsStorage: SplitsStorage,
+         splitsStorage: SyncSplitsStorage,
          splitChangeProcessor: SplitChangeProcessor) {
 
         self.splitFetcher = splitFetcher
@@ -33,7 +33,7 @@ class SplitsSyncHelper {
                 let splitChange = try self.splitFetcher.execute(since: nextSince, headers: headers)
                 let newSince = splitChange.since
                 let newTill = splitChange.till
-                if clearBeforeUpdate {
+                if clearCache {
                     splitsStorage.clear()
                 }
                 firstFetch = false

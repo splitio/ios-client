@@ -19,7 +19,7 @@ protocol SyncWorkerFactory {
                                            reconnectBackoffCounter: ReconnectBackoffCounter
     ) -> RetryableSyncWorker
 
-    func createRetryableMySegmentsSyncWorker() -> RetryableSyncWorker
+    func createRetryableMySegmentsSyncWorker(avoidCache: Bool) -> RetryableSyncWorker
 
     func createPeriodicMySegmentsSyncWorker() -> PeriodicSyncWorker
 
@@ -79,7 +79,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                                  reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
-    func createRetryableMySegmentsSyncWorker() -> RetryableSyncWorker {
+    func createRetryableMySegmentsSyncWorker(avoidCache: Bool) -> RetryableSyncWorker {
 
         let backoffBase =  splitConfig.generalRetryBackoffBase
         let mySegmentsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
@@ -87,7 +87,8 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                              mySegmentsStorage: storageContainer.mySegmentsStorage,
                                              metricsManager: DefaultMetricsManager.shared,
                                              eventsManager: eventsManager,
-                                             reconnectBackoffCounter: mySegmentsBackoffCounter)
+                                             reconnectBackoffCounter: mySegmentsBackoffCounter,
+                                             avoidCache: avoidCache)
     }
 
     func createPeriodicSplitsSyncWorker() -> PeriodicSyncWorker {

@@ -26,9 +26,8 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     var completion: SyncCompletion?
     private var reconnectBackoffCounter: ReconnectBackoffCounter
     private var splitEventsManager: SplitEventsManager
-    private var isFirstFetch = Atomic<Bool>(true)
-    private var isRunning = Atomic<Bool>(false)
-    private let loopQueue = DispatchQueue.global()
+    private var isRunning: Atomic<Bool> = Atomic(false)
+    private let syncQueue = DispatchQueue.global()
 
     init(eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
@@ -38,14 +37,20 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     }
 
     func start() {
-        isRunning.set(true)
-        loopQueue.async {
+        syncQueue.async {
+            if self.isRunning.value {
+                return
+            }
+            self.isRunning.set(true)
+            self.reconnectBackoffCounter.resetCounter()
             self.fetchFromRemoteLoop()
         }
     }
 
     func stop() {
-        isRunning.set(false)
+        syncQueue.async {
+            self.isRunning.set(false)
+        }
     }
 
     private func fetchFromRemoteLoop() {
@@ -58,7 +63,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
                 ThreadUtils.delay(seconds: retryTimeInSeconds)
             }
         }
-        isRunning.set(false)
+        self.isRunning.set(false)
         if let handler = completion {
             handler(success)
         }
@@ -96,27 +101,31 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
     private let userKey: String
     private let mySegmentsStorage: MySegmentsStorage
     private let metricsManager: MetricsManager
+    private let avoidCache: Bool
     var changeChecker: MySegmentsChangesChecker
 
     init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
          mySegmentsStorage: MySegmentsStorage,
          metricsManager: MetricsManager,
          eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter) {
+         reconnectBackoffCounter: ReconnectBackoffCounter,
+         avoidCache: Bool) {
 
         self.userKey = userKey
         self.mySegmentsStorage = mySegmentsStorage
         self.mySegmentsFetcher = mySegmentsFetcher
         self.metricsManager = metricsManager
         self.changeChecker = DefaultMySegmentsChangesChecker()
+        self.avoidCache = avoidCache
 
-        super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
+        super.init(eventsManager: eventsManager,
+                   reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() -> Bool {
         do {
             let oldSegments = mySegmentsStorage.getAll()
-            if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey) {
+            if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: getHeaders()) {
                 Logger.d(segments.debugDescription)
                 if !isSdkReadyTriggered() ||
                     changeChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segments) {
@@ -131,6 +140,10 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             Logger.e("Problem fetching mySegments: %@", error.localizedDescription)
         }
         return false
+    }
+
+    private func getHeaders() -> [String: String]? {
+        return avoidCache ? ServiceConstants.controlNoCacheHeader : nil
     }
 }
 
@@ -201,7 +214,6 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
     private let splitsStorage: SplitsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let changeNumber: Int64
-    private let controlNoCacheHeader = [ServiceConstants.CacheControlHeader: ServiceConstants.CacheControlNoCache]
     private let syncHelper: SplitsSyncHelper
     private let eventsManager: SplitEventsManager
     var changeChecker: SplitsChangesChecker
@@ -229,7 +241,9 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
     override func fetchFromRemote() -> Bool {
         let storedChangeNumber = splitsStorage.changeNumber
         if changeNumber < storedChangeNumber ||
-           syncHelper.sync(since: splitsStorage.changeNumber, clearBeforeUpdate: false, headers: controlNoCacheHeader) {
+            syncHelper.sync(since: splitsStorage.changeNumber,
+                            clearBeforeUpdate: false,
+                            headers: ServiceConstants.controlNoCacheHeader) {
             if changeChecker.splitsHaveChanged(oldChangeNumber: storedChangeNumber,
                                                      newChangeNumber: splitsStorage.changeNumber) {
                 notifySplitsUpdated()
