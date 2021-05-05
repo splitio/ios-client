@@ -44,13 +44,14 @@ class MetricManagerConfig {
 class DefaultMetricsManager: MetricsManager {
     /// TODO: Improve this class implementation by removing singleton to allow passing common RestClient to constructor
     /// This improvement will be in a future PR to avoid more changes in this one.
-    private var lastPostTime: Int64 = Date().unixTimestamp()
+    private var lastPostTime: Int64
     private var countersCache = SynchronizedArrayWrapper<CounterMetricSample>()
     private var timesCache = SynchronizedArrayWrapper<TimeMetricSample>()
 
     private let kTimesFile = "timesFile"
     private let kCountersFile = "countersFile"
     private let pushRateInSeconds: Int
+    private let updateQueue: DispatchQueue
     // TODO: Make this private in refactor
     var restClient: MetricsRestClient?
     private let fileStorage: FileStorageProtocol
@@ -69,6 +70,8 @@ class DefaultMetricsManager: MetricsManager {
     init(config: MetricManagerConfig = MetricManagerConfig.default) {
         self.fileStorage = FileStorage(dataFolderName: config.defaultDataFolderName)
         self.pushRateInSeconds = config.pushRateInSeconds
+        self.lastPostTime = Date().unixTimestamp()
+        self.updateQueue = DispatchQueue(label: "split-update-metrics", target: DispatchQueue.global())
     }
 
     private func saveDataToDisk() {
@@ -112,12 +115,15 @@ extension DefaultMetricsManager {
 // MARK: Private - Common
 extension DefaultMetricsManager {
     private func shouldPostToServer() -> Bool {
-        let curTime = Date().unixTimestamp()
-        if curTime - lastPostTime >= pushRateInSeconds {
-            lastPostTime = curTime
-            return true
+        var shouldPost = false
+        updateQueue.sync {
+            let curTime = Date().unixTimestamp()
+            if curTime - lastPostTime >= pushRateInSeconds {
+                lastPostTime = curTime
+                shouldPost = true
+            }
         }
-        return false
+        return shouldPost
     }
 }
 
