@@ -8,10 +8,16 @@
 
 import Foundation
 
+enum BlockingQueueError: Error {
+    case hasBeenInterrupted
+    case noElementAvailable
+}
+
 class GenericBlockingQueue<Item> {
     private var elements: [Item]
     private let dispatchQueue: DispatchQueue
     private let semaphore: DispatchSemaphore
+    private var isInterrupted = false
     init() {
         dispatchQueue = DispatchQueue(label: "split-blocking-queue", attributes: .concurrent)
         semaphore = DispatchSemaphore(value: 0)
@@ -25,34 +31,49 @@ class GenericBlockingQueue<Item> {
         }
     }
 
-    func take() -> Item {
-        var item: Item!
+    func take() throws -> Item {
+        var item: Item?
         self.semaphore.wait()
-        dispatchQueue.sync {
+        try dispatchQueue.sync {
+            if self.isInterrupted {
+                throw BlockingQueueError.hasBeenInterrupted
+            }
             item = elements[0]
             self.elements.removeFirst()
         }
-        return item
+        guard let foundItem = item else {
+            throw BlockingQueueError.noElementAvailable
+        }
+        return foundItem
+    }
+
+    func interrupt() {
+        dispatchQueue.async(flags: .barrier) {
+            self.isInterrupted = true
+            self.semaphore.signal()
+        }
     }
 }
 
 // Protocol to allow mocking
 protocol InternalEventBlockingQueue {
     func add(_ item: SplitInternalEvent)
-
-    func take() -> SplitInternalEvent
+    func take() throws -> SplitInternalEvent
+    func interrupt()
 }
 
 class DefaultInternalEventBlockingQueue: InternalEventBlockingQueue {
     let blockingQueue = GenericBlockingQueue<SplitInternalEvent>()
     func add(_ item: SplitInternalEvent) {
-        print("Add: \(item)")
         blockingQueue.add(item)
     }
 
-    func take() -> SplitInternalEvent {
-        let value =  blockingQueue.take()
-        print("Take: \(value)")
+    func take() throws -> SplitInternalEvent  {
+        let value =  try blockingQueue.take()
         return value
+    }
+
+    func interrupt() {
+        blockingQueue.interrupt()
     }
 }
