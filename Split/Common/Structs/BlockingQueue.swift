@@ -68,7 +68,7 @@ class DefaultInternalEventBlockingQueue: InternalEventBlockingQueue {
         blockingQueue.add(item)
     }
 
-    func take() throws -> SplitInternalEvent  {
+    func take() throws -> SplitInternalEvent {
         let value =  try blockingQueue.take()
         return value
     }
