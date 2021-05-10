@@ -10,6 +10,19 @@ import Foundation
 @testable import Split
 
 struct TestingHelper {
+
+    static func basicStreamingConfig() -> SplitClientConfig {
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 3
+        splitConfig.segmentsRefreshRate = 3
+        splitConfig.impressionRefreshRate = 30
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.eventsPerPush = 10
+        splitConfig.eventsQueueSize = 100
+        splitConfig.eventsPushRate = 3
+        return splitConfig
+    }
+
     static func createEvents(count: Int = 10, timestamp: Int64 = 1000) -> [EventDTO] {
         var events = [EventDTO]()
         for i in 0..<count {

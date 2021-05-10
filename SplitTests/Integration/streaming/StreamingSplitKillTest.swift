@@ -64,7 +64,6 @@ class StreamingSplitKillTest: XCTestCase {
         exp4 = XCTestExpectation(description: "Exp4")
 
         client.on(event: SplitEvent.sdkReady) {
-            IntegrationHelper.tlog("READY")
             sdkReadyExpectation.fulfill()
         }
 
@@ -73,8 +72,7 @@ class StreamingSplitKillTest: XCTestCase {
         }
 
         wait(for: [sdkReadyExpectation, sseConnExp], timeout: expTimeout)
-        
-        IntegrationHelper.tlog("KEEPAL")
+
         streamingBinding?.push(message: ":keepalive") // send keep alive to confirm streaming connection ok
         wait(for: [exp1], timeout: expTimeout)
         waitForUpdate(secs: 1)
@@ -163,9 +161,9 @@ class StreamingSplitKillTest: XCTestCase {
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            //DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
                 self.sseConnExp.fulfill()
-            }
+            //}
             return self.streamingBinding!
         }
     }

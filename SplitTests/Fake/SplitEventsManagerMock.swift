@@ -48,8 +48,4 @@ class SplitEventsManagerMock: SplitEventsManager {
         }
         return true
     }
-    
-    func getExecutionTimes() -> [String: Int] {
-        return [String:Int]()
-    }
 }

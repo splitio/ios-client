@@ -10,7 +10,9 @@ import Foundation
 import XCTest
 @testable import Split
 
-class SynchronizerStub: Synchronizer {
+class SynchronizerSpy: Synchronizer {
+
+    var splitSynchronizer: Synchronizer
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
@@ -39,20 +41,43 @@ class SynchronizerStub: Synchronizer {
     var startPeriodicFetchingExp: XCTestExpectation?
     var stopPeriodicFetchingExp: XCTestExpectation?
 
+    init(splitConfig: SplitClientConfig,
+         splitApiFacade: SplitApiFacade,
+         splitStorageContainer: SplitStorageContainer,
+         syncWorkerFactory: SyncWorkerFactory,
+         impressionsSyncHelper: ImpressionsRecorderSyncHelper,
+         eventsSyncHelper: EventsRecorderSyncHelper,
+         syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
+            = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>(),
+         splitsFilterQueryString: String,
+         splitEventsManager: SplitEventsManager) {
+        self.splitSynchronizer = DefaultSynchronizer(splitConfig: splitConfig, splitApiFacade: splitApiFacade,
+                                                      splitStorageContainer: splitStorageContainer,
+                                                      syncWorkerFactory: syncWorkerFactory,
+                                                      impressionsSyncHelper: impressionsSyncHelper,
+                                                      eventsSyncHelper: eventsSyncHelper,
+                                                      splitsFilterQueryString: splitsFilterQueryString,
+                                                      splitEventsManager: splitEventsManager)
+    }
+
     func loadAndSynchronizeSplits() {
         loadAndSynchronizeSplitsCalled = true
+        splitSynchronizer.loadAndSynchronizeSplits()
     }
 
     func loadMySegmentsFromCache() {
         loadMySegmentsFromCacheCalled = true
+        splitSynchronizer.loadMySegmentsFromCache()
     }
 
     func syncAll() {
         syncAllCalled = true
+        splitSynchronizer.syncAll()
     }
 
     func startPeriodicFetching() {
         startPeriodicFetchingCalled = true
+        splitSynchronizer.startPeriodicFetching()
         if let exp = startPeriodicFetchingExp {
             exp.fulfill()
         }
@@ -60,6 +85,7 @@ class SynchronizerStub: Synchronizer {
 
     func stopPeriodicFetching() {
         stopPeriodicFetchingCalled = true
+        splitSynchronizer.stopPeriodicFetching()
         if let exp = stopPeriodicFetchingExp {
             exp.fulfill()
         }
@@ -67,30 +93,37 @@ class SynchronizerStub: Synchronizer {
 
     func startPeriodicRecording() {
         startPeriodicRecordingCalled = true
+        splitSynchronizer.startPeriodicRecording()
     }
 
     func stopPeriodicRecording() {
         stopPeriodicRecordingCalled = true
+        splitSynchronizer.stopPeriodicRecording()
     }
 
     func pushEvent(event: EventDTO) {
         pushEventCalled = true
+        splitSynchronizer.pushEvent(event: event)
     }
 
     func pushImpression(impression: Impression) {
         pushImpressionCalled = true
+        splitSynchronizer.pushImpression(impression: impression)
     }
 
     func flush() {
         flushCalled = true
+        splitSynchronizer.flush()
     }
 
     func destroy() {
         destroyCalled = true
+        splitSynchronizer.destroy()
     }
 
     func synchronizeSplits() {
         synchronizeSplitsCalled = true
+        splitSynchronizer.synchronizeSplits()
         if let exp = syncSplitsExp {
             exp.fulfill()
         }
@@ -98,6 +131,7 @@ class SynchronizerStub: Synchronizer {
 
     func synchronizeSplits(changeNumber: Int64) {
         synchronizeSplitsChangeNumberCalled = true
+        splitSynchronizer.synchronizeSplits(changeNumber: changeNumber)
         if let exp = syncSplitsChangeNumberExp {
             exp.fulfill()
         }
@@ -105,6 +139,7 @@ class SynchronizerStub: Synchronizer {
 
     func synchronizeMySegments() {
         synchronizeMySegmentsCalled = true
+        splitSynchronizer.synchronizeMySegments()
         if let exp = syncMySegmentsExp {
             exp.fulfill()
         }
@@ -112,22 +147,27 @@ class SynchronizerStub: Synchronizer {
 
     func forceMySegmentsSync() {
         forceMySegmentsSyncCalled = true
+        splitSynchronizer.forceMySegmentsSync()
         if let exp = forceMySegmentsSyncExp {
             exp.fulfill()
         }
     }
 
     func pause() {
+        splitSynchronizer.pause()
     }
 
     func resume() {
+        splitSynchronizer.resume()
     }
 
     func notifiySegmentsUpdated() {
         notifyMySegmentsUpdatedCalled = true
+        splitSynchronizer.notifiySegmentsUpdated()
     }
 
     func notifySplitKilled() {
         notifySplitKilledCalled = true
+        splitSynchronizer.notifiySegmentsUpdated()
     }
 }

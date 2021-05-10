@@ -20,40 +20,30 @@ class StreamingDisabledTest: XCTestCase {
     var streamingBinding: TestStreamResponseBinding?
     let pollingExp = XCTestExpectation(description: "Polling conn")
 
-    var splitsChangesHitCount = 0
-    var mySegmentsHitCount = 0
+    var mySegExp: XCTestExpectation!
+    var splitsChangesExp: XCTestExpectation!
+
+    var checkSplitChangesHit = false
+    var checkMySegmentsHit = false
+
+    var testFactory: TestSplitFactory!
 
     override func setUp() {
-        let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
-        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+
+        testFactory = TestSplitFactory()
+        testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
     }
 
-    func testInit() {
+    func testOccupancy() throws {
 
-        let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 2
-        splitConfig.segmentsRefreshRate = 2
-        splitConfig.impressionRefreshRate = 9999
-        splitConfig.sdkReadyTimeOut = 60000
-        splitConfig.eventsPerPush = 10
-        splitConfig.eventsQueueSize = 100
-        splitConfig.eventsPushRate = 99999
-
-        let key: Key = Key(matchingKey: userKey)
-        let builder = DefaultSplitFactoryBuilder()
-        _ = builder.setHttpClient(httpClient)
-        _ = builder.setReachabilityChecker(ReachabilityMock())
-        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
-        let factory = builder.setApiKey(apiKey).setKey(key)
-            .setConfig(splitConfig).build()!
-
-        let client = factory.client
+        try testFactory.buildSdk()
+        let syncSpy = testFactory.synchronizerSpy
+        let client = testFactory.client
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         var timeOutFired = false
         var sdkReadyFired = false
+        syncSpy.startPeriodicFetchingExp = pollingExp
 
         client.on(event: SplitEvent.sdkReady) {
             sdkReadyFired = true
@@ -65,6 +55,7 @@ class StreamingDisabledTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
+
         wait(for: [sdkReadyExpectation, pollingExp], timeout: 20)
 
         XCTAssertTrue(sdkReadyFired)
@@ -72,22 +63,22 @@ class StreamingDisabledTest: XCTestCase {
         XCTAssertTrue(isSseAuthHit)
         XCTAssertFalse(isSseHit)
         // Means polling enabled
-        XCTAssertTrue(mySegmentsHitCount > 3)
-        XCTAssertTrue(splitsChangesHitCount > 3)
+        XCTAssertTrue(syncSpy.startPeriodicFetchingCalled)
+    }
 
+    private func startHitsCheck() {
+        splitsChangesExp = XCTestExpectation()
+        mySegExp = XCTestExpectation()
+        checkSplitChangesHit = true
+        checkMySegmentsHit = true
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
-                self.splitsChangesHitCount+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             case let(urlString) where urlString.contains("mySegments"):
-                self.mySegmentsHitCount+=1
-                if self.mySegmentsHitCount > 3 {
-                    self.pollingExp.fulfill()
-                }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             case let(urlString) where urlString.contains("auth"):
                 self.isSseAuthHit = true
