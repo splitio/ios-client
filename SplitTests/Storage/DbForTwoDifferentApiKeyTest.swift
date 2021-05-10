@@ -57,8 +57,6 @@ class DbForDifferentApiKeysTest: XCTestCase {
                                                           streamingHandler: buildStreamingHandler())
         httpClient1 = DefaultHttpClient(session: session, requestManager: reqManager1)
 
-
-
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient1)
@@ -78,7 +76,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
             sdkReadyExpectation1.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation1, sseExp[0]], timeout: 20)
+        wait(for: [sdkReadyExpectation1, sseExp[0]], timeout: 5)
         streamingBinding?.push(message: ":keepalive")
         testSplitsUpdate(changeNumber: changeNumberF2)
 
@@ -111,7 +109,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
             sdkReadyExpectation2.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation2, sseExp[1]], timeout: 20)
+        wait(for: [sdkReadyExpectation2, sseExp[1]], timeout: 5)
 
         let t2Split1 = client2.getTreatment("split1")
         let t2Split2 = client2.getTreatment("split2")

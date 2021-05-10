@@ -158,9 +158,9 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         return { request in
             self.sseConnHits+=1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            //DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
                 self.sseExp.fulfill()
-            }
+            //}
             return self.streamingBinding!
         }
     }

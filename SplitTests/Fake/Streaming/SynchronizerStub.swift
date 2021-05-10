@@ -36,6 +36,9 @@ class SynchronizerStub: Synchronizer {
     var syncMySegmentsExp: XCTestExpectation?
     var forceMySegmentsSyncExp: XCTestExpectation?
 
+    var startPeriodicFetchingExp: XCTestExpectation?
+    var stopPeriodicFetchingExp: XCTestExpectation?
+
     func loadAndSynchronizeSplits() {
         loadAndSynchronizeSplitsCalled = true
     }
@@ -50,10 +53,16 @@ class SynchronizerStub: Synchronizer {
 
     func startPeriodicFetching() {
         startPeriodicFetchingCalled = true
+        if let exp = startPeriodicFetchingExp {
+            exp.fulfill()
+        }
     }
 
     func stopPeriodicFetching() {
         stopPeriodicFetchingCalled = true
+        if let exp = stopPeriodicFetchingExp {
+            exp.fulfill()
+        }
     }
 
     func startPeriodicRecording() {
