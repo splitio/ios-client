@@ -33,7 +33,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     init(config: SplitClientConfig) {
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process", attributes: .concurrent)
-        self.dataAccessQueue = DispatchQueue(label: "split-evt-mngr-data", target: .global())
+        self.dataAccessQueue = DispatchQueue(label: "split-evt-mngr-data")
         self.isStarted = false
         self.sdkReadyTimeStart = Date().unixTimestampInMiliseconds()
         self.readingRefreshTime = 300
@@ -90,9 +90,11 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     func stop() {
-        processQueue.sync {
+        dataAccessQueue.async {
             self.isStarted = false
-            self.eventsQueue.interrupt()
+            self.processQueue.sync {
+                self.eventsQueue.interrupt()
+            }
         }
     }
 
