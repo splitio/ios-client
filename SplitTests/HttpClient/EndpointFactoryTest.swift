@@ -20,7 +20,7 @@ class EndpointFactoryTest: XCTestCase {
     private let kContentTypeJson = "application/json"
     private let kContentTypeEventStream = "text/event-stream"
     private let kAblyClientKey = "2bc3"
-    private let commonHeadersCount = 4
+    private let commonHeadersCount = 3
 
     var factory: EndpointFactory!
     var serviceEndpoints: ServiceEndpoints!
@@ -41,7 +41,6 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(kAblyClientKey, endpoint.headers[kAblySplitSdkClientKey])
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
@@ -54,7 +53,6 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(kAblyClientKey, endpoint.headers[kAblySplitSdkClientKey])
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
@@ -67,7 +65,6 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(kAblyClientKey, endpoint.headers[kAblySplitSdkClientKey])
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
@@ -80,7 +77,6 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(kAblyClientKey, endpoint.headers[kAblySplitSdkClientKey])
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
@@ -93,7 +89,6 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(kAblyClientKey, endpoint.headers[kAblySplitSdkClientKey])
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
@@ -106,7 +101,6 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(kAblyClientKey, endpoint.headers[kAblySplitSdkClientKey])
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
@@ -119,7 +113,6 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(kAblyClientKey, endpoint.headers[kAblySplitSdkClientKey])
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
@@ -132,7 +125,6 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(kAblyClientKey, endpoint.headers[kAblySplitSdkClientKey])
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
@@ -141,8 +133,7 @@ class EndpointFactoryTest: XCTestCase {
         let endpoint = factory.streamingEndpoint
 
         XCTAssertEqual(HttpMethod.get, endpoint.method)
-        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
-        XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
+        XCTAssertEqual(3, endpoint.headers.count)
         XCTAssertEqual(kContentTypeEventStream, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
         XCTAssertEqual(kAblyClientKey, endpoint.headers[kAblySplitSdkClientKey])
