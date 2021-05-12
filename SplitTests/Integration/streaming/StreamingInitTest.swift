@@ -67,6 +67,12 @@ class StreamingInitTest: XCTestCase {
         XCTAssertTrue(isSseAuthHit)
         XCTAssertTrue(isSseHit)
 
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {

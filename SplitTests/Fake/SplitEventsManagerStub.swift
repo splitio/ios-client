@@ -36,8 +36,4 @@ class SplitEventsManagerStub: SplitEventsManager {
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
         return false
     }
-
-    func getExecutionTimes() -> [String: Int] {
-        return [String: Int]()
-    }
 }

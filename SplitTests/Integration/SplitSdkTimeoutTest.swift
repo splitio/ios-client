@@ -75,6 +75,12 @@ class SplitSdkTiemoutTests: XCTestCase {
 
         XCTAssertFalse(sdkReadyFired)
         XCTAssertTrue(timeOutFired)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client?.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
         
     }
 }

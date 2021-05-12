@@ -39,6 +39,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
          reachabilityChecker: HostReachabilityChecker?, testDatabase: SplitDatabase? = nil) throws {
         super.init()
 
+        let eventsManager = DefaultSplitEventsManager(config: config)
+
         let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? config.defaultDataFolder
 
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
@@ -53,9 +55,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)
         defaultManager = manager
-
-        let eventsManager = DefaultSplitEventsManager(config: config)
-        eventsManager.start()
 
         let splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
         let  endpointFactory = EndpointFactory(serviceEndpoints: config.serviceEndpoints,
@@ -118,8 +117,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                            synchronizer: synchronizer, eventsManager: eventsManager) {
             syncManager.stop()
             manager.destroy()
+            eventsManager.stop()
         }
 
+        eventsManager.start()
         eventsManager.executorResources.client = defaultClient
         syncManager.start()
     }
