@@ -76,6 +76,12 @@ class StreamingAuthFail5xxTest: XCTestCase {
         XCTAssertEqual(1, sseConnHits)
         XCTAssertTrue(isSseAuth)
         XCTAssertTrue(isSseConnected)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {

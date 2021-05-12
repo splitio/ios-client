@@ -121,6 +121,12 @@ class StreamingSplitsSyncTest: XCTestCase {
         XCTAssertEqual("free", treatmentFirst)
         XCTAssertEqual("conta", treatmentSec)
         XCTAssertEqual("conta", treatmentOld)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func getChanges(for hitNumber: Int) -> Data {

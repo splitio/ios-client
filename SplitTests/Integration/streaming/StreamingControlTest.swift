@@ -25,99 +25,87 @@ class StreamingControlTest: XCTestCase {
 
     let kRefreshRate = 1
 
-    var mySegExps = [XCTestExpectation]()
-    var splitsChangesExps = [XCTestExpectation]()
-    var mySegExpIndex = 0
-    var splitsExpIndex = 0
+    var mySegExp: XCTestExpectation!
+    var splitsChangesExp: XCTestExpectation!
 
-    var waitForSplitChangesHit = true
-    var waitForMySegmentsHit = false
+    var checkSplitChangesHit = false
+    var checkMySegmentsHit = false
+
+    var testFactory: TestSplitFactory!
 
     override func setUp() {
-        let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
-        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+
+        testFactory = TestSplitFactory()
+        testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
     }
 
-    func testControl() {
-
-        let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = kRefreshRate
-        splitConfig.segmentsRefreshRate = kRefreshRate
-        splitConfig.impressionRefreshRate = 30
-        splitConfig.sdkReadyTimeOut = 60000
-        splitConfig.eventsPerPush = 10
-        splitConfig.eventsQueueSize = 100
-        splitConfig.eventsPushRate = 5
-        splitConfig.isDebugModeEnabled = true
+    func testControl() throws {
 
         let splitName = "workm"
 
-        let key: Key = Key(matchingKey: userKey)
-        let builder = DefaultSplitFactoryBuilder()
-        _ = builder.setHttpClient(httpClient)
-        _ = builder.setReachabilityChecker(ReachabilityMock())
-        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
-        let factory = builder.setApiKey(apiKey).setKey(key)
-            .setConfig(splitConfig).build()!
+        try testFactory.buildSdk()
+        let syncSpy = testFactory.synchronizerSpy
+        let client = testFactory.client
 
         var timestamp = 1000
 
-        let client = factory.client
-
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-        createExpectations()
 
         client.on(event: SplitEvent.sdkReady) {
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
-            sdkReadyExpectation.fulfill()
-        }
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 5)
 
-        wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
+        streamingBinding?.push(message: ":keepalive")
 
         let treatmentReady = client.getTreatment(splitName)
 
-        justWait() // wait to allow sync all
+        startHitsCheck()
 
-        // Should disable streaming
+        // Should disable streaming and enable polling
+        syncSpy.startPeriodicFetchingExp = XCTestExpectation()
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
                                                                                   controlType: "STREAMING_PAUSED"))
-        waitForHits()
-        wait(for: [mySegExps[mySegExpIndex],  splitsChangesExps[splitsExpIndex]], timeout: 7)
+
+
+        wait(for: [syncSpy.startPeriodicFetchingExp!], timeout: 5)
 
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
                                                                                                segment: "new_segment"))
-        justWait() // allow to my segments be updated
+        // allow to my segments be updated
+        startHitsCheck()
+        wait(for: [mySegExp,  splitsChangesExp], timeout: 5)
         let treatmentPaused = client.getTreatment(splitName)
 
+
+        syncSpy.stopPeriodicFetchingExp = XCTestExpectation()
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
                                                                                   controlType: "STREAMING_ENABLED"))
-        justWait() // allow polling to stop
-        timestamp+=1000
 
+        wait(for: [syncSpy.stopPeriodicFetchingExp!], timeout: 5) // Polling stopped once streaming enabled
+        timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
                                                                                                segment: "new_segment"))
-        justWait() // allow to my segments be updated
+        wait() // allow to my segments be updated
         let treatmentEnabled = client.getTreatment(splitName)
 
+        // Should disable streaming and enable polling
+        syncSpy.startPeriodicFetchingExp = XCTestExpectation()
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
                                                                                   controlType: "STREAMING_DISABLED"))
 
+        wait(for: [syncSpy.startPeriodicFetchingExp!], timeout: 5)
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
                                                                                                segment: "new_segment"))
-        waitForHits()
-        wait(for: [mySegExps[mySegExpIndex],  splitsChangesExps[splitsExpIndex]], timeout: 7)
+        startHitsCheck()
+        wait(for: [mySegExp,  splitsChangesExp], timeout: 5)
 
-        justWait()
         let treatmentDisabled = client.getTreatment(splitName)
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
@@ -125,11 +113,12 @@ class StreamingControlTest: XCTestCase {
         XCTAssertEqual("on", treatmentPaused)
         XCTAssertEqual("free", treatmentEnabled)
         XCTAssertEqual("on", treatmentDisabled)
-    }
 
-    private func waitForHits() {
-        waitForMySegmentsHit = true
-        waitForSplitChangesHit = true
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
@@ -141,11 +130,14 @@ class StreamingControlTest: XCTestCase {
                 if hit == 0 {
                     return TestDispatcherResponse(code: 200, data: Data(self.splitChanges().utf8))
                 }
-                self.checkHist(inSplits: true)
+                if self.checkSplitChangesHit {
+                    self.splitsChangesExp.fulfill()
+                }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             case let(urlString) where urlString.contains("mySegments"):
-                self.mySegHitCount+=1
-                self.checkHist(inSplits: false)
+                if self.checkMySegmentsHit {
+                    self.mySegExp.fulfill()
+                }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             case let(urlString) where urlString.contains("auth"):
                 self.isSseAuthHit = true
@@ -165,43 +157,15 @@ class StreamingControlTest: XCTestCase {
         }
     }
 
-    private func justWait() {
+    private func startHitsCheck() {
+        splitsChangesExp = XCTestExpectation()
+        mySegExp = XCTestExpectation()
+        checkSplitChangesHit = true
+        checkMySegmentsHit = true
+    }
+
+    private func wait() {
         ThreadUtils.delay(seconds: Double(self.kRefreshRate) * 2.0)
-    }
-
-    private func checkHist(inSplits: Bool) {
-        DispatchQueue.global().async {
-            self.waitLoop(inSplits: inSplits)
-        }
-    }
-
-    func waitLoop(inSplits: Bool) {
-        var out = false
-        while(!out) {
-            justWait()
-            let hits = inSplits ? self.splitsHitCount : self.mySegHitCount
-            out = hits > 0
-            if inSplits {
-                if waitForMySegmentsHit {
-                    waitForMySegmentsHit = false
-                    mySegExps[mySegExpIndex].fulfill()
-                    mySegExpIndex+=1
-                }
-            } else {
-                if waitForSplitChangesHit {
-                    waitForSplitChangesHit = false
-                    splitsChangesExps[splitsExpIndex].fulfill()
-                    splitsExpIndex+=1
-                }
-            }
-        }
-    }
-
-    func createExpectations() {
-        for _ in 1..<20 {
-            mySegExps.append(XCTestExpectation())
-            splitsChangesExps.append(XCTestExpectation())
-        }
     }
 
     private func splitChanges() -> String {
