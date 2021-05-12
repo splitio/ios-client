@@ -107,12 +107,16 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         waitForUpdate(secs: 2)
         let treatmentOld = client.getTreatment(splitName)
 
-        client.destroy()
-
         XCTAssertEqual("on", treatmentReady)
         XCTAssertEqual("free", treatmentFirst)
         XCTAssertEqual("on", treatmentSec)
         XCTAssertEqual("on", treatmentOld)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {

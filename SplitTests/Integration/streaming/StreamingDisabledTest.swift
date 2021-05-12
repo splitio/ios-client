@@ -58,14 +58,18 @@ class StreamingDisabledTest: XCTestCase {
 
         wait(for: [sdkReadyExpectation, pollingExp], timeout: 20)
 
-        client.destroy()
-
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertTrue(isSseAuthHit)
         XCTAssertFalse(isSseHit)
         // Means polling enabled
         XCTAssertTrue(syncSpy.startPeriodicFetchingCalled)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func startHitsCheck() {

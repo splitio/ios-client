@@ -107,12 +107,16 @@ class StreamingSplitKillTest: XCTestCase {
         ThreadUtils.delay(seconds: 2.0) // The server should not be hit here
         let treatmentOldKill = client.getTreatment(splitName)
 
-        client.destroy()
-
         XCTAssertEqual("on", treatmentReady)
         XCTAssertEqual("conta", treatmentKill)
         XCTAssertEqual("on", treatmentNoKill)
         XCTAssertEqual("on", treatmentOldKill)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
     
     private func getChanges(for hitNumber: Int) -> Data {

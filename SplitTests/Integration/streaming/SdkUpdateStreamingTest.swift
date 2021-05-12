@@ -100,6 +100,12 @@ class SdkUpdateStreamingTest: XCTestCase {
 
         XCTAssertTrue(sdkReadyTriggered)
         XCTAssertFalse(sdkUpdatedTriggered)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     func testSdkUpdateSplitsWhenNotificationArrives() {
@@ -153,6 +159,12 @@ class SdkUpdateStreamingTest: XCTestCase {
 
         XCTAssertTrue(sdkReadyTriggered)
         XCTAssertTrue(sdkUpdatedTriggered)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     func testSdkUpdateMySegmentsWhenNotificationArrives() {
@@ -209,6 +221,12 @@ class SdkUpdateStreamingTest: XCTestCase {
 
         XCTAssertTrue(sdkReadyTriggered)
         XCTAssertTrue(sdkUpdatedTriggered)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func getChanges(for hitNumber: Int) -> Data {

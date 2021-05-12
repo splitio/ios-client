@@ -62,12 +62,16 @@ class StreamingInitTest: XCTestCase {
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
 
-        client.destroy()
-
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertTrue(isSseAuthHit)
         XCTAssertTrue(isSseHit)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
 
     }
 
