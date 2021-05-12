@@ -80,6 +80,8 @@ class InitialCacheTest: XCTestCase {
 
         wait(for: [cacheReadyExp, readyExp], timeout: 10)
 
+        client.destroy()
+
         XCTAssertEqual(-1, receivedChangeNumber[0])
         XCTAssertEqual("boom", treatmentCache)
         XCTAssertEqual("on0", treatmentReady)

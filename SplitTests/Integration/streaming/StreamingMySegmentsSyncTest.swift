@@ -107,6 +107,8 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         waitForUpdate(secs: 2)
         let treatmentOld = client.getTreatment(splitName)
 
+        client.destroy()
+
         XCTAssertEqual("on", treatmentReady)
         XCTAssertEqual("free", treatmentFirst)
         XCTAssertEqual("on", treatmentSec)

@@ -58,6 +58,8 @@ class StreamingDisabledTest: XCTestCase {
 
         wait(for: [sdkReadyExpectation, pollingExp], timeout: 20)
 
+        client.destroy()
+
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertTrue(isSseAuthHit)

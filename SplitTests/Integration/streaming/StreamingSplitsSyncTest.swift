@@ -117,6 +117,8 @@ class StreamingSplitsSyncTest: XCTestCase {
         waitForUpdate()
         let treatmentOld = client.getTreatment(splitName)
 
+        client.destroy()
+
         XCTAssertEqual("on", treatmentReady)
         XCTAssertEqual("free", treatmentFirst)
         XCTAssertEqual("conta", treatmentSec)

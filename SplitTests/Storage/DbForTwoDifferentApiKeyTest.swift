@@ -118,6 +118,8 @@ class DbForDifferentApiKeysTest: XCTestCase {
 
         testSplitsUpdate(changeNumber: changeNumberF2)
 
+        client2.destroy()
+
         XCTAssertEqual("on", t1Split1)
         XCTAssertEqual("control", t1Split2)
         XCTAssertEqual(-1, firstChangeNumbers[1])
