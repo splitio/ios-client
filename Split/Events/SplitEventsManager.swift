@@ -33,7 +33,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     init(config: SplitClientConfig) {
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process", attributes: .concurrent)
-        self.dataAccessQueue = DispatchQueue(label: "split-evt-mngr-data")
+        self.dataAccessQueue = DispatchQueue(label: "split-evt-mngr-data", target: DispatchQueue.global())
         self.isStarted = false
         self.sdkReadyTimeStart = Date().unixTimestampInMiliseconds()
         self.readingRefreshTime = 300
@@ -133,7 +133,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             case .splitsUpdated, .mySegmentsUpdated:
                 if isTriggered(external: .sdkReady) {
                     trigger(event: .sdkUpdated)
-                    return
+                    continue
                 }
                 self.triggerSdkReadyIfNeeded()
 
@@ -144,7 +144,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             case .splitKilledNotification:
                 if isTriggered(external: .sdkReady) {
                     trigger(event: .sdkUpdated)
-                    return
+                    continue
                 }
             case .sdkReadyTimeoutReached:
                 if !isTriggered(external: .sdkReady) {
