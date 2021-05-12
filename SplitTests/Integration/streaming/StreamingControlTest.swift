@@ -108,13 +108,17 @@ class StreamingControlTest: XCTestCase {
 
         let treatmentDisabled = client.getTreatment(splitName)
 
-        client.destroy()
-
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual("on", treatmentReady)
         XCTAssertEqual("on", treatmentPaused)
         XCTAssertEqual("free", treatmentEnabled)
         XCTAssertEqual("on", treatmentDisabled)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {

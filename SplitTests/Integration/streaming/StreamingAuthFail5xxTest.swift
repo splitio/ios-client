@@ -70,14 +70,18 @@ class StreamingAuthFail5xxTest: XCTestCase {
 
         wait(for: [sdkReadyExpectation, sseConnExp], timeout: 20)
 
-        client.destroy()
-
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertEqual(3, sseAuthHits)
         XCTAssertEqual(1, sseConnHits)
         XCTAssertTrue(isSseAuth)
         XCTAssertTrue(isSseConnected)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {

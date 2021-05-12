@@ -108,14 +108,18 @@ class StreamingOccupancyTest: XCTestCase {
         wait() // if polling enabled on hit should occur
         let oldTimestampDisabled = syncSpy.stopPeriodicFetchingCalled
 
-        client.destroy()
-
         // Assert
         XCTAssertTrue(streamingDisabledPri)
         XCTAssertTrue(streamingEnabledSec)
         XCTAssertTrue(streamingDisabledSec)
         XCTAssertTrue(streamingEnabledPri)
         XCTAssertFalse(oldTimestampDisabled)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {

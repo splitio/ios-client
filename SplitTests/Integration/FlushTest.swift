@@ -103,8 +103,6 @@ class FlushTests: XCTestCase {
         let impression1 = getImpressionBy(testName: "FACUNDO_TEST")
         let impression2 = getImpressionBy(testName: "NO_EXISTING_FEATURE_1")
 
-        client?.destroy()
-
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertEqual(10, tracksHits().count)
