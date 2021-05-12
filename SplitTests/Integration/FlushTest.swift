@@ -81,7 +81,7 @@ class FlushTests: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
         
-        wait(for: [sdkReadyExpectation], timeout: 400000.0)
+        wait(for: [sdkReadyExpectation], timeout: 40)
 
         for i in 0..<10 {
             sleep(1)
@@ -102,6 +102,8 @@ class FlushTests: XCTestCase {
 
         let impression1 = getImpressionBy(testName: "FACUNDO_TEST")
         let impression2 = getImpressionBy(testName: "NO_EXISTING_FEATURE_1")
+
+        client?.destroy()
 
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)

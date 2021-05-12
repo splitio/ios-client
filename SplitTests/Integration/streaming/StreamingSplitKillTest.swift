@@ -107,6 +107,8 @@ class StreamingSplitKillTest: XCTestCase {
         ThreadUtils.delay(seconds: 2.0) // The server should not be hit here
         let treatmentOldKill = client.getTreatment(splitName)
 
+        client.destroy()
+
         XCTAssertEqual("on", treatmentReady)
         XCTAssertEqual("conta", treatmentKill)
         XCTAssertEqual("on", treatmentNoKill)

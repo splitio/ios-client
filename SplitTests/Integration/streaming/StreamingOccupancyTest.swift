@@ -108,6 +108,8 @@ class StreamingOccupancyTest: XCTestCase {
         wait() // if polling enabled on hit should occur
         let oldTimestampDisabled = syncSpy.stopPeriodicFetchingCalled
 
+        client.destroy()
+
         // Assert
         XCTAssertTrue(streamingDisabledPri)
         XCTAssertTrue(streamingEnabledSec)

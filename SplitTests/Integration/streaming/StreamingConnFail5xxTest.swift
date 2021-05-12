@@ -60,6 +60,8 @@ class StreamingConnFail5xxTest: XCTestCase {
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
 
+        client.destroy()
+
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertEqual(3, sseConnHits)

@@ -65,6 +65,8 @@ class StreamingAuthFail4xxTest: XCTestCase {
 
         wait(for: [sdkReadyExpectation, mySegExp, splitsChgExp], timeout: 20)
 
+        client.destroy()
+
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertEqual(1, sseAuthHits)
