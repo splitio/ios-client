@@ -81,7 +81,7 @@ class FlushTests: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
         
-        wait(for: [sdkReadyExpectation], timeout: 400000.0)
+        wait(for: [sdkReadyExpectation], timeout: 40)
 
         for i in 0..<10 {
             sleep(1)
