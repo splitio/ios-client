@@ -1,6 +1,6 @@
 2.11.1: (May 13, 2021)
 - Improved event management logic to decrease "Ready From Cache" event triggering time
-- Added some metrics headers to http requests
+- Added telemetry headers to SSE connection
 
 2.11.0: (Abr 27, 2021)
 - Added the ability to synchronize data when the host application is closed or in background
