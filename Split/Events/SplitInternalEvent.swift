@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum SplitInternalEvent {
+enum SplitInternalEvent {
     case mySegmentsUpdated
     case splitsUpdated
     case mySegmentsLoadedFromCache

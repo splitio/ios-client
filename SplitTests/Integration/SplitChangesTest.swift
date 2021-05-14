@@ -102,7 +102,7 @@ class SplitChangesTest: XCTestCase {
         
         let key: Key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesTest"))
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesTest"))
         factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory!.client

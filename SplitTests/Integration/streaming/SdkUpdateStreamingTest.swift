@@ -100,6 +100,12 @@ class SdkUpdateStreamingTest: XCTestCase {
 
         XCTAssertTrue(sdkReadyTriggered)
         XCTAssertFalse(sdkUpdatedTriggered)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     func testSdkUpdateSplitsWhenNotificationArrives() {
@@ -143,7 +149,7 @@ class SdkUpdateStreamingTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation], timeout: 5)
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 5)
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
 
         streamingBinding?.push(message:
@@ -153,6 +159,12 @@ class SdkUpdateStreamingTest: XCTestCase {
 
         XCTAssertTrue(sdkReadyTriggered)
         XCTAssertTrue(sdkUpdatedTriggered)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     func testSdkUpdateMySegmentsWhenNotificationArrives() {
@@ -199,7 +211,7 @@ class SdkUpdateStreamingTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation], timeout: 5)
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 5)
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
 
         streamingBinding?.push(message:
@@ -209,6 +221,12 @@ class SdkUpdateStreamingTest: XCTestCase {
 
         XCTAssertTrue(sdkReadyTriggered)
         XCTAssertTrue(sdkUpdatedTriggered)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func getChanges(for hitNumber: Int) -> Data {

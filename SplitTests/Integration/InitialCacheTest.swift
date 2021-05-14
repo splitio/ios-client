@@ -80,6 +80,8 @@ class InitialCacheTest: XCTestCase {
 
         wait(for: [cacheReadyExp, readyExp], timeout: 10)
 
+        client.destroy()
+
         XCTAssertEqual(-1, receivedChangeNumber[0])
         XCTAssertEqual("boom", treatmentCache)
         XCTAssertEqual("on0", treatmentReady)
@@ -133,6 +135,12 @@ class InitialCacheTest: XCTestCase {
         XCTAssertEqual(-1, receivedChangeNumber[0])
         XCTAssertEqual("boom", treatmentCache)
         XCTAssertEqual("control", treatmentReady)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     func testNoClearNoExpiredCache() {
@@ -183,6 +191,12 @@ class InitialCacheTest: XCTestCase {
         XCTAssertEqual(300, receivedChangeNumber[0])
         XCTAssertEqual("boom", treatmentCache)
         XCTAssertEqual("boom", treatmentReady)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
 
@@ -254,6 +268,12 @@ class InitialCacheTest: XCTestCase {
         XCTAssertEqual("control", treatmentReady1)
         XCTAssertEqual("t2", treatmentReady2)
         XCTAssertTrue(splitsQueryString.contains("names=sample1"))
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func getChanges(for hitNumber: Int) -> Data {

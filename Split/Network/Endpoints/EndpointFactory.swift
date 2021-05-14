@@ -15,6 +15,8 @@ class EndpointFactory {
     private static let kAuthorizationBearer = "Bearer"
     private static let kContentTypeJson = "application/json"
     private static let kContentTypeEventStream = "text/event-stream"
+    private static let kAblySplitSdkClientKey = "SplitSDKClientKey"
+    private static let kAblySplitSdkClientKeyLength = 4
     private struct EndpointsPath {
         static let sseAuth = "auth"
         static let splitChanges = "splitChanges"
@@ -43,7 +45,6 @@ class EndpointFactory {
 
         let commondHeaders = Self.basicHeaders(apiKey: apiKey)
         let typeHeader = Self.typeHeader()
-        let streamEventHeader = [Self.kContentTypeHeader: Self.kContentTypeEventStream]
 
         splitChangesEndpoint = Endpoint
             .builder(baseUrl: serviceEndpoints.sdkEndpoint, path: EndpointsPath.splitChanges,
@@ -76,7 +77,7 @@ class EndpointFactory {
 
         streamingEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.streamingServiceEndpoint)
-                .set(method: .get).add(headers: commondHeaders).add(headers: streamEventHeader).build()
+                .set(method: .get).add(headers: Self.streamingHeaders(apiKey: apiKey)).build()
     }
 
     func mySegmentsEndpoint(userKey: String) -> Endpoint {
@@ -96,5 +97,14 @@ class EndpointFactory {
 
     private static func typeHeader() -> [String: String] {
         return [Self.kContentTypeHeader: Self.kContentTypeJson]
+    }
+
+    private static func streamingHeaders(apiKey: String) -> [String: String] {
+        return [
+            Self.kContentTypeHeader: Self.kContentTypeEventStream,
+            Self.kAblySplitSdkClientKey: String(apiKey.suffix(kAblySplitSdkClientKeyLength)),
+            Self.kSplitVersionHeader: Version.sdk
+        ]
+
     }
 }

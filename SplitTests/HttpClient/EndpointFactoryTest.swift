@@ -15,9 +15,12 @@ class EndpointFactoryTest: XCTestCase {
     private let kAuthorizationHeader = "Authorization"
     private let kSplitVersionHeader = "SplitSDKVersion"
     private let kContentTypeHeader = "Content-Type"
+    private let kAblySplitSdkClientKey = "SplitSDKClientKey"
     private let kAuthorizationBearer = "Bearer \(CommonValues.apiKey)"
     private let kContentTypeJson = "application/json"
     private let kContentTypeEventStream = "text/event-stream"
+    private let kAblyClientKey = "2bc3"
+    private let commonHeadersCount = 3
 
     var factory: EndpointFactory!
     var serviceEndpoints: ServiceEndpoints!
@@ -34,7 +37,7 @@ class EndpointFactoryTest: XCTestCase {
         let endpoint = factory.mySegmentsEndpoint(userKey: CommonValues.userKey)
 
         XCTAssertEqual(HttpMethod.get, endpoint.method)
-        XCTAssertEqual(3, endpoint.headers.count)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
@@ -46,7 +49,7 @@ class EndpointFactoryTest: XCTestCase {
         let endpoint = factory.splitChangesEndpoint
 
         XCTAssertEqual(HttpMethod.get, endpoint.method)
-        XCTAssertEqual(3, endpoint.headers.count)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
@@ -58,7 +61,7 @@ class EndpointFactoryTest: XCTestCase {
         let endpoint = factory.impressionsEndpoint
 
         XCTAssertEqual(HttpMethod.post, endpoint.method)
-        XCTAssertEqual(3, endpoint.headers.count)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
@@ -70,7 +73,7 @@ class EndpointFactoryTest: XCTestCase {
         let endpoint = factory.eventsEndpoint
 
         XCTAssertEqual(HttpMethod.post, endpoint.method)
-        XCTAssertEqual(3, endpoint.headers.count)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
@@ -82,7 +85,7 @@ class EndpointFactoryTest: XCTestCase {
         let endpoint = factory.timeMetricsEndpoint
 
         XCTAssertEqual(HttpMethod.post, endpoint.method)
-        XCTAssertEqual(3, endpoint.headers.count)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
@@ -94,7 +97,7 @@ class EndpointFactoryTest: XCTestCase {
         let endpoint = factory.countMetricsEndpoint
 
         XCTAssertEqual(HttpMethod.post, endpoint.method)
-        XCTAssertEqual(3, endpoint.headers.count)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
@@ -106,7 +109,7 @@ class EndpointFactoryTest: XCTestCase {
         let endpoint = factory.gaugeMetricsEndpoint
 
         XCTAssertEqual(HttpMethod.post, endpoint.method)
-        XCTAssertEqual(3, endpoint.headers.count)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
@@ -118,7 +121,7 @@ class EndpointFactoryTest: XCTestCase {
         let endpoint = factory.sseAuthenticationEndpoint
 
         XCTAssertEqual(HttpMethod.get, endpoint.method)
-        XCTAssertEqual(3, endpoint.headers.count)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
@@ -131,9 +134,9 @@ class EndpointFactoryTest: XCTestCase {
 
         XCTAssertEqual(HttpMethod.get, endpoint.method)
         XCTAssertEqual(3, endpoint.headers.count)
-        XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeEventStream, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
+        XCTAssertEqual(kAblyClientKey, endpoint.headers[kAblySplitSdkClientKey])
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 

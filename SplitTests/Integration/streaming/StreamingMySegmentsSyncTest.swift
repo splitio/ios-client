@@ -111,6 +111,12 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         XCTAssertEqual("free", treatmentFirst)
         XCTAssertEqual("on", treatmentSec)
         XCTAssertEqual("on", treatmentOld)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
@@ -158,9 +164,9 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         return { request in
             self.sseConnHits+=1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            //DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
                 self.sseExp.fulfill()
-            }
+            //}
             return self.streamingBinding!
         }
     }

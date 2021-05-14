@@ -71,6 +71,12 @@ class StreamingAuthFail4xxTest: XCTestCase {
         XCTAssertEqual(0, sseConnHits)
         XCTAssertEqual(2, mySegmentsHits)
         XCTAssertEqual(2, splitsChangesHits)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {

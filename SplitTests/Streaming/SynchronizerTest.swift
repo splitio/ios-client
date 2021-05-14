@@ -115,7 +115,7 @@ class SynchronizerTest: XCTestCase {
         persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "SPLIT_TO_DELETE"))
         synchronizer.loadAndSynchronizeSplits()
 
-        ThreadUtils.delay(seconds: 0.2)
+        ThreadUtils.delay(seconds: 0.5)
 
         XCTAssertTrue(persistentSplitsStorage.getAllCalled)
         XCTAssertTrue(persistentSplitsStorage.deleteCalled)
@@ -131,7 +131,7 @@ class SynchronizerTest: XCTestCase {
         persistentSplitsStorage.update(filterQueryString: "")
         synchronizer.loadAndSynchronizeSplits()
 
-        ThreadUtils.delay(seconds: 0.2)
+        ThreadUtils.delay(seconds: 0.5)
 
         XCTAssertTrue(splitsStorage.loadLocalCalled)
         XCTAssertEqual(1, eventsManager.splitsLoadedEventFiredCount)
