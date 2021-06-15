@@ -14,6 +14,8 @@ struct YamlSplitStorageConfig {
 
 class YamlSplitsStorage: SplitsStorage {
 
+    
+
     var changeNumber: Int64
 
     var updateTimestamp: Int64
@@ -31,7 +33,7 @@ class YamlSplitsStorage: SplitsStorage {
 
     init(fileStorage: FileStorageProtocol,
          config: YamlSplitStorageConfig = YamlSplitStorageConfig(),
-         eventsManager: SplitEventsManager,
+         eventsManager: SplitEventsManager, dataFolderName: String,
          splitsFileName: String, bundle: Bundle) {
 
         self.fileName = splitsFileName
@@ -73,7 +75,7 @@ class YamlSplitsStorage: SplitsStorage {
             return
         }
 
-        logFileInfo(name: fileName)
+        logFileInfo(dataFolder: dataFolderName, name: fileName)
         eventsManager.notifyInternalEvent(.mySegmentsUpdated)
         eventsManager.notifyInternalEvent(.splitsUpdated)
         if refreshInterval > 0 {
@@ -126,7 +128,7 @@ class YamlSplitsStorage: SplitsStorage {
 
     private func createTaskExecutor() -> PeriodicTaskExecutor {
         var config = PeriodicTaskExecutorConfig()
-        config.firstExecutionWindow = 1
+        config.firstExecutionWindow = 15
         config.rate = refreshInterval
         let fileName = self.fileName
         return PeriodicTaskExecutor(
@@ -142,11 +144,14 @@ class YamlSplitsStorage: SplitsStorage {
 
     @discardableResult
     private func loadFile(name: String) -> Bool {
+
         inMemorySplits.removeAll()
         guard let content = fileStorage.read(fileName: name), let parser = self.fileParser else {
             return false
         }
+
         let loadedSplits = parser.parseContent(content)
+
         if loadedSplits.count < 1 {
             return false
         }
@@ -166,11 +171,11 @@ class YamlSplitsStorage: SplitsStorage {
         return SpaceDelimitedLocalhostSplitsParser()
     }
 
-    private func logFileInfo(name: String) {
+    private func logFileInfo(dataFolder: String, name: String) {
         let cachePath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
         let cacheDirectory = URL(fileURLWithPath: cachePath)
-        let path = cacheDirectory.appendingPathComponent(name)
-        Logger.d("Localhost file path: \(path)")
+        let path = cacheDirectory.appendingPathComponent(dataFolder).appendingPathComponent(name)
+        Logger.i("Localhost file path: \(path)")
     }
 
     private func splitFileName(_ fileName: String) -> (name: String, type: String)? {
