@@ -53,7 +53,6 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
 
                 if let splitMap = rowDic[splitNameField]?.dictionary {
                     let treatment = splitMap[Yaml.string(kTreatmentField)]?.string ?? SplitConstants.control
-                    split.defaultTreatment = treatment
                     if split.conditions == nil {
                         split.conditions = [Condition]()
                     }
