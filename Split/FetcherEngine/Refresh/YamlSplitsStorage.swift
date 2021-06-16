@@ -128,7 +128,7 @@ class YamlSplitsStorage: SplitsStorage {
 
     private func createTaskExecutor() -> PeriodicTaskExecutor {
         var config = PeriodicTaskExecutorConfig()
-        config.firstExecutionWindow = 15
+        config.firstExecutionWindow = refreshInterval
         config.rate = refreshInterval
         let fileName = self.fileName
         return PeriodicTaskExecutor(
