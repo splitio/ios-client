@@ -43,12 +43,13 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
 
         eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
-
-        let fileStorage = FileStorage(dataFolderName: DataFolderFactory()
-                                        .sanitizeForFolderName(config.localhostDataFolder))
+        let dataFolderName = DataFolderFactory()
+            .sanitizeForFolderName(config.localhostDataFolder)
+        let fileStorage = FileStorage(dataFolderName: dataFolderName)
 
         splitsStorage = YamlSplitsStorage(fileStorage: fileStorage,
                                           eventsManager: eventsManager,
+                                          dataFolderName: dataFolderName,
                                           splitsFileName: config.splitFile,
                                           bundle: bundle)
 
