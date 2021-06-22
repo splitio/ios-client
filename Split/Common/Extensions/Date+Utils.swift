@@ -7,6 +7,8 @@
 
 import Foundation
 
+fileprivate let kTimeIntervalMs: Int64 = 3600 * 1000
+
 extension Date {
 
     public func isBetweeen(date date1: Date, andDate date2: Date) -> Bool {
@@ -24,15 +26,19 @@ extension Date {
 }
 
 extension Date {
-    public func unixTimestamp() -> Int64 {
-        return Int64(Date().timeIntervalSince1970)
+    func unixTimestamp() -> Int64 {
+        return Int64(self.timeIntervalSince1970)
     }
 
-    public func unixTimestampInMiliseconds() -> Int64 {
-        return Int64(Date().timeIntervalSince1970 * 1000)
+    func unixTimestampInMiliseconds() -> Int64 {
+        return Int64(self.timeIntervalSince1970 * 1000)
     }
 
-    public func unixTimestampInMicroseconds() -> Int64 {
-        return Int64(Date().timeIntervalSince1970 * 1000000)
+    func unixTimestampInMicroseconds() -> Int64 {
+        return Int64(self.timeIntervalSince1970 * 1000000)
+    }
+
+    static func truncateTimeframe(millis: Int64) -> Int64 {
+        return Int64(millis - (millis % kTimeIntervalMs))
     }
 }
