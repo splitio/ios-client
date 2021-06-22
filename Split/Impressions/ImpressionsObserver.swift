@@ -28,7 +28,6 @@ struct ImpressionsObserver {
 
 struct ImpressionHasher {
 
-    private static let kUnknown = "UNKNOWN"
     private static let kSeed: UInt32 = 0
     private static let kOffset: Int64 = 0
 
