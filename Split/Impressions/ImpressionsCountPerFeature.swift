@@ -9,7 +9,7 @@
 import Foundation
 
 struct ImpressionsCountPerFeature: Codable {
-    var storageId: Int = 0
+    var storageId: String?
     var feature: String
     var timeframe: Int64
     var count: Int
