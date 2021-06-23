@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ImpressionsCountPerFeature {
+struct ImpressionsCountPerFeature: Codable {
     var storageId: Int = 0
     var feature: String
     var timeframe: Int64
