@@ -107,6 +107,6 @@ class LocalhostYamlParserTest: XCTestCase {
         let content = "treatment: \"t1\"\n- s2:\n    keys: \"thekey\""
         let parser = YamlLocalhostSplitsParser()
         let splits = parser.parseContent(content)
-        XCTAssertEqual(0, splits.count)
+        XCTAssertEqual(1, splits.count)
     }
 }

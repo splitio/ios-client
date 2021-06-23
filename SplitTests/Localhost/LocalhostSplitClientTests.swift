@@ -22,7 +22,7 @@ class LocalhostSplitClientTests: XCTestCase {
         var config = YamlSplitStorageConfig()
         config.refreshInterval = 0
         let splitsStorage = YamlSplitsStorage(fileStorage: storage, config: config,
-                                                      eventsManager: eventsManager, splitsFileName: fileName,
+                                              eventsManager: eventsManager, dataFolderName: "localhost", splitsFileName: fileName,
                                                       bundle: Bundle(for: type(of: self)))
         splitsStorage.loadLocal()
         client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), splitsStorage: splitsStorage, eventsManager: eventsManager)
