@@ -72,9 +72,18 @@ class LRUCache<K: Hashable, E> {
         }
         // If element exists, move as last used
         if let index = elementsQueue.firstIndex(where: { $0 == key }) {
-            elementsQueue.remove(at: index)
-            elementsQueue.insert(key, at: 0)
+            moveFirst(index: index, key: key)
         }
         return element
+    }
+
+    private func moveFirst(index: Int, key: K) {
+        let sem = DispatchSemaphore(value: 1)
+        queue.async(flags: .barrier) {
+            self.elementsQueue.remove(at: index)
+            self.elementsQueue.insert(key, at: 0)
+            sem.signal()
+        }
+        sem.wait()
     }
 }
