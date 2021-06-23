@@ -30,10 +30,18 @@ struct ImpressionHasher {
 
     private static let kSeed: UInt32 = 0
     private static let kOffset: Int64 = 0
+    private static let kUnknown = "UNKNOWN"
 
     static func process(impression: Impression) -> UInt32 {
-        let data = "\(impression.keyName ?? ""):\(impression.feature ?? ""):\(impression.treatment ?? ""):" +
-            "\(impression.label ?? ""):\(impression.changeNumber ?? 0)"
+        let data = "\(sanitize(impression.keyName)):\(sanitize(impression.feature))" +
+            ":\(sanitize(impression.treatment)):" + "\(sanitize(impression.label)):\(sanitize(impression.changeNumber))"
         return Murmur3Hash.hashString(data, Self.kSeed)
+    }
+
+    private static func sanitize(_ value: Any?) -> String {
+        guard let value = value else {
+            return kUnknown
+        }
+        return "\(value)"
     }
 }
