@@ -119,7 +119,7 @@ class LocalhostSplitFetcherTests: XCTestCase {
         var config = YamlSplitStorageConfig()
         config.refreshInterval = 0
         return YamlSplitsStorage(fileStorage: storage, config: config,
-                                                      eventsManager: eventsManager, splitsFileName: fileName,
+                                 eventsManager: eventsManager, dataFolderName: "localhost", splitsFileName: fileName,
                                                       bundle: Bundle(for: type(of: self)))
 
     }
