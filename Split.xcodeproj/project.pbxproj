@@ -386,6 +386,10 @@
 		59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */; };
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
+		9505681426822C6A001D7B10 /* ImpressionsCountPerFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9505681326822C6A001D7B10 /* ImpressionsCountPerFeature.swift */; };
+		9505681826822DB4001D7B10 /* ImpressionsCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9505681726822DB4001D7B10 /* ImpressionsCount.swift */; };
+		9505681C26822E96001D7B10 /* ImpressionsCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9505681B26822E96001D7B10 /* ImpressionsCounter.swift */; };
+		9505682026825B53001D7B10 /* ImpressionsCounterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9505681F26825B53001D7B10 /* ImpressionsCounterTest.swift */; };
 		951D9F72260116F20069DD23 /* SplitFactoryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D9F71260116F20069DD23 /* SplitFactoryHelper.swift */; };
 		952C2B7726447FDD009275B4 /* BlockingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7626447FDD009275B4 /* BlockingQueue.swift */; };
 		952C2B7B26449456009275B4 /* BlockingQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7A26449456009275B4 /* BlockingQueueTest.swift */; };
@@ -883,6 +887,10 @@
 		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		9505681326822C6A001D7B10 /* ImpressionsCountPerFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsCountPerFeature.swift; sourceTree = "<group>"; };
+		9505681726822DB4001D7B10 /* ImpressionsCount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsCount.swift; sourceTree = "<group>"; };
+		9505681B26822E96001D7B10 /* ImpressionsCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsCounter.swift; sourceTree = "<group>"; };
+		9505681F26825B53001D7B10 /* ImpressionsCounterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsCounterTest.swift; sourceTree = "<group>"; };
 		951D9F71260116F20069DD23 /* SplitFactoryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryHelper.swift; sourceTree = "<group>"; };
 		952C2B7626447FDD009275B4 /* BlockingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueue.swift; sourceTree = "<group>"; };
 		952C2B7A26449456009275B4 /* BlockingQueueTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueueTest.swift; sourceTree = "<group>"; };
@@ -1141,6 +1149,9 @@
 				3B6DEE8820EA6AE00067435E /* Impression.swift */,
 				3B6DEE8A20EA6AE00067435E /* ImpressionsConstants.swift */,
 				955423A226793AEF002278D5 /* ImpressionsObserver.swift */,
+				9505681326822C6A001D7B10 /* ImpressionsCountPerFeature.swift */,
+				9505681726822DB4001D7B10 /* ImpressionsCount.swift */,
+				9505681B26822E96001D7B10 /* ImpressionsCounter.swift */,
 			);
 			path = Impressions;
 			sourceTree = "<group>";
@@ -1945,6 +1956,7 @@
 			children = (
 				953911AC267A64FE0040433A /* ImpresionsObserverTest.swift */,
 				953911B2267A97DF0040433A /* ImpressionHasherTest.swift */,
+				9505681F26825B53001D7B10 /* ImpressionsCounterTest.swift */,
 			);
 			path = Impressions;
 			sourceTree = "<group>";
@@ -2322,6 +2334,7 @@
 				95F3F01C258E3B7E00084AF8 /* ImpressionsRecorder.swift in Sources */,
 				59FB7C1121F7572700ECC96A /* ApiKeyValidator.swift in Sources */,
 				5905D4FA255DD88F006DA3B1 /* EventDao.swift in Sources */,
+				9505681826822DB4001D7B10 /* ImpressionsCount.swift in Sources */,
 				3B6DEF4920EA6AE50067435E /* MatcherType.swift in Sources */,
 				597CD336216CE09100A15487 /* TimeMetricSample.swift in Sources */,
 				59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */,
@@ -2357,6 +2370,7 @@
 				3B6DEF4F20EA6AE50067435E /* TrafficType.swift in Sources */,
 				3B6DEF8020EA6AE50067435E /* RestClient.swift in Sources */,
 				59BF3D27223132E1004D134D /* DataFolderFactory.swift in Sources */,
+				9505681C26822E96001D7B10 /* ImpressionsCounter.swift in Sources */,
 				3B6DEF7020EA6AE50067435E /* Whitelist.swift in Sources */,
 				3B6DEF6320EA6AE50067435E /* ContainsStringMatcher.swift in Sources */,
 				594677E022CFA4CF00F94E58 /* TreatmentManager.swift in Sources */,
@@ -2449,6 +2463,7 @@
 				31AA2E60DECD00E2B2990F26 /* RestClient+MySegments.swift in Sources */,
 				31AA2C1F4964CD9D0769D021 /* RestClient+Impressions.swift in Sources */,
 				595AD25B24E5C00100A7B750 /* PushNotificationManager.swift in Sources */,
+				9505681426822C6A001D7B10 /* ImpressionsCountPerFeature.swift in Sources */,
 				31AA22905C46031E68E70266 /* RestClient+SplitChanges.swift in Sources */,
 				31AA2036872EEC62D9EDF4AB /* Endpoint.swift in Sources */,
 				31AA2D91508DE344F676AB46 /* EndpointFactory.swift in Sources */,
@@ -2561,6 +2576,7 @@
 				599EA5852268E9C2006CBA89 /* LocalhostTests.swift in Sources */,
 				955428E02568155B00331356 /* PersistentImpressionsStorageTest.swift in Sources */,
 				5912D152219A022000BC698C /* CsvHelper.swift in Sources */,
+				9505682026825B53001D7B10 /* ImpressionsCounterTest.swift in Sources */,
 				59F4AABF2513A97B00A1C69A /* PeriodicSplitsSyncWorkerTest.swift in Sources */,
 				5982D934219F3D2E00230F44 /* MatcherEvalTests.swift in Sources */,
 				5921ED362537B277000D6C8B /* StreamingDisabledTest.swift in Sources */,
