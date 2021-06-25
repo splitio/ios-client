@@ -27,7 +27,7 @@ class ImpressionsCountRecorderWorker: RecorderWorker {
             let counts = countsStorage.pop(count: kPopCount)
             rowCount = counts.count
             if rowCount > 0 {
-                Logger.d("Sending impressions")
+                Logger.d("Sending impressions count")
                 do {
                     _ = try countsRecorder.execute(ImpressionsCount(perFeature: counts))
                     // Removing sent impressions

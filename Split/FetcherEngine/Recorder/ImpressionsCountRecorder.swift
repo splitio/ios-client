@@ -23,7 +23,7 @@ class DefaultHttpImpressionsCountRecorder: HttpImpressionsCountRecorder {
     func execute(_ counts: ImpressionsCount) throws {
 
         if !restClient.isSdkServerAvailable() {
-            Logger.d("Server is not reachable. Impressions sending will be delayed when host is reachable")
+            Logger.d("Server is not reachable. Impressions count sending will be delayed when host is reachable")
             throw HttpError.serverUnavailable
         }
 
