@@ -16,8 +16,9 @@ enum CoreDataEntity: String {
 }
 
 class CoreDataHelper {
-    let managedObjectContext: NSManagedObjectContext
-    let persistentCoordinator: NSPersistentStoreCoordinator
+    typealias Operation = () -> Void
+    private let managedObjectContext: NSManagedObjectContext
+    private let persistentCoordinator: NSPersistentStoreCoordinator
 
     init(managedObjectContext: NSManagedObjectContext,
          persistentCoordinator: NSPersistentStoreCoordinator) {
@@ -77,6 +78,18 @@ class CoreDataHelper {
 
     func deleteAll(entity: CoreDataEntity) {
         delete(entity: entity)
+    }
+
+    func perform(_ operation: @escaping Operation) {
+        managedObjectContext.perform {
+            operation()
+        }
+    }
+
+    func performAndWait(_ operation: Operation) {
+        managedObjectContext.performAndWait {
+            operation()
+        }
     }
 
     private func delete(entity: CoreDataEntity, predicate: NSPredicate? = nil) {
