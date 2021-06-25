@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ImpressionsCount {
+struct ImpressionsCount: Encodable {
     var perFeature: [ImpressionsCountPerFeature]
 
     enum CodingKeys: String, CodingKey {

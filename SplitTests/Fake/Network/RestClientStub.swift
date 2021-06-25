@@ -23,6 +23,7 @@ class RestClientStub: SplitApiRestClient {
     private var splitChanges: [SplitChange] = []
     private var sendTrackEventsCount = 0
     private var sendImpressionsCount = 0
+    private var sendImpressionsCountCount = 0
     var isServerAvailable = true
     private var splitChangeHitIndex = 0
     
@@ -32,6 +33,10 @@ class RestClientStub: SplitApiRestClient {
     
     func getSendImpressionsCount() -> Int {
         return sendImpressionsCount;
+    }
+
+    func getSendImpressionsCountCount() -> Int {
+        return sendImpressionsCountCount;
     }
 }
 
@@ -74,6 +79,13 @@ extension RestClientStub: RestClientTrackEvents {
 extension RestClientStub: RestClientImpressions {
     func sendImpressions(impressions: [ImpressionsTest], completion: @escaping (DataResult<EmptyValue>) -> Void) {
         sendImpressionsCount+=1
+        completion(DataResult.success(value: nil))
+    }
+}
+
+extension RestClientStub: RestClientImpressionsCount {
+    func send(counts: ImpressionsCount, completion: @escaping (DataResult<EmptyValue>) -> Void) {
+        sendImpressionsCountCount+=1
         completion(DataResult.success(value: nil))
     }
 }
