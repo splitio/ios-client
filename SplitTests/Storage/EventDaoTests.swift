@@ -18,8 +18,7 @@ class EventDaoTests: XCTestCase {
     override func setUp() {
         let queue = DispatchQueue(label: "event dao test")
         eventDao = CoreDataEventDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue),
-                                    dispatchQueue: queue)
+                                                                                  dispatchQueue: queue))
         let events = createEvents()
         for event in events {
             eventDao.insert(event)
