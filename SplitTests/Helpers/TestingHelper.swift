@@ -65,6 +65,17 @@ struct TestingHelper {
         return impressions
     }
 
+    static func createImpressionsCount(count: Int = 10) -> [ImpressionsCountPerFeature] {
+
+        var counts = [ImpressionsCountPerFeature]()
+        for i in 0..<count {
+            var count = ImpressionsCountPerFeature(feature: "feature\(i)", timeframe: Date().unixTimestampInMiliseconds(), count: 1)
+            count.storageId = UUID().uuidString
+            counts.append(count)
+        }
+        return counts
+    }
+
     static func createSplit(name: String, trafficType: String = "t1", status: Status = .active) -> Split {
         let split = Split()
         split.name = name
