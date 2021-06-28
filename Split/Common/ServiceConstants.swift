@@ -19,4 +19,5 @@ struct ServiceConstants {
     static let cacheExpirationInSeconds = 864000
     static let controlNoCacheHeader = [ServiceConstants.cacheControlHeader: ServiceConstants.cacheControlNoCache]
     static let backgroundSyncPeriod = 15.0 * 60 // 15 min
+    static let defaultImpressionCountRowsPop = 200
 }
