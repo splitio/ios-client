@@ -41,4 +41,7 @@ class MySegmentsStorageStub: MySegmentsStorage {
         }
         clearCalled = true
     }
+
+    func destroy() {
+    }
 }
