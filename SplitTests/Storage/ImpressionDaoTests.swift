@@ -18,8 +18,7 @@ class ImpressionDaoTests: XCTestCase {
     override func setUp() {
         let queue = DispatchQueue(label: "impression dao test")
         impressionDao = CoreDataImpressionDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue),
-                                    dispatchQueue: queue)
+                                                                                  dispatchQueue: queue))
         let impressions = createImpressions()
         for impression in impressions {
             impressionDao.insert(impression)

@@ -37,12 +37,11 @@ struct SplitFactoryHelper {
             return database
         }
 
-        let dispatchQueue = DispatchQueue(label: "SplitCoreDataCache", target: DispatchQueue.global())
-        guard let helper = CoreDataHelperBuilder.build(databaseName: dataFolderName,
-                                                       dispatchQueue: dispatchQueue) else {
+
+        guard let helper = CoreDataHelperBuilder.build(databaseName: dataFolderName) else {
             throw GenericError.couldNotCreateCache
         }
-        return CoreDataSplitDatabase(coreDataHelper: helper, dispatchQueue: dispatchQueue)
+        return CoreDataSplitDatabase(coreDataHelper: helper)
     }
 
     static func openPersistentSplitsStorage(database: SplitDatabase) -> PersistentSplitsStorage {
