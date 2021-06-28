@@ -15,7 +15,7 @@ class CoreDataHelperBuilder {
     private static let kDataModelExtentsion = "momd"
     private static let kDatabaseExtension = "sqlite"
 
-    static func build(databaseName: String, dispatchQueue: DispatchQueue) -> CoreDataHelper? {
+    static func build(databaseName: String) -> CoreDataHelper? {
 
         let bundle = Bundle.split
         guard let modelUrl = bundle.url(forResource: kDataModelName, withExtension: kDataModelExtentsion) else {
@@ -27,16 +27,9 @@ class CoreDataHelperBuilder {
         }
 
         let persistenceCoordinator = NSPersistentStoreCoordinator(managedObjectModel: modelFile)
-        var createdManagedObjContext: NSManagedObjectContext?
-        // Managed object context should be created in some queue that operations run
-        dispatchQueue.sync {
-            createdManagedObjContext = NSManagedObjectContext(
-                concurrencyType: NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType)
-        }
 
-        guard let managedObjContext = createdManagedObjContext else {
-            fatalError("Could not create context for cache database")
-        }
+        let managedObjContext = NSManagedObjectContext(
+            concurrencyType: NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType)
 
         managedObjContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         managedObjContext.persistentStoreCoordinator = persistenceCoordinator

@@ -20,8 +20,7 @@ class SplitDaoTests: XCTestCase {
     override func setUp() {
         let queue = DispatchQueue(label: "split dao test")
         splitDao = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue),
-                                    dispatchQueue: queue)
+                                                                                  dispatchQueue: queue))
         let splits = createSplits()
         splitDao.insertOrUpdate(splits: splits)
     }

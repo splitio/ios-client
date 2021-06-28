@@ -18,8 +18,7 @@ class GeneralInfoDaoTest: XCTestCase {
     override func setUp() {
         let queue = DispatchQueue(label: "general info dao test")
         generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue),
-                                    dispatchQueue: queue)
+                                                                                  dispatchQueue: queue))
     }
 
     func testGetNilStringValue() {
