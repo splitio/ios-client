@@ -14,6 +14,7 @@ class LocalhostManagerTests: XCTestCase {
     var manager: SplitManager!
     var eventsManager: SplitEventsManager!
     let fileName = "localhost.splits"
+    let folder = "localhost"
 
     override func setUp() {
         eventsManager = SplitEventsManagerMock()
@@ -21,7 +22,7 @@ class LocalhostManagerTests: XCTestCase {
         var config = YamlSplitStorageConfig()
         config.refreshInterval = 0
         let splitsStorage = YamlSplitsStorage(fileStorage: storage, config: config,
-                                                      eventsManager: eventsManager, splitsFileName: fileName,
+                                              eventsManager: eventsManager, dataFolderName: folder, splitsFileName: fileName,
                                                       bundle: Bundle(for: type(of: self)))
         splitsStorage.loadLocal()
         manager = DefaultSplitManager(splitsStorage: splitsStorage)

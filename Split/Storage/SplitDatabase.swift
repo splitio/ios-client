@@ -25,20 +25,18 @@ protocol CoreDataDao {
 /// database operation in the same serial queue to avoid threading issues
 class BaseCoreDataDao {
     let coreDataHelper: CoreDataHelper
-    let dbDispatchQueue: DispatchQueue
-    init(coreDataHelper: CoreDataHelper, dispatchQueue: DispatchQueue) {
+    init(coreDataHelper: CoreDataHelper) {
         self.coreDataHelper = coreDataHelper
-        self.dbDispatchQueue = dispatchQueue
     }
 
     func execute(_ operation: @escaping () -> Void) {
-        dbDispatchQueue.sync {
+        coreDataHelper.performAndWait {
             operation()
         }
     }
 
     func executeAsync(_ operation: @escaping () -> Void) {
-        dbDispatchQueue.async {
+        coreDataHelper.perform {
             operation()
         }
     }
@@ -61,12 +59,12 @@ class CoreDataSplitDatabase: SplitDatabase {
 
     private let coreDataHelper: CoreDataHelper
 
-    init(coreDataHelper: CoreDataHelper, dispatchQueue: DispatchQueue) {
-            self.coreDataHelper = coreDataHelper
-            splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper, dispatchQueue: dispatchQueue)
-            eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper, dispatchQueue: dispatchQueue)
-            impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper, dispatchQueue: dispatchQueue)
-            generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper, dispatchQueue: dispatchQueue)
-            mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper, dispatchQueue: dispatchQueue)
+    init(coreDataHelper: CoreDataHelper) {
+        self.coreDataHelper = coreDataHelper
+        self.splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper)
+        self.eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper)
+        self.impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper)
+        self.generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
+        self.mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper)
     }
 }

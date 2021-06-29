@@ -23,7 +23,7 @@ class SplitHelper {
         return split
     }
 
-    func createWhitelistCondition(key: String, treatment: String) -> Condition {
+    func createWhitelistCondition(keys: [String], treatment: String) -> Condition {
 
         let condition = Condition()
         let matcherGroup = MatcherGroup()
@@ -34,14 +34,14 @@ class SplitHelper {
         condition.conditionType = ConditionType.whitelist
         matcherGroup.matcherCombiner = .and
         matcher.matcherType = MatcherType.whitelist
-        whiteListMatcherData.whitelist = [key]
+        whiteListMatcherData.whitelist = keys
         matcher.whitelistMatcherData = whiteListMatcherData
         partition.size = 100
         partition.treatment = treatment
         matcherGroup.matchers = [matcher]
         condition.matcherGroup = matcherGroup
         condition.partitions = [partition]
-        condition.label = "LOCAL_\(key)"
+        condition.label = "LOCAL_\(keys)"
 
         return condition
     }

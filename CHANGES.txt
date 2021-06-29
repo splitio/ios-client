@@ -1,3 +1,7 @@
+2.11.2: (Jun 25, 2021)
+- Fixed threading issue related to CoreData
+- Fixed issue when loading large localhost yaml files
+
 2.11.1: (May 13, 2021)
 - Improved event management logic to decrease "Ready From Cache" event triggering time
 - Added telemetry headers to SSE connection
