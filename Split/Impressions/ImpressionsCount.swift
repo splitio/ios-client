@@ -1,5 +1,5 @@
 //
-//  ImpressionsCountPerFeature.swift
+//  ImpressionsCount.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 22/06/2021.

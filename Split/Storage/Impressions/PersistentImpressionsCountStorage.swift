@@ -11,6 +11,45 @@ import Foundation
 protocol PersistentImpressionsCountStorage {
     func delete(_ counts: [ImpressionsCountPerFeature])
     func pop(count: Int) -> [ImpressionsCountPerFeature]
-    func push(counts: ImpressionsCountPerFeature)
+    func push(count: ImpressionsCountPerFeature)
     func setActive(_ counts: [ImpressionsCountPerFeature])
 }
+
+class DefaultImpressionsCountStorage: PersistentImpressionsCountStorage {
+
+    private let impressionsCountDao: ImpressionsCountDao
+    private let expirationPeriod: Int64
+
+    init(database: SplitDatabase, expirationPeriod: Int64) {
+        self.impressionsCountDao = database.impressionsCountDao
+        self.expirationPeriod = expirationPeriod
+    }
+
+    func pop(count: Int) -> [ImpressionsCountPerFeature] {
+        let createdAt = Date().unixTimestamp() - self.expirationPeriod
+        let impressions = impressionsCountDao.getBy(createdAt: createdAt, status: StorageRecordStatus.active, maxRows: count)
+        impressionsCountDao.update(ids: impressions.compactMap { $0.storageId }, newStatus: StorageRecordStatus.deleted)
+        return impressions
+    }
+
+    func push(count: ImpressionsCountPerFeature) {
+        impressionsCountDao.insert(count)
+    }
+
+    func getCritical() -> [ImpressionsCountPerFeature] {
+        // To be used in the future.
+        return []
+    }
+
+    func setActive(_ counts: [ImpressionsCountPerFeature]) {
+        if counts.count < 1 {
+            return
+        }
+        impressionsCountDao.update(ids: counts.compactMap { return $0.storageId }, newStatus: StorageRecordStatus.active)
+    }
+
+    func delete(_ counts: [ImpressionsCountPerFeature]) {
+        impressionsCountDao.delete(counts)
+    }
+}
+
