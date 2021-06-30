@@ -19,6 +19,7 @@ class PersistentEventsStorageTests: XCTestCase {
         eventDao = EventDaoStub()
         eventsStorage = DefaultEventsStorage(database: SplitDatabaseStub(eventDao: eventDao,
                                                                          impressionDao: ImpressionDaoStub(),
+                                                                         impressionsCountDao: ImpressionsCountDaoStub(),
                                                                          generalInfoDao: GeneralInfoDaoStub(),
                                                                          splitDao: SplitDaoStub(),
                                                                          mySegmentsDao: MySegmentsDaoStub()), expirationPeriod: 100)
