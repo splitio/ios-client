@@ -14,8 +14,6 @@ struct YamlSplitStorageConfig {
 
 class YamlSplitsStorage: SplitsStorage {
 
-    
-
     var changeNumber: Int64
 
     var updateTimestamp: Int64
