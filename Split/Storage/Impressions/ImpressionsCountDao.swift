@@ -27,7 +27,7 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
                 return
             }
 
-            if let obj = self.coreDataHelper.create(entity: .impression) as? ImpressionsCountEntity {
+            if let obj = self.coreDataHelper.create(entity: .impressionsCount) as? ImpressionsCountEntity {
                 do {
                     obj.storageId = self.coreDataHelper.generateId()
                     obj.body = try self.json.encodeToJson(impression)
@@ -75,7 +75,7 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
                 return
             }
             let entities = self.coreDataHelper.fetch(entity: .impressionsCount,
-                                                     where: predicate).compactMap { return $0 as? ImpressionEntity }
+                                                     where: predicate).compactMap { return $0 as? ImpressionsCountEntity }
             for entity in entities {
                 entity.status = newStatus
             }

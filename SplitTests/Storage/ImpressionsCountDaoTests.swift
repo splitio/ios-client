@@ -73,7 +73,7 @@ class ImpressionsCountDaoTests: XCTestCase {
     func createImpressionsCounts() -> [ImpressionsCountPerFeature] {
         var counts = [ImpressionsCountPerFeature]()
         for _ in 0..<10 {
-            let count = ImpressionsCountPerFeature(feature: "name", timeframe: 1000, count: 1)
+            let count = ImpressionsCountPerFeature(storageId: UUID().uuidString, feature: "name", timeframe: 1000, count: 1)
             counts.append(count)
         }
         return counts
