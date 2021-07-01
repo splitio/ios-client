@@ -128,7 +128,7 @@ class LocalhostSplitFetcherTests: XCTestCase {
         storage = FileStorageStub()
         var config = YamlSplitStorageConfig()
         config.refreshInterval = 0
-        return YamlSplitsStorage(fileStorage: storage, config: config,
+        return LocalhostSplitsStorage(fileStorage: storage, config: config,
                                  eventsManager: eventsManager, dataFolderName: "localhost", splitsFileName: fileName,
                                                       bundle: Bundle(for: type(of: self)))
 
