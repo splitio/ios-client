@@ -12,7 +12,7 @@ import XCTest
 class LocalhostSplitFetcherTests: XCTestCase {
 
     var storage: FileStorageProtocol!
-    var eventsManager: SplitEventsManager!
+    var eventsManager: SplitEventsManagerMock!
 
     override func setUp() {
     }
@@ -27,13 +27,15 @@ class LocalhostSplitFetcherTests: XCTestCase {
         for i in 1...5 {
             XCTAssertEqual(splitsStorage.get(name: "s\(i)")?.name, "s\(i)")
         }
-        let events: SplitEventsManagerMock = eventsManager as! SplitEventsManagerMock
+        let events: SplitEventsManagerMock = eventsManager
         XCTAssertTrue(events.isSdkReadyFired)
     }
     
     func testFileUpdate() {
         let fileName =  "localhost.splits"
         let splitsStorage = splitsStorageFor(fileName: fileName)
+
+        wait(for: [eventsManager.readyExp!], timeout: 5)
         let fileContent = """
                             s5 t5\n
                             s6 t6\n
@@ -45,13 +47,14 @@ class LocalhostSplitFetcherTests: XCTestCase {
         for i in 5...7 {
             XCTAssertEqual(splitsStorage.get(name: "s\(i)")?.name, "s\(i)")
         }
-        let events: SplitEventsManagerMock = eventsManager as! SplitEventsManagerMock
-        XCTAssertTrue(events.isSdkReadyFired)
+
+        XCTAssertTrue(eventsManager.isSdkReadyFired)
     }
     
     func testFileUpdate2() {
         let fileName =  "localhost.splits"
         let splitsStorage = splitsStorageFor(fileName: fileName)
+        wait(for: [eventsManager.readyExp!], timeout: 5)
         let fileContent = """
                             s5 t5\n
                             s6 t6\n
@@ -64,13 +67,13 @@ class LocalhostSplitFetcherTests: XCTestCase {
         for i in 5...8 {
             XCTAssertEqual(splitsStorage.get(name: "s\(i)")?.name, "s\(i)")
         }
-        let events: SplitEventsManagerMock = eventsManager as! SplitEventsManagerMock
-        XCTAssertTrue(events.isSdkReadyFired)
+        XCTAssertTrue(eventsManager.isSdkReadyFired)
     }
     
     func testWrongLegacyFormatUpdate() {
         let fileName =  "localhost.splits"
         let splitsStorage = splitsStorageFor(fileName: fileName)
+        wait(for: [eventsManager.readyExp!], timeout: 5)
         let originalCount = splitsStorage.getAll().count
         let fileContent = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean tempus dolor sed orci convallis, in tincidunt risus maximus. Praesent ipsum dui, aliquam in quam alique"
         storage.write(fileName: fileName, content: fileContent)
@@ -83,6 +86,7 @@ class LocalhostSplitFetcherTests: XCTestCase {
     func testWrongYamlFormatUpdate() {
         let fileName =  "localhost.yaml"
         let splitsStorage = splitsStorageFor(fileName: fileName)
+        wait(for: [eventsManager.readyExp!], timeout: 5)
         let originalCount = splitsStorage.getAll().count
         let fileContent = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean tempus dolor sed orci convallis, in tincidunt risus maximus. Praesent ipsum dui, aliquam in quam alique"
         storage.write(fileName: fileName, content: fileContent)
@@ -94,27 +98,33 @@ class LocalhostSplitFetcherTests: XCTestCase {
     
     func testInvalidTypeFile() {
         let _ = splitsStorageFor(fileName: "splits.txt")
-        let events: SplitEventsManagerMock = eventsManager as! SplitEventsManagerMock
+        let events: SplitEventsManagerMock = eventsManager
+        wait(for: [eventsManager.timeoutExp!], timeout: 5)
         XCTAssertFalse(events.isSdkReadyFired)
         XCTAssertTrue(events.isSdkTimeoutFired)
     }
     
     func testNonExistingFile() {
         let _ = splitsStorageFor(fileName: "non_existing_splits.yaml")
-        let events: SplitEventsManagerMock = eventsManager as! SplitEventsManagerMock
+        let events: SplitEventsManagerMock = eventsManager
+        wait(for: [eventsManager.timeoutExp!], timeout: 5)
         XCTAssertFalse(events.isSdkReadyFired)
         XCTAssertTrue(events.isSdkTimeoutFired)
     }
     
     func testWrongFormatYml() {
         let _ = splitsStorageFor(fileName: "wrong_format.yaml")
-        let events: SplitEventsManagerMock = eventsManager as! SplitEventsManagerMock
+        let events: SplitEventsManagerMock = eventsManager
+        wait(for: [eventsManager.timeoutExp!], timeout: 5)
         XCTAssertFalse(events.isSdkReadyFired)
         XCTAssertTrue(events.isSdkTimeoutFired)
     }
     
     func splitsStorageFor(fileName: String) -> SplitsStorage {
         eventsManager = SplitEventsManagerMock()
+        eventsManager.readyExp = XCTestExpectation()
+        eventsManager.timeoutExp = XCTestExpectation()
+
         storage = FileStorageStub()
         var config = YamlSplitStorageConfig()
         config.refreshInterval = 0
