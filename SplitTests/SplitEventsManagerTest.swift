@@ -53,6 +53,8 @@ class SplitEventsManagerTest: XCTestCase {
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
         XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkUpdated), "SDK Update shouldn't be triggered");
         XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+
+        eventManager.stop()
     }
 
     func testSdkReadyFromCacheAndReady() {
@@ -82,6 +84,8 @@ class SplitEventsManagerTest: XCTestCase {
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache), "SDK Ready should from cache be triggered");
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
         XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+
+        eventManager.stop()
     }
 
     func testSdkReadyFromCacheAndReadyTimeout() {
@@ -107,6 +111,8 @@ class SplitEventsManagerTest: XCTestCase {
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache), "SDK Ready should from cache be triggered");
         XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should not be triggered");
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out should be triggered");
+
+        eventManager.stop()
     }
     
     func testSdkReadyTimeOut() {
@@ -124,7 +130,8 @@ class SplitEventsManagerTest: XCTestCase {
         
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out should be triggered")
         XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready shouldn't be triggered")
-        
+
+        eventManager.stop()
     }
     
     func testSdkReadyAndReadyTimeOut() {
@@ -154,6 +161,8 @@ class SplitEventsManagerTest: XCTestCase {
         
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
         XCTAssertTrue(timeoutTriggered)
+
+        eventManager.stop()
     }
 
     func testSdkUpdateSplits() {
@@ -179,6 +188,8 @@ class SplitEventsManagerTest: XCTestCase {
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
         XCTAssertTrue(updatedTask.taskTriggered, "SDK Update should be triggered");
         XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+
+        eventManager.stop()
     }
 
     func testSdkUpdateMySegments() {
@@ -204,6 +215,8 @@ class SplitEventsManagerTest: XCTestCase {
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
         XCTAssertTrue(updatedTask.taskTriggered, "SDK Update should be triggered");
         XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+
+        eventManager.stop()
     }
 
     func testSplitKilledWhenReady() {
@@ -228,6 +241,8 @@ class SplitEventsManagerTest: XCTestCase {
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
         XCTAssertTrue(updatedTask.taskTriggered, "SDK Update should be triggered");
         XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+
+        eventManager.stop()
     }
 
     func testSplitKilledNoSdkReady() {
@@ -253,6 +268,8 @@ class SplitEventsManagerTest: XCTestCase {
         XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady));
         XCTAssertTrue(timeOutTask.taskTriggered);
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut));
+
+        eventManager.stop()
     }
     
     // MARK: Helpers
