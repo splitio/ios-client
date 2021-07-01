@@ -50,7 +50,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         var storageConfig = YamlSplitStorageConfig()
         storageConfig.refreshInterval = config.offlineRefreshRate
 
-        splitsStorage = YamlSplitsStorage(fileStorage: fileStorage,
+        splitsStorage = LocalhostSplitsStorage(fileStorage: fileStorage,
                                           config: storageConfig,
                                           eventsManager: eventsManager,
                                           dataFolderName: dataFolderName,
