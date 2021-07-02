@@ -118,6 +118,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             syncManager.stop()
             manager.destroy()
             eventsManager.stop()
+            storageContainer.mySegmentsStorage.destroy()
+            storageContainer.splitsStorage.destroy()
         }
 
         eventsManager.start()
