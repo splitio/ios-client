@@ -11,6 +11,7 @@ import CoreData
 
 protocol ImpressionsCountDao {
     func insert(_ count: ImpressionsCountPerFeature)
+    func insert(_ counts: [ImpressionsCountPerFeature])
     func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [ImpressionsCountPerFeature]
     func update(ids: [String], newStatus: Int32)
     func delete(_ counts: [ImpressionsCountPerFeature])
@@ -20,7 +21,7 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
 
     let json = JsonWrapper()
 
-    func insert(_ impression: ImpressionsCountPerFeature) {
+    func insert(_ count: ImpressionsCountPerFeature) {
 
         executeAsync { [weak self] in
             guard let self = self else {
@@ -30,7 +31,7 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
             if let obj = self.coreDataHelper.create(entity: .impressionsCount) as? ImpressionsCountEntity {
                 do {
                     obj.storageId = self.coreDataHelper.generateId()
-                    obj.body = try self.json.encodeToJson(impression)
+                    obj.body = try self.json.encodeToJson(count)
                     obj.createdAt = Date().unixTimestamp()
                     obj.status = StorageRecordStatus.active
                     self.coreDataHelper.save()
@@ -38,6 +39,31 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
                     Logger.e("An error occurred while inserting impressions " +
                                 "counts in storage: \(error.localizedDescription)")
                 }
+            }
+        }
+    }
+
+    func insert(_ counts: [ImpressionsCountPerFeature]) {
+        if counts.count == 0 {
+            return
+        }
+        executeAsync { [weak self] in
+            guard let self = self else {
+                return
+            }
+            do {
+                for count in counts {
+                    if let obj = self.coreDataHelper.create(entity: .impressionsCount) as? ImpressionsCountEntity {
+                        obj.storageId = self.coreDataHelper.generateId()
+                        obj.body = try self.json.encodeToJson(count)
+                        obj.createdAt = Date().unixTimestamp()
+                        obj.status = StorageRecordStatus.active
+                    }
+                }
+                self.coreDataHelper.save()
+            } catch {
+                Logger.e("An error occurred while inserting impressions " +
+                            "counts in storage: \(error.localizedDescription)")
             }
         }
     }
@@ -74,8 +100,9 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
             guard let self = self else {
                 return
             }
-            let entities = self.coreDataHelper.fetch(entity: .impressionsCount,
-                                                     where: predicate).compactMap { return $0 as? ImpressionsCountEntity }
+            let entities =
+                self.coreDataHelper.fetch(entity: .impressionsCount,
+                                          where: predicate).compactMap { return $0 as? ImpressionsCountEntity }
             for entity in entities {
                 entity.status = newStatus
             }

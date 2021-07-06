@@ -40,9 +40,11 @@ class CoreDataHelperBuilder {
 
         let databaseUrl = docURL.appendingPathComponent("\(databaseName).\(self.kDatabaseExtension)")
         do {
+            let options = [NSMigratePersistentStoresAutomaticallyOption: true,
+                           NSInferMappingModelAutomaticallyOption: true]
             try persistenceCoordinator.addPersistentStore(ofType: NSSQLiteStoreType,
                                                           configurationName: nil,
-                                                          at: databaseUrl, options: nil)
+                                                          at: databaseUrl, options: options)
 
             return CoreDataHelper(managedObjectContext: managedObjContext,
                                   persistentCoordinator: persistenceCoordinator)

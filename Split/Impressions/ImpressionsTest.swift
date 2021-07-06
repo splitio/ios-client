@@ -9,5 +9,10 @@ import Foundation
 
 struct ImpressionsTest: Codable {
     var testName: String
-    var keyImpressions: [Impression]
+    var keyImpressions: [KeyImpression]
+
+    enum CodingKeys: String, CodingKey {
+        case testName = "f"
+        case keyImpressions = "i"
+    }
 }

@@ -51,7 +51,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let storageContainer = try SplitFactoryHelper.buildStorageContainer(
             userKey: key.matchingKey, dataFolderName: dataFolderName, testDatabase: testDatabase)
 
-        migrateStorageIfNeeded(storageContainer: storageContainer, userKey: key.matchingKey)
+        LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: key.matchingKey)
 
         let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)
         defaultManager = manager
@@ -123,13 +123,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         eventsManager.start()
         eventsManager.executorResources.client = defaultClient
         syncManager.start()
-    }
-
-    private func migrateStorageIfNeeded(storageContainer: SplitStorageContainer, userKey: String) {
-        let storageMigrator = DefaultStorageMigrator(fileStorage: storageContainer.fileStorage,
-                                                     splitDatabase: storageContainer.splitDatabase,
-                                                     userKey: userKey)
-        _ = storageMigrator.runMigrationIfNeeded()
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {

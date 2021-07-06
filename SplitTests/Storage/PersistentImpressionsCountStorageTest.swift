@@ -27,9 +27,8 @@ class PersistentImpressionsCountStorageTests: XCTestCase {
     }
 
     func testPush() {
-        createImpressionsCounts().forEach { count in
-            self.countsStorage.push(count: count)
-        }
+        self.countsStorage.pushMany(counts: createImpressionsCounts())
+
         XCTAssertEqual(20, countDao.insertedCounts.count)
     }
 

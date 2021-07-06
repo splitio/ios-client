@@ -10,10 +10,10 @@ import Foundation
 @testable import Split
 
 class ImpressionsLoggerStub: ImpressionLogger {
-    var impressions = [String: Impression]()
+    var impressions = [String: KeyImpression]()
     var impressionsPushedCount = 0
-    func pushImpression(impression: Impression) {
-        guard let splitName = impression.feature else {
+    func pushImpression(impression: KeyImpression) {
+        guard let splitName = impression.featureName else {
             return
         }
         impressions[splitName] = impression

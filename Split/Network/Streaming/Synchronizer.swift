@@ -9,7 +9,7 @@
 import Foundation
 
 protocol ImpressionLogger {
-    func pushImpression(impression: Impression)
+    func pushImpression(impression: KeyImpression)
 }
 
 protocol Synchronizer: ImpressionLogger {
@@ -40,6 +40,7 @@ struct SplitStorageContainer {
     let persistentSplitsStorage: PersistentSplitsStorage
     let mySegmentsStorage: MySegmentsStorage
     let impressionsStorage: PersistentImpressionsStorage
+    let impressionsCountStorage: PersistentImpressionsCountStorage
     let eventsStorage: PersistentEventsStorage
 }
 
@@ -58,12 +59,15 @@ class DefaultSynchronizer: Synchronizer {
     private let mySegmentsSyncWorker: RetryableSyncWorker
     private let mySegmentsForcedSyncWorker: RetryableSyncWorker
     private let periodicImpressionsRecorderWoker: PeriodicRecorderWorker
+    private let periodicImpressionsCountRecorderWoker: PeriodicRecorderWorker
     private let flusherImpressionsRecorderWorker: RecorderWorker
     private let periodicEventsRecorderWoker: PeriodicRecorderWorker
     private let flusherEventsRecorderWorker: RecorderWorker
     private let eventsSyncHelper: EventsRecorderSyncHelper
     private let splitsFilterQueryString: String
     private let splitEventsManager: SplitEventsManager
+    private let impressionsObserver = ImpressionsObserver(size: ServiceConstants.lastSeenImpressionCachSize)
+    private let impressionsCounter = ImpressionsCounter()
     private let flushQueue = DispatchQueue(label: "split-flush-queue", target: DispatchQueue.global())
 
     init(splitConfig: SplitClientConfig,
@@ -91,6 +95,7 @@ class DefaultSynchronizer: Synchronizer {
             syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
         self.periodicImpressionsRecorderWoker =
             syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
+        self.periodicImpressionsCountRecorderWoker = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
         self.flusherEventsRecorderWorker = syncWorkerFactory.createEventsRecorderWorker(syncHelper: eventsSyncHelper)
         self.periodicEventsRecorderWoker =
             syncWorkerFactory.createPeriodicEventsRecorderWorker(syncHelper: eventsSyncHelper)
@@ -169,11 +174,13 @@ class DefaultSynchronizer: Synchronizer {
     func startPeriodicRecording() {
         periodicImpressionsRecorderWoker.start()
         periodicEventsRecorderWoker.start()
+        periodicImpressionsCountRecorderWoker.start()
     }
 
     func stopPeriodicRecording() {
         periodicImpressionsRecorderWoker.stop()
         periodicEventsRecorderWoker.stop()
+        periodicImpressionsCountRecorderWoker.stop()
     }
 
     func pushEvent(event: EventDTO) {
@@ -185,12 +192,26 @@ class DefaultSynchronizer: Synchronizer {
         }
     }
 
-    func pushImpression(impression: Impression) {
-        flushQueue.async {
-            if self.impressionsSyncHelper.pushAndCheckFlush(impression) {
-                self.flusherImpressionsRecorderWorker.flush()
-                self.impressionsSyncHelper.resetAccumulator()
+    func pushImpression(impression: KeyImpression) {
 
+        // This should not happen
+        guard let featureName = impression.featureName else {
+            return
+        }
+
+        flushQueue.async {
+            var impressionToPush = impression
+            if self.isOptimizedImpressionsMode() {
+                impressionToPush = impression.withPreviousTime(self.impressionsObserver.testAndSet(impression: impression))
+                self.impressionsCounter.inc(featureName: featureName, timeframe: impressionToPush.time, amount: 1)
+            }
+
+            if !self.isOptimizedImpressionsMode() || self.shouldPush(impression: impressionToPush) {
+                if self.impressionsSyncHelper.pushAndCheckFlush(impressionToPush) {
+                    self.flusherImpressionsRecorderWorker.flush()
+                    self.impressionsSyncHelper.resetAccumulator()
+
+                }
             }
         }
     }
@@ -207,11 +228,17 @@ class DefaultSynchronizer: Synchronizer {
         saveImpressionsCount()
         periodicSplitsSyncWorker.pause()
         periodicMySegmentsSyncWorker.pause()
+        periodicEventsRecorderWoker.pause()
+        periodicImpressionsRecorderWoker.pause()
+        periodicImpressionsCountRecorderWoker.pause()
     }
 
     func resume() {
         periodicSplitsSyncWorker.resume()
         periodicMySegmentsSyncWorker.resume()
+        periodicEventsRecorderWoker.resume()
+        periodicImpressionsRecorderWoker.resume()
+        periodicImpressionsCountRecorderWoker.resume()
     }
 
     func flush() {
@@ -280,6 +307,17 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     private func saveImpressionsCount() {
-        // TODO: Save impressions here on dedup integration. Add UT
+        splitStorageContainer.impressionsCountStorage.pushMany(counts: impressionsCounter.popAll())
+    }
+
+    private func isOptimizedImpressionsMode() -> Bool {
+        return ImpressionsMode.optimized == splitConfig.finalImpressionsMode
+    }
+
+    private func shouldPush(impression: KeyImpression) -> Bool {
+        guard let previousTime = impression.previousTime else {
+            return true
+        }
+        return Date.truncateTimeframe(millis: previousTime) != Date.truncateTimeframe(millis: impression.time)
     }
 }

@@ -61,18 +61,8 @@ class ImpressionHasherTest: XCTestCase {
     }
 
     func testNoCrashWhenSplitNull() {
-        let impression = baseImpression()
-        impression.feature = nil
-
-        let _ = ImpressionHasher.process(impression: impression)
-
-        XCTAssertNotNil(impression)
-    }
-
-    func testNoCrashWhenSplitAndKeyNull() {
-        let impression = baseImpression()
-        impression.keyName = nil
-        impression.feature = nil
+        var impression = baseImpression()
+        impression.featureName = nil
 
         let _ = ImpressionHasher.process(impression: impression)
 
@@ -80,7 +70,7 @@ class ImpressionHasherTest: XCTestCase {
     }
 
     func noCrashWhenKeySplitChangeNumberNull() {
-        let impression = baseImpression()
+        var impression = baseImpression()
         impression.changeNumber = nil
 
         let _ = ImpressionHasher.process(impression: impression)
@@ -89,7 +79,7 @@ class ImpressionHasherTest: XCTestCase {
     }
 
     func noCrashWhenAppliedRuleNull() {
-        let impression = baseImpression()
+        var impression = baseImpression()
         impression.label = nil
 
         let _ = ImpressionHasher.process(impression: impression)
@@ -97,7 +87,7 @@ class ImpressionHasherTest: XCTestCase {
         XCTAssertNotNil(impression)
     }
 
-    func baseImpression() -> Impression {
+    func baseImpression() -> KeyImpression {
         return createImpression()
     }
 
@@ -105,15 +95,16 @@ class ImpressionHasherTest: XCTestCase {
                           feature: String = "someFeature",
                           treatment: String = "someTreatment",
                           label: String = "someLabel",
-                          changeNumber: Int64 = 123) -> Impression {
-        let impression = Impression()
-        impression.keyName = key
-        impression.feature = feature
-        impression.treatment = treatment
-        impression.time = Date().unixTimestamp()
-        impression.label = label
-        impression.changeNumber = changeNumber
-        return impression
+                          changeNumber: Int64 = 123) -> KeyImpression {
+        return KeyImpression(featureName: feature,
+                             keyName: key,
+                             bucketingKey: nil,
+                             treatment: treatment,
+                             label: label,
+                             time: Date().unixTimestamp(),
+                             changeNumber: changeNumber,
+                             previousTime: nil,
+                             storageId: nil)
     }
 }
 

@@ -11,7 +11,7 @@ import Foundation
 protocol PersistentImpressionsCountStorage {
     func delete(_ counts: [ImpressionsCountPerFeature])
     func pop(count: Int) -> [ImpressionsCountPerFeature]
-    func push(count: ImpressionsCountPerFeature)
+    func pushMany(counts: [ImpressionsCountPerFeature])
     func setActive(_ counts: [ImpressionsCountPerFeature])
 }
 
@@ -35,8 +35,8 @@ class DefaultImpressionsCountStorage: PersistentImpressionsCountStorage {
         return impressions
     }
 
-    func push(count: ImpressionsCountPerFeature) {
-        impressionsCountDao.insert(count)
+    func pushMany(counts: [ImpressionsCountPerFeature]) {
+        impressionsCountDao.insert(counts)
     }
 
     func getCritical() -> [ImpressionsCountPerFeature] {

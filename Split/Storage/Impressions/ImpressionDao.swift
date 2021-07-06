@@ -10,17 +10,17 @@ import Foundation
 import CoreData
 
 protocol ImpressionDao {
-    func insert(_ impression: Impression)
-    func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [Impression]
+    func insert(_ impression: KeyImpression)
+    func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [KeyImpression]
     func update(ids: [String], newStatus: Int32)
-    func delete(_ impressions: [Impression])
+    func delete(_ impressions: [KeyImpression])
 }
 
 class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
 
     let json = JsonWrapper()
 
-    func insert(_ impression: Impression) {
+    func insert(_ impression: KeyImpression) {
 
         executeAsync { [weak self] in
             guard let self = self else {
@@ -29,7 +29,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
 
             if let obj = self.coreDataHelper.create(entity: .impression) as? ImpressionEntity {
                 do {
-                    guard let testName = impression.feature else {
+                    guard let testName = impression.featureName else {
                         // This should never happen
                         Logger.d("Impression without test name descarted")
                         return
@@ -47,8 +47,8 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
         }
     }
 
-    func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [Impression] {
-        var result = [Impression]()
+    func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [KeyImpression] {
+        var result = [KeyImpression]()
         execute { [weak self] in
             guard let self = self else {
                 return
@@ -88,7 +88,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
         }
     }
 
-    func delete(_ impressions: [Impression]) {
+    func delete(_ impressions: [KeyImpression]) {
         if impressions.count == 0 {
             return
         }
@@ -101,10 +101,18 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
         }
     }
 
-    func mapEntityToModel(_ entity: ImpressionEntity) throws -> Impression {
-        let model = try Json.encodeFrom(json: entity.body, to: Impression.self)
-        model.storageId = entity.storageId
-        model.feature = entity.testName
-        return model
+    func mapEntityToModel(_ entity: ImpressionEntity) throws -> KeyImpression {
+        do {
+            var model = try Json.encodeFrom(json: entity.body, to: KeyImpression.self)
+            model.storageId = entity.storageId
+            model.featureName = entity.testName
+            return model
+        } catch {
+            // if an error occurrs try with deprecated property parsing
+            var model = try Json.encodeFrom(json: entity.body, to: DeprecatedImpression.self)
+            model.storageId = entity.storageId
+            model.featureName = entity.testName
+            return model.toKeyImpression()
+        }
     }
 }
