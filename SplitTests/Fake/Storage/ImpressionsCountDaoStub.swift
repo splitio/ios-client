@@ -11,6 +11,8 @@ import Foundation
 
 class ImpressionsCountDaoStub: ImpressionsCountDao {
 
+
+
     var insertedCounts = [ImpressionsCountPerFeature]()
     var getByCounts = [ImpressionsCountPerFeature]()
     var updatedCounts = [String: Int32]()
@@ -18,6 +20,10 @@ class ImpressionsCountDaoStub: ImpressionsCountDao {
 
     func insert(_ count: ImpressionsCountPerFeature) {
         insertedCounts.append(count)
+    }
+
+    func insert(_ counts: [ImpressionsCountPerFeature]) {
+        insertedCounts.append(contentsOf: counts)
     }
 
     func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [ImpressionsCountPerFeature] {

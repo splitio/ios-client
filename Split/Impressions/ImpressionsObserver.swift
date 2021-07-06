@@ -15,14 +15,14 @@ struct ImpressionsObserver {
         cache = LRUCache(capacity: size)
     }
 
-    func testAndSet(impression: Impression) -> Int64? {
+    func testAndSet(impression: KeyImpression) -> Int64? {
         let hash = ImpressionHasher.process(impression: impression)
         let previous = cache.element(for: hash)
-        cache.set(impression.time ?? 0, for: hash)
+        cache.set(impression.time, for: hash)
         if previous == nil {
             return nil
         }
-        return min(previous ?? 0, impression.time ?? 0)
+        return min(previous ?? 0, impression.time)
     }
 }
 
@@ -32,8 +32,8 @@ struct ImpressionHasher {
     private static let kOffset: Int64 = 0
     private static let kUnknown = "UNKNOWN"
 
-    static func process(impression: Impression) -> UInt32 {
-        let data = "\(sanitize(impression.keyName)):\(sanitize(impression.feature))" +
+    static func process(impression: KeyImpression) -> UInt32 {
+        let data = "\(sanitize(impression.keyName)):\(sanitize(impression.featureName))" +
             ":\(sanitize(impression.treatment)):" + "\(sanitize(impression.label)):\(sanitize(impression.changeNumber))"
         return Murmur3Hash.hashString(data, Self.kSeed)
     }

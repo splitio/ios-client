@@ -56,10 +56,27 @@ struct TestingHelper {
         return impressions
     }
 
+    static func createKeyImpressions(feature: String = "split", count: Int = 10, time: Int64 = 100) -> [KeyImpression] {
+        var impressions = [KeyImpression]()
+        for i in 0..<count {
+            let impression = KeyImpression(featureName: feature,
+                                           keyName: "key1",
+                                           bucketingKey: nil,
+                                           treatment: "t1",
+                                           label: "t1",
+                                           time: time,
+                                           changeNumber: 1000,
+                                           previousTime: nil,
+                                           storageId:  "\(feature)_impression\(i)")
+            impressions.append(impression)
+        }
+        return impressions
+    }
+
     static func createTestImpressions(count: Int = 10) -> [ImpressionsTest] {
         var impressions = [ImpressionsTest]()
         for _ in 0..<count {
-            let impressionTest = try! Json.encodeFrom(json: "{\"testName\":\"T1\", \"keyImpressions\":[]}", to: ImpressionsTest.self)
+            let impressionTest = try! Json.encodeFrom(json: "{\"f\":\"T1\", \"i\":[]}", to: ImpressionsTest.self)
             impressions.append(impressionTest)
         }
         return impressions
@@ -88,39 +105,5 @@ struct TestingHelper {
         let queue = DispatchQueue(label: name, target: DispatchQueue.global())
         let helper = IntegrationCoreDataHelper.get(databaseName: "trackTestDb", dispatchQueue: queue)
         return CoreDataSplitDatabase(coreDataHelper: helper)
-    }
-
-    static func createLegacyImpressionsFileContent(testCount: Int, impressionsPerTest: Int) -> String {
-        var hits = [String: ImpressionsHit]()
-        do {
-            for i in 0..<testCount {
-                let testName = "T\(i)"
-                let impJson = try Json.encodeToJson(createImpressions(feature: testName, count: impressionsPerTest, time: Date().unixTimestamp()))
-                let impressionTest = try Json.encodeFrom(json: "{\"testName\":\"\(testName)\", \"keyImpressions\":\(impJson)}", to: ImpressionsTest.self)
-                let uId = "id\(i)"
-                hits[uId] = ImpressionsHit(identifier: uId, impressions: [impressionTest])
-            }
-        } catch {
-            return ""
-        }
-
-        let file = ImpressionsFile()
-        file.currentHit = ImpressionsHit(identifier: "id\(testCount)", impressions: [])
-        file.oldHits = hits
-        return (try? Json.encodeToJson(file)) ?? ""
-    }
-
-    static func createLegacyEventsFileContent(count: Int) -> String {
-        var hits = [String: EventsHit]()
-        for i in 0..<count {
-            let events = createEvents(count: count, timestamp: Date().unixTimestamp())
-            let uId = "id\(i)"
-            hits[uId] = EventsHit(identifier: uId, events: events)
-        }
-
-        let file = EventsFile()
-        file.currentHit = EventsHit(identifier: "id\(count)", events: [])
-        file.oldHits = hits
-        return (try? Json.dynamicEncodeToJson(file)) ?? ""
     }
 }

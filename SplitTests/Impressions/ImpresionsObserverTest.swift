@@ -18,13 +18,7 @@ class ImpressionsObserverTest: XCTestCase {
 
     func testBasicFunctionality() {
         let observer = ImpressionsObserver(size: 5)
-        let impression = Impression()
-        impression.keyName = "someKey"
-        impression.feature = "someFeature"
-        impression.treatment = "on"
-        impression.time = Date().unixTimestamp()
-        impression.label = "in segment all"
-        impression.changeNumber = 1234
+        let impression = KeyImpression(featureName: "someKey", keyName: "someFeature", bucketingKey: nil, treatment: "on", label: "in segment all", time: Date().unixTimestamp(), changeNumber: 1234, previousTime: nil, storageId: nil)
 
 
         // Add 5 new impressions so that the old one is evicted and re-try the test.
@@ -37,7 +31,7 @@ class ImpressionsObserverTest: XCTestCase {
 
     func testConcurrencyVsAccuracy() throws {
         let observer = ImpressionsObserver(size: 5000)
-        let impressions = SynchronizedArrayWrapper<Impression>()
+        let impressions = SynchronizedArrayWrapper<KeyImpression>()
 
 
         let operationQueue = OperationQueue()
@@ -50,35 +44,34 @@ class ImpressionsObserverTest: XCTestCase {
 
         XCTAssertEqual(5000, impressions.count)
         for imp in impressions.all {
-            XCTAssertTrue(imp.previousTime == nil || imp.previousTime ?? 0 <= imp.time ?? -1)
+            XCTAssertTrue(imp.previousTime == nil || imp.previousTime ?? 0 <= imp.time)
         }
     }
 
-    func caller(observer: ImpressionsObserver, count: Int, impressions: SynchronizedArrayWrapper<Impression> ) {
+    func caller(observer: ImpressionsObserver, count: Int, impressions: SynchronizedArrayWrapper<KeyImpression> ) {
 
         for _ in 0..<count {
-            let impression = Impression()
-            impression.keyName = "key_\(Int.random(in: 1..<100))"
-            impression.feature = "feature_\(Int.random(in: 1..<10))"
-            impression.treatment =  Bool.random() ? "on" : "off"
-            impression.label = "label_\(Int.random(in: 1..<5))"
-            impression.changeNumber = 1234567
-            impression.time = Date().unixTimestamp()
+            var impression = KeyImpression(featureName: "feature_\(Int.random(in: 1..<10))",
+                                           keyName: "key_\(Int.random(in: 1..<100))",
+                                           treatment: Bool.random() ? "on" : "off",
+                                           label: "label_\(Int.random(in: 1..<5))",
+                                           time: Date().unixTimestamp(),
+                                           changeNumber: 1234567)
+
             impression.previousTime = observer.testAndSet(impression: impression)
             impressions.append(impression)
         }
     }
 
-    func generateImpressions(count: Int) -> [Impression] {
-        var impressions = [Impression]()
+    func generateImpressions(count: Int) -> [KeyImpression] {
+        var impressions = [KeyImpression]()
         for i in 0..<count {
-            let impression = Impression()
-            impression.keyName = "key_\(i)"
-            impression.feature = "feature_\(i)"
-            impression.treatment = (i % 2 == 0 ? "on" : "off")
-            impression.label = (i % 2 == 0 ? "in segment all" : "whitelisted")
-            impression.changeNumber = Int64(i * i)
-            impression.time = Date().unixTimestamp()
+            let impression = KeyImpression(featureName: "feature_\(i)",
+                                           keyName: "key_\(i)",
+                                           treatment: (i % 2 == 0 ? "on" : "off"),
+                                           label:  (i % 2 == 0 ? "in segment all" : "whitelisted"),
+                                           time:  Date().unixTimestamp(),
+                                           changeNumber: Int64(i * i))
             impressions.append(impression)
         }
         return impressions

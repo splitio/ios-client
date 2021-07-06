@@ -16,6 +16,7 @@ struct SplitApiFacade {
     let splitsFetcher: HttpSplitFetcher
     let mySegmentsFetcher: HttpMySegmentsFetcher
     let impressionsRecorder: HttpImpressionsRecorder
+    let impressionsCountRecorder: HttpImpressionsCountRecorder
     let eventsRecorder: HttpEventsRecorder
     let streamingHttpClient: HttpClient?
     let sseAuthenticator: SseAuthenticator
@@ -80,12 +81,16 @@ class SplitApiFacadeBuilder {
             = DefaultHttpMySegmentsFetcher(restClient: restClient, metricsManager: DefaultMetricsManager.shared)
 
         let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
+
+        let impressionsCountRecorder = DefaultHttpImpressionsCountRecorder(restClient: restClient)
+
         let eventsRecorder = DefaultHttpEventsRecorder(restClient: restClient)
 
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
 
         return SplitApiFacade(splitsFetcher: splitsFetcher, mySegmentsFetcher: mySegmentsFetcher,
                               impressionsRecorder: impressionsRecorder,
+                              impressionsCountRecorder: impressionsCountRecorder,
                               eventsRecorder: eventsRecorder, streamingHttpClient: self.streamingHttpClient,
                               sseAuthenticator: sseAuthenticator)
     }
