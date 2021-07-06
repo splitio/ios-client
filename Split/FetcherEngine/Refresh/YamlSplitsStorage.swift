@@ -101,6 +101,10 @@ class YamlSplitsStorage: SplitsStorage {
         taskExecutor?.stop()
     }
 
+    func destroy() {
+        inMemorySplits.removeAll()
+    }
+
     private func createTaskExecutor() -> PeriodicTaskExecutor {
         var config = PeriodicTaskExecutorConfig()
         config.firstExecutionWindow = refreshInterval
