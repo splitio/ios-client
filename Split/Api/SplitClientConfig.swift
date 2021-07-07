@@ -174,6 +174,11 @@ public class SplitClientConfig: NSObject {
     }
 
     ///
+    /// The SDK will load changes from Splits files base on this feature. Default = -1 (Deactivated)
+    ///
+    @objc public var offlineRefreshRate: Int = -1
+
+    ///
     /// When set to true app sync is done while app is in background.
     /// Otherwise synchronization only occurs while app
     /// is in foreground
