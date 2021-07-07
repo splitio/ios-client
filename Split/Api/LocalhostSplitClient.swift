@@ -142,6 +142,8 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
     }
 
     public func destroy() {
+        splitsStorage?.destroy()
+        mySegmentsStorage?.destroy()
     }
 
     public func destroy(completion: (() -> Void)?) {

@@ -40,14 +40,18 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
     }
 
     init(key: Key, config: SplitClientConfig, bundle: Bundle) {
-
+        Logger.d("Initializing localhost mode!!")
         eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
         let dataFolderName = DataFolderFactory()
             .sanitizeForFolderName(config.localhostDataFolder)
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
 
-        splitsStorage = YamlSplitsStorage(fileStorage: fileStorage,
+        var storageConfig = YamlSplitStorageConfig()
+        storageConfig.refreshInterval = config.offlineRefreshRate
+
+        splitsStorage = LocalhostSplitsStorage(fileStorage: fileStorage,
+                                          config: storageConfig,
                                           eventsManager: eventsManager,
                                           dataFolderName: dataFolderName,
                                           splitsFileName: config.splitFile,

@@ -27,6 +27,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     func updateWithoutChecks(split: Split)
     func isValidTrafficType(name: String) -> Bool
     func clear()
+    func destroy()
 }
 
 class DefaultSplitsStorage: SplitsStorage {
@@ -148,6 +149,10 @@ class DefaultSplitsStorage: SplitsStorage {
                 inMemorySplits.removeValue(forKey: splitName)
             }
         }
+    }
+
+    func destroy() {
+        inMemorySplits.removeAll()
     }
 }
 
