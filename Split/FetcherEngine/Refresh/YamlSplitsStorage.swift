@@ -12,7 +12,7 @@ struct YamlSplitStorageConfig {
     var refreshInterval: Int = 10
 }
 
-class YamlSplitsStorage: SplitsStorage {
+class LocalhostSplitsStorage: SplitsStorage {
 
     var changeNumber: Int64 = -1
     var updateTimestamp: Int64 = 1
