@@ -40,7 +40,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
     }
 
     init(key: Key, config: SplitClientConfig, bundle: Bundle) {
-        Logger.d("Initializing localhost mode!!")
+        Logger.d("Initializing localhost mode")
         eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
         let dataFolderName = DataFolderFactory()
