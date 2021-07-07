@@ -8,8 +8,12 @@
 
 import Foundation
 @testable import Split
+import XCTest
 
 class SplitEventsManagerMock: SplitEventsManager {
+
+    var timeoutExp: XCTestExpectation?
+    var readyExp: XCTestExpectation?
 
     let executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
     var isSdkReadyFired: Bool {
@@ -25,8 +29,14 @@ class SplitEventsManagerMock: SplitEventsManager {
             isSegmentsReadyFired = true
         case .splitsUpdated:
             isSplitsReadyFired = true
+            if let exp = readyExp {
+                exp.fulfill()
+            }
         case .sdkReadyTimeoutReached:
             isSdkTimeoutFired = true
+            if let exp = timeoutExp {
+                exp.fulfill()
+            }
         default:
             print("\(event)")
         }
@@ -43,9 +53,14 @@ class SplitEventsManagerMock: SplitEventsManager {
     }
     
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
-        if event == .sdkReady {
+        switch event {
+        case.sdkReady:
             return isSdkReadyFired
+        case .sdkReadyTimedOut:
+            return isSdkTimeoutFired
+
+        default:
+            return true
         }
-        return true
     }
 }

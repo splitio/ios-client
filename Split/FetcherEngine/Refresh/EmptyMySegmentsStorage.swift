@@ -21,4 +21,7 @@ class EmptyMySegmentsStorage: MySegmentsStorage {
 
     func clear() {
     }
+
+    func destroy() {
+    }
 }
