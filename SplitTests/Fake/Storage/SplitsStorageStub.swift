@@ -81,4 +81,8 @@ class SplitsStorageStub: SplitsStorage {
         clearCalled = true
         inMemorySplits.removeAll()
     }
+
+    func destroy() {
+        inMemorySplits.removeAll()
+    }
 }
