@@ -21,7 +21,7 @@ class LocalhostSplitClientTests: XCTestCase {
         let storage = FileStorageStub()
         var config = YamlSplitStorageConfig()
         config.refreshInterval = 0
-        let splitsStorage = YamlSplitsStorage(fileStorage: storage, config: config,
+        let splitsStorage = LocalhostSplitsStorage(fileStorage: storage, config: config,
                                               eventsManager: eventsManager, dataFolderName: "localhost", splitsFileName: fileName,
                                                       bundle: Bundle(for: type(of: self)))
         splitsStorage.loadLocal()
