@@ -23,6 +23,7 @@ class PersistentMySegmentsStorageTests: XCTestCase {
             DefaultPersistentMySegmentsStorage(userKey: "dummyKey",
                                                database: SplitDatabaseStub(eventDao: EventDaoStub(),
                                                                            impressionDao: ImpressionDaoStub(),
+                                                                           impressionsCountDao: ImpressionsCountDaoStub(),
                                                                            generalInfoDao: GeneralInfoDaoStub(),
                                                                            splitDao: SplitDaoStub(),
                                                                            mySegmentsDao: mySegmentsDao))

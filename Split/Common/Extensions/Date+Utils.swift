@@ -7,7 +7,7 @@
 
 import Foundation
 
-fileprivate let kTimeIntervalMs: Int64 = 3600 * 1000
+private let kTimeIntervalMs: Int64 = 3600 * 1000
 
 extension Date {
 

@@ -204,6 +204,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func pause() {
+        saveImpressionsCount()
         periodicSplitsSyncWorker.pause()
         periodicMySegmentsSyncWorker.pause()
     }
@@ -276,5 +277,9 @@ class DefaultSynchronizer: Synchronizer {
             return String(splitName[range.upperBound...])
         }
         return nil
+    }
+
+    private func saveImpressionsCount() {
+        // TODO: Save impressions here on dedup integration. Add UT
     }
 }
