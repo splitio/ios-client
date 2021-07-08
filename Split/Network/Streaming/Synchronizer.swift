@@ -106,8 +106,10 @@ class DefaultSynchronizer: Synchronizer {
         self.splitEventsManager = splitEventsManager
 
         if isOptimizedImpressionsMode() {
-            self.periodicImpressionsCountRecorderWoker = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
-            self.flusherImpressionsCountRecorderWorker = syncWorkerFactory.createImpressionsCountRecorderWorker()
+            self.periodicImpressionsCountRecorderWoker
+                = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
+            self.flusherImpressionsCountRecorderWorker
+                = syncWorkerFactory.createImpressionsCountRecorderWorker()
         }
     }
 
@@ -206,9 +208,9 @@ class DefaultSynchronizer: Synchronizer {
         }
 
         flushQueue.async {
-            var impressionToPush = impression
+            let impressionToPush = impression.withPreviousTime(
+                self.impressionsObserver.testAndSet(impression: impression))
             if self.isOptimizedImpressionsMode() {
-                impressionToPush = impression.withPreviousTime(self.impressionsObserver.testAndSet(impression: impression))
                 self.impressionsCounter.inc(featureName: featureName, timeframe: impressionToPush.time, amount: 1)
             }
 
