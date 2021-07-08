@@ -144,7 +144,6 @@ class ImpressionsDedupTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            print(request.url.absoluteString)
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 if self.firstSplitHit {
