@@ -20,6 +20,7 @@ struct SplitFactoryHelper {
         let splitsStorage = openSplitsStorage(database: splitDatabase)
         let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase, userKey: userKey)
         let impressionsStorage = openImpressionsStorage(database: splitDatabase)
+        let impressionsCountStorage = openImpressionsCountStorage(database: splitDatabase)
         let eventsStorage = openEventsStorage(database: splitDatabase)
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      fileStorage: fileStorage,
@@ -27,6 +28,7 @@ struct SplitFactoryHelper {
                                      persistentSplitsStorage: persistentSplitsStorage,
                                      mySegmentsStorage: mySegmentsStorage,
                                      impressionsStorage: impressionsStorage,
+                                     impressionsCountStorage: impressionsCountStorage,
                                      eventsStorage: eventsStorage)
     }
 
@@ -36,7 +38,6 @@ struct SplitFactoryHelper {
         if let database = testDatabase {
             return database
         }
-
 
         guard let helper = CoreDataHelperBuilder.build(databaseName: dataFolderName) else {
             throw GenericError.couldNotCreateCache
@@ -52,7 +53,8 @@ struct SplitFactoryHelper {
         return DefaultSplitsStorage(persistentSplitsStorage: openPersistentSplitsStorage(database: database))
     }
 
-    static func openPersistentMySegmentsStorage(database: SplitDatabase, userKey: String) -> PersistentMySegmentsStorage {
+    static func openPersistentMySegmentsStorage(database: SplitDatabase,
+                                                userKey: String) -> PersistentMySegmentsStorage {
         return DefaultPersistentMySegmentsStorage(userKey: userKey, database: database)
     }
 
@@ -63,6 +65,11 @@ struct SplitFactoryHelper {
 
     static func openImpressionsStorage(database: SplitDatabase) -> PersistentImpressionsStorage {
         return DefaultImpressionsStorage(database: database,
+                                         expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+    }
+
+    static func openImpressionsCountStorage(database: SplitDatabase) -> PersistentImpressionsCountStorage {
+        return DefaultImpressionsCountStorage(database: database,
                                          expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
     }
 

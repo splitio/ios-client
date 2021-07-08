@@ -56,7 +56,7 @@ class ImpressionsRecorderSyncHelper: RecorderSyncHelper {
         self.accumulator = accumulator
     }
 
-    func pushAndCheckFlush(_ item: Impression) -> Bool {
+    func pushAndCheckFlush(_ item: KeyImpression) -> Bool {
         self.impressionsStorage.push(impression: item)
         return accumulator.checkIfFlushIsNeeded(sizeInBytes: ServiceConstants.estimatedImpressionSizeInBytes)
     }

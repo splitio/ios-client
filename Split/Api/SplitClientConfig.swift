@@ -150,11 +150,30 @@ public class SplitClientConfig: NSObject {
     /// Use the SyncConfig builder and Split Filter class to build correct filters
     ///
     @objc public var sync = SyncConfig.builder().build()
+
     /// Whether we should attempt to use streaming or not. If the variable is false,
     /// the SDK will start in polling mode and stay that way.
     /// Default: true
     ///
     @objc public var streamingEnabled = true
+
+    /// Setup the impressions mode.
+    /// @param mode Values:<br>
+    ///             DEBUG: All impressions are sent and
+    ///             OPTIMIZED: Impressions are sent using an optimization algorithm
+    ///
+    /// @return: This builder
+    /// @default: OPTIMIZED
+    ///
+    @objc public var impressionsMode: String = "OPTIMIZED" {
+        didSet {
+            let mode = impressionsMode.uppercased()
+            if mode != "OPTIMIZED" && mode != "DEBUG" {
+                Logger.w("You passed an invalid impressionsMode (\(impressionsMode)), impressionsMode should be one of the following values: 'DEBUG' or 'OPTIMIZED'. Defaulting to 'OPTMIZED' mode.")
+            }
+            finalImpressionsMode = ImpressionsMode(rawValue: mode) ?? .optimized
+        }
+    }
 
     ///
     /// How many seconds to wait before re attempting the whole connection flow
@@ -213,5 +232,10 @@ public class SplitClientConfig: NSObject {
     let sseHttpClientConnectionTimeOut: TimeInterval = 80
 
     var generalRetryBackoffBase = 1
+
+    var finalImpressionsMode: ImpressionsMode = .optimized
+
+    // Make it mutable to allow testing
+    var impressionsCountsRefreshRate = 1800
 
 }

@@ -35,8 +35,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return Version.sdk
     }
 
-    init(apiKey: String, key: Key, config: SplitClientConfig, httpClient: HttpClient?,
-         reachabilityChecker: HostReachabilityChecker?, testDatabase: SplitDatabase? = nil) throws {
+    init(apiKey: String,
+         key: Key,
+         config: SplitClientConfig,
+         httpClient: HttpClient?,
+         reachabilityChecker: HostReachabilityChecker?,
+         testDatabase: SplitDatabase? = nil,
+         notificationHelper: NotificationHelper? = nil) throws {
         super.init()
 
         let eventsManager = DefaultSplitEventsManager(config: config)
@@ -51,7 +56,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let storageContainer = try SplitFactoryHelper.buildStorageContainer(
             userKey: key.matchingKey, dataFolderName: dataFolderName, testDatabase: testDatabase)
 
-        migrateStorageIfNeeded(storageContainer: storageContainer, userKey: key.matchingKey)
+        LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: key.matchingKey)
 
         let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)
         defaultManager = manager
@@ -108,6 +113,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
             .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
+            .setNotificationHelper(notificationHelper ?? DefaultNotificationHelper.instance)
             .setSplitConfig(config).build()
 
         setupBgSync(config: config, apiKey: apiKey, userKey: key.matchingKey)
@@ -121,17 +127,9 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             storageContainer.mySegmentsStorage.destroy()
             storageContainer.splitsStorage.destroy()
         }
-
         eventsManager.start()
         eventsManager.executorResources.client = defaultClient
         syncManager.start()
-    }
-
-    private func migrateStorageIfNeeded(storageContainer: SplitStorageContainer, userKey: String) {
-        let storageMigrator = DefaultStorageMigrator(fileStorage: storageContainer.fileStorage,
-                                                     splitDatabase: storageContainer.splitDatabase,
-                                                     userKey: userKey)
-        _ = storageMigrator.runMigrationIfNeeded()
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
