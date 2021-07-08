@@ -62,7 +62,7 @@ class DefaultSynchronizer: Synchronizer {
     private var periodicImpressionsCountRecorderWoker: PeriodicRecorderWorker?
     private var flusherImpressionsCountRecorderWorker: RecorderWorker?
     private let flusherImpressionsRecorderWorker: RecorderWorker
-    private let periodicEventsRecorderWoker: PeriodicRecorderWorker
+    private let periodicEventsRecorderWorker: PeriodicRecorderWorker
     private let flusherEventsRecorderWorker: RecorderWorker
 
     private let eventsSyncHelper: EventsRecorderSyncHelper
@@ -98,7 +98,7 @@ class DefaultSynchronizer: Synchronizer {
         self.periodicImpressionsRecorderWoker =
             syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
         self.flusherEventsRecorderWorker = syncWorkerFactory.createEventsRecorderWorker(syncHelper: eventsSyncHelper)
-        self.periodicEventsRecorderWoker =
+        self.periodicEventsRecorderWorker =
             syncWorkerFactory.createPeriodicEventsRecorderWorker(syncHelper: eventsSyncHelper)
         self.impressionsSyncHelper = impressionsSyncHelper
         self.eventsSyncHelper = eventsSyncHelper
@@ -181,13 +181,13 @@ class DefaultSynchronizer: Synchronizer {
 
     func startPeriodicRecording() {
         periodicImpressionsRecorderWoker.start()
-        periodicEventsRecorderWoker.start()
+        periodicEventsRecorderWorker.start()
         periodicImpressionsCountRecorderWoker?.start()
     }
 
     func stopPeriodicRecording() {
         periodicImpressionsRecorderWoker.stop()
-        periodicEventsRecorderWoker.stop()
+        periodicEventsRecorderWorker.stop()
         periodicImpressionsCountRecorderWoker?.stop()
     }
 
@@ -236,7 +236,7 @@ class DefaultSynchronizer: Synchronizer {
         saveImpressionsCount()
         periodicSplitsSyncWorker.pause()
         periodicMySegmentsSyncWorker.pause()
-        periodicEventsRecorderWoker.pause()
+        periodicEventsRecorderWorker.pause()
         periodicImpressionsRecorderWoker.pause()
         periodicImpressionsCountRecorderWoker?.pause()
     }
@@ -244,7 +244,7 @@ class DefaultSynchronizer: Synchronizer {
     func resume() {
         periodicSplitsSyncWorker.resume()
         periodicMySegmentsSyncWorker.resume()
-        periodicEventsRecorderWoker.resume()
+        periodicEventsRecorderWorker.resume()
         periodicImpressionsRecorderWoker.resume()
         periodicImpressionsCountRecorderWoker?.resume()
     }
@@ -268,7 +268,7 @@ class DefaultSynchronizer: Synchronizer {
         periodicSplitsSyncWorker.destroy()
         periodicMySegmentsSyncWorker.destroy()
         periodicImpressionsRecorderWoker.destroy()
-        periodicEventsRecorderWoker.destroy()
+        periodicEventsRecorderWorker.destroy()
         let updateTasks = syncTaskByChangeNumberCatalog.takeAll()
         for task in updateTasks.values {
             task.stop()
