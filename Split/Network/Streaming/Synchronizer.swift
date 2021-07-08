@@ -59,10 +59,12 @@ class DefaultSynchronizer: Synchronizer {
     private let mySegmentsSyncWorker: RetryableSyncWorker
     private let mySegmentsForcedSyncWorker: RetryableSyncWorker
     private let periodicImpressionsRecorderWoker: PeriodicRecorderWorker
-    private let periodicImpressionsCountRecorderWoker: PeriodicRecorderWorker
+    private var periodicImpressionsCountRecorderWoker: PeriodicRecorderWorker?
+    private var flusherImpressionsCountRecorderWorker: RecorderWorker?
     private let flusherImpressionsRecorderWorker: RecorderWorker
     private let periodicEventsRecorderWoker: PeriodicRecorderWorker
     private let flusherEventsRecorderWorker: RecorderWorker
+
     private let eventsSyncHelper: EventsRecorderSyncHelper
     private let splitsFilterQueryString: String
     private let splitEventsManager: SplitEventsManager
@@ -95,7 +97,6 @@ class DefaultSynchronizer: Synchronizer {
             syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
         self.periodicImpressionsRecorderWoker =
             syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
-        self.periodicImpressionsCountRecorderWoker = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
         self.flusherEventsRecorderWorker = syncWorkerFactory.createEventsRecorderWorker(syncHelper: eventsSyncHelper)
         self.periodicEventsRecorderWoker =
             syncWorkerFactory.createPeriodicEventsRecorderWorker(syncHelper: eventsSyncHelper)
@@ -103,6 +104,11 @@ class DefaultSynchronizer: Synchronizer {
         self.eventsSyncHelper = eventsSyncHelper
         self.splitsFilterQueryString = splitsFilterQueryString
         self.splitEventsManager = splitEventsManager
+
+        if isOptimizedImpressionsMode() {
+            self.periodicImpressionsCountRecorderWoker = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
+            self.flusherImpressionsCountRecorderWorker = syncWorkerFactory.createImpressionsCountRecorderWorker()
+        }
     }
 
     func loadAndSynchronizeSplits() {
@@ -174,13 +180,13 @@ class DefaultSynchronizer: Synchronizer {
     func startPeriodicRecording() {
         periodicImpressionsRecorderWoker.start()
         periodicEventsRecorderWoker.start()
-        periodicImpressionsCountRecorderWoker.start()
+        periodicImpressionsCountRecorderWoker?.start()
     }
 
     func stopPeriodicRecording() {
         periodicImpressionsRecorderWoker.stop()
         periodicEventsRecorderWoker.stop()
-        periodicImpressionsCountRecorderWoker.stop()
+        periodicImpressionsCountRecorderWoker?.stop()
     }
 
     func pushEvent(event: EventDTO) {
@@ -230,7 +236,7 @@ class DefaultSynchronizer: Synchronizer {
         periodicMySegmentsSyncWorker.pause()
         periodicEventsRecorderWoker.pause()
         periodicImpressionsRecorderWoker.pause()
-        periodicImpressionsCountRecorderWoker.pause()
+        periodicImpressionsCountRecorderWoker?.pause()
     }
 
     func resume() {
@@ -238,13 +244,14 @@ class DefaultSynchronizer: Synchronizer {
         periodicMySegmentsSyncWorker.resume()
         periodicEventsRecorderWoker.resume()
         periodicImpressionsRecorderWoker.resume()
-        periodicImpressionsCountRecorderWoker.resume()
+        periodicImpressionsCountRecorderWoker?.resume()
     }
 
     func flush() {
         flushQueue.async {
             self.flusherImpressionsRecorderWorker.flush()
             self.flusherEventsRecorderWorker.flush()
+            self.flusherImpressionsCountRecorderWorker?.flush()
             self.eventsSyncHelper.resetAccumulator()
             self.impressionsSyncHelper.resetAccumulator()
         }

@@ -8,7 +8,9 @@
 
 import Foundation
 
-struct ImpressionsCount: Encodable {
+// This struct could be Encodable,
+// but Decodable is needed test properly
+struct ImpressionsCount: Codable {
     var perFeature: [ImpressionsCountPerFeature]
 
     enum CodingKeys: String, CodingKey {

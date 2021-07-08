@@ -231,6 +231,7 @@ public class SplitClientConfig: NSObject {
 
     var finalImpressionsMode: ImpressionsMode = .optimized
 
-    let impressionsCountsRefreshRate = 1800
+    // Make it mutable to allow testing
+    var impressionsCountsRefreshRate = 1800
 
 }
