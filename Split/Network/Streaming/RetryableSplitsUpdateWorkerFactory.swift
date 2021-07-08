@@ -27,6 +27,8 @@ protocol SyncWorkerFactory {
 
     func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker
 
+    func createImpressionsCountRecorderWorker() -> RecorderWorker
+
     func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker
 
     func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker
@@ -122,6 +124,11 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                          impressionsRecorder: apiFacade.impressionsRecorder,
                                          impressionsPerPush: Int(splitConfig.impressionsChunkSize),
                                          impressionsSyncHelper: syncHelper)
+    }
+
+    func createImpressionsCountRecorderWorker() -> RecorderWorker {
+        return ImpressionsCountRecorderWorker(countsStorage: storageContainer.impressionsCountStorage,
+                                              countsRecorder: apiFacade.impressionsCountRecorder)
     }
 
     func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker {

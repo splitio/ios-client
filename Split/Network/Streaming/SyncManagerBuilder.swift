@@ -16,6 +16,7 @@ class SyncManagerBuilder {
     private var storageContainer: SplitStorageContainer?
     private var endpointFactory: EndpointFactory?
     private var synchronizer: Synchronizer?
+    private var notificationHelper: NotificationHelper = DefaultNotificationHelper.instance
 
     func setUserKey(_ userKey: String) -> SyncManagerBuilder {
         self.userKey = userKey
@@ -44,6 +45,11 @@ class SyncManagerBuilder {
 
     func setSynchronizer(_ synchronizer: Synchronizer) -> SyncManagerBuilder {
         self.synchronizer = synchronizer
+        return self
+    }
+
+    func setNotificationHelper(_ notificationHelper: NotificationHelper) -> SyncManagerBuilder {
+        self.notificationHelper = notificationHelper
         return self
     }
 
@@ -92,7 +98,7 @@ class SyncManagerBuilder {
 
         return DefaultSyncManager(splitConfig: config, pushNotificationManager: pushManager,
                                   reconnectStreamingTimer: sseBackoffTimer,
-                                  notificationHelper: DefaultNotificationHelper.instance,
+                                  notificationHelper: notificationHelper,
                                   synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
     }
 }
