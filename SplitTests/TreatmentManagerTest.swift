@@ -43,6 +43,7 @@ class TreatmentManagerTest: XCTestCase {
                                                      persistentSplitsStorage: PersistentSplitsStorageStub(),
                                                      mySegmentsStorage: mySegmentsStorage,
                                                      impressionsStorage: PersistentImpressionsStorageStub(),
+                                                     impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub())
         }
     }
