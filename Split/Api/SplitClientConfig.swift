@@ -167,7 +167,11 @@ public class SplitClientConfig: NSObject {
     ///
     @objc public var impressionsMode: String = "OPTIMIZED" {
         didSet {
-            finalImpressionsMode = ImpressionsMode(rawValue: impressionsMode.uppercased()) ?? .optimized
+            let mode = impressionsMode.uppercased()
+            if mode != "OPTIMIZED" && mode != "DEBUG" {
+                Logger.w("You passed an invalid impressionsMode (\(impressionsMode)), impressionsMode should be one of the following values: 'DEBUG' or 'OPTIMIZED'. Defaulting to 'OPTMIZED' mode.")
+            }
+            finalImpressionsMode = ImpressionsMode(rawValue: mode) ?? .optimized
         }
     }
 
@@ -231,6 +235,7 @@ public class SplitClientConfig: NSObject {
 
     var finalImpressionsMode: ImpressionsMode = .optimized
 
-    let impressionsCountsRefreshRate = 1800
+    // Make it mutable to allow testing
+    var impressionsCountsRefreshRate = 1800
 
 }

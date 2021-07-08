@@ -59,10 +59,12 @@ class DefaultSynchronizer: Synchronizer {
     private let mySegmentsSyncWorker: RetryableSyncWorker
     private let mySegmentsForcedSyncWorker: RetryableSyncWorker
     private let periodicImpressionsRecorderWoker: PeriodicRecorderWorker
-    private let periodicImpressionsCountRecorderWoker: PeriodicRecorderWorker
+    private var periodicImpressionsCountRecorderWoker: PeriodicRecorderWorker?
+    private var flusherImpressionsCountRecorderWorker: RecorderWorker?
     private let flusherImpressionsRecorderWorker: RecorderWorker
-    private let periodicEventsRecorderWoker: PeriodicRecorderWorker
+    private let periodicEventsRecorderWorker: PeriodicRecorderWorker
     private let flusherEventsRecorderWorker: RecorderWorker
+
     private let eventsSyncHelper: EventsRecorderSyncHelper
     private let splitsFilterQueryString: String
     private let splitEventsManager: SplitEventsManager
@@ -95,14 +97,20 @@ class DefaultSynchronizer: Synchronizer {
             syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
         self.periodicImpressionsRecorderWoker =
             syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
-        self.periodicImpressionsCountRecorderWoker = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
         self.flusherEventsRecorderWorker = syncWorkerFactory.createEventsRecorderWorker(syncHelper: eventsSyncHelper)
-        self.periodicEventsRecorderWoker =
+        self.periodicEventsRecorderWorker =
             syncWorkerFactory.createPeriodicEventsRecorderWorker(syncHelper: eventsSyncHelper)
         self.impressionsSyncHelper = impressionsSyncHelper
         self.eventsSyncHelper = eventsSyncHelper
         self.splitsFilterQueryString = splitsFilterQueryString
         self.splitEventsManager = splitEventsManager
+
+        if isOptimizedImpressionsMode() {
+            self.periodicImpressionsCountRecorderWoker
+                = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
+            self.flusherImpressionsCountRecorderWorker
+                = syncWorkerFactory.createImpressionsCountRecorderWorker()
+        }
     }
 
     func loadAndSynchronizeSplits() {
@@ -173,14 +181,14 @@ class DefaultSynchronizer: Synchronizer {
 
     func startPeriodicRecording() {
         periodicImpressionsRecorderWoker.start()
-        periodicEventsRecorderWoker.start()
-        periodicImpressionsCountRecorderWoker.start()
+        periodicEventsRecorderWorker.start()
+        periodicImpressionsCountRecorderWoker?.start()
     }
 
     func stopPeriodicRecording() {
         periodicImpressionsRecorderWoker.stop()
-        periodicEventsRecorderWoker.stop()
-        periodicImpressionsCountRecorderWoker.stop()
+        periodicEventsRecorderWorker.stop()
+        periodicImpressionsCountRecorderWoker?.stop()
     }
 
     func pushEvent(event: EventDTO) {
@@ -200,9 +208,9 @@ class DefaultSynchronizer: Synchronizer {
         }
 
         flushQueue.async {
-            var impressionToPush = impression
+            let impressionToPush = impression.withPreviousTime(
+                self.impressionsObserver.testAndSet(impression: impression))
             if self.isOptimizedImpressionsMode() {
-                impressionToPush = impression.withPreviousTime(self.impressionsObserver.testAndSet(impression: impression))
                 self.impressionsCounter.inc(featureName: featureName, timeframe: impressionToPush.time, amount: 1)
             }
 
@@ -228,23 +236,24 @@ class DefaultSynchronizer: Synchronizer {
         saveImpressionsCount()
         periodicSplitsSyncWorker.pause()
         periodicMySegmentsSyncWorker.pause()
-        periodicEventsRecorderWoker.pause()
+        periodicEventsRecorderWorker.pause()
         periodicImpressionsRecorderWoker.pause()
-        periodicImpressionsCountRecorderWoker.pause()
+        periodicImpressionsCountRecorderWoker?.pause()
     }
 
     func resume() {
         periodicSplitsSyncWorker.resume()
         periodicMySegmentsSyncWorker.resume()
-        periodicEventsRecorderWoker.resume()
+        periodicEventsRecorderWorker.resume()
         periodicImpressionsRecorderWoker.resume()
-        periodicImpressionsCountRecorderWoker.resume()
+        periodicImpressionsCountRecorderWoker?.resume()
     }
 
     func flush() {
         flushQueue.async {
             self.flusherImpressionsRecorderWorker.flush()
             self.flusherEventsRecorderWorker.flush()
+            self.flusherImpressionsCountRecorderWorker?.flush()
             self.eventsSyncHelper.resetAccumulator()
             self.impressionsSyncHelper.resetAccumulator()
         }
@@ -259,7 +268,7 @@ class DefaultSynchronizer: Synchronizer {
         periodicSplitsSyncWorker.destroy()
         periodicMySegmentsSyncWorker.destroy()
         periodicImpressionsRecorderWoker.destroy()
-        periodicEventsRecorderWoker.destroy()
+        periodicEventsRecorderWorker.destroy()
         let updateTasks = syncTaskByChangeNumberCatalog.takeAll()
         for task in updateTasks.values {
             task.stop()
