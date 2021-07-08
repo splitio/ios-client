@@ -19,6 +19,7 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
     var mySegmentsSyncWorker = RetryableSyncWorkerStub()
     var periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
     var periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
+    var periodicImpressionsCountRecorderWorker = PeriodicRecorderWorkerStub()
 
     private var retryableWorkerIndex = -1
     var retryableSplitsUpdateWorkers: [RetryableSyncWorker] = [RetryableSyncWorkerStub()]
@@ -56,6 +57,10 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
 
     func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker {
         return impressionsRecorderWorker
+    }
+
+    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker {
+        return periodicImpressionsCountRecorderWorker
     }
 
     func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker {
