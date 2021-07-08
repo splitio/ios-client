@@ -27,12 +27,12 @@ class DefaultImpressionsCountStorage: PersistentImpressionsCountStorage {
 
     func pop(count: Int) -> [ImpressionsCountPerFeature] {
         let createdAt = Date().unixTimestamp() - self.expirationPeriod
-        let impressions = impressionsCountDao.getBy(createdAt: createdAt,
+        let counts = impressionsCountDao.getBy(createdAt: createdAt,
                                                     status: StorageRecordStatus.active,
                                                     maxRows: count)
-        impressionsCountDao.update(ids: impressions.compactMap { $0.storageId },
+        impressionsCountDao.update(ids: counts.compactMap { $0.storageId },
                                    newStatus: StorageRecordStatus.deleted)
-        return impressions
+        return counts
     }
 
     func pushMany(counts: [ImpressionsCountPerFeature]) {
