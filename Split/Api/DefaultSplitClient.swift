@@ -30,7 +30,6 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private let validationLogger: ValidationMessageLogger
     private var treatmentManager: TreatmentManager!
     private var factoryDestroyHandler: DestroyHandler
-
     private var isClientDestroyed = false
 
     init(config: SplitClientConfig,
