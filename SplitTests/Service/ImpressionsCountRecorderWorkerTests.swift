@@ -28,7 +28,7 @@ class countsRecorderCountWorkerTests: XCTestCase {
     func testSendSuccess() {
         // Sent impressions have to be removed from storage
         for count in dummyCounts {
-            countsStorage.push(counts: count)
+            countsStorage.push(count: count)
         }
         worker.flush()
 
@@ -42,7 +42,7 @@ class countsRecorderCountWorkerTests: XCTestCase {
         // Non sent have to appear as active in storage to try to send them again
         countsRecorder.errorOccurredCallCount = 3
         for impression in dummyCounts {
-            countsStorage.push(counts: impression)
+            countsStorage.push(count: impression)
         }
         worker.flush()
 
@@ -52,7 +52,7 @@ class countsRecorderCountWorkerTests: XCTestCase {
     }
 
     func testSendOneImpression() {
-        countsStorage.push(counts: dummyCounts[0])
+        countsStorage.push(count: dummyCounts[0])
 
         worker.flush()
 

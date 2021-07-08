@@ -10,6 +10,7 @@ import CoreData
 enum CoreDataEntity: String {
     case event = "Event"
     case impression = "Impression"
+    case impressionsCount = "ImpressionsCount"
     case split = "Split"
     case mySegment = "MySegment"
     case generalInfo = "GeneralInfo"

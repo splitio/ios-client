@@ -37,7 +37,6 @@ struct SplitFactoryHelper {
             return database
         }
 
-
         guard let helper = CoreDataHelperBuilder.build(databaseName: dataFolderName) else {
             throw GenericError.couldNotCreateCache
         }
@@ -52,7 +51,8 @@ struct SplitFactoryHelper {
         return DefaultSplitsStorage(persistentSplitsStorage: openPersistentSplitsStorage(database: database))
     }
 
-    static func openPersistentMySegmentsStorage(database: SplitDatabase, userKey: String) -> PersistentMySegmentsStorage {
+    static func openPersistentMySegmentsStorage(database: SplitDatabase,
+                                                userKey: String) -> PersistentMySegmentsStorage {
         return DefaultPersistentMySegmentsStorage(userKey: userKey, database: database)
     }
 
