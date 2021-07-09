@@ -13,6 +13,7 @@ protocol MySegmentsStorage {
     func getAll() -> Set<String>
     func set(_ segments: [String])
     func clear()
+    func destroy()
 }
 
 class DefaultMySegmentsStorage: MySegmentsStorage {
@@ -41,5 +42,9 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
     func clear() {
         inMemoryMySegments.removeAll()
         persistenStorage.set([String]())
+    }
+
+    func destroy() {
+        inMemoryMySegments.removeAll()
     }
 }

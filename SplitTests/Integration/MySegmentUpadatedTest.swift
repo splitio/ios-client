@@ -28,7 +28,7 @@ class MySegmentUpdatedTest: XCTestCase {
     let impExp = XCTestExpectation(description: "impressions")
 
     var impHit: [ImpressionsTest]?
-    var impressions = [String: Impression]()
+    var impressions = [String: KeyImpression]()
     
     override func setUp() {
         setupServer()
@@ -109,6 +109,7 @@ class MySegmentUpdatedTest: XCTestCase {
         splitConfig.impressionRefreshRate = splitConfig.segmentsRefreshRate * 6 + 1
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
+        splitConfig.impressionsMode = "DEBUG"
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
         .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         
@@ -222,10 +223,10 @@ class MySegmentUpdatedTest: XCTestCase {
             if let tests = tests {
                 for test in tests {
                     for imp in test.keyImpressions {
-                        //if imp.keyName! == "CUSTOMER_ID" {
-                            self.impressions[IntegrationHelper.buildImpressionKey(key: imp.keyName!, splitName: test.testName, treatment: imp.treatment!)] = imp
-                            res = true
-                        //}
+                        self.impressions[IntegrationHelper.buildImpressionKey(key: imp.keyName,
+                                                                              splitName: test.testName,
+                                                                              treatment: imp.treatment)] = imp
+                        res = true
                     }
                 }
             }

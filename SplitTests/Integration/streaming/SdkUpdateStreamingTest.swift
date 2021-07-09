@@ -56,6 +56,7 @@ class SdkUpdateStreamingTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
+        splitConfig.impressionsMode = "DEBUG"
         //splitConfig.isDebugModeEnabled = true
         
         sseExp = XCTestExpectation()

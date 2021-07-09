@@ -19,6 +19,7 @@ class PersistentImpressionsStorageTests: XCTestCase {
         impressionDao = ImpressionDaoStub()
         impressionsStorage = DefaultImpressionsStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
                                                                                    impressionDao: impressionDao,
+                                                                                   impressionsCountDao: ImpressionsCountDaoStub(),
                                                                                    generalInfoDao: GeneralInfoDaoStub(),
                                                                                    splitDao: SplitDaoStub(),
                                                                                    mySegmentsDao: MySegmentsDaoStub()), expirationPeriod: 100)
@@ -26,14 +27,14 @@ class PersistentImpressionsStorageTests: XCTestCase {
     }
 
     func testPush() {
-        createImpressions().forEach { impression in
+        TestingHelper.createKeyImpressions(count: 20).forEach { impression in
             self.impressionsStorage.push(impression: impression)
         }
         XCTAssertEqual(20, impressionDao.insertedImpressions.count)
     }
 
     func testPop() {
-        impressionDao.getByImpressions = createImpressions()
+        impressionDao.getByImpressions = TestingHelper.createKeyImpressions()
         let popped = impressionsStorage.pop(count: 100)
 
         XCTAssertEqual(impressionDao.getByImpressions.count, popped.count)
@@ -42,14 +43,14 @@ class PersistentImpressionsStorageTests: XCTestCase {
     }
 
     func testDelete() {
-        let impressions = createImpressions()
+        let impressions = TestingHelper.createKeyImpressions()
         impressionsStorage.delete(impressions)
 
         XCTAssertEqual(impressionDao.deletedImpressions.count, impressions.count)
     }
 
     func testSetActive() {
-        let impressions = createImpressions()
+        let impressions = TestingHelper.createKeyImpressions()
 
         impressionsStorage.setActive(impressions)
 
@@ -58,22 +59,5 @@ class PersistentImpressionsStorageTests: XCTestCase {
     }
 
     override func tearDown() {
-    }
-
-    func createImpressions() -> [Impression] {
-        var impressions = [Impression]()
-        for _ in 0..<20 {
-            let impression = Impression()
-            impression.storageId = UUID().uuidString
-            impression.feature = "f1"
-            impression.keyName = "key1"
-            impression.treatment = "t1"
-            impression.time = 1000
-            impression.changeNumber = 1000
-            impression.label = "t1"
-            impression.attributes = ["pepe": 1]
-            impressions.append(impression)
-        }
-        return impressions
     }
 }

@@ -22,14 +22,14 @@ class DestroyTests: XCTestCase {
     var serverUrl = ""
     var lastChangeNumber = 1
 
-    var impressions: [Impression]!
+    var impressions: [KeyImpression]!
     var events: [EventDTO]!
     
     override func setUp() {
         if splitChange == nil {
             splitChange = loadSplitsChangeFile()
         }
-        impressions = [Impression]()
+        impressions = [KeyImpression]()
         events = [EventDTO]()
         setupServer()
     }
@@ -102,6 +102,7 @@ class DestroyTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 100
         splitConfig.eventsQueueSize = 1000
+        splitConfig.impressionsMode = "DEBUG"
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
             .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         

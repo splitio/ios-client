@@ -22,6 +22,7 @@ class EndpointFactory {
         static let splitChanges = "splitChanges"
         static let mySegments = "mySegments"
         static let impressions = "testImpressions/bulk"
+        static let impressionsCount = "testImpressions/count"
         static let events = "events/bulk"
         static let timeMetrics = "metrics/times"
         static let counterMetrics = "metrics/counters"
@@ -31,6 +32,7 @@ class EndpointFactory {
     let serviceEndpoints: ServiceEndpoints
     let splitChangesEndpoint: Endpoint
     let impressionsEndpoint: Endpoint
+    let impressionsCountEndpoint: Endpoint
     let eventsEndpoint: Endpoint
     let timeMetricsEndpoint: Endpoint
     let countMetricsEndpoint: Endpoint
@@ -53,6 +55,10 @@ class EndpointFactory {
 
         impressionsEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.impressions)
+                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+
+        impressionsCountEndpoint = Endpoint
+                .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.impressionsCount)
                 .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
         eventsEndpoint = Endpoint

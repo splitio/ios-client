@@ -58,8 +58,27 @@ class IntegrationHelper {
         """
     }
 
+    static func dummyReducedImpressions() -> String {
+        return """
+        [{\"f\": \"test1\", \"i\":[
+        {
+        \"b\": \"bkey\",
+        \"k\": \"thekey\",
+        \"t\": \"on\",
+        \"m\": 111,
+        \"c\": 999,
+        \"r\": \"default rule\"
+        }
+        ]}]
+        """
+    }
+
     static func buildImpressionKey(impression: Impression) -> String {
         return buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
+    }
+
+    static func buildImpressionKey(impression: KeyImpression) -> String {
+        return buildImpressionKey(key: impression.keyName, splitName: impression.featureName!, treatment: impression.treatment)
     }
 
     static func buildImpressionKey(key: String, splitName: String, treatment: String) -> String {

@@ -11,16 +11,16 @@ import Foundation
 
 class ImpressionDaoStub: ImpressionDao {
 
-    var insertedImpressions = [Impression]()
-    var getByImpressions = [Impression]()
+    var insertedImpressions = [KeyImpression]()
+    var getByImpressions = [KeyImpression]()
     var updatedImpressions = [String: Int32]()
-    var deletedImpressions = [Impression]()
+    var deletedImpressions = [KeyImpression]()
 
-    func insert(_ event: Impression) {
-        insertedImpressions.append(event)
+    func insert(_ impression: KeyImpression) {
+        insertedImpressions.append(impression)
     }
 
-    func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [Impression] {
+    func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [KeyImpression] {
         return getByImpressions
     }
 
@@ -30,7 +30,7 @@ class ImpressionDaoStub: ImpressionDao {
         }
     }
 
-    func delete(_ events: [Impression]) {
-        deletedImpressions.append(contentsOf: events)
+    func delete(_ impressions: [KeyImpression]) {
+        deletedImpressions.append(contentsOf: impressions)
     }
 }

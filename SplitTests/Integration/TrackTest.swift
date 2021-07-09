@@ -108,7 +108,7 @@ class TrackTest: XCTestCase {
 
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
-        builder.setTestDatabase(TestingHelper.createTestDatabase(name: "TrackTest"))
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "TrackTest"))
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig)
             .build()
         

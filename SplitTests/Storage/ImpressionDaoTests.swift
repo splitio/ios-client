@@ -70,17 +70,18 @@ class ImpressionDaoTests: XCTestCase {
 
     }
 
-    func createImpressions() -> [Impression] {
-        var impressions = [Impression]()
+    func createImpressions() -> [KeyImpression] {
+        var impressions = [KeyImpression]()
         for _ in 0..<10 {
-            let impression = Impression()
-            impression.feature = "f1"
-            impression.keyName = "key1"
-            impression.treatment = "t1"
-            impression.time = 1000
-            impression.changeNumber = 1000
-            impression.label = "t1"
-            impression.attributes = ["pepe": 1]
+            let impression = KeyImpression(featureName: "f1",
+                                           keyName: "key1",
+                                           bucketingKey: nil,
+                                           treatment: "t1",
+                                           label: "t1",
+                                           time: 1000,
+                                           changeNumber: 1000,
+                                           previousTime: nil,
+                                           storageId: nil)
             impressions.append(impression)
         }
         return impressions

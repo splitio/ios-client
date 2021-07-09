@@ -106,7 +106,7 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.pushEvent(event: event)
     }
 
-    func pushImpression(impression: Impression) {
+    func pushImpression(impression: KeyImpression) {
         pushImpressionCalled = true
         splitSynchronizer.pushImpression(impression: impression)
     }

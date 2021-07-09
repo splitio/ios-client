@@ -181,18 +181,18 @@ class DefaultTreatmentManager: TreatmentManager {
 
     private func logImpression(label: String, changeNumber: Int64? = nil,
                                treatment: String, splitName: String, attributes: [String: Any]? = nil) {
-        let impression: Impression = Impression()
-        impression.feature = splitName
-        impression.keyName = key.matchingKey
-        impression.bucketingKey = key.bucketingKey
-        impression.label = (splitConfig.isLabelsEnabled ? label : nil)
-        impression.changeNumber = changeNumber
-        impression.treatment = treatment
-        impression.time = Date().unixTimestampInMiliseconds()
-        impressionLogger.pushImpression(impression: impression)
+
+        let keyImpression = KeyImpression(featureName: splitName,
+                                          keyName: key.matchingKey,
+                                          bucketingKey: key.bucketingKey,
+                                          treatment: treatment,
+                                          label: (splitConfig.isLabelsEnabled ? label : nil),
+                                          time: Date().unixTimestampInMiliseconds(),
+                                          changeNumber: changeNumber)
+        impressionLogger.pushImpression(impression: keyImpression)
 
         if let externalImpressionHandler = splitConfig.impressionListener {
-            impression.feature = splitName
+            let impression = keyImpression.toImpression()
             impression.attributes = attributes
             externalImpressionHandler(impression)
         }

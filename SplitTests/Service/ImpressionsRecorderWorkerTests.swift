@@ -15,12 +15,12 @@ class ImpressionsRecorderWorkerTests: XCTestCase {
     var worker: ImpressionsRecorderWorker!
     var impressionStorage: PersistentImpressionsStorageStub!
     var impressionsRecorder: HttpImpressionsRecorderStub!
-    var dummyImpressions: [Impression]!
+    var dummyImpressions: [KeyImpression]!
 
 
     override func setUp() {
-        dummyImpressions = TestingHelper.createImpressions(count: 5)
-        dummyImpressions.append(contentsOf: TestingHelper.createImpressions(feature: "split1", count: 6))
+        dummyImpressions = TestingHelper.createKeyImpressions(count: 5)
+        dummyImpressions.append(contentsOf: TestingHelper.createKeyImpressions(feature: "split1", count: 6))
         impressionStorage = PersistentImpressionsStorageStub()
         impressionsRecorder = HttpImpressionsRecorderStub()
         worker = ImpressionsRecorderWorker(impressionsStorage: impressionStorage,

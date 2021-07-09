@@ -82,8 +82,10 @@ class HttpClientTest: XCTestCase {
         // also, get response closure should be called
         // for split endpoints received data should not be appended by request manager
         var isSuccess = false
-        let dummyImpressions = Data(IntegrationHelper.dummyImpressions().utf8)
+
+        let dummyImpressions = Data(IntegrationHelper.dummyReducedImpressions().utf8)
         let expectation = XCTestExpectation(description: "complete req")
+        do {
         _ = try httpClient.sendRequest(endpoint: factory.impressionsEndpoint,
                                        parameters: nil,
                                        headers: nil,
@@ -91,6 +93,10 @@ class HttpClientTest: XCTestCase {
                                         isSuccess = response.result.isSuccess
                                         expectation.fulfill()
                                        }, errorHandler: { error in })
+        } catch {
+            print(error.localizedDescription)
+            throw GenericError.unknown(message: error.localizedDescription)
+        }
 
         _ = requestManager.set(responseCode: 200, to: 1)
         requestManager.complete(taskIdentifier: 1, error: nil)

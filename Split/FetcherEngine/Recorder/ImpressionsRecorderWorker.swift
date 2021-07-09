@@ -29,7 +29,7 @@ class ImpressionsRecorderWorker: RecorderWorker {
 
     func flush() {
         var rowCount = 0
-        var failedImpressions = [Impression]()
+        var failedImpressions = [KeyImpression]()
         repeat {
             let impressions = impressionsStorage.pop(count: impressionsPerPush)
             rowCount = impressions.count
@@ -56,8 +56,8 @@ class ImpressionsRecorderWorker: RecorderWorker {
 
     }
 
-    private func group(impressions: [Impression]) -> [ImpressionsTest] {
-        return Dictionary(grouping: impressions, by: { $0.feature ?? "" })
+    private func group(impressions: [KeyImpression]) -> [ImpressionsTest] {
+        return Dictionary(grouping: impressions, by: { $0.featureName ?? "" })
             .compactMap { return ImpressionsTest(testName: $0.key, keyImpressions: $0.value) }
     }
 }

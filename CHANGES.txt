@@ -1,3 +1,6 @@
+2.11.3: (Jul 9, 2021)
+ - Added impressions dedupe logic to avoid sending duplicated impressions, having `OPTIMIZED` and `DEBUG` modes to establish how impressions are going to be sent to Split servers.
+
 2.11.2: (Jun 25, 2021)
 - Fixed threading issue related to CoreData
 - Fixed issue when loading large localhost yaml files

@@ -9,11 +9,11 @@
 import Foundation
 
 protocol PersistentImpressionsStorage {
-    func delete(_ impressions: [Impression])
-    func pop(count: Int) -> [Impression]
-    func push(impression: Impression)
-    func getCritical() -> [Impression]
-    func setActive(_ impressions: [Impression])
+    func delete(_ impressions: [KeyImpression])
+    func pop(count: Int) -> [KeyImpression]
+    func push(impression: KeyImpression)
+    func getCritical() -> [KeyImpression]
+    func setActive(_ impressions: [KeyImpression])
 }
 
 class DefaultImpressionsStorage: PersistentImpressionsStorage {
@@ -26,30 +26,30 @@ class DefaultImpressionsStorage: PersistentImpressionsStorage {
         self.expirationPeriod = expirationPeriod
     }
 
-    func pop(count: Int) -> [Impression] {
+    func pop(count: Int) -> [KeyImpression] {
         let createdAt = Date().unixTimestamp() - self.expirationPeriod
         let impressions = impressionDao.getBy(createdAt: createdAt, status: StorageRecordStatus.active, maxRows: count)
         impressionDao.update(ids: impressions.compactMap { $0.storageId }, newStatus: StorageRecordStatus.deleted)
         return impressions
     }
 
-    func push(impression: Impression) {
+    func push(impression: KeyImpression) {
         impressionDao.insert(impression)
     }
 
-    func getCritical() -> [Impression] {
+    func getCritical() -> [KeyImpression] {
         // To be used in the future.
         return []
     }
 
-    func setActive(_ impressions: [Impression]) {
+    func setActive(_ impressions: [KeyImpression]) {
         if impressions.count < 1 {
             return
         }
         impressionDao.update(ids: impressions.compactMap { return $0.storageId }, newStatus: StorageRecordStatus.active)
     }
 
-    func delete(_ impressions: [Impression]) {
+    func delete(_ impressions: [KeyImpression]) {
         impressionDao.delete(impressions)
     }
 }

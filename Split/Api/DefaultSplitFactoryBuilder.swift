@@ -17,6 +17,7 @@ import Foundation
 ///
 @objc public class DefaultSplitFactoryBuilder: NSObject, SplitFactoryBuilder {
 
+    private var notificationHelper: NotificationHelper?
     private var testDatabase: SplitDatabase?
     private var reachabilityChecker: HostReachabilityChecker?
     private var httpClient: HttpClient?
@@ -88,6 +89,11 @@ import Foundation
         return self
     }
 
+    func setNotificationHelper(_ notificationHelper: NotificationHelper) -> SplitFactoryBuilder {
+        self.notificationHelper = notificationHelper
+        return self
+    }
+
     public func build() -> SplitFactory? {
 
         if let errorInfo = apiKeyValidator.validate(apiKey: apiKey) {
@@ -134,7 +140,8 @@ import Foundation
                                               config: config ?? SplitClientConfig(),
                                               httpClient: httpClient,
                                               reachabilityChecker: reachabilityChecker,
-                                              testDatabase: testDatabase)
+                                              testDatabase: testDatabase,
+                                              notificationHelper: notificationHelper)
         }
 
         DefaultSplitFactoryBuilder.factoryMonitor.register(instance: factory, for: apiKey!)

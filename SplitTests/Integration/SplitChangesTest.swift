@@ -146,7 +146,7 @@ class SplitChangesTest: XCTestCase {
         XCTAssertEqual(4, impHit?[0].keyImpressions.count)
 //        let imp0 = impHit?[0].keyImpressions[0]
         var onImp: Impression?
-        let onImpArr = impHit?.flatMap { return $0.keyImpressions }.filter { $0.treatment == "on_0" }
+        let onImpArr = impHit?.flatMap { return $0.keyImpressions }.filter { $0.treatment == "on_0" }.map { $0.toImpression() }
         if onImpArr?.count == 1 {
             onImp = onImpArr?[0]
         }
