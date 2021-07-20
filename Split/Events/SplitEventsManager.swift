@@ -70,7 +70,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     func start() {
-        processQueue.sync {
+        dataAccessQueue.sync {
             if self.isStarted {
                 return
             }
