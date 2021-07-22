@@ -15,15 +15,18 @@ class SplitDatabaseStub: SplitDatabase {
     var mySegmentsDao: MySegmentsDao
     var eventDao: EventDao
     var impressionDao: ImpressionDao
+    var impressionsCountDao: ImpressionsCountDao
     var generalInfoDao: GeneralInfoDao
     
     init(eventDao: EventDao,
          impressionDao: ImpressionDao,
+         impressionsCountDao: ImpressionsCountDao,
          generalInfoDao: GeneralInfoDao,
          splitDao: SplitDao,
          mySegmentsDao: MySegmentsDao) {
         self.eventDao = eventDao
         self.impressionDao = impressionDao
+        self.impressionsCountDao = impressionsCountDao
         self.splitDao = splitDao
         self.generalInfoDao = generalInfoDao
         self.mySegmentsDao = mySegmentsDao

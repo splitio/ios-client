@@ -26,6 +26,8 @@ public typealias SplitImpression = Impression
     @objc public var bucketingKey: String?
     @objc public var attributes: [String: Any]?
 
+    var previousTime: Int64?
+
     enum CodingKeys: String, CodingKey {
         case keyName
         case treatment
