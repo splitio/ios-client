@@ -108,6 +108,7 @@ class DefaultHttpClient {
          requestManager: HttpRequestManager? = nil) {
 
         let urlSessionConfig = URLSessionConfiguration.default
+        var url = URLSessionConfiguration()
 
         urlSessionConfig.timeoutIntervalForRequest = configuration.connectionTimeOut
 
