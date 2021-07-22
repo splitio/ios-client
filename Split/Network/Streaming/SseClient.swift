@@ -9,8 +9,6 @@
 import Foundation
 
 struct SseClientConstants {
-    static let contentTypeHeaderStream = "Content-Type"
-    static let contentTypeHeaderValueStream = "text/event-stream"
     static let pushNotificationChannelsParam = "channels"
     static let pushNotificationTokenParam = "accessToken"
     static let pushNotificationVersionParam = "v"
@@ -59,10 +57,9 @@ class DefaultSseClient: SseClient {
                 SseClientConstants.pushNotificationChannelsParam: self.createChannelsQueryString(channels: channels),
                 SseClientConstants.pushNotificationVersionParam: SseClientConstants.pushNotificationVersionValue
             ]
-            let headers = [SseClientConstants.contentTypeHeaderStream: SseClientConstants.contentTypeHeaderValueStream]
             do {
                 self.streamRequest = try self.httpClient.sendStreamRequest(endpoint: self.endpoint,
-                                                          parameters: parameters, headers: headers)
+                                                          parameters: parameters, headers: self.endpoint.headers)
                 .getResponse(responseHandler: { response in
                     if response.code != 200 {
                         completion(false)

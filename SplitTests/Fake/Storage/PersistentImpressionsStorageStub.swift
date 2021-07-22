@@ -12,10 +12,10 @@ import Foundation
 class PersistentImpressionsStorageStub: PersistentImpressionsStorage {
 
 
-    var storedImpressions = [String: Impression]()
+    var storedImpressions = [String: KeyImpression]()
     var impressionsStatus = [String: Int32]()
 
-    func delete(_ impressions: [Impression]) {
+    func delete(_ impressions: [KeyImpression]) {
         let ids = impressions.compactMap { $0.storageId }
         for uid in ids {
             storedImpressions.removeValue(forKey: uid)
@@ -23,7 +23,7 @@ class PersistentImpressionsStorageStub: PersistentImpressionsStorage {
         }
     }
 
-    func pop(count: Int) -> [Impression] {
+    func pop(count: Int) -> [KeyImpression] {
         let deleted = impressionsStatus.filter { $0.value == StorageRecordStatus.deleted }.keys
         let poped = Array(storedImpressions.values.filter { !deleted.contains($0.storageId ?? "") }.prefix(count))
         for impression in poped {
@@ -32,18 +32,18 @@ class PersistentImpressionsStorageStub: PersistentImpressionsStorage {
         return poped
     }
 
-    func push(impression: Impression) {
+    func push(impression: KeyImpression) {
         if let eId = impression.storageId {
             storedImpressions[eId] = impression
             impressionsStatus[eId] = StorageRecordStatus.active
         }
     }
 
-    func getCritical() -> [Impression] {
+    func getCritical() -> [KeyImpression] {
         return []
     }
 
-    func setActive(_ impressions: [Impression]) {
+    func setActive(_ impressions: [KeyImpression]) {
         for impression in impressions {
             if let eId = impression.storageId {
                 impressionsStatus[eId] = StorageRecordStatus.active
