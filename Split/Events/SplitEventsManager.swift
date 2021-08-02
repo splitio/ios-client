@@ -70,7 +70,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     func start() {
-        processQueue.sync {
+        dataAccessQueue.sync {
             if self.isStarted {
                 return
             }
@@ -112,6 +112,14 @@ class DefaultSplitEventsManager: SplitEventsManager {
                            SplitEvent.sdkReadyTimedOut.toString(): 1]
     }
 
+    private func isRunning() -> Bool {
+        var isRunning = true
+        dataAccessQueue.sync {
+            isRunning = self.isStarted
+        }
+        return isRunning
+    }
+
     private func takeEvent() -> SplitInternalEvent? {
         do {
             return try eventsQueue.take()
@@ -124,7 +132,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     private func processEvents() {
-        while isStarted {
+        while isRunning() {
             guard let event = takeEvent() else {
                 return
             }
@@ -156,10 +164,15 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     // MARK: Helper functions.
     func isTriggered(external event: SplitEvent) -> Bool {
-        if let times = executionTimes[event.toString()] {
-            return (times == 0)
+        var triggered = false
+        dataAccessQueue.sync {
+            if let times = executionTimes[event.toString()] {
+                triggered =  (times == 0)
+            } else {
+                triggered = false
+            }
         }
-        return false
+        return triggered
     }
 
     private func triggerSdkReadyIfNeeded() {
