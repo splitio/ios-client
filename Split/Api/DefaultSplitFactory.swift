@@ -45,16 +45,14 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         super.init()
 
         let eventsManager = DefaultSplitEventsManager(config: config)
-
-        let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? config.defaultDataFolder
-
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
         MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate
-        MetricManagerConfig.default.defaultDataFolderName = dataFolderName
 
         config.apiKey = apiKey
+        let databaseName = SplitFactoryHelper.databaseName(apiKey: apiKey) ?? config.defaultDataFolder
+        SplitFactoryHelper.renameDatabaseFromLegacyName(name: databaseName, apiKey: apiKey)
         let storageContainer = try SplitFactoryHelper.buildStorageContainer(
-            userKey: key.matchingKey, dataFolderName: dataFolderName, testDatabase: testDatabase)
+            userKey: key.matchingKey, databaseName: databaseName, testDatabase: testDatabase)
 
         LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: key.matchingKey)
 
