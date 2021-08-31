@@ -9,8 +9,11 @@
 import Foundation
 
 class Murmur64x128 {
+    ///
+    /// The following set of methods are based on `org.apache.commons.codec.digest.MurmurHash3`
+    ///
 
-    // swiftlint:disable identifier_name
+    // swiftlint:disable identifier_name function_parameter_count function_body_length
     // Constants for 128-bit variant
     private static let c1: UInt64 = 0x87c37b91114253d5
     private static let c2: UInt64 = 0x4cf5ad432745937f
@@ -44,7 +47,7 @@ class Murmur64x128 {
      * Generates 128-bit hash from the byte array with the given offset, length and seed.
      *
      * <p>This is an implementation of the 128-bit hash function {@code MurmurHash3_x64_128}
-     * from from Austin Applyby's original MurmurHash3 {@code c++} code in SMHasher.</p>
+     * originally from Austin Applyby's original MurmurHash3 {@code c++} code in SMHasher.</p>
      *
      * @param data The input byte array
      * @param offset The first element of array
@@ -57,7 +60,15 @@ class Murmur64x128 {
         var h2 = seed
         let nblocks = Int32(length >> 4)
 
-        // body
+        body(h1: &h1, h2: &h2, data: data, offset: offset, length: length, seed: seed, nblocks: nblocks)
+        tail(h1: &h1, h2: &h2, data: data, offset: offset, length: length, nblocks: nblocks)
+
+        return final(h1: &h1, h2: &h2, length: length)
+    }
+
+    private static func body(h1: inout UInt64, h2: inout UInt64, data: [UInt8], offset: Int32,
+                             length: UInt32, seed: UInt64, nblocks: Int32) {
+
         for i in 0..<nblocks {
             let index = offset + (i << 4)
             var k1 = getLittleEndianLong(data: data, index: Int(index))
@@ -81,8 +92,10 @@ class Murmur64x128 {
             h2 &+= h1
             h2 = h2 &* m &+ n2
         }
+    }
 
-        // tail
+    private static func tail(h1: inout UInt64, h2: inout UInt64, data: [UInt8], offset: Int32,
+                             length: UInt32, nblocks: Int32) {
         var k1: UInt64 = 0
         var k2: UInt64 = 0
         let index: Int = Int(offset + (nblocks << 4))
@@ -157,7 +170,9 @@ class Murmur64x128 {
         default:
             Logger.w("Murmur64 - Option not available")
         }
+    }
 
+    private static func final(h1: inout UInt64, h2: inout UInt64, length: UInt32) -> [UInt64] {
         // finalization
         h1 ^= UInt64(length)
         h2 ^= UInt64(length)
@@ -174,7 +189,7 @@ class Murmur64x128 {
         return [h1, h2]
     }
 
-    static func fmix64(_ k: UInt64) -> UInt64 {
+    private static func fmix64(_ k: UInt64) -> UInt64 {
         var res: UInt64 = k
         res ^= (res >> 33)
         res &*= 0xff51afd7ed558ccd
