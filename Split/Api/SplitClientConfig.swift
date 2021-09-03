@@ -101,12 +101,19 @@ public class SplitClientConfig: NSObject {
     ///
     /// Enables debug messages in console
     ///
+    public func set(logger: SplitLogger) {
+        Logger.external = logger
+    }
+
+    ///
+    /// Enables debug messages in console
+    ///
     @objc public var isDebugModeEnabled: Bool {
         get {
             return Logger.shared.isDebugModeEnabled
         }
         set {
-            Logger.shared.isDebugModeEnabled = newValue
+            Logger.shared.enableDebugMode(newValue)
         }
     }
 
@@ -118,7 +125,7 @@ public class SplitClientConfig: NSObject {
             return Logger.shared.isVerboseModeEnabled
         }
         set {
-            Logger.shared.isVerboseModeEnabled = newValue
+            Logger.shared.enableVerboseMode(newValue)
         }
     }
 
