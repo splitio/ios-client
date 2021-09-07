@@ -41,6 +41,30 @@ class GzipTest: XCTestCase {
         //XCTAssertEqual(res, res1 ?? "")
     }
 
+
+    func test() {
+        zlibWhat(text: "a")
+        zlibWhat(text: "b")
+        zlibWhat(text: "c")
+        zlibWhat(text: "abc")
+        zlibWhat(text: "aaabbbccc")
+        zlibWhat(text: "aaa")
+        zlibWhat(text: "aaaaaaa")
+//        zlibWhat(text: "aaaaaaaaaaaa")
+        zlibWhat(text: "abbbc")
+        zlibWhat(text: "bbbbbbb")
+        zlibWhat(text: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+    }
+
+    func zlibWhat(text: String) {
+        let comp = try? zlib.compress(Data(text.utf8))
+        let abits = comp?.binaryRepresentation
+        let ahex = comp?.hexadecimalRepresentation
+        print("\(text): \(abits)")
+        print("\(text): \(ahex)")
+        print("------")
+    }
+
     func testZlibMany() {
         for text in generateRamdom() {
             let textdata = text.data(using: .utf8)!
