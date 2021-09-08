@@ -10,6 +10,7 @@ import Foundation
 import Compression
 
 enum CompressionType {
+    case none
     case zlib
     case gzip
 }
