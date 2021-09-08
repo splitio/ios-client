@@ -9,38 +9,38 @@
 import Foundation
 import Compression
 
+enum CompressionType {
+    case zlib
+    case gzip
+}
+
 enum CompressionError: Error {
-    case couldNotUncompressZlib
-    case couldNotCompressToZlib
+    case couldNotDecompressData
+    case couldNotDecompressZlib
+    case couldNotDecompressGzip
+    case couldNotRemoveHeader
+
+    func message() -> String {
+        switch self {
+        case .couldNotRemoveHeader:
+            return "Could not remove header"
+        case .couldNotDecompressData:
+            return "Could not decompress data"
+        case .couldNotDecompressZlib:
+            return "Could not decompress ZLIB data"
+        case .couldNotDecompressGzip:
+            return "Could not decompress GZIP data"
+        }
+    }
 }
 
 protocol CompressionUtil {
-    func compress(_ data: Data) throws -> Data
-    func decompress(_ data: Data) throws -> Data
+    func decompress(data: Data) throws -> Data
 }
 
-struct Zlib: CompressionUtil {
-    func compress(_ data: Data) throws -> Data {
+private struct CompressionBase {
+    static func decompress(data: Data) throws -> Data {
 
-        let dstBufferSize = 10 * 1024 // 10K
-        let dstBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dstBufferSize)
-
-        let srcBufferSize = data.count
-        let srcBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: srcBufferSize)
-        data.copyBytes(to: srcBuffer, count: data.count)
-
-        let compCount = compression_encode_buffer(dstBuffer, dstBufferSize, srcBuffer, srcBufferSize, nil, COMPRESSION_ZLIB)
-        if compCount == 0 {
-            throw CompressionError.couldNotCompressToZlib
-        }
-
-        var result = Data()
-        result.append(dstBuffer, count: compCount)
-        return result
-
-    }
-
-    func decompress(_ data: Data) throws -> Data {
         let dstBufferSize = data.count * 5
         let dstBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dstBufferSize)
 
@@ -48,9 +48,10 @@ struct Zlib: CompressionUtil {
         let srcBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: srcBufferSize)
         data.copyBytes(to: srcBuffer, count: data.count)
 
-        let compCount = compression_decode_buffer(dstBuffer, dstBufferSize, srcBuffer, srcBufferSize, nil, COMPRESSION_ZLIB)
+        let compCount = compression_decode_buffer(dstBuffer, dstBufferSize, srcBuffer,
+                                                  srcBufferSize, nil, COMPRESSION_ZLIB)
         if compCount == 0 {
-            throw CompressionError.couldNotUncompressZlib
+            throw CompressionError.couldNotDecompressData
         }
 
         var result = Data()
@@ -58,21 +59,41 @@ struct Zlib: CompressionUtil {
         return result
     }
 
-    func decomp(_ encodedSourceData: Data) throws -> String {
-        let decodedCapacity = 8_000_000
-        let decodedDestinationBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: decodedCapacity)
-        let decodedString: String = encodedSourceData.withUnsafeBytes { encodedSourceBuffer in
-            let typedPointer = encodedSourceBuffer.bindMemory(to: UInt8.self)
-            let decodedCharCount = compression_decode_buffer(decodedDestinationBuffer, decodedCapacity,
-                                                             typedPointer.baseAddress!, encodedSourceData.count,
-                                                             nil,
-                                                             COMPRESSION_ZLIB)
+    static func removeHeader(type: CompressionType, from data: Data, headerSize: Int) -> Data {
+        var mutableData = Data(data)
+        mutableData.removeSubrange(0..<headerSize)
+        return mutableData
+    }
+}
 
-            print("Buffer decompressedCharCount", decodedCharCount)
+struct Zlib: CompressionUtil {
+    let kZlibHeaderSize = 2
 
-            let str = String(cString: decodedDestinationBuffer)
-            return String(cString: decodedDestinationBuffer)
+    func decompress(data: Data) throws -> Data {
+
+        let deflatedData = CompressionBase.removeHeader(type: .zlib,
+                                                        from: data,
+                                                        headerSize: kZlibHeaderSize)
+        do {
+            return try CompressionBase.decompress(data: deflatedData)
+        } catch {
+            throw CompressionError.couldNotDecompressZlib
         }
-        return decodedString
+    }
+}
+
+struct Gzip: CompressionUtil {
+    let kGzipHeaderSize = 5
+
+    func decompress(data: Data) throws -> Data {
+
+        let deflatedData = CompressionBase.removeHeader(type: .gzip,
+                                                        from: data,
+                                                        headerSize: kGzipHeaderSize)
+        do {
+            return try CompressionBase.decompress(data: deflatedData)
+        } catch {
+            throw CompressionError.couldNotDecompressGzip
+        }
     }
 }

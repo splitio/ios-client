@@ -451,11 +451,12 @@
 		957E676625E7F8D7006F5B19 /* ReadyFromCacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E676525E7F8D7006F5B19 /* ReadyFromCacheTest.swift */; };
 		957E67AC25F66123006F5B19 /* SplitsSyncHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E67AB25F66123006F5B19 /* SplitsSyncHelper.swift */; };
 		957E67B025F6B3E1006F5B19 /* BackgroundSyncWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */; };
-		9595910526DFB1AB009E7944 /* GzipTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595910426DFB1AB009E7944 /* GzipTest.swift */; };
+		9595910526DFB1AB009E7944 /* DecompressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595910426DFB1AB009E7944 /* DecompressionTest.swift */; };
 		9595910D26DFE149009E7944 /* lorem_ipsum.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9595910C26DFE149009E7944 /* lorem_ipsum.txt */; };
 		9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595911026DFFF87009E7944 /* CompressionUtil.swift */; };
 		95B341B026136B42002F57F6 /* KeyValueStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B341AE26136B42002F57F6 /* KeyValueStorage.swift */; };
 		95B341B126136B42002F57F6 /* GlobalSecureStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B341AF26136B42002F57F6 /* GlobalSecureStorage.swift */; };
+		95B4368D26E9186C00E1EB9C /* lorem_ipsum_result.txt in Resources */ = {isa = PBXBuildFile; fileRef = 95B4368C26E9186C00E1EB9C /* lorem_ipsum_result.txt */; };
 		95C717C4268BB426002ADB83 /* ImpressionsCountDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C717C3268BB426002ADB83 /* ImpressionsCountDao.swift */; };
 		95C717CD268BD549002ADB83 /* ImpressionsCountEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C717CC268BD549002ADB83 /* ImpressionsCountEntity.swift */; };
 		95C717DA268CDAC2002ADB83 /* ImpressionsCountDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C717D9268CDAC2002ADB83 /* ImpressionsCountDaoTests.swift */; };
@@ -976,11 +977,12 @@
 		957E676525E7F8D7006F5B19 /* ReadyFromCacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyFromCacheTest.swift; sourceTree = "<group>"; };
 		957E67AB25F66123006F5B19 /* SplitsSyncHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsSyncHelper.swift; sourceTree = "<group>"; };
 		957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundSyncWorker.swift; sourceTree = "<group>"; };
-		9595910426DFB1AB009E7944 /* GzipTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GzipTest.swift; sourceTree = "<group>"; };
+		9595910426DFB1AB009E7944 /* DecompressionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecompressionTest.swift; sourceTree = "<group>"; };
 		9595910C26DFE149009E7944 /* lorem_ipsum.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = lorem_ipsum.txt; sourceTree = "<group>"; };
 		9595911026DFFF87009E7944 /* CompressionUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionUtil.swift; sourceTree = "<group>"; };
 		95B341AE26136B42002F57F6 /* KeyValueStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueStorage.swift; sourceTree = "<group>"; };
 		95B341AF26136B42002F57F6 /* GlobalSecureStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalSecureStorage.swift; sourceTree = "<group>"; };
+		95B4368C26E9186C00E1EB9C /* lorem_ipsum_result.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lorem_ipsum_result.txt; sourceTree = "<group>"; };
 		95C717C3268BB426002ADB83 /* ImpressionsCountDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsCountDao.swift; sourceTree = "<group>"; };
 		95C717CC268BD549002ADB83 /* ImpressionsCountEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsCountEntity.swift; sourceTree = "<group>"; };
 		95C717D9268CDAC2002ADB83 /* ImpressionsCountDaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsCountDaoTests.swift; sourceTree = "<group>"; };
@@ -1745,7 +1747,7 @@
 				59F4AABC2513A2E800A1C69A /* SplitsUpdateWorkerTest.swift */,
 				5905D4E02559D20C006DA3B1 /* ConcurrentSetTests.swift */,
 				955423A626794C58002278D5 /* LRUCacheTest.swift */,
-				9595910426DFB1AB009E7944 /* GzipTest.swift */,
+				9595910426DFB1AB009E7944 /* DecompressionTest.swift */,
 			);
 			path = SplitTests;
 			sourceTree = "<group>";
@@ -1785,6 +1787,7 @@
 				598EDF03225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json */,
 				599EA58F22691D57006CBA89 /* localhost_yml.yml */,
 				9595910C26DFE149009E7944 /* lorem_ipsum.txt */,
+				95B4368C26E9186C00E1EB9C /* lorem_ipsum_result.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2269,6 +2272,7 @@
 				5912D14D2199FD4D00BC698C /* legacy_1.csv in Resources */,
 				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
 				59FB7C2A2202463000ECC96A /* localhost_1.splits in Resources */,
+				95B4368D26E9186C00E1EB9C /* lorem_ipsum_result.txt in Resources */,
 				5919C64221C7C8A600EC35B8 /* split_traffic_allocation_1.json in Resources */,
 				595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */,
 				59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */,
@@ -2595,7 +2599,7 @@
 				59AD7ACA2465C32D00F5B0B4 /* EventDTOJsonTest.swift in Sources */,
 				5905D4F5255C596C006DA3B1 /* PersistentSplitsStorageStub.swift in Sources */,
 				59FB7C1621F79B8200ECC96A /* EventTypeNameHelper.swift in Sources */,
-				9595910526DFB1AB009E7944 /* GzipTest.swift in Sources */,
+				9595910526DFB1AB009E7944 /* DecompressionTest.swift in Sources */,
 				594F5F55253A1A6500A945B4 /* StreamingSplitKillTest.swift in Sources */,
 				595AD20024DAF61700A7B750 /* FetchSpecificSplitsTest.swift in Sources */,
 				59F4AAA5250007BD00A1C69A /* SseHandlerStub.swift in Sources */,
