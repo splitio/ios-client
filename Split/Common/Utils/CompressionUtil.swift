@@ -20,6 +20,7 @@ enum CompressionError: Error {
     case couldNotDecompressZlib
     case couldNotDecompressGzip
     case couldNotRemoveHeader
+    case headerSizeError
 
     func message() -> String {
         switch self {
@@ -31,6 +32,8 @@ enum CompressionError: Error {
             return "Could not decompress ZLIB data"
         case .couldNotDecompressGzip:
             return "Could not decompress GZIP data"
+        case .headerSizeError:
+            return "Could not get header size"
         }
     }
 }
@@ -60,6 +63,8 @@ private struct CompressionBase {
         return result
     }
 
+    // To make compression_decode_buffer to work it's necessary to remove the gzip/zlib header
+    // Based on https://datatracker.ietf.org/doc/html/rfc1951
     static func removeHeader(type: CompressionType, from data: Data, headerSize: Int) -> Data {
         var mutableData = Data(data)
         mutableData.removeSubrange(0..<headerSize)
@@ -84,17 +89,94 @@ struct Zlib: CompressionUtil {
 }
 
 struct Gzip: CompressionUtil {
-    let kGzipHeaderSize = 5
-
+    private let kGzipHeaderSize = 10
+    private let kId1: UInt8 = 31 //0xuf
+    private let kId2 = 139 //0x8b
+    private let kCm: UInt8 = 8
     func decompress(data: Data) throws -> Data {
+
+        let headerSize = checkAndGetHeaderSize(data: data)
+        if headerSize == -1 {
+            throw CompressionError.headerSizeError
+        }
 
         let deflatedData = CompressionBase.removeHeader(type: .gzip,
                                                         from: data,
-                                                        headerSize: kGzipHeaderSize)
+                                                        headerSize: headerSize)
         do {
             return try CompressionBase.decompress(data: deflatedData)
         } catch {
             throw CompressionError.couldNotDecompressGzip
         }
+    }
+
+    // Checks if the header is correct and returns the amounts of bytes to be removed
+    // in order to make the deflate method to work
+    // Returns -1 if something is wrong
+    // Based on https://www.ietf.org/rfc/rfc1951.txt
+    func checkAndGetHeaderSize(data: Data) -> Int {
+        // Checking ID1 and ID2 in the two first bytes
+        if data[0] != kId1 || data[1] != kId2 {
+            Logger.e("Incorrect gzip header found while trying to decompress data")
+            return -1
+        }
+
+        // Checking compression method in third byte.
+        if data[2] != 8 {
+            Logger.e("Incorrect compression method found while trying to decompress gzip data")
+            return -1
+        }
+
+        // Checks passed, now checking total header size
+        // Initial 10 bytes are fixed header
+        var headerSize = kGzipHeaderSize
+
+        let flg = data[3]
+
+        // Extra field check, byte 3, bit 2
+        if flg & (1 << 2) != 0 {
+            // Check size to remove extra field
+            // It's in little indian, so chante to big indian
+            // Adding 4 bytes corresponding to the extra field header
+            headerSize += (Int(data[12]) | Int(data[13] & 0xff) << 8) + 4
+        }
+
+        // File name. Should be 0 for curren usage, but just in case.
+        // Byte 3, bit 3 (starting from 0)
+        // This checks should be done before following checks so that we can
+        // use current header size to count file name field size
+        // because it's 0 terminated
+        if flg & (1 << 3) != 0 {
+            let range = Data(data[headerSize..<data.count])
+            if let nameEnd = range.firstIndex(of: 0) {
+                headerSize+=(nameEnd + 1)
+            } else {
+                Logger.e("Incorrect gzip format. File name end not present.")
+                return -1
+            }
+        }
+
+        // Comment. Should be 0 for curren usage, but just in case.
+        // Byte 3, bit 4
+        // This checks should be done before following checks so that we can
+        // use current header size to count file name field size
+        // because it's 0 terminated
+        if flg & (1 << 4) != 0 {
+            let range = Data(data[headerSize..<data.count])
+            if let nameEnd = range.firstIndex(of: 0) {
+                headerSize+=(nameEnd + 1)
+            } else {
+                Logger.e("Incorrect gzip format. Comment end not present.")
+                return -1
+            }
+        }
+
+        // Crc check, byte 3 , bit 1
+        if flg & (1 << 1) != 0 {
+            // crc info is 2 bytes
+            headerSize+=2
+        }
+
+        return headerSize
     }
 }

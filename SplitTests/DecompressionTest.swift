@@ -21,7 +21,7 @@ class DecompressionTest: XCTestCase {
     }
 
     func testLoremIpsumZlib() {
-        let lines = loadLoremIpsum()
+        let lines = loadLoremIpsumZlib()
         let expected = loadLoremIpsumExpected()
         var results = [String]()
         for line in lines {
@@ -34,7 +34,7 @@ class DecompressionTest: XCTestCase {
     }
 
     func testLoremIpsumGzip() {
-        let lines = loadLoremIpsum()
+        let lines = loadLoremIpsumGzip()
         let expected = loadLoremIpsumExpected()
         var results = [String]()
         for line in lines {
@@ -58,36 +58,56 @@ class DecompressionTest: XCTestCase {
     func descompressGzip(_ base64: String) -> String {
         guard let dec =  Base64Utils.decodeBase64(base64) else { return "" }
 
-        guard let descomp = try? zlib.decompress(data: dec) else {
+        guard let descomp = try? gzip.decompress(data: dec) else {
             return ""
         }
         return descomp.stringRepresentation
     }
 
-    func this(_ b64: String, _ type: CompressionType) {
-
+    func testHeaderExtraField() {
+        let data = dataWithHeaders(extraField: true, fileName: false, crc16: false, comment: false)
+        let size = gzip.checkAndGetHeaderSize(data: data)
+        XCTAssertEqual(19, size)
     }
 
-    func testThis1() {
-
-        // gzip
-        this("H4sIAAAAAAAA/2IYBfgAx0A7YBTgB4wD7YABAAID7QC6g5EYy8MEMA20A+gMFAbaAYMZDPXqlGWgHTAKRsEoGAWjgCzQQFjJkKqiiPAPAQAIAAD//5L7VQwAEAAA", .gzip)
-        // zlib
-        this("eJzMVk3OhDAIVdNFl9/22zVzEo8yR5mjT6LGsRTKg2LiW8yPUnjQB+2kIwM2ThTIKtVU1oknFcRzufz+YGYM/phnHW8sdPvs9EzXW2I+HFzhNyTNgCD/PpW9xpGiHD0Bw1U5HLSS644FbGZgoPovmjpmX5wAzhIxJyN7IAnFQWX1htj+LUl6ZQRV3umMqYG1LCrOJGLPV8+IidBQZFt6sOUA6CqsX5iEFY2gqufs2mfqRtsVWytRnO+iYMN7xIBqJhDqAydV+HidkGOGEJYvk4fhe/8iIukphG/XfFcfVxnMVcALCOF77qL/EU7ODepxlLST6qxFLYRdOyW8EBY4BqVjObnm3V5ZMkZIKf++8+hM7zM1Kd3aFqVZeSHzDQAA//+QUQ3a", .zlib)
-        // zlib
-        this("eJxiGAX4AMdAO2AU4AeMA+2AAQACA+0AuoORGMvDBDANtAPoDBQG2gGDGQz16pRloB0wCkbBKBgFo4As0EBYyZCqoojwDwEACAAA//+W/QFR", .zlib)
-        // gzip
-        this("H4sIAAAAAAAA/wTAsRHDUAgD0F2ofwEIkPAqPhdZIW0uu/v97GPXHU004ULuMGrYR6XUbIjlXULPPse+dt1yhJibBODjrTmj3GJ4emduuDDP/w0AAP//18WLsl0AAAA=", .gzip)
-        this("eF7zSM3JyVcozy/KSVHwzFUoSC1IBQBE9Abd", .zlib)
+    func testHeaderFileName() {
+        let data = dataWithHeaders(extraField: false, fileName: true, crc16: false, comment: false)
+        let size = gzip.checkAndGetHeaderSize(data: data)
+        XCTAssertEqual(15, size)
     }
 
+    func testHeaderComments() {
+        let data = dataWithHeaders(extraField: false, fileName: false, crc16: false, comment: true)
+        let size = gzip.checkAndGetHeaderSize(data: data)
+        XCTAssertEqual(15, size)
+    }
 
+    func testHeaderCrc16() {
+        let data = dataWithHeaders(extraField: false, fileName: false, crc16: true, comment: false)
+        let size = gzip.checkAndGetHeaderSize(data: data)
+        XCTAssertEqual(12, size)
+    }
+
+    func testAllHeaders() {
+        let data = dataWithHeaders(extraField: true, fileName: true, crc16: true, comment: true)
+        let size = gzip.checkAndGetHeaderSize(data: data)
+        XCTAssertEqual(31, size)
+    }
 
     override func tearDown() {
     }
 
-    private func loadLoremIpsum() -> [String] {
-        guard let data = FileHelper.readDataFromFile(sourceClass: self, name: "lorem_ipsum", type: "txt") else {
+    private func loadLoremIpsumZlib() -> [String] {
+        guard let data = FileHelper.readDataFromFile(sourceClass: self, name: "lorem_ipsum_zlib", type: "txt") else {
+                print("Error loading compression test Data.")
+                XCTAssertTrue(false)
+                return []
+        }
+        return data.split(separator: "\n").map { String($0)}
+    }
+
+    private func loadLoremIpsumGzip() -> [String] {
+        guard let data = FileHelper.readDataFromFile(sourceClass: self, name: "lorem_ipsum_gzip", type: "txt") else {
                 print("Error loading compression test Data.")
                 XCTAssertTrue(false)
                 return []
@@ -103,4 +123,51 @@ class DecompressionTest: XCTestCase {
         }
         return data.split(separator: "\n").map { String($0)}
     }
+
+    func testHeaderFlag0() {
+        let data = dataWithHeaders(extraField: false, fileName: false, crc16: false, comment: false)
+        let size = gzip.checkAndGetHeaderSize(data: data)
+        XCTAssertEqual(10, size)
+    }
+
+    func dataWithHeaders(extraField: Bool, fileName: Bool, crc16: Bool, comment: Bool) -> Data {
+        var flag: UInt8 = 0
+        // Id1, id2, cm, flag
+        var h1: [UInt8] = [31, 139, 8, 0]
+        // Rest of header that would be ignored while analisis
+        h1.append(contentsOf: [1, 2, 3, 4, 5, 6])
+
+        if extraField {
+            flag |= UInt8(1 << 2)
+            // 1, 1 (S1, S2). size (2 bytes) = 5, 0 (little endian) and byte extra after 0
+            h1.append(contentsOf: [1, 1, 5, 0, 1, 2, 3, 4, 5])
+        }
+
+        if fileName {
+            flag |= UInt8(1 << 3)
+            h1.append(contentsOf: [1, 2, 3, 4, 0])
+        }
+
+        if comment {
+            flag |= UInt8(1 << 4)
+            h1.append(contentsOf: [1, 2, 3, 4, 0])
+        }
+
+        if crc16 {
+            flag |= UInt8(1 << 1)
+            h1.append(contentsOf: [1, 2])
+        }
+
+        // Update flag value
+
+        h1[3] = flag
+        // Simulate data (not reaaly needed)
+        h1.append(contentsOf: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
+
+
+
+        return Data(h1)
+
+    }
+
 }
