@@ -16,6 +16,7 @@ class SyncUpdateWorker: XCTestCase {
 
     var splitsUpdateWorker: SplitsUpdateWorker!
     var mySegmentsUpdateWorker: MySegmentsUpdateWorker!
+    var mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker!
     var splitKillWorker: SplitKillWorker!
 
     var synchronizer: SynchronizerStub!
@@ -37,6 +38,9 @@ class SyncUpdateWorker: XCTestCase {
 
         mySegmentsUpdateWorker =  MySegmentsUpdateWorker(synchronizer: synchronizer, mySegmentsStorage: mySegmentsStorage)
         mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
+
+        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(synchronizer: synchronizer, mySegmentsStorage: mySegmentsStorage)
+        mySegmentsUpdateV2Worker.changesChecker = mySegmentsChangesChecker
         splitKillWorker = SplitKillWorker(synchronizer: synchronizer, splitsStorage: splitsStorage)
     }
 
@@ -137,6 +141,24 @@ class SyncUpdateWorker: XCTestCase {
         synchronizer.forceMySegmentsSyncExp = exp
 
         try mySegmentsUpdateWorker.process(notification: notification)
+
+        wait(for: [exp], timeout: 3)
+
+        XCTAssertNil(mySegmentsStorage.updatedSegments)
+        XCTAssertFalse(mySegmentsStorage.clearCalled)
+        XCTAssertTrue(synchronizer.forceMySegmentsSyncCalled)
+    }
+
+    func testMySegmentsUpdateV2WorkerUnbounded() throws {
+        let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
+                                                          compressionType: .none,
+                                                          updateStrategy: .unboundedFetchRequest,
+                                                          segmentName: nil, data: nil)
+
+        let exp = XCTestExpectation(description: "exp")
+        synchronizer.forceMySegmentsSyncExp = exp
+
+        try mySegmentsUpdateV2Worker.process(notification: notification)
 
         wait(for: [exp], timeout: 3)
 
