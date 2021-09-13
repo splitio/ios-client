@@ -231,4 +231,3 @@ struct StreamingError: NotificationTypeField {
         return  !(code >= 40000 && code <= 49999)
     }
 }
-
