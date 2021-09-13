@@ -15,6 +15,7 @@ class SseNotificationProcessorTest: XCTestCase {
     var sseNotificationParser: SseNotificationParserStub!
     var splitsUpdateWorker: SplitsUpdateWorkerMock!
     var mySegmentsUpdateWorker: MySegmentsUpdateWorkerMock!
+    var mySegmentsUpdateV2Worker: MySegmentsUpdateV2WorkerMock!
     var splitKillWorker: SplitKillWorkerMock!
 
     var notificationProcessor: SseNotificationProcessor!
@@ -31,12 +32,14 @@ class SseNotificationProcessorTest: XCTestCase {
         sseNotificationParser = SseNotificationParserStub()
         splitsUpdateWorker = SplitsUpdateWorkerMock(synchronizer: synchronizer)
         mySegmentsUpdateWorker =  MySegmentsUpdateWorkerMock(synchronizer: synchronizer, mySegmentsStorage: mySegmentsStorage)
+        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2WorkerMock(synchronizer: synchronizer, mySegmentsStorage: mySegmentsStorage)
         splitKillWorker = SplitKillWorkerMock(synchronizer: synchronizer, splitsStorage: splitsStorage)
 
         notificationProcessor = DefaultSseNotificationProcessor(notificationParser: sseNotificationParser,
                                                                 splitsUpdateWorker: splitsUpdateWorker,
                                                                 splitKillWorker: splitKillWorker,
-                                                                mySegmentsUpdateWorker: mySegmentsUpdateWorker)
+                                                                mySegmentsUpdateWorker: mySegmentsUpdateWorker,
+                                                                mySegmentsUpdateV2Worker: mySegmentsUpdateV2Worker)
     }
 
     func testProcessSplitUpdate() {
@@ -158,6 +161,7 @@ class SseNotificationProcessorTest: XCTestCase {
         sseNotificationParser.mySegmentsUpdateV2Notification = MySegmentsUpdateV2Notification(changeNumber: -1,
                                                                                               compressionType: .none,
                                                                                               updateStrategy: .unboundedFetchRequest,
+                                                                                              segmentName: nil,
                                                                                               data: nil)
         let notification = IncomingNotification(type: .mySegmentsUpdateV2,
                                                 channel: nil,
@@ -165,7 +169,7 @@ class SseNotificationProcessorTest: XCTestCase {
                                                 timestamp: 1000)
         notificationProcessor.process(notification)
 
-        XCTAssertTrue(mySegmentsUpdateWorker.processCalled)
+        XCTAssertTrue(mySegmentsUpdateV2Worker.processCalled)
     }
 
     override func tearDown() {

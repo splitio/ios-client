@@ -17,16 +17,19 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
     private let sseNotificationParser: SseNotificationParser
     private let splitsUpdateWorker: SplitsUpdateWorker
     private let mySegmentsUpdateWorker: MySegmentsUpdateWorker
+    private let mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker
     private let splitKillWorker: SplitKillWorker
 
     init (notificationParser: SseNotificationParser,
           splitsUpdateWorker: SplitsUpdateWorker,
           splitKillWorker: SplitKillWorker,
-          mySegmentsUpdateWorker: MySegmentsUpdateWorker) {
+          mySegmentsUpdateWorker: MySegmentsUpdateWorker,
+          mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker) {
         self.sseNotificationParser = notificationParser
         self.splitsUpdateWorker = splitsUpdateWorker
         self.mySegmentsUpdateWorker = mySegmentsUpdateWorker
         self.splitKillWorker = splitKillWorker
+        self.mySegmentsUpdateV2Worker = mySegmentsUpdateV2Worker
     }
 
     func process(_ notification: IncomingNotification) {
@@ -60,21 +63,9 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
 
         if let jsonData = notification.jsonData {
             do {
-                let mySegmentNotification = try sseNotificationParser.parseMySegmentUpdateV2(jsonString: jsonData)
-
-                switch mySegmentNotification.updateStrategy {
-                case .unboundedFetchRequest:
-                    notifyMySegmentsRefreshNeeded()
-                case .boundedFetchRequest:
-                    print("boundedFetchRequest")
-                case .keyList:
-                    print("keyList")
-                case .segmentRemoval:
-                    print("segmentRemoval")
-                case .unknown:
-                    // should never reach here
-                    print("Unknown my segment v2 update strategy received")
-                }
+                try mySegmentsUpdateV2Worker.process(
+                    notification: sseNotificationParser.parseMySegmentUpdateV2(jsonString: jsonData)
+                )
             } catch {
                 Logger.e("Error while parsing my segments update notification: \(error.localizedDescription)")
             }
@@ -95,22 +86,12 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
     private func processMySegmentsUpdate(_ notification: IncomingNotification) {
         if let jsonData = notification.jsonData {
             do {
-                let notification = try sseNotificationParser.parseMySegmentUpdate(jsonString: jsonData)
-                notifyMySegmentsRefreshNeeded(notification: notification)
+                try mySegmentsUpdateWorker.process(notification:
+                                                    sseNotificationParser.parseMySegmentUpdate(jsonString: jsonData)
+                )
             } catch {
-                Logger.e("Error while parsing my segments update notification: \(error.localizedDescription)")
+                Logger.e("Error while processing my segments update notification: \(error.localizedDescription)")
             }
-        }
-    }
-
-    private func notifyMySegmentsRefreshNeeded(
-        notification: MySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
-                                                                                  includesPayload: false,
-                                                                                  segmentList: nil)) {
-        do {
-            try mySegmentsUpdateWorker.process(notification: notification)
-        } catch {
-            Logger.e("Error whilie notifying my segments refresh needed: \(error.localizedDescription)")
         }
     }
 }
