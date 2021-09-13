@@ -46,49 +46,65 @@ class DecompressionTest: XCTestCase {
         }
     }
 
-    func descompressZlib(_ base64: String) -> String {
-        guard let dec =  Base64Utils.decodeBase64(base64) else { return "" }
+    func testZlibCompressionMethodHeader() {
 
-        guard let descomp = try? zlib.decompress(data: dec) else {
-            return ""
-        }
-        return descomp.stringRepresentation
+        // Byte 2 => compression method should be 8, else error.
+        let data1 = Data([31, 139, 9, 0, 1, 1, 0])
+
+        let size1 = gzip.checkAndGetHeaderSize(data: data1)
+
+        XCTAssertEqual(-1, size1)
     }
 
-    func descompressGzip(_ base64: String) -> String {
-        guard let dec =  Base64Utils.decodeBase64(base64) else { return "" }
+    func testGzipIncorrectHeader() {
 
-        guard let descomp = try? gzip.decompress(data: dec) else {
-            return ""
-        }
-        return descomp.stringRepresentation
+        // Byte 0, 1
+        // Header should start with 31, 139, gzip IDs (0x1f, 0x8b)
+        let data1 = Data([20, 139, 8, 0, 1, 1, 0])
+        let data2 = Data([31, 20, 8, 0, 1, 1, 0])
+
+        let size1 = gzip.checkAndGetHeaderSize(data: data1)
+        let size2 = gzip.checkAndGetHeaderSize(data: data2)
+
+        XCTAssertEqual(-1, size1)
+        XCTAssertEqual(-1, size2)
     }
 
-    func testHeaderExtraField() {
+    func testGzipCompressionMethodHeader() {
+
+        // Byte 2 => compression method should be 8, else error.
+        let data1 = Data([31, 139, 9, 0, 1, 1, 0])
+
+        let size1 = gzip.checkAndGetHeaderSize(data: data1)
+
+        XCTAssertEqual(-1, size1)
+    }
+
+    func testGzipHeaderExtraField() {
         let data = dataWithHeaders(extraField: true, fileName: false, crc16: false, comment: false)
         let size = gzip.checkAndGetHeaderSize(data: data)
         XCTAssertEqual(19, size)
     }
 
-    func testHeaderFileName() {
+    func testGzipHeaderFileName() {
         let data = dataWithHeaders(extraField: false, fileName: true, crc16: false, comment: false)
         let size = gzip.checkAndGetHeaderSize(data: data)
         XCTAssertEqual(15, size)
     }
 
-    func testHeaderComments() {
+    func testGzipHeaderComments() {
         let data = dataWithHeaders(extraField: false, fileName: false, crc16: false, comment: true)
         let size = gzip.checkAndGetHeaderSize(data: data)
         XCTAssertEqual(15, size)
     }
 
-    func testHeaderCrc16() {
+    func testGzipHeaderCrc16() {
         let data = dataWithHeaders(extraField: false, fileName: false, crc16: true, comment: false)
         let size = gzip.checkAndGetHeaderSize(data: data)
         XCTAssertEqual(12, size)
     }
 
-    func testAllHeaders() {
+    func testGzipAllHeaders() {
         let data = dataWithHeaders(extraField: true, fileName: true, crc16: true, comment: true)
         let size = gzip.checkAndGetHeaderSize(data: data)
         XCTAssertEqual(31, size)
@@ -164,10 +180,26 @@ class DecompressionTest: XCTestCase {
         // Simulate data (not reaaly needed)
         h1.append(contentsOf: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
 
-
-
         return Data(h1)
 
+    }
+
+    func descompressGzip(_ base64: String) -> String {
+        guard let dec =  Base64Utils.decodeBase64(base64) else { return "" }
+
+        guard let descomp = try? gzip.decompress(data: dec) else {
+            return ""
+        }
+        return descomp.stringRepresentation
+    }
+
+    func descompressZlib(_ base64: String) -> String {
+        guard let dec =  Base64Utils.decodeBase64(base64) else { return "" }
+
+        guard let descomp = try? zlib.decompress(data: dec) else {
+            return ""
+        }
+        return descomp.stringRepresentation
     }
 
 }
