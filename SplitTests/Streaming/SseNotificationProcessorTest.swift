@@ -154,6 +154,20 @@ class SseNotificationProcessorTest: XCTestCase {
         XCTAssertFalse(mySegmentsUpdateWorker.processCalled)
     }
 
+    func testProcessMySegmentsUpdateV2UnboundedFetchRequest() {
+        sseNotificationParser.mySegmentsUpdateV2Notification = MySegmentsUpdateV2Notification(changeNumber: -1,
+                                                                                              compressionType: .none,
+                                                                                              updateStrategy: .unboundedFetchRequest,
+                                                                                              data: nil)
+        let notification = IncomingNotification(type: .mySegmentsUpdateV2,
+                                                channel: nil,
+                                                jsonData: "",
+                                                timestamp: 1000)
+        notificationProcessor.process(notification)
+
+        XCTAssertTrue(mySegmentsUpdateWorker.processCalled)
+    }
+
     override func tearDown() {
 
     }
