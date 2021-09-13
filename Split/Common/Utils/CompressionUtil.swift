@@ -74,6 +74,7 @@ private struct CompressionBase {
 
 struct Zlib: CompressionUtil {
     let kZlibHeaderSize = 2
+    let kDicSize = 4
 
     func decompress(data: Data) throws -> Data {
 
@@ -85,6 +86,43 @@ struct Zlib: CompressionUtil {
         } catch {
             throw CompressionError.couldNotDecompressZlib
         }
+    }
+
+    // Checks if the header is correct and returns the amounts of bytes to be removed
+    // in order to make the deflate method to work
+    // Returns -1 if something is wrong
+    // Based on https://datatracker.ietf.org/doc/html/rfc1950
+    func checkAndGetHeaderSize(data: Data) -> Int {
+        var headerSize = kZlibHeaderSize
+
+        // Checking compression method and info in byte 0
+        if (0x7 & data[0]) != 8 {
+            Logger.e("Incorrect compression method found while trying to decompress zlib data")
+            return -1
+        }
+
+        // Cinfo
+        if (data[0] >> 3) > 7 {
+            Logger.e("Incorrect compression info found while trying to decompress zlib data")
+            return -1
+        }
+
+        // FCHECK
+        // The FCHECK value must be such that CMF and FLG, when viewed as
+       // a 16-bit unsigned integer stored in MSB order (CMF*256 + FLG),
+        // is a multiple of 31.
+        if UInt16(0xf & data[1]) != UInt16(data[1] << 8 | data[0]) {
+            Logger.e("Incorrect fcheck value found while trying to decompress zlib data")
+            return -1
+        }
+
+        // Check for FDICT info
+        // If set, dict info (bytes 2, 3, 4, 5) should be available
+        if (data[1] & 0x20) != 0 {
+            headerSize+=kDicSize
+        }
+
+        return headerSize
     }
 }
 
@@ -113,17 +151,21 @@ struct Gzip: CompressionUtil {
     // Checks if the header is correct and returns the amounts of bytes to be removed
     // in order to make the deflate method to work
     // Returns -1 if something is wrong
-    // Based on https://www.ietf.org/rfc/rfc1951.txt
+    // Based on https://datatracker.ietf.org/doc/html/rfc1951
     func checkAndGetHeaderSize(data: Data) -> Int {
-        // Checking ID1 and ID2 in the two first bytes
-        if data[0] != kId1 || data[1] != kId2 {
-            Logger.e("Incorrect gzip header found while trying to decompress data")
+        //Checking ID1 y ID2
+        // ID1 (IDentification 1)
+        // ID2 (IDentification 2)
+        // These have the fixed values ID1 = 31 (0x1f, \037), ID2 = 139
+        // (0x8b, \213), to identify the file as being in gzip format.
+        if data[0] != 0x1f || data[1] != 0x8b {
+            Logger.e("Incorrect gzip header ID: 1=\(data[0]), 2=\(data[1])")
             return -1
         }
 
-        // Checking compression method in third byte.
+        // Checking compression method. It always be 8
         if data[2] != 8 {
-            Logger.e("Incorrect compression method found while trying to decompress gzip data")
+            Logger.e("Incorrect gzip compression method: \(data[2])")
             return -1
         }
 
