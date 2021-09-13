@@ -9,10 +9,29 @@
 import Foundation
 import Compression
 
-enum CompressionType {
+enum CompressionType: Decodable {
     case none
     case zlib
     case gzip
+    case unknown
+
+    init(from decoder: Decoder) throws {
+        let intValue = try? decoder.singleValueContainer().decode(Int.self)
+        self = CompressionType.enumFromInt(intValue ?? 0)
+    }
+
+    static func enumFromInt(_ intValue: Int) -> CompressionType {
+        switch intValue {
+        case 0:
+            return CompressionType.none
+        case 1:
+            return CompressionType.zlib
+        case 2:
+            return CompressionType.gzip
+        default:
+            return CompressionType.unknown
+        }
+    }
 }
 
 enum CompressionError: Error {
