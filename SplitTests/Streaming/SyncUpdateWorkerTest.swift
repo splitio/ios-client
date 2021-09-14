@@ -167,6 +167,37 @@ class SyncUpdateWorker: XCTestCase {
         XCTAssertTrue(synchronizer.forceMySegmentsSyncCalled)
     }
 
+    func testMySegmentsUpdateV2WorkerRemoval() throws {
+        let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
+                                                          compressionType: .none,
+                                                          updateStrategy: .segmentRemoval,
+                                                          segmentName: "s3", data: nil)
+
+        let exp = XCTestExpectation(description: "exp")
+        mySegmentsStorage.updateExpectation = exp
+
+        try mySegmentsUpdateV2Worker.process(notification: notification)
+        wait(for: [exp], timeout: 3)
+
+        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.updatedSegments)
+        XCTAssertFalse(mySegmentsStorage.clearCalled)
+        XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
+    }
+
+    func testMySegmentsUpdateV2WorkerNonRemoval() throws {
+        let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
+                                                          compressionType: .none,
+                                                          updateStrategy: .segmentRemoval,
+                                                          segmentName: "not_in_segments", data: nil)
+
+        try mySegmentsUpdateV2Worker.process(notification: notification)
+        ThreadUtils.delay(seconds: 2)
+
+        XCTAssertNil(mySegmentsStorage.updatedSegments)
+        XCTAssertFalse(mySegmentsStorage.clearCalled)
+        XCTAssertFalse(synchronizer.notifyMySegmentsUpdatedCalled)
+    }
+
     override func tearDown() {
 
     }
