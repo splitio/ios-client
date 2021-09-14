@@ -102,10 +102,20 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
         case .keyList:
             print("keyList")
         case .segmentRemoval:
-            print("segmentRemoval")
+            if let segmentName = notification.segmentName {
+                remove(segment: segmentName)
+            }
         case .unknown:
             // should never reach here
             print("Unknown my segment v2 update strategy received")
+        }
+    }
+
+    private func remove(segment: String) {
+        var segments = mySegmentsStorage.getAll()
+        if segments.remove(segment) != nil {
+            mySegmentsStorage.set(Array(segments))
+            synchronizer.notifiySegmentsUpdated()
         }
     }
 }
