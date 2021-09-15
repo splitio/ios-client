@@ -62,7 +62,7 @@ class DefaultSseNotificationParser: SseNotificationParser {
     }
 
     func parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification {
-        return try Json.encodeFrom(json: jsonString, to: MySegmentsUpdateNotification.self) 
+        return try Json.encodeFrom(json: jsonString, to: MySegmentsUpdateNotification.self)
     }
 
     func parseMySegmentUpdateV2(jsonString: String) throws -> MySegmentsUpdateV2Notification {
