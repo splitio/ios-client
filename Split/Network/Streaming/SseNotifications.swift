@@ -157,10 +157,12 @@ struct MySegmentsUpdateV2Notification: NotificationTypeField {
     let changeNumber: Int64?
     let compressionType: CompressionType
     let updateStrategy: MySegmentUpdateStrategy
+    let segmentName: String?
     let data: String?
 
     enum CodingKeys: String, CodingKey {
         case changeNumber
+        case segmentName
         case compressionType = "c"
         case updateStrategy = "u"
         case data = "d"
@@ -231,4 +233,3 @@ struct StreamingError: NotificationTypeField {
         return  !(code >= 40000 && code <= 49999)
     }
 }
-

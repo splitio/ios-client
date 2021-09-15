@@ -75,6 +75,41 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
     }
 }
 
+class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
+
+    private let synchronizer: Synchronizer
+    private let mySegmentsStorage: MySegmentsStorage
+    var changesChecker: MySegmentsChangesChecker
+    init(synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage) {
+        self.synchronizer = synchronizer
+        self.mySegmentsStorage = mySegmentsStorage
+        self.changesChecker = DefaultMySegmentsChangesChecker()
+        super.init(queueName: "MySegmentsUpdateV2Worker")
+    }
+
+    override func process(notification: MySegmentsUpdateV2Notification) throws {
+        processQueue.async {
+            self.process(notification)
+        }
+    }
+
+    private func process(_ notification: MySegmentsUpdateV2Notification) {
+        switch notification.updateStrategy {
+        case .unboundedFetchRequest:
+            synchronizer.forceMySegmentsSync()
+        case .boundedFetchRequest:
+            print("boundedFetchRequest")
+        case .keyList:
+            print("keyList")
+        case .segmentRemoval:
+            print("segmentRemoval")
+        case .unknown:
+            // should never reach here
+            print("Unknown my segment v2 update strategy received")
+        }
+    }
+}
+
 class SplitKillWorker: UpdateWorker<SplitKillNotification> {
 
     private let synchronizer: Synchronizer
