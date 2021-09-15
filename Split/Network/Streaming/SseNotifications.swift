@@ -23,6 +23,7 @@ struct RawNotification: Decodable {
 enum NotificationType: Decodable {
     case splitUpdate
     case mySegmentsUpdate
+    case mySegmentsUpdateV2
     case splitKill
     case occupancy
     case sseError
@@ -40,6 +41,8 @@ enum NotificationType: Decodable {
             return NotificationType.splitUpdate
         case "my_segments_update":
             return NotificationType.mySegmentsUpdate
+        case "my_segments_update_v2":
+            return NotificationType.mySegmentsUpdateV2
         case "split_kill":
             return NotificationType.splitKill
         case "control":
@@ -118,6 +121,52 @@ struct MySegmentsUpdateNotification: NotificationTypeField {
     let segmentList: [String]?
 }
 
+enum MySegmentUpdateStrategy: Decodable {
+    case unboundedFetchRequest
+    case boundedFetchRequest
+    case keyList
+    case segmentRemoval
+    case unknown
+
+    init(from decoder: Decoder) throws {
+        let intValue = try? decoder.singleValueContainer().decode(Int.self)
+        self = MySegmentUpdateStrategy.enumFromInt(intValue ?? 0)
+    }
+
+    static func enumFromInt(_ intValue: Int) -> MySegmentUpdateStrategy {
+        switch intValue {
+        case 0:
+            return MySegmentUpdateStrategy.unboundedFetchRequest
+        case 1:
+            return MySegmentUpdateStrategy.boundedFetchRequest
+        case 2:
+            return MySegmentUpdateStrategy.keyList
+        case 3:
+            return MySegmentUpdateStrategy.segmentRemoval
+        default:
+            return MySegmentUpdateStrategy.unknown
+        }
+    }
+}
+
+/// Indicates change in MySegments (Optimized version)
+struct MySegmentsUpdateV2Notification: NotificationTypeField {
+    var type: NotificationType {
+        return .mySegmentsUpdateV2
+    }
+    let changeNumber: Int64?
+    let compressionType: CompressionType
+    let updateStrategy: MySegmentUpdateStrategy
+    let data: String?
+
+    enum CodingKeys: String, CodingKey {
+        case changeNumber
+        case compressionType = "c"
+        case updateStrategy = "u"
+        case data = "d"
+    }
+}
+
 /// Indicates that a Split was killed
 struct SplitKillNotification: NotificationTypeField {
     var type: NotificationType {
@@ -182,3 +231,4 @@ struct StreamingError: NotificationTypeField {
         return  !(code >= 40000 && code <= 49999)
     }
 }
+
