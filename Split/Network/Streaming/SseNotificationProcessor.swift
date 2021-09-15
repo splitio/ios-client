@@ -17,16 +17,19 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
     private let sseNotificationParser: SseNotificationParser
     private let splitsUpdateWorker: SplitsUpdateWorker
     private let mySegmentsUpdateWorker: MySegmentsUpdateWorker
+    private let mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker
     private let splitKillWorker: SplitKillWorker
 
     init (notificationParser: SseNotificationParser,
           splitsUpdateWorker: SplitsUpdateWorker,
           splitKillWorker: SplitKillWorker,
-          mySegmentsUpdateWorker: MySegmentsUpdateWorker) {
+          mySegmentsUpdateWorker: MySegmentsUpdateWorker,
+          mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker) {
         self.sseNotificationParser = notificationParser
         self.splitsUpdateWorker = splitsUpdateWorker
         self.mySegmentsUpdateWorker = mySegmentsUpdateWorker
         self.splitKillWorker = splitKillWorker
+        self.mySegmentsUpdateV2Worker = mySegmentsUpdateV2Worker
     }
 
     func process(_ notification: IncomingNotification) {
@@ -36,6 +39,8 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
             processSplitsUpdate(notification)
         case .mySegmentsUpdate:
             processMySegmentsUpdate(notification)
+        case .mySegmentsUpdateV2:
+            processMySegmentsUpdateV2(notification)
         case .splitKill:
             processSplitKill(notification)
         default:
@@ -50,6 +55,19 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
                     sseNotificationParser.parseSplitUpdate(jsonString: jsonData))
             } catch {
                 Logger.e("Error while parsing split update notification: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func processMySegmentsUpdateV2(_ notification: IncomingNotification) {
+
+        if let jsonData = notification.jsonData {
+            do {
+                try mySegmentsUpdateV2Worker.process(
+                    notification: sseNotificationParser.parseMySegmentUpdateV2(jsonString: jsonData)
+                )
+            } catch {
+                Logger.e("Error while parsing my segments update notification: \(error.localizedDescription)")
             }
         }
     }
@@ -69,9 +87,10 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
         if let jsonData = notification.jsonData {
             do {
                 try mySegmentsUpdateWorker.process(notification:
-                    sseNotificationParser.parseMySegmentUpdate(jsonString: jsonData))
+                                                    sseNotificationParser.parseMySegmentUpdate(jsonString: jsonData)
+                )
             } catch {
-                Logger.e("Error while parsing my segments update notification: \(error.localizedDescription)")
+                Logger.e("Error while processing my segments update notification: \(error.localizedDescription)")
             }
         }
     }
