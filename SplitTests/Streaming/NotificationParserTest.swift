@@ -33,6 +33,11 @@ class NotificationParserTest: XCTestCase {
     let mySegmentsUpdateV2NotificationUnboundedMessage = """
  {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MTcwNTI2MTM0Mg==_mySegments\",\"data\": \"{\\\"type\\\": \\\"MY_SEGMENTS_UPDATE_V2\\\", \\"u\\": 0, \\"c\\": 0}\"}
 """
+
+    let mySegmentsUpdateV2NotificationSegmentRemovalMessage = """
+ {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MTcwNTI2MTM0Mg==_mySegments\",\"data\": \"{\\\"type\\\": \\\"MY_SEGMENTS_UPDATE_V2\\\", \\"u\\": 3, \\"c\\": 0, \\"segmentName\\":\\"segment_remove\\"}\"}
+"""
+
     let occupancyNotificationMessage = """
  {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"control_pri\",\"data\":\"{\\\"metrics\\\": {\\\"publishers\\\":1}}\"}
 """
@@ -98,6 +103,17 @@ class NotificationParserTest: XCTestCase {
         XCTAssertNil(mySegmentUpdate.changeNumber)
         XCTAssertNil(mySegmentUpdate.data)
         XCTAssertNil(mySegmentUpdate.segmentName)
+    }
+
+    func testProcessMySegmentUpdateV2Removal() throws {
+        let incoming = notificationParser.parseIncoming(jsonString: mySegmentsUpdateV2NotificationSegmentRemovalMessage);
+        let mySegmentUpdate = try notificationParser.parseMySegmentUpdateV2(jsonString: incoming!.jsonData!);
+
+        XCTAssertEqual(NotificationType.mySegmentsUpdateV2, incoming?.type);
+        XCTAssertEqual(.segmentRemoval, mySegmentUpdate.updateStrategy);
+        XCTAssertNil(mySegmentUpdate.changeNumber)
+        XCTAssertNil(mySegmentUpdate.data)
+        XCTAssertEqual("segment_remove", mySegmentUpdate.segmentName)
     }
 
 
