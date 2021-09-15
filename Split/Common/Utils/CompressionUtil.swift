@@ -172,6 +172,11 @@ struct Gzip: CompressionUtil {
     // Returns -1 if something is wrong
     // Based on https://datatracker.ietf.org/doc/html/rfc1951
     func checkAndGetHeaderSize(data: Data) -> Int {
+
+        if data.count < kGzipHeaderSize {
+            return -1
+        }
+
         //Checking ID1 y ID2
         // ID1 (IDentification 1)
         // ID2 (IDentification 2)

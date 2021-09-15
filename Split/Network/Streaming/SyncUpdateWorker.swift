@@ -79,11 +79,17 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
 
     private let synchronizer: Synchronizer
     private let mySegmentsStorage: MySegmentsStorage
-    var changesChecker: MySegmentsChangesChecker
-    init(synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage) {
+    private let payloadDecoder: MySegmentsV2PayloadDecoder
+    private let zlib: CompressionUtil = Zlib()
+    private let gzip: CompressionUtil = Gzip()
+    private let userKey: String
+
+    init(userKey: String, synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage,
+         payloadDecoder: MySegmentsV2PayloadDecoder) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
-        self.changesChecker = DefaultMySegmentsChangesChecker()
+        self.payloadDecoder = payloadDecoder
+        self.userKey = userKey
         super.init(queueName: "MySegmentsUpdateV2Worker")
     }
 
@@ -100,7 +106,9 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
         case .boundedFetchRequest:
             print("boundedFetchRequest")
         case .keyList:
-            print("keyList")
+            if let json = notification.data, let segmentName = notification.segmentName {
+                updateSegments(keyListJson: json, segmentName: segmentName)
+            }
         case .segmentRemoval:
             if let segmentName = notification.segmentName {
                 remove(segment: segmentName)
@@ -116,6 +124,31 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
         if segments.remove(segment) != nil {
             mySegmentsStorage.set(Array(segments))
             synchronizer.notifiySegmentsUpdated()
+        }
+    }
+
+    private func updateSegments(keyListJson: String, segmentName: String) {
+
+        guard let keyList = payloadDecoder.parseKeyList(jsonString: keyListJson) else {
+            return
+        }
+
+        let key = userKey
+        let hashedKey = payloadDecoder.hashKey(key)
+
+        if keyList.added.contains(hashedKey) {
+            var segments = mySegmentsStorage.getAll()
+            if !segments.contains(segmentName) {
+                segments.insert(segmentName)
+                mySegmentsStorage.set(Array(segments))
+                synchronizer.notifiySegmentsUpdated()
+            }
+            return
+        }
+
+        if keyList.removed.contains(hashedKey) {
+            remove(segment: segmentName)
+            return
         }
     }
 }
