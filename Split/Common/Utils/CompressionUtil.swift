@@ -11,8 +11,8 @@ import Compression
 
 enum CompressionType: Decodable {
     case none
-    case zlib
     case gzip
+    case zlib
     case unknown
 
     init(from decoder: Decoder) throws {
@@ -25,9 +25,9 @@ enum CompressionType: Decodable {
         case 0:
             return CompressionType.none
         case 1:
-            return CompressionType.zlib
-        case 2:
             return CompressionType.gzip
+        case 2:
+            return CompressionType.zlib
         default:
             return CompressionType.unknown
         }
