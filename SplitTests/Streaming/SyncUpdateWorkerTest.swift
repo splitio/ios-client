@@ -214,6 +214,11 @@ class SyncUpdateWorker: XCTestCase {
         mySegmentsPayloadDecoder.hashedKey = keyHash
         mySegmentsPayloadDecoder.parsedKeyList = KeyList(added: [4, 5], removed: [keyHash, 3])
 
+        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
+                                                             synchronizer: synchronizer,
+                                                             mySegmentsStorage: mySegmentsStorage,
+                                                             payloadDecoder: mySegmentsPayloadDecoder)
+
         let exp = XCTestExpectation(description: "exp")
         mySegmentsStorage.updateExpectation = exp
 
@@ -235,6 +240,11 @@ class SyncUpdateWorker: XCTestCase {
         let keyHash = Murmur64x128.hash(data: bytes, offset: 0, length: UInt32(bytes.count), seed: 0)[0]
         mySegmentsPayloadDecoder.hashedKey = keyHash
         mySegmentsPayloadDecoder.parsedKeyList = KeyList(added: [keyHash, 5], removed: [1, 3])
+
+        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
+                                                             synchronizer: synchronizer,
+                                                             mySegmentsStorage: mySegmentsStorage,
+                                                             payloadDecoder: mySegmentsPayloadDecoder)
 
         let exp = XCTestExpectation(description: "exp")
         mySegmentsStorage.updateExpectation = exp
