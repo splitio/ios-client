@@ -82,14 +82,14 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
     private let payloadDecoder: MySegmentsV2PayloadDecoder
     private let zlib: CompressionUtil = Zlib()
     private let gzip: CompressionUtil = Gzip()
-    private let userKey: String
+    private let keyHash: UInt64
 
     init(userKey: String, synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage,
          payloadDecoder: MySegmentsV2PayloadDecoder) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
         self.payloadDecoder = payloadDecoder
-        self.userKey = userKey
+        self.keyHash = payloadDecoder.hashKey(userKey)
         super.init(queueName: "MySegmentsUpdateV2Worker")
     }
 
@@ -100,25 +100,44 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
     }
 
     private func process(_ notification: MySegmentsUpdateV2Notification) {
-        switch notification.updateStrategy {
-        case .unboundedFetchRequest:
-            synchronizer.forceMySegmentsSync()
-        case .boundedFetchRequest:
-            print("boundedFetchRequest")
-        case .keyList:
-            if let json = notification.data, let segmentName = notification.segmentName {
-                updateSegments(keyListJson: json, segmentName: segmentName)
+        do {
+            switch notification.updateStrategy {
+            case .unboundedFetchRequest:
+                fetchMySegments()
+            case .boundedFetchRequest:
+                if let json = notification.data {
+                    try handleBounded(encodedKeyMap: json,
+                                      compressionUtil: decompressor(for: notification.compressionType))
+                }
+            case .keyList:
+                if let json = notification.data, let segmentName = notification.segmentName {
+                    try updateSegments(encodedkeyList: json,
+                                       segmentName: segmentName,
+                                       compressionUtil: decompressor(for: notification.compressionType))
+                }
+            case .segmentRemoval:
+                if let segmentName = notification.segmentName {
+                    remove(segment: segmentName)
+                }
+            case .unknown:
+                // should never reach here
+                print("Unknown my segment v2 update strategy received")
             }
-        case .segmentRemoval:
-            if let segmentName = notification.segmentName {
-                remove(segment: segmentName)
-            }
-        case .unknown:
-            // should never reach here
-            print("Unknown my segment v2 update strategy received")
+
+        } catch {
+            Logger.e("Error processing my segments notification v2. \(error.localizedDescription)")
+            Logger.i("Fall back - unbounded fetch")
+            fetchMySegments()
         }
     }
 
+    private func fetchMySegments() {
+        synchronizer.forceMySegmentsSync()
+    }
+
+    private func decompressor(for type: CompressionType) -> CompressionUtil {
+        return type == .gzip ? gzip : zlib
+    }
     private func remove(segment: String) {
         var segments = mySegmentsStorage.getAll()
         if segments.remove(segment) != nil {
@@ -127,16 +146,12 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
         }
     }
 
-    private func updateSegments(keyListJson: String, segmentName: String) {
+    private func updateSegments(encodedkeyList: String, segmentName: String, compressionUtil: CompressionUtil) throws {
 
-        guard let keyList = payloadDecoder.parseKeyList(jsonString: keyListJson) else {
-            return
-        }
+        let jsonKeyList = try payloadDecoder.decodeAsString(payload: encodedkeyList, compressionUtil: compressionUtil)
+        let keyList = try payloadDecoder.parseKeyList(jsonString: jsonKeyList)
 
-        let key = userKey
-        let hashedKey = payloadDecoder.hashKey(key)
-
-        if keyList.added.contains(hashedKey) {
+        if keyList.added.contains(keyHash) {
             var segments = mySegmentsStorage.getAll()
             if !segments.contains(segmentName) {
                 segments.insert(segmentName)
@@ -146,9 +161,18 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
             return
         }
 
-        if keyList.removed.contains(hashedKey) {
+        if keyList.removed.contains(keyHash) {
             remove(segment: segmentName)
             return
+        }
+    }
+
+    private func handleBounded(encodedKeyMap: String, compressionUtil: CompressionUtil) throws {
+        let keyMap = try payloadDecoder.decodeAsBytes(payload: encodedKeyMap, compressionUtil: compressionUtil)
+        let index = payloadDecoder.computeKeyIndex(hashedKey: keyHash, keyMapLength: keyMap.count)
+        if payloadDecoder.isKeyInBitmap(keyMap: keyMap, index: index) {
+            Logger.d("Executing Unbounded my segment fetch request")
+            fetchMySegments()
         }
     }
 }
