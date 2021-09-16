@@ -11,7 +11,7 @@ import Foundation
 
 class MySegmentsV2PayloadDecoderMock: MySegmentsV2PayloadDecoder {
 
-    var hashedKey: UInt64?
+    var hashedKey: UInt64 = 1
     var decodedString: String?
     var parsedKeyList: KeyList?
     var decodedBytes: Data?
@@ -26,7 +26,7 @@ class MySegmentsV2PayloadDecoderMock: MySegmentsV2PayloadDecoder {
     }
 
     func hashKey(_ key: String) -> UInt64 {
-        return hashedKey ?? 1
+        return hashedKey
     }
 
     func parseKeyList(jsonString: String) throws -> KeyList {
