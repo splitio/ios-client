@@ -149,6 +149,16 @@ enum MySegmentUpdateStrategy: Decodable {
     }
 }
 
+struct KeyList: Decodable {
+    let added: Set<UInt64>
+    let removed: Set<UInt64>
+
+    enum CodingKeys: String, CodingKey {
+        case added = "a"
+        case removed = "r"
+    }
+}
+
 /// Indicates change in MySegments (Optimized version)
 struct MySegmentsUpdateV2Notification: NotificationTypeField {
     var type: NotificationType {

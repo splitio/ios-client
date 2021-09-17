@@ -11,8 +11,8 @@ import Compression
 
 enum CompressionType: Decodable {
     case none
-    case zlib
     case gzip
+    case zlib
     case unknown
 
     init(from decoder: Decoder) throws {
@@ -25,9 +25,9 @@ enum CompressionType: Decodable {
         case 0:
             return CompressionType.none
         case 1:
-            return CompressionType.zlib
-        case 2:
             return CompressionType.gzip
+        case 2:
+            return CompressionType.zlib
         default:
             return CompressionType.unknown
         }
@@ -172,6 +172,11 @@ struct Gzip: CompressionUtil {
     // Returns -1 if something is wrong
     // Based on https://datatracker.ietf.org/doc/html/rfc1951
     func checkAndGetHeaderSize(data: Data) -> Int {
+
+        if data.count < kGzipHeaderSize {
+            return -1
+        }
+
         //Checking ID1 y ID2
         // ID1 (IDentification 1)
         // ID2 (IDentification 2)
