@@ -33,7 +33,7 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
     }
 
     func process(_ notification: IncomingNotification) {
-
+        Logger.d("Received notification \(notification.type)")
         switch notification.type {
         case .splitUpdate:
             processSplitsUpdate(notification)
