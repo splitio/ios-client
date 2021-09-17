@@ -55,7 +55,7 @@ class DefaultSseHandler: SseHandler {
             handleControl(incomingNotification)
         case .occupancy:
             handleOccupancy(incomingNotification)
-        case .mySegmentsUpdate, .splitKill, .splitUpdate:
+        case .mySegmentsUpdate, .splitKill, .splitUpdate, .mySegmentsUpdateV2:
             if notificationManagerKeeper.isStreamingActive {
                 notificationProcessor.process(incomingNotification)
             }
