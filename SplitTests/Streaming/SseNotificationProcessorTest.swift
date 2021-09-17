@@ -192,6 +192,21 @@ class SseNotificationProcessorTest: XCTestCase {
         XCTAssertTrue(mySegmentsUpdateV2Worker.processCalled)
     }
 
+    func testProcessMySegmentsUpdateV2BoundedRequest() {
+        sseNotificationParser.mySegmentsUpdateV2Notification = MySegmentsUpdateV2Notification(changeNumber: -1,
+                                                                                              compressionType: .gzip,
+                                                                                              updateStrategy: .boundedFetchRequest,
+                                                                                              segmentName: nil,
+                                                                                              data: nil)
+        let notification = IncomingNotification(type: .mySegmentsUpdateV2,
+                                                channel: nil,
+                                                jsonData: "",
+                                                timestamp: 1000)
+        notificationProcessor.process(notification)
+
+        XCTAssertTrue(mySegmentsUpdateV2Worker.processCalled)
+    }
+
     override func tearDown() {
 
     }

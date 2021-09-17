@@ -63,8 +63,13 @@ protocol CompressionUtil {
 
 private struct CompressionBase {
     static func decompress(data: Data) throws -> Data {
-
-        let dstBufferSize = data.count * 5
+        //
+        // A typical zlib compression ratios are on the order of 2:1 to 5:1.
+        // But for data like the bitmap array received it could be 1032:1
+        // https://zlib.net/zlib_tech.html (Maximum Compression Factor)
+        //
+        let ratio = 1032
+        let dstBufferSize = data.count * ratio
         let dstBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dstBufferSize)
 
         let srcBufferSize = data.count
