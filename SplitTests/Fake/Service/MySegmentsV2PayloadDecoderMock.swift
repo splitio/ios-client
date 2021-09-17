@@ -11,10 +11,11 @@ import Foundation
 
 class MySegmentsV2PayloadDecoderMock: MySegmentsV2PayloadDecoder {
 
-    var hashedKey: UInt64?
+    var hashedKey: UInt64 = 1
     var decodedString: String?
     var parsedKeyList: KeyList?
     var decodedBytes: Data?
+    var keyMapResult = [Bool]()
 
     func decodeAsString(payload: String, compressionUtil: CompressionUtil) throws -> String {
         return decodedString ?? ""
@@ -25,10 +26,23 @@ class MySegmentsV2PayloadDecoderMock: MySegmentsV2PayloadDecoder {
     }
 
     func hashKey(_ key: String) -> UInt64 {
-        return hashedKey ?? 1
+        return hashedKey
     }
 
-    func parseKeyList(jsonString: String) -> KeyList? {
-        return parsedKeyList
+    func parseKeyList(jsonString: String) throws -> KeyList {
+        if let list = parsedKeyList {
+            return list
+        }
+        throw MySegmentsV2ParsingException.unknown
+    }
+
+    func isKeyInBitmap(keyMap: Data, index: Int) -> Bool {
+        let value = keyMapResult[0]
+        keyMapResult.remove(at: 0)
+        return value
+    }
+
+    func computeKeyIndex(hashedKey: UInt64, keyMapLength: Int) -> Int {
+        return 1
     }
 }
