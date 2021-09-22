@@ -36,7 +36,7 @@ class MySegmentsV2PayloadDecoderMock: MySegmentsV2PayloadDecoder {
         throw MySegmentsV2ParsingException.unknown
     }
 
-    func isKeyInBitmap(keyMap: Data, index: Int) -> Bool {
+    func isKeyInBitmap(keyMap: Data, hashedKey: UInt64) -> Bool {
         let value = keyMapResult[0]
         keyMapResult.remove(at: 0)
         return value

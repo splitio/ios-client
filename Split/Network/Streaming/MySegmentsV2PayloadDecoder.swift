@@ -23,7 +23,7 @@ protocol MySegmentsV2PayloadDecoder {
 
     func parseKeyList(jsonString: String) throws -> KeyList
 
-    func isKeyInBitmap(keyMap: Data, index: Int) -> Bool
+    func isKeyInBitmap(keyMap: Data, hashedKey: UInt64) -> Bool
 
     func computeKeyIndex(hashedKey: UInt64, keyMapLength: Int) -> Int
 
@@ -53,7 +53,8 @@ struct DefaultMySegmentsV2PayloadDecoder: MySegmentsV2PayloadDecoder {
         return Murmur64x128.hash(data: Array(key.utf8), offset: 0, length: UInt32(key.count), seed: 0)[0]
     }
 
-    func isKeyInBitmap(keyMap: Data, index: Int) -> Bool {
+    func isKeyInBitmap(keyMap: Data, hashedKey: UInt64) -> Bool {
+        let index = computeKeyIndex(hashedKey: hashedKey, keyMapLength: keyMap.count)
         let bit = index / kFieldSize
         let offset: UInt8 = UInt8(index % kFieldSize)
         if bit > keyMap.count - 1 {
