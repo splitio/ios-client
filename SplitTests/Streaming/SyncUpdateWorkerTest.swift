@@ -225,7 +225,7 @@ class SyncUpdateWorker: XCTestCase {
         try mySegmentsUpdateV2Worker.process(notification: notification)
         wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.updatedSegments)
+        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.updatedSegments?.sorted())
         XCTAssertFalse(mySegmentsStorage.clearCalled)
         XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
     }
