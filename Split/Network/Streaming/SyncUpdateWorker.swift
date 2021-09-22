@@ -121,7 +121,7 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
                 }
             case .unknown:
                 // should never reach here
-                print("Unknown my segment v2 update strategy received")
+                Logger.i("Unknown my segment v2 update strategy received")
             }
 
         } catch {
@@ -169,8 +169,7 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
 
     private func handleBounded(encodedKeyMap: String, compressionUtil: CompressionUtil) throws {
         let keyMap = try payloadDecoder.decodeAsBytes(payload: encodedKeyMap, compressionUtil: compressionUtil)
-        let index = payloadDecoder.computeKeyIndex(hashedKey: keyHash, keyMapLength: keyMap.count)
-        if payloadDecoder.isKeyInBitmap(keyMap: keyMap, index: index) {
+        if payloadDecoder.isKeyInBitmap(keyMap: keyMap, hashedKey: keyHash) {
             Logger.d("Executing Unbounded my segment fetch request")
             fetchMySegments()
         }

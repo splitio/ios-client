@@ -107,13 +107,24 @@ class DefaultSyncManager: SyncManager {
         case .pushRetryableError:
             Logger.d("Push recoverable event message received.")
             enablePolling()
-            reconnectStreamingTimer.schedule {
-                self.pushNotificationManager.start()
-            }
+            scheduleStreamingReconnection()
 
         case .pushNonRetryableError:
             Logger.d("Push non recoverable event message received.")
             stopStreaming()
+
+        case .pushReset:
+            Logger.d("Push Subsystem reset received.")
+            pushNotificationManager.disconnect()
+            if !isPaused.value {
+                scheduleStreamingReconnection()
+            }
+        }
+    }
+
+    private func scheduleStreamingReconnection() {
+        reconnectStreamingTimer.schedule {
+            self.pushNotificationManager.start()
         }
     }
 
