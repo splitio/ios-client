@@ -153,6 +153,21 @@ class NotificationManagerKeeperTest: XCTestCase {
         XCTAssertEqual(PushStatusEvent.pushSubsystemDown, broadcasterChannel.lastPushedEvent)
     }
 
+    func testIncomingControlStreamingReset() {
+        // making channel pri available
+        var n1 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 1))
+        n1.channel = kControlPriChannel
+        n1.timestamp = 50
+        notificationManager.handleIncomingPresenceEvent(notification: n1)
+
+        // reseting pushed event
+        broadcasterChannel.lastPushedEvent = nil
+        let controlNotification = ControlNotification(type: .control, controlType: .streamingReset)
+        notificationManager.handleIncomingControl(notification: controlNotification)
+
+        XCTAssertEqual(PushStatusEvent.pushReset, broadcasterChannel.lastPushedEvent)
+    }
+
     func testIncomingControlStreamingEnabledNoPublishers() {
         // making channel pri unavailable
         var n1 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 0))

@@ -66,8 +66,7 @@ class MySegmentsV2PayloaDecoderTest: XCTestCase {
         var results = [String: Bool]()
         for key in keys {
             let hashedKey = decoder.hashKey(key)
-            let index = decoder.computeKeyIndex(hashedKey: hashedKey, keyMapLength: payload.count)
-            results[key] = decoder.isKeyInBitmap(keyMap: payload, index: index)
+            results[key] = decoder.isKeyInBitmap(keyMap: payload, hashedKey: hashedKey)
         }
 
         for key in keys {
