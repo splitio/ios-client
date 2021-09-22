@@ -21,6 +21,7 @@ class SynchronizerSpy: Synchronizer {
     var synchronizeSplitsChangeNumberCalled = false
     var synchronizeMySegmentsCalled = false
     var forceMySegmentsSyncCalled = false
+    var forceMySegmentsCalledCount = 0
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
     var startPeriodicRecordingCalled = false
@@ -147,6 +148,7 @@ class SynchronizerSpy: Synchronizer {
 
     func forceMySegmentsSync() {
         forceMySegmentsSyncCalled = true
+        forceMySegmentsCalledCount+=1
         splitSynchronizer.forceMySegmentsSync()
         if let exp = forceMySegmentsSyncExp {
             exp.fulfill()
