@@ -25,7 +25,7 @@ struct TestingData {
     """
 
     /**
-     Key for unbounded payload Gzip
+     Key for bounded payload Gzip
      603516ce-1243-400b-b919-0dce5d8aecfd
      88f8b33b-f858-4aea-bea2-a5f066bab3ce
      375903c8-6f62-4272-88f1-f8bcd304c7ae
