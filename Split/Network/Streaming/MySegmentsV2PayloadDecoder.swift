@@ -56,10 +56,10 @@ struct DefaultMySegmentsV2PayloadDecoder: MySegmentsV2PayloadDecoder {
     func isKeyInBitmap(keyMap: Data, index: Int) -> Bool {
         let bit = index / kFieldSize
         let offset: UInt8 = UInt8(index % kFieldSize)
-        if (bit > keyMap.count - 1) {
+        if bit > keyMap.count - 1 {
             return false
         }
-        return (keyMap[bit] & 1 << offset) != 0;
+        return (keyMap[bit] & 1 << offset) != 0
     }
 
     func computeKeyIndex(hashedKey: UInt64, keyMapLength: Int) -> Int {
