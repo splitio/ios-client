@@ -15,6 +15,7 @@ class PushNotificationManagerStub: PushNotificationManager {
     var stopCalled = false
     var pauseCalled = false
     var resumeCalled = false
+    var disconnectCalled = false
 
     func start() {
         startCalled = true
@@ -30,5 +31,9 @@ class PushNotificationManagerStub: PushNotificationManager {
 
     func resume() {
         resumeCalled = true
+    }
+
+    func disconnect() {
+        disconnectCalled = true
     }
 }
