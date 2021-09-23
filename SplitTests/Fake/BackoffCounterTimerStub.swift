@@ -10,8 +10,10 @@ import Foundation
 @testable import Split
 
 class BackoffCounterTimerStub: BackoffCounterTimer {
-    func schedule(handler: @escaping () -> Void) {
 
+    var scheduleCalled = false
+    func schedule(handler: @escaping () -> Void) {
+        scheduleCalled = true
     }
 
     func cancel() {
