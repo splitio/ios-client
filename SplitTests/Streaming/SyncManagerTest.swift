@@ -122,6 +122,23 @@ class SyncManagerTest: XCTestCase {
         XCTAssertTrue(pushManager.stopCalled)
     }
 
+    func testPushReset() {
+
+        splitConfig.streamingEnabled = true
+        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
+                                         reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
+                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+        syncManager.start()
+
+        // reseting start called value
+        pushManager.startCalled = false
+        broadcasterChannel.push(event: .pushReset)
+
+        XCTAssertTrue(pushManager.disconnectCalled)
+        XCTAssertTrue(retryTimer.scheduleCalled)
+    }
+
     func testStop() {
 
         splitConfig.streamingEnabled = true

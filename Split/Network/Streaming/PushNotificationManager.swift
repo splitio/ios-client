@@ -15,6 +15,7 @@ protocol PushNotificationManager {
     func pause()
     func resume()
     func stop()
+    func disconnect()
 }
 
 class DefaultPushNotificationManager: PushNotificationManager {
@@ -67,7 +68,13 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     func stop() {
+        Logger.d("Push notification manager stopped")
         isStopped.set(true)
+        disconnect()
+    }
+
+    func disconnect() {
+        Logger.d("Disconnecting SSE client");
         timersManager.cancel(timer: .refreshAuthToken)
         sseClient.disconnect()
     }

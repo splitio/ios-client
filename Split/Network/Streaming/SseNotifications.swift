@@ -88,6 +88,7 @@ struct ControlNotification: NotificationTypeField {
         case streamingEnabled
         case streamingDisabled
         case streamingPaused
+        case streamingReset
         case unknown
 
         init(from decoder: Decoder) throws {
@@ -103,6 +104,8 @@ struct ControlNotification: NotificationTypeField {
                 return ControlType.streamingDisabled
             case "streaming_paused":
                 return ControlType.streamingPaused
+            case "streaming_reset":
+                return ControlType.streamingReset
             default:
                 return ControlType.unknown
             }
