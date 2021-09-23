@@ -24,14 +24,18 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private let kReconnectTimeBeforeTokenExpInASeconds = 600
     private let kDisconnectOnBgTimeInSeconds = 60
     private let kTokenExpiredErrorCode = 40142
+    private let kSseConnDelayCheckTime: Double = 0.5 // 1/2 second
 
     private let sseAuthenticator: SseAuthenticator
     private var sseClient: SseClient
     private var timersManager: TimersManager
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let userKey: String
+    private let sseConnectionTimer: DispatchSourceTimer? = nil
 
-    private let connectionQueue = DispatchQueue(label: "Sse connnection", target: DispatchQueue.global())
+
+    private let connectionQueue = DispatchQueue(label: "Sse connnection",
+                                                target: DispatchQueue.global())
 
     private var isStopped: Atomic<Bool> = Atomic(false)
     private var isPaused: Atomic<Bool> = Atomic(false)
@@ -74,7 +78,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     func disconnect() {
-        Logger.d("Disconnecting SSE client");
+        Logger.d("Disconnecting SSE client")
         timersManager.cancel(timer: .refreshAuthToken)
         sseClient.disconnect()
     }
@@ -132,12 +136,51 @@ class DefaultPushNotificationManager: PushNotificationManager {
         }
         Logger.d("Streaming authentication success")
 
-        self.sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { success in
+        let connectionDelay = result.sseConnectionDelay
+
+        if connectionDelay > 0 && !delay(connectionDelay) {
+            isConnecting.set(false)
+            return
+        }
+
+        if isPaused.value || isStopped.value {
+            isConnecting.set(false)
+            return
+        }
+
+        sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { success in
             if success {
                 self.handleSubsystemUp()
             }
             self.isConnecting.set(false)
         }
+    }
+
+    // This implementation is to allow checking
+    // when the component is stopped or paused easily
+    // without creating a module scoped component
+    // Using sleep will involve block the whole thread
+    // and is not a good idea
+    private func delay(_ seconds: Int64) -> Bool {
+        var cancelled = false
+        let semaphore = DispatchSemaphore(value: 0)
+        let limit = Date().unixTimestamp() + seconds
+        let timer = DispatchSource.makeTimerSource(flags: .strict, queue: DispatchQueue.global())
+        timer.schedule(deadline: .now(), repeating: kSseConnDelayCheckTime)
+        timer.resume()
+        timer.setEventHandler { [weak self] in
+            if let self = self,
+               (self.isPaused.value || self.isStopped.value) {
+                cancelled = true
+                semaphore.signal()
+                return
+            }
+            if Date().unixTimestamp() >=  limit {
+                semaphore.signal()
+            }
+        }
+        semaphore.wait()
+        return !cancelled
     }
 
     private func notifyRecoverableError(message: String) {

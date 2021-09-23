@@ -26,7 +26,7 @@ class SseAuthenticatorTest: XCTestCase {
     func testSuccesfulRequest() {
         // Check successful response
 
-        let response = SseAuthenticationResponse(pushEnabled: true, token:rawToken)
+        let response = SseAuthenticationResponse(pushEnabled: true, token:rawToken, sseConnectionDelay: 0)
         restClient.update(response: response)
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
 
@@ -39,7 +39,7 @@ class SseAuthenticatorTest: XCTestCase {
 
     func testEmptyTokenResponse() {
         // Check empty token error response
-        let response = SseAuthenticationResponse(pushEnabled: true, token: "")
+        let response = SseAuthenticationResponse(pushEnabled: true, token: "", sseConnectionDelay: 0)
         restClient.update(response: response)
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
 
@@ -52,7 +52,7 @@ class SseAuthenticatorTest: XCTestCase {
 
     func testNullTokenResponse() {
         // Check null token error response
-        let response = SseAuthenticationResponse(pushEnabled: true, token: nil)
+        let response = SseAuthenticationResponse(pushEnabled: true, token: nil, sseConnectionDelay: 0)
         restClient.update(response: response)
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
 
