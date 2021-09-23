@@ -452,6 +452,7 @@
 		957E67AC25F66123006F5B19 /* SplitsSyncHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E67AB25F66123006F5B19 /* SplitsSyncHelper.swift */; };
 		957E67B025F6B3E1006F5B19 /* BackgroundSyncWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */; };
 		9580C98226FB8A840021D729 /* StreamingControlResetTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9580C98126FB8A840021D729 /* StreamingControlResetTest.swift */; };
+		9580C98826FCA6400021D729 /* StreamingDelayTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9580C98726FCA6400021D729 /* StreamingDelayTest.swift */; };
 		9595910526DFB1AB009E7944 /* DecompressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595910426DFB1AB009E7944 /* DecompressionTest.swift */; };
 		9595910D26DFE149009E7944 /* lorem_ipsum_zlib.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9595910C26DFE149009E7944 /* lorem_ipsum_zlib.txt */; };
 		9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595911026DFFF87009E7944 /* CompressionUtil.swift */; };
@@ -986,6 +987,7 @@
 		957E67AB25F66123006F5B19 /* SplitsSyncHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsSyncHelper.swift; sourceTree = "<group>"; };
 		957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundSyncWorker.swift; sourceTree = "<group>"; };
 		9580C98126FB8A840021D729 /* StreamingControlResetTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingControlResetTest.swift; sourceTree = "<group>"; };
+		9580C98726FCA6400021D729 /* StreamingDelayTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingDelayTest.swift; sourceTree = "<group>"; };
 		9595910426DFB1AB009E7944 /* DecompressionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecompressionTest.swift; sourceTree = "<group>"; };
 		9595910C26DFE149009E7944 /* lorem_ipsum_zlib.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = lorem_ipsum_zlib.txt; sourceTree = "<group>"; };
 		9595911026DFFF87009E7944 /* CompressionUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionUtil.swift; sourceTree = "<group>"; };
@@ -1712,6 +1714,7 @@
 				594F5F57253A340F00A945B4 /* StreamingOccupancyTest.swift */,
 				594F5F59253CFC2D00A945B4 /* StreamingControlTest.swift */,
 				9580C98126FB8A840021D729 /* StreamingControlResetTest.swift */,
+				9580C98726FCA6400021D729 /* StreamingDelayTest.swift */,
 				95B2497F26F39C9B00B34507 /* MySegmentUpdateV2Test.swift */,
 			);
 			path = streaming;
@@ -2787,6 +2790,7 @@
 				5959C47C228050750064F968 /* SplitFactoryStub.swift in Sources */,
 				5921ED3325379AA3000D6C8B /* ReachabilityMock.swift in Sources */,
 				95649FBA2603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift in Sources */,
+				9580C98826FCA6400021D729 /* StreamingDelayTest.swift in Sources */,
 				59F65F04256300CA005FE8C9 /* IntegrationCoreDataHelper.swift in Sources */,
 				956D17D7260D28320037F575 /* MySegmentsChangeChecker.swift in Sources */,
 				59F4AAD02518D4BB00A1C69A /* SyncWorkerFactoryStub.swift in Sources */,
