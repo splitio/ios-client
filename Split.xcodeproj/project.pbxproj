@@ -292,7 +292,6 @@
 		59B8B8AA220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */; };
 		59B8B8AC220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8AB220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift */; };
 		59B8B8B0220C6E3F003E0D5A /* ValidationErrorInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B8B8AF220C6E3F003E0D5A /* ValidationErrorInfo.swift */; };
-		59BF3D27223132E1004D134D /* DataFolderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BF3D26223132E1004D134D /* DataFolderFactory.swift */; };
 		59BF3D372231A698004D134D /* BCryptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BF3D362231A698004D134D /* BCryptTests.swift */; };
 		59BF3D3D22329C7A004D134D /* JFBCrypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BF3D3822329C79004D134D /* JFBCrypt.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59BF3D3E22329C7A004D134D /* JFBCrypt.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BF3D3922329C7A004D134D /* JFBCrypt.m */; };
@@ -824,7 +823,6 @@
 		59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SyncDictionaryCollectionWrapperTest.swift; path = SplitTests/SyncDictionaryCollectionWrapperTest.swift; sourceTree = SOURCE_ROOT; };
 		59B8B8AB220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncDictionarySingleWrapperTest.swift; sourceTree = "<group>"; };
 		59B8B8AF220C6E3F003E0D5A /* ValidationErrorInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationErrorInfo.swift; sourceTree = "<group>"; };
-		59BF3D26223132E1004D134D /* DataFolderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataFolderFactory.swift; sourceTree = "<group>"; };
 		59BF3D362231A698004D134D /* BCryptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BCryptTests.swift; sourceTree = "<group>"; };
 		59BF3D3822329C79004D134D /* JFBCrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JFBCrypt.h; sourceTree = "<group>"; };
 		59BF3D3922329C7A004D134D /* JFBCrypt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JFBCrypt.m; sourceTree = "<group>"; };
@@ -1495,7 +1493,6 @@
 				3B6DEF0320EA6AE30067435E /* InfoUtils.swift */,
 				5912D1442193778600BC698C /* NotificationsHelper.swift */,
 				5982D930219EFEF500230F44 /* CastUtils.swift */,
-				59BF3D26223132E1004D134D /* DataFolderFactory.swift */,
 				5935FDEB226E26E300A23FA6 /* SplitHelper.swift */,
 				595AD24A24E30C0C00A7B750 /* Base64Utils.swift */,
 				595AD25E24E5D16300A7B750 /* Atomic.swift */,
@@ -2474,7 +2471,6 @@
 				595AD1FA24D9E40C00A7B750 /* FilterBuilder.swift in Sources */,
 				3B6DEF4F20EA6AE50067435E /* TrafficType.swift in Sources */,
 				3B6DEF8020EA6AE50067435E /* RestClient.swift in Sources */,
-				59BF3D27223132E1004D134D /* DataFolderFactory.swift in Sources */,
 				9505681C26822E96001D7B10 /* ImpressionsCounter.swift in Sources */,
 				950B743426938B5E005FD649 /* KeyImpression.swift in Sources */,
 				3B6DEF7020EA6AE50067435E /* Whitelist.swift in Sources */,

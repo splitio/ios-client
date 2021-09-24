@@ -43,8 +43,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         Logger.d("Initializing localhost mode")
         eventsManager = DefaultSplitEventsManager(config: config)
         eventsManager.start()
-        let dataFolderName = DataFolderFactory()
-            .sanitizeForFolderName(config.localhostDataFolder)
+        let dataFolderName = SplitFactoryHelper.sanitizeForFolderName(config.localhostDataFolder)
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
 
         var storageConfig = YamlSplitStorageConfig()
