@@ -89,9 +89,10 @@ class DefaultSseAuthenticator: SseAuthenticator {
         if response.pushEnabled, response.token ?? "" == "" {
             return errorResult(recoverable: true)
         }
+        let connectionDelay = response.sseConnectionDelay ?? ServiceConstants.defaultSseConnectionDelayInSecs
         return SseAuthenticationResult(success: true, errorIsRecoverable: false,
                                        pushEnabled: response.pushEnabled, rawToken: response.token,
-                                       sseConnectionDelay: response.sseConnectionDelay)
+                                       sseConnectionDelay: connectionDelay)
     }
 }
 

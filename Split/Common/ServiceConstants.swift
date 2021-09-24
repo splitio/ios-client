@@ -21,4 +21,5 @@ struct ServiceConstants {
     static let backgroundSyncPeriod = 15.0 * 60 // 15 min
     static let defaultImpressionCountRowsPop = 200
     static let lastSeenImpressionCachSize = 500
+    static let defaultSseConnectionDelayInSecs: Int64 = 60
 }
