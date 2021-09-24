@@ -38,7 +38,6 @@ class MetricManagerConfig {
         return MetricManagerConfig()
     }()
     var pushRateInSeconds: Int = 1800
-    var defaultDataFolderName: String = "split_data"
 }
 
 class DefaultMetricsManager: MetricsManager {
@@ -68,7 +67,7 @@ class DefaultMetricsManager: MetricsManager {
     }()
 
     init(config: MetricManagerConfig = MetricManagerConfig.default) {
-        self.fileStorage = FileStorage(dataFolderName: config.defaultDataFolderName)
+        self.fileStorage = FileStorage(dataFolderName: "split_metrics")
         self.pushRateInSeconds = config.pushRateInSeconds
         self.lastPostTime = Date().unixTimestamp()
         self.updateQueue = DispatchQueue(label: "split-update-metrics", target: DispatchQueue.global())

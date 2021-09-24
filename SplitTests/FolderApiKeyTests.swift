@@ -10,8 +10,7 @@ import XCTest
 @testable import Split
 
 class FolderApiKeyTests: XCTestCase {
-    
-    let folderFactory = DataFolderFactory()
+
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -51,7 +50,7 @@ class FolderApiKeyTests: XCTestCase {
         
         for i in 0..<apiKeys.count {
             let apiKey = apiKeys[i]
-            let folder = folderFactory.createFrom(apiKey: apiKey)!
+            let folder = SplitFactoryHelper.legacyDbName(from: apiKey)!
             let expectedFolder = folders[i]
             XCTAssertEqual(expectedFolder, folder);
         }
@@ -87,7 +86,7 @@ class FolderApiKeyTests: XCTestCase {
         
         for i in 0..<apiKeys.count {
             let apiKey = apiKeys[i]
-            let folder = folderFactory.createFrom(apiKey: apiKey)!
+            let folder = SplitFactoryHelper.legacyDbName(from: apiKey)!
             let expectedFolder = folders[i]
             XCTAssertEqual(expectedFolder, folder);
         }
@@ -124,7 +123,7 @@ class FolderApiKeyTests: XCTestCase {
         
         for i in 0..<apiKeys.count {
             let apiKey = apiKeys[i]
-            let folder = folderFactory.createFrom(apiKey: apiKey)!
+            let folder = SplitFactoryHelper.legacyDbName(from: apiKey)!
             let expectedFolder = folders[i]
             XCTAssertEqual(expectedFolder, folder);
         }
@@ -160,14 +159,14 @@ class FolderApiKeyTests: XCTestCase {
         
         for i in 0..<apiKeys.count {
             let apiKey = apiKeys[i]
-            let folder = folderFactory.createFrom(apiKey: apiKey)
+            let folder = SplitFactoryHelper.legacyDbName(from: apiKey)!
             let expectedFolder = folders[i]
             XCTAssertEqual(expectedFolder, folder);
         }
     }
     
     func testSanitizeEmptyFolder() {
-        let folder = folderFactory.sanitizeForFolderName("")
+        let folder = SplitFactoryHelper.sanitizeForFolderName("")
         XCTAssertEqual("", folder)
     }
 }

@@ -9,12 +9,15 @@
 import Foundation
 
 struct SplitFactoryHelper {
-    static func buildStorageContainer(userKey: String,
-                                      dataFolderName: String,
-                                      testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
-        let fileStorage = FileStorage(dataFolderName: dataFolderName)
+    static private let kDbMagicCharsCount = 4
+    static private let kDbExt = ["", "-shm", "-wal"]
 
-        let splitDatabase = try openDatabase(dataFolderName: dataFolderName, testDatabase: testDatabase)
+    static func buildStorageContainer(userKey: String,
+                                      databaseName: String,
+                                      testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
+
+        let fileStorage = FileStorage(dataFolderName: databaseName)
+        let splitDatabase = try openDatabase(dataFolderName: databaseName, testDatabase: testDatabase)
 
         let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
         let splitsStorage = openSplitsStorage(database: splitDatabase)
@@ -77,4 +80,73 @@ struct SplitFactoryHelper {
         return DefaultEventsStorage(database: database,
                                          expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
     }
+
+    static func databaseName(apiKey: String) -> String? {
+        if apiKey.count < kDbMagicCharsCount {
+            return nil
+        }
+        return "\(apiKey.prefix(kDbMagicCharsCount))\(apiKey.suffix(kDbMagicCharsCount))"
+    }
+
+    static func renameDatabaseFromLegacyName(name dbName: String, apiKey: String) {
+        let fileManager = FileManager.default
+        guard let docURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {
+            fatalError("Unable to resolve document directory")
+        }
+
+        // Checking if database without hashing exists
+        // If so, renaming was already done
+        let databaseUrl = docURL.appendingPathComponent("\(dbName).\(ServiceConstants.databaseExtension)")
+        if fileManager.fileExists(atPath: databaseUrl.path) {
+            return
+        }
+
+        guard let legacyName = legacyDbName(from: apiKey) else {
+            return
+        }
+
+        // Renaming all database files
+        do {
+            for ext in kDbExt {
+                let fullExt = "\(ServiceConstants.databaseExtension)\(ext)"
+                let legacyDbFile = docURL.appendingPathComponent("\(legacyName).\(fullExt)")
+                let newDbFile = docURL.appendingPathComponent("\(dbName).\(fullExt)")
+                try fileManager.moveItem(at: legacyDbFile, to: newDbFile)
+            }
+        } catch {
+            Logger.w("Unable to rename legacy db. Avoiding migration. Message: \(error.localizedDescription)")
+        }
+    }
+
+    static func sanitizeForFolderName(_ string: String) -> String {
+        guard let regex: NSRegularExpression =
+            try? NSRegularExpression(pattern: "[^a-zA-Z0-9]",
+                                     options: NSRegularExpression.Options.caseInsensitive) else {
+                fatalError("Regular expression not valid")
+        }
+        let range = NSRange(location: 0, length: string.count)
+        return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
+    }
+
+    static func legacyDbName(from apiKey: String) -> String? {
+        let kSaltLength = 29
+        let kSaltPrefix = "$2a$10$"
+        let kCharToFillSalt = "A"
+        let sanitizedApiKey = SplitFactoryHelper.sanitizeForFolderName(apiKey)
+        var salt = kSaltPrefix
+        if sanitizedApiKey.count >= kSaltLength - kSaltPrefix.count {
+            let endIndex = sanitizedApiKey.index(sanitizedApiKey.startIndex,
+                                                 offsetBy: kSaltLength - kSaltPrefix.count)
+            salt.append(String(sanitizedApiKey[..<endIndex]))
+        } else {
+            salt.append(sanitizedApiKey)
+            salt.append(contentsOf: String(repeating: kCharToFillSalt,
+                                           count: (kSaltLength - kSaltPrefix.count) - sanitizedApiKey.count))
+        }
+        if let hash = JFBCrypt.hashPassword(sanitizedApiKey, withSalt: salt) {
+            return SplitFactoryHelper.sanitizeForFolderName(hash)
+        }
+        return nil
+    }
+
 }
