@@ -13,7 +13,6 @@ class CoreDataHelperBuilder {
 
     private static let kDataModelName = "split_cache"
     private static let kDataModelExtentsion = "momd"
-    private static let kDatabaseExtension = "sqlite"
 
     static func build(databaseName: String) -> CoreDataHelper? {
 
@@ -38,7 +37,7 @@ class CoreDataHelperBuilder {
             fatalError("Unable to resolve document directory")
         }
 
-        let databaseUrl = docURL.appendingPathComponent("\(databaseName).\(self.kDatabaseExtension)")
+        let databaseUrl = docURL.appendingPathComponent("\(databaseName).\(ServiceConstants.databaseExtension)")
         do {
             let options = [NSMigratePersistentStoresAutomaticallyOption: true,
                            NSInferMappingModelAutomaticallyOption: true]
