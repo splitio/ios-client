@@ -163,17 +163,17 @@ class PushNotificationManagerTest: XCTestCase {
 
     private func successAuthResult(pushEnabled: Bool = true) -> SseAuthenticationResult {
         return SseAuthenticationResult(success: true, errorIsRecoverable: false,
-                                       pushEnabled: pushEnabled, rawToken: rawToken)
+                                       pushEnabled: pushEnabled, rawToken: rawToken, sseConnectionDelay: 0)
     }
 
     private func recoverableAuthResult() -> SseAuthenticationResult {
         return SseAuthenticationResult(success: false, errorIsRecoverable: true,
-                                       pushEnabled: true, rawToken: nil)
+                                       pushEnabled: true, rawToken: nil, sseConnectionDelay: 0)
     }
 
     private func noRecoverableAuthResult() -> SseAuthenticationResult {
         return SseAuthenticationResult(success: false, errorIsRecoverable: false,
-                                       pushEnabled: true, rawToken: nil)
+                                       pushEnabled: true, rawToken: nil, sseConnectionDelay: 0)
     }
 
     private func dummyToken() -> JwtToken {

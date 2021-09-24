@@ -47,8 +47,8 @@ class PeriodicTaskExecutor: PeriodicTask {
     private func startTask() {
         let queue = DispatchQueue(label: "split-polling-queue")
         taskTimer = DispatchSource.makeTimerSource(queue: queue)
-        taskTimer!.schedule(deadline: .now() + .seconds(self.firstExecutionWindow), repeating: .seconds(self.rate))
-        taskTimer!.setEventHandler { [weak self] in
+        taskTimer?.schedule(deadline: .now() + .seconds(self.firstExecutionWindow), repeating: .seconds(self.rate))
+        taskTimer?.setEventHandler { [weak self] in
             guard let strongSelf = self else {
                 return
             }
@@ -58,7 +58,7 @@ class PeriodicTaskExecutor: PeriodicTask {
             }
             strongSelf.executeTask()
         }
-        taskTimer!.resume()
+        taskTimer?.resume()
     }
 
     private func stopTask() {
