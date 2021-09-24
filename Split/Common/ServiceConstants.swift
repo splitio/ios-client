@@ -22,4 +22,5 @@ struct ServiceConstants {
     static let defaultImpressionCountRowsPop = 200
     static let lastSeenImpressionCachSize = 500
     static let databaseExtension = "sqlite"
+    static let defaultSseConnectionDelayInSecs: Int64 = 60
 }
