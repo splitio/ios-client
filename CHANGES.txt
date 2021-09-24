@@ -1,5 +1,8 @@
+2.11.4: (Ago 4, 2021)
+- Fixed issue occurring sometimes when SDK Update is fired
+
 2.11.3: (Jul 9, 2021)
- - Added impressions dedupe logic to avoid sending duplicated impressions, having `OPTIMIZED` and `DEBUG` modes to establish how impressions are going to be sent to Split servers.
+- Added impressions dedupe logic to avoid sending duplicated impressions, having `OPTIMIZED` and `DEBUG` modes to establish how impressions are going to be sent to Split servers.
 
 2.11.2: (Jun 25, 2021)
 - Fixed threading issue related to CoreData
@@ -9,12 +12,12 @@
 - Improved event management logic to decrease "Ready From Cache" event triggering time
 - Added telemetry headers to SSE connection
 
-2.11.0: (Abr 27, 2021)
+2.11.0: (Apr 27, 2021)
 - Added the ability to synchronize data when the host application is closed or in background
 - Fixed small issue with jwt and streaming disabled
 - Updated my segments fetch to avoid cache when update push notification is received
 
-2.10.0: (Abr 9, 2021)
+2.10.0: (Apr 9, 2021)
 - Added SDK Updated event to notify when Splits or My Segments change
 
 2.9.1: (Mar 10, 2021)
