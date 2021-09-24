@@ -11,7 +11,7 @@ import Foundation
 struct SseAuthenticationResponse: Decodable {
     let pushEnabled: Bool
     let token: String?
-    let sseConnectionDelay: Int64
+    let sseConnectionDelay: Int64?
 
     enum CodingKeys: String, CodingKey {
         case pushEnabled
