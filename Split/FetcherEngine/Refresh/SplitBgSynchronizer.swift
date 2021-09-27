@@ -126,7 +126,7 @@ struct BackgroundSyncExecutor {
         self.apiKey = apiKey
         self.userKeys = userKeys
 
-        let dataFolderName = DataFolderFactory().createFrom(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
+        let dataFolderName = SplitFactoryHelper.databaseName(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
         guard let splitDatabase = try? SplitFactoryHelper.openDatabase(dataFolderName: dataFolderName) else {
             throw GenericError.couldNotCreateCache
         }

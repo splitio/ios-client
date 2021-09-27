@@ -220,7 +220,7 @@ class SplitEventsManagerTest: XCTestCase {
     }
 
     func testSplitKilledWhenReady() {
-        let sdkUpdatedExp = XCTestExpectation()
+
 
         let client =  SplitClientStub()
         let config: SplitClientConfig = SplitClientConfig()
@@ -228,6 +228,7 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.executorResources.client = client
         eventManager.start()
         let readyExp = XCTestExpectation()
+        let sdkUpdatedExp = XCTestExpectation()
         let updatedTask = sdkTask(exp: sdkUpdatedExp)
         eventManager.register(event: .sdkReady, task: TestTask(exp: readyExp))
         eventManager.register(event: .sdkUpdated, task: updatedTask)
@@ -284,14 +285,18 @@ class SplitEventsManagerTest: XCTestCase {
 
 class TestTask: SplitEventTask {
     var taskTriggered = false
+    let label: String
     var exp: XCTestExpectation?
-    init(exp: XCTestExpectation?) {
+    init(exp: XCTestExpectation?, label: String = "") {
         self.exp = exp
+        self.label = label
     }
     override func onPostExecute(client: SplitClient) {
+        print("onPostExecute: \(self.label)")
     }
 
     override func onPostExecuteView(client: SplitClient) {
+        print("onPostExecuteView: \(self.label)")
         taskTriggered = true
         if let exp = self.exp {
             exp.fulfill()

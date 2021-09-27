@@ -30,16 +30,11 @@ class Splitter: SplitterProtocol {
 
         var accumulatedSize: Int = 0
 
-        Logger.d("Splitter evaluating partitions ... \n")
         let bucket: Int64 = getBucket(seed: seed, key: key.bucketingKey!, algo: algo)
-        Logger.d("BUCKET: \(bucket)")
         if let splitPartitions = partions {
             for partition in splitPartitions {
-                Logger.d("PARTITION SIZE \(String(describing: partition.size)) " +
-                    " PARTITION TREATMENT: \(String(describing: partition.treatment)) \n")
                 accumulatedSize += partition.size!
                 if bucket <= accumulatedSize {
-                    Logger.d("TREATMENT RETURNED:\(partition.treatment!)")
                     return partition.treatment!
                 }
             }
@@ -64,5 +59,4 @@ class Splitter: SplitterProtocol {
             return LegacyHash.getHash(key, Int32(truncatingIfNeeded: seed))
         }
     }
-
 }
