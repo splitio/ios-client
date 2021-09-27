@@ -169,7 +169,9 @@ public class SplitClientConfig: NSObject {
         didSet {
             let mode = impressionsMode.uppercased()
             if mode != "OPTIMIZED" && mode != "DEBUG" {
-                Logger.w("You passed an invalid impressionsMode (\(impressionsMode)), impressionsMode should be one of the following values: 'DEBUG' or 'OPTIMIZED'. Defaulting to 'OPTMIZED' mode.")
+                Logger.w("You passed an invalid impressionsMode (\(impressionsMode)), " +
+                    " impressionsMode should be one of the following values: " +
+                            "'DEBUG' or 'OPTIMIZED'. Defaulting to 'OPTMIZED' mode.")
             }
             finalImpressionsMode = ImpressionsMode(rawValue: mode) ?? .optimized
         }
