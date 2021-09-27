@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+// swiftlint:disable identifier_name
 extension UInt64 {
     private static let kSize: UInt64 = 64
     func rotateLeft(_ pos: UInt64) -> UInt64 {
