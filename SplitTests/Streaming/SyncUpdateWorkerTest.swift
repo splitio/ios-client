@@ -13,7 +13,6 @@ import XCTest
 
 class SyncUpdateWorker: XCTestCase {
 
-
     var splitsUpdateWorker: SplitsUpdateWorker!
     var mySegmentsUpdateWorker: MySegmentsUpdateWorker!
     var mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker!
@@ -184,7 +183,7 @@ class SyncUpdateWorker: XCTestCase {
         try mySegmentsUpdateV2Worker.process(notification: notification)
         wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.updatedSegments)
+        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.updatedSegments?.sorted())
         XCTAssertFalse(mySegmentsStorage.clearCalled)
         XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
     }
