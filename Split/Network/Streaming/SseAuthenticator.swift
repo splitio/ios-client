@@ -43,6 +43,7 @@ struct SseAuthenticationResult {
     let errorIsRecoverable: Bool
     let pushEnabled: Bool
     let rawToken: String?
+    let sseConnectionDelay: Int64
 }
 
 ///
@@ -88,8 +89,10 @@ class DefaultSseAuthenticator: SseAuthenticator {
         if response.pushEnabled, response.token ?? "" == "" {
             return errorResult(recoverable: true)
         }
+        let connectionDelay = response.sseConnectionDelay ?? ServiceConstants.defaultSseConnectionDelayInSecs
         return SseAuthenticationResult(success: true, errorIsRecoverable: false,
-                                       pushEnabled: response.pushEnabled, rawToken: response.token)
+                                       pushEnabled: response.pushEnabled, rawToken: response.token,
+                                       sseConnectionDelay: connectionDelay)
     }
 }
 
@@ -97,6 +100,6 @@ class DefaultSseAuthenticator: SseAuthenticator {
 extension DefaultSseAuthenticator {
     private func errorResult(recoverable: Bool) -> SseAuthenticationResult {
         return SseAuthenticationResult(success: false, errorIsRecoverable: recoverable,
-                                       pushEnabled: false, rawToken: nil)
+                                       pushEnabled: false, rawToken: nil, sseConnectionDelay: 0)
     }
 }

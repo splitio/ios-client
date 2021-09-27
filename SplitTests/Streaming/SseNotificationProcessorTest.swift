@@ -15,13 +15,17 @@ class SseNotificationProcessorTest: XCTestCase {
     var sseNotificationParser: SseNotificationParserStub!
     var splitsUpdateWorker: SplitsUpdateWorkerMock!
     var mySegmentsUpdateWorker: MySegmentsUpdateWorkerMock!
+    var mySegmentsUpdateV2Worker: MySegmentsUpdateV2WorkerMock!
     var splitKillWorker: SplitKillWorkerMock!
+    let userKey = IntegrationHelper.dummyUserKey
+    var payloadDecoderMock: MySegmentsV2PayloadDecoder!
 
     var notificationProcessor: SseNotificationProcessor!
 
     override func setUp() {
         let synchronizer = SynchronizerStub()
         let splitsStorage = SplitsStorageStub()
+        payloadDecoderMock = MySegmentsV2PayloadDecoderMock()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [],
                                                                archivedSplits: [],
                                                                changeNumber: 100,
@@ -31,12 +35,16 @@ class SseNotificationProcessorTest: XCTestCase {
         sseNotificationParser = SseNotificationParserStub()
         splitsUpdateWorker = SplitsUpdateWorkerMock(synchronizer: synchronizer)
         mySegmentsUpdateWorker =  MySegmentsUpdateWorkerMock(synchronizer: synchronizer, mySegmentsStorage: mySegmentsStorage)
+        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2WorkerMock(userKey: userKey, synchronizer: synchronizer,
+                                                                 mySegmentsStorage: mySegmentsStorage,
+                                                                 payloadDecoder: payloadDecoderMock)
         splitKillWorker = SplitKillWorkerMock(synchronizer: synchronizer, splitsStorage: splitsStorage)
 
         notificationProcessor = DefaultSseNotificationProcessor(notificationParser: sseNotificationParser,
                                                                 splitsUpdateWorker: splitsUpdateWorker,
                                                                 splitKillWorker: splitKillWorker,
-                                                                mySegmentsUpdateWorker: mySegmentsUpdateWorker)
+                                                                mySegmentsUpdateWorker: mySegmentsUpdateWorker,
+                                                                mySegmentsUpdateV2Worker: mySegmentsUpdateV2Worker)
     }
 
     func testProcessSplitUpdate() {
@@ -152,6 +160,51 @@ class SseNotificationProcessorTest: XCTestCase {
         notificationProcessor.process(notification)
 
         XCTAssertFalse(mySegmentsUpdateWorker.processCalled)
+    }
+
+    func testProcessMySegmentsUpdateV2UnboundedFetchRequest() {
+        sseNotificationParser.mySegmentsUpdateV2Notification = MySegmentsUpdateV2Notification(changeNumber: -1,
+                                                                                              compressionType: .none,
+                                                                                              updateStrategy: .unboundedFetchRequest,
+                                                                                              segmentName: nil,
+                                                                                              data: nil)
+        let notification = IncomingNotification(type: .mySegmentsUpdateV2,
+                                                channel: nil,
+                                                jsonData: "",
+                                                timestamp: 1000)
+        notificationProcessor.process(notification)
+
+        XCTAssertTrue(mySegmentsUpdateV2Worker.processCalled)
+    }
+
+    func testProcessMySegmentsUpdateV2KeyListRequest() {
+        sseNotificationParser.mySegmentsUpdateV2Notification = MySegmentsUpdateV2Notification(changeNumber: -1,
+                                                                                              compressionType: .gzip,
+                                                                                              updateStrategy: .keyList,
+                                                                                              segmentName: "pepe",
+                                                                                              data: nil)
+        let notification = IncomingNotification(type: .mySegmentsUpdateV2,
+                                                channel: nil,
+                                                jsonData: "",
+                                                timestamp: 1000)
+        notificationProcessor.process(notification)
+
+        XCTAssertTrue(mySegmentsUpdateV2Worker.processCalled)
+    }
+
+    func testProcessMySegmentsUpdateV2BoundedRequest() {
+        sseNotificationParser.mySegmentsUpdateV2Notification = MySegmentsUpdateV2Notification(changeNumber: -1,
+                                                                                              compressionType: .gzip,
+                                                                                              updateStrategy: .boundedFetchRequest,
+                                                                                              segmentName: nil,
+                                                                                              data: nil)
+        let notification = IncomingNotification(type: .mySegmentsUpdateV2,
+                                                channel: nil,
+                                                jsonData: "",
+                                                timestamp: 1000)
+        notificationProcessor.process(notification)
+
+        XCTAssertTrue(mySegmentsUpdateV2Worker.processCalled)
     }
 
     override func tearDown() {
