@@ -33,7 +33,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private let userKey: String
     private let sseConnectionTimer: DispatchSourceTimer? = nil
 
-
     private let connectionQueue = DispatchQueue(label: "Sse connnection",
                                                 target: DispatchQueue.global())
 
