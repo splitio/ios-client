@@ -36,3 +36,6 @@ Carthage/
 ## Swift Package Manager
 .build/
 Split.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+## XCFramework
+Split_XCFramework/
