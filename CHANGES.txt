@@ -1,4 +1,4 @@
-2.11.5: (Sep 27, 2021)
+2.11.5: (Oct 4, 2021)
 - Updated streaming logic to implement the newest versions of our Streaming services, including:
     - Integration with the V2 of the Auth service, connecting to the new channels and applying the received connection delay.
     - Implemented handling of thew notification types for MySegmentsV2 (keyList, bounded and unbounded) 
