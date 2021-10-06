@@ -394,7 +394,7 @@
 		950B7417268F4716005FD649 /* ImpressionsMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950B7416268F4716005FD649 /* ImpressionsMode.swift */; };
 		950B743426938B5E005FD649 /* KeyImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950B743326938B5E005FD649 /* KeyImpression.swift */; };
 		950B743D2694D768005FD649 /* LegacyStorageCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950B743C2694D768005FD649 /* LegacyStorageCleaner.swift */; };
-		951D9F72260116F20069DD23 /* SplitFactoryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D9F71260116F20069DD23 /* SplitFactoryHelper.swift */; };
+		951D9F72260116F20069DD23 /* SplitDatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D9F71260116F20069DD23 /* SplitDatabaseHelper.swift */; };
 		952C2B7726447FDD009275B4 /* BlockingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7626447FDD009275B4 /* BlockingQueue.swift */; };
 		952C2B7B26449456009275B4 /* BlockingQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7A26449456009275B4 /* BlockingQueueTest.swift */; };
 		953911A8267A4F250040433A /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953911A7267A4F250040433A /* LRUCache.swift */; };
@@ -926,7 +926,7 @@
 		950B74302693761A005FD649 /* split_cache_v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v2.xcdatamodel; sourceTree = "<group>"; };
 		950B743326938B5E005FD649 /* KeyImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyImpression.swift; sourceTree = "<group>"; };
 		950B743C2694D768005FD649 /* LegacyStorageCleaner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyStorageCleaner.swift; sourceTree = "<group>"; };
-		951D9F71260116F20069DD23 /* SplitFactoryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryHelper.swift; sourceTree = "<group>"; };
+		951D9F71260116F20069DD23 /* SplitDatabaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDatabaseHelper.swift; sourceTree = "<group>"; };
 		952C2B7626447FDD009275B4 /* BlockingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueue.swift; sourceTree = "<group>"; };
 		952C2B7A26449456009275B4 /* BlockingQueueTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueueTest.swift; sourceTree = "<group>"; };
 		953911A7267A4F250040433A /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
@@ -1185,7 +1185,7 @@
 				3B6DEE8120EA6ADF0067435E /* SplitView.swift */,
 				3B6DEE7D20EA6ADF0067435E /* SplitError.swift */,
 				3B6DEE8320EA6AE00067435E /* DefaultSplitFactory.swift */,
-				951D9F71260116F20069DD23 /* SplitFactoryHelper.swift */,
+				951D9F71260116F20069DD23 /* SplitDatabaseHelper.swift */,
 				59F4AAD3251A7F4700A1C69A /* SplitApiFacade.swift */,
 				3B6DEECA20EA6AE30067435E /* SplitFactory.swift */,
 				3B6DEEE020EA6AE30067435E /* DefaultSplitManager.swift */,
@@ -2526,7 +2526,7 @@
 				95C717CD268BD549002ADB83 /* ImpressionsCountEntity.swift in Sources */,
 				9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */,
 				5905D4D82555FE74006DA3B1 /* SplitDatabase.swift in Sources */,
-				951D9F72260116F20069DD23 /* SplitFactoryHelper.swift in Sources */,
+				951D9F72260116F20069DD23 /* SplitDatabaseHelper.swift in Sources */,
 				59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */,
 				95C717C4268BB426002ADB83 /* ImpressionsCountDao.swift in Sources */,
 				955428D6256810D300331356 /* ImpressionDao.swift in Sources */,

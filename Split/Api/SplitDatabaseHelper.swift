@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct SplitFactoryHelper {
+struct SplitDatabaseHelper {
     static private let kDbMagicCharsCount = 4
     static private let kDbExt = ["", "-shm", "-wal"]
 
@@ -132,7 +132,7 @@ struct SplitFactoryHelper {
         let kSaltLength = 29
         let kSaltPrefix = "$2a$10$"
         let kCharToFillSalt = "A"
-        let sanitizedApiKey = SplitFactoryHelper.sanitizeForFolderName(apiKey)
+        let sanitizedApiKey = SplitDatabaseHelper.sanitizeForFolderName(apiKey)
         var salt = kSaltPrefix
         if sanitizedApiKey.count >= kSaltLength - kSaltPrefix.count {
             let endIndex = sanitizedApiKey.index(sanitizedApiKey.startIndex,
@@ -144,7 +144,7 @@ struct SplitFactoryHelper {
                                            count: (kSaltLength - kSaltPrefix.count) - sanitizedApiKey.count))
         }
         if let hash = JFBCrypt.hashPassword(sanitizedApiKey, withSalt: salt) {
-            return SplitFactoryHelper.sanitizeForFolderName(hash)
+            return SplitDatabaseHelper.sanitizeForFolderName(hash)
         }
         return nil
     }
