@@ -10,6 +10,7 @@ import Foundation
 
 enum GenericError: Error {
     case couldNotCreateCache
+    case apiKeyNull
     case unknown(message: String)
 }
 
@@ -19,6 +20,8 @@ extension GenericError {
         switch self {
         case .couldNotCreateCache:
             return "Error creating cache db"
+        case .apiKeyNull:
+            return "ApiKey is null. Please provide a valid one"
         case .unknown(let message):
             return message
         }

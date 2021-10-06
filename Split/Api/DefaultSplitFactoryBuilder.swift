@@ -127,24 +127,34 @@ import Foundation
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
         }
 
-        let finalKey = Key(matchingKey: matchingKey!, bucketingKey: bucketingKey)
+        let finalKey = Key(matchingKey: matchingKey ?? "", bucketingKey: bucketingKey)
 
+        guard let apiKey = apiKey else {
+            Logger.e("Api is null, please provide a valid one.")
+            return nil
+        }
         var factory: SplitFactory?
-        if apiKey?.uppercased() == kApiKeyLocalhost {
+        if apiKey.uppercased() == kApiKeyLocalhost {
             factory = LocalhostSplitFactory(key: finalKey,
                                             config: config ?? SplitClientConfig(),
                                             bundle: bundle)
         } else {
-            factory = try? DefaultSplitFactory(apiKey: apiKey!,
-                                              key: finalKey,
-                                              config: config ?? SplitClientConfig(),
-                                              httpClient: httpClient,
-                                              reachabilityChecker: reachabilityChecker,
-                                              testDatabase: testDatabase,
-                                              notificationHelper: notificationHelper)
+            do {
+                factory = try DefaultSplitFactory(apiKey: apiKey,
+                                                  key: finalKey,
+                                                  config: config ?? SplitClientConfig(),
+                                                  httpClient: httpClient,
+                                                  reachabilityChecker: reachabilityChecker,
+                                                  testDatabase: testDatabase,
+                                                  notificationHelper: notificationHelper)
+            } catch ComponentError.notFound(let name) {
+                Logger.e("Component was not created properly: \(name)")
+            } catch {
+                Logger.e("Error: \(error)")
+            }
         }
 
-        DefaultSplitFactoryBuilder.factoryMonitor.register(instance: factory, for: apiKey!)
+        DefaultSplitFactoryBuilder.factoryMonitor.register(instance: factory, for: apiKey)
         return factory
     }
 }
