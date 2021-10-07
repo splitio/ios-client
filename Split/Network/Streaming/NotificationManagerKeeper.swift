@@ -69,6 +69,9 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
                 broadcasterChannel.push(event: .pushSubsystemUp)
             }
 
+        case .streamingReset:
+            broadcasterChannel.push(event: .pushReset)
+
         case .unknown:
             Logger.w("Unknown control notification received")
         }

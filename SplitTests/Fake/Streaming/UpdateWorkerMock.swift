@@ -31,6 +31,17 @@ class MySegmentsUpdateWorkerMock: MySegmentsUpdateWorker {
     }
 }
 
+class MySegmentsUpdateV2WorkerMock: MySegmentsUpdateV2Worker {
+    var processCalled = false
+    var throwException = false
+    override func process(notification: MySegmentsUpdateV2Notification) throws {
+        if throwException {
+            throw GenericError.unknown(message: "")
+        }
+        processCalled = true
+    }
+}
+
 class SplitKillWorkerMock: SplitKillWorker {
     var processCalled = false
     var throwException = false
