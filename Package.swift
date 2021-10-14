@@ -25,7 +25,7 @@ let package = Package(
         ),
         .binaryTarget(
             name: "SplitXcFramework",
-            path: "Split.xcframework"
+            path: "Split.xcframework.zip"
         ),
         .target(
             name: "JFBCrypt",
