@@ -39,3 +39,5 @@ Split.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 
 ## XCFramework
 Split_XCFramework/
+
+Split.xcframework
