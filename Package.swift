@@ -6,7 +6,8 @@ let package = Package(
     name: "Split",
     platforms: [.iOS(.v9)],
     products: [
-        .library(name: "Split", targets: ["Split", "SplitXcFramework"])
+        .library(name: "Split", targets: ["Split"]),
+        .library(name: "SplitBinary", targets: ["SplitXcFramework"])
     ],
     dependencies: [
         .package(name: "Swifter", url: "https://github.com/httpswift/swifter.git", from: "1.5.0")
