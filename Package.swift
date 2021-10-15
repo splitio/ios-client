@@ -6,32 +6,33 @@ let package = Package(
     name: "Split",
     platforms: [.iOS(.v9)],
     products: [
-        .library(name: "Split", targets: ["Split"]),
+        // .library(name: "Split", targets: ["Split"]),
         .library(name: "SplitBinary", targets: ["SplitXcFramework"])
     ],
-    dependencies: [
-        .package(name: "Swifter", url: "https://github.com/httpswift/swifter.git", from: "1.5.0")
-    ],
+    // dependencies: [
+    //     .package(name: "Swifter", url: "https://github.com/httpswift/swifter.git", from: "1.5.0")
+    // ],
     targets: [
-        .target(
-            name: "Split",
-            dependencies: ["JFBCrypt"],
-            path: "Split",
-            exclude: [
-                "Common/Utils/JFBCrypt/",
-                "Common/Yaml/LICENSE",
-                "Info.plist",
-                "Split.h"
-            ]
-        ),
+        // .target(
+        //     name: "Split",
+        //     dependencies: ["JFBCrypt"],
+        //     path: "Split",
+        //     exclude: [
+        //         "Common/Utils/JFBCrypt/",
+        //         "Common/Yaml/LICENSE",
+        //         "Info.plist",
+        //         "Split.h"
+        //     ]
+        // ),
         .binaryTarget(
             name: "SplitXcFramework",
-            path: "Split.xcframework"
-        ),
-        .target(
-            name: "JFBCrypt",
-            path: "Split/Common/Utils/JFBCrypt",
-            publicHeadersPath: "."
+            path: "Split.xcframework",
+            dependencies: ["JFBCrypt"],
         )
+        // .target(
+        //     name: "JFBCrypt",
+        //     path: "Split/Common/Utils/JFBCrypt",
+        //     publicHeadersPath: "."
+        // )
     ]
 )
