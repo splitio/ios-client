@@ -96,7 +96,7 @@ import Foundation
 
     public func build() -> SplitFactory? {
 
-Ω        if let errorInfo = apiKeyValidator.validate(apiKey: apiKey) {
+        if let errorInfo = apiKeyValidator.validate(apiKey: apiKey) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             return nil
         }
