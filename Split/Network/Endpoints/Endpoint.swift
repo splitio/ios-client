@@ -33,7 +33,7 @@ class Endpoint {
 
         if var queryString = defaultQueryString, let from = queryString.firstIndex(of: "&") {
             let upperLimit = queryString.index(from, offsetBy: 1)
-            queryString = queryString.replacingOccurrences(of: "&", with: "?",
+            queryString = queryString.replacingOccurrences(of: "&", with: "",
                                                            options: .caseInsensitive, range: from..<upperLimit)
             comp.query = queryString
         }
