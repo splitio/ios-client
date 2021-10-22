@@ -89,8 +89,10 @@ class EndpointFactory {
     func mySegmentsEndpoint(userKey: String) -> Endpoint {
         let commonHeaders = Self.basicHeaders(apiKey: self.apiKey)
         let typeHeader = Self.typeHeader()
+        let encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? userKey
         return Endpoint
-            .builder(baseUrl: serviceEndpoints.sdkEndpoint, path: "\(EndpointsPath.mySegments)/\(userKey)")
+            .builder(baseUrl: serviceEndpoints.sdkEndpoint,
+                     encodedPath: "\(EndpointsPath.mySegments)/\(encodedUserKey)")
             .add(headers: commonHeaders).add(headers: typeHeader).build()
     }
 
