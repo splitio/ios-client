@@ -24,7 +24,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private let kReconnectTimeBeforeTokenExpInASeconds = 600
     private let kDisconnectOnBgTimeInSeconds = 60
     private let kTokenExpiredErrorCode = 40142
-    private let kSseConnDelayCheckTime: Double = 0.5 // 1/2 second
 
     private let sseAuthenticator: SseAuthenticator
     private var sseClient: SseClient
@@ -42,6 +41,8 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
 
+    var delayTimer: DelayTimer
+
     init(userKey: String, sseAuthenticator: SseAuthenticator, sseClient: SseClient,
          broadcasterChannel: PushManagerEventBroadcaster, timersManager: TimersManager) {
         self.userKey = userKey
@@ -49,6 +50,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
         self.sseClient = sseClient
         self.broadcasterChannel = broadcasterChannel
         self.timersManager = timersManager
+        self.delayTimer = DefaultTimer()
         self.timersManager.triggerHandler = timerHandler()
     }
 
@@ -60,6 +62,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func pause() {
         Logger.d("Push notification manager paused")
         isPaused.set(true)
+        delayTimer.cancel()
         isConnecting.set(false)
         sseClient.disconnect()
     }
@@ -73,6 +76,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func stop() {
         Logger.d("Push notification manager stopped")
         isStopped.set(true)
+        delayTimer.cancel()
         disconnect()
     }
 
@@ -137,7 +141,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
         let connectionDelay = result.sseConnectionDelay
 
-        if connectionDelay > 0 && !delay(connectionDelay) {
+        if connectionDelay > 0 && !delayTimer.delay(seconds: connectionDelay) {
             isConnecting.set(false)
             return
         }
@@ -147,39 +151,13 @@ class DefaultPushNotificationManager: PushNotificationManager {
             return
         }
 
+        Logger.d("Streaming connect")
         sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { success in
             if success {
                 self.handleSubsystemUp()
             }
             self.isConnecting.set(false)
         }
-    }
-
-    // This implementation is to allow checking
-    // when the component is stopped or paused easily
-    // without creating a module scoped component
-    // Using sleep will involve block the whole thread
-    // and is not a good idea
-    private func delay(_ seconds: Int64) -> Bool {
-        var cancelled = false
-        let semaphore = DispatchSemaphore(value: 0)
-        let limit = Date().unixTimestamp() + seconds
-        let timer = DispatchSource.makeTimerSource(flags: .strict, queue: DispatchQueue.global())
-        timer.schedule(deadline: .now(), repeating: kSseConnDelayCheckTime)
-        timer.resume()
-        timer.setEventHandler { [weak self] in
-            if let self = self,
-               (self.isPaused.value || self.isStopped.value) {
-                cancelled = true
-                semaphore.signal()
-                return
-            }
-            if Date().unixTimestamp() >=  limit {
-                semaphore.signal()
-            }
-        }
-        semaphore.wait()
-        return !cancelled
     }
 
     private func notifyRecoverableError(message: String) {
