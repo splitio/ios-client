@@ -14,7 +14,7 @@ class Endpoint {
     private (set) var method: HttpMethod
     private (set) var headers = [String: String]()
 
-    private  init(baseUrl: URL, path: String?, isPathEncoded: Bool = false, defaultQueryString: String? = nil) {
+    private init(baseUrl: URL, path: String?, isPathEncoded: Bool = false, defaultQueryString: String? = nil) {
 
         var comp = URLComponents()
         comp.host = baseUrl.host
@@ -33,7 +33,7 @@ class Endpoint {
 
         if var queryString = defaultQueryString, let from = queryString.firstIndex(of: "&") {
             let upperLimit = queryString.index(from, offsetBy: 1)
-            queryString = queryString.replacingOccurrences(of: "&", with: "?",
+            queryString = queryString.replacingOccurrences(of: "&", with: "",
                                                            options: .caseInsensitive, range: from..<upperLimit)
             comp.query = queryString
         }
