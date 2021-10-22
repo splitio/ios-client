@@ -1,0 +1,101 @@
+//
+// UserKeyEncondingTest.swift
+// Split
+//
+// Created by Javier L. Avrudsky on 21-Oct-2021.
+// Copyright (c) 2020 Split. All rights reserved.
+//
+
+import XCTest
+@testable import Split
+
+class UserKeyEncondingTest: XCTestCase {
+    var httpClient: HttpClient!
+    let apiKey = IntegrationHelper.dummyApiKey
+    var isSseAuthHit = false
+    var isSseHit = false
+    var streamingBinding: TestStreamResponseBinding?
+    let sseExp = XCTestExpectation(description: "Sse conn")
+    var correctUserKeyMySegments: Bool!
+    let userKey = "fake/pepe"
+    var encodedUserKey = ""
+
+    override func setUp() {
+        encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "nokey"
+        print("ENCODED: \(encodedUserKey)")
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+    }
+
+    func testKey() {
+
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 30
+        splitConfig.segmentsRefreshRate = 30
+        splitConfig.impressionRefreshRate = 30
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.eventsPerPush = 10
+        splitConfig.eventsQueueSize = 100
+        splitConfig.eventsPushRate = 5
+
+        let key: Key = Key(matchingKey: userKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
+        let factory = builder.setApiKey(apiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+
+        let client = factory.client
+
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        client.on(event: SplitEvent.sdkReadyTimedOut) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
+
+        XCTAssertTrue(correctUserKeyMySegments)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+
+    }
+
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+        return { request in
+            switch request.url.absoluteString {
+            case let(urlString) where urlString.contains("splitChanges"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+            case let(urlString) where urlString.contains("mySegments"):
+                self.correctUserKeyMySegments = urlString.contains(self.encodedUserKey)
+                print("MY SEGMENTS: \(urlString)")
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            case let(urlString) where urlString.contains("auth"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            default:
+                return TestDispatcherResponse(code: 500)
+            }
+        }
+    }
+
+    private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
+        return { request in
+            self.isSseHit = true
+            self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            self.sseExp.fulfill()
+            return self.streamingBinding!
+        }
+    }
+
+}
