@@ -22,7 +22,6 @@ class UserKeyEncondingTest: XCTestCase {
 
     override func setUp() {
         encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "nokey"
-        print("ENCODED: \(encodedUserKey)")
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -79,7 +78,6 @@ class UserKeyEncondingTest: XCTestCase {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             case let(urlString) where urlString.contains("mySegments"):
                 self.correctUserKeyMySegments = urlString.contains(self.encodedUserKey)
-                print("MY SEGMENTS: \(urlString)")
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             case let(urlString) where urlString.contains("auth"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
