@@ -84,6 +84,8 @@ private struct CompressionBase {
 
         var result = Data()
         result.append(dstBuffer, count: compCount)
+        srcBuffer.deallocate()
+        dstBuffer.deallocate()
         return result
     }
 
