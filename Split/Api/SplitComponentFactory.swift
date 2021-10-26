@@ -21,7 +21,7 @@ class SplitComponentFactory {
     private let splitClientConfig: SplitClientConfig
     private var splitsFilterQueryString = ""
 
-    private var services: [String: Any] = [:]
+    private var components: [String: Any] = [:]
 
     init(splitClientConfig: SplitClientConfig, apiKey: String, userKey: String) {
         self.splitClientConfig = splitClientConfig
@@ -32,7 +32,7 @@ class SplitComponentFactory {
     private func get<T>(for classType: T) -> Any? {
         let className = String(describing: classType.self)
         // If component exists, return it
-        return services[className]
+        return components[className]
     }
 
     // This function is implemented using generics
@@ -41,17 +41,17 @@ class SplitComponentFactory {
     // If using Any instead of T we'd get the dynamic type
     private func add<T>(component: T) {
         let className = String(describing: type(of: component))
-        services[className] = component
+        components[className] = component
     }
 
     // These two method is used to maintain more than one reference
     // to an instance of the same object
     private func add<T>(name: String, component: T) {
-        services[name] = component
+        components[name] = component
     }
 
     private func get(byName name: String) -> Any? {
-        return services[name]
+        return components[name]
     }
 
     func buildStorageContainer(databaseName: String,
