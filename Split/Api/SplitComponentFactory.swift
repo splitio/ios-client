@@ -119,8 +119,9 @@ class SplitComponentFactory {
         if let obj = get(byName: kEventsFlushCheckerName) as? RecorderFlushChecker {
             return obj
         }
-        let component = DefaultRecorderFlushChecker(maxQueueSize: Int(splitClientConfig.eventsQueueSize),
-                                                    maxQueueSizeInBytes: splitClientConfig.maxEventsQueueMemorySizeInBytes)
+        let component = DefaultRecorderFlushChecker(
+            maxQueueSize: Int(splitClientConfig.eventsQueueSize),
+            maxQueueSizeInBytes: splitClientConfig.maxEventsQueueMemorySizeInBytes)
         add(name: kImpressionsFlushCheckerName, component: component)
         return component
     }
@@ -167,8 +168,9 @@ class SplitComponentFactory {
     }
 
     func buildImpressionsSyncHelper() throws -> ImpressionsRecorderSyncHelper {
-        let component = ImpressionsRecorderSyncHelper(impressionsStorage: try getSplitStorageContainer().impressionsStorage,
-                                                      accumulator: getImpressionsRecorderFlushChecker())
+        let component = ImpressionsRecorderSyncHelper(
+            impressionsStorage: try getSplitStorageContainer().impressionsStorage,
+            accumulator: getImpressionsRecorderFlushChecker())
         add(component: component)
         return component
     }
@@ -193,13 +195,14 @@ class SplitComponentFactory {
     }
 
     func buildSynchronizer() throws -> Synchronizer {
-        let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig, splitApiFacade: try getSplitApiFacade(),
-                                            splitStorageContainer: try getSplitStorageContainer(),
-                                            syncWorkerFactory: try buildSyncWorkerFactory(),
-                                            impressionsSyncHelper: try buildImpressionsSyncHelper(),
-                                            eventsSyncHelper: try buildEventsSyncHelper(),
-                                            splitsFilterQueryString: splitsFilterQueryString,
-                                            splitEventsManager: getSplitEventsManager())
+        let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
+                                                          splitApiFacade: try getSplitApiFacade(),
+                                                          splitStorageContainer: try getSplitStorageContainer(),
+                                                          syncWorkerFactory: try buildSyncWorkerFactory(),
+                                                          impressionsSyncHelper: try buildImpressionsSyncHelper(),
+                                                          eventsSyncHelper: try buildEventsSyncHelper(),
+                                                          splitsFilterQueryString: splitsFilterQueryString,
+                                                          splitEventsManager: getSplitEventsManager())
         add(component: component)
         return component
     }
@@ -237,5 +240,4 @@ class SplitComponentFactory {
         }
         throw ComponentError.notFound(name: "Split storage container")
     }
-
 }

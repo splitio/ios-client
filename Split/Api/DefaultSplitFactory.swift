@@ -45,8 +45,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         super.init()
 
         let components = SplitComponentFactory(splitClientConfig: config,
-                                              apiKey: apiKey,
-                                              userKey: key.matchingKey)
+                                               apiKey: apiKey,
+                                               userKey: key.matchingKey)
 
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManager()
@@ -59,13 +59,14 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         SplitDatabaseHelper.renameDatabaseFromLegacyName(name: databaseName, apiKey: apiKey)
 
         let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
-                                                                  testDatabase: testDatabase)
+                                                                    testDatabase: testDatabase)
 
         LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: key.matchingKey)
 
         defaultManager = try components.getSplitManager()
-        let restClient = try components.buildRestClient(httpClient: httpClient ?? DefaultHttpClient.shared,
-                                                      reachabilityChecker: reachabilityChecker ?? ReachabilityWrapper())
+        let restClient = try components.buildRestClient(
+            httpClient: httpClient ?? DefaultHttpClient.shared,
+            reachabilityChecker: reachabilityChecker ?? ReachabilityWrapper())
 
         /// TODO: Remove this line when metrics refactor
         DefaultMetricsManager.shared.restClient = restClient
