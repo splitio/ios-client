@@ -122,7 +122,7 @@ class SplitComponentFactory {
         let component = DefaultRecorderFlushChecker(
             maxQueueSize: Int(splitClientConfig.eventsQueueSize),
             maxQueueSizeInBytes: splitClientConfig.maxEventsQueueMemorySizeInBytes)
-        add(name: kImpressionsFlushCheckerName, component: component)
+        add(name: kEventsFlushCheckerName, component: component)
         return component
     }
 
