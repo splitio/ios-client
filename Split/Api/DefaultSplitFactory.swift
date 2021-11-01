@@ -44,83 +44,47 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
          notificationHelper: NotificationHelper? = nil) throws {
         super.init()
 
-        let eventsManager = DefaultSplitEventsManager(config: config)
-        HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
-        MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate
+        let components = SplitComponentFactory(splitClientConfig: config,
+                                               apiKey: apiKey,
+                                               userKey: key.matchingKey)
 
-        config.apiKey = apiKey
-        let databaseName = SplitFactoryHelper.databaseName(apiKey: apiKey) ?? config.defaultDataFolder
-        SplitFactoryHelper.renameDatabaseFromLegacyName(name: databaseName, apiKey: apiKey)
-        let storageContainer = try SplitFactoryHelper.buildStorageContainer(
-            userKey: key.matchingKey, databaseName: databaseName, testDatabase: testDatabase)
+        // Creating Events Manager first speeds up init process
+        let eventsManager = components.getSplitEventsManager()
+
+        // Setup metrics
+        setupMetrics(splitClientConfig: config)
+
+        //
+        let databaseName = SplitDatabaseHelper.databaseName(apiKey: apiKey) ?? config.defaultDataFolder
+        SplitDatabaseHelper.renameDatabaseFromLegacyName(name: databaseName, apiKey: apiKey)
+
+        let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
+                                                                    testDatabase: testDatabase)
 
         LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: key.matchingKey)
 
-        let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)
-        defaultManager = manager
-
-        let splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
-        let  endpointFactory = EndpointFactory(serviceEndpoints: config.serviceEndpoints,
-                                               apiKey: apiKey,
-                                               splitsQueryString: splitsFilterQueryString)
-
-        let restClient = DefaultRestClient(httpClient: httpClient ?? DefaultHttpClient.shared,
-                                           endpointFactory: endpointFactory,
-                                           reachabilityChecker: reachabilityChecker ?? ReachabilityWrapper())
+        defaultManager = try components.getSplitManager()
+        let restClient = try components.buildRestClient(
+            httpClient: httpClient ?? DefaultHttpClient.shared,
+            reachabilityChecker: reachabilityChecker ?? ReachabilityWrapper())
 
         /// TODO: Remove this line when metrics refactor
         DefaultMetricsManager.shared.restClient = restClient
+        let splitApiFacade = try components.buildSplitApiFacade(testHttpClient: httpClient)
 
-        let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(key.matchingKey)
-            .setSplitConfig(config).setRestClient(restClient).setEventsManager(eventsManager)
-            .setStorageContainer(storageContainer).setSplitsQueryString(splitsFilterQueryString)
-
-        if let httpClient = httpClient {
-            _ = apiFacadeBuilder.setStreamingHttpClient(httpClient)
-        }
-
-        let apiFacade = apiFacadeBuilder.build()
-
-        let impressionsFlushChecker = DefaultRecorderFlushChecker(maxQueueSize: config.impressionsQueueSize,
-                                                                  maxQueueSizeInBytes: config.impressionsQueueSize)
-
-        let impressionsSyncHelper = ImpressionsRecorderSyncHelper(
-            impressionsStorage: storageContainer.impressionsStorage, accumulator: impressionsFlushChecker)
-
-        let eventsFlushChecker
-            = DefaultRecorderFlushChecker(maxQueueSize: Int(config.eventsQueueSize),
-                                          maxQueueSizeInBytes: config.maxEventsQueueMemorySizeInBytes)
-        let eventsSyncHelper = EventsRecorderSyncHelper(eventsStorage: storageContainer.eventsStorage,
-                                                        accumulator: eventsFlushChecker)
-
-        let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: key.matchingKey,
-                                                         splitConfig: config,
-                                                         splitsFilterQueryString: splitsFilterQueryString,
-                                                         apiFacade: apiFacade,
-                                                         storageContainer: storageContainer,
-                                                         splitChangeProcessor: DefaultSplitChangeProcessor(),
-                                                         eventsManager: eventsManager)
-
-        let synchronizer = DefaultSynchronizer(splitConfig: config, splitApiFacade: apiFacade,
-                                               splitStorageContainer: storageContainer,
-                                               syncWorkerFactory: syncWorkerFactory,
-                                               impressionsSyncHelper: impressionsSyncHelper,
-                                               eventsSyncHelper: eventsSyncHelper,
-                                               splitsFilterQueryString: splitsFilterQueryString,
-                                               splitEventsManager: eventsManager)
-
-        let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
-            .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
-            .setNotificationHelper(notificationHelper ?? DefaultNotificationHelper.instance)
-            .setSplitConfig(config).build()
+        let synchronizer = try components.buildSynchronizer()
+        let syncManager = try components.buildSyncManager(notificationHelper: notificationHelper)
 
         setupBgSync(config: config, apiKey: apiKey, userKey: key.matchingKey)
 
-        defaultClient = DefaultSplitClient(config: config, key: key, apiFacade: apiFacade,
+        defaultClient = DefaultSplitClient(config: config, key: key, apiFacade: splitApiFacade,
                                            storageContainer: storageContainer,
-                                           synchronizer: synchronizer, eventsManager: eventsManager) {
+                                           synchronizer: synchronizer, eventsManager: eventsManager) { [weak self] in
+
             syncManager.stop()
-            manager.destroy()
+            if let self = self, let manager = self.defaultManager as? Destroyable {
+                manager.destroy()
+            }
             eventsManager.stop()
             storageContainer.mySegmentsStorage.destroy()
             storageContainer.splitsStorage.destroy()
@@ -136,5 +100,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         } else {
             SplitBgSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)
         }
+    }
+
+    private func setupMetrics(splitClientConfig: SplitClientConfig) {
+        HttpSessionConfig.default.connectionTimeOut = TimeInterval(splitClientConfig.connectionTimeout)
+        MetricManagerConfig.default.pushRateInSeconds = splitClientConfig.metricsPushRate
     }
 }
