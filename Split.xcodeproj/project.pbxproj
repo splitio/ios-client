@@ -452,6 +452,9 @@
 		957E67B025F6B3E1006F5B19 /* BackgroundSyncWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */; };
 		9580C98226FB8A840021D729 /* StreamingControlResetTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9580C98126FB8A840021D729 /* StreamingControlResetTest.swift */; };
 		9580C98826FCA6400021D729 /* StreamingDelayTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9580C98726FCA6400021D729 /* StreamingDelayTest.swift */; };
+		95816FC12739CDA0004228A3 /* AttributesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95816FC02739CDA0004228A3 /* AttributesStorage.swift */; };
+		95816FC72739D274004228A3 /* AttributesStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95816FC62739D274004228A3 /* AttributesStorageTests.swift */; };
+		95816FC92739D3A4004228A3 /* PersistentAttributesStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95816FC82739D3A4004228A3 /* PersistentAttributesStorageStub.swift */; };
 		95825C022721F0F800A0CDAD /* UserKeyEncondingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95825C012721F0F800A0CDAD /* UserKeyEncondingTest.swift */; };
 		9595910526DFB1AB009E7944 /* DecompressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595910426DFB1AB009E7944 /* DecompressionTest.swift */; };
 		9595910D26DFE149009E7944 /* lorem_ipsum_zlib.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9595910C26DFE149009E7944 /* lorem_ipsum_zlib.txt */; };
@@ -995,6 +998,9 @@
 		957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundSyncWorker.swift; sourceTree = "<group>"; };
 		9580C98126FB8A840021D729 /* StreamingControlResetTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingControlResetTest.swift; sourceTree = "<group>"; };
 		9580C98726FCA6400021D729 /* StreamingDelayTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingDelayTest.swift; sourceTree = "<group>"; };
+		95816FC02739CDA0004228A3 /* AttributesStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesStorage.swift; sourceTree = "<group>"; };
+		95816FC62739D274004228A3 /* AttributesStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesStorageTests.swift; sourceTree = "<group>"; };
+		95816FC82739D3A4004228A3 /* PersistentAttributesStorageStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentAttributesStorageStub.swift; sourceTree = "<group>"; };
 		95825C012721F0F800A0CDAD /* UserKeyEncondingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserKeyEncondingTest.swift; sourceTree = "<group>"; };
 		9595910426DFB1AB009E7944 /* DecompressionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecompressionTest.swift; sourceTree = "<group>"; };
 		9595910C26DFE149009E7944 /* lorem_ipsum_zlib.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = lorem_ipsum_zlib.txt; sourceTree = "<group>"; };
@@ -1577,6 +1583,7 @@
 				955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */,
 				954F9B0E2570499700140B81 /* PersistentSplitsStorageTests.swift */,
 				5905D4E4255B2395006DA3B1 /* MySegmentsStorageTests.swift */,
+				95816FC62739D274004228A3 /* AttributesStorageTests.swift */,
 				5905D4F2255C587F006DA3B1 /* SplitsStorageTests.swift */,
 				954F9B062570309400140B81 /* SplitDaoTests.swift */,
 				954F9B0A2570431900140B81 /* GeneralInfoDaoTests.swift */,
@@ -1593,6 +1600,7 @@
 			isa = PBXGroup;
 			children = (
 				5905D4E7255B23DD006DA3B1 /* PersistentMySegmentsStorageStub.swift */,
+				95816FC82739D3A4004228A3 /* PersistentAttributesStorageStub.swift */,
 				5905D4F4255C596C006DA3B1 /* PersistentSplitsStorageStub.swift */,
 				95F3F005258D49B600084AF8 /* PersistentEventsStorageStub.swift */,
 				95F3F02B2590D8DB00084AF8 /* PersistentImpressionsStorageStub.swift */,
@@ -2155,6 +2163,7 @@
 				95DE292E2736AE7300DB3EAD /* PersistentAttributesStorage.swift */,
 				95DE293D2739737D00DB3EAD /* AttributeMap.swift */,
 				95DE29262736AE4E00DB3EAD /* AttributesDao.swift */,
+				95816FC02739CDA0004228A3 /* AttributesStorage.swift */,
 			);
 			path = Attributes;
 			sourceTree = "<group>";
@@ -2434,6 +2443,7 @@
 				95EEF7C7270E16ED00761B9D /* SplitComponentFactory.swift in Sources */,
 				5982D931219EFEF500230F44 /* CastUtils.swift in Sources */,
 				3B6DEF7220EA6AE50067435E /* RestClientConfiguration.swift in Sources */,
+				95816FC12739CDA0004228A3 /* AttributesStorage.swift in Sources */,
 				59F4AAAA2508131D00A1C69A /* SyncManager.swift in Sources */,
 				3B6DEF5120EA6AE50067435E /* UnaryNumericMatcherData.swift in Sources */,
 				3B6DEF6C20EA6AE50067435E /* LessThanOrEqualToMatcher.swift in Sources */,
@@ -2646,6 +2656,7 @@
 				59F65F0825654F44005FE8C9 /* EventDaoStub.swift in Sources */,
 				596A7B652344C1EF004F6139 /* MySegmentServerErrorTest.swift in Sources */,
 				95F3F06F25ACE20200084AF8 /* MySegmentsStorageStub.swift in Sources */,
+				95816FC72739D274004228A3 /* AttributesStorageTests.swift in Sources */,
 				5959C480228051CA0064F968 /* SplitManagerStub.swift in Sources */,
 				59F4AA9624FE800200A1C69A /* SseHandlerTest.swift in Sources */,
 				59F65F0625654EBB005FE8C9 /* PersistentEventsStorageTest.swift in Sources */,
@@ -2830,6 +2841,7 @@
 				5959C47C228050750064F968 /* SplitFactoryStub.swift in Sources */,
 				5921ED3325379AA3000D6C8B /* ReachabilityMock.swift in Sources */,
 				95649FBA2603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift in Sources */,
+				95816FC92739D3A4004228A3 /* PersistentAttributesStorageStub.swift in Sources */,
 				9580C98826FCA6400021D729 /* StreamingDelayTest.swift in Sources */,
 				59F65F04256300CA005FE8C9 /* IntegrationCoreDataHelper.swift in Sources */,
 				956D17D7260D28320037F575 /* MySegmentsChangeChecker.swift in Sources */,

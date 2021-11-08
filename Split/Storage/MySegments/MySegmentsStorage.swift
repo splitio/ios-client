@@ -18,8 +18,8 @@ protocol MySegmentsStorage {
 
 class DefaultMySegmentsStorage: MySegmentsStorage {
 
-    var inMemoryMySegments: ConcurrentSet<String>
-    let persistenStorage: PersistentMySegmentsStorage
+    private var inMemoryMySegments: ConcurrentSet<String>
+    private let persistenStorage: PersistentMySegmentsStorage
 
     init(persistentMySegmentsStorage: PersistentMySegmentsStorage) {
         persistenStorage = persistentMySegmentsStorage
