@@ -15,14 +15,11 @@ class IntegrationCoreDataHelper  {
     static func get(databaseName: String, dispatchQueue: DispatchQueue) -> CoreDataHelper {
         let sempaphore = DispatchSemaphore(value: 0)
         guard let modelUrl = Bundle(for: CoreDataHelper.self).url(forResource: "split_cache",
-                                                                                          withExtension: "momd") else {
-                                                                                            print("e")
+                                                                  withExtension: "momd") else {
+            print("e")
             fatalError("Error loading model from bundle")
 
         }
-//        guard let modelUrl = Bundle.main.url(forResource: "dcmodel", withExtension: "momd") else {
-//            fatalError("Error loading model from bundle")
-//        }
 
         guard let modelFile = NSManagedObjectModel(contentsOf: modelUrl) else {
             fatalError("Error initializing mom from: \(modelUrl)")

@@ -1,9 +1,9 @@
 //
-//  MySegmentsDaoTests.swift
+//  AttributesDaoTests.swift
 //  SplitTests
 //
-//  Created by Javier Avrudsky on 27/11/2020.
-//  Copyright © 2020 Split. All rights reserved.
+//  Created by Javier Avrudsky on 8/11/2021.
+//  Copyright © 2021 Split. All rights reserved.
 //
 
 import Foundation
@@ -11,33 +11,54 @@ import Foundation
 import XCTest
 @testable import Split
 
-class MySegmentsDaoTests: XCTestCase {
+class AttributesDaoTests: XCTestCase {
     
-    var mySegmentsDao: MySegmentsDao!
+    var attributesDao: AttributesDao!
+
+    let attributes: [String: Any] = ["att1": "se1",
+                                     "att2": true,
+                                     "att3": 1]
     
     override func setUp() {
-        let queue = DispatchQueue(label: "my segments dao test")
-        mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
+        let queue = DispatchQueue(label: "my attributes dao test")
+        attributesDao = CoreDataAttributesDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
                                                                                   dispatchQueue: queue))
     }
     
     func testUpdateGet() {
+
         let userKey = "ukey"
-        mySegmentsDao.update(userKey: userKey, segmentList: ["s1", "s2"])
+        attributesDao.update(userKey: userKey, attributes: self.attributes)
         
-        let mySegments = mySegmentsDao.getBy(userKey: userKey)
+        let attributes = attributesDao.getBy(userKey: userKey)!
         
-        XCTAssertEqual(2, mySegments.count)
-        XCTAssertEqual(1, mySegments.filter { $0 == "s1" }.count)
-        XCTAssertEqual(1, mySegments.filter { $0 == "s2" }.count)
+        XCTAssertEqual(3, attributes.count)
+        XCTAssertEqual("se1", attributes["att1"] as! String)
+        XCTAssertEqual(true, attributes["att2"] as! Bool)
+        XCTAssertEqual(1, attributes["att3"] as! Int)
     }
     
     func testGetInvalidKey() {
         let userKey = "ukey"
         
-        let mySegments = mySegmentsDao.getBy(userKey: userKey)
+        let attributes = attributesDao.getBy(userKey: userKey)
         
-        XCTAssertEqual(0, mySegments.count)
+        XCTAssertNil(attributes)
+    }
+
+    func testRemoveAll() {
+
+        let userKey = "ukey"
+        attributesDao.update(userKey: userKey, attributes: self.attributes)
+
+        let attributes = attributesDao.getBy(userKey: userKey)!
+
+        attributesDao.update(userKey: userKey, attributes: nil)
+
+        let attributesCleared = attributesDao.getBy(userKey: userKey)
+
+        XCTAssertEqual(3, attributes.count)
+        XCTAssertNil(attributesCleared)
     }
     
     override func tearDown() {
