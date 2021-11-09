@@ -12,7 +12,8 @@ struct SplitDatabaseHelper {
     static private let kDbMagicCharsCount = 4
     static private let kDbExt = ["", "-shm", "-wal"]
 
-    static func buildStorageContainer(userKey: String,
+    static func buildStorageContainer(splitClientConfig
+        userKey: String,
                                       databaseName: String,
                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
 
@@ -66,6 +67,11 @@ struct SplitDatabaseHelper {
         return DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
     }
 
+    static func openPersistentAttributesStorage(database: SplitDatabase,
+                                                userKey: String) -> PersistentAttributesStorage {
+        return DefaultPersistentAttributesStorage(userKey: userKey, database: database)
+    }
+
     static func openImpressionsStorage(database: SplitDatabase) -> PersistentImpressionsStorage {
         return DefaultImpressionsStorage(database: database,
                                          expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
@@ -79,6 +85,13 @@ struct SplitDatabaseHelper {
     static func openEventsStorage(database: SplitDatabase) -> PersistentEventsStorage {
         return DefaultEventsStorage(database: database,
                                          expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+    }
+
+    static func openAttributesStorage(database: SplitDatabase,
+                                      userKey: String,
+                                      splitClientConfig: SplitClientConfig) -> MySegmentsStorage {
+        let persistentAttributesStorage = openPersistentAttributesStorage(database: database, userKey: userKey)
+        return DefaultAttributesStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
     }
 
     static func databaseName(apiKey: String) -> String? {
