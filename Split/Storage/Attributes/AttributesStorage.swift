@@ -21,22 +21,22 @@ protocol AttributesStorage {
 class DefaultAttributesStorage: AttributesStorage {
 
     private let inMemoryAttributes: SyncDictionarySingleWrapper<String, Any>
-    private let persistenStorage: PersistentAttributesStorage
+    private let persistenStorage: PersistentAttributesStorage?
 
-    init(persistentAttributesStorage: PersistentAttributesStorage) {
+    init(persistentAttributesStorage: PersistentAttributesStorage?) {
         persistenStorage = persistentAttributesStorage
         inMemoryAttributes = SyncDictionarySingleWrapper<String, Any>()
     }
 
     func loadLocal() {
-        if let attributes = persistenStorage.getAll() {
+        if let attributes = persistenStorage?.getAll() {
             inMemoryAttributes.setValues(attributes)
         }
     }
 
     func set(_ attributes: [String: Any]) {
         inMemoryAttributes.setValues(attributes)
-        persistenStorage.set(attributes)
+        persistenStorage?.set(attributes)
     }
 
     func get(for key: String) -> Any? {
@@ -49,12 +49,12 @@ class DefaultAttributesStorage: AttributesStorage {
 
     func set(value: Any, for key: String) {
         inMemoryAttributes.setValue(value, forKey: key)
-        persistenStorage.set(inMemoryAttributes.all)
+        persistenStorage?.set(inMemoryAttributes.all)
     }
 
     func clear() {
         inMemoryAttributes.removeAll()
-        persistenStorage.clear()
+        persistenStorage?.clear()
     }
 
     func destroy() {
