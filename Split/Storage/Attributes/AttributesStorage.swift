@@ -11,10 +11,10 @@ import Foundation
 protocol AttributesStorage {
     func loadLocal()
     func set(_ attributes: [String: Any])
-    func set(value: Any, key: String)
+    func set(value: Any, name: String)
     func getAll() -> [String: Any]
-    func get(key: String) -> Any?
-    func remove(key: String)
+    func get(name: String) -> Any?
+    func remove(name: String)
     func clear()
     func destroy()
 }
@@ -44,17 +44,17 @@ class DefaultAttributesStorage: AttributesStorage {
         return inMemoryAttributes.all
     }
 
-    func get(key: String) -> Any? {
-        return inMemoryAttributes.value(forKey: key)
+    func get(name: String) -> Any? {
+        return inMemoryAttributes.value(forKey: name)
     }
 
-    func remove(key: String) {
-        inMemoryAttributes.removeValue(forKey: key)
+    func remove(name: String) {
+        inMemoryAttributes.removeValue(forKey: name)
         persistenStorage?.set(inMemoryAttributes.all)
     }
 
-    func set(value: Any, key: String) {
-        inMemoryAttributes.setValue(value, forKey: key)
+    func set(value: Any, name: String) {
+        inMemoryAttributes.setValue(value, forKey: name)
         persistenStorage?.set(inMemoryAttributes.all)
     }
 
