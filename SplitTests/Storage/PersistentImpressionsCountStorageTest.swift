@@ -22,7 +22,8 @@ class PersistentImpressionsCountStorageTests: XCTestCase {
                                                                          impressionsCountDao: countDao,
                                                                          generalInfoDao: GeneralInfoDaoStub(),
                                                                          splitDao: SplitDaoStub(),
-                                                                         mySegmentsDao: MySegmentsDaoStub()), expirationPeriod: 100)
+                                                                         mySegmentsDao: MySegmentsDaoStub(),
+                                                                         attributesDao: AttributesDaoStub()), expirationPeriod: 100)
 
     }
 
