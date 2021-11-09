@@ -227,15 +227,17 @@ extension DefaultSplitClient {
 extension DefaultSplitClient {
 
     public func setAttribute(name: String, value: Any) -> Bool {
-
+        attributesStorage.set(value: value, for: name)
+        return true
     }
 
     public func getAttribute(name: String) -> Any? {
-
+        attributesStorage.get(for: name)
     }
 
     public func setAttributes(_ values: [String: Any]) -> Bool {
-
+        attributesStorage.set(values)
+        return true
     }
 
     public func getAttributes() -> [String: Any]? {
@@ -243,11 +245,13 @@ extension DefaultSplitClient {
     }
 
     public func removeAttribute(name: String) -> Bool {
-        
+        attributesStorage.remove(key: name)
+        return true
     }
 
     public func clearAttributes() -> Bool {
-
+        attributesStorage.clear()
+        return true
     }
 }
 
