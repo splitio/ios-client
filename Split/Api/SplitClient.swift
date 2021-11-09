@@ -44,7 +44,7 @@ public typealias SplitAction = () -> Void
     func setAttributes(_ values: [String: Any]) -> Bool
 
     /// Retrieve the full attributes map
-    func getAttributes() -> [String: Any]
+    func getAttributes() -> [String: Any]?
 
     /// Removes a given attribute from the map
     func removeAttribute(name: String) -> Bool

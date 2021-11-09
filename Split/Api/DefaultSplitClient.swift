@@ -20,7 +20,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         return storageContainer.mySegmentsStorage
     }
 
-    fileprivate var attributesStorage: AttributesStorage? {
+    fileprivate var attributesStorage: AttributesStorage {
         return storageContainer.attributesStorage
     }
 
@@ -226,27 +226,27 @@ extension DefaultSplitClient {
 // MARK: Persistent attributes feature
 extension DefaultSplitClient {
 
-    func setAttribute(name: String, value: Any) -> Bool {
+    public func setAttribute(name: String, value: Any) -> Bool {
 
     }
 
-    func getAttribute(name: String) -> Any? {
+    public func getAttribute(name: String) -> Any? {
 
     }
 
-    func setAttributes(_ values: [String: Any]) -> Bool {
+    public func setAttributes(_ values: [String: Any]) -> Bool {
 
     }
 
-    func getAttributes() -> [String: Any] {
-
+    public func getAttributes() -> [String: Any]? {
+        attributesStorage.getAll()
     }
 
-    func removeAttribute(name: String) -> Bool {
-
+    public func removeAttribute(name: String) -> Bool {
+        
     }
 
-    func clearAttributes() -> Bool {
+    public func clearAttributes() -> Bool {
 
     }
 }
