@@ -41,19 +41,9 @@ class EventDTO: DynamicCodable {
         // Workaround to avoid lost of precision of Decimal(double:) constructor
         jsonObject["value"] = Decimal(string: String(value ?? 0))
         jsonObject["timestamp"] = timestamp
-        var parsedProps: [String: Any]?
         if let properties = properties {
-            parsedProps = [String: Any]()
-            for (propKey, propValue) in properties {
-                // Workaround to avoid lost of precision of Decimal(double:) constructor
-                if !(propValue is Bool || propValue is String), let doubleValue = propValue as? Double {
-                    parsedProps?[propKey] = Decimal(string: String(doubleValue))
-                } else {
-                    parsedProps?[propKey] = propValue
-                }
-            }
+            jsonObject["properties"] = CastUtils.fixDoublePrecisionIssue(values: properties)
         }
-        jsonObject["properties"] = parsedProps
         return jsonObject
     }
 }
