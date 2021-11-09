@@ -25,17 +25,7 @@ class AttributeMap: DynamicCodable {
 
     func toJsonObject() -> Any {
         var jsonObject = [String: Any]()
-        var parsedAttributes: [String: Any]?
-        parsedAttributes = [String: Any]()
-        for (propKey, propValue) in attributes {
-            // Workaround to avoid lost of precision of Decimal(double:) constructor
-            if !(propValue is Bool || propValue is String), let doubleValue = propValue as? Double {
-                parsedAttributes?[propKey] = Decimal(string: String(doubleValue))
-            } else {
-                parsedAttributes?[propKey] = propValue
-            }
-        }
-        jsonObject["attributes"] = parsedAttributes
+        jsonObject["attributes"] = CastUtils.fixDoublePrecisionIssue(values: attributes)
         return jsonObject
     }
 }

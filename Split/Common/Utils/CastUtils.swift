@@ -1,5 +1,5 @@
 //
-//  Any+Extensions.swift
+//  CastUtils.swift
 //  Split
 //
 //  Created by Javier L. Avrudsky on 16/11/2018.
@@ -19,5 +19,18 @@ class CastUtils {
             }
         }
         return nil
+    }
+
+    static func fixDoublePrecisionIssue(values: [String: Any]) -> [String: Any] {
+        var parsedValues = [String: Any]()
+        for (key, value) in values {
+            // Workaround to avoid lost of precision of Decimal(double:) constructor
+            if !(value is Bool || value is String), let doubleValue = value as? Double {
+                parsedValues[key] = Decimal(string: String(doubleValue))
+            } else {
+                parsedValues[key] = value
+            }
+        }
+        return parsedValues
     }
 }
