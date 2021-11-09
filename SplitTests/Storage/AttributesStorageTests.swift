@@ -81,6 +81,24 @@ class AttributesStorageTests: XCTestCase {
         XCTAssertEqual(0, persistedAttributes.count)
     }
 
+    func testRemove() {
+        persistentStorage.attributes = testAttributes
+        attributesStorage.loadLocal()
+        attributesStorage.remove(key: "att1")
+        let attributes = attributesStorage.getAll()
+        let persistedAttributes = persistentStorage.getAll()!
+
+        XCTAssertEqual(2, attributes.count)
+        XCTAssertNil(attributes["att1"])
+        XCTAssertEqual(true, attributes["att2"] as! Bool)
+        XCTAssertEqual(1, attributes["att3"] as! Int)
+
+        XCTAssertEqual(2, persistedAttributes.count)
+        XCTAssertNil(persistedAttributes["att1"])
+        XCTAssertEqual(true, persistedAttributes["att2"] as! Bool)
+        XCTAssertEqual(1, persistedAttributes["att3"] as! Int)
+    }
+
     func testClear() {
         persistentStorage.attributes = testAttributes
         attributesStorage.loadLocal()

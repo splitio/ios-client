@@ -14,6 +14,7 @@ protocol AttributesStorage {
     func set(value: Any, for key: String)
     func getAll() -> [String: Any]
     func get(for key: String) -> Any?
+    func remove(key: String)
     func clear()
     func destroy()
 }
@@ -39,12 +40,17 @@ class DefaultAttributesStorage: AttributesStorage {
         persistenStorage?.set(attributes)
     }
 
+    func getAll() -> [String: Any] {
+        return inMemoryAttributes.all
+    }
+
     func get(for key: String) -> Any? {
         return inMemoryAttributes.value(forKey: key)
     }
 
-    func getAll() -> [String: Any] {
-        return inMemoryAttributes.all
+    func remove(key: String) {
+        inMemoryAttributes.removeValue(forKey: key)
+        persistenStorage?.set(inMemoryAttributes.all)
     }
 
     func set(value: Any, for key: String) {
