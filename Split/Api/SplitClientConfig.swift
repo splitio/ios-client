@@ -242,8 +242,10 @@ public class SplitClientConfig: NSObject {
 
     ///
     /// Make it mutable to allow testing (Default: false)
-    /// Enables persistent storage for common attributes  given by the user during the SDK lifecycle to use them in every evaluation.
-    /// If this flags is set to false, attributes will be stored in memory only and their values will be lost in SDK detroy.
+    /// Enables persistent storage for common attributes  given by the user during the SDK
+    /// lifecycle to use them in every evaluation.
+    /// If this flags is set to false, attributes will be stored in memory only and their values
+    ///  will be lost in SDK detroy.
     ///
     var enableStoredAttributes = false
 

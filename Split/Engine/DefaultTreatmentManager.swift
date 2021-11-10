@@ -19,6 +19,7 @@ class DefaultTreatmentManager: TreatmentManager {
     private let validationLogger: ValidationMessageLogger
     private let evaluator: Evaluator
     private let splitConfig: SplitClientConfig
+    private let attributesStorage: AttributesStorage
     private var isDestroyed = false
 
     init(evaluator: Evaluator,
@@ -27,6 +28,7 @@ class DefaultTreatmentManager: TreatmentManager {
          eventsManager: SplitEventsManager,
          impressionLogger: ImpressionLogger,
          metricsManager: DefaultMetricsManager,
+         attributesStorage: AttributesStorage,
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
          validationLogger: ValidationMessageLogger) {
@@ -37,16 +39,19 @@ class DefaultTreatmentManager: TreatmentManager {
         self.eventsManager = eventsManager
         self.impressionLogger = impressionLogger
         self.metricsManager = metricsManager
+        self.attributesStorage = attributesStorage
         self.keyValidator = keyValidator
         self.splitValidator = splitValidator
         self.validationLogger = validationLogger
     }
 
     func getTreatmentWithConfig(_ splitName: String, attributes: [String: Any]?) -> SplitResult {
+
+        let mergedAttributes = mergeAttributes(attributes: attributes)
         let timeMetricStart = Date().unixTimestampInMicroseconds()
         let result = getTreatmentWithConfigNoMetrics(splitName: splitName,
                                                      shouldValidate: true,
-                                                     attributes: attributes,
+                                                     attributes: mergedAttributes,
                                                      validationTag: ValidationTag.getTreatmentWithConfig)
         metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
                             for: Metrics.Time.getTreatmentWithConfig)
@@ -113,11 +118,12 @@ class DefaultTreatmentManager: TreatmentManager {
         }
 
         if splits.count > 0 {
+            let mergedAttributes = mergeAttributes(attributes: attributes)
             let splitsNoDuplicated = Set(splits.filter { !$0.isEmpty() }.map { $0 })
             for splitName in splitsNoDuplicated {
                 results[splitName] = getTreatmentWithConfigNoMetrics(splitName: splitName,
                                                                      shouldValidate: false,
-                                                                     attributes: attributes,
+                                                                     attributes: mergedAttributes,
                                                                      validationTag: validationTag)
             }
         } else {
@@ -203,11 +209,24 @@ class DefaultTreatmentManager: TreatmentManager {
             eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady)
     }
 
-    func checkAndLogIfDestroyed(logTag: String) -> Bool {
+    private func checkAndLogIfDestroyed(logTag: String) -> Bool {
         if isDestroyed {
             validationLogger.e(message: "Client has already been destroyed - no calls possible", tag: logTag)
         }
         return isDestroyed
     }
 
+    private func mergeAttributes(attributes: [String: Any]?) -> [String: Any]? {
+        let storedAttributes = attributesStorage.getAll()
+
+        if storedAttributes.count == 0 {
+            return attributes
+        }
+
+        guard let attributes = attributes else {
+            return storedAttributes
+        }
+
+        return attributes.merging(storedAttributes) { (current, _) in current }
+    }
 }

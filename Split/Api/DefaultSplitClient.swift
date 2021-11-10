@@ -35,6 +35,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private let validationLogger: ValidationMessageLogger
     private var treatmentManager: TreatmentManager!
     private var factoryDestroyHandler: DestroyHandler
+    private let anyValueValidator: AnyValueValidator
     private var isClientDestroyed = false
 
     init(config: SplitClientConfig,
@@ -53,12 +54,14 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         self.validationLogger = DefaultValidationMessageLogger()
         self.eventsManager = eventsManager
         self.storageContainer = storageContainer
+        self.anyValueValidator = DefaultAnyValidator()
 
         super.init()
 
         self.treatmentManager = DefaultTreatmentManager(
             evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager,
             impressionLogger: synchronizer, metricsManager: DefaultMetricsManager.shared,
+            attributesStorage: storageContainer.attributesStorage,
             keyValidator: DefaultKeyValidator(),
             splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
             validationLogger: validationLogger)
@@ -183,7 +186,7 @@ extension DefaultSplitClient {
             }
 
             for (prop, value) in props {
-                if !isPropertyValid(value: value) {
+                if !anyValueValidator.isPrimitiveValue(value: value) {
                     validatedProps![prop] = NSNull()
                 }
 
@@ -207,14 +210,6 @@ extension DefaultSplitClient {
         return true
     }
 
-    private func isPropertyValid(value: Any) -> Bool {
-        return !(
-            value as? String == nil &&
-            value as? Int == nil &&
-            value as? Double == nil &&
-            value as? Float == nil &&
-            value as? Bool == nil)
-    }
     private func estimateSize(for value: String?) -> Int {
         if let value = value {
             return MemoryLayout.size(ofValue: value) * value.count
@@ -227,6 +222,9 @@ extension DefaultSplitClient {
 extension DefaultSplitClient {
 
     public func setAttribute(name: String, value: Any) -> Bool {
+        if !isValidAttribute(value) {
+            return false
+        }
         attributesStorage.set(value: value, for: name)
         return true
     }
@@ -236,6 +234,11 @@ extension DefaultSplitClient {
     }
 
     public func setAttributes(_ values: [String: Any]) -> Bool {
+        for (_, value) in values {
+            if !isValidAttribute(value) {
+                return false
+            }
+        }
         attributesStorage.set(values)
         return true
     }
@@ -252,6 +255,11 @@ extension DefaultSplitClient {
     public func clearAttributes() -> Bool {
         attributesStorage.clear()
         return true
+    }
+
+    private func isValidAttribute(_ value: Any) -> Bool {
+        return anyValueValidator.isPrimitiveValue(value: value) ||
+            anyValueValidator.isList(value: value)
     }
 }
 

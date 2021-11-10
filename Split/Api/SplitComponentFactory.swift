@@ -56,10 +56,11 @@ class SplitComponentFactory {
 
     func buildStorageContainer(databaseName: String,
                                testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
-        let component: SplitStorageContainer = try SplitDatabaseHelper.buildStorageContainer(splitClientConfig: splitClientConfig,
-                                                                                             userKey: userKey,
-                                                                                             databaseName: databaseName,
-                                                                                             testDatabase: testDatabase)
+        let component: SplitStorageContainer =
+            try SplitDatabaseHelper.buildStorageContainer(splitClientConfig: splitClientConfig,
+                                                          userKey: userKey,
+                                                          databaseName: databaseName,
+                                                          testDatabase: testDatabase)
         add(component: component)
         return component
     }
