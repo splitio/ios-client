@@ -13,7 +13,7 @@ protocol AnyValueValidator {
     func isList(value: Any) -> Bool
 }
 
-struct DefaultAnyValidator: AnyValueValidator {
+struct DefaultAnyValueValidator: AnyValueValidator {
     func isPrimitiveValue(value: Any) -> Bool {
         return !(
             value as? String == nil &&

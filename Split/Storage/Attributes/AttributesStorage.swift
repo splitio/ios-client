@@ -24,7 +24,7 @@ class DefaultAttributesStorage: AttributesStorage {
     private let inMemoryAttributes: SyncDictionarySingleWrapper<String, Any>
     private let persistenStorage: PersistentAttributesStorage?
 
-    init(persistentAttributesStorage: PersistentAttributesStorage?) {
+    init(persistentAttributesStorage: PersistentAttributesStorage? = nil) {
         persistenStorage = persistentAttributesStorage
         inMemoryAttributes = SyncDictionarySingleWrapper<String, Any>()
     }

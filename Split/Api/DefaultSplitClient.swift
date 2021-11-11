@@ -54,7 +54,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         self.validationLogger = DefaultValidationMessageLogger()
         self.eventsManager = eventsManager
         self.storageContainer = storageContainer
-        self.anyValueValidator = DefaultAnyValidator()
+        self.anyValueValidator = DefaultAnyValueValidator()
 
         super.init()
 
@@ -223,6 +223,7 @@ extension DefaultSplitClient {
 
     public func setAttribute(name: String, value: Any) -> Bool {
         if !isValidAttribute(value) {
+            logInvalidAttribute(name: name)
             return false
         }
         attributesStorage.set(value: value, for: name)
@@ -234,8 +235,9 @@ extension DefaultSplitClient {
     }
 
     public func setAttributes(_ values: [String: Any]) -> Bool {
-        for (_, value) in values {
+        for (name, value) in values {
             if !isValidAttribute(value) {
+                logInvalidAttribute(name: name)
                 return false
             }
         }
@@ -260,6 +262,11 @@ extension DefaultSplitClient {
     private func isValidAttribute(_ value: Any) -> Bool {
         return anyValueValidator.isPrimitiveValue(value: value) ||
             anyValueValidator.isList(value: value)
+    }
+
+    private func logInvalidAttribute(name: String) {
+        Logger.i("Invalid attribute value for evaluation: \(name). " +
+                    "Types allowed are String, Number, Boolean and List")
     }
 }
 

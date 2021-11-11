@@ -162,15 +162,15 @@ class DefaultTreatmentManager: TreatmentManager {
         }
 
         let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
-
+        let mergedAttributes = mergeAttributes(attributes: attributes)
         do {
-            let result = try evaluateIfReady(splitName: trimmedSplitName, attributes: attributes)
+            let result = try evaluateIfReady(splitName: trimmedSplitName, attributes: mergedAttributes)
             logImpression(label: result.label, changeNumber: result.changeNumber,
-                          treatment: result.treatment, splitName: trimmedSplitName, attributes: attributes)
+                          treatment: result.treatment, splitName: trimmedSplitName, attributes: mergedAttributes)
             return SplitResult(treatment: result.treatment, config: result.configuration)
         } catch {
             logImpression(label: ImpressionsConstants.exception, treatment: SplitConstants.control,
-                          splitName: trimmedSplitName, attributes: attributes)
+                          splitName: trimmedSplitName, attributes: mergedAttributes)
             return SplitResult(treatment: SplitConstants.control)
         }
     }
