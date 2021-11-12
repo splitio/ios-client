@@ -96,7 +96,7 @@ struct SplitDatabaseHelper {
                                       userKey: String,
                                       splitClientConfig: SplitClientConfig) -> AttributesStorage {
         return DefaultAttributesStorage(
-            persistentAttributesStorage: splitClientConfig.enableStoredAttributes ?
+            persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
                 openPersistentAttributesStorage(database: database, userKey: userKey) : nil
         )
     }

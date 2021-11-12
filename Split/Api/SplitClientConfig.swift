@@ -247,6 +247,6 @@ public class SplitClientConfig: NSObject {
     /// If this flags is set to false, attributes will be stored in memory only and their values
     ///  will be lost in SDK detroy.
     ///
-    var enableStoredAttributes = false
+    var persistentAttributesEnabled = false
 
 }

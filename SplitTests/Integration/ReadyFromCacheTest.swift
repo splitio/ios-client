@@ -363,6 +363,14 @@ class ReadyFromCacheTest: XCTestCase {
     }
 
     func testPersistentAttributesEnabled() {
+        persistentAttributes(enabled: true, treatment: "ta1")
+    }
+
+    func testPersistentAttributesDisabled() {
+        persistentAttributes(enabled: false, treatment: "on")
+    }
+
+    func persistentAttributes(enabled: Bool, treatment: String) {
         loadChangesAttr()
         let userKey = "otherKey"
         // When splits and connection available, ready from cache and Ready should be fired
@@ -375,7 +383,7 @@ class ReadyFromCacheTest: XCTestCase {
                                                           streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
-        splitConfig.enableStoredAttributes = true
+        splitConfig.persistentAttributesEnabled = enabled
 
         let readyExp = XCTestExpectation()
         let cacheReadyExp = XCTestExpectation()
@@ -409,18 +417,16 @@ class ReadyFromCacheTest: XCTestCase {
         }
 
         wait(for: [cacheReadyExp], timeout: 1)
-        let treatmentCache = client.getTreatment("split1", attributes: ["isEnabled": true])
+        let treatmentCache = client.getTreatment("split1")
 
         globalCacheReadyFired.set(true)
 
         ThreadUtils.delay(seconds: 5)
         wait(for: [readyExp], timeout: 3)
-        let treatmentReady = client.getTreatment(splitName)
 
         XCTAssertTrue(cacheReadyFired)
         XCTAssertTrue(readyFired)
-        XCTAssertEqual("ta1", treatmentCache)
-        XCTAssertEqual("on1", treatmentReady)
+        XCTAssertEqual(treatment, treatmentCache)
     }
 
     private func getChanges(for hitNumber: Int) -> Data {
