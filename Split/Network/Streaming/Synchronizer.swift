@@ -15,6 +15,7 @@ protocol ImpressionLogger {
 protocol Synchronizer: ImpressionLogger {
     func loadAndSynchronizeSplits()
     func loadMySegmentsFromCache()
+    func loadAttributesFromCache()
     func syncAll()
     func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
@@ -130,6 +131,13 @@ class DefaultSynchronizer: Synchronizer {
         DispatchQueue.global().async {
             self.splitStorageContainer.mySegmentsStorage.loadLocal()
             self.splitEventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
+        }
+    }
+
+    func loadAttributesFromCache() {
+        DispatchQueue.global().async {
+            self.splitStorageContainer.attributesStorage.loadLocal()
+            self.splitEventsManager.notifyInternalEvent(.attributesLoadedFromCache)
         }
     }
 

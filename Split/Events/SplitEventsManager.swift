@@ -145,8 +145,10 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 }
                 self.triggerSdkReadyIfNeeded()
 
-            case .mySegmentsLoadedFromCache, .splitsLoadedFromCache:
-                if isTriggered(internal: .splitsLoadedFromCache), isTriggered(internal: .mySegmentsLoadedFromCache) {
+            case .mySegmentsLoadedFromCache, .splitsLoadedFromCache, .attributesLoadedFromCache:
+                if isTriggered(internal: .splitsLoadedFromCache),
+                   isTriggered(internal: .mySegmentsLoadedFromCache),
+                   isTriggered(internal: .attributesLoadedFromCache) {
                     trigger(event: SplitEvent.sdkReadyFromCache)
                 }
             case .splitKilledNotification:
