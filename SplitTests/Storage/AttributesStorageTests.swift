@@ -84,7 +84,7 @@ class AttributesStorageTests: XCTestCase {
     func testRemove() {
         persistentStorage.attributes = testAttributes
         attributesStorage.loadLocal()
-        attributesStorage.remove(key: "att1")
+        attributesStorage.remove(name: "att1")
         let attributes = attributesStorage.getAll()
         let persistedAttributes = persistentStorage.getAll()!
 
