@@ -22,22 +22,22 @@ protocol AttributesStorage {
 class DefaultAttributesStorage: AttributesStorage {
 
     private let inMemoryAttributes: SyncDictionarySingleWrapper<String, Any>
-    private let persistenStorage: PersistentAttributesStorage?
+    private let persistentStorage: PersistentAttributesStorage?
 
     init(persistentAttributesStorage: PersistentAttributesStorage? = nil) {
-        persistenStorage = persistentAttributesStorage
+        persistentStorage = persistentAttributesStorage
         inMemoryAttributes = SyncDictionarySingleWrapper<String, Any>()
     }
 
     func loadLocal() {
-        if let attributes = persistenStorage?.getAll() {
+        if let attributes = persistentStorage?.getAll() {
             inMemoryAttributes.setValues(attributes)
         }
     }
 
     func set(_ attributes: [String: Any]) {
         inMemoryAttributes.setValues(attributes)
-        persistenStorage?.set(attributes)
+        persistentStorage?.set(attributes)
     }
 
     func getAll() -> [String: Any] {
@@ -50,17 +50,17 @@ class DefaultAttributesStorage: AttributesStorage {
 
     func remove(key: String) {
         inMemoryAttributes.removeValue(forKey: key)
-        persistenStorage?.set(inMemoryAttributes.all)
+        persistentStorage?.set(inMemoryAttributes.all)
     }
 
     func set(value: Any, for key: String) {
         inMemoryAttributes.setValue(value, forKey: key)
-        persistenStorage?.set(inMemoryAttributes.all)
+        persistentStorage?.set(inMemoryAttributes.all)
     }
 
     func clear() {
         inMemoryAttributes.removeAll()
-        persistenStorage?.clear()
+        persistentStorage?.clear()
     }
 
     func destroy() {
