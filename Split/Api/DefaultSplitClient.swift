@@ -226,12 +226,12 @@ extension DefaultSplitClient {
             logInvalidAttribute(name: name)
             return false
         }
-        attributesStorage.set(value: value, for: name)
+        attributesStorage.set(value: value, name: name)
         return true
     }
 
     public func getAttribute(name: String) -> Any? {
-        attributesStorage.get(for: name)
+        attributesStorage.get(name: name)
     }
 
     public func setAttributes(_ values: [String: Any]) -> Bool {
@@ -250,7 +250,7 @@ extension DefaultSplitClient {
     }
 
     public func removeAttribute(name: String) -> Bool {
-        attributesStorage.remove(key: name)
+        attributesStorage.remove(name: name)
         return true
     }
 
