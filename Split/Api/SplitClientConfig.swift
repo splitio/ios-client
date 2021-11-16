@@ -237,7 +237,16 @@ public class SplitClientConfig: NSObject {
 
     var finalImpressionsMode: ImpressionsMode = .optimized
 
-    // Make it mutable to allow testing
+    /// Make it mutable to allow testing
     var impressionsCountsRefreshRate = 1800
+
+    ///
+    /// Make it mutable to allow testing (Default: false)
+    /// Enables persistent storage for common attributes  given by the user during the SDK
+    /// lifecycle to use them in every evaluation.
+    /// If this flags is set to false, attributes will be stored in memory only and their values
+    ///  will be lost in SDK detroy.
+    ///
+    var persistentAttributesEnabled = false
 
 }

@@ -362,6 +362,73 @@ class ReadyFromCacheTest: XCTestCase {
         XCTAssertEqual(1000, receivedChangeNumber[2])
     }
 
+    func testPersistentAttributesEnabled() {
+        persistentAttributes(enabled: true, treatment: "ta1")
+    }
+
+    func testPersistentAttributesDisabled() {
+        persistentAttributes(enabled: false, treatment: "on")
+    }
+
+    func persistentAttributes(enabled: Bool, treatment: String) {
+        loadChangesAttr()
+        let userKey = "otherKey"
+        // When splits and connection available, ready from cache and Ready should be fired
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
+        let split1 =  changes[5].splits[1]
+        splitDatabase.splitDao.insertOrUpdate(split: split1)
+        splitDatabase.attributesDao.update(userKey: userKey, attributes: ["isEnabled": true])
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        let splitConfig = basicSplitConfig()
+        splitConfig.persistentAttributesEnabled = enabled
+
+        let readyExp = XCTestExpectation()
+        let cacheReadyExp = XCTestExpectation()
+
+        var readyFired = false
+        var cacheReadyFired = false
+
+        let key: Key = Key(matchingKey: userKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(splitDatabase)
+
+        let factory = builder.setApiKey(IntegrationHelper.dummyApiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+
+        let client = factory.client
+
+        client.on(event: SplitEvent.sdkReadyFromCache) {
+            cacheReadyExp.fulfill()
+            cacheReadyFired = true
+        }
+
+        client.on(event: SplitEvent.sdkReady) {
+            readyExp.fulfill()
+            readyFired = true
+        }
+
+        client.on(event: SplitEvent.sdkReadyTimedOut) {
+            readyExp.fulfill()
+        }
+
+        wait(for: [cacheReadyExp], timeout: 1)
+        let treatmentCache = client.getTreatment("split1")
+
+        globalCacheReadyFired.set(true)
+
+        ThreadUtils.delay(seconds: 5)
+        wait(for: [readyExp], timeout: 3)
+
+        XCTAssertTrue(cacheReadyFired)
+        XCTAssertTrue(readyFired)
+        XCTAssertEqual(treatment, treatmentCache)
+    }
+
     private func getChanges(for hitNumber: Int) -> Data {
         if hitNumber < jsonChanges.count {
             return Data(self.jsonChanges[hitNumber].utf8)
@@ -442,6 +509,42 @@ class ReadyFromCacheTest: XCTestCase {
         return split
     }
 
+    private func buildSplitWithAttrEval(name: String, treatment: String) -> Split {
+        let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
+        change?.since = Int64(1)
+        change?.till = Int64(1)
+        let split = change!.splits[0]
+        split.name = name
+
+        let condition = split.conditions![1]
+
+        condition.conditionType = .rollout
+        let matcher = Matcher()
+        matcher.matcherType = .equalToBoolean
+        matcher.booleanMatcherData = true
+        let keySelector = KeySelector()
+        keySelector.attribute = "isEnabled"
+        matcher.keySelector = keySelector
+        let matcherGroup = MatcherGroup()
+        matcherGroup.matcherCombiner = .and
+        matcherGroup.matchers = [matcher]
+        condition.matcherGroup = matcherGroup
+        split.conditions![0] = condition
+
+        if let partitions = split.conditions?[0].partitions {
+            for (i, partition) in partitions.enumerated() {
+                if 1 == i {
+                    partition.treatment = treatment
+                    partition.size = 100
+                } else {
+                    partition.treatment = "off"
+                    partition.size = 0
+                }
+            }
+        }
+        return split
+    }
+
     private func loadChanges() {
         for i in 0..<5 {
             let change = getChanges(withIndex: i,
@@ -462,6 +565,21 @@ class ReadyFromCacheTest: XCTestCase {
 
             if i==2 {
                 change.splits.append(buildSplit(name: "split1", treatment: "t1"))
+            }
+            changes.append(change)
+            let json =  (try? Json.encodeToJson(change)) ?? ""
+            jsonChanges.insert(json, at: i)
+        }
+    }
+
+    private func loadChangesAttr() {
+        for i in 0..<5 {
+            let change = getChanges(withIndex: i,
+                                    since: numbers[i],
+                                    till: numbers[i])
+
+            if i==0 {
+                change.splits.append(buildSplitWithAttrEval(name: "split1", treatment: "ta1"))
             }
             changes.append(change)
             let json =  (try? Json.encodeToJson(change)) ?? ""

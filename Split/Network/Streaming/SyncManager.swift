@@ -50,6 +50,7 @@ class DefaultSyncManager: SyncManager {
     func start() {
         synchronizer.loadAndSynchronizeSplits()
         synchronizer.loadMySegmentsFromCache()
+        synchronizer.loadAttributesFromCache()
         synchronizer.synchronizeMySegments()
         isPollingEnabled.set(!splitConfig.streamingEnabled)
         if splitConfig.streamingEnabled {

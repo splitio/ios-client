@@ -69,6 +69,30 @@ class SplitClientStub: SplitClient {
     func track(eventType: String, value: Double, properties: [String:Any]?) -> Bool {
         return true
     }
+
+    func setAttribute(name: String, value: Any) -> Bool {
+        return true
+    }
+
+    func getAttribute(name: String) -> Any? {
+        return nil
+    }
+
+    func setAttributes(_ values: [String: Any]) -> Bool {
+        return true
+    }
+
+    func getAttributes() -> [String: Any]? {
+        return nil
+    }
+
+    func removeAttribute(name: String) -> Bool {
+        return true
+    }
+
+    func clearAttributes() -> Bool {
+        return true
+    }
     
     func flush() {
     }

@@ -12,6 +12,7 @@ enum SplitInternalEvent {
     case splitsUpdated
     case mySegmentsLoadedFromCache
     case splitsLoadedFromCache
+    case attributesLoadedFromCache
     case sdkReadyTimeoutReached
     case splitKilledNotification
 }

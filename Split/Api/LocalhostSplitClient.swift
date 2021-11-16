@@ -149,5 +149,32 @@ public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitCli
     public func destroy(completion: (() -> Void)?) {
         completion?()
     }
+}
 
+// MARK: Persistent attributes feature
+extension LocalhostSplitClient {
+
+    public func setAttribute(name: String, value: Any) -> Bool {
+        return true
+    }
+
+    public func getAttribute(name: String) -> Any? {
+        return nil
+    }
+
+    public func setAttributes(_ values: [String: Any]) -> Bool {
+        return true
+    }
+
+    public func getAttributes() -> [String: Any]? {
+        return nil
+    }
+
+    public func removeAttribute(name: String) -> Bool {
+        return true
+    }
+
+    public func clearAttributes() -> Bool {
+        return true
+    }
 }

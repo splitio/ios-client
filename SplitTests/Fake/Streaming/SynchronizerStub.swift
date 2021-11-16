@@ -14,6 +14,7 @@ class SynchronizerStub: Synchronizer {
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
+    var loadAttributesFromCacheCalled = false
     var syncAllCalled = false
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
@@ -45,6 +46,10 @@ class SynchronizerStub: Synchronizer {
 
     func loadMySegmentsFromCache() {
         loadMySegmentsFromCacheCalled = true
+    }
+
+    func loadAttributesFromCache() {
+        loadAttributesFromCacheCalled = true
     }
 
     func syncAll() {

@@ -19,8 +19,13 @@ class SplitEventsManagerMock: SplitEventsManager {
     var isSdkReadyFired: Bool {
         return isSegmentsReadyFired && isSplitsReadyFired
     }
+    var isSdkReadyFromCacheFired: Bool {
+        return isSegmentsReadyFromCacheFired && isSplitsReadyFromCacheFired
+    }
     var isSegmentsReadyFired = false
     var isSplitsReadyFired = false
+    var isSegmentsReadyFromCacheFired = false
+    var isSplitsReadyFromCacheFired = false
     var isSdkTimeoutFired = false
     
     func notifyInternalEvent(_ event:SplitInternalEvent) {
@@ -56,6 +61,8 @@ class SplitEventsManagerMock: SplitEventsManager {
         switch event {
         case.sdkReady:
             return isSdkReadyFired
+        case.sdkReadyFromCache:
+            return isSdkReadyFromCacheFired
         case .sdkReadyTimedOut:
             return isSdkTimeoutFired
 
