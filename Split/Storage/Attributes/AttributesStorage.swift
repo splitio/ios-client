@@ -56,7 +56,6 @@ class DefaultAttributesStorage: AttributesStorage {
     func set(value: Any, name: String) {
         inMemoryAttributes.setValue(value, forKey: name)
         persistentStorage?.set(inMemoryAttributes.all)
-
     }
 
     func clear() {
