@@ -36,8 +36,8 @@ class DefaultAttributesStorage: AttributesStorage {
     }
 
     func set(_ attributes: [String: Any]) {
-        inMemoryAttributes.setValues(attributes)
-        persistentStorage?.set(attributes)
+        inMemoryAttributes.putValues(attributes)
+        persistentStorage?.set(inMemoryAttributes.all)
     }
 
     func getAll() -> [String: Any] {
