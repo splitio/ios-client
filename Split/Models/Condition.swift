@@ -65,7 +65,6 @@ class Condition: NSObject, Codable {
                     // scenario 1: no attr in matcher
                     // e.g. if user is in segment all then split 100:on
                     if !matcherEvaluator.matcherHasAttribute() {
-                        //let matcherEv = matcherEvaluator2(matcher: matcherEvaluator)
                         result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: nil, attributes: nil)
                     } else {
                         // scenario 2: attribute provided but no attribute value provided. Matcher does not match

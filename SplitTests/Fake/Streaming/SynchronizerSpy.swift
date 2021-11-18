@@ -16,6 +16,7 @@ class SynchronizerSpy: Synchronizer {
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
+    var loadAttributesFromCacheCalled = false
     var syncAllCalled = false
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
@@ -69,6 +70,11 @@ class SynchronizerSpy: Synchronizer {
     func loadMySegmentsFromCache() {
         loadMySegmentsFromCacheCalled = true
         splitSynchronizer.loadMySegmentsFromCache()
+    }
+
+    func loadAttributesFromCache() {
+        loadAttributesFromCacheCalled = true
+        splitSynchronizer.loadAttributesFromCache()
     }
 
     func syncAll() {
