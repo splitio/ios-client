@@ -1,5 +1,5 @@
 //
-//  AttributesLogicTest.swift
+//  AttributesEvaluationTest.swift
 //  SplitTests
 //
 //  Created by Javier Avrudsky on 25/02/2021.
@@ -11,7 +11,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class AttributesLogicTest: XCTestCase {
+class AttributesEvaluationTest: XCTestCase {
 
     let splitName = "workm"
     var streamingBinding: TestStreamResponseBinding?
@@ -49,7 +49,6 @@ class AttributesLogicTest: XCTestCase {
         let splitConfig = basicSplitConfig()
         splitConfig.persistentAttributesEnabled = true
 
-        let readyExp = XCTestExpectation()
         let cacheReadyExp = XCTestExpectation()
 
         let key: Key = Key(matchingKey: userKey)
@@ -67,15 +66,7 @@ class AttributesLogicTest: XCTestCase {
             cacheReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReady) {
-            readyExp.fulfill()
-        }
-
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
-            readyExp.fulfill()
-        }
-
-        wait(for: [cacheReadyExp], timeout: 1)
+        wait(for: [cacheReadyExp], timeout: 10)
 
         let evalAfterInit = client.getTreatment(splitName)
 
