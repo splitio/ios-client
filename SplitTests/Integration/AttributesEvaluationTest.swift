@@ -119,7 +119,6 @@ class AttributesLogicTest: XCTestCase {
         let splitConfig = basicSplitConfig()
         splitConfig.persistentAttributesEnabled = true
 
-        let readyExp = XCTestExpectation()
         let cacheReadyExp = XCTestExpectation()
 
         let key: Key = Key(matchingKey: userKey)
@@ -137,15 +136,7 @@ class AttributesLogicTest: XCTestCase {
             cacheReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReady) {
-            readyExp.fulfill()
-        }
-
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
-            readyExp.fulfill()
-        }
-
-        wait(for: [cacheReadyExp], timeout: 1)
+        wait(for: [cacheReadyExp], timeout: 10)
 
         let initAttributes = client.getAttributes()
 
@@ -208,7 +199,6 @@ class AttributesLogicTest: XCTestCase {
         let splitConfig = basicSplitConfig()
         splitConfig.persistentAttributesEnabled = false
 
-        let readyExp = XCTestExpectation()
         let cacheReadyExp = XCTestExpectation()
 
         let key: Key = Key(matchingKey: userKey)
@@ -226,15 +216,7 @@ class AttributesLogicTest: XCTestCase {
             cacheReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReady) {
-            readyExp.fulfill()
-        }
-
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
-            readyExp.fulfill()
-        }
-
-        wait(for: [cacheReadyExp], timeout: 1)
+        wait(for: [cacheReadyExp], timeout: 10)
 
         let initAttributes = client.getAttributes()
 
@@ -282,7 +264,6 @@ class AttributesLogicTest: XCTestCase {
         let splitConfig = basicSplitConfig()
         splitConfig.persistentAttributesEnabled = true
 
-        let readyExp = XCTestExpectation()
         let cacheReadyExp = XCTestExpectation()
 
         let key: Key = Key(matchingKey: userKey)
@@ -300,15 +281,7 @@ class AttributesLogicTest: XCTestCase {
             cacheReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReady) {
-            readyExp.fulfill()
-        }
-
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
-            readyExp.fulfill()
-        }
-
-        wait(for: [cacheReadyExp], timeout: 1)
+        wait(for: [cacheReadyExp], timeout: 10)
 
         let evalAfterInit = client.getTreatment(splitName)
 
