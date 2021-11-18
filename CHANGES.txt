@@ -1,3 +1,6 @@
+2.11.7: (Nov 18, 2021)
+- Added Attribute binding feature to allow to optionally keep user attributes loaded within the SDK, along with the user ID, for easier usage when requesting flag.
+
 2.11.6: (Oct 22, 2021)
 - Fixed memory issue on streaming delay
 - Added support for a user key containing a slash character
