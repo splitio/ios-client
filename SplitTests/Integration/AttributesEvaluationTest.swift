@@ -253,7 +253,9 @@ class AttributesEvaluationTest: XCTestCase {
                                                           streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
-        splitConfig.persistentAttributesEnabled = true
+        splitConfig.persistentAttributesEnabled = false
+
+        sleep(1)
 
         let cacheReadyExp = XCTestExpectation()
 
