@@ -50,18 +50,42 @@ class AttributesStorageTests: XCTestCase {
         let newAttributes = attributesStorage.getAll()
         let persistedAttributes = persistentStorage.getAll()!
 
+        attributesStorage.set(["att1": "senew", "att4": 10])
+
+        let updatedAttributes = attributesStorage.getAll()
+        let updatedPersistedAttributes = persistentStorage.getAll()!
+
+        attributesStorage.set(value: "selast", name: "att1")
+        attributesStorage.set(value: 100, name: "att5")
+
+        let singleUpdateAttributes = attributesStorage.getAll()
+        let singlePersistedAttributes = persistentStorage.getAll()!
+
         XCTAssertEqual(3, attributes.count)
         XCTAssertEqual("se1", attributes["att1"] as! String)
         XCTAssertEqual(true, attributes["att2"] as! Bool)
         XCTAssertEqual(1, attributes["att3"] as! Int)
 
-        XCTAssertEqual(2, persistedAttributes.count)
+        XCTAssertEqual(3, newAttributes.count)
+        XCTAssertEqual("n1", newAttributes["att1"] as! String)
+        XCTAssertEqual(1, newAttributes["att2"] as! Int)
+
+        XCTAssertEqual(3, persistedAttributes.count)
         XCTAssertEqual("n1", persistedAttributes["att1"] as! String)
         XCTAssertEqual(1, persistedAttributes["att2"] as! Int)
 
-        XCTAssertEqual(2, newAttributes.count)
-        XCTAssertEqual("n1", newAttributes["att1"] as! String)
-        XCTAssertEqual(1, newAttributes["att2"] as! Int)
+        XCTAssertEqual(4, updatedAttributes.count)
+        XCTAssertEqual("senew", updatedAttributes["att1"] as! String)
+        XCTAssertEqual(1, updatedAttributes["att2"] as! Int)
+        XCTAssertEqual(10, updatedAttributes["att4"] as! Int)
+        XCTAssertEqual(4, updatedPersistedAttributes.count)
+
+        XCTAssertEqual(5, singleUpdateAttributes.count)
+        XCTAssertEqual("selast", singleUpdateAttributes["att1"] as! String)
+        XCTAssertEqual(1, singleUpdateAttributes["att2"] as! Int)
+        XCTAssertEqual(10, singleUpdateAttributes["att4"] as! Int)
+        XCTAssertEqual(100, singleUpdateAttributes["att5"] as! Int)
+        XCTAssertEqual(5, singlePersistedAttributes.count)
     }
 
     func testUpdateEmptyAttributes() {
@@ -72,13 +96,15 @@ class AttributesStorageTests: XCTestCase {
         let newAttributes = attributesStorage.getAll()
         let persistedAttributes = persistentStorage.getAll()!
 
+
+
         XCTAssertEqual(3, attributes.count)
         XCTAssertEqual("se1", attributes["att1"] as! String)
         XCTAssertEqual(true, attributes["att2"] as! Bool)
         XCTAssertEqual(1, attributes["att3"] as! Int)
 
-        XCTAssertEqual(0, newAttributes.count)
-        XCTAssertEqual(0, persistedAttributes.count)
+        XCTAssertEqual(3, newAttributes.count)
+        XCTAssertEqual(3, persistedAttributes.count)
     }
 
     func testRemove() {

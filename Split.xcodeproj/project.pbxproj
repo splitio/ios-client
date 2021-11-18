@@ -463,6 +463,8 @@
 		9595910526DFB1AB009E7944 /* DecompressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595910426DFB1AB009E7944 /* DecompressionTest.swift */; };
 		9595910D26DFE149009E7944 /* lorem_ipsum_zlib.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9595910C26DFE149009E7944 /* lorem_ipsum_zlib.txt */; };
 		9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595911026DFFF87009E7944 /* CompressionUtil.swift */; };
+		9595C1A2274573DA0092123F /* AttributesEvaluationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */; };
+		9595C1A8274574220092123F /* attributes_test_split.json in Resources */ = {isa = PBXBuildFile; fileRef = 9595C1A7274574220092123F /* attributes_test_split.json */; };
 		95B2498026F39C9B00B34507 /* MySegmentUpdateV2Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B2497F26F39C9B00B34507 /* MySegmentUpdateV2Test.swift */; };
 		95B2498426F3E19300B34507 /* push_msg-segment_updV2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 95B2498326F3E19300B34507 /* push_msg-segment_updV2.txt */; };
 		95B341B026136B42002F57F6 /* KeyValueStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B341AE26136B42002F57F6 /* KeyValueStorage.swift */; };
@@ -1013,6 +1015,8 @@
 		9595910426DFB1AB009E7944 /* DecompressionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecompressionTest.swift; sourceTree = "<group>"; };
 		9595910C26DFE149009E7944 /* lorem_ipsum_zlib.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = lorem_ipsum_zlib.txt; sourceTree = "<group>"; };
 		9595911026DFFF87009E7944 /* CompressionUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionUtil.swift; sourceTree = "<group>"; };
+		9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesEvaluationTest.swift; sourceTree = "<group>"; };
+		9595C1A7274574220092123F /* attributes_test_split.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = attributes_test_split.json; sourceTree = "<group>"; };
 		95B2497F26F39C9B00B34507 /* MySegmentUpdateV2Test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentUpdateV2Test.swift; sourceTree = "<group>"; };
 		95B2498326F3E19300B34507 /* push_msg-segment_updV2.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "push_msg-segment_updV2.txt"; sourceTree = "<group>"; };
 		95B341AE26136B42002F57F6 /* KeyValueStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueStorage.swift; sourceTree = "<group>"; };
@@ -1818,6 +1822,7 @@
 			children = (
 				595B66D2231DB8690030F330 /* Integration */,
 				599EA58B226903DF006CBA89 /* localhost.yaml */,
+				9595C1A7274574220092123F /* attributes_test_split.json */,
 				599EDAF42270AD6700D7DACB /* wrong_format.yaml */,
 				5982D935219F494500230F44 /* matchers.json */,
 				95D7D7E126DD44FB002E4D75 /* murmur3_64_uuids.csv */,
@@ -1902,6 +1907,7 @@
 			children = (
 				5921ED2925373A29000D6C8B /* streaming */,
 				95825C012721F0F800A0CDAD /* UserKeyEncondingTest.swift */,
+				9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */,
 				5946783922E1147600F94E58 /* SplitIntegrationTest.swift */,
 				595AD1FF24DAF61700A7B750 /* FetchSpecificSplitsTest.swift */,
 				596A7B722358E142004F6139 /* SplitSdkTimeoutTest.swift */,
@@ -2335,6 +2341,7 @@
 				598EDF04225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json in Resources */,
 				59C493062167E3B400F5F774 /* murmur3-sample-v3.csv in Resources */,
 				592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */,
+				9595C1A8274574220092123F /* attributes_test_split.json in Resources */,
 				95B2498426F3E19300B34507 /* push_msg-segment_updV2.txt in Resources */,
 				9595910D26DFE149009E7944 /* lorem_ipsum_zlib.txt in Resources */,
 				5959C4722279EBBC0064F968 /* in_segment_condition_split.json in Resources */,
@@ -2802,6 +2809,7 @@
 				595AD1F824D9CDFB00A7B750 /* SyncConfigTest.swift in Sources */,
 				95825C022721F0F800A0CDAD /* UserKeyEncondingTest.swift in Sources */,
 				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
+				9595C1A2274573DA0092123F /* AttributesEvaluationTest.swift in Sources */,
 				594F5F5E253F641000A945B4 /* BackoffCounterTimerStub.swift in Sources */,
 				599407E022403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift in Sources */,
 				59F4AAC12513C2EC00A1C69A /* PeriodicTimerStub.swift in Sources */,
