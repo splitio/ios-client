@@ -92,6 +92,8 @@ class AttributesEvaluationTest: XCTestCase {
         XCTAssertEqual("on_str_yes", evalAfterSetMany)
         XCTAssertEqual("on_num_20", evalAfterRemoveOne)
         XCTAssertEqual("on", evalAfterClear)
+
+        client.destroy()
     }
 
     func testAttributesPersistentedCorrectly() {
@@ -172,6 +174,8 @@ class AttributesEvaluationTest: XCTestCase {
         XCTAssertEqual(attrValues[Attr.strValueA] as? String, dbSetManyAttributes?[Attr.strValueA] as? String)
 
         XCTAssertNil(dbClearedAttributes?.count)
+
+        client.destroy()
     }
 
     func testPersistenceDisabled() {
@@ -241,6 +245,8 @@ class AttributesEvaluationTest: XCTestCase {
         XCTAssertEqual(2, dbSetManyAttributes?.count ?? 0)
         XCTAssertEqual(2, dbClearedAttributes?.count ?? 0)
         XCTAssertEqual(3, inMemoryAttributes?.count ?? 0)
+
+        client.destroy()
     }
 
     func testEvaluationPrecedence() {
@@ -254,8 +260,6 @@ class AttributesEvaluationTest: XCTestCase {
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
         splitConfig.persistentAttributesEnabled = false
-
-        sleep(1)
 
         let cacheReadyExp = XCTestExpectation()
 
@@ -290,6 +294,8 @@ class AttributesEvaluationTest: XCTestCase {
         XCTAssertEqual("on", evalAfterInit)
         XCTAssertEqual("on_str_yes", evalAfterOverwrite)
         XCTAssertEqual("on_num_10", evalPrecedence)
+
+        client.destroy()
     }
 
     private func getChanges() -> Data {
