@@ -73,13 +73,13 @@ class ReadyFromCacheTest: XCTestCase {
             readyExp.fulfill()
         }
 
-        wait(for: [cacheReadyExp], timeout: 1)
+        wait(for: [cacheReadyExp], timeout: 10)
         let treatmentCache = client.getTreatment(splitName)
 
         globalCacheReadyFired.set(true)
 
         ThreadUtils.delay(seconds: 5)
-        wait(for: [readyExp], timeout: 3)
+        wait(for: [readyExp], timeout: 10)
         let treatmentReady = client.getTreatment(splitName)
 
         XCTAssertTrue(cacheReadyFired)
@@ -132,11 +132,11 @@ class ReadyFromCacheTest: XCTestCase {
             timeoutFired = true
         }
 
-        wait(for: [cacheReadyExp], timeout: 3)
+        wait(for: [cacheReadyExp], timeout: 10)
         let treatmentCache = client.getTreatment(splitName)
 
         ThreadUtils.delay(seconds: 1)
-        wait(for: [readyExp], timeout: 3)
+        wait(for: [readyExp], timeout: 10)
         let treatmentReady = client.getTreatment(splitName)
 
         XCTAssertTrue(cacheReadyFired)
@@ -256,13 +256,13 @@ class ReadyFromCacheTest: XCTestCase {
                 readyExp.fulfill()
             }
 
-            wait(for: [cacheReadyExp], timeout: 1)
+            wait(for: [cacheReadyExp], timeout: 10)
             treatmentsCache.insert(client.getTreatment(splitName), at: i)
 
             globalCacheReadyFired.set(true)
 
             ThreadUtils.delay(seconds: 2)
-            wait(for: [readyExp], timeout: 3)
+            wait(for: [readyExp], timeout: 10)
             treatmentsReady.insert(client.getTreatment(splitName), at: i)
 
             globalCacheReadyFired.set(false)
@@ -339,14 +339,14 @@ class ReadyFromCacheTest: XCTestCase {
                 readyExp.fulfill()
             }
 
-            wait(for: [cacheReadyExp], timeout: 2)
+            wait(for: [cacheReadyExp], timeout: 10)
             treatmentsCache[i] = client.getTreatment(splitName)
             treatments1Cache[i] = client.getTreatment(split1Name)
 
             globalCacheReadyFired.set(true)
 
             ThreadUtils.delay(seconds: 2)
-            wait(for: [readyExp], timeout: 3)
+            wait(for: [readyExp], timeout: 10)
             treatmentsReady[i] = client.getTreatment(splitName)
             treatments1Ready[i] = client.getTreatment(split1Name)
 
@@ -430,7 +430,7 @@ class ReadyFromCacheTest: XCTestCase {
         globalCacheReadyFired.set(true)
 
         ThreadUtils.delay(seconds: 5)
-        wait(for: [readyExp], timeout: 3)
+        wait(for: [readyExp], timeout: 10)
 
         XCTAssertTrue(cacheReadyFired)
         XCTAssertTrue(readyFired)
