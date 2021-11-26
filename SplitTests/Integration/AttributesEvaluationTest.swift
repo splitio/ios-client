@@ -41,8 +41,9 @@ class AttributesEvaluationTest: XCTestCase {
 
         // When splits and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test")
-        splitDatabase.splitDao.insertOrUpdate(split: cachedSplit)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
+
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -103,9 +104,9 @@ class AttributesEvaluationTest: XCTestCase {
         let attr: [String: Any] = [Attr.numValue: attrValues[Attr.numValue]!,
                                    Attr.strValue: attrValues[Attr.strValue]!]
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test")
-        splitDatabase.splitDao.insertOrUpdate(split: cachedSplit)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
-        splitDatabase.attributesDao.update(userKey: userKey, attributes: attr)
+        splitDatabase.attributesDao.syncUpdate(userKey: userKey, attributes: attr)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -184,11 +185,11 @@ class AttributesEvaluationTest: XCTestCase {
 
         // When splits and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test")
-        splitDatabase.splitDao.insertOrUpdate(split: cachedSplit)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
         let attr: [String: Any] = [Attr.numValue: attrValues[Attr.numValue]!,
                                    Attr.strValue: attrValues[Attr.strValue]!]
-        splitDatabase.attributesDao.update(userKey: userKey, attributes: attr)
+        splitDatabase.attributesDao.syncUpdate(userKey: userKey, attributes: attr)
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -255,7 +256,7 @@ class AttributesEvaluationTest: XCTestCase {
 
         // When splits and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test")
-        splitDatabase.splitDao.insertOrUpdate(split: cachedSplit)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),

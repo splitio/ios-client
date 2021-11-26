@@ -22,4 +22,8 @@ class AttributesDaoStub: AttributesDao {
             self.attributes.removeValue(forKey: userKey)
         }
     }
+
+    func syncUpdate(userKey: String, attributes: [String: Any]?) {
+        update(userKey: userKey, attributes: attributes)
+    }
 }

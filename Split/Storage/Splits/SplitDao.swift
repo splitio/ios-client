@@ -15,6 +15,7 @@ protocol SplitDao {
     func getAll() -> [Split]
     func delete(_ splits: [String])
     func deleteAll()
+    func syncInsertOrUpdate(split: Split)
 }
 
 class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
@@ -33,6 +34,15 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
 
     func insertOrUpdate(split: Split) {
         executeAsync { [weak self] in
+            if let self = self {
+                self.insertOrUpdate(split)
+            }
+        }
+    }
+
+    // For testing purposes only
+    func syncInsertOrUpdate(split: Split) {
+        execute { [weak self] in
             if let self = self {
                 self.insertOrUpdate(split)
             }
