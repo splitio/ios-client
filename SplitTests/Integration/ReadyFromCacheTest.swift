@@ -23,6 +23,8 @@ class ReadyFromCacheTest: XCTestCase {
     var changeHitIndex: AtomicInt!
     var receivedChangeNumber: [Int64]!
 
+    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.global())
+
     override func setUp() {
         receivedChangeNumber = Array(repeating: 0, count: 100)
         globalCacheReadyFired = Atomic(false)
@@ -35,7 +37,7 @@ class ReadyFromCacheTest: XCTestCase {
 
     func testExistingSplitsAndConnectionOk() {
         // When splits and connection available, ready from cache and Ready should be fired
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -92,7 +94,7 @@ class ReadyFromCacheTest: XCTestCase {
 
     func testExistingSplitsAndNoConnection() {
         // When splits and connection not available, ready from cache should be fired and Ready should NOT be fired
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -150,7 +152,7 @@ class ReadyFromCacheTest: XCTestCase {
 
     func testNotExistingSplitsAndConnectionOk() {
         // When NO splits and connection available, ready from cache should NOT be fired and Ready should be fired
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -207,7 +209,7 @@ class ReadyFromCacheTest: XCTestCase {
 
     func testSplitsAndConnOk_FromNoSplitFilterToFilter() {
         // When splits and connection available, ready from cache and Ready should be fired
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
         let session = HttpSessionMock()
@@ -285,7 +287,7 @@ class ReadyFromCacheTest: XCTestCase {
         changes = [SplitChange]()
         jsonChanges = [String]()
         loadChanges1()
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         let split =  changes[0].splits[0]
         let split1Name = "split1"
         let split1Treatment = "t1"
@@ -383,7 +385,7 @@ class ReadyFromCacheTest: XCTestCase {
         loadChangesAttr()
         let userKey = "otherKey"
         // When splits and connection available, ready from cache and Ready should be fired
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         let split1 =  changes[5].splits[1]
         splitDatabase.attributesDao.syncUpdate(userKey: userKey, attributes: ["isEnabled": true])
         splitDatabase.splitDao.syncInsertOrUpdate(split: split1)
