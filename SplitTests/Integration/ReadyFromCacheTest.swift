@@ -424,7 +424,7 @@ class ReadyFromCacheTest: XCTestCase {
             readyExp.fulfill()
         }
 
-        wait(for: [cacheReadyExp], timeout: 1)
+        wait(for: [cacheReadyExp], timeout: 10)
         let treatmentCache = client.getTreatment("split1")
 
         globalCacheReadyFired.set(true)

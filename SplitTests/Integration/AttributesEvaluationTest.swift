@@ -102,6 +102,8 @@ class AttributesEvaluationTest: XCTestCase {
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test")
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit)
 
+        ThreadUtils.delay(seconds: 3)
+
         let attr: [String: Any] = [Attr.numValue: attrValues[Attr.numValue]!,
                                    Attr.strValue: attrValues[Attr.strValue]!]
         splitDatabase.attributesDao.update(userKey: userKey, attributes: attr)
