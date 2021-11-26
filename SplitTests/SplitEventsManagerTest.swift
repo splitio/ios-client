@@ -65,6 +65,7 @@ class SplitEventsManagerTest: XCTestCase {
 
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsLoadedFromCache)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsLoadedFromCache)
+        eventManager.notifyInternalEvent(SplitInternalEvent.attributesLoadedFromCache)
 
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
@@ -104,6 +105,7 @@ class SplitEventsManagerTest: XCTestCase {
 
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsLoadedFromCache)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsLoadedFromCache)
+        eventManager.notifyInternalEvent(SplitInternalEvent.attributesLoadedFromCache)
         eventManager.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
 
         wait(for: [cacheExp, timeoutExp], timeout: expectationTimeOut)

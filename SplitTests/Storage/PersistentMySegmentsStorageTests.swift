@@ -26,7 +26,8 @@ class PersistentMySegmentsStorageTests: XCTestCase {
                                                                            impressionsCountDao: ImpressionsCountDaoStub(),
                                                                            generalInfoDao: GeneralInfoDaoStub(),
                                                                            splitDao: SplitDaoStub(),
-                                                                           mySegmentsDao: mySegmentsDao))
+                                                                           mySegmentsDao: mySegmentsDao,
+                                                                           attributesDao: AttributesDaoStub()))
     }
     
     func  testSet() {

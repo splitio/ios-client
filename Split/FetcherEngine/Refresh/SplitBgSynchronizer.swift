@@ -126,11 +126,11 @@ struct BackgroundSyncExecutor {
         self.apiKey = apiKey
         self.userKeys = userKeys
 
-        let dataFolderName = SplitFactoryHelper.databaseName(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
-        guard let splitDatabase = try? SplitFactoryHelper.openDatabase(dataFolderName: dataFolderName) else {
+        let dataFolderName = SplitDatabaseHelper.databaseName(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
+        guard let splitDatabase = try? SplitDatabaseHelper.openDatabase(dataFolderName: dataFolderName) else {
             throw GenericError.couldNotCreateCache
         }
-        let splitsStorage = SplitFactoryHelper.openPersistentSplitsStorage(database: splitDatabase)
+        let splitsStorage = SplitDatabaseHelper.openPersistentSplitsStorage(database: splitDatabase)
         let endpoints = serviceEndpoints ?? ServiceEndpoints.builder().build()
         let  endpointFactory = EndpointFactory(serviceEndpoints: endpoints,
                                                apiKey: apiKey,
@@ -156,11 +156,11 @@ struct BackgroundSyncExecutor {
         let eventsRecorder = DefaultHttpEventsRecorder(restClient: restClient)
 
         self.eventsRecorderWorker =
-            EventsRecorderWorker(eventsStorage: SplitFactoryHelper.openEventsStorage(database: splitDatabase),
+            EventsRecorderWorker(eventsStorage: SplitDatabaseHelper.openEventsStorage(database: splitDatabase),
                                                          eventsRecorder: eventsRecorder,
                                                          eventsPerPush: ServiceConstants.eventsPerPush)
         self.impressionsRecorderWorker = ImpressionsRecorderWorker(
-            impressionsStorage: SplitFactoryHelper.openImpressionsStorage(database: splitDatabase),
+            impressionsStorage: SplitDatabaseHelper.openImpressionsStorage(database: splitDatabase),
             impressionsRecorder: impressionsRecorder,
             impressionsPerPush: ServiceConstants.impressionsQueueSize)
 
@@ -181,7 +181,7 @@ struct BackgroundSyncExecutor {
                 }
 
                 let mySegmentsStorage =
-                    SplitFactoryHelper.openPersistentMySegmentsStorage(database: self.splitDatabase,
+                    SplitDatabaseHelper.openPersistentMySegmentsStorage(database: self.splitDatabase,
                                                                        userKey: userKey)
 
                 let mySegmentsSyncWorker = BackgroundMySegmentsSyncWorker(

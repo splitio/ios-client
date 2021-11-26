@@ -25,7 +25,8 @@ class PersistentSplitsStorageTest: XCTestCase {
                                                                                    impressionsCountDao: ImpressionsCountDaoStub(),
                                                                                    generalInfoDao: generalInfoDao,
                                                                                    splitDao: splitDao,
-                                                                                   mySegmentsDao: MySegmentsDaoStub()))
+                                                                                   mySegmentsDao: MySegmentsDaoStub(),
+                                                                                   attributesDao: AttributesDaoStub()))
 
     }
     
