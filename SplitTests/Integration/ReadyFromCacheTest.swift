@@ -86,6 +86,8 @@ class ReadyFromCacheTest: XCTestCase {
         XCTAssertTrue(readyFired)
         XCTAssertEqual("on0", treatmentCache)
         XCTAssertEqual("on1", treatmentReady)
+
+        client.destroy()
     }
 
     func testExistingSplitsAndNoConnection() {
@@ -142,6 +144,8 @@ class ReadyFromCacheTest: XCTestCase {
         XCTAssertTrue(timeoutFired)
         XCTAssertEqual("on0", treatmentCache)
         XCTAssertEqual("on0", treatmentReady)
+
+        client.destroy()
     }
 
     func testNotExistingSplitsAndConnectionOk() {
@@ -197,6 +201,8 @@ class ReadyFromCacheTest: XCTestCase {
         XCTAssertFalse(timeoutFired)
         XCTAssertEqual("control", treatmentCache)
         XCTAssertEqual("on1", treatmentReady)
+
+        client.destroy()
     }
 
     func testSplitsAndConnOk_FromNoSplitFilterToFilter() {
@@ -271,6 +277,7 @@ class ReadyFromCacheTest: XCTestCase {
 
         XCTAssertEqual(100, receivedChangeNumber[1])
         XCTAssertEqual(1000, receivedChangeNumber[2])
+
     }
 
     func testSplitsAndConnOk_FromSplitFilterToNoFilter() {
@@ -360,6 +367,7 @@ class ReadyFromCacheTest: XCTestCase {
 
         XCTAssertEqual(-1, receivedChangeNumber[1])
         XCTAssertEqual(1000, receivedChangeNumber[2])
+
     }
 
     func testPersistentAttributesEnabled() {
@@ -427,6 +435,8 @@ class ReadyFromCacheTest: XCTestCase {
         XCTAssertTrue(cacheReadyFired)
         XCTAssertTrue(readyFired)
         XCTAssertEqual(treatment, treatmentCache)
+
+        client.destroy()
     }
 
     private func getChanges(for hitNumber: Int) -> Data {
