@@ -19,6 +19,8 @@ class AttributesEvaluationTest: XCTestCase {
 
     let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.global())
 
+    var splitClient: SplitClient!
+
     struct Attr {
         static let numValue = "num_value"
         static let strValue = "str_value"
@@ -64,32 +66,32 @@ class AttributesEvaluationTest: XCTestCase {
         let factory = builder.setApiKey(IntegrationHelper.dummyApiKey).setKey(key)
             .setConfig(splitConfig).build()!
 
-        let client = factory.client
+        splitClient = factory.client
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        splitClient.on(event: SplitEvent.sdkReadyFromCache) {
             cacheReadyExp.fulfill()
         }
 
         wait(for: [cacheReadyExp], timeout: 10)
 
-        let evalAfterInit = client.getTreatment(splitName)
+        let evalAfterInit = splitClient.getTreatment(splitName)
 
-        _ = client.setAttribute(name: Attr.strValueA, value: attrValues[Attr.strValueA]!)
+        _ = splitClient.setAttribute(name: Attr.strValueA, value: attrValues[Attr.strValueA]!)
 
-        let evalAfterSetOne = client.getTreatment(splitName)
+        let evalAfterSetOne = splitClient.getTreatment(splitName)
 
-        _ = client.setAttributes([Attr.numValueA: attrValues[Attr.numValueA]!,
+        _ = splitClient.setAttributes([Attr.numValueA: attrValues[Attr.numValueA]!,
                               Attr.strValue: attrValues[Attr.strValue]!])
 
-        let evalAfterSetMany = client.getTreatment(splitName)
+        let evalAfterSetMany = splitClient.getTreatment(splitName)
 
-        _ = client.removeAttribute(name: Attr.strValue)
+        _ = splitClient.removeAttribute(name: Attr.strValue)
 
-        let evalAfterRemoveOne = client.getTreatment(splitName)
+        let evalAfterRemoveOne = splitClient.getTreatment(splitName)
 
-        _ = client.clearAttributes()
+        _ = splitClient.clearAttributes()
 
-        let evalAfterClear = client.getTreatment(splitName)
+        let evalAfterClear = splitClient.getTreatment(splitName)
 
         XCTAssertEqual("on", evalAfterInit)
         XCTAssertEqual("on_str_no", evalAfterSetOne)
@@ -97,7 +99,7 @@ class AttributesEvaluationTest: XCTestCase {
         XCTAssertEqual("on_num_20", evalAfterRemoveOne)
         XCTAssertEqual("on", evalAfterClear)
 
-        client.destroy()
+        splitClient.destroy()
     }
 
     func testAttributesPersistentedCorrectly() {
@@ -128,32 +130,32 @@ class AttributesEvaluationTest: XCTestCase {
         let factory = builder.setApiKey(IntegrationHelper.dummyApiKey).setKey(key)
             .setConfig(splitConfig).build()!
 
-        let client = factory.client
+        splitClient = factory.client
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        splitClient.on(event: SplitEvent.sdkReadyFromCache) {
             cacheReadyExp.fulfill()
         }
 
         wait(for: [cacheReadyExp], timeout: 10)
 
-        let initAttributes = client.getAttributes()
+        let initAttributes = splitClient.getAttributes()
 
-        let evalAfterInit = client.getTreatment(splitName)
+        let evalAfterInit = splitClient.getTreatment(splitName)
 
-        _ = client.setAttribute(name: Attr.strValueA, value: attrValues[Attr.strValueA]!)
+        _ = splitClient.setAttribute(name: Attr.strValueA, value: attrValues[Attr.strValueA]!)
 
         let dbSetOneAttributes = splitDatabase.attributesDao.getBy(userKey: userKey)
 
-        _ = client.removeAttribute(name: Attr.strValue)
+        _ = splitClient.removeAttribute(name: Attr.strValue)
 
         let dbRemoveOneAttributes = splitDatabase.attributesDao.getBy(userKey: userKey)
 
-        _ = client.setAttributes([Attr.numValueA: attrValues[Attr.numValueA]!,
+        _ = splitClient.setAttributes([Attr.numValueA: attrValues[Attr.numValueA]!,
                               Attr.strValue: attrValues[Attr.strValue]!])
 
         let dbSetManyAttributes = splitDatabase.attributesDao.getBy(userKey: userKey)
 
-        _ = client.clearAttributes()
+        _ = splitClient.clearAttributes()
 
         let dbClearedAttributes = splitDatabase.attributesDao.getBy(userKey: userKey)
 
@@ -180,7 +182,7 @@ class AttributesEvaluationTest: XCTestCase {
 
         XCTAssertNil(dbClearedAttributes?.count)
 
-        client.destroy()
+        splitClient.destroy()
     }
 
     func testPersistenceDisabled() {
@@ -209,35 +211,35 @@ class AttributesEvaluationTest: XCTestCase {
         let factory = builder.setApiKey(IntegrationHelper.dummyApiKey).setKey(key)
             .setConfig(splitConfig).build()!
 
-        let client = factory.client
+        splitClient = factory.client
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        splitClient.on(event: SplitEvent.sdkReadyFromCache) {
             cacheReadyExp.fulfill()
         }
 
         wait(for: [cacheReadyExp], timeout: 10)
 
-        let initAttributes = client.getAttributes()
+        let initAttributes = splitClient.getAttributes()
 
-        let evalAfterInit = client.getTreatment(splitName)
+        let evalAfterInit = splitClient.getTreatment(splitName)
 
-        _ = client.setAttribute(name: Attr.strValueA, value: attrValues[Attr.strValueA]!)
+        _ = splitClient.setAttribute(name: Attr.strValueA, value: attrValues[Attr.strValueA]!)
 
         let dbSetOneAttributes = splitDatabase.attributesDao.getBy(userKey: userKey)
 
-        _ = client.removeAttribute(name: Attr.strValueA)
+        _ = splitClient.removeAttribute(name: Attr.strValueA)
 
         let dbRemoveOneAttributes = splitDatabase.attributesDao.getBy(userKey: userKey)
 
-        _ = client.setAttributes([Attr.numValue: attrValues[Attr.numValue]!,
+        _ = splitClient.setAttributes([Attr.numValue: attrValues[Attr.numValue]!,
                               Attr.strValue: attrValues[Attr.strValue]!,
                               Attr.numValueA: attrValues[Attr.numValueA]!])
 
         let dbSetManyAttributes = splitDatabase.attributesDao.getBy(userKey: userKey)
 
-        let inMemoryAttributes = client.getAttributes()
+        let inMemoryAttributes = splitClient.getAttributes()
 
-        _ = client.clearAttributes()
+        _ = splitClient.clearAttributes()
 
         let dbClearedAttributes = splitDatabase.attributesDao.getBy(userKey: userKey)
 
@@ -250,7 +252,7 @@ class AttributesEvaluationTest: XCTestCase {
         XCTAssertEqual(2, dbClearedAttributes?.count ?? 0)
         XCTAssertEqual(3, inMemoryAttributes?.count ?? 0)
 
-        client.destroy()
+        splitClient.destroy()
     }
 
     func testEvaluationPrecedence() {
@@ -277,7 +279,7 @@ class AttributesEvaluationTest: XCTestCase {
         let factory = builder.setApiKey(IntegrationHelper.dummyApiKey).setKey(key)
             .setConfig(splitConfig).build()!
 
-        let client = factory.client
+        splitClient = factory.client
 
         client.on(event: SplitEvent.sdkReadyFromCache) {
             cacheReadyExp.fulfill()
@@ -285,22 +287,22 @@ class AttributesEvaluationTest: XCTestCase {
 
         wait(for: [cacheReadyExp], timeout: 10)
 
-        let evalAfterInit = client.getTreatment(splitName)
+        let evalAfterInit = splitClient.getTreatment(splitName)
 
-        _ = client.setAttributes([Attr.numValueA: attrValues[Attr.numValueA]!,
+        _ = splitClient.setAttributes([Attr.numValueA: attrValues[Attr.numValueA]!,
                               Attr.strValue: "no_match_value"])
 
-        let evalAfterOverwrite = client.getTreatment(splitName,
+        let evalAfterOverwrite = splitClient.getTreatment(splitName,
                                                      attributes: [ Attr.strValue: attrValues[Attr.strValue]!])
 
-        let evalPrecedence = client.getTreatment(splitName,
+        let evalPrecedence = splitClient.getTreatment(splitName,
                                                      attributes: [ Attr.numValue: attrValues[Attr.numValue]!])
 
         XCTAssertEqual("on", evalAfterInit)
         XCTAssertEqual("on_str_yes", evalAfterOverwrite)
         XCTAssertEqual("on_num_10", evalPrecedence)
 
-        client.destroy()
+        splitClient.destroy()
     }
 
     private func getChanges() -> Data {
