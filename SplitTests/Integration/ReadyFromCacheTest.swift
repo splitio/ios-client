@@ -23,6 +23,8 @@ class ReadyFromCacheTest: XCTestCase {
     var changeHitIndex: AtomicInt!
     var receivedChangeNumber: [Int64]!
 
+    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.global())
+
     override func setUp() {
         receivedChangeNumber = Array(repeating: 0, count: 100)
         globalCacheReadyFired = Atomic(false)
@@ -35,8 +37,8 @@ class ReadyFromCacheTest: XCTestCase {
 
     func testExistingSplitsAndConnectionOk() {
         // When splits and connection available, ready from cache and Ready should be fired
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
-        splitDatabase.splitDao.insertOrUpdate(split: changes[0].splits[0])
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -73,25 +75,27 @@ class ReadyFromCacheTest: XCTestCase {
             readyExp.fulfill()
         }
 
-        wait(for: [cacheReadyExp], timeout: 1)
+        wait(for: [cacheReadyExp], timeout: 10)
         let treatmentCache = client.getTreatment(splitName)
 
         globalCacheReadyFired.set(true)
 
         ThreadUtils.delay(seconds: 5)
-        wait(for: [readyExp], timeout: 3)
+        wait(for: [readyExp], timeout: 10)
         let treatmentReady = client.getTreatment(splitName)
 
         XCTAssertTrue(cacheReadyFired)
         XCTAssertTrue(readyFired)
         XCTAssertEqual("on0", treatmentCache)
         XCTAssertEqual("on1", treatmentReady)
+
+        client.destroy()
     }
 
     func testExistingSplitsAndNoConnection() {
         // When splits and connection not available, ready from cache should be fired and Ready should NOT be fired
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
-        splitDatabase.splitDao.insertOrUpdate(split: changes[0].splits[0])
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -130,11 +134,11 @@ class ReadyFromCacheTest: XCTestCase {
             timeoutFired = true
         }
 
-        wait(for: [cacheReadyExp], timeout: 3)
+        wait(for: [cacheReadyExp], timeout: 10)
         let treatmentCache = client.getTreatment(splitName)
 
         ThreadUtils.delay(seconds: 1)
-        wait(for: [readyExp], timeout: 3)
+        wait(for: [readyExp], timeout: 10)
         let treatmentReady = client.getTreatment(splitName)
 
         XCTAssertTrue(cacheReadyFired)
@@ -142,11 +146,13 @@ class ReadyFromCacheTest: XCTestCase {
         XCTAssertTrue(timeoutFired)
         XCTAssertEqual("on0", treatmentCache)
         XCTAssertEqual("on0", treatmentReady)
+
+        client.destroy()
     }
 
     func testNotExistingSplitsAndConnectionOk() {
         // When NO splits and connection available, ready from cache should NOT be fired and Ready should be fired
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -197,12 +203,14 @@ class ReadyFromCacheTest: XCTestCase {
         XCTAssertFalse(timeoutFired)
         XCTAssertEqual("control", treatmentCache)
         XCTAssertEqual("on1", treatmentReady)
+
+        client.destroy()
     }
 
     func testSplitsAndConnOk_FromNoSplitFilterToFilter() {
         // When splits and connection available, ready from cache and Ready should be fired
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
-        splitDatabase.splitDao.insertOrUpdate(split: changes[0].splits[0])
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -250,13 +258,13 @@ class ReadyFromCacheTest: XCTestCase {
                 readyExp.fulfill()
             }
 
-            wait(for: [cacheReadyExp], timeout: 1)
+            wait(for: [cacheReadyExp], timeout: 10)
             treatmentsCache.insert(client.getTreatment(splitName), at: i)
 
             globalCacheReadyFired.set(true)
 
             ThreadUtils.delay(seconds: 2)
-            wait(for: [readyExp], timeout: 3)
+            wait(for: [readyExp], timeout: 10)
             treatmentsReady.insert(client.getTreatment(splitName), at: i)
 
             globalCacheReadyFired.set(false)
@@ -271,6 +279,7 @@ class ReadyFromCacheTest: XCTestCase {
 
         XCTAssertEqual(100, receivedChangeNumber[1])
         XCTAssertEqual(1000, receivedChangeNumber[2])
+
     }
 
     func testSplitsAndConnOk_FromSplitFilterToNoFilter() {
@@ -278,14 +287,15 @@ class ReadyFromCacheTest: XCTestCase {
         changes = [SplitChange]()
         jsonChanges = [String]()
         loadChanges1()
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         let split =  changes[0].splits[0]
         let split1Name = "split1"
         let split1Treatment = "t1"
-        let split1 = buildSplit(name: split1Name, treatment: split1Treatment)
-        splitDatabase.splitDao.insertOrUpdate(split: split)
-        splitDatabase.splitDao.insertOrUpdate(split: split1)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100) // querytrings changes so change# from 100 to -1
+        let split1 = buildSplit(name: split1Name, treatment: split1Treatment)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: split)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: split1)
+
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -332,14 +342,14 @@ class ReadyFromCacheTest: XCTestCase {
                 readyExp.fulfill()
             }
 
-            wait(for: [cacheReadyExp], timeout: 2)
+            wait(for: [cacheReadyExp], timeout: 10)
             treatmentsCache[i] = client.getTreatment(splitName)
             treatments1Cache[i] = client.getTreatment(split1Name)
 
             globalCacheReadyFired.set(true)
 
             ThreadUtils.delay(seconds: 2)
-            wait(for: [readyExp], timeout: 3)
+            wait(for: [readyExp], timeout: 10)
             treatmentsReady[i] = client.getTreatment(splitName)
             treatments1Ready[i] = client.getTreatment(split1Name)
 
@@ -360,6 +370,7 @@ class ReadyFromCacheTest: XCTestCase {
 
         XCTAssertEqual(-1, receivedChangeNumber[1])
         XCTAssertEqual(1000, receivedChangeNumber[2])
+
     }
 
     func testPersistentAttributesEnabled() {
@@ -374,10 +385,11 @@ class ReadyFromCacheTest: XCTestCase {
         loadChangesAttr()
         let userKey = "otherKey"
         // When splits and connection available, ready from cache and Ready should be fired
-        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         let split1 =  changes[5].splits[1]
-        splitDatabase.splitDao.insertOrUpdate(split: split1)
-        splitDatabase.attributesDao.update(userKey: userKey, attributes: ["isEnabled": true])
+        splitDatabase.attributesDao.syncUpdate(userKey: userKey, attributes: ["isEnabled": true])
+        splitDatabase.splitDao.syncInsertOrUpdate(split: split1)
+
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -416,17 +428,19 @@ class ReadyFromCacheTest: XCTestCase {
             readyExp.fulfill()
         }
 
-        wait(for: [cacheReadyExp], timeout: 1)
+        wait(for: [cacheReadyExp], timeout: 10)
         let treatmentCache = client.getTreatment("split1")
 
         globalCacheReadyFired.set(true)
 
         ThreadUtils.delay(seconds: 5)
-        wait(for: [readyExp], timeout: 3)
+        wait(for: [readyExp], timeout: 10)
 
         XCTAssertTrue(cacheReadyFired)
         XCTAssertTrue(readyFired)
         XCTAssertEqual(treatment, treatmentCache)
+
+        client.destroy()
     }
 
     private func getChanges(for hitNumber: Int) -> Data {
