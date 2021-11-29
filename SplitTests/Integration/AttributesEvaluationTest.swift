@@ -281,7 +281,7 @@ class AttributesEvaluationTest: XCTestCase {
 
         splitClient = factory.client
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        splitClient.on(event: SplitEvent.sdkReadyFromCache) {
             cacheReadyExp.fulfill()
         }
 
