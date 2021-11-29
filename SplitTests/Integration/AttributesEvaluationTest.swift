@@ -45,7 +45,6 @@ class AttributesEvaluationTest: XCTestCase {
 
         // When splits and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test", queue: dbqueue)
-        splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
         splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
 
         let session = HttpSessionMock()
@@ -70,9 +69,10 @@ class AttributesEvaluationTest: XCTestCase {
 
         splitClient.on(event: SplitEvent.sdkReadyFromCache) {
             cacheReadyExp.fulfill()
+            print("Ready from cache")
         }
 
-        wait(for: [cacheReadyExp], timeout: 10)
+        wait(for: [cacheReadyExp], timeout: 20)
 
         let evalAfterInit = splitClient.getTreatment(splitName)
 
@@ -109,7 +109,6 @@ class AttributesEvaluationTest: XCTestCase {
                                    Attr.strValue: attrValues[Attr.strValue]!]
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
-        splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
         splitDatabase.attributesDao.syncUpdate(userKey: userKey, attributes: attr)
 
         let session = HttpSessionMock()
@@ -134,9 +133,10 @@ class AttributesEvaluationTest: XCTestCase {
 
         splitClient.on(event: SplitEvent.sdkReadyFromCache) {
             cacheReadyExp.fulfill()
+            print("Ready from cache")
         }
 
-        wait(for: [cacheReadyExp], timeout: 10)
+        wait(for: [cacheReadyExp], timeout: 20)
 
         let initAttributes = splitClient.getAttributes()
 
@@ -215,9 +215,10 @@ class AttributesEvaluationTest: XCTestCase {
 
         splitClient.on(event: SplitEvent.sdkReadyFromCache) {
             cacheReadyExp.fulfill()
+            print("Ready from cache")
         }
 
-        wait(for: [cacheReadyExp], timeout: 10)
+        wait(for: [cacheReadyExp], timeout: 20)
 
         let initAttributes = splitClient.getAttributes()
 
@@ -260,7 +261,6 @@ class AttributesEvaluationTest: XCTestCase {
         // When splits and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
-        splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -283,9 +283,10 @@ class AttributesEvaluationTest: XCTestCase {
 
         splitClient.on(event: SplitEvent.sdkReadyFromCache) {
             cacheReadyExp.fulfill()
+            print("Ready from cache")
         }
 
-        wait(for: [cacheReadyExp], timeout: 10)
+        wait(for: [cacheReadyExp], timeout: 20)
 
         let evalAfterInit = splitClient.getTreatment(splitName)
 
