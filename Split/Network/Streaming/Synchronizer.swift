@@ -73,6 +73,7 @@ class DefaultSynchronizer: Synchronizer {
     private let impressionsObserver = ImpressionsObserver(size: ServiceConstants.lastSeenImpressionCachSize)
     private let impressionsCounter = ImpressionsCounter()
     private let flushQueue = DispatchQueue(label: "split-flush-queue", target: DispatchQueue.global())
+    private let loadQueue = DispatchQueue(label: "split-load-queue")
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -117,7 +118,7 @@ class DefaultSynchronizer: Synchronizer {
 
     func loadAndSynchronizeSplits() {
         let splitsStorage = self.splitStorageContainer.splitsStorage
-        DispatchQueue.global().async {
+        loadQueue.async {
             self.filterSplitsInCache()
             splitsStorage.loadLocal()
             if splitsStorage.getAll().count > 0 {
@@ -128,14 +129,14 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func loadMySegmentsFromCache() {
-        DispatchQueue.global().async {
+        loadQueue.async {
             self.splitStorageContainer.mySegmentsStorage.loadLocal()
             self.splitEventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
         }
     }
 
     func loadAttributesFromCache() {
-        DispatchQueue.global().async {
+        loadQueue.async {
             self.splitStorageContainer.attributesStorage.loadLocal()
             self.splitEventsManager.notifyInternalEvent(.attributesLoadedFromCache)
         }

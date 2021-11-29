@@ -72,7 +72,7 @@ class AttributesEvaluationTest: XCTestCase {
             print("Ready from cache")
         }
 
-        wait(for: [cacheReadyExp], timeout: 20)
+        wait(for: [cacheReadyExp], timeout: 5)
 
         let evalAfterInit = splitClient.getTreatment(splitName)
 
@@ -136,7 +136,7 @@ class AttributesEvaluationTest: XCTestCase {
             print("Ready from cache")
         }
 
-        wait(for: [cacheReadyExp], timeout: 20)
+        wait(for: [cacheReadyExp], timeout: 5)
 
         let initAttributes = splitClient.getAttributes()
 
@@ -218,7 +218,7 @@ class AttributesEvaluationTest: XCTestCase {
             print("Ready from cache")
         }
 
-        wait(for: [cacheReadyExp], timeout: 20)
+        wait(for: [cacheReadyExp], timeout: 5)
 
         let initAttributes = splitClient.getAttributes()
 
@@ -286,7 +286,7 @@ class AttributesEvaluationTest: XCTestCase {
             print("Ready from cache")
         }
 
-        wait(for: [cacheReadyExp], timeout: 20)
+        wait(for: [cacheReadyExp], timeout: 5)
 
         let evalAfterInit = splitClient.getTreatment(splitName)
 
