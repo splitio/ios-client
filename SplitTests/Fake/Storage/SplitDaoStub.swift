@@ -18,6 +18,10 @@ class SplitDaoStub: SplitDao {
     func insertOrUpdate(splits: [Split]) {
         insertedSplits = splits
     }
+
+    func syncInsertOrUpdate(split: Split) {
+       insertOrUpdate(split: split)
+    }
     
     func insertOrUpdate(split: Split) {
         insertedSplits.append(split)
