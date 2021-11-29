@@ -77,11 +77,11 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 // MARK: Events
 extension DefaultSplitClient {
     public func on(event: SplitEvent, execute action: @escaping SplitAction) {
-        if eventsManager.eventAlreadyTriggered(event: event) {
-            Logger.w("A handler was added for \(event.toString()) on the SDK, " +
-                "which has already fired and won’t be emitted again. The callback won’t be executed.")
-            return
-        }
+//        if eventsManager.eventAlreadyTriggered(event: event) {
+//            Logger.w("A handler was added for \(event.toString()) on the SDK, " +
+//                "which has already fired and won’t be emitted again. The callback won’t be executed.")
+//            return
+//        }
         let task = SplitEventActionTask(action: action)
         eventsManager.register(event: event, task: task)
     }

@@ -120,9 +120,9 @@ class DefaultSynchronizer: Synchronizer {
         DispatchQueue.global().async {
             self.filterSplitsInCache()
             splitsStorage.loadLocal()
-//            if splitsStorage.getAll().count > 0 {
+            if splitsStorage.getAll().count > 0 {
                 self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
-//            }
+            }
             self.synchronizeSplits()
         }
     }
