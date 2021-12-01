@@ -15,12 +15,12 @@ class HttpSplitFetcherTests: XCTestCase {
     
     var restClient: RestClientStub!
     var fetcher: HttpSplitFetcher!
-    var metricsManager: MetricsManagerStub!
+    var telemetryProducer: TelemetryProducerStub!
     
     override func setUp() {
         restClient = RestClientStub()
-        metricsManager = MetricsManagerStub()
-        fetcher = DefaultHttpSplitFetcher(restClient: restClient, metricsManager: metricsManager)
+        telemetryProducer = TelemetryProducerStub()
+        fetcher = DefaultHttpSplitFetcher(restClient: restClient, telemetryProducer: telemetryProducer)
     }
     
     func testServerNoReachable() {
@@ -32,8 +32,6 @@ class HttpSplitFetcherTests: XCTestCase {
             isError = true
         }
         XCTAssertTrue(isError)
-        XCTAssertFalse(metricsManager.countCalled)
-        XCTAssertFalse(metricsManager.timeCalled)
     }
     
     func testSuccessFullFetch() throws {
@@ -45,8 +43,6 @@ class HttpSplitFetcherTests: XCTestCase {
         XCTAssertEqual(1, c.since)
         XCTAssertEqual(2, c.till)
         XCTAssertEqual(0, c.splits.count)
-        XCTAssertTrue(metricsManager.countCalled)
-        XCTAssertTrue(metricsManager.timeCalled)
     }
     
     func newChange(since: Int64, till: Int64, splits: [Split] = []) -> SplitChange {

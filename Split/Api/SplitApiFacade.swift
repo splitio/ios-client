@@ -74,11 +74,13 @@ class SplitApiFacadeBuilder {
                 fatalError("Some parameter is null when creating Split Api Facade")
         }
 
+        // TODO: Replace in real implementatyion
+        let telemetryProducer = TelemetryProducer()
         let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
-                                                    metricsManager: DefaultMetricsManager.shared)
+                                                    telemetryProducer: telemetryProducer)
 
         let mySegmentsFetcher: HttpMySegmentsFetcher
-            = DefaultHttpMySegmentsFetcher(restClient: restClient, metricsManager: DefaultMetricsManager.shared)
+            = DefaultHttpMySegmentsFetcher(restClient: restClient, telemetryProducer: telemetryProducer)
 
         let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
 

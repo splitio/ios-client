@@ -60,7 +60,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
         self.treatmentManager = DefaultTreatmentManager(
             evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager,
-            impressionLogger: synchronizer, metricsManager: DefaultMetricsManager.shared,
+            impressionLogger: synchronizer, telemetryProducer: TelemetryProducer(),
             attributesStorage: storageContainer.attributesStorage,
             keyValidator: DefaultKeyValidator(),
             splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
@@ -276,7 +276,7 @@ extension DefaultSplitClient {
 
     private func syncFlush() {
         self.synchronizer.flush()
-        DefaultMetricsManager.shared.flush()
+        // TODO: Call Telemetry synchronizer flush here
     }
 
     public func flush() {

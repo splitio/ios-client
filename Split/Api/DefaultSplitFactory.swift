@@ -51,9 +51,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManager()
 
-        // Setup metrics
-        setupMetrics(splitClientConfig: config)
-
         //
         let databaseName = SplitDatabaseHelper.databaseName(apiKey: apiKey) ?? config.defaultDataFolder
         SplitDatabaseHelper.renameDatabaseFromLegacyName(name: databaseName, apiKey: apiKey)
@@ -68,8 +65,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             httpClient: httpClient ?? DefaultHttpClient.shared,
             reachabilityChecker: reachabilityChecker ?? ReachabilityWrapper())
 
-        /// TODO: Remove this line when metrics refactor
-        DefaultMetricsManager.shared.restClient = restClient
         let splitApiFacade = try components.buildSplitApiFacade(testHttpClient: httpClient)
 
         let synchronizer = try components.buildSynchronizer()
@@ -100,10 +95,5 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         } else {
             SplitBgSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)
         }
-    }
-
-    private func setupMetrics(splitClientConfig: SplitClientConfig) {
-        HttpSessionConfig.default.connectionTimeOut = TimeInterval(splitClientConfig.connectionTimeout)
-        MetricManagerConfig.default.pushRateInSeconds = splitClientConfig.metricsPushRate
     }
 }
