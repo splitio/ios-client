@@ -15,12 +15,12 @@ protocol HttpMySegmentsFetcher {
 class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
 
     private let restClient: RestClientMySegments
-    private let metricsManager: MetricsManager
+    private let telemetryProducer: TelemetryRuntimeProducer
 
     init(restClient: RestClientMySegments,
-         metricsManager: MetricsManager) {
+         telemetryProducer: TelemetryRuntimeProducer) {
         self.restClient = restClient
-        self.metricsManager = metricsManager
+        self.telemetryProducer = telemetryProducer
     }
 
     func execute(userKey: String, headers: [String: String]? = nil) throws -> [String]? {
@@ -36,9 +36,9 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
             guard let self = self else {
                 return
             }
-            self.metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime,
-                                for: Metrics.Time.mySegmentsFetcherGet)
-            self.metricsManager.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherStatus200)
+//            self.metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime,
+//                                for: Metrics.Time.mySegmentsFetcherGet)
+//            self.metricsManager.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherStatus200)
             requestResult = result
             semaphore.signal()
         }

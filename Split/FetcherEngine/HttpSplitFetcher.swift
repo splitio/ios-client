@@ -13,11 +13,11 @@ protocol HttpSplitFetcher {
 class DefaultHttpSplitFetcher: HttpSplitFetcher {
 
     private let restClient: RestClientSplitChanges
-    private let metricsManager: MetricsManager
+    private let telemetryProducer: TelemetryRuntimeProducer
 
-    init(restClient: RestClientSplitChanges, metricsManager: MetricsManager) {
+    init(restClient: RestClientSplitChanges, telemetryProducer: TelemetryRuntimeProducer) {
         self.restClient = restClient
-        self.metricsManager = metricsManager
+        self.telemetryProducer = telemetryProducer
     }
 
     func execute(since: Int64, headers: HttpHeaders? = nil) throws -> SplitChange {
@@ -27,14 +27,14 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
             throw HttpError.serverUnavailable
         }
 
-        let metricsManager = self.metricsManager
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SplitChange>?
         let fetchStartTime = Date().unixTimestampInMiliseconds()
         restClient.getSplitChanges(since: since, headers: headers) { result in
-            metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime,
-                                for: Metrics.Time.splitChangeFetcherGet)
-            metricsManager.count(delta: 1, for: Metrics.Counter.splitChangeFetcherStatus200)
+            // Commented line to replace with new telemetry implementation in next PRs
+//            metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime,
+//                                for: Metrics.Time.splitChangeFetcherGet)
+//            metricsManager.count(delta: 1, for: Metrics.Counter.splitChangeFetcherStatus200)
             requestResult = result
             semaphore.signal()
         }

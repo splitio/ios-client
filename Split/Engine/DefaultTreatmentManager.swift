@@ -11,7 +11,7 @@ import Foundation
 class DefaultTreatmentManager: TreatmentManager {
 
     private let key: Key
-    private let metricsManager: DefaultMetricsManager
+    private let telemetryProducer: TelemetryEvaluationProducer
     private let impressionLogger: ImpressionLogger
     private let eventsManager: SplitEventsManager
     private let keyValidator: KeyValidator
@@ -27,7 +27,7 @@ class DefaultTreatmentManager: TreatmentManager {
          splitConfig: SplitClientConfig,
          eventsManager: SplitEventsManager,
          impressionLogger: ImpressionLogger,
-         metricsManager: DefaultMetricsManager,
+         telemetryProducer: TelemetryEvaluationProducer,
          attributesStorage: AttributesStorage,
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
@@ -38,7 +38,7 @@ class DefaultTreatmentManager: TreatmentManager {
         self.evaluator = evaluator
         self.eventsManager = eventsManager
         self.impressionLogger = impressionLogger
-        self.metricsManager = metricsManager
+        self.telemetryProducer = telemetryProducer
         self.attributesStorage = attributesStorage
         self.keyValidator = keyValidator
         self.splitValidator = splitValidator
@@ -53,8 +53,9 @@ class DefaultTreatmentManager: TreatmentManager {
                                                      shouldValidate: true,
                                                      attributes: mergedAttributes,
                                                      validationTag: ValidationTag.getTreatmentWithConfig)
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
-                            for: Metrics.Time.getTreatmentWithConfig)
+        // Commented line to replace with new telemetry implementation in next PRs
+//        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
+//                            for: Metrics.Time.getTreatmentWithConfig)
         return result
     }
 
@@ -64,8 +65,9 @@ class DefaultTreatmentManager: TreatmentManager {
                                                      shouldValidate: true,
                                                      attributes: attributes,
                                                      validationTag: ValidationTag.getTreatment).treatment
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
-                            for: Metrics.Time.getTreatment)
+        // Commented line to replace with new telemetry implementation in next PRs
+//        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
+//                            for: Metrics.Time.getTreatment)
         return result
     }
 
@@ -75,8 +77,9 @@ class DefaultTreatmentManager: TreatmentManager {
                                                       attributes: attributes,
                                                       validationTag: ValidationTag.getTreatments)
         let result = treatments.mapValues { $0.treatment }
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
-                            for: Metrics.Time.getTreatments)
+        // Commented line to replace with new telemetry implementation in next PRs
+//        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
+//                            for: Metrics.Time.getTreatments)
         return result
     }
 
@@ -85,8 +88,9 @@ class DefaultTreatmentManager: TreatmentManager {
         let result = getTreatmentsWithConfigNoMetrics(splits: splits,
                                                       attributes: attributes,
                                                       validationTag: ValidationTag.getTreatmentsWithConfig)
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
-                            for: Metrics.Time.getTreatmentsWithConfig)
+        // Commented line to replace with new telemetry implementation in next PRs
+//        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
+//                            for: Metrics.Time.getTreatmentsWithConfig)
         return result
     }
 

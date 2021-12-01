@@ -45,6 +45,8 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     private let userKey: String
     private let eventsManager: SplitEventsManager
     private let splitsFilterQueryString: String
+    // TODO: Inject in constructor when real implementation
+    private let telemetryProducer = TelemetryProducer()
 
     init(userKey: String,
          splitConfig: SplitClientConfig,
@@ -89,7 +91,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         let mySegmentsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
         return RetryableMySegmentsSyncWorker(userKey: userKey, mySegmentsFetcher: apiFacade.mySegmentsFetcher,
                                              mySegmentsStorage: storageContainer.mySegmentsStorage,
-                                             metricsManager: DefaultMetricsManager.shared,
+                                             telemetryProducer: telemetryProducer,
                                              eventsManager: eventsManager,
                                              reconnectBackoffCounter: mySegmentsBackoffCounter,
                                              avoidCache: avoidCache)
@@ -105,7 +107,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     func createPeriodicMySegmentsSyncWorker() -> PeriodicSyncWorker {
         return PeriodicMySegmentsSyncWorker(
             userKey: userKey, mySegmentsFetcher: apiFacade.mySegmentsFetcher,
-            mySegmentsStorage: storageContainer.mySegmentsStorage, metricsManager: DefaultMetricsManager.shared,
+            mySegmentsStorage: storageContainer.mySegmentsStorage, telemetryProducer: telemetryProducer,
             timer: DefaultPeriodicTimer(interval: splitConfig.segmentsRefreshRate), eventsManager: eventsManager)
     }
 

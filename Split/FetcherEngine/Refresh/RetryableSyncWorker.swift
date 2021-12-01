@@ -100,13 +100,13 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
     private let mySegmentsFetcher: HttpMySegmentsFetcher
     private let userKey: String
     private let mySegmentsStorage: MySegmentsStorage
-    private let metricsManager: MetricsManager
+    private let telemetryProducer: TelemetryRuntimeProducer
     private let avoidCache: Bool
     var changeChecker: MySegmentsChangesChecker
 
     init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
          mySegmentsStorage: MySegmentsStorage,
-         metricsManager: MetricsManager,
+         telemetryProducer: TelemetryRuntimeProducer,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter,
          avoidCache: Bool) {
@@ -114,7 +114,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
         self.userKey = userKey
         self.mySegmentsStorage = mySegmentsStorage
         self.mySegmentsFetcher = mySegmentsFetcher
-        self.metricsManager = metricsManager
+        self.telemetryProducer = telemetryProducer
         self.changeChecker = DefaultMySegmentsChangesChecker()
         self.avoidCache = avoidCache
 
@@ -136,7 +136,8 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                 return true
             }
         } catch let error {
-            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherException)
+            // Commented line to replace with new telemetry implementation in next PRs
+//            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherException)
             Logger.e("Problem fetching mySegments: %@", error.localizedDescription)
         }
         return false

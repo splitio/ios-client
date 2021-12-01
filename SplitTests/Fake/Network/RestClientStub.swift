@@ -96,15 +96,7 @@ extension RestClientStub: RestClientSseAuthenticator {
     }
 }
 
-extension RestClientStub: MetricsRestClient {
-    func sendTimeMetrics(_ times: [TimeMetric], completion: @escaping (DataResult<EmptyValue>) -> Void) {
-    }
-
-    func sendCounterMetrics(_ counters: [CounterMetric], completion: @escaping (DataResult<EmptyValue>) -> Void) {
-    }
-
-    func sendGaugeMetrics(_ gauge: MetricGauge, completion: @escaping (DataResult<EmptyValue>) -> Void) {
-    }
+extension RestClientStub: RestClientTelemetry {
 }
 
 extension RestClientStub: RestClientTest {

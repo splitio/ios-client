@@ -15,12 +15,12 @@ class HttpMySegmentsFetcherTests: XCTestCase {
     
     var restClient: RestClientStub!
     var fetcher: HttpMySegmentsFetcher!
-    var metricsManager: MetricsManagerStub!
+    var telemetryProducer: TelemetryProducerStub!
     
     override func setUp() {
         restClient = RestClientStub()
-        metricsManager = MetricsManagerStub()
-        fetcher = DefaultHttpMySegmentsFetcher(restClient: restClient, metricsManager: metricsManager)
+        telemetryProducer = TelemetryProducerStub()
+        fetcher = DefaultHttpMySegmentsFetcher(restClient: restClient, telemetryProducer: telemetryProducer)
     }
     
     func testServerNoReachable() {
@@ -32,8 +32,6 @@ class HttpMySegmentsFetcherTests: XCTestCase {
             isError = true
         }
         XCTAssertTrue(isError)
-        XCTAssertFalse(metricsManager.countCalled)
-        XCTAssertFalse(metricsManager.timeCalled)
     }
     
     func testSuccessFulFetch() throws {
@@ -43,8 +41,6 @@ class HttpMySegmentsFetcherTests: XCTestCase {
         let c = try fetcher.execute(userKey: "user", headers: nil)
         
         XCTAssertEqual(3, c?.count)
-        XCTAssertTrue(metricsManager.countCalled)
-        XCTAssertTrue(metricsManager.timeCalled)
     }
     
     override func tearDown() {

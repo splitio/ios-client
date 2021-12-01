@@ -140,11 +140,14 @@ struct BackgroundSyncExecutor {
                                            endpointFactory: endpointFactory,
                                            reachabilityChecker: ReachabilityWrapper())
 
+        // TODO: Create final telemetry producer here:
+        let telemetryProducer = TelemetryProducer()
+
         let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
-                                                    metricsManager: DefaultMetricsManager.shared)
+                                                    telemetryProducer: telemetryProducer)
 
         self.mySegmentsFetcher = DefaultHttpMySegmentsFetcher(restClient: restClient,
-                                                              metricsManager: DefaultMetricsManager.shared)
+                                                              telemetryProducer: telemetryProducer)
 
         let cacheExpiration = Int64(ServiceConstants.cacheExpirationInSeconds)
         self.splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitsFetcher,
