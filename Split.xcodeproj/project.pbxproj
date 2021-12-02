@@ -384,6 +384,8 @@
 		950B7417268F4716005FD649 /* ImpressionsMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950B7416268F4716005FD649 /* ImpressionsMode.swift */; };
 		950B743426938B5E005FD649 /* KeyImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950B743326938B5E005FD649 /* KeyImpression.swift */; };
 		950B743D2694D768005FD649 /* LegacyStorageCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950B743C2694D768005FD649 /* LegacyStorageCleaner.swift */; };
+		95122A0A27581BEB00D93F90 /* TelemetryConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95122A0927581BEB00D93F90 /* TelemetryConfig.swift */; };
+		95122A0E275822F600D93F90 /* TelemetryStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95122A0D275822F600D93F90 /* TelemetryStats.swift */; };
 		951D9F72260116F20069DD23 /* SplitDatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D9F71260116F20069DD23 /* SplitDatabaseHelper.swift */; };
 		952C2B7726447FDD009275B4 /* BlockingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7626447FDD009275B4 /* BlockingQueue.swift */; };
 		952C2B7B26449456009275B4 /* BlockingQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7A26449456009275B4 /* BlockingQueueTest.swift */; };
@@ -927,6 +929,8 @@
 		950B74302693761A005FD649 /* split_cache_v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v2.xcdatamodel; sourceTree = "<group>"; };
 		950B743326938B5E005FD649 /* KeyImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyImpression.swift; sourceTree = "<group>"; };
 		950B743C2694D768005FD649 /* LegacyStorageCleaner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyStorageCleaner.swift; sourceTree = "<group>"; };
+		95122A0927581BEB00D93F90 /* TelemetryConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryConfig.swift; sourceTree = "<group>"; };
+		95122A0D275822F600D93F90 /* TelemetryStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryStats.swift; sourceTree = "<group>"; };
 		951D9F71260116F20069DD23 /* SplitDatabaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDatabaseHelper.swift; sourceTree = "<group>"; };
 		952C2B7626447FDD009275B4 /* BlockingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueue.swift; sourceTree = "<group>"; };
 		952C2B7A26449456009275B4 /* BlockingQueueTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueueTest.swift; sourceTree = "<group>"; };
@@ -2045,6 +2049,15 @@
 			path = Localhost;
 			sourceTree = "<group>";
 		};
+		951229F42758153100D93F90 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				95122A0927581BEB00D93F90 /* TelemetryConfig.swift */,
+				95122A0D275822F600D93F90 /* TelemetryStats.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
 		953911AB267A648F0040433A /* Impressions */ = {
 			isa = PBXGroup;
 			children = (
@@ -2131,6 +2144,7 @@
 		95623D9C2757F3AA0006A8F1 /* Telemetry */ = {
 			isa = PBXGroup;
 			children = (
+				951229F42758153100D93F90 /* Storage */,
 				59F6AA95215E6A5F00A51997 /* LatencyCounter.swift */,
 				95623D9D2757F3F40006A8F1 /* TelemetryProducer.swift */,
 			);
@@ -2440,6 +2454,7 @@
 				595AD25724E56E6200A7B750 /* EventStreamParser.swift in Sources */,
 				3B6DEF2820EA6AE50067435E /* Impression.swift in Sources */,
 				3B6DEF3D20EA6AE50067435E /* BetweenMatcherData.swift in Sources */,
+				95122A0A27581BEB00D93F90 /* TelemetryConfig.swift in Sources */,
 				3B6DEF2220EA6AE50067435E /* SplitView.swift in Sources */,
 				3B6DEF3E20EA6AE50067435E /* Condition.swift in Sources */,
 				5905D4F1255C13DD006DA3B1 /* SplitsStorage.swift in Sources */,
@@ -2589,6 +2604,7 @@
 				5903C497210A5E0900A754B0 /* SynchronizedArrayWrapper.swift in Sources */,
 				3B6DEF2F20EA6AE50067435E /* EvaluatorError.swift in Sources */,
 				955892AB25C187EA00F67FBA /* CoreDataContextBuilder.swift in Sources */,
+				95122A0E275822F600D93F90 /* TelemetryStats.swift in Sources */,
 				3B6DEF2D20EA6AE50067435E /* SplitConstants.swift in Sources */,
 				3B6DEF5320EA6AE50067435E /* WhitelistMatcherData.swift in Sources */,
 				3B6DEF5D20EA6AE50067435E /* SplitFactory.swift in Sources */,
