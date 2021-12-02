@@ -41,9 +41,9 @@ struct TelemetryUrlOverrides {
 }
 
 struct TelemetryConfig {
-    var operationMode: Int
+    let operationMode = 0 // 0: Standalone, 1: Consumer
+    let storage: String = "memory"
     var streamingEnabled: Bool
-    var storage: String
     var rates: TelemetryRates
     var urlOverrides: TelemetryUrlOverrides
     var impressionsQueueSize: Int64
