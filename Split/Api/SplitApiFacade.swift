@@ -75,7 +75,7 @@ class SplitApiFacadeBuilder {
         }
 
         // TODO: Replace in real implementatyion
-        let telemetryProducer = TelemetryProducer()
+        let telemetryProducer = InMemoryTelemetryStorage()
         let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
                                                     telemetryProducer: telemetryProducer)
 

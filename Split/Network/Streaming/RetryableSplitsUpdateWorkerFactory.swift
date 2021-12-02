@@ -46,7 +46,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     private let eventsManager: SplitEventsManager
     private let splitsFilterQueryString: String
     // TODO: Inject in constructor when real implementation
-    private let telemetryProducer = TelemetryProducer()
+    private let telemetryProducer = InMemoryTelemetryStorage()
 
     init(userKey: String,
          splitConfig: SplitClientConfig,

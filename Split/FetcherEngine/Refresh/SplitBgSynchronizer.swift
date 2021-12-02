@@ -141,7 +141,7 @@ struct BackgroundSyncExecutor {
                                            reachabilityChecker: ReachabilityWrapper())
 
         // TODO: Create final telemetry producer here:
-        let telemetryProducer = TelemetryProducer()
+        let telemetryProducer = InMemoryTelemetryStorage()
 
         let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
                                                     telemetryProducer: telemetryProducer)
