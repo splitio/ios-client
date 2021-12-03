@@ -60,7 +60,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
         self.treatmentManager = DefaultTreatmentManager(
             evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager,
-            impressionLogger: synchronizer, telemetryProducer: TelemetryProducer(),
+            impressionLogger: synchronizer, telemetryProducer: InMemoryTelemetryStorage(),
             attributesStorage: storageContainer.attributesStorage,
             keyValidator: DefaultKeyValidator(),
             splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
