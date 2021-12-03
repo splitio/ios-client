@@ -16,7 +16,6 @@ class IntegrationCoreDataHelper  {
         let sempaphore = DispatchSemaphore(value: 0)
         guard let modelUrl = Bundle(for: CoreDataHelper.self).url(forResource: "split_cache",
                                                                   withExtension: "momd") else {
-            print("e")
             fatalError("Error loading model from bundle")
 
         }
@@ -35,18 +34,14 @@ class IntegrationCoreDataHelper  {
         let managedObjContext = ctx!
         managedObjContext.persistentStoreCoordinator = persistenceCoordinator
 
-        guard let docURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {
-            fatalError("Unable to resolve document directory")
-        }
-        let databaseUrl = docURL.appendingPathComponent("\(databaseName).sqlite")
         do {
             try persistenceCoordinator.addPersistentStore(ofType: NSInMemoryStoreType,
                                                           configurationName: nil,
-                                                          at: databaseUrl, options: nil)
-
+                                                          at: nil, options: nil)
             sempaphore.signal()
         } catch {
-            fatalError("Error migrating store: \(error)")
+            print("Error creating test database")
+            sempaphore.signal()
         }
         sempaphore.wait()
         return CoreDataHelper(managedObjectContext: managedObjContext, persistentCoordinator: persistenceCoordinator)

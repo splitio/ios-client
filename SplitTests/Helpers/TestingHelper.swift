@@ -101,9 +101,9 @@ struct TestingHelper {
         return split
     }
 
-    static func createTestDatabase(name: String) -> SplitDatabase {
-        let queue = DispatchQueue(label: name, target: DispatchQueue.global())
-        let helper = IntegrationCoreDataHelper.get(databaseName: "trackTestDb", dispatchQueue: queue)
+    static func createTestDatabase(name: String, queue: DispatchQueue? = nil) -> SplitDatabase {
+        let newQueue = queue ?? DispatchQueue(label: "testqueue", target: DispatchQueue.global())
+        let helper = IntegrationCoreDataHelper.get(databaseName: name, dispatchQueue: newQueue)
         return CoreDataSplitDatabase(coreDataHelper: helper)
     }
 }
