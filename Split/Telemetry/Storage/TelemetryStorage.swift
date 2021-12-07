@@ -8,58 +8,82 @@
 
 import Foundation
 
+enum TelemetryImpressionsDataType: CaseIterable {
+    case queued
+    case dropped
+    case deduped
+}
+
+enum TelemetryEventsDataType: CaseIterable {
+    case queued
+    case dropped
+}
+
+enum TelemetryMethod: CaseIterable {
+    case treatment
+    case treatments
+    case treatmentWithConfig
+    case treatmentsWithConfig
+    case track
+}
+
+enum TelemetryResource: CaseIterable {
+    case splits
+    case mySegments
+    case impressions
+    case impressionsCount
+    case events
+    case telemetry
+    case token
+}
+
+enum TelemetryInitCounter: CaseIterable {
+    case nonReadyUsages
+}
+
 // MARK: Config Telemtry
 protocol TelemetryInitProducer {
     func recordNonReadyUsage()
 }
 
 protocol TelemetryInitConsumer {
-    func getNonReadyUsages()
+    func getNonReadyUsages() -> Int
 }
 
 // MARK: Evaluation Telemetry
 protocol TelemetryEvaluationProducer {
-    func recordLatency(method: String, latency: Int64)
-    func recordException(method: String)
+    func recordLatency(method: TelemetryMethod, latency: Int64)
+    func recordException(method: TelemetryMethod)
 }
 
 protocol TelemetryEvaluationConsumer {
-    func popExceptions() -> TelemetryMethodExceptions
     func popLatencies() -> TelemetryMethodLatencies
+    func popExceptions() -> TelemetryMethodExceptions
 }
-
-enum ImpressionsDataType {
-}
-enum EventsDataRecords {
-}
-enum Resource {
-}
-enum LastSynchronizationRecords {
-}
-
 
 protocol TelemetryRuntimeProducer {
-    func addTag(tag: String)
-    func recordImpressionStats(dataType: ImpressionsDataType, count: Int)
-    func recordEventStats(dataType: EventsDataRecords, count: Int)
-    func recordSuccessfulSync(resource: LastSynchronizationRecords, time: Int64)
-    func recordSyncError(resource: Resource, status: Int)
-    func recordSyncLatency(resource: TelemetryHttpLatencies, latency: Int64)
+
+    func recordImpressionStats(type: TelemetryImpressionsDataType, count: Int)
+    func recordEventStats(type: TelemetryEventsDataType, count: Int)
+    func recordLastSync(resource: TelemetryResource, time: Int64)
+    func recordHttpError(resource: TelemetryResource, status: Int)
+    func recordHttpLatency(resource: TelemetryResource, latency: Int64)
     func recordAuthRejections()
     func recordTokenRefreshes()
-    func recordStreamingEvents(streamingEvent: TelemetryStreamingEvent)
+    func recordStreamingEvent(type: TelemetryStreamingEventType, data: Int64, timestamp: Int64)
+    func addTag(tag: String)
     func recordSessionLength(sessionLength: Int64)
 }
 
 protocol TelemetryRuntimeConsumer {
-    func getImpressionsStats(data: ImpressionsDataType) -> Int
-    func getEventStats(type: EventsDataRecords) -> Int
-    func getLastSynchronization() -> TelemetryLastSynchronization
-    func popHTTPErrors() -> TelemetryHttpErrors
-    func popHTTPLatencies() -> TelemetryHttpLatencies
-    func popAuthRejections() -> Int64
-    func popTokenRefreshes() -> Int64
-    func spopStreamingEvents() -> [TelemetryStreamingEvent]
+    func getImpressionStats(type: TelemetryImpressionsDataType) -> Int
+    func getEventStats(type: TelemetryEventsDataType) -> Int
+    func getLastSync() -> TelemetryLastSync
+    func popHttpErrors() -> TelemetryHttpErrors
+    func popHttpLatencies() -> TelemetryHttpLatencies
+    func popAuthRejections() -> Int
+    func popTokenRefreshes() -> Int
+    func popStreamingEvents() -> [TelemetryStreamingEvent]
     func popTags() -> [String]
     func getSessionLength() -> Int64
 }
@@ -75,132 +99,4 @@ protocol TelemetryConsumer: TelemetryInitConsumer,
 }
 
 protocol TelemetryStorage: TelemetryProducer, TelemetryConsumer {
-}
-
-// Dummy class to make the project compile until implementation is done
-class InMemoryTelemetryStorage: TelemetryStorage {
-    func recordNonReadyUsage() {
-
-    }
-
-    func recordLatency(method: String, latency: Int64) {
-
-    }
-
-    func recordException(method: String) {
-
-    }
-
-    func addTag(tag: String) {
-
-    }
-
-    func recordImpressionStats(dataType: ImpressionsDataType, count: Int) {
-
-    }
-
-    func recordEventStats(dataType: EventsDataRecords, count: Int) {
-
-    }
-
-    func recordSuccessfulSync(resource: LastSynchronizationRecords, time: Int64) {
-
-    }
-
-    func recordSyncError(resource: Resource, status: Int) {
-
-    }
-
-    func recordSyncLatency(resource: TelemetryHttpLatencies, latency: Int64) {
-
-    }
-
-    func recordAuthRejections() {
-
-    }
-
-    func recordTokenRefreshes() {
-
-    }
-
-    func recordStreamingEvents(streamingEvent: TelemetryStreamingEvent) {
-
-    }
-
-    func recordSessionLength(sessionLength: Int64) {
-
-    }
-
-    func getNonReadyUsages() {
-
-    }
-
-    func popExceptions() -> TelemetryMethodExceptions {
-        return TelemetryMethodExceptions(treatment: 0,
-                                         treatments: 0,
-                                         treatmentWithConfig: 0,
-                                         treatmentsWithConfig: 0,
-                                         track: 0)
-    }
-
-    func popLatencies() -> TelemetryMethodLatencies {
-        return TelemetryMethodLatencies(treatment: [0],
-                                        treatments: [0],
-                                        treatmentWithConfig: [0],
-                                        treatmentsWithConfig: [0],
-                                        track: [0])
-    }
-
-    func getImpressionsStats(data: ImpressionsDataType) -> Int {
-
-    }
-
-    func getEventStats(type: EventsDataRecords) -> Int {
-
-    }
-
-    func getLastSynchronization() -> TelemetryLastSynchronization {
-        return TelemetryLastSynchronization(splits: 0, impressions: 0,
-                                            impressionsCount: 0, events: 0, token: 0,
-                                            telemetry: 0, mySegments: 0)
-    }
-
-    func popHTTPErrors() -> TelemetryHttpErrors {
-        let val: [Int: Int64] = [0: 0]
-        return TelemetryHttpErrors(splits: val,
-                                   mySegments: val, impressions: val,
-                                   impressionsCount: val,
-                                   events: val,
-                                   token: val,
-                                   telemetry: val)
-    }
-
-    func popHTTPLatencies() -> TelemetryHttpLatencies {
-        let val: [Int64] = [0]
-        return TelemetryHttpLatencies(splits: val, mySegments: val,
-                                      impressions: val, impressionsCount: val,
-                                      events: val, token: val, telemetry: val)
-    }
-
-    func popAuthRejections() -> Int64 {
-        return 0
-    }
-
-    func popTokenRefreshes() -> Int64 {
-        return 0
-    }
-
-    func spopStreamingEvents() -> [TelemetryStreamingEvent] {
-        return []
-    }
-
-    func popTags() -> [String] {
-        return []
-    }
-
-    func getSessionLength() -> Int64 {
-        return 0
-    }
-
-
 }

@@ -15,11 +15,11 @@ class HttpSplitFetcherTests: XCTestCase {
     
     var restClient: RestClientStub!
     var fetcher: HttpSplitFetcher!
-    var telemetryProducer: TelemetryProducerStub!
+    var telemetryProducer: TelemetryStorageStub!
     
     override func setUp() {
         restClient = RestClientStub()
-        telemetryProducer = TelemetryProducerStub()
+        telemetryProducer = TelemetryStorageStub()
         fetcher = DefaultHttpSplitFetcher(restClient: restClient, telemetryProducer: telemetryProducer)
     }
     

@@ -8,6 +8,9 @@
 
 import Foundation
 
+typealias ConcurrentDictionary = SyncDictionarySingleWrapper
+
+// TODO: Rename SyncDictionarySingleWrapper -> ConcurrentDictionary in specific PR for that
 class SyncDictionarySingleWrapper<K: Hashable, T> {
 
     private var queue: DispatchQueue

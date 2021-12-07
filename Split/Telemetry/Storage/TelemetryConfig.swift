@@ -10,14 +10,14 @@ import Foundation
 
 struct TelemetryRates {
     var splits: Int64
-    var segments: Int64
+    var mySegments: Int64
     var impressions: Int64
     var events: Int64
     var telemetry: Int64
 
     enum CodingKeys: String, CodingKey {
         case splits = "sp"
-        case segments = "se"
+        case mySegments = "se"
         case impressions = "im"
         case events = "ev"
         case telemetry = "te"

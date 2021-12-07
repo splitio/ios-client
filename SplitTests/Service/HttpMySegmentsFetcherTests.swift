@@ -15,11 +15,11 @@ class HttpMySegmentsFetcherTests: XCTestCase {
     
     var restClient: RestClientStub!
     var fetcher: HttpMySegmentsFetcher!
-    var telemetryProducer: TelemetryProducerStub!
+    var telemetryProducer: TelemetryStorageStub!
     
     override func setUp() {
         restClient = RestClientStub()
-        telemetryProducer = TelemetryProducerStub()
+        telemetryProducer = TelemetryStorageStub()
         fetcher = DefaultHttpMySegmentsFetcher(restClient: restClient, telemetryProducer: telemetryProducer)
     }
     
