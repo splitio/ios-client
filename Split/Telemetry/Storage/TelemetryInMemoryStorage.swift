@@ -125,7 +125,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
         return nonReadyCounter.value
     }
 
-    func popExceptions() -> TelemetryMethodExceptions {
+    func popMethodExceptions() -> TelemetryMethodExceptions {
         queue.sync {
             return TelemetryMethodExceptions(treatment: popException(method: .treatment),
                                              treatments: popException(method: .treatments),
@@ -135,7 +135,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
         }
     }
 
-    func popLatencies() -> TelemetryMethodLatencies {
+    func popMethodLatencies() -> TelemetryMethodLatencies {
         queue.sync {
             return TelemetryMethodLatencies(treatment: popLatencies(method: .treatment),
                                             treatments: popLatencies(method: .treatments),

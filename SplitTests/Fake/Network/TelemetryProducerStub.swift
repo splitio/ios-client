@@ -11,6 +11,8 @@ import Foundation
 
 class TelemetryStorageStub: TelemetryStorage {
 
+    var popTagsCallCount = 0
+
     func recordLastSync(resource: TelemetryResource, time: Int64) {
     }
 
@@ -47,7 +49,6 @@ class TelemetryStorageStub: TelemetryStorage {
     }
 
     func addTag(tag: String) {
-
     }
 
     func recordImpressionStats(type: TelemetryImpressionsDataType, count: Int) {
@@ -78,7 +79,7 @@ class TelemetryStorageStub: TelemetryStorage {
 
     }
 
-    func popExceptions() -> TelemetryMethodExceptions {
+    func popMethodExceptions() -> TelemetryMethodExceptions {
         return TelemetryMethodExceptions(treatment: 0,
                                          treatments: 0,
                                          treatmentWithConfig: 0,
@@ -86,7 +87,7 @@ class TelemetryStorageStub: TelemetryStorage {
                                          track: 0)
     }
 
-    func popLatencies() -> TelemetryMethodLatencies {
+    func popMethodLatencies() -> TelemetryMethodLatencies {
         return TelemetryMethodLatencies(treatment: [0],
                                         treatments: [0],
                                         treatmentWithConfig: [0],
@@ -126,6 +127,7 @@ class TelemetryStorageStub: TelemetryStorage {
     }
 
     func popTags() -> [String] {
+        popTagsCallCount+=1
         return []
     }
 

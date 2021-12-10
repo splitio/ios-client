@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TelemetryHttpLatencies {
+struct TelemetryHttpLatencies: Encodable {
 
     var splits: [Int]?
     var mySegments: [Int]?
@@ -57,7 +57,7 @@ struct TelemetryStreamingEventValue {
     static let syncModePolling: Int64 = 1
 }
 
-struct TelemetryStreamingEvent {
+struct TelemetryStreamingEvent: Encodable {
     var type: Int
     var data: Int64
     var timestamp: Int64
@@ -69,7 +69,7 @@ struct TelemetryStreamingEvent {
     }
 }
 
-struct TelemetryHttpErrors {
+struct TelemetryHttpErrors: Encodable {
 
     var splits: [Int: Int]?
     var mySegments: [Int: Int]?
@@ -90,7 +90,7 @@ struct TelemetryHttpErrors {
     }
 }
 
-struct TelemetryMethodExceptions {
+struct TelemetryMethodExceptions: Encodable {
     var treatment: Int?
     var treatments: Int?
     var treatmentWithConfig: Int?
@@ -106,7 +106,7 @@ struct TelemetryMethodExceptions {
     }
 }
 
-struct TelemetryLastSync {
+struct TelemetryLastSync: Encodable {
 
     var splits: Int64?
     var impressions: Int64?
@@ -127,7 +127,7 @@ struct TelemetryLastSync {
     }
 }
 
-struct TelemetryMethodLatencies {
+struct TelemetryMethodLatencies: Encodable {
 
     var treatment: [Int]?
     var treatments: [Int]?
@@ -144,26 +144,26 @@ struct TelemetryMethodLatencies {
     }
 }
 
-struct TelemetryStats {
+struct TelemetryStats: Encodable {
 
-    var lastSynchronization: TelemetryLastSync
-    var methodLatencies: TelemetryMethodLatencies
-    var methodExceptions: TelemetryMethodExceptions
-    var httpErrors: TelemetryHttpErrors
-    var httpLatencies: TelemetryHttpLatencies
-    var tokenRefreshes: Int64
-    var authRejections: Int64
-    var impressionsQueued: Int64
-    var impressionsDeduped: Int64
-    var impressionsDropped: Int64
-    var splitCount: Int64
-    var segmentCount: Int64
-    var segmentKeyCount: Int64
-    var sessionLengthMs: Int64
-    var eventsQueued: Int64
-    var eventsDropped: Int64
-    var streamingEvents: [TelemetryStreamingEvent]
-    var tags: [String]
+    var lastSynchronization: TelemetryLastSync?
+    var methodLatencies: TelemetryMethodLatencies?
+    var methodExceptions: TelemetryMethodExceptions?
+    var httpErrors: TelemetryHttpErrors?
+    var httpLatencies: TelemetryHttpLatencies?
+    var tokenRefreshes: Int?
+    var authRejections: Int?
+    var impressionsQueued: Int?
+    var impressionsDeduped: Int?
+    var impressionsDropped: Int?
+    var splitCount: Int?
+    var segmentCount: Int?
+    var segmentKeyCount: Int?
+    var sessionLengthMs: Int64?
+    var eventsQueued: Int?
+    var eventsDropped: Int?
+    var streamingEvents: [TelemetryStreamingEvent]?
+    var tags: [String]?
 
     enum CodingKeys: String, CodingKey {
         case lastSynchronization = "lS"

@@ -96,7 +96,12 @@ extension RestClientStub: RestClientSseAuthenticator {
     }
 }
 
-extension RestClientStub: RestClientTelemetry {
+extension RestClientStub: RestClientTelemetryStats {
+    func send(stats: TelemetryStats, completion: @escaping (DataResult<EmptyValue>) -> Void) {
+        completion(DataResult.success(value: nil))
+    }
+
+
 }
 
 extension RestClientStub: RestClientTest {

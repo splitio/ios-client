@@ -12,8 +12,6 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
 
     private let configRecorder: HttpTelemetryConfigRecorder
     private let telemetryConfig: TelemetryConfig
-    private let kRetryTimeInSeconds = 0.5
-    private let kRetryCount = 3
 
     init(configRecorder: HttpTelemetryConfigRecorder,
          telemetryConfig: TelemetryConfig) {
@@ -23,9 +21,9 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
 
     func flush() {
         var sendCount = 1
-        while !send() && sendCount < kRetryCount {
+        while !send() && sendCount < ServiceConstants.retryCount {
             sendCount+=1
-            ThreadUtils.delay(seconds: kRetryTimeInSeconds)
+            ThreadUtils.delay(seconds: ServiceConstants.retryTimeInSeconds)
         }
     }
 

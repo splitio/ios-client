@@ -26,6 +26,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     func update(filterQueryString: String)
     func updateWithoutChecks(split: Split)
     func isValidTrafficType(name: String) -> Bool
+    func getCount() -> Int
     func clear()
     func destroy()
 }
@@ -98,6 +99,10 @@ class DefaultSplitsStorage: SplitsStorage {
         inMemorySplits.removeAll()
         changeNumber = -1
         persistentStorage.clear()
+    }
+
+    func getCount() -> Int {
+        return inMemorySplits.count
     }
 
     private func increaseTrafficTypeCount(name: String) {
