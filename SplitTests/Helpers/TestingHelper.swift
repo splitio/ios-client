@@ -106,4 +106,12 @@ struct TestingHelper {
         let helper = IntegrationCoreDataHelper.get(databaseName: name, dispatchQueue: newQueue)
         return CoreDataSplitDatabase(coreDataHelper: helper)
     }
+
+    static func createTelemetryConfig() -> TelemetryConfig {
+        return TelemetryConfig(streamingEnabled: true, rates: nil, urlOverrides: nil, impressionsQueueSize: 9, eventsQueueSize: 9, impressionsMode: 9, impressionsListenerEnabled: true, httpProxyDetected: true, activeFactories: 1, redundantFactories: 12, timeUntilReady: 9, nonReadyUsages: 2, integrations: nil, tags: nil)
+    }
+
+    static func createTelemetryStats() -> TelemetryStats {
+        return TelemetryStats(lastSynchronization: nil, methodLatencies: nil, methodExceptions: nil, httpErrors: nil, httpLatencies: nil, tokenRefreshes: 1, authRejections: 1, impressionsQueued: 1, impressionsDeduped: 1, impressionsDropped: 1, splitCount: 1, segmentCount: 1, segmentKeyCount: 2, sessionLengthMs: 88888, eventsQueued: 1, eventsDropped: 1, streamingEvents: nil, tags: nil)
+    }
 }

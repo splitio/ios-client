@@ -44,15 +44,15 @@ struct TelemetryConfig: Encodable {
     let operationMode = 0 // 0: Standalone, 1: Consumer
     let storage: String = "memory"
     var streamingEnabled: Bool
-    var rates: TelemetryRates
-    var urlOverrides: TelemetryUrlOverrides
+    var rates: TelemetryRates?
+    var urlOverrides: TelemetryUrlOverrides?
     var impressionsQueueSize: Int64
     var eventsQueueSize: Int64
     var impressionsMode: Int
     var impressionsListenerEnabled: Bool
     var httpProxyDetected: Bool
     var activeFactories: Int64
-    var redundantFactories: Int64
+    var redundantFactories: Int64?
     var timeUntilReady: Int64
     var nonReadyUsages: Int64
     var integrations: [String]?
