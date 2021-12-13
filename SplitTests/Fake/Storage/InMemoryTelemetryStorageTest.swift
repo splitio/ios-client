@@ -29,11 +29,11 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         recordLatency(method: .treatmentWithConfig, count: 4)
         recordLatency(method: .treatmentsWithConfig, count: 9)
 
-        let latencies = storage.popLatencies()
-        let emptyPopLatencies = storage.popLatencies()
+        let latencies = storage.popMethodLatencies()
+        let emptyPopLatencies = storage.popMethodLatencies()
 
         recordLatency(method: .track, count: 1)
-        let newPopLatencies = storage.popLatencies()
+        let newPopLatencies = storage.popMethodLatencies()
 
         XCTAssertEqual(3, sum(latencies.treatment))
         XCTAssertEqual(2, sum(latencies.treatments))
@@ -57,8 +57,8 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         recordException(method: .treatmentWithConfig, count: 4)
         recordException(method: .treatmentsWithConfig, count: 9)
 
-        let exceptions = storage.popExceptions()
-        let emptyExceptions = storage.popExceptions()
+        let exceptions = storage.popMethodExceptions()
+        let emptyExceptions = storage.popMethodExceptions()
 
         XCTAssertEqual(3, exceptions.treatment)
         XCTAssertEqual(2, exceptions.treatments)

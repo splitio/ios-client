@@ -57,8 +57,8 @@ protocol TelemetryEvaluationProducer {
 }
 
 protocol TelemetryEvaluationConsumer {
-    func popLatencies() -> TelemetryMethodLatencies
-    func popExceptions() -> TelemetryMethodExceptions
+    func popMethodLatencies() -> TelemetryMethodLatencies
+    func popMethodExceptions() -> TelemetryMethodExceptions
 }
 
 protocol TelemetryRuntimeProducer {

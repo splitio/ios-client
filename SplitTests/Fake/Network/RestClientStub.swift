@@ -24,6 +24,8 @@ class RestClientStub: SplitApiRestClient {
     private var sendTrackEventsCount = 0
     private var sendImpressionsCount = 0
     private var sendImpressionsCountCount = 0
+    var sendTelemetryConfigCount = 0
+    var sendTelemetryStatsCount = 0
     var isServerAvailable = true
     private var splitChangeHitIndex = 0
     
@@ -96,7 +98,18 @@ extension RestClientStub: RestClientSseAuthenticator {
     }
 }
 
-extension RestClientStub: RestClientTelemetry {
+extension RestClientStub: RestClientTelemetryConfig {
+    func send(config: TelemetryConfig, completion: @escaping (DataResult<EmptyValue>) -> Void) {
+        sendTelemetryConfigCount+=1
+        completion(DataResult.success(value: nil))
+    }
+}
+
+extension RestClientStub: RestClientTelemetryStats {
+    func send(stats: TelemetryStats, completion: @escaping (DataResult<EmptyValue>) -> Void) {
+        sendTelemetryStatsCount+=1
+        completion(DataResult.success(value: nil))
+    }
 }
 
 extension RestClientStub: RestClientTest {
