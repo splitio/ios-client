@@ -35,7 +35,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(userKey: userKey,
                                                             mySegmentsFetcher: mySegmentsFetcher,
                                                             mySegmentsStorage: mySegmentsStorage,
-                                                            telemetryProducer: TelemetryProducerStub(),
+                                                            telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
                                                             eventsManager: eventsManager)
         mySegmentsSyncWorker.start()
@@ -55,7 +55,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(userKey: userKey,
                                                             mySegmentsFetcher: mySegmentsFetcher,
                                                             mySegmentsStorage: mySegmentsStorage,
-                                                            telemetryProducer: TelemetryProducerStub(),
+                                                            telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
                                                             eventsManager: eventsManager)
 

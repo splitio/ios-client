@@ -346,7 +346,7 @@ class TreatmentManagerTest: XCTestCase {
         return DefaultTreatmentManager(evaluator: defaultEvaluator,
                                        key: key, splitConfig: SplitClientConfig(),
                                        eventsManager: eventsManager, impressionLogger: impressionsLogger,
-                                       telemetryProducer: TelemetryProducerStub(), attributesStorage: attributesStorage,
+                                       telemetryProducer: TelemetryStorageStub(), attributesStorage: attributesStorage,
                                        keyValidator: DefaultKeyValidator(),
                                        splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
                                        validationLogger: validationLogger)

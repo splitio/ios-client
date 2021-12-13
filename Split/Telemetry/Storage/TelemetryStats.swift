@@ -10,13 +10,13 @@ import Foundation
 
 struct TelemetryHttpLatencies {
 
-    var splits: [Int64]
-    var mySegments: [Int64]
-    var impressions: [Int64]
-    var impressionsCount: [Int64]
-    var events: [Int64]
-    var token: [Int64]
-    var telemetry: [Int64]
+    var splits: [Int]?
+    var mySegments: [Int]?
+    var impressions: [Int]?
+    var impressionsCount: [Int]?
+    var events: [Int]?
+    var token: [Int]?
+    var telemetry: [Int]?
 
     enum CodingKeys: String, CodingKey {
         case splits = "sp"
@@ -29,19 +29,35 @@ struct TelemetryHttpLatencies {
     }
 }
 
+enum TelemetryStreamingEventType: Int {
+    case connectionStablished = 0
+    case occupancyPri = 10
+    case occupancySec = 20
+    case streamingStatus = 30
+    case connectionError = 40
+    case tokenRefresh = 50
+    case ablyError = 60
+    case syncModeUpdate = 70
+}
+
+struct TelemetryStreamingEventValue {
+    static let empty: Int64 = 0
+
+    // Streaming event
+    static let streamingDisabled: Int64 = 0
+    static let streamingEnabled: Int64 = 1
+    static let streamingPaused: Int64 = 2
+
+    // SSE connection error
+    static let sseConnErrorRequested: Int64 = 0
+    static let sseConnErrorNonRequested: Int64 = 1
+
+    // Sync Mode Update
+    static let syncModeStreaming: Int64 = 0
+    static let syncModePolling: Int64 = 1
+}
+
 struct TelemetryStreamingEvent {
-
-    enum EventType: Int {
-        case connectionStablished = 0
-        case occupancyPri = 10
-        case occupancySec = 20
-        case streamingStatus = 30
-        case connectionError = 40
-        case tokenRefresh = 50
-        case ablyError = 60
-        case syncModeUpdate = 70
-    }
-
     var type: Int
     var data: Int64
     var timestamp: Int64
@@ -55,13 +71,13 @@ struct TelemetryStreamingEvent {
 
 struct TelemetryHttpErrors {
 
-    var splits: [Int: Int64]
-    var mySegments: [Int: Int64]
-    var impressions: [Int: Int64]
-    var impressionsCount: [Int: Int64]
-    var events: [Int: Int64]
-    var token: [Int: Int64]
-    var telemetry: [Int: Int64]
+    var splits: [Int: Int]?
+    var mySegments: [Int: Int]?
+    var impressions: [Int: Int]?
+    var impressionsCount: [Int: Int]?
+    var events: [Int: Int]?
+    var token: [Int: Int]?
+    var telemetry: [Int: Int]?
 
     enum CodingKeys: String, CodingKey {
         case splits = "sp"
@@ -74,12 +90,12 @@ struct TelemetryHttpErrors {
     }
 }
 
-struct TelemetryMethodExceptions: Encodable {
-    var treatment: Int64
-    var treatments: Int64
-    var treatmentWithConfig: Int64
-    var treatmentsWithConfig: Int64
-    var track: Int64
+struct TelemetryMethodExceptions {
+    var treatment: Int?
+    var treatments: Int?
+    var treatmentWithConfig: Int?
+    var treatmentsWithConfig: Int?
+    var track: Int?
 
     enum CodingKeys: String, CodingKey {
         case treatment = "t"
@@ -90,15 +106,15 @@ struct TelemetryMethodExceptions: Encodable {
     }
 }
 
-struct TelemetryLastSynchronization {
+struct TelemetryLastSync {
 
-    var splits: Int64
-    var impressions: Int64
-    var impressionsCount: Int64
-    var events: Int64
-    var token: Int64
-    var telemetry: Int64
-    var mySegments: Int64
+    var splits: Int64?
+    var impressions: Int64?
+    var impressionsCount: Int64?
+    var events: Int64?
+    var token: Int64?
+    var telemetry: Int64?
+    var mySegments: Int64?
 
     enum CodingKeys: String, CodingKey {
         case splits = "sp"
@@ -113,11 +129,11 @@ struct TelemetryLastSynchronization {
 
 struct TelemetryMethodLatencies {
 
-    var treatment: [Int64]
-    var treatments: [Int64]
-    var treatmentWithConfig: [Int64]
-    var treatmentsWithConfig: [Int64]
-    var track: [Int64]
+    var treatment: [Int]?
+    var treatments: [Int]?
+    var treatmentWithConfig: [Int]?
+    var treatmentsWithConfig: [Int]?
+    var track: [Int]?
 
     enum CodingKeys: String, CodingKey {
         case treatment = "t"
@@ -130,7 +146,7 @@ struct TelemetryMethodLatencies {
 
 struct TelemetryStats {
 
-    var lastSynchronization: TelemetryLastSynchronization
+    var lastSynchronization: TelemetryLastSync
     var methodLatencies: TelemetryMethodLatencies
     var methodExceptions: TelemetryMethodExceptions
     var httpErrors: TelemetryHttpErrors

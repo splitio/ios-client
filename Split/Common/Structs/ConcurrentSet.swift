@@ -9,8 +9,19 @@
 import Foundation
 
 class ConcurrentSet<T: Hashable> {
-    private var queue: DispatchQueue
-    private var items: Set<T>
+    private var queue = DispatchQueue(label: "split-concurrent-set", attributes: .concurrent)
+    private var items: Set<T> = Set<T>()
+    private var capacity: Int = -1
+
+    init(capacity: Int) {
+        if capacity > 0 {
+            self.capacity = capacity
+        }
+    }
+
+    convenience init() {
+        self.init(capacity: -1)
+    }
 
     var all: Set<T> {
         var allItems: Set<T>?
@@ -28,18 +39,21 @@ class ConcurrentSet<T: Hashable> {
         return count
     }
 
-    init() {
-        queue = DispatchQueue(label: NSUUID().uuidString, attributes: .concurrent)
-        items = Set<T>()
-    }
-
     func insert(_ item: T) {
+        if capacity > 0,
+           count >= capacity {
+            return
+        }
         queue.async(flags: .barrier) {
             self.items.insert(item)
         }
     }
 
     func set(_ items: [T]) {
+        if capacity > 0,
+           items.count >= capacity {
+            return
+        }
         queue.async(flags: .barrier) {
             self.items.removeAll()
             for item in items {
