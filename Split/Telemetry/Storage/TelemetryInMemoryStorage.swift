@@ -8,7 +8,6 @@
 
 import Foundation
 
-// Dummy class to make the project compile until implementation is done
 class InMemoryTelemetryStorage: TelemetryStorage {
 
     private static let kQueuePrefix = "split-telemetry"
