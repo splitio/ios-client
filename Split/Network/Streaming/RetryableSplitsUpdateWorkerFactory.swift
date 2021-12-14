@@ -68,21 +68,21 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     func createRetryableSplitsSyncWorker() -> RetryableSyncWorker {
         let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
         return RetryableSplitsSyncWorker(splitFetcher: apiFacade.splitsFetcher,
-                                        splitsStorage: storageContainer.splitsStorage,
-                                                           splitChangeProcessor: splitChangeProcessor,
-                                                           cacheExpiration: splitConfig.cacheExpirationInSeconds,
-                                                           defaultQueryString: splitsFilterQueryString,
-                                                           eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter)
+                                         splitsStorage: storageContainer.splitsStorage,
+                                         splitChangeProcessor: splitChangeProcessor,
+                                         cacheExpiration: splitConfig.cacheExpirationInSeconds,
+                                         defaultQueryString: splitsFilterQueryString,
+                                         eventsManager: eventsManager,
+                                         reconnectBackoffCounter: backoffCounter)
     }
 
     func createRetryableSplitsUpdateWorker(changeNumber: Int64,
                                            reconnectBackoffCounter: ReconnectBackoffCounter) -> RetryableSyncWorker {
         return RetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
-                                                 splitsStorage: storageContainer.splitsStorage,
-                                                 splitChangeProcessor: splitChangeProcessor,
-                                                 changeNumber: changeNumber, eventsManager: eventsManager,
-                                                 reconnectBackoffCounter: reconnectBackoffCounter)
+                                           splitsStorage: storageContainer.splitsStorage,
+                                           splitChangeProcessor: splitChangeProcessor,
+                                           changeNumber: changeNumber, eventsManager: eventsManager,
+                                           reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     func createRetryableMySegmentsSyncWorker(avoidCache: Bool) -> RetryableSyncWorker {
@@ -135,16 +135,16 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
 
     func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker {
         let recorderWorker = ImpressionsCountRecorderWorker(countsStorage: storageContainer.impressionsCountStorage,
-                                              countsRecorder: apiFacade.impressionsCountRecorder)
+                                                            countsRecorder: apiFacade.impressionsCountRecorder)
         let timer = DefaultPeriodicTimer(deadline: 0, interval: splitConfig.impressionsCountsRefreshRate)
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: recorderWorker)
     }
 
     func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker {
         let eventsWorker = EventsRecorderWorker(eventsStorage: storageContainer.eventsStorage,
-                                                         eventsRecorder: apiFacade.eventsRecorder,
-                                                         eventsPerPush: Int(splitConfig.eventsPerPush),
-                                                         eventsSyncHelper: syncHelper)
+                                                eventsRecorder: apiFacade.eventsRecorder,
+                                                eventsPerPush: Int(splitConfig.eventsPerPush),
+                                                eventsSyncHelper: syncHelper)
 
         let timer = DefaultPeriodicTimer(deadline: splitConfig.eventsFirstPushWindow,
                                          interval: splitConfig.eventsPushRate)
@@ -153,9 +153,49 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
 
     func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> RecorderWorker {
         return EventsRecorderWorker(eventsStorage: storageContainer.eventsStorage,
-                                                       eventsRecorder: apiFacade.eventsRecorder,
-                                                       eventsPerPush: Int(splitConfig.eventsPerPush),
-                                                       eventsSyncHelper: syncHelper)
+                                    eventsRecorder: apiFacade.eventsRecorder,
+                                    eventsPerPush: Int(splitConfig.eventsPerPush),
+                                    eventsSyncHelper: syncHelper)
+
+    }
+
+    func createTelemetryConfigRecorderWorker() -> RecorderWorker? {
+
+        guard let telemetryStorage = storageContainer.telemetryStorage else {
+            return nil
+        }
+
+
+        
+        let rates = TelemetryRates(splits: splitConfig.featuresRefreshRate,
+                                   mySegments: splitConfig.segmentsRefreshRate,
+                                   impressions: splitConfig.impressionRefreshRate,
+                                   events: splitConfig.eventsPushRate, telemetry: splitConfig.telemetryRefreshRate)
+
+
+        let endpoints = splitConfig.serviceEndpoints
+        let urlOverrides = TelemetryUrlOverrides(sdk: endpoints.isCustomSdkEndpoint,
+                                                 events: endpoints.isCustomEventsEndpoint,
+                                                 auth: endpoints.isCustomAuthServiceEndpoint,
+                                                 stream: endpoints.isCustomStreamingEndpoint,
+                                                 telemetry: endpoints.isCustomEventsEndpoint)
+
+
+        let config = TelemetryConfig(streamingEnabled: splitConfig.streamingEnabled,
+                                     rates: rates, urlOverrides: urlOverrides,
+                                     impressionsQueueSize: splitConfig.impressionsQueueSize,
+                                     eventsQueueSize: splitConfig.eventsQueueSize,
+                                     impressionsMode: splitConfig.impressionsMode,
+                                     impressionsListenerEnabled: splitConfig.impressionListener != nil,
+                                     httpProxyDetected: splitConfig.isProxy(),
+                                     activeFactories: telemetryStorage.,
+                                     redundantFactories: <#T##Int64?#>,
+                                     timeUntilReady: <#T##Int64#>,
+                                     nonReadyUsages: <#T##Int64#>,
+                                     integrations: nil, tags: nil)
+
+        return TelemetryConfigRecorderWorker(configRecorder: <#T##HttpTelemetryConfigRecorder#>, telemetryConfig: <#T##TelemetryConfig#>: storageContainer.eventsStorage,
+                                    eventsSyncHelper: syncHelper)
 
     }
 }

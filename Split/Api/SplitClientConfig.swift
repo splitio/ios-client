@@ -207,6 +207,12 @@ public class SplitClientConfig: NSObject {
     @objc public var synchronizeInBackground = false
 
     ///
+    /// The schedule time for telemetry flush after the first one.
+    /// Default: 3600 seconds (1 hour)
+    ///
+    @objc public var telemetryRefreshRate: Int = 3600
+
+    ///
     /// Maximum length matching / bucketing key. Internal config
     ///
     let maximumKeyLength = 250
@@ -248,5 +254,9 @@ public class SplitClientConfig: NSObject {
     ///  will be lost in SDK detroy.
     ///
     @objc public var persistentAttributesEnabled = false
+
+    // This variable will be handled internaly based on
+    // a random function
+    var isTelemetryEnabled = false
 
 }
