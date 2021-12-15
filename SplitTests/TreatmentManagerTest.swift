@@ -47,7 +47,8 @@ class TreatmentManagerTest: XCTestCase {
                                                      impressionsStorage: PersistentImpressionsStorageStub(),
                                                      impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub(),
-                                                     attributesStorage: attributesStorage)
+                                                     attributesStorage: attributesStorage,
+                                                     telemetryStorage: TelemetryStorageStub())
         }
     }
     

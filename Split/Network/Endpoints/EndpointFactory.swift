@@ -64,11 +64,11 @@ class EndpointFactory {
                 .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
         telemetryConfigEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.telemetryConfig)
+                .builder(baseUrl: serviceEndpoints.telemetryServiceEndpoint, path: EndpointsPath.telemetryConfig)
                 .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
         telemetryUsageEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.telemetryUsage)
+                .builder(baseUrl: serviceEndpoints.telemetryServiceEndpoint, path: EndpointsPath.telemetryUsage)
                 .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
         sseAuthenticationEndpoint = Endpoint

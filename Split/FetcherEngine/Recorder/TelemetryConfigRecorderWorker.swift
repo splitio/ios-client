@@ -11,12 +11,15 @@ import Foundation
 class TelemetryConfigRecorderWorker: RecorderWorker {
 
     private let configRecorder: HttpTelemetryConfigRecorder
-    private let telemetryConfig: TelemetryConfig
+    private let telemetryConsumer: TelemetryConsumer
+    private let splitConfig: SplitClientConfig
 
-    init(configRecorder: HttpTelemetryConfigRecorder,
-         telemetryConfig: TelemetryConfig) {
-        self.configRecorder = configRecorder
-        self.telemetryConfig = telemetryConfig
+    init(telemetryConfigRecorder: HttpTelemetryConfigRecorder,
+         splitClientConfig: SplitClientConfig,
+         telemetryConsumer: TelemetryStorage) {
+        self.configRecorder = telemetryConfigRecorder
+        self.telemetryConsumer = telemetryConsumer
+        self.splitConfig = splitClientConfig
     }
 
     func flush() {
@@ -29,12 +32,41 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
 
     private func send() -> Bool {
         do {
-            _ = try configRecorder.execute(telemetryConfig)
+            _ = try configRecorder.execute(buildTelemetryConfig())
             Logger.d("Telemetry config posted successfully")
         } catch let error {
             Logger.e("Telemetry config: \(String(describing: error))")
             return false
         }
         return true
+    }
+
+    private func buildTelemetryConfig() -> TelemetryConfig {
+
+        let rates = TelemetryRates(splits: splitConfig.featuresRefreshRate,
+                                   mySegments: splitConfig.segmentsRefreshRate,
+                                   impressions: splitConfig.impressionRefreshRate,
+                                   events: splitConfig.eventsPushRate,
+                                   telemetry: splitConfig.telemetryRefreshRate)
+
+        let endpoints = splitConfig.serviceEndpoints
+        let urlOverrides = TelemetryUrlOverrides(sdk: endpoints.isCustomSdkEndpoint,
+                                                 events: endpoints.isCustomEventsEndpoint,
+                                                 auth: endpoints.isCustomAuthServiceEndpoint,
+                                                 stream: endpoints.isCustomStreamingEndpoint,
+                                                 telemetry: endpoints.isCustomTelemetryEndpoint)
+
+        return TelemetryConfig(streamingEnabled: splitConfig.streamingEnabled,
+                               rates: rates, urlOverrides: urlOverrides,
+                               impressionsQueueSize: splitConfig.impressionsQueueSize,
+                               eventsQueueSize: splitConfig.eventsQueueSize,
+                               impressionsMode: splitConfig.finalImpressionsMode.intValue(),
+                               impressionsListenerEnabled: splitConfig.impressionListener != nil,
+                               httpProxyDetected: splitConfig.isProxy(),
+                               activeFactories: telemetryConsumer.getActiveFactories(),
+                               redundantFactories: telemetryConsumer.getRedundantFactories(),
+                               timeUntilReady: telemetryConsumer.getTimeUntilReady(),
+                               nonReadyUsages: telemetryConsumer.getNonReadyUsages(),
+                               integrations: nil, tags: telemetryConsumer.popTags())
     }
 }

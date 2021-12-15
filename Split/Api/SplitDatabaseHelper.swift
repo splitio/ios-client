@@ -30,7 +30,7 @@ struct SplitDatabaseHelper {
                                                       userKey: userKey,
                                                       splitClientConfig: splitClientConfig)
 
-        let telemetryStorage: TelemetryStorage?
+        var telemetryStorage: TelemetryStorage? = nil
         if splitClientConfig.isTelemetryEnabled {
             telemetryStorage = InMemoryTelemetryStorage()
         }

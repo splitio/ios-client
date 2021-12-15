@@ -15,29 +15,25 @@ protocol TelemetrySynchronizer {
 
 class DefaultTelemetrySynchronizer: TelemetrySynchronizer {
 
-    private let configRecorderWorker: TelemetryConfigRecorderWorker
-    private let telemetryStorage: TelemetryStorage
-    private let splitClientConfig: SplitClientConfig
+    private let configRecorderWorker: RecorderWorker
+    private let statsRecorderWorker: RecorderWorker
     private let syncQueue = DispatchQueue.global()
 
-    init(splitClientConfig: SplitClientConfig,
-         telemetryStorage: TelemetryStorage,
-         configRecorderWorker: TelemetryConfigRecorderWorker) {
-
-        self.splitClientConfig = splitClientConfig
-        self.telemetryStorage = telemetryStorage
+    init(configRecorderWorker: RecorderWorker,
+         statsRecorderWorker: RecorderWorker) {
         self.configRecorderWorker = configRecorderWorker
+        self.statsRecorderWorker = statsRecorderWorker
     }
 
     func synchronizeConfig() {
         syncQueue.async {
-            let
             self.configRecorderWorker.flush()
         }
     }
 
     func synchronizeStats() {
+        syncQueue.async {
+            self.statsRecorderWorker.flush()
+        }
     }
-
-
 }

@@ -45,8 +45,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     private let userKey: String
     private let eventsManager: SplitEventsManager
     private let splitsFilterQueryString: String
-    // TODO: Inject in constructor when real implementation
-    private let telemetryProducer = InMemoryTelemetryStorage()
+    private let telemetryProducer: TelemetryProducer?
 
     init(userKey: String,
          splitConfig: SplitClientConfig,
@@ -63,6 +62,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         self.storageContainer = storageContainer
         self.splitChangeProcessor = splitChangeProcessor
         self.eventsManager = eventsManager
+        self.telemetryProducer = storageContainer.telemetryStorage
     }
 
     func createRetryableSplitsSyncWorker() -> RetryableSyncWorker {
@@ -165,37 +165,20 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
             return nil
         }
 
+        return TelemetryConfigRecorderWorker(telemetryConfigRecorder: apiFacade.telemetryConfigRecorder,
+                                             splitClientConfig: splitConfig,
+                                             telemetryConsumer: telemetryStorage)
+    }
 
-        
-        let rates = TelemetryRates(splits: splitConfig.featuresRefreshRate,
-                                   mySegments: splitConfig.segmentsRefreshRate,
-                                   impressions: splitConfig.impressionRefreshRate,
-                                   events: splitConfig.eventsPushRate, telemetry: splitConfig.telemetryRefreshRate)
+    func createTelemetryStatsRecorderWorker() -> RecorderWorker? {
 
+        guard let telemetryStorage = storageContainer.telemetryStorage else {
+            return nil
+        }
 
-        let endpoints = splitConfig.serviceEndpoints
-        let urlOverrides = TelemetryUrlOverrides(sdk: endpoints.isCustomSdkEndpoint,
-                                                 events: endpoints.isCustomEventsEndpoint,
-                                                 auth: endpoints.isCustomAuthServiceEndpoint,
-                                                 stream: endpoints.isCustomStreamingEndpoint,
-                                                 telemetry: endpoints.isCustomEventsEndpoint)
-
-
-        let config = TelemetryConfig(streamingEnabled: splitConfig.streamingEnabled,
-                                     rates: rates, urlOverrides: urlOverrides,
-                                     impressionsQueueSize: splitConfig.impressionsQueueSize,
-                                     eventsQueueSize: splitConfig.eventsQueueSize,
-                                     impressionsMode: splitConfig.impressionsMode,
-                                     impressionsListenerEnabled: splitConfig.impressionListener != nil,
-                                     httpProxyDetected: splitConfig.isProxy(),
-                                     activeFactories: telemetryStorage.,
-                                     redundantFactories: <#T##Int64?#>,
-                                     timeUntilReady: <#T##Int64#>,
-                                     nonReadyUsages: <#T##Int64#>,
-                                     integrations: nil, tags: nil)
-
-        return TelemetryConfigRecorderWorker(configRecorder: <#T##HttpTelemetryConfigRecorder#>, telemetryConfig: <#T##TelemetryConfig#>: storageContainer.eventsStorage,
-                                    eventsSyncHelper: syncHelper)
-
+        return TelemetryStatsRecorderWorker(telemetryStatsRecorder: apiFacade.telemetryStatsRecorder,
+                                            telemetryConsumer: telemetryStorage,
+                                            splitsStorage: storageContainer.splitsStorage,
+                                            mySegmentsStorage: storageContainer.mySegmentsStorage)
     }
 }
