@@ -26,6 +26,10 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     private let tokenRefreshes: AtomicInt = AtomicInt(0)
     private let sessionLength: Atomic<Int64> = Atomic(0)
 
+    private let activeFactoriesCounter: AtomicInt = AtomicInt(0)
+    private let redundantFactoriesCounter: AtomicInt = AtomicInt(0)
+    private let timeUntilReady: Atomic<Int64> = Atomic(0)
+
     // Records
     private var impressionsStats: [TelemetryImpressionsDataType: Int] = [:]
     private var eventsStats: [TelemetryEventsDataType: Int] = [:]
@@ -209,6 +213,30 @@ class InMemoryTelemetryStorage: TelemetryStorage {
 
     func getSessionLength() -> Int64 {
         return sessionLength.value
+    }
+
+    func recordActiveFactories(count: Int) {
+        activeFactoriesCounter.set(count)
+    }
+
+    func recordRedundantFactories(count: Int) {
+        redundantFactoriesCounter.set(count)
+    }
+
+    func recordTimeUntilReady(_ time: Int64) {
+        timeUntilReady.set(time)
+    }
+
+    func getActiveFactories() -> Int {
+        return activeFactoriesCounter.value
+    }
+
+    func getRedundantFactories() -> Int {
+        return redundantFactoriesCounter.value
+    }
+
+    func getTimeUntilReady() -> Int64 {
+        return timeUntilReady.value
     }
 
     // MARK: Private methods
