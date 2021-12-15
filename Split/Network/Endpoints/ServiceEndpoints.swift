@@ -27,7 +27,7 @@ import Foundation
     }
 
     var isCustomEventsEndpoint: Bool {
-        return eventsEndpoint.absoluteString != ServiceEndpoints.kSdkEndpoint
+        return eventsEndpoint.absoluteString != ServiceEndpoints.kEventsEndpoint
     }
 
     var isCustomAuthServiceEndpoint: Bool {
