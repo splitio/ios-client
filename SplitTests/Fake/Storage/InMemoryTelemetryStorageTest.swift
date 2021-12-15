@@ -301,15 +301,6 @@ class InMemoryTelemetryStorageTest: XCTestCase {
 
     }
 
-    func recordStreamingEvent(type: TelemetryStreamingEventType,
-                              data: Int64,
-                              count: Int) {
-        for _ in 0..<count {
-            storage.recordStreamingEvent(type: type, data: data, timestamp: rnd)
-        }
-    }
-
-
     func testTags() {
         addTags(prefix: "t1", count: 8)
         let tags = storage.popTags()
@@ -330,6 +321,45 @@ class InMemoryTelemetryStorageTest: XCTestCase {
 
         XCTAssertEqual(0, initLength)
         XCTAssertEqual(2000, length)
+    }
+
+    func testActiveFactoriesCount() {
+        let initCount = storage.getActiveFactories()
+        storage.recordActiveFactories(count: 2)
+        storage.recordActiveFactories(count: 3)
+        let count = storage.getActiveFactories()
+
+        XCTAssertEqual(0, initCount)
+        XCTAssertEqual(3, count)
+    }
+
+    func testRedundantFactoriesCount() {
+        let initCount = storage.getRedundantFactories()
+        storage.recordRedundantFactories(count: 2)
+        storage.recordRedundantFactories(count: 3)
+        let count = storage.getRedundantFactories()
+
+        XCTAssertEqual(0, initCount)
+        XCTAssertEqual(3, count)
+    }
+
+    func testTimeUntilReady() {
+        let initLength = storage.getTimeUntilReady()
+        storage.recordTimeUntilReady(1000)
+        storage.recordTimeUntilReady(2000)
+        let length = storage.getTimeUntilReady()
+
+        XCTAssertEqual(0, initLength)
+        XCTAssertEqual(2000, length)
+    }
+
+
+    func recordStreamingEvent(type: TelemetryStreamingEventType,
+                              data: Int64,
+                              count: Int) {
+        for _ in 0..<count {
+            storage.recordStreamingEvent(type: type, data: data, timestamp: rnd)
+        }
     }
 
     private func addTags(prefix: String, count: Int) {

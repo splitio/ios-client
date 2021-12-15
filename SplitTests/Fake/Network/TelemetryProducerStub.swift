@@ -135,5 +135,24 @@ class TelemetryStorageStub: TelemetryStorage {
         return 0
     }
 
+    func recordActiveFactories(count: Int) {
+    }
 
+    func recordRedundantFactories(count: Int) {
+    }
+
+    func recordTimeUntilReady(_ time: Int64) {
+    }
+
+    func getActiveFactories() -> Int {
+        return 0
+    }
+
+    func getRedundantFactories() -> Int {
+        return 0
+    }
+
+    func getTimeUntilReady() -> Int64 {
+        return 0
+    }
 }
