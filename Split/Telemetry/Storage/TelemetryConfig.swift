@@ -9,11 +9,11 @@
 import Foundation
 
 struct TelemetryRates: Encodable {
-    var splits: Int64
-    var mySegments: Int64
-    var impressions: Int64
-    var events: Int64
-    var telemetry: Int64
+    var splits: Int
+    var mySegments: Int
+    var impressions: Int
+    var events: Int
+    var telemetry: Int
 
     enum CodingKeys: String, CodingKey {
         case splits = "sp"
@@ -46,15 +46,15 @@ struct TelemetryConfig: Encodable {
     var streamingEnabled: Bool
     var rates: TelemetryRates?
     var urlOverrides: TelemetryUrlOverrides?
-    var impressionsQueueSize: Int64
+    var impressionsQueueSize: Int
     var eventsQueueSize: Int64
     var impressionsMode: Int
     var impressionsListenerEnabled: Bool
     var httpProxyDetected: Bool
-    var activeFactories: Int64
-    var redundantFactories: Int64?
+    var activeFactories: Int
+    var redundantFactories: Int?
     var timeUntilReady: Int64
-    var nonReadyUsages: Int64
+    var nonReadyUsages: Int
     var integrations: [String]?
     var tags: [String]?
 

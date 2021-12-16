@@ -20,6 +20,8 @@ struct SplitApiFacade {
     let eventsRecorder: HttpEventsRecorder
     let streamingHttpClient: HttpClient?
     let sseAuthenticator: SseAuthenticator
+    let telemetryConfigRecorder: HttpTelemetryConfigRecorder
+    let telemetryStatsRecorder: HttpTelemetryStatsRecorder
 }
 
 class SplitApiFacadeBuilder {
@@ -90,10 +92,16 @@ class SplitApiFacadeBuilder {
 
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
 
+        let telemetryConfigRecorder = DefaultHttpTelemetryConfigRecorder(restClient: restClient)
+
+        let telemetryStatsRecorder = DefaultHttpTelemetryStatsRecorder(restClient: restClient)
+
         return SplitApiFacade(splitsFetcher: splitsFetcher, mySegmentsFetcher: mySegmentsFetcher,
                               impressionsRecorder: impressionsRecorder,
                               impressionsCountRecorder: impressionsCountRecorder,
                               eventsRecorder: eventsRecorder, streamingHttpClient: self.streamingHttpClient,
-                              sseAuthenticator: sseAuthenticator)
+                              sseAuthenticator: sseAuthenticator,
+                              telemetryConfigRecorder: telemetryConfigRecorder,
+                              telemetryStatsRecorder: telemetryStatsRecorder)
     }
 }

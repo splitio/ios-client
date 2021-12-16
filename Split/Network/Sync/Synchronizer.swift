@@ -44,6 +44,7 @@ struct SplitStorageContainer {
     let impressionsCountStorage: PersistentImpressionsCountStorage
     let eventsStorage: PersistentEventsStorage
     let attributesStorage: AttributesStorage
+    let telemetryStorage: TelemetryStorage?
 }
 
 class DefaultSynchronizer: Synchronizer {

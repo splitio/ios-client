@@ -45,8 +45,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     private let userKey: String
     private let eventsManager: SplitEventsManager
     private let splitsFilterQueryString: String
-    // TODO: Inject in constructor when real implementation
-    private let telemetryProducer = InMemoryTelemetryStorage()
+    private let telemetryProducer: TelemetryProducer?
 
     init(userKey: String,
          splitConfig: SplitClientConfig,
@@ -63,26 +62,27 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         self.storageContainer = storageContainer
         self.splitChangeProcessor = splitChangeProcessor
         self.eventsManager = eventsManager
+        self.telemetryProducer = storageContainer.telemetryStorage
     }
 
     func createRetryableSplitsSyncWorker() -> RetryableSyncWorker {
         let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
         return RetryableSplitsSyncWorker(splitFetcher: apiFacade.splitsFetcher,
-                                        splitsStorage: storageContainer.splitsStorage,
-                                                           splitChangeProcessor: splitChangeProcessor,
-                                                           cacheExpiration: splitConfig.cacheExpirationInSeconds,
-                                                           defaultQueryString: splitsFilterQueryString,
-                                                           eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter)
+                                         splitsStorage: storageContainer.splitsStorage,
+                                         splitChangeProcessor: splitChangeProcessor,
+                                         cacheExpiration: splitConfig.cacheExpirationInSeconds,
+                                         defaultQueryString: splitsFilterQueryString,
+                                         eventsManager: eventsManager,
+                                         reconnectBackoffCounter: backoffCounter)
     }
 
     func createRetryableSplitsUpdateWorker(changeNumber: Int64,
                                            reconnectBackoffCounter: ReconnectBackoffCounter) -> RetryableSyncWorker {
         return RetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
-                                                 splitsStorage: storageContainer.splitsStorage,
-                                                 splitChangeProcessor: splitChangeProcessor,
-                                                 changeNumber: changeNumber, eventsManager: eventsManager,
-                                                 reconnectBackoffCounter: reconnectBackoffCounter)
+                                           splitsStorage: storageContainer.splitsStorage,
+                                           splitChangeProcessor: splitChangeProcessor,
+                                           changeNumber: changeNumber, eventsManager: eventsManager,
+                                           reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     func createRetryableMySegmentsSyncWorker(avoidCache: Bool) -> RetryableSyncWorker {
@@ -135,16 +135,16 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
 
     func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker {
         let recorderWorker = ImpressionsCountRecorderWorker(countsStorage: storageContainer.impressionsCountStorage,
-                                              countsRecorder: apiFacade.impressionsCountRecorder)
+                                                            countsRecorder: apiFacade.impressionsCountRecorder)
         let timer = DefaultPeriodicTimer(deadline: 0, interval: splitConfig.impressionsCountsRefreshRate)
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: recorderWorker)
     }
 
     func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker {
         let eventsWorker = EventsRecorderWorker(eventsStorage: storageContainer.eventsStorage,
-                                                         eventsRecorder: apiFacade.eventsRecorder,
-                                                         eventsPerPush: Int(splitConfig.eventsPerPush),
-                                                         eventsSyncHelper: syncHelper)
+                                                eventsRecorder: apiFacade.eventsRecorder,
+                                                eventsPerPush: Int(splitConfig.eventsPerPush),
+                                                eventsSyncHelper: syncHelper)
 
         let timer = DefaultPeriodicTimer(deadline: splitConfig.eventsFirstPushWindow,
                                          interval: splitConfig.eventsPushRate)
@@ -153,9 +153,32 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
 
     func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> RecorderWorker {
         return EventsRecorderWorker(eventsStorage: storageContainer.eventsStorage,
-                                                       eventsRecorder: apiFacade.eventsRecorder,
-                                                       eventsPerPush: Int(splitConfig.eventsPerPush),
-                                                       eventsSyncHelper: syncHelper)
+                                    eventsRecorder: apiFacade.eventsRecorder,
+                                    eventsPerPush: Int(splitConfig.eventsPerPush),
+                                    eventsSyncHelper: syncHelper)
 
+    }
+
+    func createTelemetryConfigRecorderWorker() -> RecorderWorker? {
+
+        guard let telemetryStorage = storageContainer.telemetryStorage else {
+            return nil
+        }
+
+        return TelemetryConfigRecorderWorker(telemetryConfigRecorder: apiFacade.telemetryConfigRecorder,
+                                             splitClientConfig: splitConfig,
+                                             telemetryConsumer: telemetryStorage)
+    }
+
+    func createTelemetryStatsRecorderWorker() -> RecorderWorker? {
+
+        guard let telemetryStorage = storageContainer.telemetryStorage else {
+            return nil
+        }
+
+        return TelemetryStatsRecorderWorker(telemetryStatsRecorder: apiFacade.telemetryStatsRecorder,
+                                            telemetryConsumer: telemetryStorage,
+                                            splitsStorage: storageContainer.splitsStorage,
+                                            mySegmentsStorage: storageContainer.mySegmentsStorage)
     }
 }

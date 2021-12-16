@@ -100,13 +100,13 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
     private let mySegmentsFetcher: HttpMySegmentsFetcher
     private let userKey: String
     private let mySegmentsStorage: MySegmentsStorage
-    private let telemetryProducer: TelemetryRuntimeProducer
+    private let telemetryProducer: TelemetryRuntimeProducer?
     private let avoidCache: Bool
     var changeChecker: MySegmentsChangesChecker
 
     init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
          mySegmentsStorage: MySegmentsStorage,
-         telemetryProducer: TelemetryRuntimeProducer,
+         telemetryProducer: TelemetryRuntimeProducer?,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter,
          avoidCache: Bool) {

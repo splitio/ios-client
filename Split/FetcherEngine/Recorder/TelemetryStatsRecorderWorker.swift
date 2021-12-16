@@ -10,16 +10,16 @@ import Foundation
 
 class TelemetryStatsRecorderWorker: RecorderWorker {
 
-    private let telemetryStorage: TelemetryConsumer
+    private let telemetryConsumer: TelemetryConsumer
     private let statsRecorder: HttpTelemetryStatsRecorder
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage: MySegmentsStorage
 
-    init(telemetryStorage: TelemetryConsumer,
-         telemetryStatsRecorder: HttpTelemetryStatsRecorder,
+    init(telemetryStatsRecorder: HttpTelemetryStatsRecorder,
+         telemetryConsumer: TelemetryConsumer,
          splitsStorage: SplitsStorage,
          mySegmentsStorage: MySegmentsStorage) {
-        self.telemetryStorage = telemetryStorage
+        self.telemetryConsumer = telemetryConsumer
         self.statsRecorder = telemetryStatsRecorder
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
@@ -52,7 +52,7 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
 
     private func buildRequestData() -> TelemetryStats {
 
-        let storage = telemetryStorage
+        let storage = telemetryConsumer
         return TelemetryStats(lastSynchronization: storage.getLastSync(),
                               methodLatencies: storage.popMethodLatencies(),
                               methodExceptions: storage.popMethodExceptions(),

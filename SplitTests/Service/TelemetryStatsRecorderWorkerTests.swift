@@ -24,8 +24,10 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
         mySegmentsStorage = MySegmentsStorageStub()
         splitsStorage = SplitsStorageStub()
 
-        worker = TelemetryStatsRecorderWorker(telemetryStorage: telemetryStorage,
-                                              telemetryStatsRecorder: statsRecorder, splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
+        worker = TelemetryStatsRecorderWorker(telemetryStatsRecorder: statsRecorder,
+                                              telemetryConsumer: telemetryStorage,
+                                              splitsStorage: splitsStorage,
+                                              mySegmentsStorage: mySegmentsStorage)
     }
 
     func testSendSuccess() {

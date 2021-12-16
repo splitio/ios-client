@@ -17,8 +17,9 @@ class TelemetryConfigRecorderWorkerTests: XCTestCase {
 
     override func setUp() {
         configRecorder = HttpTelemetryConfigRecorderStub()
-        worker = TelemetryConfigRecorderWorker(configRecorder: configRecorder,
-                                               telemetryConfig: createTelemetryConfig())
+        worker = TelemetryConfigRecorderWorker(telemetryConfigRecorder: configRecorder,
+                                               splitClientConfig: SplitClientConfig(),
+                                               telemetryConsumer: TelemetryStorageStub())
     }
 
     func testSendSuccess() {
