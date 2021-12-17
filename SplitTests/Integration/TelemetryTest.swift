@@ -82,6 +82,45 @@ class TelemetryTest: XCTestCase {
         semaphore.wait()
     }
 
+    func testOnlyReadyTime() {
+        splitDatabase.splitDao.delete(["some_split"]) // remove split to avoid SDK Ready from cache
+        let timeUntilReadyBefore = telemetryStorage.getTimeUntilReady()
+        let timeUntilReadyFromCacheBefore = telemetryStorage.getTimeUntilReadyFromCache()
+
+        let factory = builder.setApiKey(apiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+
+        let client = factory.client
+
+        let sdkReadyExp = XCTestExpectation()
+        var readyFromCacheFired = false
+
+        client.on(event: SplitEvent.sdkReadyFromCache) {
+            readyFromCacheFired = true
+        }
+
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyExp.fulfill()
+        }
+
+        wait(for: [sdkReadyExp], timeout: 10)
+
+        let timeUntilReady = telemetryStorage.getTimeUntilReady()
+        let timeUntilReadyFromCache = telemetryStorage.getTimeUntilReadyFromCache()
+
+        XCTAssertEqual(0, timeUntilReadyBefore)
+        XCTAssertEqual(0, timeUntilReadyFromCacheBefore)
+        XCTAssertTrue(timeUntilReady > 0)
+        XCTAssertEqual(0, timeUntilReadyFromCache)
+        XCTAssertFalse(readyFromCacheFired)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+    }
+
     func testFactoryCount() {
 
         let activeBefore = telemetryStorage.getActiveFactories()

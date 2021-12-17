@@ -86,7 +86,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             }
         }
 
-        defaultClient?.on(event: .sdkReady) {
+        defaultClient?.on(event: .sdkReadyFromCache) {
             DispatchQueue.global().async {
                 params.telemetryStorage?.recordTimeUntilReadyFromCache(params.initStopwatch.interval())
             }
