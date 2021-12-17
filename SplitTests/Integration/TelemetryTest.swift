@@ -48,7 +48,7 @@ class TelemetryTest: XCTestCase {
 
         let timeUntilReadyBefore = telemetryStorage.getTimeUntilReady()
         let timeUntilReadyFromCacheBefore = telemetryStorage.getTimeUntilReadyFromCache()
-
+        splitConfig.resetFactoryMonitor = true
         let factory = builder.setApiKey(apiKey).setKey(key)
             .setConfig(splitConfig).build()!
 
@@ -86,7 +86,7 @@ class TelemetryTest: XCTestCase {
         splitDatabase.splitDao.delete(["some_split"]) // remove split to avoid SDK Ready from cache
         let timeUntilReadyBefore = telemetryStorage.getTimeUntilReady()
         let timeUntilReadyFromCacheBefore = telemetryStorage.getTimeUntilReadyFromCache()
-
+        splitConfig.resetFactoryMonitor = true
         let factory = builder.setApiKey(apiKey).setKey(key)
             .setConfig(splitConfig).build()!
 
