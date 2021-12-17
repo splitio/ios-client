@@ -257,6 +257,11 @@ public class SplitClientConfig: NSObject {
 
     // This variable will be handled internaly based on
     // a random function
-    var isTelemetryEnabled = false
+    var isTelemetryEnabled = true
+
+
+    // Available for testing
+    // Just to test telementry
+    var resetFactoryMonitor = false
 
 }

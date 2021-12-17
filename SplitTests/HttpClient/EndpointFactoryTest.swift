@@ -95,7 +95,7 @@ class EndpointFactoryTest: XCTestCase {
     }
 
     func testTelemetryConfigEndpoint() {
-        let endpointUrl = "\(serviceEndpoints.eventsEndpoint.absoluteString)/metrics/config"
+        let endpointUrl = "\(serviceEndpoints.telemetryServiceEndpoint.absoluteString)/metrics/config"
         let endpoint = factory.telemetryConfigEndpoint
 
         XCTAssertEqual(HttpMethod.post, endpoint.method)
@@ -107,7 +107,7 @@ class EndpointFactoryTest: XCTestCase {
     }
 
     func testTelemetryUsageEndpoint() {
-        let endpointUrl = "\(serviceEndpoints.eventsEndpoint.absoluteString)/metrics/usage"
+        let endpointUrl = "\(serviceEndpoints.telemetryServiceEndpoint.absoluteString)/metrics/usage"
         let endpoint = factory.telemetryUsageEndpoint
 
         XCTAssertEqual(HttpMethod.post, endpoint.method)

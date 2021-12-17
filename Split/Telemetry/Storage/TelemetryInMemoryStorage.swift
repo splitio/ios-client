@@ -29,6 +29,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     private let activeFactoriesCounter: AtomicInt = AtomicInt(0)
     private let redundantFactoriesCounter: AtomicInt = AtomicInt(0)
     private let timeUntilReady: Atomic<Int64> = Atomic(0)
+    private let timeUntilReadyFromCache: Atomic<Int64> = Atomic(0)
 
     // Records
     private var impressionsStats: [TelemetryImpressionsDataType: Int] = [:]
@@ -227,6 +228,10 @@ class InMemoryTelemetryStorage: TelemetryStorage {
         timeUntilReady.set(time)
     }
 
+    func recordTimeUntilReadyFromCache(_ time: Int64) {
+        timeUntilReadyFromCache.set(time)
+    }
+
     func getActiveFactories() -> Int {
         return activeFactoriesCounter.value
     }
@@ -237,6 +242,10 @@ class InMemoryTelemetryStorage: TelemetryStorage {
 
     func getTimeUntilReady() -> Int64 {
         return timeUntilReady.value
+    }
+
+    func getTimeUntilReadyFromCache() -> Int64 {
+        return timeUntilReadyFromCache.value
     }
 
     // MARK: Private methods

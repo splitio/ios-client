@@ -144,6 +144,9 @@ class TelemetryStorageStub: TelemetryStorage {
     func recordTimeUntilReady(_ time: Int64) {
     }
 
+    func recordTimeUntilReadyFromCache(_ time: Int64) {
+    }
+
     func getActiveFactories() -> Int {
         return 0
     }
@@ -153,6 +156,10 @@ class TelemetryStorageStub: TelemetryStorage {
     }
 
     func getTimeUntilReady() -> Int64 {
+        return 0
+    }
+
+    func getTimeUntilReadyFromCache() -> Int64 {
         return 0
     }
 }

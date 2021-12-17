@@ -69,7 +69,7 @@ class TestSplitFactory {
 
         let storageContainer = try SplitDatabaseHelper.buildStorageContainer(
             splitClientConfig: splitConfig,
-            userKey: userKey, databaseName: "dummy", testDatabase: splitDatabase)
+            userKey: userKey, databaseName: "dummy", telemetryStorage: nil, testDatabase: splitDatabase)
 
         let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)
         defaultManager = manager
