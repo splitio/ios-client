@@ -52,9 +52,6 @@ class TreatmentManagerTest: XCTestCase {
         }
     }
     
-    override func tearDown() {
-    }
-    
     func testBasicEvaluationNoConfig() {
         let matchingKey = "the_key"
         let splitName = "FACUNDO_TEST"
@@ -331,6 +328,9 @@ class TreatmentManagerTest: XCTestCase {
         for res in splitResultList.values {
             XCTAssertEqual(SplitConstants.control, res.treatment)
         }
+    }
+
+    override func tearDown() {
     }
     
     func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil, evaluator: Evaluator? = nil) -> TreatmentManager {

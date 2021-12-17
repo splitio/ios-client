@@ -47,6 +47,7 @@ protocol TelemetryInitProducer {
     func recordActiveFactories(count: Int)
     func recordRedundantFactories(count: Int)
     func recordTimeUntilReady(_ time: Int64)
+    func recordTimeUntilReadyFromCache(_ time: Int64)
 }
 
 protocol TelemetryInitConsumer {
@@ -54,6 +55,7 @@ protocol TelemetryInitConsumer {
     func getActiveFactories() -> Int
     func getRedundantFactories() -> Int
     func getTimeUntilReady() -> Int64
+    func getTimeUntilReadyFromCache() -> Int64
 }
 
 // MARK: Evaluation Telemetry

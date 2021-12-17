@@ -101,6 +101,26 @@ struct TestingHelper {
         return split
     }
 
+    static func buildSplit(name: String, treatment: String) -> Split {
+        let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
+        change?.since = Int64(1)
+        change?.till = Int64(1)
+        let split = change!.splits[0]
+        split.name = name
+        if let partitions = split.conditions?[1].partitions {
+            for (i, partition) in partitions.enumerated() {
+                if 1 == i {
+                    partition.treatment = treatment
+                    partition.size = 100
+                } else {
+                    partition.treatment = "off"
+                    partition.size = 0
+                }
+            }
+        }
+        return split
+    }
+
     static func createTestDatabase(name: String, queue: DispatchQueue? = nil) -> SplitDatabase {
         let newQueue = queue ?? DispatchQueue(label: "testqueue", target: DispatchQueue.global())
         let helper = IntegrationCoreDataHelper.get(databaseName: name, dispatchQueue: newQueue)

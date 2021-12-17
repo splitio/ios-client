@@ -11,7 +11,7 @@ import Foundation
 class DefaultTreatmentManager: TreatmentManager {
 
     private let key: Key
-    private let telemetryProducer: TelemetryEvaluationProducer
+    private let telemetryProducer: TelemetryProducer
     private let impressionLogger: ImpressionLogger
     private let eventsManager: SplitEventsManager
     private let keyValidator: KeyValidator
@@ -27,7 +27,7 @@ class DefaultTreatmentManager: TreatmentManager {
          splitConfig: SplitClientConfig,
          eventsManager: SplitEventsManager,
          impressionLogger: ImpressionLogger,
-         telemetryProducer: TelemetryEvaluationProducer,
+         telemetryProducer: TelemetryProducer,
          attributesStorage: AttributesStorage,
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
@@ -181,6 +181,7 @@ class DefaultTreatmentManager: TreatmentManager {
 
     private func evaluateIfReady(splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
         if !isSdkReady() {
+            telemetryProducer.recordNonReadyUsage()
             return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.notReady)
         }
         return try evaluator.evalTreatment(matchingKey: key.matchingKey,

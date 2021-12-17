@@ -353,6 +353,16 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         XCTAssertEqual(2000, length)
     }
 
+    func testTimeUntilReadyFromCache() {
+        let initLength = storage.getTimeUntilReadyFromCache()
+        storage.recordTimeUntilReadyFromCache(1000)
+        storage.recordTimeUntilReadyFromCache(2000)
+        let length = storage.getTimeUntilReadyFromCache()
+
+        XCTAssertEqual(0, initLength)
+        XCTAssertEqual(2000, length)
+    }
+
 
     func recordStreamingEvent(type: TelemetryStreamingEventType,
                               data: Int64,

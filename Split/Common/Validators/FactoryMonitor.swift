@@ -24,9 +24,24 @@ class FactoryRegistry {
     var count: Int {
         var count: Int = 0
         queue.sync {
-            for (key, factories) in self.weakFactories {
+            let weakFactories = self.weakFactories
+            for (key, _) in weakFactories {
                 self.compact(for: key)
-                count += factories.count
+                count += self.weakFactories[key]?.count ?? 0
+            }
+        }
+        return count
+    }
+
+    var activeCount: Int {
+        var count: Int = 0
+        queue.sync {
+            let weakFactories = self.weakFactories
+            for (key, _) in weakFactories {
+                self.compact(for: key)
+                if self.weakFactories[key] != nil {
+                    count+=1
+                }
             }
         }
         return count
@@ -65,10 +80,12 @@ class FactoryRegistry {
 protocol FactoryMonitor {
     var allCount: Int { get }
     func instanceCount(for apiKey: String) -> Int
+    func activeCount() -> Int
     func register(instance: SplitFactory?, for apiKey: String)
 }
 
 class DefaultFactoryMonitor: FactoryMonitor {
+
     var factoryRegistry: FactoryRegistry
 
     var allCount: Int {
@@ -81,6 +98,10 @@ class DefaultFactoryMonitor: FactoryMonitor {
 
     func instanceCount(for apiKey: String) -> Int {
         return factoryRegistry.count(for: apiKey)
+    }
+
+    func activeCount() -> Int {
+        return factoryRegistry.activeCount
     }
 
     func register(instance: SplitFactory?, for apiKey: String) {
