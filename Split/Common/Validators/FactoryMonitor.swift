@@ -88,7 +88,6 @@ protocol FactoryMonitor {
     func instanceCount(for apiKey: String) -> Int
     func activeCount() -> Int
     func register(instance: SplitFactory?, for apiKey: String)
-    func reset()
 }
 
 class DefaultFactoryMonitor: FactoryMonitor {
@@ -114,9 +113,5 @@ class DefaultFactoryMonitor: FactoryMonitor {
     func register(instance: SplitFactory?, for apiKey: String) {
         let weakFactory = WeakFactory(factory: instance)
         factoryRegistry.append(weakFactory, to: apiKey)
-    }
-
-    func reset() {
-        factoryRegistry.clear()
     }
 }
