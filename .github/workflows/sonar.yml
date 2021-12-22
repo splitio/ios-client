@@ -1,0 +1,31 @@
+name: Sonar
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    name: Sonar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: SonarQube Scan
+        uses: SonarSource/sonarcloud-github-action@v1.5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
+            -Dsonar.projectName=${{ github.event.repository.name }}
+            -Dsonar.projectKey=splitio_ios-client
+            -Dsonar.c.file.suffixes=-
+            -Dsonar.cpp.file.suffixes=-
+            -Dsonar.objc.file.suffixes=-
+            -Dsonar.links.ci="https://github.com/splitio/${{ github.event.repository.name }}/actions"
+            -Dsonar.links.scm="https://github.com/splitio/${{ github.event.repository.name }}"
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+            -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
