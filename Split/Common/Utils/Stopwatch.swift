@@ -23,7 +23,7 @@ class Stopwatch {
         startTime = 0
     }
 
-    static func startTime() -> Int64 {
+    static func now() -> Int64 {
         return Date().unixTimestampInMiliseconds()
     }
 

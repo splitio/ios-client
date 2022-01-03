@@ -19,7 +19,7 @@ class HttpTelemetryConfigRecorderStub: HttpTelemetryConfigRecorder {
         configSent = config
         executeCallCount+=1
         if errorOccurredCallCount >= executeCallCount {
-            throw HttpError.unknown(message: "something happend")
+            throw HttpError.unknown(code: -1, message: "something happend")
         }
     }
 }

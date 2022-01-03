@@ -15,9 +15,9 @@ class InMemoryTelemetryStorage: TelemetryStorage {
 
         //Latencies
     private var methodLatencies: [TelemetryMethod: LatencyCounter] = [:]
-    private var httpLatencies: [TelemetryResource: LatencyCounter] = [:]
-    private var httpErrors: [TelemetryResource: [Int: Int]] = [:]
-    private var syncLatencies: [TelemetryResource: LatencyCounter] = [:]
+    private var httpLatencies: [Resource: LatencyCounter] = [:]
+    private var httpErrors: [Resource: [Int: Int]] = [:]
+    private var syncLatencies: [Resource: LatencyCounter] = [:]
 
     // Counters
     private var methodExceptionCounters: [TelemetryMethod: Int] = [:]
@@ -34,7 +34,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     // Records
     private var impressionsStats: [TelemetryImpressionsDataType: Int] = [:]
     private var eventsStats: [TelemetryEventsDataType: Int] = [:]
-    private let lastSyncStats: ConcurrentDictionary<TelemetryResource, Int64> = ConcurrentDictionary()
+    private let lastSyncStats: ConcurrentDictionary<Resource, Int64> = ConcurrentDictionary()
 
     // Streaming events
     static let kMaxStreamingEventsCount: Int = 20 // Visible for testing
@@ -51,7 +51,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
             methodExceptionCounters[method] = 0
         }
 
-        for endpoint in TelemetryResource.allCases {
+        for endpoint in Resource.allCases {
             httpLatencies[endpoint] = LatencyCounter()
         }
     }
@@ -86,11 +86,11 @@ class InMemoryTelemetryStorage: TelemetryStorage {
         self.eventsStats[type] = (self.eventsStats[type] ?? 0) + count
     }
 
-    func recordLastSync(resource: TelemetryResource, time: Int64) {
+    func recordLastSync(resource: Resource, time: Int64) {
         lastSyncStats.setValue(time, forKey: resource)
     }
 
-    func recordHttpError(resource: TelemetryResource, status: Int) {
+    func recordHttpError(resource: Resource, status: Int) {
         queue.async(flags: .barrier) {
             if self.httpErrors[resource] == nil {
                 self.httpErrors[resource] = [status: 1]
@@ -101,7 +101,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
         }
     }
 
-    func recordHttpLatency(resource: TelemetryResource, latency: Int64) {
+    func recordHttpLatency(resource: Resource, latency: Int64) {
         queue.async(flags: .barrier) {
             self.httpLatencies[resource]?.addLatency(microseconds: latency)
         }
@@ -115,7 +115,8 @@ class InMemoryTelemetryStorage: TelemetryStorage {
         _ = tokenRefreshes.addAndGet(1)
     }
 
-    func recordStreamingEvent(type: TelemetryStreamingEventType, data: Int64, timestamp: Int64) {
+    func recordStreamingEvent(type: TelemetryStreamingEventType, data: Int64?) {
+        let timestamp: Int64 = Date().unixTimestampInMiliseconds()
         streamingEvents.append(TelemetryStreamingEvent(type: type.rawValue,
                                                        data: data,
                                                        timestamp: timestamp))
@@ -259,7 +260,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
         return counters
     }
 
-    private func popLatencies(resource: TelemetryResource) -> [Int]? {
+    private func popLatencies(resource: Resource) -> [Int]? {
         let counters =  httpLatencies[resource]?.allCounters
         httpLatencies[resource]?.resetCounters()
         return counters
@@ -271,7 +272,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
         return count
     }
 
-    private func popErrors(resource: TelemetryResource) -> [Int: Int]? {
+    private func popErrors(resource: Resource) -> [Int: Int]? {
         let errors =  httpErrors[resource]
         httpErrors[resource] = nil
         return errors

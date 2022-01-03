@@ -78,23 +78,36 @@ class SplitApiFacadeBuilder {
 
         // TODO: Replace in real implementatyion
         let telemetryProducer = InMemoryTelemetryStorage()
-        let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
-                                                    telemetryProducer: telemetryProducer)
+        let splitsFetcher
+            = DefaultHttpSplitFetcher(restClient: restClient,
+                                      syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
         let mySegmentsFetcher: HttpMySegmentsFetcher
-            = DefaultHttpMySegmentsFetcher(restClient: restClient, telemetryProducer: telemetryProducer)
+            = DefaultHttpMySegmentsFetcher(restClient: restClient,
+                                           syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
-        let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
+        let impressionsRecorder
+            = DefaultHttpImpressionsRecorder(restClient: restClient,
+                                             syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
-        let impressionsCountRecorder = DefaultHttpImpressionsCountRecorder(restClient: restClient)
+        let impressionsCountRecorder
+            = DefaultHttpImpressionsCountRecorder(restClient: restClient,
+                                                  syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
-        let eventsRecorder = DefaultHttpEventsRecorder(restClient: restClient)
+        let eventsRecorder
+            = DefaultHttpEventsRecorder(restClient: restClient,
+                                        syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
+        let sseAuthenticator
+            = DefaultSseAuthenticator(restClient: restClient)
 
-        let telemetryConfigRecorder = DefaultHttpTelemetryConfigRecorder(restClient: restClient)
+        let telemetryConfigRecorder
+            = DefaultHttpTelemetryConfigRecorder(restClient: restClient,
+                                                 syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
-        let telemetryStatsRecorder = DefaultHttpTelemetryStatsRecorder(restClient: restClient)
+        let telemetryStatsRecorder
+            = DefaultHttpTelemetryStatsRecorder(restClient: restClient,
+                                                syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
         return SplitApiFacade(splitsFetcher: splitsFetcher, mySegmentsFetcher: mySegmentsFetcher,
                               impressionsRecorder: impressionsRecorder,

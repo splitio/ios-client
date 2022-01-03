@@ -15,34 +15,33 @@ protocol HttpTelemetryConfigRecorder {
 class DefaultHttpTelemetryConfigRecorder: HttpTelemetryConfigRecorder {
 
     private let restClient: RestClientTelemetryConfig
+    private let syncHelper: SyncHelper
+    private let resource = Resource.telemetry
 
-    init(restClient: RestClientTelemetryConfig) {
+    init(restClient: RestClientTelemetryConfig,
+         syncHelper: SyncHelper) {
         self.restClient = restClient
+        self.syncHelper = syncHelper
     }
 
     func execute(_ config: TelemetryConfig) throws {
 
-        if !restClient.isSdkServerAvailable() {
-            Logger.d("Server is not reachable. Events sending will be delayed when host is reachable")
-            throw HttpError.serverUnavailable
-        }
+        try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)
         var httpError: HttpError?
-
+        let startTime = syncHelper.time()
         restClient.send(config: config, completion: { result in
             do {
                 _ = try result.unwrap()
             } catch {
-                Logger.w("Could not send telemetry config: \(String(describing: error))")
-                httpError = HttpError.unknown(message: error.localizedDescription)
+                httpError = self.syncHelper.handleError(error, resource: self.resource)
             }
             semaphore.signal()
         })
         semaphore.wait()
 
-        if let error = httpError {
-            throw error
-        }
+        try syncHelper.throwIfError(httpError)
+        syncHelper.recordTelemetry(resource: resource, startTime: startTime)
     }
 }

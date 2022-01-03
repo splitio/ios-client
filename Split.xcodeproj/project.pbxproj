@@ -390,6 +390,7 @@
 		95125625276B72B60091895B /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95125624276B72B60091895B /* Stopwatch.swift */; };
 		95125629276BB85F0091895B /* TelemetryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95125628276BB85F0091895B /* TelemetryTest.swift */; };
 		9512563A276BDB390091895B /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 95125639276BDB390091895B /* Swifter */; };
+		951256412771318D0091895B /* SyncHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951256402771318D0091895B /* SyncHelper.swift */; };
 		951D9F72260116F20069DD23 /* SplitDatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D9F71260116F20069DD23 /* SplitDatabaseHelper.swift */; };
 		952C2B7726447FDD009275B4 /* BlockingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7626447FDD009275B4 /* BlockingQueue.swift */; };
 		952C2B7B26449456009275B4 /* BlockingQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7A26449456009275B4 /* BlockingQueueTest.swift */; };
@@ -950,6 +951,7 @@
 		95122A132759410100D93F90 /* TelemetryStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelemetryStorage.swift; sourceTree = "<group>"; };
 		95125624276B72B60091895B /* Stopwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		95125628276BB85F0091895B /* TelemetryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryTest.swift; sourceTree = "<group>"; };
+		951256402771318D0091895B /* SyncHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncHelper.swift; sourceTree = "<group>"; };
 		951D9F71260116F20069DD23 /* SplitDatabaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDatabaseHelper.swift; sourceTree = "<group>"; };
 		952C2B7626447FDD009275B4 /* BlockingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueue.swift; sourceTree = "<group>"; };
 		952C2B7A26449456009275B4 /* BlockingQueueTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueueTest.swift; sourceTree = "<group>"; };
@@ -1196,6 +1198,7 @@
 			isa = PBXGroup;
 			children = (
 				955A5A4B258D042600CAEE9F /* Recorder */,
+				951256402771318D0091895B /* SyncHelper.swift */,
 				954F9C5725780CA600140B81 /* HttpMySegmentsFetcher.swift */,
 				954F9C462576DE5000140B81 /* HttpSplitFetcher.swift */,
 				3B6DEE6F20EA6ADF0067435E /* Refresh */,
@@ -2440,6 +2443,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				951256412771318D0091895B /* SyncHelper.swift in Sources */,
 				595AD1F524D9994800A7B750 /* SyncConfig.swift in Sources */,
 				59FB7C0B21F0FF1700ECC96A /* ValidationConfig.swift in Sources */,
 				95B1801627629E73002DC9DF /* RestClient+TelemetryStats.swift in Sources */,

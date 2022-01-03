@@ -25,7 +25,7 @@ class HttpTelemetryStatsRecorderStub: HttpTelemetryStatsRecorder {
         statsSent = stats
         executeCallCount+=1
         if errorOccurredCallCount >= executeCallCount {
-            throw HttpError.unknown(message: "something happend")
+            throw HttpError.unknown(code: -1, message: "something happend")
         }
     }
 }

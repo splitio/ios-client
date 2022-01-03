@@ -37,7 +37,8 @@ class ImpressionsCounter {
     }
 
     func isEmpty() -> Bool {
-        return counts.isEmpty
+        queue.sync {
+            return counts.isEmpty
+        }
     }
-
 }

@@ -13,7 +13,7 @@ import Foundation
 ///
 struct SseAuthToken: Decodable {
     let issuedAt: Int
-    let expirationTime: Int
+    let expirationTime: Int64
     let channels: String
 
     enum CodingKeys: String, CodingKey {
@@ -29,7 +29,7 @@ struct SseAuthToken: Decodable {
 ///
 struct JwtToken {
     let issuedAt: Int
-    let expirationTime: Int
+    let expirationTime: Int64
     let channels: [String]
     let rawToken: String
 }

@@ -27,7 +27,7 @@ enum TelemetryMethod: CaseIterable {
     case track
 }
 
-enum TelemetryResource: CaseIterable {
+enum Resource: CaseIterable {
     case splits
     case mySegments
     case impressions
@@ -73,12 +73,12 @@ protocol TelemetryRuntimeProducer {
 
     func recordImpressionStats(type: TelemetryImpressionsDataType, count: Int)
     func recordEventStats(type: TelemetryEventsDataType, count: Int)
-    func recordLastSync(resource: TelemetryResource, time: Int64)
-    func recordHttpError(resource: TelemetryResource, status: Int)
-    func recordHttpLatency(resource: TelemetryResource, latency: Int64)
+    func recordLastSync(resource: Resource, time: Int64)
+    func recordHttpError(resource: Resource, status: Int)
+    func recordHttpLatency(resource: Resource, latency: Int64)
     func recordAuthRejections()
     func recordTokenRefreshes()
-    func recordStreamingEvent(type: TelemetryStreamingEventType, data: Int64, timestamp: Int64)
+    func recordStreamingEvent(type: TelemetryStreamingEventType, data: Int64?)
     func addTag(tag: String)
     func recordSessionLength(sessionLength: Int64)
 }

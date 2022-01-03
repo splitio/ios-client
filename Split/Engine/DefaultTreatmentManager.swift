@@ -231,6 +231,6 @@ class DefaultTreatmentManager: TreatmentManager {
         if telemetryProducer == nil {
             return 0
         }
-        return Stopwatch.startTime()
+        return Stopwatch.now()
     }
 }
