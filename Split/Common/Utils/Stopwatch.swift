@@ -22,4 +22,12 @@ class Stopwatch {
     func reset() {
         startTime = 0
     }
+
+    static func startTime() -> Int64 {
+        return Date().unixTimestampInMiliseconds()
+    }
+
+    static func interval(from startTime: Int64) -> Int64 {
+        return Date().unixTimestampInMiliseconds() - startTime
+    }
 }
