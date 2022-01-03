@@ -8,19 +8,23 @@
 
 import Foundation
 
+// Warning: Do not use instance class methods
+// in multithread environment
+// Multithread code is avoided on purpose to avoid
+// delays while time measuring
+// call start only once and then interval
+
 class Stopwatch {
     private var startTime: Int64 = 0
 
     func start() {
-        startTime = Date().unixTimestampInMiliseconds()
+        if startTime == 0 {
+            startTime = Stopwatch.now()
+        }
     }
 
     func interval() -> Int64 {
-        return Date().unixTimestampInMiliseconds() - startTime
-    }
-
-    func reset() {
-        startTime = 0
+        return Stopwatch.interval(from: startTime)
     }
 
     static func now() -> Int64 {
@@ -28,6 +32,6 @@ class Stopwatch {
     }
 
     static func interval(from startTime: Int64) -> Int64 {
-        return Date().unixTimestampInMiliseconds() - startTime
+        return Stopwatch.now() - startTime
     }
 }
