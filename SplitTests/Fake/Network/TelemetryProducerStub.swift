@@ -24,6 +24,8 @@ class TelemetryStorageStub: TelemetryStorage {
     var recordTimeUntilReadyFromCacheCallCount: Int = 0
     var streamingEvents = [TelemetryStreamingEventType: Int]()
     var methodLatencies = [TelemetryMethod: Int]()
+    var impressions = [TelemetryImpressionsDataType: Int]()
+    var events = [TelemetryEventsDataType: Int]()
 
     func recordLastSync(resource: Resource, time: Int64) {
         recordHttpLastSyncCallCount+=1
@@ -67,11 +69,11 @@ class TelemetryStorageStub: TelemetryStorage {
     }
 
     func recordImpressionStats(type: TelemetryImpressionsDataType, count: Int) {
-
+        impressions[type] = (impressions[type] ?? 0) + 1
     }
 
     func recordEventStats(type: TelemetryEventsDataType, count: Int) {
-
+        events[type] = (events[type] ?? 0) + 1
     }
 
     func recordHttpError(resource: Resource, status: Int) {

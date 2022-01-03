@@ -248,10 +248,31 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testImpressionPush() {
-        let impression = KeyImpression(featureName: nil, keyName: "k1",
+        let impression = KeyImpression(featureName: "feature", keyName: "k1",
                                        treatment: "t1", label: nil, time: 1,
                                        changeNumber: 1)
-        synchronizer.pushImpression(impression: impression)
+
+        for _ in 0..<5 {
+            synchronizer.pushImpression(impression: impression)
+        }
+
+
+        ThreadUtils.delay(seconds: 1)
+        XCTAssertEqual(1, telemetryProducer.impressions[.queued])
+        XCTAssertEqual(4, telemetryProducer.impressions[.deduped])
+    }
+
+    func testEventPush() {
+
+
+        for i in 0..<5 {
+            synchronizer.pushEvent(event: EventDTO(trafficType: "t1", eventType: "e\(i)"))
+        }
+
+
+        ThreadUtils.delay(seconds: 1)
+        XCTAssertEqual(5, telemetryProducer.events[.queued])
+
     }
 
     override func tearDown() {
