@@ -210,7 +210,6 @@ extension DefaultSplitClient {
         event.sizeInBytes = totalSizeInBytes
         synchronizer.pushEvent(event: event)
         telemetryProducer?.recordLatency(method: .track, latency: Stopwatch.interval(from: timeStart))
-        telemetryProducer?.recordEventStats(type: .queued, count: 1)
 
         return true
     }
