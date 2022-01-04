@@ -11,18 +11,25 @@ import Foundation
 protocol TelemetrySynchronizer {
     func synchronizeConfig()
     func synchronizeStats()
+    func start()
+    func pause()
+    func resume()
+    func stop()
 }
 
 class DefaultTelemetrySynchronizer: TelemetrySynchronizer {
 
     private let configRecorderWorker: RecorderWorker
     private let statsRecorderWorker: RecorderWorker
+    private let periodicStatsRecorderWorker: PeriodicRecorderWorker
     private let syncQueue = DispatchQueue.global()
 
     init(configRecorderWorker: RecorderWorker,
-         statsRecorderWorker: RecorderWorker) {
+         statsRecorderWorker: RecorderWorker,
+         periodicStatsRecorderWorker: PeriodicRecorderWorker) {
         self.configRecorderWorker = configRecorderWorker
         self.statsRecorderWorker = statsRecorderWorker
+        self.periodicStatsRecorderWorker = periodicStatsRecorderWorker
     }
 
     func synchronizeConfig() {
@@ -35,5 +42,21 @@ class DefaultTelemetrySynchronizer: TelemetrySynchronizer {
         syncQueue.async {
             self.statsRecorderWorker.flush()
         }
+    }
+
+    func start() {
+        periodicStatsRecorderWorker.start()
+    }
+
+    func pause() {
+        periodicStatsRecorderWorker.pause()
+    }
+
+    func resume() {
+        periodicStatsRecorderWorker.resume()
+    }
+
+    func stop() {
+        periodicStatsRecorderWorker.start()
     }
 }
