@@ -44,7 +44,7 @@ jobs:
           version: 4.6.2.2472
           scan: false
 
-      - name: SonarQube Install
+      - name: SonarQube Scan
         run: >
           sonar-scanner --debug
           -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
