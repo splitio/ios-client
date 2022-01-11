@@ -19,18 +19,21 @@ class DefaultSseHandler: SseHandler {
     let notificationParser: SseNotificationParser
     let notificationManagerKeeper: NotificationManagerKeeper
     let broadcasterChannel: PushManagerEventBroadcaster
+    let telemetryProducer: TelemetryRuntimeProducer?
 
     private var lastControlTimestamp: Int64 = 0
 
     init(notificationProcessor: SseNotificationProcessor,
          notificationParser: SseNotificationParser,
          notificationManagerKeeper: NotificationManagerKeeper,
-         broadcasterChannel: PushManagerEventBroadcaster) {
+         broadcasterChannel: PushManagerEventBroadcaster,
+         telemetryProducer: TelemetryRuntimeProducer?) {
 
         self.notificationProcessor = notificationProcessor
         self.notificationParser = notificationParser
         self.notificationManagerKeeper = notificationManagerKeeper
         self.broadcasterChannel = broadcasterChannel
+        self.telemetryProducer = telemetryProducer
     }
 
     func isConnectionConfirmed(message: [String: String]) -> Bool {
@@ -102,6 +105,7 @@ class DefaultSseHandler: SseHandler {
         if let jsonData = notification.jsonData {
             do {
                 let error = try notificationParser.parseSseError(jsonString: jsonData)
+                telemetryProducer?.recordStreamingEvent(type: .ablyError, data: Int64(error.code))
                 Logger.w("Streaming error notification received: \(error.message)")
                 if error.shouldIgnore {
                     Logger.w("Error ignored")

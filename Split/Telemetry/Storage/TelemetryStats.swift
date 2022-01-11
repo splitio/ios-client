@@ -59,7 +59,7 @@ struct TelemetryStreamingEventValue {
 
 struct TelemetryStreamingEvent: Encodable {
     var type: Int
-    var data: Int64
+    var data: Int64?
     var timestamp: Int64
 
     enum CodingKeys: String, CodingKey {

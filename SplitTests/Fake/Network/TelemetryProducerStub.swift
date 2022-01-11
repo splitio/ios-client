@@ -11,12 +11,28 @@ import Foundation
 
 class TelemetryStorageStub: TelemetryStorage {
 
+    var nonReadyUsageCallCount = 0
     var popTagsCallCount = 0
+    var recordHttpErrorCallCount = 0
+    var recordHttpLastSyncCallCount = 0
+    var recordHttpLatencyCallCount = 0
+    var recordTokenRefreshesCallCount = 0
+    var recordAuthRejectionCallCount = 0
+    var recordActiveFactoriesCallCount: Int = 0
+    var recordRedundantFactoriessCallCount: Int = 0
+    var recordTimeUntilReadyCallCount: Int = 0
+    var recordTimeUntilReadyFromCacheCallCount: Int = 0
+    var streamingEvents = [TelemetryStreamingEventType: Int]()
+    var methodLatencies = [TelemetryMethod: Int]()
+    var impressions = [TelemetryImpressionsDataType: Int]()
+    var events = [TelemetryEventsDataType: Int]()
 
-    func recordLastSync(resource: TelemetryResource, time: Int64) {
+    func recordLastSync(resource: Resource, time: Int64) {
+        recordHttpLastSyncCallCount+=1
     }
 
-    func recordHttpLatency(resource: TelemetryResource, latency: Int64) {
+    func recordHttpLatency(resource: Resource, latency: Int64) {
+        recordHttpLatencyCallCount+=1
     }
 
     func getNonReadyUsages() -> Int {
@@ -37,11 +53,12 @@ class TelemetryStorageStub: TelemetryStorage {
 
 
     func recordNonReadyUsage() {
-
+        nonReadyUsageCallCount+=1
     }
 
-    func recordLatency(method: TelemetryMethod, latency: Int64) {
 
+    func recordLatency(method: TelemetryMethod, latency: Int64) {
+        methodLatencies[method] = (methodLatencies[method] ?? 0) + 1
     }
 
     func recordException(method: TelemetryMethod) {
@@ -52,15 +69,15 @@ class TelemetryStorageStub: TelemetryStorage {
     }
 
     func recordImpressionStats(type: TelemetryImpressionsDataType, count: Int) {
-
+        impressions[type] = (impressions[type] ?? 0) + 1
     }
 
     func recordEventStats(type: TelemetryEventsDataType, count: Int) {
-
+        events[type] = (events[type] ?? 0) + 1
     }
 
-    func recordHttpError(resource: TelemetryResource, status: Int) {
-
+    func recordHttpError(resource: Resource, status: Int) {
+        recordHttpErrorCallCount+=1
     }
 
     func recordAuthRejections() {
@@ -71,12 +88,12 @@ class TelemetryStorageStub: TelemetryStorage {
 
     }
 
-    func recordStreamingEvent(type: TelemetryStreamingEventType, data: Int64, timestamp: Int64) {
-
+    func recordStreamingEvent(type: TelemetryStreamingEventType, data: Int64?) {
+        streamingEvents[type] = (streamingEvents[type] ?? 0) + 1
     }
 
     func recordSessionLength(sessionLength: Int64) {
-
+        // ?
     }
 
     func popMethodExceptions() -> TelemetryMethodExceptions {
@@ -136,15 +153,19 @@ class TelemetryStorageStub: TelemetryStorage {
     }
 
     func recordActiveFactories(count: Int) {
+        recordActiveFactoriesCallCount+=1
     }
 
     func recordRedundantFactories(count: Int) {
+        recordRedundantFactoriessCallCount+=1
     }
 
     func recordTimeUntilReady(_ time: Int64) {
+        recordTimeUntilReadyCallCount+=1
     }
 
     func recordTimeUntilReadyFromCache(_ time: Int64) {
+        recordTimeUntilReadyFromCacheCallCount+=1
     }
 
     func getActiveFactories() -> Int {

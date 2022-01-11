@@ -66,7 +66,7 @@ class SseAuthenticatorTest: XCTestCase {
     func testRecoverableError() {
         // Check token error response
         // If no credentials error, error is recoverable
-        restClient.updateFailedSseAuth(error: HttpError.unknown(message: "unknown"))
+        restClient.updateFailedSseAuth(error: HttpError.unknown(code: -1, message: "unknown"))
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
 
         let result = sseAuthenticator.authenticate(userKey: kUserKey)
@@ -80,7 +80,7 @@ class SseAuthenticatorTest: XCTestCase {
     func testNoRecoverableError() {
         // Check token error response
         // If no credentials error, error is recoverable
-        restClient.updateFailedSseAuth(error: HttpError.clientRelated)
+        restClient.updateFailedSseAuth(error: HttpError.clientRelated(code: -1))
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
 
 

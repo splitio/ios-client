@@ -15,34 +15,33 @@ protocol HttpImpressionsCountRecorder {
 class DefaultHttpImpressionsCountRecorder: HttpImpressionsCountRecorder {
 
     private let restClient: RestClientImpressionsCount
+    private let syncHelper: SyncHelper
+    private let resource = Resource.impressionsCount
 
-    init(restClient: RestClientImpressionsCount) {
+    init(restClient: RestClientImpressionsCount,
+         syncHelper: SyncHelper) {
         self.restClient = restClient
+        self.syncHelper = syncHelper
     }
 
     func execute(_ counts: ImpressionsCount) throws {
 
-        if !restClient.isSdkServerAvailable() {
-            Logger.d("Server is not reachable. Impressions count sending will be delayed when host is reachable")
-            throw HttpError.serverUnavailable
-        }
+        try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)
         var httpError: HttpError?
-
+        let startTime = syncHelper.time()
         restClient.send(counts: counts, completion: { result in
             do {
                 _ = try result.unwrap()
             } catch {
-                Logger.e("Impression count error: \(String(describing: error))")
-                httpError = HttpError.unknown(message: error.localizedDescription)
+                httpError = self.syncHelper.handleError(error, resource: self.resource)
             }
             semaphore.signal()
         })
         semaphore.wait()
 
-        if let error = httpError {
-            throw error
-        }
+        try syncHelper.throwIfError(httpError)
+        syncHelper.recordTelemetry(resource: resource, startTime: startTime)
     }
 }

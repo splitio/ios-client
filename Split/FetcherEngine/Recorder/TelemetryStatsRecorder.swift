@@ -16,9 +16,13 @@ protocol HttpTelemetryStatsRecorder {
 class DefaultHttpTelemetryStatsRecorder: HttpTelemetryStatsRecorder {
 
     private let restClient: RestClientTelemetryStats
+    private let syncHelper: SyncHelper
+    private let resource = Resource.telemetry
 
-    init(restClient: RestClientTelemetryStats) {
+    init(restClient: RestClientTelemetryStats,
+         syncHelper: SyncHelper) {
         self.restClient = restClient
+        self.syncHelper = syncHelper
     }
 
     // This function should be used from the
@@ -32,20 +36,19 @@ class DefaultHttpTelemetryStatsRecorder: HttpTelemetryStatsRecorder {
 
         let semaphore = DispatchSemaphore(value: 0)
         var httpError: HttpError?
-
+        let startTime = syncHelper.time()
         restClient.send(stats: stats, completion: { result in
             do {
                 _ = try result.unwrap()
             } catch {
                 Logger.e("Telemetry stats error: \(String(describing: error))")
-                httpError = HttpError.unknown(message: error.localizedDescription)
+                httpError = self.syncHelper.handleError(error, resource: self.resource)
             }
             semaphore.signal()
         })
         semaphore.wait()
 
-        if let error = httpError {
-            throw error
-        }
+        try syncHelper.throwIfError(httpError)
+        syncHelper.recordTelemetry(resource: resource, startTime: startTime)
     }
 }

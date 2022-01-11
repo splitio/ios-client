@@ -18,7 +18,7 @@ class HttpImpressionsRecorderStub: HttpImpressionsRecorder {
     func execute(_ items: [ImpressionsTest]) throws {
         executeCallCount+=1
         if errorOccurredCallCount == executeCallCount {
-            throw HttpError.unknown(message: "something happend")
+            throw HttpError.unknown(code: -1, message: "something happend")
         }
         impressionsSent.append(contentsOf: items)
     }

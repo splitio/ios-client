@@ -368,7 +368,7 @@ class InMemoryTelemetryStorageTest: XCTestCase {
                               data: Int64,
                               count: Int) {
         for _ in 0..<count {
-            storage.recordStreamingEvent(type: type, data: data, timestamp: rnd)
+            storage.recordStreamingEvent(type: type, data: data)
         }
     }
 
@@ -380,7 +380,7 @@ class InMemoryTelemetryStorageTest: XCTestCase {
 
     //    func recordStreamingEvents(streamingEvent: TelemetryStreamingEvent)
 
-    func recordHttpError(resource: TelemetryResource, factor: Int) {
+    func recordHttpError(resource: Resource, factor: Int) {
         for _ in 0..<factor {
             storage.recordHttpError(resource: resource, status: 400)
             storage.recordHttpError(resource: resource, status: 401)
@@ -394,7 +394,7 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         }
     }
 
-    func recordHttpLatency(resource: TelemetryResource, count: Int) {
+    func recordHttpLatency(resource: Resource, count: Int) {
         for _ in (0..<count) {
             storage.recordHttpLatency(resource: resource, latency: rnd)
         }

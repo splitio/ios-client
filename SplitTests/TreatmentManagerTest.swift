@@ -20,6 +20,7 @@ class TreatmentManagerTest: XCTestCase {
     var attributesStorage: AttributesStorage!
     
     var impressionsLogger: ImpressionsLoggerStub!
+    var telemetryProducer: TelemetryStorageStub!
     
     var validationLoggerStub: ValidationMessageLoggerStub {
         return validationLogger as! ValidationMessageLoggerStub
@@ -31,6 +32,7 @@ class TreatmentManagerTest: XCTestCase {
         impressionsLogger = ImpressionsLoggerStub()
         validationLogger = ValidationMessageLoggerStub()
         attributesStorage = DefaultAttributesStorage()
+        telemetryProducer = TelemetryStorageStub()
         if storageContainer == nil {
             let splits = loadSplitsFile()
             let mySegments = ["s1", "s2", "test_copy"]
@@ -48,14 +50,13 @@ class TreatmentManagerTest: XCTestCase {
                                                      impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub(),
                                                      attributesStorage: attributesStorage,
-                                                     telemetryStorage: TelemetryStorageStub())
+                                                     telemetryStorage: telemetryProducer)
         }
     }
     
     func testBasicEvaluationNoConfig() {
         let matchingKey = "the_key"
         let splitName = "FACUNDO_TEST"
-        
         
         let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
         let splitResult = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil)
@@ -73,13 +74,13 @@ class TreatmentManagerTest: XCTestCase {
         
         XCTAssertFalse(validationLoggerStub.hasError)
         XCTAssertFalse(validationLoggerStub.hasWarnings)
+        XCTAssertEqual(1, telemetryProducer.methodLatencies[.treatmentWithConfig])
     }
     
     func testBasicEvaluationWithConfig() {
         let matchingKey = "the_key"
         let splitName = "Test_Save_1"
-        
-        
+
         let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
         let splitResult = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil)
         let impression = impressionsLogger.impressions[splitName]
@@ -96,14 +97,12 @@ class TreatmentManagerTest: XCTestCase {
         
         XCTAssertFalse(validationLoggerStub.hasError)
         XCTAssertFalse(validationLoggerStub.hasWarnings)
-        
     }
     
     func testKilledSplitWithConfig() {
         let matchingKey = "the_key"
         let splitName = "OldTest"
-        
-        
+
         let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
         let splitResult = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil)
         let impression = impressionsLogger.impressions[splitName]
@@ -182,7 +181,6 @@ class TreatmentManagerTest: XCTestCase {
         
         XCTAssertFalse(validationLoggerStub.hasError)
         XCTAssertTrue(validationLoggerStub.hasWarnings)
-        
     }
     
     func testEmptySplits() {
@@ -314,6 +312,24 @@ class TreatmentManagerTest: XCTestCase {
             XCTAssertEqual(["a", "b", "c"], attr?["att4"] as? [String])
         }
     }
+
+    func testRuntimeProducers() {
+        let matchingKey = "nico_test"
+        let splitName = ""
+        let splitNames: [String] = []
+
+        let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
+
+        let _ = treatmentManager.getTreatment(splitName, attributes: nil)
+        let _ = treatmentManager.getTreatments(splits: splitNames, attributes: nil)
+        let _ = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil)
+        let _ = treatmentManager.getTreatmentsWithConfig(splits: splitNames, attributes: nil)
+
+        XCTAssertEqual(1, telemetryProducer.methodLatencies[.treatment])
+        XCTAssertEqual(1, telemetryProducer.methodLatencies[.treatments])
+        XCTAssertEqual(1, telemetryProducer.methodLatencies[.treatmentWithConfig])
+        XCTAssertEqual(1, telemetryProducer.methodLatencies[.treatmentsWithConfig])
+    }
     
     func assertControl(splitList: [String], treatment: String, treatmentList: [String:String], splitResult: SplitResult?, splitResultList: [String:SplitResult]) {
         XCTAssertEqual(SplitConstants.control, treatment)
@@ -347,7 +363,7 @@ class TreatmentManagerTest: XCTestCase {
         return DefaultTreatmentManager(evaluator: defaultEvaluator,
                                        key: key, splitConfig: SplitClientConfig(),
                                        eventsManager: eventsManager, impressionLogger: impressionsLogger,
-                                       telemetryProducer: TelemetryStorageStub(), attributesStorage: attributesStorage,
+                                       telemetryProducer: telemetryProducer, attributesStorage: attributesStorage,
                                        keyValidator: DefaultKeyValidator(),
                                        splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
                                        validationLogger: validationLogger)

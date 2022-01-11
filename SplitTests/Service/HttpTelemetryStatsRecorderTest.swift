@@ -16,23 +16,25 @@ class HttpTelemetryStatsRecorderTest: XCTestCase {
     var restClient: RestClientStub!
     var recorder: DefaultHttpTelemetryStatsRecorder!
     let telemetryStats = TestingHelper.createTelemetryStats()
+    var telemetryProducer: TelemetryStorageStub!
 
     override func setUp() {
         restClient = RestClientStub()
-        recorder = DefaultHttpTelemetryStatsRecorder(restClient: restClient)
+        telemetryProducer = TelemetryStorageStub()
+        recorder = DefaultHttpTelemetryStatsRecorder(restClient: restClient,
+                                                     syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
     }
 
     func testServerNoReachable() {
         // This recorder doesn't check for connection
         // It should be checked for the worker before pop data
+        // by using isEndpointAvailable()
         restClient.isServerAvailable = false
-        var isError = false
-        do {
-            let _ = try recorder.execute(telemetryStats)
-        } catch {
-            isError = true
-        }
-        XCTAssertFalse(isError)
+
+        let isAvailable = recorder.isEndpointAvailable()
+        XCTAssertFalse(isAvailable)
+        XCTAssertEqual(0, telemetryProducer.recordHttpLastSyncCallCount)
+        XCTAssertEqual(0, telemetryProducer.recordHttpLatencyCallCount)
     }
 
     func testSuccessSending() throws {
@@ -40,6 +42,9 @@ class HttpTelemetryStatsRecorderTest: XCTestCase {
         try recorder.execute(telemetryStats)
 
         XCTAssertEqual(1, restClient.sendTelemetryStatsCount)
+        XCTAssertEqual(1, telemetryProducer.recordHttpLastSyncCallCount)
+        XCTAssertEqual(1, telemetryProducer.recordHttpLatencyCallCount)
+        XCTAssertEqual(0, telemetryProducer.recordHttpErrorCallCount)
     }
 
     override func tearDown() {

@@ -74,6 +74,8 @@ class DefaultSynchronizer: Synchronizer {
     private let impressionsObserver = ImpressionsObserver(size: ServiceConstants.lastSeenImpressionCachSize)
     private let impressionsCounter = ImpressionsCounter()
     private let flushQueue = DispatchQueue(label: "split-flush-queue", target: DispatchQueue.global())
+    private let telemetryProducer: TelemetryRuntimeProducer?
+    private var isDestroyed = Atomic(false)
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -107,6 +109,7 @@ class DefaultSynchronizer: Synchronizer {
         self.eventsSyncHelper = eventsSyncHelper
         self.splitsFilterQueryString = splitsFilterQueryString
         self.splitEventsManager = splitEventsManager
+        self.telemetryProducer = splitStorageContainer.telemetryStorage
 
         if isOptimizedImpressionsMode() {
             self.periodicImpressionsCountRecorderWoker
@@ -182,11 +185,13 @@ class DefaultSynchronizer: Synchronizer {
     func startPeriodicFetching() {
         periodicSplitsSyncWorker.start()
         periodicMySegmentsSyncWorker.start()
+        recordSyncModeEvent(TelemetryStreamingEventValue.syncModePolling)
     }
 
     func stopPeriodicFetching() {
         periodicSplitsSyncWorker.stop()
         periodicMySegmentsSyncWorker.stop()
+        recordSyncModeEvent(TelemetryStreamingEventValue.syncModeStreaming)
     }
 
     func startPeriodicRecording() {
@@ -207,6 +212,7 @@ class DefaultSynchronizer: Synchronizer {
                 self.flusherEventsRecorderWorker.flush()
                 self.eventsSyncHelper.resetAccumulator()
             }
+            self.telemetryProducer?.recordEventStats(type: .queued, count: 1)
         }
     }
 
@@ -225,11 +231,14 @@ class DefaultSynchronizer: Synchronizer {
             }
 
             if !self.isOptimizedImpressionsMode() || self.shouldPush(impression: impressionToPush) {
+                self.telemetryProducer?.recordImpressionStats(type: .queued, count: 1)
                 if self.impressionsSyncHelper.pushAndCheckFlush(impressionToPush) {
                     self.flusherImpressionsRecorderWorker.flush()
                     self.impressionsSyncHelper.resetAccumulator()
 
                 }
+            } else {
+                self.telemetryProducer?.recordImpressionStats(type: .deduped, count: 1)
             }
         }
     }
@@ -270,6 +279,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func destroy() {
+        isDestroyed.set(true)
         splitsSyncWorker.stop()
         mySegmentsSyncWorker.stop()
         periodicSplitsSyncWorker.stop()
@@ -338,5 +348,12 @@ class DefaultSynchronizer: Synchronizer {
             return true
         }
         return Date.truncateTimeframe(millis: previousTime) != Date.truncateTimeframe(millis: impression.time)
+    }
+
+    private func recordSyncModeEvent(_ mode: Int64) {
+        if splitConfig.streamingEnabled && !isDestroyed.value {
+            telemetryProducer?.recordStreamingEvent(type: .syncModeUpdate,
+                                                    data: mode)
+        }
     }
 }

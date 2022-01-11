@@ -20,7 +20,8 @@ class HttpSplitFetcherTests: XCTestCase {
     override func setUp() {
         restClient = RestClientStub()
         telemetryProducer = TelemetryStorageStub()
-        fetcher = DefaultHttpSplitFetcher(restClient: restClient, telemetryProducer: telemetryProducer)
+        fetcher = DefaultHttpSplitFetcher(restClient: restClient,
+                                          syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
     }
     
     func testServerNoReachable() {

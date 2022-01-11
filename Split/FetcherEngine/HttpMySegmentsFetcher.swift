@@ -15,38 +15,35 @@ protocol HttpMySegmentsFetcher {
 class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
 
     private let restClient: RestClientMySegments
-    private let telemetryProducer: TelemetryRuntimeProducer
+    private let syncHelper: SyncHelper
+    private let resource = Resource.mySegments
 
     init(restClient: RestClientMySegments,
-         telemetryProducer: TelemetryRuntimeProducer) {
+         syncHelper: SyncHelper) {
         self.restClient = restClient
-        self.telemetryProducer = telemetryProducer
+        self.syncHelper = syncHelper
     }
 
     func execute(userKey: String, headers: [String: String]? = nil) throws -> [String]? {
-        if !restClient.isSdkServerAvailable() {
-            Logger.d("Server is not reachable. My segment updates will be delayed until host is reachable")
-            throw HttpError.serverUnavailable
-        }
+        try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<[String]>?
-        let fetchStartTime = Date().unixTimestampInMiliseconds()
-        restClient.getMySegments(user: userKey, headers: headers) { [weak self] result in
-            guard let self = self else {
-                return
-            }
-//            self.metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime,
-//                                for: Metrics.Time.mySegmentsFetcherGet)
-//            self.metricsManager.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherStatus200)
+        let startTime = syncHelper.time()
+        restClient.getMySegments(user: userKey, headers: headers) { result in
             requestResult = result
             semaphore.signal()
         }
         semaphore.wait()
-        guard let segments = try requestResult?.unwrap() else {
-            return nil
-        }
+        syncHelper.recordTelemetry(resource: resource, startTime: startTime)
 
-        return segments
+        do {
+            if let segments = try requestResult?.unwrap() {
+                return segments
+            }
+        } catch {
+            try syncHelper.throwIfError(syncHelper.handleError(error, resource: resource))
+        }
+        return nil
     }
 }

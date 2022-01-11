@@ -37,7 +37,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private var factoryDestroyHandler: DestroyHandler
     private let anyValueValidator: AnyValueValidator
     private var isClientDestroyed = false
-    private let telemetryProducer: TelemetryEvaluationProducer?
+    private let telemetryProducer: TelemetryProducer?
 
     init(config: SplitClientConfig,
          key: Key,
@@ -155,7 +155,7 @@ extension DefaultSplitClient {
 
     private func track(eventType: String, trafficType: String? = nil,
                        value: Double? = nil, properties: [String: Any]?) -> Bool {
-        let timeStart = Stopwatch.startTime()
+        let timeStart = Stopwatch.now()
         let validationTag = "track"
 
         if isClientDestroyed {

@@ -16,10 +16,13 @@ class HttpImpressionsRecorderTests: XCTestCase {
     var restClient: RestClientStub!
     var recorder: DefaultHttpImpressionsRecorder!
     let impressions = TestingHelper.createTestImpressions()
+    var telemetryProducer: TelemetryStorageStub!
 
     override func setUp() {
         restClient = RestClientStub()
-        recorder = DefaultHttpImpressionsRecorder(restClient: restClient)
+        telemetryProducer = TelemetryStorageStub()
+        recorder = DefaultHttpImpressionsRecorder(restClient: restClient,
+                                                  syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
     }
 
     func testServerNoReachable() {
@@ -31,6 +34,8 @@ class HttpImpressionsRecorderTests: XCTestCase {
             isError = true
         }
         XCTAssertTrue(isError)
+        XCTAssertEqual(0, telemetryProducer.recordHttpLastSyncCallCount)
+        XCTAssertEqual(0, telemetryProducer.recordHttpLatencyCallCount)
     }
 
     func testSuccessSending() throws {
@@ -39,6 +44,9 @@ class HttpImpressionsRecorderTests: XCTestCase {
         try recorder.execute(impressions)
 
         XCTAssertEqual(1, restClient.getSendImpressionsCount())
+        XCTAssertEqual(1, telemetryProducer.recordHttpLastSyncCallCount)
+        XCTAssertEqual(1, telemetryProducer.recordHttpLatencyCallCount)
+        XCTAssertEqual(0, telemetryProducer.recordHttpErrorCallCount)
     }
 
     override func tearDown() {

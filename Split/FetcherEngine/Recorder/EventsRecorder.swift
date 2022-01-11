@@ -15,34 +15,32 @@ protocol HttpEventsRecorder {
 class DefaultHttpEventsRecorder: HttpEventsRecorder {
 
     private let restClient: RestClientTrackEvents
+    private let syncHelper: SyncHelper
+    private let resource = Resource.events
 
-    init(restClient: RestClientTrackEvents) {
+    init(restClient: RestClientTrackEvents,
+         syncHelper: SyncHelper) {
         self.restClient = restClient
+        self.syncHelper = syncHelper
     }
 
     func execute(_ items: [EventDTO]) throws {
 
-        if !restClient.isSdkServerAvailable() {
-            Logger.d("Server is not reachable. Events sending will be delayed when host is reachable")
-            throw HttpError.serverUnavailable
-        }
+        try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)
         var httpError: HttpError?
-
+        let startTime = syncHelper.time()
         restClient.sendTrackEvents(events: items, completion: { result in
             do {
                 _ = try result.unwrap()
             } catch {
-                Logger.e("Event error: \(String(describing: error))")
-                httpError = HttpError.unknown(message: error.localizedDescription)
+                httpError = self.syncHelper.handleError(error, resource: self.resource)
             }
             semaphore.signal()
         })
         semaphore.wait()
-
-        if let error = httpError {
-            throw error
-        }
+        try syncHelper.throwIfError(httpError)
+        syncHelper.recordTelemetry(resource: resource, startTime: startTime)
     }
 }
