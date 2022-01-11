@@ -92,15 +92,19 @@ class SynchronizerTest: XCTestCase {
         config.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
 
         synchronizer = DefaultSynchronizer(splitConfig: config,
-            splitApiFacade: apiFacade,
-            splitStorageContainer: storageContainer,
-            syncWorkerFactory: syncWorkerFactory,
-            impressionsSyncHelper: ImpressionsRecorderSyncHelper(impressionsStorage: PersistentImpressionsStorageStub(),
-                                                                 accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
-            eventsSyncHelper: EventsRecorderSyncHelper(eventsStorage: PersistentEventsStorageStub(),
-                                                                 accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
-            syncTaskByChangeNumberCatalog: updateWorkerCatalog, splitsFilterQueryString: "", splitEventsManager: eventsManager)
-
+                                           telemetrySynchronizer: nil,
+                                           splitApiFacade: apiFacade,
+                                           splitStorageContainer: storageContainer,
+                                           syncWorkerFactory: syncWorkerFactory,
+                                           impressionsSyncHelper:
+                                            ImpressionsRecorderSyncHelper(impressionsStorage: PersistentImpressionsStorageStub(),
+                                                                          accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
+                                           eventsSyncHelper:
+                                            EventsRecorderSyncHelper(eventsStorage: PersistentEventsStorageStub(),
+                                                                     accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
+                                           syncTaskByChangeNumberCatalog: updateWorkerCatalog,
+                                           splitsFilterQueryString: "",
+                                           splitEventsManager: eventsManager)
         return synchronizer
     }
 

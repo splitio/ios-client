@@ -115,6 +115,7 @@ class TestSplitFactory {
                                                          eventsManager: eventsManager)
 
         self.synchronizer = SynchronizerSpy(splitConfig: splitConfig, splitApiFacade: apiFacade,
+                                            telemetrySynchronizer: nil,
                                             splitStorageContainer: storageContainer,
                                             syncWorkerFactory: syncWorkerFactory,
                                             impressionsSyncHelper: impressionsSyncHelper,

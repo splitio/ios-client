@@ -21,6 +21,9 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
     var periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
     var periodicImpressionsCountRecorderWorker = PeriodicRecorderWorkerStub()
     var impressionsCountRecorderWorker = RecorderWorkerStub()
+    var telemetryConfigRecorderWorker = RecorderWorkerStub()
+    var telemetryStatsRecorderWorker = RecorderWorkerStub()
+    var periodicTelemetryStatsRecorderWorker = PeriodicRecorderWorkerStub()
 
     private var retryableWorkerIndex = -1
     var retryableSplitsUpdateWorkers: [RetryableSyncWorker] = [RetryableSyncWorkerStub()]
@@ -74,5 +77,17 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
 
     func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> RecorderWorker {
         return eventsRecorderWorker
+    }
+
+    func createTelemetryConfigRecorderWorker() -> RecorderWorker? {
+        return telemetryConfigRecorderWorker
+    }
+
+    func createTelemetryStatsRecorderWorker() -> RecorderWorker? {
+        return telemetryStatsRecorderWorker
+    }
+
+    func createPeriodicTelemetryStatsRecorderWorker() -> PeriodicRecorderWorker? {
+        return periodicTelemetryStatsRecorderWorker
     }
 }
