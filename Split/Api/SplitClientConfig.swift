@@ -255,8 +255,16 @@ public class SplitClientConfig: NSObject {
     ///
     @objc public var persistentAttributesEnabled = false
 
+
+    ///
+    ///  Update this variable to enable / disable telemetry for testing
+    ///
+    var telemetryConfigHelper: TelemetryConfigHelper = DefaultTelemetryConfigHelper()
+
     // This variable will be handled internaly based on
     // a random function
-    var isTelemetryEnabled = true
+    var isTelemetryEnabled: Bool {
+        telemetryConfigHelper.shouldRecordTelemetry
+    }
 
 }

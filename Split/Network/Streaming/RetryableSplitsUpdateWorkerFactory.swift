@@ -34,6 +34,12 @@ protocol SyncWorkerFactory {
     func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker
 
     func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> RecorderWorker
+
+    func createTelemetryConfigRecorderWorker() -> RecorderWorker?
+
+    func createTelemetryStatsRecorderWorker() -> RecorderWorker?
+
+    func createPeriodicTelemetryStatsRecorderWorker() -> PeriodicRecorderWorker?
 }
 
 class DefaultSyncWorkerFactory: SyncWorkerFactory {
@@ -165,7 +171,11 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
             return nil
         }
 
-        return TelemetryConfigRecorderWorker(telemetryConfigRecorder: apiFacade.telemetryConfigRecorder,
+        guard let telemetryConfigRecorder = apiFacade.telemetryConfigRecorder else {
+            return nil
+        }
+
+        return TelemetryConfigRecorderWorker(telemetryConfigRecorder: telemetryConfigRecorder,
                                              splitClientConfig: splitConfig,
                                              telemetryConsumer: telemetryStorage)
     }
@@ -176,9 +186,35 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
             return nil
         }
 
-        return TelemetryStatsRecorderWorker(telemetryStatsRecorder: apiFacade.telemetryStatsRecorder,
+        guard let telemetryStatsRecorder = apiFacade.telemetryStatsRecorder else {
+            return nil
+        }
+
+        return TelemetryStatsRecorderWorker(telemetryStatsRecorder: telemetryStatsRecorder,
                                             telemetryConsumer: telemetryStorage,
                                             splitsStorage: storageContainer.splitsStorage,
                                             mySegmentsStorage: storageContainer.mySegmentsStorage)
+    }
+
+    func createPeriodicTelemetryStatsRecorderWorker() -> PeriodicRecorderWorker? {
+
+        guard let telemetryStorage = storageContainer.telemetryStorage else {
+            return nil
+        }
+
+        guard let telemetryStatsRecorder = apiFacade.telemetryStatsRecorder else {
+            return nil
+        }
+
+        let telemetryStatsWorker = TelemetryStatsRecorderWorker(telemetryStatsRecorder: telemetryStatsRecorder,
+                                                                telemetryConsumer: telemetryStorage,
+                                                                splitsStorage: storageContainer.splitsStorage,
+                                                                mySegmentsStorage: storageContainer.mySegmentsStorage)
+
+        let timer = DefaultPeriodicTimer(deadline: splitConfig.telemetryRefreshRate,
+                                         interval: splitConfig.telemetryRefreshRate)
+
+
+        return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: telemetryStatsWorker)
     }
 }

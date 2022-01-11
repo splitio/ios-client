@@ -14,7 +14,7 @@ protocol TelemetrySynchronizer {
     func start()
     func pause()
     func resume()
-    func stop()
+    func destroy()
 }
 
 class DefaultTelemetrySynchronizer: TelemetrySynchronizer {
@@ -56,7 +56,9 @@ class DefaultTelemetrySynchronizer: TelemetrySynchronizer {
         periodicStatsRecorderWorker.resume()
     }
 
-    func stop() {
-        periodicStatsRecorderWorker.start()
+    func destroy() {
+        periodicStatsRecorderWorker.stop()
+        periodicStatsRecorderWorker.destroy()
     }
+
 }

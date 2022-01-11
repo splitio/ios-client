@@ -20,8 +20,8 @@ struct SplitApiFacade {
     let eventsRecorder: HttpEventsRecorder
     let streamingHttpClient: HttpClient?
     let sseAuthenticator: SseAuthenticator
-    let telemetryConfigRecorder: HttpTelemetryConfigRecorder
-    let telemetryStatsRecorder: HttpTelemetryStatsRecorder
+    let telemetryConfigRecorder: HttpTelemetryConfigRecorder?
+    let telemetryStatsRecorder: HttpTelemetryStatsRecorder?
 }
 
 class SplitApiFacadeBuilder {

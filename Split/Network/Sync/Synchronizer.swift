@@ -208,7 +208,7 @@ class DefaultSynchronizer: Synchronizer {
         periodicImpressionsRecorderWoker.stop()
         periodicEventsRecorderWorker.stop()
         periodicImpressionsCountRecorderWoker?.stop()
-        telemetrySynchronizer?.stop()
+        telemetrySynchronizer?.destroy()
     }
 
     func pushEvent(event: EventDTO) {
