@@ -154,4 +154,8 @@ class IntegrationHelper {
     static func tlog(_ message: String) {
         print("TRVLOG -> \(message)")
     }
+
+    static func enabledTelemetry() -> TelemetryConfigHelper {
+        return TelemetryConfigHelperStub(enabled: true)
+    }
 }
