@@ -120,6 +120,11 @@ class DefaultSynchronizer: Synchronizer {
             self.flusherImpressionsCountRecorderWorker
                 = syncWorkerFactory.createImpressionsCountRecorderWorker()
         }
+
+        if splitConfig.isTelemetryEnabled {
+            telemetrySynchronizer?.start()
+            telemetrySynchronizer?.synchronizeConfig()
+        }
     }
 
     func loadAndSynchronizeSplits() {
@@ -283,6 +288,7 @@ class DefaultSynchronizer: Synchronizer {
             self.flusherImpressionsCountRecorderWorker?.flush()
             self.eventsSyncHelper.resetAccumulator()
             self.impressionsSyncHelper.resetAccumulator()
+            self.telemetrySynchronizer?.synchronizeStats()
         }
     }
 
