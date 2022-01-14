@@ -18,12 +18,15 @@ class TelmetrySynchronizerTest: XCTestCase {
     var synchronizer: TelemetrySynchronizer!
     var configRecorderWorker: RecorderWorkerStub!
     var statsRecorderWorker: RecorderWorkerStub!
+    var periodicStatsRecorderWorker: PeriodicRecorderWorkerStub!
 
     override func setUp() {
         configRecorderWorker = RecorderWorkerStub()
         statsRecorderWorker = RecorderWorkerStub()
+        periodicStatsRecorderWorker = PeriodicRecorderWorkerStub()
         synchronizer = DefaultTelemetrySynchronizer(configRecorderWorker: configRecorderWorker,
-                                                    statsRecorderWorker: statsRecorderWorker)
+                                                    statsRecorderWorker: statsRecorderWorker,
+                                                    periodicStatsRecorderWorker: periodicStatsRecorderWorker)
     }
 
     func testSyncConfig() {
@@ -46,6 +49,20 @@ class TelmetrySynchronizerTest: XCTestCase {
 
         XCTAssertTrue(statsRecorderWorker.flushCalled)
         XCTAssertFalse(configRecorderWorker.flushCalled)
+    }
+
+    func testStart() {
+
+        synchronizer.start()
+
+        XCTAssertTrue(periodicStatsRecorderWorker.startCalled)
+    }
+
+    func testStop() {
+
+        synchronizer.destroy()
+
+        XCTAssertTrue(periodicStatsRecorderWorker.stopCalled)
     }
 
     override func tearDown() {

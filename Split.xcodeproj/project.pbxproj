@@ -435,6 +435,7 @@
 		95623DA82757FDDE0006A8F1 /* TelemetryProducerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95623DA72757FDDE0006A8F1 /* TelemetryProducerStub.swift */; };
 		95649FBA2603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95649FB92603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift */; };
 		95649FBE260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95649FBD260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift */; };
+		9569E1CB2784C00B006FC7E5 /* TelemetryConfigHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9569E1CA2784C00B006FC7E5 /* TelemetryConfigHelper.swift */; };
 		956D17CD260D1B700037F575 /* ChangesCheckerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17CC260D1B700037F575 /* ChangesCheckerMock.swift */; };
 		956D17D1260D266E0037F575 /* SplitsChangesCheckerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17D0260D266E0037F575 /* SplitsChangesCheckerTest.swift */; };
 		956D17D7260D28320037F575 /* MySegmentsChangeChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17D6260D28320037F575 /* MySegmentsChangeChecker.swift */; };
@@ -1000,6 +1001,7 @@
 		95623DA72757FDDE0006A8F1 /* TelemetryProducerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryProducerStub.swift; sourceTree = "<group>"; };
 		95649FB92603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsBgSyncWorkerTest.swift; sourceTree = "<group>"; };
 		95649FBD260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentsBgSyncWorkerTest.swift; sourceTree = "<group>"; };
+		9569E1CA2784C00B006FC7E5 /* TelemetryConfigHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryConfigHelper.swift; sourceTree = "<group>"; };
 		956D17CC260D1B700037F575 /* ChangesCheckerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangesCheckerMock.swift; sourceTree = "<group>"; };
 		956D17D0260D266E0037F575 /* SplitsChangesCheckerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsChangesCheckerTest.swift; sourceTree = "<group>"; };
 		956D17D6260D28320037F575 /* MySegmentsChangeChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsChangeChecker.swift; sourceTree = "<group>"; };
@@ -1243,6 +1245,7 @@
 			children = (
 				3B6DEE7E20EA6ADF0067435E /* DefaultSplitClient.swift */,
 				3B6DEE8520EA6AE00067435E /* SplitClientConfig.swift */,
+				9569E1CA2784C00B006FC7E5 /* TelemetryConfigHelper.swift */,
 				3B6DEE9B20EA6AE10067435E /* SplitClient.swift */,
 				3B6DEE8120EA6ADF0067435E /* SplitView.swift */,
 				3B6DEE7D20EA6ADF0067435E /* SplitError.swift */,
@@ -2562,6 +2565,7 @@
 				3B6DEF1A20EA6AE50067435E /* EventDTO.swift in Sources */,
 				95122A142759410100D93F90 /* TelemetryStorage.swift in Sources */,
 				955423A326793AEF002278D5 /* ImpressionsObserver.swift in Sources */,
+				9569E1CB2784C00B006FC7E5 /* TelemetryConfigHelper.swift in Sources */,
 				5932260524A516FA00496D8B /* HttpTask.swift in Sources */,
 				59F4AA9B24FE93E300A1C69A /* NotificationManagerKeeper.swift in Sources */,
 				95726075262F548500350CCA /* SplitBgSynchronizer.swift in Sources */,

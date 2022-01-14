@@ -49,6 +49,7 @@ struct SplitStorageContainer {
 
 class DefaultSynchronizer: Synchronizer {
 
+    private let telemetrySynchronizer: TelemetrySynchronizer?
     private let splitApiFacade: SplitApiFacade
     private let splitStorageContainer: SplitStorageContainer
     private let syncWorkerFactory: SyncWorkerFactory
@@ -78,6 +79,7 @@ class DefaultSynchronizer: Synchronizer {
     private var isDestroyed = Atomic(false)
 
     init(splitConfig: SplitClientConfig,
+         telemetrySynchronizer: TelemetrySynchronizer?,
          splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
@@ -110,12 +112,18 @@ class DefaultSynchronizer: Synchronizer {
         self.splitsFilterQueryString = splitsFilterQueryString
         self.splitEventsManager = splitEventsManager
         self.telemetryProducer = splitStorageContainer.telemetryStorage
+        self.telemetrySynchronizer = telemetrySynchronizer
 
         if isOptimizedImpressionsMode() {
             self.periodicImpressionsCountRecorderWoker
                 = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
             self.flusherImpressionsCountRecorderWorker
                 = syncWorkerFactory.createImpressionsCountRecorderWorker()
+        }
+
+        if splitConfig.isTelemetryEnabled {
+            telemetrySynchronizer?.start()
+            telemetrySynchronizer?.synchronizeConfig()
         }
     }
 
@@ -198,12 +206,14 @@ class DefaultSynchronizer: Synchronizer {
         periodicImpressionsRecorderWoker.start()
         periodicEventsRecorderWorker.start()
         periodicImpressionsCountRecorderWoker?.start()
+        telemetrySynchronizer?.start()
     }
 
     func stopPeriodicRecording() {
         periodicImpressionsRecorderWoker.stop()
         periodicEventsRecorderWorker.stop()
         periodicImpressionsCountRecorderWoker?.stop()
+        telemetrySynchronizer?.destroy()
     }
 
     func pushEvent(event: EventDTO) {
@@ -258,6 +268,8 @@ class DefaultSynchronizer: Synchronizer {
         periodicEventsRecorderWorker.pause()
         periodicImpressionsRecorderWoker.pause()
         periodicImpressionsCountRecorderWoker?.pause()
+        telemetrySynchronizer?.synchronizeStats()
+        telemetrySynchronizer?.pause()
     }
 
     func resume() {
@@ -266,6 +278,7 @@ class DefaultSynchronizer: Synchronizer {
         periodicEventsRecorderWorker.resume()
         periodicImpressionsRecorderWoker.resume()
         periodicImpressionsCountRecorderWoker?.resume()
+        telemetrySynchronizer?.resume()
     }
 
     func flush() {
@@ -275,6 +288,7 @@ class DefaultSynchronizer: Synchronizer {
             self.flusherImpressionsCountRecorderWorker?.flush()
             self.eventsSyncHelper.resetAccumulator()
             self.impressionsSyncHelper.resetAccumulator()
+            self.telemetrySynchronizer?.synchronizeStats()
         }
     }
 

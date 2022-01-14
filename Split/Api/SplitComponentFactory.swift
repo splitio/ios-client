@@ -198,8 +198,32 @@ class SplitComponentFactory {
         return component
     }
 
+    func buildTelemetrySynchronizer() throws -> TelemetrySynchronizer? {
+        let syncWorkerFactory = try buildSyncWorkerFactory()
+        guard let configRecorderWorker = syncWorkerFactory.createTelemetryConfigRecorderWorker() else {
+            return nil
+        }
+
+        guard let statsRecorderWorker = syncWorkerFactory.createTelemetryStatsRecorderWorker() else {
+            return nil
+        }
+
+        guard let periodicStatsRecorderWorker = syncWorkerFactory.createPeriodicTelemetryStatsRecorderWorker() else {
+            return nil
+        }
+
+        let component = DefaultTelemetrySynchronizer(configRecorderWorker: configRecorderWorker,
+                                                     statsRecorderWorker: statsRecorderWorker,
+                                                     periodicStatsRecorderWorker: periodicStatsRecorderWorker)
+
+        add(component: component)
+        return component
+    }
+
     func buildSynchronizer() throws -> Synchronizer {
+
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
+                                                          telemetrySynchronizer: getTelemetrySynchronizer(),
                                                           splitApiFacade: try getSplitApiFacade(),
                                                           splitStorageContainer: try getSplitStorageContainer(),
                                                           syncWorkerFactory: try buildSyncWorkerFactory(),
@@ -216,6 +240,10 @@ class SplitComponentFactory {
             return obj
         }
         throw ComponentError.notFound(name: "Synchronizer")
+    }
+
+    func getTelemetrySynchronizer() -> TelemetrySynchronizer? {
+        return get(for: TelemetrySynchronizer.self) as? TelemetrySynchronizer
     }
 
     func buildSyncManager(notificationHelper: NotificationHelper?) throws -> SyncManager {
@@ -243,5 +271,12 @@ class SplitComponentFactory {
             return obj
         }
         throw ComponentError.notFound(name: "Split storage container")
+    }
+
+    func getSyncWorkerFactory() throws -> SyncWorkerFactory {
+        if let obj = get(for: SyncWorkerFactory.self) as? SyncWorkerFactory {
+            return obj
+        }
+        throw ComponentError.notFound(name: "SyncWorkerFactory")
     }
 }
