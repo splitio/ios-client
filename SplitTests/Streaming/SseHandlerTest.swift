@@ -81,10 +81,12 @@ class SseHandlerTest: XCTestCase {
     }
 
     func testIncomingLowRetryableSseError() {
+        notificationParser.isError = true
         incomingRetryableSseErrorTest(code: 40140)
     }
 
     func testIncomingHightRetryableSseError() {
+        notificationParser.isError = true
         incomingRetryableSseErrorTest(code: 40149)
     }
 
@@ -103,10 +105,12 @@ class SseHandlerTest: XCTestCase {
     }
 
     func testIncomingLowNonRetryableSseError() {
+        notificationParser.isError = true
         incomingNonRetryableSseErrorTest(code: 40000)
     }
 
     func testIncomingHightNonRetryableSseError() {
+        notificationParser.isError = true
         incomingNonRetryableSseErrorTest(code: 49999)
     }
 
@@ -121,6 +125,7 @@ class SseHandlerTest: XCTestCase {
     }
 
     func testIncomingIgnorableSseErrorTest() {
+        notificationParser.isError = true
         notificationParser.incomingNotification = IncomingNotification(type: .sseError, jsonData: "dummy")
         notificationParser.sseErrorNotification = StreamingError(message: "", code: 50000, statusCode: 50000)
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
