@@ -57,14 +57,22 @@ protocol SseAuthenticator {
 class DefaultSseAuthenticator: SseAuthenticator {
 
     private let restClient: RestClientSseAuthenticator
+    private let syncHelper: SyncHelper
+    private let resource: Resource = .token
 
-    init(restClient: RestClientSseAuthenticator) {
+    init(restClient: RestClientSseAuthenticator,
+         syncHelper: SyncHelper) {
         self.restClient = restClient
+        self.syncHelper = syncHelper
     }
 
     func authenticate(userKey: String) -> SseAuthenticationResult {
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SseAuthenticationResponse>?
+
+        guard (try? syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)) != nil else {
+            return errorResult(recoverable: true)
+        }
 
         restClient.authenticate(userKey: userKey) { result in
             requestResult = result
@@ -73,16 +81,20 @@ class DefaultSseAuthenticator: SseAuthenticator {
         semaphore.wait()
 
         let response: SseAuthenticationResponse
+        let startTime = Stopwatch.now()
         do {
             if let resp = try requestResult?.unwrap() {
                 response = resp
+                syncHelper.recordTelemetry(resource: resource, startTime: startTime)
             } else {
                 return errorResult(recoverable: true)
             }
 
-        } catch HttpError.clientRelated {
+        } catch HttpError.clientRelated(let httpCode) {
+            syncHelper.recordHttpError(code: httpCode, resource: resource)
             return errorResult(recoverable: false)
         } catch {
+            _ = syncHelper.handleError(error, resource: resource)
             return errorResult(recoverable: true)
         }
 

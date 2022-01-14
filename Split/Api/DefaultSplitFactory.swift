@@ -56,7 +56,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: params.key.matchingKey)
 
         defaultManager = try components.getSplitManager()
-        let _ = try components.buildRestClient(
+        _ = try components.buildRestClient(
             httpClient: params.httpClient ?? DefaultHttpClient.shared,
             reachabilityChecker: params.reachabilityChecker ?? ReachabilityWrapper())
 
@@ -70,7 +70,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         defaultClient = DefaultSplitClient(config: params.config, key: params.key, apiFacade: splitApiFacade,
                                            storageContainer: storageContainer,
                                            synchronizer: synchronizer, eventsManager: eventsManager) { [weak self] in
-
             syncManager.stop()
             if let self = self, let manager = self.defaultManager as? Destroyable {
                 manager.destroy()
@@ -78,8 +77,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             eventsManager.stop()
             storageContainer.mySegmentsStorage.destroy()
             storageContainer.splitsStorage.destroy()
-            storageContainer.telemetryStorage?.recordSessionLength(sessionLength: params.initStopwatch.interval())
+
         }
+
+        (defaultClient as? TelemetrySplitClient)?.initStopwatch = params.initStopwatch
         eventsManager.start()
         defaultClient?.on(event: .sdkReady) {
             DispatchQueue.global().async {

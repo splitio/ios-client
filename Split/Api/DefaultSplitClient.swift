@@ -11,7 +11,7 @@ import Foundation
 
 typealias DestroyHandler = () -> Void
 
-public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClient {
+public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClient, TelemetrySplitClient {
 
     var splitsStorage: SplitsStorage? {
         return storageContainer.splitsStorage
@@ -38,6 +38,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private let anyValueValidator: AnyValueValidator
     private var isClientDestroyed = false
     private let telemetryProducer: TelemetryProducer?
+    var initStopwatch: Stopwatch?
 
     init(config: SplitClientConfig,
          key: Key,
@@ -294,6 +295,9 @@ extension DefaultSplitClient {
 
     public func destroy(completion: (() -> Void)?) {
         isClientDestroyed = true
+        if let stopwatch = self.initStopwatch {
+            telemetryProducer?.recordSessionLength(sessionLength: stopwatch.interval())
+        }
         treatmentManager.destroy()
         DispatchQueue.global().async {
             self.syncFlush()

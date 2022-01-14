@@ -56,6 +56,12 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
                                                  stream: endpoints.isCustomStreamingEndpoint,
                                                  telemetry: endpoints.isCustomTelemetryEndpoint)
 
+        var checkCount = 0
+        while !telemetryConsumer.isFactoryDataRecorded.value && checkCount < 5 {
+            ThreadUtils.delay(seconds: 1)
+            checkCount+=1
+        }
+
         return TelemetryConfig(streamingEnabled: splitConfig.streamingEnabled,
                                rates: rates, urlOverrides: urlOverrides,
                                impressionsQueueSize: splitConfig.impressionsQueueSize,

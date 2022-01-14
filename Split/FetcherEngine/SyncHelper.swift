@@ -11,6 +11,7 @@ import Foundation
 protocol SyncHelper {
     func checkEndpointReachability(restClient: RestClient, resource: Resource) throws
     func handleError(_ error: Error, resource: Resource) -> HttpError
+    func recordHttpError(code: Int, resource: Resource)
     func throwIfError(_ error: Error?) throws
     func recordTelemetry(resource: Resource, startTime: Int64)
     func time() -> Int64
@@ -49,6 +50,10 @@ class DefaultSyncHelper: SyncHelper {
     func recordTelemetry(resource: Resource, startTime: Int64) {
         telemetryProducer?.recordLastSync(resource: resource, time: Stopwatch.now())
         telemetryProducer?.recordHttpLatency(resource: resource, latency: Stopwatch.interval(from: startTime))
+    }
+
+    func recordHttpError(code: Int, resource: Resource) {
+        self.telemetryProducer?.recordHttpError(resource: resource, status: code)
     }
 
     func time() -> Int64 {

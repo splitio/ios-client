@@ -162,6 +162,10 @@ class SplitComponentFactory {
             .setStorageContainer(storageContainer)
             .setSplitsQueryString(splitsFilterQueryString)
 
+        if let telemetryStorage = storageContainer.telemetryStorage {
+                _ = builder.setTelemetryStorage(telemetryStorage)
+        }
+
         if let httpClient = testHttpClient {
             _ = builder.setStreamingHttpClient(httpClient)
         }
@@ -222,8 +226,13 @@ class SplitComponentFactory {
 
     func buildSynchronizer() throws -> Synchronizer {
 
+        var telemetrySynchronizer: TelemetrySynchronizer?
+        if splitClientConfig.isTelemetryEnabled {
+            telemetrySynchronizer = try buildTelemetrySynchronizer()
+        }
+
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
-                                                          telemetrySynchronizer: getTelemetrySynchronizer(),
+                                                          telemetrySynchronizer: telemetrySynchronizer,
                                                           splitApiFacade: try getSplitApiFacade(),
                                                           splitStorageContainer: try getSplitStorageContainer(),
                                                           syncWorkerFactory: try buildSyncWorkerFactory(),
@@ -240,10 +249,6 @@ class SplitComponentFactory {
             return obj
         }
         throw ComponentError.notFound(name: "Synchronizer")
-    }
-
-    func getTelemetrySynchronizer() -> TelemetrySynchronizer? {
-        return get(for: TelemetrySynchronizer.self) as? TelemetrySynchronizer
     }
 
     func buildSyncManager(notificationHelper: NotificationHelper?) throws -> SyncManager {

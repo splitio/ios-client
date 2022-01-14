@@ -105,6 +105,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private func connectToSse() {
 
         let result = sseAuthenticator.authenticate(userKey: userKey)
+        telemetryProducer?.recordLastSync(resource: .token, time: Date().unixTimestampInMiliseconds())
         if result.success && !result.pushEnabled {
             Logger.d("Streaming disabled for api key")
             isStopped.set(true)
@@ -163,7 +164,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
             if success {
                 self.handleSubsystemUp()
             }
-            self.telemetryProducer?.recordStreamingEvent(type: success ? .connectionStablished : .connectionError,
+            self.telemetryProducer?.recordStreamingEvent(type: .connectionStablished,
                                                          data: nil)
             self.isConnecting.set(false)
         }
@@ -186,6 +187,8 @@ class DefaultPushNotificationManager: PushNotificationManager {
             switch timerName {
             case .refreshAuthToken:
                 self.sseClient.disconnect()
+                self.telemetryProducer?.recordStreamingEvent(type: .connectionError,
+                                                        data: TelemetryStreamingEventValue.sseConnErrorRequested)
                 self.connect()
             default:
                 Logger.d("No handler or timer: \(timerName)")
