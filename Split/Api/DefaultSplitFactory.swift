@@ -77,7 +77,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             eventsManager.stop()
             storageContainer.mySegmentsStorage.destroy()
             storageContainer.splitsStorage.destroy()
-
         }
 
         (defaultClient as? TelemetrySplitClient)?.initStopwatch = params.initStopwatch
@@ -85,6 +84,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         defaultClient?.on(event: .sdkReady) {
             DispatchQueue.global().async {
                 params.telemetryStorage?.recordTimeUntilReady(params.initStopwatch.interval())
+                synchronizer.synchronizeTelemetryConfig()
             }
         }
 

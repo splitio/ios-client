@@ -40,6 +40,8 @@ class SynchronizerStub: Synchronizer {
     var startPeriodicFetchingExp: XCTestExpectation?
     var stopPeriodicFetchingExp: XCTestExpectation?
 
+    var syncTelemetryConfig = false
+
     func loadAndSynchronizeSplits() {
         loadAndSynchronizeSplitsCalled = true
     }
@@ -54,6 +56,10 @@ class SynchronizerStub: Synchronizer {
 
     func syncAll() {
         syncAllCalled = true
+    }
+
+    func synchronizeTelemetryConfig() {
+        syncTelemetryConfig = true
     }
 
     func startPeriodicFetching() {

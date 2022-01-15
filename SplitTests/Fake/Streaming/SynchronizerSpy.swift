@@ -85,6 +85,11 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.syncAll()
     }
 
+    func synchronizeTelemetryConfig() {
+        syncAllCalled = true
+        splitSynchronizer.syncAll()
+    }
+
     func startPeriodicFetching() {
         startPeriodicFetchingCalled = true
         splitSynchronizer.startPeriodicFetching()

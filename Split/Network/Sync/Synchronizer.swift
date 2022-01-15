@@ -20,6 +20,7 @@ protocol Synchronizer: ImpressionLogger {
     func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments()
+    func synchronizeTelemetryConfig()
     func forceMySegmentsSync()
     func startPeriodicFetching()
     func stopPeriodicFetching()
@@ -120,11 +121,6 @@ class DefaultSynchronizer: Synchronizer {
             self.flusherImpressionsCountRecorderWorker
                 = syncWorkerFactory.createImpressionsCountRecorderWorker()
         }
-
-        if splitConfig.isTelemetryEnabled {
-            telemetrySynchronizer?.start()
-            telemetrySynchronizer?.synchronizeConfig()
-        }
     }
 
     func loadAndSynchronizeSplits() {
@@ -188,6 +184,10 @@ class DefaultSynchronizer: Synchronizer {
 
     func forceMySegmentsSync() {
         mySegmentsForcedSyncWorker.start()
+    }
+
+    func synchronizeTelemetryConfig() {
+        telemetrySynchronizer?.synchronizeConfig()
     }
 
     func startPeriodicFetching() {

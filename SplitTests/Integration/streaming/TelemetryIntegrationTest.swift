@@ -398,6 +398,18 @@ class TelemetryIntegrationTest: XCTestCase {
         semaphore.wait()
     }
 
+    func testConfig() {
+        var res = [Bool]()
+        for _ in 0..<10000 {
+            let config = SplitClientConfig()
+            res.append(config.isTelemetryEnabled)
+        }
+
+        let count = res.filter { $0 == true }.count
+        print("count: \(count)")
+        XCTAssertTrue(count < 30)
+    }
+
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             switch request.url.absoluteString {
