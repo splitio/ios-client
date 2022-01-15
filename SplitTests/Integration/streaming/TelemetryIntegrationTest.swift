@@ -406,7 +406,6 @@ class TelemetryIntegrationTest: XCTestCase {
         }
 
         let count = res.filter { $0 == true }.count
-        print("count: \(count)")
         XCTAssertTrue(count < 30)
     }
 
