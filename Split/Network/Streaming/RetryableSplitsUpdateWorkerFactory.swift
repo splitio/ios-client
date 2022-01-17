@@ -214,7 +214,6 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         let timer = DefaultPeriodicTimer(deadline: splitConfig.internalTelemetryRefreshRate,
                                          interval: splitConfig.internalTelemetryRefreshRate)
 
-
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: telemetryStatsWorker)
     }
 }
