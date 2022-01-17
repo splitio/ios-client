@@ -10,6 +10,7 @@ import Foundation
 
 class InMemoryTelemetryStorage: TelemetryStorage {
 
+
     private static let kQueuePrefix = "split-telemetry"
     private let queue = DispatchQueue(label: "split-telemetry", attributes: .concurrent)
 
