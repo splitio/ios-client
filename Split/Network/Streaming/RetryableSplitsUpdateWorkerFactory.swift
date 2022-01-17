@@ -211,8 +211,8 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                                                 splitsStorage: storageContainer.splitsStorage,
                                                                 mySegmentsStorage: storageContainer.mySegmentsStorage)
 
-        let timer = DefaultPeriodicTimer(deadline: splitConfig.telemetryRefreshRate,
-                                         interval: splitConfig.telemetryRefreshRate)
+        let timer = DefaultPeriodicTimer(deadline: splitConfig.internalTelemetryRefreshRate,
+                                         interval: splitConfig.internalTelemetryRefreshRate)
 
 
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: telemetryStatsWorker)
