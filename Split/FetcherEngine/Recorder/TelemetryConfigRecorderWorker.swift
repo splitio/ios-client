@@ -66,6 +66,7 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
                                activeFactories: telemetryConsumer.getActiveFactories(),
                                redundantFactories: telemetryConsumer.getRedundantFactories(),
                                timeUntilReady: telemetryConsumer.getTimeUntilReady(),
+                               timeUntilReadyFromCache: telemetryConsumer.getTimeUntilReadyFromCache(),
                                nonReadyUsages: telemetryConsumer.getNonReadyUsages(),
                                integrations: nil, tags: telemetryConsumer.popTags())
     }

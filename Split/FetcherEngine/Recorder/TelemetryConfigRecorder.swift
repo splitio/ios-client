@@ -35,7 +35,7 @@ class DefaultHttpTelemetryConfigRecorder: HttpTelemetryConfigRecorder {
             do {
                 _ = try result.unwrap()
             } catch {
-                httpError = self.syncHelper.handleError(error, resource: self.resource)
+                httpError = self.syncHelper.handleError(error, resource: self.resource, startTime: startTime)
             }
             semaphore.signal()
         })

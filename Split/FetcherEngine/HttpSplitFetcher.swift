@@ -41,7 +41,7 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
             }
 
         } catch {
-            try syncHelper.throwIfError(syncHelper.handleError(error, resource: resource))
+            try syncHelper.throwIfError(syncHelper.handleError(error, resource: resource, startTime: startTime))
         }
 
         throw GenericError.unknown(message: "Incorrect split changes retrieved")

@@ -103,7 +103,7 @@ import Foundation
 
         var telemetryStorage: TelemetryStorage?
         if params.config.isTelemetryEnabled {
-            telemetryStorage = InMemoryTelemetryStorage()
+            telemetryStorage = params.telemetryStorage ?? InMemoryTelemetryStorage()
             params.telemetryStorage = telemetryStorage
             params.initStopwatch.start()
         }
