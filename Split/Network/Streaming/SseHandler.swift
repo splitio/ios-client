@@ -49,6 +49,11 @@ class DefaultSseHandler: SseHandler {
             return
         }
 
+        if notificationParser.isError(event: message) {
+            handleSseError(data)
+            return
+        }
+
         guard let incomingNotification = notificationParser.parseIncoming(jsonString: data) else {
             return
         }
@@ -62,8 +67,6 @@ class DefaultSseHandler: SseHandler {
             if notificationManagerKeeper.isStreamingActive {
                 notificationProcessor.process(incomingNotification)
             }
-        case .sseError:
-            handleSseError(incomingNotification)
         default:
             Logger.w("SSE Handler: Unknown notification")
         }
@@ -101,20 +104,18 @@ class DefaultSseHandler: SseHandler {
         }
     }
 
-    private func handleSseError(_ notification: IncomingNotification) {
-        if let jsonData = notification.jsonData {
-            do {
-                let error = try notificationParser.parseSseError(jsonString: jsonData)
-                telemetryProducer?.recordStreamingEvent(type: .ablyError, data: Int64(error.code))
-                Logger.w("Streaming error notification received: \(error.message)")
-                if error.shouldIgnore {
-                    Logger.w("Error ignored")
-                    return
-                }
-                broadcasterChannel.push(event: error.isRetryable ? .pushRetryableError : .pushNonRetryableError)
-            } catch {
-                Logger.w("Error while parsing streaming error notification")
+    private func handleSseError(_ json: String) {
+        do {
+            let error = try notificationParser.parseSseError(jsonString: json)
+            telemetryProducer?.recordStreamingEvent(type: .ablyError, data: Int64(error.code))
+            Logger.w("Streaming error notification received: \(error.message)")
+            if error.shouldIgnore {
+                Logger.w("Error ignored")
+                return
             }
+            broadcasterChannel.push(event: error.isRetryable ? .pushRetryableError : .pushNonRetryableError)
+        } catch {
+            Logger.w("Error while parsing streaming error notification")
         }
     }
 }

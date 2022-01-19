@@ -27,6 +27,8 @@ class TelemetryStorageStub: TelemetryStorage {
     var impressions = [TelemetryImpressionsDataType: Int]()
     var events = [TelemetryEventsDataType: Int]()
 
+    var isFactoryDataRecorded = Atomic<Bool>(false)
+
     func recordLastSync(resource: Resource, time: Int64) {
         recordHttpLastSyncCallCount+=1
     }
@@ -152,11 +154,8 @@ class TelemetryStorageStub: TelemetryStorage {
         return 0
     }
 
-    func recordActiveFactories(count: Int) {
+    func recordFactories(active: Int, redundant: Int) {
         recordActiveFactoriesCallCount+=1
-    }
-
-    func recordRedundantFactories(count: Int) {
         recordRedundantFactoriessCallCount+=1
     }
 

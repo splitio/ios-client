@@ -10,6 +10,7 @@ import Foundation
 
 class InMemoryTelemetryStorage: TelemetryStorage {
 
+
     private static let kQueuePrefix = "split-telemetry"
     private let queue = DispatchQueue(label: "split-telemetry", attributes: .concurrent)
 
@@ -44,6 +45,8 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     //Tags
     static let kMaxTagsCount = 10 // Visible for testing
     private let tags: ConcurrentSet<String> = ConcurrentSet(capacity: kMaxTagsCount)
+
+    let what = Date().unixTimestampInMicroseconds()
 
     init() {
         for method in TelemetryMethod.allCases {
@@ -116,10 +119,9 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordStreamingEvent(type: TelemetryStreamingEventType, data: Int64?) {
-        let timestamp: Int64 = Date().unixTimestampInMiliseconds()
         streamingEvents.append(TelemetryStreamingEvent(type: type.rawValue,
                                                        data: data,
-                                                       timestamp: timestamp))
+                                                       timestamp: Date().unixTimestampInMiliseconds()))
     }
 
     func recordSessionLength(sessionLength: Int64) {
@@ -217,12 +219,9 @@ class InMemoryTelemetryStorage: TelemetryStorage {
         return sessionLength.value
     }
 
-    func recordActiveFactories(count: Int) {
-        activeFactoriesCounter.set(count)
-    }
-
-    func recordRedundantFactories(count: Int) {
-        redundantFactoriesCounter.set(count)
+    func recordFactories(active: Int, redundant: Int) {
+        activeFactoriesCounter.set(active)
+        redundantFactoriesCounter.set(redundant)
     }
 
     func recordTimeUntilReady(_ time: Int64) {

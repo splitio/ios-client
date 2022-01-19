@@ -42,7 +42,7 @@ class DefaultHttpTelemetryStatsRecorder: HttpTelemetryStatsRecorder {
                 _ = try result.unwrap()
             } catch {
                 Logger.e("Telemetry stats error: \(String(describing: error))")
-                httpError = self.syncHelper.handleError(error, resource: self.resource)
+                httpError = self.syncHelper.handleError(error, resource: self.resource, startTime: startTime)
             }
             semaphore.signal()
         })

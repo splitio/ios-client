@@ -206,11 +206,24 @@ public class SplitClientConfig: NSObject {
     ///
     @objc public var synchronizeInBackground = false
 
+    static let kDefaultTelemetryRefreshRate = 3600
+    static let kMinTelemetryRefreshRate = 60
     ///
     /// The schedule time for telemetry flush after the first one.
     /// Default: 3600 seconds (1 hour)
     ///
-    @objc public var telemetryRefreshRate: Int = 3600
+    @objc public var telemetryRefreshRate: Int =  kDefaultTelemetryRefreshRate {
+        didSet {
+            if telemetryRefreshRate < SplitClientConfig.kMinTelemetryRefreshRate {
+                internalTelemetryRefreshRate =  SplitClientConfig.kMinTelemetryRefreshRate
+                Logger.w("Telemetry refresh rate to small. Using default value.")
+            } else {
+                internalTelemetryRefreshRate = telemetryRefreshRate
+            }
+        }
+    }
+
+    var internalTelemetryRefreshRate: Int = kDefaultTelemetryRefreshRate
 
     ///
     /// Maximum length matching / bucketing key. Internal config
@@ -254,7 +267,6 @@ public class SplitClientConfig: NSObject {
     ///  will be lost in SDK detroy.
     ///
     @objc public var persistentAttributesEnabled = false
-
 
     ///
     ///  Update this variable to enable / disable telemetry for testing

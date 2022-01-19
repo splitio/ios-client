@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TelemetryHttpLatencies: Encodable {
+struct TelemetryHttpLatencies: Codable {
 
     var splits: [Int]?
     var mySegments: [Int]?
@@ -57,7 +57,7 @@ struct TelemetryStreamingEventValue {
     static let syncModePolling: Int64 = 1
 }
 
-struct TelemetryStreamingEvent: Encodable {
+struct TelemetryStreamingEvent: Codable {
     var type: Int
     var data: Int64?
     var timestamp: Int64
@@ -69,7 +69,7 @@ struct TelemetryStreamingEvent: Encodable {
     }
 }
 
-struct TelemetryHttpErrors: Encodable {
+struct TelemetryHttpErrors: Codable {
 
     var splits: [Int: Int]?
     var mySegments: [Int: Int]?
@@ -90,7 +90,7 @@ struct TelemetryHttpErrors: Encodable {
     }
 }
 
-struct TelemetryMethodExceptions: Encodable {
+struct TelemetryMethodExceptions: Codable {
     var treatment: Int?
     var treatments: Int?
     var treatmentWithConfig: Int?
@@ -106,7 +106,7 @@ struct TelemetryMethodExceptions: Encodable {
     }
 }
 
-struct TelemetryLastSync: Encodable {
+struct TelemetryLastSync: Codable {
 
     var splits: Int64?
     var impressions: Int64?
@@ -127,7 +127,7 @@ struct TelemetryLastSync: Encodable {
     }
 }
 
-struct TelemetryMethodLatencies: Encodable {
+struct TelemetryMethodLatencies: Codable {
 
     var treatment: [Int]?
     var treatments: [Int]?
@@ -144,7 +144,8 @@ struct TelemetryMethodLatencies: Encodable {
     }
 }
 
-struct TelemetryStats: Encodable {
+// Codable to allow testing
+struct TelemetryStats: Codable {
 
     var lastSynchronization: TelemetryLastSync?
     var methodLatencies: TelemetryMethodLatencies?

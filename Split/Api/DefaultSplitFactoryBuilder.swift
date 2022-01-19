@@ -101,8 +101,10 @@ import Foundation
 
     public func build() -> SplitFactory? {
 
+        var telemetryStorage: TelemetryStorage?
         if params.config.isTelemetryEnabled {
-            params.telemetryStorage = params.telemetryStorage ?? InMemoryTelemetryStorage()
+            telemetryStorage = params.telemetryStorage ?? InMemoryTelemetryStorage()
+            params.telemetryStorage = telemetryStorage
             params.initStopwatch.start()
         }
 
@@ -151,10 +153,8 @@ import Foundation
         DefaultSplitFactoryBuilder.factoryMonitor.register(instance: factory, for: params.apiKey)
         factoryCount = DefaultSplitFactoryBuilder.factoryMonitor.instanceCount(for: params.apiKey)
         let activeCount = DefaultSplitFactoryBuilder.factoryMonitor.activeCount()
-        if let telemetryStorage = params.telemetryStorage {
-            telemetryStorage.recordActiveFactories(count: activeCount)
-            telemetryStorage.recordRedundantFactories(count: factoryCount - 1)
-        }
+        telemetryStorage?.recordFactories(active: activeCount, redundant: factoryCount - 1)
+
         return factory
     }
 

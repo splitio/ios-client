@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TelemetryRates: Encodable {
+struct TelemetryRates: Codable {
     var splits: Int
     var mySegments: Int
     var impressions: Int
@@ -24,7 +24,7 @@ struct TelemetryRates: Encodable {
     }
 }
 
-struct TelemetryUrlOverrides: Encodable {
+struct TelemetryUrlOverrides: Codable {
     var sdk: Bool
     var events: Bool
     var auth: Bool
@@ -40,7 +40,7 @@ struct TelemetryUrlOverrides: Encodable {
     }
 }
 
-struct TelemetryConfig: Encodable {
+struct TelemetryConfig: Codable {
     let operationMode = 0 // 0: Standalone, 1: Consumer
     let storage: String = "memory"
     var streamingEnabled: Bool
@@ -54,6 +54,7 @@ struct TelemetryConfig: Encodable {
     var activeFactories: Int
     var redundantFactories: Int?
     var timeUntilReady: Int64
+    var timeUntilReadyFromCache: Int64
     var nonReadyUsages: Int
     var integrations: [String]?
     var tags: [String]?
@@ -72,6 +73,7 @@ struct TelemetryConfig: Encodable {
         case activeFactories = "aF"
         case redundantFactories = "rF"
         case timeUntilReady = "tR"
+        case timeUntilReadyFromCache = "tC"
         case nonReadyUsages = "nR"
         case integrations = "i"
         case tags = "t"

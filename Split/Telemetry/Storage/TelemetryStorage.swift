@@ -44,8 +44,7 @@ enum TelemetryInitCounter: CaseIterable {
 // MARK: Config Telemtry
 protocol TelemetryInitProducer {
     func recordNonReadyUsage()
-    func recordActiveFactories(count: Int)
-    func recordRedundantFactories(count: Int)
+    func recordFactories(active: Int, redundant: Int)
     func recordTimeUntilReady(_ time: Int64)
     func recordTimeUntilReadyFromCache(_ time: Int64)
 }

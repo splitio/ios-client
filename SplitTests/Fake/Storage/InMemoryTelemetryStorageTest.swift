@@ -325,8 +325,7 @@ class InMemoryTelemetryStorageTest: XCTestCase {
 
     func testActiveFactoriesCount() {
         let initCount = storage.getActiveFactories()
-        storage.recordActiveFactories(count: 2)
-        storage.recordActiveFactories(count: 3)
+        storage.recordFactories(active: 3, redundant: 0)
         let count = storage.getActiveFactories()
 
         XCTAssertEqual(0, initCount)
@@ -335,8 +334,8 @@ class InMemoryTelemetryStorageTest: XCTestCase {
 
     func testRedundantFactoriesCount() {
         let initCount = storage.getRedundantFactories()
-        storage.recordRedundantFactories(count: 2)
-        storage.recordRedundantFactories(count: 3)
+        storage.recordFactories(active: 0, redundant: 2)
+        storage.recordFactories(active: 0, redundant: 3)
         let count = storage.getRedundantFactories()
 
         XCTAssertEqual(0, initCount)
