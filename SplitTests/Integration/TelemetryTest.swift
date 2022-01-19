@@ -28,7 +28,7 @@ class TelemetryTest: XCTestCase {
 
 
     override func setUp() {
-
+        splitConfig.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: true)
         telemetryStorage = InMemoryTelemetryStorage()
         splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
         // To allow firing ready from cache

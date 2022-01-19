@@ -54,6 +54,7 @@ struct TelemetryConfig: Codable {
     var activeFactories: Int
     var redundantFactories: Int?
     var timeUntilReady: Int64
+    var timeUntilReadyFromCache: Int64
     var nonReadyUsages: Int
     var integrations: [String]?
     var tags: [String]?
@@ -72,6 +73,7 @@ struct TelemetryConfig: Codable {
         case activeFactories = "aF"
         case redundantFactories = "rF"
         case timeUntilReady = "tR"
+        case timeUntilReadyFromCache = "tC"
         case nonReadyUsages = "nR"
         case integrations = "i"
         case tags = "t"

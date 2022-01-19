@@ -47,7 +47,7 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
                                    mySegments: splitConfig.segmentsRefreshRate,
                                    impressions: splitConfig.impressionRefreshRate,
                                    events: splitConfig.eventsPushRate,
-                                   telemetry: splitConfig.telemetryRefreshRate)
+                                   telemetry: splitConfig.internalTelemetryRefreshRate)
 
         let endpoints = splitConfig.serviceEndpoints
         let urlOverrides = TelemetryUrlOverrides(sdk: endpoints.isCustomSdkEndpoint,
@@ -66,6 +66,7 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
                                activeFactories: telemetryConsumer.getActiveFactories(),
                                redundantFactories: telemetryConsumer.getRedundantFactories(),
                                timeUntilReady: telemetryConsumer.getTimeUntilReady(),
+                               timeUntilReadyFromCache: telemetryConsumer.getTimeUntilReadyFromCache(),
                                nonReadyUsages: telemetryConsumer.getNonReadyUsages(),
                                integrations: nil, tags: telemetryConsumer.popTags())
     }

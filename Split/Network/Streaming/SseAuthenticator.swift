@@ -91,10 +91,10 @@ class DefaultSseAuthenticator: SseAuthenticator {
             }
 
         } catch HttpError.clientRelated(let httpCode) {
-            syncHelper.recordHttpError(code: httpCode, resource: resource)
+            syncHelper.recordHttpError(code: httpCode, resource: resource, startTime: startTime)
             return errorResult(recoverable: false)
         } catch {
-            _ = syncHelper.handleError(error, resource: resource)
+            _ = syncHelper.handleError(error, resource: resource, startTime: startTime)
             return errorResult(recoverable: true)
         }
 

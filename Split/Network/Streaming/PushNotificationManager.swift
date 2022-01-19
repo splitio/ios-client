@@ -183,7 +183,12 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     private func timerHandler() -> TimersManager.TimerHandler {
-        return { timerName in
+
+        return { [weak self] timerName in
+            guard let self = self else {
+                return
+            }
+
             switch timerName {
             case .refreshAuthToken:
                 self.sseClient.disconnect()

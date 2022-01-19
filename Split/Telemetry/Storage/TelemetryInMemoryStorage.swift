@@ -9,7 +9,7 @@
 import Foundation
 
 class InMemoryTelemetryStorage: TelemetryStorage {
-    
+
     private static let kQueuePrefix = "split-telemetry"
     private let queue = DispatchQueue(label: "split-telemetry", attributes: .concurrent)
 
@@ -44,9 +44,6 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     //Tags
     static let kMaxTagsCount = 10 // Visible for testing
     private let tags: ConcurrentSet<String> = ConcurrentSet(capacity: kMaxTagsCount)
-
-    // Flag to check if factory instances were recorded
-    var isFactoryDataRecorded = Atomic(false)
 
     let what = Date().unixTimestampInMicroseconds()
 
@@ -224,7 +221,6 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     func recordFactories(active: Int, redundant: Int) {
         activeFactoriesCounter.set(active)
         redundantFactoriesCounter.set(redundant)
-        isFactoryDataRecorded.set(true)
     }
 
     func recordTimeUntilReady(_ time: Int64) {

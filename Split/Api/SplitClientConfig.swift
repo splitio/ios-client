@@ -216,6 +216,7 @@ public class SplitClientConfig: NSObject {
         didSet {
             if telemetryRefreshRate < SplitClientConfig.kMinTelemetryRefreshRate {
                 internalTelemetryRefreshRate =  SplitClientConfig.kMinTelemetryRefreshRate
+                Logger.w("Telemetry refresh rate to small. Using default value.")
             } else {
                 internalTelemetryRefreshRate = telemetryRefreshRate
             }

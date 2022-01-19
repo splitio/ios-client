@@ -42,18 +42,14 @@ enum TelemetryInitCounter: CaseIterable {
 }
 
 // MARK: Config Telemtry
-
-protocol TelemetryFactoryChecker {
-    var isFactoryDataRecorded: Atomic<Bool> { get set }
-}
-protocol TelemetryInitProducer: TelemetryFactoryChecker {
+protocol TelemetryInitProducer {
     func recordNonReadyUsage()
     func recordFactories(active: Int, redundant: Int)
     func recordTimeUntilReady(_ time: Int64)
     func recordTimeUntilReadyFromCache(_ time: Int64)
 }
 
-protocol TelemetryInitConsumer: TelemetryFactoryChecker {
+protocol TelemetryInitConsumer {
     func getNonReadyUsages() -> Int
     func getActiveFactories() -> Int
     func getRedundantFactories() -> Int

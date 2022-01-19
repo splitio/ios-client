@@ -42,7 +42,7 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
                 return segments
             }
         } catch {
-            try syncHelper.throwIfError(syncHelper.handleError(error, resource: resource))
+            try syncHelper.throwIfError(syncHelper.handleError(error, resource: resource, startTime: startTime))
         }
         return nil
     }
