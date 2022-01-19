@@ -202,40 +202,24 @@ class SplitComponentFactory {
         return component
     }
 
-    func buildTelemetrySynchronizer() throws -> TelemetrySynchronizer? {
-        let syncWorkerFactory = try buildSyncWorkerFactory()
-        guard let configRecorderWorker = syncWorkerFactory.createTelemetryConfigRecorderWorker() else {
-            return nil
-        }
-
-        guard let statsRecorderWorker = syncWorkerFactory.createTelemetryStatsRecorderWorker() else {
-            return nil
-        }
-
-        guard let periodicStatsRecorderWorker = syncWorkerFactory.createPeriodicTelemetryStatsRecorderWorker() else {
-            return nil
-        }
-
-        let component = DefaultTelemetrySynchronizer(configRecorderWorker: configRecorderWorker,
-                                                     statsRecorderWorker: statsRecorderWorker,
-                                                     periodicStatsRecorderWorker: periodicStatsRecorderWorker)
-
-        add(component: component)
-        return component
-    }
-
     func buildSynchronizer() throws -> Synchronizer {
 
+        let syncWorkerFactory = try buildSyncWorkerFactory()
         var telemetrySynchronizer: TelemetrySynchronizer?
-        if splitClientConfig.isTelemetryEnabled {
-            telemetrySynchronizer = try buildTelemetrySynchronizer()
+        if splitClientConfig.isTelemetryEnabled,
+           let configRecorderWorker = syncWorkerFactory.createTelemetryConfigRecorderWorker(),
+           let statsRecorderWorker = syncWorkerFactory.createTelemetryStatsRecorderWorker(),
+           let periodicStatsRecorderWorker = syncWorkerFactory.createPeriodicTelemetryStatsRecorderWorker() {
+            telemetrySynchronizer = DefaultTelemetrySynchronizer(configRecorderWorker: configRecorderWorker,
+                                                         statsRecorderWorker: statsRecorderWorker,
+                                                         periodicStatsRecorderWorker: periodicStatsRecorderWorker)
         }
 
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
                                                           telemetrySynchronizer: telemetrySynchronizer,
                                                           splitApiFacade: try getSplitApiFacade(),
                                                           splitStorageContainer: try getSplitStorageContainer(),
-                                                          syncWorkerFactory: try buildSyncWorkerFactory(),
+                                                          syncWorkerFactory: syncWorkerFactory,
                                                           impressionsSyncHelper: try buildImpressionsSyncHelper(),
                                                           eventsSyncHelper: try buildEventsSyncHelper(),
                                                           splitsFilterQueryString: splitsFilterQueryString,
