@@ -271,7 +271,15 @@ public class SplitClientConfig: NSObject {
     ///
     ///  Update this variable to enable / disable telemetry for testing
     ///
+
+    /// WARNING!!!
+    /// This property is public only for testing purposes. 
+    /// Do not change this property
+    #if DEBUG
+    public var telemetryConfigHelper: TelemetryConfigHelper = DefaultTelemetryConfigHelper()
+    #else
     var telemetryConfigHelper: TelemetryConfigHelper = DefaultTelemetryConfigHelper()
+    #endif
 
     // This variable will be handled internaly based on
     // a random function

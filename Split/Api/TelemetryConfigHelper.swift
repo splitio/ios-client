@@ -6,11 +6,20 @@
 //  Copyright © 2022 Split. All rights reserved.
 //
 
-import Foundation
+// WARNING:
+// This protocol is intended to be used while testing.
+// That's why is only public for DEBUG mode
 
+import Foundation
+#if DEBUG
+public protocol TelemetryConfigHelper {
+    var shouldRecordTelemetry: Bool { get }
+}
+#else
 protocol TelemetryConfigHelper {
     var shouldRecordTelemetry: Bool { get }
 }
+#endif
 
 struct DefaultTelemetryConfigHelper: TelemetryConfigHelper {
 
