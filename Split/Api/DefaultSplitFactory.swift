@@ -81,6 +81,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         (defaultClient as? TelemetrySplitClient)?.initStopwatch = params.initStopwatch
         eventsManager.start()
+
+        defaultClient?.on(event: .sdkReadyFromCache) {
+            DispatchQueue.global().async {
+                params.telemetryStorage?.recordTimeUntilReadyFromCache(params.initStopwatch.interval())
+            }
+        }
+
         defaultClient?.on(event: .sdkReady) {
             DispatchQueue.global().async {
                 params.telemetryStorage?.recordTimeUntilReady(params.initStopwatch.interval())
@@ -88,11 +95,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             }
         }
 
-        defaultClient?.on(event: .sdkReadyFromCache) {
-            DispatchQueue.global().async {
-                params.telemetryStorage?.recordTimeUntilReadyFromCache(params.initStopwatch.interval())
-            }
-        }
         eventsManager.executorResources.client = defaultClient
         syncManager.start()
     }
