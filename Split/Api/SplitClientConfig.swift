@@ -273,9 +273,10 @@ public class SplitClientConfig: NSObject {
     ///
 
     /// WARNING!!!
-    /// This property is public only for testing purposes. 
+    /// This property is public only for testing purposes.
+    /// That's why is only public for when ENABLE_TELEMETRY_ALWAYS flag is present
     /// Do not change this property
-    #if DEBUG
+    #if ENABLE_TELEMETRY_ALWAYS
     public var telemetryConfigHelper: TelemetryConfigHelper = DefaultTelemetryConfigHelper()
     #else
     var telemetryConfigHelper: TelemetryConfigHelper = DefaultTelemetryConfigHelper()
