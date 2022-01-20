@@ -8,10 +8,10 @@
 
 // WARNING:
 // This protocol is intended to be used while testing.
-// That's why is only public for DEBUG mode
+// That's why is only public for when ENABLE_TELEMETRY_ALWAYS flag is present
 
 import Foundation
-#if DEBUG
+#if ENABLE_TELEMETRY_ALWAYS
 public protocol TelemetryConfigHelper {
     var shouldRecordTelemetry: Bool { get }
 }
