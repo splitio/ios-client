@@ -280,7 +280,6 @@ extension DefaultSplitClient {
 
     private func syncFlush() {
         self.synchronizer.flush()
-        // TODO: Call Telemetry synchronizer flush here
     }
 
     public func flush() {
