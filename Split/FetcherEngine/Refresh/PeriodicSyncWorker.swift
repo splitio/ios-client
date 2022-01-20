@@ -213,8 +213,6 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                 Logger.d(segments.debugDescription)
             }
         } catch let error {
-            // Commented line to replace with new telemetry implementation in next PRs
-//            metricsManager.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherException)
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
         }
     }
