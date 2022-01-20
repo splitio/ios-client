@@ -44,8 +44,6 @@ class SplitsSyncHelper {
                 nextSince = newTill
             }
         } catch let error {
-            // Commented line to replace with new telemetry implementation in next PRs
-//            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.splitChangeFetcherException)
             Logger.e("Problem fetching splits: %@", error.localizedDescription)
         }
         return false
