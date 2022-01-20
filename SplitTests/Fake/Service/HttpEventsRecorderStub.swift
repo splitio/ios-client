@@ -18,7 +18,7 @@ class HttpEventsRecorderStub: HttpEventsRecorder {
     func execute(_ items: [EventDTO]) throws {
         executeCallCount+=1
         if errorOccurredCallCount == executeCallCount {
-            throw HttpError.unknown(message: "something happend")
+            throw HttpError.unknown(code: -1, message: "something happend")
         }
         eventsSent.append(contentsOf: items)
     }

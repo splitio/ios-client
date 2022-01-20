@@ -16,10 +16,13 @@ class HttpEventsRecorderTests: XCTestCase {
     var restClient: RestClientStub!
     var recorder: DefaultHttpEventsRecorder!
     let events = TestingHelper.createEvents()
+    var telemetryProducer: TelemetryStorageStub!
 
     override func setUp() {
         restClient = RestClientStub()
-        recorder = DefaultHttpEventsRecorder(restClient: restClient)
+        telemetryProducer = TelemetryStorageStub()
+        recorder = DefaultHttpEventsRecorder(restClient: restClient,
+                                             syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
     }
 
     func testServerNoReachable() {

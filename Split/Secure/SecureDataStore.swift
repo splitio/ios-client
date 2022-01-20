@@ -13,7 +13,6 @@ class SecureDataStore {
         case accessToken = "user_auth_token"
     }
 
-    private let metricsManager = DefaultMetricsManager.shared
     private var token: String?
 
     static let shared: SecureDataStore = {
@@ -65,7 +64,7 @@ class SecureDataStore {
         if let token = self.token {
             return token
         }
-        metricsManager.count(delta: 1, for: Metrics.Counter.getApiKeyFromSecureStorage)
+
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: Asset.accessToken.rawValue

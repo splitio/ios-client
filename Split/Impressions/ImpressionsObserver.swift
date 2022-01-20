@@ -19,10 +19,10 @@ struct ImpressionsObserver {
         let hash = ImpressionHasher.process(impression: impression)
         let previous = cache.element(for: hash)
         cache.set(impression.time, for: hash)
-        if previous == nil {
+        guard let previousTime = previous else {
             return nil
         }
-        return min(previous ?? 0, impression.time)
+        return min(previousTime, impression.time)
     }
 }
 

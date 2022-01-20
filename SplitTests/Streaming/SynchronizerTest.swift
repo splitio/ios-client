@@ -33,8 +33,14 @@ class SynchronizerTest: XCTestCase {
     var synchronizer: Synchronizer!
 
     var eventsManager: SplitEventsManagerStub!
+    var telemetryProducer: TelemetryStorageStub!
 
     override func setUp() {
+        synchronizer = buildSynchronizer()
+    }
+
+    func buildSynchronizer(impressionsAccumulator: RecorderFlushChecker? = nil,
+                           eventsAccumulator: RecorderFlushChecker? = nil) -> Synchronizer {
 
         eventsManager = SplitEventsManagerStub()
         persistentSplitsStorage = PersistentSplitsStorageStub()
@@ -60,7 +66,7 @@ class SynchronizerTest: XCTestCase {
         syncWorkerFactory.periodicEventsRecorderWorker = periodicEventsRecorderWorker
         syncWorkerFactory.eventsRecorderWorker = eventsRecorderWorker
 
-
+        telemetryProducer = TelemetryStorageStub()
         splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
@@ -71,7 +77,8 @@ class SynchronizerTest: XCTestCase {
                                                      persistentSplitsStorage: persistentSplitsStorage,
                                                      mySegmentsStorage: mySegmentsStorage, impressionsStorage: PersistentImpressionsStorageStub(), impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub(),
-                                                     attributesStorage: DefaultAttributesStorage())
+                                                     attributesStorage: DefaultAttributesStorage(),
+                                                     telemetryStorage: telemetryProducer)
 
         let apiFacade = SplitApiFacade.builder()
             .setUserKey("userKey")
@@ -83,15 +90,22 @@ class SynchronizerTest: XCTestCase {
 
         let config =  SplitClientConfig()
         config.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
+
         synchronizer = DefaultSynchronizer(splitConfig: config,
-            splitApiFacade: apiFacade,
-            splitStorageContainer: storageContainer,
-            syncWorkerFactory: syncWorkerFactory,
-            impressionsSyncHelper: ImpressionsRecorderSyncHelper(impressionsStorage: PersistentImpressionsStorageStub(),
-                                                                 accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
-            eventsSyncHelper: EventsRecorderSyncHelper(eventsStorage: PersistentEventsStorageStub(),
-                                                                 accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
-            syncTaskByChangeNumberCatalog: updateWorkerCatalog, splitsFilterQueryString: "", splitEventsManager: eventsManager)
+                                           telemetrySynchronizer: nil,
+                                           splitApiFacade: apiFacade,
+                                           splitStorageContainer: storageContainer,
+                                           syncWorkerFactory: syncWorkerFactory,
+                                           impressionsSyncHelper:
+                                            ImpressionsRecorderSyncHelper(impressionsStorage: PersistentImpressionsStorageStub(),
+                                                                          accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
+                                           eventsSyncHelper:
+                                            EventsRecorderSyncHelper(eventsStorage: PersistentEventsStorageStub(),
+                                                                     accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
+                                           syncTaskByChangeNumberCatalog: updateWorkerCatalog,
+                                           splitsFilterQueryString: "",
+                                           splitEventsManager: eventsManager)
+        return synchronizer
     }
 
     func testSyncAll() {
@@ -235,6 +249,34 @@ class SynchronizerTest: XCTestCase {
         XCTAssertTrue(sw1.stopCalled)
         XCTAssertTrue(sw2.stopCalled)
         XCTAssertEqual(0, updateWorkerCatalog.count)
+    }
+
+    func testImpressionPush() {
+        let impression = KeyImpression(featureName: "feature", keyName: "k1",
+                                       treatment: "t1", label: nil, time: 1,
+                                       changeNumber: 1)
+
+        for _ in 0..<5 {
+            synchronizer.pushImpression(impression: impression)
+        }
+
+
+        ThreadUtils.delay(seconds: 1)
+        XCTAssertEqual(1, telemetryProducer.impressions[.queued])
+        XCTAssertEqual(4, telemetryProducer.impressions[.deduped])
+    }
+
+    func testEventPush() {
+
+
+        for i in 0..<5 {
+            synchronizer.pushEvent(event: EventDTO(trafficType: "t1", eventType: "e\(i)"))
+        }
+
+
+        ThreadUtils.delay(seconds: 1)
+        XCTAssertEqual(5, telemetryProducer.events[.queued])
+
     }
 
     override func tearDown() {

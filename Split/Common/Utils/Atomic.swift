@@ -82,6 +82,15 @@ final class AtomicInt {
         }
     }
 
+    func getAndSet(_ newValue: Int) -> Int {
+        var oldValue: Int!
+        queue.sync {
+            oldValue = self.curValue
+            self.curValue = newValue
+        }
+        return oldValue
+    }
+
     func mutate(_ transformation: (inout Int) -> Void) {
         queue.sync {
             transformation(&self.curValue)

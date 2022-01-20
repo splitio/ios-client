@@ -43,12 +43,16 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     var delayTimer: DelayTimer
 
-    init(userKey: String, sseAuthenticator: SseAuthenticator, sseClient: SseClient,
-         broadcasterChannel: PushManagerEventBroadcaster, timersManager: TimersManager) {
+    private let telemetryProducer: TelemetryRuntimeProducer?
+
+    init(userKey: String, sseAuthenticator: SseAuthenticator,
+         sseClient: SseClient, broadcasterChannel: PushManagerEventBroadcaster,
+         timersManager: TimersManager, telemetryProducer: TelemetryRuntimeProducer?) {
         self.userKey = userKey
         self.sseAuthenticator = sseAuthenticator
         self.sseClient = sseClient
         self.broadcasterChannel = broadcasterChannel
+        self.telemetryProducer = telemetryProducer
         self.timersManager = timersManager
         self.delayTimer = DefaultTimer()
         self.timersManager.triggerHandler = timerHandler()
@@ -101,6 +105,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private func connectToSse() {
 
         let result = sseAuthenticator.authenticate(userKey: userKey)
+        telemetryProducer?.recordLastSync(resource: .token, time: Date().unixTimestampInMiliseconds())
         if result.success && !result.pushEnabled {
             Logger.d("Streaming disabled for api key")
             isStopped.set(true)
@@ -114,6 +119,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
             isStopped.set(true)
             isConnecting.set(false)
             broadcasterChannel.push(event: .pushNonRetryableError)
+            telemetryProducer?.recordAuthRejections()
             return
         }
 
@@ -131,6 +137,8 @@ class DefaultPushNotificationManager: PushNotificationManager {
             notifyRecoverableError(message: "Error parsing JWT")
             return
         }
+
+        telemetryProducer?.recordStreamingEvent(type: .tokenRefresh, data: jwt.expirationTime)
 
         if isStopped.value {
             Logger.d("Streaming stopped. Aborting connection")
@@ -156,6 +164,8 @@ class DefaultPushNotificationManager: PushNotificationManager {
             if success {
                 self.handleSubsystemUp()
             }
+            self.telemetryProducer?.recordStreamingEvent(type: .connectionStablished,
+                                                         data: nil)
             self.isConnecting.set(false)
         }
     }
@@ -167,15 +177,23 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     private func handleSubsystemUp() {
-        self.timersManager.add(timer: .refreshAuthToken, delayInSeconds: kReconnectTimeBeforeTokenExpInASeconds)
-        self.broadcasterChannel.push(event: .pushSubsystemUp)
+        timersManager.add(timer: .refreshAuthToken, delayInSeconds: kReconnectTimeBeforeTokenExpInASeconds)
+        broadcasterChannel.push(event: .pushSubsystemUp)
+        telemetryProducer?.recordTokenRefreshes()
     }
 
     private func timerHandler() -> TimersManager.TimerHandler {
-        return { timerName in
+
+        return { [weak self] timerName in
+            guard let self = self else {
+                return
+            }
+
             switch timerName {
             case .refreshAuthToken:
                 self.sseClient.disconnect()
+                self.telemetryProducer?.recordStreamingEvent(type: .connectionError,
+                                                        data: TelemetryStreamingEventValue.sseConnErrorRequested)
                 self.connect()
             default:
                 Logger.d("No handler or timer: \(timerName)")

@@ -16,8 +16,8 @@ protocol RestClient {
 }
 
 protocol SplitApiRestClient: RestClientSplitChanges, RestClientMySegments, RestClientImpressions,
-                             RestClientTrackEvents, RestClientSseAuthenticator, MetricsRestClient,
-                             RestClientImpressionsCount {
+                             RestClientTrackEvents, RestClientSseAuthenticator, RestClientTelemetryStats,
+                             RestClientImpressionsCount, RestClientTelemetryConfig {
 }
 
 protocol HostReachabilityChecker {
@@ -77,12 +77,12 @@ class DefaultRestClient: SplitApiRestClient {
             case .failure:
                 completion(DataResult {
                     if response.code >= 400, response.code < 500 {
-                        throw HttpError.clientRelated
+                        throw HttpError.clientRelated(code: response.code)
                     }
-                    throw HttpError.unknown(message: "unknown")
+                    throw HttpError.unknown(code: response.code, message: "unknown")
                 })
             }
-            }, errorHandler: {error in
+            }, errorHandler: { error in
                 completion(DataResult { throw error })
             })
         } catch HttpError.couldNotCreateRequest(let message) {

@@ -53,6 +53,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         processQueue.async {
+            print("Added \(event)")
             self.eventsQueue.add(event)
         }
     }
@@ -181,7 +182,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         if isTriggered(internal: .mySegmentsUpdated),
            isTriggered(internal: .splitsUpdated),
            !isTriggered(external: .sdkReady) {
-            self.saveMetrics()
+            self.recordTelemetry()
             self.trigger(event: SplitEvent.sdkReady)
         }
     }
@@ -220,11 +221,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
         return triggered.filter { $0 == event }.count > 0
     }
 
-    private func saveMetrics() {
-        DefaultMetricsManager.shared.time(microseconds: Date().unixTimestampInMiliseconds()
-            - self.sdkReadyTimeStart, for: Metrics.Time.sdkReady)
-    }
-
     // MARK: Safe Data Access
     func executionTimes(for eventName: String) -> Int? {
         var times: Int?
@@ -254,5 +250,9 @@ class DefaultSplitEventsManager: SplitEventsManager {
         dataAccessQueue.sync {
             self.executionTimes[eventName] = count
         }
+    }
+
+    private func recordTelemetry() {
+        // Implement function on final telemtry component implementation
     }
 }

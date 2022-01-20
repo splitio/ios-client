@@ -11,7 +11,7 @@ import Foundation
 class DefaultTreatmentManager: TreatmentManager {
 
     private let key: Key
-    private let metricsManager: DefaultMetricsManager
+    private let telemetryProducer: TelemetryProducer?
     private let impressionLogger: ImpressionLogger
     private let eventsManager: SplitEventsManager
     private let keyValidator: KeyValidator
@@ -27,7 +27,7 @@ class DefaultTreatmentManager: TreatmentManager {
          splitConfig: SplitClientConfig,
          eventsManager: SplitEventsManager,
          impressionLogger: ImpressionLogger,
-         metricsManager: DefaultMetricsManager,
+         telemetryProducer: TelemetryProducer?,
          attributesStorage: AttributesStorage,
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
@@ -38,7 +38,7 @@ class DefaultTreatmentManager: TreatmentManager {
         self.evaluator = evaluator
         self.eventsManager = eventsManager
         self.impressionLogger = impressionLogger
-        self.metricsManager = metricsManager
+        self.telemetryProducer = telemetryProducer
         self.attributesStorage = attributesStorage
         self.keyValidator = keyValidator
         self.splitValidator = splitValidator
@@ -47,46 +47,42 @@ class DefaultTreatmentManager: TreatmentManager {
 
     func getTreatmentWithConfig(_ splitName: String, attributes: [String: Any]?) -> SplitResult {
 
+        let timeStart = startTime()
         let mergedAttributes = mergeAttributes(attributes: attributes)
-        let timeMetricStart = Date().unixTimestampInMicroseconds()
         let result = getTreatmentWithConfigNoMetrics(splitName: splitName,
                                                      shouldValidate: true,
                                                      attributes: mergedAttributes,
                                                      validationTag: ValidationTag.getTreatmentWithConfig)
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
-                            for: Metrics.Time.getTreatmentWithConfig)
+        telemetryProducer?.recordLatency(method: .treatmentWithConfig, latency: Stopwatch.interval(from: timeStart))
         return result
     }
 
     func getTreatment(_ splitName: String, attributes: [String: Any]?) -> String {
-        let timeMetricStart = Date().unixTimestampInMicroseconds()
+        let timeStart = startTime()
         let result = getTreatmentWithConfigNoMetrics(splitName: splitName,
                                                      shouldValidate: true,
                                                      attributes: attributes,
                                                      validationTag: ValidationTag.getTreatment).treatment
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
-                            for: Metrics.Time.getTreatment)
+        telemetryProducer?.recordLatency(method: .treatment, latency: Stopwatch.interval(from: timeStart))
         return result
     }
 
     func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String] {
-        let timeMetricStart = Date().unixTimestampInMicroseconds()
+        let timeStart = startTime()
         let treatments = getTreatmentsWithConfigNoMetrics(splits: splits,
                                                       attributes: attributes,
                                                       validationTag: ValidationTag.getTreatments)
         let result = treatments.mapValues { $0.treatment }
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
-                            for: Metrics.Time.getTreatments)
+        telemetryProducer?.recordLatency(method: .treatments, latency: Stopwatch.interval(from: timeStart))
         return result
     }
 
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult] {
-        let timeMetricStart = Date().unixTimestampInMicroseconds()
+        let timeStart = startTime()
         let result = getTreatmentsWithConfigNoMetrics(splits: splits,
                                                       attributes: attributes,
                                                       validationTag: ValidationTag.getTreatmentsWithConfig)
-        metricsManager.time(microseconds: Date().unixTimestampInMicroseconds() - timeMetricStart,
-                            for: Metrics.Time.getTreatmentsWithConfig)
+        telemetryProducer?.recordLatency(method: .treatmentsWithConfig, latency: Stopwatch.interval(from: timeStart))
         return result
     }
 
@@ -177,6 +173,7 @@ class DefaultTreatmentManager: TreatmentManager {
 
     private func evaluateIfReady(splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
         if !isSdkReady() {
+            telemetryProducer?.recordNonReadyUsage()
             return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.notReady)
         }
         return try evaluator.evalTreatment(matchingKey: key.matchingKey,
@@ -228,5 +225,12 @@ class DefaultTreatmentManager: TreatmentManager {
         }
 
         return attributes.merging(storedAttributes) { (current, _) in current }
+    }
+
+    private func startTime() -> Int64 {
+        if telemetryProducer == nil {
+            return 0
+        }
+        return Stopwatch.now()
     }
 }

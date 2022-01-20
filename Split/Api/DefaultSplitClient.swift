@@ -11,7 +11,7 @@ import Foundation
 
 typealias DestroyHandler = () -> Void
 
-public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClient {
+public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClient, TelemetrySplitClient {
 
     var splitsStorage: SplitsStorage? {
         return storageContainer.splitsStorage
@@ -37,6 +37,8 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private var factoryDestroyHandler: DestroyHandler
     private let anyValueValidator: AnyValueValidator
     private var isClientDestroyed = false
+    private let telemetryProducer: TelemetryProducer?
+    var initStopwatch: Stopwatch?
 
     init(config: SplitClientConfig,
          key: Key,
@@ -54,13 +56,14 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         self.validationLogger = DefaultValidationMessageLogger()
         self.eventsManager = eventsManager
         self.storageContainer = storageContainer
+        self.telemetryProducer = storageContainer.telemetryStorage
         self.anyValueValidator = DefaultAnyValueValidator()
 
         super.init()
 
         self.treatmentManager = DefaultTreatmentManager(
             evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager,
-            impressionLogger: synchronizer, metricsManager: DefaultMetricsManager.shared,
+            impressionLogger: synchronizer, telemetryProducer: storageContainer.telemetryStorage,
             attributesStorage: storageContainer.attributesStorage,
             keyValidator: DefaultKeyValidator(),
             splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
@@ -153,7 +156,7 @@ extension DefaultSplitClient {
 
     private func track(eventType: String, trafficType: String? = nil,
                        value: Double? = nil, properties: [String: Any]?) -> Bool {
-
+        let timeStart = Stopwatch.now()
         let validationTag = "track"
 
         if isClientDestroyed {
@@ -207,6 +210,7 @@ extension DefaultSplitClient {
         event.properties = validatedProps
         event.sizeInBytes = totalSizeInBytes
         synchronizer.pushEvent(event: event)
+        telemetryProducer?.recordLatency(method: .track, latency: Stopwatch.interval(from: timeStart))
 
         return true
     }
@@ -276,7 +280,6 @@ extension DefaultSplitClient {
 
     private func syncFlush() {
         self.synchronizer.flush()
-        DefaultMetricsManager.shared.flush()
     }
 
     public func flush() {
@@ -291,6 +294,9 @@ extension DefaultSplitClient {
 
     public func destroy(completion: (() -> Void)?) {
         isClientDestroyed = true
+        if let stopwatch = self.initStopwatch {
+            telemetryProducer?.recordSessionLength(sessionLength: stopwatch.interval())
+        }
         treatmentManager.destroy()
         DispatchQueue.global().async {
             self.syncFlush()

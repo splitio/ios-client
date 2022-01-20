@@ -21,6 +21,7 @@ class PushNotificationManagerTest: XCTestCase {
     let userKey = IntegrationHelper.dummyUserKey
     var jwtParser: JwtTokenParser!
     let rawToken = "the_token"
+    var telemetryProducer: TelemetryStorageStub!
 
     override func setUp() {
         sseAuthenticator = SseAuthenticatorStub()
@@ -28,9 +29,11 @@ class PushNotificationManagerTest: XCTestCase {
         sseClient.isConnectionOpened = false
         timersManager = TimersManagerMock()
         broadcasterChannel = PushManagerEventBroadcasterStub()
+        telemetryProducer = TelemetryStorageStub()
 
-        pnManager = DefaultPushNotificationManager(userKey: userKey, sseAuthenticator: sseAuthenticator, sseClient: sseClient,
-                                                   broadcasterChannel: broadcasterChannel, timersManager: timersManager)
+        pnManager = DefaultPushNotificationManager(userKey: userKey, sseAuthenticator: sseAuthenticator,
+                                                   sseClient: sseClient,broadcasterChannel: broadcasterChannel,
+                                                   timersManager: timersManager, telemetryProducer: telemetryProducer)
     }
 
     func testStartFullConnectionOk() {
@@ -52,12 +55,16 @@ class PushNotificationManagerTest: XCTestCase {
 
         wait(for: [exp], timeout: 3)
 
+        let streamEvents = telemetryProducer.streamingEvents
+
         XCTAssertEqual(userKey, sseAuthenticator.userKey)
         XCTAssertEqual(rawToken, sseClient.token)
         XCTAssertEqual(2, sseClient.channels?.count)
         XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
         XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
+        XCTAssertNotNil(streamEvents[.tokenRefresh])
+        XCTAssertNotNil(streamEvents[.connectionStablished])
     }
 
     func testStartAuthReintent() {
@@ -78,11 +85,16 @@ class PushNotificationManagerTest: XCTestCase {
 
         wait(for: [exp], timeout: 3)
 
+        let streamEvents = telemetryProducer.streamingEvents
+
         XCTAssertEqual(userKey, sseAuthenticator.userKey)
         XCTAssertFalse(sseClient.connectCalled)
         XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect)) // ??
         XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.lastPushedEvent)
+        XCTAssertNil(streamEvents[.tokenRefresh])
+        XCTAssertNil(streamEvents[.connectionStablished])
+        XCTAssertNil(streamEvents[.connectionError]) // To check that no recoverable error is recorded
     }
 
     func testStartSseReintent() {
@@ -126,12 +138,18 @@ class PushNotificationManagerTest: XCTestCase {
 
         wait(for: [exp], timeout: 3)
 
+        let streamEvents = telemetryProducer.streamingEvents
+
         XCTAssertEqual(userKey, sseAuthenticator.userKey!)
         XCTAssertNil(sseClient.token)
         XCTAssertFalse(sseClient.disconnectCalled)
         XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
         XCTAssertEqual(PushStatusEvent.pushSubsystemDisabled, broadcasterChannel.lastPushedEvent)
+
+        XCTAssertNil(streamEvents[.tokenRefresh])
+        XCTAssertNil(streamEvents[.connectionStablished])
+        XCTAssertNil(streamEvents[.connectionError]) // To check that no recoverable error is recorded
     }
 
     func testStop() {

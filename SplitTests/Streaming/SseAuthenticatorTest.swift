@@ -19,8 +19,11 @@ class SseAuthenticatorTest: XCTestCase {
     let kUserKey = IntegrationHelper.dummyUserKey
 
     let rawToken = "this_token_raw"
-    
+
+    var telemetryProducer: TelemetryStorageStub!
+
     override func setUp() {
+        telemetryProducer = TelemetryStorageStub()
     }
     
     func testSuccesfulRequest() {
@@ -28,7 +31,8 @@ class SseAuthenticatorTest: XCTestCase {
 
         let response = SseAuthenticationResponse(pushEnabled: true, token:rawToken, sseConnectionDelay: 0)
         restClient.update(response: response)
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
+                                                       syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
         let result = sseAuthenticator.authenticate(userKey: kUserKey)
 
@@ -41,7 +45,8 @@ class SseAuthenticatorTest: XCTestCase {
         // Check empty token error response
         let response = SseAuthenticationResponse(pushEnabled: true, token: "", sseConnectionDelay: 0)
         restClient.update(response: response)
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
+                                                       syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
         let result = sseAuthenticator.authenticate(userKey: kUserKey)
 
@@ -54,7 +59,8 @@ class SseAuthenticatorTest: XCTestCase {
         // Check null token error response
         let response = SseAuthenticationResponse(pushEnabled: true, token: nil, sseConnectionDelay: 0)
         restClient.update(response: response)
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
+                                                       syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
         let result = sseAuthenticator.authenticate(userKey: kUserKey)
 
@@ -66,8 +72,9 @@ class SseAuthenticatorTest: XCTestCase {
     func testRecoverableError() {
         // Check token error response
         // If no credentials error, error is recoverable
-        restClient.updateFailedSseAuth(error: HttpError.unknown(message: "unknown"))
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
+        restClient.updateFailedSseAuth(error: HttpError.unknown(code: -1, message: "unknown"))
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
+                                                       syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
         let result = sseAuthenticator.authenticate(userKey: kUserKey)
 
@@ -80,8 +87,9 @@ class SseAuthenticatorTest: XCTestCase {
     func testNoRecoverableError() {
         // Check token error response
         // If no credentials error, error is recoverable
-        restClient.updateFailedSseAuth(error: HttpError.clientRelated)
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
+        restClient.updateFailedSseAuth(error: HttpError.clientRelated(code: -1))
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
+                                                       syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
 
         let result = sseAuthenticator.authenticate(userKey: kUserKey)

@@ -18,6 +18,7 @@ class MySegmentsStorageStub: MySegmentsStorage {
     var clearCalled = false
     var updateExpectation: XCTestExpectation?
     var clearExpectation: XCTestExpectation?
+    var getCountCalledCount = 0
 
     func loadLocal() {
         loadLocalCalled = true
@@ -43,5 +44,10 @@ class MySegmentsStorageStub: MySegmentsStorage {
     }
 
     func destroy() {
+    }
+
+    func getCount() -> Int {
+        getCountCalledCount+=1
+        return segments.count
     }
 }

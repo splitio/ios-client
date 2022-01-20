@@ -141,10 +141,10 @@ struct BackgroundSyncExecutor {
                                            reachabilityChecker: ReachabilityWrapper())
 
         let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
-                                                    metricsManager: DefaultMetricsManager.shared)
+                                                    syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
         self.mySegmentsFetcher = DefaultHttpMySegmentsFetcher(restClient: restClient,
-                                                              metricsManager: DefaultMetricsManager.shared)
+                                                              syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
         let cacheExpiration = Int64(ServiceConstants.cacheExpirationInSeconds)
         self.splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitsFetcher,
@@ -152,8 +152,12 @@ struct BackgroundSyncExecutor {
                                                            splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                            cacheExpiration: cacheExpiration)
 
-        let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
-        let eventsRecorder = DefaultHttpEventsRecorder(restClient: restClient)
+        let impressionsRecorder
+            = DefaultHttpImpressionsRecorder(restClient: restClient,
+                                             syncHelper: DefaultSyncHelper(telemetryProducer: nil))
+        let eventsRecorder
+            = DefaultHttpEventsRecorder(restClient: restClient,
+                                        syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
         self.eventsRecorderWorker =
             EventsRecorderWorker(eventsStorage: SplitDatabaseHelper.openEventsStorage(database: splitDatabase),

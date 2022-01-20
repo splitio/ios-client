@@ -15,6 +15,7 @@ struct SplitDatabaseHelper {
     static func buildStorageContainer(splitClientConfig: SplitClientConfig,
                                       userKey: String,
                                       databaseName: String,
+                                      telemetryStorage: TelemetryStorage?,
                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
 
         let fileStorage = FileStorage(dataFolderName: databaseName)
@@ -38,7 +39,8 @@ struct SplitDatabaseHelper {
                                      impressionsStorage: impressionsStorage,
                                      impressionsCountStorage: impressionsCountStorage,
                                      eventsStorage: eventsStorage,
-                                     attributesStorage: attributesStorage)
+                                     attributesStorage: attributesStorage,
+                                     telemetryStorage: telemetryStorage)
     }
 
     static func openDatabase(dataFolderName: String,

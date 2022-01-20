@@ -101,9 +101,41 @@ struct TestingHelper {
         return split
     }
 
+    static func buildSplit(name: String, treatment: String) -> Split {
+        let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
+        change?.since = Int64(1)
+        change?.till = Int64(1)
+        let split = change!.splits[0]
+        split.name = name
+        if let partitions = split.conditions?[1].partitions {
+            for (i, partition) in partitions.enumerated() {
+                if 1 == i {
+                    partition.treatment = treatment
+                    partition.size = 100
+                } else {
+                    partition.treatment = "off"
+                    partition.size = 0
+                }
+            }
+        }
+        return split
+    }
+
     static func createTestDatabase(name: String, queue: DispatchQueue? = nil) -> SplitDatabase {
         let newQueue = queue ?? DispatchQueue(label: "testqueue", target: DispatchQueue.global())
         let helper = IntegrationCoreDataHelper.get(databaseName: name, dispatchQueue: newQueue)
         return CoreDataSplitDatabase(coreDataHelper: helper)
+    }
+
+    static func createTelemetryConfig() -> TelemetryConfig {
+        return TelemetryConfig(streamingEnabled: true, rates: nil, urlOverrides: nil, impressionsQueueSize: 9,
+                               eventsQueueSize: 9, impressionsMode: 9, impressionsListenerEnabled: true,
+                               httpProxyDetected: true, activeFactories: 1, redundantFactories: 12,
+                               timeUntilReady: 9, timeUntilReadyFromCache: 5, nonReadyUsages: 2,
+                               integrations: nil, tags: nil)
+    }
+
+    static func createTelemetryStats() -> TelemetryStats {
+        return TelemetryStats(lastSynchronization: nil, methodLatencies: nil, methodExceptions: nil, httpErrors: nil, httpLatencies: nil, tokenRefreshes: 1, authRejections: 1, impressionsQueued: 1, impressionsDeduped: 1, impressionsDropped: 1, splitCount: 1, segmentCount: 1, segmentKeyCount: 2, sessionLengthMs: 88888, eventsQueued: 1, eventsDropped: 1, streamingEvents: nil, tags: nil)
     }
 }

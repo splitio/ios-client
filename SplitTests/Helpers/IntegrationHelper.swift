@@ -154,4 +154,31 @@ class IntegrationHelper {
     static func tlog(_ message: String) {
         print("TRVLOG -> \(message)")
     }
+
+    static func enabledTelemetry() -> TelemetryConfigHelper {
+        return TelemetryConfigHelperStub(enabled: true)
+    }
+
+    static func loadSplitChangeFile(name fileName: String) -> SplitChange? {
+        if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
+            let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+            return change
+        }
+        return nil
+    }
+
+    static func loadSplitChangeFileJson(name fileName: String, sourceClass: Any) -> String? {
+        if let jsonContent = FileHelper.readDataFromFile(sourceClass: sourceClass, name: fileName, type: "json") {
+            return jsonContent
+        }
+        return nil
+    }
+
+    static func ably40012Error() -> String {
+        return """
+            id:cf74eb42-f687-48e4-ad18-af2125110aac
+            event:error
+            data:{ "code": 40012,  "statusCode":400,  "message": "Invalid client id"}
+            """
+    }
 }

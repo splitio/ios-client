@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SplitHelper {
+class SplitTestHelper {
 
     func loadSplitFromFile(name: String) -> Split? {
         var split: Split?

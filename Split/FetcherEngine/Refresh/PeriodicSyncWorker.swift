@@ -179,20 +179,20 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
     private let mySegmentsFetcher: HttpMySegmentsFetcher
     private let mySegmentsStorage: MySegmentsStorage
     private let userKey: String
-    private let metricsManager: MetricsManager
+    private let telemetryProducer: TelemetryRuntimeProducer?
     var changeChecker: MySegmentsChangesChecker
 
     init(userKey: String,
          mySegmentsFetcher: HttpMySegmentsFetcher,
          mySegmentsStorage: MySegmentsStorage,
-         metricsManager: MetricsManager,
+         telemetryProducer: TelemetryRuntimeProducer?,
          timer: PeriodicTimer,
          eventsManager: SplitEventsManager) {
 
         self.userKey = userKey
         self.mySegmentsFetcher = mySegmentsFetcher
         self.mySegmentsStorage = mySegmentsStorage
-        self.metricsManager = metricsManager
+        self.telemetryProducer = telemetryProducer
         changeChecker = DefaultMySegmentsChangesChecker()
         super.init(timer: timer,
                    eventsManager: eventsManager)
@@ -213,7 +213,6 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                 Logger.d(segments.debugDescription)
             }
         } catch let error {
-            metricsManager.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherException)
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
         }
     }
