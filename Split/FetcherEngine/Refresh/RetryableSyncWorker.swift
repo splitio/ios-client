@@ -136,8 +136,6 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                 return true
             }
         } catch let error {
-            // Commented line to replace with new telemetry implementation in next PRs
-//            DefaultMetricsManager.shared.count(delta: 1, for: Metrics.Counter.mySegmentsFetcherException)
             Logger.e("Problem fetching mySegments: %@", error.localizedDescription)
         }
         return false
