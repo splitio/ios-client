@@ -96,10 +96,12 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
         let prevPublishersCount = publishersCount
         update(count: notification.metrics.publishers, for: channelIndex)
 
-        let eventType = channelIndex == kChannelPriIndex
-            ? TelemetryStreamingEventType.occupancyPri
-            : TelemetryStreamingEventType.occupancySec
-        telemetryProducer?.recordStreamingEvent(type: eventType, data: Int64(notification.metrics.publishers))
+        if channelIndex <= kChannelSecIndex {
+            let eventType = channelIndex == kChannelPriIndex
+                ? TelemetryStreamingEventType.occupancyPri
+                : TelemetryStreamingEventType.occupancySec
+            telemetryProducer?.recordStreamingEvent(type: eventType, data: Int64(notification.metrics.publishers))
+        }
 
         if publishersCount == 0 && prevPublishersCount > 0 {
             broadcasterChannel.push(event: .pushSubsystemDown)
