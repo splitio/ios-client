@@ -173,61 +173,6 @@ class TelemetryTest: XCTestCase {
         semaphore.wait()
     }
 
-    // TODO: Uncomment when find proper fix for this test
-    //    func testFactoryCount() {
-    //        let activeBefore = telemetryStorage.getActiveFactories()
-    //        let redundantBefore = telemetryStorage.getRedundantFactories()
-    //
-    //        let factoryCount = 6
-    //
-    //        var factories = [SplitFactory]()
-    //        var exps = [XCTestExpectation]()
-    //
-    //        for i in 0..<factoryCount {
-    //            let sdkReadyExp = XCTestExpectation()
-    //            let sdkReadyFromCacheExp = XCTestExpectation()
-    //            exps.append(sdkReadyExp)
-    //            exps.append(sdkReadyFromCacheExp)
-    //
-    //            let apiKey = "apiKey_\(i % 2)"
-    //            let factory = builder.setApiKey(apiKey).setKey(key)
-    //                .setConfig(splitConfig).build()!
-    //
-    //            factories.append(factory)
-    //
-    //            let client = factory.client
-    //
-    //            client.on(event: SplitEvent.sdkReadyFromCache) {
-    //                sdkReadyFromCacheExp.fulfill()
-    //            }
-    //
-    //            client.on(event: SplitEvent.sdkReady) {
-    //                sdkReadyExp.fulfill()
-    //            }
-    //        }
-    //
-    //        wait(for: exps, timeout: 10)
-    //
-    //        let active = telemetryStorage.getActiveFactories()
-    //        let redundant = telemetryStorage.getRedundantFactories()
-    //
-    //        XCTAssertEqual(0, activeBefore)
-    //        XCTAssertEqual(0, redundantBefore)
-    //
-    //        XCTAssertEqual(2, active)
-    //        XCTAssertEqual(2, redundant) // 2 is ok, because only has redundat for one factory
-    //
-    //
-    //        for factory in factories {
-    //            let client = factory.client
-    //            let semaphore = DispatchSemaphore(value: 0)
-    //            client.destroy(completion: {
-    //                _ = semaphore.signal()
-    //            })
-    //            semaphore.wait()
-    //        }
-    //    }
-
     func testNonReadyEvaluation() {
         let treatmentManager = createTreatmentManager()
 
