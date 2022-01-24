@@ -35,52 +35,41 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return Version.sdk
     }
 
-    init(apiKey: String,
-         key: Key,
-         config: SplitClientConfig,
-         httpClient: HttpClient?,
-         reachabilityChecker: HostReachabilityChecker?,
-         testDatabase: SplitDatabase? = nil,
-         notificationHelper: NotificationHelper? = nil) throws {
+    init(_ params: SplitFactoryParams) throws {
         super.init()
 
-        let components = SplitComponentFactory(splitClientConfig: config,
-                                               apiKey: apiKey,
-                                               userKey: key.matchingKey)
+        let components = SplitComponentFactory(splitClientConfig: params.config,
+                                               apiKey: params.apiKey,
+                                               userKey: params.key.matchingKey)
 
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManager()
 
-        // Setup metrics
-        setupMetrics(splitClientConfig: config)
-
         //
-        let databaseName = SplitDatabaseHelper.databaseName(apiKey: apiKey) ?? config.defaultDataFolder
-        SplitDatabaseHelper.renameDatabaseFromLegacyName(name: databaseName, apiKey: apiKey)
+        let databaseName = SplitDatabaseHelper.databaseName(apiKey: params.apiKey) ?? params.config.defaultDataFolder
+        SplitDatabaseHelper.renameDatabaseFromLegacyName(name: databaseName, apiKey: params.apiKey)
 
         let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
-                                                                    testDatabase: testDatabase)
+                                                                    telemetryStorage: params.telemetryStorage,
+                                                                    testDatabase: params.testDatabase)
 
-        LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: key.matchingKey)
+        LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: params.key.matchingKey)
 
         defaultManager = try components.getSplitManager()
-        let restClient = try components.buildRestClient(
-            httpClient: httpClient ?? DefaultHttpClient.shared,
-            reachabilityChecker: reachabilityChecker ?? ReachabilityWrapper())
+        _ = try components.buildRestClient(
+            httpClient: params.httpClient ?? DefaultHttpClient.shared,
+            reachabilityChecker: params.reachabilityChecker ?? ReachabilityWrapper())
 
-        /// TODO: Remove this line when metrics refactor
-        DefaultMetricsManager.shared.restClient = restClient
-        let splitApiFacade = try components.buildSplitApiFacade(testHttpClient: httpClient)
+        let splitApiFacade = try components.buildSplitApiFacade(testHttpClient: params.httpClient)
 
         let synchronizer = try components.buildSynchronizer()
-        let syncManager = try components.buildSyncManager(notificationHelper: notificationHelper)
+        let syncManager = try components.buildSyncManager(notificationHelper: params.notificationHelper)
 
-        setupBgSync(config: config, apiKey: apiKey, userKey: key.matchingKey)
+        setupBgSync(config: params.config, apiKey: params.apiKey, userKey: params.key.matchingKey)
 
-        defaultClient = DefaultSplitClient(config: config, key: key, apiFacade: splitApiFacade,
+        defaultClient = DefaultSplitClient(config: params.config, key: params.key, apiFacade: splitApiFacade,
                                            storageContainer: storageContainer,
                                            synchronizer: synchronizer, eventsManager: eventsManager) { [weak self] in
-
             syncManager.stop()
             if let self = self, let manager = self.defaultManager as? Destroyable {
                 manager.destroy()
@@ -89,7 +78,23 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             storageContainer.mySegmentsStorage.destroy()
             storageContainer.splitsStorage.destroy()
         }
+
+        (defaultClient as? TelemetrySplitClient)?.initStopwatch = params.initStopwatch
         eventsManager.start()
+
+        defaultClient?.on(event: .sdkReadyFromCache) {
+            DispatchQueue.global().async {
+                params.telemetryStorage?.recordTimeUntilReadyFromCache(params.initStopwatch.interval())
+            }
+        }
+
+        defaultClient?.on(event: .sdkReady) {
+            DispatchQueue.global().async {
+                params.telemetryStorage?.recordTimeUntilReady(params.initStopwatch.interval())
+                synchronizer.synchronizeTelemetryConfig()
+            }
+        }
+
         eventsManager.executorResources.client = defaultClient
         syncManager.start()
     }
@@ -100,10 +105,5 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         } else {
             SplitBgSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)
         }
-    }
-
-    private func setupMetrics(splitClientConfig: SplitClientConfig) {
-        HttpSessionConfig.default.connectionTimeOut = TimeInterval(splitClientConfig.connectionTimeout)
-        MetricManagerConfig.default.pushRateInSeconds = splitClientConfig.metricsPushRate
     }
 }

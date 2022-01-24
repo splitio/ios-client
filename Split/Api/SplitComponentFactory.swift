@@ -55,11 +55,13 @@ class SplitComponentFactory {
     }
 
     func buildStorageContainer(databaseName: String,
+                               telemetryStorage: TelemetryStorage?,
                                testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
         let component: SplitStorageContainer =
             try SplitDatabaseHelper.buildStorageContainer(splitClientConfig: splitClientConfig,
                                                           userKey: userKey,
                                                           databaseName: databaseName,
+                                                          telemetryStorage: telemetryStorage,
                                                           testDatabase: testDatabase)
         add(component: component)
         return component
@@ -160,6 +162,10 @@ class SplitComponentFactory {
             .setStorageContainer(storageContainer)
             .setSplitsQueryString(splitsFilterQueryString)
 
+        if let telemetryStorage = storageContainer.telemetryStorage {
+                _ = builder.setTelemetryStorage(telemetryStorage)
+        }
+
         if let httpClient = testHttpClient {
             _ = builder.setStreamingHttpClient(httpClient)
         }
@@ -197,10 +203,23 @@ class SplitComponentFactory {
     }
 
     func buildSynchronizer() throws -> Synchronizer {
+
+        let syncWorkerFactory = try buildSyncWorkerFactory()
+        var telemetrySynchronizer: TelemetrySynchronizer?
+        if splitClientConfig.isTelemetryEnabled,
+           let configRecorderWorker = syncWorkerFactory.createTelemetryConfigRecorderWorker(),
+           let statsRecorderWorker = syncWorkerFactory.createTelemetryStatsRecorderWorker(),
+           let periodicStatsRecorderWorker = syncWorkerFactory.createPeriodicTelemetryStatsRecorderWorker() {
+            telemetrySynchronizer = DefaultTelemetrySynchronizer(configRecorderWorker: configRecorderWorker,
+                                                         statsRecorderWorker: statsRecorderWorker,
+                                                         periodicStatsRecorderWorker: periodicStatsRecorderWorker)
+        }
+
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
+                                                          telemetrySynchronizer: telemetrySynchronizer,
                                                           splitApiFacade: try getSplitApiFacade(),
                                                           splitStorageContainer: try getSplitStorageContainer(),
-                                                          syncWorkerFactory: try buildSyncWorkerFactory(),
+                                                          syncWorkerFactory: syncWorkerFactory,
                                                           impressionsSyncHelper: try buildImpressionsSyncHelper(),
                                                           eventsSyncHelper: try buildEventsSyncHelper(),
                                                           splitsFilterQueryString: splitsFilterQueryString,
@@ -241,5 +260,12 @@ class SplitComponentFactory {
             return obj
         }
         throw ComponentError.notFound(name: "Split storage container")
+    }
+
+    func getSyncWorkerFactory() throws -> SyncWorkerFactory {
+        if let obj = get(for: SyncWorkerFactory.self) as? SyncWorkerFactory {
+            return obj
+        }
+        throw ComponentError.notFound(name: "SyncWorkerFactory")
     }
 }

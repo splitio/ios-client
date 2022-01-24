@@ -19,18 +19,21 @@ class DefaultSseHandler: SseHandler {
     let notificationParser: SseNotificationParser
     let notificationManagerKeeper: NotificationManagerKeeper
     let broadcasterChannel: PushManagerEventBroadcaster
+    let telemetryProducer: TelemetryRuntimeProducer?
 
     private var lastControlTimestamp: Int64 = 0
 
     init(notificationProcessor: SseNotificationProcessor,
          notificationParser: SseNotificationParser,
          notificationManagerKeeper: NotificationManagerKeeper,
-         broadcasterChannel: PushManagerEventBroadcaster) {
+         broadcasterChannel: PushManagerEventBroadcaster,
+         telemetryProducer: TelemetryRuntimeProducer?) {
 
         self.notificationProcessor = notificationProcessor
         self.notificationParser = notificationParser
         self.notificationManagerKeeper = notificationManagerKeeper
         self.broadcasterChannel = broadcasterChannel
+        self.telemetryProducer = telemetryProducer
     }
 
     func isConnectionConfirmed(message: [String: String]) -> Bool {
@@ -43,6 +46,11 @@ class DefaultSseHandler: SseHandler {
 
     func handleIncomingMessage(message: [String: String]) {
         guard let data = message[EventStreamParser.kDataField] else {
+            return
+        }
+
+        if notificationParser.isError(event: message) {
+            handleSseError(data)
             return
         }
 
@@ -59,8 +67,6 @@ class DefaultSseHandler: SseHandler {
             if notificationManagerKeeper.isStreamingActive {
                 notificationProcessor.process(incomingNotification)
             }
-        case .sseError:
-            handleSseError(incomingNotification)
         default:
             Logger.w("SSE Handler: Unknown notification")
         }
@@ -98,19 +104,18 @@ class DefaultSseHandler: SseHandler {
         }
     }
 
-    private func handleSseError(_ notification: IncomingNotification) {
-        if let jsonData = notification.jsonData {
-            do {
-                let error = try notificationParser.parseSseError(jsonString: jsonData)
-                Logger.w("Streaming error notification received: \(error.message)")
-                if error.shouldIgnore {
-                    Logger.w("Error ignored")
-                    return
-                }
-                broadcasterChannel.push(event: error.isRetryable ? .pushRetryableError : .pushNonRetryableError)
-            } catch {
-                Logger.w("Error while parsing streaming error notification")
+    private func handleSseError(_ json: String) {
+        do {
+            let error = try notificationParser.parseSseError(jsonString: json)
+            telemetryProducer?.recordStreamingEvent(type: .ablyError, data: Int64(error.code))
+            Logger.w("Streaming error notification received: \(error.message)")
+            if error.shouldIgnore {
+                Logger.w("Error ignored")
+                return
             }
+            broadcasterChannel.push(event: error.isRetryable ? .pushRetryableError : .pushNonRetryableError)
+        } catch {
+            Logger.w("Error while parsing streaming error notification")
         }
     }
 }

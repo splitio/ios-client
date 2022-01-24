@@ -20,6 +20,7 @@ protocol Synchronizer: ImpressionLogger {
     func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments()
+    func synchronizeTelemetryConfig()
     func forceMySegmentsSync()
     func startPeriodicFetching()
     func stopPeriodicFetching()
@@ -44,10 +45,12 @@ struct SplitStorageContainer {
     let impressionsCountStorage: PersistentImpressionsCountStorage
     let eventsStorage: PersistentEventsStorage
     let attributesStorage: AttributesStorage
+    let telemetryStorage: TelemetryStorage?
 }
 
 class DefaultSynchronizer: Synchronizer {
 
+    private let telemetrySynchronizer: TelemetrySynchronizer?
     private let splitApiFacade: SplitApiFacade
     private let splitStorageContainer: SplitStorageContainer
     private let syncWorkerFactory: SyncWorkerFactory
@@ -73,8 +76,11 @@ class DefaultSynchronizer: Synchronizer {
     private let impressionsObserver = ImpressionsObserver(size: ServiceConstants.lastSeenImpressionCachSize)
     private let impressionsCounter = ImpressionsCounter()
     private let flushQueue = DispatchQueue(label: "split-flush-queue", target: DispatchQueue.global())
+    private let telemetryProducer: TelemetryRuntimeProducer?
+    private var isDestroyed = Atomic(false)
 
     init(splitConfig: SplitClientConfig,
+         telemetrySynchronizer: TelemetrySynchronizer?,
          splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
@@ -106,6 +112,8 @@ class DefaultSynchronizer: Synchronizer {
         self.eventsSyncHelper = eventsSyncHelper
         self.splitsFilterQueryString = splitsFilterQueryString
         self.splitEventsManager = splitEventsManager
+        self.telemetryProducer = splitStorageContainer.telemetryStorage
+        self.telemetrySynchronizer = telemetrySynchronizer
 
         if isOptimizedImpressionsMode() {
             self.periodicImpressionsCountRecorderWoker
@@ -178,26 +186,34 @@ class DefaultSynchronizer: Synchronizer {
         mySegmentsForcedSyncWorker.start()
     }
 
+    func synchronizeTelemetryConfig() {
+        telemetrySynchronizer?.synchronizeConfig()
+    }
+
     func startPeriodicFetching() {
         periodicSplitsSyncWorker.start()
         periodicMySegmentsSyncWorker.start()
+        recordSyncModeEvent(TelemetryStreamingEventValue.syncModePolling)
     }
 
     func stopPeriodicFetching() {
         periodicSplitsSyncWorker.stop()
         periodicMySegmentsSyncWorker.stop()
+        recordSyncModeEvent(TelemetryStreamingEventValue.syncModeStreaming)
     }
 
     func startPeriodicRecording() {
         periodicImpressionsRecorderWoker.start()
         periodicEventsRecorderWorker.start()
         periodicImpressionsCountRecorderWoker?.start()
+        telemetrySynchronizer?.start()
     }
 
     func stopPeriodicRecording() {
         periodicImpressionsRecorderWoker.stop()
         periodicEventsRecorderWorker.stop()
         periodicImpressionsCountRecorderWoker?.stop()
+        telemetrySynchronizer?.destroy()
     }
 
     func pushEvent(event: EventDTO) {
@@ -206,6 +222,7 @@ class DefaultSynchronizer: Synchronizer {
                 self.flusherEventsRecorderWorker.flush()
                 self.eventsSyncHelper.resetAccumulator()
             }
+            self.telemetryProducer?.recordEventStats(type: .queued, count: 1)
         }
     }
 
@@ -224,11 +241,14 @@ class DefaultSynchronizer: Synchronizer {
             }
 
             if !self.isOptimizedImpressionsMode() || self.shouldPush(impression: impressionToPush) {
+                self.telemetryProducer?.recordImpressionStats(type: .queued, count: 1)
                 if self.impressionsSyncHelper.pushAndCheckFlush(impressionToPush) {
                     self.flusherImpressionsRecorderWorker.flush()
                     self.impressionsSyncHelper.resetAccumulator()
 
                 }
+            } else {
+                self.telemetryProducer?.recordImpressionStats(type: .deduped, count: 1)
             }
         }
     }
@@ -248,6 +268,8 @@ class DefaultSynchronizer: Synchronizer {
         periodicEventsRecorderWorker.pause()
         periodicImpressionsRecorderWoker.pause()
         periodicImpressionsCountRecorderWoker?.pause()
+        telemetrySynchronizer?.synchronizeStats()
+        telemetrySynchronizer?.pause()
     }
 
     func resume() {
@@ -256,6 +278,7 @@ class DefaultSynchronizer: Synchronizer {
         periodicEventsRecorderWorker.resume()
         periodicImpressionsRecorderWoker.resume()
         periodicImpressionsCountRecorderWoker?.resume()
+        telemetrySynchronizer?.resume()
     }
 
     func flush() {
@@ -265,10 +288,12 @@ class DefaultSynchronizer: Synchronizer {
             self.flusherImpressionsCountRecorderWorker?.flush()
             self.eventsSyncHelper.resetAccumulator()
             self.impressionsSyncHelper.resetAccumulator()
+            self.telemetrySynchronizer?.synchronizeStats()
         }
     }
 
     func destroy() {
+        isDestroyed.set(true)
         splitsSyncWorker.stop()
         mySegmentsSyncWorker.stop()
         periodicSplitsSyncWorker.stop()
@@ -337,5 +362,12 @@ class DefaultSynchronizer: Synchronizer {
             return true
         }
         return Date.truncateTimeframe(millis: previousTime) != Date.truncateTimeframe(millis: impression.time)
+    }
+
+    private func recordSyncModeEvent(_ mode: Int64) {
+        if splitConfig.streamingEnabled && !isDestroyed.value {
+            telemetryProducer?.recordStreamingEvent(type: .syncModeUpdate,
+                                                    data: mode)
+        }
     }
 }

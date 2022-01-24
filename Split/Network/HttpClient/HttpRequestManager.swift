@@ -34,7 +34,7 @@ extension DefaultHttpRequestManager: URLSessionTaskDelegate {
             case CFNetworkErrors.cfurlErrorTimedOut.rawValue:
                 httpError = HttpError.requestTimeOut
             default:
-                httpError = HttpError.unknown(message: error.localizedDescription)
+                httpError = HttpError.unknown(code: -1, message: error.localizedDescription)
             }
         }
         complete(taskIdentifier: task.taskIdentifier, error: httpError)

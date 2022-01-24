@@ -20,6 +20,8 @@ struct SplitApiFacade {
     let eventsRecorder: HttpEventsRecorder
     let streamingHttpClient: HttpClient?
     let sseAuthenticator: SseAuthenticator
+    let telemetryConfigRecorder: HttpTelemetryConfigRecorder?
+    let telemetryStatsRecorder: HttpTelemetryStatsRecorder?
 }
 
 class SplitApiFacadeBuilder {
@@ -31,6 +33,7 @@ class SplitApiFacadeBuilder {
     private var storageContainer: SplitStorageContainer?
     private var streamingHttpClient: HttpClient?
     private var splitsQueryString: String = ""
+    private var telemetryStorage: TelemetryStorage?
 
     func setUserKey(_ userKey: String) -> SplitApiFacadeBuilder {
         self.userKey = userKey
@@ -67,6 +70,11 @@ class SplitApiFacadeBuilder {
         return self
     }
 
+    func setTelemetryStorage(_ telemetryStorage: TelemetryStorage) -> SplitApiFacadeBuilder {
+        self.telemetryStorage = telemetryStorage
+        return self
+    }
+
     func build() -> SplitApiFacade {
 
         guard let restClient = self.restClient
@@ -74,24 +82,44 @@ class SplitApiFacadeBuilder {
                 fatalError("Some parameter is null when creating Split Api Facade")
         }
 
-        let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
-                                                    metricsManager: DefaultMetricsManager.shared)
+        let splitsFetcher
+            = DefaultHttpSplitFetcher(restClient: restClient,
+                                      syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
         let mySegmentsFetcher: HttpMySegmentsFetcher
-            = DefaultHttpMySegmentsFetcher(restClient: restClient, metricsManager: DefaultMetricsManager.shared)
+            = DefaultHttpMySegmentsFetcher(restClient: restClient,
+                                           syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
-        let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
+        let impressionsRecorder
+            = DefaultHttpImpressionsRecorder(restClient: restClient,
+                                             syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
-        let impressionsCountRecorder = DefaultHttpImpressionsCountRecorder(restClient: restClient)
+        let impressionsCountRecorder
+            = DefaultHttpImpressionsCountRecorder(restClient: restClient,
+                                                  syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
-        let eventsRecorder = DefaultHttpEventsRecorder(restClient: restClient)
+        let eventsRecorder
+            = DefaultHttpEventsRecorder(restClient: restClient,
+                                        syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
-        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient)
+        let sseAuthenticator
+            = DefaultSseAuthenticator(restClient: restClient,
+                                      syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
+
+        let telemetryConfigRecorder
+            = DefaultHttpTelemetryConfigRecorder(restClient: restClient,
+                                                 syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
+
+        let telemetryStatsRecorder
+            = DefaultHttpTelemetryStatsRecorder(restClient: restClient,
+                                                syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
         return SplitApiFacade(splitsFetcher: splitsFetcher, mySegmentsFetcher: mySegmentsFetcher,
                               impressionsRecorder: impressionsRecorder,
                               impressionsCountRecorder: impressionsCountRecorder,
                               eventsRecorder: eventsRecorder, streamingHttpClient: self.streamingHttpClient,
-                              sseAuthenticator: sseAuthenticator)
+                              sseAuthenticator: sseAuthenticator,
+                              telemetryConfigRecorder: telemetryConfigRecorder,
+                              telemetryStatsRecorder: telemetryStatsRecorder)
     }
 }

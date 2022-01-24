@@ -11,4 +11,11 @@ import Foundation
 enum ImpressionsMode: String {
     case optimized = "OPTIMIZED"
     case debug = "DEBUG"
+
+    func intValue() -> Int {
+        if self == .optimized {
+            return 0
+        }
+        return 1
+    }
 }

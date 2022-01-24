@@ -208,8 +208,8 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.register(event: .sdkUpdated, task: updatedTask)
 
 
-        eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
+        eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
 
         wait(for: [readyExp, sdkUpdatedExp], timeout: expectationTimeOut)

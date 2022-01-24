@@ -42,27 +42,27 @@ class LatencyCounter {
     // Removed first bucket (1000) for practical
     // reasons
     // Array is in microseconds
-    let kLatencyBuckets: [Int64] = [
+    private let kLatencyBuckets: [Int64] = [
         1500, 2250, 3375, 5063,
         7594, 11391, 17086, 25629, 38443,
         57665, 86498, 129746, 194620, 291929,
         437894, 656841, 985261, 1477892, 2216838,
         3325257, 4987885, 7481828
     ]
-    let kMaxBucketIndex = 22
-    let kMaxLatency: Int64 = 7481828
-    var counters = [Int]()
+    private static let kMaxBucketIndex = 22
+    private let kMaxLatency: Int64 = 7481828
+    private var counters = [Int]()
 
-    var latencyCounters: [Int] {
+    var allCounters: [Int] {
         return counters
     }
 
     init() {
-        resetCounters()
+        counters = LatencyCounter.emptyCounters()
     }
 
     func resetCounters() {
-        counters = Array(repeating: 0, count: kMaxBucketIndex + 1)
+        counters = LatencyCounter.emptyCounters()
     }
 
     func addLatency(microseconds time: Int64) {
@@ -70,7 +70,7 @@ class LatencyCounter {
     }
 
     func count(for index: Int) -> Int {
-        if index < 0 || index > kMaxBucketIndex { return -1 }
+        if index < 0 || index > LatencyCounter.kMaxBucketIndex { return -1 }
         return counters[index]
     }
 
@@ -81,6 +81,10 @@ class LatencyCounter {
         if let index = kLatencyBuckets.firstIndex(where: { latency < $0 }) {
             return index
         }
-        return kMaxBucketIndex
+        return LatencyCounter.kMaxBucketIndex
+    }
+
+    private static func emptyCounters() -> [Int] {
+        return Array(repeating: 0, count: kMaxBucketIndex + 1)
     }
 }

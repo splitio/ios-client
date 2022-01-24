@@ -93,6 +93,12 @@ class LocalhostSplitsStorage: SplitsStorage {
         }
     }
 
+    func getCount() -> Int {
+        dataQueue.sync {
+            return inMemorySplits.count
+        }
+    }
+
     func start() {
         taskExecutor?.start()
     }

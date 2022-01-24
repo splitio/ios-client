@@ -14,17 +14,41 @@ import Foundation
     private static let kEventsEndpoint = "https://events.split.io/api"
     private static let kAuthServiceEndpoint = "https://auth.split.io/api/v2"
     private static let kStreamingEndpoint = "https://streaming.split.io/sse"
+    private static let kTelemetryEndpoint = "https://telemetry.split.io/api/v1"
 
     private (set) var sdkEndpoint: URL
     private (set) var eventsEndpoint: URL
     private (set) var authServiceEndpoint: URL
     private (set) var streamingServiceEndpoint: URL
+    private (set) var telemetryServiceEndpoint: URL
 
-    private init(sdkEndpoint: URL, eventsEndpoint: URL, authServiceEndpoint: URL, streamingServiceEndpoint: URL) {
+    var isCustomSdkEndpoint: Bool {
+        return sdkEndpoint.absoluteString != ServiceEndpoints.kSdkEndpoint
+    }
+
+    var isCustomEventsEndpoint: Bool {
+        return eventsEndpoint.absoluteString != ServiceEndpoints.kEventsEndpoint
+    }
+
+    var isCustomAuthServiceEndpoint: Bool {
+        return authServiceEndpoint.absoluteString != ServiceEndpoints.kAuthServiceEndpoint
+    }
+
+    var isCustomStreamingEndpoint: Bool {
+        return streamingServiceEndpoint.absoluteString != ServiceEndpoints.kStreamingEndpoint
+    }
+
+    var isCustomTelemetryEndpoint: Bool {
+        return telemetryServiceEndpoint.absoluteString != ServiceEndpoints.kTelemetryEndpoint
+    }
+
+    private init(sdkEndpoint: URL, eventsEndpoint: URL, authServiceEndpoint: URL,
+                 streamingServiceEndpoint: URL, telemetryServiceEndpoint: URL) {
         self.sdkEndpoint = sdkEndpoint
         self.eventsEndpoint = eventsEndpoint
         self.authServiceEndpoint = authServiceEndpoint
         self.streamingServiceEndpoint = streamingServiceEndpoint
+        self.telemetryServiceEndpoint = telemetryServiceEndpoint
     }
 
     @objc public static func builder() -> Builder {
@@ -37,6 +61,7 @@ import Foundation
         private var eventsEndpoint = kEventsEndpoint
         private var authServiceEndpoint = kAuthServiceEndpoint
         private var streamingServiceEndpoint = kStreamingEndpoint
+        private var telemetryServiceEndpoint = kTelemetryEndpoint
 
         ///
         /// The rest endpoint that sdk will hit for latest features and segments.
@@ -86,6 +111,17 @@ import Foundation
             return self
         }
 
+        /// The rest endpoint that sdk will hit to send telemetry data
+        ///
+        /// @param telemetryServiceEndpoint
+        /// @return this builder
+        ///
+        @objc(setTelemetryServiceEndpoint:)
+        public func set(telemetryServiceEndpoint: String) -> Self {
+            self.telemetryServiceEndpoint = telemetryServiceEndpoint
+            return self
+        }
+
         @objc public func build() -> ServiceEndpoints {
             guard let sdkUrl = URL(string: sdkEndpoint) else {
                 preconditionFailure("SDK URL is not valid")
@@ -102,11 +138,16 @@ import Foundation
             guard let streamingServiceUrl = URL(string: streamingServiceEndpoint) else {
                 preconditionFailure("Streaming URL is not valid")
             }
-            return ServiceEndpoints(
-                    sdkEndpoint: sdkUrl,
-                    eventsEndpoint: eventsUrl,
-                    authServiceEndpoint: authServiceUrl,
-                    streamingServiceEndpoint: streamingServiceUrl)
+
+            guard let telemetryServiceEndpoint = URL(string: telemetryServiceEndpoint) else {
+                preconditionFailure("Telemetry URL is not valid")
+            }
+
+            return ServiceEndpoints(sdkEndpoint: sdkUrl,
+                                    eventsEndpoint: eventsUrl,
+                                    authServiceEndpoint: authServiceUrl,
+                                    streamingServiceEndpoint: streamingServiceUrl,
+                                    telemetryServiceEndpoint: telemetryServiceEndpoint)
         }
     }
 }

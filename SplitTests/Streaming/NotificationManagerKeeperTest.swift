@@ -18,10 +18,13 @@ class NotificationManagerKeeperTest: XCTestCase {
 
     var broadcasterChannel: PushManagerEventBroadcasterStub!
     var notificationManager: NotificationManagerKeeper!
+    var telemetryProducer: TelemetryStorageStub!
 
     override func setUp() {
+        telemetryProducer = TelemetryStorageStub()
         broadcasterChannel = PushManagerEventBroadcasterStub()
-        notificationManager = DefaultNotificationManagerKeeper(broadcasterChannel: broadcasterChannel)
+        notificationManager = DefaultNotificationManagerKeeper(broadcasterChannel: broadcasterChannel,
+                                                               telemetryProducer: telemetryProducer)
     }
 
     func testNoAvailablePublishers() {
@@ -32,7 +35,11 @@ class NotificationManagerKeeperTest: XCTestCase {
         notification.timestamp = 100
         notificationManager.handleIncomingPresenceEvent(notification: notification)
 
+        let streamEvents = telemetryProducer.streamingEvents
+        
         XCTAssertEqual(PushStatusEvent.pushSubsystemDown, broadcasterChannel.lastPushedEvent)
+
+        XCTAssertNotNil(streamEvents[.occupancyPri])
     }
 
     func testNoAvailablePublishersOldTimestamp() {
@@ -43,7 +50,10 @@ class NotificationManagerKeeperTest: XCTestCase {
         notification.timestamp = 0
         notificationManager.handleIncomingPresenceEvent(notification: notification)
 
+        let streamEvents = telemetryProducer.streamingEvents
+
         XCTAssertNil(broadcasterChannel.lastPushedEvent)
+        XCTAssertNil(streamEvents[.occupancyPri])
     }
 
     func testNoAvailablePublishersInPriButAvailableInSec() {
@@ -65,7 +75,11 @@ class NotificationManagerKeeperTest: XCTestCase {
         n2.channel = kControlPriChannel
         notificationManager.handleIncomingPresenceEvent(notification: n2)
 
+        let streamEvents = telemetryProducer.streamingEvents
+
         XCTAssertNil(broadcasterChannel.lastPushedEvent)
+        XCTAssertNil(streamEvents[.occupancyPri])
+        XCTAssertNil(streamEvents[.occupancySec])
     }
 
 
@@ -195,7 +209,10 @@ class NotificationManagerKeeperTest: XCTestCase {
         let controlNotification = ControlNotification(type: .control, controlType: .streamingDisabled)
         notificationManager.handleIncomingControl(notification: controlNotification)
 
+        let streamEvents = telemetryProducer.streamingEvents
+
         XCTAssertEqual(PushStatusEvent.pushSubsystemDisabled, broadcasterChannel.lastPushedEvent)
+        XCTAssertNotNil(streamEvents[.streamingStatus])
     }
 
     override func tearDown() {

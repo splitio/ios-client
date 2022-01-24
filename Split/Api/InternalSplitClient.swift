@@ -17,3 +17,7 @@ protocol InternalSplitClient: SplitClient {
     var splitsStorage: SplitsStorage? { get }
     var mySegmentsStorage: MySegmentsStorage? { get }
 }
+
+protocol TelemetrySplitClient: SplitClient {
+    var initStopwatch: Stopwatch? { get set }
+}
