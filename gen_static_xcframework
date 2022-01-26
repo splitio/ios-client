@@ -24,4 +24,4 @@ echo "Archiving ${FRAMEWORK_NAME} as ${IOS_DEVICE_ARCHIVE_PATH}"
 xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS"  -derivedDataPath ".${IOS_DEVICE_ARCHIVE_PATH}" -sdk iphoneos -configuration release SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
 #Creating XCFramework
 echo "Creating XCFramework from ${SIMULATOR_ARCHIVE_PATH} and ${IOS_DEVICE_ARCHIVE_PATH} into ${FRAMEWORK_PATH}"
-xcodebuild -create-xcframework -library .${SIMULATOR_ARCHIVE_PATH}/Build/Products/Release-iphonesimulator/lib${SCHEMA_NAME}.a -library .${IOS_DEVICE_ARCHIVE_PATH}/Build/Products/Debug-iphoneos/lib${SCHEMA_NAME}.a -output "${FRAMEWORK_PATH}"
+xcodebuild -create-xcframework -library .${SIMULATOR_ARCHIVE_PATH}/Build/Products/Release-iphonesimulator/lib${SCHEMA_NAME}.a -library .${IOS_DEVICE_ARCHIVE_PATH}/Build/Products/Release-iphoneos/lib${SCHEMA_NAME}.a -output "${FRAMEWORK_PATH}"
