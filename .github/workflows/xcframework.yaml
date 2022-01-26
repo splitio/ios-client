@@ -1,0 +1,22 @@
+name: Build xcframework
+
+on:
+  push:
+    branches: 
+      - test_xcframework
+
+jobs:
+  build:
+    runs-on: [macos-latest]
+
+    steps:
+    - name: Select Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: 12.2
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+     - name: Create xcframework for release
+      run: ./gen_static_xcframework
