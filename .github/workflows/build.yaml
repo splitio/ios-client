@@ -32,3 +32,6 @@ jobs:
         scheme: Split
         sdk: 'iphonesimulator'
         use-xcpretty: true
+
+    - name: Create xcframework for release
+      run: ./gen_static_xcframework
