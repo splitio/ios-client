@@ -3,7 +3,7 @@ name: Build xcframework
 on:
   push:
     branches: 
-      - test_xcframework
+      - test_xcframework*
     #tags:
       #- *.*.*
 
