@@ -4,6 +4,8 @@ on:
   push:
     branches: 
       - test_xcframework
+    #tags:
+      #- *.*.*
 
 jobs:
   build:
@@ -21,8 +23,17 @@ jobs:
     - name: Create xcframework for release
       run: ./gen_static_xcframework
       
-    - uses: chrislennon/action-aws-cli@v1.1
-    - run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework --recursive
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_MOBILE_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_MOBILE_SECRET }}
+    - uses: chrislennon/action-aws-cli@v1.1    
+    - if: ${{ github.ref == '*.*.*-rc*' }}
+      run: ./test_script_dev
+#       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework --recursive
+#       env:
+#         AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+#         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+  
+    - if: ${{ github.ref == '*.*.*' &&  github.ref != '*.*.*-rc*' }}
+      run: ./test_script_prod
+#       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework --recursive
+#       env:
+#         AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+#         AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
