@@ -9,7 +9,7 @@ FRAMEWORK_FOLDER_NAME="${PROJECT_NAME}_XCFramework"
 FRAMEWORK_NAME="${PROJECT_NAME}"
 #xcframework path
 FRAMEWORK_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${FRAMEWORK_NAME}.xcframework"
-ZIP_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${FRAMEWORK_NAME}.zip"
+ZIP_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${FRAMEWORK_NAME}_${VERSION}.zip"
 # set path for iOS simulator archive
 SIMULATOR_ARCHIVE_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/simulator"
 # set path for iOS device archive
@@ -32,23 +32,25 @@ xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS"  -derivedDataPath ".$
 echo "Creating XCFramework from ${SIMULATOR_ARCHIVE_PATH} and ${IOS_DEVICE_ARCHIVE_PATH} into ${FRAMEWORK_PATH}"
 xcodebuild -create-xcframework -library .${SIMULATOR_ARCHIVE_PATH}/Build/Products/Release-iphonesimulator/lib${SCHEMA_NAME}.a -library .${IOS_DEVICE_ARCHIVE_PATH}/Build/Products/Release-iphoneos/lib${SCHEMA_NAME}.a -output "${FRAMEWORK_PATH}"
 
-# Generating zip file from xcframework
+echo "Generating zip file from xcframework"
 zip -r ${ZIP_PATH} ${FRAMEWORK_PATH}
 
-# Computing package checksum
-PACKAGE_CHECKSUM=$(swift package compute-checksum ${ZIP_PATH}
+echo $ZIP_PATH
 
+# Computing package checksum
+PACKAGE_CHECKSUM=$(swift package compute-checksum ${ZIP_PATH})
+
+echo "CHEKCSUM: ${PACKAGE_CHECKSUM}"
 
 ZIP_FILE_NAME="${PROJECT_NAME}_${VERSION}.zip"
 
 if [ "$RELEASE_TYPE" == "1" ]; then
-then
     FINAL_URL="${PROD_URL_BASE}/${ZIP_FILE_NAME}"
 else
     FINAL_URL="${DEV_URL_BASE}/${ZIP_FILE_NAME}"
 fi
 
-# Update swift pacakage
-sed 's/{{SPLIT_XCFRAMEWORK_URL}}/${FINAL_URL}/' Package.swift.template >> Package.swift.tmp
-sed 's/{{SPLIT_XCFRAMEWORK_CHECKSUM}}/${PACKAGE_CHECKSUM}/' Package.swift.template >> Package.swift.tmp
-cp -f Package.swift.tmp Package.swift.test
+echo "Update swift pacakage"
+sed "s,SPLIT-XCFRAMEWORK-URL,${FINAL_URL}," Package.swift.template > Package.swift.tmp
+sed "s,SPLIT-XCFRAMEWORK-CHECKSUM,${PACKAGE_CHECKSUM}," Package.swift.tmp > Package.swift.test
+rm Package.swift.tmp
