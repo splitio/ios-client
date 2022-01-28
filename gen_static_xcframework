@@ -35,12 +35,8 @@ xcodebuild -create-xcframework -library .${SIMULATOR_ARCHIVE_PATH}/Build/Product
 echo "Generating zip file from xcframework"
 zip -r ${ZIP_PATH} ${FRAMEWORK_PATH}
 
-echo $ZIP_PATH
-
 # Computing package checksum
 PACKAGE_CHECKSUM=$(swift package compute-checksum ${ZIP_PATH})
-
-echo "CHEKCSUM: ${PACKAGE_CHECKSUM}"
 
 ZIP_FILE_NAME="${PROJECT_NAME}_${VERSION}.zip"
 
@@ -54,3 +50,4 @@ echo "Update swift pacakage"
 sed "s,SPLIT-XCFRAMEWORK-URL,${FINAL_URL}," Package.swift.template > Package.swift.tmp
 sed "s,SPLIT-XCFRAMEWORK-CHECKSUM,${PACKAGE_CHECKSUM}," Package.swift.tmp > Package.swift.test
 rm Package.swift.tmp
+rm -rf ${FRAMEWORK_PATH}
