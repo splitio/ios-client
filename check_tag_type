@@ -8,7 +8,6 @@ RC_PATTERN='[0-9]+\.[0-9]+\.[0-9]+-(rc[0-9]+|SNAPSHOT)$'
 [[ $REF =~ $STABLE_PATTERN ]]
 if [ ! -z ${BASH_REMATCH[0]} ]
 then
-      #echo 1 > release_type
       echo 1
       exit
 fi
@@ -18,5 +17,4 @@ fi
 if [ ! -z ${BASH_REMATCH[0]} ]
 then
       echo 0
-      #echo 0 > release_type
 fi
