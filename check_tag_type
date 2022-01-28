@@ -1,0 +1,20 @@
+#!/bin/bash
+# Checks tag name and create determines if it
+# corresponds to a RC or STABLE release
+REF=$1
+STABLE_PATTERN='[0-9]+\.[0-9]+\.[0-9]+$'
+RC_PATTERN='[0-9]+\.[0-9]+\.[0-9]+-(rc[0-9]+|SNAPSHOT)$'
+
+[[ $REF =~ $STABLE_PATTERN ]]
+if [ ! -z ${BASH_REMATCH[0]} ]
+then
+      echo 1 > release_type
+      exit
+fi
+
+[[ $REF =~ $RC_PATTERN ]]
+
+if [ ! -z ${BASH_REMATCH[0]} ]
+then
+      echo 0 > release_type
+fi
