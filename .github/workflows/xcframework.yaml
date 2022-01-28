@@ -19,7 +19,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Computing release version
-      run: echo "version=$(echo ${${{ github.ref }}#test_xcframework_})"
+      run: ref=${{ github.ref }}; echo "version=$(echo ${ref#refs/heads/test_xcframework_})"
 
     - name: Create xcframework for release
       # run: ./gen_static_xcframework ${{ github.ref }}
