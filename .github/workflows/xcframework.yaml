@@ -22,17 +22,24 @@ jobs:
 
 #     - name: Create xcframework for release
 #       run: ./gen_static_xcframework
+
+    - name: Check tag type and add it to env
+    - run: ./check_tag_type
+    - run: |
+        echo "release_type=$(cat release_type)" >> $GITHUB_ENV
       
     - uses: chrislennon/action-aws-cli@v1.1    
-    - if: ${{ github.ref == '*.*.*-rc*' }}
-      run: ./test_script_dev
+    - if: ${{ env.release_type == 0 }}
+      run: |
+        echo "type release stable"
 #       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework --recursive
 #       env:
 #         AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
 #         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
   
-    - if: ${{ github.ref == '*.*.*' &&  github.ref != '*.*.*-rc*' }}
-      run: ./test_script_prod
+    - if: ${{ env.release_type == 1 }}
+      run: |
+        echo "type release candidate"
 #       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework --recursive
 #       env:
 #         AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
