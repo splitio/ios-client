@@ -27,17 +27,17 @@ jobs:
       run: ./check_tag_type; echo "release_type=$(cat release_type)" >> $GITHUB_ENV
       
     - uses: chrislennon/action-aws-cli@v1.1    
-    - if: ${{ env.release_type == 0 }}
+    - if: ${{ env.release_type == 1 }}
       run: |
-        echo "type release stable"
+        echo "type release stable: ${{ env.release_type }}"
 #       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework --recursive
 #       env:
 #         AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
 #         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
   
-    - if: ${{ env.release_type == 1 }}
+    - if: ${{ env.release_type == 0 }}
       run: |
-        echo "type release candidate"
+        echo "type release candidate: ${{ env.release_type }}"
 #       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework --recursive
 #       env:
 #         AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
