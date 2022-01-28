@@ -19,14 +19,13 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Computing release version
-      run: ref=${{ github.ref }}; echo "version=$(echo ${ref#refs/heads/test_xcframework_})"
-
-    - name: Create xcframework for release
-      # run: ./gen_static_xcframework ${{ github.ref }}
-      run: echo ${{ github.ref }}
+      run: ref=${{ github.ref }}; echo "version=$(echo ${ref#refs/heads/test_xcframework_})" >> $GITHUB_ENV
 
     - name: Check tag type and add it to env
       run: echo "release_type=$(./check_tag_type ${{ github.ref }})" >> $GITHUB_ENV; echo "release_type=$(./check_tag_type ${{ github.ref }})"
+
+    - name: Create xcframework for release
+      run: ./gen_static_xcframework ${{ env.version }} ${{ env.release_type }}
       
     - uses: chrislennon/action-aws-cli@v1.1    
 
