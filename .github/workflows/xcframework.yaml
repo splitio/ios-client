@@ -3,9 +3,7 @@ name: Build xcframework
 on:
   push:
     branches: 
-      - test_xcframework*
-    #tags:
-      #- *.*.*
+      - test_xcframework_*
 
 jobs:
   build:
@@ -20,8 +18,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-#     - name: Create xcframework for release
-#       run: ./gen_static_xcframework
+    - name: Computing release version
+      run: echo "version=${{ github.ref#test_xcframework_ }}"
+
+    - name: Create xcframework for release
+      # run: ./gen_static_xcframework ${{ github.ref }}
+      run: echo ${{ github.ref }}
 
     - name: Check tag type and add it to env
       run: echo "release_type=$(./check_tag_type ${{ github.ref }})" >> $GITHUB_ENV; echo "release_type=$(./check_tag_type ${{ github.ref }})"
@@ -38,7 +40,7 @@ jobs:
     - if: ${{ env.release_type == 0 }}
       run: |
         echo "type release candidate: ${{ env.release_type }}"
-#       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework --recursive
+#       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-split-public/mobile/ios-xcframework --recursive
 #       env:
 #         AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
 #         AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
