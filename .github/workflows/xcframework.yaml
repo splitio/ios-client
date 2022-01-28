@@ -24,7 +24,7 @@ jobs:
 #       run: ./gen_static_xcframework
 
     - name: Check tag type and add it to env
-      run: echo "release_type=$(./check_tag_type github.ref)" >> $GITHUB_ENV; echo "release_type=$(./check_tag_type github.ref)"
+      run: echo "release_type=$(./check_tag_type github.ref)" >> $GITHUB_ENV; echo "release_type=$(./check_tag_type ${{ github.ref }})"
       
     - uses: chrislennon/action-aws-cli@v1.1    
     - if: ${{ env.release_type == 1 }}
