@@ -48,6 +48,6 @@ fi
 
 echo "Update swift pacakage"
 sed "s,SPLIT-XCFRAMEWORK-URL,${FINAL_URL}," Package.swift.template > Package.swift.tmp
-sed "s,SPLIT-XCFRAMEWORK-CHECKSUM,${PACKAGE_CHECKSUM}," Package.swift.tmp > Package.swift.test
+sed "s,SPLIT-XCFRAMEWORK-CHECKSUM,${PACKAGE_CHECKSUM}," Package.swift.tmp > Package.swift
 rm Package.swift.tmp
 rm -rf ${FRAMEWORK_PATH}
