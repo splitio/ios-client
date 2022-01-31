@@ -50,7 +50,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_STAGE_KEY }}
   
     - if: ${{ env.release_type == 1 }}
-      run: aws s3 cp ./Split_XCFrameworkSplit_${{ env.version }}.zip s3://aws-development-split-public/mobile/ios-xcframework  
+      run: aws s3 cp ./Split_XCFramework/Split_${{ env.version }}.zip s3://aws-development-split-public/mobile/ios-xcframework  
 #       run: aws s3 cp ./Split_XCFramework/Split_${{ env.version }}.zip s3://aws-split-public/mobile/ios-xcframework --recursive
 #      run: |
 #        echo "type release candidate: ${{ env.release_type }}"
