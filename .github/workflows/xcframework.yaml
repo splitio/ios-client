@@ -41,16 +41,16 @@ jobs:
     - uses: chrislennon/action-aws-cli@v1.1    
 
     - if: ${{ env.release_type == 0 }}
-      run: aws s3 cp ./Split_XCFramework s3://aws-development-split-public/mobile/ios-xcframework --recursive
+      run: aws s3 cp ./Split_XCFramework/Split_${{ env.version }}.zip s3://aws-development-split-public/mobile/ios-xcframework --recursive
 #       run: |
 #         echo "type release stable: ${{ env.release_type }}"
-#       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework --recursive
+#       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_ASSETS_STAGE_USER }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_STAGE_KEY }}
   
     - if: ${{ env.release_type == 1 }}
-      run: aws s3 cp ./Split_XCFramework s3://aws-development-split-public/mobile/ios-xcframework --recursive  
+      run: aws s3 cp ./Split_XCFrameworkSplit_${{ env.version }}.zip s3://aws-development-split-public/mobile/ios-xcframework  
 #       run: aws s3 cp ./Split_XCFramework/Split_${{ env.version }}.zip s3://aws-split-public/mobile/ios-xcframework --recursive
 #      run: |
 #        echo "type release candidate: ${{ env.release_type }}"
