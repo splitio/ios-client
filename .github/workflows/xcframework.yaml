@@ -20,6 +20,9 @@ jobs:
 
     - name: Computing release version
       run: ref=${{ github.ref }}; echo "version=$(echo ${ref#refs/heads/test_xcframework_})" >> $GITHUB_ENV
+      
+    - name: Computing branch name
+      run: ref=${{ github.ref }}; echo "branch_name=$(echo ${ref#refs/heads/})" >> $GITHUB_ENV
 
     - name: Check tag type and add it to env
       run: echo "release_type=$(./check_tag_type ${{ github.ref }})" >> $GITHUB_ENV; echo "release_type=$(./check_tag_type ${{ github.ref }})"
@@ -27,23 +30,29 @@ jobs:
     - name: Create xcframework for release
       run: ./gen_static_xcframework ${{ env.version }} ${{ env.release_type }}
       
+    - name: Commit package file (url and checksum)
+      run: |
+        git add Package.swift
+        git commit -m "Added new release xcframework url and checksum"
+        git push origin ${{ env.branch_name }}
+      
     - uses: chrislennon/action-aws-cli@v1.1    
 
     - if: ${{ env.release_type == 0 }}
-      run: aws s3 cp ./Split_XCFramework/Split_${{ env.version }}.zip s3://aws-development-split-public/mobile/ios-xcframework --recursive
+      run: aws s3 cp ./Split_XCFramework s3://aws-development-split-public/mobile/ios-xcframework --recursive
 #       run: |
 #         echo "type release stable: ${{ env.release_type }}"
 #       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework --recursive
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_ASSETS_STAGE_USER }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_STAGE_KEY }}
   
     - if: ${{ env.release_type == 1 }}
-      run: aws s3 cp ./Split_XCFramework/Split_${{ env.version }}.zip s3://aws-development-split-public/mobile/ios-xcframework --recursive  
+      run: aws s3 cp ./Split_XCFramework s3://aws-development-split-public/mobile/ios-xcframework --recursive  
 #       run: aws s3 cp ./Split_XCFramework/Split_${{ env.version }}.zip s3://aws-split-public/mobile/ios-xcframework --recursive
 #      run: |
 #        echo "type release candidate: ${{ env.release_type }}"
 
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_ASSETS_STAGE_USER }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_STAGE_KEY }}
