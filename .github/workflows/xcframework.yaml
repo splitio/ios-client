@@ -24,7 +24,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       with:
-        ref: ${{ branch_name }}
+        ref: ${{ env.branch_name }}
 
     - name: Check tag type and add it to env
       run: echo "release_type=$(./check_tag_type ${{ github.ref }})" >> $GITHUB_ENV; echo "release_type=$(./check_tag_type ${{ github.ref }})"
