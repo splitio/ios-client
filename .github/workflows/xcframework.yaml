@@ -20,12 +20,21 @@ jobs:
 
     - name: Computing release version
       run: ref=${{ github.ref }}; echo "version=$(echo ${ref#refs/heads/test_xcframework_})" >> $GITHUB_ENV
+      
+    - name: Computing branch name
+      run: ref=${{ github.ref }}; echo "branch_name=$(echo ${ref#refs/heads/})" >> $GITHUB_ENV
 
     - name: Check tag type and add it to env
       run: echo "release_type=$(./check_tag_type ${{ github.ref }})" >> $GITHUB_ENV; echo "release_type=$(./check_tag_type ${{ github.ref }})"
 
     - name: Create xcframework for release
       run: ./gen_static_xcframework ${{ env.version }} ${{ env.release_type }}
+      
+    - name: Commit package file (url and checksum)
+      run: |
+        git add Package.swift
+        git commit -m "Added new release xcframework url and checksum"
+        git push origin ${{ env.branch_name }}
       
     - uses: chrislennon/action-aws-cli@v1.1    
 
