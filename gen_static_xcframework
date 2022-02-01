@@ -10,9 +10,8 @@ FRAMEWORK_NAME="${PROJECT_NAME}"
 #xcframework path
 XCFRAMEWORK_NAME="${FRAMEWORK_NAME}.xcframework"
 FRAMEWORK_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${XCFRAMEWORK_NAME}"
-ZIP_NAME="${FRAMEWORK_NAME}_${VERSION}.zip"
-# ZIP_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${ZIP_NAME}"
-ZIP_PATH="${FRAMEWORK_PATH}"
+ZIP_NAME="${FRAMEWORK_NAME}_${VERSION}.xcframework"
+ZIP_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${ZIP_NAME}"
 
 # set path for iOS simulator archive
 SIMULATOR_ARCHIVE_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/simulator"
@@ -44,12 +43,11 @@ echo "Generating zip file from xcframework ${ZIP_PATH} from ${XCFRAMEWORK_NAME}"
 # Computing package checksum
 # PACKAGE_CHECKSUM=$(swift package compute-checksum ${ZIP_PATH})
 
-ZIP_FILE_NAME="${PROJECT_NAME}_${VERSION}.zip"
 
 if [ "$RELEASE_TYPE" == "1" ]; then
-    FINAL_URL="${PROD_URL_BASE}/${ZIP_FILE_NAME}"
+    FINAL_URL="${PROD_URL_BASE}/${ZIP_NAME}"
 else
-    FINAL_URL="${DEV_URL_BASE}/${ZIP_FILE_NAME}"
+    FINAL_URL="${DEV_URL_BASE}/${ZIP_NAME}"
 fi
 
 echo "Update swift package"
