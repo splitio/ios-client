@@ -50,7 +50,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_STAGE_KEY }}
   
     - if: ${{ env.release_type == 1 }}
-      run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework/Split_${{ env.version }}.xcframework --acl public-read 
+      run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework/Split_${{ env.version }}.xcframework --acl public-read  --recursive
 #       run: aws s3 cp ./Split_XCFramework/Split_${{ env.version }}.zip s3://aws-development-split-public/mobile/ios-xcframework/Split_${{ env.version }}.zip --acl public-read 
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_ASSETS_STAGE_USER }}
