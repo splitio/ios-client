@@ -27,8 +27,7 @@ let package = Package(
         ),
         .binaryTarget(
             name: "SplitXcFramework",
-            url: "SPLIT-XCFRAMEWORK-URL",
-            checksum: "SPLIT-XCFRAMEWORK-CHECKSUM"
+            url: "SPLIT-XCFRAMEWORK-URL"
         ),
         .target(
             name: "JFBCrypt",
