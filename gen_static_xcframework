@@ -13,7 +13,7 @@ FRAMEWORK_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${XCFRAMEWORK_NAME}"
 ZIP_NAME="${FRAMEWORK_NAME}_${VERSION}.xcframework"
 ZIP_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${ZIP_NAME}"
 
-# set path for iOS simulator archive
+# set path for iOS simulator archive 
 SIMULATOR_ARCHIVE_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/simulator"
 # set path for iOS device archive
 IOS_DEVICE_ARCHIVE_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/device"
