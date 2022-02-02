@@ -36,7 +36,7 @@ jobs:
       run: echo "release_type=$(./check_tag_type ${{ github.ref }})" >> $GITHUB_ENV; echo "release_type=$(./check_tag_type ${{ github.ref }})"
 
     - name: Create xcframework for release
-      run: ./gen_static_xcframework ${{ env.version }} ${{ env.release_type }}
+      run: ./gen_static_xcframework ${{ env.version }} ${{ env.release_type }} ${{ env.artifact_name }}
       
     - name: Commit package file (url and checksum)
       run: |

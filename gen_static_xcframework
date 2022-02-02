@@ -1,12 +1,14 @@
+# release version
 VERSION=$1
+# rc (0) or stable (1)
 RELEASE_TYPE=$2
+# set framework / artifact name
+FRAMEWORK_NAME=$3
 PROJECT_DIR=.
 PROJECT_NAME=Split
 SCHEMA_NAME=Splitlib
 # set framework folder name
 FRAMEWORK_FOLDER_NAME="${PROJECT_NAME}_XCFramework"
-# set framework name or read it from project by this variable
-FRAMEWORK_NAME="${PROJECT_NAME}"
 #xcframework path
 XCFRAMEWORK_NAME="${FRAMEWORK_NAME}.xcframework"
 FRAMEWORK_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${XCFRAMEWORK_NAME}"
@@ -54,4 +56,4 @@ echo "Update swift package"
 sed "s,SPLIT-XCFRAMEWORK-URL,${FINAL_URL}," Package.swift.template > Package.swift.tmp
 sed "s,SPLIT-XCFRAMEWORK-CHECKSUM,${PACKAGE_CHECKSUM}," Package.swift.tmp > Package.swift
 rm Package.swift.tmp
-# rm -rf ${FRAMEWORK_PATH}
+rm -rf ${FRAMEWORK_PATH}
