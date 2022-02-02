@@ -24,7 +24,7 @@ jobs:
     - name: Computing artifact name
       run: echo "artifact_name=SplitXcFramework" >> $GITHUB_ENV
 
-      - name: Computing artifact name
+    - name: Computing artifact name
       run: echo "zip_name=Split_${{ env.version }}.zip" >> $GITHUB_ENV
 
     - name: Checkout
