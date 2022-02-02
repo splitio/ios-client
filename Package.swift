@@ -28,7 +28,7 @@ let package = Package(
         .binaryTarget(
             name: "SplitXcFramework",
             url: "https://aws-development-split-public.s3.amazonaws.com/mobile/ios-xcframework/Split_2.0.0.zip",
-            checksum: "c1b74c72be4f9a9cc3cd22452f94751bfd723fc24eedec9ca3d4326aa27afe5a"
+            checksum: "e28fc25c58b4dba196abd8d8a6404cf32ee61897fb2a644e308ca129cf53a845"
         ),
         .target(
             name: "JFBCrypt",
