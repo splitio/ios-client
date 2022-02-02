@@ -10,7 +10,7 @@ FRAMEWORK_NAME="${PROJECT_NAME}"
 #xcframework path
 XCFRAMEWORK_NAME="${FRAMEWORK_NAME}.xcframework"
 FRAMEWORK_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${XCFRAMEWORK_NAME}"
-ZIP_NAME="${FRAMEWORK_NAME}_${VERSION}.xcframework"
+ZIP_NAME="${FRAMEWORK_NAME}_${VERSION}.zip"
 ZIP_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${ZIP_NAME}"
 
 # set path for iOS simulator archive 
@@ -36,12 +36,12 @@ echo "Creating XCFramework from ${SIMULATOR_ARCHIVE_PATH} and ${IOS_DEVICE_ARCHI
 xcodebuild -create-xcframework -library .${SIMULATOR_ARCHIVE_PATH}/Build/Products/Release-iphonesimulator/lib${SCHEMA_NAME}.a -library .${IOS_DEVICE_ARCHIVE_PATH}/Build/Products/Release-iphoneos/lib${SCHEMA_NAME}.a -output "${FRAMEWORK_PATH}"
 
 echo "Generating zip file from xcframework ${ZIP_PATH} from ${XCFRAMEWORK_NAME}"
-# cd Split_XCFramework/
-# zip -r ${ZIP_NAME} ${XCFRAMEWORK_NAME}
-# cd ..
+cd Split_XCFramework/
+zip -r ${ZIP_NAME} ${XCFRAMEWORK_NAME}
+cd ..
 
 # Computing package checksum
-# PACKAGE_CHECKSUM=$(swift package compute-checksum ${ZIP_PATH})
+PACKAGE_CHECKSUM=$(swift package compute-checksum ${ZIP_PATH})
 
 
 if [ "$RELEASE_TYPE" == "1" ]; then
