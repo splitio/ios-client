@@ -22,7 +22,7 @@ IOS_DEVICE_ARCHIVE_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/device"
 OUTPUT_FOLDER="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}"
 
 DEV_URL_BASE=https://aws-development-split-public.s3.amazonaws.com/mobile/ios-xcframework
-PROD_URL_BASE=https://aws-development-split-public.s3.amazonaws.com/mobile/ios-xcframework
+PROD_URL_BASE=https://split-public.s3.amazonaws.com/sdk
 
 rm -rf ${OUTPUT_FOLDER}
 echo "Deleted ${FRAMEWORK_FOLDER_NAME}"
