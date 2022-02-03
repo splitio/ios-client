@@ -8,6 +8,9 @@
 
 import Foundation
 
+typealias ConcurrentDictionary = SyncDictionarySingleWrapper
+
+// TODO: Rename SyncDictionarySingleWrapper -> ConcurrentDictionary in specific PR for that
 class SyncDictionarySingleWrapper<K: Hashable, T> {
 
     private var queue: DispatchQueue
@@ -71,6 +74,14 @@ class SyncDictionarySingleWrapper<K: Hashable, T> {
     func setValues(_ values: [K: T]) {
         queue.async(flags: .barrier) {
             self.items.removeAll()
+            for (key, value) in values {
+                self.items[key] = value
+            }
+        }
+    }
+
+    func putValues(_ values: [K: T]) {
+        queue.async(flags: .barrier) {
             for (key, value) in values {
                 self.items[key] = value
             }

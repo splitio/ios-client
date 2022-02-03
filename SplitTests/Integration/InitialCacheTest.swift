@@ -205,12 +205,12 @@ class InitialCacheTest: XCTestCase {
         let splitInFilter = "sample1"
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
-        splitDatabase.splitDao.insertOrUpdate(split: buildSplit(name: splitInFilter, treatment: "t1"))
+        splitDatabase.splitDao.insertOrUpdate(split: TestingHelper.buildSplit(name: splitInFilter, treatment: "t1"))
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: Date().unixTimestamp())
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .splitsFilterQueryString, stringValue: "")
 
-        let split = buildSplit(name: splitInFilter, treatment: "t2")
+        let split = TestingHelper.buildSplit(name: splitInFilter, treatment: "t2")
         let change = SplitChange(splits: [split], since: 9000, till: 9000)
         jsonChanges.removeAll()
         jsonChanges.append(try Json.encodeToJson(change))
@@ -356,28 +356,10 @@ class InitialCacheTest: XCTestCase {
         return change!
     }
 
-    private func buildSplit(name: String, treatment: String) -> Split {
-        let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
-        change?.since = Int64(1)
-        change?.till = Int64(1)
-        let split = change!.splits[0]
-        split.name = name
-        if let partitions = split.conditions?[1].partitions {
-            for (i, partition) in partitions.enumerated() {
-                if 1 == i {
-                    partition.treatment = treatment
-                    partition.size = 100
-                } else {
-                    partition.treatment = "off"
-                    partition.size = 0
-                }
-            }
-        }
-        return split
-    }
+    
 
     private func loadChangesExpired() {
-        cachedSplit = buildSplit(name: splitName, treatment: "boom")
+        cachedSplit = TestingHelper.buildSplit(name: splitName, treatment: "boom")
         for i in 0..<5 {
             let change = getChanges(withIndex: 0,
                                     since: numbers[i],

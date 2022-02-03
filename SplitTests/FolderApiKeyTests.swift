@@ -50,7 +50,7 @@ class FolderApiKeyTests: XCTestCase {
         
         for i in 0..<apiKeys.count {
             let apiKey = apiKeys[i]
-            let folder = SplitFactoryHelper.legacyDbName(from: apiKey)!
+            let folder = SplitDatabaseHelper.legacyDbName(from: apiKey)!
             let expectedFolder = folders[i]
             XCTAssertEqual(expectedFolder, folder);
         }
@@ -86,7 +86,7 @@ class FolderApiKeyTests: XCTestCase {
         
         for i in 0..<apiKeys.count {
             let apiKey = apiKeys[i]
-            let folder = SplitFactoryHelper.legacyDbName(from: apiKey)!
+            let folder = SplitDatabaseHelper.legacyDbName(from: apiKey)!
             let expectedFolder = folders[i]
             XCTAssertEqual(expectedFolder, folder);
         }
@@ -123,7 +123,7 @@ class FolderApiKeyTests: XCTestCase {
         
         for i in 0..<apiKeys.count {
             let apiKey = apiKeys[i]
-            let folder = SplitFactoryHelper.legacyDbName(from: apiKey)!
+            let folder = SplitDatabaseHelper.legacyDbName(from: apiKey)!
             let expectedFolder = folders[i]
             XCTAssertEqual(expectedFolder, folder);
         }
@@ -159,14 +159,14 @@ class FolderApiKeyTests: XCTestCase {
         
         for i in 0..<apiKeys.count {
             let apiKey = apiKeys[i]
-            let folder = SplitFactoryHelper.legacyDbName(from: apiKey)!
+            let folder = SplitDatabaseHelper.legacyDbName(from: apiKey)!
             let expectedFolder = folders[i]
             XCTAssertEqual(expectedFolder, folder);
         }
     }
     
     func testSanitizeEmptyFolder() {
-        let folder = SplitFactoryHelper.sanitizeForFolderName("")
+        let folder = SplitDatabaseHelper.sanitizeForFolderName("")
         XCTAssertEqual("", folder)
     }
 }

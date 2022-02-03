@@ -24,9 +24,8 @@ class EndpointFactory {
         static let impressions = "testImpressions/bulk"
         static let impressionsCount = "testImpressions/count"
         static let events = "events/bulk"
-        static let timeMetrics = "metrics/times"
-        static let counterMetrics = "metrics/counters"
-        static let gaugeMetrics = "metrics/gauge"
+        static let telemetryConfig = "metrics/config"
+        static let telemetryUsage = "metrics/usage"
     }
 
     let serviceEndpoints: ServiceEndpoints
@@ -34,9 +33,8 @@ class EndpointFactory {
     let impressionsEndpoint: Endpoint
     let impressionsCountEndpoint: Endpoint
     let eventsEndpoint: Endpoint
-    let timeMetricsEndpoint: Endpoint
-    let countMetricsEndpoint: Endpoint
-    let gaugeMetricsEndpoint: Endpoint
+    let telemetryConfigEndpoint: Endpoint
+    let telemetryUsageEndpoint: Endpoint
     let sseAuthenticationEndpoint: Endpoint
     let streamingEndpoint: Endpoint
     let apiKey: String
@@ -65,16 +63,12 @@ class EndpointFactory {
                 .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.events)
                 .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
-        timeMetricsEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.timeMetrics)
+        telemetryConfigEndpoint = Endpoint
+                .builder(baseUrl: serviceEndpoints.telemetryServiceEndpoint, path: EndpointsPath.telemetryConfig)
                 .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
-        countMetricsEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.counterMetrics)
-                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
-
-        gaugeMetricsEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.gaugeMetrics)
+        telemetryUsageEndpoint = Endpoint
+                .builder(baseUrl: serviceEndpoints.telemetryServiceEndpoint, path: EndpointsPath.telemetryUsage)
                 .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
         sseAuthenticationEndpoint = Endpoint
@@ -89,8 +83,10 @@ class EndpointFactory {
     func mySegmentsEndpoint(userKey: String) -> Endpoint {
         let commonHeaders = Self.basicHeaders(apiKey: self.apiKey)
         let typeHeader = Self.typeHeader()
+        let encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? userKey
         return Endpoint
-            .builder(baseUrl: serviceEndpoints.sdkEndpoint, path: "\(EndpointsPath.mySegments)/\(userKey)")
+            .builder(baseUrl: serviceEndpoints.sdkEndpoint,
+                     encodedPath: "\(EndpointsPath.mySegments)/\(encodedUserKey)")
             .add(headers: commonHeaders).add(headers: typeHeader).build()
     }
 

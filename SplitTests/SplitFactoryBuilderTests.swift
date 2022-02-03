@@ -11,6 +11,12 @@ import XCTest
 
 class SplitFactoryBuilderTests: XCTestCase {
 
+    private let moreThanOneFactoryMessage = """
+    You already have an instance of the Split factory. Make sure you definitely want this
+        additional instance. We recommend keeping only one instance of the factory at all times
+        (Singleton pattern) and reusing it throughout your application.
+    """
+
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -165,7 +171,7 @@ class SplitFactoryBuilderTests: XCTestCase {
 
         print("print \(f1!.version) - \(f2!.version)")
         
-        XCTAssertEqual("You already have an instance of the Split factory. Make sure you definitely want this additional instance. We recommend keeping only one instance of the factory at all times (Singleton pattern) and reusing it throughout your application.", logger.messages[0])
+        XCTAssertEqual(moreThanOneFactoryMessage, logger.messages[0])
     }
     
     func factoryValidationMessage(count: Int, for key: String) -> String {

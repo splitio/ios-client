@@ -14,12 +14,13 @@ protocol MySegmentsStorage {
     func set(_ segments: [String])
     func clear()
     func destroy()
+    func getCount() -> Int
 }
 
 class DefaultMySegmentsStorage: MySegmentsStorage {
 
-    var inMemoryMySegments: ConcurrentSet<String>
-    let persistenStorage: PersistentMySegmentsStorage
+    private var inMemoryMySegments: ConcurrentSet<String>
+    private let persistenStorage: PersistentMySegmentsStorage
 
     init(persistentMySegmentsStorage: PersistentMySegmentsStorage) {
         persistenStorage = persistentMySegmentsStorage
@@ -46,5 +47,9 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
 
     func destroy() {
         inMemoryMySegments.removeAll()
+    }
+
+    func getCount() -> Int {
+        return inMemoryMySegments.count
     }
 }

@@ -8,9 +8,13 @@
 
 import Foundation
 
+typealias ConcurrentList = SynchronizedArrayWrapper
+
+// TODO: Rename SynchronizedArrayWrapper -> ConcurrentList in specific PR for that
 class SynchronizedArrayWrapper<T> {
     private var queue: DispatchQueue
     private var items: [T]
+    private var capacity: Int
 
     var all: [T] {
         var allItems: [T]?
@@ -28,13 +32,23 @@ class SynchronizedArrayWrapper<T> {
         return count
     }
 
-    init() {
-        queue = DispatchQueue(label: NSUUID().uuidString, attributes: .concurrent)
-        items = [T]()
+    init(capacity: Int) {
+        self.queue = DispatchQueue(label: NSUUID().uuidString, attributes: .concurrent)
+        self.items = [T]()
+        self.capacity = capacity
+    }
+
+    convenience init() {
+        self.init(capacity: -1)
     }
 
     func append(_ item: T) {
+
         queue.async(flags: .barrier) {
+            if self.capacity > -1,
+               self.items.count >= self.capacity {
+                return
+            }
             self.items.append(item)
         }
     }
@@ -47,7 +61,18 @@ class SynchronizedArrayWrapper<T> {
 
     func append(_ items: [T]) {
         queue.async(flags: .barrier) {
-            self.items.append(contentsOf: items)
+            if self.capacity > -1 {
+                if self.items.count >= self.capacity {
+                    return
+                }
+                let appendCount = self.capacity - self.items.count
+                if appendCount < 1 {
+                    return
+                }
+                self.items.append(contentsOf: items[0..<appendCount])
+            } else {
+                self.items.append(contentsOf: items)
+            }
         }
     }
 

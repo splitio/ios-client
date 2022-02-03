@@ -30,7 +30,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsSyncWorker = RetryableMySegmentsSyncWorker(
             userKey: "CUSTOMER_ID",
             mySegmentsFetcher: mySegmentsFetcher,
-            mySegmentsStorage: mySegmentsStorage, metricsManager: MetricsManagerStub(),
+            mySegmentsStorage: mySegmentsStorage, telemetryProducer: TelemetryStorageStub(),
             eventsManager: eventsManager,
             reconnectBackoffCounter: backoffCounter,
             avoidCache: false)
@@ -97,7 +97,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsSyncWorker = RetryableMySegmentsSyncWorker(
             userKey: "CUSTOMER_ID",
             mySegmentsFetcher: mySegmentsFetcher,
-            mySegmentsStorage: mySegmentsStorage, metricsManager: MetricsManagerStub(),
+            mySegmentsStorage: mySegmentsStorage, telemetryProducer: TelemetryStorageStub(),
             eventsManager: eventsManager,
             reconnectBackoffCounter: backoffCounter,
             avoidCache: true)

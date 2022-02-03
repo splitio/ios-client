@@ -24,7 +24,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private let kReconnectTimeBeforeTokenExpInASeconds = 600
     private let kDisconnectOnBgTimeInSeconds = 60
     private let kTokenExpiredErrorCode = 40142
-    private let kSseConnDelayCheckTime: Double = 0.5 // 1/2 second
 
     private let sseAuthenticator: SseAuthenticator
     private var sseClient: SseClient
@@ -42,13 +41,20 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
 
-    init(userKey: String, sseAuthenticator: SseAuthenticator, sseClient: SseClient,
-         broadcasterChannel: PushManagerEventBroadcaster, timersManager: TimersManager) {
+    var delayTimer: DelayTimer
+
+    private let telemetryProducer: TelemetryRuntimeProducer?
+
+    init(userKey: String, sseAuthenticator: SseAuthenticator,
+         sseClient: SseClient, broadcasterChannel: PushManagerEventBroadcaster,
+         timersManager: TimersManager, telemetryProducer: TelemetryRuntimeProducer?) {
         self.userKey = userKey
         self.sseAuthenticator = sseAuthenticator
         self.sseClient = sseClient
         self.broadcasterChannel = broadcasterChannel
+        self.telemetryProducer = telemetryProducer
         self.timersManager = timersManager
+        self.delayTimer = DefaultTimer()
         self.timersManager.triggerHandler = timerHandler()
     }
 
@@ -60,6 +66,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func pause() {
         Logger.d("Push notification manager paused")
         isPaused.set(true)
+        delayTimer.cancel()
         isConnecting.set(false)
         sseClient.disconnect()
     }
@@ -73,6 +80,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func stop() {
         Logger.d("Push notification manager stopped")
         isStopped.set(true)
+        delayTimer.cancel()
         disconnect()
     }
 
@@ -97,6 +105,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private func connectToSse() {
 
         let result = sseAuthenticator.authenticate(userKey: userKey)
+        telemetryProducer?.recordLastSync(resource: .token, time: Date().unixTimestampInMiliseconds())
         if result.success && !result.pushEnabled {
             Logger.d("Streaming disabled for api key")
             isStopped.set(true)
@@ -110,6 +119,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
             isStopped.set(true)
             isConnecting.set(false)
             broadcasterChannel.push(event: .pushNonRetryableError)
+            telemetryProducer?.recordAuthRejections()
             return
         }
 
@@ -128,6 +138,8 @@ class DefaultPushNotificationManager: PushNotificationManager {
             return
         }
 
+        telemetryProducer?.recordStreamingEvent(type: .tokenRefresh, data: jwt.expirationTime)
+
         if isStopped.value {
             Logger.d("Streaming stopped. Aborting connection")
             isConnecting.set(false)
@@ -137,7 +149,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
         let connectionDelay = result.sseConnectionDelay
 
-        if connectionDelay > 0 && !delay(connectionDelay) {
+        if connectionDelay > 0 && !delayTimer.delay(seconds: connectionDelay) {
             isConnecting.set(false)
             return
         }
@@ -147,39 +159,15 @@ class DefaultPushNotificationManager: PushNotificationManager {
             return
         }
 
+        Logger.d("Streaming connect")
         sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { success in
             if success {
                 self.handleSubsystemUp()
             }
+            self.telemetryProducer?.recordStreamingEvent(type: .connectionStablished,
+                                                         data: nil)
             self.isConnecting.set(false)
         }
-    }
-
-    // This implementation is to allow checking
-    // when the component is stopped or paused easily
-    // without creating a module scoped component
-    // Using sleep will involve block the whole thread
-    // and is not a good idea
-    private func delay(_ seconds: Int64) -> Bool {
-        var cancelled = false
-        let semaphore = DispatchSemaphore(value: 0)
-        let limit = Date().unixTimestamp() + seconds
-        let timer = DispatchSource.makeTimerSource(flags: .strict, queue: DispatchQueue.global())
-        timer.schedule(deadline: .now(), repeating: kSseConnDelayCheckTime)
-        timer.resume()
-        timer.setEventHandler { [weak self] in
-            if let self = self,
-               (self.isPaused.value || self.isStopped.value) {
-                cancelled = true
-                semaphore.signal()
-                return
-            }
-            if Date().unixTimestamp() >=  limit {
-                semaphore.signal()
-            }
-        }
-        semaphore.wait()
-        return !cancelled
     }
 
     private func notifyRecoverableError(message: String) {
@@ -189,15 +177,23 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     private func handleSubsystemUp() {
-        self.timersManager.add(timer: .refreshAuthToken, delayInSeconds: kReconnectTimeBeforeTokenExpInASeconds)
-        self.broadcasterChannel.push(event: .pushSubsystemUp)
+        timersManager.add(timer: .refreshAuthToken, delayInSeconds: kReconnectTimeBeforeTokenExpInASeconds)
+        broadcasterChannel.push(event: .pushSubsystemUp)
+        telemetryProducer?.recordTokenRefreshes()
     }
 
     private func timerHandler() -> TimersManager.TimerHandler {
-        return { timerName in
+
+        return { [weak self] timerName in
+            guard let self = self else {
+                return
+            }
+
             switch timerName {
             case .refreshAuthToken:
                 self.sseClient.disconnect()
+                self.telemetryProducer?.recordStreamingEvent(type: .connectionError,
+                                                        data: TelemetryStreamingEventValue.sseConnErrorRequested)
                 self.connect()
             default:
                 Logger.d("No handler or timer: \(timerName)")

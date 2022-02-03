@@ -13,28 +13,22 @@ protocol HttpSplitFetcher {
 class DefaultHttpSplitFetcher: HttpSplitFetcher {
 
     private let restClient: RestClientSplitChanges
-    private let metricsManager: MetricsManager
+    private let syncHelper: SyncHelper
+    private let resource = Resource.splits
 
-    init(restClient: RestClientSplitChanges, metricsManager: MetricsManager) {
+    init(restClient: RestClientSplitChanges, syncHelper: SyncHelper) {
         self.restClient = restClient
-        self.metricsManager = metricsManager
+        self.syncHelper = syncHelper
     }
 
     func execute(since: Int64, headers: HttpHeaders? = nil) throws -> SplitChange {
 
-        if !restClient.isSdkServerAvailable() {
-            Logger.d("Server is not reachable. Split updates will be delayed until host is reachable")
-            throw HttpError.serverUnavailable
-        }
+        try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
-        let metricsManager = self.metricsManager
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SplitChange>?
-        let fetchStartTime = Date().unixTimestampInMiliseconds()
+        let startTime = syncHelper.time()
         restClient.getSplitChanges(since: since, headers: headers) { result in
-            metricsManager.time(microseconds: Date().unixTimestampInMiliseconds() - fetchStartTime,
-                                for: Metrics.Time.splitChangeFetcherGet)
-            metricsManager.count(delta: 1, for: Metrics.Counter.splitChangeFetcherStatus200)
             requestResult = result
             semaphore.signal()
         }
@@ -42,14 +36,14 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
 
         do {
             if let change: SplitChange = try requestResult?.unwrap() {
+                syncHelper.recordTelemetry(resource: resource, startTime: startTime)
                 return change
-            } else {
-                throw GenericError.unknown(message: "Null split changes retrieved")
             }
-        } catch {
-            Logger.e("Error while retrieving split definitions: \(error.localizedDescription)")
-            throw error
-        }
-    }
 
+        } catch {
+            try syncHelper.throwIfError(syncHelper.handleError(error, resource: resource, startTime: startTime))
+        }
+
+        throw GenericError.unknown(message: "Incorrect split changes retrieved")
+    }
 }

@@ -8,12 +8,14 @@
 
 import Foundation
 
-struct SplitFactoryHelper {
+struct SplitDatabaseHelper {
     static private let kDbMagicCharsCount = 4
     static private let kDbExt = ["", "-shm", "-wal"]
 
-    static func buildStorageContainer(userKey: String,
+    static func buildStorageContainer(splitClientConfig: SplitClientConfig,
+                                      userKey: String,
                                       databaseName: String,
+                                      telemetryStorage: TelemetryStorage?,
                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
 
         let fileStorage = FileStorage(dataFolderName: databaseName)
@@ -25,6 +27,10 @@ struct SplitFactoryHelper {
         let impressionsStorage = openImpressionsStorage(database: splitDatabase)
         let impressionsCountStorage = openImpressionsCountStorage(database: splitDatabase)
         let eventsStorage = openEventsStorage(database: splitDatabase)
+        let attributesStorage = openAttributesStorage(database: splitDatabase,
+                                                      userKey: userKey,
+                                                      splitClientConfig: splitClientConfig)
+
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      fileStorage: fileStorage,
                                      splitsStorage: splitsStorage,
@@ -32,7 +38,9 @@ struct SplitFactoryHelper {
                                      mySegmentsStorage: mySegmentsStorage,
                                      impressionsStorage: impressionsStorage,
                                      impressionsCountStorage: impressionsCountStorage,
-                                     eventsStorage: eventsStorage)
+                                     eventsStorage: eventsStorage,
+                                     attributesStorage: attributesStorage,
+                                     telemetryStorage: telemetryStorage)
     }
 
     static func openDatabase(dataFolderName: String,
@@ -66,6 +74,11 @@ struct SplitFactoryHelper {
         return DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
     }
 
+    static func openPersistentAttributesStorage(database: SplitDatabase,
+                                                userKey: String) -> PersistentAttributesStorage {
+        return DefaultPersistentAttributesStorage(userKey: userKey, database: database)
+    }
+
     static func openImpressionsStorage(database: SplitDatabase) -> PersistentImpressionsStorage {
         return DefaultImpressionsStorage(database: database,
                                          expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
@@ -79,6 +92,15 @@ struct SplitFactoryHelper {
     static func openEventsStorage(database: SplitDatabase) -> PersistentEventsStorage {
         return DefaultEventsStorage(database: database,
                                          expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+    }
+
+    static func openAttributesStorage(database: SplitDatabase,
+                                      userKey: String,
+                                      splitClientConfig: SplitClientConfig) -> AttributesStorage {
+        return DefaultAttributesStorage(
+            persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
+                openPersistentAttributesStorage(database: database, userKey: userKey) : nil
+        )
     }
 
     static func databaseName(apiKey: String) -> String? {
@@ -132,7 +154,7 @@ struct SplitFactoryHelper {
         let kSaltLength = 29
         let kSaltPrefix = "$2a$10$"
         let kCharToFillSalt = "A"
-        let sanitizedApiKey = SplitFactoryHelper.sanitizeForFolderName(apiKey)
+        let sanitizedApiKey = SplitDatabaseHelper.sanitizeForFolderName(apiKey)
         var salt = kSaltPrefix
         if sanitizedApiKey.count >= kSaltLength - kSaltPrefix.count {
             let endIndex = sanitizedApiKey.index(sanitizedApiKey.startIndex,
@@ -144,7 +166,7 @@ struct SplitFactoryHelper {
                                            count: (kSaltLength - kSaltPrefix.count) - sanitizedApiKey.count))
         }
         if let hash = JFBCrypt.hashPassword(sanitizedApiKey, withSalt: salt) {
-            return SplitFactoryHelper.sanitizeForFolderName(hash)
+            return SplitDatabaseHelper.sanitizeForFolderName(hash)
         }
         return nil
     }

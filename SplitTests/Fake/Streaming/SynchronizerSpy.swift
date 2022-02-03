@@ -16,6 +16,7 @@ class SynchronizerSpy: Synchronizer {
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
+    var loadAttributesFromCacheCalled = false
     var syncAllCalled = false
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
@@ -44,6 +45,7 @@ class SynchronizerSpy: Synchronizer {
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
+         telemetrySynchronizer: TelemetrySynchronizer?,
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
          impressionsSyncHelper: ImpressionsRecorderSyncHelper,
@@ -52,13 +54,15 @@ class SynchronizerSpy: Synchronizer {
             = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
          splitEventsManager: SplitEventsManager) {
-        self.splitSynchronizer = DefaultSynchronizer(splitConfig: splitConfig, splitApiFacade: splitApiFacade,
-                                                      splitStorageContainer: splitStorageContainer,
-                                                      syncWorkerFactory: syncWorkerFactory,
-                                                      impressionsSyncHelper: impressionsSyncHelper,
-                                                      eventsSyncHelper: eventsSyncHelper,
-                                                      splitsFilterQueryString: splitsFilterQueryString,
-                                                      splitEventsManager: splitEventsManager)
+        self.splitSynchronizer = DefaultSynchronizer(splitConfig: splitConfig,
+                                                     telemetrySynchronizer: telemetrySynchronizer,
+                                                     splitApiFacade: splitApiFacade,
+                                                     splitStorageContainer: splitStorageContainer,
+                                                     syncWorkerFactory: syncWorkerFactory,
+                                                     impressionsSyncHelper: impressionsSyncHelper,
+                                                     eventsSyncHelper: eventsSyncHelper,
+                                                     splitsFilterQueryString: splitsFilterQueryString,
+                                                     splitEventsManager: splitEventsManager)
     }
 
     func loadAndSynchronizeSplits() {
@@ -71,7 +75,17 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.loadMySegmentsFromCache()
     }
 
+    func loadAttributesFromCache() {
+        loadAttributesFromCacheCalled = true
+        splitSynchronizer.loadAttributesFromCache()
+    }
+
     func syncAll() {
+        syncAllCalled = true
+        splitSynchronizer.syncAll()
+    }
+
+    func synchronizeTelemetryConfig() {
         syncAllCalled = true
         splitSynchronizer.syncAll()
     }

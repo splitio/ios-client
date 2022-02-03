@@ -19,7 +19,10 @@ class SseHandlerTest: XCTestCase {
 
     var sseHandler: SseHandler!
 
+    var telemetryProducer: TelemetryStorageStub!
+
     override func setUp() {
+        telemetryProducer = TelemetryStorageStub()
         notificationParser = SseNotificationParserStub()
         notificationProcessor = SseNotificationProcessorStub()
         notificationManagerKeeper = NotificationManagerKeeperStub()
@@ -27,7 +30,8 @@ class SseHandlerTest: XCTestCase {
         sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,
                                        notificationParser: notificationParser,
                                        notificationManagerKeeper: notificationManagerKeeper,
-                                       broadcasterChannel: broadcasterChannel
+                                       broadcasterChannel: broadcasterChannel,
+                                       telemetryProducer: telemetryProducer
         )
     }
 
@@ -65,6 +69,7 @@ class SseHandlerTest: XCTestCase {
 
         XCTAssertTrue(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertFalse(notificationProcessor.processCalled)
+
     }
 
     func testIncomingControlStreaming() {
@@ -76,10 +81,12 @@ class SseHandlerTest: XCTestCase {
     }
 
     func testIncomingLowRetryableSseError() {
+        notificationParser.isError = true
         incomingRetryableSseErrorTest(code: 40140)
     }
 
     func testIncomingHightRetryableSseError() {
+        notificationParser.isError = true
         incomingRetryableSseErrorTest(code: 40149)
     }
 
@@ -88,16 +95,22 @@ class SseHandlerTest: XCTestCase {
         notificationParser.sseErrorNotification = StreamingError(message: "", code: code, statusCode: code)
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
+        let streamEvents = telemetryProducer.streamingEvents
+
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertFalse(notificationProcessor.processCalled)
         XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.lastPushedEvent)
+
+        XCTAssertNotNil(streamEvents[.ablyError])
     }
 
     func testIncomingLowNonRetryableSseError() {
+        notificationParser.isError = true
         incomingNonRetryableSseErrorTest(code: 40000)
     }
 
     func testIncomingHightNonRetryableSseError() {
+        notificationParser.isError = true
         incomingNonRetryableSseErrorTest(code: 49999)
     }
 
@@ -112,13 +125,18 @@ class SseHandlerTest: XCTestCase {
     }
 
     func testIncomingIgnorableSseErrorTest() {
+        notificationParser.isError = true
         notificationParser.incomingNotification = IncomingNotification(type: .sseError, jsonData: "dummy")
         notificationParser.sseErrorNotification = StreamingError(message: "", code: 50000, statusCode: 50000)
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
+        let streamEvents = telemetryProducer.streamingEvents
+
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertFalse(notificationProcessor.processCalled)
         XCTAssertNil(broadcasterChannel.lastPushedEvent)
+
+        XCTAssertNotNil(streamEvents[.ablyError])
     }
 
     override func tearDown() {

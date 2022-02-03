@@ -1,9 +1,22 @@
-2.11.5: (Sep 27, 2021)
+2.13.0: (Jan 24, 2022)
+- Updated SDK telemetry storage, metrics and updater to be more effective and send less often.
+
+2.12.1: (Dic 2, 2021)
+- Fixed atrributes config issue by making "persistentAttributesEnabled" option publicly accessible.
+
+2.12.0: (Nov 18, 2021)
+- Added Attribute binding feature to allow to optionally keep user attributes loaded within the SDK, along with the user ID, for easier usage when requesting flag.
+
+2.11.6: (Oct 22, 2021)
+- Fixed memory issue on streaming delay
+- Added support for a user key containing a slash character
+
+2.11.5: (Oct 4, 2021)
 - Updated streaming logic to implement the newest versions of our Streaming services, including:
     - Integration with the V2 of the Auth service, connecting to the new channels and applying the received connection delay.
     - Implemented handling of thew notification types for MySegmentsV2 (keyList, bounded and unbounded) 
     - New control notification for environment scoped streaming reset.
-- Improved performance by removing hashing in initial database name generation
+- Improved initialization performance by removing hashing in initial database name generation.
 
 2.11.4: (Ago 4, 2021)
 - Fixed issue occurring sometimes when SDK Update is fired

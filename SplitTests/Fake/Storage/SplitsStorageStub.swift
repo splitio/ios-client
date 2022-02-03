@@ -26,6 +26,8 @@ class SplitsStorageStub: SplitsStorage {
     var updatedWithoutChecksSplit: Split?
     var updatedWithoutChecksExp: XCTestExpectation?
 
+    var getCountCalledCount = 0
+
     private let inMemorySplits = SyncDictionarySingleWrapper<String, Split>()
     
     func loadLocal() {
@@ -84,5 +86,10 @@ class SplitsStorageStub: SplitsStorage {
 
     func destroy() {
         inMemorySplits.removeAll()
+    }
+
+    func getCount() -> Int {
+        getCountCalledCount+=1
+        return inMemorySplits.count
     }
 }

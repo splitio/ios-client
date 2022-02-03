@@ -1,5 +1,5 @@
 //
-//  Array+DynamicCodable.swift
+//  Dictionary+DynamicCodable.swift
 //  Split
 //
 //  Created by Javier L. Avrudsky on 15/05/2019.

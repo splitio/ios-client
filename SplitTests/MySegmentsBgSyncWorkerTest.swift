@@ -38,7 +38,7 @@ class MySegmentsBgSyncWorkerTest: XCTestCase {
 
     func testNoSuccess() {
 
-        mySegmentsFetcher.httpError = HttpError.clientRelated
+        mySegmentsFetcher.httpError = HttpError.clientRelated(code: -1)
         mySegmentsFetcher.allSegments = [["s1", "s2"]]
         mySegmentsSyncWorker.execute()
 

@@ -44,6 +44,20 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
+    func testMySegmentsEndpointSlashKeyEncoding() {
+        let userKey = "fake/key"
+        let encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
+        let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/mySegments/\(encodedUserKey)"
+        let endpoint = factory.mySegmentsEndpoint(userKey: userKey)
+
+        XCTAssertEqual(HttpMethod.get, endpoint.method)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
+        XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
+        XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
+        XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
+        XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
+    }
+
     func testSplitChangesEndpoint() {
         let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/splitChanges"
         let endpoint = factory.splitChangesEndpoint
@@ -80,9 +94,9 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
-    func testTimeMetricsEndpoint() {
-        let endpointUrl = "\(serviceEndpoints.eventsEndpoint.absoluteString)/metrics/times"
-        let endpoint = factory.timeMetricsEndpoint
+    func testTelemetryConfigEndpoint() {
+        let endpointUrl = "\(serviceEndpoints.telemetryServiceEndpoint.absoluteString)/metrics/config"
+        let endpoint = factory.telemetryConfigEndpoint
 
         XCTAssertEqual(HttpMethod.post, endpoint.method)
         XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
@@ -92,21 +106,9 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
-    func testCountMetricsEndpoint() {
-        let endpointUrl = "\(serviceEndpoints.eventsEndpoint.absoluteString)/metrics/counters"
-        let endpoint = factory.countMetricsEndpoint
-
-        XCTAssertEqual(HttpMethod.post, endpoint.method)
-        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
-        XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
-        XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
-        XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
-    }
-
-    func testGaugeMetricsEndpoint() {
-        let endpointUrl = "\(serviceEndpoints.eventsEndpoint.absoluteString)/metrics/gauge"
-        let endpoint = factory.gaugeMetricsEndpoint
+    func testTelemetryUsageEndpoint() {
+        let endpointUrl = "\(serviceEndpoints.telemetryServiceEndpoint.absoluteString)/metrics/usage"
+        let endpoint = factory.telemetryUsageEndpoint
 
         XCTAssertEqual(HttpMethod.post, endpoint.method)
         XCTAssertEqual(commonHeadersCount, endpoint.headers.count)

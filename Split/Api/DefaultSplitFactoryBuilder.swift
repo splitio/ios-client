@@ -17,21 +17,21 @@ import Foundation
 ///
 @objc public class DefaultSplitFactoryBuilder: NSObject, SplitFactoryBuilder {
 
-    private var notificationHelper: NotificationHelper?
-    private var testDatabase: SplitDatabase?
-    private var reachabilityChecker: HostReachabilityChecker?
-    private var httpClient: HttpClient?
-    private var bundle: Bundle = Bundle.main
-    private var apiKey: String?
     private var matchingKey: String?
     private var bucketingKey: String?
-    private var key: Key?
-    private var config: SplitClientConfig?
+    private var bundle: Bundle = Bundle.main
     private let kApiKeyLocalhost = "LOCALHOST"
     private let keyValidator: KeyValidator
     private let apiKeyValidator: ApiKeyValidator
     var validationLogger: ValidationMessageLogger
     private let validationTag = "factory instantiation"
+    private var params: SplitFactoryParams = SplitFactoryParams()
+
+    private let moreThanOneFactoryMessage = """
+    You already have an instance of the Split factory. Make sure you definitely want this
+        additional instance. We recommend keeping only one instance of the factory at all times
+        (Singleton pattern) and reusing it throughout your application.
+    """
 
     private static let  factoryMonitor: FactoryMonitor = {
         return DefaultFactoryMonitor()
@@ -45,7 +45,7 @@ import Foundation
     }
 
     public func setApiKey(_ apiKey: String) -> SplitFactoryBuilder {
-        self.apiKey = apiKey
+        params.apiKey = apiKey
         return self
     }
 
@@ -60,12 +60,12 @@ import Foundation
     }
 
     public func setKey(_ key: Key) -> SplitFactoryBuilder {
-        self.key = key
+        params.key = key
         return self
     }
 
     public func setConfig(_ config: SplitClientConfig) -> SplitFactoryBuilder {
-        self.config = config
+        params.config = config
         return self
     }
 
@@ -75,76 +75,104 @@ import Foundation
     }
 
     func setHttpClient(_ httpClient: HttpClient) -> SplitFactoryBuilder {
-        self.httpClient = httpClient
+        params.httpClient = httpClient
         return self
     }
 
     func setReachabilityChecker(_ checker: HostReachabilityChecker) -> SplitFactoryBuilder {
-        self.reachabilityChecker = checker
+        params.reachabilityChecker = checker
         return self
     }
 
     func setTestDatabase(_ database: SplitDatabase) -> SplitFactoryBuilder {
-        self.testDatabase = database
+        params.testDatabase = database
         return self
     }
 
     func setNotificationHelper(_ notificationHelper: NotificationHelper) -> SplitFactoryBuilder {
-        self.notificationHelper = notificationHelper
+        params.notificationHelper = notificationHelper
+        return self
+    }
+
+    func setTelemetryStorage(_ telemetryStorage: TelemetryStorage) -> SplitFactoryBuilder {
+        params.telemetryStorage = telemetryStorage
         return self
     }
 
     public func build() -> SplitFactory? {
 
-        if let errorInfo = apiKeyValidator.validate(apiKey: apiKey) {
+        var telemetryStorage: TelemetryStorage?
+        if params.config.isTelemetryEnabled {
+            telemetryStorage = params.telemetryStorage ?? InMemoryTelemetryStorage()
+            params.telemetryStorage = telemetryStorage
+            params.initStopwatch.start()
+        }
+
+        if let errorInfo = apiKeyValidator.validate(apiKey: params.apiKey) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             return nil
         }
 
-        let matchingKey = key?.matchingKey ?? self.matchingKey
-        let bucketingKey = key?.bucketingKey ?? self.bucketingKey
+        let matchingKey = self.matchingKey ?? params.key.matchingKey
+        let bucketingKey = self.bucketingKey ?? params.key.bucketingKey
 
         if let errorInfo = keyValidator.validate(matchingKey: matchingKey, bucketingKey: bucketingKey) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             return nil
         }
 
-        let factoryCount = DefaultSplitFactoryBuilder.factoryMonitor.instanceCount(for: apiKey!)
+        var factoryCount = DefaultSplitFactoryBuilder.factoryMonitor.instanceCount(for: params.apiKey)
         if factoryCount > 0 {
-            let errorInfo = ValidationErrorInfo(
-                error: ValidationError.some,
-                message: "You already have \(factoryCount) \(factoryCount == 1 ? "factory" : "factories") with this " +
-                    "API Key. We recommend keeping only one instance of the factory at all times " +
-                "(Singleton pattern) and reusing it throughout your application.")
+            let errorInfo = ValidationErrorInfo(error: ValidationError.some,
+                                                message: apiKeyFactoryCountMessage(factoryCount))
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
 
         } else if DefaultSplitFactoryBuilder.factoryMonitor.allCount > 0 {
-            let errorInfo = ValidationErrorInfo(
-                error: ValidationError.some,
-                message: "You already have an instance of the Split factory. Make sure you definitely want this " +
-                    "additional instance. We recommend keeping only one instance of the factory at all times " +
-                "(Singleton pattern) and reusing it throughout your application.")
+            let errorInfo = ValidationErrorInfo(error: ValidationError.some,
+                                                message: moreThanOneFactoryMessage)
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
         }
 
-        let finalKey = Key(matchingKey: matchingKey!, bucketingKey: bucketingKey)
+        params.key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
 
         var factory: SplitFactory?
-        if apiKey?.uppercased() == kApiKeyLocalhost {
-            factory = LocalhostSplitFactory(key: finalKey,
-                                            config: config ?? SplitClientConfig(),
+        if params.apiKey.uppercased() == kApiKeyLocalhost {
+            factory = LocalhostSplitFactory(key: params.key,
+                                            config: params.config,
                                             bundle: bundle)
         } else {
-            factory = try? DefaultSplitFactory(apiKey: apiKey!,
-                                              key: finalKey,
-                                              config: config ?? SplitClientConfig(),
-                                              httpClient: httpClient,
-                                              reachabilityChecker: reachabilityChecker,
-                                              testDatabase: testDatabase,
-                                              notificationHelper: notificationHelper)
+            do {
+                factory = try DefaultSplitFactory(params)
+            } catch ComponentError.notFound(let name) {
+                Logger.e("Component was not created properly: \(name)")
+            } catch {
+                Logger.e("Error: \(error)")
+            }
         }
 
-        DefaultSplitFactoryBuilder.factoryMonitor.register(instance: factory, for: apiKey!)
+        DefaultSplitFactoryBuilder.factoryMonitor.register(instance: factory, for: params.apiKey)
+        factoryCount = DefaultSplitFactoryBuilder.factoryMonitor.instanceCount(for: params.apiKey)
+        let activeCount = DefaultSplitFactoryBuilder.factoryMonitor.activeCount()
+        telemetryStorage?.recordFactories(active: activeCount, redundant: factoryCount - 1)
+
         return factory
     }
+
+    private func apiKeyFactoryCountMessage(_ factoryCount: Int) -> String {
+        return "You already have \(factoryCount) \(factoryCount == 1 ? "factory" : "factories") with this " +
+            "API Key. We recommend keeping only one instance of the factory at all times " +
+            "(Singleton pattern) and reusing it throughout your application."
+    }
+}
+
+struct SplitFactoryParams {
+    var notificationHelper: NotificationHelper?
+    var testDatabase: SplitDatabase?
+    var reachabilityChecker: HostReachabilityChecker?
+    var httpClient: HttpClient?
+    var apiKey: String = ""
+    var key: Key = Key(matchingKey: "")
+    var config: SplitClientConfig = SplitClientConfig()
+    var telemetryStorage: TelemetryStorage?
+    var initStopwatch: Stopwatch = Stopwatch()
 }

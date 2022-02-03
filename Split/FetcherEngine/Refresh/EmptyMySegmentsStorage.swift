@@ -24,4 +24,8 @@ class EmptyMySegmentsStorage: MySegmentsStorage {
 
     func destroy() {
     }
+
+    func getCount() -> Int {
+        return 0
+    }
 }

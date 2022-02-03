@@ -206,6 +206,26 @@ public class SplitClientConfig: NSObject {
     ///
     @objc public var synchronizeInBackground = false
 
+    static let kDefaultTelemetryRefreshRate = 3600
+    static let kMinTelemetryRefreshRate = 60
+    ///
+    /// The schedule time for telemetry flush after the first one.
+    /// Default: 3600 seconds (1 hour)
+    ///
+    @objc public var telemetryRefreshRate: Int =  kDefaultTelemetryRefreshRate {
+        didSet {
+            if telemetryRefreshRate < SplitClientConfig.kMinTelemetryRefreshRate {
+                internalTelemetryRefreshRate =  SplitClientConfig.kMinTelemetryRefreshRate
+                Logger.w("Telemetry refresh rate lower than allowed. " +
+                            "Using minumum allowed value: \(SplitClientConfig.kMinTelemetryRefreshRate) seconds.")
+            } else {
+                internalTelemetryRefreshRate = telemetryRefreshRate
+            }
+        }
+    }
+
+    var internalTelemetryRefreshRate: Int = kDefaultTelemetryRefreshRate
+
     ///
     /// Maximum length matching / bucketing key. Internal config
     ///
@@ -237,7 +257,36 @@ public class SplitClientConfig: NSObject {
 
     var finalImpressionsMode: ImpressionsMode = .optimized
 
-    // Make it mutable to allow testing
+    /// Make it mutable to allow testing
     var impressionsCountsRefreshRate = 1800
+
+    ///
+    /// Make it mutable to allow testing (Default: false)
+    /// Enables persistent storage for common attributes  given by the user during the SDK
+    /// lifecycle to use them in every evaluation.
+    /// If this flags is set to false, attributes will be stored in memory only and their values
+    ///  will be lost in SDK detroy.
+    ///
+    @objc public var persistentAttributesEnabled = false
+
+    ///
+    ///  Update this variable to enable / disable telemetry for testing
+    ///
+
+    /// WARNING!!!
+    /// This property is public only for testing purposes.
+    /// That's why is only public for when ENABLE_TELEMETRY_ALWAYS flag is present
+    /// Do not change this property
+    #if ENABLE_TELEMETRY_ALWAYS
+    public var telemetryConfigHelper: TelemetryConfigHelper = DefaultTelemetryConfigHelper()
+    #else
+    var telemetryConfigHelper: TelemetryConfigHelper = DefaultTelemetryConfigHelper()
+    #endif
+
+    // This variable will be handled internaly based on
+    // a random function
+    var isTelemetryEnabled: Bool {
+        telemetryConfigHelper.shouldRecordTelemetry
+    }
 
 }

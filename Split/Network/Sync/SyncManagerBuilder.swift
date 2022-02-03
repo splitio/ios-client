@@ -69,7 +69,9 @@ class SyncManagerBuilder {
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
         let sseHttpClient = apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
         let broadcasterChannel = DefaultPushManagerEventBroadcaster()
-        let notificationManagerKeeper = DefaultNotificationManagerKeeper(broadcasterChannel: broadcasterChannel)
+        let notificationManagerKeeper
+            = DefaultNotificationManagerKeeper(broadcasterChannel: broadcasterChannel,
+                                               telemetryProducer: storageContainer.telemetryStorage)
 
         let notificationProcessor =  DefaultSseNotificationProcessor(
             notificationParser: DefaultSseNotificationParser(),
@@ -85,7 +87,8 @@ class SyncManagerBuilder {
         let sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,
                                            notificationParser: DefaultSseNotificationParser(),
                                            notificationManagerKeeper: notificationManagerKeeper,
-                                           broadcasterChannel: broadcasterChannel)
+                                           broadcasterChannel: broadcasterChannel,
+                                           telemetryProducer: storageContainer.telemetryStorage)
 
         let sseAuthenticator = apiFacade.sseAuthenticator
         let sseClient = DefaultSseClient(endpoint: endpointFactory.streamingEndpoint,
@@ -94,7 +97,8 @@ class SyncManagerBuilder {
         let pushManager = DefaultPushNotificationManager(
             userKey: userKey, sseAuthenticator: sseAuthenticator, sseClient: sseClient,
             broadcasterChannel: broadcasterChannel,
-            timersManager: DefaultTimersManager())
+            timersManager: DefaultTimersManager(),
+            telemetryProducer: storageContainer.telemetryStorage)
 
         let sseBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: config.pushRetryBackoffBase)
         let sseBackoffTimer = DefaultBackoffCounterTimer(reconnectBackoffCounter: sseBackoffCounter)

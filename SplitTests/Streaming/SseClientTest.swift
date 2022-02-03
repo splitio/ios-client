@@ -163,7 +163,7 @@ class SseClientTest: XCTestCase {
 
         request.notifyIncomingData(Data(":keepalive".utf8))
         wait(for: [conExp], timeout: 5)
-        request.complete(error: HttpError.unknown(message: "unknown error"))
+        request.complete(error: HttpError.unknown(code: -1, message: "unknown error"))
         wait(for: [errExp], timeout: 5)
 
         XCTAssertTrue(connected)

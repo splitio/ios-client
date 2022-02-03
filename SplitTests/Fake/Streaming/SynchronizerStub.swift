@@ -14,6 +14,7 @@ class SynchronizerStub: Synchronizer {
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
+    var loadAttributesFromCacheCalled = false
     var syncAllCalled = false
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
@@ -39,6 +40,8 @@ class SynchronizerStub: Synchronizer {
     var startPeriodicFetchingExp: XCTestExpectation?
     var stopPeriodicFetchingExp: XCTestExpectation?
 
+    var syncTelemetryConfig = false
+
     func loadAndSynchronizeSplits() {
         loadAndSynchronizeSplitsCalled = true
     }
@@ -47,8 +50,16 @@ class SynchronizerStub: Synchronizer {
         loadMySegmentsFromCacheCalled = true
     }
 
+    func loadAttributesFromCache() {
+        loadAttributesFromCacheCalled = true
+    }
+
     func syncAll() {
         syncAllCalled = true
+    }
+
+    func synchronizeTelemetryConfig() {
+        syncTelemetryConfig = true
     }
 
     func startPeriodicFetching() {

@@ -126,11 +126,11 @@ struct BackgroundSyncExecutor {
         self.apiKey = apiKey
         self.userKeys = userKeys
 
-        let dataFolderName = SplitFactoryHelper.databaseName(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
-        guard let splitDatabase = try? SplitFactoryHelper.openDatabase(dataFolderName: dataFolderName) else {
+        let dataFolderName = SplitDatabaseHelper.databaseName(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
+        guard let splitDatabase = try? SplitDatabaseHelper.openDatabase(dataFolderName: dataFolderName) else {
             throw GenericError.couldNotCreateCache
         }
-        let splitsStorage = SplitFactoryHelper.openPersistentSplitsStorage(database: splitDatabase)
+        let splitsStorage = SplitDatabaseHelper.openPersistentSplitsStorage(database: splitDatabase)
         let endpoints = serviceEndpoints ?? ServiceEndpoints.builder().build()
         let  endpointFactory = EndpointFactory(serviceEndpoints: endpoints,
                                                apiKey: apiKey,
@@ -141,10 +141,10 @@ struct BackgroundSyncExecutor {
                                            reachabilityChecker: ReachabilityWrapper())
 
         let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
-                                                    metricsManager: DefaultMetricsManager.shared)
+                                                    syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
         self.mySegmentsFetcher = DefaultHttpMySegmentsFetcher(restClient: restClient,
-                                                              metricsManager: DefaultMetricsManager.shared)
+                                                              syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
         let cacheExpiration = Int64(ServiceConstants.cacheExpirationInSeconds)
         self.splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitsFetcher,
@@ -152,15 +152,19 @@ struct BackgroundSyncExecutor {
                                                            splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                            cacheExpiration: cacheExpiration)
 
-        let impressionsRecorder = DefaultHttpImpressionsRecorder(restClient: restClient)
-        let eventsRecorder = DefaultHttpEventsRecorder(restClient: restClient)
+        let impressionsRecorder
+            = DefaultHttpImpressionsRecorder(restClient: restClient,
+                                             syncHelper: DefaultSyncHelper(telemetryProducer: nil))
+        let eventsRecorder
+            = DefaultHttpEventsRecorder(restClient: restClient,
+                                        syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
         self.eventsRecorderWorker =
-            EventsRecorderWorker(eventsStorage: SplitFactoryHelper.openEventsStorage(database: splitDatabase),
+            EventsRecorderWorker(eventsStorage: SplitDatabaseHelper.openEventsStorage(database: splitDatabase),
                                                          eventsRecorder: eventsRecorder,
                                                          eventsPerPush: ServiceConstants.eventsPerPush)
         self.impressionsRecorderWorker = ImpressionsRecorderWorker(
-            impressionsStorage: SplitFactoryHelper.openImpressionsStorage(database: splitDatabase),
+            impressionsStorage: SplitDatabaseHelper.openImpressionsStorage(database: splitDatabase),
             impressionsRecorder: impressionsRecorder,
             impressionsPerPush: ServiceConstants.impressionsQueueSize)
 
@@ -181,7 +185,7 @@ struct BackgroundSyncExecutor {
                 }
 
                 let mySegmentsStorage =
-                    SplitFactoryHelper.openPersistentMySegmentsStorage(database: self.splitDatabase,
+                    SplitDatabaseHelper.openPersistentMySegmentsStorage(database: self.splitDatabase,
                                                                        userKey: userKey)
 
                 let mySegmentsSyncWorker = BackgroundMySegmentsSyncWorker(

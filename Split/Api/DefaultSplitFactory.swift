@@ -35,97 +35,66 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return Version.sdk
     }
 
-    init(apiKey: String,
-         key: Key,
-         config: SplitClientConfig,
-         httpClient: HttpClient?,
-         reachabilityChecker: HostReachabilityChecker?,
-         testDatabase: SplitDatabase? = nil,
-         notificationHelper: NotificationHelper? = nil) throws {
+    init(_ params: SplitFactoryParams) throws {
         super.init()
 
-        let eventsManager = DefaultSplitEventsManager(config: config)
-        HttpSessionConfig.default.connectionTimeOut = TimeInterval(config.connectionTimeout)
-        MetricManagerConfig.default.pushRateInSeconds = config.metricsPushRate
+        let components = SplitComponentFactory(splitClientConfig: params.config,
+                                               apiKey: params.apiKey,
+                                               userKey: params.key.matchingKey)
 
-        config.apiKey = apiKey
-        let databaseName = SplitFactoryHelper.databaseName(apiKey: apiKey) ?? config.defaultDataFolder
-        SplitFactoryHelper.renameDatabaseFromLegacyName(name: databaseName, apiKey: apiKey)
-        let storageContainer = try SplitFactoryHelper.buildStorageContainer(
-            userKey: key.matchingKey, databaseName: databaseName, testDatabase: testDatabase)
+        // Creating Events Manager first speeds up init process
+        let eventsManager = components.getSplitEventsManager()
 
-        LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: key.matchingKey)
+        //
+        let databaseName = SplitDatabaseHelper.databaseName(apiKey: params.apiKey) ?? params.config.defaultDataFolder
+        SplitDatabaseHelper.renameDatabaseFromLegacyName(name: databaseName, apiKey: params.apiKey)
 
-        let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)
-        defaultManager = manager
+        let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
+                                                                    telemetryStorage: params.telemetryStorage,
+                                                                    testDatabase: params.testDatabase)
 
-        let splitsFilterQueryString = try filterBuilder.add(filters: config.sync.filters).build()
-        let  endpointFactory = EndpointFactory(serviceEndpoints: config.serviceEndpoints,
-                                               apiKey: apiKey,
-                                               splitsQueryString: splitsFilterQueryString)
+        LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: params.key.matchingKey)
 
-        let restClient = DefaultRestClient(httpClient: httpClient ?? DefaultHttpClient.shared,
-                                           endpointFactory: endpointFactory,
-                                           reachabilityChecker: reachabilityChecker ?? ReachabilityWrapper())
+        defaultManager = try components.getSplitManager()
+        _ = try components.buildRestClient(
+            httpClient: params.httpClient ?? DefaultHttpClient.shared,
+            reachabilityChecker: params.reachabilityChecker ?? ReachabilityWrapper())
 
-        /// TODO: Remove this line when metrics refactor
-        DefaultMetricsManager.shared.restClient = restClient
+        let splitApiFacade = try components.buildSplitApiFacade(testHttpClient: params.httpClient)
 
-        let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(key.matchingKey)
-            .setSplitConfig(config).setRestClient(restClient).setEventsManager(eventsManager)
-            .setStorageContainer(storageContainer).setSplitsQueryString(splitsFilterQueryString)
+        let synchronizer = try components.buildSynchronizer()
+        let syncManager = try components.buildSyncManager(notificationHelper: params.notificationHelper)
 
-        if let httpClient = httpClient {
-            _ = apiFacadeBuilder.setStreamingHttpClient(httpClient)
-        }
+        setupBgSync(config: params.config, apiKey: params.apiKey, userKey: params.key.matchingKey)
 
-        let apiFacade = apiFacadeBuilder.build()
-
-        let impressionsFlushChecker = DefaultRecorderFlushChecker(maxQueueSize: config.impressionsQueueSize,
-                                                                  maxQueueSizeInBytes: config.impressionsQueueSize)
-
-        let impressionsSyncHelper = ImpressionsRecorderSyncHelper(
-            impressionsStorage: storageContainer.impressionsStorage, accumulator: impressionsFlushChecker)
-
-        let eventsFlushChecker
-            = DefaultRecorderFlushChecker(maxQueueSize: Int(config.eventsQueueSize),
-                                          maxQueueSizeInBytes: config.maxEventsQueueMemorySizeInBytes)
-        let eventsSyncHelper = EventsRecorderSyncHelper(eventsStorage: storageContainer.eventsStorage,
-                                                        accumulator: eventsFlushChecker)
-
-        let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: key.matchingKey,
-                                                         splitConfig: config,
-                                                         splitsFilterQueryString: splitsFilterQueryString,
-                                                         apiFacade: apiFacade,
-                                                         storageContainer: storageContainer,
-                                                         splitChangeProcessor: DefaultSplitChangeProcessor(),
-                                                         eventsManager: eventsManager)
-
-        let synchronizer = DefaultSynchronizer(splitConfig: config, splitApiFacade: apiFacade,
-                                               splitStorageContainer: storageContainer,
-                                               syncWorkerFactory: syncWorkerFactory,
-                                               impressionsSyncHelper: impressionsSyncHelper,
-                                               eventsSyncHelper: eventsSyncHelper,
-                                               splitsFilterQueryString: splitsFilterQueryString,
-                                               splitEventsManager: eventsManager)
-
-        let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
-            .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
-            .setNotificationHelper(notificationHelper ?? DefaultNotificationHelper.instance)
-            .setSplitConfig(config).build()
-
-        setupBgSync(config: config, apiKey: apiKey, userKey: key.matchingKey)
-
-        defaultClient = DefaultSplitClient(config: config, key: key, apiFacade: apiFacade,
+        defaultClient = DefaultSplitClient(config: params.config, key: params.key, apiFacade: splitApiFacade,
                                            storageContainer: storageContainer,
-                                           synchronizer: synchronizer, eventsManager: eventsManager) {
+                                           synchronizer: synchronizer, eventsManager: eventsManager) { [weak self] in
             syncManager.stop()
-            manager.destroy()
+            if let self = self, let manager = self.defaultManager as? Destroyable {
+                manager.destroy()
+            }
             eventsManager.stop()
             storageContainer.mySegmentsStorage.destroy()
             storageContainer.splitsStorage.destroy()
         }
+
+        (defaultClient as? TelemetrySplitClient)?.initStopwatch = params.initStopwatch
         eventsManager.start()
+
+        defaultClient?.on(event: .sdkReadyFromCache) {
+            DispatchQueue.global().async {
+                params.telemetryStorage?.recordTimeUntilReadyFromCache(params.initStopwatch.interval())
+            }
+        }
+
+        defaultClient?.on(event: .sdkReady) {
+            DispatchQueue.global().async {
+                params.telemetryStorage?.recordTimeUntilReady(params.initStopwatch.interval())
+                synchronizer.synchronizeTelemetryConfig()
+            }
+        }
+
         eventsManager.executorResources.client = defaultClient
         syncManager.start()
     }

@@ -39,7 +39,7 @@ class HttpClientMock: HttpClient {
                      headers: [String: String]?, body: Data?) throws -> HttpDataRequest {
 
         if throwOnSend {
-            throw HttpError.unknown(message: "throw on send mock exception")
+            throw HttpError.unknown(code: -1, message: "throw on send mock exception")
         }
         return httpDataRequest
     }
@@ -52,7 +52,7 @@ class HttpClientMock: HttpClient {
             }
         }
         if throwOnSend {
-            throw HttpError.unknown(message: "throw on send mock exception")
+            throw HttpError.unknown(code: -1, message: "throw on send mock exception")
         }
         return httpStreamRequest
     }
