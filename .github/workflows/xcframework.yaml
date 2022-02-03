@@ -16,7 +16,7 @@ jobs:
         xcode-version: 13.0
         
     - name: Computing release version
-      run: ref=${{ github.ref }}; echo "version=$(echo ${ref#refs/heads/test_xcframework_})" >> $GITHUB_ENV
+      run: ref=${{ github.ref }}; echo "version=$(echo ${ref#refs/heads/release_})" >> $GITHUB_ENV
       
     - name: Computing branch name
       run: ref=${{ github.ref }}; echo "branch_name=$(echo ${ref#refs/heads/})" >> $GITHUB_ENV
