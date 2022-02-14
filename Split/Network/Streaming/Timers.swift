@@ -75,17 +75,18 @@ class DefaultTimer: DelayTimer {
     func delay(seconds: Int64) -> Bool {
         let semaphore = DispatchSemaphore(value: 0)
         queue.sync {
-            timer?.cancel()
+            isCancelled = false
             let limit = Date().unixTimestamp() + seconds
             timer = DispatchSource.makeTimerSource(flags: .strict, queue: DispatchQueue.global())
-            timer?.schedule(deadline: .now(), repeating: kSseConnDelayCheckTime)
-            timer?.resume()
             timer?.setEventHandler { [weak self] in
                 guard let self = self else { return }
                 if self.isCancelled || Date().unixTimestamp() >=  limit {
+                    self.timer?.cancel()
                     semaphore.signal()
                 }
             }
+            timer?.schedule(deadline: .now(), repeating: kSseConnDelayCheckTime)
+            timer?.resume()
         }
         semaphore.wait()
         return !isCancelled
