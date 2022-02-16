@@ -53,7 +53,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         processQueue.async {
-            print("Added \(event)")
             self.eventsQueue.add(event)
         }
     }
