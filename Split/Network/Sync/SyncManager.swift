@@ -20,13 +20,13 @@ class DefaultSyncManager: SyncManager {
     private let splitConfig: SplitClientConfig
     private let synchronizer: Synchronizer
     private let broadcasterChannel: PushManagerEventBroadcaster
-    private let pushNotificationManager: PushNotificationManager
-    private let reconnectStreamingTimer: BackoffCounterTimer
+    private let pushNotificationManager: PushNotificationManager?
+    private let reconnectStreamingTimer: BackoffCounterTimer?
     private var isPollingEnabled: Atomic<Bool> = Atomic(false)
     private var isPaused: Atomic<Bool> = Atomic(false)
 
-    init(splitConfig: SplitClientConfig, pushNotificationManager: PushNotificationManager,
-         reconnectStreamingTimer: BackoffCounterTimer, notificationHelper: NotificationHelper,
+    init(splitConfig: SplitClientConfig, pushNotificationManager: PushNotificationManager?,
+         reconnectStreamingTimer: BackoffCounterTimer?, notificationHelper: NotificationHelper,
          synchronizer: Synchronizer, broadcasterChannel: PushManagerEventBroadcaster) {
         self.splitConfig = splitConfig
         self.pushNotificationManager = pushNotificationManager
@@ -53,11 +53,13 @@ class DefaultSyncManager: SyncManager {
         synchronizer.loadAttributesFromCache()
         synchronizer.synchronizeMySegments()
         isPollingEnabled.set(!splitConfig.streamingEnabled)
-        if splitConfig.streamingEnabled {
+        if splitConfig.streamingEnabled,
+           pushNotificationManager != nil,
+           reconnectStreamingTimer != nil {
             broadcasterChannel.register { event in
                 self.handle(pushEvent: event)
             }
-            pushNotificationManager.start()
+            pushNotificationManager?.start()
         } else {
             synchronizer.startPeriodicFetching()
         }
@@ -66,19 +68,19 @@ class DefaultSyncManager: SyncManager {
 
     func pause() {
         isPaused.set(true)
-        pushNotificationManager.pause()
+        pushNotificationManager?.pause()
         synchronizer.pause()
     }
 
     func resume() {
         isPaused.set(false)
         synchronizer.resume()
-        pushNotificationManager.resume()
+        pushNotificationManager?.resume()
     }
 
     func stop() {
-        reconnectStreamingTimer.cancel()
-        pushNotificationManager.stop()
+        reconnectStreamingTimer?.cancel()
+        pushNotificationManager?.stop()
         synchronizer.destroy()
     }
 
@@ -90,7 +92,7 @@ class DefaultSyncManager: SyncManager {
         switch pushEvent {
         case .pushSubsystemUp:
             Logger.d("Push Subsystem Up event message received.")
-            reconnectStreamingTimer.cancel()
+            reconnectStreamingTimer?.cancel()
             synchronizer.syncAll()
             synchronizer.stopPeriodicFetching()
             isPollingEnabled.set(false)
@@ -98,7 +100,7 @@ class DefaultSyncManager: SyncManager {
 
         case .pushSubsystemDown:
             Logger.d("Push Subsystem Down event message received.")
-            reconnectStreamingTimer.cancel()
+            reconnectStreamingTimer?.cancel()
             enablePolling()
 
         case .pushSubsystemDisabled:
@@ -116,7 +118,7 @@ class DefaultSyncManager: SyncManager {
 
         case .pushReset:
             Logger.d("Push Subsystem reset received.")
-            pushNotificationManager.disconnect()
+            pushNotificationManager?.disconnect()
             if !isPaused.value {
                 scheduleStreamingReconnection()
             }
@@ -124,15 +126,15 @@ class DefaultSyncManager: SyncManager {
     }
 
     private func scheduleStreamingReconnection() {
-        reconnectStreamingTimer.schedule {
-            self.pushNotificationManager.start()
+        reconnectStreamingTimer?.schedule {
+            self.pushNotificationManager?.start()
         }
     }
 
     private func stopStreaming() {
-        reconnectStreamingTimer.cancel()
+        reconnectStreamingTimer?.cancel()
         enablePolling()
-        pushNotificationManager.stop()
+        pushNotificationManager?.stop()
     }
 
     private func enablePolling() {

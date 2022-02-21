@@ -454,6 +454,7 @@
 		957E676625E7F8D7006F5B19 /* ReadyFromCacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E676525E7F8D7006F5B19 /* ReadyFromCacheTest.swift */; };
 		957E67AC25F66123006F5B19 /* SplitsSyncHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E67AB25F66123006F5B19 /* SplitsSyncHelper.swift */; };
 		957E67B025F6B3E1006F5B19 /* BackgroundSyncWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */; };
+		957F8CF327BD3A41001FF7C2 /* StreamingNoReconectWhenPollingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957F8CF227BD3A41001FF7C2 /* StreamingNoReconectWhenPollingTest.swift */; };
 		9580C98226FB8A840021D729 /* StreamingControlResetTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9580C98126FB8A840021D729 /* StreamingControlResetTest.swift */; };
 		9580C98826FCA6400021D729 /* StreamingDelayTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9580C98726FCA6400021D729 /* StreamingDelayTest.swift */; };
 		95816FC12739CDA0004228A3 /* AttributesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95816FC02739CDA0004228A3 /* AttributesStorage.swift */; };
@@ -1022,6 +1023,7 @@
 		957E676525E7F8D7006F5B19 /* ReadyFromCacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyFromCacheTest.swift; sourceTree = "<group>"; };
 		957E67AB25F66123006F5B19 /* SplitsSyncHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsSyncHelper.swift; sourceTree = "<group>"; };
 		957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundSyncWorker.swift; sourceTree = "<group>"; };
+		957F8CF227BD3A41001FF7C2 /* StreamingNoReconectWhenPollingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingNoReconectWhenPollingTest.swift; sourceTree = "<group>"; };
 		9580C98126FB8A840021D729 /* StreamingControlResetTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingControlResetTest.swift; sourceTree = "<group>"; };
 		9580C98726FCA6400021D729 /* StreamingDelayTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingDelayTest.swift; sourceTree = "<group>"; };
 		95816FC02739CDA0004228A3 /* AttributesStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesStorage.swift; sourceTree = "<group>"; };
@@ -1779,6 +1781,7 @@
 			isa = PBXGroup;
 			children = (
 				5921ED3025378ECD000D6C8B /* StreamingInitTest.swift */,
+				957F8CF227BD3A41001FF7C2 /* StreamingNoReconectWhenPollingTest.swift */,
 				5921ED352537B277000D6C8B /* StreamingDisabledTest.swift */,
 				5921ED392538C57D000D6C8B /* StreamingConnFail5xxTest.swift */,
 				5921ED3B2538D2DA000D6C8B /* StreamingAuthFail5xxTest.swift */,
@@ -2889,6 +2892,7 @@
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
 				95F3F0282590D81B00084AF8 /* ImpressionsRecorderWorkerTests.swift in Sources */,
 				9577A8472683B8C800D92AE1 /* HttpImpressionsCountRecorderTests.swift in Sources */,
+				957F8CF327BD3A41001FF7C2 /* StreamingNoReconectWhenPollingTest.swift in Sources */,
 				954F9C7025795CD300140B81 /* SplitsStorageStub.swift in Sources */,
 				594F5F532539E36400A945B4 /* StreamingMySegmentsSyncTest.swift in Sources */,
 				95B2498026F39C9B00B34507 /* MySegmentUpdateV2Test.swift in Sources */,
