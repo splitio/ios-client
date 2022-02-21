@@ -42,3 +42,10 @@ extension Date {
         return Int64(millis - (millis % kTimeIntervalMs))
     }
 }
+
+extension Date {
+    static func now() -> Int64 {
+        return Date().unixTimestamp()
+    }
+}
+

@@ -41,7 +41,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
 
-    var delayTimer: DelayTimer
+    var delayTimer: DispatchWorkItem?
 
     private let telemetryProducer: TelemetryRuntimeProducer?
 
@@ -54,7 +54,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
         self.broadcasterChannel = broadcasterChannel
         self.telemetryProducer = telemetryProducer
         self.timersManager = timersManager
-        self.delayTimer = DefaultTimer()
         self.timersManager.triggerHandler = timerHandler()
     }
 
@@ -66,7 +65,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func pause() {
         Logger.d("Push notification manager paused")
         isPaused.set(true)
-        delayTimer.cancel()
+        delayTimer?.cancel()
         isConnecting.set(false)
         sseClient.disconnect()
     }
@@ -80,7 +79,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func stop() {
         Logger.d("Push notification manager stopped")
         isStopped.set(true)
-        delayTimer.cancel()
+        delayTimer?.cancel()
         disconnect()
     }
 
@@ -98,11 +97,11 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
         connectionQueue.async {
             self.isConnecting.set(true)
-            self.connectToSse()
+            self.authenticateAndConnect()
         }
     }
 
-    private func connectToSse() {
+    private func authenticateAndConnect() {
 
         let result = sseAuthenticator.authenticate(userKey: userKey)
         telemetryProducer?.recordLastSync(resource: .token, time: Date().unixTimestampInMiliseconds())
@@ -148,18 +147,27 @@ class DefaultPushNotificationManager: PushNotificationManager {
         Logger.d("Streaming authentication success")
 
         let connectionDelay = result.sseConnectionDelay
-
-        if connectionDelay > 0 && !delayTimer.delay(seconds: connectionDelay) {
-            isConnecting.set(false)
-            return
+        if connectionDelay > 0 {
+            self.delayTimer = DispatchWorkItem { [weak self] in
+                guard let self = self else { return }
+                self.connectSse(jwt: jwt)
+            }
+            if let delayTimer = self.delayTimer {
+                connectionQueue.asyncAfter(deadline: DispatchTime.now() + Double(connectionDelay), execute: delayTimer)
+            }
+        } else {
+            connectSse(jwt: jwt)
         }
+    }
+
+    private func connectSse(jwt: JwtToken) {
+        Logger.d("Streaming connect")
 
         if isPaused.value || isStopped.value {
             isConnecting.set(false)
             return
         }
 
-        Logger.d("Streaming connect")
         sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { success in
             if success {
                 self.handleSubsystemUp()
