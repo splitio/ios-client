@@ -1,16 +1,18 @@
+#!/bin/zsh
+
 # release version
 VERSION=$1
 # rc (0) or stable (1)
 RELEASE_TYPE=$2
 # set framework / artifact name
 FRAMEWORK_NAME=$3
-PROJECT_DIR=.
+PROJECT_DIR=..
 PROJECT_NAME=Split
 SCHEMA_NAME=Splitlib
 # set framework folder name
 FRAMEWORK_FOLDER_NAME="${PROJECT_NAME}_XCFramework"
 #xcframework path
-XCFRAMEWORK_NAME="${FRAMEWORK_NAME}.xcframework"
+XCFRAMEWORK_NAME="${PROJECT_NAME}.xcframework"
 FRAMEWORK_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${XCFRAMEWORK_NAME}"
 ZIP_NAME=$(echo "$PROJECT_NAME" | tr '[A-Z]' '[a-z]')"-ios-${VERSION}.zip"
 ZIP_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${ZIP_NAME}"
@@ -38,7 +40,7 @@ echo "Creating XCFramework from ${SIMULATOR_ARCHIVE_PATH} and ${IOS_DEVICE_ARCHI
 xcodebuild -create-xcframework -library .${SIMULATOR_ARCHIVE_PATH}/Build/Products/Release-iphonesimulator/lib${SCHEMA_NAME}.a -library .${IOS_DEVICE_ARCHIVE_PATH}/Build/Products/Release-iphoneos/lib${SCHEMA_NAME}.a -output "${FRAMEWORK_PATH}"
 
 echo "Generating zip file from xcframework ${ZIP_PATH} from ${XCFRAMEWORK_NAME}"
-cd Split_XCFramework/
+cd "${PROJECT_DIR}/Split_XCFramework/"
 zip -r ${ZIP_NAME} ${XCFRAMEWORK_NAME}
 cd ..
 
