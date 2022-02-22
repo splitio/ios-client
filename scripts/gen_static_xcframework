@@ -31,14 +31,15 @@ rm -rf ${OUTPUT_FOLDER}
 echo "Deleted ${FRAMEWORK_FOLDER_NAME}"
 
 mkdir "${FRAMEWORK_FOLDER_NAME}"
-echo "Created ${FRAMEWORK_FOLDER_NAME}"
+echo "Created ${FRAMEWORK_FOLDER_NAME}"t
+
 echo "Archiving ${FRAMEWORK_NAME} as ${SIMULATOR_ARCHIVE_PATH}"
-xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS Simulator" -derivedDataPath ".${SIMULATOR_ARCHIVE_PATH}" -sdk iphonesimulator -configuration release SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS Simulator" -derivedDataPath "${SIMULATOR_ARCHIVE_PATH}" -sdk iphonesimulator -configuration release SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
 echo "Archiving ${FRAMEWORK_NAME} as ${IOS_DEVICE_ARCHIVE_PATH}"
-xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS"  -derivedDataPath ".${IOS_DEVICE_ARCHIVE_PATH}" -sdk iphoneos -configuration release SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS"  -derivedDataPath "${IOS_DEVICE_ARCHIVE_PATH}" -sdk iphoneos -configuration release SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
 #Creating XCFramework
 echo "Creating XCFramework from ${SIMULATOR_ARCHIVE_PATH} and ${IOS_DEVICE_ARCHIVE_PATH} into ${FRAMEWORK_PATH}"
-xcodebuild -create-xcframework -library .${SIMULATOR_ARCHIVE_PATH}/Build/Products/Release-iphonesimulator/lib${SCHEMA_NAME}.a -library .${IOS_DEVICE_ARCHIVE_PATH}/Build/Products/Release-iphoneos/lib${SCHEMA_NAME}.a -output "${FRAMEWORK_PATH}"
+xcodebuild -create-xcframework -library ${SIMULATOR_ARCHIVE_PATH}/Build/Products/Release-iphonesimulator/lib${SCHEMA_NAME}.a -library ${IOS_DEVICE_ARCHIVE_PATH}/Build/Products/Release-iphoneos/lib${SCHEMA_NAME}.a -output "${FRAMEWORK_PATH}"
 
 echo "Generating zip file from xcframework ${ZIP_PATH} from ${FRAMEWORK_PATH}"
 zip -r ${ZIP_PATH} ${FRAMEWORK_PATH}
