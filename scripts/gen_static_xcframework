@@ -10,7 +10,7 @@ PROJECT_DIR=$(pwd)
 PROJECT_NAME=Split
 SCHEMA_NAME=Splitlib
 # set framework folder name
-FRAMEWORK_FOLDER_NAME="${PROJECT_NAME}XCFramework"
+FRAMEWORK_FOLDER_NAME="${PROJECT_NAME}XcFramework"
 #xcframework path
 XCFRAMEWORK_NAME="${PROJECT_NAME}.xcframework"
 FRAMEWORK_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${XCFRAMEWORK_NAME}"
@@ -41,10 +41,13 @@ xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS"  -derivedDataPath "${
 echo "Creating XCFramework from ${SIMULATOR_ARCHIVE_PATH} and ${IOS_DEVICE_ARCHIVE_PATH} into ${FRAMEWORK_PATH}"
 xcodebuild -create-xcframework -library ${SIMULATOR_ARCHIVE_PATH}/Build/Products/Release-iphonesimulator/lib${SCHEMA_NAME}.a -library ${IOS_DEVICE_ARCHIVE_PATH}/Build/Products/Release-iphoneos/lib${SCHEMA_NAME}.a -output "${FRAMEWORK_PATH}"
 
+echo "Removing intermediate folders"
+rm -rf ${SIMULATOR_ARCHIVE_PATH}
+rm -rf ${IOS_DEVICE_ARCHIVE_PATH}
+
 echo "Generating zip file from xcframework ${ZIP_PATH} from ${FRAMEWORK_PATH}"
-cd ${FRAMEWORK_FOLDER_PATH}
-pwd
-zip -r ${ZIP_NAME} ${XCFRAMEWORK_NAME}
+cd ${PROJECT_DIR}
+zip -r ${FRAMEWORK_FOLDER_PATH}/${ZIP_NAME} ${FRAMEWORK_FOLDER_NAME}
 cd ${PROJECT_DIR}/scripts
 
 echo "Computing package checksum"
