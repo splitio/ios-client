@@ -12,7 +12,8 @@ SCHEMA_NAME=Splitlib
 # set framework folder name
 FRAMEWORK_FOLDER_NAME="${PROJECT_NAME}XcFramework"
 #xcframework path
-XCFRAMEWORK_NAME="${PROJECT_NAME}.xcframework"
+# XCFRAMEWORK_NAME="${PROJECT_NAME}.xcframework"
+XCFRAMEWORK_NAME="${FRAMEWORK_FOLDER_NAME}.xcframework"
 FRAMEWORK_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${XCFRAMEWORK_NAME}"
 FRAMEWORK_FOLDER_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}"
 ZIP_NAME=$(echo "$PROJECT_NAME" | tr '[A-Z]' '[a-z]')"-ios-${VERSION}.zip"
@@ -46,8 +47,8 @@ rm -rf ${SIMULATOR_ARCHIVE_PATH}
 rm -rf ${IOS_DEVICE_ARCHIVE_PATH}
 
 echo "Generating zip file from xcframework ${ZIP_PATH} from ${FRAMEWORK_PATH}"
-cd ${PROJECT_DIR}
-zip -r ${FRAMEWORK_FOLDER_PATH}/${ZIP_NAME} ${FRAMEWORK_FOLDER_NAME}
+cd ${FRAMEWORK_FOLDER_PATH}
+zip -r ${ZIP_NAME} ${XCFRAMEWORK_NAME}
 cd ${PROJECT_DIR}/scripts
 
 echo "Computing package checksum"
