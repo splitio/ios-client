@@ -47,13 +47,13 @@ jobs:
     - uses: chrislennon/action-aws-cli@v1.1    
 
     - if: ${{ env.release_type == 0 }}
-      run: aws s3 cp ./Split_XCFramework/${{ env.zip_name }} s3://aws-development-split-public/mobile/ios-xcframework/${{ env.zip_name }} --acl public-read
+      run: aws s3 cp ./SplitXCFramework/${{ env.zip_name }} s3://aws-development-split-public/mobile/ios-xcframework/${{ env.zip_name }} --acl public-read
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_ASSETS_STAGE_USER }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_STAGE_KEY }}
   
     - if: ${{ env.release_type == 1 }}
-      run: aws s3 cp ./Split_XCFramework/${{ env.zip_name }} s3://split-public/sdk/${{ env.zip_name }} --acl public-read 
+      run: aws s3 cp ./SplitXCFramework/${{ env.zip_name }} s3://split-public/sdk/${{ env.zip_name }} --acl public-read 
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_ASSETS_PROD_USER }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_PROD_KEY }}
