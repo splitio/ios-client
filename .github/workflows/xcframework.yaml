@@ -48,9 +48,6 @@ jobs:
 
     - if: ${{ env.release_type == 0 }}
       run: aws s3 cp ./Split_XCFramework/${{ env.zip_name }} s3://aws-development-split-public/mobile/ios-xcframework/${{ env.zip_name }} --acl public-read
-#       run: |
-#         echo "type release stable: ${{ env.release_type }}"
-#       run: aws s3 cp ./Split_XCFramework/Split.xcframework s3://aws-development-split-public/mobile/ios-xcframework
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_ASSETS_STAGE_USER }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_STAGE_KEY }}
