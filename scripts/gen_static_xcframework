@@ -61,4 +61,4 @@ echo "Update swift package"
 sed "s,SPLIT-XCFRAMEWORK-URL,${FINAL_URL}," "${PROJECT_DIR}/Package.swift.template" > "${PROJECT_DIR}/Package.swift.tmp"
 sed "s,SPLIT-XCFRAMEWORK-CHECKSUM,${PACKAGE_CHECKSUM}," "${PROJECT_DIR}/Package.swift.tmp" > "${PROJECT_DIR}/Package.swift"
 rm "${PROJECT_DIR}/Package.swift.tmp"
-rm -rf ${FRAMEWORK_FOLDER_PATH}
+rm -rf ${FRAMEWORK_PATH}
