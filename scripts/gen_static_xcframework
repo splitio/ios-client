@@ -42,7 +42,8 @@ echo "Creating XCFramework from ${SIMULATOR_ARCHIVE_PATH} and ${IOS_DEVICE_ARCHI
 xcodebuild -create-xcframework -library ${SIMULATOR_ARCHIVE_PATH}/Build/Products/Release-iphonesimulator/lib${SCHEMA_NAME}.a -library ${IOS_DEVICE_ARCHIVE_PATH}/Build/Products/Release-iphoneos/lib${SCHEMA_NAME}.a -output "${FRAMEWORK_PATH}"
 
 echo "Generating zip file from xcframework ${ZIP_PATH} from ${FRAMEWORK_PATH}"
-cd ${FRAMEWORK_PATH}
+cd ${FRAMEWORK_FOLDER_PATH}
+pwd
 zip -r ${ZIP_NAME} ${XCFRAMEWORK_NAME}
 cd ${PROJECT_DIR}/scripts
 
@@ -60,4 +61,4 @@ echo "Update swift package"
 sed "s,SPLIT-XCFRAMEWORK-URL,${FINAL_URL}," "${PROJECT_DIR}/Package.swift.template" > "${PROJECT_DIR}/Package.swift.tmp"
 sed "s,SPLIT-XCFRAMEWORK-CHECKSUM,${PACKAGE_CHECKSUM}," "${PROJECT_DIR}/Package.swift.tmp" > "${PROJECT_DIR}/Package.swift"
 rm "${PROJECT_DIR}/Package.swift.tmp"
-rm -rf ${FRAMEWORK_PATH}
+rm -rf ${FRAMEWORK_FOLDER_PATH}
