@@ -22,13 +22,14 @@ let package = Package(
                 "Common/Utils/JFBCrypt/",
                 "Common/Yaml/LICENSE",
                 "Info.plist",
-                "Split.h"
+                "Split.h",
+                "Common/Utils/framework/HashHelper.swift"
             ]
         ),
         .binaryTarget(
             name: "SplitXcFramework",
-            url: "https://aws-development-split-public.s3.amazonaws.com/mobile/ios-xcframework/split-ios-2.13.1-rc3.zip",
-            checksum: "18bfa89c2cac38e19cbd784c411294a31c918328976e08afca44834c640ca61a"
+            url: "https://aws-development-split-public.s3.amazonaws.com/mobile/ios-xcframework/split-ios-2.13.1-rc4.zip",
+            checksum: "bf4024941c2b044df4429c368a2f1a0b902ed46cd68a98d119c05d4666f37fee"
         ),
         .target(
             name: "JFBCrypt",

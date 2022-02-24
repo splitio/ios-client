@@ -733,6 +733,8 @@
 		9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595911026DFFF87009E7944 /* CompressionUtil.swift */; };
 		9595C1A2274573DA0092123F /* AttributesEvaluationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */; };
 		9595C1A8274574220092123F /* attributes_test_split.json in Resources */ = {isa = PBXBuildFile; fileRef = 9595C1A7274574220092123F /* attributes_test_split.json */; };
+		9599083427C742260014B2B5 /* HashHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599083327C742260014B2B5 /* HashHelper.swift */; };
+		9599083627C742F10014B2B5 /* HashHelperLib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599083527C742F10014B2B5 /* HashHelperLib.swift */; };
 		95B17FF1275A52D7002DC9DF /* TelemetryInMemoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B17FF0275A52D7002DC9DF /* TelemetryInMemoryStorage.swift */; };
 		95B17FF5275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B17FF4275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift */; };
 		95B17FF9275FCD0A002DC9DF /* TelemetryConfigRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B17FF8275FCD0A002DC9DF /* TelemetryConfigRecorder.swift */; };
@@ -1318,6 +1320,8 @@
 		9595911026DFFF87009E7944 /* CompressionUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionUtil.swift; sourceTree = "<group>"; };
 		9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesEvaluationTest.swift; sourceTree = "<group>"; };
 		9595C1A7274574220092123F /* attributes_test_split.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = attributes_test_split.json; sourceTree = "<group>"; };
+		9599083327C742260014B2B5 /* HashHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashHelper.swift; sourceTree = "<group>"; };
+		9599083527C742F10014B2B5 /* HashHelperLib.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HashHelperLib.swift; path = Split/Common/Utils/Lib/HashHelperLib.swift; sourceTree = SOURCE_ROOT; };
 		95B17FF0275A52D7002DC9DF /* TelemetryInMemoryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryInMemoryStorage.swift; sourceTree = "<group>"; };
 		95B17FF4275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryTelemetryStorageTest.swift; sourceTree = "<group>"; };
 		95B17FF8275FCD0A002DC9DF /* TelemetryConfigRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelemetryConfigRecorder.swift; sourceTree = "<group>"; };
@@ -1855,6 +1859,8 @@
 		3B6DEF0220EA6AE30067435E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				9599083827C7437D0014B2B5 /* framework */,
+				9599083727C7436F0014B2B5 /* Lib */,
 				59BF3D2C22313E82004D134D /* JFBCrypt */,
 				954F9BB125759BBE00140B81 /* ThreadUtils.swift */,
 				3B6DEE7B20EA6ADF0067435E /* PeriodicTaskManager.swift */,
@@ -2524,6 +2530,22 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		9599083727C7436F0014B2B5 /* Lib */ = {
+			isa = PBXGroup;
+			children = (
+				9599083527C742F10014B2B5 /* HashHelperLib.swift */,
+			);
+			path = Lib;
+			sourceTree = "<group>";
+		};
+		9599083827C7437D0014B2B5 /* framework */ = {
+			isa = PBXGroup;
+			children = (
+				9599083327C742260014B2B5 /* HashHelper.swift */,
+			);
+			path = framework;
+			sourceTree = "<group>";
+		};
 		95B1802E2767DDC4002DC9DF /* Sync */ = {
 			isa = PBXGroup;
 			children = (
@@ -3033,6 +3055,7 @@
 				5959C488228C4B160064F968 /* Dictionary+DynamicCodable.swift in Sources */,
 				5912D1472194715500BC698C /* FileStorageProtocol.swift in Sources */,
 				3B6DEF6720EA6AE50067435E /* EqualToBooleanMatcher.swift in Sources */,
+				9599083427C742260014B2B5 /* HashHelper.swift in Sources */,
 				3B6DEF6920EA6AE50067435E /* EqualToSetMatcher.swift in Sources */,
 				31AA251394DE280C77882C76 /* HttpDataRequest.swift in Sources */,
 				957E67AC25F66123006F5B19 /* SplitsSyncHelper.swift in Sources */,
@@ -3373,6 +3396,7 @@
 				956E42D6271DCCE7008B4DB6 /* BetweenMatcherData.swift in Sources */,
 				956E42D7271DCCE7008B4DB6 /* SplitView.swift in Sources */,
 				956E42D8271DCCE7008B4DB6 /* Condition.swift in Sources */,
+				9599083627C742F10014B2B5 /* HashHelperLib.swift in Sources */,
 				956E42D9271DCCE7008B4DB6 /* SplitsStorage.swift in Sources */,
 				950D0C0B27C544CB00E617EB /* TelemetryStatsRecorder.swift in Sources */,
 				956E42DA271DCCE7008B4DB6 /* RetryableSyncWorker.swift in Sources */,
