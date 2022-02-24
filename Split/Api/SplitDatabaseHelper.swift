@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import JFBCrypt
 
 struct SplitDatabaseHelper {
     static private let kDbMagicCharsCount = 4
