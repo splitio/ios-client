@@ -14,6 +14,11 @@ jobs:
       uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: 13.0
+
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x' 
         
     - name: Computing release version
       run: ref=${{ github.ref }}; echo "version=$(echo ${ref#refs/heads/release_})" >> $GITHUB_ENV
