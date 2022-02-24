@@ -14,7 +14,11 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.ios.deployment_target = '9.0'
   s.frameworks = 'Foundation'
   s.swift_versions = ['4.0', '4.2', '5.0', '5.1', '5.2', '5.3']
+  # s.project_header_files = 'Split/Common/Utils/JFBCrypt/*.h'
+  s.public_header_files = 'Split/Common/Utils/JFBCrypt/*.h'
   s.source_files = 'Split/**/*.{swift}','Split/Common/Utils/JFBCrypt/*.{h,m}'
+  s.preserve_paths = 'Split/Common/Utils/JFBCrypt'
   s.resources = "Split/Storage/split_cache.xcdatamodeld"
-  s.pod_target_xcconfig = { 'HEADER_SEARCH_PATHS' => '$(PROJECT_DIR)/Split/Common/Utils/JFBCrypt', 'SWIFT_INCLUDE_PATHS' => '${PROJECT_DIR}/Split/Common/Utils/JFBCrypt'}
+  s.pod_target_xcconfig = { 'HEADER_SEARCH_PATHS' => '$(PROJECT_DIR)/Split/Common/Utils/JFBCrypt', 'SWIFT_INCLUDE_PATHS' => '${PROJECT_DIR}/Split/Common/Utils/JFBCrypt' }
+
 end
