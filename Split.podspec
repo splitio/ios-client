@@ -17,5 +17,6 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.resources = "Split/Storage/split_cache.xcdatamodeld"
   s.pod_target_xcconfig = { 'HEADER_SEARCH_PATHS' => '$(PROJECT_DIR)/Split/Common/Utils/JFBCrypt', 'SWIFT_INCLUDE_PATHS' => '${PROJECT_DIR}/Split/Common/Utils/JFBCrypt' }
   s.source_files = 'Split/**/*.{swift}','Split/Common/Utils/JFBCrypt/*.{h,m}'
+  s.exclude_files = 'Split/Common/Utils/Lib/*'
 
 end
