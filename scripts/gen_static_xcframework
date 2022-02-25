@@ -1,0 +1,68 @@
+#!/bin/zsh
+
+# release version
+VERSION=$1
+# rc (0) or stable (1)
+RELEASE_TYPE=$2
+# set framework / artifact name
+FRAMEWORK_NAME=$3
+PROJECT_DIR=$(pwd)
+PROJECT_NAME=Split
+SCHEMA_NAME=Splitlib
+# set framework folder name
+FRAMEWORK_FOLDER_NAME="${PROJECT_NAME}XcFramework"
+#xcframework path
+# XCFRAMEWORK_NAME="${PROJECT_NAME}.xcframework"
+XCFRAMEWORK_NAME="${FRAMEWORK_FOLDER_NAME}.xcframework"
+FRAMEWORK_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${XCFRAMEWORK_NAME}"
+FRAMEWORK_FOLDER_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}"
+ZIP_NAME=$(echo "$PROJECT_NAME" | tr '[A-Z]' '[a-z]')"-ios-${VERSION}.zip"
+ZIP_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/${ZIP_NAME}"
+
+# set path for iOS simulator archive 
+SIMULATOR_ARCHIVE_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/simulator"
+# set path for iOS device archive
+IOS_DEVICE_ARCHIVE_PATH="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}/device"
+OUTPUT_FOLDER="${PROJECT_DIR}/${FRAMEWORK_FOLDER_NAME}"
+
+DEV_URL_BASE=https://aws-development-split-public.s3.amazonaws.com/mobile/ios-xcframework
+PROD_URL_BASE=https://split-public.s3.amazonaws.com/sdk
+
+rm -rf ${OUTPUT_FOLDER}
+echo "Deleted ${FRAMEWORK_FOLDER_NAME}"
+
+mkdir "${FRAMEWORK_FOLDER_NAME}"
+echo "Created ${FRAMEWORK_FOLDER_NAME}"t
+
+echo "Archiving ${FRAMEWORK_NAME} as ${SIMULATOR_ARCHIVE_PATH}"
+xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS Simulator" -derivedDataPath "${SIMULATOR_ARCHIVE_PATH}" -sdk iphonesimulator -configuration release SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+echo "Archiving ${FRAMEWORK_NAME} as ${IOS_DEVICE_ARCHIVE_PATH}"
+xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS"  -derivedDataPath "${IOS_DEVICE_ARCHIVE_PATH}" -sdk iphoneos -configuration release SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+#Creating XCFramework
+echo "Creating XCFramework from ${SIMULATOR_ARCHIVE_PATH} and ${IOS_DEVICE_ARCHIVE_PATH} into ${FRAMEWORK_PATH}"
+xcodebuild -create-xcframework -library ${SIMULATOR_ARCHIVE_PATH}/Build/Products/Release-iphonesimulator/lib${SCHEMA_NAME}.a -library ${IOS_DEVICE_ARCHIVE_PATH}/Build/Products/Release-iphoneos/lib${SCHEMA_NAME}.a -output "${FRAMEWORK_PATH}"
+
+echo "Removing intermediate folders"
+rm -rf ${SIMULATOR_ARCHIVE_PATH}
+rm -rf ${IOS_DEVICE_ARCHIVE_PATH}
+
+echo "Generating zip file from xcframework ${ZIP_PATH} from ${FRAMEWORK_PATH}"
+cd ${FRAMEWORK_FOLDER_PATH}
+zip -r ${ZIP_NAME} ${XCFRAMEWORK_NAME}
+cd ${PROJECT_DIR}/scripts
+
+echo "Computing package checksum"
+PACKAGE_CHECKSUM=$(swift package compute-checksum ${ZIP_PATH})
+
+echo "Checking release type ${RELEASE_TYPE}"
+if [ $RELEASE_TYPE -eq 1 ]; then
+    FINAL_URL="${PROD_URL_BASE}/${ZIP_NAME}"
+else
+    FINAL_URL="${DEV_URL_BASE}/${ZIP_NAME}"
+fi
+
+echo "Update swift package"
+sed "s,SPLIT-XCFRAMEWORK-URL,${FINAL_URL}," "${PROJECT_DIR}/Package.swift.template" > "${PROJECT_DIR}/Package.swift.tmp"
+sed "s,SPLIT-XCFRAMEWORK-CHECKSUM,${PACKAGE_CHECKSUM}," "${PROJECT_DIR}/Package.swift.tmp" > "${PROJECT_DIR}/Package.swift"
+rm "${PROJECT_DIR}/Package.swift.tmp"
+rm -rf ${FRAMEWORK_PATH}
