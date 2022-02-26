@@ -1,0 +1,67 @@
+name: Build xcframework
+
+on:
+  push:
+    branches: 
+      - release_*
+
+jobs:
+  build:
+    runs-on: [macos-latest]
+
+    steps:
+    - name: Select Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: 13.0
+
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x' 
+        
+    - name: Computing release version
+      run: ref=${{ github.ref }}; echo "version=$(echo ${ref#refs/heads/release_})" >> $GITHUB_ENV
+      
+    - name: Computing branch name
+      run: ref=${{ github.ref }}; echo "branch_name=$(echo ${ref#refs/heads/})" >> $GITHUB_ENV
+
+    - name: Computing artifact name
+      run: echo "artifact_name=SplitXcFramework" >> $GITHUB_ENV
+
+    - name: Computing artifact name
+      run: echo "zip_name=split-ios-${{ env.version }}.zip" >> $GITHUB_ENV
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ env.branch_name }}
+
+    - name: Check tag type and add it to env
+      run: echo "release_type=$(./scripts/check_tag_type ${{ github.ref }})" >> $GITHUB_ENV; echo "release_type=$(./check_tag_type ${{ github.ref }})"
+
+    - name: Create xcframework for release
+      run: ./scripts/gen_static_xcframework ${{ env.version }} ${{ env.release_type }} ${{ env.artifact_name }}
+      
+    - name: Commit package file (url and checksum)
+      run: |
+        git add Package.swift
+        git commit -m "Added new release xcframework url and checksum"
+        git push origin ${{ env.branch_name }}
+
+    - name: ACTIONS_ALLOW_UNSECURE_COMMANDS
+      run: echo 'ACTIONS_ALLOW_UNSECURE_COMMANDS=true' >> $GITHUB_ENV
+
+    - uses: chrislennon/action-aws-cli@v1.1    
+
+    - if: ${{ env.release_type == 0 }}
+      run: aws s3 cp ./SplitXCFramework/${{ env.zip_name }} s3://aws-development-split-public/mobile/ios-xcframework/${{ env.zip_name }} --acl public-read
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_ASSETS_STAGE_USER }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_STAGE_KEY }}
+  
+    - if: ${{ env.release_type == 1 }}
+      run: aws s3 cp ./SplitXCFramework/${{ env.zip_name }} s3://split-public/sdk/${{ env.zip_name }} --acl public-read 
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_ASSETS_PROD_USER }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_PROD_KEY }}

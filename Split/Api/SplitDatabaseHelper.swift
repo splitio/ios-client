@@ -165,7 +165,7 @@ struct SplitDatabaseHelper {
             salt.append(contentsOf: String(repeating: kCharToFillSalt,
                                            count: (kSaltLength - kSaltPrefix.count) - sanitizedApiKey.count))
         }
-        if let hash = JFBCrypt.hashPassword(sanitizedApiKey, withSalt: salt) {
+        if let hash = HashHelper.hash(sanitizedApiKey, salt: salt) {
             return SplitDatabaseHelper.sanitizeForFolderName(hash)
         }
         return nil

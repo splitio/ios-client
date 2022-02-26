@@ -1,3 +1,7 @@
+2.13.1: (Feb 25, 2022)
+- Fixed issue when reconnecting when host app became active
+- Fixed and optimized component creation when streaming is disabled
+
 2.13.0: (Jan 24, 2022)
 - Updated SDK telemetry storage, metrics and updater to be more effective and send less often.
 
