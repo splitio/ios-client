@@ -43,9 +43,9 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
 
     private let synchronizer: Synchronizer
-    private let mySegmentsStorage: MySegmentsStorage
+    private let mySegmentsStorage: OneKeyMySegmentsStorage
     var changesChecker: MySegmentsChangesChecker
-    init(synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage) {
+    init(synchronizer: Synchronizer, mySegmentsStorage: OneKeyMySegmentsStorage) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
         self.changesChecker = DefaultMySegmentsChangesChecker()
@@ -78,13 +78,13 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
 class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
 
     private let synchronizer: Synchronizer
-    private let mySegmentsStorage: MySegmentsStorage
+    private let mySegmentsStorage: OneKeyMySegmentsStorage
     private let payloadDecoder: MySegmentsV2PayloadDecoder
     private let zlib: CompressionUtil = Zlib()
     private let gzip: CompressionUtil = Gzip()
     private let keyHash: UInt64
 
-    init(userKey: String, synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage,
+    init(userKey: String, synchronizer: Synchronizer, mySegmentsStorage: OneKeyMySegmentsStorage,
          payloadDecoder: MySegmentsV2PayloadDecoder) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage

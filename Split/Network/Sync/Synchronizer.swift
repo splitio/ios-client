@@ -40,7 +40,7 @@ struct SplitStorageContainer {
     let fileStorage: FileStorageProtocol
     let splitsStorage: SplitsStorage
     let persistentSplitsStorage: PersistentSplitsStorage
-    let mySegmentsStorage: MySegmentsStorage
+    let mySegmentsStorage: OneKeyMySegmentsStorage
     let impressionsStorage: PersistentImpressionsStorage
     let impressionsCountStorage: PersistentImpressionsCountStorage
     let eventsStorage: PersistentEventsStorage
