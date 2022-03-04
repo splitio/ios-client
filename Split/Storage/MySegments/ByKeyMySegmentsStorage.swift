@@ -1,57 +1,39 @@
 //
-//  MySegmentsStorage.swift
+//  ByKeyMySegmentsStorage.swift
 //  Split
 //
-//  Created by Javier L. Avrudsky on 09/11/2020.
-//  Copyright © 2020 Split. All rights reserved.
+//  Created by Javier L. Avrudsky on 03-Mar-2022.
+//  Copyright © 2022 Split. All rights reserved.
 //
 
 import Foundation
 
-@available(*, deprecated, message: "Gonna be replaced by MySegmentsStorage and ByKeyMySegmentsStorage")
-protocol OneKeyMySegmentsStorage {
-    func loadLocal()
+protocol ByKeyMySegmentsStorage {
     func getAll() -> Set<String>
     func set(_ segments: [String])
-    func clear()
-    func destroy()
     func getCount() -> Int
 }
 
-@available(*, deprecated, message: "Gonna be replaced by MySegmentsStorage and ByKeyMySegmentsStorage")
-class DefaultOneKeyMySegmentsStorage: OneKeyMySegmentsStorage {
+class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
 
-    private var inMemoryMySegments: ConcurrentSet<String>
-    private let persistenStorage: OneKeyPersistentMySegmentsStorage
+    private let mySegmentsStorage: MySegmentsStorage
+    private let userKey: String
 
-    init(persistentMySegmentsStorage: OneKeyPersistentMySegmentsStorage) {
-        persistenStorage = persistentMySegmentsStorage
-        inMemoryMySegments = ConcurrentSet<String>()
-    }
-
-    func loadLocal() {
-        inMemoryMySegments.set(persistenStorage.getSnapshot())
+    init(mySegmentsStorage: MySegmentsStorage,
+         userKey: String) {
+        self.mySegmentsStorage = mySegmentsStorage
+        self.userKey = userKey
     }
 
     func getAll() -> Set<String> {
-        return inMemoryMySegments.all
+        return mySegmentsStorage.getAll(forKey: userKey)
     }
 
     func set(_ segments: [String]) {
-        inMemoryMySegments.set(segments)
-        persistenStorage.set(segments)
-    }
-
-    func clear() {
-        inMemoryMySegments.removeAll()
-        persistenStorage.set([String]())
-    }
-
-    func destroy() {
-        inMemoryMySegments.removeAll()
+        mySegmentsStorage.set(segments, forKey: userKey)
     }
 
     func getCount() -> Int {
-        return inMemoryMySegments.count
+        return mySegmentsStorage.getCount(forKey: userKey)
     }
 }

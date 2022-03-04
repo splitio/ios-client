@@ -14,14 +14,14 @@ import XCTest
 class AttributesStorageTests: XCTestCase {
 
     var attributesStorage: AttributesStorage!
-    var persistentStorage: PersistentAttributesStorageStub!
+    var persistentStorage: OneKeyPersistentAttributesStorageStub!
 
     let testAttributes: [String: Any] = ["att1": "se1",
                                          "att2": true,
                                          "att3": 1]
     
     override func setUp() {
-        persistentStorage = PersistentAttributesStorageStub()
+        persistentStorage = OneKeyPersistentAttributesStorageStub()
         attributesStorage = DefaultAttributesStorage(persistentAttributesStorage: persistentStorage)
     }
 
