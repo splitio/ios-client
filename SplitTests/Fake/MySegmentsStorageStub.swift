@@ -2,8 +2,8 @@
 //  MySegmentsStorageStub.swift
 //  SplitTests
 //
-//  Created by Javier Avrudsky on 11/01/2021.
-//  Copyright © 2021 Split. All rights reserved.
+//  Created by Javier Avrudsky on 03-Mar-2022.
+//  Copyright © 2022 Split. All rights reserved.
 //
 
 import Foundation
@@ -11,43 +11,44 @@ import XCTest
 @testable import Split
 
 class MySegmentsStorageStub: MySegmentsStorage {
-
-    var segments: Set = ["s1", "s2", "s3"]
-    var updatedSegments: [String]?
+    var segments: [String: Set<String>] = [String: Set<String>]()
+    var persistedSegments = [String: Set<String>]()
     var loadLocalCalled = false
     var clearCalled = false
     var updateExpectation: XCTestExpectation?
     var clearExpectation: XCTestExpectation?
     var getCountCalledCount = 0
 
-    func loadLocal() {
+    func loadLocal(forKey key: String) {
+        segments = persistedSegments
         loadLocalCalled = true
     }
-
-    func getAll() -> Set<String> {
-        return segments
+    
+    func getAll(forKey key: String) -> Set<String> {
+        return segments[key] ?? Set()
     }
 
-    func set(_ segments: [String]) {
-        updatedSegments = segments
-        self.segments = Set(segments)
+    func set(_ segments: [String], forKey key: String) {
+        self.segments[key] = Set(segments)
         if let exp = updateExpectation {
             exp.fulfill()
         }
     }
 
-    func clear() {
+    func clear(forKey key: String) {
+        segments[key] = Set()
         if let exp = clearExpectation {
             exp.fulfill()
         }
-        clearCalled = true
     }
 
     func destroy() {
+        segments.removeAll()
     }
 
-    func getCount() -> Int {
-        getCountCalledCount+=1
-        return segments.count
+    func getCount(forKey key: String) -> Int {
+        return segments[key]?.count ?? 0
     }
+
+
 }

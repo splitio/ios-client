@@ -14,7 +14,7 @@ class TreatmentManagerTest: XCTestCase {
     
     var validationLogger: ValidationMessageLogger!
     var splitsStorage: SplitsStorage!
-    var mySegmentsStorage: MySegmentsStorageStub!
+    var mySegmentsStorage: OneKeyMySegmentsStorageStub!
     var storageContainer: SplitStorageContainer!
     var client: InternalSplitClient!
     var attributesStorage: AttributesStorage!
@@ -39,7 +39,7 @@ class TreatmentManagerTest: XCTestCase {
             splitsStorage = SplitsStorageStub()
             splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [],
                                                                    changeNumber: -1, updateTimestamp: 100))
-            mySegmentsStorage = MySegmentsStorageStub()
+            mySegmentsStorage = OneKeyMySegmentsStorageStub()
             mySegmentsStorage.set(mySegments)
             storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      fileStorage: FileStorageStub(),
