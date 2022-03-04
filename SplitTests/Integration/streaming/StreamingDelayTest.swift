@@ -105,6 +105,54 @@ class StreamingDelaytTest: XCTestCase {
         semaphore.wait()
     }
 
+    func testDelayOnReconnect() throws {
+        sseConDelay = 4
+        let config = TestingHelper.basicStreamingConfig()
+        let notificationHelper = NotificationHelperStub()
+
+        let key: Key = Key(matchingKey: userKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
+        _ = builder.setNotificationHelper(notificationHelper)
+        let factory = builder.setApiKey(apiKey).setKey(key)
+            .setConfig(config).build()!
+
+        let client = factory.client
+
+        var time = Date().unixTimestamp()
+
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 10)
+        time = Date().unixTimestamp() - time
+
+        notificationHelper.simulateApplicationDidEnterBackground()
+        ThreadUtils.delay(seconds: 1)
+
+        var time1 = Date().unixTimestamp()
+        notificationHelper.simulateApplicationDidBecomeActive()
+
+        sseExp = XCTestExpectation()
+        wait(for: [sseExp], timeout: 10)
+        time1 = Date().unixTimestamp() - time1
+
+        // Hits are not asserted because tests will fail if expectations are not fulfilled
+        XCTAssertTrue(time > 3)
+        XCTAssertTrue(time1 > 3)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+    }
+
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             switch request.url.absoluteString {

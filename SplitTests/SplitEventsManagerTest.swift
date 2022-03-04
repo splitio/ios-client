@@ -183,6 +183,7 @@ class SplitEventsManagerTest: XCTestCase {
 
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
+        ThreadUtils.delay(seconds: 0.5)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
 
         wait(for: [readyExp, sdkUpdatedExp], timeout: expectationTimeOut)
@@ -210,6 +211,7 @@ class SplitEventsManagerTest: XCTestCase {
 
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
+        ThreadUtils.delay(seconds: 0.5)
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
 
         wait(for: [readyExp, sdkUpdatedExp], timeout: expectationTimeOut)
@@ -237,6 +239,7 @@ class SplitEventsManagerTest: XCTestCase {
 
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
+        ThreadUtils.delay(seconds: 0.5)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitKilledNotification)
 
         wait(for: [readyExp, sdkUpdatedExp], timeout: expectationTimeOut)

@@ -12,36 +12,33 @@ import XCTest
 class FlushTests: XCTestCase {
     
     let kNeverRefreshRate = 9999999
-    var webServer: MockWebServer!
+    var httpClient: HttpClient!
     var splitChange: SplitChange?
     var serverUrl = ""
+    var streamingBinding: TestStreamResponseBinding?
+    let sseExp = XCTestExpectation(description: "Sse conn")
+    var trackRequestData = [String]()
+    var impressionsRequestData = [String]()
+
+    var impExp: XCTestExpectation?
+    var trackExp: XCTestExpectation?
     
     override func setUp() {
         if splitChange == nil {
             splitChange = loadSplitsChangeFile()
         }
-        setupServer()
+        trackRequestData = [String]()
+        impressionsRequestData = [String]()
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
     
     override func tearDown() {
-        stopServer()
     }
     
-    private func setupServer() {
-        webServer = MockWebServer()
-        webServer.routeGet(path: "/mySegments/:user_id", data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}")
-        webServer.routeGet(path: "/splitChanges?since=:param", data: try? Json.encodeToJson(splitChange))
-        webServer.routePost(path: "/events/bulk", data: nil)
-        webServer.routePost(path: "/testImpressions/bulk", data: nil)
-        webServer.start()
-        serverUrl = webServer.url
-    }
-    
-    private func stopServer() {
-        webServer.stop()
-    }
-    
-    func testControlTreatment() throws {
+    func test() throws {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_g"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "account"
@@ -55,13 +52,13 @@ class FlushTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 1000
-        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
-        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "GralIntegrationTest"))
-        var factory = builder.setApiKey(apiKey).setKey(key)
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
+        let factory = builder.setApiKey(apiKey).setKey(key)
             .setConfig(splitConfig).build()
         
         let client = factory?.client
@@ -93,9 +90,12 @@ class FlushTests: XCTestCase {
         for i in 0..<100 {
             _ = client?.track(eventType: "account", value: Double(i))
         }
+
+        impExp = XCTestExpectation()
+        trackExp = XCTestExpectation()
         client?.flush()
-        //wait(for: [serverExpectation], timeout: 4000.0)
-        sleep(3)
+        wait(for: [impExp!, trackExp!], timeout: 5)
+
 
         let event99 = getTrackEventBy(value: 99.0)
         let event100 = getTrackEventBy(value: 100.0)
@@ -105,7 +105,7 @@ class FlushTests: XCTestCase {
 
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
-        XCTAssertEqual(10, tracksHits().count)
+        XCTAssertEqual(10, trackRequestData.count)
         XCTAssertNotNil(event99)
         XCTAssertNil(event100)
         XCTAssertNotNil(impression1)
@@ -115,33 +115,19 @@ class FlushTests: XCTestCase {
             _ = semaphore.signal()
         })
         semaphore.wait()
-        factory = nil
     }
 
     // MARK: Tracks Hits
     private func buildEventsFromJson(content: String) throws -> [EventDTO] {
         return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
     }
-    
-    private func tracksHits() -> [ClientRequest] {
-        var req: [ClientRequest]!
-        DispatchQueue.global().sync {
-            req = webServer.receivedRequests
-        }
-        return req.filter { $0.path == "/events/bulk"}
-    }
-
-    private func getLastTrackEventJsonHit() -> String {
-        let trackRecs = tracksHits()
-        return trackRecs[trackRecs.count  - 1].data!
-    }
 
     private func getTrackEventBy(value: Double) -> EventDTO? {
-        let hits = tracksHits()
-        for req in hits {
+        let hits = trackRequestData
+        for data in hits {
             var lastEventHitEvents: [EventDTO] = []
             do {
-                lastEventHitEvents = try buildEventsFromJson(content: req.data!)
+                lastEventHitEvents = try buildEventsFromJson(content: data)
             } catch {
                 print("error: \(error)")
             }
@@ -158,21 +144,12 @@ class FlushTests: XCTestCase {
         return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
     }
 
-    private func impressionsHits() -> [ClientRequest] {
-        return webServer.receivedRequests.filter { $0.path == "/testImpressions/bulk"}
-    }
-
-    private func getLastImpressionsJsonHit() -> String {
-        let trackRecs = tracksHits()
-        return trackRecs[trackRecs.count  - 1].data!
-    }
-
     private func getImpressionBy(testName: String) -> ImpressionsTest? {
-        let hits = impressionsHits()
-        for req in hits {
+        let hits = impressionsRequestData
+        for data in hits {
             var lastImpressionsHitTest: [ImpressionsTest] = []
             do {
-                lastImpressionsHitTest = try buildImpressionsFromJson(content: req.data!)
+                lastImpressionsHitTest = try buildImpressionsFromJson(content:data)
             } catch {
                 print("error: \(error)")
             }
@@ -195,5 +172,52 @@ class FlushTests: XCTestCase {
             return change
         }
         return nil
+    }
+
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+        return { request in
+            print("request url: \(request.url)")
+            switch request.url.absoluteString {
+            case let(urlString) where urlString.contains("splitChanges"):
+                return TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(self.splitChange).utf8))
+            case let(urlString) where urlString.contains("mySegments"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            case let(urlString) where urlString.contains("auth"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse(delay: 1).utf8))
+            case let(urlString) where urlString.contains("/events/bulk"):
+                self.trackRequestData.append(request.body?.stringRepresentation ?? "{}")
+                if self.nextTrackHit() >= 10 {
+                    self.trackExp?.fulfill()
+                }
+                return TestDispatcherResponse(code: 200)
+            case let(urlString) where urlString.contains("testImpressions/bulk"):
+                if self.nextImpressionHit() >= 1 {
+                    self.impExp?.fulfill()
+                }
+                self.impressionsRequestData.append(request.body?.stringRepresentation ?? "{}")
+                return TestDispatcherResponse(code: 200)
+            default:
+                return TestDispatcherResponse(code: 500)
+            }
+        }
+    }
+
+    private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
+        return { request in
+            self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            return self.streamingBinding!
+        }
+    }
+
+    var trackHitCount = 0
+    func nextTrackHit() -> Int {
+        trackHitCount+=1
+        return trackHitCount
+    }
+
+    var impressionHitCount = 0
+    func nextImpressionHit() -> Int {
+        impressionHitCount+=1
+        return impressionHitCount
     }
 }

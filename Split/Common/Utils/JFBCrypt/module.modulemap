@@ -1,0 +1,4 @@
+module JFBCrypt {
+ header "JFBCrypt.h"
+ export *
+}
