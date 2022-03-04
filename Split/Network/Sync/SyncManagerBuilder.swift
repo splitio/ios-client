@@ -62,6 +62,7 @@ class SyncManagerBuilder {
             let synchronizer = self.synchronizer,
             let storageContainer = self.storageContainer
             else {
+                // TODO: Remove this fatal error
                 fatalError("Some parameter is null when creating Sync Manager")
         }
 
@@ -84,9 +85,10 @@ class SyncManagerBuilder {
                                                  splitsStorage: storageContainer.splitsStorage),
                 mySegmentsUpdateWorker: MySegmentsUpdateWorker(synchronizer: synchronizer,
                                                                mySegmentsStorage: storageContainer.mySegmentsStorage),
-                mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker(userKey: userKey, synchronizer: synchronizer,
-                                                                   mySegmentsStorage: storageContainer.mySegmentsStorage,
-                                                                   payloadDecoder: DefaultMySegmentsV2PayloadDecoder()))
+                mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker(
+                    userKey: userKey, synchronizer: synchronizer,
+                    mySegmentsStorage: storageContainer.mySegmentsStorage,
+                    payloadDecoder: DefaultMySegmentsV2PayloadDecoder()))
 
             let sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,
                                                notificationParser: DefaultSseNotificationParser(),

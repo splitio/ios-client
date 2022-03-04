@@ -201,7 +201,7 @@ class TelemetryTest: XCTestCase {
         let split = splitHelper.createDefaultSplit(named: "SPLIT")
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [],
                                                                changeNumber: -1, updateTimestamp: 100))
-        let mySegmentsStorage = MySegmentsStorageStub()
+        let mySegmentsStorage = OneKeyMySegmentsStorageStub()
 
         let key = Key(matchingKey: "CUSTOMER_ID")
         let client = InternalSplitClientStub(splitsStorage: splitsStorage,

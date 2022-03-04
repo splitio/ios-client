@@ -16,7 +16,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     var splitsStorage: SplitsStorage? {
         return storageContainer.splitsStorage
     }
-    var mySegmentsStorage: MySegmentsStorage? {
+    var mySegmentsStorage: OneKeyMySegmentsStorage? {
         return storageContainer.mySegmentsStorage
     }
 

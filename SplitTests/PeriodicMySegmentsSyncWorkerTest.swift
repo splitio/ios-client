@@ -14,7 +14,7 @@ import XCTest
 class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
 
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
-    var mySegmentsStorage: MySegmentsStorageStub!
+    var mySegmentsStorage: OneKeyMySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
     var mySegmentsSyncWorker: PeriodicMySegmentsSyncWorker!
@@ -22,7 +22,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
 
     override func setUp() {
         mySegmentsFetcher = HttpMySegmentsFetcherStub()
-        mySegmentsStorage = MySegmentsStorageStub()
+        mySegmentsStorage = OneKeyMySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false

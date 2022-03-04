@@ -20,7 +20,7 @@ class SyncUpdateWorker: XCTestCase {
 
     var synchronizer: SynchronizerStub!
     var splitsStorage: SplitsStorageStub!
-    var mySegmentsStorage: MySegmentsStorageStub!
+    var mySegmentsStorage: OneKeyMySegmentsStorageStub!
     var mySegmentsChangesChecker: MySegmentsChangesCheckerMock!
     var mySegmentsPayloadDecoder: MySegmentsV2PayloadDecoderMock!
     let userKey = IntegrationHelper.dummyUserKey
@@ -34,7 +34,7 @@ class SyncUpdateWorker: XCTestCase {
                                                                archivedSplits: [],
                                                                changeNumber: 100,
                                                                updateTimestamp: 100))
-        mySegmentsStorage = MySegmentsStorageStub()
+        mySegmentsStorage = OneKeyMySegmentsStorageStub()
 
         splitsUpdateWorker = SplitsUpdateWorker(synchronizer: synchronizer)
 
