@@ -75,8 +75,8 @@ struct SplitDatabaseHelper {
     }
 
     static func openPersistentAttributesStorage(database: SplitDatabase,
-                                                userKey: String) -> PersistentAttributesStorage {
-        return DefaultPersistentAttributesStorage(userKey: userKey, database: database)
+                                                userKey: String) -> OneKeyPersistentAttributesStorage {
+        return DefaultOneKeyPersistentAttributesStorage(userKey: userKey, database: database)
     }
 
     static func openImpressionsStorage(database: SplitDatabase) -> PersistentImpressionsStorage {

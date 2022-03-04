@@ -22,9 +22,9 @@ protocol AttributesStorage {
 class DefaultAttributesStorage: AttributesStorage {
 
     private let inMemoryAttributes: SyncDictionarySingleWrapper<String, Any>
-    private let persistentStorage: PersistentAttributesStorage?
+    private let persistentStorage: OneKeyPersistentAttributesStorage?
 
-    init(persistentAttributesStorage: PersistentAttributesStorage? = nil) {
+    init(persistentAttributesStorage: OneKeyPersistentAttributesStorage? = nil) {
         persistentStorage = persistentAttributesStorage
         inMemoryAttributes = SyncDictionarySingleWrapper<String, Any>()
     }
