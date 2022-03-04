@@ -14,14 +14,14 @@ import XCTest
 class MySegmentsSyncWorkerTest: XCTestCase {
 
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
-    var mySegmentsStorage: MySegmentsStorageStub!
+    var mySegmentsStorage: OneKeyMySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
     var mySegmentsSyncWorker: RetryableMySegmentsSyncWorker!
 
     override func setUp() {
         mySegmentsFetcher = HttpMySegmentsFetcherStub()
-        mySegmentsStorage = MySegmentsStorageStub()
+        mySegmentsStorage = OneKeyMySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
 

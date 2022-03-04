@@ -15,13 +15,13 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
     var worker: TelemetryStatsRecorderWorker!
     var statsRecorder: HttpTelemetryStatsRecorderStub!
     var splitsStorage: SplitsStorageStub!
-    var mySegmentsStorage: MySegmentsStorageStub!
+    var mySegmentsStorage: OneKeyMySegmentsStorageStub!
     var telemetryStorage: TelemetryStorageStub!
 
     override func setUp() {
         statsRecorder = HttpTelemetryStatsRecorderStub()
         telemetryStorage = TelemetryStorageStub()
-        mySegmentsStorage = MySegmentsStorageStub()
+        mySegmentsStorage = OneKeyMySegmentsStorageStub()
         splitsStorage = SplitsStorageStub()
 
         worker = TelemetryStatsRecorderWorker(telemetryStatsRecorder: statsRecorder,

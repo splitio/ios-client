@@ -13,12 +13,12 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
     private let telemetryConsumer: TelemetryConsumer
     private let statsRecorder: HttpTelemetryStatsRecorder
     private let splitsStorage: SplitsStorage
-    private let mySegmentsStorage: MySegmentsStorage
+    private let mySegmentsStorage: OneKeyMySegmentsStorage
 
     init(telemetryStatsRecorder: HttpTelemetryStatsRecorder,
          telemetryConsumer: TelemetryConsumer,
          splitsStorage: SplitsStorage,
-         mySegmentsStorage: MySegmentsStorage) {
+         mySegmentsStorage: OneKeyMySegmentsStorage) {
         self.telemetryConsumer = telemetryConsumer
         self.statsRecorder = telemetryStatsRecorder
         self.splitsStorage = splitsStorage

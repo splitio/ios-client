@@ -8,7 +8,7 @@
 
 import Foundation
 
-class EmptyMySegmentsStorage: MySegmentsStorage {
+class EmptyMySegmentsStorage: OneKeyMySegmentsStorage {
     func loadLocal() {
     }
 
