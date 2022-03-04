@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PersistentMySegmentsStorageStub: PersistentMySegmentsStorage {
+class PersistentMySegmentsStorageStub: OneKeyPersistentMySegmentsStorage {
     var segments = [String]()
 
     func set(_ segments: [String]) {

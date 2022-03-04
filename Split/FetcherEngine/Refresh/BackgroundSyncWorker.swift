@@ -16,10 +16,10 @@ class BackgroundMySegmentsSyncWorker: BackgroundSyncWorker {
 
     private let mySegmentsFetcher: HttpMySegmentsFetcher
     private let userKey: String
-    private let mySegmentsStorage: PersistentMySegmentsStorage
+    private let mySegmentsStorage: OneKeyPersistentMySegmentsStorage
 
     init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
-         mySegmentsStorage: PersistentMySegmentsStorage) {
+         mySegmentsStorage: OneKeyPersistentMySegmentsStorage) {
 
         self.userKey = userKey
         self.mySegmentsStorage = mySegmentsStorage

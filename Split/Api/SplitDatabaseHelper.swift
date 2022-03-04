@@ -65,8 +65,8 @@ struct SplitDatabaseHelper {
     }
 
     static func openPersistentMySegmentsStorage(database: SplitDatabase,
-                                                userKey: String) -> PersistentMySegmentsStorage {
-        return DefaultPersistentMySegmentsStorage(userKey: userKey, database: database)
+                                                userKey: String) -> OneKeyPersistentMySegmentsStorage {
+        return DefaultOneKeyPersistentMySegmentsStorage(userKey: userKey, database: database)
     }
 
     static func openMySegmentsStorage(database: SplitDatabase, userKey: String) -> MySegmentsStorage {
