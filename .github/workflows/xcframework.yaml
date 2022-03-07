@@ -3,7 +3,8 @@ name: Build xcframework
 on:
   push:
     branches: 
-      - release_*
+      - dont_run_for_now
+      # - release_*
 
 jobs:
   build:
