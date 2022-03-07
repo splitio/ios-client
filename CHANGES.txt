@@ -1,3 +1,6 @@
+2.13.2: (Mar 07, 2022)
+- Removed xcframework target temporarily in SPM to avoid building issues on some projects setup.
+
 2.13.1: (Feb 25, 2022)
 - Fixed issue when reconnecting when host app became active
 - Fixed and optimized component creation when streaming is disabled
