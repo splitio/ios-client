@@ -20,7 +20,8 @@ let package = Package(
                 "Common/Utils/JFBCrypt/",
                 "Common/Yaml/LICENSE",
                 "Info.plist",
-                "Split.h"
+                "Split.h",
+                "Common/Utils/framework/HashHelper.swift"
             ]
         ),
         .target(
