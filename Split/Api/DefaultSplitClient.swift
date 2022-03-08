@@ -20,7 +20,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
         return storageContainer.mySegmentsStorage
     }
 
-    fileprivate var attributesStorage: AttributesStorage {
+    fileprivate var attributesStorage: OneKeyAttributesStorage {
         return storageContainer.attributesStorage
     }
 
