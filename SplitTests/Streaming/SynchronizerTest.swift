@@ -77,7 +77,7 @@ class SynchronizerTest: XCTestCase {
                                                      persistentSplitsStorage: persistentSplitsStorage,
                                                      mySegmentsStorage: mySegmentsStorage, impressionsStorage: PersistentImpressionsStorageStub(), impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub(),
-                                                     attributesStorage: DefaultAttributesStorage(),
+                                                     attributesStorage: OneKeyDefaultAttributesStorage(),
                                                      telemetryStorage: telemetryProducer)
 
         let apiFacade = SplitApiFacade.builder()

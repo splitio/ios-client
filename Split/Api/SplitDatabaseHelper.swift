@@ -96,8 +96,8 @@ struct SplitDatabaseHelper {
 
     static func openAttributesStorage(database: SplitDatabase,
                                       userKey: String,
-                                      splitClientConfig: SplitClientConfig) -> AttributesStorage {
-        return DefaultAttributesStorage(
+                                      splitClientConfig: SplitClientConfig) -> OneKeyAttributesStorage {
+        return OneKeyDefaultAttributesStorage(
             persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
                 openPersistentAttributesStorage(database: database, userKey: userKey) : nil
         )

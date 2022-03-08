@@ -34,4 +34,3 @@ class DefaultPersistentAttributesStorage: PersistentAttributesStorage {
         attributesDao.update(userKey: key, attributes: nil)
     }
 }
-

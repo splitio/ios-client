@@ -217,7 +217,7 @@ class TelemetryTest: XCTestCase {
                                        eventsManager: eventsManager,
                                        impressionLogger: ImpressionsLoggerStub(),
                                        telemetryProducer: telemetryStorage,
-                                       attributesStorage: DefaultAttributesStorage(),
+                                       attributesStorage: OneKeyDefaultAttributesStorage(),
                                        keyValidator: DefaultKeyValidator(),
                                        splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
                                        validationLogger: ValidationMessageLoggerStub())

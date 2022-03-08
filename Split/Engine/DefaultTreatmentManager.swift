@@ -19,7 +19,7 @@ class DefaultTreatmentManager: TreatmentManager {
     private let validationLogger: ValidationMessageLogger
     private let evaluator: Evaluator
     private let splitConfig: SplitClientConfig
-    private let attributesStorage: AttributesStorage
+    private let attributesStorage: OneKeyAttributesStorage
     private var isDestroyed = false
 
     init(evaluator: Evaluator,
@@ -28,7 +28,7 @@ class DefaultTreatmentManager: TreatmentManager {
          eventsManager: SplitEventsManager,
          impressionLogger: ImpressionLogger,
          telemetryProducer: TelemetryProducer?,
-         attributesStorage: AttributesStorage,
+         attributesStorage: OneKeyAttributesStorage,
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
          validationLogger: ValidationMessageLogger) {

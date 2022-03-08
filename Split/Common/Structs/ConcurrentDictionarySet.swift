@@ -11,7 +11,7 @@ import Foundation
 class ConcurrentDictionarySet<K: Hashable, T: Hashable> {
 
     private var queue: DispatchQueue = DispatchQueue(label: "split-concurrent-dictionary-map",
-                                                     attributes: .concurrent)
+                                                     target: .global())
     private var items = [K: Set<T>]()
 
     func count(forKey key: K) -> Int {
@@ -39,19 +39,19 @@ class ConcurrentDictionarySet<K: Hashable, T: Hashable> {
     }
 
     func set(_ values: Set<T>, forKey key: K) {
-        queue.async(flags: .barrier) {
+        queue.sync {
             self.items[key] = values
         }
     }
 
     func removeValues(forKey key: K) {
-        queue.async(flags: .barrier) {
+        queue.sync {
             self.items.removeValue(forKey: key)
         }
     }
 
     func removeAll() {
-        queue.async(flags: .barrier) {
+        queue.sync {
             self.items.removeAll()
         }
     }
