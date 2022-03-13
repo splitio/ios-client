@@ -17,7 +17,7 @@ class TreatmentManagerTest: XCTestCase {
     var mySegmentsStorage: OneKeyMySegmentsStorageStub!
     var storageContainer: SplitStorageContainer!
     var client: InternalSplitClient!
-    var attributesStorage: AttributesStorage!
+    var attributesStorage: OneKeyAttributesStorage!
     
     var impressionsLogger: ImpressionsLoggerStub!
     var telemetryProducer: TelemetryStorageStub!
@@ -31,7 +31,7 @@ class TreatmentManagerTest: XCTestCase {
         
         impressionsLogger = ImpressionsLoggerStub()
         validationLogger = ValidationMessageLoggerStub()
-        attributesStorage = DefaultAttributesStorage()
+        attributesStorage = OneKeyDefaultAttributesStorage()
         telemetryProducer = TelemetryStorageStub()
         if storageContainer == nil {
             let splits = loadSplitsFile()

@@ -22,15 +22,15 @@ protocol OneKeyMySegmentsStorage {
 class DefaultOneKeyMySegmentsStorage: OneKeyMySegmentsStorage {
 
     private var inMemoryMySegments: ConcurrentSet<String>
-    private let persistenStorage: OneKeyPersistentMySegmentsStorage
+    private let persistentStorage: OneKeyPersistentMySegmentsStorage
 
     init(persistentMySegmentsStorage: OneKeyPersistentMySegmentsStorage) {
-        persistenStorage = persistentMySegmentsStorage
+        persistentStorage = persistentMySegmentsStorage
         inMemoryMySegments = ConcurrentSet<String>()
     }
 
     func loadLocal() {
-        inMemoryMySegments.set(persistenStorage.getSnapshot())
+        inMemoryMySegments.set(persistentStorage.getSnapshot())
     }
 
     func getAll() -> Set<String> {
@@ -39,12 +39,12 @@ class DefaultOneKeyMySegmentsStorage: OneKeyMySegmentsStorage {
 
     func set(_ segments: [String]) {
         inMemoryMySegments.set(segments)
-        persistenStorage.set(segments)
+        persistentStorage.set(segments)
     }
 
     func clear() {
         inMemoryMySegments.removeAll()
-        persistenStorage.set([String]())
+        persistentStorage.set([String]())
     }
 
     func destroy() {

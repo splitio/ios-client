@@ -44,7 +44,7 @@ struct SplitStorageContainer {
     let impressionsStorage: PersistentImpressionsStorage
     let impressionsCountStorage: PersistentImpressionsCountStorage
     let eventsStorage: PersistentEventsStorage
-    let attributesStorage: AttributesStorage
+    let attributesStorage: OneKeyAttributesStorage
     let telemetryStorage: TelemetryStorage?
 }
 
