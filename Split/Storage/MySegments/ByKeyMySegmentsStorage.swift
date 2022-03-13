@@ -8,7 +8,9 @@
 
 import Foundation
 
-protocol ByKeyMySegmentsStorage {
+// TODO: Remove inheritance. Only to make old stuff to work for now
+protocol ByKeyMySegmentsStorage: OneKeyMySegmentsStorage{
+    func loadLocal()
     func getAll() -> Set<String>
     func set(_ segments: [String])
     func getCount() -> Int
@@ -25,6 +27,10 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
         self.userKey = userKey
     }
 
+    func loadLocal() {
+        mySegmentsStorage.loadLocal(forKey: userKey)
+    }
+
     func getAll() -> Set<String> {
         return mySegmentsStorage.getAll(forKey: userKey)
     }
@@ -35,5 +41,13 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
 
     func getCount() -> Int {
         return mySegmentsStorage.getCount(forKey: userKey)
+    }
+
+    func clear() {
+        // TODO: Remove this method
+    }
+
+    func destroy() {
+        // TODO: Remove this method
     }
 }

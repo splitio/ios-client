@@ -8,15 +8,20 @@
 
 import Foundation
 @testable import Split
+import XCTest
 class SplitEventsManagerStub: SplitEventsManager {
 
     var splitsLoadedEventFiredCount = 0
     var executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
     var mySegmentsLoadedEventFiredCount = 0
+    var mySegmentsLoadedEventExp: XCTestExpectation?
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         switch event {
         case .mySegmentsLoadedFromCache:
             mySegmentsLoadedEventFiredCount+=1
+            if let exp = mySegmentsLoadedEventExp {
+                exp.fulfill()
+            }
         case .splitsLoadedFromCache:
             splitsLoadedEventFiredCount+=1
         default:

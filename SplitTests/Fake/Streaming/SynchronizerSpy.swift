@@ -10,9 +10,9 @@ import Foundation
 import XCTest
 @testable import Split
 
-class SynchronizerSpy: Synchronizer {
+class SynchronizerSpy: FullSynchronizer {
 
-    var splitSynchronizer: Synchronizer
+    var splitSynchronizer: FullSynchronizer
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
@@ -54,7 +54,7 @@ class SynchronizerSpy: Synchronizer {
             = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
          splitEventsManager: SplitEventsManager) {
-        self.splitSynchronizer = DefaultSynchronizer(splitConfig: splitConfig,
+        self.splitSynchronizer = DefaultFullSynchronizer(splitConfig: splitConfig,
                                                      telemetrySynchronizer: telemetrySynchronizer,
                                                      splitApiFacade: splitApiFacade,
                                                      splitStorageContainer: splitStorageContainer,
