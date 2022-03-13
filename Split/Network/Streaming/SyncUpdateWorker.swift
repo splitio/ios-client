@@ -26,9 +26,9 @@ class UpdateWorker<T: NotificationTypeField> {
 
 class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 
-    private let synchronizer: Synchronizer
+    private let synchronizer: FullSynchronizer
 
-    init(synchronizer: Synchronizer) {
+    init(synchronizer: FullSynchronizer) {
         self.synchronizer = synchronizer
         super.init(queueName: "SplitsUpdateWorker")
     }
@@ -42,10 +42,10 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 
 class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
 
-    private let synchronizer: Synchronizer
+    private let synchronizer: FullSynchronizer
     private let mySegmentsStorage: OneKeyMySegmentsStorage
     var changesChecker: MySegmentsChangesChecker
-    init(synchronizer: Synchronizer, mySegmentsStorage: OneKeyMySegmentsStorage) {
+    init(synchronizer: FullSynchronizer, mySegmentsStorage: OneKeyMySegmentsStorage) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
         self.changesChecker = DefaultMySegmentsChangesChecker()
@@ -77,14 +77,14 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
 
 class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
 
-    private let synchronizer: Synchronizer
+    private let synchronizer: FullSynchronizer
     private let mySegmentsStorage: OneKeyMySegmentsStorage
     private let payloadDecoder: MySegmentsV2PayloadDecoder
     private let zlib: CompressionUtil = Zlib()
     private let gzip: CompressionUtil = Gzip()
     private let keyHash: UInt64
 
-    init(userKey: String, synchronizer: Synchronizer, mySegmentsStorage: OneKeyMySegmentsStorage,
+    init(userKey: String, synchronizer: FullSynchronizer, mySegmentsStorage: OneKeyMySegmentsStorage,
          payloadDecoder: MySegmentsV2PayloadDecoder) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
@@ -178,10 +178,10 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
 
 class SplitKillWorker: UpdateWorker<SplitKillNotification> {
 
-    private let synchronizer: Synchronizer
+    private let synchronizer: FullSynchronizer
     private let splitsStorage: SplitsStorage
 
-    init(synchronizer: Synchronizer, splitsStorage: SplitsStorage) {
+    init(synchronizer: FullSynchronizer, splitsStorage: SplitsStorage) {
         self.synchronizer = synchronizer
         self.splitsStorage = splitsStorage
         super.init(queueName: "SplitKillWorker")
