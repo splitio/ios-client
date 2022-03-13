@@ -10,15 +10,6 @@ import Foundation
 import XCTest
 @testable import Split
 
-//func loadMySegmentsFromCache()
-//func synchronizeMySegments()
-//func forceMySegmentsSync()
-//func startPeriodicFetching()
-//func stopPeriodicFetching()
-//func pause()
-//func resume()
-//func destroy()
-
 class MySegmentsSynchronizerTest: XCTestCase {
 
     var mySegmentsSync: MySegmentsSynchronizer!
