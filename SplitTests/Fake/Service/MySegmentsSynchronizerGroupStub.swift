@@ -25,8 +25,12 @@ class MySegmentsSynchronizerGroupStub: MySegmentsSynchronizerGroup {
     var syncKey: String = ""
     var loadFromCacheKey: String = ""
 
-    func append(mySegmentsSynchronizer: MySegmentsSynchronizer, forKey key: String) {
-        synchronizers[key] = mySegmentsSynchronizer
+    func append(_ synchronizer: MySegmentsSynchronizer, forKey key: String) {
+        synchronizers[key] = synchronizer
+    }
+
+    func remove(forKey key: String) {
+        synchronizers.removeValue(forKey: key)
     }
 
     func loadFromCache(forKey key: String) {

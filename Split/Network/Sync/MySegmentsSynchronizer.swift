@@ -8,19 +8,6 @@
 
 import Foundation
 
-protocol MySegmentsSynchronizerGroup {
-    func append(mySegmentsSynchronizer: MySegmentsSynchronizer, forKey key: String)
-    func loadFromCache(forKey: String)
-    func startPeriodicSync()
-    func sync(forKey: String)
-    func syncAll()
-    func forceSync(forKey: String)
-    func pause()
-    func resume()
-    func stopPeriodicSync()
-    func stop()
-}
-
 protocol MySegmentsSynchronizer {
     func loadMySegmentsFromCache()
     func synchronizeMySegments()
