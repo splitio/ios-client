@@ -202,7 +202,7 @@ class SplitComponentFactory {
         return component
     }
 
-    func buildSynchronizer() throws -> Synchronizer {
+    func buildSynchronizer() throws -> FullSynchronizer {
 
         let syncWorkerFactory = try buildSyncWorkerFactory()
         var telemetrySynchronizer: TelemetrySynchronizer?
@@ -215,7 +215,7 @@ class SplitComponentFactory {
                                                          periodicStatsRecorderWorker: periodicStatsRecorderWorker)
         }
 
-        let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
+        let component: FullSynchronizer = DefaultFullSynchronizer(splitConfig: splitClientConfig,
                                                           telemetrySynchronizer: telemetrySynchronizer,
                                                           splitApiFacade: try getSplitApiFacade(),
                                                           splitStorageContainer: try getSplitStorageContainer(),
@@ -228,8 +228,8 @@ class SplitComponentFactory {
         return component
     }
 
-    func getSynchronizer() throws -> Synchronizer {
-        if let obj = get(for: Synchronizer.self) as? Synchronizer {
+    func getSynchronizer() throws -> FullSynchronizer {
+        if let obj = get(for: FullSynchronizer.self) as? FullSynchronizer {
             return obj
         }
         throw ComponentError.notFound(name: "Synchronizer")

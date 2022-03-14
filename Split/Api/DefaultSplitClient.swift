@@ -29,7 +29,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     private let config: SplitClientConfig
 
     private var eventsManager: SplitEventsManager
-    private var synchronizer: Synchronizer
+    private var synchronizer: FullSynchronizer
 
     private let eventValidator: EventValidator
     private let validationLogger: ValidationMessageLogger
@@ -44,7 +44,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
          key: Key,
          apiFacade: SplitApiFacade,
          storageContainer: SplitStorageContainer,
-         synchronizer: Synchronizer,
+         synchronizer: FullSynchronizer,
          eventsManager: SplitEventsManager,
          destroyHandler: @escaping DestroyHandler) {
 

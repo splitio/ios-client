@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class SynchronizerStub: Synchronizer {
+class SynchronizerStub: FullSynchronizer {
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false

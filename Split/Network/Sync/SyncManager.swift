@@ -18,7 +18,7 @@ protocol SyncManager {
 class DefaultSyncManager: SyncManager {
 
     private let splitConfig: SplitClientConfig
-    private let synchronizer: Synchronizer
+    private let synchronizer: FullSynchronizer
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let pushNotificationManager: PushNotificationManager?
     private let reconnectStreamingTimer: BackoffCounterTimer?
@@ -27,7 +27,7 @@ class DefaultSyncManager: SyncManager {
 
     init(splitConfig: SplitClientConfig, pushNotificationManager: PushNotificationManager?,
          reconnectStreamingTimer: BackoffCounterTimer?, notificationHelper: NotificationHelper,
-         synchronizer: Synchronizer, broadcasterChannel: PushManagerEventBroadcaster) {
+         synchronizer: FullSynchronizer, broadcasterChannel: PushManagerEventBroadcaster) {
         self.splitConfig = splitConfig
         self.pushNotificationManager = pushNotificationManager
         self.synchronizer = synchronizer

@@ -35,7 +35,7 @@ class TestSplitFactory {
     var userKey: String = IntegrationHelper.dummyUserKey
     var splitConfig: SplitClientConfig = TestingHelper.basicStreamingConfig()
     var httpClient: HttpClient?
-    var synchronizer: Synchronizer!
+    var synchronizer: FullSynchronizer!
     var synchronizerSpy: SynchronizerSpy {
         return synchronizer as! SynchronizerSpy
     }

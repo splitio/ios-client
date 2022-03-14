@@ -15,7 +15,7 @@ class SyncManagerBuilder {
     private var splitApiFacade: SplitApiFacade?
     private var storageContainer: SplitStorageContainer?
     private var endpointFactory: EndpointFactory?
-    private var synchronizer: Synchronizer?
+    private var synchronizer: FullSynchronizer?
     private var notificationHelper: NotificationHelper = DefaultNotificationHelper.instance
 
     func setUserKey(_ userKey: String) -> SyncManagerBuilder {
@@ -43,7 +43,7 @@ class SyncManagerBuilder {
         return self
     }
 
-    func setSynchronizer(_ synchronizer: Synchronizer) -> SyncManagerBuilder {
+    func setSynchronizer(_ synchronizer: FullSynchronizer) -> SyncManagerBuilder {
         self.synchronizer = synchronizer
         return self
     }
