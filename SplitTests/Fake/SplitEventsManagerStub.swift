@@ -12,9 +12,14 @@ import XCTest
 class SplitEventsManagerStub: SplitEventsManager {
 
     var splitsLoadedEventFiredCount = 0
+    var splitsKilledEventFiredCount = 0
+    var splitsUpdatedEventFiredCount = 0
     var executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
     var mySegmentsLoadedEventFiredCount = 0
     var mySegmentsLoadedEventExp: XCTestExpectation?
+    var startCalled = false
+    var stopCalled = false
+
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         switch event {
         case .mySegmentsLoadedFromCache:
@@ -24,6 +29,12 @@ class SplitEventsManagerStub: SplitEventsManager {
             }
         case .splitsLoadedFromCache:
             splitsLoadedEventFiredCount+=1
+
+        case .splitKilledNotification:
+            splitsKilledEventFiredCount+=1
+
+        case .splitsUpdated:
+            splitsUpdatedEventFiredCount+=1
         default:
             print("internal event fired: \(event)")
         }
@@ -33,9 +44,11 @@ class SplitEventsManagerStub: SplitEventsManager {
     }
 
     func start() {
+        startCalled = true
     }
 
     func stop() {
+        stopCalled = true
     }
 
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
