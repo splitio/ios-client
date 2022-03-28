@@ -18,7 +18,7 @@ class EqualToBooleanMatcher: BaseMatcher, MatcherProtocol {
         self.data = data
     }
 
-    func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
+    func evaluate(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
 
         guard let matchValueBool = matchValue, let booleanData = data else {
             return false

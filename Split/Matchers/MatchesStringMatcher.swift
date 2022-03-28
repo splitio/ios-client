@@ -22,7 +22,7 @@ class MatchesStringMatcher: BaseMatcher, MatcherProtocol {
         return Date(timeIntervalSince1970: TimeInterval(number))
     }
 
-    func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
+    func evaluate(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
 
         guard let matcherData = data, let keyValue = matchValue as? String else {
             return false

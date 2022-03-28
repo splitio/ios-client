@@ -349,7 +349,7 @@ class TreatmentManagerTest: XCTestCase {
     }
     
     func createTreatmentManager(evaluator: Evaluator? = nil) -> TreatmentManager {
-        client = InternalSplitClientStub(splitsStorage: storageContainer.splitsStorage, mySegmentsStorage: storageContainer.oneKeyMySegmentsStorage)
+        client = InternalSplitClientStub(splitsStorage: storageContainer.splitsStorage, mySegmentsStorage: storageContainer.mySegmentsStorage)
         let defaultEvaluator = evaluator ?? DefaultEvaluator(splitClient: client)
 
         let eventsManager = SplitEventsManagerMock()

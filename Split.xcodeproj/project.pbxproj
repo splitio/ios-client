@@ -185,7 +185,6 @@
 		593AE9FC226F4825000D61B0 /* RestClientStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593AE9FB226F4825000D61B0 /* RestClientStub.swift */; };
 		594677E022CFA4CF00F94E58 /* OneKeyTreatmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594677DF22CFA4CF00F94E58 /* OneKeyTreatmentManager.swift */; };
 		594677E222CFA7E300F94E58 /* DefaultOneKeyTreatmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594677E122CFA7E300F94E58 /* DefaultOneKeyTreatmentManager.swift */; };
-		594677E422CFF30B00F94E58 /* OneKeyTreatmentManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594677E322CFF30B00F94E58 /* OneKeyTreatmentManagerTest.swift */; };
 		5946783522E110A700F94E58 /* MockWebServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5946783422E110A600F94E58 /* MockWebServer.swift */; };
 		5946783A22E1147600F94E58 /* SplitIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5946783922E1147600F94E58 /* SplitIntegrationTest.swift */; };
 		594F5F532539E36400A945B4 /* StreamingMySegmentsSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F522539E36400A945B4 /* StreamingMySegmentsSyncTest.swift */; };
@@ -1062,7 +1061,6 @@
 		593AE9FB226F4825000D61B0 /* RestClientStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestClientStub.swift; sourceTree = "<group>"; };
 		594677DF22CFA4CF00F94E58 /* OneKeyTreatmentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneKeyTreatmentManager.swift; sourceTree = "<group>"; };
 		594677E122CFA7E300F94E58 /* DefaultOneKeyTreatmentManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultOneKeyTreatmentManager.swift; sourceTree = "<group>"; };
-		594677E322CFF30B00F94E58 /* OneKeyTreatmentManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneKeyTreatmentManagerTest.swift; sourceTree = "<group>"; };
 		5946783422E110A600F94E58 /* MockWebServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockWebServer.swift; sourceTree = "<group>"; };
 		5946783722E1144400F94E58 /* Swifter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Swifter.framework; path = Carthage/Build/iOS/Swifter.framework; sourceTree = "<group>"; };
 		5946783922E1147600F94E58 /* SplitIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitIntegrationTest.swift; sourceTree = "<group>"; };
@@ -2222,7 +2220,6 @@
 				59DD34B32236989700FA9545 /* FolderApiKeyTests.swift */,
 				5959C476227B89820064F968 /* FactoryMonitorTest.swift */,
 				5959C478227B89980064F968 /* FactoryRegistryTest.swift */,
-				594677E322CFF30B00F94E58 /* OneKeyTreatmentManagerTest.swift */,
 				95F20F4927EB533000B5B30A /* TreatmentManagerTest.swift */,
 				59BF90B8239A75520007A896 /* VersionTest.swift */,
 				59AD7AC92465C32D00F5B0B4 /* EventDTOJsonTest.swift */,
@@ -3251,7 +3248,6 @@
 				9519A91727D6B9EE00278AEC /* AttributesStorageStub.swift in Sources */,
 				5932260724A5325A00496D8B /* HttpTaskMock.swift in Sources */,
 				595AD26124E5D48500A7B750 /* ReconnectBackoffCounterTest.swift in Sources */,
-				594677E422CFF30B00F94E58 /* OneKeyTreatmentManagerTest.swift in Sources */,
 				95F3F020258E3E2F00084AF8 /* HttpImpressionsRecorderTests.swift in Sources */,
 				59F4AAC82515436400A1C69A /* SyncWorkerStub.swift in Sources */,
 				59EFD2ED24B4B05E0052920D /* HttpClientTest.swift in Sources */,

@@ -18,7 +18,7 @@ class DependencyMatcher: BaseMatcher, MatcherProtocol {
         self.dependencyData = dependencyData
     }
 
-    func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
+    func evaluate(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
 
         if let splitName = dependencyData?.split {
 

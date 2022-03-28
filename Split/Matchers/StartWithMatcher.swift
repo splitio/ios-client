@@ -17,7 +17,7 @@ class StartWithMatcher: BaseMatcher, MatcherProtocol {
         self.data = data
     }
 
-    func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
+    func evaluate(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
 
         guard let matchValueString = matchValue as? String, let dataElements = data else {
             return false
