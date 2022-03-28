@@ -52,7 +52,7 @@ class Condition: NSObject, Codable {
         }
     }
 
-    func match(matchValue: Any?, bucketingKey: String?, attributes: [String: Any]?) throws -> Bool {
+    func match(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) throws -> Bool {
 
         if let matcherG = self.matcherGroup, let matchers = matcherG.matchers {
             var results: [Bool] = []
@@ -65,7 +65,9 @@ class Condition: NSObject, Codable {
                     // scenario 1: no attr in matcher
                     // e.g. if user is in segment all then split 100:on
                     if !matcherEvaluator.matcherHasAttribute() {
-                        result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: nil, attributes: nil)
+                        result = matcherEvaluator.evaluate(matchValue: matchValue,
+                                                           matchingKey: matchingKey,
+                                                           bucketingKey: nil, attributes: nil)
                     } else {
                         // scenario 2: attribute provided but no attribute value provided. Matcher does not match
                         // e.g. if user.age is >= 10 then split 100:on
@@ -76,12 +78,14 @@ class Condition: NSObject, Codable {
                         } else {
                             // instead of using the user id, we use the attribute value for evaluation
                             result = matcherEvaluator.evaluate(matchValue: attributes![att],
+                                                               matchingKey: matchingKey,
                                                                bucketingKey: nil,
                                                                attributes: nil)
                         }
                     }
                 } else if matcherEvaluator.getMatcherType() == MatcherType.dependency {
                         result = matcherEvaluator.evaluate(matchValue: matchValue,
+                                                           matchingKey: matchingKey,
                                                            bucketingKey: bucketingKey,
                                                            attributes: attributes)
                 }

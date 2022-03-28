@@ -12,9 +12,9 @@ import Foundation
 class InternalSplitClientStub: InternalSplitClient {
 
     var splitsStorage: SplitsStorage?
-    var mySegmentsStorage: OneKeyMySegmentsStorage?
+    var mySegmentsStorage: MySegmentsStorage?
 
-    init(splitsStorage: SplitsStorage?, mySegmentsStorage: OneKeyMySegmentsStorage?) {
+    init(splitsStorage: SplitsStorage?, mySegmentsStorage: MySegmentsStorage?) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
     }

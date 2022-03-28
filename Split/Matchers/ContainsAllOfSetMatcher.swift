@@ -21,7 +21,7 @@ class ContainsAllOfSetMatcher: BaseMatcher, MatcherProtocol {
         }
     }
 
-    func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
+    func evaluate(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
 
         var setToCompare: Set<String>?
 
