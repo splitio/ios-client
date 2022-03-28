@@ -185,7 +185,7 @@ struct BackgroundSyncExecutor {
                 }
 
                 let mySegmentsStorage =
-                    SplitDatabaseHelper.openPersistentMySegmentsStorage(database: self.splitDatabase,
+                    SplitDatabaseHelper.openOneKeyPersistentMySegmentsStorage(database: self.splitDatabase,
                                                                        userKey: userKey)
 
                 let mySegmentsSyncWorker = BackgroundMySegmentsSyncWorker(

@@ -16,12 +16,12 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
     var splitsStorage: SplitsStorage? {
         return storageContainer.splitsStorage
     }
-    var mySegmentsStorage: OneKeyMySegmentsStorage? {
+    var mySegmentsStorage: MySegmentsStorage? {
         return storageContainer.mySegmentsStorage
     }
 
     fileprivate var attributesStorage: OneKeyAttributesStorage {
-        return storageContainer.attributesStorage
+        return storageContainer.oneKeyAttributesStorage
     }
 
     private var storageContainer: SplitStorageContainer
@@ -33,7 +33,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
     private let eventValidator: EventValidator
     private let validationLogger: ValidationMessageLogger
-    private var treatmentManager: TreatmentManager!
+    private var treatmentManager: OneKeyTreatmentManager!
     private var factoryDestroyHandler: DestroyHandler
     private let anyValueValidator: AnyValueValidator
     private var isClientDestroyed = false
@@ -61,10 +61,10 @@ public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClien
 
         super.init()
 
-        self.treatmentManager = DefaultTreatmentManager(
+        self.treatmentManager = DefaultOneKeyTreatmentManager(
             evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager,
             impressionLogger: synchronizer, telemetryProducer: storageContainer.telemetryStorage,
-            attributesStorage: storageContainer.attributesStorage,
+            attributesStorage: storageContainer.oneKeyAttributesStorage,
             keyValidator: DefaultKeyValidator(),
             splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
             validationLogger: validationLogger)

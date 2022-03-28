@@ -195,7 +195,7 @@ class TelemetryTest: XCTestCase {
         return values.reduce(0)  { return $0 + $1 }
     }
 
-    func createTreatmentManager() -> TreatmentManager {
+    func createTreatmentManager() -> OneKeyTreatmentManager {
         let splitHelper = SplitHelper()
         let splitsStorage = SplitsStorageStub()
         let split = splitHelper.createDefaultSplit(named: "SPLIT")
@@ -212,7 +212,7 @@ class TelemetryTest: XCTestCase {
         eventsManager.isSegmentsReadyFromCacheFired = false
         eventsManager.isSplitsReadyFromCacheFired = true
 
-        return DefaultTreatmentManager(evaluator: DefaultEvaluator(splitClient: client),
+        return DefaultOneKeyTreatmentManager(evaluator: DefaultEvaluator(splitClient: client),
                                        key: key, splitConfig: SplitClientConfig(),
                                        eventsManager: eventsManager,
                                        impressionLogger: ImpressionsLoggerStub(),

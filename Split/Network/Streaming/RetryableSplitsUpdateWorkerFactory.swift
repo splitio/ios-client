@@ -107,7 +107,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     func createPeriodicMySegmentsSyncWorker() -> PeriodicSyncWorker {
         return PeriodicMySegmentsSyncWorker(
             userKey: userKey, mySegmentsFetcher: apiFacade.mySegmentsFetcher,
-            mySegmentsStorage: storageContainer.mySegmentsStorage, telemetryProducer: telemetryProducer,
+            mySegmentsStorage: storageContainer.oneKeyMySegmentsStorage, telemetryProducer: telemetryProducer,
             timer: DefaultPeriodicTimer(interval: splitConfig.segmentsRefreshRate), eventsManager: eventsManager)
     }
 
@@ -187,7 +187,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         return TelemetryStatsRecorderWorker(telemetryStatsRecorder: telemetryStatsRecorder,
                                             telemetryConsumer: telemetryStorage,
                                             splitsStorage: storageContainer.splitsStorage,
-                                            mySegmentsStorage: storageContainer.mySegmentsStorage)
+                                            mySegmentsStorage: storageContainer.oneKeyMySegmentsStorage)
     }
 
     func createPeriodicTelemetryStatsRecorderWorker() -> PeriodicRecorderWorker? {
@@ -203,7 +203,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         let telemetryStatsWorker = TelemetryStatsRecorderWorker(telemetryStatsRecorder: telemetryStatsRecorder,
                                                                 telemetryConsumer: telemetryStorage,
                                                                 splitsStorage: storageContainer.splitsStorage,
-                                                                mySegmentsStorage: storageContainer.mySegmentsStorage)
+                                                                mySegmentsStorage: storageContainer.oneKeyMySegmentsStorage)
 
         let timer = DefaultPeriodicTimer(deadline: splitConfig.internalTelemetryRefreshRate,
                                          interval: splitConfig.internalTelemetryRefreshRate)
@@ -216,7 +216,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         let backoffBase =  splitConfig.generalRetryBackoffBase
         let mySegmentsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
         return RetryableMySegmentsSyncWorker(userKey: userKey, mySegmentsFetcher: apiFacade.mySegmentsFetcher,
-                                             mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                             mySegmentsStorage: storageContainer.oneKeyMySegmentsStorage,
                                              telemetryProducer: telemetryProducer,
                                              eventsManager: eventsManager,
                                              reconnectBackoffCounter: mySegmentsBackoffCounter,

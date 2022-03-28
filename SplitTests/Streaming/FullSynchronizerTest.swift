@@ -75,10 +75,12 @@ class FullSynchronizerTest: XCTestCase {
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      fileStorage: FileStorageStub(), splitsStorage: splitsStorage,
                                                      persistentSplitsStorage: persistentSplitsStorage,
-                                                     mySegmentsStorage: mySegmentsStorage, impressionsStorage: PersistentImpressionsStorageStub(), impressionsCountStorage: PersistentImpressionsCountStorageStub(),
+                                                     oneKeyMySegmentsStorage: mySegmentsStorage, impressionsStorage: PersistentImpressionsStorageStub(), impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub(),
-                                                     attributesStorage: OneKeyDefaultAttributesStorage(),
-                                                     telemetryStorage: telemetryProducer)
+                                                     oneKeyAttributesStorage: OneKeyDefaultAttributesStorage(),
+                                                     telemetryStorage: telemetryProducer,
+                                                     mySegmentsStorage: MySegmentsStorageStub(),
+                                                     attributesStorage: AttributesStorageStub())
 
         let apiFacade = SplitApiFacade.builder()
             .setUserKey("userKey")

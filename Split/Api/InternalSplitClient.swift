@@ -15,7 +15,7 @@ import Foundation
 ///
 protocol InternalSplitClient: SplitClient {
     var splitsStorage: SplitsStorage? { get }
-    var mySegmentsStorage: OneKeyMySegmentsStorage? { get }
+    var mySegmentsStorage: MySegmentsStorage? { get }
 }
 
 protocol TelemetrySplitClient: SplitClient {
