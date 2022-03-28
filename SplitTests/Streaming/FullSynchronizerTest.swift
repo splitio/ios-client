@@ -25,7 +25,7 @@ class FullSynchronizerTest: XCTestCase {
     var persistentSplitsStorage: PersistentSplitsStorageStub!
 
     var splitsStorage: SplitsStorageStub!
-    var mySegmentsStorage: OneKeyMySegmentsStorageStub!
+    var mySegmentsStorage: ByKeyMySegmentsStorageStub!
 
     var updateWorkerCatalog = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()
     var syncWorkerFactory: SyncWorkerFactoryStub!
@@ -70,7 +70,7 @@ class FullSynchronizerTest: XCTestCase {
         splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
-        mySegmentsStorage = OneKeyMySegmentsStorageStub()
+        mySegmentsStorage = ByKeyMySegmentsStorageStub()
 
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      fileStorage: FileStorageStub(), splitsStorage: splitsStorage,
