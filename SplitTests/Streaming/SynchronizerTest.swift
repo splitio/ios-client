@@ -24,7 +24,7 @@ class SynchronizerTest: XCTestCase {
     var persistentSplitsStorage: PersistentSplitsStorageStub!
 
     var splitsStorage: SplitsStorageStub!
-    var mySegmentsStorage: OneKeyMySegmentsStorageStub!
+    var mySegmentsStorage: ByKeyMySegmentsStorageStub!
 
     var updateWorkerCatalog = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()
     var syncWorkerFactory: SyncWorkerFactoryStub!
@@ -67,7 +67,7 @@ class SynchronizerTest: XCTestCase {
         syncWorkerFactory.periodicEventsRecorderWorker = periodicEventsRecorderWorker
         syncWorkerFactory.eventsRecorderWorker = eventsRecorderWorker
 
-        mySegmentsStorage = OneKeyMySegmentsStorageStub()
+        mySegmentsStorage = ByKeyMySegmentsStorageStub()
         telemetryProducer = TelemetryStorageStub()
         splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],

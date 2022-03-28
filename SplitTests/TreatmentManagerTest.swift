@@ -49,7 +49,7 @@ class TreatmentManagerTest: XCTestCase {
                                                      fileStorage: FileStorageStub(),
                                                      splitsStorage: splitsStorage,
                                                      persistentSplitsStorage: PersistentSplitsStorageStub(),
-                                                     oneKeyMySegmentsStorage: OneKeyMySegmentsStorageStub(),
+                                                     oneKeyMySegmentsStorage: ByKeyMySegmentsStorageStub(),
                                                      impressionsStorage: PersistentImpressionsStorageStub(),
                                                      impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub(),
@@ -126,7 +126,11 @@ class TreatmentManagerTest: XCTestCase {
     }
     
     func testBasicEvaluations() {
-        let thisKey = Key(matchingKey: "thekey")
+//        let thisKey = Key(matchingKey: "thekey")
+        let thisKey = Key(matchingKey: matchingKey)
+
+        mySegmentsStorage.set(["test_copy"], forKey: matchingKey)
+
         let splitNames = ["FACUNDO_TEST", "testo2222", "OldTest"]
         
         let treatmentManager = createTreatmentManager()

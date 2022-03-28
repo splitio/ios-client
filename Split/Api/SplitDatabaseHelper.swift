@@ -36,11 +36,14 @@ struct SplitDatabaseHelper {
         let attributesStorage = openAttributesStorage(database: splitDatabase,
                                                       splitClientConfig: splitClientConfig)
 
+        // To make it work current staff for now
+        let byKeyMySegmentsStorage = createByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: userKey)
+
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      fileStorage: fileStorage,
                                      splitsStorage: splitsStorage,
                                      persistentSplitsStorage: persistentSplitsStorage,
-                                     oneKeyMySegmentsStorage: oneKeyMySegmentsStorage,
+                                     oneKeyMySegmentsStorage: byKeyMySegmentsStorage,
                                      impressionsStorage: impressionsStorage,
                                      impressionsCountStorage: impressionsCountStorage,
                                      eventsStorage: eventsStorage,
@@ -201,5 +204,9 @@ struct SplitDatabaseHelper {
             persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
                 openOneKeyPersistentAttributesStorage(database: database, userKey: userKey) : nil
         )
+    }
+
+    static func createByKeyMySegmentsStorage(mySegmentsStorage: MySegmentsStorage, userKey: String) -> ByKeyMySegmentsStorage {
+        return DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: userKey)
     }
 }
