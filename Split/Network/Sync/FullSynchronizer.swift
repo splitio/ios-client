@@ -122,14 +122,14 @@ class DefaultFullSynchronizer: FullSynchronizer {
 
     func loadMySegmentsFromCache() {
         DispatchQueue.global().async {
-            self.splitStorageContainer.mySegmentsStorage.loadLocal()
+            self.splitStorageContainer.oneKeyMySegmentsStorage.loadLocal()
             self.splitEventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
         }
     }
 
     func loadAttributesFromCache() {
         DispatchQueue.global().async {
-            self.splitStorageContainer.attributesStorage.loadLocal()
+            self.splitStorageContainer.oneKeyAttributesStorage.loadLocal()
             self.splitEventsManager.notifyInternalEvent(.attributesLoadedFromCache)
         }
     }

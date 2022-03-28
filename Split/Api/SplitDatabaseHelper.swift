@@ -23,24 +23,31 @@ struct SplitDatabaseHelper {
 
         let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
         let splitsStorage = openSplitsStorage(database: splitDatabase)
-        let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase, userKey: userKey)
+
         let impressionsStorage = openImpressionsStorage(database: splitDatabase)
         let impressionsCountStorage = openImpressionsCountStorage(database: splitDatabase)
         let eventsStorage = openEventsStorage(database: splitDatabase)
-        let attributesStorage = openAttributesStorage(database: splitDatabase,
+        let oneKeyMySegmentsStorage = openOneKeyMySegmentsStorage(database: splitDatabase, userKey: userKey)
+        let oneKeyAttributesStorage = openOneKeyAttributesStorage(database: splitDatabase,
                                                       userKey: userKey,
+                                                      splitClientConfig: splitClientConfig)
+
+        let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase)
+        let attributesStorage = openAttributesStorage(database: splitDatabase,
                                                       splitClientConfig: splitClientConfig)
 
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      fileStorage: fileStorage,
                                      splitsStorage: splitsStorage,
                                      persistentSplitsStorage: persistentSplitsStorage,
-                                     mySegmentsStorage: mySegmentsStorage,
+                                     oneKeyMySegmentsStorage: oneKeyMySegmentsStorage,
                                      impressionsStorage: impressionsStorage,
                                      impressionsCountStorage: impressionsCountStorage,
                                      eventsStorage: eventsStorage,
-                                     attributesStorage: attributesStorage,
-                                     telemetryStorage: telemetryStorage)
+                                     oneKeyAttributesStorage: oneKeyAttributesStorage,
+                                     telemetryStorage: telemetryStorage,
+                                     mySegmentsStorage: mySegmentsStorage,
+                                     attributesStorage: attributesStorage)
     }
 
     static func openDatabase(dataFolderName: String,
@@ -64,19 +71,25 @@ struct SplitDatabaseHelper {
         return DefaultSplitsStorage(persistentSplitsStorage: openPersistentSplitsStorage(database: database))
     }
 
-    static func openPersistentMySegmentsStorage(database: SplitDatabase,
-                                                userKey: String) -> OneKeyPersistentMySegmentsStorage {
-        return DefaultOneKeyPersistentMySegmentsStorage(userKey: userKey, database: database)
+    static func openPersistentMySegmentsStorage(database: SplitDatabase) -> PersistentMySegmentsStorage {
+        return DefaultPersistentMySegmentsStorage(database: database)
     }
 
-    static func openMySegmentsStorage(database: SplitDatabase, userKey: String) -> OneKeyMySegmentsStorage {
-        let persistentMySegmentsStorage = openPersistentMySegmentsStorage(database: database, userKey: userKey)
-        return DefaultOneKeyMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
+    static func openMySegmentsStorage(database: SplitDatabase) -> MySegmentsStorage {
+        let persistentMySegmentsStorage = openPersistentMySegmentsStorage(database: database)
+        return DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
     }
 
-    static func openPersistentAttributesStorage(database: SplitDatabase,
-                                                userKey: String) -> OneKeyPersistentAttributesStorage {
-        return DefaultOneKeyPersistentAttributesStorage(userKey: userKey, database: database)
+    static func openPersistentAttributesStorage(database: SplitDatabase) -> PersistentAttributesStorage {
+        return DefaultPersistentAttributesStorage(database: database)
+    }
+
+    static func openAttributesStorage(database: SplitDatabase,
+                                      splitClientConfig: SplitClientConfig) -> AttributesStorage {
+        return DefaultAttributesStorage(
+            persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
+                openPersistentAttributesStorage(database: database) : nil
+        )
     }
 
     static func openImpressionsStorage(database: SplitDatabase) -> PersistentImpressionsStorage {
@@ -92,15 +105,6 @@ struct SplitDatabaseHelper {
     static func openEventsStorage(database: SplitDatabase) -> PersistentEventsStorage {
         return DefaultEventsStorage(database: database,
                                          expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
-    }
-
-    static func openAttributesStorage(database: SplitDatabase,
-                                      userKey: String,
-                                      splitClientConfig: SplitClientConfig) -> OneKeyAttributesStorage {
-        return OneKeyDefaultAttributesStorage(
-            persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
-                openPersistentAttributesStorage(database: database, userKey: userKey) : nil
-        )
     }
 
     static func databaseName(apiKey: String) -> String? {
@@ -171,4 +175,31 @@ struct SplitDatabaseHelper {
         return nil
     }
 
+    @available(*, deprecated, message: "Replaced by PersistentMySegmentsStorage")
+    static func openOneKeyPersistentMySegmentsStorage(database: SplitDatabase,
+                                                userKey: String) -> OneKeyPersistentMySegmentsStorage {
+        return DefaultOneKeyPersistentMySegmentsStorage(userKey: userKey, database: database)
+    }
+
+    @available(*, deprecated, message: "Replaced by MySegmentsStorage")
+    static func openOneKeyMySegmentsStorage(database: SplitDatabase, userKey: String) -> OneKeyMySegmentsStorage {
+        let persistentMySegmentsStorage = openOneKeyPersistentMySegmentsStorage(database: database, userKey: userKey)
+        return DefaultOneKeyMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
+    }
+
+    @available(*, deprecated, message: "Replaced by AttributesStorage")
+    static func openOneKeyPersistentAttributesStorage(database: SplitDatabase,
+                                                userKey: String) -> OneKeyPersistentAttributesStorage {
+        return DefaultOneKeyPersistentAttributesStorage(userKey: userKey, database: database)
+    }
+
+    @available(*, deprecated, message: "Replaced by AttributesStorage")
+    static func openOneKeyAttributesStorage(database: SplitDatabase,
+                                      userKey: String,
+                                      splitClientConfig: SplitClientConfig) -> OneKeyAttributesStorage {
+        return OneKeyDefaultAttributesStorage(
+            persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
+                openOneKeyPersistentAttributesStorage(database: database, userKey: userKey) : nil
+        )
+    }
 }

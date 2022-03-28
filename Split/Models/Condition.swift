@@ -80,12 +80,10 @@ class Condition: NSObject, Codable {
                                                                attributes: nil)
                         }
                     }
-                } else {
-                    if matcherEvaluator.getMatcherType() == MatcherType.dependency {
+                } else if matcherEvaluator.getMatcherType() == MatcherType.dependency {
                         result = matcherEvaluator.evaluate(matchValue: matchValue,
                                                            bucketingKey: bucketingKey,
                                                            attributes: attributes)
-                    }
                 }
 
                 let lastEvaluation = matcherEvaluator.isNegate() ? !result : result
