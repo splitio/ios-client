@@ -14,6 +14,7 @@ class EvaluatorTests: XCTestCase {
     var evaluator: Evaluator!
     let matchingKey = "test_key"
     var client: InternalSplitClient!
+    var mySegmentsStorage: MySegmentsStorageStub!
     
     override func setUp() {
         if evaluator == nil {
@@ -22,8 +23,8 @@ class EvaluatorTests: XCTestCase {
             let splits = loadSplitsFile()
             let splitsStorage = SplitsStorageStub()
             splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
-            let mySegmentsStorage = OneKeyMySegmentsStorageStub()
-            mySegmentsStorage.set(mySegments)
+            mySegmentsStorage = MySegmentsStorageStub()
+            mySegmentsStorage.set(mySegments, forKey: matchingKey)
             client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
             evaluator = DefaultEvaluator(splitClient: client)
         }
@@ -77,7 +78,6 @@ class EvaluatorTests: XCTestCase {
     
     func testInSegmentTestKey() {
         var result: EvaluationResult!
-        let matchingKey = "anyKey"
         let splitName = "a_new_split_2"
         do {
             result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
@@ -374,8 +374,8 @@ class EvaluatorTests: XCTestCase {
         let split = loadSplit(splitName: fileName)!
         let splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
-        let mySegmentsStorage = OneKeyMySegmentsStorageStub()
-        mySegmentsStorage.set(mySegments)
+        let mySegmentsStorage = MySegmentsStorageStub()
+        mySegmentsStorage.set(mySegments, forKey: matchingKey)
         client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
         evaluator = DefaultEvaluator(splitClient: client)
         return evaluator
@@ -384,8 +384,8 @@ class EvaluatorTests: XCTestCase {
     func customEvaluator(split: Split) -> Evaluator {
         let splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
-        let mySegmentsStorage = OneKeyMySegmentsStorageStub()
-        mySegmentsStorage.set([])
+        let mySegmentsStorage = MySegmentsStorageStub()
+        mySegmentsStorage.set([], forKey: matchingKey)
         client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
         evaluator = DefaultEvaluator(splitClient: client)
         return evaluator

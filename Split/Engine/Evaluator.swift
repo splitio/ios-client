@@ -87,7 +87,8 @@ class DefaultEvaluator: Evaluator {
                 }
 
                 //Return the first condition that match.
-                if try condition.match(matchValue: matchingKey, bucketingKey: bucketKey, attributes: attributes) {
+                if try condition.match(matchValue: matchingKey, matchingKey: matchingKey,
+                                       bucketingKey: bucketKey, attributes: attributes) {
                     let key: Key = Key(matchingKey: matchingKey, bucketingKey: bucketKey)
                     let treatment = splitter.getTreatment(key: key, seed: seed, attributes: attributes,
                                                           partions: condition.partitions, algo: splitAlgo)

@@ -2,14 +2,16 @@
 //  DefaultTreatmentManager.swift
 //  Split
 //
-//  Created by Javier L. Avrudsky on 02-Mar-2022.
-//  Copyright © 2022 Split. All rights reserved.
+//  Created by Javier L. Avrudsky on 05/07/2019.
+//  Copyright © 2019 Split. All rights reserved.
 //
 
 import Foundation
 
-class DefaultTreatmentManager: TreatmentManager {
+@available(*, deprecated, message: "DefaultTreatmentManager")
+class DefaultOneKeyTreatmentManager: OneKeyTreatmentManager {
 
+    private let key: Key
     private let telemetryProducer: TelemetryProducer?
     private let impressionLogger: ImpressionLogger
     private let eventsManager: SplitEventsManager
@@ -18,19 +20,21 @@ class DefaultTreatmentManager: TreatmentManager {
     private let validationLogger: ValidationMessageLogger
     private let evaluator: Evaluator
     private let splitConfig: SplitClientConfig
-    private let attributesStorage: AttributesStorage
+    private let attributesStorage: OneKeyAttributesStorage
     private var isDestroyed = false
 
     init(evaluator: Evaluator,
+         key: Key,
          splitConfig: SplitClientConfig,
          eventsManager: SplitEventsManager,
          impressionLogger: ImpressionLogger,
          telemetryProducer: TelemetryProducer?,
-         attributesStorage: AttributesStorage,
+         attributesStorage: OneKeyAttributesStorage,
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
          validationLogger: ValidationMessageLogger) {
 
+        self.key = key
         self.splitConfig = splitConfig
         self.evaluator = evaluator
         self.eventsManager = eventsManager
@@ -42,12 +46,11 @@ class DefaultTreatmentManager: TreatmentManager {
         self.validationLogger = validationLogger
     }
 
-    func getTreatmentWithConfig(_ splitName: String, key: Key, attributes: [String: Any]?) -> SplitResult {
+    func getTreatmentWithConfig(_ splitName: String, attributes: [String: Any]?) -> SplitResult {
 
         let timeStart = startTime()
-        let mergedAttributes = mergeAttributes(attributes: attributes, forKey: key.matchingKey)
+        let mergedAttributes = mergeAttributes(attributes: attributes)
         let result = getTreatmentWithConfigNoMetrics(splitName: splitName,
-                                                     key: key,
                                                      shouldValidate: true,
                                                      attributes: mergedAttributes,
                                                      validationTag: ValidationTag.getTreatmentWithConfig)
@@ -55,10 +58,9 @@ class DefaultTreatmentManager: TreatmentManager {
         return result
     }
 
-    func getTreatment(_ splitName: String, key: Key, attributes: [String: Any]?) -> String {
+    func getTreatment(_ splitName: String, attributes: [String: Any]?) -> String {
         let timeStart = startTime()
         let result = getTreatmentWithConfigNoMetrics(splitName: splitName,
-                                                     key: key,
                                                      shouldValidate: true,
                                                      attributes: attributes,
                                                      validationTag: ValidationTag.getTreatment).treatment
@@ -66,10 +68,9 @@ class DefaultTreatmentManager: TreatmentManager {
         return result
     }
 
-    func getTreatments(splits: [String], key: Key, attributes: [String: Any]?) -> [String: String] {
+    func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String] {
         let timeStart = startTime()
         let treatments = getTreatmentsWithConfigNoMetrics(splits: splits,
-                                                          key: key,
                                                       attributes: attributes,
                                                       validationTag: ValidationTag.getTreatments)
         let result = treatments.mapValues { $0.treatment }
@@ -77,10 +78,9 @@ class DefaultTreatmentManager: TreatmentManager {
         return result
     }
 
-    func getTreatmentsWithConfig(splits: [String], key: Key, attributes: [String: Any]?) -> [String: SplitResult] {
+    func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult] {
         let timeStart = startTime()
         let result = getTreatmentsWithConfigNoMetrics(splits: splits,
-                                                      key: key,
                                                       attributes: attributes,
                                                       validationTag: ValidationTag.getTreatmentsWithConfig)
         telemetryProducer?.recordLatency(method: .treatmentsWithConfig, latency: Stopwatch.interval(from: timeStart))
@@ -92,7 +92,6 @@ class DefaultTreatmentManager: TreatmentManager {
     }
 
     private func getTreatmentsWithConfigNoMetrics(splits: [String],
-                                                  key: Key,
                                                   attributes: [String: Any]?,
                                                   validationTag: String) -> [String: SplitResult] {
         var results = [String: SplitResult]()
@@ -116,11 +115,10 @@ class DefaultTreatmentManager: TreatmentManager {
         }
 
         if splits.count > 0 {
-            let mergedAttributes = mergeAttributes(attributes: attributes, forKey: key.matchingKey)
+            let mergedAttributes = mergeAttributes(attributes: attributes)
             let splitsNoDuplicated = Set(splits.filter { !$0.isEmpty() }.map { $0 })
             for splitName in splitsNoDuplicated {
                 results[splitName] = getTreatmentWithConfigNoMetrics(splitName: splitName,
-                                                                     key: key,
                                                                      shouldValidate: false,
                                                                      attributes: mergedAttributes,
                                                                      validationTag: validationTag)
@@ -132,7 +130,6 @@ class DefaultTreatmentManager: TreatmentManager {
     }
 
     private func getTreatmentWithConfigNoMetrics(splitName: String,
-                                                 key: Key,
                                                  shouldValidate: Bool = true,
                                                  attributes: [String: Any]? = nil,
                                                  validationTag: String) -> SplitResult {
@@ -162,21 +159,20 @@ class DefaultTreatmentManager: TreatmentManager {
         }
 
         let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let mergedAttributes = mergeAttributes(attributes: attributes, forKey: key.matchingKey)
+        let mergedAttributes = mergeAttributes(attributes: attributes)
         do {
-            let result = try evaluateIfReady(splitName: trimmedSplitName, key: key, attributes: mergedAttributes)
+            let result = try evaluateIfReady(splitName: trimmedSplitName, attributes: mergedAttributes)
             logImpression(label: result.label, changeNumber: result.changeNumber,
-                          treatment: result.treatment, splitName: trimmedSplitName, key: key,
-                          attributes: mergedAttributes)
+                          treatment: result.treatment, splitName: trimmedSplitName, attributes: mergedAttributes)
             return SplitResult(treatment: result.treatment, config: result.configuration)
         } catch {
             logImpression(label: ImpressionsConstants.exception, treatment: SplitConstants.control,
-                          splitName: trimmedSplitName, key: key, attributes: mergedAttributes)
+                          splitName: trimmedSplitName, attributes: mergedAttributes)
             return SplitResult(treatment: SplitConstants.control)
         }
     }
 
-    private func evaluateIfReady(splitName: String, key: Key, attributes: [String: Any]?) throws -> EvaluationResult {
+    private func evaluateIfReady(splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
         if !isSdkReady() {
             telemetryProducer?.recordNonReadyUsage()
             return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.notReady)
@@ -188,8 +184,7 @@ class DefaultTreatmentManager: TreatmentManager {
     }
 
     private func logImpression(label: String, changeNumber: Int64? = nil,
-                               treatment: String, splitName: String,
-                               key: Key, attributes: [String: Any]? = nil) {
+                               treatment: String, splitName: String, attributes: [String: Any]? = nil) {
 
         let keyImpression = KeyImpression(featureName: splitName,
                                           keyName: key.matchingKey,
@@ -219,8 +214,8 @@ class DefaultTreatmentManager: TreatmentManager {
         return isDestroyed
     }
 
-    private func mergeAttributes(attributes: [String: Any]?, forKey key: String) -> [String: Any]? {
-        let storedAttributes = attributesStorage.getAll(forKey: key)
+    private func mergeAttributes(attributes: [String: Any]?) -> [String: Any]? {
+        let storedAttributes = attributesStorage.getAll()
 
         if storedAttributes.count == 0 {
             return attributes

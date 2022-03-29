@@ -1,5 +1,5 @@
 //
-//  SyncCommons.swift
+//  SplitStorageContainer.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 09-Mar-2022.
@@ -11,12 +11,14 @@ struct SplitStorageContainer {
     let fileStorage: FileStorageProtocol
     let splitsStorage: SplitsStorage
     let persistentSplitsStorage: PersistentSplitsStorage
-    let mySegmentsStorage: OneKeyMySegmentsStorage
+    let oneKeyMySegmentsStorage: ByKeyMySegmentsStorage
     let impressionsStorage: PersistentImpressionsStorage
     let impressionsCountStorage: PersistentImpressionsCountStorage
     let eventsStorage: PersistentEventsStorage
-    let attributesStorage: OneKeyAttributesStorage
+    let oneKeyAttributesStorage: OneKeyAttributesStorage
     let telemetryStorage: TelemetryStorage?
+    let mySegmentsStorage: MySegmentsStorage
+    let attributesStorage: AttributesStorage
 }
 
 protocol ImpressionLogger {

@@ -24,7 +24,7 @@ class SynchronizerTest: XCTestCase {
     var persistentSplitsStorage: PersistentSplitsStorageStub!
 
     var splitsStorage: SplitsStorageStub!
-    var mySegmentsStorage: OneKeyMySegmentsStorageStub!
+    var mySegmentsStorage: ByKeyMySegmentsStorageStub!
 
     var updateWorkerCatalog = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()
     var syncWorkerFactory: SyncWorkerFactoryStub!
@@ -67,7 +67,7 @@ class SynchronizerTest: XCTestCase {
         syncWorkerFactory.periodicEventsRecorderWorker = periodicEventsRecorderWorker
         syncWorkerFactory.eventsRecorderWorker = eventsRecorderWorker
 
-        mySegmentsStorage = OneKeyMySegmentsStorageStub()
+        mySegmentsStorage = ByKeyMySegmentsStorageStub()
         telemetryProducer = TelemetryStorageStub()
         splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
@@ -76,10 +76,12 @@ class SynchronizerTest: XCTestCase {
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      fileStorage: FileStorageStub(), splitsStorage: splitsStorage,
                                                      persistentSplitsStorage: persistentSplitsStorage,
-                                                     mySegmentsStorage: mySegmentsStorage, impressionsStorage: PersistentImpressionsStorageStub(), impressionsCountStorage: PersistentImpressionsCountStorageStub(),
+                                                     oneKeyMySegmentsStorage: mySegmentsStorage, impressionsStorage: PersistentImpressionsStorageStub(), impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub(),
-                                                     attributesStorage: OneKeyDefaultAttributesStorage(),
-                                                     telemetryStorage: telemetryProducer)
+                                                     oneKeyAttributesStorage: OneKeyDefaultAttributesStorage(),
+                                                     telemetryStorage: telemetryProducer,
+                                                     mySegmentsStorage: MySegmentsStorageStub(),
+                                                     attributesStorage: AttributesStorageStub())
 
         let apiFacade = SplitApiFacade.builder()
             .setUserKey("userKey")
