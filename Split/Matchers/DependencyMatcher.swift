@@ -11,22 +11,20 @@ class DependencyMatcher: BaseMatcher, MatcherProtocol {
 
     var dependencyData: DependencyMatcherData?
 
-    init(splitClient: InternalSplitClient? = nil, negate: Bool? = nil,
+    init(negate: Bool? = nil,
          attribute: String? = nil, type: MatcherType? = nil, dependencyData: DependencyMatcherData?) {
 
-        super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
+        super.init(negate: negate, attribute: attribute, type: type)
         self.dependencyData = dependencyData
     }
 
-    func evaluate(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
-
+    func evaluate(values: EvalValues, context: EvalContext) -> Bool {
         if let splitName = dependencyData?.split {
-
-            var treatment: String?
-            treatment = splitClient?.getTreatment(splitName, attributes: attributes)
+            let key = Key(matchingKey: values.matchingKey, bucketingKey: values.bucketingKey)
+            let treatment = components.treatmentManager.getTreatment(splitName, key: key, attributes: values.attributes)
 
             if let treatments = dependencyData?.treatments {
-                return treatments.contains(treatment!)
+                return treatments.contains(treatment)
             } else {
                 return false
             }

@@ -21,23 +21,37 @@ struct EvaluationResult {
     }
 }
 
+struct EvalValues {
+    let matchValue: Any?
+    let matchingKey: String
+    let bucketingKey: String?
+    let attributes: [String: Any]?
+}
+
+// Components needed
+struct EvalContext {
+    let evaluator: Evaluator
+    let mySegmentsStorage: MySegmentsStorage
+}
+
 protocol Evaluator {
     func evalTreatment(matchingKey: String, bucketingKey: String?,
                        splitName: String, attributes: [String: Any]?) throws -> EvaluationResult
 }
 
 class DefaultEvaluator: Evaluator {
-    weak var splitClient: InternalSplitClient?
-    var splitter: SplitterProtocol = Splitter.shared
+    private let splitter: SplitterProtocol = Splitter.shared
+    private let storageContainer: SplitStorageContainer
 
-    init(splitClient: InternalSplitClient? = nil) {
-            self.splitClient = splitClient
+
+    init(storageContainer: SplitStorageContainer) {
+        self.storageContainer = storageContainer
     }
 
     func evalTreatment(matchingKey: String, bucketingKey: String?,
                        splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
 
-        guard let split = splitClient?.splitsStorage?.get(name: splitName),
+        guard let split = storageContainer.splitsStorage.get(name: splitName),
             split.status != .archived else {
                 Logger.w("The SPLIT definition for '\(splitName)' has not been found")
                 return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
@@ -70,7 +84,6 @@ class DefaultEvaluator: Evaluator {
 
         do {
             for condition in conditions {
-                condition.client = splitClient
                 if !inRollOut && condition.conditionType == ConditionType.rollout {
                     if let trafficAllocation = split.trafficAllocation, trafficAllocation < 100 {
                         let bucket: Int64 = splitter.getBucket(seed: trafficAllocationSeed,
@@ -87,8 +100,9 @@ class DefaultEvaluator: Evaluator {
                 }
 
                 //Return the first condition that match.
-                if try condition.match(matchValue: matchingKey, matchingKey: matchingKey,
-                                       bucketingKey: bucketKey, attributes: attributes) {
+                let values = EvalValues(matchValue: matchingKey, matchingKey: matchingKey,
+                                        bucketingKey: bucketKey, attributes: attributes)
+                if try condition.match(values: values, context: getContext()) {
                     let key: Key = Key(matchingKey: matchingKey, bucketingKey: bucketKey)
                     let treatment = splitter.getTreatment(key: key, seed: seed, attributes: attributes,
                                                           partions: condition.partitions, algo: splitAlgo)
@@ -108,5 +122,9 @@ class DefaultEvaluator: Evaluator {
             return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.matcherNotFound,
                                     changeNumber: changeNumber)
         }
+    }
+
+    private func getContext() -> EvalContext {
+        return EvalContext(evaluator: self, mySegmentsStorage: storageContainer.mySegmentsStorage)
     }
 }
