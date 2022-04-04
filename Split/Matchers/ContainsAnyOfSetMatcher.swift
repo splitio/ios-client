@@ -14,7 +14,7 @@ class ContainsAnyOfSetMatcher: BaseMatcher, MatcherProtocol {
     init(data: [String]?, splitClient: DefaultSplitClient? = nil,
          negate: Bool? = nil, attribute: String? = nil, type: MatcherType? = nil) {
 
-        super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
+        super.init(negate: negate, attribute: attribute, type: type)
 
         if let dataElements = data {
             let set: Set<String> = Set(dataElements.map { $0 })
@@ -22,11 +22,10 @@ class ContainsAnyOfSetMatcher: BaseMatcher, MatcherProtocol {
         }
     }
 
-    func evaluate(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
-
+    func evaluate(values: EvalValues, context: EvalContext) -> Bool {
         var setToCompare: Set<String>?
 
-        if let dataElements = matchValue as? [String] {
+        if let dataElements = values.matchValue as? [String] {
             setToCompare = Set(dataElements.map { $0 })
         } else {
             return false

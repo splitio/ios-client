@@ -8,14 +8,14 @@
 
 import Foundation
 
-protocol SplitEventsManagerGroup {
+protocol SplitEventsManagerCoordinator: SplitEventsManager {
     func add(_ manager: SplitEventsManager, forKey key: String)
     func remove(forKey key: String)
 }
 
-protocol SplitEventsManagerCoordinator: SplitEventsQueue, SplitEventsManagerGroup {}
+class MainSplitEventsManager: SplitEventsManagerCoordinator {
+    var executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
 
-class GlobalEventsQueue: SplitEventsManagerCoordinator {
     private var managers = [String: SplitEventsManager]()
     private var triggered = Set<SplitInternalEvent>()
     private let queue = DispatchQueue(label: "split-event-manager-coordinator")
@@ -74,5 +74,8 @@ class GlobalEventsQueue: SplitEventsManagerCoordinator {
                 manager.stop()
             }
         }
+    }
+
+    func register(event: SplitEvent, task: SplitEventTask) {
     }
 }

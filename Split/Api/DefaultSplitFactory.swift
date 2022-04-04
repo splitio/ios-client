@@ -19,7 +19,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return Version.semantic
     }
 
-    private var defaultClient: SplitClient?
     private var defaultManager: SplitManager?
     private let filterBuilder = FilterBuilder()
 

@@ -11,63 +11,39 @@ import Foundation
 
 typealias DestroyHandler = () -> Void
 
-public final class DefaultSplitClient: NSObject, SplitClient, InternalSplitClient, TelemetrySplitClient {
-
-    var splitsStorage: SplitsStorage? {
-        return storageContainer.splitsStorage
-    }
-    var mySegmentsStorage: MySegmentsStorage? {
-        return storageContainer.mySegmentsStorage
-    }
-
-    fileprivate var attributesStorage: OneKeyAttributesStorage {
-        return storageContainer.oneKeyAttributesStorage
-    }
+public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClient {
 
     private var storageContainer: SplitStorageContainer
     private var key: Key
     private let config: SplitClientConfig
-
     private var eventsManager: SplitEventsManager
-    private var synchronizer: FullSynchronizer
-
-    private let eventValidator: EventValidator
     private let validationLogger: ValidationMessageLogger
-    private var treatmentManager: OneKeyTreatmentManager!
-    private var factoryDestroyHandler: DestroyHandler
+    private var treatmentManager: TreatmentManager
     private let anyValueValidator: AnyValueValidator
     private var isClientDestroyed = false
-    private let telemetryProducer: TelemetryProducer?
+    private let eventsTracker: EventsTracker
+    private weak var clientManager: SplitClientManager?
+
     var initStopwatch: Stopwatch?
 
     init(config: SplitClientConfig,
          key: Key,
+         treatmentManager: TreatmentManager,
          apiFacade: SplitApiFacade,
          storageContainer: SplitStorageContainer,
-         synchronizer: FullSynchronizer,
          eventsManager: SplitEventsManager,
-         destroyHandler: @escaping DestroyHandler) {
+         eventsTracker: EventsTracker) {
 
         self.config = config
         self.key = key
-        self.synchronizer = synchronizer
-        self.factoryDestroyHandler = destroyHandler
-        self.eventValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
+        self.eventsTracker = eventsTracker
         self.validationLogger = DefaultValidationMessageLogger()
         self.eventsManager = eventsManager
         self.storageContainer = storageContainer
-        self.telemetryProducer = storageContainer.telemetryStorage
+        self.treatmentManager = treatmentManager
         self.anyValueValidator = DefaultAnyValueValidator()
 
         super.init()
-
-        self.treatmentManager = DefaultOneKeyTreatmentManager(
-            evaluator: DefaultEvaluator(splitClient: self), key: key, splitConfig: config, eventsManager: eventsManager,
-            impressionLogger: synchronizer, telemetryProducer: storageContainer.telemetryStorage,
-            attributesStorage: storageContainer.oneKeyAttributesStorage,
-            keyValidator: DefaultKeyValidator(),
-            splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
-            validationLogger: validationLogger)
 
         Logger.i("iOS Split SDK initialized!")
     }
@@ -154,72 +130,17 @@ extension DefaultSplitClient {
         return track(eventType: eventType, trafficType: nil, value: value, properties: properties)
     }
 
-    private func track(eventType: String, trafficType: String? = nil,
-                       value: Double? = nil, properties: [String: Any]?) -> Bool {
-        let timeStart = Stopwatch.now()
-        let validationTag = "track"
-
+    func track(eventType: String, trafficType: String? = nil,
+               value: Double? = nil, properties: [String: Any]?) -> Bool {
         if isClientDestroyed {
-            validationLogger.e(message: "Client has already been destroyed - no calls possible", tag: validationTag)
+            validationLogger.e(message: "Client has already been destroyed - no calls possible", tag: "track")
             return false
         }
-
-        guard let trafficType = trafficType ?? config.trafficType else {
-            return false
-        }
-
-        if let errorInfo = eventValidator.validate(key: self.key.matchingKey,
-                                                   trafficTypeName: trafficType,
-                                                   eventTypeId: trafficType,
-                                                   value: value,
-                                                   properties: properties) {
-            validationLogger.log(errorInfo: errorInfo, tag: validationTag)
-            if errorInfo.isError {
-                return false
-            }
-        }
-
-        var validatedProps = properties
-        var totalSizeInBytes = config.initialEventSizeInBytes
-        if let props = validatedProps {
-            let maxBytes = ValidationConfig.default.maximumEventPropertyBytes
-            if props.count > ValidationConfig.default.maxEventPropertiesCount {
-                validationLogger.w(message: "Event has more than 300 properties. " +
-                    "Some of them will be trimmed when processed",
-                                   tag: validationTag)
-            }
-
-            for (prop, value) in props {
-                if !anyValueValidator.isPrimitiveValue(value: value) {
-                    validatedProps![prop] = NSNull()
-                }
-
-                totalSizeInBytes += estimateSize(for: prop) + estimateSize(for: (value as? String))
-                if totalSizeInBytes > maxBytes {
-                    validationLogger.e(message: "The maximum size allowed for the properties is 32kb." +
-                                                " Current is \(prop). Event not queued", tag: validationTag)
-                    return false
-                }
-            }
-        }
-
-        let event = EventDTO(trafficType: trafficType, eventType: eventType)
-        event.key = self.key.matchingKey
-        event.value = value
-        event.timestamp = Date().unixTimestampInMiliseconds()
-        event.properties = validatedProps
-        event.sizeInBytes = totalSizeInBytes
-        synchronizer.pushEvent(event: event)
-        telemetryProducer?.recordLatency(method: .track, latency: Stopwatch.interval(from: timeStart))
-
-        return true
-    }
-
-    private func estimateSize(for value: String?) -> Int {
-        if let value = value {
-            return MemoryLayout.size(ofValue: value) * value.count
-        }
-        return 0
+        return eventsTracker.track(eventType: eventType,
+                                   trafficType: trafficType,
+                                   value: value,
+                                   properties: properties,
+                                   matchingKey: key.matchingKey)
     }
 }
 
@@ -231,12 +152,12 @@ extension DefaultSplitClient {
             logInvalidAttribute(name: name)
             return false
         }
-        attributesStorage.set(value: value, name: name)
+        attributesStorage().set(value: value, name: name, forKey: key.matchingKey)
         return true
     }
 
     public func getAttribute(name: String) -> Any? {
-        attributesStorage.get(name: name)
+        attributesStorage().get(name: name, forKey: key.matchingKey)
     }
 
     public func setAttributes(_ values: [String: Any]) -> Bool {
@@ -246,21 +167,21 @@ extension DefaultSplitClient {
                 return false
             }
         }
-        attributesStorage.set(values)
+        attributesStorage().set(values, forKey: key.matchingKey)
         return true
     }
 
     public func getAttributes() -> [String: Any]? {
-        attributesStorage.getAll()
+        attributesStorage().getAll(forKey: key.matchingKey)
     }
 
     public func removeAttribute(name: String) -> Bool {
-        attributesStorage.remove(name: name)
+        attributesStorage().remove(name: name, forKey: key.matchingKey)
         return true
     }
 
     public func clearAttributes() -> Bool {
-        attributesStorage.clear()
+        attributesStorage().clear(forKey: key.matchingKey)
         return true
     }
 
@@ -273,13 +194,19 @@ extension DefaultSplitClient {
         Logger.i("Invalid attribute value for evaluation: \(name). " +
                     "Types allowed are String, Number, Boolean and List")
     }
+
+    private func attributesStorage() -> AttributesStorage {
+        return storageContainer.attributesStorage
+    }
 }
 
 // MARK: Flush / Destroy
 extension DefaultSplitClient {
 
     private func syncFlush() {
-        self.synchronizer.flush()
+        if let clientManager = self.clientManager {
+            clientManager.flush()
+        }
     }
 
     public func flush() {
@@ -294,14 +221,9 @@ extension DefaultSplitClient {
 
     public func destroy(completion: (() -> Void)?) {
         isClientDestroyed = true
-        if let stopwatch = self.initStopwatch {
-            telemetryProducer?.recordSessionLength(sessionLength: stopwatch.interval())
-        }
         treatmentManager.destroy()
-        DispatchQueue.global().async {
-            self.syncFlush()
-            self.factoryDestroyHandler()
-            completion?()
+        if let clientManager = self.clientManager {
+            clientManager.destroy(forKey: key.matchingKey)
         }
     }
 }
