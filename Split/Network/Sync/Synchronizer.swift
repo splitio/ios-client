@@ -9,7 +9,11 @@
 import Foundation
 
 protocol Synchronizer: ImpressionLogger {
+    func start(forKey key: String)
     func loadAndSynchronizeSplits()
+    func loadMySegmentsFromCache()
+    func loadAttributesFromCache()
+    func synchronizeMySegments()
     func loadMySegmentsFromCache(forKey key: String)
     func loadAttributesFromCache(forKey key: String)
     func syncAll()
@@ -23,7 +27,7 @@ protocol Synchronizer: ImpressionLogger {
     func startPeriodicRecording()
     func stopPeriodicRecording()
     func pushEvent(event: EventDTO)
-    func notifiySegmentsUpdated()
+    func notifySegmentsUpdated(forKey key: String)
     func notifySplitKilled()
     func pause()
     func resume()
@@ -59,12 +63,15 @@ class DefaultSynchronizer: Synchronizer {
     private let impressionsCounter = ImpressionsCounter()
     private let flushQueue = DispatchQueue(label: "split-flush-queue", target: DispatchQueue.global())
     private let telemetryProducer: TelemetryRuntimeProducer?
-    private let mySegmentsSynchronizers: MySegmentsSynchronizerGroup
+    private let byKeySynchronizer: ByKeySynchronizer
+    private let defaultUserKey: String
+
     private var isDestroyed = Atomic(false)
 
     init(splitConfig: SplitClientConfig,
+         defaultUserKey: String,
          telemetrySynchronizer: TelemetrySynchronizer?,
-         mySegmentsSynchronizers: MySegmentsSynchronizerGroup,
+         byKeyFacade: ByKeyFacade,
          splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
@@ -75,6 +82,7 @@ class DefaultSynchronizer: Synchronizer {
          splitsFilterQueryString: String,
          splitEventsManager: SplitEventsManager) {
 
+        self.defaultUserKey = defaultUserKey
         self.splitConfig = splitConfig
         self.splitApiFacade = splitApiFacade
         self.splitStorageContainer = splitStorageContainer
@@ -95,7 +103,7 @@ class DefaultSynchronizer: Synchronizer {
         self.splitEventsManager = splitEventsManager
         self.telemetryProducer = splitStorageContainer.telemetryStorage
         self.telemetrySynchronizer = telemetrySynchronizer
-        self.mySegmentsSynchronizers = mySegmentsSynchronizers
+        self.byKeySynchronizer = byKeyFacade
 
         if isOptimizedImpressionsMode() {
             self.periodicImpressionsCountRecorderWoker
@@ -117,17 +125,31 @@ class DefaultSynchronizer: Synchronizer {
         }
     }
 
+    func loadMySegmentsFromCache() {
+        loadMySegmentsFromCache(forKey: defaultUserKey)
+    }
+
+    func loadAttributesFromCache() {
+        loadAttributesFromCache(forKey: defaultUserKey)
+    }
+
     func loadMySegmentsFromCache(forKey key: String) {
-        mySegmentsSynchronizers.loadFromCache(forKey: key)
+        byKeySynchronizer.loadMySegmentsFromCache(forKey: key)
     }
 
     func loadAttributesFromCache(forKey key: String) {
-        mySegmentsSynchronizers.loadFromCache(forKey: key)
+        byKeySynchronizer.loadAttributesFromCache(forKey: key)
+    }
+
+    func start(forKey key: String) {
+        loadMySegmentsFromCache(forKey: key)
+        loadAttributesFromCache(forKey: key)
+        synchronizeMySegments(forKey: key)
     }
 
     func syncAll() {
         synchronizeSplits()
-        mySegmentsSynchronizers.syncAll()
+        byKeySynchronizer.syncAll()
     }
 
     func synchronizeSplits() {
@@ -154,12 +176,16 @@ class DefaultSynchronizer: Synchronizer {
         }
     }
 
+    func synchronizeMySegments() {
+        synchronizeMySegments(forKey: defaultUserKey)
+    }
+
     func synchronizeMySegments(forKey key: String) {
-        mySegmentsSynchronizers.sync(forKey: key)
+        byKeySynchronizer.syncMySegments(forKey: key)
     }
 
     func forceMySegmentsSync(forKey key: String) {
-        mySegmentsSynchronizers.forceSync(forKey: key)
+        byKeySynchronizer.forceMySegmentsSync(forKey: key)
     }
 
     func synchronizeTelemetryConfig() {
@@ -168,13 +194,13 @@ class DefaultSynchronizer: Synchronizer {
 
     func startPeriodicFetching() {
         periodicSplitsSyncWorker.start()
-        mySegmentsSynchronizers.startPeriodicSync()
+        byKeySynchronizer.startPeriodicSync()
         recordSyncModeEvent(TelemetryStreamingEventValue.syncModePolling)
     }
 
     func stopPeriodicFetching() {
         periodicSplitsSyncWorker.stop()
-        mySegmentsSynchronizers.stopPeriodicSync()
+        byKeySynchronizer.stopPeriodicSync()
         recordSyncModeEvent(TelemetryStreamingEventValue.syncModeStreaming)
     }
 
@@ -229,8 +255,8 @@ class DefaultSynchronizer: Synchronizer {
         }
     }
 
-    func notifiySegmentsUpdated() {
-        splitEventsManager.notifyInternalEvent(.mySegmentsUpdated)
+    func notifySegmentsUpdated(forKey key: String) {
+        byKeySynchronizer.notifyMySegmentsUpdated(forKey: key)
     }
 
     func notifySplitKilled() {
@@ -240,7 +266,7 @@ class DefaultSynchronizer: Synchronizer {
     func pause() {
         saveImpressionsCount()
         periodicSplitsSyncWorker.pause()
-        mySegmentsSynchronizers.pause()
+        byKeySynchronizer.pause()
         periodicEventsRecorderWorker.pause()
         periodicImpressionsRecorderWoker.pause()
         periodicImpressionsCountRecorderWoker?.pause()
@@ -250,7 +276,7 @@ class DefaultSynchronizer: Synchronizer {
 
     func resume() {
         periodicSplitsSyncWorker.resume()
-        mySegmentsSynchronizers.resume()
+        byKeySynchronizer.resume()
         periodicEventsRecorderWorker.resume()
         periodicImpressionsRecorderWoker.resume()
         periodicImpressionsCountRecorderWoker?.resume()
@@ -271,7 +297,7 @@ class DefaultSynchronizer: Synchronizer {
     func destroy() {
         isDestroyed.set(true)
         splitsSyncWorker.stop()
-        mySegmentsSynchronizers.stop()
+        byKeySynchronizer.stop()
         periodicSplitsSyncWorker.stop()
         periodicSplitsSyncWorker.destroy()
         periodicImpressionsRecorderWoker.destroy()

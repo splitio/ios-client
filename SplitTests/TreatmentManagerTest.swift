@@ -40,17 +40,17 @@ class TreatmentManagerTest: XCTestCase {
             splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [],
                                                                    changeNumber: -1, updateTimestamp: 100))
             mySegmentsStorage = MySegmentsStorageStub()
-            mySegmentsStorage.set(mySegments)
+            mySegmentsStorage.set(mySegments, forKey: "the_key")
             storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      fileStorage: FileStorageStub(),
                                                      splitsStorage: splitsStorage,
                                                      persistentSplitsStorage: PersistentSplitsStorageStub(),
-                                                     mySegmentsStorage: mySegmentsStorage,
                                                      impressionsStorage: PersistentImpressionsStorageStub(),
                                                      impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub(),
-                                                     attributesStorage: attributesStorage,
-                                                     telemetryStorage: telemetryProducer)
+                                                     telemetryStorage: telemetryProducer,
+                                                     mySegmentsStorage: mySegmentsStorage,
+                                                     attributesStorage: attributesStorage)
         }
     }
 
@@ -268,7 +268,7 @@ class TreatmentManagerTest: XCTestCase {
                                        "ev2": "v1",
                                        "att2": false]
 
-        attributesStorage.set(testAttributes())
+        attributesStorage.set(testAttributes(), forKey: userKey)
 
         let treatmentManager = createTreatmentManager(matchingKey: userKey, evaluator: evaluator)
 
@@ -294,7 +294,7 @@ class TreatmentManagerTest: XCTestCase {
         let splitName = "FACUNDO_TEST"
         let splitNames = [splitName]
         let evaluator = EvaluatorStub()
-        attributesStorage.set(testAttributes())
+        attributesStorage.set(testAttributes(), forKey: userKey)
 
         let treatmentManager = createTreatmentManager(matchingKey: userKey, evaluator: evaluator)
 
@@ -352,7 +352,8 @@ class TreatmentManagerTest: XCTestCase {
     func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil, evaluator: Evaluator? = nil) -> TreatmentManager {
         let key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
         client = InternalSplitClientStub(splitsStorage: storageContainer.splitsStorage, mySegmentsStorage: storageContainer.mySegmentsStorage)
-        let defaultEvaluator = evaluator ?? DefaultEvaluator(splitClient: client)
+        let defaultEvaluator = evaluator ?? DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
+                                                             mySegmentsStorage: storageContainer.mySegmentsStorage)
 
         let eventsManager = SplitEventsManagerMock()
         eventsManager.isSegmentsReadyFired = true

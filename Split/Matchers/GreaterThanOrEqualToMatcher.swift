@@ -11,14 +11,16 @@ class GreaterThanOrEqualToMatcher: BaseMatcher, MatcherProtocol {
 
     var data: UnaryNumericMatcherData?
 
-    init(data: UnaryNumericMatcherData?, splitClient: DefaultSplitClient? = nil,
-         negate: Bool? = nil, attribute: String? = nil, type: MatcherType? = nil) {
+    init(data: UnaryNumericMatcherData?,
+         negate: Bool? = nil,
+         attribute: String? = nil,
+         type: MatcherType? = nil) {
 
         super.init(negate: negate, attribute: attribute, type: type)
         self.data = data
     }
 
-    func evaluate(values: EvalValues, context: EvalContext) -> Bool {
+    func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
 
         guard let matcherData = data, let dataType = matcherData.dataType, let value = matcherData.value else {
             return false

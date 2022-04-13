@@ -15,7 +15,7 @@ class SplitEventsCoordinatorTest: XCTestCase {
     var coordinator: SplitEventsManagerCoordinator!
 
     override func setUp() {
-        coordinator = GlobalEventsQueue()
+        coordinator = MainSplitEventsManager()
     }
 
     func testAddNotifyRemoveManager() {

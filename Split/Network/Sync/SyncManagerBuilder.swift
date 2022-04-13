@@ -15,7 +15,7 @@ class SyncManagerBuilder {
     private var splitApiFacade: SplitApiFacade?
     private var storageContainer: SplitStorageContainer?
     private var endpointFactory: EndpointFactory?
-    private var synchronizer: FullSynchronizer?
+    private var synchronizer: Synchronizer?
     private var notificationHelper: NotificationHelper = DefaultNotificationHelper.instance
 
     func setUserKey(_ userKey: String) -> SyncManagerBuilder {
@@ -43,7 +43,7 @@ class SyncManagerBuilder {
         return self
     }
 
-    func setSynchronizer(_ synchronizer: FullSynchronizer) -> SyncManagerBuilder {
+    func setSynchronizer(_ synchronizer: Synchronizer) -> SyncManagerBuilder {
         self.synchronizer = synchronizer
         return self
     }
@@ -84,10 +84,10 @@ class SyncManagerBuilder {
                 splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
                                                  splitsStorage: storageContainer.splitsStorage),
                 mySegmentsUpdateWorker: MySegmentsUpdateWorker(synchronizer: synchronizer,
-                                                               mySegmentsStorage: storageContainer.oneKeyMySegmentsStorage),
+                                                               mySegmentsStorage: storageContainer.mySegmentsStorage),
                 mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker(
                     userKey: userKey, synchronizer: synchronizer,
-                    mySegmentsStorage: storageContainer.oneKeyMySegmentsStorage,
+                    mySegmentsStorage: storageContainer.mySegmentsStorage,
                     payloadDecoder: DefaultMySegmentsV2PayloadDecoder()))
 
             let sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,

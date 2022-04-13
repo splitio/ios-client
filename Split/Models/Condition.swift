@@ -35,7 +35,6 @@ class Condition: NSObject, Codable {
         }
     }
 
-//    func match(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) throws -> Bool {
     func match(values: EvalValues, context: EvalContext) throws -> Bool {
 
         if let matcherG = self.matcherGroup, let matchers = matcherG.matchers {
@@ -56,12 +55,13 @@ class Condition: NSObject, Codable {
                     } else {
                         // scenario 2: attribute provided but no attribute value provided. Matcher does not match
                         // e.g. if user.age is >= 10 then split 100:on
-                        let att = matcherEvaluator.getAttribute() ?? "null" // Should not  be null, but just in case to avoid a crash
+                        // Next line: Should not  be null, but just in case to avoid a crash
+                        let att = matcherEvaluator.getAttribute() ?? "null"
                         if values.attributes == nil || values.attributes![att] == nil {
                             result = false
                         } else {
                             // instead of using the user id, we use the attribute value for evaluation
-                            let newValues = EvalValues(matchValue: values.attributes?[att] ?? "null", // Same here to avoid crash
+                            let newValues = EvalValues(matchValue: values.attributes?[att] ?? "null",
                                                        matchingKey: values.matchingKey,
                                                        bucketingKey: nil,
                                                        attributes: nil)

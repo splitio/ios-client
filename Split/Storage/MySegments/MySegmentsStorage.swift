@@ -15,6 +15,7 @@ protocol MySegmentsStorage {
     func clear(forKey key: String)
     func destroy()
     func getCount(forKey key: String) -> Int
+    func getCount() -> Int
 }
 
 class DefaultMySegmentsStorage: MySegmentsStorage {
@@ -51,5 +52,10 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
 
     func getCount(forKey key: String) -> Int {
         return inMemoryMySegments.count(forKey: key)
+    }
+
+    func getCount() -> Int {
+        // TODO: Count all segments here
+        return 0
     }
 }

@@ -8,82 +8,108 @@
 
 import Foundation
 
-protocol MySegmentsSynchronizerGroup {
-    func append(_ synchronizer: MySegmentsSynchronizer, forKey key: String)
+protocol ByKeyRegistry {
+    func append(_ group: ByKeyComponentGroup, forKey key: String)
     func remove(forKey key: String)
-    func loadFromCache(forKey key: String)
+}
+protocol ByKeySynchronizer {
+    func loadMySegmentsFromCache(forKey key: String)
+    func loadAttributesFromCache(forKey key: String)
+    func notifyMySegmentsUpdated(forKey key: String)
     func startPeriodicSync()
-    func sync(forKey key: String)
+    func stopPeriodicSync()
+    func syncMySegments(forKey key: String)
     func syncAll()
-    func forceSync(forKey: String)
+    func forceMySegmentsSync(forKey: String)
     func pause()
     func resume()
-    func stopPeriodicSync()
     func stop()
 }
 
-class DefaultMySegmentsSynchronizerGroup: MySegmentsSynchronizerGroup {
-    private let synchronizers = ConcurrentDictionary<String, MySegmentsSynchronizer>()
+protocol ByKeyFacade: ByKeyRegistry, ByKeySynchronizer {}
 
-    func append(_ synchronizer: MySegmentsSynchronizer, forKey key: String) {
-        synchronizers.setValue(synchronizer, forKey: key)
+struct ByKeyComponentGroup {
+    let eventsManager: SplitEventsManager
+    let mySegmentsSynchronizer: MySegmentsSynchronizer
+    let attributesStorage: ByKeyAttributesStorage
+}
+
+class DefaultByKeyFacade: ByKeyFacade {
+
+    private let byKeyComponents = SyncDictionary<String, ByKeyComponentGroup>()
+
+    func append(_ synchronizer: ByKeyComponentGroup, forKey key: String) {
+        byKeyComponents.setValue(synchronizer, forKey: key)
     }
 
     func remove(forKey key: String) {
-        synchronizers.removeValue(forKey: key)
+        byKeyComponents.removeValue(forKey: key)
     }
 
-    func loadFromCache(forKey key: String) {
-        synchronizers.value(forKey: key)?.loadMySegmentsFromCache()
+    func loadMySegmentsFromCache(forKey key: String) {
+        byKeyComponents.value(forKey: key)?.mySegmentsSynchronizer.loadMySegmentsFromCache()
+    }
+
+    func loadAttributesFromCache(forKey key: String) {
+        if let group = byKeyComponents.value(forKey: key) {
+            group.attributesStorage.loadLocal()
+            group.eventsManager.notifyInternalEvent(.attributesLoadedFromCache)
+        }
     }
 
     func startPeriodicSync() {
-        doInAll { sync in
-            sync.startPeriodicFetching()
+        doInAll { group in
+            group.mySegmentsSynchronizer.startPeriodicFetching()
         }
     }
 
-    func sync(forKey key: String) {
-        synchronizers.value(forKey: key)?.synchronizeMySegments()
+    func syncMySegments(forKey key: String) {
+        byKeyComponents.value(forKey: key)?.mySegmentsSynchronizer.synchronizeMySegments()
     }
 
     func syncAll() {
-        doInAll { sync in
-            sync.synchronizeMySegments()
+        doInAll { group in
+            group.mySegmentsSynchronizer.synchronizeMySegments()
         }
     }
 
-    func forceSync(forKey key: String) {
-        synchronizers.value(forKey: key)?.forceMySegmentsSync()
+    func forceMySegmentsSync(forKey key: String) {
+        byKeyComponents.value(forKey: key)?.mySegmentsSynchronizer.forceMySegmentsSync()
+    }
+
+    func notifyMySegmentsUpdated(forKey key: String) {
+        byKeyComponents.value(forKey: key)?.eventsManager.notifyInternalEvent(.mySegmentsUpdated)
     }
 
     func pause() {
-        doInAll { sync in
-            sync.pause()
+        doInAll { group in
+            group.mySegmentsSynchronizer.pause()
         }
     }
 
     func resume() {
-        doInAll { sync in
-            sync.resume()
+        doInAll { group in
+            group.mySegmentsSynchronizer.resume()
         }
     }
 
     func stopPeriodicSync() {
-        doInAll { sync in
-            sync.stopPeriodicFetching()
+        doInAll { group in
+            group.mySegmentsSynchronizer.stopPeriodicFetching()
         }
     }
 
     func stop() {
-        doInAll { sync in
-            sync.stopPeriodicFetching()
-            sync.destroy()
+        doInAll { group in
+            group.attributesStorage.destroy()
+            group.mySegmentsSynchronizer.stopPeriodicFetching()
+            group.mySegmentsSynchronizer.destroy()
+            group.eventsManager.stop()
         }
     }
 
-    private func doInAll(_ action: (MySegmentsSynchronizer) -> Void) {
-        for (_, sync) in synchronizers.all {
+    private func doInAll(_ action: (ByKeyComponentGroup) -> Void) {
+        for (_, sync) in byKeyComponents.all {
             action(sync)
         }
     }

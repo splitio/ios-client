@@ -26,12 +26,19 @@ struct EvalValues {
     let matchingKey: String
     let bucketingKey: String?
     let attributes: [String: Any]?
+
+    init(matchValue: Any?, matchingKey: String, bucketingKey: String? = nil, attributes: [String: Any]? = nil) {
+        self.matchValue = matchValue
+        self.matchingKey = matchingKey
+        self.bucketingKey = bucketingKey
+        self.attributes = attributes
+    }
 }
 
 // Components needed
 struct EvalContext {
-    let evaluator: Evaluator
-    let mySegmentsStorage: MySegmentsStorage
+    let evaluator: Evaluator?
+    let mySegmentsStorage: MySegmentsStorage?
 }
 
 protocol Evaluator {
@@ -40,18 +47,20 @@ protocol Evaluator {
 }
 
 class DefaultEvaluator: Evaluator {
-    private let splitter: SplitterProtocol = Splitter.shared
-    private let storageContainer: SplitStorageContainer
+    // Internal for testing purposes
+    var splitter: SplitterProtocol = Splitter.shared
+    private let splitsStorage: SplitsStorage
+    private let mySegmentsStorage: MySegmentsStorage
 
-
-    init(storageContainer: SplitStorageContainer) {
-        self.storageContainer = storageContainer
+    init(splitsStorage: SplitsStorage, mySegmentsStorage: MySegmentsStorage) {
+        self.splitsStorage = splitsStorage
+        self.mySegmentsStorage = mySegmentsStorage
     }
 
     func evalTreatment(matchingKey: String, bucketingKey: String?,
                        splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
 
-        guard let split = storageContainer.splitsStorage.get(name: splitName),
+        guard let split = splitsStorage.get(name: splitName),
             split.status != .archived else {
                 Logger.w("The SPLIT definition for '\(splitName)' has not been found")
                 return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
@@ -125,6 +134,6 @@ class DefaultEvaluator: Evaluator {
     }
 
     private func getContext() -> EvalContext {
-        return EvalContext(evaluator: self, mySegmentsStorage: storageContainer.mySegmentsStorage)
+        return EvalContext(evaluator: self, mySegmentsStorage: mySegmentsStorage)
     }
 }

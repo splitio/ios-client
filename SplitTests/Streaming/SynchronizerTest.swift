@@ -33,9 +33,10 @@ class SynchronizerTest: XCTestCase {
 
     var eventsManager: SplitEventsManagerStub!
     var telemetryProducer: TelemetryStorageStub!
-    var mySegmentsSyncGroup: MySegmentsSynchronizerGroupStub!
+    var mySegmentsSyncGroup: ByKeyFacadeStub!
 
     let userKey = "CUSTOMER_KEY"
+    var byKeyApiFacade: ByKeyFacade!
 
     override func setUp() {
         synchronizer = buildSynchronizer()
@@ -51,7 +52,7 @@ class SynchronizerTest: XCTestCase {
         splitsSyncWorker = RetryableSyncWorkerStub()
         mySegmentsSyncWorker = RetryableSyncWorkerStub()
         periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
-        mySegmentsSyncGroup = MySegmentsSynchronizerGroupStub()
+        mySegmentsSyncGroup = ByKeyFacadeStub()
         periodicImpressionsRecorderWorker = PeriodicRecorderWorkerStub()
         impressionsRecorderWorker = RecorderWorkerStub()
         periodicEventsRecorderWorker = PeriodicRecorderWorkerStub()
@@ -76,9 +77,9 @@ class SynchronizerTest: XCTestCase {
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      fileStorage: FileStorageStub(), splitsStorage: splitsStorage,
                                                      persistentSplitsStorage: persistentSplitsStorage,
-                                                     oneKeyMySegmentsStorage: mySegmentsStorage, impressionsStorage: PersistentImpressionsStorageStub(), impressionsCountStorage: PersistentImpressionsCountStorageStub(),
+                                                     impressionsStorage: PersistentImpressionsStorageStub(),
+                                                     impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub(),
-                                                     oneKeyAttributesStorage: OneKeyDefaultAttributesStorage(),
                                                      telemetryStorage: telemetryProducer,
                                                      mySegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub())
@@ -94,9 +95,12 @@ class SynchronizerTest: XCTestCase {
         let config =  SplitClientConfig()
         config.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
 
+        byKeyApiFacade = DefaultByKeyFacade()
+
         synchronizer = DefaultSynchronizer(splitConfig: config,
+                                           defaultUserKey: userKey,
                                            telemetrySynchronizer: nil,
-                                           mySegmentsSynchronizers: mySegmentsSyncGroup,
+                                           byKeyFacade: byKeyApiFacade,
                                            splitApiFacade: apiFacade,
                                            splitStorageContainer: storageContainer,
                                            syncWorkerFactory: syncWorkerFactory,
@@ -162,15 +166,15 @@ class SynchronizerTest: XCTestCase {
 
         ThreadUtils.delay(seconds: 0.2)
 
-        XCTAssertTrue(mySegmentsSyncGroup.loadFromCacheCalled)
-        XCTAssertEqual(userKey, mySegmentsSyncGroup.loadFromCacheKey)
+        XCTAssertTrue(mySegmentsSyncGroup.loadMySegmentsFromCacheCalled)
+        XCTAssertEqual(userKey, mySegmentsSyncGroup.loadMySegmentsFromCacheKey)
     }
 
     func testSynchronizeMySegments() {
 
         synchronizer.synchronizeMySegments(forKey: userKey)
 
-        XCTAssertTrue(mySegmentsSyncGroup.syncCalled)
+        XCTAssertTrue(mySegmentsSyncGroup.syncMySegmentsCalled)
         XCTAssertEqual(userKey, mySegmentsSyncGroup.syncKey)
     }
 

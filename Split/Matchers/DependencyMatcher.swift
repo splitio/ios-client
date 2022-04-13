@@ -18,10 +18,20 @@ class DependencyMatcher: BaseMatcher, MatcherProtocol {
         self.dependencyData = dependencyData
     }
 
-    func evaluate(values: EvalValues, context: EvalContext) -> Bool {
+    func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
+
         if let splitName = dependencyData?.split {
-            let key = Key(matchingKey: values.matchingKey, bucketingKey: values.bucketingKey)
-            let treatment = components.treatmentManager.getTreatment(splitName, key: key, attributes: values.attributes)
+            var treatment = SplitConstants.control
+            do {
+                treatment = try context?.evaluator?.evalTreatment(
+                    matchingKey: values.matchingKey,
+                    bucketingKey: values.bucketingKey,
+                    splitName: splitName,
+                    attributes: values.attributes).treatment ?? SplitConstants.control
+
+            } catch {
+                return false
+            }
 
             if let treatments = dependencyData?.treatments {
                 return treatments.contains(treatment)

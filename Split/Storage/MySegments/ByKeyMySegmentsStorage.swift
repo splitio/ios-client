@@ -8,8 +8,7 @@
 
 import Foundation
 
-// TODO: Remove inheritance. Only to make old stuff to work for now
-protocol ByKeyMySegmentsStorage: OneKeyMySegmentsStorage{
+protocol ByKeyMySegmentsStorage {
     func loadLocal()
     func getAll() -> Set<String>
     func set(_ segments: [String])

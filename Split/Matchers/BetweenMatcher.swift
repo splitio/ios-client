@@ -11,14 +11,16 @@ class BetweenMatcher: BaseMatcher, MatcherProtocol {
 
     var data: BetweenMatcherData?
 
-    init(data: BetweenMatcherData?, splitClient: DefaultSplitClient? = nil,
-         negate: Bool? = nil, attribute: String? = nil, type: MatcherType? = nil) {
+    init(data: BetweenMatcherData?,
+         negate: Bool? = nil,
+         attribute: String? = nil,
+         type: MatcherType? = nil) {
         super.init(negate: negate, attribute: attribute, type: type)
         self.data = data
     }
 
 
-    func evaluate(values: EvalValues, context: EvalContext) -> Bool {
+    func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
 
         guard let matcherData = data, let dataType = matcherData.dataType, let start = matcherData.start,
               let end = matcherData.end else {

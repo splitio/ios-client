@@ -21,7 +21,7 @@ class PartOfSetMatcher: BaseMatcher, MatcherProtocol {
         }
     }
 
-    func evaluate(values: EvalValues, context: EvalContext) -> Bool {
+    func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
 
         var setToCompare: Set<String>?
         if let dataElements = values.matchValue as? [String], !dataElements.isEmpty {

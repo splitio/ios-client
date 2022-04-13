@@ -8,7 +8,7 @@
 // Generated using Sourcery 0.11.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
-//swiftlint:disable inclusive_language
+// swiftlint:disable inclusive_language
 extension BetweenMatcherData {
   override public var debugDescription: String {
     var output: String = "BetweenMatcherData {\n"
@@ -55,11 +55,6 @@ extension Condition {
       output+="label = \(label) \n"
     } else {
       output+="label = nil\n"
-    }
-    if let client = client {
-      output+="client = \(client) \n"
-    } else {
-      output+="client = nil\n"
     }
     output+="}"
     return output
@@ -154,11 +149,6 @@ extension Matcher {
       output+="stringMatcherData = \(stringMatcherData) \n"
     } else {
       output+="stringMatcherData = nil\n"
-    }
-    if let client = client {
-      output+="client = \(client) \n"
-    } else {
-      output+="client = nil\n"
     }
     output+="}"
     return output

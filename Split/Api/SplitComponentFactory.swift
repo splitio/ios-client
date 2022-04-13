@@ -190,6 +190,17 @@ class SplitComponentFactory {
         return component
     }
 
+    func buildMySegmentsSyncWorkerFactory() throws -> MySegmentsSyncWorkerFactory {
+        let storageContainer = try getSplitStorageContainer()
+        let component = DefaultMySegmentsSyncWorkerFactory(splitConfig: splitClientConfig,
+                                                           mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                                           mySegmentsFetcher: try getSplitApiFacade().mySegmentsFetcher,
+                                                           telemetryProducer: storageContainer.telemetryStorage)
+
+        add(component: component)
+        return component
+    }
+
     func buildSyncWorkerFactory() throws -> SyncWorkerFactory {
         let component = DefaultSyncWorkerFactory(userKey: userKey,
                                                  splitConfig: splitClientConfig,
@@ -202,7 +213,7 @@ class SplitComponentFactory {
         return component
     }
 
-    func buildSynchronizer() throws -> FullSynchronizer {
+    func buildSynchronizer() throws -> Synchronizer {
 
         let syncWorkerFactory = try buildSyncWorkerFactory()
         var telemetrySynchronizer: TelemetrySynchronizer?
@@ -215,8 +226,10 @@ class SplitComponentFactory {
                                                          periodicStatsRecorderWorker: periodicStatsRecorderWorker)
         }
 
-        let component: FullSynchronizer = DefaultFullSynchronizer(splitConfig: splitClientConfig,
+        let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
+                                                          defaultUserKey: userKey,
                                                           telemetrySynchronizer: telemetrySynchronizer,
+                                                          byKeyFacade: getByKeyFacade(),
                                                           splitApiFacade: try getSplitApiFacade(),
                                                           splitStorageContainer: try getSplitStorageContainer(),
                                                           syncWorkerFactory: syncWorkerFactory,
@@ -228,11 +241,20 @@ class SplitComponentFactory {
         return component
     }
 
-    func getSynchronizer() throws -> FullSynchronizer {
-        if let obj = get(for: FullSynchronizer.self) as? FullSynchronizer {
+    func getSynchronizer() throws -> Synchronizer {
+        if let obj = get(for: Synchronizer.self) as? Synchronizer {
             return obj
         }
         throw ComponentError.notFound(name: "Synchronizer")
+    }
+
+    func getByKeyFacade() -> ByKeyFacade {
+        if let obj = get(for: ByKeyFacade.self) as? ByKeyFacade {
+            return obj
+        }
+        let component: ByKeyFacade = DefaultByKeyFacade()
+        add(component: component)
+        return component
     }
 
     func buildSyncManager(notificationHelper: NotificationHelper?) throws -> SyncManager {

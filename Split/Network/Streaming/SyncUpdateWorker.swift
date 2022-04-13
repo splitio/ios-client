@@ -26,9 +26,9 @@ class UpdateWorker<T: NotificationTypeField> {
 
 class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 
-    private let synchronizer: FullSynchronizer
+    private let synchronizer: Synchronizer
 
-    init(synchronizer: FullSynchronizer) {
+    init(synchronizer: Synchronizer) {
         self.synchronizer = synchronizer
         super.init(queueName: "SplitsUpdateWorker")
     }
@@ -42,10 +42,10 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 
 class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
 
-    private let synchronizer: FullSynchronizer
-    private let mySegmentsStorage: OneKeyMySegmentsStorage
+    private let synchronizer: Synchronizer
+    private let mySegmentsStorage: MySegmentsStorage
     var changesChecker: MySegmentsChangesChecker
-    init(synchronizer: FullSynchronizer, mySegmentsStorage: OneKeyMySegmentsStorage) {
+    init(synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
         self.changesChecker = DefaultMySegmentsChangesChecker()
@@ -59,36 +59,42 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
     }
 
     private func process(_ notification: MySegmentsUpdateNotification) {
+        // TODO: Get user key from channel
+        let userKey =  "WEIRD_CUSTOMER_ID"
         if notification.includesPayload {
             if let segmentList = notification.segmentList {
-                let oldSegments = mySegmentsStorage.getAll()
+                let oldSegments = mySegmentsStorage.getAll(forKey: userKey)
                 if changesChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segmentList) {
-                    mySegmentsStorage.set(segmentList)
-                    synchronizer.notifiySegmentsUpdated()
+                    mySegmentsStorage.set(segmentList, forKey: userKey)
+                    synchronizer.notifySegmentsUpdated(forKey: userKey)
                 }
             } else {
-                mySegmentsStorage.clear()
+                mySegmentsStorage.clear(forKey: userKey)
             }
         } else {
-            synchronizer.forceMySegmentsSync()
+            synchronizer.forceMySegmentsSync(forKey: userKey)
         }
     }
 }
 
 class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
 
-    private let synchronizer: FullSynchronizer
-    private let mySegmentsStorage: OneKeyMySegmentsStorage
+    private let synchronizer: Synchronizer
+    private let mySegmentsStorage: MySegmentsStorage
     private let payloadDecoder: MySegmentsV2PayloadDecoder
     private let zlib: CompressionUtil = Zlib()
     private let gzip: CompressionUtil = Gzip()
-    private let keyHash: UInt64
 
-    init(userKey: String, synchronizer: FullSynchronizer, mySegmentsStorage: OneKeyMySegmentsStorage,
+    // TODO: get userKey from notification channel
+    let keyHash: UInt64
+    let userKey: String
+
+    init(userKey: String, synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage,
          payloadDecoder: MySegmentsV2PayloadDecoder) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
         self.payloadDecoder = payloadDecoder
+        self.userKey = userKey
         self.keyHash = payloadDecoder.hashKey(userKey)
         super.init(queueName: "MySegmentsUpdateV2Worker")
     }
@@ -100,10 +106,11 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
     }
 
     private func process(_ notification: MySegmentsUpdateV2Notification) {
+
         do {
             switch notification.updateStrategy {
             case .unboundedFetchRequest:
-                fetchMySegments()
+                fetchMySegments(forKey: userKey)
             case .boundedFetchRequest:
                 if let json = notification.data {
                     try handleBounded(encodedKeyMap: json,
@@ -117,7 +124,7 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
                 }
             case .segmentRemoval:
                 if let segmentName = notification.segmentName {
-                    remove(segment: segmentName)
+                    remove(segment: segmentName, forKey: userKey)
                 }
             case .unknown:
                 // should never reach here
@@ -127,22 +134,23 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
         } catch {
             Logger.e("Error processing my segments notification v2. \(error.localizedDescription)")
             Logger.i("Fall back - unbounded fetch")
-            fetchMySegments()
+            fetchMySegments(forKey: userKey)
         }
     }
 
-    private func fetchMySegments() {
-        synchronizer.forceMySegmentsSync()
+    private func fetchMySegments(forKey key: String) {
+        synchronizer.forceMySegmentsSync(forKey: key)
     }
 
     private func decompressor(for type: CompressionType) -> CompressionUtil {
         return type == .gzip ? gzip : zlib
     }
-    private func remove(segment: String) {
-        var segments = mySegmentsStorage.getAll()
+
+    private func remove(segment: String, forKey key: String) {
+        var segments = mySegmentsStorage.getAll(forKey: key)
         if segments.remove(segment) != nil {
-            mySegmentsStorage.set(Array(segments))
-            synchronizer.notifiySegmentsUpdated()
+            mySegmentsStorage.set(Array(segments), forKey: key)
+            synchronizer.notifySegmentsUpdated(forKey: key)
         }
     }
 
@@ -152,17 +160,17 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
         let keyList = try payloadDecoder.parseKeyList(jsonString: jsonKeyList)
 
         if keyList.added.contains(keyHash) {
-            var segments = mySegmentsStorage.getAll()
+            var segments = mySegmentsStorage.getAll(forKey: userKey)
             if !segments.contains(segmentName) {
                 segments.insert(segmentName)
-                mySegmentsStorage.set(Array(segments))
-                synchronizer.notifiySegmentsUpdated()
+                mySegmentsStorage.set(Array(segments), forKey: userKey)
+                synchronizer.notifySegmentsUpdated(forKey: userKey)
             }
             return
         }
 
         if keyList.removed.contains(keyHash) {
-            remove(segment: segmentName)
+            remove(segment: segmentName, forKey: userKey)
             return
         }
     }
@@ -171,17 +179,17 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
         let keyMap = try payloadDecoder.decodeAsBytes(payload: encodedKeyMap, compressionUtil: compressionUtil)
         if payloadDecoder.isKeyInBitmap(keyMap: keyMap, hashedKey: keyHash) {
             Logger.d("Executing Unbounded my segment fetch request")
-            fetchMySegments()
+            fetchMySegments(forKey: userKey)
         }
     }
 }
 
 class SplitKillWorker: UpdateWorker<SplitKillNotification> {
 
-    private let synchronizer: FullSynchronizer
+    private let synchronizer: Synchronizer
     private let splitsStorage: SplitsStorage
 
-    init(synchronizer: FullSynchronizer, splitsStorage: SplitsStorage) {
+    init(synchronizer: Synchronizer, splitsStorage: SplitsStorage) {
         self.synchronizer = synchronizer
         self.splitsStorage = splitsStorage
         super.init(queueName: "SplitKillWorker")

@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class SynchronizerStub: FullSynchronizer {
+class SynchronizerStub: Synchronizer {
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
@@ -52,6 +52,36 @@ class SynchronizerStub: FullSynchronizer {
 
     func loadAttributesFromCache() {
         loadAttributesFromCacheCalled = true
+    }
+
+    var startForKeyCalled = false
+    func start(forKey key: String) {
+        startForKeyCalled = true
+    }
+
+    var loadMySegmentsFromCacheForKeyCalled = false
+    func loadMySegmentsFromCache(forKey key: String) {
+        loadMySegmentsFromCacheCalled = true
+    }
+
+    var loadAttributesFromCacheForKeyCalled = false
+    func loadAttributesFromCache(forKey key: String) {
+        loadAttributesFromCacheForKeyCalled = true
+    }
+
+    var synchronizeMySegmentsForKeyCalled = true
+    func synchronizeMySegments(forKey key: String) {
+        synchronizeMySegmentsForKeyCalled = true
+    }
+
+    var forceMySegmentsSyncForKeyCalled = false
+    func forceMySegmentsSync(forKey key: String) {
+        forceMySegmentsSyncForKeyCalled = true
+    }
+
+    var notifySegmentsUpdatedForKey = false
+    func notifySegmentsUpdated(forKey: String) {
+        notifySegmentsUpdatedForKey = true
     }
 
     func syncAll() {
