@@ -46,13 +46,13 @@ class ConcurrentDictionarySet<K: Hashable, T: Hashable> {
 
     func removeValues(forKey key: K) {
         queue.sync {
-            self.items.removeValue(forKey: key)
+            _ = items.removeValue(forKey: key)
         }
     }
 
     func removeAll() {
         queue.sync {
-            self.items.removeAll()
+            items.removeAll()
         }
     }
 }

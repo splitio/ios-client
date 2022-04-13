@@ -19,7 +19,7 @@ class Whitelist: BaseMatcher, MatcherProtocol {
         self.data = data
     }
 
-    func evaluate(values: EvalValues, context: EvalContext) -> Bool {
+    func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
 
         guard let matchValueString = values.matchValue as? String, let dataElements = data else {
             return false

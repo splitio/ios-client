@@ -32,7 +32,8 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
          apiFacade: SplitApiFacade,
          storageContainer: SplitStorageContainer,
          eventsManager: SplitEventsManager,
-         eventsTracker: EventsTracker) {
+         eventsTracker: EventsTracker,
+         clientManager: SplitClientManager) {
 
         self.config = config
         self.key = key
@@ -41,6 +42,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
         self.eventsManager = eventsManager
         self.storageContainer = storageContainer
         self.treatmentManager = treatmentManager
+        self.clientManager = clientManager
         self.anyValueValidator = DefaultAnyValueValidator()
 
         super.init()
@@ -220,10 +222,16 @@ extension DefaultSplitClient {
     }
 
     public func destroy(completion: (() -> Void)?) {
+        let userKey = key.matchingKey
         isClientDestroyed = true
         treatmentManager.destroy()
         if let clientManager = self.clientManager {
-            clientManager.destroy(forKey: key.matchingKey)
+            DispatchQueue.global().async {
+                clientManager.destroy(forKey: userKey)
+                if let completion = completion {
+                    completion()
+                }
+            }
         }
     }
 }

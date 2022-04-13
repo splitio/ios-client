@@ -15,5 +15,3 @@ protocol TreatmentManager {
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult]
     func destroy()
 }
-
-

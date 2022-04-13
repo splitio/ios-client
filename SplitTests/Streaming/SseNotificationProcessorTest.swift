@@ -30,7 +30,7 @@ class SseNotificationProcessorTest: XCTestCase {
                                                                archivedSplits: [],
                                                                changeNumber: 100,
                                                                updateTimestamp: 100))
-        let mySegmentsStorage = OneKeyMySegmentsStorageStub()
+        let mySegmentsStorage = MySegmentsStorageStub()
 
         sseNotificationParser = SseNotificationParserStub()
         splitsUpdateWorker = SplitsUpdateWorkerMock(synchronizer: synchronizer)

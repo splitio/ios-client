@@ -29,4 +29,8 @@ class EmptyMySegmentsStorage: MySegmentsStorage {
     func getCount(forKey key: String) -> Int {
         return 0
     }
+
+    func getCount() -> Int {
+        return 0
+    }
 }

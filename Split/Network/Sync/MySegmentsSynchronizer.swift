@@ -39,11 +39,17 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         self.splitConfig = splitConfig
         self.mySegmentsStorage = mySegmentsStorage
         self.syncWorkerFactory = syncWorkerFactory
-        self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker(forKey: userKey)
-        self.mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(forKey: userKey,
-                                                                                          avoidCache: false)
-        self.mySegmentsForcedSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(forKey: userKey,
-                                                                                                avoidCache: true)
+        self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker(
+            forKey: userKey,
+            eventsManager: splitEventsManager)
+        self.mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
+            forKey: userKey,
+            avoidCache: false,
+            eventsManager: splitEventsManager)
+        self.mySegmentsForcedSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
+            forKey: userKey,
+            avoidCache: true,
+            eventsManager: splitEventsManager)
         self.splitEventsManager = splitEventsManager
     }
 

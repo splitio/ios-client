@@ -20,7 +20,7 @@ class SyncUpdateWorker: XCTestCase {
 
     var synchronizer: SynchronizerStub!
     var splitsStorage: SplitsStorageStub!
-    var mySegmentsStorage: OneKeyMySegmentsStorageStub!
+    var mySegmentsStorage: MySegmentsStorageStub!
     var mySegmentsChangesChecker: MySegmentsChangesCheckerMock!
     var mySegmentsPayloadDecoder: MySegmentsV2PayloadDecoderMock!
     let userKey = IntegrationHelper.dummyUserKey
@@ -34,7 +34,7 @@ class SyncUpdateWorker: XCTestCase {
                                                                archivedSplits: [],
                                                                changeNumber: 100,
                                                                updateTimestamp: 100))
-        mySegmentsStorage = OneKeyMySegmentsStorageStub()
+        mySegmentsStorage = MySegmentsStorageStub()
 
         splitsUpdateWorker = SplitsUpdateWorker(synchronizer: synchronizer)
 
@@ -95,9 +95,9 @@ class SyncUpdateWorker: XCTestCase {
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(2, mySegmentsStorage.updatedSegments?.count)
-        XCTAssertEqual(1, mySegmentsStorage.updatedSegments?.filter { $0 == "s1" }.count)
-        XCTAssertEqual(1, mySegmentsStorage.updatedSegments?.filter { $0 == "s2" }.count)
+        XCTAssertEqual(2, mySegmentsStorage.segments[userKey]?.count)
+        XCTAssertEqual(1, mySegmentsStorage.segments[userKey]?.filter { $0 == "s1" }.count)
+        XCTAssertEqual(1, mySegmentsStorage.segments[userKey]?.filter { $0 == "s2" }.count)
         XCTAssertFalse(mySegmentsStorage.clearCalled)
         XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
         XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
@@ -114,7 +114,7 @@ class SyncUpdateWorker: XCTestCase {
         mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
         try mySegmentsUpdateWorker.process(notification: notification)
 
-        XCTAssertNil(mySegmentsStorage.updatedSegments)
+        XCTAssertNil(mySegmentsStorage.segments[userKey])
         XCTAssertFalse(synchronizer.notifyMySegmentsUpdatedCalled)
         XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
     }
@@ -131,7 +131,7 @@ class SyncUpdateWorker: XCTestCase {
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertNil(mySegmentsStorage.updatedSegments)
+        XCTAssertNil(mySegmentsStorage.segments[userKey])
         XCTAssertTrue(mySegmentsStorage.clearCalled)
         XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
     }
@@ -148,7 +148,7 @@ class SyncUpdateWorker: XCTestCase {
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertNil(mySegmentsStorage.updatedSegments)
+        XCTAssertNil(mySegmentsStorage.segments[userKey])
         XCTAssertFalse(mySegmentsStorage.clearCalled)
         XCTAssertTrue(synchronizer.forceMySegmentsSyncCalled)
     }
@@ -166,7 +166,7 @@ class SyncUpdateWorker: XCTestCase {
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertNil(mySegmentsStorage.updatedSegments)
+        XCTAssertNil(mySegmentsStorage.segments[userKey])
         XCTAssertFalse(mySegmentsStorage.clearCalled)
         XCTAssertTrue(synchronizer.forceMySegmentsSyncCalled)
     }
@@ -183,7 +183,7 @@ class SyncUpdateWorker: XCTestCase {
         try mySegmentsUpdateV2Worker.process(notification: notification)
         wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.updatedSegments?.sorted())
+        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.segments[userKey]?.sorted())
         XCTAssertFalse(mySegmentsStorage.clearCalled)
         XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
     }
@@ -197,7 +197,7 @@ class SyncUpdateWorker: XCTestCase {
         try mySegmentsUpdateV2Worker.process(notification: notification)
         ThreadUtils.delay(seconds: 2)
 
-        XCTAssertNil(mySegmentsStorage.updatedSegments)
+        XCTAssertNil(mySegmentsStorage.segments[userKey])
         XCTAssertFalse(mySegmentsStorage.clearCalled)
         XCTAssertFalse(synchronizer.notifyMySegmentsUpdatedCalled)
     }
@@ -224,7 +224,7 @@ class SyncUpdateWorker: XCTestCase {
         try mySegmentsUpdateV2Worker.process(notification: notification)
         wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.updatedSegments?.sorted())
+        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.segments[userKey]?.sorted())
         XCTAssertFalse(mySegmentsStorage.clearCalled)
         XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
     }
@@ -251,7 +251,7 @@ class SyncUpdateWorker: XCTestCase {
         try mySegmentsUpdateV2Worker.process(notification: notification)
         wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(["s1", "s2", "s3", "s5"], mySegmentsStorage.updatedSegments?.sorted())
+        XCTAssertEqual(["s1", "s2", "s3", "s5"], mySegmentsStorage.segments[userKey]?.sorted())
         XCTAssertFalse(mySegmentsStorage.clearCalled)
         XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
     }
@@ -271,7 +271,7 @@ class SyncUpdateWorker: XCTestCase {
 
         ThreadUtils.delay(seconds: 1)
 
-        XCTAssertNil(mySegmentsStorage.updatedSegments)
+        XCTAssertNil(mySegmentsStorage.segments[userKey])
         XCTAssertFalse(synchronizer.notifyMySegmentsUpdatedCalled)
     }
 

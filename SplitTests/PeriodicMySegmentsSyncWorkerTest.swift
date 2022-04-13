@@ -14,7 +14,7 @@ import XCTest
 class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
 
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
-    var mySegmentsStorage: OneKeyMySegmentsStorageStub!
+    var mySegmentsStorage: MySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
     var mySegmentsSyncWorker: PeriodicMySegmentsSyncWorker!
@@ -22,7 +22,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
 
     override func setUp() {
         mySegmentsFetcher = HttpMySegmentsFetcherStub()
-        mySegmentsStorage = OneKeyMySegmentsStorageStub()
+        mySegmentsStorage = MySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
@@ -32,9 +32,10 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         eventsManager.isSplitsReadyFired = true
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
+        let byKeyMySegmentsStorage = ByKeyMySegmentsStorageStub()
         mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(userKey: userKey,
                                                             mySegmentsFetcher: mySegmentsFetcher,
-                                                            mySegmentsStorage: mySegmentsStorage,
+                                                            mySegmentsStorage: byKeyMySegmentsStorage,
                                                             telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
                                                             eventsManager: eventsManager)
@@ -52,9 +53,10 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         eventsManager.isSplitsReadyFired = false
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
+        let byKeyMySegmentsStorage = ByKeyMySegmentsStorageStub()
         mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(userKey: userKey,
                                                             mySegmentsFetcher: mySegmentsFetcher,
-                                                            mySegmentsStorage: mySegmentsStorage,
+                                                            mySegmentsStorage: byKeyMySegmentsStorage,
                                                             telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
                                                             eventsManager: eventsManager)

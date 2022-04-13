@@ -47,7 +47,9 @@ class AttributesStorageStub: AttributesStorage {
         attributes.removeValue(forKey: key)
     }
 
+    var destroyCalled = false
     func destroy(forKey key: String) {
+        destroyCalled = true
         attributes.removeValue(forKey: key)
     }
 

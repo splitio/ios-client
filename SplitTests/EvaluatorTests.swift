@@ -26,7 +26,7 @@ class EvaluatorTests: XCTestCase {
             mySegmentsStorage = MySegmentsStorageStub()
             mySegmentsStorage.set(mySegments, forKey: matchingKey)
             client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
-            evaluator = DefaultEvaluator(splitClient: client)
+            evaluator = DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
         }
     }
     
@@ -377,7 +377,7 @@ class EvaluatorTests: XCTestCase {
         let mySegmentsStorage = MySegmentsStorageStub()
         mySegmentsStorage.set(mySegments, forKey: matchingKey)
         client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
-        evaluator = DefaultEvaluator(splitClient: client)
+        evaluator = DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
         return evaluator
     }
     
@@ -387,7 +387,7 @@ class EvaluatorTests: XCTestCase {
         let mySegmentsStorage = MySegmentsStorageStub()
         mySegmentsStorage.set([], forKey: matchingKey)
         client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
-        evaluator = DefaultEvaluator(splitClient: client)
+        evaluator = DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
         return evaluator
     }
     

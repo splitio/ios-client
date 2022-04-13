@@ -13,7 +13,7 @@ class AllKeysMatcher: BaseMatcher, MatcherProtocol {
         super.init(negate: negate, type: MatcherType.allKeys)
     }
 
-    func evaluate(values: EvalValues, context: EvalContext) -> Bool {
+    func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
         if values.matchValue == nil {
             return false
         }

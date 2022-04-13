@@ -177,14 +177,14 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
 
     private let mySegmentsFetcher: HttpMySegmentsFetcher
-    private let mySegmentsStorage: OneKeyMySegmentsStorage
+    private let mySegmentsStorage: ByKeyMySegmentsStorage
     private let userKey: String
     private let telemetryProducer: TelemetryRuntimeProducer?
     var changeChecker: MySegmentsChangesChecker
 
     init(userKey: String,
          mySegmentsFetcher: HttpMySegmentsFetcher,
-         mySegmentsStorage: OneKeyMySegmentsStorage,
+         mySegmentsStorage: ByKeyMySegmentsStorage,
          telemetryProducer: TelemetryRuntimeProducer?,
          timer: PeriodicTimer,
          eventsManager: SplitEventsManager) {
