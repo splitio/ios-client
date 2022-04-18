@@ -14,6 +14,10 @@ class ConcurrentDictionarySet<K: Hashable, T: Hashable> {
                                                      target: .global())
     private var items = [K: Set<T>]()
 
+    var keys: Set<K> {
+        return Set(items.keys.map { $0 as K})
+    }
+
     func count(forKey key: K) -> Int {
         var count: Int?
         queue.sync {

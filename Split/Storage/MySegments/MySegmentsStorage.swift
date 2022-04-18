@@ -9,6 +9,7 @@
 import Foundation
 
 protocol MySegmentsStorage {
+    var keys: Set<String> { get }
     func loadLocal(forKey key: String)
     func getAll(forKey key: String) -> Set<String>
     func set(_ segments: [String], forKey key: String)
@@ -22,6 +23,10 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
 
     private var inMemoryMySegments: ConcurrentDictionarySet<String, String>
     private let persistenStorage: PersistentMySegmentsStorage
+
+    var keys: Set<String> {
+        return inMemoryMySegments.keys
+    }
 
     init(persistentMySegmentsStorage: PersistentMySegmentsStorage) {
         persistenStorage = persistentMySegmentsStorage
@@ -55,7 +60,11 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
     }
 
     func getCount() -> Int {
-        // TODO: Count all segments here
-        return 0
+        let keys = inMemoryMySegments.keys
+        var count = 0
+        for key in keys {
+            count+=(inMemoryMySegments.values(forKey: key)?.count ?? 0)
+        }
+        return count
     }
 }

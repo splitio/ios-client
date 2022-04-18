@@ -113,8 +113,19 @@ struct ControlNotification: NotificationTypeField {
     }
     let controlType: ControlType
 }
+/// MySegmentsUpdateNotificationJson: Indicates change in MySegments parsed from de incoming JSON
+/// For my segments update notification, two notifications are used
+/// to avoid adding an read-write variable for channel
+struct MySegmentsUpdateNotificationJson: NotificationTypeField {
+    var type: NotificationType {
+        return .mySegmentsUpdate
+    }
+    let changeNumber: Int64
+    let includesPayload: Bool
+    let segmentList: [String]?
+}
 
-/// Indicates change in MySegments
+/// MySegmentsUpdateNotification: Indicates change in MySegments. This struct has also the userKey (readonly)
 struct MySegmentsUpdateNotification: NotificationTypeField {
     var type: NotificationType {
         return .mySegmentsUpdate
@@ -122,6 +133,14 @@ struct MySegmentsUpdateNotification: NotificationTypeField {
     let changeNumber: Int64
     let includesPayload: Bool
     let segmentList: [String]?
+    let userKeyHash: String
+
+    init(json: MySegmentsUpdateNotificationJson, userKeyHash: String) {
+        self.changeNumber = json.changeNumber
+        self.includesPayload = json.includesPayload
+        self.segmentList = json.segmentList
+        self.userKeyHash = userKeyHash
+    }
 }
 
 enum MySegmentUpdateStrategy: Decodable {
