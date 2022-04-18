@@ -44,10 +44,14 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
 
     private let synchronizer: Synchronizer
     private let mySegmentsStorage: MySegmentsStorage
+    private let decoder: MySegmentsPayloadDecoder
     var changesChecker: MySegmentsChangesChecker
-    init(synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage) {
+    init(synchronizer: Synchronizer,
+         mySegmentsStorage: MySegmentsStorage,
+         mySegmentsPayloadDecoder: MySegmentsPayloadDecoder) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
+        self.decoder = mySegmentsPayloadDecoder
         self.changesChecker = DefaultMySegmentsChangesChecker()
         super.init(queueName: "MySegmentsUpdateWorker")
     }
@@ -59,8 +63,10 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
     }
 
     private func process(_ notification: MySegmentsUpdateNotification) {
-        // TODO: Get user key from channel
-        let userKey =  "WEIRD_CUSTOMER_ID"
+        guard let userKey = getUserKeyFromHash(notification.userKeyHash) else {
+            Logger.d("Avoiding process my segments update notification because userKey is null")
+            return
+        }
         if notification.includesPayload {
             if let segmentList = notification.segmentList {
                 let oldSegments = mySegmentsStorage.getAll(forKey: userKey)
@@ -74,6 +80,16 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
         } else {
             synchronizer.forceMySegmentsSync(forKey: userKey)
         }
+    }
+
+    private func getUserKeyFromHash(_ hash: String) -> String? {
+        let userKeys = mySegmentsStorage.keys
+        for userKey in userKeys {
+            if hash == decoder.hashUserKey(userKey: userKey) {
+                return userKey
+            }
+        }
+        return nil
     }
 }
 
