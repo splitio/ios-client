@@ -84,7 +84,8 @@ class SyncManagerBuilder {
                 splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
                                                  splitsStorage: storageContainer.splitsStorage),
                 mySegmentsUpdateWorker: MySegmentsUpdateWorker(synchronizer: synchronizer,
-                                                               mySegmentsStorage: storageContainer.mySegmentsStorage),
+                                                               mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                                              mySegmentsPayloadDecoder: MySegmentsPayloadDecoder()),
                 mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker(
                     userKey: userKey, synchronizer: synchronizer,
                     mySegmentsStorage: storageContainer.mySegmentsStorage,

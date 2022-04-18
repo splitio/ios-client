@@ -19,7 +19,6 @@ class BetweenMatcher: BaseMatcher, MatcherProtocol {
         self.data = data
     }
 
-
     func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
 
         guard let matcherData = data, let dataType = matcherData.dataType, let start = matcherData.start,
@@ -31,8 +30,8 @@ class BetweenMatcher: BaseMatcher, MatcherProtocol {
 
         case DataType.dateTime:
             guard let keyValue = values.matchValue as? TimeInterval else {return false}
-            let backendTimeIntervalStart = TimeInterval(start/1000) //Backend is in millis
-            let backendTimeIntervalEnd = TimeInterval(end/1000) //Backend is in millis
+            let backendTimeIntervalStart = TimeInterval(start/1000) // Backend is in millis
+            let backendTimeIntervalEnd = TimeInterval(end/1000) // Backend is in millis
             let attributeTimeInterval = keyValue
 
             let attributeDate = DateTime.zeroOutSeconds(timestamp: attributeTimeInterval)
