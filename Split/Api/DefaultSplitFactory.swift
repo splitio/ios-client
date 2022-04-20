@@ -13,18 +13,20 @@ import Foundation
  */
 public class DefaultSplitFactory: NSObject, SplitFactory {
 
+    private var clientManager: SplitClientManager?
+
     // Not using default implementation in protocol
     // extension due to Objc interoperability
     @objc public static var sdkVersion: String {
         return Version.semantic
     }
 
-    private var defaultClient: SplitClient?
     private var defaultManager: SplitManager?
     private let filterBuilder = FilterBuilder()
 
     public var client: SplitClient {
-        return defaultClient!
+        // TODO: Check this line
+        return clientManager!.defaultClient!
     }
 
     public var manager: SplitManager {
@@ -66,37 +68,19 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let syncManager = try components.buildSyncManager(notificationHelper: params.notificationHelper)
 
         setupBgSync(config: params.config, apiKey: params.apiKey, userKey: params.key.matchingKey)
+        let mySegmentsSyncWorkerFactory = try components.buildMySegmentsSyncWorkerFactory()
+        clientManager = DefaultClientManager(config: params.config,
+                                             key: params.key,
+                                             splitManager: manager,
+                                             apiFacade: splitApiFacade,
+                                             byKeyFacade: components.getByKeyFacade(),
+                                             storageContainer: storageContainer,
+                                             syncManager: syncManager,
+                                             synchronizer: synchronizer,
+                                             eventsManagerCoordinator: eventsManager,
+                                             mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
+                                             telemetryStopwatch: params.initStopwatch)
 
-        defaultClient = DefaultSplitClient(config: params.config, key: params.key, apiFacade: splitApiFacade,
-                                           storageContainer: storageContainer,
-                                           synchronizer: synchronizer, eventsManager: eventsManager) { [weak self] in
-            syncManager.stop()
-            if let self = self, let manager = self.defaultManager as? Destroyable {
-                manager.destroy()
-            }
-            eventsManager.stop()
-            storageContainer.oneKeyMySegmentsStorage.destroy()
-            storageContainer.splitsStorage.destroy()
-        }
-
-        (defaultClient as? TelemetrySplitClient)?.initStopwatch = params.initStopwatch
-        eventsManager.start()
-
-        defaultClient?.on(event: .sdkReadyFromCache) {
-            DispatchQueue.global().async {
-                params.telemetryStorage?.recordTimeUntilReadyFromCache(params.initStopwatch.interval())
-            }
-        }
-
-        defaultClient?.on(event: .sdkReady) {
-            DispatchQueue.global().async {
-                params.telemetryStorage?.recordTimeUntilReady(params.initStopwatch.interval())
-                synchronizer.synchronizeTelemetryConfig()
-            }
-        }
-
-        eventsManager.executorResources.client = defaultClient
-        syncManager.start()
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {

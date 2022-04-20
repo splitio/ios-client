@@ -9,17 +9,12 @@ import Foundation
 
 class AllKeysMatcher: BaseMatcher, MatcherProtocol {
 
-    //--------------------------------------------------------------------------------------------------
-     init(negate: Bool? = false) {
-
+    init(negate: Bool? = false) {
         super.init(negate: negate, type: MatcherType.allKeys)
-
     }
-    //--------------------------------------------------------------------------------------------------
-    func evaluate(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
 
-        if matchValue == nil {
-
+    func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
+        if values.matchValue == nil {
             return false
         }
 

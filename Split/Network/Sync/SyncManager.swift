@@ -18,16 +18,19 @@ protocol SyncManager {
 class DefaultSyncManager: SyncManager {
 
     private let splitConfig: SplitClientConfig
-    private let synchronizer: FullSynchronizer
+    private let synchronizer: Synchronizer
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let pushNotificationManager: PushNotificationManager?
     private let reconnectStreamingTimer: BackoffCounterTimer?
     private var isPollingEnabled: Atomic<Bool> = Atomic(false)
     private var isPaused: Atomic<Bool> = Atomic(false)
 
-    init(splitConfig: SplitClientConfig, pushNotificationManager: PushNotificationManager?,
-         reconnectStreamingTimer: BackoffCounterTimer?, notificationHelper: NotificationHelper,
-         synchronizer: FullSynchronizer, broadcasterChannel: PushManagerEventBroadcaster) {
+    init(splitConfig: SplitClientConfig,
+         pushNotificationManager: PushNotificationManager?,
+         reconnectStreamingTimer: BackoffCounterTimer?,
+         notificationHelper: NotificationHelper,
+         synchronizer: Synchronizer,
+         broadcasterChannel: PushManagerEventBroadcaster) {
         self.splitConfig = splitConfig
         self.pushNotificationManager = pushNotificationManager
         self.synchronizer = synchronizer

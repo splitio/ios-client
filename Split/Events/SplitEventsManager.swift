@@ -8,19 +8,14 @@
 
 import Foundation
 
-protocol SplitEventsHandlerExecutor {
+protocol SplitEventsManager {
     var executorResources: SplitEventExecutorResources { get }
     func register(event: SplitEvent, task: SplitEventTask)
-}
-
-protocol SplitEventsQueue {
     func notifyInternalEvent(_ event: SplitInternalEvent)
     func start()
     func stop()
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
 }
-
-protocol SplitEventsManager: SplitEventsQueue, SplitEventsHandlerExecutor {}
 
 class DefaultSplitEventsManager: SplitEventsManager {
     let executorResources: SplitEventExecutorResources

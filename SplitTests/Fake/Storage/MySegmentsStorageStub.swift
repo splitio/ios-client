@@ -50,5 +50,13 @@ class MySegmentsStorageStub: MySegmentsStorage {
         return segments[key]?.count ?? 0
     }
 
+    func getCount() -> Int {
+        var count = 0
+        for (_, value) in segments {
+            count += value.count
+        }
+        return count
+    }
+
 
 }

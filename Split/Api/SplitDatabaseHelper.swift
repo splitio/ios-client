@@ -27,27 +27,18 @@ struct SplitDatabaseHelper {
         let impressionsStorage = openImpressionsStorage(database: splitDatabase)
         let impressionsCountStorage = openImpressionsCountStorage(database: splitDatabase)
         let eventsStorage = openEventsStorage(database: splitDatabase)
-        let oneKeyMySegmentsStorage = openOneKeyMySegmentsStorage(database: splitDatabase, userKey: userKey)
-        let oneKeyAttributesStorage = openOneKeyAttributesStorage(database: splitDatabase,
-                                                      userKey: userKey,
-                                                      splitClientConfig: splitClientConfig)
 
         let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase)
         let attributesStorage = openAttributesStorage(database: splitDatabase,
                                                       splitClientConfig: splitClientConfig)
 
-        // To make it work current staff for now
-        let byKeyMySegmentsStorage = createByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: userKey)
-
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      fileStorage: fileStorage,
                                      splitsStorage: splitsStorage,
                                      persistentSplitsStorage: persistentSplitsStorage,
-                                     oneKeyMySegmentsStorage: byKeyMySegmentsStorage,
                                      impressionsStorage: impressionsStorage,
                                      impressionsCountStorage: impressionsCountStorage,
                                      eventsStorage: eventsStorage,
-                                     oneKeyAttributesStorage: oneKeyAttributesStorage,
                                      telemetryStorage: telemetryStorage,
                                      mySegmentsStorage: mySegmentsStorage,
                                      attributesStorage: attributesStorage)
@@ -91,7 +82,7 @@ struct SplitDatabaseHelper {
                                       splitClientConfig: SplitClientConfig) -> AttributesStorage {
         return DefaultAttributesStorage(
             persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
-                openPersistentAttributesStorage(database: database) : nil
+            openPersistentAttributesStorage(database: database) : nil
         )
     }
 
@@ -102,12 +93,12 @@ struct SplitDatabaseHelper {
 
     static func openImpressionsCountStorage(database: SplitDatabase) -> PersistentImpressionsCountStorage {
         return DefaultImpressionsCountStorage(database: database,
-                                         expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+                                              expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
     }
 
     static func openEventsStorage(database: SplitDatabase) -> PersistentEventsStorage {
         return DefaultEventsStorage(database: database,
-                                         expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+                                    expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
     }
 
     static func databaseName(apiKey: String) -> String? {
@@ -149,9 +140,9 @@ struct SplitDatabaseHelper {
 
     static func sanitizeForFolderName(_ string: String) -> String {
         guard let regex: NSRegularExpression =
-            try? NSRegularExpression(pattern: "[^a-zA-Z0-9]",
-                                     options: NSRegularExpression.Options.caseInsensitive) else {
-                fatalError("Regular expression not valid")
+                try? NSRegularExpression(pattern: "[^a-zA-Z0-9]",
+                                         options: NSRegularExpression.Options.caseInsensitive) else {
+            fatalError("Regular expression not valid")
         }
         let range = NSRange(location: 0, length: string.count)
         return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
@@ -178,35 +169,8 @@ struct SplitDatabaseHelper {
         return nil
     }
 
-    @available(*, deprecated, message: "Replaced by PersistentMySegmentsStorage")
-    static func openOneKeyPersistentMySegmentsStorage(database: SplitDatabase,
-                                                userKey: String) -> OneKeyPersistentMySegmentsStorage {
-        return DefaultOneKeyPersistentMySegmentsStorage(userKey: userKey, database: database)
-    }
-
-    @available(*, deprecated, message: "Replaced by MySegmentsStorage")
-    static func openOneKeyMySegmentsStorage(database: SplitDatabase, userKey: String) -> OneKeyMySegmentsStorage {
-        let persistentMySegmentsStorage = openOneKeyPersistentMySegmentsStorage(database: database, userKey: userKey)
-        return DefaultOneKeyMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
-    }
-
-    @available(*, deprecated, message: "Replaced by AttributesStorage")
-    static func openOneKeyPersistentAttributesStorage(database: SplitDatabase,
-                                                userKey: String) -> OneKeyPersistentAttributesStorage {
-        return DefaultOneKeyPersistentAttributesStorage(userKey: userKey, database: database)
-    }
-
-    @available(*, deprecated, message: "Replaced by AttributesStorage")
-    static func openOneKeyAttributesStorage(database: SplitDatabase,
-                                      userKey: String,
-                                      splitClientConfig: SplitClientConfig) -> OneKeyAttributesStorage {
-        return OneKeyDefaultAttributesStorage(
-            persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
-                openOneKeyPersistentAttributesStorage(database: database, userKey: userKey) : nil
-        )
-    }
-
-    static func createByKeyMySegmentsStorage(mySegmentsStorage: MySegmentsStorage, userKey: String) -> ByKeyMySegmentsStorage {
+    static func createByKeyMySegmentsStorage(mySegmentsStorage: MySegmentsStorage,
+                                             userKey: String) -> ByKeyMySegmentsStorage {
         return DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: userKey)
     }
 }

@@ -16,10 +16,10 @@ class BackgroundMySegmentsSyncWorker: BackgroundSyncWorker {
 
     private let mySegmentsFetcher: HttpMySegmentsFetcher
     private let userKey: String
-    private let mySegmentsStorage: OneKeyPersistentMySegmentsStorage
+    private let mySegmentsStorage: PersistentMySegmentsStorage
 
     init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
-         mySegmentsStorage: OneKeyPersistentMySegmentsStorage) {
+         mySegmentsStorage: PersistentMySegmentsStorage) {
 
         self.userKey = userKey
         self.mySegmentsStorage = mySegmentsStorage
@@ -29,7 +29,7 @@ class BackgroundMySegmentsSyncWorker: BackgroundSyncWorker {
     func execute() {
         do {
             if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: nil) {
-                mySegmentsStorage.set(segments)
+                mySegmentsStorage.set(segments, forKey: userKey)
             }
         } catch let error {
             Logger.e("Problem fetching mySegments: %@", error.localizedDescription)

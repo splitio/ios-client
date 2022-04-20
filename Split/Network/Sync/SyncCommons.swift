@@ -11,11 +11,9 @@ struct SplitStorageContainer {
     let fileStorage: FileStorageProtocol
     let splitsStorage: SplitsStorage
     let persistentSplitsStorage: PersistentSplitsStorage
-    let oneKeyMySegmentsStorage: ByKeyMySegmentsStorage
     let impressionsStorage: PersistentImpressionsStorage
     let impressionsCountStorage: PersistentImpressionsCountStorage
     let eventsStorage: PersistentEventsStorage
-    let oneKeyAttributesStorage: OneKeyAttributesStorage
     let telemetryStorage: TelemetryStorage?
     let mySegmentsStorage: MySegmentsStorage
     let attributesStorage: AttributesStorage

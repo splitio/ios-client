@@ -11,10 +11,12 @@ class MatchesStringMatcher: BaseMatcher, MatcherProtocol {
 
     var data: String?
 
-    init(data: String?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil,
-         attribute: String? = nil, type: MatcherType? = nil) {
+    init(data: String?,
+         negate: Bool? = nil,
+         attribute: String? = nil,
+         type: MatcherType? = nil) {
 
-        super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
+        super.init(negate: negate, attribute: attribute, type: type)
         self.data = data
     }
 
@@ -22,9 +24,9 @@ class MatchesStringMatcher: BaseMatcher, MatcherProtocol {
         return Date(timeIntervalSince1970: TimeInterval(number))
     }
 
-    func evaluate(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
+    func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
 
-        guard let matcherData = data, let keyValue = matchValue as? String else {
+        guard let matcherData = data, let keyValue = values.matchValue as? String else {
             return false
         }
 

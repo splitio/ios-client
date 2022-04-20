@@ -14,11 +14,11 @@ class EqualToMatcher: BaseMatcher, MatcherProtocol {
     init(data: UnaryNumericMatcherData?, splitClient: DefaultSplitClient? = nil,
          negate: Bool? = nil, attribute: String? = nil, type: MatcherType? = nil) {
 
-        super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
+        super.init(negate: negate, attribute: attribute, type: type)
         self.data = data
     }
 
-    func evaluate(matchValue: Any?, matchingKey: String, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
+    func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
 
         guard let matcherData = data, let dataType = matcherData.dataType, let value = matcherData.value else {
             return false
@@ -26,7 +26,7 @@ class EqualToMatcher: BaseMatcher, MatcherProtocol {
 
         switch dataType {
         case DataType.dateTime:
-            guard let keyValue = matchValue as? TimeInterval else {return false}
+            guard let keyValue = values.matchValue as? TimeInterval else {return false}
             let backendTimeInterval = TimeInterval(value/1000)
             let attributeTimeInterval = keyValue
 
@@ -35,7 +35,7 @@ class EqualToMatcher: BaseMatcher, MatcherProtocol {
             return backendDate == attributeDate
 
         case DataType.number:
-            guard let keyValue = CastUtils.anyToInt64(value: matchValue) else {return false}
+            guard let keyValue = CastUtils.anyToInt64(value: values.matchValue) else {return false}
             return keyValue == value
         }
     }
