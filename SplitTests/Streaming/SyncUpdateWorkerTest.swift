@@ -24,8 +24,10 @@ class SyncUpdateWorker: XCTestCase {
     var mySegmentsChangesChecker: MySegmentsChangesCheckerMock!
     var mySegmentsPayloadDecoder: MySegmentsV2PayloadDecoderMock!
     let userKey = IntegrationHelper.dummyUserKey
+    var userKeyHash: String = ""
 
     override func setUp() {
+        userKeyHash = DefaultMySegmentsPayloadDecoder().hash(userKey: userKey)
         synchronizer = SynchronizerStub()
         splitsStorage = SplitsStorageStub()
         mySegmentsChangesChecker = MySegmentsChangesCheckerMock()
@@ -35,10 +37,13 @@ class SyncUpdateWorker: XCTestCase {
                                                                changeNumber: 100,
                                                                updateTimestamp: 100))
         mySegmentsStorage = MySegmentsStorageStub()
+        mySegmentsStorage.segments[userKey] = []
 
         splitsUpdateWorker = SplitsUpdateWorker(synchronizer: synchronizer)
 
-        mySegmentsUpdateWorker =  MySegmentsUpdateWorker(synchronizer: synchronizer, mySegmentsStorage: mySegmentsStorage)
+        mySegmentsUpdateWorker =  MySegmentsUpdateWorker(synchronizer: synchronizer,
+                                                         mySegmentsStorage: mySegmentsStorage,
+                                                         mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
         mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
 
         mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
@@ -85,10 +90,11 @@ class SyncUpdateWorker: XCTestCase {
 
         let notification = MySegmentsUpdateNotification(changeNumber: 100,
                                                         includesPayload: true,
-                                                        segmentList: ["s1", "s2"])
+                                                        segmentList: ["s1", "s2"],
+                                                        userKeyHash: userKeyHash)
 
         let exp = XCTestExpectation(description: "exp")
-        mySegmentsStorage.updateExpectation = exp
+        mySegmentsStorage.updateExpectation[userKey] = exp
         mySegmentsChangesChecker.haveChanged = true
         mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
         try mySegmentsUpdateWorker.process(notification: notification)
@@ -98,9 +104,9 @@ class SyncUpdateWorker: XCTestCase {
         XCTAssertEqual(2, mySegmentsStorage.segments[userKey]?.count)
         XCTAssertEqual(1, mySegmentsStorage.segments[userKey]?.filter { $0 == "s1" }.count)
         XCTAssertEqual(1, mySegmentsStorage.segments[userKey]?.filter { $0 == "s2" }.count)
-        XCTAssertFalse(mySegmentsStorage.clearCalled)
-        XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
-        XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
+        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
+        XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
+        XCTAssertFalse(synchronizer.synchronizeMySegmentsForKeyCalled[userKey] ?? false)
     }
 
     func testMySegmentsUpdateWorkerWithPayloadWithoutChanges() throws {
@@ -108,13 +114,14 @@ class SyncUpdateWorker: XCTestCase {
 
         let notification = MySegmentsUpdateNotification(changeNumber: 100,
                                                         includesPayload: true,
-                                                        segmentList: ["s1", "s2"])
+                                                        segmentList: ["s1", "s2"],
+                                                        userKeyHash: userKeyHash)
 
         mySegmentsChangesChecker.haveChanged = false
         mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
         try mySegmentsUpdateWorker.process(notification: notification)
 
-        XCTAssertNil(mySegmentsStorage.segments[userKey])
+        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
         XCTAssertFalse(synchronizer.notifyMySegmentsUpdatedCalled)
         XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
     }
@@ -122,35 +129,37 @@ class SyncUpdateWorker: XCTestCase {
     func testMySegmentsUpdateWorkerWithPayloadNil() throws {
         let notification = MySegmentsUpdateNotification(changeNumber: 100,
                                                         includesPayload: true,
-                                                        segmentList: nil)
+                                                        segmentList: nil,
+                                                        userKeyHash: userKeyHash)
 
         let exp = XCTestExpectation(description: "exp")
-        mySegmentsStorage.clearExpectation = exp
+        mySegmentsStorage.clearExpectation[userKey] = exp
 
         try mySegmentsUpdateWorker.process(notification: notification)
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertNil(mySegmentsStorage.segments[userKey])
-        XCTAssertTrue(mySegmentsStorage.clearCalled)
+        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
+        XCTAssertTrue(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
         XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
     }
 
     func testMySegmentsUpdateWorkerNoPayload() throws {
         let notification = MySegmentsUpdateNotification(changeNumber: 100,
                                                         includesPayload: false,
-                                                        segmentList: nil)
+                                                        segmentList: nil,
+                                                        userKeyHash: userKeyHash)
 
         let exp = XCTestExpectation(description: "exp")
-        synchronizer.forceMySegmentsSyncExp = exp
+        synchronizer.forceMySegmentsSyncExp[userKey] = exp
 
         try mySegmentsUpdateWorker.process(notification: notification)
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertNil(mySegmentsStorage.segments[userKey])
-        XCTAssertFalse(mySegmentsStorage.clearCalled)
-        XCTAssertTrue(synchronizer.forceMySegmentsSyncCalled)
+        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
+        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
+        XCTAssertTrue(synchronizer.forceMySegmentsSyncForKeyCalled[userKey] ?? false)
     }
 
     func testMySegmentsUpdateV2WorkerUnbounded() throws {
@@ -160,32 +169,33 @@ class SyncUpdateWorker: XCTestCase {
                                                           segmentName: nil, data: nil)
 
         let exp = XCTestExpectation(description: "exp")
-        synchronizer.forceMySegmentsSyncExp = exp
+        synchronizer.forceMySegmentsSyncExp[userKey] = exp
 
         try mySegmentsUpdateV2Worker.process(notification: notification)
 
         wait(for: [exp], timeout: 3)
 
-        XCTAssertNil(mySegmentsStorage.segments[userKey])
-        XCTAssertFalse(mySegmentsStorage.clearCalled)
-        XCTAssertTrue(synchronizer.forceMySegmentsSyncCalled)
+        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
+        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
+        XCTAssertTrue(synchronizer.forceMySegmentsSyncForKeyCalled[userKey] ?? false)
     }
 
     func testMySegmentsUpdateV2WorkerRemoval() throws {
+        mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
         let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
                                                           compressionType: .none,
                                                           updateStrategy: .segmentRemoval,
                                                           segmentName: "s3", data: nil)
 
         let exp = XCTestExpectation(description: "exp")
-        mySegmentsStorage.updateExpectation = exp
+        synchronizer.notifyMySegmentsUpdatedExp[userKey] = exp
 
         try mySegmentsUpdateV2Worker.process(notification: notification)
         wait(for: [exp], timeout: 3)
 
         XCTAssertEqual(["s1", "s2"], mySegmentsStorage.segments[userKey]?.sorted())
-        XCTAssertFalse(mySegmentsStorage.clearCalled)
-        XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
+        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
+        XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
     }
 
     func testMySegmentsUpdateV2WorkerNonRemoval() throws {
@@ -197,12 +207,13 @@ class SyncUpdateWorker: XCTestCase {
         try mySegmentsUpdateV2Worker.process(notification: notification)
         ThreadUtils.delay(seconds: 2)
 
-        XCTAssertNil(mySegmentsStorage.segments[userKey])
-        XCTAssertFalse(mySegmentsStorage.clearCalled)
-        XCTAssertFalse(synchronizer.notifyMySegmentsUpdatedCalled)
+        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
+        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
+        XCTAssertFalse(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
     }
 
     func testMySegmentsUpdateV2KeyListRemove() throws {
+        mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
         let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
                                                           compressionType: .gzip,
                                                           updateStrategy: .keyList,
@@ -219,17 +230,19 @@ class SyncUpdateWorker: XCTestCase {
                                                              payloadDecoder: mySegmentsPayloadDecoder)
 
         let exp = XCTestExpectation(description: "exp")
-        mySegmentsStorage.updateExpectation = exp
+        synchronizer.notifyMySegmentsUpdatedExp[userKey] = exp
 
         try mySegmentsUpdateV2Worker.process(notification: notification)
         wait(for: [exp], timeout: 3)
 
         XCTAssertEqual(["s1", "s2"], mySegmentsStorage.segments[userKey]?.sorted())
-        XCTAssertFalse(mySegmentsStorage.clearCalled)
-        XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
+        XCTAssertEqual(2, mySegmentsStorage.segments[userKey]?.count ?? -1)
+        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
+        XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
     }
 
     func testMySegmentsUpdateV2KeyLisAdd() throws {
+        mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
         let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
                                                           compressionType: .gzip,
                                                           updateStrategy: .keyList,
@@ -246,14 +259,14 @@ class SyncUpdateWorker: XCTestCase {
                                                              payloadDecoder: mySegmentsPayloadDecoder)
 
         let exp = XCTestExpectation(description: "exp")
-        mySegmentsStorage.updateExpectation = exp
+        synchronizer.notifyMySegmentsUpdatedExp[userKey] = exp
 
         try mySegmentsUpdateV2Worker.process(notification: notification)
         wait(for: [exp], timeout: 3)
 
         XCTAssertEqual(["s1", "s2", "s3", "s5"], mySegmentsStorage.segments[userKey]?.sorted())
-        XCTAssertFalse(mySegmentsStorage.clearCalled)
-        XCTAssertTrue(synchronizer.notifyMySegmentsUpdatedCalled)
+        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
+        XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
     }
 
     func testMySegmentsUpdateV2KeyListNoAction() throws {
@@ -271,8 +284,8 @@ class SyncUpdateWorker: XCTestCase {
 
         ThreadUtils.delay(seconds: 1)
 
-        XCTAssertNil(mySegmentsStorage.segments[userKey])
-        XCTAssertFalse(synchronizer.notifyMySegmentsUpdatedCalled)
+        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
+        XCTAssertFalse(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
     }
 
     override func tearDown() {

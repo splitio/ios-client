@@ -21,7 +21,6 @@ class SseNotificationParserStub: SseNotificationParser {
     var sseErrorNotification: StreamingError?
     var isError = false
 
-
     func parseIncoming(jsonString: String) -> IncomingNotification? {
         return incomingNotification
     }
@@ -34,7 +33,7 @@ class SseNotificationParserStub: SseNotificationParser {
         return splitKillNotification!
     }
 
-    func parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification {
+    func parseMySegmentUpdate(jsonString: String, channel: String) throws -> MySegmentsUpdateNotification {
         return mySegmentsUpdateNotification!
     }
 
@@ -56,5 +55,10 @@ class SseNotificationParserStub: SseNotificationParser {
 
     func isError(event: [String : String]) -> Bool {
         return isError
+    }
+
+    var userKeyHash: String = ""
+    func extractUserKeyHashFromChannel(channel: String) -> String? {
+        return userKeyHash
     }
 }

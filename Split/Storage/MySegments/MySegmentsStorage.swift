@@ -21,7 +21,7 @@ protocol MySegmentsStorage {
 
 class DefaultMySegmentsStorage: MySegmentsStorage {
 
-    private var inMemoryMySegments: ConcurrentDictionarySet<String, String>
+    private var inMemoryMySegments: ConcurrentDictionarySet<String, String> = ConcurrentDictionarySet()
     private let persistenStorage: PersistentMySegmentsStorage
 
     var keys: Set<String> {
@@ -30,7 +30,6 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
 
     init(persistentMySegmentsStorage: PersistentMySegmentsStorage) {
         persistenStorage = persistentMySegmentsStorage
-        inMemoryMySegments = ConcurrentDictionarySet()
     }
 
     func loadLocal(forKey key: String) {

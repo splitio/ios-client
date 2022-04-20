@@ -28,6 +28,10 @@ class ByKeyFacadeStub: ByKeyFacade {
     var loadAttributesFromCacheCalled = false
     var loadAttributesFromCacheKey: String = ""
 
+    var keys: Set<String> {
+        return Set(components.keys.map {$0 })
+    }
+
     func append(_ group: ByKeyComponentGroup, forKey key: String) {
         components[key] = group
     }
@@ -47,6 +51,7 @@ class ByKeyFacadeStub: ByKeyFacade {
     }
 
     func syncMySegments(forKey key: String) {
+        syncKey = key
         syncMySegmentsCalled = true
     }
 
@@ -56,11 +61,6 @@ class ByKeyFacadeStub: ByKeyFacade {
 
     func startPeriodicSync() {
         startPeriodicSyncCalled = true
-    }
-
-    func sync(forKey key: String) {
-        syncKey = key
-        syncMySegmentsCalled = true
     }
 
     func syncAll() {

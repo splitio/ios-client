@@ -28,6 +28,8 @@ protocol SseNotificationParser {
 
     func isError(event: [String: String]) -> Bool
 
+    func extractUserKeyHashFromChannel(channel: String) -> String?
+
 }
 
 class DefaultSseNotificationParser: SseNotificationParser {

@@ -34,7 +34,7 @@ class StreamingIntegrationHelper {
         return """
         id:cf74eb42-f687-48e4-ad18-af2125110aac
         event:message
-        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MTExMzgwNjgx_MTcwNTI2MTM0Mg==_mySegments","data":"{\\"type\\":\\"MY_SEGMENTS_UPDATE\\",\\"changeNumber\\":2000, \\"includesPayload\\":false}"}
+        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MjAwNjI0Nzg3NQ==_mySegments","data":"{\\"type\\":\\"MY_SEGMENTS_UPDATE\\",\\"changeNumber\\":2000, \\"includesPayload\\":false}"}
         """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
     }
 
@@ -42,7 +42,7 @@ class StreamingIntegrationHelper {
         return """
         id:cf74eb42-f687-48e4-ad18-af2125110aac
         event:message
-        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MTExMzgwNjgx_MTcwNTI2MTM0Mg==_mySegments","data":"{\\"type\\":\\"MY_SEGMENTS_UPDATE\\",\\"changeNumber\\":2000, \\"includesPayload\\":true, \\"segmentList\\":[\\"$SEGMENT$\\"]}"}
+        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MjAwNjI0Nzg3NQ==_mySegments","data":"{\\"type\\":\\"MY_SEGMENTS_UPDATE\\",\\"changeNumber\\":2000, \\"includesPayload\\":true, \\"segmentList\\":[\\"$SEGMENT$\\"]}"}
         """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
         .replacingOccurrences(of: "$SEGMENT$", with: "\(segment)")
     }

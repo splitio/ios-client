@@ -141,6 +141,16 @@ struct MySegmentsUpdateNotification: NotificationTypeField {
         self.segmentList = json.segmentList
         self.userKeyHash = userKeyHash
     }
+
+    init(changeNumber: Int64,
+         includesPayload: Bool,
+         segmentList: [String]?,
+         userKeyHash: String) {
+        self.changeNumber = changeNumber
+        self.includesPayload = includesPayload
+        self.segmentList = segmentList
+        self.userKeyHash = userKeyHash
+    }
 }
 
 enum MySegmentUpdateStrategy: Decodable {

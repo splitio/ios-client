@@ -48,4 +48,3 @@ extension Date {
         return Date().unixTimestamp()
     }
 }
-
