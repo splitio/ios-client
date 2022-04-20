@@ -67,11 +67,11 @@ class SplitComponentFactory {
         return component
     }
 
-    func getSplitEventsManager() -> SplitEventsManager {
-        if let obj = get(for: SplitEventsManager.self) as? SplitEventsManager {
+    func getSplitEventsManagerCoordinator() -> SplitEventsManagerCoordinator {
+        if let obj = get(for: SplitEventsManagerCoordinator.self) as? SplitEventsManagerCoordinator {
             return obj
         }
-        let component: SplitEventsManager = DefaultSplitEventsManager(config: splitClientConfig)
+        let component: SplitEventsManagerCoordinator = MainSplitEventsManager()
         add(component: component)
         return component
     }
@@ -158,7 +158,7 @@ class SplitComponentFactory {
             .setUserKey(userKey)
             .setSplitConfig(splitClientConfig)
             .setRestClient(restClient)
-            .setEventsManager(getSplitEventsManager())
+            .setEventsManager(getSplitEventsManagerCoordinator())
             .setStorageContainer(storageContainer)
             .setSplitsQueryString(splitsFilterQueryString)
 
@@ -208,7 +208,7 @@ class SplitComponentFactory {
                                                  apiFacade: try getSplitApiFacade(),
                                                  storageContainer: try getSplitStorageContainer(),
                                                  splitChangeProcessor: DefaultSplitChangeProcessor(),
-                                                 eventsManager: getSplitEventsManager())
+                                                 eventsManager: getSplitEventsManagerCoordinator())
         add(component: component)
         return component
     }
@@ -236,7 +236,7 @@ class SplitComponentFactory {
                                                           impressionsSyncHelper: try buildImpressionsSyncHelper(),
                                                           eventsSyncHelper: try buildEventsSyncHelper(),
                                                           splitsFilterQueryString: splitsFilterQueryString,
-                                                          splitEventsManager: getSplitEventsManager())
+                                                          splitEventsManager: getSplitEventsManagerCoordinator())
         add(component: component)
         return component
     }

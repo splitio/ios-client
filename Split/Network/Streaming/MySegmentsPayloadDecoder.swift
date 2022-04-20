@@ -8,8 +8,12 @@
 
 import Foundation
 
-class MySegmentsPayloadDecoder {
-    func hashUserKey(userKey: String) -> String {
+protocol MySegmentsPayloadDecoder {
+    func hash(userKey: String) -> String
+}
+
+class DefaultMySegmentsPayloadDecoder: MySegmentsPayloadDecoder {
+    func hash(userKey: String) -> String {
         return Base64Utils.encodeToBase64("\(Murmur3Hash.hashString(userKey, 0))")
     }
 }

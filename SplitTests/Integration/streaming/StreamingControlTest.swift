@@ -34,8 +34,7 @@ class StreamingControlTest: XCTestCase {
     var testFactory: TestSplitFactory!
 
     override func setUp() {
-
-        testFactory = TestSplitFactory()
+        testFactory = TestSplitFactory(userKey: "user_key")
         testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
     }
 

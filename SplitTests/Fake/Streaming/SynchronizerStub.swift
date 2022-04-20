@@ -35,7 +35,8 @@ class SynchronizerStub: Synchronizer {
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
     var syncMySegmentsExp: XCTestExpectation?
-    var forceMySegmentsSyncExp: XCTestExpectation?
+    var forceMySegmentsSyncExp = [String: XCTestExpectation]()
+    var notifyMySegmentsUpdatedExp = [String: XCTestExpectation]()
 
     var startPeriodicFetchingExp: XCTestExpectation?
     var stopPeriodicFetchingExp: XCTestExpectation?
@@ -59,29 +60,36 @@ class SynchronizerStub: Synchronizer {
         startForKeyCalled = true
     }
 
-    var loadMySegmentsFromCacheForKeyCalled = false
+    var loadMySegmentsFromCacheForKeyCalled = [String: Bool]()
     func loadMySegmentsFromCache(forKey key: String) {
-        loadMySegmentsFromCacheCalled = true
+        loadMySegmentsFromCacheForKeyCalled[key] = true
     }
 
-    var loadAttributesFromCacheForKeyCalled = false
+    var loadAttributesFromCacheForKeyCalled = [String: Bool]()
     func loadAttributesFromCache(forKey key: String) {
-        loadAttributesFromCacheForKeyCalled = true
+        loadAttributesFromCacheForKeyCalled[key] = true
     }
 
-    var synchronizeMySegmentsForKeyCalled = true
+    var synchronizeMySegmentsForKeyCalled = [String: Bool]()
     func synchronizeMySegments(forKey key: String) {
-        synchronizeMySegmentsForKeyCalled = true
+        synchronizeMySegmentsForKeyCalled[key] = true
     }
 
-    var forceMySegmentsSyncForKeyCalled = false
+    var forceMySegmentsSyncForKeyCalled = [String: Bool]()
     func forceMySegmentsSync(forKey key: String) {
-        forceMySegmentsSyncForKeyCalled = true
+        forceMySegmentsSyncForKeyCalled[key] = true
+
+        if let exp = forceMySegmentsSyncExp[key] {
+            exp.fulfill()
+        }
     }
 
-    var notifySegmentsUpdatedForKey = false
-    func notifySegmentsUpdated(forKey: String) {
-        notifySegmentsUpdatedForKey = true
+    var notifySegmentsUpdatedForKeyCalled = [String: Bool]()
+    func notifySegmentsUpdated(forKey key: String) {
+        notifySegmentsUpdatedForKeyCalled[key] = true
+        if let exp = notifyMySegmentsUpdatedExp[key] {
+            exp.fulfill()
+        }
     }
 
     func syncAll() {
@@ -150,13 +158,13 @@ class SynchronizerStub: Synchronizer {
             exp.fulfill()
         }
     }
-
-    func forceMySegmentsSync() {
-        forceMySegmentsSyncCalled = true
-        if let exp = forceMySegmentsSyncExp {
-            exp.fulfill()
-        }
-    }
+//
+//    func forceMySegmentsSync() {
+//        forceMySegmentsSyncCalled = true
+//        if let exp = forceMySegmentsSyncExp {
+//            exp.fulfill()
+//        }
+//    }
 
     func pause() {
     }

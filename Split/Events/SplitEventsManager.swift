@@ -197,7 +197,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             updateExecutionTimes(for: eventName, count: times - 1)
         }
 
-        //If executionTimes is lower than zero, execute it without limitation
+        // If executionTimes is lower than zero, execute it without limitation
         if let subscriptions = getSubscriptions(for: event) {
             for task in subscriptions {
                 executeTask(event: event, task: task)

@@ -16,6 +16,7 @@ protocol SplitEventsManagerCoordinator: SplitEventsManager {
 class MainSplitEventsManager: SplitEventsManagerCoordinator {
     var executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
 
+    private var defaultManager: SplitEventsManager?
     private var managers = [String: SplitEventsManager]()
     private var triggered = Set<SplitInternalEvent>()
     private let queue = DispatchQueue(label: "split-event-manager-coordinator")
@@ -53,15 +54,18 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
     }
 
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
-        return false
+        print("Coordinator event already triggered??? \(event.toString())")
+        return defaultManager?.eventAlreadyTriggered(event: event) ?? false
     }
 
     func add(_ manager: SplitEventsManager, forKey key: String) {
-        queue.async { [weak self] in
-            guard let self = self else { return }
+        queue.sync {
+            if managers.isEmpty {
+                defaultManager = manager
+            }
             manager.start()
-            self.managers[key] = manager
-            self.triggered.forEach {
+            managers[key] = manager
+            triggered.forEach {
                 manager.notifyInternalEvent($0)
             }
         }

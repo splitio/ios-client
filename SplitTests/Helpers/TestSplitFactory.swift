@@ -29,7 +29,7 @@ class TestSplitFactory {
 
     private(set) var clientManager: SplitClientManager?
     private let filterBuilder = FilterBuilder()
-    var userKey: String = IntegrationHelper.dummyUserKey
+    let userKey: String
     private var key: Key!
     var splitDatabase: SplitDatabase
     var reachabilityChecker: HostReachabilityChecker
@@ -47,7 +47,8 @@ class TestSplitFactory {
         return Version.sdk
     }
 
-    init() {
+    init(userKey: String) {
+        self.userKey = userKey
         splitDatabase = TestingHelper.createTestDatabase(name: UUID().uuidString)
         reachabilityChecker = ReachabilityMock()
     }
@@ -77,7 +78,7 @@ class TestSplitFactory {
         let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)
         defaultManager = manager
 
-        let eventsManager = DefaultSplitEventsManager(config: splitConfig)
+        let eventsManager = MainSplitEventsManager()
         eventsManager.start()
 
         let splitsFilterQueryString = try filterBuilder.add(filters: splitConfig.sync.filters).build()

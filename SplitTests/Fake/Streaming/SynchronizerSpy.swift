@@ -21,7 +21,6 @@ class SynchronizerSpy: Synchronizer {
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
     var synchronizeMySegmentsCalled = false
-    var forceMySegmentsSyncCalled = false
     var forceMySegmentsCalledCount = 0
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
@@ -37,13 +36,15 @@ class SynchronizerSpy: Synchronizer {
 
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
-    var syncMySegmentsExp: XCTestExpectation?
-    var forceMySegmentsSyncExp: XCTestExpectation?
 
     var startPeriodicFetchingExp: XCTestExpectation?
     var stopPeriodicFetchingExp: XCTestExpectation?
 
     let defaultUserKey: String
+
+
+    var forceMySegmentsSyncCalled = [String: Bool]()
+    var forceMySegmentsSyncCount = [String: Int]()
 
     init(splitConfig: SplitClientConfig,
          defaultUserKey: String,
@@ -197,12 +198,11 @@ class SynchronizerSpy: Synchronizer {
     func synchronizeMySegments(forKey key: String) {
         synchronizeMySegmentsCalled = true
         splitSynchronizer.synchronizeMySegments(forKey: key)
-        if let exp = syncMySegmentsExp {
-            exp.fulfill()
-        }
     }
 
     func forceMySegmentsSync(forKey key: String) {
         splitSynchronizer.forceMySegmentsSync(forKey: key)
+        forceMySegmentsSyncCalled[key] = true
+        forceMySegmentsSyncCount[key]=(forceMySegmentsSyncCount[key] ?? 0) + 1
     }
 }
