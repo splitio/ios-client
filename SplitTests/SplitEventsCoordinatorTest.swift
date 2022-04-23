@@ -98,6 +98,21 @@ class SplitEventsCoordinatorTest: XCTestCase {
         }
     }
 
+    func testStop() {
+
+        var managers = [SplitEventsManagerStub]()
+        for i in 0..<10 {
+        let manager = SplitEventsManagerStub()
+            managers.append(manager)
+            coordinator.add(manager, forKey: "k\(i)")
+        }
+        coordinator.stop()
+        sleep(1)
+        for manager in managers {
+            XCTAssertTrue(manager.stopCalled)
+        }
+    }
+
 
     private func addManagersToCoordinator(count: Int) -> [SplitEventsManagerStub] {
         var managers = [SplitEventsManagerStub]()

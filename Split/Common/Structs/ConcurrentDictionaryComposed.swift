@@ -73,7 +73,6 @@ class ConcurrentDictionaryComposed<K: Hashable, IK: Hashable> {
     func removeValue(_ innerKey: IK, forKey key: K) {
         queue.sync {
             _ = self.items[key]?.removeValue(forKey: innerKey)
-            print("bla")
         }
     }
 

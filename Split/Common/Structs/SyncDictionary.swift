@@ -53,7 +53,9 @@ class SyncDictionary<K: Hashable, T> {
 
     func removeAll() {
         queue.sync {
+            print("REMOVE ALLB \(items.count)")
             items.removeAll()
+            print("REMOVE ALLA \(items.count)")
         }
     }
 

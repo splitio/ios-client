@@ -170,6 +170,37 @@ class ByKeyFacadeTest: XCTestCase {
         }
     }
 
+    func testStartSyncForKey() {
+        setupTest { key in
+            byKeyFacade.startSync(forKey: key)
+        }
+
+        assertThis { keyNum, group in
+            if keyNum < 5 {
+                XCTAssertTrue(stub(group.mySegmentsSynchronizer).loadMySegmentsFromCacheCalled)
+                XCTAssertTrue(stub(group.mySegmentsSynchronizer).synchronizeMySegmentsCalled)
+                XCTAssertTrue(stub(group.attributesStorage).loadLocalCalled)
+                XCTAssertFalse(stub(group.mySegmentsSynchronizer).startPeriodicFetchingCalled)
+            }
+        }
+    }
+
+    func testStartSyncForKeyPolling() {
+        byKeyFacade.startPeriodicSync()
+        setupTest { key in
+            byKeyFacade.startSync(forKey: key)
+        }
+
+        assertThis { keyNum, group in
+            if keyNum < 5 {
+                XCTAssertTrue(stub(group.mySegmentsSynchronizer).loadMySegmentsFromCacheCalled)
+                XCTAssertTrue(stub(group.mySegmentsSynchronizer).synchronizeMySegmentsCalled)
+                XCTAssertTrue(stub(group.attributesStorage).loadLocalCalled)
+                XCTAssertTrue(stub(group.mySegmentsSynchronizer).startPeriodicFetchingCalled)
+            }
+        }
+    }
+
     private func setupTest(_ test: (String) -> Void) {
         for i in 0..<5 {
             test(buildKey(i))
