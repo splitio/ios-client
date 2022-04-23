@@ -16,6 +16,7 @@ protocol PushNotificationManager {
     func resume()
     func stop()
     func disconnect()
+    func reset()
 }
 
 class DefaultPushNotificationManager: PushNotificationManager {
@@ -29,7 +30,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private var sseClient: SseClient
     private var timersManager: TimersManager
     private let broadcasterChannel: PushManagerEventBroadcaster
-    private let userKey: String
+    private let userKeyRegistry: ByKeyRegistry
     private let sseConnectionTimer: DispatchSourceTimer? = nil
 
     private let connectionQueue = DispatchQueue(label: "Sse connnection",
@@ -45,10 +46,10 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     private let telemetryProducer: TelemetryRuntimeProducer?
 
-    init(userKey: String, sseAuthenticator: SseAuthenticator,
+    init(userKeyRegistry: ByKeyRegistry, sseAuthenticator: SseAuthenticator,
          sseClient: SseClient, broadcasterChannel: PushManagerEventBroadcaster,
          timersManager: TimersManager, telemetryProducer: TelemetryRuntimeProducer?) {
-        self.userKey = userKey
+        self.userKeyRegistry = userKeyRegistry
         self.sseAuthenticator = sseAuthenticator
         self.sseClient = sseClient
         self.broadcasterChannel = broadcasterChannel
@@ -62,13 +63,17 @@ class DefaultPushNotificationManager: PushNotificationManager {
         connect()
     }
 
+    func reset() {
+        disconnect()
+        connect()
+    }
+
     func pause() {
         Logger.d("Push notification manager paused")
         isPaused.set(true)
-        delayTimer?.cancel()
-        isConnecting.set(false)
-        sseClient.disconnect()
+        disconnect()
     }
+
 
     func resume() {
         Logger.d("Push notification manager resumed")
@@ -79,14 +84,15 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func stop() {
         Logger.d("Push notification manager stopped")
         isStopped.set(true)
-        delayTimer?.cancel()
         disconnect()
     }
 
     func disconnect() {
         Logger.d("Disconnecting SSE client")
         timersManager.cancel(timer: .refreshAuthToken)
+        delayTimer?.cancel()
         sseClient.disconnect()
+        isConnecting.set(false)
     }
 
     private func connect() {
@@ -102,8 +108,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     private func authenticateAndConnect() {
-
-        let result = sseAuthenticator.authenticate(userKey: userKey)
+        let result = sseAuthenticator.authenticate(userKeys: userKeyRegistry.keys.map { $0 })
         telemetryProducer?.recordLastSync(resource: .token, time: Date().unixTimestampInMiliseconds())
         if result.success && !result.pushEnabled {
             Logger.d("Streaming disabled for api key")

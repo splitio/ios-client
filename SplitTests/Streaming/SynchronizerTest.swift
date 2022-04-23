@@ -164,16 +164,14 @@ class SynchronizerTest: XCTestCase {
 
         ThreadUtils.delay(seconds: 0.2)
 
-        XCTAssertTrue(byKeyApiFacade.loadMySegmentsFromCacheCalled)
-        XCTAssertEqual(userKey, byKeyApiFacade.loadMySegmentsFromCacheKey)
+        XCTAssertTrue(byKeyApiFacade.loadMySegmentsFromCacheCalled[userKey] ?? false)
     }
 
     func testSynchronizeMySegments() {
 
         synchronizer.synchronizeMySegments(forKey: userKey)
 
-        XCTAssertTrue(byKeyApiFacade.syncMySegmentsCalled)
-        XCTAssertEqual(userKey, byKeyApiFacade.syncKey)
+        XCTAssertTrue(byKeyApiFacade.syncMySegmentsCalled[userKey] ?? false)
     }
 
     func testSynchronizeSplitsWithChangeNumber() {
@@ -230,6 +228,12 @@ class SynchronizerTest: XCTestCase {
         XCTAssertTrue(periodicEventsRecorderWorker.stopCalled)
     }
 
+    func testStartByKey() {
+        synchronizer.start(forKey: userKey)
+
+        XCTAssertTrue(byKeyApiFacade.startSyncForKeyCalled[userKey] ?? false)
+    }
+
     func testFlush() {
 
         synchronizer.flush()
@@ -250,9 +254,9 @@ class SynchronizerTest: XCTestCase {
         synchronizer.destroy()
 
         XCTAssertTrue(splitsSyncWorker.stopCalled)
-        XCTAssertTrue(byKeyApiFacade.stopCalled)
+        XCTAssertTrue(byKeyApiFacade.destroyCalled)
         XCTAssertTrue(periodicSplitsSyncWorker.stopCalled)
-        XCTAssertTrue(byKeyApiFacade.stopCalled)
+        XCTAssertTrue(byKeyApiFacade.destroyCalled)
         XCTAssertTrue(sw1.stopCalled)
         XCTAssertTrue(sw2.stopCalled)
         XCTAssertEqual(0, updateWorkerCatalog.count)

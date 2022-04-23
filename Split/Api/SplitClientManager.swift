@@ -102,8 +102,12 @@ class DefaultClientManager: SplitClientManager {
         if let client = clients.value(forKey: key) {
             return client
         }
+
         let client = createClient(forKey: key)
-        synchronizer.start(forKey: key)
+        if byKeyRegistry.keys.count > 0 {
+            syncManager.resetStreaming()
+        }
+
         return client
     }
 
@@ -113,13 +117,17 @@ class DefaultClientManager: SplitClientManager {
 
     func destroy(forKey key: String) {
 
-        if clients.takeValue(forKey: key) != nil,
-           clients.count == 0 {
+        if clients.takeValue(forKey: key) != nil {
+            byKeyRegistry.remove(forKey: key)
+        }
+
+        if clients.count == 0 {
+            self.syncManager.stop()
             if let stopwatch = self.telemetryStopwatch {
                 telemetryProducer?.recordSessionLength(sessionLength: stopwatch.interval())
             }
             (self.splitManager as? Destroyable)?.destroy()
-            self.synchronizer.destroy()
+
             self.flush()
             self.eventsManagerCoordinator.stop()
             self.storageContainer.splitsStorage.destroy()
@@ -127,58 +135,83 @@ class DefaultClientManager: SplitClientManager {
     }
 
     private func createClient(forKey key: String) -> SplitClient {
-
         let clientEventsManager = DefaultSplitEventsManager(config: config)
         let clientKey = Key(matchingKey: key, bucketingKey: defaultKey.bucketingKey)
 
-        let treatmentManager = DefaultTreatmentManager(
-            evaluator: evaluator,
-            key: clientKey,
-            splitConfig: config,
-            eventsManager: clientEventsManager,
-            impressionLogger: synchronizer, telemetryProducer: storageContainer.telemetryStorage,
-            attributesStorage: storageContainer.attributesStorage,
-            keyValidator: DefaultKeyValidator(),
-            splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
-            validationLogger: DefaultValidationMessageLogger())
+        let treatmentManager = buildTreatmentManager(key: clientKey,
+                                                     eventsManager: clientEventsManager)
 
-        let byKeyMySegmentsStorage = DefaultByKeyMySegmentsStorage(
-            mySegmentsStorage: storageContainer.mySegmentsStorage,
-            userKey: key)
-        let byKeyAttributesStorage = DefaultByKeyAttributesStorage(
-            attributesStorage: storageContainer.attributesStorage,
-            userKey: key)
-
-        let mySegmentsSynchronizer = DefaultMySegmentsSynchronizer(userKey: key,
-                                                                   splitConfig: config,
-                                                                   mySegmentsStorage: byKeyMySegmentsStorage,
-                                                                   syncWorkerFactory: mySegmentsSyncWorkerFactory,
-                                                                   splitEventsManager: clientEventsManager)
-
-        let byKeyGroup = ByKeyComponentGroup(eventsManager: clientEventsManager,
-                                             mySegmentsSynchronizer: mySegmentsSynchronizer,
-                                             attributesStorage: byKeyAttributesStorage)
-
-        let client = DefaultSplitClient(config: config,
-                                        key: clientKey,
-                                        treatmentManager: treatmentManager,
-                                        apiFacade: apiFacade,
-                                        storageContainer: storageContainer,
-                                        eventsManager: clientEventsManager,
-                                        eventsTracker: eventsTracker,
-                                        clientManager: self)
+        let client = buildClient(key: clientKey,
+                                 treatmentManager: treatmentManager,
+                                 eventsManager: clientEventsManager)
 
         clients.setValue(client, forKey: key)
-        byKeyRegistry.append(byKeyGroup, forKey: key)
+        addToByKeyRegistry(userKey: key,
+                           eventsManager: clientEventsManager)
         clientEventsManager.executorResources.client = client
         eventsManagerCoordinator.add(clientEventsManager, forKey: key)
 
         if shouldStartSyncKey() {
             synchronizer.start(forKey: key)
         }
-        clientEventsManager.start()
 
         return client
+    }
+
+    private func buildTreatmentManager(key: Key,
+                                       eventsManager: SplitEventsManager) -> TreatmentManager {
+        return DefaultTreatmentManager(
+            evaluator: evaluator,
+            key: key,
+            splitConfig: config,
+            eventsManager: eventsManager,
+            impressionLogger: synchronizer, telemetryProducer: storageContainer.telemetryStorage,
+            attributesStorage: storageContainer.attributesStorage,
+            keyValidator: DefaultKeyValidator(),
+            splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
+            validationLogger: DefaultValidationMessageLogger())
+    }
+
+    private func addToByKeyRegistry(userKey: String,
+                                    eventsManager: SplitEventsManager) {
+
+        let mySegmentsSynchronizer =
+        DefaultMySegmentsSynchronizer(userKey: userKey,
+                                      splitConfig: config,
+                                      mySegmentsStorage: buildMySegmentsStorage(forKey: userKey),
+                                      syncWorkerFactory: mySegmentsSyncWorkerFactory,
+                                      splitEventsManager: eventsManager)
+
+        let byKeyGroup = ByKeyComponentGroup(eventsManager: eventsManager,
+                                             mySegmentsSynchronizer: mySegmentsSynchronizer,
+                                             attributesStorage: attributesStorage(forKey: userKey))
+
+        byKeyRegistry.append(byKeyGroup, forKey: userKey)
+    }
+
+    private func buildMySegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage {
+        return DefaultByKeyMySegmentsStorage(
+            mySegmentsStorage: storageContainer.mySegmentsStorage,
+            userKey: key)
+    }
+
+    private func attributesStorage(forKey key: String) -> ByKeyAttributesStorage {
+        return DefaultByKeyAttributesStorage(
+            attributesStorage: storageContainer.attributesStorage,
+            userKey: key)
+    }
+
+    private func buildClient(key: Key,
+                             treatmentManager: TreatmentManager,
+                             eventsManager: SplitEventsManager) -> SplitClient {
+        return DefaultSplitClient(config: config,
+                                  key: key,
+                                  treatmentManager: treatmentManager,
+                                  apiFacade: apiFacade,
+                                  storageContainer: storageContainer,
+                                  eventsManager: eventsManager,
+                                  eventsTracker: eventsTracker,
+                                  clientManager: self)
     }
 
     func shouldStartSyncKey() -> Bool {

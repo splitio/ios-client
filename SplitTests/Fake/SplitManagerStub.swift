@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SplitManagerStub: SplitManager {
+class SplitManagerStub: SplitManager, Destroyable {
     var splits: [SplitView]
     var splitNames: [String]
     
@@ -21,6 +21,9 @@ class SplitManagerStub: SplitManager {
     func split(featureName: String) -> SplitView? {
         return nil
     }
-    
-    
+
+    var destroyCalled = false
+    func destroy() {
+        destroyCalled = true
+    }
 }

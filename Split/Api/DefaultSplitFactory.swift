@@ -66,14 +66,16 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let synchronizer = try components.buildSynchronizer()
         let syncManager = try components.buildSyncManager(notificationHelper: params.notificationHelper)
+        let byKeyFacade = components.getByKeyFacade()
+        let mySegmentsSyncWorkerFactory = try components.buildMySegmentsSyncWorkerFactory()
 
         setupBgSync(config: params.config, apiKey: params.apiKey, userKey: params.key.matchingKey)
-        let mySegmentsSyncWorkerFactory = try components.buildMySegmentsSyncWorkerFactory()
+
         clientManager = DefaultClientManager(config: params.config,
                                              key: params.key,
                                              splitManager: manager,
                                              apiFacade: splitApiFacade,
-                                             byKeyFacade: components.getByKeyFacade(),
+                                             byKeyFacade: byKeyFacade,
                                              storageContainer: storageContainer,
                                              syncManager: syncManager,
                                              synchronizer: synchronizer,

@@ -22,6 +22,7 @@ class PushNotificationManagerTest: XCTestCase {
     var jwtParser: JwtTokenParser!
     let rawToken = "the_token"
     var telemetryProducer: TelemetryStorageStub!
+    var byKeyFacade: ByKeyFacadeStub!
 
     override func setUp() {
         sseAuthenticator = SseAuthenticatorStub()
@@ -30,8 +31,13 @@ class PushNotificationManagerTest: XCTestCase {
         timersManager = TimersManagerMock()
         broadcasterChannel = PushManagerEventBroadcasterStub()
         telemetryProducer = TelemetryStorageStub()
-
-        pnManager = DefaultPushNotificationManager(userKey: userKey, sseAuthenticator: sseAuthenticator,
+        byKeyFacade = ByKeyFacadeStub()
+        let byKeyGroup = ByKeyComponentGroup(eventsManager: SplitEventsManagerStub(),
+                                             mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
+                                             attributesStorage: ByKeyAttributesStorageStub(userKey: userKey,
+                                                                                           attributesStorage: AttributesStorageStub()))
+        byKeyFacade.append(byKeyGroup, forKey: userKey)
+        pnManager = DefaultPushNotificationManager(userKeyRegistry: byKeyFacade, sseAuthenticator: sseAuthenticator,
                                                    sseClient: sseClient,broadcasterChannel: broadcasterChannel,
                                                    timersManager: timersManager, telemetryProducer: telemetryProducer)
     }
@@ -57,7 +63,7 @@ class PushNotificationManagerTest: XCTestCase {
 
         let streamEvents = telemetryProducer.streamingEvents
 
-        XCTAssertEqual(userKey, sseAuthenticator.userKey)
+        XCTAssertEqual(userKey, sseAuthenticator.userKeys[0])
         XCTAssertEqual(rawToken, sseClient.token)
         XCTAssertEqual(2, sseClient.channels?.count)
         XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
@@ -87,7 +93,7 @@ class PushNotificationManagerTest: XCTestCase {
 
         let streamEvents = telemetryProducer.streamingEvents
 
-        XCTAssertEqual(userKey, sseAuthenticator.userKey)
+        XCTAssertEqual(userKey, sseAuthenticator.userKeys[0])
         XCTAssertFalse(sseClient.connectCalled)
         XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect)) // ??
@@ -116,7 +122,7 @@ class PushNotificationManagerTest: XCTestCase {
 
         sleep(1)
 
-        XCTAssertEqual(userKey, sseAuthenticator.userKey)
+        XCTAssertEqual(userKey, sseAuthenticator.userKeys[0])
         XCTAssertEqual(rawToken, sseClient.token)
         XCTAssertEqual(2, sseClient.channels?.count)
         XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
@@ -140,7 +146,7 @@ class PushNotificationManagerTest: XCTestCase {
 
         let streamEvents = telemetryProducer.streamingEvents
 
-        XCTAssertEqual(userKey, sseAuthenticator.userKey!)
+        XCTAssertEqual(userKey, sseAuthenticator.userKeys[0])
         XCTAssertNil(sseClient.token)
         XCTAssertFalse(sseClient.disconnectCalled)
         XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
@@ -174,6 +180,43 @@ class PushNotificationManagerTest: XCTestCase {
 
         XCTAssertTrue(sseClient.disconnectCalled)
         XCTAssertTrue(timersManager.timerIsCancelled(timer: .refreshAuthToken))
+    }
+
+    func testResetConnectionOk() {
+
+        pnManager.jwtParser = JwtParserStub(token: dummyToken())
+
+        var exp = XCTestExpectation(description: "start")
+
+        broadcasterChannel.pushExpectation = exp
+        sseAuthenticator.results = [successAuthResult(), successAuthResult()]
+        sseClient.results = [true, true]
+
+        pnManager.start()
+
+        wait(for: [exp], timeout: 3)
+
+        exp = XCTestExpectation(description: "reset")
+        broadcasterChannel.pushExpectationTriggerCallCount = 2
+        broadcasterChannel.pushExpectation = exp
+
+        telemetryProducer.streamingEvents = [:]
+        timersManager.reset()
+        pnManager.reset()
+
+        wait(for: [exp], timeout: 5)
+
+        let streamEvents = telemetryProducer.streamingEvents
+
+        XCTAssertTrue(sseClient.disconnectCalled)
+        XCTAssertEqual(userKey, sseAuthenticator.userKeys[0])
+        XCTAssertEqual(rawToken, sseClient.token)
+        XCTAssertEqual(2, sseClient.channels?.count)
+        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
+        XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
+        XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
+        XCTAssertNotNil(streamEvents[.tokenRefresh])
+        XCTAssertNotNil(streamEvents[.connectionStablished])
     }
 
     override func tearDown() {

@@ -239,6 +239,7 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
     func createPeriodicMySegmentsSyncWorker(forKey key: String,
                                             eventsManager: SplitEventsManager) -> PeriodicSyncWorker {
         let byKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
+
         return PeriodicMySegmentsSyncWorker(
             userKey: key, mySegmentsFetcher: mySegmentsFetcher,
             mySegmentsStorage: byKeyStorage,

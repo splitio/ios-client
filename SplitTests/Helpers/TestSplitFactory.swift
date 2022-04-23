@@ -136,9 +136,11 @@ class TestSplitFactory {
             return
         }
 
-        let syncManager = SyncManagerBuilder().setUserKey(key.matchingKey).setStorageContainer(storageContainer)
+        let syncManager = try SyncManagerBuilder()
+            .setUserKey(key.matchingKey)
+            .setStorageContainer(storageContainer)
             .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
-            .setSplitConfig(splitConfig).build()
+            .setSplitConfig(splitConfig).setByKeyFacade(byKeyFacade).build()
 
         // Sec api not available for testing
         // Should build a mock here

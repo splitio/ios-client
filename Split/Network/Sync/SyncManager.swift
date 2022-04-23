@@ -10,6 +10,7 @@ import Foundation
 
 protocol SyncManager {
     func start()
+    func resetStreaming()
     func pause()
     func resume()
     func stop()
@@ -126,6 +127,10 @@ class DefaultSyncManager: SyncManager {
                 scheduleStreamingReconnection()
             }
         }
+    }
+
+    func resetStreaming() {
+        pushNotificationManager?.reset()
     }
 
     private func scheduleStreamingReconnection() {

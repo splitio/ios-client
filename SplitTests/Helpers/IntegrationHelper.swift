@@ -181,4 +181,23 @@ class IntegrationHelper {
             data:{ "code": 40012,  "statusCode":400,  "message": "Invalid client id"}
             """
     }
+
+    static func describeEvent(_ event: SplitInternalEvent) -> String {
+        switch event {
+        case .mySegmentsUpdated:
+            return "mySegmentsUpdated"
+        case .splitsUpdated:
+            return "splitsUpdated"
+        case .mySegmentsLoadedFromCache:
+            return "mySegmentsLoadedFromCache"
+        case .splitsLoadedFromCache:
+            return "splitsLoadedFromCache"
+        case .attributesLoadedFromCache:
+            return "attributesLoadedFromCache"
+        case .sdkReadyTimeoutReached:
+            return "sdkReadyTimeoutReached"
+        case .splitKilledNotification:
+            return "splitKilledNotification"
+        }
+    }
 }
