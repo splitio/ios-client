@@ -108,7 +108,7 @@ class DefaultEvaluator: Evaluator {
                     }
                 }
 
-                //Return the first condition that match.
+                // Returns the first condition that match.
                 let values = EvalValues(matchValue: matchingKey, matchingKey: matchingKey,
                                         bucketingKey: bucketKey, attributes: attributes)
                 if try condition.match(values: values, context: getContext()) {

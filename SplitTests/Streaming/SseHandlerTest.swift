@@ -55,7 +55,10 @@ class SseHandlerTest: XCTestCase {
 
     func testIncomingMySegmentsUpdate() {
         notificationParser.incomingNotification = IncomingNotification(type: .mySegmentsUpdate, jsonData: "dummy")
-        notificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1, includesPayload: true, segmentList: [])
+        notificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
+                                                                                       includesPayload: true,
+                                                                                       segmentList: [],
+                                                                                       userKeyHash: "")
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)

@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 protocol EventsTracker {
     func track(eventType: String,
                trafficType: String?,
@@ -46,8 +45,6 @@ class DefaultEventsTracker: EventsTracker {
                matchingKey: String) -> Bool {
         let timeStart = Stopwatch.now()
         let validationTag = "track"
-
-        
 
         guard let trafficType = trafficType ?? config.trafficType else {
             return false

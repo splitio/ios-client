@@ -13,15 +13,20 @@ import XCTest
 class MySegmentsStorageStub: MySegmentsStorage {
     var segments: [String: Set<String>] = [String: Set<String>]()
     var persistedSegments = [String: Set<String>]()
-    var loadLocalCalled = false
-    var clearCalled = false
-    var updateExpectation: XCTestExpectation?
-    var clearExpectation: XCTestExpectation?
+
+    var updateExpectation = [String: XCTestExpectation]()
+    var clearExpectation = [String: XCTestExpectation]()
+    var getCountByKeyCalledCount = 0
     var getCountCalledCount = 0
 
+    var keys: Set<String> {
+        return Set(segments.keys.map { $0 })
+    }
+
+    var loadLocalForKeyCalled = [String: Bool]()
     func loadLocal(forKey key: String) {
+        loadLocalForKeyCalled[key] = true
         segments = persistedSegments
-        loadLocalCalled = true
     }
     
     func getAll(forKey key: String) -> Set<String> {
@@ -30,14 +35,16 @@ class MySegmentsStorageStub: MySegmentsStorage {
 
     func set(_ segments: [String], forKey key: String) {
         self.segments[key] = Set(segments)
-        if let exp = updateExpectation {
+        if let exp = updateExpectation[key] {
             exp.fulfill()
         }
     }
 
+    var clearForKeyCalled = [String: Bool]()
     func clear(forKey key: String) {
+        clearForKeyCalled[key] = true
         segments[key] = Set()
-        if let exp = clearExpectation {
+        if let exp = clearExpectation[key] {
             exp.fulfill()
         }
     }
@@ -51,6 +58,7 @@ class MySegmentsStorageStub: MySegmentsStorage {
     }
 
     func getCount() -> Int {
+        getCountCalledCount+=1
         var count = 0
         for (_, value) in segments {
             count += value.count

@@ -29,14 +29,15 @@ class MySegmentUpdateV2Test: XCTestCase {
     var testFactory: TestSplitFactory!
 
     override func setUp() {
-        testFactory = TestSplitFactory()
-        testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
+
         loadNotificationTemplate()
     }
 
     func testMySegmentsUpdate() throws {
+        let userKey = "key1"
+        testFactory = TestSplitFactory(userKey: userKey)
+        testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
         mySegExp = XCTestExpectation()
-        testFactory.userKey = "key1"
         try testFactory.buildSdk()
         let syncSpy = testFactory.synchronizerSpy
         let client = testFactory.client
@@ -85,7 +86,7 @@ class MySegmentUpdateV2Test: XCTestCase {
         let segmentEntity = db.mySegmentsDao.getBy(userKey: testFactory.userKey)
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
-        XCTAssertEqual(1, syncSpy.forceMySegmentsCalledCount)
+        XCTAssertEqual(1, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
         XCTAssertEqual(1, segmentEntity.filter { $0 == "new_segment_added" }.count)
         XCTAssertEqual(0, segmentEntity.filter { $0 == "segment1" }.count)
 
@@ -98,7 +99,9 @@ class MySegmentUpdateV2Test: XCTestCase {
 
     func testMySegmentsUpdateBounded() throws {
         mySegExp = XCTestExpectation()
-        testFactory.userKey = "603516ce-1243-400b-b919-0dce5d8aecfd"
+        let userKey = "603516ce-1243-400b-b919-0dce5d8aecfd"
+        testFactory = TestSplitFactory(userKey: userKey)
+        testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
         try testFactory.buildSdk()
         let syncSpy = testFactory.synchronizerSpy
         let client = testFactory.client
@@ -115,7 +118,7 @@ class MySegmentUpdateV2Test: XCTestCase {
         }
 
         // Wait for hitting my segments two times (sdk ready and full sync after streaming connection)
-        wait(for: [sdkReadyExp, sseExp], timeout: 5)
+        wait(for: [sdkReadyExp, sseExp], timeout: 15)
 
         streamingBinding?.push(message: ":keepalive")
 
@@ -145,7 +148,7 @@ class MySegmentUpdateV2Test: XCTestCase {
         wait(for: [sdkUpdExp], timeout: 5)
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
-        XCTAssertEqual(4, syncSpy.forceMySegmentsCalledCount)
+        XCTAssertEqual(4, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -163,10 +166,8 @@ class MySegmentUpdateV2Test: XCTestCase {
 
             case let(urlString) where urlString.contains("mySegments"):
                 self.mySegmentsHitCount+=1
-                Logger.i("** My segments hit: \(self.mySegmentsHitCount)")
                 if self.mySegmentsHitCount == 2 {
                     self.mySegExp.fulfill()
-                    Logger.d("updatedMySegments SEGMENTS")
                 }
                 return self.createResponse(code: 200, json: self.updatedSegments(index: self.mySegmentsHitCount))
 

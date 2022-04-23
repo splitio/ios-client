@@ -78,13 +78,17 @@ class SyncManagerBuilder {
             = DefaultNotificationManagerKeeper(broadcasterChannel: broadcasterChannel,
                                                telemetryProducer: storageContainer.telemetryStorage)
 
+            let mySegmentsUpdateWorker
+            = MySegmentsUpdateWorker(synchronizer: synchronizer,
+                                     mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                     mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
+
             let notificationProcessor =  DefaultSseNotificationProcessor(
                 notificationParser: DefaultSseNotificationParser(),
                 splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer),
                 splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
                                                  splitsStorage: storageContainer.splitsStorage),
-                mySegmentsUpdateWorker: MySegmentsUpdateWorker(synchronizer: synchronizer,
-                                                               mySegmentsStorage: storageContainer.mySegmentsStorage),
+                mySegmentsUpdateWorker: mySegmentsUpdateWorker,
                 mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker(
                     userKey: userKey, synchronizer: synchronizer,
                     mySegmentsStorage: storageContainer.mySegmentsStorage,

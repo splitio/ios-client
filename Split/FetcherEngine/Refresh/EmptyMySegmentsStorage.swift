@@ -9,6 +9,7 @@
 import Foundation
 
 class EmptyMySegmentsStorage: MySegmentsStorage {
+    var keys: Set<String> = Set()
 
     func loadLocal(forKey key: String) {
     }

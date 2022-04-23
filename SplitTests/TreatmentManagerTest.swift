@@ -123,7 +123,7 @@ class TreatmentManagerTest: XCTestCase {
     }
 
     func testBasicEvaluations() {
-        let matchingKey = "thekey"
+        let matchingKey = "the_key"
         let splitNames = ["FACUNDO_TEST", "testo2222", "OldTest"]
 
         let treatmentManager = createTreatmentManager(matchingKey: matchingKey)

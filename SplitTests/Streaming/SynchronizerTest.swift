@@ -33,10 +33,9 @@ class SynchronizerTest: XCTestCase {
 
     var eventsManager: SplitEventsManagerStub!
     var telemetryProducer: TelemetryStorageStub!
-    var mySegmentsSyncGroup: ByKeyFacadeStub!
+    var byKeyApiFacade: ByKeyFacadeStub!
 
     let userKey = "CUSTOMER_KEY"
-    var byKeyApiFacade: ByKeyFacade!
 
     override func setUp() {
         synchronizer = buildSynchronizer()
@@ -52,7 +51,6 @@ class SynchronizerTest: XCTestCase {
         splitsSyncWorker = RetryableSyncWorkerStub()
         mySegmentsSyncWorker = RetryableSyncWorkerStub()
         periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
-        mySegmentsSyncGroup = ByKeyFacadeStub()
         periodicImpressionsRecorderWorker = PeriodicRecorderWorkerStub()
         impressionsRecorderWorker = RecorderWorkerStub()
         periodicEventsRecorderWorker = PeriodicRecorderWorkerStub()
@@ -95,7 +93,7 @@ class SynchronizerTest: XCTestCase {
         let config =  SplitClientConfig()
         config.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
 
-        byKeyApiFacade = DefaultByKeyFacade()
+        byKeyApiFacade = ByKeyFacadeStub()
 
         synchronizer = DefaultSynchronizer(splitConfig: config,
                                            defaultUserKey: userKey,
@@ -121,7 +119,7 @@ class SynchronizerTest: XCTestCase {
         synchronizer.syncAll()
 
         XCTAssertTrue(splitsSyncWorker.startCalled)
-        XCTAssertTrue(mySegmentsSyncGroup.syncAllCalled)
+        XCTAssertTrue(byKeyApiFacade.syncAllCalled)
     }
 
     func testSynchronizeSplits() {
@@ -166,16 +164,16 @@ class SynchronizerTest: XCTestCase {
 
         ThreadUtils.delay(seconds: 0.2)
 
-        XCTAssertTrue(mySegmentsSyncGroup.loadMySegmentsFromCacheCalled)
-        XCTAssertEqual(userKey, mySegmentsSyncGroup.loadMySegmentsFromCacheKey)
+        XCTAssertTrue(byKeyApiFacade.loadMySegmentsFromCacheCalled)
+        XCTAssertEqual(userKey, byKeyApiFacade.loadMySegmentsFromCacheKey)
     }
 
     func testSynchronizeMySegments() {
 
         synchronizer.synchronizeMySegments(forKey: userKey)
 
-        XCTAssertTrue(mySegmentsSyncGroup.syncMySegmentsCalled)
-        XCTAssertEqual(userKey, mySegmentsSyncGroup.syncKey)
+        XCTAssertTrue(byKeyApiFacade.syncMySegmentsCalled)
+        XCTAssertEqual(userKey, byKeyApiFacade.syncKey)
     }
 
     func testSynchronizeSplitsWithChangeNumber() {
@@ -205,7 +203,7 @@ class SynchronizerTest: XCTestCase {
         synchronizer.startPeriodicFetching()
 
         XCTAssertTrue(periodicSplitsSyncWorker.startCalled)
-        XCTAssertTrue(mySegmentsSyncGroup.startPeriodicSyncCalled)
+        XCTAssertTrue(byKeyApiFacade.startPeriodicSyncCalled)
     }
 
     func testStopPeriodicFetching() {
@@ -213,7 +211,7 @@ class SynchronizerTest: XCTestCase {
         synchronizer.stopPeriodicFetching()
 
         XCTAssertTrue(periodicSplitsSyncWorker.stopCalled)
-        XCTAssertTrue(mySegmentsSyncGroup.stopPeriodicSyncCalled)
+        XCTAssertTrue(byKeyApiFacade.stopPeriodicSyncCalled)
     }
 
     func testStartPeriodicRecording() {
@@ -252,9 +250,9 @@ class SynchronizerTest: XCTestCase {
         synchronizer.destroy()
 
         XCTAssertTrue(splitsSyncWorker.stopCalled)
-        XCTAssertTrue(mySegmentsSyncGroup.stopCalled)
+        XCTAssertTrue(byKeyApiFacade.stopCalled)
         XCTAssertTrue(periodicSplitsSyncWorker.stopCalled)
-        XCTAssertTrue(mySegmentsSyncGroup.stopCalled)
+        XCTAssertTrue(byKeyApiFacade.stopCalled)
         XCTAssertTrue(sw1.stopCalled)
         XCTAssertTrue(sw2.stopCalled)
         XCTAssertEqual(0, updateWorkerCatalog.count)

@@ -9,6 +9,7 @@
 import Foundation
 
 protocol ByKeyRegistry {
+    var keys: Set<String> { get }
     func append(_ group: ByKeyComponentGroup, forKey key: String)
     func remove(forKey key: String)
 }
@@ -37,6 +38,10 @@ struct ByKeyComponentGroup {
 class DefaultByKeyFacade: ByKeyFacade {
 
     private let byKeyComponents = SyncDictionary<String, ByKeyComponentGroup>()
+
+    var keys: Set<String> {
+        return Set(byKeyComponents.all.keys.map { String($0) })
+    }
 
     func append(_ synchronizer: ByKeyComponentGroup, forKey key: String) {
         byKeyComponents.setValue(synchronizer, forKey: key)

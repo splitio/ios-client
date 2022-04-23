@@ -13,7 +13,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     private static let kQueuePrefix = "split-telemetry"
     private let queue = DispatchQueue(label: "split-telemetry", attributes: .concurrent)
 
-        //Latencies
+    // Latencies
     private var methodLatencies: [TelemetryMethod: LatencyCounter] = [:]
     private var httpLatencies: [Resource: LatencyCounter] = [:]
     private var httpErrors: [Resource: [Int: Int]] = [:]
@@ -41,7 +41,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     private let streamingEvents: ConcurrentList<TelemetryStreamingEvent> =
         ConcurrentList(capacity: kMaxStreamingEventsCount)
 
-    //Tags
+    // Tags
     static let kMaxTagsCount = 10 // Visible for testing
     private let tags: ConcurrentSet<String> = ConcurrentSet(capacity: kMaxTagsCount)
 

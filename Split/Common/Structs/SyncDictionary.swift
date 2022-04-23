@@ -38,7 +38,7 @@ class SyncDictionary<K: Hashable, T> {
     }
 
     func removeValue(forKey key: K) {
-        queue.sync{
+        queue.sync {
             _ = items.removeValue(forKey: key)
         }
     }
