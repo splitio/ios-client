@@ -10,7 +10,7 @@ import Foundation
 
 protocol SplitClientManager: AnyObject {
     var defaultClient: SplitClient? { get }
-    func get(forKey key: String) -> SplitClient
+    func get(forKey key: Key) -> SplitClient
     func flush()
     func destroy(forKey key: String)
 }
@@ -76,7 +76,7 @@ class DefaultClientManager: SplitClientManager {
                                                   validationLogger: validationLogger,
                                                   telemetryProducer: telemetryProducer)
 
-        defaultClient = createClient(forKey: key.matchingKey)
+        defaultClient = createClient(forKey: key)
 
         (defaultClient as? TelemetrySplitClient)?.initStopwatch = telemetryStopwatch
         eventsManagerCoordinator.start()
@@ -98,8 +98,8 @@ class DefaultClientManager: SplitClientManager {
         syncManager.start()
     }
 
-    func get(forKey key: String) -> SplitClient {
-        if let client = clients.value(forKey: key) {
+    func get(forKey key: Key) -> SplitClient {
+        if let client = clients.value(forKey: key.matchingKey) {
             return client
         }
 
@@ -134,25 +134,25 @@ class DefaultClientManager: SplitClientManager {
         }
     }
 
-    private func createClient(forKey key: String) -> SplitClient {
+    private func createClient(forKey key: Key) -> SplitClient {
         let clientEventsManager = DefaultSplitEventsManager(config: config)
-        let clientKey = Key(matchingKey: key, bucketingKey: defaultKey.bucketingKey)
+        let userKey = key.matchingKey
 
-        let treatmentManager = buildTreatmentManager(key: clientKey,
+        let treatmentManager = buildTreatmentManager(key: key,
                                                      eventsManager: clientEventsManager)
 
-        let client = buildClient(key: clientKey,
+        let client = buildClient(key: key,
                                  treatmentManager: treatmentManager,
                                  eventsManager: clientEventsManager)
 
-        clients.setValue(client, forKey: key)
-        addToByKeyRegistry(userKey: key,
+        clients.setValue(client, forKey: key.matchingKey)
+        addToByKeyRegistry(userKey: userKey,
                            eventsManager: clientEventsManager)
         clientEventsManager.executorResources.client = client
-        eventsManagerCoordinator.add(clientEventsManager, forKey: key)
+        eventsManagerCoordinator.add(clientEventsManager, forKey: userKey)
 
         if shouldStartSyncKey() {
-            synchronizer.start(forKey: key)
+            synchronizer.start(forKey: userKey)
         }
 
         return client

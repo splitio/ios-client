@@ -61,4 +61,16 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         eventsManager.executorResources.client = localhostClient
         localhostManager = DefaultSplitManager(splitsStorage: splitsStorage)
     }
+
+    public func client(key: Key) -> SplitClient {
+        return localhostClient
+    }
+
+    public func client(matchingKey: String) -> SplitClient {
+        return localhostClient
+    }
+
+    public func client(matchingKey: String, bucketingKey: String) -> SplitClient {
+        return localhostClient
+    }
 }
