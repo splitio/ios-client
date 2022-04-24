@@ -46,7 +46,7 @@ class SplitClientManagerTest: XCTestCase {
 
     func testAddClient() {
 
-        let client = clientManager.get(forKey: newKey)
+        let client = clientManager.get(forKey: Key(matchingKey: newKey))
 
         XCTAssertNotNil(client)
         XCTAssertEqual(2, byKeyFacade.keys.count)
@@ -60,7 +60,7 @@ class SplitClientManagerTest: XCTestCase {
     func testDestroyForKey() {
 
         // Calling get to create a new client
-        _ = clientManager.get(forKey: newKey)
+        _ = clientManager.get(forKey: Key(matchingKey: newKey))
 
         sleep(1)
         clientManager.destroy(forKey: newKey)

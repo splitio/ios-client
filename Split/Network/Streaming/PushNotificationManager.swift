@@ -74,7 +74,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
         disconnect()
     }
 
-
     func resume() {
         Logger.d("Push notification manager resumed")
         isPaused.set(false)

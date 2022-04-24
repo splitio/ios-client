@@ -13,6 +13,8 @@ import Foundation
  */
 public class DefaultSplitFactory: NSObject, SplitFactory {
 
+    private static let kInitErrorMessage = "Something happened on Split init and the client couldn't be created"
+
     private var clientManager: SplitClientManager?
 
     // Not using default implementation in protocol
@@ -25,12 +27,19 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     private let filterBuilder = FilterBuilder()
 
     public var client: SplitClient {
-        // TODO: Check this line
-        return clientManager!.defaultClient!
+        if let client = clientManager?.defaultClient {
+            return client
+        }
+        Logger.e(Self.kInitErrorMessage)
+        return FailedClient()
     }
 
     public var manager: SplitManager {
-        return defaultManager!
+        if let manager = defaultManager {
+        return manager
+        }
+        Logger.e(Self.kInitErrorMessage)
+        return FailedManager()
     }
 
     public var version: String {
@@ -83,6 +92,22 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: params.initStopwatch)
 
+    }
+
+    public func client(key: Key) -> SplitClient {
+        if let client = clientManager?.get(forKey: key) {
+            return client
+        }
+        Logger.e(Self.kInitErrorMessage)
+        return FailedClient()
+    }
+
+    public func client(matchingKey: String) -> SplitClient {
+        return client(key: Key(matchingKey: matchingKey))
+    }
+
+    public func client(matchingKey: String, bucketingKey: String) -> SplitClient {
+        return client(key: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
