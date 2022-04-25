@@ -15,10 +15,11 @@ class MultiClientEvaluationTest: XCTestCase {
 
     let splitName = "workm"
     var streamingBinding: TestStreamResponseBinding?
-    var defaultKey = IntegrationHelper.dummyUserKey
-    var key1 = "key_1"
-    var key2 = "key_2"
-    var key3 = "key_3"
+    let defaultKey = "key_default"
+    let key1 = "key_1"
+    let key2 = "key_2"
+    let key3 = "key_3"
+    let key4 = "key_4"
 
     let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.global())
 
@@ -38,10 +39,6 @@ class MultiClientEvaluationTest: XCTestCase {
 
     var cachedSplit: Split!
 
-    override func setUp() {
-        cachedSplit = buildSplitEntity()
-    }
-
     func testOne() {
         var clients = [String: SplitClient]()
         var readyExps = [String: XCTestExpectation]()
@@ -49,16 +46,12 @@ class MultiClientEvaluationTest: XCTestCase {
 
         // When splits and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
-        splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
-        splitConfig.persistentAttributesEnabled = true
-
-        let cacheReadyExp = XCTestExpectation()
 
         let key: Key = Key(matchingKey: defaultKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -73,53 +66,47 @@ class MultiClientEvaluationTest: XCTestCase {
 
         // Using all new API methods
         clients[key1] = factory.client(key: Key(matchingKey: key1))
-        clients[key2] = factory.client(matchingKey: "key2")
-        clients[key3] = factory.client(matchingKey: "key1", bucketingKey: "buckKey")
+        clients[key2] = factory.client(matchingKey: key2)
+        clients[key3] = factory.client(matchingKey: key3, bucketingKey: "buckKey")
+        clients[key4] = factory.client(matchingKey: key4)
 
-        for (key, client) in clients {
+        for (key, _) in clients {
+            readyExps[key] = XCTestExpectation(description: "Ready \(key)")
             clients[key]?.on(event: SplitEvent.sdkReadyFromCache) {
-                cacheReadyExp.fulfill()
+                cache[key] = true
                 print("Ready from cache")
             }
 
             clients[key]?.on(event: SplitEvent.sdkReady) {
-                cacheReadyExp.fulfill()
-                print("Ready from cache")
+                readyExps[key]?.fulfill()
+                print("Ready")
             }
         }
 
-        wait(for: [cacheReadyExp], timeout: 5)
+        wait(for: readyExps.values.map { $0 }, timeout: 5)
 
-        let evalAfterInit = splitClient.getTreatment(splitName)
+        var results = [String: String]()
+        for (key, client) in clients {
+            results[key] = client.getTreatment(splitName)
+        }
 
-        _ = splitClient.setAttribute(name: Attr.strValueA, value: attrValues[Attr.strValueA]!)
+        let expectedResults = [defaultKey: "on_key_default", key1: "on_key_1",
+                                     key2: "on_key_2", key3: "on_key_3", key4: "default_t"]
+        for (key, _) in clients {
+            XCTAssertEqual(expectedResults[key] ?? "", results[key] ?? "")
+        }
 
-        let evalAfterSetOne = splitClient.getTreatment(splitName)
-
-        _ = splitClient.setAttributes([Attr.numValueA: attrValues[Attr.numValueA]!,
-                              Attr.strValue: attrValues[Attr.strValue]!])
-
-        let evalAfterSetMany = splitClient.getTreatment(splitName)
-
-        _ = splitClient.removeAttribute(name: Attr.strValue)
-
-        let evalAfterRemoveOne = splitClient.getTreatment(splitName)
-
-        _ = splitClient.clearAttributes()
-
-        let evalAfterClear = splitClient.getTreatment(splitName)
-
-        XCTAssertEqual("on", evalAfterInit)
-        XCTAssertEqual("on_str_no", evalAfterSetOne)
-        XCTAssertEqual("on_str_yes", evalAfterSetMany)
-        XCTAssertEqual("on_num_20", evalAfterRemoveOne)
-        XCTAssertEqual("on", evalAfterClear)
-
-        splitClient.destroy()
+        for client in clients.values {
+            client.destroy()
+        }
     }
 
     private func getChanges() -> Data {
-        return Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8)
+        let changeNumber = 5000
+        var content = FileHelper.readDataFromFile(sourceClass: IntegrationHelper(), name: "multi_client_test", type: "json")!
+        content = content.replacingOccurrences(of: "<FIELD_SINCE>", with: "\(changeNumber)")
+        content = content.replacingOccurrences(of: "<FIELD_TILL>", with: "\(changeNumber)")
+        return Data(content.utf8)
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
@@ -127,7 +114,7 @@ class MultiClientEvaluationTest: XCTestCase {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
-                return TestDispatcherResponse(code: 500, data: self.getChanges())
+                return TestDispatcherResponse(code: 200, data: self.getChanges())
 
             case let(urlString) where urlString.contains("mySegments"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
@@ -147,11 +134,6 @@ class MultiClientEvaluationTest: XCTestCase {
             }
             return self.streamingBinding!
         }
-    }
-
-    private func buildSplitEntity() -> Split {
-        let content = FileHelper.readDataFromFile(sourceClass: IntegrationHelper(), name: "attributes_test_split", type: "json")!
-        return try! Json.encodeFrom(json: content, to: Split.self)
     }
 
     private func basicSplitConfig() -> SplitClientConfig {

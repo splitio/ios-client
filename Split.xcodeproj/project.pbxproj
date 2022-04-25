@@ -835,6 +835,7 @@
 		95F3F06725ACDE0400084AF8 /* EmptyMySegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F06625ACDE0400084AF8 /* EmptyMySegmentsStorage.swift */; };
 		95F3F07325ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F07225ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift */; };
 		95F3F09525AE1F3800084AF8 /* ServiceConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */; };
+		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1453,6 +1454,7 @@
 		95F3F06625ACDE0400084AF8 /* EmptyMySegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyMySegmentsStorage.swift; sourceTree = "<group>"; };
 		95F3F07225ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpMySegmentsFetcherStub.swift; sourceTree = "<group>"; };
 		95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceConstants.swift; sourceTree = "<group>"; };
+		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2320,6 +2322,7 @@
 			isa = PBXGroup;
 			children = (
 				595B66CE231DB0720030F330 /* splitchanges_int_test.json */,
+				95F8F06728170473009E09B1 /* multi_client_test.json */,
 			);
 			path = Integration;
 			sourceTree = "<group>";
@@ -2867,6 +2870,7 @@
 				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
 				59FB7C2A2202463000ECC96A /* localhost_1.splits in Resources */,
 				95B4368D26E9186C00E1EB9C /* lorem_ipsum_result.txt in Resources */,
+				95F8F06828170473009E09B1 /* multi_client_test.json in Resources */,
 				5919C64221C7C8A600EC35B8 /* split_traffic_allocation_1.json in Resources */,
 				595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */,
 				59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */,
