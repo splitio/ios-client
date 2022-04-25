@@ -8,7 +8,9 @@
 
 import Foundation
 
-@objc public class ServiceEndpoints: NSObject {private static let kSdkEndpoint = "https://sdk.split.io/api"
+@objc public class ServiceEndpoints: NSObject {
+
+    private static let kSdkEndpoint = "https://sdk.split.io/api"
     static let kEventsEndpoint = "https://events.split.io/api"
     static let kAuthServiceEndpoint = "https://auth.split.io/api/v2"
     static let kStreamingEndpoint = "https://streaming.split.io/sse"

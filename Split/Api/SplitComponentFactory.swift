@@ -199,11 +199,6 @@ class SplitComponentFactory {
                                                            telemetryProducer: storageContainer.telemetryStorage)
         add(component: component)
 
-//        let comp = MySegFac(splitConfig: splitClientConfig,
-//                            mySegmentsStorage: storageContainer.mySegmentsStorage,
-//                            mySegmentsFetcher: try getSplitApiFacade().mySegmentsFetcher,
-//                            telemetryProducer: storageContainer.telemetryStorage)
-//        add(component: comp)
         return component
     }
 
