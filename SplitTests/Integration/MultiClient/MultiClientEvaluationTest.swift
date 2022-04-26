@@ -16,10 +16,13 @@ class MultiClientEvaluationTest: XCTestCase {
     let splitName = "workm"
     var streamingBinding: TestStreamResponseBinding?
     let defaultKey = "key_default"
+    let trafficType = "client"
     let key1 = "key_1"
     let key2 = "key_2"
     let key3 = "key_3"
     let key4 = "key_4"
+    let key5 = "key_5"
+    let key6 = "key_6"
 
     let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.global())
 
@@ -38,30 +41,17 @@ class MultiClientEvaluationTest: XCTestCase {
     ]
 
     var cachedSplit: Split!
+    var clients = [String: SplitClient]()
+    var readyExps = [String: XCTestExpectation]()
+    var factory: SplitFactory!
 
-    func testOne() {
-        var clients = [String: SplitClient]()
-        var readyExps = [String: XCTestExpectation]()
-        var cache = [String: Bool]()
 
-        // When splits and connection available, ready from cache and Ready should be fired
-        let splitDatabase = TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
+    override func setUp() {
+        setupFactory()
+    }
 
-        let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
-        let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
-        let splitConfig = basicSplitConfig()
-
-        let key: Key = Key(matchingKey: defaultKey)
-        let builder = DefaultSplitFactoryBuilder()
-        _ = builder.setHttpClient(httpClient)
-        _ = builder.setReachabilityChecker(ReachabilityMock())
-        _ = builder.setTestDatabase(splitDatabase)
-
-        let factory = builder.setApiKey(IntegrationHelper.dummyApiKey).setKey(key)
-            .setConfig(splitConfig).build()!
-
+    func testEvaluation() {
+//        var cache = [String: Bool]()
         clients[defaultKey] = factory.client
 
         // Using all new API methods
@@ -70,33 +60,197 @@ class MultiClientEvaluationTest: XCTestCase {
         clients[key3] = factory.client(matchingKey: key3, bucketingKey: "buckKey")
         clients[key4] = factory.client(matchingKey: key4)
 
-        for (key, _) in clients {
+        doInAllClients { key, client in
             readyExps[key] = XCTestExpectation(description: "Ready \(key)")
-            clients[key]?.on(event: SplitEvent.sdkReadyFromCache) {
-                cache[key] = true
-                print("Ready from cache")
-            }
 
             clients[key]?.on(event: SplitEvent.sdkReady) {
-                readyExps[key]?.fulfill()
-                print("Ready")
+                self.readyExps[key]?.fulfill()
             }
         }
 
         wait(for: readyExps.values.map { $0 }, timeout: 5)
 
         var results = [String: String]()
-        for (key, client) in clients {
+        doInAllClients { key, client in
             results[key] = client.getTreatment(splitName)
         }
 
+        // defaultKey is whitelisted.
+        // key1 to key3 has its own whitelist
+        // key4 evaluates to default treatment
         let expectedResults = [defaultKey: "on_key_default", key1: "on_key_1",
                                      key2: "on_key_2", key3: "on_key_3", key4: "default_t"]
-        for (key, _) in clients {
+        doInAllClients { key, _ in
             XCTAssertEqual(expectedResults[key] ?? "", results[key] ?? "")
         }
 
         for client in clients.values {
+            client.destroy()
+        }
+    }
+
+    // str_value_a = no
+
+    func testEvaluationFromCache() {
+        var cache = [String: Bool]()
+        let changes = try! Json.encodeFrom(json: getChanges().stringRepresentation, to: SplitChange.self)
+        let db = TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
+        db.splitDao.syncInsertOrUpdate(split: changes.splits[0])
+        setupFactory(database: db)
+
+        clients[defaultKey] = factory.client
+
+        for i in 1..<4 {
+            clients["key_\(i)"] = factory.client(key: Key(matchingKey: "key_\(i)"))
+        }
+
+        doInAllClients { key, client in
+            readyExps[key] = XCTestExpectation(description: "Ready \(key)")
+            clients[key]?.on(event: SplitEvent.sdkReadyFromCache) {
+                print("key: \(key) ready")
+                self.readyExps[key]?.fulfill()
+                cache[key] = true
+            }
+        }
+
+        wait(for: readyExps.values.map { $0 }, timeout: 5)
+
+        var results = [String: String]()
+        doInAllClients { key, client in
+            results[key] = client.getTreatment(splitName)
+        }
+
+        // defaultKey is whitelisted.
+        // key1 to key3 has its own whitelist
+        // key4 evaluates to default treatment
+        let expectedResults = [defaultKey: "on_key_default", key1: "on_key_1",
+                                     key2: "on_key_2", key3: "on_key_3", key4: "default_t"]
+        doInAllClients { key, _ in
+            XCTAssertEqual(expectedResults[key] ?? "", results[key] ?? "")
+            XCTAssertTrue(cache[key] ?? false)
+        }
+
+        for client in clients.values {
+            client.destroy()
+        }
+    }
+
+    func testEvaluationWithAttributes() {
+        clients[defaultKey] = factory.client
+
+        clients[defaultKey] = factory.client
+
+        for i in 4..<6 {
+            clients["key_\(i)"] = factory.client(key: Key(matchingKey: "key_\(i)"))
+        }
+
+        doInAllClients { key, client in
+            readyExps[key] = XCTestExpectation(description: "Ready \(key)")
+
+            clients[key]?.on(event: SplitEvent.sdkReady) {
+                self.readyExps[key]?.fulfill()
+            }
+        }
+
+        wait(for: readyExps.values.map { $0 }, timeout: 5)
+
+        _ = clients[key5]?.setAttribute(name: "str_value_a", value: "yes")
+
+        var results = [String: String]()
+        doInAllClients { key, client in
+            results[key] = client.getTreatment(splitName)
+        }
+        results[key6] = clients[key6]?.getTreatment(splitName, attributes: ["str_value_a": "yes"])
+
+        // defaultKey is whitelisted.
+        // key4 evaluates to default treatment
+        // key5 evaluates using attributes on get treatment
+        // key6 has stored attributes
+        let expectedResults = [defaultKey: "on_key_default", key4: "default_t",
+                                     key5: "str_yes", key6: "str_yes"]
+        doInAllClients { key, _ in
+            XCTAssertEqual(expectedResults[key] ?? "", results[key] ?? "")
+        }
+
+        for client in clients.values {
+            client.destroy()
+        }
+    }
+
+    var eventsSent = [String: EventDTO]()
+    var eventsExp = XCTestExpectation(description: "events exp")
+    func testTrack() {
+
+        clients[defaultKey] = factory.client
+
+        for i in 1..<4 {
+            clients["key_\(i)"] = factory.client(key: Key(matchingKey: "key_\(i)"))
+        }
+
+        doInAllClients { key, client in
+            readyExps[key] = XCTestExpectation(description: "Ready \(key)")
+
+            clients[key]?.on(event: SplitEvent.sdkReady) {
+                self.readyExps[key]?.fulfill()
+            }
+        }
+
+        wait(for: readyExps.values.map { $0 }, timeout: 5)
+
+        var trackResult = [String: Bool]()
+        doInAllClients { key, client in
+            trackResult[key] = client.track(eventType: "ev_\(key)")
+        }
+        clients[defaultKey]?.flush()
+        wait(for: [eventsExp], timeout: 5)
+
+        doInAllClients { key, _ in
+            let event = eventsSent[key]
+            XCTAssertTrue(trackResult[key] ?? false)
+            XCTAssertNotNil(event)
+            XCTAssertEqual(key, event?.key)
+            XCTAssertEqual(trafficType, event?.trafficTypeName)
+        }
+
+        doInAllClients { _, client in
+            client.destroy()
+        }
+    }
+
+    var impressionsSent = [String: KeyImpression]()
+    var impressionsExp = XCTestExpectation(description: "impressions exp")
+    func testImpressions() {
+
+        clients[defaultKey] = factory.client
+
+        for i in 1..<4 {
+            clients["key_\(i)"] = factory.client(key: Key(matchingKey: "key_\(i)"))
+        }
+
+        doInAllClients { key, client in
+            readyExps[key] = XCTestExpectation(description: "Ready \(key)")
+
+            clients[key]?.on(event: SplitEvent.sdkReady) {
+                self.readyExps[key]?.fulfill()
+            }
+        }
+
+        wait(for: readyExps.values.map { $0 }, timeout: 5)
+
+        doInAllClients { key, client in
+            _ = client.getTreatment(splitName)
+        }
+        clients[defaultKey]?.flush()
+        wait(for: [impressionsExp], timeout: 5)
+
+        doInAllClients { key, _ in
+            let impression = impressionsSent[key]
+            XCTAssertNotNil(impression)
+            XCTAssertEqual("on_\(key)", impression?.treatment ?? "")
+            XCTAssertEqual(key, impression?.keyName)
+        }
+
+        doInAllClients { _, client in
             client.destroy()
         }
     }
@@ -121,12 +275,36 @@ class MultiClientEvaluationTest: XCTestCase {
 
             case let(urlString) where urlString.contains("auth"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+
+            case let(urlString) where urlString.contains("events/bulk"):
+                if let events = self.event(from: request.body) {
+                    for event in events {
+                        self.eventsSent[event.key ?? "unknown"] = event
+                    }
+                }
+                self.eventsExp.fulfill()
+                return TestDispatcherResponse(code: 200)
+
+            case let(urlString) where urlString.contains("testImpressions"):
+                if let impressions = self.impressions(from: request.body) {
+                    for impression in impressions {
+                        self.impressionsSent[impression.keyName] = impression
+                    }
+                }
+                self.impressionsExp.fulfill()
+                return TestDispatcherResponse(code: 200)
+
             default:
-                return TestDispatcherResponse(code: 500)
+                return TestDispatcherResponse(code: 200)
             }
         }
     }
 
+    private func doInAllClients(action: (String, SplitClient) -> Void) {
+        for (key, client) in clients {
+            action(key, client)
+        }
+    }
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
@@ -145,6 +323,48 @@ class MultiClientEvaluationTest: XCTestCase {
         splitConfig.eventsPushRate = 999999
         //splitConfig.isDebugModeEnabled = true
         return splitConfig
+    }
+
+    private func setupFactory(database: SplitDatabase? = nil) {
+        // When splits and connection available, ready from cache and Ready should be fired
+        let splitDatabase = database ?? TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
+
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        let splitConfig = basicSplitConfig()
+        splitConfig.trafficType = trafficType
+
+        let key: Key = Key(matchingKey: defaultKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(splitDatabase)
+
+        factory = builder.setApiKey(IntegrationHelper.dummyApiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+    }
+
+    private func event(from data: Data?) -> [EventDTO]? {
+        guard let data = data else { return nil }
+        do {
+            return try Json.dynamicEncodeFrom(json: data.stringRepresentation, to: [EventDTO].self)
+        } catch {
+            print(error)
+        }
+        return nil
+    }
+
+    private func impressions(from data: Data?) -> [KeyImpression]? {
+        guard let data = data else { return nil }
+        do {
+            let tests =  try Json.encodeFrom(json: data.stringRepresentation, to: [ImpressionsTest].self)
+            return tests.flatMap { $0.keyImpressions }
+        } catch {
+            print(error)
+        }
+        return nil
     }
 }
 
