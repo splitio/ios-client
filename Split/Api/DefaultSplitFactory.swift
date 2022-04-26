@@ -106,7 +106,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return client(key: Key(matchingKey: matchingKey))
     }
 
-    public func client(matchingKey: String, bucketingKey: String) -> SplitClient {
+    public func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
         return client(key: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
     }
 
