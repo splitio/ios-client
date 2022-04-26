@@ -68,7 +68,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         return client(forKey: Key(matchingKey: matchingKey))
     }
 
-    public func client(matchingKey: String, bucketingKey: String) -> SplitClient {
+    public func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
         return client(forKey: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
     }
 
