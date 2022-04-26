@@ -137,6 +137,36 @@
                         }
                     ],
                     "label":"whitelisted"
+                },
+                {
+                    "conditionType": "ROLLOUT",
+                    "matcherGroup": {
+                        "combiner": "AND",
+                        "matchers": [
+                            {
+                                "keySelector": {
+                                    "trafficType": "client",
+                                    "attribute": "str_value_a"
+                                },
+                                "matcherType": "MATCHES_STRING",
+                                "negate": false,
+                                "userDefinedSegmentMatcherData": null,
+                                "whitelistMatcherData": null,
+                                "unaryNumericMatcherData": null,
+                                "betweenMatcherData": null,
+                                "booleanMatcherData": null,
+                                "dependencyMatcherData": null,
+                                "stringMatcherData": "yes"
+                            }
+                        ]
+                    },
+                    "partitions": [
+                        {
+                            "treatment": "str_yes",
+                            "size": 100
+                        }
+                    ],
+                    "label": "rule 3"
                 }
             ]
         }
