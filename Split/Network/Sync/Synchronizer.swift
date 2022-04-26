@@ -142,9 +142,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func start(forKey key: String) {
-        loadMySegmentsFromCache(forKey: key)
-        loadAttributesFromCache(forKey: key)
-        synchronizeMySegments(forKey: key)
+        byKeySynchronizer.startSync(forKey: key)
     }
 
     func syncAll() {

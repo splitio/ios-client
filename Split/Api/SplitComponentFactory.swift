@@ -10,6 +10,7 @@ import Foundation
 
 enum ComponentError: Error {
     case notFound(name: String)
+    case buildFailed(name: String)
 }
 
 class SplitComponentFactory {
@@ -196,8 +197,8 @@ class SplitComponentFactory {
                                                            mySegmentsStorage: storageContainer.mySegmentsStorage,
                                                            mySegmentsFetcher: try getSplitApiFacade().mySegmentsFetcher,
                                                            telemetryProducer: storageContainer.telemetryStorage)
-
         add(component: component)
+
         return component
     }
 
@@ -258,8 +259,9 @@ class SplitComponentFactory {
     }
 
     func buildSyncManager(notificationHelper: NotificationHelper?) throws -> SyncManager {
-        let component = SyncManagerBuilder()
+        let component = try SyncManagerBuilder()
             .setUserKey(userKey)
+            .setByKeyFacade(getByKeyFacade())
             .setStorageContainer(try getSplitStorageContainer())
             .setEndpointFactory(try getEndpointFactory())
             .setSplitApiFacade(try getSplitApiFacade())

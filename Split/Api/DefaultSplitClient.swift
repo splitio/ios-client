@@ -225,8 +225,8 @@ extension DefaultSplitClient {
         let userKey = key.matchingKey
         isClientDestroyed = true
         treatmentManager.destroy()
-        if let clientManager = self.clientManager {
-            DispatchQueue.global().async {
+        DispatchQueue.global().async {
+            if let clientManager = self.clientManager {
                 clientManager.destroy(forKey: userKey)
                 if let completion = completion {
                     completion()

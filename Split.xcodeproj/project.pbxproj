@@ -468,6 +468,9 @@
 		955B595428060CF100D105CD /* SyncDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595328060CF100D105CD /* SyncDictionary.swift */; };
 		955B595628076BB900D105CD /* MySegmentsPayloadDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595528076BB900D105CD /* MySegmentsPayloadDecoder.swift */; };
 		955B5960280DF75E00D105CD /* MySegmentsPayloadDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595F280DF75E00D105CD /* MySegmentsPayloadDecoderTest.swift */; };
+		955B59632811E8E700D105CD /* SplitClientManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B59622811E8E700D105CD /* SplitClientManagerTest.swift */; };
+		955B59652811F18000D105CD /* SyncManagerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B59642811F18000D105CD /* SyncManagerStub.swift */; };
+		955B59672811F51A00D105CD /* SplitEventsManagerCoordinatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B59662811F51A00D105CD /* SplitEventsManagerCoordinatorStub.swift */; };
 		9560354327D01E8300E35BC8 /* MySegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9560354227D01E8300E35BC8 /* MySegmentsStorage.swift */; };
 		9560354527D0F53300E35BC8 /* ConcurrentDictionarySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9560354427D0F53300E35BC8 /* ConcurrentDictionarySet.swift */; };
 		9560354927D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9560354827D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift */; };
@@ -1321,6 +1324,9 @@
 		955B595328060CF100D105CD /* SyncDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncDictionary.swift; sourceTree = "<group>"; };
 		955B595528076BB900D105CD /* MySegmentsPayloadDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsPayloadDecoder.swift; sourceTree = "<group>"; };
 		955B595F280DF75E00D105CD /* MySegmentsPayloadDecoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsPayloadDecoderTest.swift; sourceTree = "<group>"; };
+		955B59622811E8E700D105CD /* SplitClientManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitClientManagerTest.swift; sourceTree = "<group>"; };
+		955B59642811F18000D105CD /* SyncManagerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManagerStub.swift; sourceTree = "<group>"; };
+		955B59662811F51A00D105CD /* SplitEventsManagerCoordinatorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsManagerCoordinatorStub.swift; sourceTree = "<group>"; };
 		9560354227D01E8300E35BC8 /* MySegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsStorage.swift; sourceTree = "<group>"; };
 		9560354427D0F53300E35BC8 /* ConcurrentDictionarySet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentDictionarySet.swift; sourceTree = "<group>"; };
 		9560354827D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByKeyMySegmentsStorageTests.swift; sourceTree = "<group>"; };
@@ -2202,6 +2208,7 @@
 				5912D14E2199FD8600BC698C /* LegacyHashingTest.swift */,
 				5982D933219F3D2E00230F44 /* MatcherEvalTests.swift */,
 				599407DF22403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift */,
+				955B59622811E8E700D105CD /* SplitClientManagerTest.swift */,
 				598EDE79224BBF7E005D4762 /* EvaluatorTests.swift */,
 				59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */,
 				59BF3D362231A698004D134D /* BCryptTests.swift */,
@@ -2538,8 +2545,10 @@
 				9577A8522683E98A00D92AE1 /* HttpImpressionsCountRecorderStub.swift */,
 				956D17CC260D1B700037F575 /* ChangesCheckerMock.swift */,
 				95B436A526F1533600E1EB9C /* MySegmentsV2PayloadDecoderMock.swift */,
+				955B59662811F51A00D105CD /* SplitEventsManagerCoordinatorStub.swift */,
 				9519A92B27DA9CB700278AEC /* MySegmentsSynchronizerStub.swift */,
 				9519A92F27DAA73400278AEC /* ByKeyFacadeStub.swift */,
+				955B59642811F18000D105CD /* SyncManagerStub.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -3222,6 +3231,7 @@
 				599A6E3422FC681600D3D68C /* FlushTest.swift in Sources */,
 				9519A93227DBC25B00278AEC /* MySegmentsSynchronizerTest.swift in Sources */,
 				59B8B8AA220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift in Sources */,
+				955B59652811F18000D105CD /* SyncManagerStub.swift in Sources */,
 				955428E4256815B200331356 /* ImpressionDaoTests.swift in Sources */,
 				590DF9CC213EB7D50082B94F /* SplitManagerTest.swift in Sources */,
 				59ED408A24EADAA100EF7B09 /* ReconnectBackoffCounterStub.swift in Sources */,
@@ -3235,6 +3245,7 @@
 				5932260724A5325A00496D8B /* HttpTaskMock.swift in Sources */,
 				595AD26124E5D48500A7B750 /* ReconnectBackoffCounterTest.swift in Sources */,
 				95F3F020258E3E2F00084AF8 /* HttpImpressionsRecorderTests.swift in Sources */,
+				955B59672811F51A00D105CD /* SplitEventsManagerCoordinatorStub.swift in Sources */,
 				59F4AAC82515436400A1C69A /* SyncWorkerStub.swift in Sources */,
 				59EFD2ED24B4B05E0052920D /* HttpClientTest.swift in Sources */,
 				954F9B072570309400140B81 /* SplitDaoTests.swift in Sources */,
@@ -3261,6 +3272,7 @@
 				5946783522E110A700F94E58 /* MockWebServer.swift in Sources */,
 				595AD24D24E324D200A7B750 /* Base64UtilsTest.swift in Sources */,
 				599EDAF12270970500D7DACB /* SplitEventsManagerMock.swift in Sources */,
+				955B59632811E8E700D105CD /* SplitClientManagerTest.swift in Sources */,
 				59FB7C1421F78C4E00ECC96A /* EventValidatorTests.swift in Sources */,
 				598EDE7C224BCA58005D4762 /* InternalSplitClientStub.swift in Sources */,
 				9519A91527D6A10F00278AEC /* ByKeyAttributesStorageTests.swift in Sources */,

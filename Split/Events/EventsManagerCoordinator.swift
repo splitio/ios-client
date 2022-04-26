@@ -40,8 +40,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         }
     }
 
-    func start() {
-    }
+    func start() {}
 
     func stop() {
         queue.async { [weak self] in
@@ -80,6 +79,5 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         }
     }
 
-    func register(event: SplitEvent, task: SplitEventTask) {
-    }
+    func register(event: SplitEvent, task: SplitEventTask) {}
 }

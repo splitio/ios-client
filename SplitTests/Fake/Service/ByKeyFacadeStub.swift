@@ -12,21 +12,17 @@ import Foundation
 class ByKeyFacadeStub: ByKeyFacade {
 
     var components = [String: ByKeyComponentGroup]()
-    var loadMySegmentsFromCacheCalled = false
+    var loadMySegmentsFromCacheCalled = [String: Bool]()
     var startPeriodicSyncCalled = false
-    var syncMySegmentsCalled = false
+    var syncMySegmentsCalled = [String: Bool]()
     var syncAllCalled = false
-    var forceMySegmentsSyncCalled = false
+    var forceMySegmentsSyncCalled = [String: Bool]()
     var pauseCalled = false
     var resumeCalled = false
     var stopPeriodicSyncCalled = false
-    var stopCalled = false
+    var destroyCalled = false
 
-    var syncKey: String = ""
-    var loadMySegmentsFromCacheKey: String = ""
-
-    var loadAttributesFromCacheCalled = false
-    var loadAttributesFromCacheKey: String = ""
+    var loadAttributesFromCacheCalled = [String: Bool]()
 
     var keys: Set<String> {
         return Set(components.keys.map {$0 })
@@ -41,22 +37,19 @@ class ByKeyFacadeStub: ByKeyFacade {
     }
 
     func loadMySegmentsFromCache(forKey key: String) {
-        loadMySegmentsFromCacheKey = key
-        loadMySegmentsFromCacheCalled = true
+        loadMySegmentsFromCacheCalled[key] = true
     }
 
     func loadAttributesFromCache(forKey key: String) {
-        loadAttributesFromCacheKey = key
-        loadAttributesFromCacheCalled = true
+        loadAttributesFromCacheCalled[key] = true
     }
 
     func syncMySegments(forKey key: String) {
-        syncKey = key
-        syncMySegmentsCalled = true
+        syncMySegmentsCalled[key] = true
     }
 
-    func forceMySegmentsSync(forKey: String) {
-        forceMySegmentsSyncCalled = true
+    func forceMySegmentsSync(forKey key: String) {
+        forceMySegmentsSyncCalled[key] = true
     }
 
     func startPeriodicSync() {
@@ -67,8 +60,13 @@ class ByKeyFacadeStub: ByKeyFacade {
         syncAllCalled = true
     }
 
-    func forceSync(forKey: String) {
-        forceMySegmentsSyncCalled = true
+    var startSyncForKeyCalled = [String: Bool]()
+    func startSync(forKey key: String) {
+        startSyncForKeyCalled[key] = true
+    }
+
+    func forceSync(forKey key: String) {
+        forceMySegmentsSyncCalled[key] = true
     }
 
     func pause() {
@@ -84,7 +82,7 @@ class ByKeyFacadeStub: ByKeyFacade {
     }
 
     func stop() {
-        stopCalled = true
+        destroyCalled = true
     }
 
     var notifyMySegmentsUpdatedCalled = false
