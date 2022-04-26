@@ -7,7 +7,7 @@
 
 import Foundation
 
-//swiftlint:disable inclusive_language
+// swiftlint:disable inclusive_language
 class Whitelist: BaseMatcher, MatcherProtocol {
 
     var data: [String]?
