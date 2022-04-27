@@ -75,7 +75,6 @@ class DefaultEvaluator: Evaluator {
                                     configuration: split.configurations?[defaultTreatment])
         }
 
-        var bucketKey: String?
         var inRollOut: Bool = false
         var splitAlgo: Algorithm = Algorithm.legacy
 
@@ -83,7 +82,7 @@ class DefaultEvaluator: Evaluator {
             splitAlgo = algo
         }
 
-        bucketKey = !(bucketingKey ?? "").isEmpty() ? bucketingKey : matchingKey
+        let bucketKey = selectBucketKey(matchingKey: matchingKey, bucketingKey: bucketingKey)
 
         guard let conditions: [Condition] = split.conditions,
             let trafficAllocationSeed = split.trafficAllocationSeed,
@@ -96,7 +95,7 @@ class DefaultEvaluator: Evaluator {
                 if !inRollOut && condition.conditionType == ConditionType.rollout {
                     if let trafficAllocation = split.trafficAllocation, trafficAllocation < 100 {
                         let bucket: Int64 = splitter.getBucket(seed: trafficAllocationSeed,
-                                                               key: bucketKey!,
+                                                               key: bucketKey,
                                                                algo: splitAlgo)
                         if bucket > trafficAllocation {
                             return EvaluationResult(treatment: defaultTreatment,
@@ -135,5 +134,12 @@ class DefaultEvaluator: Evaluator {
 
     private func getContext() -> EvalContext {
         return EvalContext(evaluator: self, mySegmentsStorage: mySegmentsStorage)
+    }
+
+    private func selectBucketKey(matchingKey: String, bucketingKey: String?) -> String {
+        if let key = bucketingKey, !key.isEmpty() {
+            return key
+        }
+        return matchingKey
     }
 }

@@ -87,7 +87,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
 
         let newClient = LocalhostSplitClient(key: key,
                                              splitsStorage: newSplitStorage,
-                                            eventsManager: newEventsManager)
+                                             eventsManager: newEventsManager)
 
         let newGroup = LocalhostComponentsGroup(client: newClient, eventsManager: newEventsManager)
         newEventsManager.executorResources.client = newClient
@@ -104,10 +104,10 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         storageConfig.refreshInterval = config.offlineRefreshRate
 
         return LocalhostSplitsStorage(fileStorage: fileStorage,
-                                          config: storageConfig,
-                                          eventsManager: eventsManager,
-                                          dataFolderName: dataFolderName,
-                                          splitsFileName: config.splitFile,
-                                          bundle: bundle)
+                                      config: storageConfig,
+                                      eventsManager: eventsManager,
+                                      dataFolderName: dataFolderName,
+                                      splitsFileName: config.splitFile,
+                                      bundle: bundle)
     }
 }

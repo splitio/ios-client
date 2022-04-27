@@ -33,7 +33,7 @@ class SplitFactoryStub: SplitFactory {
         return client
     }
 
-    func client(matchingKey: String, bucketingKey: String) -> SplitClient {
+    func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
         return client
     }
     

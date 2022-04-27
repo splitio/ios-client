@@ -32,6 +32,10 @@ class ByKeyFacadeStub: ByKeyFacade {
         components[key] = group
     }
 
+    func group(forKey key: String) -> ByKeyComponentGroup? {
+        return components[key]
+    }
+
     func remove(forKey key: String) {
         components.removeValue(forKey: key)
     }
