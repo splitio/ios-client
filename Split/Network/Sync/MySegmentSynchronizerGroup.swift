@@ -11,7 +11,8 @@ import Foundation
 protocol ByKeyRegistry {
     var keys: Set<String> { get }
     func append(_ group: ByKeyComponentGroup, forKey: String)
-    func remove(forKey key: String)
+    func remove(forKey: String)
+    func group(forKey: String) -> ByKeyComponentGroup?
 }
 protocol ByKeySynchronizer {
     func loadMySegmentsFromCache(forKey: String)
@@ -43,6 +44,10 @@ class DefaultByKeyFacade: ByKeyFacade {
 
     var keys: Set<String> {
         return Set(byKeyComponents.all.keys.map { String($0) })
+    }
+
+    func group(forKey key: String) -> ByKeyComponentGroup? {
+        return byKeyComponents.value(forKey: key)
     }
 
     func append(_ group: ByKeyComponentGroup, forKey key: String) {

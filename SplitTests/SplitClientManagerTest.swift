@@ -58,12 +58,12 @@ class SplitClientManagerTest: XCTestCase {
     }
 
     func testDestroyForKey() {
-
+        let thisKey = Key(matchingKey: newKey)
         // Calling get to create a new client
-        _ = clientManager.get(forKey: Key(matchingKey: newKey))
+        _ = clientManager.get(forKey: thisKey)
 
         sleep(1)
-        clientManager.destroy(forKey: newKey)
+        clientManager.destroy(forKey: thisKey)
 
         XCTAssertFalse(byKeyFacade.destroyCalled)
         XCTAssertEqual(1, byKeyFacade.components.count)
@@ -74,7 +74,7 @@ class SplitClientManagerTest: XCTestCase {
     func testDestroyLastKey() {
 
         sleep(1)
-        clientManager.destroy(forKey: key.matchingKey)
+        clientManager.destroy(forKey: key)
 
         // XCTAssertTrue(byKeyFacade.destroyCalled) It's destroyed by the syncrhonizer
         XCTAssertEqual(0, byKeyFacade.components.count)

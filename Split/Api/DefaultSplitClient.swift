@@ -222,12 +222,11 @@ extension DefaultSplitClient {
     }
 
     public func destroy(completion: (() -> Void)?) {
-        let userKey = key.matchingKey
         isClientDestroyed = true
         treatmentManager.destroy()
         DispatchQueue.global().async {
             if let clientManager = self.clientManager {
-                clientManager.destroy(forKey: userKey)
+                clientManager.destroy(forKey: self.key)
                 if let completion = completion {
                     completion()
                 }

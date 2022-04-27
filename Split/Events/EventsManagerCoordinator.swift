@@ -53,7 +53,6 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
     }
 
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
-        print("Coordinator event already triggered??? \(event.toString())")
         return defaultManager?.eventAlreadyTriggered(event: event) ?? false
     }
 
