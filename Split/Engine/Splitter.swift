@@ -30,7 +30,7 @@ class Splitter: SplitterProtocol {
 
         var accumulatedSize: Int = 0
 
-        let bucket: Int64 = getBucket(seed: seed, key: key.bucketingKey ?? "", algo: algo)
+        let bucket: Int64 = getBucket(seed: seed, key: key.bucketingKey ?? key.matchingKey, algo: algo)
         if let splitPartitions = partions {
             for partition in splitPartitions {
                 accumulatedSize += partition.size ?? 0
