@@ -19,6 +19,7 @@ class PushNotificationManagerTest: XCTestCase {
     var timersManager: TimersManagerMock!
     var broadcasterChannel: PushManagerEventBroadcasterStub!
     let userKey = IntegrationHelper.dummyUserKey
+    let key = Key(matchingKey: IntegrationHelper.dummyUserKey)
     var jwtParser: JwtTokenParser!
     let rawToken = "the_token"
     var telemetryProducer: TelemetryStorageStub!
@@ -32,11 +33,12 @@ class PushNotificationManagerTest: XCTestCase {
         broadcasterChannel = PushManagerEventBroadcasterStub()
         telemetryProducer = TelemetryStorageStub()
         byKeyFacade = ByKeyFacadeStub()
-        let byKeyGroup = ByKeyComponentGroup(eventsManager: SplitEventsManagerStub(),
+        let byKeyGroup = ByKeyComponentGroup(splitClient: SplitClientStub(),
+                                             eventsManager: SplitEventsManagerStub(),
                                              mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
                                              attributesStorage: ByKeyAttributesStorageStub(userKey: userKey,
                                                                                            attributesStorage: AttributesStorageStub()))
-        byKeyFacade.append(byKeyGroup, forKey: userKey)
+        byKeyFacade.append(byKeyGroup, forKey: key)
         pnManager = DefaultPushNotificationManager(userKeyRegistry: byKeyFacade, sseAuthenticator: sseAuthenticator,
                                                    sseClient: sseClient,broadcasterChannel: broadcasterChannel,
                                                    timersManager: timersManager, telemetryProducer: telemetryProducer)

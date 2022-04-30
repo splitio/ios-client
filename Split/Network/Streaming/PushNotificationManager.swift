@@ -107,7 +107,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     private func authenticateAndConnect() {
-        let result = sseAuthenticator.authenticate(userKeys: userKeyRegistry.keys.map { $0 })
+        let result = sseAuthenticator.authenticate(userKeys: userKeyRegistry.matchingKeys.map { $0 })
         telemetryProducer?.recordLastSync(resource: .token, time: Date().unixTimestampInMiliseconds())
         if result.success && !result.pushEnabled {
             Logger.d("Streaming disabled for api key")
