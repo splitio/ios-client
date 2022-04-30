@@ -23,11 +23,11 @@ class SplitEventsCoordinatorTest: XCTestCase {
         let manager2 = SplitEventsManagerStub()
         let manager3 = SplitEventsManagerStub()
 
-        coordinator.add(manager1, forKey: "k1")
-        coordinator.add(manager2, forKey: "k2")
-        coordinator.add(manager3, forKey: "k3")
+        coordinator.add(manager1, forKey: buildKey("k1"))
+        coordinator.add(manager2, forKey: buildKey("k2"))
+        coordinator.add(manager3, forKey: buildKey("k3"))
 
-        coordinator.remove(forKey: "k3")
+        coordinator.remove(forKey: buildKey("k3"))
 
         sleep(1)
 
@@ -79,9 +79,9 @@ class SplitEventsCoordinatorTest: XCTestCase {
 
         let managers = addManagersToCoordinator(count: count)
 
-        coordinator.remove(forKey: "k0")
-        coordinator.remove(forKey: "k1")
-        coordinator.remove(forKey: "k2")
+        coordinator.remove(forKey: buildKey("k0"))
+        coordinator.remove(forKey: buildKey("k1"))
+        coordinator.remove(forKey: buildKey("k2"))
 
         sleep(1)
 
@@ -104,7 +104,7 @@ class SplitEventsCoordinatorTest: XCTestCase {
         for i in 0..<10 {
         let manager = SplitEventsManagerStub()
             managers.append(manager)
-            coordinator.add(manager, forKey: "k\(i)")
+            coordinator.add(manager, forKey: buildKey("k\(i)"))
         }
         coordinator.stop()
         sleep(1)
@@ -119,11 +119,14 @@ class SplitEventsCoordinatorTest: XCTestCase {
         for i in 0..<count {
             let manager = SplitEventsManagerStub()
             managers.append(manager)
-            coordinator.add(manager, forKey: "k\(i)")
+            coordinator.add(manager, forKey: buildKey("k\(i)"))
         }
         return managers
     }
 
+    private func buildKey(_ matchingKey: String) -> Key {
+        return Key(matchingKey: matchingKey)
+    }
 
 
 

@@ -9,15 +9,15 @@
 import Foundation
 
 protocol SplitEventsManagerCoordinator: SplitEventsManager {
-    func add(_ manager: SplitEventsManager, forKey key: String)
-    func remove(forKey key: String)
+    func add(_ manager: SplitEventsManager, forKey key: Key)
+    func remove(forKey key: Key)
 }
 
 class MainSplitEventsManager: SplitEventsManagerCoordinator {
     var executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
 
     private var defaultManager: SplitEventsManager?
-    private var managers = [String: SplitEventsManager]()
+    private var managers = [Key: SplitEventsManager]()
     private var triggered = Set<SplitInternalEvent>()
     private let queue = DispatchQueue(label: "split-event-manager-coordinator")
     private let eventsToHandle: Set<SplitInternalEvent> = Set(
@@ -56,7 +56,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         return defaultManager?.eventAlreadyTriggered(event: event) ?? false
     }
 
-    func add(_ manager: SplitEventsManager, forKey key: String) {
+    func add(_ manager: SplitEventsManager, forKey key: Key) {
         queue.sync {
             if managers.isEmpty {
                 defaultManager = manager
@@ -69,7 +69,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         }
     }
 
-    func remove(forKey key: String) {
+    func remove(forKey key: Key) {
         queue.async { [weak self] in
             guard let self = self else { return }
             if let manager = self.managers.removeValue(forKey: key) {
