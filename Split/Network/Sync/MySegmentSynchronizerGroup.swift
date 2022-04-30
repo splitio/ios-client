@@ -9,10 +9,11 @@
 import Foundation
 
 protocol ByKeyRegistry {
-    var keys: Set<String> { get }
-    func append(_ group: ByKeyComponentGroup, forKey: String)
-    func remove(forKey: String)
-    func group(forKey: String) -> ByKeyComponentGroup?
+    var matchingKeys: Set<String> { get }
+    func append(_ group: ByKeyComponentGroup, forKey: Key)
+    func remove(forKey: Key) -> ByKeyComponentGroup?
+    func group(forKey: Key) -> ByKeyComponentGroup?
+    func isEmpty() -> Bool
 }
 protocol ByKeySynchronizer {
     func loadMySegmentsFromCache(forKey: String)
@@ -32,6 +33,7 @@ protocol ByKeySynchronizer {
 protocol ByKeyFacade: ByKeyRegistry, ByKeySynchronizer {}
 
 struct ByKeyComponentGroup {
+    let splitClient: SplitClient
     let eventsManager: SplitEventsManager
     let mySegmentsSynchronizer: MySegmentsSynchronizer
     let attributesStorage: ByKeyAttributesStorage
@@ -39,35 +41,38 @@ struct ByKeyComponentGroup {
 
 class DefaultByKeyFacade: ByKeyFacade {
 
-    private let byKeyComponents = SyncDictionary<String, ByKeyComponentGroup>()
+    private let byKeyComponents = SplitKeyDictionary<ByKeyComponentGroup>()
     private var isPollingEnabled = Atomic(false)
 
-    var keys: Set<String> {
-        return Set(byKeyComponents.all.keys.map { String($0) })
+    var matchingKeys: Set<String> {
+        return Set(byKeyComponents.all.keys.map { $0.matchingKey })
     }
 
-    func group(forKey key: String) -> ByKeyComponentGroup? {
+    func group(forKey key: Key) -> ByKeyComponentGroup? {
         return byKeyComponents.value(forKey: key)
     }
 
-    func append(_ group: ByKeyComponentGroup, forKey key: String) {
+    func append(_ group: ByKeyComponentGroup, forKey key: Key) {
         byKeyComponents.setValue(group, forKey: key)
     }
 
-    func remove(forKey key: String) {
-        guard let group = byKeyComponents.value(forKey: key) else { return }
+    func remove(forKey key: Key) -> ByKeyComponentGroup? {
+        guard let group = byKeyComponents.value(forKey: key) else { return nil }
         group.mySegmentsSynchronizer.destroy()
         group.attributesStorage.destroy()
         group.eventsManager.stop()
         byKeyComponents.removeValue(forKey: key)
+        return group
     }
 
     func loadMySegmentsFromCache(forKey key: String) {
-        byKeyComponents.value(forKey: key)?.mySegmentsSynchronizer.loadMySegmentsFromCache()
+        byKeyComponents.values(forMatchingKey: key).forEach { group in
+            group.mySegmentsSynchronizer.loadMySegmentsFromCache()
+        }
     }
 
     func loadAttributesFromCache(forKey key: String) {
-        if let group = byKeyComponents.value(forKey: key) {
+        doInAll(forMatchingKey: key) { group in
             group.attributesStorage.loadLocal()
             group.eventsManager.notifyInternalEvent(.attributesLoadedFromCache)
         }
@@ -85,12 +90,16 @@ class DefaultByKeyFacade: ByKeyFacade {
         loadAttributesFromCache(forKey: key)
         syncMySegments(forKey: key)
         if isPollingEnabled.value {
-            byKeyComponents.value(forKey: key)?.mySegmentsSynchronizer.startPeriodicFetching()
+            doInAll(forMatchingKey: key) { group in
+                group.mySegmentsSynchronizer.startPeriodicFetching()
+            }
         }
     }
 
     func syncMySegments(forKey key: String) {
-        byKeyComponents.value(forKey: key)?.mySegmentsSynchronizer.synchronizeMySegments()
+        doInAll(forMatchingKey: key) { group in
+            group.mySegmentsSynchronizer.synchronizeMySegments()
+        }
     }
 
     func syncAll() {
@@ -100,11 +109,15 @@ class DefaultByKeyFacade: ByKeyFacade {
     }
 
     func forceMySegmentsSync(forKey key: String) {
-        byKeyComponents.value(forKey: key)?.mySegmentsSynchronizer.forceMySegmentsSync()
+        doInAll(forMatchingKey: key) { group in
+            group.mySegmentsSynchronizer.forceMySegmentsSync()
+        }
     }
 
     func notifyMySegmentsUpdated(forKey key: String) {
-        byKeyComponents.value(forKey: key)?.eventsManager.notifyInternalEvent(.mySegmentsUpdated)
+        doInAll(forMatchingKey: key) { group in
+            group.eventsManager.notifyInternalEvent(.mySegmentsUpdated)
+        }
     }
 
     func pause() {
@@ -136,10 +149,22 @@ class DefaultByKeyFacade: ByKeyFacade {
         byKeyComponents.removeAll()
     }
 
+    func isEmpty() -> Bool {
+        return byKeyComponents.count == 0
+    }
+
     private func doInAll(_ action: (ByKeyComponentGroup) -> Void) {
         let all = byKeyComponents.all
         for (_, sync) in all {
             action(sync)
+        }
+    }
+
+    private func doInAll(forMatchingKey key: String,
+                         action: (ByKeyComponentGroup) -> Void) {
+
+        byKeyComponents.values(forMatchingKey: key).forEach {  group in
+            action(group)
         }
     }
 }

@@ -12,13 +12,13 @@ import Foundation
 
 class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
 
-    var managers = [String: SplitEventsManager]()
+    var managers = [Key: SplitEventsManager]()
 
-    func add(_ manager: SplitEventsManager, forKey key: String) {
+    func add(_ manager: SplitEventsManager, forKey key: Key) {
         managers[key] = manager
     }
 
-    func remove(forKey key: String) {
+    func remove(forKey key: Key) {
         managers[key] = nil
     }
 

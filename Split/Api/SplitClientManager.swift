@@ -17,7 +17,6 @@ protocol SplitClientManager: AnyObject {
 
 class DefaultClientManager: SplitClientManager {
     private(set) var defaultClient: SplitClient?
-    private var clients = SyncDictionary<Key, SplitClient>()
 
     private var storageContainer: SplitStorageContainer
     private let config: SplitClientConfig
@@ -99,13 +98,13 @@ class DefaultClientManager: SplitClientManager {
     }
 
     func get(forKey key: Key) -> SplitClient {
-        if let client = clients.value(forKey: key) {
+        if let client = byKeyRegistry.group(forKey: key)?.splitClient {
             return client
         }
 
-        let previousMatchingKeyCount = matchingKeyCount(forKey: key.matchingKey)
+        let keyCount = byKeyRegistry.matchingKeys.count
         let client = createClient(forKey: key)
-        if previousMatchingKeyCount != matchingKeyCount(forKey: key.matchingKey) {
+        if byKeyRegistry.matchingKeys.count != keyCount {
             syncManager.resetStreaming()
         }
         return client
@@ -116,13 +115,8 @@ class DefaultClientManager: SplitClientManager {
     }
 
     func destroy(forKey key: Key) {
-
-        if clients.takeValue(forKey: key) != nil,
-           shouldRemoveComponents(forKey: key.matchingKey) {
-            byKeyRegistry.remove(forKey: key.matchingKey)
-        }
-
-        if clients.count == 0 {
+        if byKeyRegistry.remove(forKey: key) != nil,
+            byKeyRegistry.isEmpty() {
             self.syncManager.stop()
             if let stopwatch = self.telemetryStopwatch {
                 telemetryProducer?.recordSessionLength(sessionLength: stopwatch.interval())
@@ -138,18 +132,19 @@ class DefaultClientManager: SplitClientManager {
     private func createClient(forKey key: Key) -> SplitClient {
 
         let userKey = key.matchingKey
-        let group = getByKeyGroup(userKey: userKey)
-
+        let eventsManager = DefaultSplitEventsManager(config: config)
         let treatmentManager = buildTreatmentManager(key: key,
-                                                     eventsManager: group.eventsManager)
+                                                     eventsManager: eventsManager)
 
         let client = buildClient(key: key,
                                  treatmentManager: treatmentManager,
-                                 eventsManager: group.eventsManager)
+                                 eventsManager: eventsManager)
 
-        clients.setValue(client, forKey: key)
-        group.eventsManager.executorResources.client = client
-        eventsManagerCoordinator.add(group.eventsManager, forKey: userKey)
+        addToByKeyRegistry(key: key,
+                           client: client,
+                           eventsManager: eventsManager)
+        eventsManager.executorResources.client = client
+        eventsManagerCoordinator.add(eventsManager, forKey: key)
 
         if shouldStartSyncKey() {
             synchronizer.start(forKey: userKey)
@@ -172,26 +167,24 @@ class DefaultClientManager: SplitClientManager {
             validationLogger: DefaultValidationMessageLogger())
     }
 
-    private func getByKeyGroup(userKey: String) -> ByKeyComponentGroup {
+    private func addToByKeyRegistry(key: Key,
+                                    client: SplitClient,
+                                    eventsManager: SplitEventsManager) {
 
-        if let group = byKeyRegistry.group(forKey: userKey) {
-            return group
-        }
-
-        let eventsManager = DefaultSplitEventsManager(config: config)
+        let matchingKey = key.matchingKey
         let mySegmentsSynchronizer =
-        DefaultMySegmentsSynchronizer(userKey: userKey,
+        DefaultMySegmentsSynchronizer(userKey: matchingKey,
                                       splitConfig: config,
-                                      mySegmentsStorage: buildMySegmentsStorage(forKey: userKey),
+                                      mySegmentsStorage: buildMySegmentsStorage(forKey: matchingKey),
                                       syncWorkerFactory: mySegmentsSyncWorkerFactory,
                                       splitEventsManager: eventsManager)
 
-        let byKeyGroup = ByKeyComponentGroup(eventsManager: eventsManager,
+        let byKeyGroup = ByKeyComponentGroup(splitClient: client,
+                                             eventsManager: eventsManager,
                                              mySegmentsSynchronizer: mySegmentsSynchronizer,
-                                             attributesStorage: attributesStorage(forKey: userKey))
+                                             attributesStorage: attributesStorage(forKey: matchingKey))
 
-        byKeyRegistry.append(byKeyGroup, forKey: userKey)
-        return byKeyGroup
+        byKeyRegistry.append(byKeyGroup, forKey: key)
     }
 
     private func buildMySegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage {
@@ -219,15 +212,7 @@ class DefaultClientManager: SplitClientManager {
                                   clientManager: self)
     }
 
-    private func shouldRemoveComponents(forKey key: String) -> Bool {
-        return !Set(clients.all.keys.map { $0.matchingKey }).contains(key)
-    }
-
     private func shouldStartSyncKey() -> Bool {
         return defaultClient != nil
-    }
-
-    private func matchingKeyCount(forKey key: String) -> Int {
-        return Set(clients.all.keys.map { $0.matchingKey }).count
     }
 }
