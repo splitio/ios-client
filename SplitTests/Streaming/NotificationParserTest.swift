@@ -45,7 +45,7 @@ class NotificationParserTest: XCTestCase {
 """
 
     let controlNotificationMessage = """
- {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"control_pri\",\"data\":\"{\\\"type\\\":\\\"CONTROL\\\",\\\"controlType\\\":\\\"STREAMING_ENABLED\\\"}\"}
+ {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"control_pri\",\"data\":\"{\\\"type\\\":\\\"CONTROL\\\",\\\"controlType\\\":\\\"STREAMING_RESUMED\\\"}\"}
 """
 
     let errorNotificationMessage = """
@@ -137,7 +137,7 @@ class NotificationParserTest: XCTestCase {
         let notification = try notificationParser.parseControl(jsonString: incoming!.jsonData!);
 
         XCTAssertEqual(NotificationType.control, notification.type);
-        XCTAssertEqual(ControlNotification.ControlType.streamingEnabled, notification.controlType);
+        XCTAssertEqual(ControlNotification.ControlType.streamingResumed, notification.controlType);
     }
 
 
