@@ -11,7 +11,7 @@ import Foundation
 
 class ByKeyFacadeStub: ByKeyFacade {
 
-    var components = [String: ByKeyComponentGroup]()
+    var components = [Key: ByKeyComponentGroup]()
     var loadMySegmentsFromCacheCalled = [String: Bool]()
     var startPeriodicSyncCalled = false
     var syncMySegmentsCalled = [String: Bool]()
@@ -24,16 +24,22 @@ class ByKeyFacadeStub: ByKeyFacade {
 
     var loadAttributesFromCacheCalled = [String: Bool]()
 
-    var keys: Set<String> {
-        return Set(components.keys.map {$0 })
+    var matchingKeys: Set<String> {
+        return Set(components.keys.map { $0.matchingKey })
     }
 
-    func append(_ group: ByKeyComponentGroup, forKey key: String) {
+    func append(_ group: ByKeyComponentGroup, forKey key: Key) {
         components[key] = group
     }
 
-    func remove(forKey key: String) {
+    func group(forKey key: Key) -> ByKeyComponentGroup? {
+        return components[key]
+    }
+
+    func remove(forKey key: Key) -> ByKeyComponentGroup? {
+        let group = components[key]
         components.removeValue(forKey: key)
+        return group
     }
 
     func loadMySegmentsFromCache(forKey key: String) {
@@ -83,6 +89,10 @@ class ByKeyFacadeStub: ByKeyFacade {
 
     func stop() {
         destroyCalled = true
+    }
+
+    func isEmpty() -> Bool {
+        return components.count == 0
     }
 
     var notifyMySegmentsUpdatedCalled = false

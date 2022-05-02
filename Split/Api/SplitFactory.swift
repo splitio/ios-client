@@ -45,7 +45,7 @@ import Foundation
     ///     - bucketingKey: The bucketing key to create a Key object for this new SplitClient
     /// - Returns: An instance of a class implementing SplitClient protocol
     @objc(clientWithMatchingKey:bucketingKey:)
-    func client(matchingKey: String, bucketingKey: String) -> SplitClient
+    func client(matchingKey: String, bucketingKey: String?) -> SplitClient
 
     ///
     /// Current Split manager instance

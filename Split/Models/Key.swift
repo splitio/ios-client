@@ -17,4 +17,19 @@ public class Key: NSObject {
         self.matchingKey = matchingKey
         self.bucketingKey = bucketingKey
     }
+
+    override public var hash: Int {
+        var hasher = Hasher()
+        hasher.combine(matchingKey)
+        hasher.combine(bucketingKey)
+        return hasher.finalize()
+    }
+
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? Key else {
+            return false
+        }
+        return matchingKey == other.matchingKey
+        && bucketingKey == other.bucketingKey
+    }
 }

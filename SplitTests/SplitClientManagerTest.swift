@@ -34,13 +34,13 @@ class SplitClientManagerTest: XCTestCase {
     }
 
     func testInit() {
-        XCTAssertEqual(1, byKeyFacade.keys.count)
+        XCTAssertEqual(1, byKeyFacade.matchingKeys.count)
         XCTAssertTrue(syncManager.startCalled)
         XCTAssertNotNil(clientManager.defaultClient)
         XCTAssertEqual(1, byKeyFacade.components.count)
         // This should not be called on init
         XCTAssertFalse(synchronizer.startForKeyCalled[key.matchingKey] ?? false)
-        XCTAssertNotNil(byKeyFacade.components[key.matchingKey])
+        XCTAssertNotNil(byKeyFacade.components[key])
         XCTAssertTrue(splitEventsCoordinator.startCalled)
     }
 
@@ -49,36 +49,36 @@ class SplitClientManagerTest: XCTestCase {
         let client = clientManager.get(forKey: Key(matchingKey: newKey))
 
         XCTAssertNotNil(client)
-        XCTAssertEqual(2, byKeyFacade.keys.count)
+        XCTAssertEqual(2, byKeyFacade.matchingKeys.count)
         XCTAssertEqual(2, byKeyFacade.components.count)
         // This should not be called on init
         XCTAssertTrue(synchronizer.startForKeyCalled[newKey] ?? false)
-        XCTAssertNotNil(byKeyFacade.components[newKey])
+        XCTAssertNotNil(byKeyFacade.components[Key(matchingKey: newKey)])
         XCTAssertTrue(syncManager.resetStreamingCalled)
     }
 
     func testDestroyForKey() {
-
+        let thisKey = Key(matchingKey: newKey)
         // Calling get to create a new client
-        _ = clientManager.get(forKey: Key(matchingKey: newKey))
+        _ = clientManager.get(forKey: thisKey)
 
         sleep(1)
-        clientManager.destroy(forKey: newKey)
+        clientManager.destroy(forKey: thisKey)
 
         XCTAssertFalse(byKeyFacade.destroyCalled)
         XCTAssertEqual(1, byKeyFacade.components.count)
-        XCTAssertNil(byKeyFacade.components[newKey])
+        XCTAssertNil(byKeyFacade.components[Key(matchingKey: newKey)])
         XCTAssertFalse(byKeyFacade.destroyCalled)
     }
 
     func testDestroyLastKey() {
 
         sleep(1)
-        clientManager.destroy(forKey: key.matchingKey)
+        clientManager.destroy(forKey: key)
 
         // XCTAssertTrue(byKeyFacade.destroyCalled) It's destroyed by the syncrhonizer
         XCTAssertEqual(0, byKeyFacade.components.count)
-        XCTAssertNil(byKeyFacade.components[key.matchingKey])
+        XCTAssertNil(byKeyFacade.components[key])
         XCTAssertTrue(synchronizer.flushCalled)
         XCTAssertTrue(syncManager.stopCalled)
         XCTAssertTrue(splitManager.destroyCalled)
