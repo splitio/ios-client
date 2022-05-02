@@ -102,9 +102,9 @@ class DefaultClientManager: SplitClientManager {
             return client
         }
 
-        let keyCount = byKeyRegistry.matchingKeys.count
+        let shouldResetStreaming = !byKeyRegistry.matchingKeys.contains(key.matchingKey)
         let client = createClient(forKey: key)
-        if byKeyRegistry.matchingKeys.count != keyCount {
+        if shouldResetStreaming {
             syncManager.resetStreaming()
         }
         return client
