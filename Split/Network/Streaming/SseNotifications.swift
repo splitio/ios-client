@@ -85,7 +85,7 @@ struct ControlNotification: NotificationTypeField {
     private (set) var type: NotificationType
 
     enum ControlType: Decodable {
-        case streamingEnabled
+        case streamingResumed
         case streamingDisabled
         case streamingPaused
         case streamingReset
@@ -98,8 +98,8 @@ struct ControlNotification: NotificationTypeField {
 
         static func enumFromString(string: String) -> ControlType {
             switch string.lowercased() {
-            case "streaming_enabled":
-                return ControlType.streamingEnabled
+            case "streaming_resumed":
+                return ControlType.streamingResumed
             case "streaming_disabled":
                 return ControlType.streamingDisabled
             case "streaming_paused":
