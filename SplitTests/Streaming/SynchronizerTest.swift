@@ -229,9 +229,10 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testStartByKey() {
-        synchronizer.start(forKey: userKey)
+        let key = Key(matchingKey: userKey)
+        synchronizer.start(forKey: key)
 
-        XCTAssertTrue(byKeyApiFacade.startSyncForKeyCalled[userKey] ?? false)
+        XCTAssertTrue(byKeyApiFacade.startSyncForKeyCalled[key] ?? false)
     }
 
     func testFlush() {

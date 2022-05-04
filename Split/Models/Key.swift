@@ -33,7 +33,7 @@ public class Key: NSObject {
         && bucketingKey == other.bucketingKey
     }
 
-    public override var description : String {
+    public override var description: String {
             return "Key: \(matchingKey) - Bucketing: \(bucketingKey ?? "No bucketing")"
         }
 }

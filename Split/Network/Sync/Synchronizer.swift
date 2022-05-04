@@ -9,7 +9,7 @@
 import Foundation
 
 protocol Synchronizer: ImpressionLogger {
-    func start(forKey key: String)
+    func start(forKey key: Key)
     func loadAndSynchronizeSplits()
     func loadMySegmentsFromCache()
     func loadAttributesFromCache()
@@ -141,7 +141,7 @@ class DefaultSynchronizer: Synchronizer {
         byKeySynchronizer.loadAttributesFromCache(forKey: key)
     }
 
-    func start(forKey key: String) {
+    func start(forKey key: Key) {
         byKeySynchronizer.startSync(forKey: key)
     }
 

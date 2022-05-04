@@ -61,7 +61,7 @@ class ByKeyFacadeTest: XCTestCase {
             syncStub.stopPeriodicFetchingCalled = false
         }
 
-        _ = byKeyFacade.remove(forKey: key)
+        _ = byKeyFacade.removeAndCount(forKey: key)
 
         byKeyFacade.startPeriodicSync()
         byKeyFacade.stopPeriodicSync()
@@ -175,7 +175,7 @@ class ByKeyFacadeTest: XCTestCase {
 
     func testStartSyncForKey() {
         setupTest { key in
-            byKeyFacade.startSync(forKey: key.matchingKey)
+            byKeyFacade.startSync(forKey: key)
         }
 
         assertThis { keyNum, group in
@@ -191,7 +191,7 @@ class ByKeyFacadeTest: XCTestCase {
     func testStartSyncForKeyPolling() {
         byKeyFacade.startPeriodicSync()
         setupTest { key in
-            byKeyFacade.startSync(forKey: key.matchingKey)
+            byKeyFacade.startSync(forKey: key)
         }
 
         assertThis { keyNum, group in

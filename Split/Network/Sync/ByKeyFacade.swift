@@ -11,7 +11,7 @@ import Foundation
 protocol ByKeyRegistry {
     var matchingKeys: Set<String> { get }
     func append(_ group: ByKeyComponentGroup, forKey: Key)
-    func remove(forKey: Key) -> ByKeyComponentGroup?
+    func removeAndCount(forKey: Key) -> Int?
     func group(forKey: Key) -> ByKeyComponentGroup?
     func isEmpty() -> Bool
 }
@@ -19,12 +19,13 @@ protocol ByKeySynchronizer {
     func loadMySegmentsFromCache(forKey: String)
     func loadAttributesFromCache(forKey: String)
     func notifyMySegmentsUpdated(forKey: String)
-    func startSync(forKey: String)
+    func startSync(forKey key: Key)
     func startPeriodicSync()
     func stopPeriodicSync()
     func syncMySegments(forKey: String)
     func syncAll()
     func forceMySegmentsSync(forKey: String)
+    func syncMySegments(forKey: Key)
     func pause()
     func resume()
     func stop()
@@ -56,13 +57,13 @@ class DefaultByKeyFacade: ByKeyFacade {
         byKeyComponents.setValue(group, forKey: key)
     }
 
-    func remove(forKey key: Key) -> ByKeyComponentGroup? {
+    // Removes a value and returns current count
+    func removeAndCount(forKey key: Key) -> Int? {
         guard let group = byKeyComponents.value(forKey: key) else { return nil }
         group.mySegmentsSynchronizer.destroy()
         group.attributesStorage.destroy()
         group.eventsManager.stop()
-        byKeyComponents.removeValue(forKey: key)
-        return group
+        return byKeyComponents.removeAndCount(forKey: key)
     }
 
     func loadMySegmentsFromCache(forKey key: String) {
@@ -85,14 +86,12 @@ class DefaultByKeyFacade: ByKeyFacade {
         }
     }
 
-    func startSync(forKey key: String) {
-        loadMySegmentsFromCache(forKey: key)
-        loadAttributesFromCache(forKey: key)
+    func startSync(forKey key: Key) {
+        loadMySegmentsFromCache(forKey: key.matchingKey)
+        loadAttributesFromCache(forKey: key.matchingKey)
         syncMySegments(forKey: key)
         if isPollingEnabled.value {
-            doInAll(forMatchingKey: key) { group in
-                group.mySegmentsSynchronizer.startPeriodicFetching()
-            }
+            byKeyComponents.value(forKey: key)?.mySegmentsSynchronizer.startPeriodicFetching()
         }
     }
 
@@ -112,6 +111,10 @@ class DefaultByKeyFacade: ByKeyFacade {
         doInAll(forMatchingKey: key) { group in
             group.mySegmentsSynchronizer.forceMySegmentsSync()
         }
+    }
+
+    func syncMySegments(forKey key: Key) {
+        byKeyComponents.value(forKey: key)?.mySegmentsSynchronizer.synchronizeMySegments()
     }
 
     func notifyMySegmentsUpdated(forKey key: String) {
