@@ -107,12 +107,13 @@ class SyncManagerBuilder {
                                                telemetryProducer: storageContainer.telemetryStorage)
 
             let sseAuthenticator = apiFacade.sseAuthenticator
-            let sseClient = DefaultSseClient(endpoint: endpointFactory.streamingEndpoint,
-                                             httpClient: sseHttpClient, sseHandler: sseHandler)
+            let sseClientFactory  = DefaultSseClientFactory(endpoint: endpointFactory.streamingEndpoint,
+                                                            httpClient: sseHttpClient,
+                                                            sseHandler: sseHandler)
 
             pushNotificationManager = DefaultPushNotificationManager(
                 userKeyRegistry: byKeyFacade, sseAuthenticator: sseAuthenticator,
-                sseClient: sseClient,
+                sseClientFactory: sseClientFactory,
                 broadcasterChannel: broadcasterChannel,
                 timersManager: DefaultTimersManager(),
                 telemetryProducer: storageContainer.telemetryStorage)

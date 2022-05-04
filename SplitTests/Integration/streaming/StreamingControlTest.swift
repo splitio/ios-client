@@ -83,7 +83,7 @@ class StreamingControlTest: XCTestCase {
         syncSpy.stopPeriodicFetchingExp = XCTestExpectation()
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
-                                                                                  controlType: "STREAMING_ENABLED"))
+                                                                                  controlType: "STREAMING_RESUMED"))
 
         wait(for: [syncSpy.stopPeriodicFetchingExp!], timeout: 5) // Polling stopped once streaming enabled
         timestamp+=1000

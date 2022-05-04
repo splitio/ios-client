@@ -217,7 +217,6 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                     mySegmentsStorage.set(segments)
                     notifyMySegmentsUpdated()
                 }
-                Logger.d(segments.debugDescription)
             }
         } catch let error {
             Logger.e("Problem fetching segments: %@", error.localizedDescription)

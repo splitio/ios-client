@@ -47,7 +47,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
 
         super.init()
 
-        Logger.i("iOS Split SDK initialized!")
+        Logger.i("Split SDK client for key \(key.matchingKey) initialized!")
     }
 
     deinit {

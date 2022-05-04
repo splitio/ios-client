@@ -51,7 +51,7 @@ class DefaultSseClient: SseClient {
     func connect(token: String, channels: [String], completion: @escaping CompletionHandler) {
 
         var isFirstMessage = true
-        queue.async {
+        queue.async(flags: .barrier) {
             let parameters: [String: Any] = [
                 SseClientConstants.pushNotificationTokenParam: token,
                 SseClientConstants.pushNotificationChannelsParam: self.createChannelsQueryString(channels: channels),
@@ -93,7 +93,6 @@ class DefaultSseClient: SseClient {
                     if !self.isDisconnectCalled.value {
                         self.handleConnectionClosed()
                     }
-
                 }, errorHandler: { error in
                     Logger.d("Streaming disconnected: \(error.localizedDescription)")
                     self.handleError(error)

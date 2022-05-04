@@ -126,7 +126,6 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
         do {
             let oldSegments = mySegmentsStorage.getAll()
             if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: getHeaders()) {
-                Logger.d(segments.debugDescription)
                 if !isSdkReadyTriggered() ||
                     changeChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segments) {
                     mySegmentsStorage.set(segments)

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-//swiftlint:disable inclusive_language
+// swiftlint:disable inclusive_language
 class SplitHelper {
 
     func createDefaultSplit(named splitName: String) -> Split {

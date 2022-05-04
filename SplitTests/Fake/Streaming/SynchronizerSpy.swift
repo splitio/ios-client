@@ -183,7 +183,7 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.notifySplitKilled()
     }
 
-    func start(forKey key: String) {
+    func start(forKey key: Key) {
         splitSynchronizer.start(forKey: key)
     }
 

@@ -113,6 +113,15 @@ class SplitKeyDictionary<T> {
         return value
     }
 
+    func removeAndCount(forKey key: Key) -> Int {
+        var count: Int = 0
+        queue.sync {
+            items.removeValue(forKey: key)
+            count = items.count
+        }
+        return count
+    }
+
     func takeAll() -> [Key: T] {
         var allItems: [Key: T]!
         queue.sync {

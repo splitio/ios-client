@@ -55,8 +55,8 @@ class SynchronizerStub: Synchronizer {
         loadAttributesFromCacheCalled = true
     }
 
-    var startForKeyCalled = [String: Bool]()
-    func start(forKey key: String) {
+    var startForKeyCalled = [Key: Bool]()
+    func start(forKey key: Key) {
         startForKeyCalled[key] = true
     }
 
