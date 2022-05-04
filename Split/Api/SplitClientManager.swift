@@ -115,8 +115,8 @@ class DefaultClientManager: SplitClientManager {
     }
 
     func destroy(forKey key: Key) {
-        if byKeyRegistry.remove(forKey: key) != nil,
-            byKeyRegistry.isEmpty() {
+        if let count = byKeyRegistry.removeAndCount(forKey: key),
+            count == 0 {
             self.syncManager.stop()
             if let stopwatch = self.telemetryStopwatch {
                 telemetryProducer?.recordSessionLength(sessionLength: stopwatch.interval())
@@ -126,12 +126,12 @@ class DefaultClientManager: SplitClientManager {
             self.flush()
             self.eventsManagerCoordinator.stop()
             self.storageContainer.splitsStorage.destroy()
+            Logger.i("Split SDK destroyed")
         }
     }
 
     private func createClient(forKey key: Key) -> SplitClient {
 
-        let userKey = key.matchingKey
         let eventsManager = DefaultSplitEventsManager(config: config)
         let treatmentManager = buildTreatmentManager(key: key,
                                                      eventsManager: eventsManager)
@@ -147,7 +147,7 @@ class DefaultClientManager: SplitClientManager {
         eventsManagerCoordinator.add(eventsManager, forKey: key)
 
         if shouldStartSyncKey() {
-            synchronizer.start(forKey: userKey)
+            synchronizer.start(forKey: key)
         }
 
         return client
