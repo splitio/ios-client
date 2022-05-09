@@ -34,26 +34,27 @@ class SplitClientManagerTest: XCTestCase {
     }
 
     func testInit() {
+
         XCTAssertEqual(1, byKeyFacade.matchingKeys.count)
         XCTAssertTrue(syncManager.startCalled)
         XCTAssertNotNil(clientManager.defaultClient)
         XCTAssertEqual(1, byKeyFacade.components.count)
         // This should not be called on init
-        XCTAssertFalse(synchronizer.startForKeyCalled[key.matchingKey] ?? false)
+        XCTAssertFalse(synchronizer.startForKeyCalled[key] ?? false)
         XCTAssertNotNil(byKeyFacade.components[key])
         XCTAssertTrue(splitEventsCoordinator.startCalled)
     }
 
     func testAddClient() {
-
-        let client = clientManager.get(forKey: Key(matchingKey: newKey))
+        let newKey = Key(matchingKey: newKey)
+        let client = clientManager.get(forKey: newKey)
 
         XCTAssertNotNil(client)
         XCTAssertEqual(2, byKeyFacade.matchingKeys.count)
         XCTAssertEqual(2, byKeyFacade.components.count)
         // This should not be called on init
         XCTAssertTrue(synchronizer.startForKeyCalled[newKey] ?? false)
-        XCTAssertNotNil(byKeyFacade.components[Key(matchingKey: newKey)])
+        XCTAssertNotNil(byKeyFacade.components[newKey])
         XCTAssertTrue(syncManager.resetStreamingCalled)
     }
 

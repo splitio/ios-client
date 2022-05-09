@@ -47,6 +47,7 @@ class MultiClientEvaluationTest: XCTestCase {
 
 
     override func setUp() {
+        readyExps = [String: XCTestExpectation]()
         setupFactory()
     }
 
@@ -63,6 +64,7 @@ class MultiClientEvaluationTest: XCTestCase {
         doInAllClients { key, client in
             readyExps[key] = XCTestExpectation(description: "Ready \(key)")
 
+            print("Handler for: \(key)")
             clients[key]?.on(event: SplitEvent.sdkReady) {
                 self.readyExps[key]?.fulfill()
             }
@@ -138,18 +140,14 @@ class MultiClientEvaluationTest: XCTestCase {
     func testEvaluationWithAttributes() {
         clients[defaultKey] = factory.client
 
-        clients[defaultKey] = factory.client
-
         for i in 4..<6 {
-            clients["key_\(i)"] = factory.client(key: Key(matchingKey: "key_\(i)"))
-        }
-
-        doInAllClients { key, client in
+            let key = "key_\(i)"
             readyExps[key] = XCTestExpectation(description: "Ready \(key)")
-
-            clients[key]?.on(event: SplitEvent.sdkReady) {
+            let client = factory.client(key: Key(matchingKey: key))
+            client.on(event: SplitEvent.sdkReady) {
                 self.readyExps[key]?.fulfill()
             }
+            clients[key] = client
         }
 
         wait(for: readyExps.values.map { $0 }, timeout: 5)
@@ -321,7 +319,7 @@ class MultiClientEvaluationTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 3000
         splitConfig.eventsPushRate = 999999
-        //splitConfig.isDebugModeEnabled = true
+        splitConfig.isDebugModeEnabled = true
         return splitConfig
     }
 

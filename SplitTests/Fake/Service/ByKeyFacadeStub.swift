@@ -15,6 +15,7 @@ class ByKeyFacadeStub: ByKeyFacade {
     var loadMySegmentsFromCacheCalled = [String: Bool]()
     var startPeriodicSyncCalled = false
     var syncMySegmentsCalled = [String: Bool]()
+    var syncMySegmentsKeyCalled = [Key: Bool]()
     var syncAllCalled = false
     var forceMySegmentsSyncCalled = [String: Bool]()
     var pauseCalled = false
@@ -42,6 +43,11 @@ class ByKeyFacadeStub: ByKeyFacade {
         return group
     }
 
+    func removeAndCount(forKey key: Key) -> Int? {
+        components.removeValue(forKey: key)
+        return components.count
+    }
+
     func loadMySegmentsFromCache(forKey key: String) {
         loadMySegmentsFromCacheCalled[key] = true
     }
@@ -52,6 +58,10 @@ class ByKeyFacadeStub: ByKeyFacade {
 
     func syncMySegments(forKey key: String) {
         syncMySegmentsCalled[key] = true
+    }
+
+    func syncMySegments(forKey key: Key) {
+        syncMySegmentsKeyCalled[key] = true
     }
 
     func forceMySegmentsSync(forKey key: String) {
@@ -66,8 +76,8 @@ class ByKeyFacadeStub: ByKeyFacade {
         syncAllCalled = true
     }
 
-    var startSyncForKeyCalled = [String: Bool]()
-    func startSync(forKey key: String) {
+    var startSyncForKeyCalled = [Key: Bool]()
+    func startSync(forKey key: Key) {
         startSyncForKeyCalled[key] = true
     }
 
