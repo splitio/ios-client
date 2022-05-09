@@ -167,6 +167,10 @@ class TestSplitFactory {
 
     }
 
+    func client(matchingKey: String) -> SplitClient {
+        return clientManager!.get(forKey: Key(matchingKey: matchingKey))
+    }
+
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
         if config.synchronizeInBackground {
             SplitBgSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)

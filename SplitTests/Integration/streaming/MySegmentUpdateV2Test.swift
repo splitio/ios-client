@@ -17,6 +17,7 @@ class MySegmentUpdateV2Test: XCTestCase {
     var isSseHit = false
     var streamingBinding: TestStreamResponseBinding?
     let sseExp = XCTestExpectation(description: "Sse conn")
+    let sseMExp = XCTestExpectation(description: "Sse conn M")
     var notificationTemplate: String!
     let kDataField = "[NOTIFICATION_DATA]"
 
@@ -117,8 +118,22 @@ class MySegmentUpdateV2Test: XCTestCase {
             sdkUpdExp.fulfill()
         }
 
+        // Adding multi client
+        let sdkReadyMExp = XCTestExpectation(description: "SDK READY Expectation mcli")
+        var sdkUpdMExp = XCTestExpectation(description: "SDK UPDATE Expectation mcli")
+        let userKeyM = "09025e90-d396-433a-9292-acef23cf0ad1"
+        let mClient = testFactory!.client(matchingKey: userKeyM)
+
+        mClient.on(event: SplitEvent.sdkReady) {
+            sdkReadyMExp.fulfill()
+        }
+
+        mClient.on(event: SplitEvent.sdkUpdated) {
+            sdkUpdMExp.fulfill()
+        }
+
         // Wait for hitting my segments two times (sdk ready and full sync after streaming connection)
-        wait(for: [sdkReadyExp, sseExp], timeout: 15)
+        wait(for: [sdkReadyExp, sdkReadyMExp, sseExp, sseMExp], timeout: 15)
 
         streamingBinding?.push(message: ":keepalive")
 
@@ -129,26 +144,31 @@ class MySegmentUpdateV2Test: XCTestCase {
         // Set count to 0 to start counting hits
         syncSpy.forceMySegmentsCalledCount = 0
         sdkUpdExp = XCTestExpectation()
+        sdkUpdMExp = XCTestExpectation()
         pushMessage(TestingData.kUnboundedNotification)
-        wait(for: [sdkUpdExp], timeout: 5)
+        wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 5)
 
 
         // Pushed key list message. Key 1 should add a segment
         sdkUpdExp = XCTestExpectation()
+        sdkUpdMExp = XCTestExpectation()
         pushMessage(TestingData.kEscapedBoundedNotificationGzip)
-        wait(for: [sdkUpdExp], timeout: 5)
+        wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 5)
 
         sdkUpdExp = XCTestExpectation()
+        sdkUpdMExp = XCTestExpectation()
         pushMessage(TestingData.kEscapedBoundedNotificationZlib)
-        wait(for: [sdkUpdExp], timeout: 5)
+        wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 5)
 
         // Should trigger unbounded
         sdkUpdExp = XCTestExpectation()
+        sdkUpdMExp = XCTestExpectation()
         pushMessage(TestingData.kEscapedBoundedNotificationMalformed)
-        wait(for: [sdkUpdExp], timeout: 5)
+        wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 5)
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual(4, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
+        XCTAssertEqual(4, syncSpy.forceMySegmentsSyncCount[userKeyM] ?? 0)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -197,6 +217,7 @@ class MySegmentUpdateV2Test: XCTestCase {
             self.isSseHit = true
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             self.sseExp.fulfill()
+            self.sseMExp.fulfill()
             return self.streamingBinding!
         }
     }
