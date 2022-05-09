@@ -23,6 +23,9 @@ class MultiClientStreamingResetTest: XCTestCase {
     let key3 = "key_3"
     let key4 = "key_4"
 
+    var authHitCount = 0
+    var sseHitCount = 0
+
     let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.global())
 
     var cachedSplit: Split!
@@ -31,47 +34,62 @@ class MultiClientStreamingResetTest: XCTestCase {
     var streamExps = [String: XCTestExpectation]()
     var factory: SplitFactory!
 
-
-    override func setUp() {
-        setupFactory()
-    }
-
-    var expReady: XCTestExpectation?
     var expAuth: XCTestExpectation?
     var expSse: XCTestExpectation?
-    func testEvaluation() {
+
+    override func setUp() {
+        authHitCount = 0
+        sseHitCount = 0
+    }
+
+    func testNoStreamingDelay() {
+        setupFactory()
+        execTest(delay: false)
+    }
+
+    func testWithStreamingDelay() {
+        setupFactory(streamDelay: 3)
+        execTest(delay: true)
+    }
+
+    private func execTest(delay: Bool = false) {
 
         var results = [String: String]()
         let defaultClient = factory.client
         clients[Key(matchingKey: defaultKey)] = defaultClient
-        expReady = XCTestExpectation(description: "Ready \(defaultKey)")
+        let expReady = XCTestExpectation(description: "Ready \(defaultKey)")
         expAuth = XCTestExpectation(description: "Auth \(defaultKey)")
-        expSse = XCTestExpectation(description: "SSE \(defaultKey)")
         defaultClient.on(event: SplitEvent.sdkReady) {
-            self.expReady!.fulfill()
-            self.expSse!.fulfill()
-            self.expAuth!.fulfill()
+            expReady.fulfill()
             results[self.defaultKey] = defaultClient.getTreatment(self.splitName)
         }
-        wait(for: [expReady!, expSse!, expAuth!], timeout: 5)
 
-        for i in 1..<4 {
+        var exps = [expReady, expAuth!]
+        if !delay {
+            expSse = (XCTestExpectation(description: "Streaming \(defaultKey)"))
+            exps.append(expSse!)
+        }
+        wait(for: exps, timeout: 5)
+        let keyCount = 3
+        for i in 1...3 {
             let key = Key(matchingKey: "key_\(i)")
             let client = factory.client(key: key)
             self.clients[key] = client
-            self.expReady = XCTestExpectation(description: "Ready \(key.matchingKey)")
+            let expReady = XCTestExpectation(description: "Ready \(key.matchingKey)")
             self.expAuth = XCTestExpectation(description: "Auth \(key.matchingKey)")
-            self.expSse = XCTestExpectation(description: "SSE \(key.matchingKey)")
+
+            var exps = [expReady, expAuth!]
+            if !delay || i == keyCount {
+                self.expSse = (XCTestExpectation(description: "Streaming \(defaultKey)"))
+                exps.append(expSse!)
+            }
 
             client.on(event: SplitEvent.sdkReady) {
-                self.expReady!.fulfill()
-                self.expSse!.fulfill()
-                self.expAuth!.fulfill()
+                expReady.fulfill()
                 results[key.matchingKey] = client.getTreatment(self.splitName)
             }
-            wait(for: [expReady!, expSse!, expAuth!], timeout: 5)
+            wait(for: exps, timeout: 10)
         }
-
 
         // defaultKey is whitelisted.
         // key1 to key3 has its own whitelist
@@ -80,6 +98,13 @@ class MultiClientStreamingResetTest: XCTestCase {
                                      key2: "on_key_2", key3: "on_key_3", key4: "default_t"]
         doInAllClients { key, _ in
             XCTAssertEqual(expectedResults[key.matchingKey] ?? "", results[key.matchingKey] ?? "")
+        }
+        XCTAssertEqual(clients.count, authHitCount)
+
+        if !delay {
+            XCTAssertEqual(clients.count, sseHitCount)
+        } else {
+            XCTAssertEqual(1, sseHitCount)
         }
 
         for client in clients.values {
@@ -95,7 +120,7 @@ class MultiClientStreamingResetTest: XCTestCase {
         return Data(content.utf8)
     }
 
-    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+    private func buildTestDispatcher(streamingDelay: Int = 0) -> HttpClientTestDispatcher {
 
         return { request in
             switch request.url.absoluteString {
@@ -106,8 +131,9 @@ class MultiClientStreamingResetTest: XCTestCase {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
 
             case let(urlString) where urlString.contains("auth"):
+                self.authHitCount+=1
                 self.expAuth?.fulfill()
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse(delay: streamingDelay).utf8))
 
             default:
                 return TestDispatcherResponse(code: 200)
@@ -120,8 +146,10 @@ class MultiClientStreamingResetTest: XCTestCase {
             action(key, client)
         }
     }
+
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
+            self.sseHitCount+=1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
                 self.expSse?.fulfill()
@@ -141,12 +169,12 @@ class MultiClientStreamingResetTest: XCTestCase {
         return splitConfig
     }
 
-    private func setupFactory(database: SplitDatabase? = nil) {
+    private func setupFactory(database: SplitDatabase? = nil,streamDelay: Int = 0) {
         // When splits and connection available, ready from cache and Ready should be fired
         let splitDatabase = database ?? TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(streamingDelay: streamDelay),
                                                           streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
