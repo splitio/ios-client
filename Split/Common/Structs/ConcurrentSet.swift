@@ -50,11 +50,11 @@ class ConcurrentSet<T: Hashable> {
     }
 
     func set(_ items: [T]) {
-        if capacity > 0,
-           items.count >= capacity {
-            return
-        }
         queue.async(flags: .barrier) {
+            if self.capacity > 0,
+               items.count >= self.capacity {
+                return
+            }
             self.items.removeAll()
             for item in items {
                 self.items.insert(item)

@@ -42,7 +42,9 @@ class RegexTest: XCTestCase {
                 let resultString: String = row[2]
                 let result: Bool = resultString.toBool()!
                 let matcher = MatchesStringMatcher(data: regex, negate: false)
-                let resultEvaluation = matcher.evaluate(matchValue: key, bucketingKey: key, attributes: nil)
+
+                let resultEvaluation = matcher.evaluate(values: EvalValues(matchValue: key, matchingKey: key, bucketingKey: key, attributes: nil),
+                                                        context: nil)
                 XCTAssertEqual(resultEvaluation, result, "Evaluation result: \(resultEvaluation), expected -> \(result)")
             }
         }

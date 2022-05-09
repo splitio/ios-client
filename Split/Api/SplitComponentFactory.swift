@@ -10,6 +10,7 @@ import Foundation
 
 enum ComponentError: Error {
     case notFound(name: String)
+    case buildFailed(name: String)
 }
 
 class SplitComponentFactory {
@@ -67,11 +68,11 @@ class SplitComponentFactory {
         return component
     }
 
-    func getSplitEventsManager() -> SplitEventsManager {
-        if let obj = get(for: SplitEventsManager.self) as? SplitEventsManager {
+    func getSplitEventsManagerCoordinator() -> SplitEventsManagerCoordinator {
+        if let obj = get(for: SplitEventsManagerCoordinator.self) as? SplitEventsManagerCoordinator {
             return obj
         }
-        let component: SplitEventsManager = DefaultSplitEventsManager(config: splitClientConfig)
+        let component: SplitEventsManagerCoordinator = MainSplitEventsManager()
         add(component: component)
         return component
     }
@@ -158,7 +159,7 @@ class SplitComponentFactory {
             .setUserKey(userKey)
             .setSplitConfig(splitClientConfig)
             .setRestClient(restClient)
-            .setEventsManager(getSplitEventsManager())
+            .setEventsManager(getSplitEventsManagerCoordinator())
             .setStorageContainer(storageContainer)
             .setSplitsQueryString(splitsFilterQueryString)
 
@@ -190,6 +191,17 @@ class SplitComponentFactory {
         return component
     }
 
+    func buildMySegmentsSyncWorkerFactory() throws -> MySegmentsSyncWorkerFactory {
+        let storageContainer = try getSplitStorageContainer()
+        let component = DefaultMySegmentsSyncWorkerFactory(splitConfig: splitClientConfig,
+                                                           mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                                           mySegmentsFetcher: try getSplitApiFacade().mySegmentsFetcher,
+                                                           telemetryProducer: storageContainer.telemetryStorage)
+        add(component: component)
+
+        return component
+    }
+
     func buildSyncWorkerFactory() throws -> SyncWorkerFactory {
         let component = DefaultSyncWorkerFactory(userKey: userKey,
                                                  splitConfig: splitClientConfig,
@@ -197,7 +209,7 @@ class SplitComponentFactory {
                                                  apiFacade: try getSplitApiFacade(),
                                                  storageContainer: try getSplitStorageContainer(),
                                                  splitChangeProcessor: DefaultSplitChangeProcessor(),
-                                                 eventsManager: getSplitEventsManager())
+                                                 eventsManager: getSplitEventsManagerCoordinator())
         add(component: component)
         return component
     }
@@ -216,14 +228,16 @@ class SplitComponentFactory {
         }
 
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
+                                                          defaultUserKey: userKey,
                                                           telemetrySynchronizer: telemetrySynchronizer,
+                                                          byKeyFacade: getByKeyFacade(),
                                                           splitApiFacade: try getSplitApiFacade(),
                                                           splitStorageContainer: try getSplitStorageContainer(),
                                                           syncWorkerFactory: syncWorkerFactory,
                                                           impressionsSyncHelper: try buildImpressionsSyncHelper(),
                                                           eventsSyncHelper: try buildEventsSyncHelper(),
                                                           splitsFilterQueryString: splitsFilterQueryString,
-                                                          splitEventsManager: getSplitEventsManager())
+                                                          splitEventsManager: getSplitEventsManagerCoordinator())
         add(component: component)
         return component
     }
@@ -235,9 +249,19 @@ class SplitComponentFactory {
         throw ComponentError.notFound(name: "Synchronizer")
     }
 
+    func getByKeyFacade() -> ByKeyFacade {
+        if let obj = get(for: ByKeyFacade.self) as? ByKeyFacade {
+            return obj
+        }
+        let component: ByKeyFacade = DefaultByKeyFacade()
+        add(component: component)
+        return component
+    }
+
     func buildSyncManager(notificationHelper: NotificationHelper?) throws -> SyncManager {
-        let component = SyncManagerBuilder()
+        let component = try SyncManagerBuilder()
             .setUserKey(userKey)
+            .setByKeyFacade(getByKeyFacade())
             .setStorageContainer(try getSplitStorageContainer())
             .setEndpointFactory(try getEndpointFactory())
             .setSplitApiFacade(try getSplitApiFacade())

@@ -11,6 +11,7 @@ import Foundation
 @testable import Split
 
 class RetryableSyncWorkerStub: RetryableSyncWorker {
+
     var completion: SyncCompletion?
 
     var startCalled = false
@@ -30,6 +31,8 @@ class PeriodicSyncWorkerStub: PeriodicSyncWorker {
     var startCalled = false
     var stopCalled = false
     var destroyCalled = false
+    var pauseCalled = false
+    var resumeCalled = false
 
     func start() {
         startCalled = true
@@ -44,8 +47,32 @@ class PeriodicSyncWorkerStub: PeriodicSyncWorker {
     }
 
     func pause() {
+        pauseCalled = true
     }
 
     func resume() {
+        resumeCalled = true
+    }
+}
+
+class RetryableMySegmentsSyncWorkerStub: RetryableSyncWorker {
+
+    init(userKey: String? = nil, avoidCache: Bool? = nil) {
+        self.userKey = userKey
+        self.avoidCache = avoidCache
+    }
+
+    var userKey: String?
+    var avoidCache: Bool?
+    var completion: SyncCompletion?
+    var startCalled = false
+    var stopCalled = false
+
+    func start() {
+        startCalled = true
+    }
+
+    func stop() {
+        stopCalled = true
     }
 }

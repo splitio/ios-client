@@ -16,20 +16,46 @@ import Foundation
 @objc public protocol SplitFactory {
 
     ///
-    /// Current Split client instance
-    /// - returns: An instance of a class implementing SplitClient protocol
+    /// Default Split client instance. This would be the first client created on factory init
+    /// - Returns: An instance of a class implementing SplitClient protocol
     ///
     var client: SplitClient { get }
 
     ///
+    /// Allows getting a new client instance for other Key using the current created factory
+    /// - Parameter key: The corresponding Key object for this new SplitClient
+    /// - Returns: An instance of a class implementing SplitClient protocol
+    ///
+    func client(key: Key) -> SplitClient
+
+    ///
+    /// Allows getting a new client instance for other Key using the current created factory
+    ///
+    /// - Parameter matchingKey: A matching key to create a Key object for this new SplitClient
+    /// - Returns: An instance of a class implementing SplitClient protocol
+    ///
+    @objc(clientWithMatchingKey:)
+    func client(matchingKey: String) -> SplitClient
+
+    ///
+    /// Allows getting a new client instance for other Key using the current created factory
+    ///
+    /// - Parameters:
+    ///     - matchingKey: The matching key to create a Key object for this new SplitClient
+    ///     - bucketingKey: The bucketing key to create a Key object for this new SplitClient
+    /// - Returns: An instance of a class implementing SplitClient protocol
+    @objc(clientWithMatchingKey:bucketingKey:)
+    func client(matchingKey: String, bucketingKey: String?) -> SplitClient
+
+    ///
     /// Current Split manager instance
-    /// - returns: An instance of a class implementing SplitManager protocol
+    /// - Returns: The current instance of a class implementing SplitManager protocol
     ///
     var manager: SplitManager { get }
 
     ///
     /// Current Split SDK Version
-    /// - returns: A String representation of the current SDK version
+    /// - Returns: A String representation of the current SDK version
     ///
     var version: String { get }
 }

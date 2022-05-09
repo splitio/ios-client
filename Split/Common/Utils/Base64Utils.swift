@@ -49,4 +49,8 @@ class Base64Utils {
         return Data(base64Encoded: finalBase64,
                     options: Data.Base64DecodingOptions.init(rawValue: 0))
     }
+
+    class func encodeToBase64(_ string: String) -> String {
+        return Data(string.utf8).base64EncodedString(options: [])
+    }
 }

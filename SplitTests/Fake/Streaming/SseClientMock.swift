@@ -8,6 +8,7 @@
 
 import Foundation
 @testable import Split
+import XCTest
 
 class SseClientMock: SseClient {
     var isConnectionOpened: Bool = true
@@ -20,6 +21,11 @@ class SseClientMock: SseClient {
     var channels: [String]?
     var successHandler: CompletionHandler?
     var results: [Bool]?
+    var closeExp: XCTestExpectation?
+
+    init(connected: Bool = true) {
+        isConnectionOpened = connected
+    }
 
     func connect(token: String, channels: [String], completion: @escaping CompletionHandler) {
         self.successHandler = completion
@@ -37,6 +43,8 @@ class SseClientMock: SseClient {
 
     func disconnect() {
         disconnectCalled = true
-//        fireOnDisconnect()
+        if let exp = closeExp {
+            exp.fulfill()
+        }
     }
 }

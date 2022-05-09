@@ -26,7 +26,7 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
 
     func execute(userKey: String, headers: [String: String]? = nil) throws -> [String]? {
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
-
+        Logger.d("Fetching segments")
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<[String]>?
         let startTime = syncHelper.time()

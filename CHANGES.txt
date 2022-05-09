@@ -1,4 +1,4 @@
-2.13.1: (Feb 16, 2022)
+2.13.1: (Feb 25, 2022)
 - Fixed issue when reconnecting when host app became active
 - Fixed and optimized component creation when streaming is disabled
 

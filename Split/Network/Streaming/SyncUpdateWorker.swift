@@ -44,10 +44,14 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
 
     private let synchronizer: Synchronizer
     private let mySegmentsStorage: MySegmentsStorage
+    private let decoder: MySegmentsPayloadDecoder
     var changesChecker: MySegmentsChangesChecker
-    init(synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage) {
+    init(synchronizer: Synchronizer,
+         mySegmentsStorage: MySegmentsStorage,
+         mySegmentsPayloadDecoder: MySegmentsPayloadDecoder) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
+        self.decoder = mySegmentsPayloadDecoder
         self.changesChecker = DefaultMySegmentsChangesChecker()
         super.init(queueName: "MySegmentsUpdateWorker")
     }
@@ -59,19 +63,33 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
     }
 
     private func process(_ notification: MySegmentsUpdateNotification) {
+        guard let userKey = getUserKeyFromHash(notification.userKeyHash) else {
+            Logger.d("Avoiding process my segments update notification because userKey is null")
+            return
+        }
         if notification.includesPayload {
             if let segmentList = notification.segmentList {
-                let oldSegments = mySegmentsStorage.getAll()
+                let oldSegments = mySegmentsStorage.getAll(forKey: userKey)
                 if changesChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segmentList) {
-                    mySegmentsStorage.set(segmentList)
-                    synchronizer.notifiySegmentsUpdated()
+                    mySegmentsStorage.set(segmentList, forKey: userKey)
+                    synchronizer.notifySegmentsUpdated(forKey: userKey)
                 }
             } else {
-                mySegmentsStorage.clear()
+                mySegmentsStorage.clear(forKey: userKey)
             }
         } else {
-            synchronizer.forceMySegmentsSync()
+            synchronizer.forceMySegmentsSync(forKey: userKey)
         }
+    }
+
+    private func getUserKeyFromHash(_ hash: String) -> String? {
+        let userKeys = mySegmentsStorage.keys
+        for userKey in userKeys {
+            if hash == decoder.hash(userKey: userKey) {
+                return userKey
+            }
+        }
+        return nil
     }
 }
 
@@ -82,14 +100,13 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
     private let payloadDecoder: MySegmentsV2PayloadDecoder
     private let zlib: CompressionUtil = Zlib()
     private let gzip: CompressionUtil = Gzip()
-    private let keyHash: UInt64
 
     init(userKey: String, synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage,
          payloadDecoder: MySegmentsV2PayloadDecoder) {
+
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
         self.payloadDecoder = payloadDecoder
-        self.keyHash = payloadDecoder.hashKey(userKey)
         super.init(queueName: "MySegmentsUpdateV2Worker")
     }
 
@@ -100,6 +117,7 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
     }
 
     private func process(_ notification: MySegmentsUpdateV2Notification) {
+
         do {
             switch notification.updateStrategy {
             case .unboundedFetchRequest:
@@ -132,17 +150,30 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
     }
 
     private func fetchMySegments() {
-        synchronizer.forceMySegmentsSync()
+        doForAllUserKeys { userKey in
+            fetchMySegments(forKey: userKey)
+        }
+    }
+
+    private func fetchMySegments(forKey key: String) {
+        synchronizer.forceMySegmentsSync(forKey: key)
     }
 
     private func decompressor(for type: CompressionType) -> CompressionUtil {
         return type == .gzip ? gzip : zlib
     }
+
     private func remove(segment: String) {
-        var segments = mySegmentsStorage.getAll()
+        doForAllUserKeys { userKey in
+            remove(segment: segment, forKey: userKey)
+        }
+    }
+
+    private func remove(segment: String, forKey key: String) {
+        var segments = mySegmentsStorage.getAll(forKey: key)
         if segments.remove(segment) != nil {
-            mySegmentsStorage.set(Array(segments))
-            synchronizer.notifiySegmentsUpdated()
+            mySegmentsStorage.set(Array(segments), forKey: key)
+            synchronizer.notifySegmentsUpdated(forKey: key)
         }
     }
 
@@ -151,27 +182,40 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
         let jsonKeyList = try payloadDecoder.decodeAsString(payload: encodedkeyList, compressionUtil: compressionUtil)
         let keyList = try payloadDecoder.parseKeyList(jsonString: jsonKeyList)
 
-        if keyList.added.contains(keyHash) {
-            var segments = mySegmentsStorage.getAll()
-            if !segments.contains(segmentName) {
-                segments.insert(segmentName)
-                mySegmentsStorage.set(Array(segments))
-                synchronizer.notifiySegmentsUpdated()
+        doForAllUserKeys { userKey in
+            let keyHash = payloadDecoder.hashKey(userKey)
+            if keyList.added.contains(keyHash) {
+                var segments = mySegmentsStorage.getAll(forKey: userKey)
+                if !segments.contains(segmentName) {
+                    segments.insert(segmentName)
+                    mySegmentsStorage.set(Array(segments), forKey: userKey)
+                    synchronizer.notifySegmentsUpdated(forKey: userKey)
+                }
+                return
             }
-            return
-        }
 
-        if keyList.removed.contains(keyHash) {
-            remove(segment: segmentName)
-            return
+            if keyList.removed.contains(keyHash) {
+                remove(segment: segmentName, forKey: userKey)
+            }
         }
     }
 
     private func handleBounded(encodedKeyMap: String, compressionUtil: CompressionUtil) throws {
         let keyMap = try payloadDecoder.decodeAsBytes(payload: encodedKeyMap, compressionUtil: compressionUtil)
-        if payloadDecoder.isKeyInBitmap(keyMap: keyMap, hashedKey: keyHash) {
-            Logger.d("Executing Unbounded my segment fetch request")
-            fetchMySegments()
+
+        doForAllUserKeys { userKey in
+            let keyHash = payloadDecoder.hashKey(userKey)
+            if payloadDecoder.isKeyInBitmap(keyMap: keyMap, hashedKey: keyHash) {
+                Logger.d("Executing Unbounded my segment fetch request")
+                fetchMySegments(forKey: userKey)
+            }
+        }
+    }
+
+    private func doForAllUserKeys(_ action: (String) -> Void) {
+        let userKeys = mySegmentsStorage.keys
+        for userKey in userKeys {
+            action(userKey)
         }
     }
 }

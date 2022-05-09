@@ -19,6 +19,7 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
          telemetryConsumer: TelemetryConsumer,
          splitsStorage: SplitsStorage,
          mySegmentsStorage: MySegmentsStorage) {
+
         self.telemetryConsumer = telemetryConsumer
         self.statsRecorder = telemetryStatsRecorder
         self.splitsStorage = splitsStorage

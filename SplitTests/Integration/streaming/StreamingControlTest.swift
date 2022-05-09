@@ -34,8 +34,7 @@ class StreamingControlTest: XCTestCase {
     var testFactory: TestSplitFactory!
 
     override func setUp() {
-
-        testFactory = TestSplitFactory()
+        testFactory = TestSplitFactory(userKey: "user_key")
         testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
     }
 
@@ -84,7 +83,7 @@ class StreamingControlTest: XCTestCase {
         syncSpy.stopPeriodicFetchingExp = XCTestExpectation()
         timestamp+=1000
         streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
-                                                                                  controlType: "STREAMING_ENABLED"))
+                                                                                  controlType: "STREAMING_RESUMED"))
 
         wait(for: [syncSpy.stopPeriodicFetchingExp!], timeout: 5) // Polling stopped once streaming enabled
         timestamp+=1000

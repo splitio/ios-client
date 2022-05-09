@@ -10,14 +10,14 @@ import Foundation
 @testable import Split
 
 class PersistentMySegmentsStorageStub: PersistentMySegmentsStorage {
-    var segments = [String]()
+    var persistedSegments = [String: [String]]()
 
-    func set(_ segments: [String]) {
-        self.segments = segments
+    func set(_ segments: [String], forKey key: String) {
+        persistedSegments[key] = segments
     }
 
-    func getSnapshot() -> [String] {
-        return segments
+    func getSnapshot(forKey key: String) -> [String] {
+        return persistedSegments[key] ?? [String]()
     }
 
     func close() {
