@@ -45,10 +45,6 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         loadMySegments()
     }
 
-    func testHash() {
-        print (DefaultMySegmentsPayloadDecoder().hash(userKey: "user_key"))
-    }
-
     func testInit() {
         
         exp1 = XCTestExpectation(description: "Exp1")
