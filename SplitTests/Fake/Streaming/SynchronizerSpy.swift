@@ -53,7 +53,7 @@ class SynchronizerSpy: Synchronizer {
          splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
-         impressionsSyncHelper: ImpressionsRecorderSyncHelper,
+         impressionsTracker: ImpressionsTracker,
          eventsSyncHelper: EventsRecorderSyncHelper,
          syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
         = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>(),
@@ -68,7 +68,7 @@ class SynchronizerSpy: Synchronizer {
                                                      splitApiFacade: splitApiFacade,
                                                      splitStorageContainer: splitStorageContainer,
                                                      syncWorkerFactory: syncWorkerFactory,
-                                                     impressionsSyncHelper: impressionsSyncHelper,
+                                                     impressionsTracker: impressionsTracker,
                                                      eventsSyncHelper: eventsSyncHelper,
                                                      splitsFilterQueryString: splitsFilterQueryString,
                                                      splitEventsManager: splitEventsManager)

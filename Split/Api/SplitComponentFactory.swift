@@ -217,7 +217,11 @@ class SplitComponentFactory {
     func buildSynchronizer() throws -> Synchronizer {
 
         let syncWorkerFactory = try buildSyncWorkerFactory()
+        let splitApiFacade = try getSplitApiFacade()
+        let storageContainer = try getSplitStorageContainer()
+
         var telemetrySynchronizer: TelemetrySynchronizer?
+
         if splitClientConfig.isTelemetryEnabled,
            let configRecorderWorker = syncWorkerFactory.createTelemetryConfigRecorderWorker(),
            let statsRecorderWorker = syncWorkerFactory.createTelemetryStatsRecorderWorker(),
@@ -227,14 +231,20 @@ class SplitComponentFactory {
                                                          periodicStatsRecorderWorker: periodicStatsRecorderWorker)
         }
 
+        let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitClientConfig,
+                                                           splitApiFacade: splitApiFacade,
+                                                           storageContainer: storageContainer,
+                                                           syncWorkerFactory: syncWorkerFactory,
+                                                           impressionsSyncHelper: try buildImpressionsSyncHelper())
+
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
                                                           defaultUserKey: userKey,
                                                           telemetrySynchronizer: telemetrySynchronizer,
                                                           byKeyFacade: getByKeyFacade(),
                                                           splitApiFacade: try getSplitApiFacade(),
-                                                          splitStorageContainer: try getSplitStorageContainer(),
+                                                          splitStorageContainer: storageContainer,
                                                           syncWorkerFactory: syncWorkerFactory,
-                                                          impressionsSyncHelper: try buildImpressionsSyncHelper(),
+                                                          impressionsTracker: impressionsTracker,
                                                           eventsSyncHelper: try buildEventsSyncHelper(),
                                                           splitsFilterQueryString: splitsFilterQueryString,
                                                           splitEventsManager: getSplitEventsManagerCoordinator())

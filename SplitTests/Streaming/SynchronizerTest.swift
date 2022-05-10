@@ -34,6 +34,7 @@ class SynchronizerTest: XCTestCase {
     var eventsManager: SplitEventsManagerStub!
     var telemetryProducer: TelemetryStorageStub!
     var byKeyApiFacade: ByKeyFacadeStub!
+    var impressionsTracker: ImpressionsTracker!
 
     let userKey = "CUSTOMER_KEY"
 
@@ -57,6 +58,8 @@ class SynchronizerTest: XCTestCase {
         eventsRecorderWorker = RecorderWorkerStub()
 
         syncWorkerFactory = SyncWorkerFactoryStub()
+
+        impressionsTracker = ImpressionsTrackStub()
 
         syncWorkerFactory.splitsSyncWorker = splitsSyncWorker
         syncWorkerFactory.mySegmentsSyncWorker = mySegmentsSyncWorker
@@ -95,6 +98,7 @@ class SynchronizerTest: XCTestCase {
 
         byKeyApiFacade = ByKeyFacadeStub()
 
+
         synchronizer = DefaultSynchronizer(splitConfig: config,
                                            defaultUserKey: userKey,
                                            telemetrySynchronizer: nil,
@@ -102,9 +106,7 @@ class SynchronizerTest: XCTestCase {
                                            splitApiFacade: apiFacade,
                                            splitStorageContainer: storageContainer,
                                            syncWorkerFactory: syncWorkerFactory,
-                                           impressionsSyncHelper:
-                                            ImpressionsRecorderSyncHelper(impressionsStorage: PersistentImpressionsStorageStub(),
-                                                                          accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
+                                           impressionsTracker: impressionsTracker,
                                            eventsSyncHelper:
                                             EventsRecorderSyncHelper(eventsStorage: PersistentEventsStorageStub(),
                                                                      accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
