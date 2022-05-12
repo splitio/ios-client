@@ -44,7 +44,6 @@ class ByKeyFacadeStub: ByKeyFacade {
     }
 
     func removeAndCount(forKey key: Key) -> Int? {
-//        let group = components[key]
         components.removeValue(forKey: key)
         return components.count
     }
