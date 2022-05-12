@@ -10,6 +10,7 @@ import Foundation
 
 protocol SyncManager {
     func start()
+    func resetStreaming()
     func pause()
     func resume()
     func stop()
@@ -25,9 +26,12 @@ class DefaultSyncManager: SyncManager {
     private var isPollingEnabled: Atomic<Bool> = Atomic(false)
     private var isPaused: Atomic<Bool> = Atomic(false)
 
-    init(splitConfig: SplitClientConfig, pushNotificationManager: PushNotificationManager?,
-         reconnectStreamingTimer: BackoffCounterTimer?, notificationHelper: NotificationHelper,
-         synchronizer: Synchronizer, broadcasterChannel: PushManagerEventBroadcaster) {
+    init(splitConfig: SplitClientConfig,
+         pushNotificationManager: PushNotificationManager?,
+         reconnectStreamingTimer: BackoffCounterTimer?,
+         notificationHelper: NotificationHelper,
+         synchronizer: Synchronizer,
+         broadcasterChannel: PushManagerEventBroadcaster) {
         self.splitConfig = splitConfig
         self.pushNotificationManager = pushNotificationManager
         self.synchronizer = synchronizer
@@ -123,6 +127,10 @@ class DefaultSyncManager: SyncManager {
                 scheduleStreamingReconnection()
             }
         }
+    }
+
+    func resetStreaming() {
+        pushNotificationManager?.reset()
     }
 
     private func scheduleStreamingReconnection() {

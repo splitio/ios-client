@@ -2,54 +2,68 @@
 //  MySegmentsStorage.swift
 //  Split
 //
-//  Created by Javier L. Avrudsky on 09/11/2020.
-//  Copyright © 2020 Split. All rights reserved.
+//  Created by Javier Avrudsky on 02-Mar-2022.
+//  Copyright © 2022 Split. All rights reserved.
 //
 
 import Foundation
 
 protocol MySegmentsStorage {
-    func loadLocal()
-    func getAll() -> Set<String>
-    func set(_ segments: [String])
-    func clear()
+    var keys: Set<String> { get }
+    func loadLocal(forKey key: String)
+    func getAll(forKey key: String) -> Set<String>
+    func set(_ segments: [String], forKey key: String)
+    func clear(forKey key: String)
     func destroy()
+    func getCount(forKey key: String) -> Int
     func getCount() -> Int
 }
 
 class DefaultMySegmentsStorage: MySegmentsStorage {
 
-    private var inMemoryMySegments: ConcurrentSet<String>
+    private var inMemoryMySegments: ConcurrentDictionarySet<String, String> = ConcurrentDictionarySet()
     private let persistenStorage: PersistentMySegmentsStorage
+
+    var keys: Set<String> {
+        return inMemoryMySegments.keys
+    }
 
     init(persistentMySegmentsStorage: PersistentMySegmentsStorage) {
         persistenStorage = persistentMySegmentsStorage
-        inMemoryMySegments = ConcurrentSet<String>()
     }
 
-    func loadLocal() {
-        inMemoryMySegments.set(persistenStorage.getSnapshot())
+    func loadLocal(forKey key: String) {
+        inMemoryMySegments.set(Set(persistenStorage.getSnapshot(forKey: key)), forKey: key)
     }
 
-    func getAll() -> Set<String> {
-        return inMemoryMySegments.all
+    func getAll(forKey key: String) -> Set<String> {
+        return inMemoryMySegments.values(forKey: key) ?? Set<String>()
     }
 
-    func set(_ segments: [String]) {
-        inMemoryMySegments.set(segments)
-        persistenStorage.set(segments)
+    func set(_ segments: [String], forKey key: String) {
+        inMemoryMySegments.set(Set(segments), forKey: key)
+        persistenStorage.set(segments, forKey: key)
     }
 
-    func clear() {
-        inMemoryMySegments.removeAll()
-        persistenStorage.set([String]())
+    func clear(forKey key: String) {
+        inMemoryMySegments.removeValues(forKey: key)
+        persistenStorage.set([String](), forKey: key)
     }
 
     func destroy() {
         inMemoryMySegments.removeAll()
     }
 
+    func getCount(forKey key: String) -> Int {
+        return inMemoryMySegments.count(forKey: key)
+    }
+
     func getCount() -> Int {
-        return inMemoryMySegments.count
+        let keys = inMemoryMySegments.keys
+        var count = 0
+        for key in keys {
+            count+=(inMemoryMySegments.values(forKey: key)?.count ?? 0)
+        }
+        return count
     }
 }

@@ -23,24 +23,25 @@ struct SplitDatabaseHelper {
 
         let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
         let splitsStorage = openSplitsStorage(database: splitDatabase)
-        let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase, userKey: userKey)
+
         let impressionsStorage = openImpressionsStorage(database: splitDatabase)
         let impressionsCountStorage = openImpressionsCountStorage(database: splitDatabase)
         let eventsStorage = openEventsStorage(database: splitDatabase)
+
+        let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase)
         let attributesStorage = openAttributesStorage(database: splitDatabase,
-                                                      userKey: userKey,
                                                       splitClientConfig: splitClientConfig)
 
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      fileStorage: fileStorage,
                                      splitsStorage: splitsStorage,
                                      persistentSplitsStorage: persistentSplitsStorage,
-                                     mySegmentsStorage: mySegmentsStorage,
                                      impressionsStorage: impressionsStorage,
                                      impressionsCountStorage: impressionsCountStorage,
                                      eventsStorage: eventsStorage,
-                                     attributesStorage: attributesStorage,
-                                     telemetryStorage: telemetryStorage)
+                                     telemetryStorage: telemetryStorage,
+                                     mySegmentsStorage: mySegmentsStorage,
+                                     attributesStorage: attributesStorage)
     }
 
     static func openDatabase(dataFolderName: String,
@@ -64,19 +65,25 @@ struct SplitDatabaseHelper {
         return DefaultSplitsStorage(persistentSplitsStorage: openPersistentSplitsStorage(database: database))
     }
 
-    static func openPersistentMySegmentsStorage(database: SplitDatabase,
-                                                userKey: String) -> PersistentMySegmentsStorage {
-        return DefaultPersistentMySegmentsStorage(userKey: userKey, database: database)
+    static func openPersistentMySegmentsStorage(database: SplitDatabase) -> PersistentMySegmentsStorage {
+        return DefaultPersistentMySegmentsStorage(database: database)
     }
 
-    static func openMySegmentsStorage(database: SplitDatabase, userKey: String) -> MySegmentsStorage {
-        let persistentMySegmentsStorage = openPersistentMySegmentsStorage(database: database, userKey: userKey)
+    static func openMySegmentsStorage(database: SplitDatabase) -> MySegmentsStorage {
+        let persistentMySegmentsStorage = openPersistentMySegmentsStorage(database: database)
         return DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
     }
 
-    static func openPersistentAttributesStorage(database: SplitDatabase,
-                                                userKey: String) -> PersistentAttributesStorage {
-        return DefaultPersistentAttributesStorage(userKey: userKey, database: database)
+    static func openPersistentAttributesStorage(database: SplitDatabase) -> PersistentAttributesStorage {
+        return DefaultPersistentAttributesStorage(database: database)
+    }
+
+    static func openAttributesStorage(database: SplitDatabase,
+                                      splitClientConfig: SplitClientConfig) -> AttributesStorage {
+        return DefaultAttributesStorage(
+            persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
+            openPersistentAttributesStorage(database: database) : nil
+        )
     }
 
     static func openImpressionsStorage(database: SplitDatabase) -> PersistentImpressionsStorage {
@@ -86,21 +93,12 @@ struct SplitDatabaseHelper {
 
     static func openImpressionsCountStorage(database: SplitDatabase) -> PersistentImpressionsCountStorage {
         return DefaultImpressionsCountStorage(database: database,
-                                         expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+                                              expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
     }
 
     static func openEventsStorage(database: SplitDatabase) -> PersistentEventsStorage {
         return DefaultEventsStorage(database: database,
-                                         expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
-    }
-
-    static func openAttributesStorage(database: SplitDatabase,
-                                      userKey: String,
-                                      splitClientConfig: SplitClientConfig) -> AttributesStorage {
-        return DefaultAttributesStorage(
-            persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
-                openPersistentAttributesStorage(database: database, userKey: userKey) : nil
-        )
+                                    expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
     }
 
     static func databaseName(apiKey: String) -> String? {
@@ -142,9 +140,9 @@ struct SplitDatabaseHelper {
 
     static func sanitizeForFolderName(_ string: String) -> String {
         guard let regex: NSRegularExpression =
-            try? NSRegularExpression(pattern: "[^a-zA-Z0-9]",
-                                     options: NSRegularExpression.Options.caseInsensitive) else {
-                fatalError("Regular expression not valid")
+                try? NSRegularExpression(pattern: "[^a-zA-Z0-9]",
+                                         options: NSRegularExpression.Options.caseInsensitive) else {
+            fatalError("Regular expression not valid")
         }
         let range = NSRange(location: 0, length: string.count)
         return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
@@ -171,4 +169,8 @@ struct SplitDatabaseHelper {
         return nil
     }
 
+    static func createByKeyMySegmentsStorage(mySegmentsStorage: MySegmentsStorage,
+                                             userKey: String) -> ByKeyMySegmentsStorage {
+        return DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: userKey)
+    }
 }

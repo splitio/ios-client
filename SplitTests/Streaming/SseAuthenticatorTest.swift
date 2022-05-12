@@ -34,7 +34,22 @@ class SseAuthenticatorTest: XCTestCase {
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
                                                        syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
-        let result = sseAuthenticator.authenticate(userKey: kUserKey)
+        let result = sseAuthenticator.authenticate(userKeys: [kUserKey])
+
+        XCTAssertEqual(true, result.pushEnabled)
+        XCTAssertEqual(true, result.success)
+        XCTAssertEqual(rawToken, result.rawToken)
+    }
+
+    func testSuccesfulMultiUserKeyRequest() {
+        // Check successful response
+
+        let response = SseAuthenticationResponse(pushEnabled: true, token:rawToken, sseConnectionDelay: 0)
+        restClient.update(response: response)
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
+                                                       syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
+
+        let result = sseAuthenticator.authenticate(userKeys: [kUserKey, "otherKey"])
 
         XCTAssertEqual(true, result.pushEnabled)
         XCTAssertEqual(true, result.success)
@@ -48,7 +63,7 @@ class SseAuthenticatorTest: XCTestCase {
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
                                                        syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
-        let result = sseAuthenticator.authenticate(userKey: kUserKey)
+        let result = sseAuthenticator.authenticate(userKeys: [kUserKey])
 
         XCTAssertEqual(false, result.success)
         XCTAssertEqual(false, result.pushEnabled)
@@ -62,7 +77,7 @@ class SseAuthenticatorTest: XCTestCase {
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
                                                        syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
-        let result = sseAuthenticator.authenticate(userKey: kUserKey)
+        let result = sseAuthenticator.authenticate(userKeys: [kUserKey])
 
         XCTAssertEqual(false, result.success)
         XCTAssertEqual(false, result.pushEnabled)
@@ -76,7 +91,7 @@ class SseAuthenticatorTest: XCTestCase {
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
                                                        syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
-        let result = sseAuthenticator.authenticate(userKey: kUserKey)
+        let result = sseAuthenticator.authenticate(userKeys: [kUserKey])
 
         XCTAssertEqual(false, result.success)
         XCTAssertEqual(true, result.errorIsRecoverable)
@@ -92,7 +107,7 @@ class SseAuthenticatorTest: XCTestCase {
                                                        syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 
 
-        let result = sseAuthenticator.authenticate(userKey: kUserKey)
+        let result = sseAuthenticator.authenticate(userKeys: [kUserKey])
 
         XCTAssertEqual(false, result.success)
         XCTAssertEqual(false, result.errorIsRecoverable)

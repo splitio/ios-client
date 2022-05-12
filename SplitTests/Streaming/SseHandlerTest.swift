@@ -55,7 +55,10 @@ class SseHandlerTest: XCTestCase {
 
     func testIncomingMySegmentsUpdate() {
         notificationParser.incomingNotification = IncomingNotification(type: .mySegmentsUpdate, jsonData: "dummy")
-        notificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1, includesPayload: true, segmentList: [])
+        notificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
+                                                                                       includesPayload: true,
+                                                                                       segmentList: [],
+                                                                                       userKeyHash: "")
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
@@ -74,7 +77,7 @@ class SseHandlerTest: XCTestCase {
 
     func testIncomingControlStreaming() {
         notificationParser.incomingNotification = IncomingNotification(type: .control, jsonData: "dummy", timestamp: 100)
-        notificationParser.controlNotification = ControlNotification(type: .control, controlType: .streamingEnabled)
+        notificationParser.controlNotification = ControlNotification(type: .control, controlType: .streamingResumed)
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
         XCTAssertTrue(notificationManagerKeeper.handleIncomingControlCalled)

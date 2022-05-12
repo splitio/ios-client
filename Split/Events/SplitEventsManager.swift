@@ -10,8 +10,8 @@ import Foundation
 
 protocol SplitEventsManager {
     var executorResources: SplitEventExecutorResources { get }
-    func notifyInternalEvent(_ event: SplitInternalEvent)
     func register(event: SplitEvent, task: SplitEventTask)
+    func notifyInternalEvent(_ event: SplitInternalEvent)
     func start()
     func stop()
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
@@ -181,7 +181,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
         if isTriggered(internal: .mySegmentsUpdated),
            isTriggered(internal: .splitsUpdated),
            !isTriggered(external: .sdkReady) {
-            self.recordTelemetry()
             self.trigger(event: SplitEvent.sdkReady)
         }
     }
@@ -198,7 +197,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             updateExecutionTimes(for: eventName, count: times - 1)
         }
 
-        //If executionTimes is lower than zero, execute it without limitation
+        // If executionTimes is lower than zero, execute it without limitation
         if let subscriptions = getSubscriptions(for: event) {
             for task in subscriptions {
                 executeTask(event: event, task: task)
@@ -249,9 +248,5 @@ class DefaultSplitEventsManager: SplitEventsManager {
         dataAccessQueue.sync {
             self.executionTimes[eventName] = count
         }
-    }
-
-    private func recordTelemetry() {
-        // Implement function on final telemtry component implementation
     }
 }
