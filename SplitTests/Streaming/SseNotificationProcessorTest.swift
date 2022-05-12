@@ -34,9 +34,7 @@ class SseNotificationProcessorTest: XCTestCase {
 
         sseNotificationParser = SseNotificationParserStub()
         splitsUpdateWorker = SplitsUpdateWorkerMock(synchronizer: synchronizer)
-        mySegmentsUpdateWorker =  MySegmentsUpdateWorkerMock(synchronizer: synchronizer,
-                                                             mySegmentsStorage: mySegmentsStorage,
-                                                             mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
+        mySegmentsUpdateWorker =  MySegmentsUpdateWorkerMock(synchronizer: synchronizer, mySegmentsStorage: mySegmentsStorage)
         mySegmentsUpdateV2Worker =  MySegmentsUpdateV2WorkerMock(userKey: userKey, synchronizer: synchronizer,
                                                                  mySegmentsStorage: mySegmentsStorage,
                                                                  payloadDecoder: payloadDecoderMock)
@@ -126,8 +124,7 @@ class SseNotificationProcessorTest: XCTestCase {
     func testProcessMySegmentsUpdate() {
         sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
                                                                                           includesPayload: false,
-                                                                                          segmentList: [String](),
-                                                                                          userKeyHash: "")
+                                                                                          segmentList: [String]())
         let notification = IncomingNotification(type: .mySegmentsUpdate,
                                                 channel: nil,
                                                 jsonData: "",
@@ -140,8 +137,7 @@ class SseNotificationProcessorTest: XCTestCase {
     func testProcessMySegmentsUpdateNullJson() {
         sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
                                                                                           includesPayload: false,
-                                                                                          segmentList: [String](),
-                                                                                          userKeyHash: "")
+                                                                                          segmentList: [String]())
         let notification = IncomingNotification(type: .mySegmentsUpdate,
                                                 channel: nil,
                                                 jsonData: nil,
@@ -156,8 +152,7 @@ class SseNotificationProcessorTest: XCTestCase {
         mySegmentsUpdateWorker.throwException = true
         sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
                                                                                           includesPayload: false,
-                                                                                          segmentList: [String](),
-                                                                                          userKeyHash: "")
+                                                                                          segmentList: [String]())
         let notification = IncomingNotification(type: .mySegmentsUpdate,
                                                 channel: nil,
                                                 jsonData: nil,

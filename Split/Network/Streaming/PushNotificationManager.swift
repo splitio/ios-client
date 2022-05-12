@@ -16,7 +16,6 @@ protocol PushNotificationManager {
     func resume()
     func stop()
     func disconnect()
-    func reset()
 }
 
 class DefaultPushNotificationManager: PushNotificationManager {
@@ -27,17 +26,14 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private let kTokenExpiredErrorCode = 40142
 
     private let sseAuthenticator: SseAuthenticator
-    private var sseClient: SseClient?
-    private var sseClientFactory: SseClientFactory
+    private var sseClient: SseClient
     private var timersManager: TimersManager
     private let broadcasterChannel: PushManagerEventBroadcaster
-    private let userKeyRegistry: ByKeyRegistry
+    private let userKey: String
     private let sseConnectionTimer: DispatchSourceTimer? = nil
 
-    private var lastConnId: Int64 = 0
-
     private let connectionQueue = DispatchQueue(label: "Sse connnection",
-                                                attributes: .concurrent)
+                                                target: DispatchQueue.global())
 
     private var isStopped: Atomic<Bool> = Atomic(false)
     private var isPaused: Atomic<Bool> = Atomic(false)
@@ -49,18 +45,15 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     private let telemetryProducer: TelemetryRuntimeProducer?
 
-    init(userKeyRegistry: ByKeyRegistry,
-         sseAuthenticator: SseAuthenticator,
-         sseClientFactory: SseClientFactory,
-         broadcasterChannel: PushManagerEventBroadcaster,
-         timersManager: TimersManager,
-         telemetryProducer: TelemetryRuntimeProducer?) {
-        self.userKeyRegistry = userKeyRegistry
+    init(userKey: String, sseAuthenticator: SseAuthenticator,
+         sseClient: SseClient, broadcasterChannel: PushManagerEventBroadcaster,
+         timersManager: TimersManager, telemetryProducer: TelemetryRuntimeProducer?) {
+        self.userKey = userKey
         self.sseAuthenticator = sseAuthenticator
+        self.sseClient = sseClient
         self.broadcasterChannel = broadcasterChannel
         self.telemetryProducer = telemetryProducer
         self.timersManager = timersManager
-        self.sseClientFactory = sseClientFactory
         self.timersManager.triggerHandler = timerHandler()
     }
 
@@ -69,16 +62,12 @@ class DefaultPushNotificationManager: PushNotificationManager {
         connect()
     }
 
-    func reset() {
-        Logger.d("Push notification manager reset")
-        disconnect()
-        connect()
-    }
-
     func pause() {
         Logger.d("Push notification manager paused")
         isPaused.set(true)
-        disconnect()
+        delayTimer?.cancel()
+        isConnecting.set(false)
+        sseClient.disconnect()
     }
 
     func resume() {
@@ -90,39 +79,31 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func stop() {
         Logger.d("Push notification manager stopped")
         isStopped.set(true)
+        delayTimer?.cancel()
         disconnect()
     }
 
     func disconnect() {
-        Logger.d("Notification Manager - Disconnecting SSE client")
+        Logger.d("Disconnecting SSE client")
         timersManager.cancel(timer: .refreshAuthToken)
-        delayTimer?.cancel()
-        if let disconnectingClient = sseClient {
-            DispatchQueue.global().async {
-                disconnectingClient.disconnect()
-            }
-        }
-        connectionQueue.async(flags: .barrier) {
-            self.sseClient = nil
-        }
-        isConnecting.set(false)
+        sseClient.disconnect()
     }
 
     private func connect() {
         if isStopped.value || isPaused.value ||
-            isConnecting.value || sseClient?.isConnectionOpened ?? false {
+            isConnecting.value || sseClient.isConnectionOpened {
             return
         }
 
-        connectionQueue.async(flags: .barrier) {
+        connectionQueue.async {
             self.isConnecting.set(true)
             self.authenticateAndConnect()
         }
     }
 
     private func authenticateAndConnect() {
-        lastConnId = Date().unixTimestampInMicroseconds()
-        let result = sseAuthenticator.authenticate(userKeys: userKeyRegistry.matchingKeys.map { $0 })
+
+        let result = sseAuthenticator.authenticate(userKey: userKey)
         telemetryProducer?.recordLastSync(resource: .token, time: Date().unixTimestampInMiliseconds())
         if result.success && !result.pushEnabled {
             Logger.d("Streaming disabled for api key")
@@ -166,14 +147,10 @@ class DefaultPushNotificationManager: PushNotificationManager {
         Logger.d("Streaming authentication success")
 
         let connectionDelay = result.sseConnectionDelay
-        let lastId = lastConnId
         if connectionDelay > 0 {
             self.delayTimer = DispatchWorkItem { [weak self] in
                 guard let self = self else { return }
-                if lastId != self.lastConnId { return }
-                self.connectionQueue.async(flags: .barrier) {
-                    self.connectSse(jwt: jwt)
-                }
+                self.connectSse(jwt: jwt)
             }
             if let delayTimer = self.delayTimer {
                 connectionQueue.asyncAfter(deadline: DispatchTime.now() + Double(connectionDelay), execute: delayTimer)
@@ -183,17 +160,15 @@ class DefaultPushNotificationManager: PushNotificationManager {
         }
     }
 
-    // This method must run in connectionQueue!!
     private func connectSse(jwt: JwtToken) {
         Logger.d("Streaming connect")
-        self.sseClient = sseClientFactory.create()
 
         if isPaused.value || isStopped.value {
             isConnecting.set(false)
             return
         }
 
-        sseClient?.connect(token: jwt.rawToken, channels: jwt.channels) { success in
+        sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { success in
             if success {
                 self.handleSubsystemUp()
             }
@@ -224,8 +199,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
             switch timerName {
             case .refreshAuthToken:
-                self.sseClient?.disconnect()
-                self.sseClient = nil
+                self.sseClient.disconnect()
                 self.telemetryProducer?.recordStreamingEvent(type: .connectionError,
                                                         data: TelemetryStreamingEventValue.sseConnErrorRequested)
                 self.connect()

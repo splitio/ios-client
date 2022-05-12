@@ -32,10 +32,9 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         eventsManager.isSplitsReadyFired = true
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
-        let byKeyMySegmentsStorage = ByKeyMySegmentsStorageStub()
         mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(userKey: userKey,
                                                             mySegmentsFetcher: mySegmentsFetcher,
-                                                            mySegmentsStorage: byKeyMySegmentsStorage,
+                                                            mySegmentsStorage: mySegmentsStorage,
                                                             telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
                                                             eventsManager: eventsManager)
@@ -53,10 +52,9 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         eventsManager.isSplitsReadyFired = false
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
-        let byKeyMySegmentsStorage = ByKeyMySegmentsStorageStub()
         mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(userKey: userKey,
                                                             mySegmentsFetcher: mySegmentsFetcher,
-                                                            mySegmentsStorage: byKeyMySegmentsStorage,
+                                                            mySegmentsStorage: mySegmentsStorage,
                                                             telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
                                                             eventsManager: eventsManager)

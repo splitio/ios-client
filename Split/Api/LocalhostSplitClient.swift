@@ -41,10 +41,10 @@ import Foundation
 /// [Split iOS SDK](https://docs.split.io/docs/ios-sdk-overview#section-localhost)
 ///
 
-public final class LocalhostSplitClient: NSObject, SplitClient {
+public final class LocalhostSplitClient: NSObject, SplitClient, InternalSplitClient {
 
-    var splitsStorage: SplitsStorage
-    var mySegmentsStorage: MySegmentsStorage
+    var splitsStorage: SplitsStorage?
+    var mySegmentsStorage: MySegmentsStorage?
 
     private let eventsManager: SplitEventsManager?
     private var evaluator: Evaluator!
@@ -56,8 +56,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = EmptyMySegmentsStorage()
         super.init()
-        self.evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
-                                          mySegmentsStorage: mySegmentsStorage)
+        self.evaluator = DefaultEvaluator(splitClient: self)
     }
 
     public func getTreatment(_ split: String, attributes: [String: Any]?) -> String {
@@ -143,8 +142,8 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
 
     public func destroy() {
-        splitsStorage.destroy()
-        mySegmentsStorage.destroy()
+        splitsStorage?.destroy()
+        mySegmentsStorage?.destroy()
     }
 
     public func destroy(completion: (() -> Void)?) {

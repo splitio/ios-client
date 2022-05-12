@@ -214,7 +214,7 @@ class DefaultTreatmentManager: TreatmentManager {
     }
 
     private func mergeAttributes(attributes: [String: Any]?) -> [String: Any]? {
-        let storedAttributes = attributesStorage.getAll(forKey: key.matchingKey)
+        let storedAttributes = attributesStorage.getAll()
 
         if storedAttributes.count == 0 {
             return attributes

@@ -53,13 +53,6 @@ class DefaultPeriodicTimer: PeriodicTimer {
     func handler( _ handler: @escaping () -> Void) {
         fetchTimer.setEventHandler(handler: handler)
     }
-
-    deinit {
-        // This line is necessary to avoid timer crashing
-        // because is not possible to release a suspended timer
-        fetchTimer.resume()
-    }
-
 }
 
 protocol PeriodicSyncWorker {
@@ -184,14 +177,14 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
 
     private let mySegmentsFetcher: HttpMySegmentsFetcher
-    private let mySegmentsStorage: ByKeyMySegmentsStorage
+    private let mySegmentsStorage: MySegmentsStorage
     private let userKey: String
     private let telemetryProducer: TelemetryRuntimeProducer?
     var changeChecker: MySegmentsChangesChecker
 
     init(userKey: String,
          mySegmentsFetcher: HttpMySegmentsFetcher,
-         mySegmentsStorage: ByKeyMySegmentsStorage,
+         mySegmentsStorage: MySegmentsStorage,
          telemetryProducer: TelemetryRuntimeProducer?,
          timer: PeriodicTimer,
          eventsManager: SplitEventsManager) {
@@ -217,6 +210,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                     mySegmentsStorage.set(segments)
                     notifyMySegmentsUpdated()
                 }
+                Logger.d(segments.debugDescription)
             }
         } catch let error {
             Logger.e("Problem fetching segments: %@", error.localizedDescription)

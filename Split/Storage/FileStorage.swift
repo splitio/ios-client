@@ -49,6 +49,7 @@ class FileStorage: FileStorageProtocol {
                 let fileURL = dataFolderUrl.appendingPathComponent(elementId)
                 try FileManager.default.removeItem(at: fileURL)
             } catch {
+                Logger.i("File \(elementId) already deleted")
             }
         }
     }

@@ -59,7 +59,7 @@ class Logger {
         return instance
     }()
 
-    // Guarantee singleton instance
+    //Guarantee singleton instance
     private init() {
         queue = DispatchQueue(label: queueName, attributes: .concurrent)
     }

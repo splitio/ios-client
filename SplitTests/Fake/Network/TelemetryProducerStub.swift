@@ -94,9 +94,8 @@ class TelemetryStorageStub: TelemetryStorage {
         streamingEvents[type] = (streamingEvents[type] ?? 0) + 1
     }
 
-    var recordSessionLengthCalled = false
     func recordSessionLength(sessionLength: Int64) {
-        recordSessionLengthCalled = true
+        // ?
     }
 
     func popMethodExceptions() -> TelemetryMethodExceptions {

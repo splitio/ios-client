@@ -1,16 +1,16 @@
 //
-//  ByKeyMySegmentsStorageStub.swift
+//  MySegmentsStorageStub.swift
 //  SplitTests
 //
-//  Created by Javier Avrudsky on 11-Mar-2022.
-//  Copyright © 2022 Split. All rights reserved.
+//  Created by Javier Avrudsky on 11/01/2021.
+//  Copyright © 2021 Split. All rights reserved.
 //
 
 import Foundation
 import XCTest
 @testable import Split
 
-class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage {
+class MySegmentsStorageStub: MySegmentsStorage {
 
     var segments: Set = ["s1", "s2", "s3"]
     var updatedSegments: [String]?

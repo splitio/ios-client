@@ -13,33 +13,22 @@ import Foundation
  */
 public class DefaultSplitFactory: NSObject, SplitFactory {
 
-    private static let kInitErrorMessage = "Something happened on Split init and the client couldn't be created"
-
-    private var clientManager: SplitClientManager?
-
     // Not using default implementation in protocol
     // extension due to Objc interoperability
     @objc public static var sdkVersion: String {
         return Version.semantic
     }
 
+    private var defaultClient: SplitClient?
     private var defaultManager: SplitManager?
     private let filterBuilder = FilterBuilder()
 
     public var client: SplitClient {
-        if let client = clientManager?.defaultClient {
-            return client
-        }
-        Logger.e(Self.kInitErrorMessage)
-        return FailedClient()
+        return defaultClient!
     }
 
     public var manager: SplitManager {
-        if let manager = defaultManager {
-        return manager
-        }
-        Logger.e(Self.kInitErrorMessage)
-        return FailedManager()
+        return defaultManager!
     }
 
     public var version: String {
@@ -54,7 +43,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                userKey: params.key.matchingKey)
 
         // Creating Events Manager first speeds up init process
-        let eventsManager = components.getSplitEventsManagerCoordinator()
+        let eventsManager = components.getSplitEventsManager()
 
         //
         let databaseName = SplitDatabaseHelper.databaseName(apiKey: params.apiKey) ?? params.config.defaultDataFolder
@@ -75,39 +64,39 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let synchronizer = try components.buildSynchronizer()
         let syncManager = try components.buildSyncManager(notificationHelper: params.notificationHelper)
-        let byKeyFacade = components.getByKeyFacade()
-        let mySegmentsSyncWorkerFactory = try components.buildMySegmentsSyncWorkerFactory()
 
         setupBgSync(config: params.config, apiKey: params.apiKey, userKey: params.key.matchingKey)
 
-        clientManager = DefaultClientManager(config: params.config,
-                                             key: params.key,
-                                             splitManager: manager,
-                                             apiFacade: splitApiFacade,
-                                             byKeyFacade: byKeyFacade,
-                                             storageContainer: storageContainer,
-                                             syncManager: syncManager,
-                                             synchronizer: synchronizer,
-                                             eventsManagerCoordinator: eventsManager,
-                                             mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
-                                             telemetryStopwatch: params.initStopwatch)
-
-    }
-
-    public func client(key: Key) -> SplitClient {
-        if let client = clientManager?.get(forKey: key) {
-            return client
+        defaultClient = DefaultSplitClient(config: params.config, key: params.key, apiFacade: splitApiFacade,
+                                           storageContainer: storageContainer,
+                                           synchronizer: synchronizer, eventsManager: eventsManager) { [weak self] in
+            syncManager.stop()
+            if let self = self, let manager = self.defaultManager as? Destroyable {
+                manager.destroy()
+            }
+            eventsManager.stop()
+            storageContainer.mySegmentsStorage.destroy()
+            storageContainer.splitsStorage.destroy()
         }
-        Logger.e(Self.kInitErrorMessage)
-        return FailedClient()
-    }
 
-    public func client(matchingKey: String) -> SplitClient {
-        return client(key: Key(matchingKey: matchingKey))
-    }
+        (defaultClient as? TelemetrySplitClient)?.initStopwatch = params.initStopwatch
+        eventsManager.start()
 
-    public func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
-        return client(key: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
+        defaultClient?.on(event: .sdkReadyFromCache) {
+            DispatchQueue.global().async {
+                params.telemetryStorage?.recordTimeUntilReadyFromCache(params.initStopwatch.interval())
+            }
+        }
+
+        defaultClient?.on(event: .sdkReady) {
+            DispatchQueue.global().async {
+                params.telemetryStorage?.recordTimeUntilReady(params.initStopwatch.interval())
+                synchronizer.synchronizeTelemetryConfig()
+            }
+        }
+
+        eventsManager.executorResources.client = defaultClient
+        syncManager.start()
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {

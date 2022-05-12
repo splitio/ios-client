@@ -16,14 +16,13 @@ class MySegmentsBgSyncWorkerTest: XCTestCase {
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
     var mySegmentsStorage: PersistentMySegmentsStorageStub!
     var mySegmentsSyncWorker: BackgroundSyncWorker!
-    let userKey = "CUSTOMER_ID"
 
     override func setUp() {
         mySegmentsFetcher = HttpMySegmentsFetcherStub()
         mySegmentsStorage = PersistentMySegmentsStorageStub()
 
         mySegmentsSyncWorker = BackgroundMySegmentsSyncWorker(
-            userKey: userKey,
+            userKey: "CUSTOMER_ID",
             mySegmentsFetcher: mySegmentsFetcher,
             mySegmentsStorage: mySegmentsStorage)
     }
@@ -33,7 +32,7 @@ class MySegmentsBgSyncWorkerTest: XCTestCase {
         mySegmentsFetcher.allSegments = [["s1", "s2"]]
         mySegmentsSyncWorker.execute()
 
-        XCTAssertNotNil(mySegmentsStorage.persistedSegments[userKey])
+        XCTAssertNotNil(mySegmentsStorage.segments)
     }
 
 
@@ -43,7 +42,7 @@ class MySegmentsBgSyncWorkerTest: XCTestCase {
         mySegmentsFetcher.allSegments = [["s1", "s2"]]
         mySegmentsSyncWorker.execute()
 
-        XCTAssertNil(mySegmentsStorage.persistedSegments[userKey])
+        XCTAssertEqual(0, mySegmentsStorage.segments.count)
     }
 
     override func tearDown() {

@@ -11,19 +11,21 @@ class InSegmentMatcher: BaseMatcher, MatcherProtocol {
 
     var data: UserDefinedSegmentMatcherData?
 
-    init(data: UserDefinedSegmentMatcherData?,
+    init(data: UserDefinedSegmentMatcherData?, splitClient: InternalSplitClient? = nil,
          negate: Bool? = nil, attribute: String? = nil, type: MatcherType? = nil) {
 
-        super.init(negate: negate, attribute: attribute, type: type)
+        super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.data = data
     }
 
-    func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
+    func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
 
         // Match value is not used because it is matching key. My segments cache only has segments for that key cause
         // Split client is instantiated  based on it
-        if values.matchValue as? String != nil, let dataElements = data, let segmentName = dataElements.segmentName {
-            return context?.mySegmentsStorage?.getAll(forKey: values.matchingKey).contains(segmentName) ?? false
+        if matchValue as? String != nil, let dataElements = data, let segmentName = dataElements.segmentName {
+            if let mySegmentsStorage = self.splitClient?.mySegmentsStorage {
+                return mySegmentsStorage.getAll().contains(segmentName)
+            }
         }
         return false
     }

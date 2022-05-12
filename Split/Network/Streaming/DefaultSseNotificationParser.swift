@@ -16,7 +16,7 @@ protocol SseNotificationParser {
 
     func parseSplitKill(jsonString: String) throws -> SplitKillNotification
 
-    func parseMySegmentUpdate(jsonString: String, channel: String) throws -> MySegmentsUpdateNotification
+    func parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification
 
     func parseMySegmentUpdateV2(jsonString: String) throws -> MySegmentsUpdateV2Notification
 
@@ -27,8 +27,6 @@ protocol SseNotificationParser {
     func parseSseError(jsonString: String) throws -> StreamingError
 
     func isError(event: [String: String]) -> Bool
-
-    func extractUserKeyHashFromChannel(channel: String) -> String?
 
 }
 
@@ -63,10 +61,8 @@ class DefaultSseNotificationParser: SseNotificationParser {
         return try Json.encodeFrom(json: jsonString, to: SplitKillNotification.self)
     }
 
-    func parseMySegmentUpdate(jsonString: String, channel: String) throws -> MySegmentsUpdateNotification {
-        let jsonNotification = try Json.encodeFrom(json: jsonString, to: MySegmentsUpdateNotificationJson.self)
-        return MySegmentsUpdateNotification(json: jsonNotification,
-                                            userKeyHash: extractUserKeyHashFromChannel(channel: channel) ?? "unknown")
+    func parseMySegmentUpdate(jsonString: String) throws -> MySegmentsUpdateNotification {
+        return try Json.encodeFrom(json: jsonString, to: MySegmentsUpdateNotification.self)
     }
 
     func parseMySegmentUpdateV2(jsonString: String) throws -> MySegmentsUpdateV2Notification {
@@ -98,13 +94,5 @@ class DefaultSseNotificationParser: SseNotificationParser {
             .lowercased()
             .trimmingCharacters(in: .whitespacesAndNewlines)
             == Self.kErrorNotificationName
-    }
-
-    func extractUserKeyHashFromChannel(channel: String) -> String? {
-        let segmentsInChannel = channel.split(separator: "_")
-        if segmentsInChannel.count > 2 {
-            return String(segmentsInChannel[2])
-        }
-        return nil
     }
 }

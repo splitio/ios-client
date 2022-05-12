@@ -31,7 +31,7 @@ class StreamingOccupancyTest: XCTestCase {
 
     override func setUp() {
 
-        testFactory = TestSplitFactory(userKey: "user_key")
+        testFactory = TestSplitFactory()
         testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
     }
 

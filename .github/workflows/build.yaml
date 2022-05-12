@@ -8,7 +8,7 @@ on:
     branches:
       - master
       - development
-      - SKDS-5524_multi_client_baseline
+      - storage_revamp_baseline
 
 jobs:
   build:

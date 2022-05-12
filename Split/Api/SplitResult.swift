@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc open class SplitResult: NSObject {
+@objc public class SplitResult: NSObject {
     @objc public var treatment: String
     @objc public var config: String?
 

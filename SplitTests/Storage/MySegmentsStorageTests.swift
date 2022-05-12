@@ -13,43 +13,37 @@ import XCTest
 
 class MySegmentsStorageTests: XCTestCase {
 
-    var persistentStorage: PersistentMySegmentsStorageStub!
     var mySegmentsStorage: MySegmentsStorage!
-    var userKey = "dummyKey"
-    var dummySegments = ["s1", "s2", "s3"]
-
+    var persistentStorage: PersistentMySegmentsStorageStub!
+    
     override func setUp() {
         persistentStorage = PersistentMySegmentsStorageStub()
         mySegmentsStorage = DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentStorage)
     }
 
     func testNoLoaded() {
-        let segments = mySegmentsStorage.getAll(forKey: userKey)
+        let segments = mySegmentsStorage.getAll()
 
         XCTAssertEqual(0, segments.count)
     }
 
     func testGetMySegmentsAfterLoad() {
-        persistentStorage.persistedSegments = [userKey : dummySegments]
-        mySegmentsStorage.loadLocal(forKey: userKey)
-        let segments = mySegmentsStorage.getAll(forKey: userKey)
-        let segments1 = mySegmentsStorage.getAll(forKey: "otherKey")
+        persistentStorage.segments = ["s1", "s2", "s3"]
+        mySegmentsStorage.loadLocal()
+        let segments = mySegmentsStorage.getAll()
 
         XCTAssertEqual(3, segments.count)
         XCTAssertTrue(segments.contains("s1"))
         XCTAssertTrue(segments.contains("s3"))
-
-        XCTAssertEqual(0, segments1.count)
     }
 
     func testUpdateSegments() {
-        persistentStorage.persistedSegments = [userKey : dummySegments]
-        mySegmentsStorage.loadLocal(forKey: userKey)
-        let segments = mySegmentsStorage.getAll(forKey: userKey)
-        mySegmentsStorage.set(["n1", "n2"], forKey: userKey)
-        let newSegments = mySegmentsStorage.getAll(forKey: userKey)
-        let persistedSegments = persistentStorage.getSnapshot(forKey: userKey)
-        let otherSegments = mySegmentsStorage.getAll(forKey: "otherKey")
+        persistentStorage.segments = ["s1", "s2", "s3"]
+        mySegmentsStorage.loadLocal()
+        let segments = mySegmentsStorage.getAll()
+        mySegmentsStorage.set(["n1", "n2"])
+        let newSegments = mySegmentsStorage.getAll()
+        let persistedSegments = persistentStorage.getSnapshot()
 
         XCTAssertEqual(3, segments.count)
         XCTAssertTrue(segments.contains("s1"))
@@ -62,17 +56,15 @@ class MySegmentsStorageTests: XCTestCase {
         XCTAssertEqual(2, newSegments.count)
         XCTAssertTrue(newSegments.contains("n1"))
         XCTAssertTrue(newSegments.contains("n2"))
-
-        XCTAssertEqual(0, otherSegments.count)
     }
 
     func testUpdateEmptySegments() {
-        persistentStorage.persistedSegments = [userKey : dummySegments]
-        mySegmentsStorage.loadLocal(forKey: userKey)
-        let segments = mySegmentsStorage.getAll(forKey: userKey)
-        mySegmentsStorage.set([String](), forKey: userKey)
-        let newSegments = mySegmentsStorage.getAll(forKey: userKey)
-        let persistedSegments = persistentStorage.getSnapshot(forKey: userKey)
+        persistentStorage.segments = ["s1", "s2", "s3"]
+        mySegmentsStorage.loadLocal()
+        let segments = mySegmentsStorage.getAll()
+        mySegmentsStorage.set([String]())
+        let newSegments = mySegmentsStorage.getAll()
+        let persistedSegments = persistentStorage.getSnapshot()
 
         XCTAssertEqual(3, segments.count)
         XCTAssertTrue(segments.contains("s1"))
@@ -83,16 +75,12 @@ class MySegmentsStorageTests: XCTestCase {
     }
 
     func testClear() {
-        let otherKey = "otherKey"
-        persistentStorage.persistedSegments = [userKey : dummySegments, otherKey: ["s1"]]
-        mySegmentsStorage.loadLocal(forKey: userKey)
-        mySegmentsStorage.loadLocal(forKey: otherKey)
-        let segments = mySegmentsStorage.getAll(forKey: userKey)
-        mySegmentsStorage.clear(forKey: userKey)
-        let newSegments = mySegmentsStorage.getAll(forKey: userKey)
-        let otherSegments = mySegmentsStorage.getAll(forKey: otherKey)
-        let persistedSegments = persistentStorage.getSnapshot(forKey: userKey)
-        let otherPersistedSegments = persistentStorage.getSnapshot(forKey: otherKey)
+        persistentStorage.segments = ["s1", "s2", "s3"]
+        mySegmentsStorage.loadLocal()
+        let segments = mySegmentsStorage.getAll()
+        mySegmentsStorage.clear()
+        let newSegments = mySegmentsStorage.getAll()
+        let persistedSegments = persistentStorage.getSnapshot()
 
         XCTAssertEqual(3, segments.count)
         XCTAssertTrue(segments.contains("s1"))
@@ -100,12 +88,9 @@ class MySegmentsStorageTests: XCTestCase {
 
         XCTAssertEqual(0, newSegments.count)
         XCTAssertEqual(0, persistedSegments.count)
-
-        XCTAssertEqual(1, otherSegments.count)
-        XCTAssertTrue(otherSegments.contains("s1"))
-
-        XCTAssertEqual(1, otherPersistedSegments.count)
-        XCTAssertTrue(otherPersistedSegments.contains("s1"))
     }
 
+    override func tearDown() {
+
+    }
 }

@@ -32,13 +32,13 @@ struct Json {
 
     func decode<T>(_ type: T.Type) throws -> T? where T: Decodable {
 
-        guard let data = data else {
+        if self.isNull() {
             return nil
         }
 
         let decoder = JSONDecoder()
         do {
-            let result = try decoder.decode(T.self, from: data)
+            let result = try decoder.decode(T.self, from: data!)
             return result
         } catch {
             throw error

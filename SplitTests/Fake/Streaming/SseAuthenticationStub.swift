@@ -10,12 +10,12 @@ import Foundation
 @testable import Split
 
 class SseAuthenticatorStub: SseAuthenticator {
-    var userKeys = [String]()
+    var userKey: String?
     var results: [SseAuthenticationResult]?
     private var resultIndex = 0
 
-    func authenticate(userKeys: [String]) -> SseAuthenticationResult {
-        self.userKeys.append(contentsOf: userKeys)
+    func authenticate(userKey: String) -> SseAuthenticationResult {
+        self.userKey = userKey
         let result = results![resultIndex]
         if resultIndex < results!.count - 1 {
             resultIndex+=1

@@ -92,7 +92,6 @@ class SplitChangesServerErrorTest: XCTestCase {
         splitConfig.impressionRefreshRate = kNeverRefreshRate
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
-        splitConfig.streamingEnabled = false
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
         .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         
@@ -110,7 +109,7 @@ class SplitChangesServerErrorTest: XCTestCase {
             sdkReady.fulfill()
         }
         
-        wait(for: [sdkReady], timeout: 10)
+        wait(for: [sdkReady], timeout: 20)
 
         for i in 0..<4 {
             wait(for: [spExp[i]], timeout: 40)
@@ -135,6 +134,8 @@ class SplitChangesServerErrorTest: XCTestCase {
     private func  responseSlitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
 
+
+        
         for i in 0..<2 {
             let c = loadSplitsChangeFile()!
             var prevChangeNumber = c.since

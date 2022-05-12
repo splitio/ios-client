@@ -174,8 +174,7 @@ class TelemetryTest: XCTestCase {
     }
 
     func testNonReadyEvaluation() {
-        let userKey = Key(matchingKey: "CUSTOMER_ID")
-        let treatmentManager = createTreatmentManager(userKey: userKey)
+        let treatmentManager = createTreatmentManager()
 
         let before = telemetryStorage.getNonReadyUsages()
         let _ = treatmentManager.getTreatment("SPLIT", attributes: nil)
@@ -196,7 +195,7 @@ class TelemetryTest: XCTestCase {
         return values.reduce(0)  { return $0 + $1 }
     }
 
-    func createTreatmentManager(userKey: Key) -> TreatmentManager {
+    func createTreatmentManager() -> TreatmentManager {
         let splitHelper = SplitHelper()
         let splitsStorage = SplitsStorageStub()
         let split = splitHelper.createDefaultSplit(named: "SPLIT")
@@ -204,7 +203,8 @@ class TelemetryTest: XCTestCase {
                                                                changeNumber: -1, updateTimestamp: 100))
         let mySegmentsStorage = MySegmentsStorageStub()
 
-        _ = InternalSplitClientStub(splitsStorage: splitsStorage,
+        let key = Key(matchingKey: "CUSTOMER_ID")
+        let client = InternalSplitClientStub(splitsStorage: splitsStorage,
                                              mySegmentsStorage: mySegmentsStorage)
         let eventsManager = SplitEventsManagerMock()
         eventsManager.isSegmentsReadyFired = false
@@ -212,9 +212,8 @@ class TelemetryTest: XCTestCase {
         eventsManager.isSegmentsReadyFromCacheFired = false
         eventsManager.isSplitsReadyFromCacheFired = true
 
-        return DefaultTreatmentManager(evaluator: DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage),
-                                       key: userKey,
-                                       splitConfig: SplitClientConfig(),
+        return DefaultTreatmentManager(evaluator: DefaultEvaluator(splitClient: client),
+                                       key: key, splitConfig: SplitClientConfig(),
                                        eventsManager: eventsManager,
                                        impressionLogger: ImpressionsLoggerStub(),
                                        telemetryProducer: telemetryStorage,

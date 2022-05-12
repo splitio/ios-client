@@ -21,15 +21,15 @@ struct SseAuthenticationResponse: Decodable {
 }
 
 protocol RestClientSseAuthenticator: RestClient {
-    func authenticate(userKeys: [String], completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void)
+    func authenticate(userKey: String, completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void)
 }
 
 extension DefaultRestClient: RestClientSseAuthenticator {
     var kUserKeyParameter: String { "users" }
-    func authenticate(userKeys: [String], completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void) {
+    func authenticate(userKey: String, completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void) {
         self.execute(
             endpoint: endpointFactory.sseAuthenticationEndpoint,
-            parameters: [kUserKeyParameter: userKeys],
+            parameters: [kUserKeyParameter: userKey],
             completion: completion)
     }
 }

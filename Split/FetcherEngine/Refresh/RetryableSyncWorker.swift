@@ -99,13 +99,13 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
 
     private let mySegmentsFetcher: HttpMySegmentsFetcher
     private let userKey: String
-    private let mySegmentsStorage: ByKeyMySegmentsStorage
+    private let mySegmentsStorage: MySegmentsStorage
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let avoidCache: Bool
     var changeChecker: MySegmentsChangesChecker
 
     init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
-         mySegmentsStorage: ByKeyMySegmentsStorage,
+         mySegmentsStorage: MySegmentsStorage,
          telemetryProducer: TelemetryRuntimeProducer?,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter,
@@ -126,6 +126,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
         do {
             let oldSegments = mySegmentsStorage.getAll()
             if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: getHeaders()) {
+                Logger.d(segments.debugDescription)
                 if !isSdkReadyTriggered() ||
                     changeChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segments) {
                     mySegmentsStorage.set(segments)

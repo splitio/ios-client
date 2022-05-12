@@ -14,6 +14,23 @@ class Condition: NSObject, Codable {
     var matcherGroup: MatcherGroup?
     var partitions: [Partition]?
     var label: String?
+    private let clientQueue = DispatchQueue(label: "split-condition", target: DispatchQueue.global())
+    private weak var wrappedClient: InternalSplitClient?
+    var client: InternalSplitClient? {
+        get {
+            var localClient: InternalSplitClient?
+            clientQueue.sync {
+                localClient = wrappedClient
+            }
+            return localClient
+        }
+
+        set {
+            clientQueue.sync {
+                wrappedClient = newValue
+            }
+        }
+    }
 
     enum CodingKeys: String, CodingKey {
         case conditionType
@@ -35,11 +52,12 @@ class Condition: NSObject, Codable {
         }
     }
 
-    func match(values: EvalValues, context: EvalContext) throws -> Bool {
+    func match(matchValue: Any?, bucketingKey: String?, attributes: [String: Any]?) throws -> Bool {
 
         if let matcherG = self.matcherGroup, let matchers = matcherG.matchers {
             var results: [Bool] = []
             for matcher in matchers {
+                matcher.client = self.client
                 let matcherEvaluator = try matcher.getMatcher()
                 var result: Bool = false
 
@@ -47,29 +65,27 @@ class Condition: NSObject, Codable {
                     // scenario 1: no attr in matcher
                     // e.g. if user is in segment all then split 100:on
                     if !matcherEvaluator.matcherHasAttribute() {
-                        let newValues = EvalValues(matchValue: values.matchValue,
-                                                   matchingKey: values.matchingKey,
-                                                   bucketingKey: nil,
-                                                   attributes: nil)
-                        result = matcherEvaluator.evaluate(values: newValues, context: context)
+                        result = matcherEvaluator.evaluate(matchValue: matchValue, bucketingKey: nil, attributes: nil)
                     } else {
                         // scenario 2: attribute provided but no attribute value provided. Matcher does not match
                         // e.g. if user.age is >= 10 then split 100:on
-                        // Next line: Should not  be null, but just in case to avoid a crash
-                        let att = matcherEvaluator.getAttribute() ?? "null"
-                        if values.attributes == nil || values.attributes![att] == nil {
+                        let att = matcherEvaluator.getAttribute()!
+                        if attributes == nil || attributes![att] == nil {
                             result = false
+
                         } else {
                             // instead of using the user id, we use the attribute value for evaluation
-                            let newValues = EvalValues(matchValue: values.attributes?[att] ?? "null",
-                                                       matchingKey: values.matchingKey,
-                                                       bucketingKey: nil,
-                                                       attributes: nil)
-                            result = matcherEvaluator.evaluate(values: newValues, context: context)
+                            result = matcherEvaluator.evaluate(matchValue: attributes![att],
+                                                               bucketingKey: nil,
+                                                               attributes: nil)
                         }
                     }
-                } else if matcherEvaluator.getMatcherType() == MatcherType.dependency {
-                        result = matcherEvaluator.evaluate(values: values, context: context)
+                } else {
+                    if matcherEvaluator.getMatcherType() == MatcherType.dependency {
+                        result = matcherEvaluator.evaluate(matchValue: matchValue,
+                                                           bucketingKey: bucketingKey,
+                                                           attributes: attributes)
+                    }
                 }
 
                 let lastEvaluation = matcherEvaluator.isNegate() ? !result : result
