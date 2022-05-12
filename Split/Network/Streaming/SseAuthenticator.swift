@@ -51,7 +51,7 @@ struct SseAuthenticationResult {
 /// to get streaming status for API key
 ///
 protocol SseAuthenticator {
-    func authenticate(userKeys: [String]) -> SseAuthenticationResult
+    func authenticate(userKey: String) -> SseAuthenticationResult
 }
 
 class DefaultSseAuthenticator: SseAuthenticator {
@@ -66,7 +66,7 @@ class DefaultSseAuthenticator: SseAuthenticator {
         self.syncHelper = syncHelper
     }
 
-    func authenticate(userKeys: [String]) -> SseAuthenticationResult {
+    func authenticate(userKey: String) -> SseAuthenticationResult {
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SseAuthenticationResponse>?
 
@@ -74,7 +74,7 @@ class DefaultSseAuthenticator: SseAuthenticator {
             return errorResult(recoverable: true)
         }
 
-        restClient.authenticate(userKeys: userKeys) { result in
+        restClient.authenticate(userKey: userKey) { result in
             requestResult = result
             semaphore.signal()
         }

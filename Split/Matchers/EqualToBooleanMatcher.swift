@@ -14,13 +14,13 @@ class EqualToBooleanMatcher: BaseMatcher, MatcherProtocol {
     init(data: Bool?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil,
          attribute: String? = nil, type: MatcherType? = nil) {
 
-        super.init(negate: negate, attribute: attribute, type: type)
+        super.init(splitClient: splitClient, negate: negate, attribute: attribute, type: type)
         self.data = data
     }
 
-    func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
+    func evaluate(matchValue: Any?, bucketingKey: String?, attributes: [String: Any]?) -> Bool {
 
-        guard let matchValueBool = values.matchValue, let booleanData = data else {
+        guard let matchValueBool = matchValue, let booleanData = data else {
             return false
         }
 

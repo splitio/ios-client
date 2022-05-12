@@ -2,8 +2,8 @@
 //  TreatmentManager.swift
 //  Split
 //
-//  Created by Javier L. Avrudsky on 22-Mar-2022.
-//  Copyright © 2022 Split. All rights reserved.
+//  Created by Javier L. Avrudsky on 05/07/2019.
+//  Copyright © 2019 Split. All rights reserved.
 //
 
 import Foundation

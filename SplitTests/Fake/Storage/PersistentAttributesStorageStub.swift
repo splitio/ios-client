@@ -10,16 +10,18 @@ import Foundation
 @testable import Split
 
 class PersistentAttributesStorageStub: PersistentAttributesStorage {
-    var attributes = [String: [String: Any]]()
-    func set(_ attributes: [String : Any], forKey key: String) {
-        self.attributes[key] = attributes
+
+    var attributes: [String: Any]?
+
+    func set(_ attributes: [String : Any]) {
+        self.attributes = attributes
     }
 
-    func getAll(forKey key: String) -> [String : Any]? {
-        return attributes[key]
+    func getAll() -> [String : Any]? {
+        return attributes
     }
 
-    func clear(forKey key: String) {
-        attributes.removeValue(forKey: key)
+    func clear() {
+        attributes = nil
     }
 }

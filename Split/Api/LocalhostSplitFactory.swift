@@ -18,28 +18,21 @@ import Foundation
 ///
 public class LocalhostSplitFactory: NSObject, SplitFactory {
 
-    struct LocalhostComponentsGroup {
-        let client: SplitClient
-        let eventsManager: SplitEventsManager
-    }
-
-    private var clients = SyncDictionary<String, LocalhostComponentsGroup>()
-
     @objc public static var sdkVersion: String {
         return Version.semantic
     }
 
-    private var defaulClient: SplitClient?
-    private var localhostManager: SplitManager?
-    private let config: SplitClientConfig
-    private let bundle: Bundle
+    private let localhostClient: SplitClient
+    private let localhostManager: SplitManager
+    private let eventsManager: SplitEventsManager
+    private let splitsStorage: SplitsStorage
 
     public var client: SplitClient {
-        return defaulClient ?? FailedClient()
+        return localhostClient
     }
 
     public var manager: SplitManager {
-        return localhostManager ?? FailedManager()
+        return localhostManager
     }
 
     public var version: String {
@@ -48,66 +41,24 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
 
     init(key: Key, config: SplitClientConfig, bundle: Bundle) {
         Logger.d("Initializing localhost mode")
-        self.config = config
-        self.bundle = bundle
-        super.init()
-
-        let eventsManager = DefaultSplitEventsManager(config: config)
-        let splitsStorage = buildSplitStorage(eventsManager: eventsManager)
-        defaulClient = client(forKey: key,
-                              eventsManager: eventsManager,
-                              splitsStorage: splitsStorage)
-        localhostManager = DefaultSplitManager(splitsStorage: splitsStorage)
-    }
-
-    public func client(key: Key) -> SplitClient {
-        return client(forKey: key)
-    }
-
-    public func client(matchingKey: String) -> SplitClient {
-        return client(forKey: Key(matchingKey: matchingKey))
-    }
-
-    public func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
-        return client(forKey: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
-    }
-
-    private func client(forKey key: Key,
-                        eventsManager: SplitEventsManager? = nil,
-                        splitsStorage: SplitsStorage? = nil) -> SplitClient {
-
-        if let group = clients.value(forKey: key.matchingKey) {
-            return group.client
-        }
-
-        let newEventsManager = eventsManager ?? DefaultSplitEventsManager(config: config)
-        newEventsManager.start()
-
-        let newSplitStorage = splitsStorage ?? buildSplitStorage(eventsManager: newEventsManager)
-
-        let newClient = LocalhostSplitClient(key: key,
-                                             splitsStorage: newSplitStorage,
-                                             eventsManager: newEventsManager)
-
-        let newGroup = LocalhostComponentsGroup(client: newClient, eventsManager: newEventsManager)
-        newEventsManager.executorResources.client = newClient
-        clients.setValue(newGroup, forKey: key.matchingKey)
-
-        return newClient
-    }
-
-    private func buildSplitStorage(eventsManager: SplitEventsManager) -> SplitsStorage {
+        eventsManager = DefaultSplitEventsManager(config: config)
+        eventsManager.start()
         let dataFolderName = SplitDatabaseHelper.sanitizeForFolderName(config.localhostDataFolder)
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
 
         var storageConfig = YamlSplitStorageConfig()
         storageConfig.refreshInterval = config.offlineRefreshRate
 
-        return LocalhostSplitsStorage(fileStorage: fileStorage,
-                                      config: storageConfig,
-                                      eventsManager: eventsManager,
-                                      dataFolderName: dataFolderName,
-                                      splitsFileName: config.splitFile,
-                                      bundle: bundle)
+        splitsStorage = LocalhostSplitsStorage(fileStorage: fileStorage,
+                                          config: storageConfig,
+                                          eventsManager: eventsManager,
+                                          dataFolderName: dataFolderName,
+                                          splitsFileName: config.splitFile,
+                                          bundle: bundle)
+
+        localhostClient = LocalhostSplitClient(key: key, splitsStorage: splitsStorage,
+                                               eventsManager: eventsManager)
+        eventsManager.executorResources.client = localhostClient
+        localhostManager = DefaultSplitManager(splitsStorage: splitsStorage)
     }
 }

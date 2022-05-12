@@ -30,7 +30,7 @@ class StreamingDisabledTest: XCTestCase {
 
     override func setUp() {
 
-        testFactory = TestSplitFactory(userKey: IntegrationHelper.dummyUserKey)
+        testFactory = TestSplitFactory()
         testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
     }
 

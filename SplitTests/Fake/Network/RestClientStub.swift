@@ -93,7 +93,7 @@ extension RestClientStub: RestClientImpressionsCount {
 }
 
 extension RestClientStub: RestClientSseAuthenticator {
-    func authenticate(userKeys: [String], completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void) {
+    func authenticate(userKey: String, completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void) {
         completion(self.sseAuthResult!)
     }
 }

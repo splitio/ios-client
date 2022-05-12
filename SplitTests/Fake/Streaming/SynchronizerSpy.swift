@@ -21,6 +21,7 @@ class SynchronizerSpy: Synchronizer {
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
     var synchronizeMySegmentsCalled = false
+    var forceMySegmentsSyncCalled = false
     var forceMySegmentsCalledCount = 0
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
@@ -36,35 +37,25 @@ class SynchronizerSpy: Synchronizer {
 
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
+    var syncMySegmentsExp: XCTestExpectation?
+    var forceMySegmentsSyncExp: XCTestExpectation?
 
     var startPeriodicFetchingExp: XCTestExpectation?
     var stopPeriodicFetchingExp: XCTestExpectation?
 
-    let defaultUserKey: String
-
-
-    var forceMySegmentsSyncCalled = [String: Bool]()
-    var forceMySegmentsSyncCount = [String: Int]()
-
     init(splitConfig: SplitClientConfig,
-         defaultUserKey: String,
-         telemetrySynchronizer: TelemetrySynchronizer?,
-         byKeyFacade: ByKeyFacade,
          splitApiFacade: SplitApiFacade,
+         telemetrySynchronizer: TelemetrySynchronizer?,
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
          impressionsSyncHelper: ImpressionsRecorderSyncHelper,
          eventsSyncHelper: EventsRecorderSyncHelper,
          syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
-        = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>(),
+            = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
          splitEventsManager: SplitEventsManager) {
-
-        self.defaultUserKey = defaultUserKey
         self.splitSynchronizer = DefaultSynchronizer(splitConfig: splitConfig,
-                                                     defaultUserKey: defaultUserKey,
                                                      telemetrySynchronizer: telemetrySynchronizer,
-                                                     byKeyFacade: byKeyFacade,
                                                      splitApiFacade: splitApiFacade,
                                                      splitStorageContainer: splitStorageContainer,
                                                      syncWorkerFactory: syncWorkerFactory,
@@ -153,14 +144,27 @@ class SynchronizerSpy: Synchronizer {
         }
     }
 
-    func synchronizeMySegments() {
-        synchronizeMySegments(forKey: defaultUserKey)
-    }
-
     func synchronizeSplits(changeNumber: Int64) {
         synchronizeSplitsChangeNumberCalled = true
         splitSynchronizer.synchronizeSplits(changeNumber: changeNumber)
         if let exp = syncSplitsChangeNumberExp {
+            exp.fulfill()
+        }
+    }
+
+    func synchronizeMySegments() {
+        synchronizeMySegmentsCalled = true
+        splitSynchronizer.synchronizeMySegments()
+        if let exp = syncMySegmentsExp {
+            exp.fulfill()
+        }
+    }
+
+    func forceMySegmentsSync() {
+        forceMySegmentsSyncCalled = true
+        forceMySegmentsCalledCount+=1
+        splitSynchronizer.forceMySegmentsSync()
+        if let exp = forceMySegmentsSyncExp {
             exp.fulfill()
         }
     }
@@ -173,36 +177,13 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.resume()
     }
 
-    func notifySegmentsUpdated(forKey key: String) {
+    func notifiySegmentsUpdated() {
         notifyMySegmentsUpdatedCalled = true
-        splitSynchronizer.notifySegmentsUpdated(forKey: key)
+        splitSynchronizer.notifiySegmentsUpdated()
     }
 
     func notifySplitKilled() {
         notifySplitKilledCalled = true
-        splitSynchronizer.notifySplitKilled()
-    }
-
-    func start(forKey key: Key) {
-        splitSynchronizer.start(forKey: key)
-    }
-
-    func loadMySegmentsFromCache(forKey key: String) {
-        splitSynchronizer.loadMySegmentsFromCache(forKey: key)
-    }
-
-    func loadAttributesFromCache(forKey key: String) {
-        splitSynchronizer.loadAttributesFromCache(forKey: key)
-    }
-
-    func synchronizeMySegments(forKey key: String) {
-        synchronizeMySegmentsCalled = true
-        splitSynchronizer.synchronizeMySegments(forKey: key)
-    }
-
-    func forceMySegmentsSync(forKey key: String) {
-        splitSynchronizer.forceMySegmentsSync(forKey: key)
-        forceMySegmentsSyncCalled[key] = true
-        forceMySegmentsSyncCount[key]=(forceMySegmentsSyncCount[key] ?? 0) + 1
+        splitSynchronizer.notifiySegmentsUpdated()
     }
 }

@@ -80,7 +80,6 @@ class StreamingConnFail5xxTest: XCTestCase {
             case let(urlString) where urlString.contains("mySegments"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             case let(urlString) where urlString.contains("auth"):
-                print("auth hit!!!")
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             default:
                 return TestDispatcherResponse(code: 500)

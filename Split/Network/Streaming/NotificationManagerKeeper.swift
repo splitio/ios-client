@@ -70,7 +70,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
             self.telemetryProducer?.recordStreamingEvent(type: .streamingStatus,
                                                          data: TelemetryStreamingEventValue.streamingDisabled)
 
-        case .streamingResumed:
+        case .streamingEnabled:
             updateStreamingState(active: true)
             if publishersCount > 0 {
                 broadcasterChannel.push(event: .pushSubsystemUp)

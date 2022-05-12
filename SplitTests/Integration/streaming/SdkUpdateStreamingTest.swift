@@ -91,7 +91,6 @@ class SdkUpdateStreamingTest: XCTestCase {
         }
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: 10)
-
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
 
         let sdkUpdateExp = XCTestExpectation()
@@ -182,7 +181,7 @@ class SdkUpdateStreamingTest: XCTestCase {
         splitConfig.eventsPushRate = 999999
         //splitConfig.isDebugModeEnabled = true
         sseExp = XCTestExpectation()
-        let key: Key = Key(matchingKey: "user_key")
+        let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())

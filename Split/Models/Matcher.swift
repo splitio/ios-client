@@ -21,6 +21,23 @@
     var dependencyMatcherData: DependencyMatcherData?
     var booleanMatcherData: Bool?
     var stringMatcherData: String?
+    private let clientQueue = DispatchQueue(label: "split-matcher", target: DispatchQueue.global())
+    private weak var wrappedClient: InternalSplitClient?
+    var client: InternalSplitClient? {
+        get {
+            var localClient: InternalSplitClient?
+            clientQueue.sync {
+                localClient = wrappedClient
+            }
+            return localClient
+        }
+
+        set {
+            clientQueue.sync {
+                wrappedClient = newValue
+            }
+        }
+    }
 
     enum CodingKeys: String, CodingKey {
         case keySelector
@@ -94,7 +111,7 @@
                                                    type: self.matcherType)
 
         case .inSegment: return InSegmentMatcher(
-            data: self.userDefinedSegmentMatcherData, negate: self.negate,
+            data: self.userDefinedSegmentMatcherData, splitClient: self.client, negate: self.negate,
             attribute: self.keySelector?.attribute, type: self.matcherType)
 
         case .matchesString: return MatchesStringMatcher(
@@ -106,7 +123,7 @@
                                           type: self.matcherType)
 
         case .dependency: return DependencyMatcher(
-            negate: self.negate, attribute: self.keySelector?.attribute,
+            splitClient: self.client, negate: self.negate, attribute: self.keySelector?.attribute,
             type: self.matcherType, dependencyData: self.dependencyMatcherData)
 
         case .containsAnyOfSet: return ContainsAnyOfSetMatcher(

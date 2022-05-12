@@ -12,7 +12,7 @@ import XCTest
 class StreamingMySegmentsSyncTest: XCTestCase {
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
-    let userKey = "user_key"
+    let userKey = IntegrationHelper.dummyUserKey
     var isSseAuth = false
     var isSseConnected = false
     var streamingBinding: TestStreamResponseBinding?

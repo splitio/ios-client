@@ -22,7 +22,7 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
     }
 
     func execute(since: Int64, headers: HttpHeaders? = nil) throws -> SplitChange {
-        Logger.d("Fetching split definitions")
+
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)

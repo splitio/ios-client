@@ -238,7 +238,7 @@ class TelemetryIntegrationTest: XCTestCase {
 
         sseConnExp = XCTestExpectation()
         streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: nextTimestap(),
-                                                                                  controlType: "STREAMING_RESUMED"))
+                                                                                  controlType: "STREAMING_ENABLED"))
 
         streamingBinding?.push(message: ":keepalive") // send keep alive to confirm streaming connection ok
         streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: nextTimestap(),

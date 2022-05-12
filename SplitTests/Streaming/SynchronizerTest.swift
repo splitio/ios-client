@@ -2,8 +2,8 @@
 //  SynchronizerTest.swift
 //  SplitTests
 //
-//  Created by Javier L. Avrudsky on 10-03-2022.
-//  Copyright © 2022 Split. All rights reserved.
+//  Created by Javier L. Avrudsky on 18/09/2020.
+//  Copyright © 2020 Split. All rights reserved.
 //
 
 import Foundation
@@ -21,10 +21,11 @@ class SynchronizerTest: XCTestCase {
     var splitsSyncWorker: RetryableSyncWorkerStub!
     var mySegmentsSyncWorker: RetryableSyncWorkerStub!
     var periodicSplitsSyncWorker: PeriodicSyncWorkerStub!
+    var periodicMySegmentsSyncWorker: PeriodicSyncWorkerStub!
     var persistentSplitsStorage: PersistentSplitsStorageStub!
 
     var splitsStorage: SplitsStorageStub!
-    var mySegmentsStorage: ByKeyMySegmentsStorageStub!
+    var mySegmentsStorage: MySegmentsStorageStub!
 
     var updateWorkerCatalog = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()
     var syncWorkerFactory: SyncWorkerFactoryStub!
@@ -33,9 +34,6 @@ class SynchronizerTest: XCTestCase {
 
     var eventsManager: SplitEventsManagerStub!
     var telemetryProducer: TelemetryStorageStub!
-    var byKeyApiFacade: ByKeyFacadeStub!
-
-    let userKey = "CUSTOMER_KEY"
 
     override func setUp() {
         synchronizer = buildSynchronizer()
@@ -51,6 +49,7 @@ class SynchronizerTest: XCTestCase {
         splitsSyncWorker = RetryableSyncWorkerStub()
         mySegmentsSyncWorker = RetryableSyncWorkerStub()
         periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
+        periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
         periodicImpressionsRecorderWorker = PeriodicRecorderWorkerStub()
         impressionsRecorderWorker = RecorderWorkerStub()
         periodicEventsRecorderWorker = PeriodicRecorderWorkerStub()
@@ -61,26 +60,25 @@ class SynchronizerTest: XCTestCase {
         syncWorkerFactory.splitsSyncWorker = splitsSyncWorker
         syncWorkerFactory.mySegmentsSyncWorker = mySegmentsSyncWorker
         syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
+        syncWorkerFactory.periodicMySegmentsSyncWorker = periodicMySegmentsSyncWorker
         syncWorkerFactory.periodicImpressionsRecorderWorker = periodicImpressionsRecorderWorker
         syncWorkerFactory.impressionsRecorderWorker = impressionsRecorderWorker
         syncWorkerFactory.periodicEventsRecorderWorker = periodicEventsRecorderWorker
         syncWorkerFactory.eventsRecorderWorker = eventsRecorderWorker
 
-        mySegmentsStorage = ByKeyMySegmentsStorageStub()
         telemetryProducer = TelemetryStorageStub()
         splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
+        mySegmentsStorage = MySegmentsStorageStub()
 
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      fileStorage: FileStorageStub(), splitsStorage: splitsStorage,
                                                      persistentSplitsStorage: persistentSplitsStorage,
-                                                     impressionsStorage: PersistentImpressionsStorageStub(),
-                                                     impressionsCountStorage: PersistentImpressionsCountStorageStub(),
+                                                     mySegmentsStorage: mySegmentsStorage, impressionsStorage: PersistentImpressionsStorageStub(), impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: PersistentEventsStorageStub(),
-                                                     telemetryStorage: telemetryProducer,
-                                                     mySegmentsStorage: MySegmentsStorageStub(),
-                                                     attributesStorage: AttributesStorageStub())
+                                                     attributesStorage: DefaultAttributesStorage(),
+                                                     telemetryStorage: telemetryProducer)
 
         let apiFacade = SplitApiFacade.builder()
             .setUserKey("userKey")
@@ -93,12 +91,8 @@ class SynchronizerTest: XCTestCase {
         let config =  SplitClientConfig()
         config.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
 
-        byKeyApiFacade = ByKeyFacadeStub()
-
         synchronizer = DefaultSynchronizer(splitConfig: config,
-                                           defaultUserKey: userKey,
                                            telemetrySynchronizer: nil,
-                                           byKeyFacade: byKeyApiFacade,
                                            splitApiFacade: apiFacade,
                                            splitStorageContainer: storageContainer,
                                            syncWorkerFactory: syncWorkerFactory,
@@ -119,7 +113,7 @@ class SynchronizerTest: XCTestCase {
         synchronizer.syncAll()
 
         XCTAssertTrue(splitsSyncWorker.startCalled)
-        XCTAssertTrue(byKeyApiFacade.syncAllCalled)
+        XCTAssertTrue(mySegmentsSyncWorker.startCalled)
     }
 
     func testSynchronizeSplits() {
@@ -160,18 +154,19 @@ class SynchronizerTest: XCTestCase {
 
     func testLoadMySegmentsFromCache() {
 
-        synchronizer.loadMySegmentsFromCache(forKey: userKey)
+        synchronizer.loadMySegmentsFromCache()
 
         ThreadUtils.delay(seconds: 0.2)
 
-        XCTAssertTrue(byKeyApiFacade.loadMySegmentsFromCacheCalled[userKey] ?? false)
+        XCTAssertTrue(mySegmentsStorage.loadLocalCalled)
+        XCTAssertEqual(1, eventsManager.mySegmentsLoadedEventFiredCount)
     }
 
     func testSynchronizeMySegments() {
 
-        synchronizer.synchronizeMySegments(forKey: userKey)
+        synchronizer.synchronizeMySegments()
 
-        XCTAssertTrue(byKeyApiFacade.syncMySegmentsCalled[userKey] ?? false)
+        XCTAssertTrue(mySegmentsSyncWorker.startCalled)
     }
 
     func testSynchronizeSplitsWithChangeNumber() {
@@ -201,7 +196,7 @@ class SynchronizerTest: XCTestCase {
         synchronizer.startPeriodicFetching()
 
         XCTAssertTrue(periodicSplitsSyncWorker.startCalled)
-        XCTAssertTrue(byKeyApiFacade.startPeriodicSyncCalled)
+        XCTAssertTrue(periodicMySegmentsSyncWorker.startCalled)
     }
 
     func testStopPeriodicFetching() {
@@ -209,7 +204,7 @@ class SynchronizerTest: XCTestCase {
         synchronizer.stopPeriodicFetching()
 
         XCTAssertTrue(periodicSplitsSyncWorker.stopCalled)
-        XCTAssertTrue(byKeyApiFacade.stopPeriodicSyncCalled)
+        XCTAssertTrue(periodicMySegmentsSyncWorker.stopCalled)
     }
 
     func testStartPeriodicRecording() {
@@ -226,13 +221,6 @@ class SynchronizerTest: XCTestCase {
 
         XCTAssertTrue(periodicImpressionsRecorderWorker.stopCalled)
         XCTAssertTrue(periodicEventsRecorderWorker.stopCalled)
-    }
-
-    func testStartByKey() {
-        let key = Key(matchingKey: userKey)
-        synchronizer.start(forKey: key)
-
-        XCTAssertTrue(byKeyApiFacade.startSyncForKeyCalled[key] ?? false)
     }
 
     func testFlush() {
@@ -255,9 +243,9 @@ class SynchronizerTest: XCTestCase {
         synchronizer.destroy()
 
         XCTAssertTrue(splitsSyncWorker.stopCalled)
-        XCTAssertTrue(byKeyApiFacade.destroyCalled)
+        XCTAssertTrue(mySegmentsSyncWorker.stopCalled)
         XCTAssertTrue(periodicSplitsSyncWorker.stopCalled)
-        XCTAssertTrue(byKeyApiFacade.destroyCalled)
+        XCTAssertTrue(periodicMySegmentsSyncWorker.stopCalled)
         XCTAssertTrue(sw1.stopCalled)
         XCTAssertTrue(sw2.stopCalled)
         XCTAssertEqual(0, updateWorkerCatalog.count)

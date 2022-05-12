@@ -15,14 +15,12 @@ class NotificationParserTest: XCTestCase {
 
     let notificationParser = DefaultSseNotificationParser()
 
-    static let kMySegmentsChannel = "MzM5Njc0ODcyNg==_MTExMzgwNjgx_MTcwNTI2MTM0Mg==_mySegments"
-
     let splitsChangeNotificationMessage = """
 {\"id\":\"VSEQrcq9D8:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==\",\"timestamp\":1584554772719,\"encoding\":\"json\",\"channel\":\"MzM5Njc0ODcyNg==_MTExMzgwNjgx_splits\",\"data\":\"{\\\"type\\\":\\\"SPLIT_UPDATE\\\",\\\"changeNumber\\\":1584554772108}\"}
 """
 
     let mySegmentsUpdateNotificationMessage = """
- {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"\(kMySegmentsChannel)\",\"data\":\"{\\\"type\\\":\\\"MY_SEGMENTS_UPDATE\\\",\\\"changeNumber\\\":1584647532812,\\\"includesPayload\\\":false}\"}
+ {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MTcwNTI2MTM0Mg==_mySegments\",\"data\":\"{\\\"type\\\":\\\"MY_SEGMENTS_UPDATE\\\",\\\"changeNumber\\\":1584647532812,\\\"includesPayload\\\":false}\"}
 """
 
     let splitKillNotificationMessage = """
@@ -30,14 +28,14 @@ class NotificationParserTest: XCTestCase {
 """
 
     let mySegmentUpdateInlineNotificationMessage = """
- {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"\(kMySegmentsChannel)\",\"data\":\"{\\\"type\\\":\\\"MY_SEGMENTS_UPDATE\\\",\\\"changeNumber\\\":1584647532812,\\\"includesPayload\\\":true,\\\"segmentList\\\":[\\\"segment1\\\", \\\"segment2\\\"]}\"}
+ {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MTcwNTI2MTM0Mg==_mySegments\",\"data\":\"{\\\"type\\\":\\\"MY_SEGMENTS_UPDATE\\\",\\\"changeNumber\\\":1584647532812,\\\"includesPayload\\\":true,\\\"segmentList\\\":[\\\"segment1\\\", \\\"segment2\\\"]}\"}
 """
     let mySegmentsUpdateV2NotificationUnboundedMessage = """
- {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"\(kMySegmentsChannel)\",\"data\": \"{\\\"type\\\": \\\"MY_SEGMENTS_UPDATE_V2\\\", \\"u\\": 0, \\"c\\": 0}\"}
+ {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MTcwNTI2MTM0Mg==_mySegments\",\"data\": \"{\\\"type\\\": \\\"MY_SEGMENTS_UPDATE_V2\\\", \\"u\\": 0, \\"c\\": 0}\"}
 """
 
     let mySegmentsUpdateV2NotificationSegmentRemovalMessage = """
- {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"\(kMySegmentsChannel)\",\"data\": \"{\\\"type\\\": \\\"MY_SEGMENTS_UPDATE_V2\\\", \\"u\\": 3, \\"c\\": 0, \\"segmentName\\":\\"segment_remove\\"}\"}
+ {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MTcwNTI2MTM0Mg==_mySegments\",\"data\": \"{\\\"type\\\": \\\"MY_SEGMENTS_UPDATE_V2\\\", \\"u\\": 3, \\"c\\": 0, \\"segmentName\\":\\"segment_remove\\"}\"}
 """
 
     let occupancyNotificationMessage = """
@@ -45,7 +43,7 @@ class NotificationParserTest: XCTestCase {
 """
 
     let controlNotificationMessage = """
- {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"control_pri\",\"data\":\"{\\\"type\\\":\\\"CONTROL\\\",\\\"controlType\\\":\\\"STREAMING_RESUMED\\\"}\"}
+ {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"control_pri\",\"data\":\"{\\\"type\\\":\\\"CONTROL\\\",\\\"controlType\\\":\\\"STREAMING_ENABLED\\\"}\"}
 """
 
     let errorNotificationMessage = """
@@ -76,8 +74,7 @@ class NotificationParserTest: XCTestCase {
 
     func testProcessMySegmentUpdate() throws {
         let incoming = notificationParser.parseIncoming(jsonString: mySegmentsUpdateNotificationMessage);
-        let mySegmentUpdate = try notificationParser.parseMySegmentUpdate(jsonString: incoming!.jsonData!,
-                                                                          channel: Self.kMySegmentsChannel)
+        let mySegmentUpdate = try notificationParser.parseMySegmentUpdate(jsonString: incoming!.jsonData!);
 
         XCTAssertEqual(NotificationType.mySegmentsUpdate, incoming?.type);
         XCTAssertEqual(1584647532812, mySegmentUpdate.changeNumber);
@@ -86,9 +83,8 @@ class NotificationParserTest: XCTestCase {
 
 
     func testProcessMySegmentUpdateInline() throws {
-        let incoming = notificationParser.parseIncoming(jsonString: mySegmentUpdateInlineNotificationMessage)
-        let mySegmentUpdate = try notificationParser.parseMySegmentUpdate(jsonString: incoming!.jsonData!,
-                                                                          channel: Self.kMySegmentsChannel)
+        let incoming = notificationParser.parseIncoming(jsonString: mySegmentUpdateInlineNotificationMessage);
+        let mySegmentUpdate = try notificationParser.parseMySegmentUpdate(jsonString: incoming!.jsonData!);
 
         XCTAssertEqual(NotificationType.mySegmentsUpdate, incoming?.type);
         XCTAssertEqual(1584647532812, mySegmentUpdate.changeNumber);
@@ -137,7 +133,7 @@ class NotificationParserTest: XCTestCase {
         let notification = try notificationParser.parseControl(jsonString: incoming!.jsonData!);
 
         XCTAssertEqual(NotificationType.control, notification.type);
-        XCTAssertEqual(ControlNotification.ControlType.streamingResumed, notification.controlType);
+        XCTAssertEqual(ControlNotification.ControlType.streamingEnabled, notification.controlType);
     }
 
 
@@ -145,14 +141,6 @@ class NotificationParserTest: XCTestCase {
         let incoming = notificationParser.parseIncoming(jsonString: errorNotificationMessage);
 
         XCTAssertEqual(NotificationType.sseError, incoming?.type);
-    }
-
-    func testExtractUserKeyHashFromChannel() {
-        let expectedResult = "MTcwNTI2MTM0Mg=="
-
-        let result = notificationParser.extractUserKeyHashFromChannel(channel: Self.kMySegmentsChannel)
-
-        XCTAssertEqual(expectedResult, result)
     }
 
     override func tearDown() {

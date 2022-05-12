@@ -9,26 +9,20 @@
 import Foundation
 
 class EmptyMySegmentsStorage: MySegmentsStorage {
-    var keys: Set<String> = Set()
-
-    func loadLocal(forKey key: String) {
+    func loadLocal() {
     }
 
-    func getAll(forKey key: String) -> Set<String> {
+    func getAll() -> Set<String> {
         return Set()
     }
 
-    func set(_ segments: [String], forKey key: String) {
+    func set(_ segments: [String]) {
     }
 
-    func clear(forKey key: String) {
+    func clear() {
     }
 
     func destroy() {
-    }
-
-    func getCount(forKey key: String) -> Int {
-        return 0
     }
 
     func getCount() -> Int {

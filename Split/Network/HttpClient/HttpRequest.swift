@@ -57,13 +57,7 @@ class BaseHttpRequest: HttpRequest {
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
         let initialQueryItems = components?.queryItems
         if let parameters = parameters {
-            components?.queryItems = parameters.map { key, value in
-                var parsedValue = "\(value)"
-                if let array = value as? [Any] {
-                    parsedValue = array.compactMap { "\($0)" }.joined(separator: ",")
-                }
-                return URLQueryItem(name: key, value: parsedValue)
-            }
+            components?.queryItems = parameters.map { key, value in URLQueryItem(name: key, value: "\(value)")}
         }
 
         if let initialQueryItems = initialQueryItems {

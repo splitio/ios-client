@@ -142,7 +142,6 @@ class DbForDifferentApiKeysTest: XCTestCase {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
-                print("Split changes hit")
                 let respChangeNumber = Self.changeNumberBase + Int64(factoryNumber)
                 self.lastChangeNumbers[factoryNumber] = request.parameters?["since"] as? Int64 ?? 0
                 if self.lastChangeNumbers[factoryNumber] == -1 {
@@ -154,12 +153,11 @@ class DbForDifferentApiKeysTest: XCTestCase {
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: Int(respChangeNumber), till: Int(respChangeNumber)).utf8))
             case let(urlString) where urlString.contains("mySegments"):
-                print("My segments hit")
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             case let(urlString) where urlString.contains("auth"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             default:
-                return TestDispatcherResponse(code: 200)
+                return TestDispatcherResponse(code: 500)
             }
         }
     }
@@ -167,11 +165,9 @@ class DbForDifferentApiKeysTest: XCTestCase {
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            if self.sseExpIndex < self.sseExp.count {
-                let exp = self.sseExp[self.sseExpIndex]
-                self.sseExpIndex+=1
-                exp.fulfill()
-            }
+            let exp = self.sseExp[self.sseExpIndex]
+            self.sseExpIndex+=1
+            exp.fulfill()
             return self.streamingBinding!
         }
     }
