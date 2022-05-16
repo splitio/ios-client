@@ -34,6 +34,7 @@ class MatcherEvalTests: XCTestCase {
     }
     
     func testEval() {
+        let dummyKey = "CUSTOMER_ID"
         let fileContent = FileHelper.readDataFromFile(sourceClass: self, name: "matchers", type: "json")
         XCTAssertNotNil(fileContent, "Matcher file should not be null")
         var matcherTests: [Test]? = nil
@@ -49,7 +50,9 @@ class MatcherEvalTests: XCTestCase {
                 let values: [Int64] = test.values
                 let matcher = (try? test.matcher.getMatcher())!
                 for (index, value) in values.enumerated() {
-                    let evalResult = matcher.evaluate(matchValue: value, bucketingKey: nil, attributes: nil)
+                    let evalResult = matcher.evaluate(values: EvalValues(matchValue: value, matchingKey: dummyKey, bucketingKey: nil, attributes: nil),
+                                                      context: nil)
+
                     let expectedResult = test.result(for: index)
                     XCTAssertTrue(evalResult == expectedResult, "Failed: \(test.description) Value: \(value) -> Expected: \(expectedResult), Result: \(evalResult)")
                 }

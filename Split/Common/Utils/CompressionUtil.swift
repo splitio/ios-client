@@ -154,8 +154,8 @@ struct Zlib: CompressionUtil {
 
 struct Gzip: CompressionUtil {
     private let kGzipHeaderSize = 10
-    private let kId1: UInt8 = 31 //0xuf
-    private let kId2 = 139 //0x8b
+    private let kId1: UInt8 = 31 // 0xuf
+    private let kId2 = 139 // 0x8b
     private let kCm: UInt8 = 8
     func decompress(data: Data) throws -> Data {
 
@@ -184,7 +184,7 @@ struct Gzip: CompressionUtil {
             return -1
         }
 
-        //Checking ID1 y ID2
+        // Checking ID1 y ID2
         // ID1 (IDentification 1)
         // ID2 (IDentification 2)
         // These have the fixed values ID1 = 31 (0x1f, \037), ID2 = 139

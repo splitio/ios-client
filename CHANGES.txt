@@ -1,3 +1,8 @@
+2.14.0: (May 12, 2022)
+- Added support for multiple clients: Factories can now create multiple clients with different keys while reusing the common tasks, data and behavior. Read more in our iOS SDK docs.
+- Renamed STREAMING_ENABLED event to STREAMING_RESUMED
+- Improved factory implementation by returning dummy classes instead of forcing unwrapp for client and manager component
+
 2.13.2: (Mar 28, 2022)
 - Removed xcframework target temporarily in SPM to avoid building issues on some projects setup.
 

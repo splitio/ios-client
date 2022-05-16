@@ -177,16 +177,14 @@ struct BackgroundSyncExecutor {
             self.splitsSyncWorker.execute()
         }
 
+        let mySegmentsStorage =
+            SplitDatabaseHelper.openPersistentMySegmentsStorage(database: self.splitDatabase)
         operationQueue.addOperation {
             for (userKey, timestamp) in self.userKeys {
                 if self.isExpired(timestamp: timestamp) {
                     SplitBgSynchronizer.shared.unregister(apiKey: self.apiKey, userKey: userKey)
                     return
                 }
-
-                let mySegmentsStorage =
-                    SplitDatabaseHelper.openPersistentMySegmentsStorage(database: self.splitDatabase,
-                                                                       userKey: userKey)
 
                 let mySegmentsSyncWorker = BackgroundMySegmentsSyncWorker(
                     userKey: userKey, mySegmentsFetcher: self.mySegmentsFetcher,

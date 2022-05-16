@@ -10,6 +10,7 @@ import Foundation
 @testable import Split
 
 class SplitFactoryStub: SplitFactory {
+
     var client: SplitClient
     
     var manager: SplitManager
@@ -22,6 +23,18 @@ class SplitFactoryStub: SplitFactory {
         client = SplitClientStub()
         manager = SplitManagerStub()
         version = "0.0.0-stub"
+    }
+
+    func client(key: Key) -> SplitClient {
+        return client
+    }
+
+    func client(matchingKey: String) -> SplitClient {
+        return client
+    }
+
+    func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
+        return client
     }
     
     

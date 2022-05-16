@@ -2,37 +2,35 @@
 //  PersistentAttributesStorage.swift
 //  Split
 //
-//  Created by Javier L. Avrudsky on 06/11/2021.
-//  Copyright © 2020 Split. All rights reserved.
+//  Created by Javier Avrudsky on 04-Mar-2022.
+//  Copyright © 2022 Split. All rights reserved.
 //
 
 import Foundation
 
 protocol PersistentAttributesStorage {
-    func set(_ attributes: [String: Any])
-    func getAll() -> [String: Any]?
-    func clear()
+    func set(_ attributes: [String: Any], forKey key: String)
+    func getAll(forKey key: String) -> [String: Any]?
+    func clear(forKey key: String)
 }
 
 class DefaultPersistentAttributesStorage: PersistentAttributesStorage {
 
     private let attributesDao: AttributesDao
-    private let userKey: String
 
-    init(userKey: String, database: SplitDatabase) {
-        self.userKey = userKey
+    init(database: SplitDatabase) {
         self.attributesDao = database.attributesDao
     }
 
-    func set(_ attributes: [String: Any]) {
-        attributesDao.update(userKey: userKey, attributes: attributes)
+    func set(_ attributes: [String: Any], forKey key: String) {
+        attributesDao.update(userKey: key, attributes: attributes)
     }
 
-    func getAll() -> [String: Any]? {
-        return attributesDao.getBy(userKey: userKey)
+    func getAll(forKey key: String) -> [String: Any]? {
+        return attributesDao.getBy(userKey: key)
     }
 
-    func clear() {
-        attributesDao.update(userKey: userKey, attributes: nil)
+    func clear(forKey key: String) {
+        attributesDao.update(userKey: key, attributes: nil)
     }
 }

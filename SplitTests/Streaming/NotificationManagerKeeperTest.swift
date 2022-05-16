@@ -146,7 +146,7 @@ class NotificationManagerKeeperTest: XCTestCase {
 
         // reseting pushed event
         broadcasterChannel.lastPushedEvent = nil
-        let controlNotification = ControlNotification(type: .control, controlType: .streamingEnabled)
+        let controlNotification = ControlNotification(type: .control, controlType: .streamingResumed)
         notificationManager.handleIncomingControl(notification: controlNotification)
 
         XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
@@ -191,7 +191,7 @@ class NotificationManagerKeeperTest: XCTestCase {
 
         // reseting pushed event
         broadcasterChannel.lastPushedEvent = nil
-        let controlNotification = ControlNotification(type: .control, controlType: .streamingEnabled)
+        let controlNotification = ControlNotification(type: .control, controlType: .streamingResumed)
         notificationManager.handleIncomingControl(notification: controlNotification)
 
         XCTAssertNil(broadcasterChannel.lastPushedEvent)

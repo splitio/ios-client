@@ -17,22 +17,24 @@ class TestSplitFactory {
         return "Test_factory"
     }
 
-    var defaultClient: SplitClient?
     var defaultManager: SplitManager?
 
     var client: SplitClient {
-        return defaultClient!
+        return clientManager!.defaultClient!
     }
 
     var manager: SplitManager {
         return defaultManager!
     }
 
+    private(set) var clientManager: SplitClientManager?
     private let filterBuilder = FilterBuilder()
+    let userKey: String
+    private var key: Key!
     var splitDatabase: SplitDatabase
     var reachabilityChecker: HostReachabilityChecker
     var apiKey: String = IntegrationHelper.dummyApiKey
-    var userKey: String = IntegrationHelper.dummyUserKey
+
     var splitConfig: SplitClientConfig = TestingHelper.basicStreamingConfig()
     var httpClient: HttpClient?
     var synchronizer: Synchronizer!
@@ -45,13 +47,15 @@ class TestSplitFactory {
         return Version.sdk
     }
 
-    init() {
+    init(userKey: String) {
+        self.userKey = userKey
         splitDatabase = TestingHelper.createTestDatabase(name: UUID().uuidString)
         reachabilityChecker = ReachabilityMock()
     }
 
     func createHttpClient(dispatcher: @escaping HttpClientTestDispatcher,
                       streamingHandler: @escaping TestStreamResponseBindingHandler) {
+        key = Key(matchingKey: userKey)
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher,
                                                           streamingHandler: streamingHandler)
@@ -69,12 +73,12 @@ class TestSplitFactory {
 
         let storageContainer = try SplitDatabaseHelper.buildStorageContainer(
             splitClientConfig: splitConfig,
-            userKey: userKey, databaseName: "dummy", telemetryStorage: nil, testDatabase: splitDatabase)
+            userKey: key.matchingKey, databaseName: "dummy", telemetryStorage: nil, testDatabase: splitDatabase)
 
         let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)
         defaultManager = manager
 
-        let eventsManager = DefaultSplitEventsManager(config: splitConfig)
+        let eventsManager = MainSplitEventsManager()
         eventsManager.start()
 
         let splitsFilterQueryString = try filterBuilder.add(filters: splitConfig.sync.filters).build()
@@ -86,7 +90,7 @@ class TestSplitFactory {
                                            endpointFactory: endpointFactory,
                                            reachabilityChecker: reachabilityChecker)
 
-        let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(userKey)
+        let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(key.matchingKey)
             .setSplitConfig(splitConfig).setRestClient(restClient).setEventsManager(eventsManager)
             .setStorageContainer(storageContainer).setSplitsQueryString(splitsFilterQueryString)
 
@@ -106,7 +110,7 @@ class TestSplitFactory {
         let eventsSyncHelper = EventsRecorderSyncHelper(eventsStorage: storageContainer.eventsStorage,
                                                         accumulator: eventsFlushChecker)
 
-        let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: userKey,
+        let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: key.matchingKey,
                                                          splitConfig: splitConfig,
                                                          splitsFilterQueryString: splitsFilterQueryString,
                                                          apiFacade: apiFacade,
@@ -114,8 +118,13 @@ class TestSplitFactory {
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          eventsManager: eventsManager)
 
-        self.synchronizer = SynchronizerSpy(splitConfig: splitConfig, splitApiFacade: apiFacade,
+        let byKeyFacade = DefaultByKeyFacade()
+
+        self.synchronizer = SynchronizerSpy(splitConfig: splitConfig,
+                                            defaultUserKey: key.matchingKey,
                                             telemetrySynchronizer: nil,
+                                            byKeyFacade: byKeyFacade,
+                                            splitApiFacade: apiFacade,
                                             splitStorageContainer: storageContainer,
                                             syncWorkerFactory: syncWorkerFactory,
                                             impressionsSyncHelper: impressionsSyncHelper,
@@ -127,24 +136,39 @@ class TestSplitFactory {
             return
         }
 
-        let syncManager = SyncManagerBuilder().setUserKey(userKey).setStorageContainer(storageContainer)
+        let syncManager = try SyncManagerBuilder()
+            .setUserKey(key.matchingKey)
+            .setStorageContainer(storageContainer)
             .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
-            .setSplitConfig(splitConfig).build()
+            .setSplitConfig(splitConfig).setByKeyFacade(byKeyFacade).build()
 
         // Sec api not available for testing
         // Should build a mock here
         //setupBgSync(config: config, apiKey: apiKey, userKey: userKey)
 
-        defaultClient = DefaultSplitClient(config: splitConfig, key: Key(matchingKey: userKey), apiFacade: apiFacade,
-                                           storageContainer: storageContainer,
-                                           synchronizer: synchronizer, eventsManager: eventsManager) {
-            syncManager.stop()
-            manager.destroy()
-            eventsManager.stop()
-        }
+        let mySegmentsSyncWorkerFactory = DefaultMySegmentsSyncWorkerFactory(
+            splitConfig: splitConfig,
+            mySegmentsStorage: storageContainer.mySegmentsStorage,
+            mySegmentsFetcher: apiFacade.mySegmentsFetcher,
+            telemetryProducer: storageContainer.telemetryStorage)
 
-        eventsManager.executorResources.client = defaultClient
-        syncManager.start()
+
+        clientManager = DefaultClientManager(config: splitConfig,
+                                             key: key,
+                                             splitManager: manager,
+                                             apiFacade: apiFacade,
+                                             byKeyFacade: byKeyFacade,
+                                             storageContainer: storageContainer,
+                                             syncManager: syncManager,
+                                             synchronizer: synchronizer,
+                                             eventsManagerCoordinator: eventsManager,
+                                             mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
+                                             telemetryStopwatch: nil)
+
+    }
+
+    func client(matchingKey: String) -> SplitClient {
+        return clientManager!.get(forKey: Key(matchingKey: matchingKey))
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {

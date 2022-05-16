@@ -13,15 +13,15 @@ typealias ConcurrentDictionaryList = SyncDictionaryCollectionWrapper
 // TODO: Rename SyncDictionaryCollectionWrapper -> ConcurrentDictionaryList in specific PR for that
 class SyncDictionaryCollectionWrapper<K: Hashable, T> {
 
-    private var queue: DispatchQueue
-    private var items: [K: [T]]
+    private var queue = DispatchQueue(label: "split-dictionary-list", attributes: .concurrent)
+    private var items = [K: [T]]()
 
     var all: [K: [T]] {
         var allItems: [K: [T]]?
         queue.sync {
             allItems = items
         }
-        return allItems!
+        return allItems ?? [K: [T]]()
     }
 
     var count: Int {
@@ -32,11 +32,6 @@ class SyncDictionaryCollectionWrapper<K: Hashable, T> {
             }
         }
         return count
-    }
-
-    init() {
-        queue = DispatchQueue(label: NSUUID().uuidString, attributes: .concurrent)
-        items = [K: [T]]()
     }
 
     func value(forKey key: K) -> [T]? {
@@ -70,13 +65,13 @@ class SyncDictionaryCollectionWrapper<K: Hashable, T> {
     }
 
     func takeAll() -> [K: [T]] {
-        var allItems: [K: [T]]!
+        var allItems: [K: [T]]?
         queue.sync {
             allItems = self.items
             queue.async(flags: .barrier) {
                 self.items.removeAll()
             }
         }
-        return allItems
+        return allItems ?? [K: [T]]()
     }
 }

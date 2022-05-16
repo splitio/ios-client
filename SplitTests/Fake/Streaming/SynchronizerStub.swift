@@ -35,7 +35,8 @@ class SynchronizerStub: Synchronizer {
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
     var syncMySegmentsExp: XCTestExpectation?
-    var forceMySegmentsSyncExp: XCTestExpectation?
+    var forceMySegmentsSyncExp = [String: XCTestExpectation]()
+    var notifyMySegmentsUpdatedExp = [String: XCTestExpectation]()
 
     var startPeriodicFetchingExp: XCTestExpectation?
     var stopPeriodicFetchingExp: XCTestExpectation?
@@ -52,6 +53,43 @@ class SynchronizerStub: Synchronizer {
 
     func loadAttributesFromCache() {
         loadAttributesFromCacheCalled = true
+    }
+
+    var startForKeyCalled = [Key: Bool]()
+    func start(forKey key: Key) {
+        startForKeyCalled[key] = true
+    }
+
+    var loadMySegmentsFromCacheForKeyCalled = [String: Bool]()
+    func loadMySegmentsFromCache(forKey key: String) {
+        loadMySegmentsFromCacheForKeyCalled[key] = true
+    }
+
+    var loadAttributesFromCacheForKeyCalled = [String: Bool]()
+    func loadAttributesFromCache(forKey key: String) {
+        loadAttributesFromCacheForKeyCalled[key] = true
+    }
+
+    var synchronizeMySegmentsForKeyCalled = [String: Bool]()
+    func synchronizeMySegments(forKey key: String) {
+        synchronizeMySegmentsForKeyCalled[key] = true
+    }
+
+    var forceMySegmentsSyncForKeyCalled = [String: Bool]()
+    func forceMySegmentsSync(forKey key: String) {
+        forceMySegmentsSyncForKeyCalled[key] = true
+
+        if let exp = forceMySegmentsSyncExp[key] {
+            exp.fulfill()
+        }
+    }
+
+    var notifySegmentsUpdatedForKeyCalled = [String: Bool]()
+    func notifySegmentsUpdated(forKey key: String) {
+        notifySegmentsUpdatedForKeyCalled[key] = true
+        if let exp = notifyMySegmentsUpdatedExp[key] {
+            exp.fulfill()
+        }
     }
 
     func syncAll() {
@@ -120,13 +158,13 @@ class SynchronizerStub: Synchronizer {
             exp.fulfill()
         }
     }
-
-    func forceMySegmentsSync() {
-        forceMySegmentsSyncCalled = true
-        if let exp = forceMySegmentsSyncExp {
-            exp.fulfill()
-        }
-    }
+//
+//    func forceMySegmentsSync() {
+//        forceMySegmentsSyncCalled = true
+//        if let exp = forceMySegmentsSyncExp {
+//            exp.fulfill()
+//        }
+//    }
 
     func pause() {
     }
