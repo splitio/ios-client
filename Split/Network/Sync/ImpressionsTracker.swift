@@ -58,9 +58,11 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
     func start() {
         periodicImpressionsRecorderWoker.start()
+        periodicImpressionsCountRecorderWoker?.start()
     }
 
     func stop() {
+        periodicImpressionsCountRecorderWoker?.stop()
         periodicImpressionsRecorderWoker.stop()
     }
 
@@ -72,19 +74,19 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         }
 
         let impressionToPush = impression.withPreviousTime(
-            self.impressionsObserver.testAndSet(impression: impression))
-        if self.isOptimizedImpressionsMode() {
-            self.impressionsCounter.inc(featureName: featureName, timeframe: impressionToPush.time, amount: 1)
+            impressionsObserver.testAndSet(impression: impression))
+        if isOptimizedImpressionsMode() {
+            impressionsCounter.inc(featureName: featureName, timeframe: impressionToPush.time, amount: 1)
         }
 
-        if !self.isOptimizedImpressionsMode() || self.shouldPush(impression: impressionToPush) {
-            if self.impressionsSyncHelper.pushAndCheckFlush(impressionToPush) {
-                self.flusherImpressionsRecorderWorker.flush()
-                self.impressionsSyncHelper.resetAccumulator()
-
+        if !isOptimizedImpressionsMode() || shouldPush(impression: impressionToPush) {
+            if impressionsSyncHelper.pushAndCheckFlush(impressionToPush) {
+                flusherImpressionsRecorderWorker.flush()
+                impressionsSyncHelper.resetAccumulator()
             }
+            telemetryProducer?.recordImpressionStats(type: .queued, count: 1)
         } else {
-            self.telemetryProducer?.recordImpressionStats(type: .deduped, count: 1)
+            telemetryProducer?.recordImpressionStats(type: .deduped, count: 1)
         }
 
     }
@@ -101,13 +103,14 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     func flush() {
-        self.flusherImpressionsRecorderWorker.flush()
-        self.flusherImpressionsCountRecorderWorker?.flush()
-        self.impressionsSyncHelper.resetAccumulator()
+        flusherImpressionsRecorderWorker.flush()
+        flusherImpressionsCountRecorderWorker?.flush()
+        impressionsSyncHelper.resetAccumulator()
     }
 
     func destroy() {
         periodicImpressionsRecorderWoker.destroy()
+        periodicImpressionsCountRecorderWoker?.destroy()
     }
 
     private func saveImpressionsCount() {
