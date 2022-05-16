@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class ImpressionsTrackStub: ImpressionsTracker {
+class ImpressionsTrackerStub: ImpressionsTracker {
     var startCalled = false
     func start() {
         startCalled = true

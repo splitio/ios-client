@@ -14,8 +14,6 @@ import XCTest
 class SynchronizerTest: XCTestCase {
 
     var splitsFetcher: HttpSplitFetcherStub!
-    var periodicImpressionsRecorderWorker: PeriodicRecorderWorkerStub!
-    var impressionsRecorderWorker: RecorderWorkerStub!
     var periodicEventsRecorderWorker: PeriodicRecorderWorkerStub!
     var eventsRecorderWorker: RecorderWorkerStub!
     var splitsSyncWorker: RetryableSyncWorkerStub!
@@ -34,7 +32,7 @@ class SynchronizerTest: XCTestCase {
     var eventsManager: SplitEventsManagerStub!
     var telemetryProducer: TelemetryStorageStub!
     var byKeyApiFacade: ByKeyFacadeStub!
-    var impressionsTracker: ImpressionsTracker!
+    var impressionsTracker: ImpressionsTrackerStub!
 
     let userKey = "CUSTOMER_KEY"
 
@@ -52,20 +50,16 @@ class SynchronizerTest: XCTestCase {
         splitsSyncWorker = RetryableSyncWorkerStub()
         mySegmentsSyncWorker = RetryableSyncWorkerStub()
         periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
-        periodicImpressionsRecorderWorker = PeriodicRecorderWorkerStub()
-        impressionsRecorderWorker = RecorderWorkerStub()
         periodicEventsRecorderWorker = PeriodicRecorderWorkerStub()
         eventsRecorderWorker = RecorderWorkerStub()
 
         syncWorkerFactory = SyncWorkerFactoryStub()
 
-        impressionsTracker = ImpressionsTrackStub()
+        impressionsTracker = ImpressionsTrackerStub()
 
         syncWorkerFactory.splitsSyncWorker = splitsSyncWorker
         syncWorkerFactory.mySegmentsSyncWorker = mySegmentsSyncWorker
         syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
-        syncWorkerFactory.periodicImpressionsRecorderWorker = periodicImpressionsRecorderWorker
-        syncWorkerFactory.impressionsRecorderWorker = impressionsRecorderWorker
         syncWorkerFactory.periodicEventsRecorderWorker = periodicEventsRecorderWorker
         syncWorkerFactory.eventsRecorderWorker = eventsRecorderWorker
 
@@ -218,7 +212,7 @@ class SynchronizerTest: XCTestCase {
 
         synchronizer.startPeriodicRecording()
 
-        XCTAssertTrue(periodicImpressionsRecorderWorker.startCalled)
+        XCTAssertTrue(impressionsTracker.startCalled)
         XCTAssertTrue(periodicEventsRecorderWorker.startCalled)
     }
 
@@ -226,7 +220,7 @@ class SynchronizerTest: XCTestCase {
 
         synchronizer.stopPeriodicRecording()
 
-        XCTAssertTrue(periodicImpressionsRecorderWorker.stopCalled)
+        XCTAssertTrue(impressionsTracker.stopCalled)
         XCTAssertTrue(periodicEventsRecorderWorker.stopCalled)
     }
 
@@ -241,7 +235,7 @@ class SynchronizerTest: XCTestCase {
 
         synchronizer.flush()
         sleep(1)
-        XCTAssertTrue(impressionsRecorderWorker.flushCalled)
+        XCTAssertTrue(impressionsTracker.flushCalled)
         XCTAssertTrue(eventsRecorderWorker.flushCalled)
     }
 
@@ -263,21 +257,6 @@ class SynchronizerTest: XCTestCase {
         XCTAssertTrue(sw1.stopCalled)
         XCTAssertTrue(sw2.stopCalled)
         XCTAssertEqual(0, updateWorkerCatalog.count)
-    }
-
-    func testImpressionPush() {
-        let impression = KeyImpression(featureName: "feature", keyName: "k1",
-                                       treatment: "t1", label: nil, time: 1,
-                                       changeNumber: 1)
-
-        for _ in 0..<5 {
-            synchronizer.pushImpression(impression: impression)
-        }
-
-
-        ThreadUtils.delay(seconds: 1)
-        XCTAssertEqual(1, telemetryProducer.impressions[.queued])
-        XCTAssertEqual(4, telemetryProducer.impressions[.deduped])
     }
 
     func testEventPush() {

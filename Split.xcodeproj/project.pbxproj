@@ -454,6 +454,7 @@
 		954F9C7025795CD300140B81 /* SplitsStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9C6F25795CD300140B81 /* SplitsStorageStub.swift */; };
 		954F9C75257961C100140B81 /* HttpSplitFetcherStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9C74257961C100140B81 /* HttpSplitFetcherStub.swift */; };
 		954F9C7D2579697B00140B81 /* SplitChangeProcessorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9C7C2579697B00140B81 /* SplitChangeProcessorStub.swift */; };
+		9550334A282F0FF400E5330F /* ImpressionsTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95503349282F0FF400E5330F /* ImpressionsTrackerTest.swift */; };
 		9551666B276A46E000FE9D55 /* TelemetrySynchronizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9551666A276A46E000FE9D55 /* TelemetrySynchronizerTest.swift */; };
 		955423A326793AEF002278D5 /* ImpressionsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955423A226793AEF002278D5 /* ImpressionsObserver.swift */; };
 		955423A726794C58002278D5 /* LRUCacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955423A626794C58002278D5 /* LRUCacheTest.swift */; };
@@ -1321,6 +1322,7 @@
 		954F9C6F25795CD300140B81 /* SplitsStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsStorageStub.swift; sourceTree = "<group>"; };
 		954F9C74257961C100140B81 /* HttpSplitFetcherStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpSplitFetcherStub.swift; sourceTree = "<group>"; };
 		954F9C7C2579697B00140B81 /* SplitChangeProcessorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitChangeProcessorStub.swift; sourceTree = "<group>"; };
+		95503349282F0FF400E5330F /* ImpressionsTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTrackerTest.swift; sourceTree = "<group>"; };
 		9551666A276A46E000FE9D55 /* TelemetrySynchronizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetrySynchronizerTest.swift; sourceTree = "<group>"; };
 		955423A226793AEF002278D5 /* ImpressionsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsObserver.swift; sourceTree = "<group>"; };
 		955423A626794C58002278D5 /* LRUCacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCacheTest.swift; sourceTree = "<group>"; };
@@ -1524,6 +1526,7 @@
 				59ED408E24F06EC100EF7B09 /* TimersManagerTest.swift */,
 				59F4AAA72508120500A1C69A /* SyncManagerTest.swift */,
 				9519A92927DA9AF000278AEC /* SynchronizerTest.swift */,
+				95503349282F0FF400E5330F /* ImpressionsTrackerTest.swift */,
 				9519A93127DBC25B00278AEC /* MySegmentsSynchronizerTest.swift */,
 				9519A93927DE318000278AEC /* ByKeyFacadeTest.swift */,
 				59B2047524F9B8230092F2E9 /* PushManagerEventBroadcasterTest.swift */,
@@ -3329,6 +3332,7 @@
 				954F9C4E2577E6D200140B81 /* HttpSplitFetcherTests.swift in Sources */,
 				5932260124A4E91800496D8B /* HttpStreamRequestTest.swift in Sources */,
 				5946783522E110A700F94E58 /* MockWebServer.swift in Sources */,
+				9550334A282F0FF400E5330F /* ImpressionsTrackerTest.swift in Sources */,
 				595AD24D24E324D200A7B750 /* Base64UtilsTest.swift in Sources */,
 				599EDAF12270970500D7DACB /* SplitEventsManagerMock.swift in Sources */,
 				955B59632811E8E700D105CD /* SplitClientManagerTest.swift in Sources */,
