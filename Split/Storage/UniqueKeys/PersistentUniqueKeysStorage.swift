@@ -9,23 +9,50 @@
 import Foundation
 
 protocol PersistentUniqueKeysStorage {
-    func set(_ features: [String], forKey key: String)
-    func getSnapshot(forKey key: String) -> [String]
+    func delete(_ counts: [UniqueKey])
+    func pop(count: Int) -> [UniqueKey]
+    func pushMany(keys: [UniqueKey])
+    func setActive(_ counts: [UniqueKey])
 }
 
 class DefaultPersistentUniqueKeysStorage: PersistentUniqueKeysStorage {
 
-    private let uniqueKeysDao: UniqueKeyDao
+    private let uniqueKeyDao: UniqueKeyDao
+    private let expirationPeriod: Int64
 
-    init(database: SplitDatabase) {
-        self.uniqueKeysDao = database.uniqueKeyDao
+    init(database: SplitDatabase, expirationPeriod: Int64) {
+        self.uniqueKeyDao = database.uniqueKeyDao
+        self.expirationPeriod = expirationPeriod
     }
 
-    func set(_ features: [String], forKey key: String) {
-        uniqueKeysDao.update(userKey: key, featureList: features)
+    func pop(count: Int) -> [UniqueKey] {
+        let createdAt = Date().unixTimestamp() - self.expirationPeriod
+        let keys = uniqueKeyDao.getBy(createdAt: createdAt,
+                                      status: StorageRecordStatus.active,
+                                      maxRows: count)
+        uniqueKeyDao.update(keys: keys.map { $0.userKey },
+                            newStatus: StorageRecordStatus.deleted)
+        return keys
     }
 
-    func getSnapshot(forKey key: String) -> [String] {
-        return uniqueKeysDao.getBy(userKey: key)
+    func pushMany(keys: [UniqueKey]) {
+        uniqueKeyDao.insert(keys)
+    }
+
+    func getCritical() -> [UniqueKey] {
+        // To be used in the future.
+        return []
+    }
+
+    func setActive(_ keys: [UniqueKey]) {
+        if keys.count < 1 {
+            return
+        }
+        uniqueKeyDao.update(keys: keys.compactMap { return $0.userKey },
+                            newStatus: StorageRecordStatus.active)
+    }
+
+    func delete(_ keys: [UniqueKey]) {
+        uniqueKeyDao.delete(keys.map { $0.userKey })
     }
 }

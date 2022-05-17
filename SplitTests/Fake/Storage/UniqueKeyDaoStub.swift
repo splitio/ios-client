@@ -10,12 +10,33 @@ import Foundation
 @testable import Split
 
 class UniqueKeyDaoStub: UniqueKeyDao {
-    var features =  [String: [String]]()
-    func getBy(userKey: String) -> [String] {
-        return features[userKey] ?? []
-    }
-    
-    func update(userKey: String, featureList: [String]) {
-        features[userKey] = featureList
+
+var insertedKeys = [UniqueKey]()
+var getByKeys = [UniqueKey]()
+var updatedKeys = [String: Int32]()
+var deletedKeys = [String]()
+
+
+func insert(_ key: UniqueKey) {
+    insertedKeys.append(key)
+}
+
+func insert(_ keys: [UniqueKey]) {
+    insertedKeys.append(contentsOf: keys)
+}
+
+func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [UniqueKey] {
+    return getByKeys
+}
+
+func update(keys: [String], newStatus: Int32) {
+    keys.forEach {
+        updatedKeys[$0] = newStatus
     }
 }
+
+func delete(_ events: [String]) {
+    deletedKeys.append(contentsOf: events)
+}
+}
+

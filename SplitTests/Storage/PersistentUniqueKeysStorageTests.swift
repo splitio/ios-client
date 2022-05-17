@@ -11,73 +11,65 @@ import Foundation
 import XCTest
 @testable import Split
 
+
 class PersistentUniqueKeysStorageTests: XCTestCase {
-    
-    var uniqueKeysStorage: PersistentUniqueKeysStorage!
-    var uniqueKeysDao: UniqueKeyDaoStub!
-    let dummyKey = "dummyKey"
-    let otherKey = "otherKey"
-    
+
+    var keysStorage: PersistentUniqueKeysStorage!
+    var keyDao: UniqueKeyDaoStub!
+
     override func setUp() {
-        uniqueKeysDao = UniqueKeyDaoStub()
-        uniqueKeysStorage =
-            DefaultPersistentUniqueKeysStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
-                                                                           impressionDao: ImpressionDaoStub(),
-                                                                           impressionsCountDao: ImpressionsCountDaoStub(),
-                                                                           generalInfoDao: GeneralInfoDaoStub(),
-                                                                           splitDao: SplitDaoStub(),
-                                                                           mySegmentsDao: MySegmentsDaoStub(),
-                                                                           attributesDao: AttributesDaoStub(),
-                                                                           uniqueKeyDao: uniqueKeysDao))
-    }
-    
-    func  testSet() {
-        uniqueKeysStorage.set(["se1", "se2", "se3"], forKey: dummyKey)
-        
-        let features = uniqueKeysDao.getBy(userKey: dummyKey)
-        
-        XCTAssertEqual(3, features.count)
-        XCTAssertEqual(1, features.filter { $0 == "se1" }.count)
-        XCTAssertEqual(1, features.filter { $0 == "se2" }.count)
-        XCTAssertEqual(1, features.filter { $0 == "se3" }.count)
+        keyDao = UniqueKeyDaoStub()
+        keysStorage = DefaultPersistentUniqueKeysStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
+                                                                                   impressionDao: ImpressionDaoStub(),
+                                                                                   impressionsCountDao: ImpressionsCountDaoStub(),
+                                                                                   generalInfoDao: GeneralInfoDaoStub(),
+                                                                                   splitDao: SplitDaoStub(),
+                                                                                   mySegmentsDao: MySegmentsDaoStub(),
+                                                                                   attributesDao: AttributesDaoStub(),
+                                                                                   uniqueKeyDao: keyDao), expirationPeriod: 100)
+
     }
 
-    func  testClear() {
-        uniqueKeysDao.features[dummyKey] = ["s1", "s2"]
-        uniqueKeysStorage.set([], forKey: dummyKey)
+    func testPush() {
+        self.keysStorage.pushMany(keys: createUniqueKeyss())
 
-        let features = uniqueKeysDao.getBy(userKey: dummyKey)
-
-        XCTAssertEqual(0, features.count)
-    }
-    
-    func testGetSnapshot() {
-        uniqueKeysDao.features[dummyKey] = ["s1", "s2"]
-        
-        let features = uniqueKeysStorage.getSnapshot(forKey: dummyKey)
-        
-        XCTAssertEqual(2, features.count)
-        XCTAssertEqual(1, features.filter { $0 == "s1" }.count)
-        XCTAssertEqual(1, features.filter { $0 == "s2" }.count)
+        XCTAssertEqual(20, keyDao.insertedKeys.count)
     }
 
-    func testSetMultiKey() {
-        uniqueKeysStorage.set(["se1", "se2", "se3"], forKey: dummyKey)
+    func testPop() {
+        keyDao.getByKeys = createUniqueKeyss()
+        let popped = keysStorage.pop(count: 100)
 
-        let features = uniqueKeysDao.getBy(userKey: otherKey)
-
-        XCTAssertEqual(0, features.count)
+        XCTAssertEqual(keyDao.getByKeys.count, popped.count)
+        XCTAssertEqual(keyDao.updatedKeys.count, popped.count)
+        XCTAssertEqual(0, keyDao.updatedKeys.values.filter { $0 == StorageRecordStatus.active }.count)
     }
 
-    func testGetSnapshotMultiKey() {
-        uniqueKeysDao.features[dummyKey] = ["s1", "s2"]
+    func testDelete() {
+        let keys = createUniqueKeyss()
+        keysStorage.delete(keys)
 
-        let features = uniqueKeysStorage.getSnapshot(forKey: otherKey)
-
-        XCTAssertEqual(0, features.count)
+        XCTAssertEqual(keyDao.deletedKeys.count, keys.count)
     }
-    
+
+    func testSetActive() {
+        let keys = createUniqueKeyss()
+
+        keysStorage.setActive(keys)
+
+        XCTAssertEqual(keys.count, keyDao.updatedKeys.values.filter { $0 ==  StorageRecordStatus.active }.count)
+        XCTAssertEqual(0, keyDao.updatedKeys.values.filter { $0 ==  StorageRecordStatus.deleted }.count )
+    }
+
     override func tearDown() {
     }
-}
 
+    func createUniqueKeyss() -> [UniqueKey] {
+        var keys = [UniqueKey]()
+        for i in 0..<20 {
+            let key = UniqueKey(userKey: "key_\(i)", features: ["f_1_\(i)", "f_2_\(i)"])
+            keys.append(key)
+        }
+        return keys
+    }
+}

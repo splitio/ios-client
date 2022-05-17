@@ -13,10 +13,11 @@ import CoreData
 @objc(UniqueKeyEntity)
 class UniqueKeyEntity: NSManagedObject {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<UniqueKeyEntity> {
-        return NSFetchRequest<UniqueKeyEntity>(entityName: "UniqueKeys")
+        return NSFetchRequest<UniqueKeyEntity>(entityName: CoreDataEntity.uniqueKey.rawValue)
     }
 
-    @NSManaged public var featureList: String?
-    @NSManaged public var updatedAt: Int64
-    @NSManaged public var userKey: String?
+    @NSManaged public var userKey: String
+    @NSManaged public var featureList: String
+    @NSManaged public var createdAt: Int64
+    @NSManaged public var status: Int32
 }
