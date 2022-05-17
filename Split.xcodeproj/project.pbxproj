@@ -429,6 +429,11 @@
 		952BF5FC278DF66700FF6181 /* TelemetryConfigHelperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */; };
 		952C2B7726447FDD009275B4 /* BlockingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7626447FDD009275B4 /* BlockingQueue.swift */; };
 		952C2B7B26449456009275B4 /* BlockingQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7A26449456009275B4 /* BlockingQueueTest.swift */; };
+		952E266B2833E35A0015D633 /* PersistentUniqueKeysStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E266A2833E35A0015D633 /* PersistentUniqueKeysStorage.swift */; };
+		952E266D2833E4120015D633 /* UniqueKeyDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E266C2833E4120015D633 /* UniqueKeyDao.swift */; };
+		952E26702833E4F20015D633 /* UniqueKeyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E266F2833E4F20015D633 /* UniqueKeyEntity.swift */; };
+		952E26732833FE8A0015D633 /* PersistentUniqueKeysStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E26722833FE8A0015D633 /* PersistentUniqueKeysStorageTests.swift */; };
+		952E26752833FF3F0015D633 /* UniqueKeyDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E26742833FF3F0015D633 /* UniqueKeyDaoStub.swift */; };
 		9530FD7A27F24306005027AA /* EventsManagerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */; };
 		9530FD7C27F253CA005027AA /* SplitEventsCoordinatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530FD7B27F253CA005027AA /* SplitEventsCoordinatorTest.swift */; };
 		953911A8267A4F250040433A /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953911A7267A4F250040433A /* LRUCache.swift */; };
@@ -1294,6 +1299,12 @@
 		952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryConfigHelperStub.swift; sourceTree = "<group>"; };
 		952C2B7626447FDD009275B4 /* BlockingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueue.swift; sourceTree = "<group>"; };
 		952C2B7A26449456009275B4 /* BlockingQueueTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueueTest.swift; sourceTree = "<group>"; };
+		952E266A2833E35A0015D633 /* PersistentUniqueKeysStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentUniqueKeysStorage.swift; sourceTree = "<group>"; };
+		952E266C2833E4120015D633 /* UniqueKeyDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeyDao.swift; sourceTree = "<group>"; };
+		952E266F2833E4F20015D633 /* UniqueKeyEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeyEntity.swift; sourceTree = "<group>"; };
+		952E26712833EBC90015D633 /* split_cache_v4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v4.xcdatamodel; sourceTree = "<group>"; };
+		952E26722833FE8A0015D633 /* PersistentUniqueKeysStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentUniqueKeysStorageTests.swift; sourceTree = "<group>"; };
+		952E26742833FF3F0015D633 /* UniqueKeyDaoStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeyDaoStub.swift; sourceTree = "<group>"; };
 		9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsManagerCoordinator.swift; sourceTree = "<group>"; };
 		9530FD7B27F253CA005027AA /* SplitEventsCoordinatorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsCoordinatorTest.swift; sourceTree = "<group>"; };
 		953911A7267A4F250040433A /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
@@ -1987,6 +1998,7 @@
 		3B6DEF0720EA6AE40067435E /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				952E266E2833E4210015D633 /* UniqueKeys */,
 				95DE29252736AE1E00DB3EAD /* Attributes */,
 				95B341AD26136AC4002F57F6 /* Global */,
 				954F9AF6256EE46000140B81 /* GeneralInfo */,
@@ -2037,6 +2049,7 @@
 				954F9B1D25715EAB00140B81 /* MySegmentsDaoTests.swift */,
 				95DE29522739A7AB00DB3EAD /* AttributesDaoTests.swift */,
 				95C8F78D27D00A5E00E118EA /* PersistentMySegmentsStorageTests.swift */,
+				952E26722833FE8A0015D633 /* PersistentUniqueKeysStorageTests.swift */,
 				95C1600E27D28FD4008562E3 /* PersistentAttributesStorageTests.swift */,
 				9557C1C92614F67700CD9B5C /* DbForTwoDifferentApiKeyTest.swift */,
 			);
@@ -2061,6 +2074,7 @@
 				954F9B0225700AF700140B81 /* GeneralInfoDaoStub.swift */,
 				954F9AFE2570082C00140B81 /* SplitDaoStub.swift */,
 				954F9B212571605600140B81 /* MySegmentsDaoStub.swift */,
+				952E26742833FF3F0015D633 /* UniqueKeyDaoStub.swift */,
 				95DE294D2739981400DB3EAD /* AttributesDaoStub.swift */,
 				955428E72568176C00331356 /* ImpressionDaoStub.swift */,
 				95C717DD268CE137002ADB83 /* ImpressionsCountDaoStub.swift */,
@@ -2525,6 +2539,16 @@
 				95B17FF0275A52D7002DC9DF /* TelemetryInMemoryStorage.swift */,
 			);
 			path = Storage;
+			sourceTree = "<group>";
+		};
+		952E266E2833E4210015D633 /* UniqueKeys */ = {
+			isa = PBXGroup;
+			children = (
+				952E266A2833E35A0015D633 /* PersistentUniqueKeysStorage.swift */,
+				952E266C2833E4120015D633 /* UniqueKeyDao.swift */,
+				952E266F2833E4F20015D633 /* UniqueKeyEntity.swift */,
+			);
+			path = UniqueKeys;
 			sourceTree = "<group>";
 		};
 		953911AB267A648F0040433A /* Impressions */ = {
@@ -3066,11 +3090,13 @@
 				596A7B6E23566BE0004F6139 /* Destroyable.swift in Sources */,
 				95F3F01C258E3B7E00084AF8 /* ImpressionsRecorder.swift in Sources */,
 				59FB7C1121F7572700ECC96A /* ApiKeyValidator.swift in Sources */,
+				952E26702833E4F20015D633 /* UniqueKeyEntity.swift in Sources */,
 				5905D4FA255DD88F006DA3B1 /* EventDao.swift in Sources */,
 				9505681826822DB4001D7B10 /* ImpressionsCount.swift in Sources */,
 				95F20F4627EA6A4300B5B30A /* TreatmentManager.swift in Sources */,
 				3B6DEF4920EA6AE50067435E /* MatcherType.swift in Sources */,
 				59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */,
+				952E266D2833E4120015D633 /* UniqueKeyDao.swift in Sources */,
 				3B6DEF3620EA6AE50067435E /* SplitClient.swift in Sources */,
 				3B6DEF3F20EA6AE50067435E /* ConditionType.swift in Sources */,
 				5959C486228C429A0064F968 /* Array+DynamicCodable.swift in Sources */,
@@ -3143,6 +3169,7 @@
 				59B8B8B0220C6E3F003E0D5A /* ValidationErrorInfo.swift in Sources */,
 				955A5A52258D04DF00CAEE9F /* RecorderWorker.swift in Sources */,
 				593225FF24A4D8FD00496D8B /* HttpResponse.swift in Sources */,
+				952E266B2833E35A0015D633 /* PersistentUniqueKeysStorage.swift in Sources */,
 				59F65EFE2562C215005FE8C9 /* CoreDataHelper.swift in Sources */,
 				3B6DEF5B20EA6AE50067435E /* SplitInternalEvent.swift in Sources */,
 				59FB7C332203126400ECC96A /* DefaultSplitFactoryBuilder.swift in Sources */,
@@ -3322,6 +3349,7 @@
 				9530FD7C27F253CA005027AA /* SplitEventsCoordinatorTest.swift in Sources */,
 				5921ED3E2538E3F8000D6C8B /* StreamingAuthFail4xxTest.swift in Sources */,
 				59F6AA9B215E9DA100A51997 /* LatencyCounterTests.swift in Sources */,
+				952E26752833FF3F0015D633 /* UniqueKeyDaoStub.swift in Sources */,
 				59ED408F24F06EC100EF7B09 /* TimersManagerTest.swift in Sources */,
 				59D84BE7221AE775003DA248 /* LocalhostManagerTests.swift in Sources */,
 				955B596C2816BC0C00D105CD /* MultiClientEvaluationTest.swift in Sources */,
@@ -3337,6 +3365,7 @@
 				599EDAF12270970500D7DACB /* SplitEventsManagerMock.swift in Sources */,
 				955B59632811E8E700D105CD /* SplitClientManagerTest.swift in Sources */,
 				59FB7C1421F78C4E00ECC96A /* EventValidatorTests.swift in Sources */,
+				952E26732833FE8A0015D633 /* PersistentUniqueKeysStorageTests.swift in Sources */,
 				598EDE7C224BCA58005D4762 /* InternalSplitClientStub.swift in Sources */,
 				9519A91527D6A10F00278AEC /* ByKeyAttributesStorageTests.swift in Sources */,
 				59B2043324F549B70092F2E9 /* SyncUpdateWorkerTest.swift in Sources */,
@@ -4195,11 +4224,12 @@
 		59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				952E26712833EBC90015D633 /* split_cache_v4.xcdatamodel */,
 				95623D8E275100770006A8F1 /* split_cache_v3.xcdatamodel */,
 				950B74302693761A005FD649 /* split_cache_v2.xcdatamodel */,
 				59E6A38925557C8D005DE642 /* split_cache.xcdatamodel */,
 			);
-			currentVersion = 95623D8E275100770006A8F1 /* split_cache_v3.xcdatamodel */;
+			currentVersion = 952E26712833EBC90015D633 /* split_cache_v4.xcdatamodel */;
 			path = split_cache.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

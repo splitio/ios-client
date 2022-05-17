@@ -18,6 +18,7 @@ class SplitDatabaseStub: SplitDatabase {
     var impressionsCountDao: ImpressionsCountDao
     var generalInfoDao: GeneralInfoDao
     var attributesDao: AttributesDao
+    var uniqueKeyDao: UniqueKeyDao
     
     init(eventDao: EventDao,
          impressionDao: ImpressionDao,
@@ -25,7 +26,9 @@ class SplitDatabaseStub: SplitDatabase {
          generalInfoDao: GeneralInfoDao,
          splitDao: SplitDao,
          mySegmentsDao: MySegmentsDao,
-         attributesDao: AttributesDao) {
+         attributesDao: AttributesDao,
+         uniqueKeyDao: UniqueKeyDao
+    ) {
         self.eventDao = eventDao
         self.impressionDao = impressionDao
         self.impressionsCountDao = impressionsCountDao
@@ -33,5 +36,6 @@ class SplitDatabaseStub: SplitDatabase {
         self.generalInfoDao = generalInfoDao
         self.mySegmentsDao = mySegmentsDao
         self.attributesDao = attributesDao
+        self.uniqueKeyDao = uniqueKeyDao
     }
 }

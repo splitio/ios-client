@@ -7,7 +7,7 @@
 //
 
 import Foundation
-//swiftlint:disable inclusive_language
+// swiftlint:disable inclusive_language
 public enum ConditionType: Int, Codable {
     case whitelist
     case rollout
