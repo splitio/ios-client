@@ -118,6 +118,12 @@ class TestSplitFactory {
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          eventsManager: eventsManager)
 
+        let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitConfig,
+                                                           splitApiFacade: apiFacade,
+                                                           storageContainer: storageContainer,
+                                                           syncWorkerFactory: syncWorkerFactory,
+                                                           impressionsSyncHelper: impressionsSyncHelper)
+
         let byKeyFacade = DefaultByKeyFacade()
 
         self.synchronizer = SynchronizerSpy(splitConfig: splitConfig,
@@ -127,7 +133,7 @@ class TestSplitFactory {
                                             splitApiFacade: apiFacade,
                                             splitStorageContainer: storageContainer,
                                             syncWorkerFactory: syncWorkerFactory,
-                                            impressionsSyncHelper: impressionsSyncHelper,
+                                            impressionsTracker: impressionsTracker,
                                             eventsSyncHelper: eventsSyncHelper,
                                             splitsFilterQueryString: splitsFilterQueryString,
                                             splitEventsManager: eventsManager)
