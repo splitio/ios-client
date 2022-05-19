@@ -30,7 +30,7 @@ class DefaultPersistentUniqueKeysStorage: PersistentUniqueKeysStorage {
         let keys = uniqueKeyDao.getBy(createdAt: createdAt,
                                       status: StorageRecordStatus.active,
                                       maxRows: count)
-        uniqueKeyDao.update(ids: keys.map { $0.storageId },
+        uniqueKeyDao.update(ids: keys.compactMap { $0.storageId },
                             newStatus: StorageRecordStatus.deleted,
                             incrementSentCount: false)
         return keys

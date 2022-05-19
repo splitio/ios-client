@@ -107,12 +107,13 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
                                           where: predicate).compactMap { return $0 as? UniqueKeyEntity }
             for entity in entities {
                 entity.status = newStatus
+                if incrementSentCount {
+                    entity.sendAttemptCount+=1
+                }
             }
             self.coreDataHelper.save()
         }
     }
-
-    
 
     func delete(_ ids: [String]) {
         if ids.count == 0 {
