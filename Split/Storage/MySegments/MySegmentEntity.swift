@@ -12,10 +12,6 @@ import CoreData
 
 @objc(MySegmentEntity)
 class MySegmentEntity: NSManagedObject {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<MySegmentEntity> {
-        return NSFetchRequest<MySegmentEntity>(entityName: "MySegments")
-    }
-
     @NSManaged public var segmentList: String?
     @NSManaged public var updatedAt: Int64
     @NSManaged public var userKey: String?

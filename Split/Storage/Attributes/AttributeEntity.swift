@@ -12,10 +12,6 @@ import CoreData
 
 @objc(AttributeEntity)
 class AttributeEntity: NSManagedObject {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<AttributeEntity> {
-        return NSFetchRequest<AttributeEntity>(entityName: "Attributes")
-    }
-
     @NSManaged public var attributes: String?
     @NSManaged public var updatedAt: Int64
     @NSManaged public var userKey: String?

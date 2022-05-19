@@ -9,10 +9,10 @@
 import Foundation
 
 protocol PersistentUniqueKeysStorage {
-    func delete(_ counts: [UniqueKey])
+    func delete(_ keys: [UniqueKey])
     func pop(count: Int) -> [UniqueKey]
     func pushMany(keys: [UniqueKey])
-    func setActive(_ counts: [UniqueKey])
+    func setActiveAndUpdateSendCount(_ ids: [String])
 }
 
 class DefaultPersistentUniqueKeysStorage: PersistentUniqueKeysStorage {
@@ -30,8 +30,9 @@ class DefaultPersistentUniqueKeysStorage: PersistentUniqueKeysStorage {
         let keys = uniqueKeyDao.getBy(createdAt: createdAt,
                                       status: StorageRecordStatus.active,
                                       maxRows: count)
-        uniqueKeyDao.update(keys: keys.map { $0.userKey },
-                            newStatus: StorageRecordStatus.deleted)
+        uniqueKeyDao.update(ids: keys.map { $0.storageId },
+                            newStatus: StorageRecordStatus.deleted,
+                            incrementSentCount: false)
         return keys
     }
 
@@ -44,12 +45,11 @@ class DefaultPersistentUniqueKeysStorage: PersistentUniqueKeysStorage {
         return []
     }
 
-    func setActive(_ keys: [UniqueKey]) {
-        if keys.count < 1 {
+    func setActiveAndUpdateSendCount(_ ids: [String]) {
+        if ids.count < 1 {
             return
         }
-        uniqueKeyDao.update(keys: keys.compactMap { return $0.userKey },
-                            newStatus: StorageRecordStatus.active)
+        uniqueKeyDao.update(ids: ids, newStatus: StorageRecordStatus.active, incrementSentCount: true)
     }
 
     func delete(_ keys: [UniqueKey]) {

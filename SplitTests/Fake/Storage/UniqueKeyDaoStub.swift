@@ -11,32 +11,33 @@ import Foundation
 
 class UniqueKeyDaoStub: UniqueKeyDao {
 
-var insertedKeys = [UniqueKey]()
-var getByKeys = [UniqueKey]()
-var updatedKeys = [String: Int32]()
-var deletedKeys = [String]()
+    var insertedKeys = [UniqueKey]()
+    var getByKeys = [UniqueKey]()
+    var updatedStatus = [String: Int32]()
+    var updatedCount = [String: Int16]()
+    var updatedKeys = [String: UniqueKey]()
+    var deletedKeys = [String]()
 
-
-func insert(_ key: UniqueKey) {
-    insertedKeys.append(key)
-}
-
-func insert(_ keys: [UniqueKey]) {
-    insertedKeys.append(contentsOf: keys)
-}
-
-func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [UniqueKey] {
-    return getByKeys
-}
-
-func update(keys: [String], newStatus: Int32) {
-    keys.forEach {
-        updatedKeys[$0] = newStatus
+    func insert(_ key: UniqueKey) {
+        insertedKeys.append(key)
     }
-}
 
-func delete(_ events: [String]) {
-    deletedKeys.append(contentsOf: events)
-}
+    func insert(_ keys: [UniqueKey]) {
+        insertedKeys.append(contentsOf: keys)
+    }
+
+    func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [UniqueKey] {
+        return getByKeys
+    }
+
+    func update(ids: [String], newStatus: Int32, incrementSentCount: Bool) {
+        ids.forEach {
+            updatedStatus[$0] = newStatus
+        }
+    }
+
+    func delete(_ events: [String]) {
+        deletedKeys.append(contentsOf: events)
+    }
 }
 
