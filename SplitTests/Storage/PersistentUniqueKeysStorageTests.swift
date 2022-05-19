@@ -31,13 +31,13 @@ class PersistentUniqueKeysStorageTests: XCTestCase {
     }
 
     func testPush() {
-        self.keysStorage.pushMany(keys: createUniqueKeyss())
+        self.keysStorage.pushMany(keys: createUniqueKeys())
 
         XCTAssertEqual(20, keyDao.insertedKeys.count)
     }
 
     func testPop() {
-        keyDao.getByKeys = createUniqueKeyss()
+        keyDao.getByKeys = createUniqueKeys()
         let popped = keysStorage.pop(count: 100)
 
         XCTAssertEqual(keyDao.getByKeys.count, popped.count)
@@ -46,14 +46,14 @@ class PersistentUniqueKeysStorageTests: XCTestCase {
     }
 
     func testDelete() {
-        let keys = createUniqueKeyss()
+        let keys = createUniqueKeys()
         keysStorage.delete(keys)
 
         XCTAssertEqual(keyDao.deletedKeys.count, keys.count)
     }
 
     func testSetActive() {
-        let keys = createUniqueKeyss()
+        let keys = createUniqueKeys()
 
         keysStorage.setActive(keys)
 
@@ -64,7 +64,7 @@ class PersistentUniqueKeysStorageTests: XCTestCase {
     override func tearDown() {
     }
 
-    func createUniqueKeyss() -> [UniqueKey] {
+    func createUniqueKeys() -> [UniqueKey] {
         var keys = [UniqueKey]()
         for i in 0..<20 {
             let key = UniqueKey(userKey: "key_\(i)", features: ["f_1_\(i)", "f_2_\(i)"])
