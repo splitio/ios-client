@@ -48,7 +48,7 @@ class DefaultSynchronizer: Synchronizer {
 
     private let periodicSplitsSyncWorker: PeriodicSyncWorker
     private let splitsSyncWorker: RetryableSyncWorker
-    
+
     private let periodicEventsRecorderWorker: PeriodicRecorderWorker
     private let flusherEventsRecorderWorker: RecorderWorker
 
