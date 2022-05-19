@@ -41,8 +41,8 @@ class PersistentUniqueKeysStorageTests: XCTestCase {
         let popped = keysStorage.pop(count: 100)
 
         XCTAssertEqual(keyDao.getByKeys.count, popped.count)
-        XCTAssertEqual(keyDao.updatedKeys.count, popped.count)
-        XCTAssertEqual(0, keyDao.updatedKeys.values.filter { $0 == StorageRecordStatus.active }.count)
+        XCTAssertEqual(keyDao.updatedStatus.count, popped.count)
+        XCTAssertEqual(0, keyDao.updatedStatus.values.filter { $0 == StorageRecordStatus.active }.count)
     }
 
     func testDelete() {
@@ -55,10 +55,10 @@ class PersistentUniqueKeysStorageTests: XCTestCase {
     func testSetActive() {
         let keys = createUniqueKeys()
 
-        keysStorage.setActive(keys)
+        keysStorage.setActiveAndUpdateSendCount(keys.map { $0.storageId })
 
-        XCTAssertEqual(keys.count, keyDao.updatedKeys.values.filter { $0 ==  StorageRecordStatus.active }.count)
-        XCTAssertEqual(0, keyDao.updatedKeys.values.filter { $0 ==  StorageRecordStatus.deleted }.count )
+        XCTAssertEqual(keys.count, keyDao.updatedStatus.values.filter { $0 ==  StorageRecordStatus.active }.count)
+        XCTAssertEqual(0, keyDao.updatedStatus.values.filter { $0 ==  StorageRecordStatus.deleted }.count )
     }
 
     override func tearDown() {
@@ -67,7 +67,7 @@ class PersistentUniqueKeysStorageTests: XCTestCase {
     func createUniqueKeys() -> [UniqueKey] {
         var keys = [UniqueKey]()
         for i in 0..<20 {
-            let key = UniqueKey(userKey: "key_\(i)", features: ["f_1_\(i)", "f_2_\(i)"])
+            let key = UniqueKey(storageId: "id_\(i)", userKey: "key_\(i)", features: ["f_1_\(i)", "f_2_\(i)"])
             keys.append(key)
         }
         return keys

@@ -12,10 +12,6 @@ import CoreData
 
 @objc(GeneralInfoEntity)
 class GeneralInfoEntity: NSManagedObject {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<GeneralInfoEntity> {
-        return NSFetchRequest<GeneralInfoEntity>(entityName: "GeneralInfo")
-    }
-
     @NSManaged public var longValue: Int64
     @NSManaged public var name: String
     @NSManaged public var stringValue: String?

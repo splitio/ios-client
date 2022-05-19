@@ -71,17 +71,6 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="UniqueKey" representedClassName="UniqueKey" syncable="YES">
-        <attribute name="createAt" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="featureList" attributeType="String"/>
-        <attribute name="sendAttemtsCount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="userKey" attributeType="String"/>
-        <uniquenessConstraints>
-            <uniquenessConstraint>
-                <constraint value="userKey"/>
-            </uniquenessConstraint>
-        </uniquenessConstraints>
-    </entity>
     <elements>
         <element name="Attribute" positionX="58.431640625" positionY="-111.2310791015625" width="128" height="88"/>
         <element name="Event" positionX="-394.56640625" positionY="-244.453125" width="128" height="118"/>
@@ -90,6 +79,5 @@
         <element name="ImpressionsCount" positionX="-423.51171875" positionY="-63.26171875" width="128" height="103"/>
         <element name="MySegment" positionX="-226.27734375" positionY="-237.1171875" width="128" height="88"/>
         <element name="Split" positionX="-95.48828125" positionY="-119.859375" width="128" height="88"/>
-        <element name="UniqueKey" positionX="-241.4404296875" positionY="23.11611938476562" width="128" height="103"/>
     </elements>
 </model>

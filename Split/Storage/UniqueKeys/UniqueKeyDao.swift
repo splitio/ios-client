@@ -13,8 +13,8 @@ protocol UniqueKeyDao {
     func insert(_ key: UniqueKey)
     func insert(_ keys: [UniqueKey])
     func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [UniqueKey]
-    func update(keys: [String], newStatus: Int32)
-    func delete(_ keys: [String])
+    func update(ids: [String], newStatus: Int32, incrementSentCount: Bool)
+    func delete(_ ids: [String])
 }
 
 class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
@@ -54,10 +54,12 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
             do {
                 for key in keys {
                     if let obj = self.coreDataHelper.create(entity: .uniqueKey) as? UniqueKeyEntity {
+                        obj.storageId = self.coreDataHelper.generateId()
                         obj.userKey = key.userKey
                         obj.featureList = try self.json.encodeToJson(key.features)
                         obj.createdAt = Date().unixTimestamp()
                         obj.status = StorageRecordStatus.active
+                        obj.sendAttemptCount = 0
                     }
                 }
                 self.coreDataHelper.save()
@@ -89,12 +91,12 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
         return result
     }
 
-    func update(keys: [String], newStatus: Int32) {
-        if keys.count == 0 {
+    func update(ids: [String], newStatus: Int32, incrementSentCount: Bool) {
+        if ids.count == 0 {
             return
         }
 
-        let predicate = NSPredicate(format: "userKey IN %@", keys)
+        let predicate = NSPredicate(format: "id IN %@", ids)
 
         executeAsync { [weak self] in
             guard let self = self else {
@@ -102,7 +104,7 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
             }
             let entities =
                 self.coreDataHelper.fetch(entity: .uniqueKey,
-                                          where: predicate).compactMap { return $0 as? ImpressionsCountEntity }
+                                          where: predicate).compactMap { return $0 as? UniqueKeyEntity }
             for entity in entities {
                 entity.status = newStatus
             }
@@ -110,8 +112,10 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
         }
     }
 
-    func delete(_ keys: [String]) {
-        if keys.count == 0 {
+    
+
+    func delete(_ ids: [String]) {
+        if ids.count == 0 {
             return
         }
         executeAsync { [weak self] in
@@ -119,13 +123,14 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
                 return
             }
             self.coreDataHelper.delete(entity: .uniqueKey, by: "storageId",
-                                       values: keys)
+                                       values: ids)
         }
     }
 
     func mapEntityToModel(_ entity: UniqueKeyEntity) throws -> UniqueKey {
         let featureList = try Json.encodeFrom(json: entity.featureList, to: [String].self)
-        let model = UniqueKey(userKey: entity.userKey,
+        let model = UniqueKey(storageId: entity.storageId,
+                              userKey: entity.userKey,
                               features: featureList)
         return model
     }
