@@ -10,6 +10,7 @@ import Foundation
 
 struct ServiceConstants {
     static let estimatedImpressionSizeInBytes = 150
+    static let estimatedUniqueKeySizeInBytes = 150
     static let recordedDataExpirationPeriodInSeconds: Int64 = 3600 * 24 * 90 // 90 days
     static let cacheControlHeader = "Cache-Control"
     static let cacheControlNoCache = "no-cache"

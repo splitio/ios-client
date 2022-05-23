@@ -29,7 +29,7 @@ class DefaultUniqueKeyTracker: UniqueKeyTracker {
         let keys = inMemoryKeys.takeAll()
         var uniqueKeys = [UniqueKey]()
         keys.forEach { userKey, features in
-            uniqueKeys.append(UniqueKey(userKey: userKey, features: Array(features)))
+            uniqueKeys.append(UniqueKey(userKey: userKey, features: features))
         }
         uniqueKeyStorage.pushMany(keys: uniqueKeys)
     }

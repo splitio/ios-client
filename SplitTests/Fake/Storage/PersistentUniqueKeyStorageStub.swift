@@ -46,6 +46,7 @@ class PersistentUniqueKeyStorageStub: PersistentUniqueKeysStorage {
     }
 
     func setActiveAndUpdateSendCount(_ ids: [String]) {
+        
         for elementId in ids {
             var status = recordState[elementId] ?? State(sendAttempCount: 0, recordStatus: StorageRecordStatus.active)
             status.recordStatus = StorageRecordStatus.active

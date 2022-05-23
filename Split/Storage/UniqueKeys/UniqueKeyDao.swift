@@ -106,12 +106,18 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
             let entities =
                 self.coreDataHelper.fetch(entity: .uniqueKey,
                                           where: predicate).compactMap { return $0 as? UniqueKeyEntity }
+
+            var toDelete = [String]()
             for entity in entities {
                 entity.status = newStatus
                 if incrementSentCount {
                     entity.sendAttemptCount+=1
+                    if entity.sendAttemptCount > ServiceConstants.retryCount {
+                        toDelete.append(entity.storageId)
+                    }
                 }
             }
+            self.delete(toDelete)
             self.coreDataHelper.save()
         }
     }
@@ -133,7 +139,7 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
         let featureList = try Json.encodeFrom(json: entity.featureList, to: [String].self)
         let model = UniqueKey(storageId: entity.storageId,
                               userKey: entity.userKey,
-                              features: featureList)
+                              features: Set(featureList))
         return model
     }
 }

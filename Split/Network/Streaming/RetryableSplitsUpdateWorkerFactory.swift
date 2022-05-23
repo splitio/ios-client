@@ -38,7 +38,11 @@ protocol SyncWorkerFactory {
 
     func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker
 
+    func createPeriodicImpressionsRecorderWorker(flusherChecker: RecorderFlushChecker?) -> PeriodicRecorderWorker
+
     func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> RecorderWorker
+
+    func createUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> RecorderWorker
 
     func createTelemetryConfigRecorderWorker() -> RecorderWorker?
 

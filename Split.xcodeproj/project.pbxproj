@@ -818,6 +818,11 @@
 		95D7D7E226DD44FB002E4D75 /* murmur3_64_uuids.csv in Resources */ = {isa = PBXBuildFile; fileRef = 95D7D7E126DD44FB002E4D75 /* murmur3_64_uuids.csv */; };
 		95D7D7EA26DD621D002E4D75 /* Murmur64x128.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D7D7E926DD621D002E4D75 /* Murmur64x128.swift */; };
 		95D94464283BA7D400D7FFED /* UniqueKeyTrackerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D94463283BA7D400D7FFED /* UniqueKeyTrackerStub.swift */; };
+		95D94466283BE5A200D7FFED /* UniqueKeysRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D94465283BE5A200D7FFED /* UniqueKeysRecorder.swift */; };
+		95D94468283BE61100D7FFED /* RestClient+UniqueKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D94467283BE61100D7FFED /* RestClient+UniqueKeys.swift */; };
+		95D94469283BEE3700D7FFED /* UniqueKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E2679283410620015D633 /* UniqueKey.swift */; };
+		95D9446B283BEE4D00D7FFED /* UniqueKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D9446A283BEE4D00D7FFED /* UniqueKeys.swift */; };
+		95D9446D283BF76A00D7FFED /* UniqueKeysRecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D9446C283BF76A00D7FFED /* UniqueKeysRecorderWorker.swift */; };
 		95DE29272736AE4E00DB3EAD /* AttributesDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE29262736AE4E00DB3EAD /* AttributesDao.swift */; };
 		95DE293727395E7300DB3EAD /* AttributeEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE293627395E7300DB3EAD /* AttributeEntity.swift */; };
 		95DE293E2739737D00DB3EAD /* AttributeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE293D2739737D00DB3EAD /* AttributeMap.swift */; };
@@ -1458,6 +1463,10 @@
 		95D7D7E126DD44FB002E4D75 /* murmur3_64_uuids.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = murmur3_64_uuids.csv; sourceTree = "<group>"; };
 		95D7D7E926DD621D002E4D75 /* Murmur64x128.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Murmur64x128.swift; sourceTree = "<group>"; };
 		95D94463283BA7D400D7FFED /* UniqueKeyTrackerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqueKeyTrackerStub.swift; sourceTree = "<group>"; };
+		95D94465283BE5A200D7FFED /* UniqueKeysRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeysRecorder.swift; sourceTree = "<group>"; };
+		95D94467283BE61100D7FFED /* RestClient+UniqueKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+UniqueKeys.swift"; sourceTree = "<group>"; };
+		95D9446A283BEE4D00D7FFED /* UniqueKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqueKeys.swift; sourceTree = "<group>"; };
+		95D9446C283BF76A00D7FFED /* UniqueKeysRecorderWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeysRecorderWorker.swift; sourceTree = "<group>"; };
 		95DE29262736AE4E00DB3EAD /* AttributesDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AttributesDao.swift; path = Split/Storage/Attributes/AttributesDao.swift; sourceTree = SOURCE_ROOT; };
 		95DE293627395E7300DB3EAD /* AttributeEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributeEntity.swift; sourceTree = "<group>"; };
 		95DE293D2739737D00DB3EAD /* AttributeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeMap.swift; sourceTree = "<group>"; };
@@ -1687,6 +1696,8 @@
 		3B6DEE8720EA6AE00067435E /* Impressions */ = {
 			isa = PBXGroup;
 			children = (
+				952E2679283410620015D633 /* UniqueKey.swift */,
+				95D9446A283BEE4D00D7FFED /* UniqueKeys.swift */,
 				59F6AA8621558BEB00A51997 /* ImpressionsTest.swift */,
 				950B743326938B5E005FD649 /* KeyImpression.swift */,
 				3B6DEE8820EA6AE00067435E /* Impression.swift */,
@@ -1942,6 +1953,7 @@
 				31AA203D93FA685145C3BCCD /* RestClient+MySegments.swift */,
 				595AD20924DDC77C00A7B750 /* RestClient+SseAuthenticator.swift */,
 				31AA229CA74193186137A991 /* RestClient+Impressions.swift */,
+				95D94467283BE61100D7FFED /* RestClient+UniqueKeys.swift */,
 				9505682726836C4A001D7B10 /* RestClient+ImpressionsCount.swift */,
 				31AA2B308C842042CD5D4ED3 /* RestClient+SplitChanges.swift */,
 			);
@@ -2557,7 +2569,6 @@
 		952E266E2833E4210015D633 /* UniqueKeys */ = {
 			isa = PBXGroup;
 			children = (
-				952E2679283410620015D633 /* UniqueKey.swift */,
 				952E266A2833E35A0015D633 /* PersistentUniqueKeysStorage.swift */,
 				952E266C2833E4120015D633 /* UniqueKeyDao.swift */,
 				952E266F2833E4F20015D633 /* UniqueKeyEntity.swift */,
@@ -2653,10 +2664,12 @@
 				95B17FF8275FCD0A002DC9DF /* TelemetryConfigRecorder.swift */,
 				95F3F01B258E3B7E00084AF8 /* ImpressionsRecorder.swift */,
 				9505682326836B20001D7B10 /* ImpressionsCountRecorder.swift */,
+				95D94465283BE5A200D7FFED /* UniqueKeysRecorder.swift */,
 				955A5A4C258D04DF00CAEE9F /* EventsRecorderWorker.swift */,
 				95B180192762B2C4002DC9DF /* TelemetryStatsRecorderWorker.swift */,
 				95B18000275FE87D002DC9DF /* TelemetryConfigRecorderWorker.swift */,
 				95F3F0232590D35F00084AF8 /* ImpressionsRecorderWorker.swift */,
+				95D9446C283BF76A00D7FFED /* UniqueKeysRecorderWorker.swift */,
 				9577A8422683AD2900D92AE1 /* ImpressionsCountRecorderWorker.swift */,
 				955A5A4D258D04DF00CAEE9F /* PeriodicRecorderWorker.swift */,
 				955A5A4E258D04DF00CAEE9F /* RecorderWorker.swift */,
@@ -2993,6 +3006,7 @@
 			files = (
 				951256412771318D0091895B /* SyncHelper.swift in Sources */,
 				595AD1F524D9994800A7B750 /* SyncConfig.swift in Sources */,
+				95D94466283BE5A200D7FFED /* UniqueKeysRecorder.swift in Sources */,
 				59FB7C0B21F0FF1700ECC96A /* ValidationConfig.swift in Sources */,
 				95B1801627629E73002DC9DF /* RestClient+TelemetryStats.swift in Sources */,
 				95D7D7EA26DD621D002E4D75 /* Murmur64x128.swift in Sources */,
@@ -3044,6 +3058,7 @@
 				9505682426836B20001D7B10 /* ImpressionsCountRecorder.swift in Sources */,
 				3B6DEF3020EA6AE50067435E /* Evaluator.swift in Sources */,
 				598EDE78224BB3E9005D4762 /* InternalSplitClient.swift in Sources */,
+				95D9446D283BF76A00D7FFED /* UniqueKeysRecorderWorker.swift in Sources */,
 				95B1801A2762B2C4002DC9DF /* TelemetryStatsRecorderWorker.swift in Sources */,
 				955B595628076BB900D105CD /* MySegmentsPayloadDecoder.swift in Sources */,
 				3B6DEF6020EA6AE50067435E /* BetweenMatcher.swift in Sources */,
@@ -3106,6 +3121,7 @@
 				596A7B6E23566BE0004F6139 /* Destroyable.swift in Sources */,
 				95F3F01C258E3B7E00084AF8 /* ImpressionsRecorder.swift in Sources */,
 				59FB7C1121F7572700ECC96A /* ApiKeyValidator.swift in Sources */,
+				95D94468283BE61100D7FFED /* RestClient+UniqueKeys.swift in Sources */,
 				952E26702833E4F20015D633 /* UniqueKeyEntity.swift in Sources */,
 				5905D4FA255DD88F006DA3B1 /* EventDao.swift in Sources */,
 				9505681826822DB4001D7B10 /* ImpressionsCount.swift in Sources */,
@@ -3115,6 +3131,7 @@
 				952E266D2833E4120015D633 /* UniqueKeyDao.swift in Sources */,
 				3B6DEF3620EA6AE50067435E /* SplitClient.swift in Sources */,
 				3B6DEF3F20EA6AE50067435E /* ConditionType.swift in Sources */,
+				95D9446B283BEE4D00D7FFED /* UniqueKeys.swift in Sources */,
 				5959C486228C429A0064F968 /* Array+DynamicCodable.swift in Sources */,
 				954F9BB225759BBE00140B81 /* ThreadUtils.swift in Sources */,
 				3B6DEF3B20EA6AE50067435E /* Dictionary+JSON.swift in Sources */,
@@ -3639,6 +3656,7 @@
 				956E42E4271DCCE7008B4DB6 /* SplitHelper.swift in Sources */,
 				956E42E5271DCCE7008B4DB6 /* SplitEventTask.swift in Sources */,
 				950D0C0627C5436600E617EB /* AttributesDao.swift in Sources */,
+				95D94469283BEE3700D7FFED /* UniqueKey.swift in Sources */,
 				956E42E6271DCCE7008B4DB6 /* ByKeyMySegmentsStorage.swift in Sources */,
 				956E42E7271DCCE7008B4DB6 /* EventEntity.swift in Sources */,
 				956E42E8271DCCE7008B4DB6 /* SynchronizedArrayQueue.swift in Sources */,

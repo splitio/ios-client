@@ -33,9 +33,12 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     private var impressionsCounter: ImpressionsCounter?
 
     private let uniqueKeyTracker: UniqueKeyTracker?
+    private let uniqueKeysRecorderWorker: RecorderWorker?
+    private let periodicUniqueKeyRecorderWorker: PeriodicRecorderWorker?
 
     private let storageContainer: SplitStorageContainer
     private let telemetryProducer: TelemetryRuntimeProducer?
+    private let uniqueKeyFlushChecker: RecorderFlushChecker?
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -72,7 +75,12 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
         if isNoneImpressionsMode() {
             uniqueKeyTracker?.track(userKey: impression.keyName, featureName: featureName)
-            // TODO: Should record metrics here?
+            if uniqueKeyFlushChecker?
+                .checkIfFlushIsNeeded(sizeInBytes: ServiceConstants.estimatedUniqueKeySizeInBytes) ?? false {
+                uniqueKeyTracker?.saveAndClear()
+
+                uni.
+            }
             return
         }
 
