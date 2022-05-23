@@ -50,6 +50,11 @@
         <attribute name="createdAt" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="status" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="storageId" optional="YES" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="storageId"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="MySegment" representedClassName="MySegmentEntity" syncable="YES">
         <attribute name="segmentList" attributeType="String"/>
@@ -71,21 +76,27 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="UniqueKey" representedClassName="UniqueKey" syncable="YES">
+    <entity name="UniqueKey" representedClassName="UniqueKeyEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="featureList" attributeType="String"/>
         <attribute name="sendAttemptCount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="status" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="storageId" attributeType="String"/>
         <attribute name="userKey" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="storageId"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <elements>
         <element name="Attribute" positionX="58.431640625" positionY="-111.2310791015625" width="128" height="88"/>
         <element name="Event" positionX="-394.56640625" positionY="-244.453125" width="128" height="118"/>
         <element name="GeneralInfo" positionX="-68.07421875" positionY="-234.640625" width="128" height="103"/>
         <element name="Impression" positionX="-265.90234375" positionY="-118.63671875" width="128" height="118"/>
-        <element name="ImpressionsCount" positionX="-423.51171875" positionY="-63.26171875" width="128" height="103"/>
+        <element name="ImpressionsCount" positionX="-423.51171875" positionY="-63.26171875" width="128" height="89"/>
         <element name="MySegment" positionX="-226.27734375" positionY="-237.1171875" width="128" height="88"/>
         <element name="Split" positionX="-95.48828125" positionY="-119.859375" width="128" height="88"/>
-        <element name="UniqueKey" positionX="-216" positionY="-117" width="128" height="104"/>
+        <element name="UniqueKey" positionX="-216" positionY="-117" width="128" height="119"/>
     </elements>
 </model>

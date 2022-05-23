@@ -54,16 +54,16 @@ class UniqueKeyDaoTests: XCTestCase {
         uniqueKeyDao.update(ids: loadedUniqueKeys.prefix(5).compactMap { return $0.storageId },
                             newStatus: StorageRecordStatus.deleted,
         incrementSentCount: true)
-        let active = getBy(status: StorageRecordStatus.active)
-        let deleted = getBy(status: StorageRecordStatus.deleted)
+        let active = getByCount(status: StorageRecordStatus.active)
+        let deleted = getByCount(status: StorageRecordStatus.deleted)
 
 
-        for key in active {
-            XCTAssertEqual(0, key.sendAttemptCount)
+        for count in active {
+            XCTAssertEqual(0, count)
         }
 
-        for key in deleted {
-            XCTAssertEqual(1, key.sendAttemptCount)
+        for count in deleted {
+            XCTAssertEqual(1, count)
         }
     }
 
@@ -90,11 +90,22 @@ class UniqueKeyDaoTests: XCTestCase {
     }
 
 
-    private func getBy(status: Int32) -> [UniqueKeyEntity] {
-        let predicate = NSPredicate(format: "status == %d", status)
-    return helper.fetch(entity: .uniqueKey,
+    private func getByCount(status: Int32) -> [Int16] {
+        var resp = [Int16]()
+        helper.performAndWait {
+            let predicate = NSPredicate(format: "status == %d", status)
+            let entities = helper.fetch(entity: .uniqueKey,
                                         where: predicate,
-                                        rowLimit: 100).compactMap { return $0 as? UniqueKeyEntity }
+                                        rowLimit: 100)
+
+
+            entities.forEach {
+                if let entity = $0 as? UniqueKeyEntity {
+                    resp.append(entity.sendAttemptCount)
+                }
+            }
+        }
+        return resp
     }
 
     override func tearDown() {
