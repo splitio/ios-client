@@ -88,7 +88,7 @@ class ImpressionsTrackerTest: XCTestCase {
         impressionsTracker.start()
 
         XCTAssertFalse(periodicImpressionsRecorderWorker.startCalled)
-        XCTAssertFalse(periodicImpressionsCountRecorderWorker.startCalled)
+        XCTAssertTrue(periodicImpressionsCountRecorderWorker.startCalled)
     }
 
     func testPause() {
@@ -135,7 +135,7 @@ class ImpressionsTrackerTest: XCTestCase {
         impressionsTracker.stop()
 
         XCTAssertFalse(periodicImpressionsRecorderWorker.stopCalled)
-        XCTAssertFalse(periodicImpressionsCountRecorderWorker.stopCalled)
+        XCTAssertTrue(periodicImpressionsCountRecorderWorker.stopCalled)
     }
 
     func testFlushOptimized() {
@@ -162,7 +162,7 @@ class ImpressionsTrackerTest: XCTestCase {
         impressionsTracker.flush()
 
         XCTAssertFalse(impressionsRecorderWorker.flushCalled)
-        XCTAssertFalse(impressionsCountRecorderWorker.flushCalled)
+        XCTAssertTrue(impressionsCountRecorderWorker.flushCalled)
     }
 
     func testDestroyOptimized() {
@@ -186,7 +186,7 @@ class ImpressionsTrackerTest: XCTestCase {
         impressionsTracker.start()
         impressionsTracker.destroy()
         XCTAssertFalse(periodicImpressionsRecorderWorker.destroyCalled)
-        XCTAssertFalse(periodicImpressionsCountRecorderWorker.destroyCalled)
+        XCTAssertTrue(periodicImpressionsCountRecorderWorker.destroyCalled)
     }
 
     private func createImpression(keyName: String = "k1", featureName: String = "feature") -> KeyImpression {
