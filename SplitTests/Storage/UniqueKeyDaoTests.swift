@@ -14,11 +14,13 @@ import XCTest
 class UniqueKeyDaoTests: XCTestCase {
 
     var uniqueKeyDao: UniqueKeyDao!
+    var helper: CoreDataHelper!
 
     override func setUp() {
         let queue = DispatchQueue(label: "key dao test")
-        uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue))
+        helper = IntegrationCoreDataHelper.get(databaseName: "test",
+                                                 dispatchQueue: queue)
+        uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: helper)
         let keys = createUniqueKeys()
         for key in keys {
             uniqueKeyDao.insert(key)
@@ -52,8 +54,9 @@ class UniqueKeyDaoTests: XCTestCase {
         uniqueKeyDao.update(ids: loadedUniqueKeys.prefix(5).compactMap { return $0.storageId },
                             newStatus: StorageRecordStatus.deleted,
         incrementSentCount: true)
-        let active = uniqueKeyDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
-        let deleted = uniqueKeyDao.getBy(createdAt: 200, status: StorageRecordStatus.deleted, maxRows: 20)
+        let active = getBy(status: StorageRecordStatus.active)
+        let deleted = getBy(status: StorageRecordStatus.deleted)
+
 
         for key in active {
             XCTAssertEqual(0, key.sendAttemptCount)
@@ -68,7 +71,7 @@ class UniqueKeyDaoTests: XCTestCase {
     func PausedtestDelete() {
         let toDelete = uniqueKeyDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20).prefix(5)
 
-        uniqueKeyDao.delete(Array(toDelete).map { $0.storageId })
+        uniqueKeyDao.delete(Array(toDelete).map { $0.storageId ?? "nil"})
         let loadedUniqueKeys = uniqueKeyDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
 
         let notFound = Set(toDelete.map { $0.storageId })
@@ -84,6 +87,14 @@ class UniqueKeyDaoTests: XCTestCase {
 
         XCTAssertEqual(0, loadedUniqueKeys.count)
         XCTAssertEqual(0, loadedUniqueKeys1.count)
+    }
+
+
+    private func getBy(status: Int32) -> [UniqueKeyEntity] {
+        let predicate = NSPredicate(format: "status == %d", status)
+    return helper.fetch(entity: .uniqueKey,
+                                        where: predicate,
+                                        rowLimit: 100).compactMap { return $0 as? UniqueKeyEntity }
     }
 
     override func tearDown() {

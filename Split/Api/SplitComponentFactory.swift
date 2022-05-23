@@ -230,12 +230,18 @@ class SplitComponentFactory {
                                                          statsRecorderWorker: statsRecorderWorker,
                                                          periodicStatsRecorderWorker: periodicStatsRecorderWorker)
         }
-
+        var uniqueKeyTracker: UniqueKeyTracker?
+        if splitClientConfig.finalImpressionsMode == .none,
+           let uniqueKeyStorage = storageContainer.uniqueKeyStorage {
+            uniqueKeyTracker = DefaultUniqueKeyTracker(persistenUniqueKeyStorage: uniqueKeyStorage)
+        }
         let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitClientConfig,
                                                            splitApiFacade: splitApiFacade,
                                                            storageContainer: storageContainer,
                                                            syncWorkerFactory: syncWorkerFactory,
-                                                           impressionsSyncHelper: try buildImpressionsSyncHelper())
+                                                           impressionsSyncHelper: try buildImpressionsSyncHelper(),
+                                                           uniqueKeyTracker: uniqueKeyTracker)
+
 
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
                                                           defaultUserKey: userKey,

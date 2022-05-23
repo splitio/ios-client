@@ -11,6 +11,7 @@ import Foundation
 struct SplitDatabaseHelper {
     static private let kDbMagicCharsCount = 4
     static private let kDbExt = ["", "-shm", "-wal"]
+    static private let kExpirationPeriod = ServiceConstants.recordedDataExpirationPeriodInSeconds
 
     static func buildStorageContainer(splitClientConfig: SplitClientConfig,
                                       userKey: String,
@@ -32,6 +33,13 @@ struct SplitDatabaseHelper {
         let attributesStorage = openAttributesStorage(database: splitDatabase,
                                                       splitClientConfig: splitClientConfig)
 
+        var uniqueKeyStorage: PersistentUniqueKeysStorage?
+        if splitClientConfig.finalImpressionsMode == .none {
+            uniqueKeyStorage =
+            DefaultPersistentUniqueKeysStorage(database: splitDatabase,
+                                               expirationPeriod: kExpirationPeriod)
+        }
+
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      fileStorage: fileStorage,
                                      splitsStorage: splitsStorage,
@@ -41,7 +49,8 @@ struct SplitDatabaseHelper {
                                      eventsStorage: eventsStorage,
                                      telemetryStorage: telemetryStorage,
                                      mySegmentsStorage: mySegmentsStorage,
-                                     attributesStorage: attributesStorage)
+                                     attributesStorage: attributesStorage,
+                                     uniqueKeyStorage: uniqueKeyStorage)
     }
 
     static func openDatabase(dataFolderName: String,

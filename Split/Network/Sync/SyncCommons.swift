@@ -17,6 +17,7 @@ struct SplitStorageContainer {
     let telemetryStorage: TelemetryStorage?
     let mySegmentsStorage: MySegmentsStorage
     let attributesStorage: AttributesStorage
+    let uniqueKeyStorage: PersistentUniqueKeysStorage?
 }
 
 protocol ImpressionLogger {
