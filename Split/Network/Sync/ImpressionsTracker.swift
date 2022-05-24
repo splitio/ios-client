@@ -143,15 +143,12 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         switch splitConfig.finalImpressionsMode {
         case .optimized:
             createImpressionsRecorder()
-            self.periodicImpressionsCountRecorderWoker
-            = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
-            self.flusherImpressionsCountRecorderWorker
-            = syncWorkerFactory.createImpressionsCountRecorderWorker()
-            impressionsCounter = ImpressionsCounter()
+            createImpressionsCountRecorder()
         case .debug:
             createImpressionsRecorder()
         case .none:
             // TODO: Setup send unique key recorder
+            createImpressionsCountRecorder()
             Logger.d("Missing none setup") // To be removed
         default:
             Logger.d("Impression mode set: \(splitConfig.finalImpressionsMode)")
@@ -163,6 +160,14 @@ class DefaultImpressionsTracker: ImpressionsTracker {
             syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
         periodicImpressionsRecorderWoker =
             syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
+    }
+
+    private func createImpressionsCountRecorder() {
+        self.periodicImpressionsCountRecorderWoker
+        = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
+        self.flusherImpressionsCountRecorderWorker
+        = syncWorkerFactory.createImpressionsCountRecorderWorker()
+        impressionsCounter = ImpressionsCounter()
     }
 
     private func isOptimizedImpressionsMode() -> Bool {
