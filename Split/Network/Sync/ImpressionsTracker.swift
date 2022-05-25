@@ -72,6 +72,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
         if isNoneImpressionsMode() {
             uniqueKeyTracker?.track(userKey: impression.keyName, featureName: featureName)
+            impressionsCounter?.inc(featureName: featureName, timeframe: impression.time, amount: 1)
             // TODO: Should record metrics here?
             return
         }
