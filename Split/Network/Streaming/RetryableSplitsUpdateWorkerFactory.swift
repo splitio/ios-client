@@ -28,21 +28,21 @@ protocol SyncWorkerFactory {
                                            reconnectBackoffCounter: ReconnectBackoffCounter
     ) -> RetryableSyncWorker
 
-    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> PeriodicRecorderWorker
+    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> PeriodicRecorderWorker?
 
-    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker
+    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker?
 
-    func createImpressionsCountRecorderWorker() -> RecorderWorker
+    func createImpressionsCountRecorderWorker() -> RecorderWorker?
 
-    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker
+    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker?
 
     func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker
 
-    func createPeriodicImpressionsRecorderWorker(flusherChecker: RecorderFlushChecker?) -> PeriodicRecorderWorker
-
     func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> RecorderWorker
 
-    func createUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> RecorderWorker
+    func createUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> RecorderWorker?
+
+    func createPeriodicUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> PeriodicRecorderWorker?
 
     func createTelemetryConfigRecorderWorker() -> RecorderWorker?
 
@@ -107,9 +107,14 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
             timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate), eventsManager: eventsManager)
     }
 
-    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> PeriodicRecorderWorker {
+    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> PeriodicRecorderWorker? {
+
+        guard let impressionsRecorder = apiFacade.impressionsRecorder else {
+            return nil
+        }
+
         let impressionWorker = ImpressionsRecorderWorker(impressionsStorage: storageContainer.impressionsStorage,
-                                                         impressionsRecorder: apiFacade.impressionsRecorder,
+                                                         impressionsRecorder: impressionsRecorder,
                                                          impressionsPerPush: Int(splitConfig.impressionsChunkSize),
                                                          impressionsSyncHelper: syncHelper)
 
@@ -117,21 +122,36 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: impressionWorker)
     }
 
-    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker {
+    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker? {
+
+        guard let impressionsRecorder = apiFacade.impressionsRecorder else {
+            return nil
+        }
+
         return ImpressionsRecorderWorker(impressionsStorage: storageContainer.impressionsStorage,
-                                         impressionsRecorder: apiFacade.impressionsRecorder,
+                                         impressionsRecorder: impressionsRecorder,
                                          impressionsPerPush: Int(splitConfig.impressionsChunkSize),
                                          impressionsSyncHelper: syncHelper)
     }
 
-    func createImpressionsCountRecorderWorker() -> RecorderWorker {
+    func createImpressionsCountRecorderWorker() -> RecorderWorker? {
+
+        guard let impressionsCountRecorder = apiFacade.impressionsCountRecorder else {
+            return nil
+        }
+
         return ImpressionsCountRecorderWorker(countsStorage: storageContainer.impressionsCountStorage,
-                                              countsRecorder: apiFacade.impressionsCountRecorder)
+                                              countsRecorder: impressionsCountRecorder)
     }
 
-    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker {
+    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker? {
+
+        guard let impressionsCountRecorder = apiFacade.impressionsCountRecorder else {
+            return nil
+        }
+
         let recorderWorker = ImpressionsCountRecorderWorker(countsStorage: storageContainer.impressionsCountStorage,
-                                                            countsRecorder: apiFacade.impressionsCountRecorder)
+                                                            countsRecorder: impressionsCountRecorder)
         let timer = DefaultPeriodicTimer(deadline: 0, interval: splitConfig.impressionsCountsRefreshRate)
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: recorderWorker)
     }
@@ -205,6 +225,40 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                          interval: splitConfig.internalTelemetryRefreshRate)
 
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: telemetryStatsWorker)
+    }
+
+    func createUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> RecorderWorker? {
+
+        guard let uniqueKeysRecorder = apiFacade.uniqueKeysRecorder else {
+            return nil
+        }
+
+        return nil
+        
+//        let uniqueKeyWorker = UniqueKeysRecorderWorker(uniqueKeyStorage: storageContainer.uniqueKeyStorage,
+//                                                       uniqueKeyRecorder: uniqueKeysRecorder,
+//                                                       uniqueKeyPerPush: <#T##Int#>)
+//
+//        (uniqueKeys: storageContainer.impressionsStorage,
+//                                                         impressionsRecorder: apiFacade.impressionsRecorder,
+//                                                         impressionsPerPush: Int(splitConfig.impressionsChunkSize),
+//                                                         impressionsSyncHelper: syncHelper)
+//
+//        let timer = DefaultPeriodicTimer(deadline: 0, interval: splitConfig.impressionRefreshRate)
+//        return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: impressionWorker)
+    }
+    
+
+    func createPeriodicUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> PeriodicRecorderWorker? {
+        guard let uniqueKeysRecorder = apiFacade.uniqueKeysRecorder else {
+            return nil
+        }
+        return nil
+
+//        (uni: storageContainer.impressionsStorage,
+//                                         impressionsRecorder: apiFacade.impressionsRecorder,
+//                                         impressionsPerPush: Int(splitConfig.impressionsChunkSize),
+//                                         impressionsSyncHelper: syncHelper)
     }
 }
 

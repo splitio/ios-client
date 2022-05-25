@@ -32,13 +32,13 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     private let impressionsObserver = ImpressionsObserver(size: ServiceConstants.lastSeenImpressionCachSize)
     private var impressionsCounter: ImpressionsCounter?
 
-    private let uniqueKeyTracker: UniqueKeyTracker?
-    private let uniqueKeysRecorderWorker: RecorderWorker?
-    private let periodicUniqueKeyRecorderWorker: PeriodicRecorderWorker?
+    private var uniqueKeyTracker: UniqueKeyTracker?
+    private var uniqueKeysRecorderWorker: RecorderWorker?
+    private var periodicUniqueKeyRecorderWorker: PeriodicRecorderWorker?
+    private var uniqueKeyFlushChecker: RecorderFlushChecker?
 
     private let storageContainer: SplitStorageContainer
     private let telemetryProducer: TelemetryRuntimeProducer?
-    private let uniqueKeyFlushChecker: RecorderFlushChecker?
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -78,8 +78,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
             if uniqueKeyFlushChecker?
                 .checkIfFlushIsNeeded(sizeInBytes: ServiceConstants.estimatedUniqueKeySizeInBytes) ?? false {
                 uniqueKeyTracker?.saveAndClear()
-
-                uni.
+                uniqueKeysRecorderWorker?.flush()
             }
             return
         }
@@ -148,6 +147,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
             createImpressionsRecorder()
         case .none:
             // TODO: Setup send unique key recorder
+
             createImpressionsCountRecorder()
             Logger.d("Missing none setup") // To be removed
         default:

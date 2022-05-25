@@ -171,7 +171,7 @@ class SplitComponentFactory {
             _ = builder.setStreamingHttpClient(httpClient)
         }
 
-        let component: SplitApiFacade = builder.build()
+        let component: SplitApiFacade = try builder.build()
         add(component: component)
         return component
     }

@@ -11,32 +11,29 @@ import Foundation
 class UniqueKeysRecorderWorker: RecorderWorker {
 
     private let uniqueKeyStorage: PersistentUniqueKeysStorage
-    private let uniqueKeyRecorder: HttpUniqueKeysRecorder
-    private let uniqueKeyPerPush: Int
-    private let accumulator: 
+    private let uniqueKeysRecorder: HttpUniqueKeysRecorder
+    private let flushChecker: RecorderFlushChecker?
+    private let rowsPerPush = ServiceConstants.uniqueKeyBulkSize
 
     init(uniqueKeyStorage: PersistentUniqueKeysStorage,
-         uniqueKeyRecorder: HttpUniqueKeysRecorder,
-         uniqueKeyPerPush: Int,
-         uniqueKeySyncHelper: UniqueKeyRecorderSyncHelper? = nil) {
+         uniqueKeysRecorder: HttpUniqueKeysRecorder,
+         flushChecker: RecorderFlushChecker? = nil) {
 
         self.uniqueKeyStorage = uniqueKeyStorage
-        self.uniqueKeyRecorder = uniqueKeyRecorder
-        self.uniqueKeyPerPush = uniqueKeyPerPush
-        self.uniqueKeySyncHelper = uniqueKeySyncHelper
-
+        self.uniqueKeysRecorder = uniqueKeysRecorder
+        self.flushChecker = flushChecker
     }
 
     func flush() {
         var rowCount = 0
         var failedUniqueKeys = [UniqueKey]()
         repeat {
-            let keys = uniqueKeyStorage.pop(count: uniqueKeyPerPush)
+            let keys = uniqueKeyStorage.pop(count: rowsPerPush)
             rowCount = keys.count
             if rowCount > 0 {
                 Logger.d("Sending uniqueKey")
                 do {
-                    _ = try uniqueKeyRecorder.execute(group(keys: keys))
+                    _ = try uniqueKeysRecorder.execute(group(keys: keys))
                     // Removing sent uniqueKey
                     uniqueKeyStorage.delete(keys)
                     Logger.d("Impression posted successfully")
@@ -45,13 +42,13 @@ class UniqueKeysRecorderWorker: RecorderWorker {
                     failedUniqueKeys.append(contentsOf: keys)
                 }
             }
-        } while rowCount == uniqueKeyPerPush
+        } while rowCount == rowsPerPush
         // Activate non sent uniqueKey to retry in next iteration
         uniqueKeyStorage.setActiveAndUpdateSendCount(failedUniqueKeys.compactMap { $0.storageId })
-        if let syncHelper = uniqueKeySyncHelper {
-            syncHelper.updateAccumulator(count: failedUniqueKeys.count,
-                                         bytes: failedUniqueKeys.count *
-                                            ServiceConstants.estimatedImpressionSizeInBytes)
+        if let flushChecker = self.flushChecker {
+            flushChecker.update(count: failedUniqueKeys.count,
+                                bytes: failedUniqueKeys.count *
+                                ServiceConstants.estimatedImpressionSizeInBytes)
         }
 
     }
