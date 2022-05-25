@@ -80,6 +80,8 @@ class DefaultImpressionsTracker: ImpressionsTracker {
                 uniqueKeyTracker?.saveAndClear()
                 uniqueKeysRecorderWorker?.flush()
             }
+            impressionsCounter?.inc(featureName: featureName, timeframe: impression.time, amount: 1)
+            // TODO: Should record metrics here?
             return
         }
 
