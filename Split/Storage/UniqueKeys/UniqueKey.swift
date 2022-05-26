@@ -9,10 +9,15 @@
 import Foundation
 
 struct UniqueKey {
-    let storageId: String
+    let storageId: String?
     let userKey: String
     let features: [String]
-    var sendAttemptCount: Int16 = 0
+
+    init(storageId: String? = nil, userKey: String, features: [String]) {
+        self.storageId = storageId
+        self.userKey = userKey
+        self.features = features
+    }
 
     enum CodingKeys: String, CodingKey {
         case key = "k"

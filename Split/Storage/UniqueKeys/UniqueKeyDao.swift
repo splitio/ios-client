@@ -30,6 +30,7 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
 
             if let obj = self.coreDataHelper.create(entity: .uniqueKey) as? UniqueKeyEntity {
                 do {
+                    obj.storageId = self.coreDataHelper.generateId()
                     obj.userKey = key.userKey
                     obj.featureList = try self.json.encodeToJson(key.features)
                     obj.createdAt = Date().unixTimestamp()
@@ -96,7 +97,7 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
             return
         }
 
-        let predicate = NSPredicate(format: "id IN %@", ids)
+        let predicate = NSPredicate(format: "storageId IN %@", ids)
 
         executeAsync { [weak self] in
             guard let self = self else {
@@ -107,12 +108,13 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
                                           where: predicate).compactMap { return $0 as? UniqueKeyEntity }
             for entity in entities {
                 entity.status = newStatus
+                if incrementSentCount {
+                    entity.sendAttemptCount+=1
+                }
             }
             self.coreDataHelper.save()
         }
     }
-
-    
 
     func delete(_ ids: [String]) {
         if ids.count == 0 {

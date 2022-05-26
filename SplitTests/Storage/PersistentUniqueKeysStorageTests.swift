@@ -55,7 +55,7 @@ class PersistentUniqueKeysStorageTests: XCTestCase {
     func testSetActive() {
         let keys = createUniqueKeys()
 
-        keysStorage.setActiveAndUpdateSendCount(keys.map { $0.storageId })
+        keysStorage.setActiveAndUpdateSendCount(keys.map { $0.storageId ?? "" })
 
         XCTAssertEqual(keys.count, keyDao.updatedStatus.values.filter { $0 ==  StorageRecordStatus.active }.count)
         XCTAssertEqual(0, keyDao.updatedStatus.values.filter { $0 ==  StorageRecordStatus.deleted }.count )

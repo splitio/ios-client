@@ -12,9 +12,6 @@ import CoreData
 
 @objc(UniqueKeyEntity)
 class UniqueKeyEntity: NSManagedObject {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<UniqueKeyEntity> {
-        return NSFetchRequest<UniqueKeyEntity>(entityName: CoreDataEntity.uniqueKey.rawValue)
-    }
 
     @NSManaged public var storageId: String
     @NSManaged public var userKey: String

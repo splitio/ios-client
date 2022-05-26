@@ -20,15 +20,20 @@ protocol ImpressionsTracker {
 
 class DefaultImpressionsTracker: ImpressionsTracker {
 
+    private let splitConfig: SplitClientConfig
+
     private let syncWorkerFactory: SyncWorkerFactory
-    private let impressionsSyncHelper: ImpressionsRecorderSyncHelper
-    private let periodicImpressionsRecorderWoker: PeriodicRecorderWorker
+    private var impressionsSyncHelper: ImpressionsRecorderSyncHelper?
+    private var periodicImpressionsRecorderWoker: PeriodicRecorderWorker?
     private var periodicImpressionsCountRecorderWoker: PeriodicRecorderWorker?
     private var flusherImpressionsCountRecorderWorker: RecorderWorker?
-    private let flusherImpressionsRecorderWorker: RecorderWorker
-    private let splitConfig: SplitClientConfig
+    private var flusherImpressionsRecorderWorker: RecorderWorker?
+
     private let impressionsObserver = ImpressionsObserver(size: ServiceConstants.lastSeenImpressionCachSize)
-    private let impressionsCounter = ImpressionsCounter()
+    private var impressionsCounter: ImpressionsCounter?
+
+    private let uniqueKeyTracker: UniqueKeyTracker?
+
     private let storageContainer: SplitStorageContainer
     private let telemetryProducer: TelemetryRuntimeProducer?
 
@@ -36,34 +41,26 @@ class DefaultImpressionsTracker: ImpressionsTracker {
          splitApiFacade: SplitApiFacade,
          storageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
-         impressionsSyncHelper: ImpressionsRecorderSyncHelper) {
+         impressionsSyncHelper: ImpressionsRecorderSyncHelper?,
+         uniqueKeyTracker: UniqueKeyTracker?) {
 
         self.splitConfig = splitConfig
         self.syncWorkerFactory = syncWorkerFactory
         self.storageContainer = storageContainer
-        self.flusherImpressionsRecorderWorker =
-            syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
-        self.periodicImpressionsRecorderWoker =
-            syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
-        self.impressionsSyncHelper = impressionsSyncHelper
         self.telemetryProducer = storageContainer.telemetryStorage
-
-        if isOptimizedImpressionsMode() {
-            self.periodicImpressionsCountRecorderWoker
-                = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
-            self.flusherImpressionsCountRecorderWorker
-                = syncWorkerFactory.createImpressionsCountRecorderWorker()
-        }
+        self.uniqueKeyTracker = uniqueKeyTracker
+        self.impressionsSyncHelper = impressionsSyncHelper
+        setupImpressionsMode()
     }
 
     func start() {
-        periodicImpressionsRecorderWoker.start()
+        periodicImpressionsRecorderWoker?.start()
         periodicImpressionsCountRecorderWoker?.start()
     }
 
     func stop() {
+        periodicImpressionsRecorderWoker?.stop()
         periodicImpressionsCountRecorderWoker?.stop()
-        periodicImpressionsRecorderWoker.stop()
     }
 
     func push(_ impression: KeyImpression) {
@@ -73,16 +70,23 @@ class DefaultImpressionsTracker: ImpressionsTracker {
             return
         }
 
+        if isNoneImpressionsMode() {
+            uniqueKeyTracker?.track(userKey: impression.keyName, featureName: featureName)
+            impressionsCounter?.inc(featureName: featureName, timeframe: impression.time, amount: 1)
+            // TODO: Should record metrics here?
+            return
+        }
+
         let impressionToPush = impression.withPreviousTime(
             impressionsObserver.testAndSet(impression: impression))
         if isOptimizedImpressionsMode() {
-            impressionsCounter.inc(featureName: featureName, timeframe: impressionToPush.time, amount: 1)
+            impressionsCounter?.inc(featureName: featureName, timeframe: impressionToPush.time, amount: 1)
         }
 
         if !isOptimizedImpressionsMode() || shouldPush(impression: impressionToPush) {
-            if impressionsSyncHelper.pushAndCheckFlush(impressionToPush) {
-                flusherImpressionsRecorderWorker.flush()
-                impressionsSyncHelper.resetAccumulator()
+            if impressionsSyncHelper?.pushAndCheckFlush(impressionToPush) ?? false {
+                flusherImpressionsRecorderWorker?.flush()
+                impressionsSyncHelper?.resetAccumulator()
             }
             telemetryProducer?.recordImpressionStats(type: .queued, count: 1)
         } else {
@@ -93,32 +97,78 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
     func pause() {
         saveImpressionsCount()
-        periodicImpressionsRecorderWoker.pause()
+        saveUniqueKeys()
+        periodicImpressionsRecorderWoker?.pause()
         periodicImpressionsCountRecorderWoker?.pause()
     }
 
     func resume() {
-        periodicImpressionsRecorderWoker.resume()
+        periodicImpressionsRecorderWoker?.resume()
         periodicImpressionsCountRecorderWoker?.resume()
     }
 
     func flush() {
-        flusherImpressionsRecorderWorker.flush()
+        flusherImpressionsRecorderWorker?.flush()
         flusherImpressionsCountRecorderWorker?.flush()
-        impressionsSyncHelper.resetAccumulator()
+        impressionsSyncHelper?.resetAccumulator()
     }
 
     func destroy() {
-        periodicImpressionsRecorderWoker.destroy()
+        periodicImpressionsRecorderWoker?.destroy()
         periodicImpressionsCountRecorderWoker?.destroy()
     }
 
     private func saveImpressionsCount() {
-        storageContainer.impressionsCountStorage.pushMany(counts: impressionsCounter.popAll())
+        if isOptimizedImpressionsMode(), let counts = impressionsCounter?.popAll() {
+            storageContainer.impressionsCountStorage.pushMany(counts: counts)
+        }
+    }
+
+    private func saveUniqueKeys() {
+        // Just doble checking
+        if isNoneImpressionsMode() {
+            uniqueKeyTracker?.saveAndClear()
+        }
+    }
+
+    private func setupImpressionsMode() {
+
+        switch splitConfig.finalImpressionsMode {
+        case .optimized:
+            createImpressionsRecorder()
+            createImpressionsCountRecorder()
+        case .debug:
+            createImpressionsRecorder()
+        case .none:
+            // TODO: Setup send unique key recorder
+            createImpressionsCountRecorder()
+            Logger.d("Missing none setup") // To be removed
+        default:
+            Logger.d("Impression mode set: \(splitConfig.finalImpressionsMode)")
+        }
+    }
+
+    private func createImpressionsRecorder() {
+        flusherImpressionsRecorderWorker =
+            syncWorkerFactory.createImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
+        periodicImpressionsRecorderWoker =
+            syncWorkerFactory.createPeriodicImpressionsRecorderWorker(syncHelper: impressionsSyncHelper)
+    }
+
+    private func createImpressionsCountRecorder() {
+        self.periodicImpressionsCountRecorderWoker
+        = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
+        self.flusherImpressionsCountRecorderWorker
+        = syncWorkerFactory.createImpressionsCountRecorderWorker()
+        impressionsCounter = ImpressionsCounter()
     }
 
     private func isOptimizedImpressionsMode() -> Bool {
         return ImpressionsMode.optimized == splitConfig.finalImpressionsMode
+    }
+
+    private func isNoneImpressionsMode() -> Bool {
+        return ImpressionsMode.none == splitConfig.finalImpressionsMode
     }
 
     private func shouldPush(impression: KeyImpression) -> Bool {
