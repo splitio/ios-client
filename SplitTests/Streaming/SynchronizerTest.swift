@@ -80,7 +80,7 @@ class SynchronizerTest: XCTestCase {
                                                      attributesStorage: AttributesStorageStub(),
                                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub())
 
-        let apiFacade = SplitApiFacade.builder()
+        let apiFacade = try! SplitApiFacade.builder()
             .setUserKey("userKey")
             .setRestClient(RestClientStub())
             .setSplitConfig(SplitClientConfig())

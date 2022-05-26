@@ -242,7 +242,6 @@ class SplitComponentFactory {
                                                            impressionsSyncHelper: try buildImpressionsSyncHelper(),
                                                            uniqueKeyTracker: uniqueKeyTracker)
 
-
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
                                                           defaultUserKey: userKey,
                                                           telemetrySynchronizer: telemetrySynchronizer,

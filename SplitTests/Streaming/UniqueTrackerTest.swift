@@ -40,8 +40,8 @@ class UniqueKeyTrackerTest: XCTestCase {
         let save2 = uniqueKeyStorage.uniqueKeys
 
         XCTAssertEqual(2, save1.count)
-        XCTAssertEqual(10, save1.values.filter { $0.userKey == "key1"}[0].features.count)
-        XCTAssertEqual(5, save1.values.filter { $0.userKey == "key2"}[0].features.count)
+        XCTAssertEqual(10, save1.values.filter { $0.uniqueKey.userKey == "key1"}[0].uniqueKey.features.count)
+        XCTAssertEqual(5, save1.values.filter { $0.uniqueKey.userKey == "key2"}[0].uniqueKey.features.count)
         XCTAssertEqual(0, save2.count)
     }
 

@@ -477,6 +477,9 @@
 		955A5A51258D04DF00CAEE9F /* PeriodicRecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A5A4D258D04DF00CAEE9F /* PeriodicRecorderWorker.swift */; };
 		955A5A52258D04DF00CAEE9F /* RecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A5A4E258D04DF00CAEE9F /* RecorderWorker.swift */; };
 		955A5A53258D04DF00CAEE9F /* EventsRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A5A4F258D04DF00CAEE9F /* EventsRecorder.swift */; };
+		955AAB8B283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AAB8A283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift */; };
+		955AAB8D283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AAB8C283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift */; };
+		955AAB8F283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AAB8E283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift */; };
 		955B59522804B52500D105CD /* ByKeyAttributesStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B59512804B52500D105CD /* ByKeyAttributesStorageStub.swift */; };
 		955B595428060CF100D105CD /* SyncDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595328060CF100D105CD /* SyncDictionary.swift */; };
 		955B595628076BB900D105CD /* MySegmentsPayloadDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595528076BB900D105CD /* MySegmentsPayloadDecoder.swift */; };
@@ -1361,6 +1364,9 @@
 		955A5A4D258D04DF00CAEE9F /* PeriodicRecorderWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeriodicRecorderWorker.swift; sourceTree = "<group>"; };
 		955A5A4E258D04DF00CAEE9F /* RecorderWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderWorker.swift; sourceTree = "<group>"; };
 		955A5A4F258D04DF00CAEE9F /* EventsRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsRecorder.swift; sourceTree = "<group>"; };
+		955AAB8A283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpUniqueKeyRecorderTests.swift; sourceTree = "<group>"; };
+		955AAB8C283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeysRecorderWorkerTests.swift; sourceTree = "<group>"; };
+		955AAB8E283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpUniqueKeysRecorderStub.swift; sourceTree = "<group>"; };
 		955B59512804B52500D105CD /* ByKeyAttributesStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByKeyAttributesStorageStub.swift; sourceTree = "<group>"; };
 		955B595328060CF100D105CD /* SyncDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncDictionary.swift; sourceTree = "<group>"; };
 		955B595528076BB900D105CD /* MySegmentsPayloadDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsPayloadDecoder.swift; sourceTree = "<group>"; };
@@ -2607,11 +2613,13 @@
 				95B1802A2763DE4B002DC9DF /* HttpTelemetryStatsRecorderTest.swift */,
 				95F3F01F258E3E2F00084AF8 /* HttpImpressionsRecorderTests.swift */,
 				9577A8462683B8C800D92AE1 /* HttpImpressionsCountRecorderTests.swift */,
+				955AAB8A283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift */,
 				95F3EFFD258D3C8600084AF8 /* EventsRecorderWorkerTests.swift */,
 				95B1800427626C70002DC9DF /* TelemetryConfigRecorderWorkerTests.swift */,
 				95B1801D2763BF7E002DC9DF /* TelemetryStatsRecorderWorkerTests.swift */,
 				95F3F0272590D81B00084AF8 /* ImpressionsRecorderWorkerTests.swift */,
 				9577A84A2683CBDC00D92AE1 /* ImpressionsCountRecorderWorkerTests.swift */,
+				955AAB8C283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift */,
 				956D17D0260D266E0037F575 /* SplitsChangesCheckerTest.swift */,
 				956D17D6260D28320037F575 /* MySegmentsChangeChecker.swift */,
 				9551666A276A46E000FE9D55 /* TelemetrySynchronizerTest.swift */,
@@ -2632,6 +2640,7 @@
 				95B180212763C00C002DC9DF /* HttpTelemetryStatsRecorderStub.swift */,
 				95F3F02F2590E4BE00084AF8 /* HttpImpressionsRecorderStub.swift */,
 				9577A8522683E98A00D92AE1 /* HttpImpressionsCountRecorderStub.swift */,
+				955AAB8E283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift */,
 				956D17CC260D1B700037F575 /* ChangesCheckerMock.swift */,
 				95B436A526F1533600E1EB9C /* MySegmentsV2PayloadDecoderMock.swift */,
 				955B59662811F51A00D105CD /* SplitEventsManagerCoordinatorStub.swift */,
@@ -3322,6 +3331,7 @@
 				59F65F0A256568CF005FE8C9 /* SplitDatabaseStub.swift in Sources */,
 				5905D4E12559D20C006DA3B1 /* ConcurrentSetTests.swift in Sources */,
 				955BB49728229E9100762D7E /* SseClientFactoryStub.swift in Sources */,
+				955AAB8F283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift in Sources */,
 				59EFD2FB24B8EF6F0052920D /* HttpRequestMock.swift in Sources */,
 				5921ED3A2538C57D000D6C8B /* StreamingConnFail5xxTest.swift in Sources */,
 				59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */,
@@ -3432,6 +3442,7 @@
 				59B8B8AC220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift in Sources */,
 				595AD20C24DDCB0E00A7B750 /* SseAuthenticatorTest.swift in Sources */,
 				5946783A22E1147600F94E58 /* SplitIntegrationTest.swift in Sources */,
+				955AAB8B283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift in Sources */,
 				593225FC24A40AA900496D8B /* HttpResponseTest.swift in Sources */,
 				953911AD267A64FE0040433A /* ImpresionsObserverTest.swift in Sources */,
 				954F9C7D2579697B00140B81 /* SplitChangeProcessorStub.swift in Sources */,
@@ -3455,6 +3466,7 @@
 				954F9B0325700AF700140B81 /* GeneralInfoDaoStub.swift in Sources */,
 				95F3EFF4258D2C0300084AF8 /* RecorderWorkerStub.swift in Sources */,
 				95C717E2268CE705002ADB83 /* PersistentImpressionsCountStorageTest.swift in Sources */,
+				955AAB8D283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift in Sources */,
 				59DD34B42236989700FA9545 /* FolderApiKeyTests.swift in Sources */,
 				952BF5FC278DF66700FF6181 /* TelemetryConfigHelperStub.swift in Sources */,
 				59ED408824EABD4700EF7B09 /* SseClientMock.swift in Sources */,
