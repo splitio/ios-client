@@ -18,7 +18,7 @@ class UniqueKeyTrackerTest: XCTestCase {
 
     override func setUp() {
         uniqueKeyStorage = PersistentUniqueKeyStorageStub()
-        tracker = DefaultUniqueKeyTracker(persistenUniqueKeyStorage: uniqueKeyStorage)
+        tracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: uniqueKeyStorage)
     }
 
     func testTrackAndSave() {

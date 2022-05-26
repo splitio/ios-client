@@ -233,7 +233,7 @@ class SplitComponentFactory {
         var uniqueKeyTracker: UniqueKeyTracker?
         if splitClientConfig.finalImpressionsMode == .none,
            let uniqueKeyStorage = storageContainer.uniqueKeyStorage {
-            uniqueKeyTracker = DefaultUniqueKeyTracker(persistenUniqueKeyStorage: uniqueKeyStorage)
+            uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: uniqueKeyStorage)
         }
         let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitClientConfig,
                                                            splitApiFacade: splitApiFacade,

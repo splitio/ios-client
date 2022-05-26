@@ -17,8 +17,8 @@ class DefaultUniqueKeyTracker: UniqueKeyTracker {
 
     let uniqueKeyStorage: PersistentUniqueKeysStorage
     let inMemoryKeys = ConcurrentDictionarySet<String, String>()
-    init(persistenUniqueKeyStorage: PersistentUniqueKeysStorage) {
-        self.uniqueKeyStorage = persistenUniqueKeyStorage
+    init(persistentUniqueKeyStorage: PersistentUniqueKeysStorage) {
+        self.uniqueKeyStorage = persistentUniqueKeyStorage
     }
 
     func track(userKey: String, featureName: String) {
