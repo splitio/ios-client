@@ -11,6 +11,8 @@ import Foundation
 enum GenericError: Error {
     case couldNotCreateCache
     case apiKeyNull
+    case nullValueInApiFacade
+    case jsonParsingFail
     case unknown(message: String)
 }
 
@@ -22,6 +24,10 @@ extension GenericError {
             return "Error creating cache db"
         case .apiKeyNull:
             return "ApiKey is null. Please provide a valid one"
+        case .nullValueInApiFacade:
+            return "Some parameter is null when creating Split Api Facade"
+        case .jsonParsingFail:
+            return "Something has occured while parsing json data"
         case .unknown(let message):
             return message
         }

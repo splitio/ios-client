@@ -24,8 +24,10 @@ class RestClientStub: SplitApiRestClient {
     private var sendTrackEventsCount = 0
     private var sendImpressionsCount = 0
     private var sendImpressionsCountCount = 0
+
     var sendTelemetryConfigCount = 0
     var sendTelemetryStatsCount = 0
+    var sendUniqueKeysCount = 0
     var isServerAvailable = true
     private var splitChangeHitIndex = 0
     
@@ -108,6 +110,13 @@ extension RestClientStub: RestClientTelemetryConfig {
 extension RestClientStub: RestClientTelemetryStats {
     func send(stats: TelemetryStats, completion: @escaping (DataResult<EmptyValue>) -> Void) {
         sendTelemetryStatsCount+=1
+        completion(DataResult.success(value: nil))
+    }
+}
+
+extension RestClientStub: RestClientUniqueKeys {
+    func send(uniqueKeys: UniqueKeys, completion: @escaping (DataResult<EmptyValue>) -> Void) {
+        sendUniqueKeysCount+=1
         completion(DataResult.success(value: nil))
     }
 }

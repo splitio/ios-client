@@ -171,7 +171,7 @@ class SplitComponentFactory {
             _ = builder.setStreamingHttpClient(httpClient)
         }
 
-        let component: SplitApiFacade = builder.build()
+        let component: SplitApiFacade = try builder.build()
         add(component: component)
         return component
     }
@@ -233,7 +233,7 @@ class SplitComponentFactory {
         var uniqueKeyTracker: UniqueKeyTracker?
         if splitClientConfig.finalImpressionsMode == .none,
            let uniqueKeyStorage = storageContainer.uniqueKeyStorage {
-            uniqueKeyTracker = DefaultUniqueKeyTracker(persistenUniqueKeyStorage: uniqueKeyStorage)
+            uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: uniqueKeyStorage)
         }
         let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitClientConfig,
                                                            splitApiFacade: splitApiFacade,
@@ -241,7 +241,6 @@ class SplitComponentFactory {
                                                            syncWorkerFactory: syncWorkerFactory,
                                                            impressionsSyncHelper: try buildImpressionsSyncHelper(),
                                                            uniqueKeyTracker: uniqueKeyTracker)
-
 
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
                                                           defaultUserKey: userKey,

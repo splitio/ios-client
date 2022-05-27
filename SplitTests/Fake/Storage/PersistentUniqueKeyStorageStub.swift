@@ -11,13 +11,13 @@ import Foundation
 
 class PersistentUniqueKeyStorageStub: PersistentUniqueKeysStorage {
 
-    struct State {
+    struct Record {
+        var uniqueKey: UniqueKey
         var sendAttempCount: Int16
         var recordStatus: Int32
     }
 
-    var uniqueKeys = [String: UniqueKey]()
-    var recordState = [String: State]()
+    var uniqueKeys = [String: Record]()
 
     func delete(_ keys: [UniqueKey]) {
         for key in keys {
@@ -28,11 +28,14 @@ class PersistentUniqueKeyStorageStub: PersistentUniqueKeysStorage {
     }
 
     func pop(count: Int) -> [UniqueKey] {
-        let resp = uniqueKeys.prefix(count)
-        for (key, _) in resp {
-            uniqueKeys.removeValue(forKey: key)
+        let resp = uniqueKeys.values.filter {
+            $0.recordStatus == StorageRecordStatus.active
+            
+        } .prefix(count)
+        for value in resp {
+            uniqueKeys[value.uniqueKey.userKey]?.recordStatus = StorageRecordStatus.deleted
         }
-        return resp.map { return $0.value }
+        return resp.map { $0.uniqueKey }
     }
 
     func pushMany(keys: [UniqueKey]) {
@@ -41,21 +44,23 @@ class PersistentUniqueKeyStorageStub: PersistentUniqueKeysStorage {
             let newKey = UniqueKey(storageId: storageId,
                                    userKey: key.userKey,
                                    features: key.features)
-            uniqueKeys[storageId] = newKey
+            uniqueKeys[storageId] = Record(uniqueKey: newKey,
+                                           sendAttempCount: 0,
+                                           recordStatus: StorageRecordStatus.active)
         }
     }
 
     func setActiveAndUpdateSendCount(_ ids: [String]) {
         for elementId in ids {
-            var status = recordState[elementId] ?? State(sendAttempCount: 0, recordStatus: StorageRecordStatus.active)
-            status.recordStatus = StorageRecordStatus.active
-            status.sendAttempCount+=1
-            recordState[elementId] = status
+            if var key = uniqueKeys[elementId] {
+                key.recordStatus = StorageRecordStatus.active
+                key.sendAttempCount+=1
+                uniqueKeys[elementId] = key
+            }
         }
     }
 
     func clear() {
         uniqueKeys.removeAll()
-        recordState.removeAll()
     }
 }

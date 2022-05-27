@@ -96,7 +96,7 @@ class TestSplitFactory {
 
         _ = apiFacadeBuilder.setStreamingHttpClient(httpClient)
 
-        let apiFacade = apiFacadeBuilder.build()
+        let apiFacade = try! apiFacadeBuilder.build()
 
         let impressionsFlushChecker = DefaultRecorderFlushChecker(maxQueueSize: splitConfig.impressionsQueueSize,
                                                                   maxQueueSizeInBytes: splitConfig.impressionsQueueSize)

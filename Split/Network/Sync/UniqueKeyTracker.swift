@@ -17,8 +17,8 @@ class DefaultUniqueKeyTracker: UniqueKeyTracker {
 
     let uniqueKeyStorage: PersistentUniqueKeysStorage
     let inMemoryKeys = ConcurrentDictionarySet<String, String>()
-    init(persistenUniqueKeyStorage: PersistentUniqueKeysStorage) {
-        self.uniqueKeyStorage = persistenUniqueKeyStorage
+    init(persistentUniqueKeyStorage: PersistentUniqueKeysStorage) {
+        self.uniqueKeyStorage = persistentUniqueKeyStorage
     }
 
     func track(userKey: String, featureName: String) {
@@ -29,7 +29,7 @@ class DefaultUniqueKeyTracker: UniqueKeyTracker {
         let keys = inMemoryKeys.takeAll()
         var uniqueKeys = [UniqueKey]()
         keys.forEach { userKey, features in
-            uniqueKeys.append(UniqueKey(userKey: userKey, features: Array(features)))
+            uniqueKeys.append(UniqueKey(userKey: userKey, features: features))
         }
         uniqueKeyStorage.pushMany(keys: uniqueKeys)
     }
