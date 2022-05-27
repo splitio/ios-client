@@ -8,6 +8,7 @@
 
 import Foundation
 
+// Codable for testing
 class UniqueKey: Codable {
     var storageId: String?
     var userKey: String

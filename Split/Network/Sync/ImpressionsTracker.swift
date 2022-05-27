@@ -124,6 +124,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         flusherImpressionsCountRecorderWorker?.flush()
         flusherUniqueKeysRecorderWorker?.flush()
         impressionsSyncHelper?.resetAccumulator()
+        uniqueKeyFlushChecker?.update(count: 0, bytes: 0)
     }
 
     func destroy() {
