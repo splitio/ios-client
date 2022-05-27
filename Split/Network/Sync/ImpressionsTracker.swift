@@ -124,6 +124,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         flusherImpressionsCountRecorderWorker?.flush()
         flusherUniqueKeysRecorderWorker?.flush()
         impressionsSyncHelper?.resetAccumulator()
+        uniqueKeyFlushChecker?.update(count: 0, bytes: 0)
     }
 
     func destroy() {
@@ -133,7 +134,8 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     private func saveImpressionsCount() {
-        if isOptimizedImpressionsMode(), let counts = impressionsCounter?.popAll() {
+        if (isOptimizedImpressionsMode() || isNoneImpressionsMode()),
+           let counts = impressionsCounter?.popAll() {
             storageContainer.impressionsCountStorage.pushMany(counts: counts)
         }
     }

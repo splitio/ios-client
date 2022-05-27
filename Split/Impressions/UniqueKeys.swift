@@ -8,6 +8,7 @@
 
 import Foundation
 
-struct UniqueKeys: Encodable {
+// Codable for testing
+struct UniqueKeys: Codable {
     let keys: [UniqueKey]
 }

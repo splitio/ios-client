@@ -480,6 +480,7 @@
 		955AAB8B283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AAB8A283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift */; };
 		955AAB8D283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AAB8C283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift */; };
 		955AAB8F283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AAB8E283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift */; };
+		955AAB922840182800ADFB07 /* ImpressionsNoneTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AAB912840182800ADFB07 /* ImpressionsNoneTest.swift */; };
 		955B59522804B52500D105CD /* ByKeyAttributesStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B59512804B52500D105CD /* ByKeyAttributesStorageStub.swift */; };
 		955B595428060CF100D105CD /* SyncDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595328060CF100D105CD /* SyncDictionary.swift */; };
 		955B595628076BB900D105CD /* MySegmentsPayloadDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595528076BB900D105CD /* MySegmentsPayloadDecoder.swift */; };
@@ -1367,6 +1368,7 @@
 		955AAB8A283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpUniqueKeyRecorderTests.swift; sourceTree = "<group>"; };
 		955AAB8C283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeysRecorderWorkerTests.swift; sourceTree = "<group>"; };
 		955AAB8E283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpUniqueKeysRecorderStub.swift; sourceTree = "<group>"; };
+		955AAB912840182800ADFB07 /* ImpressionsNoneTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsNoneTest.swift; sourceTree = "<group>"; };
 		955B59512804B52500D105CD /* ByKeyAttributesStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByKeyAttributesStorageStub.swift; sourceTree = "<group>"; };
 		955B595328060CF100D105CD /* SyncDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncDictionary.swift; sourceTree = "<group>"; };
 		955B595528076BB900D105CD /* MySegmentsPayloadDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsPayloadDecoder.swift; sourceTree = "<group>"; };
@@ -2415,6 +2417,7 @@
 				957E676525E7F8D7006F5B19 /* ReadyFromCacheTest.swift */,
 				95E6DA57261CC02E00BA1BCF /* InitialCacheTest.swift */,
 				95CC53C52695F68500A07A04 /* ImpressionsDedupTest.swift */,
+				955AAB912840182800ADFB07 /* ImpressionsNoneTest.swift */,
 				95125628276BB85F0091895B /* TelemetryTest.swift */,
 			);
 			path = Integration;
@@ -3362,6 +3365,7 @@
 				95118EEB281AC83B00782F33 /* BucketSplitTest.swift in Sources */,
 				9519A93227DBC25B00278AEC /* MySegmentsSynchronizerTest.swift in Sources */,
 				59B8B8AA220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift in Sources */,
+				955AAB922840182800ADFB07 /* ImpressionsNoneTest.swift in Sources */,
 				955B59652811F18000D105CD /* SyncManagerStub.swift in Sources */,
 				955428E4256815B200331356 /* ImpressionDaoTests.swift in Sources */,
 				590DF9CC213EB7D50082B94F /* SplitManagerTest.swift in Sources */,

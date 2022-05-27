@@ -289,7 +289,8 @@ public class SplitClientConfig: NSObject {
         telemetryConfigHelper.shouldRecordTelemetry
     }
 
-    let uniqueKeysRefreshRate: Int = 900
+    // Is not a constant for testing purposes
+    var uniqueKeysRefreshRate: Int = 900
 
     // Internal function. For testing purposes only
     // will be removed when .none is available
