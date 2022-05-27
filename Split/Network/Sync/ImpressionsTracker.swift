@@ -134,7 +134,8 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     private func saveImpressionsCount() {
-        if isOptimizedImpressionsMode(), let counts = impressionsCounter?.popAll() {
+        if (isOptimizedImpressionsMode() || isNoneImpressionsMode()),
+           let counts = impressionsCounter?.popAll() {
             storageContainer.impressionsCountStorage.pushMany(counts: counts)
         }
     }

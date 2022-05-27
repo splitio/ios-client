@@ -228,6 +228,71 @@ class ImpressionsNoneTest: XCTestCase {
         }
     }
 
+    func testPeriodicRecording() {
+
+        let notificationHelper = NotificationHelperStub()
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+//        splitConfig.impressionsMode = "none" // Currently unavailable
+        splitConfig.setImpressionsMode(.none) // Available now only for testing. Will be removed
+        splitConfig.uniqueKeysRefreshRate = 1
+
+        let key: Key = Key(matchingKey: userKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
+        _ = builder.setNotificationHelper(notificationHelper)
+        let factory = builder.setApiKey(apiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+
+        var exps = [XCTestExpectation]()
+        let client = factory.client
+
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+
+
+        exps.append(sdkReadyExpectation)
+
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        client.on(event: SplitEvent.sdkReadyTimedOut) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        exps.append(sseExp)
+        wait(for: exps, timeout: 5)
+
+        for _ in 0..<10 {
+            _ = client.getTreatment(Splits.aNewSplit2.str)
+            _ = client.getTreatment(Splits.testStringWithoutAttr.str)
+            _ = client.getTreatment(Splits.test.str)
+            _ = client.getTreatment(Splits.testo2222.str)
+        }
+
+        sleep(1)
+
+        // Unique keys and impressions count are saved on app bg
+        // Here that situation is simulated
+        notificationHelper.simulateApplicationDidEnterBackground()
+        // Make app active again
+        notificationHelper.simulateApplicationDidBecomeActive()
+
+        impExp = XCTestExpectation()
+
+        // Unique key should arrive if periodic recording works
+        wait(for: [impExp!], timeout: 5)
+
+        XCTAssertTrue(uniqueKeys.count > 0)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+    }
+
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             print("Hit: \(request.url.absoluteString)")
