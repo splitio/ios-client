@@ -35,6 +35,7 @@ enum Resource: CaseIterable {
     case events
     case telemetry
     case token
+    case uniqueKeys
 }
 
 enum TelemetryInitCounter: CaseIterable {

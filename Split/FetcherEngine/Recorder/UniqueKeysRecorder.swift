@@ -16,7 +16,7 @@ class DefaultHttpUniqueKeysRecorder: HttpUniqueKeysRecorder {
 
     private let restClient: RestClientUniqueKeys
     private let syncHelper: SyncHelper
-    private let resource = Resource.impressionsCount
+    private let resource = Resource.uniqueKeys
 
     init(restClient: RestClientUniqueKeys,
          syncHelper: SyncHelper) {
@@ -30,18 +30,17 @@ class DefaultHttpUniqueKeysRecorder: HttpUniqueKeysRecorder {
 
         let semaphore = DispatchSemaphore(value: 0)
         var httpError: HttpError?
-        let startTime = syncHelper.time()
         restClient.send(uniqueKeys: uniqueKeys, completion: { result in
             do {
                 _ = try result.unwrap()
             } catch {
-                httpError = self.syncHelper.handleError(error, resource: self.resource, startTime: startTime)
+                httpError = HttpError.unknown(code: -1, message: error.localizedDescription)
             }
             semaphore.signal()
         })
         semaphore.wait()
 
         try syncHelper.throwIfError(httpError)
-        syncHelper.recordTelemetry(resource: resource, startTime: startTime)
+
     }
 }

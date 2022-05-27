@@ -104,7 +104,7 @@ class ImpressionsTrackerTest: XCTestCase {
 
         XCTAssertTrue(periodicImpressionsRecorderWorker.pauseCalled)
         XCTAssertTrue(periodicImpressionsCountRecorderWorker.pauseCalled)
-        XCTAssertFalse(periodicUniqueKeysRecorderWorker.startCalled)
+        XCTAssertFalse(periodicUniqueKeysRecorderWorker.pauseCalled)
 
     }
 
