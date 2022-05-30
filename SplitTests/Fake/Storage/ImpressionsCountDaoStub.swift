@@ -11,8 +11,6 @@ import Foundation
 
 class ImpressionsCountDaoStub: ImpressionsCountDao {
 
-
-
     var insertedCounts = [ImpressionsCountPerFeature]()
     var getByCounts = [ImpressionsCountPerFeature]()
     var updatedCounts = [String: Int32]()

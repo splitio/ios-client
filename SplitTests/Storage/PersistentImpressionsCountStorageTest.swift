@@ -18,12 +18,13 @@ class PersistentImpressionsCountStorageTests: XCTestCase {
     override func setUp() {
         countDao = ImpressionsCountDaoStub()
         countsStorage = DefaultImpressionsCountStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
-                                                                         impressionDao: ImpressionDaoStub(),
-                                                                         impressionsCountDao: countDao,
-                                                                         generalInfoDao: GeneralInfoDaoStub(),
-                                                                         splitDao: SplitDaoStub(),
-                                                                         mySegmentsDao: MySegmentsDaoStub(),
-                                                                         attributesDao: AttributesDaoStub()), expirationPeriod: 100)
+                                                                                   impressionDao: ImpressionDaoStub(),
+                                                                                   impressionsCountDao: countDao,
+                                                                                   generalInfoDao: GeneralInfoDaoStub(),
+                                                                                   splitDao: SplitDaoStub(),
+                                                                                   mySegmentsDao: MySegmentsDaoStub(),
+                                                                                   attributesDao: AttributesDaoStub(),
+                                                                                   uniqueKeyDao: UniqueKeyDaoStub()), expirationPeriod: 100)
 
     }
 

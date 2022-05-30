@@ -138,4 +138,17 @@ struct TestingHelper {
     static func createTelemetryStats() -> TelemetryStats {
         return TelemetryStats(lastSynchronization: nil, methodLatencies: nil, methodExceptions: nil, httpErrors: nil, httpLatencies: nil, tokenRefreshes: 1, authRejections: 1, impressionsQueued: 1, impressionsDeduped: 1, impressionsDropped: 1, splitCount: 1, segmentCount: 1, segmentKeyCount: 2, sessionLengthMs: 88888, eventsQueued: 1, eventsDropped: 1, streamingEvents: nil, tags: nil)
     }
+
+    static func createUniqueKeys(keyCount: Int = 5, featureCount: Int = 20) -> UniqueKeys {
+        var allKeys = [UniqueKey]()
+        for k in 0..<keyCount {
+            var features = Set<String>()
+            for i in 0..<featureCount {
+                features.insert("feature\(i)")
+            }
+            let uniqueKey = UniqueKey(userKey: "key\(k)", features: features)
+            allKeys.append(uniqueKey)
+        }
+        return UniqueKeys(keys: allKeys)
+    }
 }

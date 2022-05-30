@@ -289,4 +289,12 @@ public class SplitClientConfig: NSObject {
         telemetryConfigHelper.shouldRecordTelemetry
     }
 
+    // Is not a constant for testing purposes
+    var uniqueKeysRefreshRate: Int = 900
+
+    // Internal function. For testing purposes only
+    // will be removed when .none is available
+    func setImpressionsMode(_ mode: ImpressionsMode) {
+        finalImpressionsMode = mode
+    }
 }

@@ -24,6 +24,8 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
     var telemetryConfigRecorderWorker = RecorderWorkerStub()
     var telemetryStatsRecorderWorker = RecorderWorkerStub()
     var periodicTelemetryStatsRecorderWorker = PeriodicRecorderWorkerStub()
+    var uniqueKeysRecorderWorker = RecorderWorkerStub()
+    var periodicUniqueKeysRecorderWorker = PeriodicRecorderWorkerStub()
 
     private var retryableWorkerIndex = -1
     var retryableSplitsUpdateWorkers: [RetryableSyncWorker] = [RetryableSyncWorkerStub()]
@@ -55,19 +57,19 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
         return periodicMySegmentsSyncWorker
     }
 
-    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> PeriodicRecorderWorker {
+    func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> PeriodicRecorderWorker? {
         return periodicImpressionsRecorderWorker
     }
 
-    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker {
+    func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker? {
         return impressionsRecorderWorker
     }
 
-    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker {
+    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker? {
         return periodicImpressionsCountRecorderWorker
     }
 
-    func createImpressionsCountRecorderWorker() -> RecorderWorker {
+    func createImpressionsCountRecorderWorker() -> RecorderWorker? {
         return impressionsCountRecorderWorker
     }
 
@@ -89,5 +91,13 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
 
     func createPeriodicTelemetryStatsRecorderWorker() -> PeriodicRecorderWorker? {
         return periodicTelemetryStatsRecorderWorker
+    }
+
+    func createUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> RecorderWorker? {
+        return uniqueKeysRecorderWorker
+    }
+
+    func createPeriodicUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> PeriodicRecorderWorker? {
+        return periodicUniqueKeysRecorderWorker
     }
 }

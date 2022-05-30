@@ -17,7 +17,7 @@ protocol RestClient {
 
 protocol SplitApiRestClient: RestClientSplitChanges, RestClientMySegments, RestClientImpressions,
                              RestClientTrackEvents, RestClientSseAuthenticator, RestClientTelemetryStats,
-                             RestClientImpressionsCount, RestClientTelemetryConfig {
+                             RestClientImpressionsCount, RestClientTelemetryConfig, RestClientUniqueKeys {
 }
 
 protocol HostReachabilityChecker {

@@ -23,7 +23,8 @@ class PersistentEventsStorageTests: XCTestCase {
                                                                          generalInfoDao: GeneralInfoDaoStub(),
                                                                          splitDao: SplitDaoStub(),
                                                                          mySegmentsDao: MySegmentsDaoStub(),
-                                                                         attributesDao: AttributesDaoStub()), expirationPeriod: 100)
+                                                                         attributesDao: AttributesDaoStub(),
+                                                                         uniqueKeyDao: UniqueKeyDaoStub()), expirationPeriod: 100)
 
     }
 

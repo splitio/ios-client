@@ -1,5 +1,5 @@
 //
-//  ImpressionsHit.swift
+//  ImpressionsTest.swift
 //  Split
 //
 //  Created by Natalia  Stele on 08/01/2018.

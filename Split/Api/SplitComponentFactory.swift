@@ -171,7 +171,7 @@ class SplitComponentFactory {
             _ = builder.setStreamingHttpClient(httpClient)
         }
 
-        let component: SplitApiFacade = builder.build()
+        let component: SplitApiFacade = try builder.build()
         add(component: component)
         return component
     }
@@ -217,7 +217,11 @@ class SplitComponentFactory {
     func buildSynchronizer() throws -> Synchronizer {
 
         let syncWorkerFactory = try buildSyncWorkerFactory()
+        let splitApiFacade = try getSplitApiFacade()
+        let storageContainer = try getSplitStorageContainer()
+
         var telemetrySynchronizer: TelemetrySynchronizer?
+
         if splitClientConfig.isTelemetryEnabled,
            let configRecorderWorker = syncWorkerFactory.createTelemetryConfigRecorderWorker(),
            let statsRecorderWorker = syncWorkerFactory.createTelemetryStatsRecorderWorker(),
@@ -226,15 +230,26 @@ class SplitComponentFactory {
                                                          statsRecorderWorker: statsRecorderWorker,
                                                          periodicStatsRecorderWorker: periodicStatsRecorderWorker)
         }
+        var uniqueKeyTracker: UniqueKeyTracker?
+        if splitClientConfig.finalImpressionsMode == .none,
+           let uniqueKeyStorage = storageContainer.uniqueKeyStorage {
+            uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: uniqueKeyStorage)
+        }
+        let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitClientConfig,
+                                                           splitApiFacade: splitApiFacade,
+                                                           storageContainer: storageContainer,
+                                                           syncWorkerFactory: syncWorkerFactory,
+                                                           impressionsSyncHelper: try buildImpressionsSyncHelper(),
+                                                           uniqueKeyTracker: uniqueKeyTracker)
 
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
                                                           defaultUserKey: userKey,
                                                           telemetrySynchronizer: telemetrySynchronizer,
                                                           byKeyFacade: getByKeyFacade(),
                                                           splitApiFacade: try getSplitApiFacade(),
-                                                          splitStorageContainer: try getSplitStorageContainer(),
+                                                          splitStorageContainer: storageContainer,
                                                           syncWorkerFactory: syncWorkerFactory,
-                                                          impressionsSyncHelper: try buildImpressionsSyncHelper(),
+                                                          impressionsTracker: impressionsTracker,
                                                           eventsSyncHelper: try buildEventsSyncHelper(),
                                                           splitsFilterQueryString: splitsFilterQueryString,
                                                           splitEventsManager: getSplitEventsManagerCoordinator())
