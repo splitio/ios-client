@@ -41,7 +41,8 @@ class SynchronizerTest: XCTestCase {
     }
 
     func buildSynchronizer(impressionsAccumulator: RecorderFlushChecker? = nil,
-                           eventsAccumulator: RecorderFlushChecker? = nil) -> Synchronizer {
+                           eventsAccumulator: RecorderFlushChecker? = nil,
+                           isSingleSyncEnabled: Bool = false) -> Synchronizer {
 
         eventsManager = SplitEventsManagerStub()
         persistentSplitsStorage = PersistentSplitsStorageStub()
@@ -89,6 +90,7 @@ class SynchronizerTest: XCTestCase {
             .build()
 
         let config =  SplitClientConfig()
+        config.isSingleSyncModeEnabled = isSingleSyncEnabled
         config.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
 
         byKeyApiFacade = ByKeyFacadeStub()
@@ -171,6 +173,13 @@ class SynchronizerTest: XCTestCase {
         XCTAssertTrue(byKeyApiFacade.syncMySegmentsCalled[userKey] ?? false)
     }
 
+    func testForceSynchronizeMySegments() {
+
+        synchronizer.forceMySegmentsSync(forKey: userKey)
+
+        XCTAssertTrue(byKeyApiFacade.forceMySegmentsSyncCalled[userKey] ?? false)
+    }
+
     func testSynchronizeSplitsWithChangeNumber() {
 
         let sw1 = RetryableSyncWorkerStub()
@@ -199,6 +208,31 @@ class SynchronizerTest: XCTestCase {
 
         XCTAssertTrue(periodicSplitsSyncWorker.startCalled)
         XCTAssertTrue(byKeyApiFacade.startPeriodicSyncCalled)
+    }
+
+    func testStartPeriodicFetchingSingleModeEnabled() {
+
+        synchronizer = buildSynchronizer(isSingleSyncEnabled: true)
+        synchronizer.startPeriodicFetching()
+
+        XCTAssertFalse(periodicSplitsSyncWorker.startCalled)
+        XCTAssertFalse(byKeyApiFacade.startPeriodicSyncCalled)
+    }
+
+    func testUpdateSplitsSingleModeEnabled() {
+
+        synchronizer = buildSynchronizer(isSingleSyncEnabled: true)
+        synchronizer.synchronizeSplits(changeNumber: -1)
+
+        XCTAssertFalse(splitsSyncWorker.startCalled)
+    }
+
+    func testForceMySegmentsSyncSingleModeEnabled() {
+        let syncKey = IntegrationHelper.dummyUserKey
+        synchronizer = buildSynchronizer(isSingleSyncEnabled: true)
+        synchronizer.forceMySegmentsSync(forKey: syncKey)
+
+        XCTAssertFalse(byKeyApiFacade.forceMySegmentsSyncCalled[syncKey] ?? false)
     }
 
     func testStopPeriodicFetching() {
