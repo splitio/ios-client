@@ -44,8 +44,6 @@ class HttpUniqueKeyRecorderTests: XCTestCase {
         try recorder.execute(uniqueKeys)
 
         XCTAssertEqual(1, restClient.sendUniqueKeysCount)
-        XCTAssertEqual(1, telemetryProducer.recordHttpLastSyncCallCount)
-        XCTAssertEqual(1, telemetryProducer.recordHttpLatencyCallCount)
         XCTAssertEqual(0, telemetryProducer.recordHttpErrorCallCount)
     }
 
