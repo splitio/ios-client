@@ -59,7 +59,76 @@ class SyncManagerBuilder {
         return self
     }
 
+    private struct Components {
+        let userKey: String
+        let byKeyFacade: ByKeyFacade
+        let config: SplitClientConfig
+        let apiFacade: SplitApiFacade
+        let endpointFactory: EndpointFactory
+        let synchronizer: Synchronizer
+        let storageContainer: SplitStorageContainer
+    }
+
     func build() throws -> SyncManager {
+
+        guard let config = self.splitConfig,
+              let synchronizer = self.synchronizer
+        else {
+            throw ComponentError.buildFailed(name: "SyncManager")
+        }
+
+        let broadcasterChannel = DefaultPushManagerEventBroadcaster()
+        var pushNotificationManager: PushNotificationManager?
+        var sseBackoffTimer: BackoffCounterTimer?
+        if !config.isSingleSyncModeEnabled, config.streamingEnabled {
+            pushNotificationManager = try buildPushManager(broadcasterChannel: broadcasterChannel)
+
+            sseBackoffTimer = buildSseBackoffTimer(config: config)
+        }
+
+        return DefaultSyncManager(splitConfig: config,
+                                  pushNotificationManager: pushNotificationManager,
+                                  reconnectStreamingTimer: sseBackoffTimer,
+                                  notificationHelper: notificationHelper,
+                                  synchronizer: synchronizer,
+                                  broadcasterChannel: broadcasterChannel)
+    }
+
+    private func buildSseBackoffTimer(config: SplitClientConfig) -> BackoffCounterTimer {
+        let sseBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: config.pushRetryBackoffBase)
+        return DefaultBackoffCounterTimer(reconnectBackoffCounter: sseBackoffCounter)
+    }
+
+    private func buildSseHttpClient(config: SplitClientConfig,
+                               apiFacade: SplitApiFacade) -> HttpClient {
+        let sseHttpConfig = HttpSessionConfig()
+        sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
+        return apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
+    }
+
+    private func buildNotificationProcessor(userKey: String,
+                                            storageContainer: SplitStorageContainer,
+                                            synchronizer: Synchronizer) -> SseNotificationProcessor {
+
+        let mySegmentsUpdateWorker
+        = MySegmentsUpdateWorker(synchronizer: synchronizer,
+                                 mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                 mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
+
+        return  DefaultSseNotificationProcessor(
+            notificationParser: DefaultSseNotificationParser(),
+            splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer),
+            splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
+                                             splitsStorage: storageContainer.splitsStorage),
+            mySegmentsUpdateWorker: mySegmentsUpdateWorker,
+            mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker(
+                userKey: userKey, synchronizer: synchronizer,
+                mySegmentsStorage: storageContainer.mySegmentsStorage,
+                payloadDecoder: DefaultMySegmentsV2PayloadDecoder()))
+    }
+
+    private func buildPushManager(broadcasterChannel: PushManagerEventBroadcaster)
+    throws -> PushNotificationManager {
 
         guard let userKey = self.userKey,
               let byKeyFacade = self.byKeyFacade,
@@ -72,59 +141,32 @@ class SyncManagerBuilder {
             throw ComponentError.buildFailed(name: "SyncManager")
         }
 
-        let broadcasterChannel = DefaultPushManagerEventBroadcaster()
-        var pushNotificationManager: PushNotificationManager?
-        var sseBackoffTimer: BackoffCounterTimer?
-        if config.streamingEnabled {
-            let sseHttpConfig = HttpSessionConfig()
-            sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
-            let sseHttpClient = apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
+        let sseHttpClient = buildSseHttpClient(config: config, apiFacade: apiFacade)
+        let notificationManagerKeeper
+        = DefaultNotificationManagerKeeper(broadcasterChannel: broadcasterChannel,
+                                           telemetryProducer: storageContainer.telemetryStorage)
 
-            let notificationManagerKeeper
-            = DefaultNotificationManagerKeeper(broadcasterChannel: broadcasterChannel,
-                                               telemetryProducer: storageContainer.telemetryStorage)
+        let notificationProcessor = buildNotificationProcessor(userKey: userKey,
+                                                               storageContainer: storageContainer,
+                                                               synchronizer: synchronizer)
 
-            let mySegmentsUpdateWorker
-            = MySegmentsUpdateWorker(synchronizer: synchronizer,
-                                     mySegmentsStorage: storageContainer.mySegmentsStorage,
-                                     mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
+        let sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,
+                                           notificationParser: DefaultSseNotificationParser(),
+                                           notificationManagerKeeper: notificationManagerKeeper,
+                                           broadcasterChannel: broadcasterChannel,
+                                           telemetryProducer: storageContainer.telemetryStorage)
 
-            let notificationProcessor =  DefaultSseNotificationProcessor(
-                notificationParser: DefaultSseNotificationParser(),
-                splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer),
-                splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
-                                                 splitsStorage: storageContainer.splitsStorage),
-                mySegmentsUpdateWorker: mySegmentsUpdateWorker,
-                mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker(
-                    userKey: userKey, synchronizer: synchronizer,
-                    mySegmentsStorage: storageContainer.mySegmentsStorage,
-                    payloadDecoder: DefaultMySegmentsV2PayloadDecoder()))
+        let sseClientFactory  = DefaultSseClientFactory(endpoint: endpointFactory.streamingEndpoint,
+                                                        httpClient: sseHttpClient,
+                                                        sseHandler: sseHandler)
 
-            let sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,
-                                               notificationParser: DefaultSseNotificationParser(),
-                                               notificationManagerKeeper: notificationManagerKeeper,
-                                               broadcasterChannel: broadcasterChannel,
-                                               telemetryProducer: storageContainer.telemetryStorage)
+        return DefaultPushNotificationManager(
+            userKeyRegistry: byKeyFacade,
+            sseAuthenticator: apiFacade.sseAuthenticator,
+            sseClientFactory: sseClientFactory,
+            broadcasterChannel: broadcasterChannel,
+            timersManager: DefaultTimersManager(),
+            telemetryProducer: storageContainer.telemetryStorage)
 
-            let sseAuthenticator = apiFacade.sseAuthenticator
-            let sseClientFactory  = DefaultSseClientFactory(endpoint: endpointFactory.streamingEndpoint,
-                                                            httpClient: sseHttpClient,
-                                                            sseHandler: sseHandler)
-
-            pushNotificationManager = DefaultPushNotificationManager(
-                userKeyRegistry: byKeyFacade, sseAuthenticator: sseAuthenticator,
-                sseClientFactory: sseClientFactory,
-                broadcasterChannel: broadcasterChannel,
-                timersManager: DefaultTimersManager(),
-                telemetryProducer: storageContainer.telemetryStorage)
-
-            let sseBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: config.pushRetryBackoffBase)
-            sseBackoffTimer = DefaultBackoffCounterTimer(reconnectBackoffCounter: sseBackoffCounter)
-        }
-
-        return DefaultSyncManager(splitConfig: config, pushNotificationManager: pushNotificationManager,
-                                  reconnectStreamingTimer: sseBackoffTimer,
-                                  notificationHelper: notificationHelper,
-                                  synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
     }
 }

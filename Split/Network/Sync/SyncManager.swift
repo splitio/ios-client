@@ -56,17 +56,7 @@ class DefaultSyncManager: SyncManager {
         synchronizer.loadMySegmentsFromCache()
         synchronizer.loadAttributesFromCache()
         synchronizer.synchronizeMySegments()
-        isPollingEnabled.set(!splitConfig.streamingEnabled)
-        if splitConfig.streamingEnabled,
-           pushNotificationManager != nil,
-           reconnectStreamingTimer != nil {
-            broadcasterChannel.register { event in
-                self.handle(pushEvent: event)
-            }
-            pushNotificationManager?.start()
-        } else {
-            synchronizer.startPeriodicFetching()
-        }
+        setupSyncMode()
         synchronizer.startPeriodicRecording()
     }
 
@@ -149,6 +139,24 @@ class DefaultSyncManager: SyncManager {
         if !isPollingEnabled.getAndSet(true) {
             synchronizer.startPeriodicFetching()
             Logger.i("Polling enabled")
+        }
+    }
+
+    private func setupSyncMode() {
+        if splitConfig.isSingleSyncModeEnabled {
+            // No setup is needed
+            return
+        }
+        isPollingEnabled.set(!splitConfig.streamingEnabled)
+        if splitConfig.streamingEnabled,
+           pushNotificationManager != nil,
+           reconnectStreamingTimer != nil {
+            broadcasterChannel.register { event in
+                self.handle(pushEvent: event)
+            }
+            pushNotificationManager?.start()
+        } else {
+            synchronizer.startPeriodicFetching()
         }
     }
 }
