@@ -295,7 +295,6 @@ class ImpressionsNoneTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            print("Hit: \(request.url.absoluteString)")
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 if self.firstSplitHit {
