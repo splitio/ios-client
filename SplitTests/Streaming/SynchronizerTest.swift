@@ -42,7 +42,7 @@ class SynchronizerTest: XCTestCase {
 
     func buildSynchronizer(impressionsAccumulator: RecorderFlushChecker? = nil,
                            eventsAccumulator: RecorderFlushChecker? = nil,
-                           isSingleSyncEnabled: Bool = false) -> Synchronizer {
+                           syncEnabled: Bool = true) -> Synchronizer {
 
         eventsManager = SplitEventsManagerStub()
         persistentSplitsStorage = PersistentSplitsStorageStub()
@@ -90,7 +90,7 @@ class SynchronizerTest: XCTestCase {
             .build()
 
         let config =  SplitClientConfig()
-        config.isSingleSyncModeEnabled = isSingleSyncEnabled
+        config.syncEnabled = syncEnabled
         config.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
 
         byKeyApiFacade = ByKeyFacadeStub()
@@ -212,7 +212,7 @@ class SynchronizerTest: XCTestCase {
 
     func testStartPeriodicFetchingSingleModeEnabled() {
 
-        synchronizer = buildSynchronizer(isSingleSyncEnabled: true)
+        synchronizer = buildSynchronizer(syncEnabled: false)
         synchronizer.startPeriodicFetching()
 
         XCTAssertFalse(periodicSplitsSyncWorker.startCalled)
@@ -221,7 +221,7 @@ class SynchronizerTest: XCTestCase {
 
     func testUpdateSplitsSingleModeEnabled() {
 
-        synchronizer = buildSynchronizer(isSingleSyncEnabled: true)
+        synchronizer = buildSynchronizer(syncEnabled: false)
         synchronizer.synchronizeSplits(changeNumber: -1)
 
         XCTAssertFalse(splitsSyncWorker.startCalled)
@@ -229,7 +229,7 @@ class SynchronizerTest: XCTestCase {
 
     func testForceMySegmentsSyncSingleModeEnabled() {
         let syncKey = IntegrationHelper.dummyUserKey
-        synchronizer = buildSynchronizer(isSingleSyncEnabled: true)
+        synchronizer = buildSynchronizer(syncEnabled: false)
         synchronizer.forceMySegmentsSync(forKey: syncKey)
 
         XCTAssertFalse(byKeyApiFacade.forceMySegmentsSyncCalled[syncKey] ?? false)

@@ -80,7 +80,7 @@ class SyncManagerBuilder {
         let broadcasterChannel = DefaultPushManagerEventBroadcaster()
         var pushNotificationManager: PushNotificationManager?
         var sseBackoffTimer: BackoffCounterTimer?
-        if !config.isSingleSyncModeEnabled, config.streamingEnabled {
+        if config.syncEnabled, config.streamingEnabled {
             pushNotificationManager = try buildPushManager(broadcasterChannel: broadcasterChannel)
 
             sseBackoffTimer = buildSseBackoffTimer(config: config)

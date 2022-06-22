@@ -74,7 +74,7 @@ class SyncManagerTest: XCTestCase {
     func singleModeStartTest(streamingEnabled: Bool) {
 
         splitConfig.streamingEnabled = streamingEnabled
-        splitConfig.isSingleSyncModeEnabled = true
+        splitConfig.syncEnabled = false
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
                                          notificationHelper: DefaultNotificationHelper.instance,

@@ -97,7 +97,7 @@ class DefaultSynchronizer: Synchronizer {
         self.telemetrySynchronizer = telemetrySynchronizer
         self.byKeySynchronizer = byKeyFacade
 
-        if !splitConfig.isSingleSyncModeEnabled {
+        if splitConfig.syncEnabled {
             self.periodicSplitsSyncWorker = syncWorkerFactory.createPeriodicSplitsSyncWorker()
         }
     }
@@ -145,7 +145,7 @@ class DefaultSynchronizer: Synchronizer {
 
     func synchronizeSplits(changeNumber: Int64) {
 
-        if splitConfig.isSingleSyncModeEnabled {
+        if !splitConfig.syncEnabled {
             return
         }
 
@@ -176,7 +176,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func forceMySegmentsSync(forKey key: String) {
-        if splitConfig.isSingleSyncModeEnabled {
+        if !splitConfig.syncEnabled {
             return
         }
         byKeySynchronizer.forceMySegmentsSync(forKey: key)
@@ -187,7 +187,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func startPeriodicFetching() {
-        if splitConfig.isSingleSyncModeEnabled {
+        if !splitConfig.syncEnabled {
             return
         }
         periodicSplitsSyncWorker?.start()
