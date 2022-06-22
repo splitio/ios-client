@@ -161,7 +161,8 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
          cacheExpiration: Int,
          defaultQueryString: String,
          eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter) {
+         reconnectBackoffCounter: ReconnectBackoffCounter,
+         splitConfig: SplitClientConfig) {
 
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
@@ -171,7 +172,8 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         self.changeChecker = DefaultSplitsChangesChecker()
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
-                                           splitChangeProcessor: splitChangeProcessor)
+                                           splitChangeProcessor: splitChangeProcessor,
+                                           splitConfig: splitConfig)
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
@@ -182,8 +184,8 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             if syncHelper.cacheHasExpired(storedChangeNumber: changeNumber,
                                           updateTimestamp: splitsStorage.updateTimestamp,
                                           cacheExpirationInSeconds: Int64(cacheExpiration)) {
-                    changeNumber = -1
-                    clearCache = true
+                changeNumber = -1
+                clearCache = true
             }
         }
 
@@ -221,7 +223,8 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
          splitChangeProcessor: SplitChangeProcessor,
          changeNumber: Int64,
          eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter) {
+         reconnectBackoffCounter: ReconnectBackoffCounter,
+         splitConfig: SplitClientConfig) {
 
         self.splitsFetcher = splitsFetcher
         self.splitsStorage = splitsStorage
@@ -232,18 +235,23 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
 
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitsFetcher,
                                            splitsStorage: splitsStorage,
-                                           splitChangeProcessor: splitChangeProcessor)
+                                           splitChangeProcessor: splitChangeProcessor,
+                                           splitConfig: splitConfig)
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() -> Bool {
         let storedChangeNumber = splitsStorage.changeNumber
-        if changeNumber < storedChangeNumber ||
-            syncHelper.sync(since: splitsStorage.changeNumber,
-                            clearBeforeUpdate: false,
-                            headers: ServiceConstants.controlNoCacheHeader) {
+        if changeNumber <= storedChangeNumber {
+            return true
+        }
+
+        if syncHelper.sync(since: storedChangeNumber,
+                           till: changeNumber,
+                           clearBeforeUpdate: false,
+                           headers: ServiceConstants.controlNoCacheHeader) {
             if changeChecker.splitsHaveChanged(oldChangeNumber: storedChangeNumber,
-                                                     newChangeNumber: splitsStorage.changeNumber) {
+                                               newChangeNumber: splitsStorage.changeNumber) {
                 notifySplitsUpdated()
             }
             resetBackoffCounter()

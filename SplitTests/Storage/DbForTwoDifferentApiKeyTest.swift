@@ -28,6 +28,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
 
     let userKey = IntegrationHelper.dummyUserKey
 
+    var splitHitCounters = [0, 0]
     static let changeNumberBase: Int64 = 1000;
     let changeNumberF1: Int64 = changeNumberBase + 1
     let changeNumberF2: Int64 = changeNumberBase + 2
@@ -51,6 +52,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.isDebugModeEnabled = true
+        splitConfig.cdnBackoffTimeBaseInSecs = 1
 
         let session = HttpSessionMock()
         let reqManager1 = HttpRequestManagerTestDispatcher(dispatcher: buildBasicDispatcher(factoryNumber: 1),
@@ -76,7 +78,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
             sdkReadyExpectation1.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation1, sseExp[0]], timeout: 5)
+        wait(for: [sdkReadyExpectation1, sseExp[0]], timeout: 555)
         streamingBinding?.push(message: ":keepalive")
         testSplitsUpdate(changeNumber: changeNumberF2)
 
@@ -109,7 +111,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
             sdkReadyExpectation2.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation2, sseExp[1]], timeout: 5)
+        wait(for: [sdkReadyExpectation2, sseExp[1]], timeout: 5555)
 
         let t2Split1 = client2.getTreatment("split1")
         let t2Split2 = client2.getTreatment("split2")
@@ -143,11 +145,15 @@ class DbForDifferentApiKeysTest: XCTestCase {
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 print("Split changes hit")
+                let hitNumber = self.splitHitCounters[factoryNumber - 1]
+                self.splitHitCounters[factoryNumber - 1]+=1
                 let respChangeNumber = Self.changeNumberBase + Int64(factoryNumber)
                 self.lastChangeNumbers[factoryNumber] = request.parameters?["since"] as? Int64 ?? 0
                 if self.lastChangeNumbers[factoryNumber] == -1 {
                     self.firstChangeNumbers[factoryNumber] = -1
-                    return TestDispatcherResponse(code: 200, data: Data(self.splitChanges(factoryNumber: factoryNumber).utf8))
+                    return TestDispatcherResponse(code: 200,
+                                                  data: Data(self.splitChanges(factoryNumber: factoryNumber,
+                                                                               hitNumber: hitNumber).utf8))
                 }
                 if let exp = self.splitsChangesExp {
                     exp.fulfill()
@@ -176,10 +182,14 @@ class DbForDifferentApiKeysTest: XCTestCase {
         }
     }
 
-    private func splitChanges(factoryNumber: Int) -> String {
+    private func splitChanges(factoryNumber: Int, hitNumber: Int) -> String {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.splits[0].name = "split\(factoryNumber)"
+        if hitNumber == 0 {
         change?.since = -1
+        } else {
+            change?.since = Self.changeNumberBase + Int64(factoryNumber)
+        }
         change?.till = Self.changeNumberBase + Int64(factoryNumber)
         return (try? Json.encodeToJson(change)) ?? IntegrationHelper.emptySplitChanges
     }

@@ -49,7 +49,8 @@ class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
     init(splitFetcher: HttpSplitFetcher,
          persistentSplitsStorage: PersistentSplitsStorage,
          splitChangeProcessor: SplitChangeProcessor,
-         cacheExpiration: Int64) {
+         cacheExpiration: Int64,
+         splitConfig: SplitClientConfig) {
 
         self.persistenSplitsStorage = persistentSplitsStorage
         self.splitFetcher = splitFetcher
@@ -58,7 +59,8 @@ class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
         self.cacheExpiration = cacheExpiration
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
-                                           splitChangeProcessor: splitChangeProcessor)
+                                           splitChangeProcessor: splitChangeProcessor,
+                                           splitConfig: splitConfig)
     }
 
     func execute() {

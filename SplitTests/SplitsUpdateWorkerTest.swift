@@ -37,7 +37,8 @@ class SplitsUpdateWorkerTest: XCTestCase {
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          changeNumber: 101,
                                                          eventsManager: eventsManager,
-                                                         reconnectBackoffCounter: backoffCounter)
+                                                         reconnectBackoffCounter: backoffCounter,
+                                                         splitConfig: SplitClientConfig())
 
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
@@ -58,9 +59,10 @@ class SplitsUpdateWorkerTest: XCTestCase {
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
                                                          splitsStorage: splitsStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(),
-                                                         changeNumber: 100,
+                                                         changeNumber: 200,
                                                          eventsManager: eventsManager,
-                                                         reconnectBackoffCounter: backoffCounter)
+                                                         reconnectBackoffCounter: backoffCounter,
+                                                         splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitFetcher.splitChanges = [nil, nil, change]
@@ -83,9 +85,10 @@ class SplitsUpdateWorkerTest: XCTestCase {
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
                                                          splitsStorage: splitsStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(),
-                                                         changeNumber: 100,
+                                                         changeNumber: 200,
                                                          eventsManager: eventsManager,
-                                                         reconnectBackoffCounter: backoffCounter)
+                                                         reconnectBackoffCounter: backoffCounter,
+                                                         splitConfig: SplitClientConfig())
 
         splitFetcher.splitChanges = [nil]
         var resultIsSuccess = false
@@ -112,7 +115,8 @@ class SplitsUpdateWorkerTest: XCTestCase {
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          changeNumber: 99,
                                                          eventsManager: eventsManager,
-                                                         reconnectBackoffCounter: backoffCounter)
+                                                         reconnectBackoffCounter: backoffCounter,
+                                                         splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 100, till: 100)
         splitFetcher.splitChanges = [change]

@@ -39,7 +39,8 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                            cacheExpiration: 100,
                                                            defaultQueryString: "",
                                                            eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter)
+                                                           reconnectBackoffCounter: backoffCounter,
+                                                     splitConfig: SplitClientConfig())
 
         var resultIsSuccess = false
         let change = SplitChange(splits: [], since: 200, till: 200)
@@ -66,7 +67,8 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                            cacheExpiration: 100,
                                                            defaultQueryString: "",
                                                            eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter)
+                                                           reconnectBackoffCounter: backoffCounter,
+                                                     splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitFetcher.splitChanges = [nil, nil, change]
@@ -87,12 +89,13 @@ class SplitsSyncWorkerTest: XCTestCase {
 
     func testStopNoSuccess() {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                           splitsStorage: splitStorage,
-                                                           splitChangeProcessor: splitChangeProcessor,
-                                                           cacheExpiration: 100,
-                                                           defaultQueryString: "",
-                                                           eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter)
+                                                     splitsStorage: splitStorage,
+                                                     splitChangeProcessor: splitChangeProcessor,
+                                                     cacheExpiration: 100,
+                                                     defaultQueryString: "",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter,
+                                                     splitConfig: SplitClientConfig())
 
         splitFetcher.splitChanges = [nil]
         var resultIsSuccess = false
@@ -116,12 +119,13 @@ class SplitsSyncWorkerTest: XCTestCase {
 
         let expiration = 1000
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                           splitsStorage: splitStorage,
-                                                           splitChangeProcessor: splitChangeProcessor,
-                                                           cacheExpiration: 100,
-                                                           defaultQueryString: "",
-                                                           eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter)
+                                                     splitsStorage: splitStorage,
+                                                     splitChangeProcessor: splitChangeProcessor,
+                                                     cacheExpiration: 100,
+                                                     defaultQueryString: "",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter,
+                                                     splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Date().timeIntervalSince1970) - Int64(expiration * 2) // Expired cache
@@ -146,12 +150,13 @@ class SplitsSyncWorkerTest: XCTestCase {
 
         let expiration = 1000
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                           splitsStorage: splitStorage,
-                                                           splitChangeProcessor: splitChangeProcessor,
-                                                           cacheExpiration: 2000,
-                                                           defaultQueryString: "",
-                                                           eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter)
+                                                     splitsStorage: splitStorage,
+                                                     splitChangeProcessor: splitChangeProcessor,
+                                                     cacheExpiration: 2000,
+                                                     defaultQueryString: "",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter,
+                                                     splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Date().timeIntervalSince1970) - Int64(expiration / 2) // Non Expired cache
@@ -174,12 +179,13 @@ class SplitsSyncWorkerTest: XCTestCase {
     func testChangedQueryString() {
         let expiration = 10000
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                           splitsStorage: splitStorage,
-                                                           splitChangeProcessor: splitChangeProcessor,
-                                                           cacheExpiration: 100,
-                                                           defaultQueryString: "&q=1",
-                                                           eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter)
+                                                     splitsStorage: splitStorage,
+                                                     splitChangeProcessor: splitChangeProcessor,
+                                                     cacheExpiration: 100,
+                                                     defaultQueryString: "&q=1",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter,
+                                                     splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Int(Date().timeIntervalSince1970) - expiration / 2) // Non Expired cache
@@ -205,12 +211,13 @@ class SplitsSyncWorkerTest: XCTestCase {
 
         let expiration = 10000
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                           splitsStorage: splitStorage,
-                                                           splitChangeProcessor: splitChangeProcessor,
-                                                           cacheExpiration: 100,
-                                                           defaultQueryString: "&q=1",
-                                                           eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter)
+                                                     splitsStorage: splitStorage,
+                                                     splitChangeProcessor: splitChangeProcessor,
+                                                     cacheExpiration: 100,
+                                                     defaultQueryString: "&q=1",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter,
+                                                     splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Int(Date().timeIntervalSince1970) - expiration / 2) // Non Expired cache
@@ -235,12 +242,13 @@ class SplitsSyncWorkerTest: XCTestCase {
 
         let expiration = 1000
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                           splitsStorage: splitStorage,
-                                                           splitChangeProcessor: splitChangeProcessor,
-                                                           cacheExpiration: 100,
-                                                           defaultQueryString: "&q=1",
-                                                           eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter)
+                                                     splitsStorage: splitStorage,
+                                                     splitChangeProcessor: splitChangeProcessor,
+                                                     cacheExpiration: 100,
+                                                     defaultQueryString: "&q=1",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter,
+                                                     splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.splitsFilterQueryString = ""

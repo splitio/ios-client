@@ -88,7 +88,8 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                          cacheExpiration: splitConfig.cacheExpirationInSeconds,
                                          defaultQueryString: splitsFilterQueryString,
                                          eventsManager: eventsManager,
-                                         reconnectBackoffCounter: backoffCounter)
+                                         reconnectBackoffCounter: backoffCounter,
+                                         splitConfig: splitConfig)
     }
 
     func createRetryableSplitsUpdateWorker(changeNumber: Int64,
@@ -97,14 +98,16 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                            splitsStorage: storageContainer.splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            changeNumber: changeNumber, eventsManager: eventsManager,
-                                           reconnectBackoffCounter: reconnectBackoffCounter)
+                                           reconnectBackoffCounter: reconnectBackoffCounter,
+                                           splitConfig: splitConfig)
     }
 
     func createPeriodicSplitsSyncWorker() -> PeriodicSyncWorker {
         return  PeriodicSplitsSyncWorker(
             splitFetcher: apiFacade.splitsFetcher, splitsStorage: storageContainer.splitsStorage,
             splitChangeProcessor: splitChangeProcessor,
-            timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate), eventsManager: eventsManager)
+            timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate), eventsManager: eventsManager,
+            splitConfig: splitConfig)
     }
 
     func createPeriodicImpressionsRecorderWorker(
