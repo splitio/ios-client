@@ -153,7 +153,8 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
          splitsStorage: SplitsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          timer: PeriodicTimer,
-         eventsManager: SplitEventsManager) {
+         eventsManager: SplitEventsManager,
+         splitConfig: SplitClientConfig) {
 
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
@@ -161,7 +162,8 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         self.changeChecker = DefaultSplitsChangesChecker()
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
-                                           splitChangeProcessor: splitChangeProcessor)
+                                           splitChangeProcessor: splitChangeProcessor,
+                                           splitConfig: splitConfig)
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }

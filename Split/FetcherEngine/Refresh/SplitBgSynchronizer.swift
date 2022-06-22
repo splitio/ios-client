@@ -150,7 +150,8 @@ struct BackgroundSyncExecutor {
         self.splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitsFetcher,
                                                            persistentSplitsStorage: splitsStorage,
                                                            splitChangeProcessor: DefaultSplitChangeProcessor(),
-                                                           cacheExpiration: cacheExpiration)
+                                                           cacheExpiration: cacheExpiration,
+                                                           splitConfig: SplitClientConfig())
 
         let impressionsRecorder
             = DefaultHttpImpressionsRecorder(restClient: restClient,

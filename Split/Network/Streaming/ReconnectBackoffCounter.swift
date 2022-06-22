@@ -14,14 +14,17 @@ protocol ReconnectBackoffCounter {
 }
 
 class DefaultReconnectBackoffCounter: ReconnectBackoffCounter {
-    private static let kMaxTimeLimitInSecs: Double = 1800.0 // 30 minutes (30 * 60)
+    private var maxTimeLimitInSecs: Double = 1800.0 // 30 minutes (30 * 60)
     private static let kRetryExponentialBase = 2
     private let backoffBase: Int
     private var attemptCount: AtomicInt
 
-    init(backoffBase: Int) {
+    init(backoffBase: Int, maxTimeLimit: Int? = nil) {
         self.backoffBase = backoffBase
         self.attemptCount = AtomicInt(0)
+        if let max = maxTimeLimit {
+            maxTimeLimitInSecs = Double(max)
+        }
     }
 
     func getNextRetryTime() -> Double {
@@ -29,8 +32,8 @@ class DefaultReconnectBackoffCounter: ReconnectBackoffCounter {
         let base = Decimal(backoffBase * Self.kRetryExponentialBase)
         let decimalResult = pow(base, attemptCount.getAndAdd(1))
 
-        var retryTime = Self.kMaxTimeLimitInSecs
-        if !decimalResult.isNaN, decimalResult < Decimal(Self.kMaxTimeLimitInSecs) {
+        var retryTime = maxTimeLimitInSecs
+        if !decimalResult.isNaN, decimalResult < Decimal(maxTimeLimitInSecs) {
             retryTime = (decimalResult as NSDecimalNumber).doubleValue
         }
         return retryTime

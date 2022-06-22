@@ -298,6 +298,13 @@ public class SplitClientConfig: NSObject {
     // Is not a constant for testing purposes
     var uniqueKeysRefreshRate: Int = 900
 
+    // Max attempts before add cdn by pass
+    let cdnByPassMaxAttempts: Int = 10
+
+    // CDN backoff time base - Not a constant for testing purposes
+    var cdnBackoffTimeBaseInSecs: Int = 10
+    var cdnBackoffTimeMaxInSecs: Int = 60
+
     // Internal function. For testing purposes only
     // will be removed when .none is available
     func setImpressionsMode(_ mode: ImpressionsMode) {
