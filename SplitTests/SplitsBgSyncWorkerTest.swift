@@ -31,7 +31,8 @@ class SplitsBgSyncWorkerTest: XCTestCase {
         splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
                                                       persistentSplitsStorage: splitStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
-                                                      cacheExpiration: 100)
+                                                      cacheExpiration: 100,
+                                                      splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitFetcher.splitChanges = [change]
@@ -47,7 +48,8 @@ class SplitsBgSyncWorkerTest: XCTestCase {
         splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
                                                       persistentSplitsStorage: splitStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
-                                                      cacheExpiration: 100)
+                                                      cacheExpiration: 100,
+                                                      splitConfig: SplitClientConfig())
 
         splitFetcher.httpError = HttpError.clientRelated(code: -1)
 
@@ -63,7 +65,8 @@ class SplitsBgSyncWorkerTest: XCTestCase {
         splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
                                                       persistentSplitsStorage: splitStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
-                                                      cacheExpiration: 100)
+                                                      cacheExpiration: 100,
+                                                      splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Date().timeIntervalSince1970) - Int64(expiration * 2) // Expired cache
@@ -79,8 +82,9 @@ class SplitsBgSyncWorkerTest: XCTestCase {
         let expiration = 1000
         splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
                                                       persistentSplitsStorage: splitStorage,
-                                                           splitChangeProcessor: splitChangeProcessor,
-                                                           cacheExpiration: 2000)
+                                                      splitChangeProcessor: splitChangeProcessor,
+                                                      cacheExpiration: 2000,
+                                                      splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Date().timeIntervalSince1970) - Int64(expiration / 2) // Non Expired cache

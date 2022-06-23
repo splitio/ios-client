@@ -34,10 +34,11 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
         splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                          splitsStorage: splitsStorage,
-                                                          splitChangeProcessor: splitChangeProcessor,
-                                                          timer: timer,
-                                                          eventsManager: eventsManager)
+                                                    splitsStorage: splitsStorage,
+                                                    splitChangeProcessor: splitChangeProcessor,
+                                                    timer: timer,
+                                                    eventsManager: eventsManager,
+                                                    splitConfig: SplitClientConfig())
 
         splitsSyncWorker.start()
 
@@ -54,10 +55,11 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
         splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                          splitsStorage: splitsStorage,
-                                                          splitChangeProcessor: splitChangeProcessor,
-                                                          timer: timer,
-                                                          eventsManager: eventsManager)
+                                                    splitsStorage: splitsStorage,
+                                                    splitChangeProcessor: splitChangeProcessor,
+                                                    timer: timer,
+                                                    eventsManager: eventsManager,
+                                                    splitConfig: SplitClientConfig())
 
         splitsSyncWorker.start()
 
