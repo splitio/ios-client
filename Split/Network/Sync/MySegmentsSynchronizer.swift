@@ -45,7 +45,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
             avoidCache: false,
             eventsManager: splitEventsManager)
         // If no single sync mode is enabled, create periodic and forced worker (polling and streaming)
-        if !splitConfig.isSingleSyncModeEnabled {
+        if splitConfig.syncEnabled {
             self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker(
                 forKey: userKey,
                 eventsManager: splitEventsManager)

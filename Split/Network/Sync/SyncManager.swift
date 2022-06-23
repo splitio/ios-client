@@ -143,7 +143,7 @@ class DefaultSyncManager: SyncManager {
     }
 
     private func setupSyncMode() {
-        if splitConfig.isSingleSyncModeEnabled {
+        if !splitConfig.syncEnabled {
             // No setup is needed
             return
         }

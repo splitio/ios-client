@@ -273,7 +273,7 @@ public class SplitClientConfig: NSObject {
     /// Sync all retrieved data only once on init (Default: false)
     /// No streaming neither polling service is enabled.
     /// To get last definitions, the SDK have to be recreated
-    @objc public var isSingleSyncModeEnabled = false
+    @objc public var syncEnabled = true
 
     ///
     ///  Update this variable to enable / disable telemetry for testing

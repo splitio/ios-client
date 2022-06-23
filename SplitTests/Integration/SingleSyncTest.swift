@@ -242,7 +242,7 @@ class SingleSyncTest: XCTestCase {
         let splitConfig = SplitClientConfig()
         splitConfig.setImpressionsMode(ImpressionsMode(rawValue: impressionsMode) ?? .optimized)
         splitConfig.trafficType = "user"
-        splitConfig.isSingleSyncModeEnabled = true
+        splitConfig.syncEnabled = false
         splitConfig.streamingEnabled = true
         splitConfig.featuresRefreshRate = 1
         splitConfig.segmentsRefreshRate = 1
