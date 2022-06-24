@@ -9,15 +9,24 @@
 import Foundation
 
 protocol RestClientSplitChanges: RestClient {
-    func getSplitChanges(since: Int64, headers: HttpHeaders?, completion: @escaping (DataResult<SplitChange>) -> Void)
+    func getSplitChanges(since: Int64,
+                         till: Int64?,
+                         headers: HttpHeaders?,
+                         completion: @escaping (DataResult<SplitChange>) -> Void)
 }
 
 extension DefaultRestClient: RestClientSplitChanges {
-    func getSplitChanges(since: Int64, headers: HttpHeaders?, completion: @escaping (DataResult<SplitChange>) -> Void) {
-        var kSinceParameter: String { "since" }
+    func getSplitChanges(since: Int64,
+                         till: Int64?,
+                         headers: HttpHeaders?,
+                         completion: @escaping (DataResult<SplitChange>) -> Void) {
+        var parameters = ["since": since]
+        if let till = till {
+            parameters["till"] = till
+        }
         self.execute(
             endpoint: endpointFactory.splitChangesEndpoint,
-            parameters: [kSinceParameter: since],
+            parameters: parameters,
             headers: headers,
             completion: completion)
     }

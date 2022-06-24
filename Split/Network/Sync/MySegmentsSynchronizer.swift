@@ -24,9 +24,9 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     private let mySegmentsStorage: ByKeyMySegmentsStorage
     private let syncWorkerFactory: MySegmentsSyncWorkerFactory
     private let splitConfig: SplitClientConfig
-    private let periodicMySegmentsSyncWorker: PeriodicSyncWorker
+    private var periodicMySegmentsSyncWorker: PeriodicSyncWorker?
     private let mySegmentsSyncWorker: RetryableSyncWorker
-    private let mySegmentsForcedSyncWorker: RetryableSyncWorker
+    private var mySegmentsForcedSyncWorker: RetryableSyncWorker?
     private let splitEventsManager: SplitEventsManager
     private var isDestroyed = Atomic(false)
 
@@ -39,18 +39,21 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         self.splitConfig = splitConfig
         self.mySegmentsStorage = mySegmentsStorage
         self.syncWorkerFactory = syncWorkerFactory
-        self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker(
-            forKey: userKey,
-            eventsManager: splitEventsManager)
+        self.splitEventsManager = splitEventsManager
         self.mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
             forKey: userKey,
             avoidCache: false,
             eventsManager: splitEventsManager)
-        self.mySegmentsForcedSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
-            forKey: userKey,
-            avoidCache: true,
-            eventsManager: splitEventsManager)
-        self.splitEventsManager = splitEventsManager
+        // If no single sync mode is enabled, create periodic and forced worker (polling and streaming)
+        if splitConfig.syncEnabled {
+            self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker(
+                forKey: userKey,
+                eventsManager: splitEventsManager)
+            self.mySegmentsForcedSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
+                forKey: userKey,
+                avoidCache: true,
+                eventsManager: splitEventsManager)
+        }
     }
 
     func loadMySegmentsFromCache() {
@@ -65,15 +68,15 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func forceMySegmentsSync() {
-        mySegmentsForcedSyncWorker.start()
+        mySegmentsForcedSyncWorker?.start()
     }
 
     func startPeriodicFetching() {
-        periodicMySegmentsSyncWorker.start()
+        periodicMySegmentsSyncWorker?.start()
     }
 
     func stopPeriodicFetching() {
-        periodicMySegmentsSyncWorker.stop()
+        periodicMySegmentsSyncWorker?.stop()
     }
 
     func notifiySegmentsUpdated() {
@@ -81,17 +84,17 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func pause() {
-        periodicMySegmentsSyncWorker.pause()
+        periodicMySegmentsSyncWorker?.pause()
     }
 
     func resume() {
-        periodicMySegmentsSyncWorker.resume()
+        periodicMySegmentsSyncWorker?.resume()
     }
 
     func destroy() {
         isDestroyed.set(true)
         mySegmentsSyncWorker.stop()
-        periodicMySegmentsSyncWorker.stop()
-        mySegmentsForcedSyncWorker.stop()
+        periodicMySegmentsSyncWorker?.stop()
+        mySegmentsForcedSyncWorker?.stop()
     }
 }

@@ -50,6 +50,7 @@ protocol SplitDatabase {
     var impressionsCountDao: ImpressionsCountDao { get }
     var generalInfoDao: GeneralInfoDao { get }
     var attributesDao: AttributesDao { get }
+    var uniqueKeyDao: UniqueKeyDao { get }
 }
 
 class CoreDataSplitDatabase: SplitDatabase {
@@ -60,6 +61,7 @@ class CoreDataSplitDatabase: SplitDatabase {
     var impressionsCountDao: ImpressionsCountDao
     var generalInfoDao: GeneralInfoDao
     var attributesDao: AttributesDao
+    var uniqueKeyDao: UniqueKeyDao
 
     private let coreDataHelper: CoreDataHelper
 
@@ -72,5 +74,6 @@ class CoreDataSplitDatabase: SplitDatabase {
         self.generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
         self.mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper)
         self.attributesDao = CoreDataAttributesDao(coreDataHelper: coreDataHelper)
+        self.uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: coreDataHelper)
     }
 }

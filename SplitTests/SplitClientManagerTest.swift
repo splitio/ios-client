@@ -94,7 +94,7 @@ class SplitClientManagerTest: XCTestCase {
 
     private func createClientManager() {
         let splitDatabase = TestingHelper.createTestDatabase(name: UUID().uuidString)
-        let apiFacade = SplitApiFacade.builder()
+        let apiFacade = try! SplitApiFacade.builder()
             .setUserKey("userKey")
             .setRestClient(RestClientStub())
             .setSplitConfig(SplitClientConfig())

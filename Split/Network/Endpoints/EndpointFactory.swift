@@ -26,6 +26,7 @@ class EndpointFactory {
         static let events = "events/bulk"
         static let telemetryConfig = "metrics/config"
         static let telemetryUsage = "metrics/usage"
+        static let uniqueKeys = "keys/cs"
     }
 
     let serviceEndpoints: ServiceEndpoints
@@ -37,6 +38,7 @@ class EndpointFactory {
     let telemetryUsageEndpoint: Endpoint
     let sseAuthenticationEndpoint: Endpoint
     let streamingEndpoint: Endpoint
+    let uniqueKeysEndpoint: Endpoint
     let apiKey: String
 
     init(serviceEndpoints: ServiceEndpoints, apiKey: String, splitsQueryString: String) {
@@ -78,6 +80,10 @@ class EndpointFactory {
         streamingEndpoint = Endpoint
                 .builder(baseUrl: serviceEndpoints.streamingServiceEndpoint)
                 .set(method: .get).add(headers: Self.streamingHeaders(apiKey: apiKey)).build()
+
+        uniqueKeysEndpoint = Endpoint
+                .builder(baseUrl: serviceEndpoints.telemetryServiceEndpoint, path: EndpointsPath.uniqueKeys)
+                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
     }
 
     func mySegmentsEndpoint(userKey: String) -> Endpoint {

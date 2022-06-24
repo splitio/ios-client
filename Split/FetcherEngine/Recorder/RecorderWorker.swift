@@ -20,20 +20,17 @@ protocol RecorderSyncHelper {
     func resetAccumulator()
 }
 
-class EventsRecorderSyncHelper: RecorderSyncHelper {
+protocol AccumulatorHelper {
+    func updateAccumulator(count: Int, bytes: Int)
+    func resetAccumulator()
+}
 
-    private let eventsStorage: PersistentEventsStorage
-    private let accumulator: RecorderFlushChecker
+class DefaultAccumulatorHelper: AccumulatorHelper {
 
-    init(eventsStorage: PersistentEventsStorage,
-         accumulator: RecorderFlushChecker) {
-        self.eventsStorage = eventsStorage
+    let accumulator: RecorderFlushChecker
+
+    init(accumulator: RecorderFlushChecker) {
         self.accumulator = accumulator
-    }
-
-    func pushAndCheckFlush(_ item: EventDTO) -> Bool {
-        self.eventsStorage.push(event: item)
-        return accumulator.checkIfFlushIsNeeded(sizeInBytes: item.sizeInBytes)
     }
 
     func resetAccumulator() {
@@ -45,28 +42,35 @@ class EventsRecorderSyncHelper: RecorderSyncHelper {
     }
 }
 
-class ImpressionsRecorderSyncHelper: RecorderSyncHelper {
+class EventsRecorderSyncHelper: DefaultAccumulatorHelper, RecorderSyncHelper {
+
+    private let eventsStorage: PersistentEventsStorage
+
+    init(eventsStorage: PersistentEventsStorage,
+         accumulator: RecorderFlushChecker) {
+        self.eventsStorage = eventsStorage
+        super.init(accumulator: accumulator)
+    }
+
+    func pushAndCheckFlush(_ item: EventDTO) -> Bool {
+        self.eventsStorage.push(event: item)
+        return accumulator.checkIfFlushIsNeeded(sizeInBytes: item.sizeInBytes)
+    }
+}
+
+class ImpressionsRecorderSyncHelper: DefaultAccumulatorHelper, RecorderSyncHelper {
 
     private let impressionsStorage: PersistentImpressionsStorage
-    private let accumulator: RecorderFlushChecker
 
     init(impressionsStorage: PersistentImpressionsStorage,
          accumulator: RecorderFlushChecker) {
         self.impressionsStorage = impressionsStorage
-        self.accumulator = accumulator
+        super.init(accumulator: accumulator)
     }
 
     func pushAndCheckFlush(_ item: KeyImpression) -> Bool {
         self.impressionsStorage.push(impression: item)
         return accumulator.checkIfFlushIsNeeded(sizeInBytes: ServiceConstants.estimatedImpressionSizeInBytes)
-    }
-
-    func resetAccumulator() {
-        updateAccumulator(count: 0, bytes: 0)
-    }
-
-    func updateAccumulator(count: Int, bytes: Int) {
-        accumulator.update(count: count, bytes: bytes)
     }
 }
 

@@ -270,6 +270,12 @@ public class SplitClientConfig: NSObject {
     @objc public var persistentAttributesEnabled = false
 
     ///
+    /// Sync all retrieved data only once on init (Default: false)
+    /// No streaming neither polling service is enabled.
+    /// To get last definitions, the SDK have to be recreated
+    @objc public var syncEnabled = true
+
+    ///
     ///  Update this variable to enable / disable telemetry for testing
     ///
 
@@ -289,4 +295,19 @@ public class SplitClientConfig: NSObject {
         telemetryConfigHelper.shouldRecordTelemetry
     }
 
+    // Is not a constant for testing purposes
+    var uniqueKeysRefreshRate: Int = 900
+
+    // Max attempts before add cdn by pass
+    let cdnByPassMaxAttempts: Int = 10
+
+    // CDN backoff time base - Not a constant for testing purposes
+    var cdnBackoffTimeBaseInSecs: Int = 10
+    var cdnBackoffTimeMaxInSecs: Int = 60
+
+    // Internal function. For testing purposes only
+    // will be removed when .none is available
+    func setImpressionsMode(_ mode: ImpressionsMode) {
+        finalImpressionsMode = mode
+    }
 }

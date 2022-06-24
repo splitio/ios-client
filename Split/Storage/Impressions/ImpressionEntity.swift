@@ -12,10 +12,6 @@ import CoreData
 
 @objc(ImpressionEntity)
 class ImpressionEntity: NSManagedObject {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<ImpressionEntity> {
-        return NSFetchRequest<ImpressionEntity>(entityName: "Impressions")
-    }
-
     @NSManaged public var storageId: String
     @NSManaged public var body: String
     @NSManaged public var createdAt: Int64

@@ -15,6 +15,7 @@ enum CoreDataEntity: String {
     case mySegment = "MySegment"
     case generalInfo = "GeneralInfo"
     case attribute = "Attribute"
+    case uniqueKey = "UniqueKey"
 }
 
 class CoreDataHelper {

@@ -17,21 +17,22 @@ class PersistentAttributesStorageTests: XCTestCase {
     var attributesDao: AttributesDaoStub!
     let dummyKey = "dummyKey"
     let dummyAttributes: [String: Any] = ["att1": "se1",
-                           "att2": true,
-                           "att3": 1]
+                                          "att2": true,
+                                          "att3": 1]
     let otherKey = "otherKey"
     let otherAttributes: [String: Any] = ["oatt1": "ot1"]
     
     override func setUp() {
         attributesDao = AttributesDaoStub()
         attributesStorage =
-            DefaultPersistentAttributesStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
-                                                                           impressionDao: ImpressionDaoStub(),
-                                                                           impressionsCountDao: ImpressionsCountDaoStub(),
-                                                                           generalInfoDao: GeneralInfoDaoStub(),
-                                                                           splitDao: SplitDaoStub(),
-                                                                           mySegmentsDao: MySegmentsDaoStub(),
-                                                                           attributesDao: attributesDao))
+        DefaultPersistentAttributesStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
+                                                                       impressionDao: ImpressionDaoStub(),
+                                                                       impressionsCountDao: ImpressionsCountDaoStub(),
+                                                                       generalInfoDao: GeneralInfoDaoStub(),
+                                                                       splitDao: SplitDaoStub(),
+                                                                       mySegmentsDao: MySegmentsDaoStub(),
+                                                                       attributesDao: attributesDao,
+                                                                       uniqueKeyDao: UniqueKeyDaoStub()))
     }
     
     func  testSet() {
@@ -59,14 +60,14 @@ class PersistentAttributesStorageTests: XCTestCase {
         XCTAssertEqual(1, attributes?["att3"] as? Int ?? -1)
         XCTAssertNil(otherAttributes)
     }
-
+    
     func testClear() {
         attributesDao.attributes[dummyKey] = dummyAttributes
         attributesDao.attributes[otherKey] = otherAttributes
-
+        
         attributesStorage.clear(forKey: dummyKey)
         let otherAttributes = attributesStorage.getAll(forKey: otherKey)
-
+        
         XCTAssertNil(attributesDao.attributes[dummyKey])
         XCTAssertEqual(1, otherAttributes?.count ?? 0)
         XCTAssertEqual("ot1", otherAttributes?["oatt1"] as? String ?? "")

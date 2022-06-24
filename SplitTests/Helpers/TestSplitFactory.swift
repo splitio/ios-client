@@ -96,7 +96,7 @@ class TestSplitFactory {
 
         _ = apiFacadeBuilder.setStreamingHttpClient(httpClient)
 
-        let apiFacade = apiFacadeBuilder.build()
+        let apiFacade = try! apiFacadeBuilder.build()
 
         let impressionsFlushChecker = DefaultRecorderFlushChecker(maxQueueSize: splitConfig.impressionsQueueSize,
                                                                   maxQueueSizeInBytes: splitConfig.impressionsQueueSize)
@@ -118,6 +118,13 @@ class TestSplitFactory {
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(),
                                                          eventsManager: eventsManager)
 
+        let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitConfig,
+                                                           splitApiFacade: apiFacade,
+                                                           storageContainer: storageContainer,
+                                                           syncWorkerFactory: syncWorkerFactory,
+                                                           impressionsSyncHelper: impressionsSyncHelper,
+                                                           uniqueKeyTracker: nil)
+
         let byKeyFacade = DefaultByKeyFacade()
 
         self.synchronizer = SynchronizerSpy(splitConfig: splitConfig,
@@ -127,7 +134,7 @@ class TestSplitFactory {
                                             splitApiFacade: apiFacade,
                                             splitStorageContainer: storageContainer,
                                             syncWorkerFactory: syncWorkerFactory,
-                                            impressionsSyncHelper: impressionsSyncHelper,
+                                            impressionsTracker: impressionsTracker,
                                             eventsSyncHelper: eventsSyncHelper,
                                             splitsFilterQueryString: splitsFilterQueryString,
                                             splitEventsManager: eventsManager)

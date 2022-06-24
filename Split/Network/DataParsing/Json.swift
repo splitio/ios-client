@@ -64,13 +64,17 @@ extension Json {
     static func encodeToJson<T: Encodable>(_ data: T) throws -> String {
         let encoder = JSONEncoder()
         let jsonData = try encoder.encode(data)
-        return String(data: jsonData, encoding: .utf8)!
+        guard let result = String(data: jsonData, encoding: .utf8) else {
+            throw GenericError.jsonParsingFail
+        }
+        return result
     }
 
     static func encodeFrom<T: Decodable>(json: String, to type: T.Type) throws -> T {
-        let jsonData = json.data(using: .utf8)!
-        let encoded = try JSON(jsonData).decode(type)
-        return encoded!
+        if let jsonData = json.data(using: .utf8), let encoded = try JSON(jsonData).decode(type) {
+            return encoded
+        }
+        throw GenericError.jsonParsingFail
     }
 
     static func encodeToJsonData<T: Encodable>(_ data: T) throws -> Data {
@@ -80,7 +84,10 @@ extension Json {
 
     static func dynamicEncodeToJson<T: DynamicEncodable>(_ data: T) throws -> String {
         let jsonData = try JSONSerialization.data(withJSONObject: data.toJsonObject(), options: [])
-        return String(data: jsonData, encoding: .utf8)!
+        guard let result = String(data: jsonData, encoding: .utf8) else {
+            throw GenericError.jsonParsingFail
+        }
+        return result
     }
 
     static func dynamicEncodeToJsonData<T: DynamicEncodable>(_ data: T) throws -> Data {
@@ -88,7 +95,9 @@ extension Json {
     }
 
     static func dynamicEncodeFrom<T: DynamicDecodable>(json: String, to type: T.Type) throws -> T {
-        let jsonData = json.data(using: .utf8)!
+        guard let jsonData = json.data(using: .utf8) else {
+            throw GenericError.jsonParsingFail
+        }
         let encoded = try JSONSerialization.jsonObject(with: jsonData, options: [])
         return try T.init(jsonObject: encoded)
     }

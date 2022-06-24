@@ -63,6 +63,33 @@ class SyncManagerTest: XCTestCase {
         XCTAssertTrue(synchronizer.startPeriodicFetchingCalled)
     }
 
+    func testStartSingleModeStreamingEnabled() {
+        singleModeStartTest(streamingEnabled: true)
+    }
+
+    func testStartSingleModeStreamingDisabled() {
+        singleModeStartTest(streamingEnabled: false)
+    }
+
+    func singleModeStartTest(streamingEnabled: Bool) {
+
+        splitConfig.streamingEnabled = streamingEnabled
+        splitConfig.syncEnabled = false
+        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
+                                         reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
+                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+        syncManager.start()
+
+        XCTAssertTrue(synchronizer.loadAndSynchronizeSplitsCalled)
+        XCTAssertTrue(synchronizer.loadMySegmentsFromCacheCalled)
+        XCTAssertTrue(synchronizer.synchronizeMySegmentsCalled)
+        XCTAssertNil(broadcasterChannel.registeredHandler)
+        XCTAssertFalse(pushManager.startCalled)
+        XCTAssertFalse(synchronizer.startPeriodicFetchingCalled)
+        XCTAssertTrue(synchronizer.startPeriodicRecordingCalled)
+    }
+
     func testPushSubsystemUpReceived() {
 
         splitConfig.streamingEnabled = true

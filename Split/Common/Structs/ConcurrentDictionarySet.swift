@@ -37,6 +37,15 @@ class ConcurrentDictionarySet<K: Hashable, T: Hashable> {
         return value
     }
 
+    func takeAll() -> [K: Set<T>] {
+        var all: [K: Set<T>]?
+        queue.sync {
+            all = items
+            items.removeAll()
+        }
+        return all ?? [K: Set<T>]()
+    }
+
     func contains(value: T, forKey key: K) -> Bool {
         var hasValue: Bool?
         queue.sync {
@@ -48,6 +57,16 @@ class ConcurrentDictionarySet<K: Hashable, T: Hashable> {
     func set(_ values: Set<T>, forKey key: K) {
         queue.sync {
             self.items[key] = values
+        }
+    }
+
+    func insert(_ value: T, forKey key: K) {
+        queue.sync {
+            if items[key] != nil {
+                items[key]?.insert(value)
+            } else {
+                items[key] = Set([value])
+            }
         }
     }
 
