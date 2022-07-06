@@ -1,0 +1,7 @@
+framework module SplitMacOS {
+  umbrella header "Split.h"
+
+  header "JFGC.h"
+  header "JFRandom.h"
+  header "JFBCrypt.h"
+}

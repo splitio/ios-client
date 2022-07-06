@@ -5,7 +5,16 @@
 //  Created by Javier L. Avrudsky on 7/2/18.
 //  Copyright © 2018 Split. All rights reserved.
 //
-#import <UIKit/UIKit.h>
+#include <TargetConditionals.h>
+
+#if TARGET_OS_IPHONE
+    @import UIKit;
+#else
+    @import AppKit;
+#endif
+//#import <UIKit/UIKit.h>
+
+
 
 //! Project version number for Split.
 FOUNDATION_EXPORT double SplitVersionNumber;

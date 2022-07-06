@@ -7,6 +7,7 @@
 //
 
 import Foundation
+#if os(iOS)
 import BackgroundTasks
 
 @objc public class SplitBgSynchronizer: NSObject {
@@ -207,3 +208,4 @@ struct BackgroundSyncExecutor {
         return Date().unixTimestamp() - timestamp > SplitBgSynchronizer.kRegistrationExpiration
     }
 }
+#endif
