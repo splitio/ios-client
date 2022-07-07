@@ -807,6 +807,7 @@
 		95B4369A26F147F100E1EB9C /* MySegmentsV2PayloaDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B4369926F147F100E1EB9C /* MySegmentsV2PayloaDecoderTest.swift */; };
 		95B436A026F1487400E1EB9C /* TestingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B4369F26F1487400E1EB9C /* TestingData.swift */; };
 		95B436A626F1533700E1EB9C /* MySegmentsV2PayloadDecoderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B436A526F1533600E1EB9C /* MySegmentsV2PayloadDecoderMock.swift */; };
+		95B5AADE28762C59009A3557 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 95B5AADD28762C59009A3557 /* Swifter */; };
 		95BC77EE28368FF1008E14BF /* UniqueKeyDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BC77ED28368FF1008E14BF /* UniqueKeyDaoTests.swift */; };
 		95C1600B27D28CB8008562E3 /* OneKeyPersistentAttributesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C1600A27D28CB8008562E3 /* OneKeyPersistentAttributesStorage.swift */; };
 		95C1600D27D28CF4008562E3 /* PersistentAttributesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C1600C27D28CF4008562E3 /* PersistentAttributesStorage.swift */; };
@@ -834,7 +835,6 @@
 		95DE293E2739737D00DB3EAD /* AttributeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE293D2739737D00DB3EAD /* AttributeMap.swift */; };
 		95DE294E2739981400DB3EAD /* AttributesDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE294D2739981400DB3EAD /* AttributesDaoStub.swift */; };
 		95DE29532739A7AB00DB3EAD /* AttributesDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE29522739A7AB00DB3EAD /* AttributesDaoTests.swift */; };
-		95DE8E9E27C5478F009FAC01 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 95DE8E9D27C5478F009FAC01 /* Swifter */; };
 		95DE8EA027C54858009FAC01 /* SplitDatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE8E9F27C54858009FAC01 /* SplitDatabaseHelper.swift */; };
 		95DE8EA127C54870009FAC01 /* SplitDatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE8E9F27C54858009FAC01 /* SplitDatabaseHelper.swift */; };
 		95DFD13B2608FFF600776E0A /* SplitSdkUpdatePollingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DFD13A2608FFF600776E0A /* SplitSdkUpdatePollingTest.swift */; };
@@ -1522,7 +1522,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95DE8E9E27C5478F009FAC01 /* Swifter in Frameworks */,
+				95B5AADE28762C59009A3557 /* Swifter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2819,7 +2819,7 @@
 			);
 			name = Split;
 			packageProductDependencies = (
-				95DE8E9D27C5478F009FAC01 /* Swifter */,
+				95B5AADD28762C59009A3557 /* Swifter */,
 			);
 			productName = Split;
 			productReference = 3B6DEE5A20EA6A4E0067435E /* Split.framework */;
@@ -2888,7 +2888,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1230;
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = Split;
 				TargetAttributes = {
 					3B6DEE5920EA6A4E0067435E = {
@@ -2915,10 +2915,11 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 3B6DEE5020EA6A4D0067435E;
 			packageReferences = (
-				95DE8E9C27C5478F009FAC01 /* XCRemoteSwiftPackageReference "swifter" */,
+				95B5AADC28762C59009A3557 /* XCRemoteSwiftPackageReference "swifter" */,
 			);
 			productRefGroup = 3B6DEE5B20EA6A4E0067435E /* Products */;
 			projectDirPath = "";
@@ -3899,6 +3900,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -3963,6 +3965,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -4080,7 +4083,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SplitTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4106,7 +4109,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SplitTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4264,20 +4267,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		95DE8E9C27C5478F009FAC01 /* XCRemoteSwiftPackageReference "swifter" */ = {
+		95B5AADC28762C59009A3557 /* XCRemoteSwiftPackageReference "swifter" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/httpswift/swifter";
 			requirement = {
-				kind = exactVersion;
-				version = 1.5.0;
+				branch = stable;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		95DE8E9D27C5478F009FAC01 /* Swifter */ = {
+		95B5AADD28762C59009A3557 /* Swifter */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 95DE8E9C27C5478F009FAC01 /* XCRemoteSwiftPackageReference "swifter" */;
+			package = 95B5AADC28762C59009A3557 /* XCRemoteSwiftPackageReference "swifter" */;
 			productName = Swifter;
 		};
 /* End XCSwiftPackageProductDependency section */
