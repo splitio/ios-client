@@ -41,42 +41,50 @@ class ConcurrentList<T> {
 
     func append(_ item: T) {
 
-        queue.async(flags: .barrier) {
-            if self.capacity > -1,
-               self.items.count >= self.capacity {
-                return
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                if self.capacity > -1,
+                   self.items.count >= self.capacity {
+                    return
+                }
+                self.items.append(item)
             }
-            self.items.append(item)
         }
     }
 
     func removeAll() {
-        queue.async(flags: .barrier) {
-            self.items.removeAll()
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.items.removeAll()
+            }
         }
     }
 
     func append(_ items: [T]) {
-        queue.async(flags: .barrier) {
-            if self.capacity > -1 {
-                if self.items.count >= self.capacity {
-                    return
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                if self.capacity > -1 {
+                    if self.items.count >= self.capacity {
+                        return
+                    }
+                    let appendCount = self.capacity - self.items.count
+                    if appendCount < 1 {
+                        return
+                    }
+                    self.items.append(contentsOf: items[0..<appendCount])
+                } else {
+                    self.items.append(contentsOf: items)
                 }
-                let appendCount = self.capacity - self.items.count
-                if appendCount < 1 {
-                    return
-                }
-                self.items.append(contentsOf: items[0..<appendCount])
-            } else {
-                self.items.append(contentsOf: items)
             }
         }
     }
 
     func fill(with newItems: [T]) {
-        queue.async(flags: .barrier) {
-            self.items.removeAll()
-            self.items.append(contentsOf: newItems)
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.items.removeAll()
+                self.items.append(contentsOf: newItems)
+            }
         }
     }
 
@@ -84,8 +92,10 @@ class ConcurrentList<T> {
         var allItems: [T]!
         queue.sync {
             allItems = self.items
-            queue.async(flags: .barrier) {
-                self.items.removeAll()
+            queue.async(flags: .barrier) { [weak self] in
+                if let self = self {
+                    self.items.removeAll()
+                }
             }
         }
         return allItems
