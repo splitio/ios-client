@@ -25,9 +25,11 @@ class GenericBlockingQueue<Item> {
     }
 
     func add(_ item: Item) {
-        dispatchQueue.async(flags: .barrier) {
-            self.elements.append(item)
-            self.semaphore.signal()
+        dispatchQueue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.elements.append(item)
+                self.semaphore.signal()
+            }
         }
     }
 
@@ -48,9 +50,11 @@ class GenericBlockingQueue<Item> {
     }
 
     func interrupt() {
-        dispatchQueue.async(flags: .barrier) {
-            self.isInterrupted = true
-            self.semaphore.signal()
+        dispatchQueue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.isInterrupted = true
+                self.semaphore.signal()
+            }
         }
     }
 }
