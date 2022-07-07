@@ -109,7 +109,7 @@
 		3B6DEF8920EA6AE50067435E /* SynchronizedArrayQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0620EA6AE40067435E /* SynchronizedArrayQueue.swift */; };
 		3B6DEF8B20EA6AE50067435E /* FileStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0920EA6AE40067435E /* FileStorage.swift */; };
 		3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */; };
-		5903C497210A5E0900A754B0 /* SynchronizedArrayWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* SynchronizedArrayWrapper.swift */; };
+		5903C497210A5E0900A754B0 /* ConcurrentList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* ConcurrentList.swift */; };
 		5905D4CA2555F99D006DA3B1 /* GeneralInfoEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C02555F99D006DA3B1 /* GeneralInfoEntity.swift */; };
 		5905D4CC2555F99D006DA3B1 /* ImpressionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C22555F99D006DA3B1 /* ImpressionEntity.swift */; };
 		5905D4CE2555F99D006DA3B1 /* EventEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C42555F99D006DA3B1 /* EventEntity.swift */; };
@@ -714,7 +714,7 @@
 		956E4362271DCCE7008B4DB6 /* SplitEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C82555F99D006DA3B1 /* SplitEntity.swift */; };
 		956E4363271DCCE7008B4DB6 /* LocalhostSplitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BD322158A07003DA248 /* LocalhostSplitClient.swift */; };
 		956E4364271DCCE7008B4DB6 /* PeriodicTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7B20EA6ADF0067435E /* PeriodicTaskManager.swift */; };
-		956E4365271DCCE7008B4DB6 /* SynchronizedArrayWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* SynchronizedArrayWrapper.swift */; };
+		956E4365271DCCE7008B4DB6 /* ConcurrentList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* ConcurrentList.swift */; };
 		956E4366271DCCE7008B4DB6 /* EvaluatorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9220EA6AE00067435E /* EvaluatorError.swift */; };
 		956E4367271DCCE7008B4DB6 /* CoreDataContextBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955892AA25C187EA00F67FBA /* CoreDataContextBuilder.swift */; };
 		956E4368271DCCE7008B4DB6 /* SplitConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9020EA6AE00067435E /* SplitConstants.swift */; };
@@ -1013,7 +1013,7 @@
 		3B6DEF0620EA6AE40067435E /* SynchronizedArrayQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizedArrayQueue.swift; sourceTree = "<group>"; };
 		3B6DEF0920EA6AE40067435E /* FileStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileStorage.swift; sourceTree = "<group>"; };
 		3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEventActionTask.swift; sourceTree = "<group>"; };
-		5903C496210A5E0900A754B0 /* SynchronizedArrayWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizedArrayWrapper.swift; sourceTree = "<group>"; };
+		5903C496210A5E0900A754B0 /* ConcurrentList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrentList.swift; sourceTree = "<group>"; };
 		5905D4C02555F99D006DA3B1 /* GeneralInfoEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoEntity.swift; sourceTree = "<group>"; };
 		5905D4C22555F99D006DA3B1 /* ImpressionEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionEntity.swift; sourceTree = "<group>"; };
 		5905D4C42555F99D006DA3B1 /* EventEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEntity.swift; sourceTree = "<group>"; };
@@ -2016,7 +2016,7 @@
 			isa = PBXGroup;
 			children = (
 				3B6DEF0620EA6AE40067435E /* SynchronizedArrayQueue.swift */,
-				5903C496210A5E0900A754B0 /* SynchronizedArrayWrapper.swift */,
+				5903C496210A5E0900A754B0 /* ConcurrentList.swift */,
 				5905D4DE2559CA95006DA3B1 /* ConcurrentSet.swift */,
 				590DF9ED215038200082B94F /* SyncDictionaryCollectionWrapper.swift */,
 				9560354427D0F53300E35BC8 /* ConcurrentDictionarySet.swift */,
@@ -3277,7 +3277,7 @@
 				9519A91E27D947C300278AEC /* SyncCommons.swift in Sources */,
 				59D84BD422158A07003DA248 /* LocalhostSplitClient.swift in Sources */,
 				3B6DEF1D20EA6AE50067435E /* PeriodicTaskManager.swift in Sources */,
-				5903C497210A5E0900A754B0 /* SynchronizedArrayWrapper.swift in Sources */,
+				5903C497210A5E0900A754B0 /* ConcurrentList.swift in Sources */,
 				3B6DEF2F20EA6AE50067435E /* EvaluatorError.swift in Sources */,
 				955892AB25C187EA00F67FBA /* CoreDataContextBuilder.swift in Sources */,
 				95122A0E275822F600D93F90 /* TelemetryStats.swift in Sources */,
@@ -3814,7 +3814,7 @@
 				956E4362271DCCE7008B4DB6 /* SplitEntity.swift in Sources */,
 				956E4363271DCCE7008B4DB6 /* LocalhostSplitClient.swift in Sources */,
 				956E4364271DCCE7008B4DB6 /* PeriodicTaskManager.swift in Sources */,
-				956E4365271DCCE7008B4DB6 /* SynchronizedArrayWrapper.swift in Sources */,
+				956E4365271DCCE7008B4DB6 /* ConcurrentList.swift in Sources */,
 				956E4366271DCCE7008B4DB6 /* EvaluatorError.swift in Sources */,
 				956E4367271DCCE7008B4DB6 /* CoreDataContextBuilder.swift in Sources */,
 				956E4368271DCCE7008B4DB6 /* SplitConstants.swift in Sources */,

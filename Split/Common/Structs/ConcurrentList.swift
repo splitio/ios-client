@@ -8,10 +8,7 @@
 
 import Foundation
 
-typealias ConcurrentList = SynchronizedArrayWrapper
-
-// TODO: Rename SynchronizedArrayWrapper -> ConcurrentList in specific PR for that
-class SynchronizedArrayWrapper<T> {
+class ConcurrentList<T> {
     private var queue: DispatchQueue
     private var items: [T]
     private var capacity: Int

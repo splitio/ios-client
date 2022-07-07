@@ -51,8 +51,7 @@ class ConcurrentDictionary<K: Hashable, T> {
     }
 
     func removeValues(forKeys keys: Dictionary<K, T>.Keys) {
-        queue.async(flags: .barrier) {
-            [weak self] in
+        queue.async(flags: .barrier) { [weak self] in
             if let self = self {
                 for key in keys {
                     self.items.removeValue(forKey: key)
@@ -62,8 +61,10 @@ class ConcurrentDictionary<K: Hashable, T> {
     }
 
     func removeAll() {
-        queue.async(flags: .barrier) {
-            self.items.removeAll()
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.items.removeAll()
+            }
         }
     }
 
