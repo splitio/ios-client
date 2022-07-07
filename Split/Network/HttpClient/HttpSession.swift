@@ -12,7 +12,7 @@ import Foundation
 /// Split http classes into the test harness
 /// It will be renamed to HttpSession after all apple URL classes are wrapped
 /// and added to test harness
-protocol HttpSession {
+protocol HttpSession: AnyObject {
     func startTask(with request: HttpRequest) -> HttpTask?
     func finalize()
 }
