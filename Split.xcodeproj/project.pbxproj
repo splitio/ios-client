@@ -169,7 +169,7 @@
 		592C6AEB211CBBB0002D120C /* murmur3-sample-data-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE1211CBBB0002D120C /* murmur3-sample-data-v2.csv */; };
 		592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE3211CBBB0002D120C /* splitchanges_2.json */; };
 		592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE4211CBBB0002D120C /* splitchanges_1.json */; };
-		592D2CFA22088606007458F9 /* SyncDictionarySingleWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592D2CF922088606007458F9 /* SyncDictionarySingleWrapper.swift */; };
+		592D2CFA22088606007458F9 /* ConcurrentDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592D2CF922088606007458F9 /* ConcurrentDictionary.swift */; };
 		593225F824A384B300496D8B /* EndpointFactoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593225F724A384B300496D8B /* EndpointFactoryTest.swift */; };
 		593225FA24A3855700496D8B /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593225F924A3855700496D8B /* TestHelper.swift */; };
 		593225FC24A40AA900496D8B /* HttpResponseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593225FB24A40AA900496D8B /* HttpResponseTest.swift */; };
@@ -538,7 +538,7 @@
 		956E42AC271DCCE7008B4DB6 /* MatcherProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEB120EA6AE20067435E /* MatcherProtocol.swift */; };
 		956E42AD271DCCE7008B4DB6 /* MySegmentsV2PayloadDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B4369526F11F4B00E1EB9C /* MySegmentsV2PayloadDecoder.swift */; };
 		956E42AE271DCCE7008B4DB6 /* JwtTokenParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD21024E1750300A7B750 /* JwtTokenParser.swift */; };
-		956E42AF271DCCE7008B4DB6 /* SyncDictionarySingleWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592D2CF922088606007458F9 /* SyncDictionarySingleWrapper.swift */; };
+		956E42AF271DCCE7008B4DB6 /* ConcurrentDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592D2CF922088606007458F9 /* ConcurrentDictionary.swift */; };
 		956E42B0271DCCE7008B4DB6 /* Segment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEB320EA6AE20067435E /* Segment.swift */; };
 		956E42B1271DCCE7008B4DB6 /* ContainsAllOfSetMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEECF20EA6AE30067435E /* ContainsAllOfSetMatcher.swift */; };
 		956E42B2271DCCE7008B4DB6 /* Json.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEE620EA6AE30067435E /* Json.swift */; };
@@ -1075,7 +1075,7 @@
 		592C6AE1211CBBB0002D120C /* murmur3-sample-data-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "murmur3-sample-data-v2.csv"; path = "SplitTests/Resources/murmur3-sample-data-v2.csv"; sourceTree = SOURCE_ROOT; };
 		592C6AE3211CBBB0002D120C /* splitchanges_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_2.json; path = SplitTests/Resources/splitchanges_2.json; sourceTree = SOURCE_ROOT; };
 		592C6AE4211CBBB0002D120C /* splitchanges_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_1.json; path = SplitTests/Resources/splitchanges_1.json; sourceTree = SOURCE_ROOT; };
-		592D2CF922088606007458F9 /* SyncDictionarySingleWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncDictionarySingleWrapper.swift; sourceTree = "<group>"; };
+		592D2CF922088606007458F9 /* ConcurrentDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentDictionary.swift; sourceTree = "<group>"; };
 		593225F724A384B300496D8B /* EndpointFactoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointFactoryTest.swift; sourceTree = "<group>"; };
 		593225F924A3855700496D8B /* TestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
 		593225FB24A40AA900496D8B /* HttpResponseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpResponseTest.swift; sourceTree = "<group>"; };
@@ -2021,7 +2021,7 @@
 				590DF9ED215038200082B94F /* SyncDictionaryCollectionWrapper.swift */,
 				9560354427D0F53300E35BC8 /* ConcurrentDictionarySet.swift */,
 				9519A90E27D686A900278AEC /* ConcurrentDictionaryComposed.swift */,
-				592D2CF922088606007458F9 /* SyncDictionarySingleWrapper.swift */,
+				592D2CF922088606007458F9 /* ConcurrentDictionary.swift */,
 				955B595328060CF100D105CD /* SyncDictionary.swift */,
 				95118EF2281C551A00782F33 /* KeyStorage.swift */,
 				952C2B7626447FDD009275B4 /* BlockingQueue.swift */,
@@ -3059,7 +3059,7 @@
 				3B6DEF4820EA6AE50067435E /* MatcherProtocol.swift in Sources */,
 				95B4369626F11F4B00E1EB9C /* MySegmentsV2PayloadDecoder.swift in Sources */,
 				595AD21124E1750300A7B750 /* JwtTokenParser.swift in Sources */,
-				592D2CFA22088606007458F9 /* SyncDictionarySingleWrapper.swift in Sources */,
+				592D2CFA22088606007458F9 /* ConcurrentDictionary.swift in Sources */,
 				955B59692815687200D105CD /* FailHelpers.swift in Sources */,
 				3B6DEF4A20EA6AE50067435E /* Segment.swift in Sources */,
 				95B17FFD275FCD92002DC9DF /* RestClient+TelemetryConfig.swift in Sources */,
@@ -3620,7 +3620,7 @@
 				956E42AE271DCCE7008B4DB6 /* JwtTokenParser.swift in Sources */,
 				950D0BFE27C542F200E617EB /* RestClient+TelemetryConfig.swift in Sources */,
 				95825BDD271F4E8700A0CDAD /* Bundle+Name.swift in Sources */,
-				956E42AF271DCCE7008B4DB6 /* SyncDictionarySingleWrapper.swift in Sources */,
+				956E42AF271DCCE7008B4DB6 /* ConcurrentDictionary.swift in Sources */,
 				956E42B0271DCCE7008B4DB6 /* Segment.swift in Sources */,
 				956E42B1271DCCE7008B4DB6 /* ContainsAllOfSetMatcher.swift in Sources */,
 				956E42B2271DCCE7008B4DB6 /* Json.swift in Sources */,

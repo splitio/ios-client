@@ -28,7 +28,7 @@ class SplitsStorageStub: SplitsStorage {
 
     var getCountCalledCount = 0
 
-    private let inMemorySplits = SyncDictionarySingleWrapper<String, Split>()
+    private let inMemorySplits = ConcurrentDictionary<String, Split>()
     
     func loadLocal() {
         loadLocalCalled = true
