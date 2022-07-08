@@ -23,12 +23,12 @@ protocol OneKeyAttributesStorage {
 @available(*, deprecated, message: "Gonna be replaced by AttributesStorage and ByKeyAttributesStorage")
 class OneKeyDefaultAttributesStorage: OneKeyAttributesStorage {
 
-    private let inMemoryAttributes: SyncDictionarySingleWrapper<String, Any>
+    private let inMemoryAttributes: ConcurrentDictionary<String, Any>
     private let persistentStorage: OneKeyPersistentAttributesStorage?
 
     init(persistentAttributesStorage: OneKeyPersistentAttributesStorage? = nil) {
         persistentStorage = persistentAttributesStorage
-        inMemoryAttributes = SyncDictionarySingleWrapper<String, Any>()
+        inMemoryAttributes = ConcurrentDictionary<String, Any>()
     }
 
     func loadLocal() {

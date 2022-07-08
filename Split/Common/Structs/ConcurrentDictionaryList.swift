@@ -8,14 +8,11 @@
 
 import Foundation
 
-typealias ConcurrentDictionaryList = SyncDictionaryCollectionWrapper
-
-// TODO: Rename SyncDictionaryCollectionWrapper -> ConcurrentDictionaryList in specific PR for that
-class SyncDictionaryCollectionWrapper<K: Hashable, T> {
-
+class ConcurrentDictionaryList<K: Hashable, T> {
+    
     private var queue = DispatchQueue(label: "split-dictionary-list", attributes: .concurrent)
     private var items = [K: [T]]()
-
+    
     var all: [K: [T]] {
         var allItems: [K: [T]]?
         queue.sync {
@@ -23,7 +20,7 @@ class SyncDictionaryCollectionWrapper<K: Hashable, T> {
         }
         return allItems ?? [K: [T]]()
     }
-
+    
     var count: Int {
         var count: Int = 0
         queue.sync {
@@ -33,7 +30,7 @@ class SyncDictionaryCollectionWrapper<K: Hashable, T> {
         }
         return count
     }
-
+    
     func value(forKey key: K) -> [T]? {
         var value: [T]?
         queue.sync {
@@ -41,29 +38,35 @@ class SyncDictionaryCollectionWrapper<K: Hashable, T> {
         }
         return value
     }
-
+    
     func removeValues(forKeys keys: [K]) {
-        queue.async(flags: .barrier) {
-            for key in keys {
-                self.items.removeValue(forKey: key)
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                for key in keys {
+                    self.items.removeValue(forKey: key)
+                }
             }
         }
     }
-
+    
     func removeAll() {
-        queue.async(flags: .barrier) {
-            self.items.removeAll()
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.items.removeAll()
+            }
         }
     }
-
+    
     func appendValue(_ value: T, toKey key: K) {
-        queue.async(flags: .barrier) {
-            var values = self.items[key] ?? []
-            values.append(value)
-            self.items[key] = values
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                var values = self.items[key] ?? []
+                values.append(value)
+                self.items[key] = values
+            }
         }
     }
-
+    
     func takeAll() -> [K: [T]] {
         var allItems: [K: [T]]?
         queue.sync {

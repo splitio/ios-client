@@ -26,7 +26,7 @@ class LocalhostSplitsStorage: SplitsStorage {
     private var fileParser: LocalhostSplitsParser!
     private let supportedExtensions = ["yaml", "yml", "splits"]
     private let fileName: String
-    private let inMemorySplits = SyncDictionarySingleWrapper<String, Split>()
+    private let inMemorySplits = ConcurrentDictionary<String, Split>()
     private let dataQueue = DispatchQueue(label: "Split yaml storage queue", attributes: .concurrent)
 
     init(fileStorage: FileStorageProtocol,

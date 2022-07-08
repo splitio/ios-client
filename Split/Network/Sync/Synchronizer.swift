@@ -43,7 +43,7 @@ class DefaultSynchronizer: Synchronizer {
     private let splitApiFacade: SplitApiFacade
     private let splitStorageContainer: SplitStorageContainer
     private let syncWorkerFactory: SyncWorkerFactory
-    private let syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
+    private let syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
     private let splitConfig: SplitClientConfig
 
     private var periodicSplitsSyncWorker: PeriodicSyncWorker?
@@ -73,8 +73,8 @@ class DefaultSynchronizer: Synchronizer {
          syncWorkerFactory: SyncWorkerFactory,
          impressionsTracker: ImpressionsTracker,
          eventsSyncHelper: EventsRecorderSyncHelper,
-         syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
-        = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>(),
+         syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
+        = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
          splitEventsManager: SplitEventsManager) {
 

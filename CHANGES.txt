@@ -1,3 +1,7 @@
+2.15.0: (Jun 24, 2022)
+- Added a new config option to control the tasks that listen or poll for updates on feature flags and segments, via the new config syncEnabled . Running online Split will always pull the most recent updates upon initialization, this only affects updates fetching on a running instance. Useful when a consistent session experience is a must or to save resources when updates are not being used.
+- Updated the synchronization flow to be more reliable in the event of an edge case generating delay in cache purge propagation, keeping the SDK cache properly synced.
+
 2.14.0: (May 12, 2022)
 - Added support for multiple clients: Factories can now create multiple clients with different keys while reusing the common tasks, data and behavior. Read more in our iOS SDK docs.
 - Renamed STREAMING_ENABLED event to STREAMING_RESUMED
