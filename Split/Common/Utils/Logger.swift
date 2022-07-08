@@ -7,107 +7,59 @@
 
 import Foundation
 
+// Protocol to enable testing for Logger class
+protocol LogPrinter {
+    func print(_ items: Any...)
+}
+
+class DefaultLogPrinter: LogPrinter {
+    func print(_ items: Any...) {
+        print(items)
+    }
+}
+
 class Logger {
+    var printer: LogPrinter = DefaultLogPrinter()
+    private let tag: String = "SplitSDK"
 
-    private let queueName = "split.logger-queue"
-    private var queue: DispatchQueue
-    private let TAG: String = "SplitSDK"
-
-    private var isVerboseEnabled = false
-    private var isDebugEnabled = false
-
-    enum Level: String {
-        case verbose = "VERBOSE"
-        case debug = "DEBUG"
-        case info = "INFO"
-        case warning = "WARNING"
-        case error = "ERROR"
-    }
-
-    var isVerboseModeEnabled: Bool {
-        get {
-            var isEnabled = false
-            queue.sync {
-                isEnabled = self.isVerboseEnabled
-            }
-            return isEnabled
-        }
-        set {
-            queue.async(flags: .barrier) {
-                self.isVerboseEnabled = newValue
-            }
-        }
-    }
-
-    var isDebugModeEnabled: Bool {
-        get {
-            var isEnabled = false
-            queue.sync {
-                isEnabled = self.isDebugEnabled
-            }
-            return isEnabled
-        }
-        set {
-            queue.async(flags: .barrier) {
-                self.isDebugEnabled = newValue
-            }
-        }
-    }
+    var level: SplitLogLevel = .none
 
     static let shared: Logger = {
-        let instance = Logger()
-        return instance
+        return Logger()
     }()
 
-    // Guarantee singleton instance
-    private init() {
-        queue = DispatchQueue(label: queueName, attributes: .concurrent)
-    }
+    private init() {}
 
-    private func log(level: Logger.Level, msg: String, _ ctx: Any ...) {
+    private func log(level: SplitLogLevel, msg: String, _ ctx: Any ...) {
 
-        if !isDebugModeEnabled && level == Logger.Level.debug {
-            return
-        }
-
-        if !isVerboseModeEnabled && level == Logger.Level.verbose {
+        if level.order() < self.level.order() {
             return
         }
 
         if ctx.count == 0 {
-            print(level.rawValue, self.TAG, msg)
+            printer.print(level.rawValue, tag, msg)
         } else {
-            print(level.rawValue, self.TAG, msg, ctx[0])
+            printer.print(level.rawValue, tag, msg, ctx[0])
         }
     }
 
     static func v(_ message: String, _ context: Any ...) {
-        context.count > 0
-            ? shared.log(level: Logger.Level.verbose, msg: message, context)
-            : shared.log(level: Logger.Level.verbose, msg: message)
+        shared.log(level: .verbose, msg: message, context)
     }
 
     static func d(_ message: String, _ context: Any ...) {
-        context.count > 0
-            ? shared.log(level: Logger.Level.debug, msg: message, context)
-            : shared.log(level: Logger.Level.debug, msg: message)
+        shared.log(level: .debug, msg: message, context)
     }
 
     static func i(_ message: String, _ context: Any ...) {
-        context.count > 0
-            ? shared.log(level: Logger.Level.info, msg: message, context)
-            : shared.log(level: Logger.Level.info, msg: message)
+        shared.log(level: .info, msg: message, context)
     }
 
     static func w(_ message: String, _ context: Any ...) {
-        context.count > 0
-            ? shared.log(level: Logger.Level.warning, msg: message, context)
-            : shared.log(level: Logger.Level.warning, msg: message)
+        shared.log(level: .warning, msg: message, context)
     }
 
     static func e(_ message: String, _ context: Any ...) {
-        context.count > 0
-            ? shared.log(level: Logger.Level.error, msg: message, context)
-            : shared.log(level: Logger.Level.error, msg: message)
+        shared.log(level: .error, msg: message, context)
     }
 }
