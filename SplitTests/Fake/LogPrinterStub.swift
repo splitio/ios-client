@@ -13,7 +13,7 @@ class LogPrinterStub: LogPrinter {
 
     var logs = [String]()
 
-    func print(_ items: Any...) {
+    func stdout(_ items: Any...) {
         logs.append(items.map { "\($0)" }.joined(separator: ","))
     }
 }

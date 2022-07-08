@@ -12,7 +12,7 @@ class SynchronizedArrayQueue<T> {
     private let queue = DispatchQueue(label: "io.Split.Structs.ArraySerialBlockingQueue", attributes: .concurrent)
     private var array = [T]()
     private var firstAppend = true
-    
+
     // Adds a new element at the end of the array.
     func append( _ element: T) {
         queue.async(flags: .barrier) { [weak self] in
@@ -21,7 +21,7 @@ class SynchronizedArrayQueue<T> {
             }
         }
     }
-    
+
     // Removes and returns the element at the specified position.
     func take() -> T? {
         var element: T?

@@ -130,8 +130,7 @@ class BucketSplitTest: XCTestCase {
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
         splitConfig.trafficType = trafficType
-        splitConfig.isVerboseModeEnabled = true
-        splitConfig.isDebugModeEnabled = true
+        splitConfig.logLevel = .verbose
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()

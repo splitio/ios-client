@@ -32,7 +32,7 @@ class ImpressionsCountRecorderWorker: RecorderWorker {
                     _ = try countsRecorder.execute(ImpressionsCount(perFeature: counts))
                     // Removing sent impressions
                     countsStorage.delete(counts)
-                    Logger.d("Impressions counts posted successfully")
+                    Logger.i("Impressions counts posted successfully")
                 } catch let error {
                     Logger.e("Impressions counts error: \(String(describing: error))")
                     failedCounts.append(contentsOf: counts)

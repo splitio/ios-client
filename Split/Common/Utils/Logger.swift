@@ -9,11 +9,11 @@ import Foundation
 
 // Protocol to enable testing for Logger class
 protocol LogPrinter {
-    func print(_ items: Any...)
+    func stdout(_ items: Any...)
 }
 
 class DefaultLogPrinter: LogPrinter {
-    func print(_ items: Any...) {
+    func stdout(_ items: Any...) {
         print(items)
     }
 }
@@ -37,9 +37,9 @@ class Logger {
         }
 
         if ctx.count == 0 {
-            printer.print(level.rawValue, tag, msg)
+            printer.stdout(level.rawValue, tag, msg)
         } else {
-            printer.print(level.rawValue, tag, msg, ctx[0])
+            printer.stdout(level.rawValue, tag, msg, ctx[0])
         }
     }
 

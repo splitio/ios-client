@@ -108,24 +108,26 @@ public class SplitClientConfig: NSObject {
             return Logger.shared.level == .debug
         }
         set {
-            Logger.shared.level = .debug
+            Logger.shared.level = newValue ? .debug : .none
         }
     }
 
     ///
-    /// Enables verbose mode. This mode is no longer available and it will enable debug mode instead.
-    /// Also this method is deprecated in favor of logLevel
+    //// Enables verbose messages in console.
+    /// This method is deprecated in favor of logLevel.
     ///
     @available(*, deprecated, message: "Use logLevel instead")
     @objc public var isVerboseModeEnabled: Bool {
         get {
-            return Logger.shared.level == .debug
+            return Logger.shared.level == .verbose
         }
         set {
-            Logger.shared.level = .debug
+            Logger.shared.level = newValue ? .verbose : .none
         }
     }
 
+    /// Set the log level
+    /// Swift only method
     public var logLevel: SplitLogLevel {
         get {
             return Logger.shared.level
@@ -133,6 +135,10 @@ public class SplitClientConfig: NSObject {
         set {
             Logger.shared.level = newValue
         }
+    }
+
+    @objc public func set(logLevel: String) {
+        Logger.shared.level = SplitLogLevel(rawValue: logLevel) ?? .none
     }
 
     ///
