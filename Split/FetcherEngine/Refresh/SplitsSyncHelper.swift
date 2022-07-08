@@ -20,7 +20,7 @@ class SplitsSyncHelper {
     private let splitChangeProcessor: SplitChangeProcessor
     private let splitConfig: SplitClientConfig
 
-    private var maxAttemps: Int {
+    private var maxAttempts: Int {
         return splitConfig.cdnByPassMaxAttempts
     }
 
@@ -79,7 +79,7 @@ class SplitsSyncHelper {
         var nextSince = since
         var attemptCount = 0
         let goalTill = till ?? -10
-        while attemptCount < 10 {
+        while attemptCount < maxAttempts {
             nextSince = try fetchUntil(since: nextSince,
                                        till: useTillParam ? till : nil,
                                        clearBeforeUpdate: clearBeforeUpdate,
