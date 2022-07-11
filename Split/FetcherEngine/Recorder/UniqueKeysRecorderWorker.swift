@@ -38,7 +38,7 @@ class UniqueKeysRecorderWorker: RecorderWorker {
                     uniqueKeyStorage.delete(keys)
                     Logger.i("Unique keys posted successfully")
                 } catch let error {
-                    Logger.e("Impression error: \(String(describing: error))")
+                    Logger.e("Unique keys error: \(String(describing: error))")
                     failedUniqueKeys.append(contentsOf: keys)
                 }
             }
