@@ -143,7 +143,7 @@ struct SplitDatabaseHelper {
                 try fileManager.moveItem(at: legacyDbFile, to: newDbFile)
             }
         } catch {
-            Logger.w("Unable to rename legacy db. Avoiding migration. Message: \(error.localizedDescription)")
+            Logger.i("Unable to rename legacy db. Avoiding migration. Message: \(error.localizedDescription)")
         }
     }
 

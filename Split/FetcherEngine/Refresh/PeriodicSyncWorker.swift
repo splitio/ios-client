@@ -218,6 +218,8 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                 if changeChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segments) {
                     mySegmentsStorage.set(segments)
                     notifyMySegmentsUpdated()
+                    Logger.i("My Segments have been updated")
+                    Logger.v(segments.joined(separator: ","))
                 }
             }
         } catch let error {

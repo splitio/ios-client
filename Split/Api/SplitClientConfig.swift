@@ -99,27 +99,46 @@ public class SplitClientConfig: NSObject {
     @objc public var serviceEndpoints = ServiceEndpoints.builder().build()
 
     ///
-    /// Enables debug messages in console
+    /// Enables debug messages in console.
+    /// This method is deprecated in favor of logLevel.
     ///
+    @available(*, deprecated, message: "Use logLevel instead")
     @objc public var isDebugModeEnabled: Bool {
         get {
-            return Logger.shared.isDebugModeEnabled
+            return Logger.shared.level == .debug
         }
         set {
-            Logger.shared.isDebugModeEnabled = newValue
+            Logger.shared.level = newValue ? .debug : .none
         }
     }
 
     ///
-    /// Enables verbose mode. All Sdk messages will be logged in console
+    //// Enables verbose messages in console.
+    /// This method is deprecated in favor of logLevel.
     ///
+    @available(*, deprecated, message: "Use logLevel instead")
     @objc public var isVerboseModeEnabled: Bool {
         get {
-            return Logger.shared.isVerboseModeEnabled
+            return Logger.shared.level == .verbose
         }
         set {
-            Logger.shared.isVerboseModeEnabled = newValue
+            Logger.shared.level = newValue ? .verbose : .none
         }
+    }
+
+    /// Set the log level
+    /// Swift only method
+    public var logLevel: SplitLogLevel {
+        get {
+            return Logger.shared.level
+        }
+        set {
+            Logger.shared.level = newValue
+        }
+    }
+
+    @objc public func set(logLevel: String) {
+        Logger.shared.level = SplitLogLevel(rawValue: logLevel) ?? .none
     }
 
     ///

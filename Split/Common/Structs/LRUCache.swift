@@ -16,7 +16,7 @@ class LRUCache<K: Hashable, E> {
     private var elements: [K: E]
     private let capacity: Int
     private let queue: DispatchQueue
-    
+
     init(capacity: Int) {
         self.capacity = capacity
         self.elements = [K: E]()
@@ -24,7 +24,7 @@ class LRUCache<K: Hashable, E> {
         self.elementsQueue.reserveCapacity(capacity)
         self.queue = DispatchQueue(label: "split-lru", attributes: .concurrent)
     }
-    
+
     func set(_ element: E, for key: K) {
         queue.async(flags: .barrier) { [weak self] in
             if let self = self {
@@ -32,7 +32,7 @@ class LRUCache<K: Hashable, E> {
             }
         }
     }
-    
+
     func element(for key: K) -> E? {
         var element: E?
         queue.sync {
@@ -40,20 +40,19 @@ class LRUCache<K: Hashable, E> {
         }
         return element
     }
-    
+
     // Private function to avoid using self
     // Call this functions only from within queue closure
     private func put(_ element: E, for key: K) {
-        
         // If element exists, remove from current position in the queue
         // to add last after
         if elements[key] != nil, let index = elementsQueue.firstIndex(where: { $0 == key }) {
             elementsQueue.remove(at: index)
         }
-        
+
         // Add new element for key
         elements[key] = element
-        
+
         // Check capacity before adding to avoid
         // reserving more memory
         if elements.count > capacity {
@@ -61,11 +60,11 @@ class LRUCache<K: Hashable, E> {
             let keyToRemove = elementsQueue.removeLast()
             elements.removeValue(forKey: keyToRemove)
         }
-        
+
         // Add as last used
         elementsQueue.insert(key, at: 0)
     }
-    
+
     // Same as above
     private func get(for key: K) -> E? {
         // Get element by key. Returns nil if not found
@@ -78,15 +77,13 @@ class LRUCache<K: Hashable, E> {
         }
         return element
     }
-    
+
     private func moveFirst(index: Int, key: K) {
         let sem = DispatchSemaphore(value: 1)
-        queue.async(flags: .barrier) {
-            [weak self] in
+        queue.async(flags: .barrier) { [weak self] in
             if let self = self {
                 self.elementsQueue.remove(at: index)
                 self.elementsQueue.insert(key, at: 0)
-                
             }
             sem.signal()
         }

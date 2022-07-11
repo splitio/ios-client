@@ -9,10 +9,10 @@
 import Foundation
 
 class ConcurrentDictionaryList<K: Hashable, T> {
-    
+
     private var queue = DispatchQueue(label: "split-dictionary-list", attributes: .concurrent)
     private var items = [K: [T]]()
-    
+
     var all: [K: [T]] {
         var allItems: [K: [T]]?
         queue.sync {
@@ -20,7 +20,7 @@ class ConcurrentDictionaryList<K: Hashable, T> {
         }
         return allItems ?? [K: [T]]()
     }
-    
+
     var count: Int {
         var count: Int = 0
         queue.sync {
@@ -30,7 +30,7 @@ class ConcurrentDictionaryList<K: Hashable, T> {
         }
         return count
     }
-    
+
     func value(forKey key: K) -> [T]? {
         var value: [T]?
         queue.sync {
@@ -38,7 +38,7 @@ class ConcurrentDictionaryList<K: Hashable, T> {
         }
         return value
     }
-    
+
     func removeValues(forKeys keys: [K]) {
         queue.async(flags: .barrier) { [weak self] in
             if let self = self {
@@ -48,7 +48,7 @@ class ConcurrentDictionaryList<K: Hashable, T> {
             }
         }
     }
-    
+
     func removeAll() {
         queue.async(flags: .barrier) { [weak self] in
             if let self = self {
@@ -56,7 +56,7 @@ class ConcurrentDictionaryList<K: Hashable, T> {
             }
         }
     }
-    
+
     func appendValue(_ value: T, toKey key: K) {
         queue.async(flags: .barrier) { [weak self] in
             if let self = self {
@@ -66,7 +66,7 @@ class ConcurrentDictionaryList<K: Hashable, T> {
             }
         }
     }
-    
+
     func takeAll() -> [K: [T]] {
         var allItems: [K: [T]]?
         queue.sync {
