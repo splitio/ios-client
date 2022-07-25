@@ -108,7 +108,9 @@ public class SplitClientConfig: NSObject {
             return Logger.shared.level == .debug
         }
         set {
-            Logger.shared.level = newValue ? .debug : .none
+            if Logger.shared.level == .none {
+                Logger.shared.level = newValue ? .debug : .none
+            }
         }
     }
 
@@ -122,7 +124,9 @@ public class SplitClientConfig: NSObject {
             return Logger.shared.level == .verbose
         }
         set {
-            Logger.shared.level = newValue ? .verbose : .none
+            if Logger.shared.level == .none {
+                Logger.shared.level = newValue ? .verbose : .none
+            }
         }
     }
 
