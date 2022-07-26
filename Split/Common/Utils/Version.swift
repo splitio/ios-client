@@ -9,7 +9,7 @@ import Foundation
 
 class Version {
     private static let kSdkPlatform: String = "ios"
-    private static let kVersion = "2.16.0-rc3"
+    private static let kVersion = "2.16.0-rc4"
 
     static var semantic: String {
         return kVersion
