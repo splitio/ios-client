@@ -28,7 +28,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import <JFGC.h>		// For GC related macros
+#import <Split/JFGC.h>		// For GC related macros
 #import <JFRandom.h>	// For generating random salts
 
 
