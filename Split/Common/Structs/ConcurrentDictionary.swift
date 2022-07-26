@@ -8,10 +8,7 @@
 
 import Foundation
 
-typealias ConcurrentDictionary = SyncDictionarySingleWrapper
-
-// TODO: Rename SyncDictionarySingleWrapper -> ConcurrentDictionary in specific PR for that
-class SyncDictionarySingleWrapper<K: Hashable, T> {
+class ConcurrentDictionary<K: Hashable, T> {
 
     private var queue: DispatchQueue
     private var items: [K: T]
@@ -46,22 +43,28 @@ class SyncDictionarySingleWrapper<K: Hashable, T> {
     }
 
     func removeValue(forKey key: K) {
-        queue.async(flags: .barrier) {
-            self.items.removeValue(forKey: key)
-        }
-    }
-
-    func removeValues(forKeys keys: Dictionary<K, T>.Keys) {
-        queue.async(flags: .barrier) {
-            for key in keys {
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
                 self.items.removeValue(forKey: key)
             }
         }
     }
 
+    func removeValues(forKeys keys: Dictionary<K, T>.Keys) {
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                for key in keys {
+                    self.items.removeValue(forKey: key)
+                }
+            }
+        }
+    }
+
     func removeAll() {
-        queue.async(flags: .barrier) {
-            self.items.removeAll()
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.items.removeAll()
+            }
         }
     }
 
@@ -81,9 +84,11 @@ class SyncDictionarySingleWrapper<K: Hashable, T> {
     }
 
     func putValues(_ values: [K: T]) {
-        queue.async(flags: .barrier) {
-            for (key, value) in values {
-                self.items[key] = value
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                for (key, value) in values {
+                    self.items[key] = value
+                }
             }
         }
     }

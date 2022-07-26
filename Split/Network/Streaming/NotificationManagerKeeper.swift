@@ -155,7 +155,6 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
 
     private func updateStreamingState(active: Bool) {
         DispatchQueue.global().sync {
-            Logger.d("Streaming active = \(active)")
             streamingActive = active
         }
     }

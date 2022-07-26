@@ -15,8 +15,10 @@ class SynchronizedArrayQueue<T> {
 
     // Adds a new element at the end of the array.
     func append( _ element: T) {
-        queue.async(flags: .barrier) {
-            self.array.append(element)
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.array.append(element)
+            }
         }
     }
 

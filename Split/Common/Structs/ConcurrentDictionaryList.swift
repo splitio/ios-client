@@ -8,10 +8,7 @@
 
 import Foundation
 
-typealias ConcurrentDictionaryList = SyncDictionaryCollectionWrapper
-
-// TODO: Rename SyncDictionaryCollectionWrapper -> ConcurrentDictionaryList in specific PR for that
-class SyncDictionaryCollectionWrapper<K: Hashable, T> {
+class ConcurrentDictionaryList<K: Hashable, T> {
 
     private var queue = DispatchQueue(label: "split-dictionary-list", attributes: .concurrent)
     private var items = [K: [T]]()
@@ -43,24 +40,30 @@ class SyncDictionaryCollectionWrapper<K: Hashable, T> {
     }
 
     func removeValues(forKeys keys: [K]) {
-        queue.async(flags: .barrier) {
-            for key in keys {
-                self.items.removeValue(forKey: key)
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                for key in keys {
+                    self.items.removeValue(forKey: key)
+                }
             }
         }
     }
 
     func removeAll() {
-        queue.async(flags: .barrier) {
-            self.items.removeAll()
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.items.removeAll()
+            }
         }
     }
 
     func appendValue(_ value: T, toKey key: K) {
-        queue.async(flags: .barrier) {
-            var values = self.items[key] ?? []
-            values.append(value)
-            self.items[key] = values
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                var values = self.items[key] ?? []
+                values.append(value)
+                self.items[key] = values
+            }
         }
     }
 

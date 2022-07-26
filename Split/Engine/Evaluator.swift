@@ -123,7 +123,6 @@ class DefaultEvaluator: Evaluator {
                                           label: ImpressionsConstants.noConditionMatched,
                                           changeNumber: changeNumber,
                                           configuration: split.configurations?[defaultTreatment])
-            Logger.d("* Treatment for \(matchingKey) in \(split.name ?? "") is: \(result.treatment)")
             return result
         } catch EvaluatorError.matcherNotFound {
             Logger.e("The matcher has not been found")

@@ -11,9 +11,9 @@ import XCTest
 
 class SyncDictionarySingleWrapperTest: XCTestCase {
 
-    var dic: SyncDictionarySingleWrapper<String, String>!
+    var dic: ConcurrentDictionary<String, String>!
     override func setUp() {
-        dic = SyncDictionarySingleWrapper()
+        dic = ConcurrentDictionary()
         dic.setValue("k1value1", forKey: "key1")
         dic.setValue("k1value2", forKey: "key1")
         dic.setValue("k1value", forKey: "key1")

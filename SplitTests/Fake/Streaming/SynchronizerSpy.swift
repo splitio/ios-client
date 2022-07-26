@@ -55,8 +55,8 @@ class SynchronizerSpy: Synchronizer {
          syncWorkerFactory: SyncWorkerFactory,
          impressionsTracker: ImpressionsTracker,
          eventsSyncHelper: EventsRecorderSyncHelper,
-         syncTaskByChangeNumberCatalog: SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>
-        = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>(),
+         syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
+        = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
          splitEventsManager: SplitEventsManager) {
 

@@ -33,8 +33,8 @@ protocol SplitsStorage: SyncSplitsStorage {
 
 class DefaultSplitsStorage: SplitsStorage {
     private var persistentStorage: PersistentSplitsStorage
-    private var inMemorySplits: SyncDictionarySingleWrapper<String, Split>
-    private var trafficTypes: SyncDictionarySingleWrapper<String, Int>
+    private var inMemorySplits: ConcurrentDictionary<String, Split>
+    private var trafficTypes: ConcurrentDictionary<String, Int>
 
     private (set) var changeNumber: Int64 = -1
     private (set) var updateTimestamp: Int64 = -1
@@ -42,8 +42,8 @@ class DefaultSplitsStorage: SplitsStorage {
 
     init(persistentSplitsStorage: PersistentSplitsStorage) {
         self.persistentStorage = persistentSplitsStorage
-        self.inMemorySplits = SyncDictionarySingleWrapper()
-        self.trafficTypes = SyncDictionarySingleWrapper()
+        self.inMemorySplits = ConcurrentDictionary()
+        self.trafficTypes = ConcurrentDictionary()
     }
 
     func loadLocal() {
