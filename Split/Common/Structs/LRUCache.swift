@@ -26,8 +26,10 @@ class LRUCache<K: Hashable, E> {
     }
 
     func set(_ element: E, for key: K) {
-        queue.async(flags: .barrier) {
-            self.put(element, for: key)
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.put(element, for: key)
+            }
         }
     }
 
@@ -42,7 +44,6 @@ class LRUCache<K: Hashable, E> {
     // Private function to avoid using self
     // Call this functions only from within queue closure
     private func put(_ element: E, for key: K) {
-
         // If element exists, remove from current position in the queue
         // to add last after
         if elements[key] != nil, let index = elementsQueue.firstIndex(where: { $0 == key }) {
@@ -79,9 +80,11 @@ class LRUCache<K: Hashable, E> {
 
     private func moveFirst(index: Int, key: K) {
         let sem = DispatchSemaphore(value: 1)
-        queue.async(flags: .barrier) {
-            self.elementsQueue.remove(at: index)
-            self.elementsQueue.insert(key, at: 0)
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.elementsQueue.remove(at: index)
+                self.elementsQueue.insert(key, at: 0)
+            }
             sem.signal()
         }
         sem.wait()

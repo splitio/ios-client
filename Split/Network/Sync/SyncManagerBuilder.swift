@@ -100,7 +100,7 @@ class SyncManagerBuilder {
     }
 
     private func buildSseHttpClient(config: SplitClientConfig,
-                               apiFacade: SplitApiFacade) -> HttpClient {
+                                    apiFacade: SplitApiFacade) -> HttpClient {
         let sseHttpConfig = HttpSessionConfig()
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
         return apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)

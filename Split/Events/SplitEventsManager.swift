@@ -45,21 +45,25 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
         if config.sdkReadyTimeOut > 0 {
             let readyTimedoutQueue = DispatchQueue(label: "io.Split.Event.TimedOut")
-            readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.sdkReadyTimeOut), execute: {
+            readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.sdkReadyTimeOut)) {  [weak self] in
+                guard let self = self else { return }
                 self.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
-            })
+            }
         }
     }
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        processQueue.async {
-            self.eventsQueue.add(event)
+        processQueue.async { [weak self] in
+            if let self = self {
+                self.eventsQueue.add(event)
+            }
         }
     }
 
     func register(event: SplitEvent, task: SplitEventTask) {
         let eventName = event.toString()
-        processQueue.async {
+        processQueue.async { [weak self] in
+            guard let self = self else { return }
             // If event is already triggered, execute the task
             if let times = self.executionTimes(for: eventName), times == 0 {
                 self.executeTask(event: event, task: task)
@@ -76,8 +80,10 @@ class DefaultSplitEventsManager: SplitEventsManager {
             }
             self.isStarted = true
         }
-        processQueue.async {
-            self.processEvents()
+        processQueue.async { [weak self] in
+            if let self = self {
+                self.processEvents()
+            }
         }
     }
 
@@ -90,7 +96,8 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     func stop() {
-        dataAccessQueue.async {
+        dataAccessQueue.async { [weak self] in
+            guard let self = self else { return }
             self.isStarted = false
             self.processQueue.sync {
                 self.eventsQueue.interrupt()
@@ -206,11 +213,12 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     private func executeTask(event: SplitEvent, task: SplitEventTask) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async {  [weak self] in
+            guard let self = self else { return }
             let executor: SplitEventExecutorProtocol
-                = SplitEventExecutorFactory.factory(event: event,
-                                                    task: task,
-                                                    resources: self.executorResources)
+            = SplitEventExecutorFactory.factory(event: event,
+                                                task: task,
+                                                resources: self.executorResources)
             executor.execute()
         }
     }
@@ -229,7 +237,8 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     func subscribe(task: SplitEventTask, to event: SplitEvent) {
-        dataAccessQueue.async {
+        dataAccessQueue.async { [weak self] in
+            guard let self = self else { return }
             var subscriptions = self.subscriptions[event] ?? [SplitEventTask]()
             subscriptions.append(task)
             self.subscriptions[event] = subscriptions

@@ -39,7 +39,7 @@ class BaseHttpRequest: HttpRequest {
     private (set) var method: HttpMethod
     private (set) var parameters: HttpParameters?
     private (set) var headers: HttpHeaders
-    private (set) var session: HttpSession
+    private (set) weak var session: HttpSession?
     private (set) var task: HttpTask?
     private (set) var error: Error?
     var requestQueue = DispatchQueue(label: "split-http-base-request", attributes: .concurrent)
@@ -91,6 +91,7 @@ class BaseHttpRequest: HttpRequest {
     }
 
     func send() {
+        guard let session = self.session else { return }
         requestQueue.sync {
             task = session.startTask(with: self)
         }

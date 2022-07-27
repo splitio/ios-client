@@ -38,7 +38,7 @@ class FileStorageStub: FileStorageProtocol {
     
     func delete(fileName: String) {
         queue.sync {
-            self.files.removeValue(forKey: fileName)
+            _ = files.removeValue(forKey: fileName)
         }
     }
     
