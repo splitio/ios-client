@@ -1,4 +1,4 @@
-2.16.0: (Jul 11, 2022)
+2.16.0: (Jul 27, 2022)
 - Improved log handling by adding log level config. Deprecating old verbose and debug flags.
 - Fixed some memory leaks found.
 
