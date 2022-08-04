@@ -67,4 +67,23 @@ class LocalhostSplitClientTests: XCTestCase {
         }
     }
 
+    func testDoesRetainOnEventActionsWhenClientHasAnEventsManager() {
+        let result = client.on(event: .sdkReady) {}
+        XCTAssertTrue(result)
+    }
+
+    func testDoesNotRetainOnEventActionsWhenClientHasNoEventsManager() {
+        let fileName = "localhost.splits"
+        let storage = FileStorageStub()
+        var config = YamlSplitStorageConfig()
+        config.refreshInterval = 0
+        let splitsStorage = LocalhostSplitsStorage(fileStorage: storage, config: config,
+                                              eventsManager: eventsManager, dataFolderName: "localhost", splitsFileName: fileName,
+                                                      bundle: Bundle(for: type(of: self)))
+        splitsStorage.loadLocal()
+        client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), splitsStorage: splitsStorage, eventsManager: nil)
+
+        let result = client.on(event: .sdkReady) {}
+        XCTAssertFalse(result)
+    }
 }

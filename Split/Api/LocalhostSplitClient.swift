@@ -97,14 +97,13 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return results
     }
 
-    public func on(_ event: SplitEvent, _ task: SplitEventTask) {
-    }
-
-    public func on(event: SplitEvent, execute action: @escaping SplitAction) {
+    public func on(event: SplitEvent, execute action: @escaping SplitAction) -> Bool {
         if let eventsManager = self.eventsManager {
             let task = SplitEventActionTask(action: action)
             eventsManager.register(event: event, task: task)
+            return true
         }
+        return false
     }
 
     public func track(trafficType: String, eventType: String) -> Bool {

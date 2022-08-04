@@ -43,8 +43,8 @@ class InternalSplitClientStub: InternalSplitClient {
         return ["": SplitResult(treatment: SplitConstants.control)]
     }
     
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {
-    
+    func on(event: SplitEvent, execute action: @escaping SplitAction) -> Bool {
+        return true
     }
     
     func track(trafficType: String, eventType: String) -> Bool {

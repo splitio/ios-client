@@ -57,15 +57,16 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
 
 // MARK: Events
 extension DefaultSplitClient {
-    public func on(event: SplitEvent, execute action: @escaping SplitAction) {
+    public func on(event: SplitEvent, execute action: @escaping SplitAction) -> Bool {
         if  event != .sdkReadyFromCache,
             eventsManager.eventAlreadyTriggered(event: event) {
             Logger.w("A handler was added for \(event.toString()) on the SDK, " +
                 "which has already fired and won’t be emitted again. The callback won’t be executed.")
-            return
+            return false
         }
         let task = SplitEventActionTask(action: action)
         eventsManager.register(event: event, task: task)
+        return true
     }
 }
 

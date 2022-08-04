@@ -24,8 +24,12 @@ public typealias SplitAction = () -> Void
     @objc(getTreatmentsWithConfigForSplits:attributes:)
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult]
 
+    /// Executes the given action once the given event is triggered.
+    ///
+    /// Returns true if the action was retained to be executed later, or false if not.
+    @discardableResult
     @objc(onEvent:execute:)
-    func on(event: SplitEvent, execute action: @escaping SplitAction)
+    func on(event: SplitEvent, execute action: @escaping SplitAction) -> Bool
 
     // MARK: Track feature
     func track(trafficType: String, eventType: String) -> Bool
