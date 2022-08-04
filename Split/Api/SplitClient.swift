@@ -24,6 +24,7 @@ public typealias SplitAction = () -> Void
     @objc(getTreatmentsWithConfigForSplits:attributes:)
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult]
 
+    @objc(onEvent:execute:)
     func on(event: SplitEvent, execute action: @escaping SplitAction)
 
     // MARK: Track feature
