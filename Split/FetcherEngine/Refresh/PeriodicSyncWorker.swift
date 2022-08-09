@@ -76,7 +76,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
 
     private var fetchTimer: PeriodicTimer
     private let fetchQueue = DispatchQueue.global()
-    private let eventsManager: SplitEventsManager
+    private weak var eventsManager: SplitEventsManager?
     private var isPaused: Atomic<Bool> = Atomic(false)
 
     init(timer: PeriodicTimer,
@@ -125,7 +125,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 
     func isSdkReadyFired() -> Bool {
-        return eventsManager.eventAlreadyTriggered(event: .sdkReady)
+        return eventsManager?.eventAlreadyTriggered(event: .sdkReady) ?? false
     }
 
     func fetchFromRemote() {
@@ -133,11 +133,11 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 
     func notifyMySegmentsUpdated() {
-        eventsManager.notifyInternalEvent(.mySegmentsUpdated)
+        eventsManager?.notifyInternalEvent(.mySegmentsUpdated)
     }
 
     func notifySplitsUpdated() {
-        eventsManager.notifyInternalEvent(.splitsUpdated)
+        eventsManager?.notifyInternalEvent(.splitsUpdated)
     }
 }
 

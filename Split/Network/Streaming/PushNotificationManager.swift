@@ -114,12 +114,14 @@ class DefaultPushNotificationManager: PushNotificationManager {
             return
         }
 
-        connectionQueue.async(flags: .barrier) {
+        connectionQueue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
             self.isConnecting.set(true)
             self.authenticateAndConnect()
         }
     }
 
+    // This method must run within connectionQueue!!
     private func authenticateAndConnect() {
         lastConnId = Date().unixTimestampInMicroseconds()
         let result = sseAuthenticator.authenticate(userKeys: userKeyRegistry.matchingKeys.map { $0 })
@@ -171,7 +173,8 @@ class DefaultPushNotificationManager: PushNotificationManager {
             self.delayTimer = DispatchWorkItem { [weak self] in
                 guard let self = self else { return }
                 if lastId != self.lastConnId { return }
-                self.connectionQueue.async(flags: .barrier) {
+                self.connectionQueue.async(flags: .barrier) { [weak self] in
+                    guard let self = self else { return }
                     self.connectSse(jwt: jwt)
                 }
             }
@@ -183,7 +186,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
         }
     }
 
-    // This method must run in connectionQueue!!
+    // This method must run within connectionQueue!!
     private func connectSse(jwt: JwtToken) {
         Logger.d("Streaming connect")
         self.sseClient = sseClientFactory.create()
