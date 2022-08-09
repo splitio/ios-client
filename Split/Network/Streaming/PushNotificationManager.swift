@@ -89,6 +89,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     func stop() {
         Logger.d("Push notification manager stopped")
+        broadcasterChannel.destroy()
         isStopped.set(true)
         disconnect()
     }

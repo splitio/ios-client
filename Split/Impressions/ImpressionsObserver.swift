@@ -24,6 +24,10 @@ struct ImpressionsObserver {
         }
         return min(previousTime, impression.time)
     }
+
+    func stop() {
+        cache.clear()
+    }
 }
 
 struct ImpressionHasher {

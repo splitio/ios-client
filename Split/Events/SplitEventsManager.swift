@@ -102,7 +102,9 @@ class DefaultSplitEventsManager: SplitEventsManager {
             self.subscriptions.removeAll()
             self.processQueue.sync {
                 self.eventsQueue.interrupt()
+                self.eventsQueue.stop()
             }
+
         }
     }
 

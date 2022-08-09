@@ -57,6 +57,14 @@ class GenericBlockingQueue<Item> {
             }
         }
     }
+
+    func stop() {
+        dispatchQueue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.elements.removeAll()
+            }
+        }
+    }
 }
 
 // Protocol to allow mocking
@@ -64,6 +72,7 @@ protocol InternalEventBlockingQueue {
     func add(_ item: SplitInternalEvent)
     func take() throws -> SplitInternalEvent
     func interrupt()
+    func stop()
 }
 
 class DefaultInternalEventBlockingQueue: InternalEventBlockingQueue {
@@ -79,5 +88,9 @@ class DefaultInternalEventBlockingQueue: InternalEventBlockingQueue {
 
     func interrupt() {
         blockingQueue.interrupt()
+    }
+
+    func stop() {
+        blockingQueue.stop()
     }
 }

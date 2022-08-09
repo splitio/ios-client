@@ -33,6 +33,14 @@ class LRUCache<K: Hashable, E> {
         }
     }
 
+    func clear() {
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.elements.removeAll()
+            }
+        }
+    }
+
     func element(for key: K) -> E? {
         var element: E?
         queue.sync {
