@@ -9,7 +9,7 @@ import Foundation
 
 class SplitEventActionTask: SplitEventTask {
 
-    var eventHandler: SplitAction!
+    var eventHandler: SplitAction?
 
     override private init() {
         super.init()
@@ -25,6 +25,6 @@ class SplitEventActionTask: SplitEventTask {
     }
 
     override func onPostExecuteView(client: SplitClient) {
-        eventHandler()
+        eventHandler?()
     }
 }
