@@ -9,7 +9,7 @@ import Foundation
 
 class SplitEventActionTask: SplitEventTask {
 
-    var eventHandler: SplitAction?
+    private var eventHandler: SplitAction?
 
     override private init() {
         super.init()

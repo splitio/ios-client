@@ -97,7 +97,6 @@ class DefaultClientManager: SplitClientManager {
             }
         }
 
-        eventsManagerCoordinator.executorResources.client = defaultClient
         syncManager.start()
     }
 

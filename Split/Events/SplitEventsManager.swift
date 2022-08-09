@@ -99,6 +99,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         dataAccessQueue.async { [weak self] in
             guard let self = self else { return }
             self.isStarted = false
+            self.subscriptions.removeAll()
             self.processQueue.sync {
                 self.eventsQueue.interrupt()
             }
