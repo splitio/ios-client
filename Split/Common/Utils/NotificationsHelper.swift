@@ -45,7 +45,8 @@ class DefaultNotificationHelper: NotificationHelper {
     }
 
     func addObserver(for notification: AppNotification, action: @escaping ObserverAction) {
-        queue.async(flags: .barrier) {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
             if self.actions[notification.rawValue] == nil {
                 self.actions[notification.rawValue] = [ObserverAction]()
             }

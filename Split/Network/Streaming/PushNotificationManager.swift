@@ -27,7 +27,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private let kTokenExpiredErrorCode = 40142
 
     private let sseAuthenticator: SseAuthenticator
-    private var sseClient: SseClient?
+    private weak var sseClient: SseClient?
     private var sseClientFactory: SseClientFactory
     private var timersManager: TimersManager
     private let broadcasterChannel: PushManagerEventBroadcaster
@@ -45,7 +45,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
 
-    var delayTimer: DispatchWorkItem?
+    private weak var delayTimer: DispatchWorkItem?
 
     private let telemetryProducer: TelemetryRuntimeProducer?
 
@@ -90,6 +90,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func stop() {
         Logger.d("Push notification manager stopped")
         broadcasterChannel.destroy()
+        timersManager.destroy()
         isStopped.set(true)
         disconnect()
     }
@@ -102,9 +103,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
             DispatchQueue.global().async {
                 disconnectingClient.disconnect()
             }
-        }
-        connectionQueue.async(flags: .barrier) {
-            self.sseClient = nil
         }
         isConnecting.set(false)
     }
@@ -171,17 +169,15 @@ class DefaultPushNotificationManager: PushNotificationManager {
         let connectionDelay = result.sseConnectionDelay
         let lastId = lastConnId
         if connectionDelay > 0 {
-            self.delayTimer = DispatchWorkItem { [weak self] in
-                guard let self = self else { return }
-                if lastId != self.lastConnId { return }
-                self.connectionQueue.async(flags: .barrier) { [weak self] in
-                    guard let self = self else { return }
-                    self.connectSse(jwt: jwt)
-                }
+            let delaySem = DispatchSemaphore(value: 0)
+            let delayTimer = DispatchWorkItem {
+                delaySem.signal()
             }
-            if let delayTimer = self.delayTimer {
-                connectionQueue.asyncAfter(deadline: DispatchTime.now() + Double(connectionDelay), execute: delayTimer)
-            }
+            DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + Double(connectionDelay),
+                                              execute: delayTimer)
+            delaySem.wait()
+            if lastId != self.lastConnId { return }
+            connectSse(jwt: jwt)
         } else {
             connectSse(jwt: jwt)
         }
@@ -190,14 +186,15 @@ class DefaultPushNotificationManager: PushNotificationManager {
     // This method must run within connectionQueue!!
     private func connectSse(jwt: JwtToken) {
         Logger.d("Streaming connect")
-        self.sseClient = sseClientFactory.create()
+        let sseClient = sseClientFactory.create()
 
         if isPaused.value || isStopped.value {
             isConnecting.set(false)
             return
         }
 
-        sseClient?.connect(token: jwt.rawToken, channels: jwt.channels) { success in
+        sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { [weak self] success in
+            guard let self = self else { return }
             if success {
                 self.handleSubsystemUp()
             }
@@ -205,6 +202,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
                                                          data: nil)
             self.isConnecting.set(false)
         }
+        self.sseClient = sseClient
     }
 
     private func notifyRecoverableError(message: String) {
@@ -229,7 +227,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
             switch timerName {
             case .refreshAuthToken:
                 self.sseClient?.disconnect()
-                self.sseClient = nil
                 self.telemetryProducer?.recordStreamingEvent(type: .connectionError,
                                                         data: TelemetryStreamingEventValue.sseConnErrorRequested)
                 self.connect()

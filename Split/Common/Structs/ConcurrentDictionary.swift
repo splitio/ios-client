@@ -69,13 +69,15 @@ class ConcurrentDictionary<K: Hashable, T> {
     }
 
     func setValue(_ value: T, forKey key: K) {
-        queue.async(flags: .barrier) {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
             self.items[key] = value
         }
     }
 
     func setValues(_ values: [K: T]) {
-        queue.async(flags: .barrier) {
+        queue.async(flags: .barrier) {  [weak self] in
+            guard let self = self else { return }
             self.items.removeAll()
             for (key, value) in values {
                 self.items[key] = value
@@ -98,9 +100,7 @@ class ConcurrentDictionary<K: Hashable, T> {
         queue.sync {
             value = self.items[key]
             if value != nil {
-                queue.async(flags: .barrier) {
-                    self.items.removeValue(forKey: key)
-                }
+                self.items.removeValue(forKey: key)
             }
         }
         return value
@@ -110,9 +110,7 @@ class ConcurrentDictionary<K: Hashable, T> {
         var allItems: [K: T]!
         queue.sync {
             allItems = items
-            queue.async(flags: .barrier) {
-                self.items.removeAll()
-            }
+            self.items.removeAll()
         }
         return allItems
     }

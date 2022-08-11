@@ -20,8 +20,10 @@ class HttpRequestList {
     }
 
     func set(_ request: HttpRequest) {
-        queue.async(flags: .barrier) {
-            self.requests[request.identifier] = request
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.requests[request.identifier] = request
+            }
         }
     }
 
@@ -38,11 +40,17 @@ class HttpRequestList {
         queue.sync {
             request = requests[identifier]
             if request != nil {
-                queue.async(flags: .barrier) {
-                    self.requests.removeValue(forKey: identifier)
-                }
+                self.requests.removeValue(forKey: identifier)
             }
         }
         return request
+    }
+
+    func clear() {
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.requests.removeAll()
+            }
+        }
     }
 }

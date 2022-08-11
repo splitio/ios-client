@@ -15,7 +15,7 @@ struct SseClientConstants {
     static let pushNotificationVersionValue = "1.1"
 }
 
-protocol SseClient {
+protocol SseClient: AnyObject {
     typealias CompletionHandler = (Bool) -> Void
     func connect(token: String, channels: [String], completion: @escaping CompletionHandler)
     func disconnect()
@@ -51,7 +51,8 @@ class DefaultSseClient: SseClient {
     func connect(token: String, channels: [String], completion: @escaping CompletionHandler) {
 
         var isFirstMessage = true
-        queue.async(flags: .barrier) {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
             let parameters: [String: Any] = [
                 SseClientConstants.pushNotificationTokenParam: token,
                 SseClientConstants.pushNotificationChannelsParam: self.createChannelsQueryString(channels: channels),
@@ -141,6 +142,7 @@ class DefaultSseClient: SseClient {
         isDisconnectCalled.set(true)
         isConnected.set(false)
         streamRequest?.close()
+        httpClient
     }
 }
 
