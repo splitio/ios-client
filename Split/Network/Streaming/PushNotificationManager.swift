@@ -166,8 +166,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
         }
         Logger.d("Streaming authentication success")
 
-//        let connectionDelay = result.sseConnectionDelay
-        let connectionDelay = 5
+        let connectionDelay = result.sseConnectionDelay
         let lastId = lastConnId
         if connectionDelay > 0 {
             let delaySem = DispatchSemaphore(value: 0)
