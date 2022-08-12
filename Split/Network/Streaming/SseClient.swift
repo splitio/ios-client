@@ -37,6 +37,7 @@ class DefaultSseClient: SseClient {
     private let sseHandler: SseHandler
     private var isDisconnectCalled: Atomic<Bool> = Atomic(false)
     private var isConnected: Atomic<Bool> = Atomic(false)
+    private var isFirstMessage: Atomic<Bool> = Atomic(false)
     var isConnectionOpened: Bool {
         return isConnected.value
     }
@@ -49,8 +50,6 @@ class DefaultSseClient: SseClient {
     }
 
     func connect(token: String, channels: [String], completion: @escaping CompletionHandler) {
-
-        var isFirstMessage = true
         queue.async(flags: .barrier) { [weak self] in
             guard let self = self else { return }
             let parameters: [String: Any] = [
@@ -61,43 +60,10 @@ class DefaultSseClient: SseClient {
             do {
                 self.streamRequest = try self.httpClient.sendStreamRequest(endpoint: self.endpoint,
                                                           parameters: parameters, headers: self.endpoint.headers)
-                .getResponse(responseHandler: { response in
-                    if response.code != 200 {
-                        completion(false)
-                        self.handleError(retryable: !response.isClientError)
-                        return
-                    }
-                    Logger.d("Streaming connected")
-
-                }, incomingDataHandler: { data in
-
-                    let values = self.streamParser.parse(streamChunk: data.stringRepresentation)
-
-                    if isFirstMessage {
-                        isFirstMessage = false
-                        if self.isConnectionConfirmed(message: values) {
-                            completion(true)
-                            self.isConnected.set(true)
-                        } else {
-                            completion(false)
-                            self.isConnected.set(false)
-                            self.sseHandler.reportError(isRetryable: true)
-                        }
-                    }
-                    if !self.streamParser.isKeepAlive(values: values) {
-                        Logger.d("Push message received: \(values)")
-                        self.triggerMessageHandler(message: values)
-                    }
-
-                }, closeHandler: {
-                    Logger.d("Streaming connection closed")
-                    if !self.isDisconnectCalled.value {
-                        self.handleConnectionClosed()
-                    }
-                }, errorHandler: { error in
-                    Logger.d("Streaming disconnected: \(error.localizedDescription)")
-                    self.handleError(error)
-                })
+                .getResponse(responseHandler: self.responseHandler(completion: completion),
+                             incomingDataHandler: self.incommingDataHandler(completion: completion),
+                             closeHandler: self.closeHandler(),
+                             errorHandler: self.errorHandler())
             } catch {
                 Logger.e("Error while connecting to streaming: \(error.localizedDescription)")
                 self.handleError(retryable: false)
@@ -142,7 +108,64 @@ class DefaultSseClient: SseClient {
         isDisconnectCalled.set(true)
         isConnected.set(false)
         streamRequest?.close()
-        httpClient
+    }
+
+    // MARK: Handlers for Stream request
+    func responseHandler(completion: @escaping CompletionHandler) -> HttpStreamRequest.ResponseHandler {
+        return { [weak self] response in
+            guard let self = self else { return }
+            if response.code != 200 {
+                completion(false)
+                self.handleError(retryable: !response.isClientError)
+                return
+            }
+            Logger.d("Streaming connected")
+
+        }
+    }
+
+    func incommingDataHandler(completion: @escaping CompletionHandler) -> HttpStreamRequest.IncomingDataHandler {
+        isFirstMessage.set(true)
+        return { [weak self] data in
+
+            guard let self = self else { return }
+
+            let values = self.streamParser.parse(streamChunk: data.stringRepresentation)
+
+            if self.isFirstMessage.value {
+                if self.isConnectionConfirmed(message: values) {
+                    self.isFirstMessage.set(false)
+                    completion(true)
+                    self.isConnected.set(true)
+                } else {
+                    completion(false)
+                    self.isConnected.set(false)
+                    self.sseHandler.reportError(isRetryable: true)
+                }
+            }
+            if !self.streamParser.isKeepAlive(values: values) {
+                Logger.d("Push message received: \(values)")
+                self.triggerMessageHandler(message: values)
+            }
+        }
+    }
+
+    func closeHandler() -> HttpStreamRequest.CloseHandler {
+        return { [weak self] in
+            guard let self = self else { return }
+            Logger.d("Streaming connection closed")
+            if !self.isDisconnectCalled.value {
+                self.handleConnectionClosed()
+            }
+        }
+    }
+
+    func errorHandler() -> HttpStreamRequest.ErrorHandler {
+        return { [weak self] error in
+            guard let self = self else { return }
+            Logger.d("Streaming disconnected: \(error.localizedDescription)")
+            self.handleError(error)
+        }
     }
 }
 

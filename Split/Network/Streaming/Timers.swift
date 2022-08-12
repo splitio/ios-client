@@ -22,7 +22,6 @@ protocol TimersManager {
 }
 
 class DefaultTimersManager: TimersManager {
-    private let timersQueue = DispatchQueue.global()
     private let timers = ConcurrentDictionary<TimerName, DispatchWorkItem>()
 
     var triggerHandler: TimerHandler?
@@ -34,7 +33,7 @@ class DefaultTimersManager: TimersManager {
             }
         })
         timers.setValue(workItem, forKey: timer)
-        timersQueue.asyncAfter(deadline: DispatchTime.now() + Double(delayInSeconds), execute: workItem)
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + Double(delayInSeconds), execute: workItem)
     }
 
     func cancel(timer: TimerName) {

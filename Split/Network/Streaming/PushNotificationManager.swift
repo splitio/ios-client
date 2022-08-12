@@ -89,10 +89,10 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     func stop() {
         Logger.d("Push notification manager stopped")
+        disconnect()
         broadcasterChannel.destroy()
         timersManager.destroy()
         isStopped.set(true)
-        disconnect()
     }
 
     func disconnect() {
@@ -166,7 +166,8 @@ class DefaultPushNotificationManager: PushNotificationManager {
         }
         Logger.d("Streaming authentication success")
 
-        let connectionDelay = result.sseConnectionDelay
+//        let connectionDelay = result.sseConnectionDelay
+        let connectionDelay = 5
         let lastId = lastConnId
         if connectionDelay > 0 {
             let delaySem = DispatchSemaphore(value: 0)
@@ -226,10 +227,9 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
             switch timerName {
             case .refreshAuthToken:
-                self.sseClient?.disconnect()
                 self.telemetryProducer?.recordStreamingEvent(type: .connectionError,
                                                         data: TelemetryStreamingEventValue.sseConnErrorRequested)
-                self.connect()
+                self.reset()
             default:
                 Logger.d("No handler or timer: \(timerName)")
             }
