@@ -27,7 +27,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private let kTokenExpiredErrorCode = 40142
 
     private let sseAuthenticator: SseAuthenticator
-    private weak var sseClient: SseClient?
+    private var sseClient: SseClient?
     private var sseClientFactory: SseClientFactory
     private var timersManager: TimersManager
     private let broadcasterChannel: PushManagerEventBroadcaster
@@ -45,7 +45,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
 
-    private weak var delayTimer: DispatchWorkItem?
+    private var delayTimer: DispatchWorkItem?
 
     private let telemetryProducer: TelemetryRuntimeProducer?
 
