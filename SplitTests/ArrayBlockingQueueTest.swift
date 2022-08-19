@@ -21,13 +21,20 @@ class ArrayBlockingQueueTests: XCTestCase {
     
     func testArrayBlockingQueue() {
         
-        let abqt = SynchronizedArrayQueue<String>()
+        let abqt = ConcurrentArrayQueue<String>()
         
         abqt.append("STR_1")
         abqt.append("STR_2")
         abqt.append("STR_3")
-        
-        let str1 = abqt.take()
+
+        var str1 = ""
+        let exp = XCTestExpectation()
+        while str1 == "" {
+            sleep(1)
+            str1 = abqt.take() ?? ""
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 5)
         let str2 = abqt.take()
         let str3 = abqt.take()
         

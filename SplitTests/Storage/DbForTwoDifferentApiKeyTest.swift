@@ -144,7 +144,6 @@ class DbForDifferentApiKeysTest: XCTestCase {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
-                print("Split changes hit")
                 let hitNumber = self.splitHitCounters[factoryNumber - 1]
                 self.splitHitCounters[factoryNumber - 1]+=1
                 let respChangeNumber = Self.changeNumberBase + Int64(factoryNumber)
@@ -160,7 +159,6 @@ class DbForDifferentApiKeysTest: XCTestCase {
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: Int(respChangeNumber), till: Int(respChangeNumber)).utf8))
             case let(urlString) where urlString.contains("mySegments"):
-                print("My segments hit")
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             case let(urlString) where urlString.contains("auth"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))

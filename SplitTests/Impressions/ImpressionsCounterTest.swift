@@ -99,7 +99,7 @@ class ImpressionsCounterTest: XCTestCase {
 
     func testConcurrency() throws {
         let queue = DispatchQueue(label: "q1", attributes: .concurrent)
-        let iterations = 100000
+        let iterations = 20000
         let counter = ImpressionsCounter()
         let timestamp = makeTimestamp(year: 2020, month: 9, day: 2, hour: 10, minute: 10, second: 12).unixTimestampInMiliseconds()
         let truncatedTimestamp = makeTimestamp(year: 2020, month: 9, day: 2, hour: 10, minute: 0, second: 0).unixTimestampInMiliseconds()

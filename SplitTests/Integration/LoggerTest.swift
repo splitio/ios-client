@@ -17,7 +17,7 @@ class LoggerTest : XCTestCase {
     let printer = LogPrinterStub()
 
     override func setUp() {
-        printer.logs.removeAll()
+        printer.clear()
         Logger.shared.printer = printer
     }
 
@@ -106,6 +106,8 @@ class LoggerTest : XCTestCase {
     }
 
     override func tearDown() {
+        Logger.shared.printer = DefaultLogPrinter()
+        printer.clear()
     }
 }
 

@@ -63,5 +63,8 @@ class TimersManagerMock: TimersManager {
             }
         }
     }
+
+    func destroy() {
+    }
 }
 
