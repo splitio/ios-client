@@ -34,7 +34,9 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private let userKeyRegistry: ByKeyRegistry
     private let sseConnectionTimer: DispatchSourceTimer? = nil
 
-    private var lastConnId: Int64 = 0
+    private let lastConnId = Atomic<Int64>(-1)
+
+    private let taskExecutor = TaskExecutor()
 
     private let connectionQueue = DispatchQueue(label: "Sse connnection",
                                                 attributes: .concurrent)
@@ -45,7 +47,8 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
 
-    private var delayTimer: DispatchWorkItem?
+//    private var delayTimer: DelayTimer = DelayTimer()
+    private var delayTimer: CancellableTask?
 
     private let telemetryProducer: TelemetryRuntimeProducer?
 
@@ -98,9 +101,12 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func disconnect() {
         Logger.d("Notification Manager - Disconnecting SSE client")
         timersManager.cancel(timer: .refreshAuthToken)
-        delayTimer?.cancel()
+        if let delayTimer = delayTimer {
+            delayTimer.cancel()
+        }
+
         if let disconnectingClient = sseClient {
-            DispatchQueue.global().async {
+            connectionQueue.async {
                 disconnectingClient.disconnect()
             }
         }
@@ -113,7 +119,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
             return
         }
 
-        connectionQueue.async(flags: .barrier) { [weak self] in
+        connectionQueue.async { [weak self] in
             guard let self = self else { return }
             self.isConnecting.set(true)
             self.authenticateAndConnect()
@@ -122,40 +128,15 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     // This method must run within connectionQueue!!
     private func authenticateAndConnect() {
-        lastConnId = Date().unixTimestampInMicroseconds()
+        lastConnId.set(Date().unixTimestampInMicroseconds())
         let result = sseAuthenticator.authenticate(userKeys: userKeyRegistry.matchingKeys.map { $0 })
         telemetryProducer?.recordLastSync(resource: .token, time: Date().unixTimestampInMiliseconds())
-        if result.success && !result.pushEnabled {
-            Logger.d("Streaming disabled for api key")
-            isStopped.set(true)
-            isConnecting.set(false)
-            broadcasterChannel.push(event: .pushSubsystemDisabled)
-            return
-        }
 
-        if !result.success && !result.errorIsRecoverable {
-            Logger.d("Streaming client error. Please check your API key")
-            isStopped.set(true)
-            isConnecting.set(false)
-            broadcasterChannel.push(event: .pushNonRetryableError)
-            telemetryProducer?.recordAuthRejections()
-            return
-        }
+        if !isPushEnabled(result: result) { return }
+        if isErrorNonRecoverable(result: result) { return }
+        if isErrorRecoverable(result: result) { return }
 
-        if !result.success && result.errorIsRecoverable {
-            notifyRecoverableError(message: "Streaming auth error. Retrying")
-            return
-        }
-
-        guard let rawToken = result.rawToken else {
-            notifyRecoverableError(message: "Invalid raw JWT")
-            return
-        }
-
-        guard let jwt = try? jwtParser.parse(raw: rawToken) else {
-            notifyRecoverableError(message: "Error parsing JWT")
-            return
-        }
+        guard let jwt = extractJwt(result: result) else { return }
 
         telemetryProducer?.recordStreamingEvent(type: .tokenRefresh, data: jwt.expirationTime)
 
@@ -167,23 +148,67 @@ class DefaultPushNotificationManager: PushNotificationManager {
         Logger.d("Streaming authentication success")
 
         let connectionDelay = result.sseConnectionDelay
-        let lastId = lastConnId
+        let lastId = lastConnId.value
         if connectionDelay > 0 {
-            let delaySem = DispatchSemaphore(value: 0)
-            let delayTimer = DispatchWorkItem {
-                delaySem.signal()
+            self.delayTimer?.cancel()
+            let delayTimer =  CancellableTask(delay: connectionDelay) { [weak self] in
+                guard let self = self else { return }
+                if lastId != self.lastConnId.value { return }
+                self.connectSse(jwt: jwt)
             }
-            DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + Double(connectionDelay),
-                                              execute: delayTimer)
-            delaySem.wait()
-            if lastId != self.lastConnId { return }
-            connectSse(jwt: jwt)
+            self.taskExecutor.run(delayTimer)
+            self.delayTimer = delayTimer
         } else {
             connectSse(jwt: jwt)
         }
     }
 
-    // This method must run within connectionQueue!!
+    // This methods must run within connectionQueue!!
+    private func isPushEnabled(result: SseAuthenticationResult) -> Bool {
+        if result.success && !result.pushEnabled {
+            Logger.d("Streaming disabled for api key")
+            isStopped.set(true)
+            isConnecting.set(false)
+            broadcasterChannel.push(event: .pushSubsystemDisabled)
+            return false
+        }
+        return true
+    }
+
+    private func isErrorNonRecoverable(result: SseAuthenticationResult) -> Bool {
+        if !result.success && !result.errorIsRecoverable {
+            Logger.d("Streaming client error. Please check your API key")
+            isStopped.set(true)
+            isConnecting.set(false)
+            broadcasterChannel.push(event: .pushNonRetryableError)
+            telemetryProducer?.recordAuthRejections()
+            return true
+        }
+        return false
+    }
+
+    private func isErrorRecoverable(result: SseAuthenticationResult) -> Bool {
+
+        if !result.success && result.errorIsRecoverable {
+            notifyRecoverableError(message: "Streaming auth error. Retrying")
+            return true
+        }
+        return false
+    }
+
+    private func extractJwt(result: SseAuthenticationResult) -> JwtToken? {
+        guard let rawToken = result.rawToken else {
+            notifyRecoverableError(message: "Invalid raw JWT")
+            return nil
+        }
+
+        guard let jwt = try? jwtParser.parse(raw: rawToken) else {
+            notifyRecoverableError(message: "Error parsing JWT")
+            return nil
+        }
+        return jwt
+    }
+
     private func connectSse(jwt: JwtToken) {
         Logger.d("Streaming connect")
         let sseClient = sseClientFactory.create()
@@ -202,7 +227,10 @@ class DefaultPushNotificationManager: PushNotificationManager {
                                                          data: nil)
             self.isConnecting.set(false)
         }
-        self.sseClient = sseClient
+        connectionQueue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            self.sseClient = sseClient
+        }
     }
 
     private func notifyRecoverableError(message: String) {

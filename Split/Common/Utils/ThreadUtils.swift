@@ -19,3 +19,33 @@ class ThreadUtils {
         semaphore.wait()
     }
 }
+
+class CancellableTask {
+    typealias Work = () -> Void
+
+    private (set) var taskId: Int64
+    private(set) var isCancelled = false
+    private(set) var delay: Double
+    let work: Work
+
+    init(delay: Int64, _ work: @escaping Work) {
+        self.taskId = Date().unixTimestampInMiliseconds()
+        self.work = work
+        self.delay = Double(delay)
+    }
+    func cancel() {
+        isCancelled = true
+    }
+}
+
+struct TaskExecutor {
+    typealias Work = () -> Void
+
+    func run(_ task: CancellableTask) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + task.delay) {
+            if !task.isCancelled {
+                task.work()
+            }
+        }
+    }
+}
