@@ -26,6 +26,7 @@ class DefaultPeriodicTimer: PeriodicTimer {
         self.intervalInSecs = intervalInSecs
         self.isRunning = Atomic(false)
         fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
+        self.fetchTimer.resume()
     }
 
     convenience init(interval intervalInSecs: Int) {
@@ -36,14 +37,13 @@ class DefaultPeriodicTimer: PeriodicTimer {
         if !isRunning.getAndSet(true) {
             fetchTimer.schedule(deadline: .now() + .seconds(deadLineInSecs),
                                 repeating: .seconds(intervalInSecs))
-            fetchTimer.resume()
+//            fetchTimer.resume()
         }
     }
 
     func stop() {
-        if isRunning.getAndSet(false) {
-            fetchTimer.suspend()
-        }
+        // Not suspending the timer to avoid crashes
+        isRunning.set(false)
     }
 
     func destroy() {
@@ -51,14 +51,19 @@ class DefaultPeriodicTimer: PeriodicTimer {
     }
 
     func handler( _ handler: @escaping () -> Void) {
-        fetchTimer.setEventHandler(handler: handler)
+        let action = { [weak self] in
+            if let self = self, self.isRunning.value {
+                handler()
+            }
+        }
+        fetchTimer.setEventHandler(handler: action)
     }
 
-    deinit {
-        // This line is necessary to avoid timer crashing
-        // because is not possible to release a suspended timer
-        fetchTimer.resume()
-    }
+//    deinit {
+//        // This line is necessary to avoid timer crashing
+//        // because is not possible to release a suspended timer
+////        fetchTimer.resume()
+//    }
 
 }
 

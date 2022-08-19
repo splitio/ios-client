@@ -16,7 +16,7 @@ protocol UniqueKeyTracker {
 class DefaultUniqueKeyTracker: UniqueKeyTracker {
 
     let uniqueKeyStorage: PersistentUniqueKeysStorage
-    let inMemoryKeys = ConcurrentDictionarySet<String, String>()
+    let inMemoryKeys = SynchronizedDictionarySet<String, String>()
     init(persistentUniqueKeyStorage: PersistentUniqueKeysStorage) {
         self.uniqueKeyStorage = persistentUniqueKeyStorage
     }
