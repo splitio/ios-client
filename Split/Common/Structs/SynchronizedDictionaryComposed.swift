@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ConcurrentDictionaryComposed<K: Hashable, IK: Hashable> {
+class SynchronizedDictionaryComposed<K: Hashable, IK: Hashable> {
 
     private var queue: DispatchQueue = DispatchQueue(label: "split-concurrent-dictionary-map",
                                                      target: .global())

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SyncDictionary<K: Hashable, T> {
+class SynchronizedDictionary<K: Hashable, T> {
 
     private var queue: DispatchQueue = DispatchQueue(label: "split-sync-dictionary", target: .global())
     private var items = [K: T]()
