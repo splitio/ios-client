@@ -7,9 +7,9 @@
 
 import Foundation
 
-/// A thread-safe array.
 class ConcurrentArrayQueue<T> {
-    private let queue = DispatchQueue(label: "io.Split.Structs.ArraySerialBlockingQueue", attributes: .concurrent)
+    private let queue = DispatchQueue(label: "Split.ConcurrentArrayQueue",
+                                      attributes: .concurrent)
     private var array = [T]()
     private var firstAppend = true
 
@@ -27,9 +27,10 @@ class ConcurrentArrayQueue<T> {
         var element: T?
         queue.sync {
             if !array.isEmpty {
+                element = array[0]
                 queue.async(flags: .barrier) { [weak self] in
                     guard let self = self else { return }
-                    element = self.array.remove(at: 0)
+                    self.array.remove(at: 0)
                 }
             }
         }

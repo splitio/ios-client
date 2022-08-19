@@ -1,5 +1,5 @@
 //
-//  SynchronizedDictionaryWrapper.swift
+//  ConcurrentDictionaryList.swift
 //  Split
 //
 //  Created by Javier on 17/09/2018.
@@ -10,7 +10,8 @@ import Foundation
 
 class ConcurrentDictionaryList<K: Hashable, T> {
 
-    private var queue = DispatchQueue(label: "split-dictionary-list", attributes: .concurrent)
+    private var queue = DispatchQueue(label: "Split.ConcurrentDictionaryList",
+                                      attributes: .concurrent)
     private var items = [K: [T]]()
 
     var all: [K: [T]] {
@@ -71,7 +72,8 @@ class ConcurrentDictionaryList<K: Hashable, T> {
         var allItems: [K: [T]]?
         queue.sync {
             allItems = self.items
-            queue.async(flags: .barrier) {
+            queue.async(flags: .barrier) { [weak self] in
+                guard let self = self else { return }
                 self.items.removeAll()
             }
         }

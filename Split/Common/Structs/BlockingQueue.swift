@@ -19,7 +19,8 @@ class GenericBlockingQueue<Item> {
     private let semaphore: DispatchSemaphore
     private var isInterrupted = false
     init() {
-        dispatchQueue = DispatchQueue(label: "split-blocking-queue", attributes: .concurrent)
+        dispatchQueue = DispatchQueue(label: "Split.GenericBlockingQueue",
+                                      attributes: .concurrent)
         semaphore = DispatchSemaphore(value: 0)
         elements = [Item]()
     }
@@ -41,7 +42,10 @@ class GenericBlockingQueue<Item> {
                 throw BlockingQueueError.hasBeenInterrupted
             }
             item = elements[0]
-            self.elements.removeFirst()
+            dispatchQueue.async(flags: .barrier) { [weak self] in
+                guard let self = self else { return }
+                self.elements.removeFirst()
+            }
         }
         guard let foundItem = item else {
             throw BlockingQueueError.noElementAvailable

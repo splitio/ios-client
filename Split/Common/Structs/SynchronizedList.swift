@@ -30,7 +30,8 @@ class SynchronizedList<T> {
     }
 
     init(capacity: Int) {
-        self.queue = DispatchQueue(label: NSUUID().uuidString, target: .global())
+        self.queue = DispatchQueue(label: "Split.SynchronizedList",
+                                   target: .global())
         self.items = [T]()
         self.capacity = capacity
     }

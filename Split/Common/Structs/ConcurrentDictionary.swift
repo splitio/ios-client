@@ -30,7 +30,8 @@ class ConcurrentDictionary<K: Hashable, T> {
     }
 
     init() {
-        queue = DispatchQueue(label: NSUUID().uuidString, attributes: .concurrent)
+        queue = DispatchQueue(label: "Split.ConcurrentDictionary",
+                              attributes: .concurrent)
         items = [K: T]()
     }
 
@@ -110,7 +111,10 @@ class ConcurrentDictionary<K: Hashable, T> {
         var allItems: [K: T]!
         queue.sync {
             allItems = items
-            self.items.removeAll()
+            queue.async(flags: .barrier) {  [weak self] in
+                guard let self = self else { return }
+                self.items.removeAll()
+            }
         }
         return allItems
     }
