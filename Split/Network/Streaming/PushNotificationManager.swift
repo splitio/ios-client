@@ -22,7 +22,7 @@ protocol PushNotificationManager {
 class DefaultPushNotificationManager: PushNotificationManager {
 
     private let kSseKeepAliveTimeInSeconds = 70
-    private let kReconnectTimeBeforeTokenExpInASeconds = 600
+    private let kReconnectTimeBeforeTokenExpInASeconds: Int64 = 600
     private let kDisconnectOnBgTimeInSeconds = 60
     private let kTokenExpiredErrorCode = 40142
 
@@ -48,7 +48,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
 
 //    private var delayTimer: DelayTimer = DelayTimer()
-    private var delayTimer: CancellableTask?
+    private var delayTimer: DefaultTask?
 
     private let telemetryProducer: TelemetryRuntimeProducer?
 
@@ -64,7 +64,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
         self.telemetryProducer = telemetryProducer
         self.timersManager = timersManager
         self.sseClientFactory = sseClientFactory
-        self.timersManager.triggerHandler = timerHandler()
     }
 
     // MARK: Public
@@ -151,7 +150,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
         let lastId = lastConnId.value
         if connectionDelay > 0 {
             self.delayTimer?.cancel()
-            let delayTimer =  CancellableTask(delay: connectionDelay) { [weak self] in
+            let delayTimer =  DefaultTask(delay: connectionDelay) { [weak self] in
                 guard let self = self else { return }
                 if lastId != self.lastConnId.value { return }
                 self.connectSse(jwt: jwt)
@@ -240,26 +239,17 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     private func handleSubsystemUp() {
-        timersManager.add(timer: .refreshAuthToken, delayInSeconds: kReconnectTimeBeforeTokenExpInASeconds)
+        timersManager.add(timer: .refreshAuthToken, task: self.createRefreshTokenTask())
         broadcasterChannel.push(event: .pushSubsystemUp)
         telemetryProducer?.recordTokenRefreshes()
     }
 
-    private func timerHandler() -> TimersManager.TimerHandler {
-
-        return { [weak self] timerName in
-            guard let self = self else {
-                return
-            }
-
-            switch timerName {
-            case .refreshAuthToken:
-                self.telemetryProducer?.recordStreamingEvent(type: .connectionError,
-                                                        data: TelemetryStreamingEventValue.sseConnErrorRequested)
-                self.reset()
-            default:
-                Logger.d("No handler or timer: \(timerName)")
-            }
+    private func createRefreshTokenTask() -> CancellableTask {
+        return DefaultTask(delay: kReconnectTimeBeforeTokenExpInASeconds) { [weak self] in
+            guard let self = self else { return }
+            self.telemetryProducer?.recordStreamingEvent(type: .connectionError,
+                                                         data: TelemetryStreamingEventValue.sseConnErrorRequested)
+            self.reset()
         }
     }
 }

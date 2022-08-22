@@ -14,43 +14,30 @@ enum TimerName {
 }
 
 protocol TimersManager {
-    typealias TimerHandler = (TimerName) -> Void
-    var triggerHandler: TimerHandler? { get set }
-    func add(timer: TimerName, delayInSeconds: Int)
+    func add(timer: TimerName, task: CancellableTask)
     func cancel(timer: TimerName)
     func destroy()
 }
 
 class DefaultTimersManager: TimersManager {
-    private let timers = ConcurrentDictionary<TimerName, DispatchWorkItem>()
+    private let timers = ConcurrentDictionary<TimerName, CancellableTask>()
+    private let taskExecutor = TaskExecutor()
 
-    var triggerHandler: TimerHandler?
-
-    func add(timer: TimerName, delayInSeconds: Int) {
-        let workItem = DispatchWorkItem(block: { [weak self] in
-            if let self = self {
-                self.fireHandler(timer: timer)
-            }
-        })
-        timers.setValue(workItem, forKey: timer)
-        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + Double(delayInSeconds), execute: workItem)
+    func add(timer: TimerName, task: CancellableTask) {
+        timers.setValue(task, forKey: timer)
+        taskExecutor.run(task)
     }
 
     func cancel(timer: TimerName) {
-        let workItem = timers.takeValue(forKey: timer)
-        workItem?.cancel()
+        if let task = timers.takeValue(forKey: timer) {
+            task.cancel()
+        }
     }
 
     func destroy() {
         let all = timers.takeAll()
         all.forEach {
             $1.cancel()
-        }
-    }
-
-    private func fireHandler(timer: TimerName) {
-        if let handler = triggerHandler {
-            handler(timer)
         }
     }
 }

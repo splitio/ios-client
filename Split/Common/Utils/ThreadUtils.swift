@@ -20,18 +20,26 @@ class ThreadUtils {
     }
 }
 
-class CancellableTask {
+protocol CancellableTask {
     typealias Work = () -> Void
+    var taskId: Int64 { get }
+    var isCancelled: Bool { get }
+    var delay: Double { get }
+    var work: Work { get }
+    func cancel()
+}
+
+class DefaultTask: CancellableTask {
 
     private (set) var taskId: Int64
     private(set) var isCancelled = false
     private(set) var delay: Double
-    let work: Work
+    private(set) var work: Work
 
-    init(delay: Int64, _ work: @escaping Work) {
+    init(delay: Int64, work: @escaping Work) {
         self.taskId = Date().unixTimestampInMiliseconds()
-        self.work = work
         self.delay = Double(delay)
+        self.work = work
     }
     func cancel() {
         isCancelled = true
@@ -39,8 +47,6 @@ class CancellableTask {
 }
 
 struct TaskExecutor {
-    typealias Work = () -> Void
-
     func run(_ task: CancellableTask) {
         DispatchQueue.global().asyncAfter(deadline: .now() + task.delay) {
             if !task.isCancelled {

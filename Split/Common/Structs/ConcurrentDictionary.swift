@@ -101,7 +101,10 @@ class ConcurrentDictionary<K: Hashable, T> {
         queue.sync {
             value = self.items[key]
             if value != nil {
-                self.items.removeValue(forKey: key)
+                queue.async(flags: .barrier) {  [weak self] in
+                    guard let self = self else { return }
+                    self.items.removeValue(forKey: key)
+                }
             }
         }
         return value
