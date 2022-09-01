@@ -224,7 +224,8 @@ extension DefaultSplitClient {
     public func destroy(completion: (() -> Void)?) {
         isClientDestroyed = true
         treatmentManager.destroy()
-        DispatchQueue.global().async {
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else { return }
             if let clientManager = self.clientManager {
                 clientManager.destroy(forKey: self.key)
                 if let completion = completion {

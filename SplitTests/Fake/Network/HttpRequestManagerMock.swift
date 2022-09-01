@@ -11,8 +11,6 @@ import Foundation
 
 class HttpRequestManagerMock: HttpRequestManager {
 
-
-
     // Function counters
     var addRequestCallCount = 0
     var appendDataCallCount = 0
@@ -47,5 +45,12 @@ class HttpRequestManagerMock: HttpRequestManager {
         request.setResponse(code: responseCode)
         request.complete(error: nil)
         return setResponseCodeDummyValue
+    }
+
+    func destroy() {
+        addRequestCallCount = 0
+        appendDataCallCount = 0
+        setResponseCodeCallCount = 0
+        notifyErrorCallCount = 0
     }
 }

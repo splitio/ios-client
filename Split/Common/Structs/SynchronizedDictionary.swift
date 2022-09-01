@@ -1,5 +1,5 @@
 //
-//  SyncDictionary.swift
+//  SynchronizedDictionary.swift
 //  Split
 //
 //  Created by Javier on 12-Apr-2022.
@@ -8,9 +8,9 @@
 
 import Foundation
 
-class SyncDictionary<K: Hashable, T> {
+class SynchronizedDictionary<K: Hashable, T> {
 
-    private var queue: DispatchQueue = DispatchQueue(label: "split-sync-dictionary", target: .global())
+    private var queue: DispatchQueue = DispatchQueue(label: "Split.SynchronizedDictionary", target: .global())
     private var items = [K: T]()
 
     var all: [K: T] {

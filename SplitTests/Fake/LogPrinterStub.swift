@@ -11,9 +11,20 @@ import Foundation
 
 class LogPrinterStub: LogPrinter {
 
-    var logs = [String]()
+    private(set) var logs = [String]()
+
+    private let queue = DispatchQueue(label: "Split.LogPrinterStub",
+                                  target: .global())
 
     func stdout(_ items: Any...) {
-        logs.append(items.map { "\($0)" }.joined(separator: ","))
+        queue.sync {
+            self.logs.append(items.map { "\($0)" }.joined(separator: ","))
+        }
+    }
+
+    func clear() {
+        queue.sync {
+            self.logs.removeAll()
+        }
     }
 }

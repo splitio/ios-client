@@ -34,7 +34,8 @@ class DefaultPushManagerEventBroadcaster: PushManagerEventBroadcaster {
     var handlers = [IncomingMessageHandler]()
 
     func push(event: PushStatusEvent) {
-        messageQueue.async {
+        messageQueue.async { [weak self] in
+            guard let self = self else { return }
             for handler in self.handlers {
                 handler(event)
             }
@@ -42,13 +43,15 @@ class DefaultPushManagerEventBroadcaster: PushManagerEventBroadcaster {
     }
 
     func register(handler: @escaping IncomingMessageHandler) {
-        messageQueue.async(flags: .barrier) {
+        messageQueue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
             self.handlers.append(handler)
         }
     }
 
     func destroy() {
-        messageQueue.async(flags: .barrier) {
+        messageQueue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
             self.handlers.removeAll()
         }
     }

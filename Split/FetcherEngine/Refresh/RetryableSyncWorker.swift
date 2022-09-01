@@ -25,7 +25,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
 
     var completion: SyncCompletion?
     private var reconnectBackoffCounter: ReconnectBackoffCounter
-    private var splitEventsManager: SplitEventsManager
+    private weak var splitEventsManager: SplitEventsManager?
     private var isRunning: Atomic<Bool> = Atomic(false)
     private let syncQueue = DispatchQueue.global()
 
@@ -37,7 +37,8 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     }
 
     func start() {
-        syncQueue.async {
+        syncQueue.async { [weak self] in
+            guard let self = self else { return }
             if self.isRunning.value {
                 return
             }
@@ -48,7 +49,8 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     }
 
     func stop() {
-        syncQueue.async {
+        syncQueue.async { [weak self] in
+            guard let self = self else { return }
             self.isRunning.set(false)
         }
     }
@@ -70,15 +72,15 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     }
 
     func notifySplitsUpdated() {
-        splitEventsManager.notifyInternalEvent(.splitsUpdated)
+        splitEventsManager?.notifyInternalEvent(.splitsUpdated)
     }
 
     func notifyMySegmentsUpdated() {
-        splitEventsManager.notifyInternalEvent(.mySegmentsUpdated)
+        splitEventsManager?.notifyInternalEvent(.mySegmentsUpdated)
     }
 
     func isSdkReadyTriggered() -> Bool {
-        return self.splitEventsManager.eventAlreadyTriggered(event: .sdkReady)
+        return splitEventsManager?.eventAlreadyTriggered(event: .sdkReady) ?? false
     }
 
     func resetBackoffCounter() {
@@ -215,7 +217,6 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
     private let splitChangeProcessor: SplitChangeProcessor
     private let changeNumber: Int64
     private let syncHelper: SplitsSyncHelper
-    private let eventsManager: SplitEventsManager
     var changeChecker: SplitsChangesChecker
 
     init(splitsFetcher: HttpSplitFetcher,
@@ -230,7 +231,6 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         self.splitsStorage = splitsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.changeNumber = changeNumber
-        self.eventsManager = eventsManager
         self.changeChecker = DefaultSplitsChangesChecker()
 
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitsFetcher,

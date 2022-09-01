@@ -22,13 +22,11 @@ class TimersManagerTest: XCTestCase {
     func testAddTimer() {
         let exp = XCTestExpectation(description: "exp")
         var triggered = false
-        timersManager.triggerHandler = { timer in
-            if timer == .refreshAuthToken {
-                exp.fulfill()
-                triggered = true
-            }
+        let task = DefaultTask(delay: 1) {
+            exp.fulfill()
+            triggered = true
         }
-        timersManager.add(timer: .refreshAuthToken, delayInSeconds: 1)
+        timersManager.add(timer: .refreshAuthToken, task: task)
 
         wait(for: [exp], timeout: 3)
 
@@ -42,18 +40,18 @@ class TimersManagerTest: XCTestCase {
         let exp = XCTestExpectation(description: "exp")
         var triggered = false
         var cancelled = true
-        timersManager.triggerHandler = { timer in
-            switch timer {
-            case .refreshAuthToken:
-                cancelled = false
-            default:
-                exp.fulfill()
-                triggered = true
 
-            }
+        let task1 = DefaultTask(delay: 1) {
+            cancelled = false
         }
-        timersManager.add(timer: .refreshAuthToken, delayInSeconds: 1)
-        timersManager.add(timer: .appHostBgDisconnect, delayInSeconds: 3)
+
+        let task2 = DefaultTask(delay: 3) {
+            exp.fulfill()
+            triggered = true
+        }
+
+        timersManager.add(timer: .refreshAuthToken, task: task1)
+        timersManager.add(timer: .appHostBgDisconnect, task: task2)
         timersManager.cancel(timer: .refreshAuthToken)
         wait(for: [exp], timeout: 3)
 

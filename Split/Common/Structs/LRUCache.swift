@@ -22,14 +22,20 @@ class LRUCache<K: Hashable, E> {
         self.elements = [K: E]()
         self.elementsQueue = [K]()
         self.elementsQueue.reserveCapacity(capacity)
-        self.queue = DispatchQueue(label: "split-lru", attributes: .concurrent)
+        self.queue = DispatchQueue(label: "Split.LRUCache", attributes: .concurrent)
     }
 
     func set(_ element: E, for key: K) {
         queue.async(flags: .barrier) { [weak self] in
-            if let self = self {
-                self.put(element, for: key)
-            }
+            guard let self = self else { return }
+            self.put(element, for: key)
+        }
+    }
+
+    func clear() {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            self.elements.removeAll()
         }
     }
 
@@ -79,14 +85,10 @@ class LRUCache<K: Hashable, E> {
     }
 
     private func moveFirst(index: Int, key: K) {
-        let sem = DispatchSemaphore(value: 1)
-        queue.async(flags: .barrier) { [weak self] in
-            if let self = self {
-                self.elementsQueue.remove(at: index)
-                self.elementsQueue.insert(key, at: 0)
-            }
-            sem.signal()
+        self.queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            self.elementsQueue.remove(at: index)
+            self.elementsQueue.insert(key, at: 0)
         }
-        sem.wait()
     }
 }
