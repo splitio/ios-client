@@ -21,7 +21,7 @@ protocol MySegmentsStorage {
 
 class DefaultMySegmentsStorage: MySegmentsStorage {
 
-    private var inMemoryMySegments: ConcurrentDictionarySet<String, String> = ConcurrentDictionarySet()
+    private var inMemoryMySegments: SynchronizedDictionarySet<String, String> = SynchronizedDictionarySet()
     private let persistenStorage: PersistentMySegmentsStorage
 
     var keys: Set<String> {

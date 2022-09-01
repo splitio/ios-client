@@ -92,6 +92,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: params.initStopwatch)
 
+        components.destroy()
+
     }
 
     public func client(key: Key) -> SplitClient {

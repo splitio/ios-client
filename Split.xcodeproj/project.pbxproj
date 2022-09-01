@@ -106,10 +106,10 @@
 		3B6DEF8020EA6AE50067435E /* RestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEF820EA6AE30067435E /* RestClient.swift */; };
 		3B6DEF8120EA6AE50067435E /* DataResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEFA20EA6AE30067435E /* DataResult.swift */; };
 		3B6DEF8720EA6AE50067435E /* InfoUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0320EA6AE30067435E /* InfoUtils.swift */; };
-		3B6DEF8920EA6AE50067435E /* SynchronizedArrayQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0620EA6AE40067435E /* SynchronizedArrayQueue.swift */; };
+		3B6DEF8920EA6AE50067435E /* ConcurrentArrayQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0620EA6AE40067435E /* ConcurrentArrayQueue.swift */; };
 		3B6DEF8B20EA6AE50067435E /* FileStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0920EA6AE40067435E /* FileStorage.swift */; };
 		3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */; };
-		5903C497210A5E0900A754B0 /* ConcurrentList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* ConcurrentList.swift */; };
+		5903C497210A5E0900A754B0 /* SynchronizedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* SynchronizedList.swift */; };
 		5905D4CA2555F99D006DA3B1 /* GeneralInfoEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C02555F99D006DA3B1 /* GeneralInfoEntity.swift */; };
 		5905D4CC2555F99D006DA3B1 /* ImpressionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C22555F99D006DA3B1 /* ImpressionEntity.swift */; };
 		5905D4CE2555F99D006DA3B1 /* EventEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C42555F99D006DA3B1 /* EventEntity.swift */; };
@@ -412,7 +412,7 @@
 		95125629276BB85F0091895B /* TelemetryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95125628276BB85F0091895B /* TelemetryTest.swift */; };
 		951256412771318D0091895B /* SyncHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951256402771318D0091895B /* SyncHelper.swift */; };
 		9519A8F827D2AE2400278AEC /* AttributesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A8F727D2AE2400278AEC /* AttributesStorage.swift */; };
-		9519A90F27D686A900278AEC /* ConcurrentDictionaryComposed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A90E27D686A900278AEC /* ConcurrentDictionaryComposed.swift */; };
+		9519A90F27D686A900278AEC /* SynchronizedDictionaryComposed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A90E27D686A900278AEC /* SynchronizedDictionaryComposed.swift */; };
 		9519A91127D6935700278AEC /* ByKeyAttributesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A91027D6935700278AEC /* ByKeyAttributesStorage.swift */; };
 		9519A91527D6A10F00278AEC /* ByKeyAttributesStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A91427D6A10F00278AEC /* ByKeyAttributesStorageTests.swift */; };
 		9519A91727D6B9EE00278AEC /* AttributesStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A91627D6B9EE00278AEC /* AttributesStorageStub.swift */; };
@@ -483,7 +483,7 @@
 		955AAB8F283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AAB8E283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift */; };
 		955AAB922840182800ADFB07 /* ImpressionsNoneTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AAB912840182800ADFB07 /* ImpressionsNoneTest.swift */; };
 		955B59522804B52500D105CD /* ByKeyAttributesStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B59512804B52500D105CD /* ByKeyAttributesStorageStub.swift */; };
-		955B595428060CF100D105CD /* SyncDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595328060CF100D105CD /* SyncDictionary.swift */; };
+		955B595428060CF100D105CD /* SynchronizedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595328060CF100D105CD /* SynchronizedDictionary.swift */; };
 		955B595628076BB900D105CD /* MySegmentsPayloadDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595528076BB900D105CD /* MySegmentsPayloadDecoder.swift */; };
 		955B5960280DF75E00D105CD /* MySegmentsPayloadDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595F280DF75E00D105CD /* MySegmentsPayloadDecoderTest.swift */; };
 		955B59632811E8E700D105CD /* SplitClientManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B59622811E8E700D105CD /* SplitClientManagerTest.swift */; };
@@ -496,7 +496,7 @@
 		955BB499282ABC9D00762D7E /* ImpressionsTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955BB498282ABC9D00762D7E /* ImpressionsTracker.swift */; };
 		955BB49B282AF19B00762D7E /* ImpressionsTrackerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955BB49A282AF19B00762D7E /* ImpressionsTrackerStub.swift */; };
 		9560354327D01E8300E35BC8 /* MySegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9560354227D01E8300E35BC8 /* MySegmentsStorage.swift */; };
-		9560354527D0F53300E35BC8 /* ConcurrentDictionarySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9560354427D0F53300E35BC8 /* ConcurrentDictionarySet.swift */; };
+		9560354527D0F53300E35BC8 /* SynchronizedDictionarySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9560354427D0F53300E35BC8 /* SynchronizedDictionarySet.swift */; };
 		9560354927D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9560354827D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift */; };
 		9560354F27D16D5700E35BC8 /* MySegmentsStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9560354E27D16D5700E35BC8 /* MySegmentsStorageStub.swift */; };
 		95623DA82757FDDE0006A8F1 /* TelemetryProducerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95623DA72757FDDE0006A8F1 /* TelemetryProducerStub.swift */; };
@@ -594,7 +594,7 @@
 		956E42E5271DCCE7008B4DB6 /* SplitEventTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC620EA6AE20067435E /* SplitEventTask.swift */; };
 		956E42E6271DCCE7008B4DB6 /* ByKeyMySegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4D92559BB42006DA3B1 /* ByKeyMySegmentsStorage.swift */; };
 		956E42E7271DCCE7008B4DB6 /* EventEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C42555F99D006DA3B1 /* EventEntity.swift */; };
-		956E42E8271DCCE7008B4DB6 /* SynchronizedArrayQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0620EA6AE40067435E /* SynchronizedArrayQueue.swift */; };
+		956E42E8271DCCE7008B4DB6 /* ConcurrentArrayQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0620EA6AE40067435E /* ConcurrentArrayQueue.swift */; };
 		956E42E9271DCCE7008B4DB6 /* SecureDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9A20EA6AE00067435E /* SecureDataStore.swift */; };
 		956E42EA271DCCE7008B4DB6 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8620EA6AE00067435E /* Logger.swift */; };
 		956E42EB271DCCE7008B4DB6 /* SplitEventsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC520EA6AE20067435E /* SplitEventsManager.swift */; };
@@ -714,7 +714,7 @@
 		956E4362271DCCE7008B4DB6 /* SplitEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C82555F99D006DA3B1 /* SplitEntity.swift */; };
 		956E4363271DCCE7008B4DB6 /* LocalhostSplitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BD322158A07003DA248 /* LocalhostSplitClient.swift */; };
 		956E4364271DCCE7008B4DB6 /* PeriodicTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7B20EA6ADF0067435E /* PeriodicTaskManager.swift */; };
-		956E4365271DCCE7008B4DB6 /* ConcurrentList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* ConcurrentList.swift */; };
+		956E4365271DCCE7008B4DB6 /* SynchronizedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* SynchronizedList.swift */; };
 		956E4366271DCCE7008B4DB6 /* EvaluatorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9220EA6AE00067435E /* EvaluatorError.swift */; };
 		956E4367271DCCE7008B4DB6 /* CoreDataContextBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955892AA25C187EA00F67FBA /* CoreDataContextBuilder.swift */; };
 		956E4368271DCCE7008B4DB6 /* SplitConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9020EA6AE00067435E /* SplitConstants.swift */; };
@@ -1013,10 +1013,10 @@
 		3B6DEEF820EA6AE30067435E /* RestClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClient.swift; sourceTree = "<group>"; };
 		3B6DEEFA20EA6AE30067435E /* DataResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataResult.swift; sourceTree = "<group>"; };
 		3B6DEF0320EA6AE30067435E /* InfoUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoUtils.swift; sourceTree = "<group>"; };
-		3B6DEF0620EA6AE40067435E /* SynchronizedArrayQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizedArrayQueue.swift; sourceTree = "<group>"; };
+		3B6DEF0620EA6AE40067435E /* ConcurrentArrayQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentArrayQueue.swift; sourceTree = "<group>"; };
 		3B6DEF0920EA6AE40067435E /* FileStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileStorage.swift; sourceTree = "<group>"; };
 		3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEventActionTask.swift; sourceTree = "<group>"; };
-		5903C496210A5E0900A754B0 /* ConcurrentList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrentList.swift; sourceTree = "<group>"; };
+		5903C496210A5E0900A754B0 /* SynchronizedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizedList.swift; sourceTree = "<group>"; };
 		5905D4C02555F99D006DA3B1 /* GeneralInfoEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoEntity.swift; sourceTree = "<group>"; };
 		5905D4C22555F99D006DA3B1 /* ImpressionEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionEntity.swift; sourceTree = "<group>"; };
 		5905D4C42555F99D006DA3B1 /* EventEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEntity.swift; sourceTree = "<group>"; };
@@ -1301,7 +1301,7 @@
 		95125628276BB85F0091895B /* TelemetryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryTest.swift; sourceTree = "<group>"; };
 		951256402771318D0091895B /* SyncHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncHelper.swift; sourceTree = "<group>"; };
 		9519A8F727D2AE2400278AEC /* AttributesStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesStorage.swift; sourceTree = "<group>"; };
-		9519A90E27D686A900278AEC /* ConcurrentDictionaryComposed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentDictionaryComposed.swift; sourceTree = "<group>"; };
+		9519A90E27D686A900278AEC /* SynchronizedDictionaryComposed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizedDictionaryComposed.swift; sourceTree = "<group>"; };
 		9519A91027D6935700278AEC /* ByKeyAttributesStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByKeyAttributesStorage.swift; sourceTree = "<group>"; };
 		9519A91427D6A10F00278AEC /* ByKeyAttributesStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByKeyAttributesStorageTests.swift; sourceTree = "<group>"; };
 		9519A91627D6B9EE00278AEC /* AttributesStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesStorageStub.swift; sourceTree = "<group>"; };
@@ -1376,7 +1376,7 @@
 		955AAB8E283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpUniqueKeysRecorderStub.swift; sourceTree = "<group>"; };
 		955AAB912840182800ADFB07 /* ImpressionsNoneTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsNoneTest.swift; sourceTree = "<group>"; };
 		955B59512804B52500D105CD /* ByKeyAttributesStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByKeyAttributesStorageStub.swift; sourceTree = "<group>"; };
-		955B595328060CF100D105CD /* SyncDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncDictionary.swift; sourceTree = "<group>"; };
+		955B595328060CF100D105CD /* SynchronizedDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizedDictionary.swift; sourceTree = "<group>"; };
 		955B595528076BB900D105CD /* MySegmentsPayloadDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsPayloadDecoder.swift; sourceTree = "<group>"; };
 		955B595F280DF75E00D105CD /* MySegmentsPayloadDecoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsPayloadDecoderTest.swift; sourceTree = "<group>"; };
 		955B59622811E8E700D105CD /* SplitClientManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitClientManagerTest.swift; sourceTree = "<group>"; };
@@ -1389,7 +1389,7 @@
 		955BB498282ABC9D00762D7E /* ImpressionsTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTracker.swift; sourceTree = "<group>"; };
 		955BB49A282AF19B00762D7E /* ImpressionsTrackerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsTrackerStub.swift; sourceTree = "<group>"; };
 		9560354227D01E8300E35BC8 /* MySegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsStorage.swift; sourceTree = "<group>"; };
-		9560354427D0F53300E35BC8 /* ConcurrentDictionarySet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentDictionarySet.swift; sourceTree = "<group>"; };
+		9560354427D0F53300E35BC8 /* SynchronizedDictionarySet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizedDictionarySet.swift; sourceTree = "<group>"; };
 		9560354827D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByKeyMySegmentsStorageTests.swift; sourceTree = "<group>"; };
 		9560354E27D16D5700E35BC8 /* MySegmentsStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsStorageStub.swift; sourceTree = "<group>"; };
 		95623D8E275100770006A8F1 /* split_cache_v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v3.xcdatamodel; sourceTree = "<group>"; };
@@ -2022,14 +2022,14 @@
 		3B6DEF0520EA6AE40067435E /* Structs */ = {
 			isa = PBXGroup;
 			children = (
-				3B6DEF0620EA6AE40067435E /* SynchronizedArrayQueue.swift */,
-				5903C496210A5E0900A754B0 /* ConcurrentList.swift */,
+				3B6DEF0620EA6AE40067435E /* ConcurrentArrayQueue.swift */,
+				5903C496210A5E0900A754B0 /* SynchronizedList.swift */,
 				5905D4DE2559CA95006DA3B1 /* ConcurrentSet.swift */,
 				590DF9ED215038200082B94F /* ConcurrentDictionaryList.swift */,
-				9560354427D0F53300E35BC8 /* ConcurrentDictionarySet.swift */,
-				9519A90E27D686A900278AEC /* ConcurrentDictionaryComposed.swift */,
+				9560354427D0F53300E35BC8 /* SynchronizedDictionarySet.swift */,
+				9519A90E27D686A900278AEC /* SynchronizedDictionaryComposed.swift */,
 				592D2CF922088606007458F9 /* ConcurrentDictionary.swift */,
-				955B595328060CF100D105CD /* SyncDictionary.swift */,
+				955B595328060CF100D105CD /* SynchronizedDictionary.swift */,
 				95118EF2281C551A00782F33 /* KeyStorage.swift */,
 				952C2B7626447FDD009275B4 /* BlockingQueue.swift */,
 				953911A7267A4F250040433A /* LRUCache.swift */,
@@ -3137,7 +3137,7 @@
 				3B6DEF5A20EA6AE50067435E /* SplitEventTask.swift in Sources */,
 				5905D4DA2559BB42006DA3B1 /* ByKeyMySegmentsStorage.swift in Sources */,
 				5905D4CE2555F99D006DA3B1 /* EventEntity.swift in Sources */,
-				3B6DEF8920EA6AE50067435E /* SynchronizedArrayQueue.swift in Sources */,
+				3B6DEF8920EA6AE50067435E /* ConcurrentArrayQueue.swift in Sources */,
 				3B6DEF3520EA6AE50067435E /* SecureDataStore.swift in Sources */,
 				3B6DEF2720EA6AE50067435E /* Logger.swift in Sources */,
 				3B6DEF5920EA6AE50067435E /* SplitEventsManager.swift in Sources */,
@@ -3248,7 +3248,7 @@
 				95E8193E28786A1C00D99093 /* SplitLogLevel.swift in Sources */,
 				95DE8EA027C54858009FAC01 /* SplitDatabaseHelper.swift in Sources */,
 				95B1801027629B5E002DC9DF /* TelemetryStatsRecorder.swift in Sources */,
-				9560354527D0F53300E35BC8 /* ConcurrentDictionarySet.swift in Sources */,
+				9560354527D0F53300E35BC8 /* SynchronizedDictionarySet.swift in Sources */,
 				3B6DEF6620EA6AE50067435E /* EndsWithMatcher.swift in Sources */,
 				3B6DEF4B20EA6AE50067435E /* Split.swift in Sources */,
 				3B6DEF6A20EA6AE50067435E /* GreaterThanOrEqualToMatcher.swift in Sources */,
@@ -3268,7 +3268,7 @@
 				950B7417268F4716005FD649 /* ImpressionsMode.swift in Sources */,
 				95DFD14C260A156000776E0A /* ChangesChecker.swift in Sources */,
 				5905D4DF2559CA95006DA3B1 /* ConcurrentSet.swift in Sources */,
-				955B595428060CF100D105CD /* SyncDictionary.swift in Sources */,
+				955B595428060CF100D105CD /* SynchronizedDictionary.swift in Sources */,
 				3B6DEF6220EA6AE50067435E /* ContainsAnyOfSetMatcher.swift in Sources */,
 				95DE293727395E7300DB3EAD /* AttributeEntity.swift in Sources */,
 				595AD20A24DDC77C00A7B750 /* RestClient+SseAuthenticator.swift in Sources */,
@@ -3283,11 +3283,11 @@
 				954F9B16257110D700140B81 /* MySegmentsDao.swift in Sources */,
 				3B6DEF5F20EA6AE50067435E /* BaseMatcher.swift in Sources */,
 				5905D4D22555F99D006DA3B1 /* SplitEntity.swift in Sources */,
-				9519A90F27D686A900278AEC /* ConcurrentDictionaryComposed.swift in Sources */,
+				9519A90F27D686A900278AEC /* SynchronizedDictionaryComposed.swift in Sources */,
 				9519A91E27D947C300278AEC /* SyncCommons.swift in Sources */,
 				59D84BD422158A07003DA248 /* LocalhostSplitClient.swift in Sources */,
 				3B6DEF1D20EA6AE50067435E /* PeriodicTaskManager.swift in Sources */,
-				5903C497210A5E0900A754B0 /* ConcurrentList.swift in Sources */,
+				5903C497210A5E0900A754B0 /* SynchronizedList.swift in Sources */,
 				3B6DEF2F20EA6AE50067435E /* EvaluatorError.swift in Sources */,
 				955892AB25C187EA00F67FBA /* CoreDataContextBuilder.swift in Sources */,
 				95122A0E275822F600D93F90 /* TelemetryStats.swift in Sources */,
@@ -3696,7 +3696,7 @@
 				95D94469283BEE3700D7FFED /* UniqueKey.swift in Sources */,
 				956E42E6271DCCE7008B4DB6 /* ByKeyMySegmentsStorage.swift in Sources */,
 				956E42E7271DCCE7008B4DB6 /* EventEntity.swift in Sources */,
-				956E42E8271DCCE7008B4DB6 /* SynchronizedArrayQueue.swift in Sources */,
+				956E42E8271DCCE7008B4DB6 /* ConcurrentArrayQueue.swift in Sources */,
 				956E42E9271DCCE7008B4DB6 /* SecureDataStore.swift in Sources */,
 				956E42EA271DCCE7008B4DB6 /* Logger.swift in Sources */,
 				956E42EB271DCCE7008B4DB6 /* SplitEventsManager.swift in Sources */,
@@ -3826,7 +3826,7 @@
 				956E4362271DCCE7008B4DB6 /* SplitEntity.swift in Sources */,
 				956E4363271DCCE7008B4DB6 /* LocalhostSplitClient.swift in Sources */,
 				956E4364271DCCE7008B4DB6 /* PeriodicTaskManager.swift in Sources */,
-				956E4365271DCCE7008B4DB6 /* ConcurrentList.swift in Sources */,
+				956E4365271DCCE7008B4DB6 /* SynchronizedList.swift in Sources */,
 				956E4366271DCCE7008B4DB6 /* EvaluatorError.swift in Sources */,
 				956E4367271DCCE7008B4DB6 /* CoreDataContextBuilder.swift in Sources */,
 				956E4368271DCCE7008B4DB6 /* SplitConstants.swift in Sources */,

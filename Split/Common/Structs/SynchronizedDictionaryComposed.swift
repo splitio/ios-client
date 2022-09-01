@@ -1,5 +1,5 @@
 //
-//  ConcurrentDictionaryComposed.swift
+//  SynchronizedDictionaryComposed.swift
 //  Split
 //
 //  Created by Javier on 3-Mar-2022.
@@ -8,9 +8,9 @@
 
 import Foundation
 
-class ConcurrentDictionaryComposed<K: Hashable, IK: Hashable> {
+class SynchronizedDictionaryComposed<K: Hashable, IK: Hashable> {
 
-    private var queue: DispatchQueue = DispatchQueue(label: "split-concurrent-dictionary-map",
+    private var queue: DispatchQueue = DispatchQueue(label: "Split.SynchronizedDictionaryComposed",
                                                      target: .global())
     private var items = [K: [IK: Any]]()
 

@@ -42,45 +42,60 @@ class MultiClientStreamingResetTest: XCTestCase {
         sseHitCount = 0
     }
 
+    func testStress() {
+        for _ in 0..<2 {
+            sseHitCount = 0
+            authHitCount = 0
+            clients.removeAll()
+            execTest(delay: 0)
+
+            sseHitCount = 0
+            authHitCount = 0
+            clients.removeAll()
+            execTest(delay: 3)
+        }
+
+    }
+
     func testNoStreamingDelay() {
-        setupFactory()
-        execTest(delay: false)
+        execTest(delay: 0)
     }
 
     func testWithStreamingDelay() {
-        setupFactory(streamDelay: 3)
-        execTest(delay: true)
+        execTest(delay: 3)
     }
 
-    private func execTest(delay: Bool = false) {
+    private func execTest(delay: Int = 0) {
 
+        let expReady = XCTestExpectation(description: "Ready \(defaultKey)")
+        expAuth = XCTestExpectation(description: "Auth \(defaultKey)")
+
+        setupFactory(streamDelay: delay)
         var results = [String: String]()
         let defaultClient = factory.client
         clients[Key(matchingKey: defaultKey)] = defaultClient
-        let expReady = XCTestExpectation(description: "Ready \(defaultKey)")
-        expAuth = XCTestExpectation(description: "Auth \(defaultKey)")
+
         defaultClient.on(event: SplitEvent.sdkReady) {
             expReady.fulfill()
             results[self.defaultKey] = defaultClient.getTreatment(self.splitName)
         }
 
         var exps = [expReady, expAuth!]
-        if !delay {
+        if delay < 1 {
             expSse = (XCTestExpectation(description: "Streaming \(defaultKey)"))
             exps.append(expSse!)
         }
-        wait(for: exps, timeout: 5)
+        wait(for: exps, timeout: 20)
         let keyCount = 3
         for i in 1...3 {
             let key = Key(matchingKey: "key_\(i)")
-            let client = factory.client(key: key)
-            self.clients[key] = client
             let expReady = XCTestExpectation(description: "Ready \(key.matchingKey)")
             self.expAuth = XCTestExpectation(description: "Auth \(key.matchingKey)")
-
+            let client = factory.client(key: key)
+            self.clients[key] = client
             var exps = [expReady, expAuth!]
-            if !delay || i == keyCount {
-                self.expSse = (XCTestExpectation(description: "Streaming \(defaultKey)"))
+            if delay < 1 || i == keyCount {
+                self.expSse = (XCTestExpectation(description: "Streaming \(key.matchingKey)"))
                 exps.append(expSse!)
             }
 
@@ -88,7 +103,8 @@ class MultiClientStreamingResetTest: XCTestCase {
                 expReady.fulfill()
                 results[key.matchingKey] = client.getTreatment(self.splitName)
             }
-            wait(for: exps, timeout: 10)
+            print("---------------------------------------------")
+            wait(for: exps, timeout: 20)
         }
 
         // defaultKey is whitelisted.
@@ -101,7 +117,7 @@ class MultiClientStreamingResetTest: XCTestCase {
         }
         XCTAssertEqual(clients.count, authHitCount)
 
-        if !delay {
+        if delay < 1 {
             XCTAssertEqual(clients.count, sseHitCount)
         } else {
             XCTAssertEqual(1, sseHitCount)
@@ -151,9 +167,7 @@ class MultiClientStreamingResetTest: XCTestCase {
         return { request in
             self.sseHitCount+=1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                self.expSse?.fulfill()
-            }
+            self.expSse?.fulfill()
             return self.streamingBinding!
         }
     }

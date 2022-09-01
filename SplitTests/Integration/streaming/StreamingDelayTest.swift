@@ -135,16 +135,73 @@ class StreamingDelaytTest: XCTestCase {
         notificationHelper.simulateApplicationDidEnterBackground()
         ThreadUtils.delay(seconds: 1)
 
+        sseExp = XCTestExpectation()
         var time1 = Date().unixTimestamp()
         notificationHelper.simulateApplicationDidBecomeActive()
 
-        sseExp = XCTestExpectation()
         wait(for: [sseExp], timeout: 10)
         time1 = Date().unixTimestamp() - time1
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertTrue(time > 3)
+        print("TIME 1: \(time1)")
         XCTAssertTrue(time1 > 3)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+    }
+
+    func testDelayOnReconnectStress() throws {
+        sseConDelay = 2
+        let config = TestingHelper.basicStreamingConfig()
+        let notificationHelper = NotificationHelperStub()
+
+        let key: Key = Key(matchingKey: userKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
+        _ = builder.setNotificationHelper(notificationHelper)
+        let factory = builder.setApiKey(apiKey).setKey(key)
+            .setConfig(config).build()!
+
+        let client = factory.client
+
+
+
+        var time = Date().unixTimestamp()
+
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 10)
+        time = Date().unixTimestamp() - time
+
+        var times = [Int64]()
+        for _ in 0..<10 {
+            notificationHelper.simulateApplicationDidEnterBackground()
+            ThreadUtils.delay(seconds: 1)
+
+            sseExp = XCTestExpectation()
+            let time1 = Date().unixTimestamp()
+            notificationHelper.simulateApplicationDidBecomeActive()
+
+            wait(for: [sseExp], timeout: 10)
+            times.append( Date().unixTimestamp() - time1)
+        }
+
+
+        XCTAssertTrue(time >= 2)
+
+        for i in 0..<10 {
+            XCTAssertTrue(times[i] >= 2)
+        }
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {

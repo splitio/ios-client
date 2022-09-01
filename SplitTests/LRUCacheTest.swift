@@ -84,6 +84,8 @@ class LRUCacheTest: XCTestCase {
                 let _ = cache.element(for: i)
             }
         }
+
+        cache.clear()
     }
 
     override func tearDown() {

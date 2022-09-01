@@ -38,8 +38,8 @@ class InMemoryTelemetryStorage: TelemetryStorage {
 
     // Streaming events
     static let kMaxStreamingEventsCount: Int = 20 // Visible for testing
-    private let streamingEvents: ConcurrentList<TelemetryStreamingEvent> =
-        ConcurrentList(capacity: kMaxStreamingEventsCount)
+    private let streamingEvents: SynchronizedList<TelemetryStreamingEvent> =
+        SynchronizedList(capacity: kMaxStreamingEventsCount)
 
     // Tags
     static let kMaxTagsCount = 10 // Visible for testing

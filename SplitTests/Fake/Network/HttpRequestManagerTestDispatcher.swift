@@ -94,5 +94,6 @@ class HttpRequestManagerTestDispatcher: HttpRequestManager {
         return true
     }
 
-    
+    func destroy() {
+    }
 }

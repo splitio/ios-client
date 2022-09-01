@@ -11,13 +11,12 @@ import XCTest
 @testable import Split
 
 class TimersManagerMock: TimersManager {
-    var triggerHandler: TimerHandler?
 
     private var timersAdded = Set<TimerName>()
     private var timersCancelled = Set<TimerName>()
     private var expectations = [TimerName: XCTestExpectation]()
 
-    func add(timer: TimerName, delayInSeconds: Int) {
+    func add(timer: TimerName, task: CancellableTask) {
         _ = DispatchQueue.global().sync {
             self.timersAdded.insert(timer)
         }
@@ -62,6 +61,9 @@ class TimersManagerMock: TimersManager {
                 self.timersCancelled.removeAll()
             }
         }
+    }
+
+    func destroy() {
     }
 }
 

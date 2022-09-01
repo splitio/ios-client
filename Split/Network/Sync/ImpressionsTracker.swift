@@ -131,6 +131,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         periodicImpressionsRecorderWoker?.destroy()
         periodicImpressionsCountRecorderWoker?.destroy()
         periodicUniqueKeysRecorderWorker?.destroy()
+        impressionsObserver.stop()
     }
 
     private func saveImpressionsCount() {

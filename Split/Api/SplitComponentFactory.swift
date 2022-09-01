@@ -307,4 +307,8 @@ class SplitComponentFactory {
         }
         throw ComponentError.notFound(name: "SyncWorkerFactory")
     }
+
+    func destroy() {
+        components.removeAll()
+    }
 }

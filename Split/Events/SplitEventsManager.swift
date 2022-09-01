@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol SplitEventsManager {
+protocol SplitEventsManager: AnyObject {
     var executorResources: SplitEventExecutorResources { get }
     func register(event: SplitEvent, task: SplitEventTask)
     func notifyInternalEvent(_ event: SplitInternalEvent)
@@ -99,9 +99,12 @@ class DefaultSplitEventsManager: SplitEventsManager {
         dataAccessQueue.async { [weak self] in
             guard let self = self else { return }
             self.isStarted = false
+            self.subscriptions.removeAll()
             self.processQueue.sync {
                 self.eventsQueue.interrupt()
+                self.eventsQueue.stop()
             }
+
         }
     }
 

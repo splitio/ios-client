@@ -17,6 +17,7 @@ protocol HttpRequestManager {
     func append(data: Data, to taskIdentifier: Int)
     func complete(taskIdentifier: Int, error: HttpError?)
     func set(responseCode: Int, to taskIdentifier: Int) -> Bool
+    func destroy()
 }
 
 class DefaultHttpRequestManager: NSObject {
@@ -83,5 +84,9 @@ extension DefaultHttpRequestManager: HttpRequestManager {
         if let request = requests.get(identifier: taskIdentifier) as? HttpDataReceivingRequest {
             request.notifyIncomingData(data)
         }
+    }
+
+    func destroy() {
+        requests.clear()
     }
 }

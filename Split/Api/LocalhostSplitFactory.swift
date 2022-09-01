@@ -23,7 +23,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         let eventsManager: SplitEventsManager
     }
 
-    private var clients = SyncDictionary<String, LocalhostComponentsGroup>()
+    private var clients = SynchronizedDictionary<String, LocalhostComponentsGroup>()
 
     @objc public static var sdkVersion: String {
         return Version.semantic
