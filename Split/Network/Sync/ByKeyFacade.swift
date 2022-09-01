@@ -63,8 +63,7 @@ class DefaultByKeyFacade: ByKeyFacade {
         group.mySegmentsSynchronizer.destroy()
         group.attributesStorage.destroy()
         group.eventsManager.stop()
-        let caca = byKeyComponents.removeAndCount(forKey: key)
-        return caca
+        return byKeyComponents.removeAndCount(forKey: key)
     }
 
     func loadMySegmentsFromCache(forKey key: String) {
