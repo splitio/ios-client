@@ -38,9 +38,9 @@ class EventsRecorderWorker: RecorderWorker {
                     _ = try eventsRecorder.execute(events)
                     // Removing sent events
                     eventsStorage.delete(events)
-                    Logger.d("Event posted successfully")
+                    Logger.i("Events posted successfully")
                 } catch let error {
-                    Logger.e("Event error: \(String(describing: error))")
+                    Logger.e("Events error: \(String(describing: error))")
                     failedEvents.append(contentsOf: events)
                 }
             }

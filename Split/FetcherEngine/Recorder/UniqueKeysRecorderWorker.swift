@@ -31,14 +31,14 @@ class UniqueKeysRecorderWorker: RecorderWorker {
             let keys = uniqueKeyStorage.pop(count: rowsPerPush)
             rowCount = keys.count
             if rowCount > 0 {
-                Logger.d("Sending uniqueKey")
+                Logger.d("Sending unique keys")
                 do {
                     _ = try uniqueKeysRecorder.execute(group(keys: keys))
                     // Removing sent uniqueKey
                     uniqueKeyStorage.delete(keys)
-                    Logger.d("Impression posted successfully")
+                    Logger.i("Unique keys posted successfully")
                 } catch let error {
-                    Logger.e("Impression error: \(String(describing: error))")
+                    Logger.e("Unique keys error: \(String(describing: error))")
                     failedUniqueKeys.append(contentsOf: keys)
                 }
             }

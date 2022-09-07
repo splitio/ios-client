@@ -8,10 +8,7 @@
 
 import Foundation
 
-typealias ConcurrentDictionary = SyncDictionarySingleWrapper
-
-// TODO: Rename SyncDictionarySingleWrapper -> ConcurrentDictionary in specific PR for that
-class SyncDictionarySingleWrapper<K: Hashable, T> {
+class ConcurrentDictionary<K: Hashable, T> {
 
     private var queue: DispatchQueue
     private var items: [K: T]
@@ -33,7 +30,8 @@ class SyncDictionarySingleWrapper<K: Hashable, T> {
     }
 
     init() {
-        queue = DispatchQueue(label: NSUUID().uuidString, attributes: .concurrent)
+        queue = DispatchQueue(label: "Split.ConcurrentDictionary",
+                              attributes: .concurrent)
         items = [K: T]()
     }
 
@@ -46,33 +44,41 @@ class SyncDictionarySingleWrapper<K: Hashable, T> {
     }
 
     func removeValue(forKey key: K) {
-        queue.async(flags: .barrier) {
-            self.items.removeValue(forKey: key)
-        }
-    }
-
-    func removeValues(forKeys keys: Dictionary<K, T>.Keys) {
-        queue.async(flags: .barrier) {
-            for key in keys {
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
                 self.items.removeValue(forKey: key)
             }
         }
     }
 
+    func removeValues(forKeys keys: Dictionary<K, T>.Keys) {
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                for key in keys {
+                    self.items.removeValue(forKey: key)
+                }
+            }
+        }
+    }
+
     func removeAll() {
-        queue.async(flags: .barrier) {
-            self.items.removeAll()
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.items.removeAll()
+            }
         }
     }
 
     func setValue(_ value: T, forKey key: K) {
-        queue.async(flags: .barrier) {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
             self.items[key] = value
         }
     }
 
     func setValues(_ values: [K: T]) {
-        queue.async(flags: .barrier) {
+        queue.async(flags: .barrier) {  [weak self] in
+            guard let self = self else { return }
             self.items.removeAll()
             for (key, value) in values {
                 self.items[key] = value
@@ -81,9 +87,11 @@ class SyncDictionarySingleWrapper<K: Hashable, T> {
     }
 
     func putValues(_ values: [K: T]) {
-        queue.async(flags: .barrier) {
-            for (key, value) in values {
-                self.items[key] = value
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                for (key, value) in values {
+                    self.items[key] = value
+                }
             }
         }
     }
@@ -93,7 +101,8 @@ class SyncDictionarySingleWrapper<K: Hashable, T> {
         queue.sync {
             value = self.items[key]
             if value != nil {
-                queue.async(flags: .barrier) {
+                queue.async(flags: .barrier) {  [weak self] in
+                    guard let self = self else { return }
                     self.items.removeValue(forKey: key)
                 }
             }
@@ -105,7 +114,8 @@ class SyncDictionarySingleWrapper<K: Hashable, T> {
         var allItems: [K: T]!
         queue.sync {
             allItems = items
-            queue.async(flags: .barrier) {
+            queue.async(flags: .barrier) {  [weak self] in
+                guard let self = self else { return }
                 self.items.removeAll()
             }
         }

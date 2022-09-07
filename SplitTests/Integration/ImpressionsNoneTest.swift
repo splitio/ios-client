@@ -331,13 +331,13 @@ class ImpressionsNoneTest: XCTestCase {
 
             case let(urlString) where urlString.contains("keys/cs"):
                 self.queue.sync {
-                    if let exp = self.impExp {
-                        exp.fulfill()
-                    }
                     if let body = request.body?.stringRepresentation.utf8 {
                         if let keys = try? Json.encodeFrom(json: String(body), to: UniqueKeys.self) {
                             self.uniqueKeys.append(keys)
                         }
+                    }
+                    if let exp = self.impExp {
+                        exp.fulfill()
                     }
                 }
                 return TestDispatcherResponse(code: 200)

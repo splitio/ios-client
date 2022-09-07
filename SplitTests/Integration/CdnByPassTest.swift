@@ -65,7 +65,7 @@ class CdnByPassTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation, sseExp], timeout: 100)
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
 
         streamingBinding?.push(message: ":keepalive")
 

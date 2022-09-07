@@ -24,7 +24,7 @@ class SynchronizerTest: XCTestCase {
     var splitsStorage: SplitsStorageStub!
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
 
-    var updateWorkerCatalog = SyncDictionarySingleWrapper<Int64, RetryableSyncWorker>()
+    var updateWorkerCatalog = ConcurrentDictionary<Int64, RetryableSyncWorker>()
     var syncWorkerFactory: SyncWorkerFactoryStub!
 
     var synchronizer: Synchronizer!

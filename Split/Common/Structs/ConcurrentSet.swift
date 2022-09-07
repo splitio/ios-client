@@ -9,7 +9,8 @@
 import Foundation
 
 class ConcurrentSet<T: Hashable> {
-    private var queue = DispatchQueue(label: "split-concurrent-set", attributes: .concurrent)
+    private var queue = DispatchQueue(label: "Split.ConcurrentSet",
+                                      attributes: .concurrent)
     private var items: Set<T> = Set<T>()
     private var capacity: Int = -1
 
@@ -44,27 +45,33 @@ class ConcurrentSet<T: Hashable> {
            count >= capacity {
             return
         }
-        queue.async(flags: .barrier) {
-            self.items.insert(item)
-        }
-    }
-
-    func set(_ items: [T]) {
-        queue.async(flags: .barrier) {
-            if self.capacity > 0,
-               items.count >= self.capacity {
-                return
-            }
-            self.items.removeAll()
-            for item in items {
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
                 self.items.insert(item)
             }
         }
     }
 
+    func set(_ items: [T]) {
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                if self.capacity > 0,
+                   items.count >= self.capacity {
+                    return
+                }
+                self.items.removeAll()
+                for item in items {
+                    self.items.insert(item)
+                }
+            }
+        }
+    }
+
     func removeAll() {
-        queue.async(flags: .barrier) {
-            self.items.removeAll()
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.items.removeAll()
+            }
         }
     }
 
@@ -72,8 +79,10 @@ class ConcurrentSet<T: Hashable> {
         var allItems: Set<T>?
         queue.sync {
             allItems = self.items
-            queue.async(flags: .barrier) {
-                self.items.removeAll()
+            queue.async(flags: .barrier) { [weak self] in
+                if let self = self {
+                    self.items.removeAll()
+                }
             }
         }
         return allItems ?? Set<T>()

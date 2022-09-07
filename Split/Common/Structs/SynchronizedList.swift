@@ -8,10 +8,7 @@
 
 import Foundation
 
-typealias ConcurrentList = SynchronizedArrayWrapper
-
-// TODO: Rename SynchronizedArrayWrapper -> ConcurrentList in specific PR for that
-class SynchronizedArrayWrapper<T> {
+class SynchronizedList<T> {
     private var queue: DispatchQueue
     private var items: [T]
     private var capacity: Int
@@ -33,7 +30,8 @@ class SynchronizedArrayWrapper<T> {
     }
 
     init(capacity: Int) {
-        self.queue = DispatchQueue(label: NSUUID().uuidString, attributes: .concurrent)
+        self.queue = DispatchQueue(label: "Split.SynchronizedList",
+                                   target: .global())
         self.items = [T]()
         self.capacity = capacity
     }
@@ -43,29 +41,28 @@ class SynchronizedArrayWrapper<T> {
     }
 
     func append(_ item: T) {
-
-        queue.async(flags: .barrier) {
-            if self.capacity > -1,
-               self.items.count >= self.capacity {
+        queue.sync {
+            if capacity > -1,
+               items.count >= self.capacity {
                 return
             }
-            self.items.append(item)
+            items.append(item)
         }
     }
 
     func removeAll() {
-        queue.async(flags: .barrier) {
+        queue.sync {
             self.items.removeAll()
         }
     }
 
     func append(_ items: [T]) {
-        queue.async(flags: .barrier) {
-            if self.capacity > -1 {
-                if self.items.count >= self.capacity {
+        queue.sync {
+            if capacity > -1 {
+                if items.count >= capacity {
                     return
                 }
-                let appendCount = self.capacity - self.items.count
+                let appendCount = capacity - self.items.count
                 if appendCount < 1 {
                     return
                 }
@@ -77,20 +74,29 @@ class SynchronizedArrayWrapper<T> {
     }
 
     func fill(with newItems: [T]) {
-        queue.async(flags: .barrier) {
-            self.items.removeAll()
-            self.items.append(contentsOf: newItems)
+        queue.sync {
+                items.removeAll()
+                items.append(contentsOf: newItems)
         }
     }
 
     func takeAll() -> [T] {
-        var allItems: [T]!
+        var allItems: [T]?
         queue.sync {
             allItems = self.items
-            queue.async(flags: .barrier) {
-                self.items.removeAll()
+            self.items.removeAll()
+        }
+        return allItems ?? []
+    }
+
+    func takeFirst() -> T? {
+        var item: T?
+        queue.sync {
+            if items.count > 0 {
+                item = self.items.first
+                self.items.removeFirst()
             }
         }
-        return allItems
+        return item
     }
 }

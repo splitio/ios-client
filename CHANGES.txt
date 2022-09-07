@@ -1,3 +1,13 @@
+2.16.2: (Sep 1, 2022)
+- Memory handling improvements.
+
+2.16.1: (Aug 8, 2022)
+- Reverted xcode warning fix preventing Swift Package Manager to work properly 
+
+2.16.0: (Jul 27, 2022)
+- Improved log handling by adding log level config. Deprecating old verbose and debug flags.
+- Fixed some memory leaks found.
+
 2.15.0: (Jun 24, 2022)
 - Added a new config option to control the tasks that listen or poll for updates on feature flags and segments, via the new config syncEnabled . Running online Split will always pull the most recent updates upon initialization, this only affects updates fetching on a running instance. Useful when a consistent session experience is a must or to save resources when updates are not being used.
 - Updated the synchronization flow to be more reliable in the event of an edge case generating delay in cache purge propagation, keeping the SDK cache properly synced.

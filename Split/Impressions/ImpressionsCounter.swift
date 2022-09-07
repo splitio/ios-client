@@ -13,11 +13,12 @@ class ImpressionsCounter {
         let featureName: String
         let timeframe: Int64
     }
-    private let queue: DispatchQueue = DispatchQueue(label: "split-impressions-counter", target: .global())
+    private let queue: DispatchQueue = DispatchQueue(label: "split-impressions-counter", attributes: .concurrent)
     private var counts = [Key: Int]()
 
     func inc(featureName: String, timeframe: Int64, amount: Int) {
-        queue.async {
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
             let truncatedTimeframe = Date.truncateTimeframe(millis: timeframe)
             let key = Key(featureName: featureName, timeframe: truncatedTimeframe)
             self.counts[key] = (self.counts[key] ?? 0) + amount

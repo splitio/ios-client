@@ -26,6 +26,7 @@ class DefaultPeriodicTimer: PeriodicTimer {
         self.intervalInSecs = intervalInSecs
         self.isRunning = Atomic(false)
         fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
+        self.fetchTimer.resume()
     }
 
     convenience init(interval intervalInSecs: Int) {
@@ -36,14 +37,13 @@ class DefaultPeriodicTimer: PeriodicTimer {
         if !isRunning.getAndSet(true) {
             fetchTimer.schedule(deadline: .now() + .seconds(deadLineInSecs),
                                 repeating: .seconds(intervalInSecs))
-            fetchTimer.resume()
+//            fetchTimer.resume()
         }
     }
 
     func stop() {
-        if isRunning.getAndSet(false) {
-            fetchTimer.suspend()
-        }
+        // Not suspending the timer to avoid crashes
+        isRunning.set(false)
     }
 
     func destroy() {
@@ -51,14 +51,19 @@ class DefaultPeriodicTimer: PeriodicTimer {
     }
 
     func handler( _ handler: @escaping () -> Void) {
-        fetchTimer.setEventHandler(handler: handler)
+        let action = { [weak self] in
+            if let self = self, self.isRunning.value {
+                handler()
+            }
+        }
+        fetchTimer.setEventHandler(handler: action)
     }
 
-    deinit {
-        // This line is necessary to avoid timer crashing
-        // because is not possible to release a suspended timer
-        fetchTimer.resume()
-    }
+//    deinit {
+//        // This line is necessary to avoid timer crashing
+//        // because is not possible to release a suspended timer
+////        fetchTimer.resume()
+//    }
 
 }
 
@@ -76,7 +81,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
 
     private var fetchTimer: PeriodicTimer
     private let fetchQueue = DispatchQueue.global()
-    private let eventsManager: SplitEventsManager
+    private weak var eventsManager: SplitEventsManager?
     private var isPaused: Atomic<Bool> = Atomic(false)
 
     init(timer: PeriodicTimer,
@@ -125,7 +130,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 
     func isSdkReadyFired() -> Bool {
-        return eventsManager.eventAlreadyTriggered(event: .sdkReady)
+        return eventsManager?.eventAlreadyTriggered(event: .sdkReady) ?? false
     }
 
     func fetchFromRemote() {
@@ -133,11 +138,11 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 
     func notifyMySegmentsUpdated() {
-        eventsManager.notifyInternalEvent(.mySegmentsUpdated)
+        eventsManager?.notifyInternalEvent(.mySegmentsUpdated)
     }
 
     func notifySplitsUpdated() {
-        eventsManager.notifyInternalEvent(.splitsUpdated)
+        eventsManager?.notifyInternalEvent(.splitsUpdated)
     }
 }
 
@@ -218,6 +223,8 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                 if changeChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segments) {
                     mySegmentsStorage.set(segments)
                     notifyMySegmentsUpdated()
+                    Logger.i("My Segments have been updated")
+                    Logger.v(segments.joined(separator: ","))
                 }
             }
         } catch let error {

@@ -1,5 +1,5 @@
 //
-//  SynchronizedDictionaryWrapper.swift
+//  ConcurrentDictionaryList.swift
 //  Split
 //
 //  Created by Javier on 17/09/2018.
@@ -8,12 +8,10 @@
 
 import Foundation
 
-typealias ConcurrentDictionaryList = SyncDictionaryCollectionWrapper
+class ConcurrentDictionaryList<K: Hashable, T> {
 
-// TODO: Rename SyncDictionaryCollectionWrapper -> ConcurrentDictionaryList in specific PR for that
-class SyncDictionaryCollectionWrapper<K: Hashable, T> {
-
-    private var queue = DispatchQueue(label: "split-dictionary-list", attributes: .concurrent)
+    private var queue = DispatchQueue(label: "Split.ConcurrentDictionaryList",
+                                      attributes: .concurrent)
     private var items = [K: [T]]()
 
     var all: [K: [T]] {
@@ -43,24 +41,30 @@ class SyncDictionaryCollectionWrapper<K: Hashable, T> {
     }
 
     func removeValues(forKeys keys: [K]) {
-        queue.async(flags: .barrier) {
-            for key in keys {
-                self.items.removeValue(forKey: key)
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                for key in keys {
+                    self.items.removeValue(forKey: key)
+                }
             }
         }
     }
 
     func removeAll() {
-        queue.async(flags: .barrier) {
-            self.items.removeAll()
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.items.removeAll()
+            }
         }
     }
 
     func appendValue(_ value: T, toKey key: K) {
-        queue.async(flags: .barrier) {
-            var values = self.items[key] ?? []
-            values.append(value)
-            self.items[key] = values
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                var values = self.items[key] ?? []
+                values.append(value)
+                self.items[key] = values
+            }
         }
     }
 
@@ -68,7 +72,8 @@ class SyncDictionaryCollectionWrapper<K: Hashable, T> {
         var allItems: [K: [T]]?
         queue.sync {
             allItems = self.items
-            queue.async(flags: .barrier) {
+            queue.async(flags: .barrier) { [weak self] in
+                guard let self = self else { return }
                 self.items.removeAll()
             }
         }

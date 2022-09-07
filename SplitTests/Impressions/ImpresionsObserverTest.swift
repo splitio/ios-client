@@ -31,7 +31,7 @@ class ImpressionsObserverTest: XCTestCase {
 
     func testConcurrencyVsAccuracy() throws {
         let observer = ImpressionsObserver(size: 5000)
-        let impressions = SynchronizedArrayWrapper<KeyImpression>()
+        let impressions = SynchronizedList<KeyImpression>()
 
 
         let operationQueue = OperationQueue()
@@ -48,7 +48,7 @@ class ImpressionsObserverTest: XCTestCase {
         }
     }
 
-    func caller(observer: ImpressionsObserver, count: Int, impressions: SynchronizedArrayWrapper<KeyImpression> ) {
+    func caller(observer: ImpressionsObserver, count: Int, impressions: SynchronizedList<KeyImpression> ) {
 
         for _ in 0..<count {
             var impression = KeyImpression(featureName: "feature_\(Int.random(in: 1..<10))",

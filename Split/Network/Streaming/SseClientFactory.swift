@@ -17,8 +17,6 @@ class DefaultSseClientFactory: SseClientFactory {
     private let httpClient: HttpClient
     private let sseHandler: SseHandler
 
-    var clients = [SseClient]()
-
     init(endpoint: Endpoint,
          httpClient: HttpClient,
          sseHandler: SseHandler) {

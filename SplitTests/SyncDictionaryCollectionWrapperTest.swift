@@ -11,9 +11,9 @@ import XCTest
 
 class SyncDictionaryCollectionWrapperTest: XCTestCase {
 
-    var dic: SyncDictionaryCollectionWrapper<String, String>!
+    var dic: ConcurrentDictionaryList<String, String>!
     override func setUp() {
-        dic = SyncDictionaryCollectionWrapper()
+        dic = ConcurrentDictionaryList()
         dic.appendValue("k1value1", toKey: "key1")
         dic.appendValue("k1value2", toKey: "key1")
         dic.appendValue("k1value3", toKey: "key1")

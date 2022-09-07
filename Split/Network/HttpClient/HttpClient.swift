@@ -127,6 +127,7 @@ class DefaultHttpClient {
     }
 
     deinit {
+        requestManager.destroy()
         httpSession.finalize()
     }
 }

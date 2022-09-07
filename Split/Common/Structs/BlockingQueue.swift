@@ -19,15 +19,18 @@ class GenericBlockingQueue<Item> {
     private let semaphore: DispatchSemaphore
     private var isInterrupted = false
     init() {
-        dispatchQueue = DispatchQueue(label: "split-blocking-queue", attributes: .concurrent)
+        dispatchQueue = DispatchQueue(label: "Split.GenericBlockingQueue",
+                                      attributes: .concurrent)
         semaphore = DispatchSemaphore(value: 0)
         elements = [Item]()
     }
 
     func add(_ item: Item) {
-        dispatchQueue.async(flags: .barrier) {
-            self.elements.append(item)
-            self.semaphore.signal()
+        dispatchQueue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.elements.append(item)
+                self.semaphore.signal()
+            }
         }
     }
 
@@ -39,7 +42,10 @@ class GenericBlockingQueue<Item> {
                 throw BlockingQueueError.hasBeenInterrupted
             }
             item = elements[0]
-            self.elements.removeFirst()
+            dispatchQueue.async(flags: .barrier) { [weak self] in
+                guard let self = self else { return }
+                self.elements.removeFirst()
+            }
         }
         guard let foundItem = item else {
             throw BlockingQueueError.noElementAvailable
@@ -48,9 +54,19 @@ class GenericBlockingQueue<Item> {
     }
 
     func interrupt() {
-        dispatchQueue.async(flags: .barrier) {
-            self.isInterrupted = true
-            self.semaphore.signal()
+        dispatchQueue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.isInterrupted = true
+                self.semaphore.signal()
+            }
+        }
+    }
+
+    func stop() {
+        dispatchQueue.async(flags: .barrier) { [weak self] in
+            if let self = self {
+                self.elements.removeAll()
+            }
         }
     }
 }
@@ -60,6 +76,7 @@ protocol InternalEventBlockingQueue {
     func add(_ item: SplitInternalEvent)
     func take() throws -> SplitInternalEvent
     func interrupt()
+    func stop()
 }
 
 class DefaultInternalEventBlockingQueue: InternalEventBlockingQueue {
@@ -75,5 +92,9 @@ class DefaultInternalEventBlockingQueue: InternalEventBlockingQueue {
 
     func interrupt() {
         blockingQueue.interrupt()
+    }
+
+    func stop() {
+        blockingQueue.stop()
     }
 }
