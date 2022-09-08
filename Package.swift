@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "Split",
-    platforms: [.iOS(.v9)],
+    platforms: [.iOS(.v9), .macOS(.v10_15)],
     products: [
         .library(name: "Split", targets: ["Split"])
     ],
