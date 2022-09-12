@@ -1072,7 +1072,7 @@
 		95B02AFD28CBF23B0030EC8B /* split_cache.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */; };
 		95B02AFE28CBF27C0030EC8B /* JFBCrypt.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BF3D3922329C7A004D134D /* JFBCrypt.m */; };
 		95B02AFF28CBF27C0030EC8B /* JFRandom.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BF3D3A22329C7A004D134D /* JFRandom.m */; };
-		95B02B0328CFA6F50030EC8B /* HashHelperLib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599083527C742F10014B2B5 /* HashHelperLib.swift */; };
+		95B02B0728CFB0870030EC8B /* HashHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599083327C742260014B2B5 /* HashHelper.swift */; };
 		95B17FF1275A52D7002DC9DF /* TelemetryInMemoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B17FF0275A52D7002DC9DF /* TelemetryInMemoryStorage.swift */; };
 		95B17FF5275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B17FF4275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift */; };
 		95B17FF9275FCD0A002DC9DF /* TelemetryConfigRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B17FF8275FCD0A002DC9DF /* TelemetryConfigRecorder.swift */; };
@@ -4323,7 +4323,6 @@
 				95B02A4028CBF1FE0030EC8B /* FilterBuilder.swift in Sources */,
 				95B02A4128CBF1FE0030EC8B /* SplitDatabaseHelper.swift in Sources */,
 				95B02A4228CBF1FE0030EC8B /* FailHelpers.swift in Sources */,
-				95B02B0328CFA6F50030EC8B /* HashHelperLib.swift in Sources */,
 				95B02A4328CBF1FE0030EC8B /* SplitLogLevel.swift in Sources */,
 				95B02A4428CBF1FE0030EC8B /* SplitConstants.swift in Sources */,
 				95B02A4528CBF1FE0030EC8B /* EvaluatorError.swift in Sources */,
@@ -4454,6 +4453,7 @@
 				95B02AC228CBF2000030EC8B /* NetworkReachabilityManager.swift in Sources */,
 				95B02AC328CBF2000030EC8B /* RestClient.swift in Sources */,
 				95B02AC428CBF2000030EC8B /* RestClient+TrackEvents.swift in Sources */,
+				95B02B0728CFB0870030EC8B /* HashHelper.swift in Sources */,
 				95B02AC528CBF2000030EC8B /* RestClient+TelemetryConfig.swift in Sources */,
 				95B02AC628CBF2000030EC8B /* RestClient+TelemetryStats.swift in Sources */,
 				95B02AC728CBF2000030EC8B /* RestClient+MySegments.swift in Sources */,
