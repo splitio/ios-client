@@ -16,6 +16,10 @@ import UIKit
 import AppKit
 #endif
 
+#if canImport(WatchKit)
+import WatchKit
+#endif
+
 typealias ObserverAction = () -> Void
 
 enum AppNotification: String {
@@ -59,6 +63,9 @@ class DefaultNotificationHelper: NotificationHelper {
     static let didBecomeActiveNotification = NSNotification.didActivateApplicationNotification
 #endif
 
+#elseif os(watchOS)
+    static let didEnterBgNotification = NSNotification.Name.NSExtensionHostDidEnterBackground
+    static let didBecomeActiveNotification = NSNotification.Name.NSExtensionHostDidBecomeActive
 #endif
 
 
