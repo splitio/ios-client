@@ -12,7 +12,6 @@
 #else
     @import AppKit;
 #endif
-//#import <UIKit/UIKit.h>
 
 
 
@@ -23,5 +22,3 @@ FOUNDATION_EXPORT double SplitVersionNumber;
 FOUNDATION_EXPORT const unsigned char SplitVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <Split/PublicHeader.h>
-
-
