@@ -61,9 +61,10 @@ class DefaultNotificationHelper: NotificationHelper {
 #elseif os(macOS)
     static let didEnterBgNotification = NSApplication.didResignActiveNotification
     static let didBecomeActiveNotification = NSApplication.didBecomeActiveNotification
+
 #elseif os(watchOS)
-    static let didEnterBgNotification = NSNotification.Name.NSExtensionHostDidEnterBackground
-    static let didBecomeActiveNotification = NSNotification.Name.NSExtensionHostDidBecomeActive
+    static let didEnterBgNotification = WKExtension.applicationDidEnterBackgroundNotification
+    static let didBecomeActiveNotification = WKExtension.applicationDidBecomeActiveNotification
 
 #endif
 

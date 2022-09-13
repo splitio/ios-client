@@ -2315,6 +2315,7 @@
 		95B02B1528CFBD160030EC8B /* SplitWatchOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitWatchOS.h; sourceTree = "<group>"; };
 		95B02CA428D0BD790030EC8B /* SplitTvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SplitTvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		95B02CA628D0BD790030EC8B /* SplitTvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitTvOS.h; sourceTree = "<group>"; };
+		95B02E0928D130670030EC8B /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.5.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
 		95B17FF0275A52D7002DC9DF /* TelemetryInMemoryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryInMemoryStorage.swift; sourceTree = "<group>"; };
 		95B17FF4275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryTelemetryStorageTest.swift; sourceTree = "<group>"; };
 		95B17FF8275FCD0A002DC9DF /* TelemetryConfigRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelemetryConfigRecorder.swift; sourceTree = "<group>"; };
@@ -3061,6 +3062,7 @@
 		590DF9962125F6900082B94F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				95B02E0928D130670030EC8B /* WatchKit.framework */,
 				954F9BBF2575A1AB00140B81 /* UIKit.framework */,
 				5946783722E1144400F94E58 /* Swifter.framework */,
 			);
@@ -6183,7 +6185,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MARKETING_VERSION = 1.0;
 				MODULEMAP_FILE = "";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -6220,7 +6222,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MARKETING_VERSION = 1.0;
 				MODULEMAP_FILE = "";
 				MTL_FAST_MATH = YES;
@@ -6236,7 +6238,7 @@
 		95B02B1828CFBD160030EC8B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -6266,14 +6268,14 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.5;
+				WATCHOS_DEPLOYMENT_TARGET = 7.0;
 			};
 			name = Debug;
 		};
 		95B02B1928CFBD160030EC8B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -6302,7 +6304,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.5;
+				WATCHOS_DEPLOYMENT_TARGET = 7.0;
 			};
 			name = Release;
 		};
@@ -6338,7 +6340,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 15.4;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Debug;
 		};
@@ -6373,7 +6375,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 15.4;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Release;
 		};
