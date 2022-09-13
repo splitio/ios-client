@@ -8,7 +8,7 @@
 
 import Foundation
 
-#if os(macOS) || os(watchOS)
+#if os(macOS) || os(watchOS) || os(tvOS)
 import JFBCrypt
 #endif
 

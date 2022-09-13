@@ -20,6 +20,10 @@ import AppKit
 import WatchKit
 #endif
 
+#if canImport(TVUIKit)
+import TVUIKit
+#endif
+
 typealias ObserverAction = () -> Void
 
 enum AppNotification: String {
@@ -44,7 +48,7 @@ class DefaultNotificationHelper: NotificationHelper {
     private let queue = DispatchQueue(label: UUID.init().uuidString, attributes: .concurrent)
     private var actions = [String: [ObserverAction]]()
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 
 #if swift(>=4.2)
     static let didEnterBgNotification = UIApplication.didEnterBackgroundNotification
@@ -55,19 +59,13 @@ class DefaultNotificationHelper: NotificationHelper {
 #endif
 
 #elseif os(macOS)
-#if swift(>=4.2)
     static let didEnterBgNotification = NSApplication.didResignActiveNotification
     static let didBecomeActiveNotification = NSApplication.didBecomeActiveNotification
-#else
-    static let didEnterBgNotification = NSNotification.didResignActiveNotification
-    static let didBecomeActiveNotification = NSNotification.didActivateApplicationNotification
-#endif
-
 #elseif os(watchOS)
     static let didEnterBgNotification = NSNotification.Name.NSExtensionHostDidEnterBackground
     static let didBecomeActiveNotification = NSNotification.Name.NSExtensionHostDidBecomeActive
-#endif
 
+#endif
 
 
     static let instance: DefaultNotificationHelper = {
