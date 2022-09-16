@@ -16,13 +16,20 @@ class SplitIntegrationTests: XCTestCase {
     let matchingKey = "CUSTOMER_ID"
     let trafficType = "account"
     let kNeverRefreshRate = 9999999
-    var webServer: MockWebServer!
     var splitChange: SplitChange?
     var serverUrl = ""
     var trackReqIndex = 0
     var impHit = [[ImpressionsTest]]()
 
+    let mySegmentsJson = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}"
+
     var trExp = [XCTestExpectation]()
+
+    var streamingBinding: TestStreamResponseBinding?
+
+    var httpClient: HttpClient!
+
+    var trackRequestsData: [String] = []
 
     override func setUp() {
         if splitChange == nil {
@@ -31,35 +38,49 @@ class SplitIntegrationTests: XCTestCase {
         for i in 0 ... 9 {
             trExp.append(XCTestExpectation(description: "track: \(i)"))
         }
-        setupServer()
+
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
-    override func tearDown() {
-        stopServer()
-    }
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+        return { request in
+            switch request.url.absoluteString {
+            case let(urlString) where urlString.contains("splitChanges"):
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))
 
-    private func setupServer() {
-        webServer = MockWebServer()
-        webServer.routeGet(path: "/mySegments/:user_id", data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}")
-        webServer.routeGet(path: "/splitChanges?since=:param", data: try? Json.encodeToJson(splitChange))
-        webServer.route(method: .post, path: "/testImpressions/bulk") { request in
-            self.impHit.append(try! TestUtils.impressionsFromHit(request: request))
+            case let(urlString) where urlString.contains("mySegments"):
+                return TestDispatcherResponse(code: 200, data: Data(self.mySegmentsJson.utf8))
 
-            return MockedResponse(code: 200, data: nil)
-        }
-        webServer.route(method: .post, path: "/events/bulk") { request in
-            let index = self.getAndUpdateReqIndex()
-            if index < self.trExp.count {
-                self.trExp[index].fulfill()
+            case let(urlString) where urlString.contains("auth"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+
+            case let(urlString) where urlString.contains("testImpressions/bulk"):
+
+                self.impHit.append(try! TestUtils.impressionsFromHit(request: request))
+                return TestDispatcherResponse(code: 200)
+
+            case let(urlString) where urlString.contains("events/bulk"):
+                let index = self.getAndUpdateReqIndex()
+                self.trackRequestsData.append(request.body!.stringRepresentation)
+                if index < self.trExp.count {
+                    self.trExp[index].fulfill()
+                }
+                return TestDispatcherResponse(code: 200)
+
+            default:
+                return TestDispatcherResponse(code: 500)
             }
-            return MockedResponse(code: 200)
         }
-        webServer.start()
-        serverUrl = webServer.url
     }
 
-    private func stopServer() {
-        webServer.stop()
+    private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
+        return { request in
+            self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            return self.streamingBinding!
+        }
     }
 
     func testControlTreatment() throws {
@@ -87,6 +108,7 @@ class SplitIntegrationTests: XCTestCase {
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "GralIntegrationTest"))
+        _ = builder.setHttpClient(httpClient)
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
 
         let client = factory?.client
@@ -127,8 +149,8 @@ class SplitIntegrationTests: XCTestCase {
 
         wait(for: trExp, timeout: 30)
 
-        let event1 = IntegrationHelper.getTrackEventBy(value: 1.0, trackHits: tracksHits())
-        let event100 = IntegrationHelper.getTrackEventBy(value: 100.0, trackHits: tracksHits())
+        let event1 = IntegrationHelper.getTrackEventBy(value: 1.0, trackHits: trackRequestsData)
+        let event100 = IntegrationHelper.getTrackEventBy(value: 100.0, trackHits: trackRequestsData)
 
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
@@ -148,7 +170,7 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertNotNil(i3)
         XCTAssertEqual(1505162627437, i3?.changeNumber)
         XCTAssertEqual("not in split", i1?.label) // TODO: Uncomment when impressions split name is added to impression listener
-        XCTAssertEqual(10, tracksHits().count)
+        XCTAssertEqual(10, trackRequestsData.count)
         XCTAssertNotNil(event1)
         XCTAssertNil(event100)
         XCTAssertEqual(3, impressions.count)
@@ -179,6 +201,7 @@ class SplitIntegrationTests: XCTestCase {
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "IntegrationTest"))
+        _ = builder.setHttpClient(httpClient)
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
 
         let client = factory?.client
@@ -222,15 +245,6 @@ class SplitIntegrationTests: XCTestCase {
             return change
         }
         return nil
-    }
-
-    private func tracksHits() -> [ClientRequest] {
-        return webServer.receivedRequests.filter { $0.path == "/events/bulk"}
-    }
-
-    private func getLastTrackEventJsonHit() -> String {
-        let trackRecs = tracksHits()
-        return trackRecs[trackRecs.count  - 1].data!
     }
 
     private func getAndUpdateReqIndex() -> Int {

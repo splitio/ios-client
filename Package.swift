@@ -8,9 +8,6 @@ let package = Package(
     products: [
         .library(name: "Split", targets: ["Split"])
     ],
-    dependencies: [
-        .package(name: "Swifter", url: "https://github.com/httpswift/swifter.git", from: "1.5.0")
-    ],
     targets: [
         .target(
             name: "Split",

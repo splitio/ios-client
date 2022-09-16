@@ -12,7 +12,6 @@ import XCTest
 class MySegmentUpdatedTest: XCTestCase {
     
     let kNeverRefreshRate = 9999999
-    var webServer: MockWebServer!
     let kChangeNbInterval: Int64 = 86400
     var reqSegmentsIndex = 0
     var isFirstChangesReq = true
@@ -29,67 +28,83 @@ class MySegmentUpdatedTest: XCTestCase {
 
     var impHit: [ImpressionsTest]?
     var impressions = [String: KeyImpression]()
-    
+    var httpClient: HttpClient!
+    var streamingBinding: TestStreamResponseBinding?
+
     override func setUp() {
-        setupServer()
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
-    
-    override func tearDown() {
-        stopServer()
-    }
-    
-    private func setupServer() {
 
-        webServer = MockWebServer()
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+
         let respData = responseSlitChanges()
-        var responses = [MockedResponse]()
+        var responses = [TestDispatcherResponse]()
         for data in respData {
-            responses.append(MockedResponse(code: 200, data: try? Json.encodeToJson(data)))
+            responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(data).utf8)))
         }
 
-        webServer.route(method: .get, path: "/mySegments/:user_id") { request in
-            var data: String
-            let index = self.getAndIncrement()
-            switch index {
-            case 1:
-                data = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}]}"
-            case 2:
-                data = "{\"mySegments\":[{ \"id\":\"id2\", \"name\":\"segment2\"}]}"
+        return { request in
+            print("URL: \(request.url.absoluteString)")
+            switch request.url.absoluteString {
+            case let(urlString) where urlString.contains("splitChanges"):
+                var since: Int = 0
+                if self.isFirstChangesReq {
+                    self.isFirstChangesReq = false
+                    let change = self.responseSlitChanges()[0]
+                    since = Int(change.till)
+                    let jsonChanges = try? Json.encodeToJson(change)
+                    return TestDispatcherResponse(code: 200, data: Data(jsonChanges!.utf8))
+                }
+
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
+
+            case let(urlString) where urlString.contains("mySegments"):
+
+                var data: String
+                let index = self.getAndIncrement()
+                print("MY SEGMENTS \(index)")
+                switch index {
+                case 1:
+                    data = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}]}"
+                case 2:
+                    data = "{\"mySegments\":[{ \"id\":\"id2\", \"name\":\"segment2\"}]}"
+                default:
+                    data = "{\"mySegments\":[]}"
+                }
+
+                if index > 0 && index <= self.sgExp.count {
+                    print("MY SEGMENTS EXP FUL")
+                    self.sgExp[index - 1].fulfill()
+                }
+                return TestDispatcherResponse(code: 200, data: Data(data.utf8))
+
+            case let(urlString) where urlString.contains("auth"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+
+            case let(urlString) where urlString.contains("testImpressions/bulk"):
+                self.impHit = try? IntegrationHelper.buildImpressionsFromJson(content: request.body!.stringRepresentation)
+                if self.addImpressions(tests: self.impHit) {
+                    self.impExp.fulfill()
+                }
+                return TestDispatcherResponse(code: 200)
+
+            case let(urlString) where urlString.contains("events/bulk"):
+                return TestDispatcherResponse(code: 200)
+
             default:
-                data = "{\"mySegments\":[]}"
+                return TestDispatcherResponse(code: 500)
             }
-
-            if index > 0 && index <= self.sgExp.count {
-                self.sgExp[index - 1].fulfill()
-            }
-            return MockedResponse(code: 200, data: data)
         }
-
-        webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
-            var since: Int64 = 0
-            if self.isFirstChangesReq {
-                self.isFirstChangesReq = false
-                let change = self.responseSlitChanges()[0]
-                since = change.till
-                let jsonChanges = try? Json.encodeToJson(change)
-                return MockedResponse(code: 200, data: jsonChanges)
-            }
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": \(since), \"till\": \(since) }")
-        }
-
-        webServer.route(method: .post, path: "/testImpressions/bulk") { request in
-            self.impHit = try? IntegrationHelper.impressionsFromHit(request: request)
-            if self.addImpressions(tests: self.impHit) {
-                self.impExp.fulfill()
-            }
-            return MockedResponse(code: 200, data: nil)
-        }
-        webServer.start()
-        serverUrl = webServer.url
     }
-    
-    private func stopServer() {
-        webServer.stop()
+
+    private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
+        return { request in
+            self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            return self.streamingBinding!
+        }
     }
 
     // MARK: Test
@@ -104,8 +119,9 @@ class MySegmentUpdatedTest: XCTestCase {
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.streamingEnabled = false
         splitConfig.featuresRefreshRate = 50
-        splitConfig.segmentsRefreshRate = 5
+        splitConfig.segmentsRefreshRate = 3
         splitConfig.impressionRefreshRate = splitConfig.segmentsRefreshRate * 6 + 1
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
@@ -116,6 +132,7 @@ class MySegmentUpdatedTest: XCTestCase {
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "GralIntegrationTest"))
+        _ = builder.setHttpClient(httpClient)
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory!.client
@@ -130,7 +147,7 @@ class MySegmentUpdatedTest: XCTestCase {
         wait(for: [sdkReady], timeout: 20)
 
         for i in 0..<4 {
-            wait(for: [sgExp[i]], timeout: 10)
+            wait(for: [sgExp[i]], timeout: 20)
             treatments.append(client.getTreatment(splitName))
         }
 

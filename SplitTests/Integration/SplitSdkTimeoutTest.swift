@@ -1,6 +1,6 @@
 //
-//  SplitIntegrationTests.swift
-//  SplitIntegrationTests
+//  SplitSdkTimeoutTests.swift
+//  SplitSdkTimeoutTests
 //
 //  Created by Javier L. Avrudsky on 28/03/2019.
 //  Copyright © 2019 Split. All rights reserved.
@@ -9,28 +9,9 @@
 import XCTest
 @testable import Split
 
-class SplitSdkTiemoutTests: XCTestCase {
+class SplitSdkTimeoutTests: XCTestCase {
     
     let kNeverRefreshRate = 9999999
-    var webServer: MockWebServer!
-    
-    override func setUp() {
-        setupServer()
-    }
-    
-    override func tearDown() {
-        stopServer()
-    }
-    
-    private func setupServer() {
-        webServer = MockWebServer()
-        webServer.routeGet(path: "/mySegments/:user_id", data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}")
-        webServer.start()
-    }
-    
-    private func stopServer() {
-        webServer.stop()
-    }
     
     func testSdkTimeout() throws {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_a"

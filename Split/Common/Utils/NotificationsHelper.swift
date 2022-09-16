@@ -68,7 +68,6 @@ class DefaultNotificationHelper: NotificationHelper {
 
 #endif
 
-
     static let instance: DefaultNotificationHelper = {
         return DefaultNotificationHelper()
     }()
@@ -101,11 +100,9 @@ class DefaultNotificationHelper: NotificationHelper {
                                                selector: #selector(applicationDidBecomeActive),
                                                name: Self.didBecomeActiveNotification,
                                                object: nil)
-
-
     }
 
-    private func unsubscribe()  {
+    private func unsubscribe() {
         NotificationCenter.default.removeObserver(self, name: Self.didEnterBgNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: Self.didBecomeActiveNotification, object: nil)
     }
