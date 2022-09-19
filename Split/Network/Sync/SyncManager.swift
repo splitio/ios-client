@@ -65,7 +65,6 @@ class DefaultSyncManager: SyncManager {
         isPaused.set(true)
         pushNotificationManager?.pause()
         synchronizer.pause()
-        print("PAUSEEEE")
 #endif
     }
 
@@ -74,7 +73,6 @@ class DefaultSyncManager: SyncManager {
         isPaused.set(false)
         synchronizer.resume()
         pushNotificationManager?.resume()
-        print("RESUMEEEEE")
 #endif
     }
 
