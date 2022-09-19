@@ -1730,7 +1730,6 @@
 		95B02CA428D0BD790030EC8B /* WatchOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WatchOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		95B02CA628D0BD790030EC8B /* SplitTvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitTvOS.h; sourceTree = "<group>"; };
 		95B02E0928D130670030EC8B /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.5.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
-		95B0307928D26E8F0030EC8B /* Split copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Split copy-Info.plist"; path = "/Users/javieravrudsky/Codebase/ios-client/Split copy-Info.plist"; sourceTree = "<absolute>"; };
 		95B0307B28D275020030EC8B /* SplitiOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOS.xctestplan; sourceTree = "<group>"; };
 		95B030BF28D6487C0030EC8B /* StreamingBgReconnectTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingBgReconnectTest.swift; sourceTree = "<group>"; };
 		95B030C228D8B6160030EC8B /* WatchOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WatchOS.xctestplan; sourceTree = "<group>"; };
@@ -1904,7 +1903,6 @@
 				95B02E1028D222100030EC8B /* SplitMacOSTests */,
 				3B6DEE5B20EA6A4E0067435E /* Products */,
 				590DF9962125F6900082B94F /* Frameworks */,
-				95B0307928D26E8F0030EC8B /* Split copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};

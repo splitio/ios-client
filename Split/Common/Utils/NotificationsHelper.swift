@@ -126,7 +126,7 @@ class DefaultNotificationHelper: NotificationHelper {
 
     @objc private func applicationDidBecomeActive() {
         executeActions(for: AppNotification.didBecomeActive)
-        Logger.d("Split host app become inactive")
+        Logger.d("Split host app become active")
     }
 
     func removeAllObservers() {
