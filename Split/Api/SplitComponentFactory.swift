@@ -31,9 +31,8 @@ class SplitComponentFactory {
     }
 
     private func get<T>(for classType: T) -> Any? {
-        let className = String(describing: classType.self)
         // If component exists, return it
-        return components[className]
+        return components[String(describing: classType.self)]
     }
 
     // This function is implemented using generics
@@ -41,8 +40,7 @@ class SplitComponentFactory {
     // static type.
     // If using Any instead of T we'd get the dynamic type
     private func add<T>(component: T) {
-        let className = String(describing: type(of: component))
-        components[className] = component
+        components[String(describing: type(of: component))] = component
     }
 
     // These two method is used to maintain more than one reference

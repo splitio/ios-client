@@ -83,7 +83,6 @@ class DefaultImpressionsTracker: ImpressionsTracker {
                 uniqueKeyTracker?.saveAndClear()
                 flusherUniqueKeysRecorderWorker?.flush()
             }
-            // TODO: Should record metrics here?
             return
         }
 
@@ -157,8 +156,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         case .debug:
             createImpressionsRecorder()
         case .none:
-            // TODO: Setup send unique key recorder
-            createUniqueKeysRecorderWorker()
+            createUniqueKeysRecorder()
             createImpressionsCountRecorder()
         }
     }
@@ -178,7 +176,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         impressionsCounter = ImpressionsCounter()
     }
 
-    private func createUniqueKeysRecorderWorker() {
+    private func createUniqueKeysRecorder() {
         self.periodicUniqueKeysRecorderWorker
         = syncWorkerFactory.createPeriodicUniqueKeyRecorderWorker(flusherChecker: uniqueKeyFlushChecker)
         self.flusherUniqueKeysRecorderWorker

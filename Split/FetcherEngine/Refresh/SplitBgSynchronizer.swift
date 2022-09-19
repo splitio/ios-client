@@ -7,6 +7,7 @@
 //
 
 import Foundation
+#if os(iOS) || os(tvOS)
 import BackgroundTasks
 
 @objc public class SplitBgSynchronizer: NSObject {
@@ -51,7 +52,7 @@ import BackgroundTasks
     }
 
     @objc public func schedule(serviceEndpoints: ServiceEndpoints? = nil) {
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, tvOS 13.0, macCatalyst 13.1, *) {
             let success = BGTaskScheduler.shared.register(
                 forTaskWithIdentifier: taskId, using: nil) { task in
 
@@ -94,7 +95,7 @@ import BackgroundTasks
     }
 
     private func scheduleNextSync(taskId: String) {
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, tvOS 13.0, macCatalyst 13.1, *) {
             let request = BGAppRefreshTaskRequest(identifier: taskId)
             request.earliestBeginDate = Date(timeIntervalSinceNow: SplitBgSynchronizer.kTimeInterval)
 
@@ -207,3 +208,4 @@ struct BackgroundSyncExecutor {
         return Date().unixTimestamp() - timestamp > SplitBgSynchronizer.kRegistrationExpiration
     }
 }
+#endif

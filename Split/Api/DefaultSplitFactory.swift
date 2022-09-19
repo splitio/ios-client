@@ -113,10 +113,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
+
+#if os(iOS)
         if config.synchronizeInBackground {
             SplitBgSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)
         } else {
             SplitBgSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)
         }
+#endif
     }
 }

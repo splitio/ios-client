@@ -58,13 +58,6 @@ class DefaultPeriodicTimer: PeriodicTimer {
         }
         fetchTimer.setEventHandler(handler: action)
     }
-
-//    deinit {
-//        // This line is necessary to avoid timer crashing
-//        // because is not possible to release a suspended timer
-////        fetchTimer.resume()
-//    }
-
 }
 
 protocol PeriodicSyncWorker {

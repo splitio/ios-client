@@ -14,7 +14,12 @@ class TestUtils {
         return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
     }
 
-    static func impressionsFromHit(request: ClientRequest) throws -> [ImpressionsTest] {
-        return try buildImpressionsFromJson(content: request.data!)
+    static func impressionsFromHit(request: HttpDataRequest) throws -> [ImpressionsTest] {
+        do {
+        return try buildImpressionsFromJson(content: request.body?.stringRepresentation ?? "")
+        } catch {
+            print("error impressionsFromHit: \(error)")
+        }
+        return []
     }
 }
