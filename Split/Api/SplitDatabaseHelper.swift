@@ -119,31 +119,53 @@ struct SplitDatabaseHelper {
 
     static func renameDatabaseFromLegacyName(name dbName: String, apiKey: String) {
         let fileManager = FileManager.default
-        guard let docURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {
-            fatalError("Unable to resolve document directory")
+        guard let docUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {
+            Logger.d("Could not find document directory")
+            return
+        }
+        guard let cacheUrl = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).last else {
+            Logger.d("Could not find cache directory")
+            return
+        }
+
+        let fullDbName = "\(dbName).\(ServiceConstants.databaseExtension)"
+        let cacheDbUrl = cacheUrl.appendingPathComponent("\(fullDbName)")
+        // Checking if database in cache folder exists
+        // If so, work is done here
+        if fileManager.fileExists(atPath: cacheDbUrl.path) {
+            return
         }
 
         // Checking if database without hashing exists
-        // If so, renaming was already done
-        let databaseUrl = docURL.appendingPathComponent("\(dbName).\(ServiceConstants.databaseExtension)")
-        if fileManager.fileExists(atPath: databaseUrl.path) {
+        // in documents
+        // If so, moving to cache folder
+        if fileManager.fileExists(atPath: docUrl.appendingPathComponent("\(fullDbName)").path) {
+            moveDbFiles(fromFolder: docUrl, fromName: dbName,
+                        toFolder: cacheUrl, toName: dbName)
             return
         }
 
+        // Checking if database hashed name exists
+        // in documents
+        // If so, moving to cache folder without a hashed name
         guard let legacyName = legacyDbName(from: apiKey) else {
             return
         }
+        moveDbFiles(fromFolder: docUrl, fromName: legacyName,
+                    toFolder: cacheUrl, toName: dbName)
+    }
 
-        // Renaming all database files
+    static func moveDbFiles(fromFolder: URL, fromName: String,
+                            toFolder: URL, toName: String) {
         do {
             for ext in kDbExt {
                 let fullExt = "\(ServiceConstants.databaseExtension)\(ext)"
-                let legacyDbFile = docURL.appendingPathComponent("\(legacyName).\(fullExt)")
-                let newDbFile = docURL.appendingPathComponent("\(dbName).\(fullExt)")
-                try fileManager.moveItem(at: legacyDbFile, to: newDbFile)
+                let fromDbFile = fromFolder.appendingPathComponent("\(fromName).\(fullExt)")
+                let newDbFile = toFolder.appendingPathComponent("\(toName).\(fullExt)")
+                try FileManager.default.moveItem(at: fromDbFile, to: newDbFile)
             }
         } catch {
-            Logger.i("Unable to rename legacy db. Avoiding migration. Message: \(error.localizedDescription)")
+            Logger.d("Unable to rename / move old db file. Avoiding migration. Message: \(error.localizedDescription)")
         }
     }
 
@@ -151,7 +173,8 @@ struct SplitDatabaseHelper {
         guard let regex: NSRegularExpression =
                 try? NSRegularExpression(pattern: "[^a-zA-Z0-9]",
                                          options: NSRegularExpression.Options.caseInsensitive) else {
-            fatalError("Regular expression not valid")
+            Logger.d("sanitizeForFolderName: Regular expression not valid")
+            return "dummyName"
         }
         let range = NSRange(location: 0, length: string.count)
         return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")

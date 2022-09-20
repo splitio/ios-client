@@ -32,8 +32,8 @@ class ReachabilityWrapper: HostReachabilityChecker {
         if let reachabilityManager = NetworkReachabilityManager(host: url) {
             return reachabilityManager.isReachable
         }
-        #endif
         return false
+        #endif
     }
 }
 

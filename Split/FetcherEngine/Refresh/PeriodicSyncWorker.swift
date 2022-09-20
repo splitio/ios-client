@@ -127,7 +127,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 
     func fetchFromRemote() {
-        fatalError("fetch from remote not implemented")
+        Logger.i("Fetch from remote not implemented")
     }
 
     func notifyMySegmentsUpdated() {
