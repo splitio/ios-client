@@ -5,6 +5,7 @@
 //  Created by Javier L. Avrudsky on 7/2/18.
 //  Copyright © 2018 Split. All rights reserved.
 //
+
 #include <TargetConditionals.h>
 
 #if TARGET_OS_IPHONE
@@ -12,8 +13,6 @@
 #else
     @import AppKit;
 #endif
-
-
 
 //! Project version number for Split.
 FOUNDATION_EXPORT double SplitVersionNumber;
