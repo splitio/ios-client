@@ -1732,6 +1732,7 @@
 		95B02E0928D130670030EC8B /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.5.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
 		95B0307B28D275020030EC8B /* SplitiOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOS.xctestplan; sourceTree = "<group>"; };
 		95B030BF28D6487C0030EC8B /* StreamingBgReconnectTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingBgReconnectTest.swift; sourceTree = "<group>"; };
+		95B030C228D8B6160030EC8B /* WatchOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WatchOS.xctestplan; sourceTree = "<group>"; };
 		95B17FF0275A52D7002DC9DF /* TelemetryInMemoryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryInMemoryStorage.swift; sourceTree = "<group>"; };
 		95B17FF4275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryTelemetryStorageTest.swift; sourceTree = "<group>"; };
 		95B17FF8275FCD0A002DC9DF /* TelemetryConfigRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelemetryConfigRecorder.swift; sourceTree = "<group>"; };
@@ -2551,6 +2552,7 @@
 			children = (
 				5921ED3025378ECD000D6C8B /* StreamingInitTest.swift */,
 				95B030BF28D6487C0030EC8B /* StreamingBgReconnectTest.swift */,
+				95B030C228D8B6160030EC8B /* WatchOS.xctestplan */,
 				957F8CF227BD3A41001FF7C2 /* StreamingNoReconectWhenPollingTest.swift */,
 				5921ED352537B277000D6C8B /* StreamingDisabledTest.swift */,
 				5921ED392538C57D000D6C8B /* StreamingConnFail5xxTest.swift */,

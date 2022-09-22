@@ -20,7 +20,8 @@ extension Dictionary: DynamicDecodable where Key: Hashable, Value: DynamicDecoda
         if let elements = jsonObject as? [Key: Any] {
             self = try elements.mapValues({ try Value.init(jsonObject: $0) })
         } else {
-            fatalError("DynamicDecodable: Could not parse objects")
+            Logger.i("DynamicDecodable: Could not parse objects")
+            self = [:]
         }
     }
 }

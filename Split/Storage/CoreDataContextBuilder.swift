@@ -18,11 +18,13 @@ class CoreDataHelperBuilder {
 
         let bundle = Bundle.split
         guard let modelUrl = bundle.url(forResource: kDataModelName, withExtension: kDataModelExtentsion) else {
-            fatalError("Error loading model from bundle")
+            Logger.e("Error loading model from bundle")
+            return nil
         }
 
         guard let modelFile = NSManagedObjectModel(contentsOf: modelUrl) else {
-            fatalError("Error initializing mom from: \(modelUrl)")
+            Logger.e("Error initializing mom from: \(modelUrl)")
+            return nil
         }
 
         let persistenceCoordinator = NSPersistentStoreCoordinator(managedObjectModel: modelFile)
@@ -33,8 +35,9 @@ class CoreDataHelperBuilder {
         managedObjContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         managedObjContext.persistentStoreCoordinator = persistenceCoordinator
 
-        guard let docURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {
-            fatalError("Unable to resolve document directory")
+        guard let docURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).last else {
+            Logger.e("Unable to resolve document directory")
+            return nil
         }
 
         let databaseUrl = docURL.appendingPathComponent("\(databaseName).\(ServiceConstants.databaseExtension)")
