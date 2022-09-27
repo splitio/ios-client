@@ -42,7 +42,7 @@ jobs:
       - name: Build MacOS
         uses: sersoft-gmbh/xcodebuild-action@v1
         with:
-          action: build test
+          action: build
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
@@ -54,7 +54,7 @@ jobs:
       - name: Build tvOS
         uses: sersoft-gmbh/xcodebuild-action@v1
         with:
-          action: build test
+          action: build
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
@@ -67,7 +67,7 @@ jobs:
       - name: Build tvOS
         uses: sersoft-gmbh/xcodebuild-action@v1
         with:
-          action: build test
+          action: build
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
