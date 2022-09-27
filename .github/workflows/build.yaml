@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - SDKS-6144_gha_all_platforms
   pull_request:
     branches:
       - master
