@@ -37,7 +37,7 @@ jobs:
           sdk: 'iphonesimulator'
           use-xcpretty: true
 
-- name: Build iOS
+      - name: Build iOS
         uses: sersoft-gmbh/xcodebuild-action@v1
         with:
           action: build test
