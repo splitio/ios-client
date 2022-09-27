@@ -444,6 +444,11 @@
 		953911B3267A97DF0040433A /* ImpressionHasherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953911B2267A97DF0040433A /* ImpressionHasherTest.swift */; };
 		9546079225BF1B7E007FFD35 /* PeriodicRecorderWorkerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9546079125BF1B7E007FFD35 /* PeriodicRecorderWorkerStub.swift */; };
 		9546079625BF3945007FFD35 /* ImpressionsLoggerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9546079525BF3945007FFD35 /* ImpressionsLoggerStub.swift */; };
+		954DAFAA28DBCF91009E108F /* JFBCrypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BF3D3822329C79004D134D /* JFBCrypt.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		954DAFAB28DBCF91009E108F /* JFGC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BF3D3B22329C7A004D134D /* JFGC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		954DAFAC28DBCF91009E108F /* JFRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BF3D3C22329C7A004D134D /* JFRandom.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		954DAFAE28DBD014009E108F /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 599EA56F22666B84006CBA89 /* LICENSE */; };
+		954DAFB328DCAA7D009E108F /* SplitWatchOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 95B02B1528CFBD160030EC8B /* SplitWatchOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		954F9AEA256D9D9E00140B81 /* SplitDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9AE9256D9D9E00140B81 /* SplitDao.swift */; };
 		954F9AF9256EE55B00140B81 /* GeneralInfoDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9AF8256EE55B00140B81 /* GeneralInfoDao.swift */; };
 		954F9AFF2570082C00140B81 /* SplitDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9AFE2570082C00140B81 /* SplitDaoStub.swift */; };
@@ -781,7 +786,6 @@
 		9595C1A8274574220092123F /* attributes_test_split.json in Resources */ = {isa = PBXBuildFile; fileRef = 9595C1A7274574220092123F /* attributes_test_split.json */; };
 		9599083427C742260014B2B5 /* HashHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599083327C742260014B2B5 /* HashHelper.swift */; };
 		9599083627C742F10014B2B5 /* HashHelperLib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599083527C742F10014B2B5 /* HashHelperLib.swift */; };
-		95B02CA728D0BD790030EC8B /* SplitTvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 95B02CA628D0BD790030EC8B /* SplitTvOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		95B02CAB28D0BDC10030EC8B /* Yaml.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57422666B84006CBA89 /* Yaml.swift */; };
 		95B02CAC28D0BDC10030EC8B /* YAMLOperators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA56E22666B84006CBA89 /* YAMLOperators.swift */; };
 		95B02CAD28D0BDC10030EC8B /* YAMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57222666B84006CBA89 /* YAMLParser.swift */; };
@@ -1624,6 +1628,7 @@
 		953911B2267A97DF0040433A /* ImpressionHasherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionHasherTest.swift; sourceTree = "<group>"; };
 		9546079125BF1B7E007FFD35 /* PeriodicRecorderWorkerStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeriodicRecorderWorkerStub.swift; sourceTree = "<group>"; };
 		9546079525BF3945007FFD35 /* ImpressionsLoggerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsLoggerStub.swift; sourceTree = "<group>"; };
+		954DAFB428DCB527009E108F /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		954F9AE9256D9D9E00140B81 /* SplitDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitDao.swift; sourceTree = "<group>"; };
 		954F9AF8256EE55B00140B81 /* GeneralInfoDao.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoDao.swift; sourceTree = "<group>"; };
 		954F9AFE2570082C00140B81 /* SplitDaoStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitDaoStub.swift; sourceTree = "<group>"; };
@@ -1727,7 +1732,7 @@
 		9599083527C742F10014B2B5 /* HashHelperLib.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HashHelperLib.swift; path = Split/Common/Utils/Lib/HashHelperLib.swift; sourceTree = SOURCE_ROOT; };
 		95B027B328CBEF7E0030EC8B /* SplitMacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitMacOS.h; sourceTree = "<group>"; };
 		95B02B1528CFBD160030EC8B /* SplitWatchOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitWatchOS.h; sourceTree = "<group>"; };
-		95B02CA428D0BD790030EC8B /* WatchOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WatchOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		95B02CA428D0BD790030EC8B /* SplitWatchOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SplitWatchOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		95B02CA628D0BD790030EC8B /* SplitTvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitTvOS.h; sourceTree = "<group>"; };
 		95B02E0928D130670030EC8B /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.5.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
 		95B0307B28D275020030EC8B /* SplitiOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOS.xctestplan; sourceTree = "<group>"; };
@@ -1913,7 +1918,7 @@
 				592C6AA5211B6C99002D120C /* SplitTests.xctest */,
 				956E418D271DC8F1008B4DB6 /* libSplitlib.a */,
 				95825BA0271F004700A0CDAD /* Split_Split.bundle */,
-				95B02CA428D0BD790030EC8B /* WatchOS.framework */,
+				95B02CA428D0BD790030EC8B /* SplitWatchOS.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3078,6 +3083,7 @@
 			isa = PBXGroup;
 			children = (
 				95B02B1528CFBD160030EC8B /* SplitWatchOS.h */,
+				954DAFB428DCB527009E108F /* module.modulemap */,
 			);
 			path = SplitWatchOS;
 			sourceTree = "<group>";
@@ -3151,11 +3157,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		95B02C9F28D0BD790030EC8B /* Headers */ = {
+		954DAFA928DBCF74009E108F /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95B02CA728D0BD790030EC8B /* SplitTvOS.h in Headers */,
+				954DAFB328DCAA7D009E108F /* SplitWatchOS.h in Headers */,
+				954DAFAA28DBCF91009E108F /* JFBCrypt.h in Headers */,
+				954DAFAC28DBCF91009E108F /* JFRandom.h in Headers */,
+				954DAFAB28DBCF91009E108F /* JFGC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3239,11 +3248,11 @@
 			productReference = 95825BA0271F004700A0CDAD /* Split_Split.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
-		95B02CA328D0BD790030EC8B /* WatchOS */ = {
+		95B02CA328D0BD790030EC8B /* SplitWatchOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 95B02CA828D0BD790030EC8B /* Build configuration list for PBXNativeTarget "WatchOS" */;
+			buildConfigurationList = 95B02CA828D0BD790030EC8B /* Build configuration list for PBXNativeTarget "SplitWatchOS" */;
 			buildPhases = (
-				95B02C9F28D0BD790030EC8B /* Headers */,
+				954DAFA928DBCF74009E108F /* Headers */,
 				95B02CA028D0BD790030EC8B /* Sources */,
 				95B02CA128D0BD790030EC8B /* Frameworks */,
 				95B02CA228D0BD790030EC8B /* Resources */,
@@ -3252,9 +3261,9 @@
 			);
 			dependencies = (
 			);
-			name = WatchOS;
+			name = SplitWatchOS;
 			productName = SplitTvOS;
-			productReference = 95B02CA428D0BD790030EC8B /* WatchOS.framework */;
+			productReference = 95B02CA428D0BD790030EC8B /* SplitWatchOS.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -3307,7 +3316,7 @@
 				592C6AA4211B6C99002D120C /* SplitTests */,
 				956E418C271DC8F1008B4DB6 /* Splitlib */,
 				95825B9F271F004700A0CDAD /* Split_Split */,
-				95B02CA328D0BD790030EC8B /* WatchOS */,
+				95B02CA328D0BD790030EC8B /* SplitWatchOS */,
 			);
 		};
 /* End PBXProject section */
@@ -3379,6 +3388,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				954DAFAE28DBD014009E108F /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4952,9 +4962,10 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				MODULEMAP_FILE = SplitWatchOS/module.modulemap;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.split.SplitWatchOS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.split.Split;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -4962,6 +4973,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Split/Common/Utils/JFBCrypt";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
@@ -4994,8 +5006,9 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				MODULEMAP_FILE = SplitWatchOS/module.modulemap;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.split.SplitWatchOS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.split.Split;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -5003,6 +5016,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Split/Common/Utils/JFBCrypt";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
@@ -5058,7 +5072,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		95B02CA828D0BD790030EC8B /* Build configuration list for PBXNativeTarget "WatchOS" */ = {
+		95B02CA828D0BD790030EC8B /* Build configuration list for PBXNativeTarget "SplitWatchOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				95B02CA928D0BD790030EC8B /* Debug */,

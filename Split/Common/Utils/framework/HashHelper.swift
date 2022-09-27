@@ -8,10 +8,6 @@
 
 import Foundation
 
-#if os(macOS) || os(watchOS) || os(tvOS)
-import JFBCrypt
-#endif
-
 struct HashHelper {
     static func hash(_ string: String, salt: String) -> String? {
         return JFBCrypt.hashPassword(string, withSalt: salt)

@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "95B02CA328D0BD790030EC8B"
                BuildableName = "WatchOS.framework"
-               BlueprintName = "WatchOS"
+               BlueprintName = "SplitWatchOS"
                ReferencedContainer = "container:Split.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -56,7 +56,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "95B02CA328D0BD790030EC8B"
             BuildableName = "WatchOS.framework"
-            BlueprintName = "WatchOS"
+            BlueprintName = "SplitWatchOS"
             ReferencedContainer = "container:Split.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
