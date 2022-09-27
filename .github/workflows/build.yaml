@@ -39,17 +39,17 @@ jobs:
       #     test-plan: 'SplitiOS'
       #     use-xcpretty: true
 
-      - name: Build MacOS
-        uses: sersoft-gmbh/xcodebuild-action@v1
-        with:
-          action: build
-          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
-          configuration: Debug
-          derived-data-path: "${{github.workspace}}/SplitApp"
-          destination: 'platform=macOS,arch=x86_64'
-          project: Split.xcodeproj
-          scheme: Split
-          use-xcpretty: true
+      # - name: Build MacOS
+      #   uses: sersoft-gmbh/xcodebuild-action@v1
+      #   with:
+      #     action: build
+      #     build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
+      #     configuration: Debug
+      #     derived-data-path: "${{github.workspace}}/SplitApp"
+      #     destination: 'platform=macOS,arch=x86_64'
+      #     project: Split.xcodeproj
+      #     scheme: Split
+      #     use-xcpretty: true
 
       - name: Build tvOS
         uses: sersoft-gmbh/xcodebuild-action@v1
@@ -59,7 +59,6 @@ jobs:
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
           destination: 'platform=tvOS'
-          sdk: 'appletvsimulator15.4'
           project: Split.xcodeproj
           scheme: Split
           use-xcpretty: true
@@ -72,7 +71,6 @@ jobs:
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
           destination: 'platform=watchOS'
-          sdk: 'watchsimulator8.5'
           project: Split.xcodeproj
           scheme: Split
           use-xcpretty: true
