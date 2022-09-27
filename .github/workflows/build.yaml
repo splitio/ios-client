@@ -58,7 +58,7 @@ jobs:
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
-          destination: 'platform=tvOS'
+          destination: 'platform=tvOS Simulator'
           project: Split.xcodeproj
           scheme: Split
           use-xcpretty: true
@@ -70,7 +70,7 @@ jobs:
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
-          destination: 'platform=watchOS'
+          destination: 'platform=watchOS Simulator'
           project: Split.xcodeproj
           scheme: Split
           use-xcpretty: true
