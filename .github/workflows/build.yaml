@@ -17,7 +17,6 @@ jobs:
       matrix:
         platform:
           - macOS
-          - tvOS
           - iOS
     steps:
       - name: Checkout
@@ -30,6 +29,12 @@ jobs:
           action: build
           xcode: 13.2.1
           platform: ${{ matrix.platform }}
+
+      - uses: mxcl/xcodebuild@v1
+        with:
+          action: build
+          xcode: 13.2.1
+          destination: 'generic/platform=tvOS' 
 
 # jobs:
 #   build:
