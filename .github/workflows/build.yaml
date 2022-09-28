@@ -28,6 +28,7 @@ jobs:
 
       - uses: mxcl/xcodebuild@v1
         with:
+          action: build
           xcode: 13.2.1
           platform: ${{ matrix.platform }}
 
