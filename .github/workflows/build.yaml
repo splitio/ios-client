@@ -12,18 +12,33 @@ on:
 
 jobs:
   build:
-    runs-on: [macos-latest]
-
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        platform:
+          - macOS
+          - watchOS
+          - tvOS
+          - iOS
     steps:
-      - name: Select Xcode
-        uses: maxim-lobanov/setup-xcode@v1
+      - use: mxcl/xcodebuild@v1
         with:
-          xcode-version: 13.2.1
+          platform: ${{ matrix.platform }}
 
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+# jobs:
+#   build:
+#     runs-on: [macos-latest]
+
+#     steps:
+      # - name: Select Xcode
+      #   uses: maxim-lobanov/setup-xcode@v1
+      #   with:
+      #     xcode-version: 13.2.1
+
+      # - name: Checkout
+      #   uses: actions/checkout@v2
+      #   with:
+      #     fetch-depth: 0
 
       # - name: Build iOS
       #   uses: sersoft-gmbh/xcodebuild-action@v1
@@ -51,31 +66,18 @@ jobs:
       #     scheme: Split
       #     use-xcpretty: true
 
-      - name: Build tvOS
-        uses: sersoft-gmbh/xcodebuild-action@v1
-        with:
-          action: build
-          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
-          configuration: Debug
-          derived-data-path: "${{github.workspace}}/SplitApp"
-          destination: 'platform=tvOS Simulator,name=Apple TV'
-          # sdk: 'appletvos15.4'
-          project: Split.xcodeproj
-          scheme: Split
-          use-xcpretty: true
-
-      - name: Build WatchOS
-        uses: sersoft-gmbh/xcodebuild-action@v1
-        with:
-          action: build
-          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
-          configuration: Debug
-          derived-data-path: "${{github.workspace}}/SplitApp"
-          destination: 'platform=tvOS Simulator,name=Apple Watch Serios 6 - 44mm'
-          # sdk: 'watchos8.5'
-          project: Split.xcodeproj
-          scheme: Split
-          use-xcpretty: true
+      # - name: Build tvOS
+      #   uses: sersoft-gmbh/xcodebuild-action@v1
+      #   with:
+      #     action: build
+      #     build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
+      #     configuration: Debug
+      #     derived-data-path: "${{github.workspace}}/SplitApp"
+      #     destination: 'platform=tvOS Simulator,name=Apple TV'
+      #     # sdk: 'appletvos15.4'
+      #     project: Split.xcodeproj
+      #     scheme: Split
+      #     use-xcpretty: true
 
       - name: SonarQube Install
         uses: mathrix-education/sonar-scanner@master
