@@ -64,7 +64,7 @@ jobs:
           scheme: Split
           use-xcpretty: true
 
-      - name: Build tvOS
+      - name: Build WatchOS
         uses: sersoft-gmbh/xcodebuild-action@v1
         with:
           action: build
