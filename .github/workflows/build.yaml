@@ -59,7 +59,7 @@ jobs:
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
           destination: 'platform=tvOS Simulator,name=Apple TV'
-          sdk: 'appletvos15.4'
+          # sdk: 'appletvos15.4'
           project: Split.xcodeproj
           scheme: Split
           use-xcpretty: true
@@ -72,7 +72,7 @@ jobs:
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
           destination: 'platform=tvOS Simulator,name=Apple Watch Serios 6 - 44mm'
-          sdk: 'watchos8.5'
+          # sdk: 'watchos8.5'
           project: Split.xcodeproj
           scheme: Split
           use-xcpretty: true
