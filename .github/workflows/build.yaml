@@ -21,6 +21,11 @@ jobs:
           - tvOS
           - iOS
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - uses: mxcl/xcodebuild@v1
         with:
           platform: ${{ matrix.platform }}
