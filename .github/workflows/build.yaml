@@ -21,7 +21,7 @@ jobs:
           - tvOS
           - iOS
     steps:
-      - use: mxcl/xcodebuild@v1
+      - uses: mxcl/xcodebuild@v1
         with:
           platform: ${{ matrix.platform }}
 
