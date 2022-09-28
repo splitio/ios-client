@@ -58,7 +58,8 @@ jobs:
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
-          destination: 'platform=tvOS Simulator'
+          destination: 'platform=tvOS Simulator,name=Apple TV'
+          sdk: 'appletvos15.4'
           project: Split.xcodeproj
           scheme: Split
           use-xcpretty: true
@@ -70,7 +71,8 @@ jobs:
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
-          destination: 'platform=watchOS Simulator'
+          destination: 'platform=tvOS Simulator,name=Apple Watch Serios 6 - 44mm'
+          sdk: 'watchos8.5'
           project: Split.xcodeproj
           scheme: Split
           use-xcpretty: true
