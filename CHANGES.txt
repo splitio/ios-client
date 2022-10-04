@@ -1,3 +1,6 @@
+2.17.0: 
+- Added a new impressions mode for the SDK called NONE, to be used in factory when there is no desire to capture impressions on an SDK factory to feed Split's analytics engine. Running NONE mode, the SDK will only capture unique keys evaluated for a particular feature flag instead of full blown impressions.
+
 2.16.2: (Sep 1, 2022)
 - Memory handling improvements.
 
@@ -48,7 +51,10 @@
 - Fixed issue occurring sometimes when SDK Update is fired
 
 2.11.3: (Jul 9, 2021)
-- Added impressions dedupe logic to avoid sending duplicated impressions, having `OPTIMIZED` and `DEBUG` modes to establish how impressions are going to be sent to Split servers.
+- Added impressions dedupe logic to avoid sending duplicated impressions:  
+   - Added `OPTIMIZED` and `DEBUG` modes in order to enabling/disabling how impressions are going to be sent into Split servers,
+        - `OPTIMIZED`: will send unique impressions in a timeframe in order to reduce how many times impressions are posted to Split.
+        - `DEBUG`: will send every impression generated to Split.
 
 2.11.2: (Jun 25, 2021)
 - Fixed threading issue related to CoreData
