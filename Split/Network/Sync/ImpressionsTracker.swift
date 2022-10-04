@@ -83,13 +83,13 @@ class DefaultImpressionsTracker: ImpressionsTracker {
                 uniqueKeyTracker?.saveAndClear()
                 flusherUniqueKeysRecorderWorker?.flush()
             }
-            // TODO: Should record metrics here?
             return
         }
 
         let impressionToPush = impression.withPreviousTime(
             impressionsObserver.testAndSet(impression: impression))
-        if isOptimizedImpressionsMode() {
+        if isOptimizedImpressionsMode() &&
+            impressionToPush.previousTime ?? 0 > 0 {
             impressionsCounter?.inc(featureName: featureName, timeframe: impressionToPush.time, amount: 1)
         }
 
@@ -120,6 +120,8 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     func flush() {
+        saveImpressionsCount()
+        saveUniqueKeys()
         flusherImpressionsRecorderWorker?.flush()
         flusherImpressionsCountRecorderWorker?.flush()
         flusherUniqueKeysRecorderWorker?.flush()
@@ -157,7 +159,6 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         case .debug:
             createImpressionsRecorder()
         case .none:
-            // TODO: Setup send unique key recorder
             createUniqueKeysRecorderWorker()
             createImpressionsCountRecorder()
         }
