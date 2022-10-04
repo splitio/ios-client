@@ -39,7 +39,7 @@ class ImpressionsDedupTest: XCTestCase {
     }
 
     func testOptimized() {
-        dedupTest(mode: "OPTIMIZED", impValues: [1, 1, 1], countValues: [100, 150, 160])
+        dedupTest(mode: "OPTIMIZED", impValues: [1, 1, 1], countValues: [99, 149, 159])
     }
 
     func testDebug() {

@@ -66,6 +66,7 @@ class SingleSyncTest: XCTestCase {
 
         impCountExp = XCTestExpectation(description: "counts")
         for i in 0..<3 {
+            _ = factory.client(matchingKey: "key").getTreatment("TEST")
             _ = factory.client(matchingKey: "key\(i)").getTreatment("TEST")
             _ = client.track(eventType: "eve\(i)")
 
@@ -251,6 +252,7 @@ class SingleSyncTest: XCTestCase {
         splitConfig.eventsFirstPushWindow = 1
         splitConfig.eventsPushRate = 1
         splitConfig.uniqueKeysRefreshRate = 1
+        splitConfig.logLevel = .none
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
