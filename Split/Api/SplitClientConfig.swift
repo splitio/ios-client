@@ -182,8 +182,9 @@ public class SplitClientConfig: NSObject {
 
     /// Setup the impressions mode.
     /// @param mode Values:<br>
-    ///             DEBUG: All impressions are sent and
-    ///             OPTIMIZED: Impressions are sent using an optimization algorithm
+    ///     DEBUG: All impressions are sent and
+    ///     OPTIMIZED: Will send unique impressions in a timeframe in order to reduce how many times impressions are posted.
+    ///     NONE: Only capture unique keys evaluated for a particular feature flag instead of full blown impressions.
     ///
     /// @return: This builder
     /// @default: OPTIMIZED
@@ -191,10 +192,10 @@ public class SplitClientConfig: NSObject {
     @objc public var impressionsMode: String = "OPTIMIZED" {
         didSet {
             let mode = impressionsMode.uppercased()
-            if mode != "OPTIMIZED" && mode != "DEBUG" {
+            if  !["OPTIMIZED", "DEBUG", "NONE"].contains(where: { $0 == mode }) {
                 Logger.w("You passed an invalid impressionsMode (\(impressionsMode)), " +
                     " impressionsMode should be one of the following values: " +
-                            "'DEBUG' or 'OPTIMIZED'. Defaulting to 'OPTMIZED' mode.")
+                            "'DEBUG', 'OPTIMIZED' or 'NONE'. Defaulting to 'OPTMIZED' mode.")
             }
             finalImpressionsMode = ImpressionsMode(rawValue: mode) ?? .optimized
         }
