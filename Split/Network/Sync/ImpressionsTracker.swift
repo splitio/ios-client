@@ -88,7 +88,8 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
         let impressionToPush = impression.withPreviousTime(
             impressionsObserver.testAndSet(impression: impression))
-        if isOptimizedImpressionsMode() {
+        if isOptimizedImpressionsMode() &&
+            impressionToPush.previousTime ?? 0 > 0 {
             impressionsCounter?.inc(featureName: featureName, timeframe: impressionToPush.time, amount: 1)
         }
 
@@ -119,6 +120,8 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     func flush() {
+        saveImpressionsCount()
+        saveUniqueKeys()
         flusherImpressionsRecorderWorker?.flush()
         flusherImpressionsCountRecorderWorker?.flush()
         flusherUniqueKeysRecorderWorker?.flush()
