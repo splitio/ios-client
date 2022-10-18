@@ -179,10 +179,12 @@ class TestSplitFactory {
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
+#if os(iOS) || os(tvOS)
         if config.synchronizeInBackground {
             SplitBgSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)
         } else {
             SplitBgSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)
         }
+#endif
     }
 }

@@ -159,7 +159,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         case .debug:
             createImpressionsRecorder()
         case .none:
-            createUniqueKeysRecorderWorker()
+            createUniqueKeysRecorder()
             createImpressionsCountRecorder()
         }
     }
@@ -179,7 +179,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         impressionsCounter = ImpressionsCounter()
     }
 
-    private func createUniqueKeysRecorderWorker() {
+    private func createUniqueKeysRecorder() {
         self.periodicUniqueKeysRecorderWorker
         = syncWorkerFactory.createPeriodicUniqueKeyRecorderWorker(flusherChecker: uniqueKeyFlushChecker)
         self.flusherUniqueKeysRecorderWorker

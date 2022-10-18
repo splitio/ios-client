@@ -15,7 +15,9 @@ class FetchSpecificSplitsTest: XCTestCase {
     let matchingKey = IntegrationHelper.dummyUserKey
     let trafficType = "account"
     let kNeverRefreshRate = 9999999
-    var webServer: MockWebServer!
+    var httpClient: HttpClient!
+    var streamingBinding: TestStreamResponseBinding?
+
     var splitChange: SplitChange?
     var serverUrl = ""
     var splitsRequestUrl = ""
@@ -25,33 +27,11 @@ class FetchSpecificSplitsTest: XCTestCase {
         if splitChange == nil {
             splitChange = loadSplitsChangeFile()
         }
-        setupServer()
-    }
-    
-    override func tearDown() {
-        stopServer()
-    }
-    
-    private func setupServer() {
-        webServer = MockWebServer()
-        webServer.routeGet(path: "/mySegments/:user_id", data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}")
-        webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
-            self.splitsRequestUrl = "\(self.serverUrl)\(request.path)\(request.queryString ?? "")"
-            let since = self.lastChangeNumber
-            return MockedResponse(code: 200, data: IntegrationHelper.emptySplitChanges(since: since, till: since))
-        }
-        webServer.route(method: .post, path: "/testImpressions/bulk") { request in
-            return MockedResponse(code: 200, data: nil)
-        }
-        webServer.route(method: .post, path: "/events/bulk") { request in
-            return MockedResponse(code: 200)
-        }
-        webServer.start()
-        serverUrl = webServer.url
-    }
-    
-    private func stopServer() {
-        webServer.stop()
+
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
     func testBothFilters() {
@@ -95,6 +75,7 @@ class FetchSpecificSplitsTest: XCTestCase {
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "FetchSpecificSplit"))
+        _ = builder.setHttpClient(httpClient)
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory?.client
@@ -132,6 +113,40 @@ class FetchSpecificSplitsTest: XCTestCase {
             return change
         }
         return nil
+    }
+
+
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+        return { request in
+            switch request.url.absoluteString {
+            case let(urlString) where urlString.contains("splitChanges"):
+
+                self.splitsRequestUrl = String(request.url.absoluteString.suffix(request.url.absoluteString.count - 24))
+                let since = self.lastChangeNumber
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
+
+            case let(urlString) where urlString.contains("mySegments"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+
+            case let(urlString) where urlString.contains("auth"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+
+            case let(urlString) where urlString.contains("testImpressions/bulk"):
+                return TestDispatcherResponse(code: 200)
+
+            case let(urlString) where urlString.contains("events/bulk"):
+                return TestDispatcherResponse(code: 200)
+            default:
+                return TestDispatcherResponse(code: 500)
+            }
+        }
+    }
+
+    private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
+        return { request in
+            self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            return self.streamingBinding!
+        }
     }
 }
 

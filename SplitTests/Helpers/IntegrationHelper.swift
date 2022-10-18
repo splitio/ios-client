@@ -85,10 +85,6 @@ class IntegrationHelper {
         return "(\(key)_\(splitName)_\(treatment)"
     }
 
-    static func impressionsFromHit(request: ClientRequest) throws -> [ImpressionsTest] {
-        return try buildImpressionsFromJson(content: request.data!)
-    }
-
     static func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
         return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
     }
@@ -97,12 +93,12 @@ class IntegrationHelper {
         return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
     }
 
-    static func getTrackEventBy(value: Double, trackHits: [ClientRequest]) -> EventDTO? {
+    static func getTrackEventBy(value: Double, trackHits: [String]) -> EventDTO? {
         let hits = trackHits
         for req in hits {
             var lastEventHitEvents: [EventDTO] = []
             do {
-                lastEventHitEvents = try buildEventsFromJson(content: req.data!)
+                lastEventHitEvents = try buildEventsFromJson(content: req)
             } catch {
                 print("error: \(error)")
             }
@@ -113,6 +109,7 @@ class IntegrationHelper {
         }
         return nil
     }
+
 
     static func dummySseResponse(delay: Int = 0) -> String {
         return """

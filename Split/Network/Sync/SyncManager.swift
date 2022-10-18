@@ -61,15 +61,19 @@ class DefaultSyncManager: SyncManager {
     }
 
     func pause() {
+#if !os(macOS)
         isPaused.set(true)
         pushNotificationManager?.pause()
         synchronizer.pause()
+#endif
     }
 
     func resume() {
+#if !os(macOS)
         isPaused.set(false)
         synchronizer.resume()
         pushNotificationManager?.resume()
+#endif
     }
 
     func stop() {

@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "1582CBF6-2C3F-45DB-A818-CE12E1269C80",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Split.xcodeproj",
+        "identifier" : "592C6AA4211B6C99002D120C",
+        "name" : "SplitTests"
+      }
+    }
+  ],
+  "version" : 1
+}

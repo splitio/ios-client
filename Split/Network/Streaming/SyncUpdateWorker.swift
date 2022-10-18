@@ -20,7 +20,7 @@ class UpdateWorker<T: NotificationTypeField> {
     }
 
     func process(notification: T) throws {
-        fatalError()
+        Logger.i("Method has to be overrided by child")
     }
 }
 

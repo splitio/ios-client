@@ -102,10 +102,10 @@ class BaseHttpRequest: HttpRequest {
     }
 
     func complete(error: HttpError?) {
-        fatalError()
+        Logger.e("Http Complete method should be implemented")
     }
 
     func notifyIncomingData(_ data: Data) {
-        fatalError()
+        Logger.e("Http notifyIncomingData method should be implemented")
     }
 }

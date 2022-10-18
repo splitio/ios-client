@@ -19,7 +19,8 @@ extension Array: DynamicDecodable where Element: DynamicDecodable {
         if let elements = jsonObject as? [Any] {
             self = try elements.map({ try Element(jsonObject: $0) })
         } else {
-            fatalError("DynamicDecodable: Could not parse object")
+            Logger.i("DynamicDecodable: Could not parse objects")
+            self = []
         }
     }
 }

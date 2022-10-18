@@ -63,9 +63,11 @@ class HttpRequestManagerTestDispatcher: HttpRequestManager {
     func addRequest(_ request: HttpRequest) {
         if let dataRequest = request as? HttpDataRequest {
             let response = dispatcher(dataRequest)
-            queue.asyncAfter(deadline: DispatchTime.now() + 0.1) {
+            queue.asyncAfter(deadline: DispatchTime.now() + 0.1) { [weak self] in
+                guard let self = self else  { return }
                 dataRequest.setResponse(code: response.code)
-                self.queue.asyncAfter(deadline: DispatchTime.now() + 0.1) {
+                self.queue.asyncAfter(deadline: DispatchTime.now() + 0.1) { [weak self] in
+                    guard let self = self else  { return }
                     if let data = response.data {
                         dataRequest.notifyIncomingData(data)
                     }
@@ -76,7 +78,8 @@ class HttpRequestManagerTestDispatcher: HttpRequestManager {
             }
 
         } else if let streamRequest = request as? HttpStreamRequest {
-            queue.asyncAfter(deadline: DispatchTime.now() + 0.2) {
+            queue.asyncAfter(deadline: DispatchTime.now() + 0.2) { [weak self] in
+                guard let self = self else  { return }
                 let binding = self.streamingHandler(streamRequest)
                 request.setResponse(code: binding.code)
                 self.streamingBinding.append(binding)

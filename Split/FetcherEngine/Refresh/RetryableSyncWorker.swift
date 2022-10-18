@@ -89,7 +89,8 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
 
     // This methods should be overrided by child class
     func fetchFromRemote() -> Bool {
-        fatalError("fetch from remote not overriden")
+        Logger.i("fetch from remote not overriden")
+        return true
     }
 }
 
