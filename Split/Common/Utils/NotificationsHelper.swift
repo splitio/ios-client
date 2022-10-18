@@ -130,8 +130,9 @@ class DefaultNotificationHelper: NotificationHelper {
     }
 
     func removeAllObservers() {
-        queue.sync {
-           actions.removeAll()
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            self.actions.removeAll()
         }
     }
 }

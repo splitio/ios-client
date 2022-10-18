@@ -105,6 +105,7 @@ class StreamingDelaytTest: XCTestCase {
         semaphore.wait()
     }
 
+#if !os(macOS)
     func testDelayOnReconnect() throws {
         sseConDelay = 4
         let config = TestingHelper.basicStreamingConfig()
@@ -209,6 +210,7 @@ class StreamingDelaytTest: XCTestCase {
         })
         semaphore.wait()
     }
+#endif
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
