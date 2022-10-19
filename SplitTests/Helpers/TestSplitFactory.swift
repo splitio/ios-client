@@ -123,7 +123,8 @@ class TestSplitFactory {
                                                            storageContainer: storageContainer,
                                                            syncWorkerFactory: syncWorkerFactory,
                                                            impressionsSyncHelper: impressionsSyncHelper,
-                                                           uniqueKeyTracker: nil)
+                                                           uniqueKeyTracker: nil,
+                                                           notificationHelper: nil)
 
         let byKeyFacade = DefaultByKeyFacade()
 

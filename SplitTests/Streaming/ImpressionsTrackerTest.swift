@@ -269,7 +269,7 @@ class ImpressionsTrackerTest: XCTestCase {
                                                        storageContainer: storageContainer,
                                                        syncWorkerFactory: syncWorkerFactory,
                                                        impressionsSyncHelper: impressionsRecorderSyncHelper,
-        uniqueKeyTracker: uniqueKeyTracker)
+        uniqueKeyTracker: uniqueKeyTracker, notificationHelper: nil)
     }
 }
 

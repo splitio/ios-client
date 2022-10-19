@@ -73,7 +73,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let splitApiFacade = try components.buildSplitApiFacade(testHttpClient: params.httpClient)
 
-        let synchronizer = try components.buildSynchronizer()
+        let synchronizer = try components.buildSynchronizer(notificationHelper: params.notificationHelper)
         let syncManager = try components.buildSyncManager(notificationHelper: params.notificationHelper)
         let byKeyFacade = components.getByKeyFacade()
         let mySegmentsSyncWorkerFactory = try components.buildMySegmentsSyncWorkerFactory()

@@ -212,7 +212,7 @@ class SplitComponentFactory {
         return component
     }
 
-    func buildSynchronizer() throws -> Synchronizer {
+    func buildSynchronizer(notificationHelper: NotificationHelper?) throws -> Synchronizer {
 
         let syncWorkerFactory = try buildSyncWorkerFactory()
         let splitApiFacade = try getSplitApiFacade()
@@ -233,12 +233,20 @@ class SplitComponentFactory {
            let uniqueKeyStorage = storageContainer.uniqueKeyStorage {
             uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: uniqueKeyStorage)
         }
+
+        var macosNotificationHelper: NotificationHelper?
+
+#if os(macOS)
+        macosNotificationHelper = notificationHelper ?? DefaultNotificationHelper.instance
+#endif
+
         let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitClientConfig,
                                                            splitApiFacade: splitApiFacade,
                                                            storageContainer: storageContainer,
                                                            syncWorkerFactory: syncWorkerFactory,
                                                            impressionsSyncHelper: try buildImpressionsSyncHelper(),
-                                                           uniqueKeyTracker: uniqueKeyTracker)
+                                                           uniqueKeyTracker: uniqueKeyTracker,
+                                                           notificationHelper: macosNotificationHelper)
 
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
                                                           defaultUserKey: userKey,
