@@ -24,6 +24,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Build iOS
+        uses: sersoft-gmbh/xcodebuild-action@v1
+        with:
+          action: build test
+          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=YES
+          configuration: Debug
+          derived-data-path: "${{github.workspace}}/SplitApp"
+          destination: 'platform=iOS Simulator,OS=15.2,name=iPhone 12'
+          project: Split.xcodeproj
+          scheme: Split
+          sdk: 'iphonesimulator'
+          test-plan: 'SplitiOS'
+          use-xcpretty: true
+
       - name: Build MacOS
         uses: sersoft-gmbh/xcodebuild-action@v1
         with:
@@ -58,20 +72,6 @@ jobs:
           destination: 'generic/platform=watchOS'
           project: Split.xcodeproj
           scheme: WatchOS
-          use-xcpretty: true
-
-      - name: Build iOS
-        uses: sersoft-gmbh/xcodebuild-action@v1
-        with:
-          action: build test
-          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=YES
-          configuration: Debug
-          derived-data-path: "${{github.workspace}}/SplitApp"
-          destination: 'platform=iOS Simulator,OS=15.2,name=iPhone 12'
-          project: Split.xcodeproj
-          scheme: Split
-          sdk: 'iphonesimulator'
-          test-plan: 'SplitiOS'
           use-xcpretty: true
 
       - name: SonarQube Install
