@@ -1,4 +1,4 @@
-name: Build MacOS
+name: Build TvOS
 
 on:
   push:
@@ -24,14 +24,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build MacOS
+      - name: Build tvOS
         uses: sersoft-gmbh/xcodebuild-action@v1
         with:
           action: build
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
-          destination: 'platform=macOS,arch=x86_64'
+          destination: 'generic/platform=tvOS'
           project: Split.xcodeproj
           scheme: Split
           use-xcpretty: true
