@@ -26,10 +26,14 @@ protocol HostReachabilityChecker {
 
 class ReachabilityWrapper: HostReachabilityChecker {
     func isReachable(path url: String) -> Bool {
+        #if os(watchOS)
+            return true // for now
+        #else
         if let reachabilityManager = NetworkReachabilityManager(host: url) {
             return reachabilityManager.isReachable
         }
         return false
+        #endif
     }
 }
 

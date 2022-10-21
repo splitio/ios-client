@@ -180,6 +180,33 @@ class SyncManagerTest: XCTestCase {
         XCTAssertTrue(pushManager.stopCalled)
     }
 
+    func testPauseResume() {
+        splitConfig.streamingEnabled = true
+        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
+                                         reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
+                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+
+        syncManager.start()
+        syncManager.pause()
+        syncManager.resume()
+
+        // macOS doesn't have to pause sdk process
+        // when is no active
+        #if !os(macOS)
+        XCTAssertTrue(pushManager.pauseCalled)
+        XCTAssertTrue(pushManager.resumeCalled)
+        XCTAssertTrue(synchronizer.pauseCalled)
+        XCTAssertTrue(synchronizer.resumeCalled)
+        #else
+        XCTAssertFalse(pushManager.pauseCalled)
+        XCTAssertFalse(pushManager.resumeCalled)
+        XCTAssertFalse(synchronizer.pauseCalled)
+        XCTAssertFalse(synchronizer.resumeCalled)
+        #endif
+
+    }
+
     override func tearDown() {
 
     }

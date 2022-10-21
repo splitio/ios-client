@@ -12,7 +12,6 @@ import XCTest
 class SplitChangesServerErrorTest: XCTestCase {
     
     let kNeverRefreshRate = 9999999
-    var webServer: MockWebServer!
     let kChangeNbInterval: Int64 = 86400
     var reqChangesIndex = 0
     var lastChangeNumber: Int64 = 0
@@ -30,51 +29,65 @@ class SplitChangesServerErrorTest: XCTestCase {
 
     var impHit: [ImpressionsTest]?
     
+    var httpClient: HttpClient!
+    var streamingBinding: TestStreamResponseBinding?
+
     override func setUp() {
-        setupServer()
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
-    
-    override func tearDown() {
-        stopServer()
-    }
-    
-    private func setupServer() {
 
-        webServer = MockWebServer()
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+
         let respData = responseSlitChanges()
-        var responses = [MockedResponse]()
-        responses.append(MockedResponse(code: 200, data: try? Json.encodeToJson(respData[0])))
-        responses.append(MockedResponse(code: 500))
-        responses.append(MockedResponse(code: 500))
-        responses.append(MockedResponse(code: 200, data: try? Json.encodeToJson(respData[1])))
+        var responses = [TestDispatcherResponse]()
+        responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(respData[0]).utf8)))
+        responses.append(TestDispatcherResponse(code: 500))
+        responses.append(TestDispatcherResponse(code: 500))
+        responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(respData[1]).utf8)))
 
 
-        webServer.routeGet(path: "/mySegments/:user_id",
-                           data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, "
-                            + "{ \"id\":\"id1\", \"name\":\"segment2\"}]}")
-
-        webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
-            let index = self.reqChangesIndex
-            if index < self.spExp.count {
-                if self.reqChangesIndex > 0 {
+        return { request in
+            switch request.url.absoluteString {
+            case let(urlString) where urlString.contains("splitChanges"):
+                let index = self.reqChangesIndex
+                if index < self.spExp.count {
+                    if self.reqChangesIndex > 0 {
+                        self.spExp[index - 1].fulfill()
+                    }
+                    self.reqChangesIndex += 1
+                    return responses[index]
+                } else if index == self.spExp.count {
                     self.spExp[index - 1].fulfill()
                 }
-                self.reqChangesIndex += 1
-                return responses[index]
-            } else if index == self.spExp.count {
-                self.spExp[index - 1].fulfill()
-            }
-            let since = self.lastChangeNumber
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": \(since), \"till\": \(since) }")
-        }
+                let since = Int(self.lastChangeNumber)
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
 
-        webServer.routePost(path: "/testImpressions/bulk")
-        webServer.start()
-        serverUrl = webServer.url
+            case let(urlString) where urlString.contains("mySegments"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+
+            case let(urlString) where urlString.contains("auth"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+
+            case let(urlString) where urlString.contains("testImpressions/bulk"):
+                return TestDispatcherResponse(code: 200)
+
+            case let(urlString) where urlString.contains("events/bulk"):
+                return TestDispatcherResponse(code: 200)
+
+            default:
+                return TestDispatcherResponse(code: 500)
+            }
+        }
     }
-    
-    private func stopServer() {
-        webServer.stop()
+
+    private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
+        return { request in
+            self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            return self.streamingBinding!
+        }
     }
 
     // MARK: Test
@@ -88,7 +101,8 @@ class SplitChangesServerErrorTest: XCTestCase {
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 5
+        splitConfig.streamingEnabled = false
+        splitConfig.featuresRefreshRate = 3
         splitConfig.impressionRefreshRate = kNeverRefreshRate
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
@@ -99,6 +113,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesServerErrorTest"))
+        _ = builder.setHttpClient(httpClient)
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory!.client
@@ -159,16 +174,8 @@ class SplitChangesServerErrorTest: XCTestCase {
         return FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_int_test")
     }
 
-    private func impressionsHits() -> [ClientRequest] {
-        return webServer.receivedRequests.filter { $0.path == "/testImpressions/bulk"}
-    }
-
     private func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
         return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
-    }
-
-    private func impressionsFromHit(request: ClientRequest) throws -> [ImpressionsTest] {
-        return try buildImpressionsFromJson(content: request.data!)
     }
 }
 

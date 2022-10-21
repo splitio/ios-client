@@ -12,7 +12,6 @@ import XCTest
 class TrackTest: XCTestCase {
     
     let kNeverRefreshRate = 9999999
-    var webServer: MockWebServer!
     let kChangeNbInterval: Int64 = 86400
     var reqTrackIndex = 0
     var serverUrl = ""
@@ -30,57 +29,70 @@ class TrackTest: XCTestCase {
 
     let queue = DispatchQueue(label: "ios.split.itest.track", attributes: .concurrent)
 
+    var httpClient: HttpClient!
+    var streamingBinding: TestStreamResponseBinding?
+
     override func setUp() {
-        setupServer()
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
-    
-    override func tearDown() {
-        stopServer()
-    }
-    
-    private func setupServer() {
 
-        webServer = MockWebServer()
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+
         let respData = responseSlitChanges()
-        var responses = [MockedResponse]()
+        var responses = [TestDispatcherResponse]()
         for data in respData {
-            responses.append(MockedResponse(code: 200, data: try? Json.encodeToJson(data)))
+            responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(data).utf8)))
         }
 
-        webServer.route(method: .get, path: "/mySegments/:user_id") { request in
-            return MockedResponse(code: 200, data: "{\"mySegments\":[]}")
-        }
+        return { request in
+            switch request.url.absoluteString {
+            case let(urlString) where urlString.contains("splitChanges"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 9999999, till: 9999999).utf8))
 
-        webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9999999999999, \"till\": 9999999999999 }")
-        }
+            case let(urlString) where urlString.contains("mySegments"):
 
-        webServer.route(method: .post, path: "/events/bulk") { request in
-            var code: Int = 0
-            self.queue.sync {
-                let index = self.getAndIncrement()
-                print("Hit: \(index)")
-                if index > 0, index < 4 {
-                    code = 500
-                } else {
-                    let data = try? IntegrationHelper.buildEventsFromJson(content: request.data!)
-                    self.trackHits.append(data!)
-                    code = 200
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+
+            case let(urlString) where urlString.contains("auth"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+
+            case let(urlString) where urlString.contains("testImpressions/bulk"):
+                return TestDispatcherResponse(code: 200)
+
+            case let(urlString) where urlString.contains("events/bulk"):
+                var code: Int = 0
+                self.queue.sync {
+                    let index = self.getAndIncrement()
+                    print("Hit: \(index)")
+                    if index > 0, index < 4 {
+                        code = 500
+                    } else {
+                        let data = try? IntegrationHelper.buildEventsFromJson(content: request.body!.stringRepresentation)
+                        self.trackHits.append(data!)
+                        code = 200
+                    }
+
+                    if index < 6 {
+                        self.trExp[index].fulfill()
+                    }
+
                 }
+                return TestDispatcherResponse(code: code)
 
-                if index < 6 {
-                    self.trExp[index].fulfill()
-                }
-
+            default:
+                return TestDispatcherResponse(code: 500)
             }
-            return MockedResponse(code: code, data: nil)
         }
-        webServer.start()
-        serverUrl = webServer.url
     }
-    
-    private func stopServer() {
-        webServer.stop()
+
+    private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
+        return { request in
+            self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            return self.streamingBinding!
+        }
     }
 
     // MARK: Test
@@ -109,6 +121,7 @@ class TrackTest: XCTestCase {
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "TrackTest"))
+        _ = builder.setHttpClient(httpClient)
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig)
             .build()
         

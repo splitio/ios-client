@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build
+      - name: Build iOS
         uses: sersoft-gmbh/xcodebuild-action@v1
         with:
           action: build test
@@ -35,7 +35,44 @@ jobs:
           project: Split.xcodeproj
           scheme: Split
           sdk: 'iphonesimulator'
+          test-plan: 'SplitiOS'
           use-xcpretty: true
+
+      # - name: Build MacOS
+      #   uses: sersoft-gmbh/xcodebuild-action@v1
+      #   with:
+      #     action: build
+      #     build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
+      #     configuration: Debug
+      #     derived-data-path: "${{github.workspace}}/SplitApp"
+      #     destination: 'platform=macOS,arch=x86_64'
+      #     project: Split.xcodeproj
+      #     scheme: Split
+      #     use-xcpretty: true
+
+      # - name: Build tvOS
+      #   uses: sersoft-gmbh/xcodebuild-action@v1
+      #   with:
+      #     action: build
+      #     build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
+      #     configuration: Debug
+      #     derived-data-path: "${{github.workspace}}/SplitApp"
+      #     destination: 'generic/platform=tvOS'
+      #     project: Split.xcodeproj
+      #     scheme: Split
+      #     use-xcpretty: true
+
+      # - name: Build watchOS
+      #   uses: sersoft-gmbh/xcodebuild-action@v1
+      #   with:
+      #     action: build
+      #     build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
+      #     configuration: Debug
+      #     derived-data-path: "${{github.workspace}}/SplitApp"
+      #     destination: 'generic/platform=watchOS'
+      #     project: Split.xcodeproj
+      #     scheme: WatchOS
+      #     use-xcpretty: true
 
       - name: SonarQube Install
         uses: mathrix-education/sonar-scanner@master

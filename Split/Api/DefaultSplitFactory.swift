@@ -73,7 +73,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let splitApiFacade = try components.buildSplitApiFacade(testHttpClient: params.httpClient)
 
-        let synchronizer = try components.buildSynchronizer()
+        let synchronizer = try components.buildSynchronizer(notificationHelper: params.notificationHelper)
         let syncManager = try components.buildSyncManager(notificationHelper: params.notificationHelper)
         let byKeyFacade = components.getByKeyFacade()
         let mySegmentsSyncWorkerFactory = try components.buildMySegmentsSyncWorkerFactory()
@@ -113,10 +113,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
+
+#if os(iOS)
         if config.synchronizeInBackground {
             SplitBgSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)
         } else {
             SplitBgSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)
         }
+#endif
     }
 }

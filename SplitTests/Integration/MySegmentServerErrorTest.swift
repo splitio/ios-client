@@ -12,7 +12,6 @@ import XCTest
 class MySegmentServerErrorTest: XCTestCase {
     
     let kNeverRefreshRate = 9999999
-    var webServer: MockWebServer!
     let kChangeNbInterval: Int64 = 86400
     var reqSegmentsIndex = 0
     var isFirstChangesReq = true
@@ -26,65 +25,72 @@ class MySegmentServerErrorTest: XCTestCase {
         XCTestExpectation(description: "upd 3")
     ]
     
+    var httpClient: HttpClient!
+    var streamingBinding: TestStreamResponseBinding?
+
     override func setUp() {
-        setupServer()
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
-    
-    override func tearDown() {
-        stopServer()
-    }
-    
-    private func setupServer() {
 
-        webServer = MockWebServer()
-        let respData = responseSlitChanges()
-        var responses = [MockedResponse]()
-        for data in respData {
-            responses.append(MockedResponse(code: 200, data: try? Json.encodeToJson(data)))
-        }
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
 
-        webServer.route(method: .get, path: "/mySegments/:user_id") { request in
-            var data: String
-            let index = self.reqSegmentsIndex
-            var code = 200
-            switch index {
-            case 0:
-                data = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}]}"
-            case 1, 2:
-                data = ""
-                code = 500
+        return { request in
+            switch request.url.absoluteString {
+            case let(urlString) where urlString.contains("splitChanges"):
+                if self.isFirstChangesReq {
+                    self.isFirstChangesReq = false
+                    let change = self.responseSlitChanges()[0]
+                    self.lastChangeNumber = Int(change.till)
+                    let jsonChanges = try? Json.encodeToJson(change)
+                    return TestDispatcherResponse(code: 200, data: Data(jsonChanges!.utf8))
+                }
+                let since = self.lastChangeNumber
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
+
+            case let(urlString) where urlString.contains("mySegments"):
+
+                var data: String
+                let index = self.reqSegmentsIndex
+                var code = 200
+                switch index {
+                case 0:
+                    data = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}]}"
+                case 1, 2:
+                    data = ""
+                    code = 500
+                default:
+                    data = "{\"mySegments\":[{ \"id\":\"id2\", \"name\":\"segment2\"}]}"
+                }
+
+                if index > 0 && index <= self.sgExp.count {
+                    self.sgExp[index - 1].fulfill()
+                }
+                self.reqSegmentsIndex += 1
+                return TestDispatcherResponse(code: code, data: Data(data.utf8))
+
+            case let(urlString) where urlString.contains("auth"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+
+            case let(urlString) where urlString.contains("testImpressions/bulk"):
+                return TestDispatcherResponse(code: 200)
+
+            case let(urlString) where urlString.contains("events/bulk"):
+                return TestDispatcherResponse(code: 200)
+
             default:
-                data = "{\"mySegments\":[{ \"id\":\"id2\", \"name\":\"segment2\"}]}"
+                return TestDispatcherResponse(code: 500)
             }
-
-            if index > 0 && index <= self.sgExp.count {
-                self.sgExp[index - 1].fulfill()
-            }
-            self.reqSegmentsIndex += 1
-            return MockedResponse(code: code, data: data)
         }
-
-        webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
-            if self.isFirstChangesReq {
-                self.isFirstChangesReq = false
-                let change = self.responseSlitChanges()[0]
-                self.lastChangeNumber = Int(change.till)
-                let jsonChanges = try? Json.encodeToJson(change)
-                return MockedResponse(code: 200, data: jsonChanges)
-            }
-            let since = self.lastChangeNumber
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": \(since), \"till\": \(since) }")
-        }
-
-        webServer.route(method: .post, path: "/testImpressions/bulk") { request in
-            return MockedResponse(code: 200, data: nil)
-        }
-        webServer.start()
-        serverUrl = webServer.url
     }
-    
-    private func stopServer() {
-        webServer.stop()
+
+    private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
+        return { request in
+            self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            return self.streamingBinding!
+        }
     }
 
     // MARK: Test
@@ -98,6 +104,7 @@ class MySegmentServerErrorTest: XCTestCase {
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.streamingEnabled = false
         splitConfig.featuresRefreshRate = 15
         splitConfig.segmentsRefreshRate = 5
         splitConfig.impressionRefreshRate = 21
@@ -109,6 +116,7 @@ class MySegmentServerErrorTest: XCTestCase {
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "GralIntegrationTest"))
+        _ = builder.setHttpClient(httpClient)
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory!.client

@@ -21,7 +21,8 @@ class InfoUtils {
     static func valueForKey(key: String) -> String {
         guard let info = Bundle.main.infoDictionary,
             let domain = info[key] as? String else {
-                fatalError("Cannot get \(key) key from Info.plist")
+            Logger.i("Cannot get \(key) key from Info.plist")
+            return ""
         }
         return domain
     }

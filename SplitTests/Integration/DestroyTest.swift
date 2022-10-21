@@ -12,7 +12,6 @@ import XCTest
 class DestroyTests: XCTestCase {
     
     let kNeverRefreshRate = 9999999
-    var webServer: MockWebServer!
     var splitChange: SplitChange?
 
     var trackHitCounter = 0
@@ -24,66 +23,72 @@ class DestroyTests: XCTestCase {
 
     var impressions: [KeyImpression]!
     var events: [EventDTO]!
-    
+    var httpClient: HttpClient!
+    var streamingBinding: TestStreamResponseBinding?
+
     override func setUp() {
         if splitChange == nil {
             splitChange = loadSplitsChangeFile()
         }
         impressions = [KeyImpression]()
         events = [EventDTO]()
-        setupServer()
+
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
-    
-    override func tearDown() {
-        stopServer()
-    }
-    
-    private func setupServer() {
-        webServer = MockWebServer()
 
-        webServer.route(method: .get, path: "/mySegments/:user_id") { request in
-            self.mySegmentsHitCount+=1
-            return MockedResponse(code: 200, data: IntegrationHelper.emptyMySegments)
-        }
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
 
-        webServer.route(method: .get, path: "/splitChanges?since=:param") { request in
+        return { request in
+            switch request.url.absoluteString {
+            case let(urlString) where urlString.contains("splitChanges"):
+                self.splitChangesHitCount+=1
+                let since = self.lastChangeNumber
+                return TestDispatcherResponse(code: 200,
+                                      data: self.splitChangesHitCount == 1 ?
+                                              Data(try! Json.encodeToJson(self.splitChange).utf8)
+                                              : Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
 
-            self.splitChangesHitCount+=1
-            let since = self.lastChangeNumber
-            return MockedResponse(code: 200,
-                                  data: self.splitChangesHitCount == 1 ?
-                                    try? Json.encodeToJson(self.splitChange)
-                                    : IntegrationHelper.emptySplitChanges(since: since, till: since))
-        }
+            case let(urlString) where urlString.contains("mySegments"):
+                self.mySegmentsHitCount+=1
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
 
-        webServer.route(method: .post, path: "/events/bulk") { request in
-            self.trackHitCounter+=1
-            if let data = request.data {
-                if let e = try? IntegrationHelper.buildEventsFromJson(content: data) {
-                    self.events.append(contentsOf: e)
-                }
-            }
-            return MockedResponse(code: 200, data: nil)
-        }
+            case let(urlString) where urlString.contains("auth"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
 
-        webServer.route(method: .post, path: "/testImpressions/bulk") { request in
-            self.impressionsHitCount+=1
-            if let data = request.data {
-                if let tests = try? IntegrationHelper.buildImpressionsFromJson(content: data) {
-                    for test in tests {
-                        self.impressions.append(contentsOf: test.keyImpressions)
+            case let(urlString) where urlString.contains("testImpressions/bulk"):
+                self.impressionsHitCount+=1
+                if let data = request.body {
+                    if let tests = try? IntegrationHelper.buildImpressionsFromJson(content: data.stringRepresentation) {
+                        for test in tests {
+                            self.impressions.append(contentsOf: test.keyImpressions)
+                        }
                     }
                 }
-            }
-            return MockedResponse(code: 200, data: nil)
-        }
+                return TestDispatcherResponse(code: 200)
 
-        webServer.start()
-        serverUrl =  webServer.url
+            case let(urlString) where urlString.contains("events/bulk"):
+                self.trackHitCounter+=1
+                if let data = request.body {
+                    if let e = try? IntegrationHelper.buildEventsFromJson(content: data.stringRepresentation) {
+                        self.events.append(contentsOf: e)
+                    }
+                }
+                return TestDispatcherResponse(code: 200)
+
+            default:
+                return TestDispatcherResponse(code: 500)
+            }
+        }
     }
-    
-    private func stopServer() {
-        webServer.stop()
+
+    private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
+        return { request in
+            self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            return self.streamingBinding!
+        }
     }
     
     func testDestroy() throws {
@@ -109,6 +114,7 @@ class DestroyTests: XCTestCase {
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "GralIntegrationTest"))
+        _ = builder.setHttpClient(httpClient)
         let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory?.client
@@ -228,7 +234,7 @@ class DestroyTests: XCTestCase {
 
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+           let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
             lastChangeNumber = Int(change.till)
             return change
         }

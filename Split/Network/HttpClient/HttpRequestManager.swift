@@ -30,9 +30,8 @@ extension DefaultHttpRequestManager: URLSessionTaskDelegate {
 
         var httpError: HttpError?
         if let error = error as NSError? {
-            let code = Int32(truncatingIfNeeded: error.code)
-            switch code {
-            case CFNetworkErrors.cfurlErrorTimedOut.rawValue:
+            switch error.code {
+            case HttpCode.requestTimeOut:
                 httpError = HttpError.requestTimeOut
             default:
                 httpError = HttpError.unknown(code: -1, message: error.localizedDescription)

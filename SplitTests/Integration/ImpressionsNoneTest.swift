@@ -232,8 +232,7 @@ class ImpressionsNoneTest: XCTestCase {
 
         let notificationHelper = NotificationHelperStub()
         let splitConfig: SplitClientConfig = SplitClientConfig()
-//        splitConfig.impressionsMode = "none" // Currently unavailable
-        splitConfig.setImpressionsMode(.none) // Available now only for testing. Will be removed
+        splitConfig.impressionsMode = "none" // Currently unavailable
         splitConfig.uniqueKeysRefreshRate = 1
 
         let key: Key = Key(matchingKey: userKey)

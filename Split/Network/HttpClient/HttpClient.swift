@@ -24,6 +24,7 @@ struct HttpCode {
     static let forbidden = 403
     static let notFound = 404
     static let internalServerError = 500
+    static let requestTimeOut = 408
 }
 
 // MARK: HttpMethod

@@ -43,6 +43,9 @@ class SynchronizerStub: Synchronizer {
 
     var syncTelemetryConfig = false
 
+    var pauseCalled = false
+    var resumeCalled = false
+
     func loadAndSynchronizeSplits() {
         loadAndSynchronizeSplitsCalled = true
     }
@@ -167,9 +170,11 @@ class SynchronizerStub: Synchronizer {
 //    }
 
     func pause() {
+        pauseCalled = true
     }
 
     func resume() {
+        resumeCalled = true
     }
 
     func notifiySegmentsUpdated() {

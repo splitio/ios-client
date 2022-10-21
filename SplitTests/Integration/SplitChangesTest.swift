@@ -12,12 +12,14 @@ import XCTest
 class SplitChangesTest: XCTestCase {
     
     let kNeverRefreshRate = 9999999
-    var webServer: MockWebServer!
     let kChangeNbInterval: Int64 = 86400
     var reqChangesIndex = 0
     var serverUrl = ""
     let kMatchingKey = IntegrationHelper.dummyUserKey
     var factory: SplitFactory?
+
+    var streamingBinding: TestStreamResponseBinding?
+    var httpClient: HttpClient!
 
     let spExp = [
         XCTestExpectation(description: "upd 0"),
@@ -29,52 +31,12 @@ class SplitChangesTest: XCTestCase {
     let impExp = XCTestExpectation(description: "impressions")
 
     var impHit: [ImpressionsTest]?
-    
+
     override func setUp() {
-        setupServer()
-    }
-    
-    override func tearDown() {
-        stopServer()
-    }
-    
-    private func setupServer() {
-
-        webServer = MockWebServer()
-        let respData = responseSlitChanges()
-        var responses = [MockedResponse]()
-        for data in respData {
-            responses.append(MockedResponse(code: 200, data: try? Json.encodeToJson(data)))
-        }
-
-        webServer.routeGet(path: "/mySegments/:user_id",
-                           data: "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, "
-                            + "{ \"id\":\"id1\", \"name\":\"segment2\"}]}")
-
-        webServer.route(method: .get, path: "/splitChanges") { request in
-            let index = self.getAndIncrement()
-            if index < self.spExp.count {
-                if index > 0 {
-                    self.spExp[index - 1].fulfill()
-                }
-                return responses[index]
-            } else if index == self.spExp.count {
-                self.spExp[index - 1].fulfill()
-            }
-            return MockedResponse(code: 200, data: "{\"splits\":[], \"since\": 9999999999999, \"till\": 9999999999999 }")
-        }
-
-        webServer.route(method: .post, path: "/testImpressions/bulk") { request in
-            self.impHit = try? TestUtils.impressionsFromHit(request: request)
-            self.impExp.fulfill()
-            return MockedResponse(code: 200, data: nil)
-        }
-        webServer.start()
-        serverUrl = webServer.url
-    }
-    
-    private func stopServer() {
-        webServer.stop()
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
     // MARK: Test
@@ -95,7 +57,7 @@ class SplitChangesTest: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.streamingEnabled = false
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+            .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         splitConfig.impressionListener = { impression in
             impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
         }
@@ -103,6 +65,7 @@ class SplitChangesTest: XCTestCase {
         let key: Key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesTest"))
+        _ = builder.setHttpClient(httpClient)
         factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         
         let client = factory!.client
@@ -144,7 +107,7 @@ class SplitChangesTest: XCTestCase {
         XCTAssertEqual(1567456937865 + kChangeNbInterval * 2, impLis2.changeNumber)
         XCTAssertEqual(1, impHit?.count)
         XCTAssertEqual(4, impHit?[0].keyImpressions.count)
-//        let imp0 = impHit?[0].keyImpressions[0]
+        //        let imp0 = impHit?[0].keyImpressions[0]
         var onImp: Impression?
         let onImpArr = impHit?.flatMap { return $0.keyImpressions }.filter { $0.treatment == "on_0" }.map { $0.toImpression() }
         if onImpArr?.count == 1 {
@@ -184,12 +147,56 @@ class SplitChangesTest: XCTestCase {
         return changes
     }
 
-    private func loadSplitsChangeFile() -> SplitChange? {
-        return FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_int_test")
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+
+        let respData = responseSlitChanges()
+        var responses = [TestDispatcherResponse]()
+        for data in respData {
+            responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(data).utf8)))
+        }
+
+        return { request in
+            switch request.url.absoluteString {
+            case let(urlString) where urlString.contains("splitChanges"):
+                let index = self.getAndIncrement()
+                if index < self.spExp.count {
+                    if index > 0 {
+                        self.spExp[index - 1].fulfill()
+                    }
+                    return responses[index]
+                } else if index == self.spExp.count {
+                    self.spExp[index - 1].fulfill()
+                }
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999999, till: 99999999).utf8))
+
+            case let(urlString) where urlString.contains("mySegments"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+
+            case let(urlString) where urlString.contains("auth"):
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+
+            case let(urlString) where urlString.contains("testImpressions/bulk"):
+                self.impHit = try? TestUtils.impressionsFromHit(request: request)
+                self.impExp.fulfill()
+                return TestDispatcherResponse(code: 200)
+
+            case let(urlString) where urlString.contains("events/bulk"):
+                return TestDispatcherResponse(code: 200)
+
+            default:
+                return TestDispatcherResponse(code: 500)
+            }
+        }
     }
 
-    private func impressionsHits() -> [ClientRequest] {
-        return webServer.receivedRequests.filter { $0.path == "/testImpressions/bulk"}
+    private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
+        return { request in
+            return self.streamingBinding!
+        }
+    }
+
+    private func loadSplitsChangeFile() -> SplitChange? {
+        return FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_int_test")
     }
 
     private func getAndIncrement() -> Int {
@@ -201,4 +208,3 @@ class SplitChangesTest: XCTestCase {
         return i
     }
 }
-

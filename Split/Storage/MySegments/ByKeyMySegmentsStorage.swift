@@ -41,12 +41,4 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
     func getCount() -> Int {
         return mySegmentsStorage.getCount(forKey: userKey)
     }
-
-    func clear() {
-        // TODO: Remove this method
-    }
-
-    func destroy() {
-        // TODO: Remove this method
-    }
 }

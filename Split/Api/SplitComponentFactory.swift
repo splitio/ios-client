@@ -31,9 +31,8 @@ class SplitComponentFactory {
     }
 
     private func get<T>(for classType: T) -> Any? {
-        let className = String(describing: classType.self)
         // If component exists, return it
-        return components[className]
+        return components[String(describing: classType.self)]
     }
 
     // This function is implemented using generics
@@ -41,8 +40,7 @@ class SplitComponentFactory {
     // static type.
     // If using Any instead of T we'd get the dynamic type
     private func add<T>(component: T) {
-        let className = String(describing: type(of: component))
-        components[className] = component
+        components[String(describing: type(of: component))] = component
     }
 
     // These two method is used to maintain more than one reference
@@ -214,7 +212,7 @@ class SplitComponentFactory {
         return component
     }
 
-    func buildSynchronizer() throws -> Synchronizer {
+    func buildSynchronizer(notificationHelper: NotificationHelper?) throws -> Synchronizer {
 
         let syncWorkerFactory = try buildSyncWorkerFactory()
         let splitApiFacade = try getSplitApiFacade()
@@ -235,12 +233,20 @@ class SplitComponentFactory {
            let uniqueKeyStorage = storageContainer.uniqueKeyStorage {
             uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: uniqueKeyStorage)
         }
+
+        var macosNotificationHelper: NotificationHelper?
+
+#if os(macOS)
+        macosNotificationHelper = notificationHelper ?? DefaultNotificationHelper.instance
+#endif
+
         let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitClientConfig,
                                                            splitApiFacade: splitApiFacade,
                                                            storageContainer: storageContainer,
                                                            syncWorkerFactory: syncWorkerFactory,
                                                            impressionsSyncHelper: try buildImpressionsSyncHelper(),
-                                                           uniqueKeyTracker: uniqueKeyTracker)
+                                                           uniqueKeyTracker: uniqueKeyTracker,
+                                                           notificationHelper: macosNotificationHelper)
 
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
                                                           defaultUserKey: userKey,

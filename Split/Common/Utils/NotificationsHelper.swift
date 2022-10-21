@@ -7,7 +7,22 @@
 //
 
 import Foundation
+
+#if canImport(UIKit)
 import UIKit
+#endif
+
+#if canImport(AppKit)
+import AppKit
+#endif
+
+#if canImport(WatchKit)
+import WatchKit
+#endif
+
+#if canImport(TVUIKit)
+import TVUIKit
+#endif
 
 typealias ObserverAction = () -> Void
 
@@ -23,6 +38,7 @@ enum AppNotification: String {
 /// that way the code becomes streight and simple.
 
 protocol NotificationHelper {
+
     func addObserver(for notification: AppNotification, action: @escaping ObserverAction)
     func removeAllObservers()
 }
@@ -31,6 +47,26 @@ class DefaultNotificationHelper: NotificationHelper {
 
     private let queue = DispatchQueue(label: UUID.init().uuidString, attributes: .concurrent)
     private var actions = [String: [ObserverAction]]()
+
+#if os(iOS) || os(tvOS)
+
+#if swift(>=4.2)
+    static let didEnterBgNotification = UIApplication.didEnterBackgroundNotification
+    static let didBecomeActiveNotification = UIApplication.didBecomeActiveNotification
+#else
+    static let didEnterBgNotification = NSNotification.Name.UIApplicationDidEnterBackground
+    static let didBecomeActiveNotification = NSNotification.Name.UIApplicationDidBecomeActive
+#endif
+
+#elseif os(macOS)
+    static let didEnterBgNotification = NSApplication.didResignActiveNotification
+    static let didBecomeActiveNotification = NSApplication.didBecomeActiveNotification
+
+#elseif os(watchOS)
+    static let didEnterBgNotification = WKExtension.applicationDidEnterBackgroundNotification
+    static let didBecomeActiveNotification = WKExtension.applicationDidBecomeActiveNotification
+
+#endif
 
     static let instance: DefaultNotificationHelper = {
         return DefaultNotificationHelper()
@@ -55,35 +91,20 @@ class DefaultNotificationHelper: NotificationHelper {
     }
 
     private func subscribe() {
-        #if swift(>=4.2)
+
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationDidEnterBackground),
-                                               name: UIApplication.didEnterBackgroundNotification,
+                                               name: Self.didEnterBgNotification,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationDidBecomeActive),
-                                               name: UIApplication.didBecomeActiveNotification,
+                                               name: Self.didBecomeActiveNotification,
                                                object: nil)
-        #else
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationDidEnterBackground),
-                                               name: .UIApplicationDidEnterBackground,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationDidBecomeActive),
-                                               name: .UIApplicationDidBecomeActive,
-                                               object: nil)
-        #endif
     }
 
-    private func unsubscribe()  {
-        #if swift(>=4.2)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
-        #else
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidBecomeActive, object: nil)
-        #endif
+    private func unsubscribe() {
+        NotificationCenter.default.removeObserver(self, name: Self.didEnterBgNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Self.didBecomeActiveNotification, object: nil)
     }
 
     private func executeActions(for notification: AppNotification) {
@@ -100,15 +121,18 @@ class DefaultNotificationHelper: NotificationHelper {
 
     @objc private func applicationDidEnterBackground() {
         executeActions(for: AppNotification.didEnterBackground)
+        Logger.d("Split host app is inactive")
     }
 
     @objc private func applicationDidBecomeActive() {
         executeActions(for: AppNotification.didBecomeActive)
+        Logger.d("Split host app become active")
     }
 
     func removeAllObservers() {
-        queue.sync {
-           actions.removeAll()
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            self.actions.removeAll()
         }
     }
 }

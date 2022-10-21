@@ -45,7 +45,8 @@ class DefaultImpressionsTracker: ImpressionsTracker {
          storageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
          impressionsSyncHelper: ImpressionsRecorderSyncHelper?,
-         uniqueKeyTracker: UniqueKeyTracker?) {
+         uniqueKeyTracker: UniqueKeyTracker?,
+         notificationHelper: NotificationHelper?) {
 
         self.splitConfig = splitConfig
         self.syncWorkerFactory = syncWorkerFactory
@@ -53,6 +54,15 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         self.telemetryProducer = storageContainer.telemetryStorage
         self.uniqueKeyTracker = uniqueKeyTracker
         self.impressionsSyncHelper = impressionsSyncHelper
+
+#if os(macOS)
+        notificationHelper?.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
+            if let self = self {
+                self.saveUniqueKeys()
+                self.saveImpressionsCount()
+            }
+        }
+#endif
         setupImpressionsMode()
     }
 
@@ -159,7 +169,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         case .debug:
             createImpressionsRecorder()
         case .none:
-            createUniqueKeysRecorderWorker()
+            createUniqueKeysRecorder()
             createImpressionsCountRecorder()
         }
     }
@@ -179,7 +189,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         impressionsCounter = ImpressionsCounter()
     }
 
-    private func createUniqueKeysRecorderWorker() {
+    private func createUniqueKeysRecorder() {
         self.periodicUniqueKeysRecorderWorker
         = syncWorkerFactory.createPeriodicUniqueKeyRecorderWorker(flusherChecker: uniqueKeyFlushChecker)
         self.flusherUniqueKeysRecorderWorker
