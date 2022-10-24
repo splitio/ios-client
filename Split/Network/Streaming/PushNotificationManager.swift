@@ -232,7 +232,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
                                                          data: nil)
             self.isConnecting.set(false)
         }
-        self.setCurrentSseClient(sseClient)
+        setCurrentSseClient(sseClient)
     }
 
     private func notifyRecoverableError(message: String) {
