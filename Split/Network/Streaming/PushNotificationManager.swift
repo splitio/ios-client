@@ -47,7 +47,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
 
-//    private var delayTimer: DelayTimer = DelayTimer()
     private var delayTimer: DefaultTask?
 
     private let telemetryProducer: TelemetryRuntimeProducer?
@@ -104,12 +103,19 @@ class DefaultPushNotificationManager: PushNotificationManager {
             delayTimer.cancel()
         }
 
-        if let disconnectingClient = sseClient {
-            connectionQueue.async {
-                disconnectingClient.disconnect()
-            }
-        }
+        let disconnectingClient = sseClient
         isConnecting.set(false)
+        setCurrentSseClient(nil)
+        connectionQueue.async {
+            disconnectingClient?.disconnect()
+        }
+    }
+
+    private let lock = NSLock()
+    private func setCurrentSseClient(_ newClient: SseClient?) {
+        lock.lock()
+        sseClient = newClient
+        lock.unlock()
     }
 
     private func connect() {
@@ -226,10 +232,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
                                                          data: nil)
             self.isConnecting.set(false)
         }
-        connectionQueue.async(flags: .barrier) { [weak self] in
-            guard let self = self else { return }
-            self.sseClient = sseClient
-        }
+        setCurrentSseClient(sseClient)
     }
 
     private func notifyRecoverableError(message: String) {
