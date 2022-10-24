@@ -11,7 +11,6 @@ class Version {
     private static let kSdkPlatform: String = "ios"
     private static let kVersion = "2.18.0"
 
-
     static var semantic: String {
         return kVersion
     }

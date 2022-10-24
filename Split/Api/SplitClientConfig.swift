@@ -183,7 +183,8 @@ public class SplitClientConfig: NSObject {
     /// Setup the impressions mode.
     /// @param mode Values:<br>
     ///     DEBUG: All impressions are sent and
-    ///     OPTIMIZED: Will send unique impressions in a timeframe in order to reduce how many times impressions are posted.
+    ///     OPTIMIZED: Will send unique impressions in a timeframe in order to reduce how
+    ///     many times impressions are posted.
     ///     NONE: Only capture unique keys evaluated for a particular feature flag instead of full blown impressions.
     ///
     /// @return: This builder
