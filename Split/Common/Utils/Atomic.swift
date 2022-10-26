@@ -9,7 +9,7 @@
 import Foundation
 
 final class Atomic<T> {
-    private let queue = DispatchQueue.global()
+    private let queue = DispatchQueue(label: "split-atomic-int", target: DispatchQueue.global())
     private var currentValue: T
     init(_ value: T) {
         self.currentValue = value
