@@ -22,13 +22,11 @@ protocol PushNotificationManager {
 class DefaultPushNotificationManager: PushNotificationManager {
 
     private let kSseKeepAliveTimeInSeconds = 70
-    private let kReconnectTimeBeforeTokenExpInASeconds: Int64 = 600
+    private let kReconnectTimeBeforeTokenExpInASeconds: Int64 = 40//600
     private let kDisconnectOnBgTimeInSeconds = 60
     private let kTokenExpiredErrorCode = 40142
 
     private let sseAuthenticator: SseAuthenticator
-    private var sseClient: SseClient?
-    private var sseClientFactory: SseClientFactory
     private var timersManager: TimersManager
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let userKeyRegistry: ByKeyRegistry
@@ -50,19 +48,21 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private var delayTimer: DefaultTask?
 
     private let telemetryProducer: TelemetryRuntimeProducer?
+    private let sseClient: SseConnectionHandler
 
     init(userKeyRegistry: ByKeyRegistry,
          sseAuthenticator: SseAuthenticator,
-         sseClientFactory: SseClientFactory,
          broadcasterChannel: PushManagerEventBroadcaster,
          timersManager: TimersManager,
-         telemetryProducer: TelemetryRuntimeProducer?) {
+         telemetryProducer: TelemetryRuntimeProducer?,
+         sseConnectionHandler: SseConnectionHandler
+    ) {
         self.userKeyRegistry = userKeyRegistry
         self.sseAuthenticator = sseAuthenticator
         self.broadcasterChannel = broadcasterChannel
         self.telemetryProducer = telemetryProducer
         self.timersManager = timersManager
-        self.sseClientFactory = sseClientFactory
+        self.sseClient = sseConnectionHandler
     }
 
     // MARK: Public
@@ -102,25 +102,13 @@ class DefaultPushNotificationManager: PushNotificationManager {
         if let delayTimer = delayTimer {
             delayTimer.cancel()
         }
-
-        let disconnectingClient = sseClient
         isConnecting.set(false)
-        setCurrentSseClient(nil)
-        connectionQueue.async {
-            disconnectingClient?.disconnect()
-        }
-    }
-
-    private let lock = NSLock()
-    private func setCurrentSseClient(_ newClient: SseClient?) {
-        lock.lock()
-        sseClient = newClient
-        lock.unlock()
+        sseClient.disconnect()
     }
 
     private func connect() {
         if isStopped.value || isPaused.value ||
-            isConnecting.value || sseClient?.isConnectionOpened ?? false {
+            isConnecting.value || sseClient.isConnectionOpened {
             return
         }
 
@@ -216,14 +204,13 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     private func connectSse(jwt: JwtToken) {
         Logger.d("Streaming connect")
-        let sseClient = sseClientFactory.create()
 
         if isPaused.value || isStopped.value {
             isConnecting.set(false)
             return
         }
 
-        sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { [weak self] success in
+        sseClient.connect(jwt: jwt, channels: jwt.channels) { [weak self] success in
             guard let self = self else { return }
             if success {
                 self.handleSubsystemUp()
@@ -232,7 +219,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
                                                          data: nil)
             self.isConnecting.set(false)
         }
-        setCurrentSseClient(sseClient)
     }
 
     private func notifyRecoverableError(message: String) {
