@@ -401,6 +401,7 @@
 		950D0C0C27C544E500E617EB /* TelemetryConfigRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B17FF8275FCD0A002DC9DF /* TelemetryConfigRecorder.swift */; };
 		950D0C0D27C544F200E617EB /* SplitComponentFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */; };
 		950E501F290B38D2005A473E /* SseConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E501E290B38D2005A473E /* SseConnectionHandler.swift */; };
+		950E50202914590C005A473E /* SseConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E501E290B38D2005A473E /* SseConnectionHandler.swift */; };
 		95118EE8281AC6E700782F33 /* bucket_split_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95118EE7281AC6E700782F33 /* bucket_split_test.json */; };
 		95118EEB281AC83B00782F33 /* BucketSplitTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95118EEA281AC83B00782F33 /* BucketSplitTest.swift */; };
 		95118EEE281AFF8900782F33 /* MultiClientStreamingResetTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95118EED281AFF8900782F33 /* MultiClientStreamingResetTest.swift */; };
@@ -4467,6 +4468,7 @@
 				95B02D7128D0BDC20030EC8B /* SseClient.swift in Sources */,
 				95B02D7228D0BDC20030EC8B /* Timers.swift in Sources */,
 				95B02D7328D0BDC20030EC8B /* PushNotificationManager.swift in Sources */,
+				950E50202914590C005A473E /* SseConnectionHandler.swift in Sources */,
 				95B02D7428D0BDC20030EC8B /* SseClientFactory.swift in Sources */,
 				95B02D7528D0BDC20030EC8B /* ReconnectBackoffCounter.swift in Sources */,
 				95B02D7628D0BDC20030EC8B /* EventStreamParser.swift in Sources */,
