@@ -22,7 +22,7 @@ protocol PushNotificationManager {
 class DefaultPushNotificationManager: PushNotificationManager {
 
     private let kSseKeepAliveTimeInSeconds = 70
-    private let kReconnectTimeBeforeTokenExpInASeconds: Int64 = 40//600
+    private let kReconnectTimeBeforeTokenExpInASeconds: Int64 = 600
     private let kDisconnectOnBgTimeInSeconds = 60
     private let kTokenExpiredErrorCode = 40142
 
@@ -30,11 +30,8 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private var timersManager: TimersManager
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let userKeyRegistry: ByKeyRegistry
-    private let sseConnectionTimer: DispatchSourceTimer? = nil
 
     private let lastConnId = Atomic<Int64>(-1)
-
-    private let taskExecutor = TaskExecutor()
 
     private let connectionQueue = DispatchQueue(label: "Sse connnection",
                                                 attributes: .concurrent)
@@ -44,8 +41,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private var isConnecting: Atomic<Bool> = Atomic(false)
 
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
-
-    private var delayTimer: DefaultTask?
 
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let sseClient: SseConnectionHandler
@@ -99,9 +94,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func disconnect() {
         Logger.d("Notification Manager - Disconnecting SSE client")
         timersManager.cancel(timer: .refreshAuthToken)
-        if let delayTimer = delayTimer {
-            delayTimer.cancel()
-        }
+        timersManager.cancel(timer: .streamingDelay)
         isConnecting.set(false)
         sseClient.disconnect()
     }
@@ -143,14 +136,14 @@ class DefaultPushNotificationManager: PushNotificationManager {
         let connectionDelay = result.sseConnectionDelay
         let lastId = lastConnId.value
         if connectionDelay > 0 {
-            self.delayTimer?.cancel()
+            self.timersManager.cancel(timer: .streamingDelay)
             let delayTimer =  DefaultTask(delay: connectionDelay) { [weak self] in
                 guard let self = self else { return }
                 if lastId != self.lastConnId.value { return }
                 self.connectSse(jwt: jwt)
             }
-            self.taskExecutor.run(delayTimer)
-            self.delayTimer = delayTimer
+            self.timersManager.add(timer: .streamingDelay, task: delayTimer)
+
         } else {
             connectSse(jwt: jwt)
         }
