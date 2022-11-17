@@ -43,7 +43,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
 
     private let telemetryProducer: TelemetryRuntimeProducer?
-    private let sseClient: SseConnectionHandler
+    private let sseConnectionHandler: SseConnectionHandler
 
     init(userKeyRegistry: ByKeyRegistry,
          sseAuthenticator: SseAuthenticator,
@@ -57,7 +57,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
         self.broadcasterChannel = broadcasterChannel
         self.telemetryProducer = telemetryProducer
         self.timersManager = timersManager
-        self.sseClient = sseConnectionHandler
+        self.sseConnectionHandler = sseConnectionHandler
     }
 
     // MARK: Public
@@ -96,12 +96,12 @@ class DefaultPushNotificationManager: PushNotificationManager {
         timersManager.cancel(timer: .refreshAuthToken)
         timersManager.cancel(timer: .streamingDelay)
         isConnecting.set(false)
-        sseClient.disconnect()
+        sseConnectionHandler.disconnect()
     }
 
     private func connect() {
         if isStopped.value || isPaused.value ||
-            isConnecting.value || sseClient.isConnectionOpened {
+            isConnecting.value || sseConnectionHandler.isConnectionOpened {
             return
         }
 
@@ -203,7 +203,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
             return
         }
 
-        sseClient.connect(jwt: jwt, channels: jwt.channels) { [weak self] success in
+        sseConnectionHandler.connect(jwt: jwt, channels: jwt.channels) { [weak self] success in
             guard let self = self else { return }
             if success {
                 self.handleSubsystemUp()
