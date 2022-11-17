@@ -11,6 +11,7 @@ import Foundation
 enum TimerName {
     case refreshAuthToken
     case appHostBgDisconnect
+    case streamingDelay
 }
 
 protocol TimersManager {

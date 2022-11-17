@@ -40,10 +40,11 @@ class PushNotificationManagerTest: XCTestCase {
 
 
         sseClientFactory = SseClientFactoryStub()
+
+        let sseConnectionHandler = SseConnectionHandler(sseClientFactory: sseClientFactory)
         
         pnManager = DefaultPushNotificationManager(userKeyRegistry: byKeyFacade, sseAuthenticator: sseAuthenticator,
-                                                   sseClientFactory: sseClientFactory, broadcasterChannel: broadcasterChannel,
-                                                   timersManager: timersManager, telemetryProducer: telemetryProducer)
+                                                   broadcasterChannel: broadcasterChannel, timersManager: timersManager, telemetryProducer: telemetryProducer, sseConnectionHandler: sseConnectionHandler)
     }
 
     func testStartFullConnectionOk() {

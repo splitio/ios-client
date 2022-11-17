@@ -160,13 +160,15 @@ class SyncManagerBuilder {
                                                         httpClient: sseHttpClient,
                                                         sseHandler: sseHandler)
 
+        let sseConnectionHandler = SseConnectionHandler(sseClientFactory: sseClientFactory)
+
         return DefaultPushNotificationManager(
             userKeyRegistry: byKeyFacade,
             sseAuthenticator: apiFacade.sseAuthenticator,
-            sseClientFactory: sseClientFactory,
             broadcasterChannel: broadcasterChannel,
             timersManager: DefaultTimersManager(),
-            telemetryProducer: storageContainer.telemetryStorage)
+            telemetryProducer: storageContainer.telemetryStorage,
+            sseConnectionHandler: sseConnectionHandler)
 
     }
 }
