@@ -49,7 +49,7 @@ class DefaultSyncHelper: SyncHelper {
     }
 
     func recordTelemetry(resource: Resource, startTime: Int64) {
-        telemetryProducer?.recordLastSync(resource: resource, time: Stopwatch.now())
+        telemetryProducer?.recordLastSync(resource: resource, time: time())
         telemetryProducer?.recordHttpLatency(resource: resource, latency: Stopwatch.interval(from: startTime))
     }
 
@@ -62,6 +62,6 @@ class DefaultSyncHelper: SyncHelper {
         if telemetryProducer == nil {
             return 0
         }
-        return Stopwatch.now()
+        return Date().unixTimestampInMiliseconds()
     }
 }
