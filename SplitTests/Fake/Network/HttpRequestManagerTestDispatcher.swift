@@ -80,9 +80,13 @@ class HttpRequestManagerTestDispatcher: HttpRequestManager {
         } else if let streamRequest = request as? HttpStreamRequest {
             queue.asyncAfter(deadline: DispatchTime.now() + 0.2) { [weak self] in
                 guard let self = self else  { return }
-                let binding = self.streamingHandler(streamRequest)
-                request.setResponse(code: binding.code)
-                self.streamingBinding.append(binding)
+                self.queue.async(flags: .barrier) { [weak self] in
+                    guard let self = self else  { return }
+                    let binding = self.streamingHandler(streamRequest)
+                    request.setResponse(code: binding.code)
+                    self.streamingBinding.append(binding)
+                }
+
             }
         }
     }
