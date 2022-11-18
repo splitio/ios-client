@@ -9,7 +9,7 @@
 import Foundation
 
 enum BlockingQueueError: Error {
-    case hasBeenInterrupted
+    case hasBeenStopped
     case noElementAvailable
 }
 
@@ -17,7 +17,7 @@ class GenericBlockingQueue<Item> {
     private var elements: [Item]
     private let dispatchQueue: DispatchQueue
     private let semaphore: DispatchSemaphore
-    private var isInterrupted = false
+    private var isStopped = false
     init() {
         dispatchQueue = DispatchQueue(label: "Split.GenericBlockingQueue",
                                       attributes: .concurrent)
@@ -28,6 +28,7 @@ class GenericBlockingQueue<Item> {
     func add(_ item: Item) {
         dispatchQueue.async(flags: .barrier) { [weak self] in
             if let self = self {
+                if self.isStopped { return }
                 self.elements.append(item)
                 self.semaphore.signal()
             }
@@ -36,15 +37,14 @@ class GenericBlockingQueue<Item> {
 
     func take() throws -> Item {
         var item: Item?
+        // Checks if stopped before waiting
+        try checkIfStopped()
         self.semaphore.wait()
-        try dispatchQueue.sync {
-            if self.isInterrupted {
-                throw BlockingQueueError.hasBeenInterrupted
-            }
-            item = elements[0]
-            dispatchQueue.async(flags: .barrier) { [weak self] in
-                guard let self = self else { return }
-                self.elements.removeFirst()
+        try dispatchQueue.sync(flags: .barrier) {
+            // Checks if thread was awaked by stop or interruption
+            try checkIfStopped()
+            if elements.count > 0 {
+                item = elements.removeFirst()
             }
         }
         guard let foundItem = item else {
@@ -53,20 +53,20 @@ class GenericBlockingQueue<Item> {
         return foundItem
     }
 
-    func interrupt() {
+    func stop() {
         dispatchQueue.async(flags: .barrier) { [weak self] in
             if let self = self {
-                self.isInterrupted = true
+                self.isStopped = true
+                self.elements.removeAll()
                 self.semaphore.signal()
             }
         }
     }
 
-    func stop() {
-        dispatchQueue.async(flags: .barrier) { [weak self] in
-            if let self = self {
-                self.elements.removeAll()
-            }
+    // Use this function within the queue
+    private func checkIfStopped() throws {
+        if self.isStopped {
+            throw BlockingQueueError.hasBeenStopped
         }
     }
 }
@@ -75,7 +75,6 @@ class GenericBlockingQueue<Item> {
 protocol InternalEventBlockingQueue {
     func add(_ item: SplitInternalEvent)
     func take() throws -> SplitInternalEvent
-    func interrupt()
     func stop()
 }
 
@@ -88,10 +87,6 @@ class DefaultInternalEventBlockingQueue: InternalEventBlockingQueue {
     func take() throws -> SplitInternalEvent {
         let value =  try blockingQueue.take()
         return value
-    }
-
-    func interrupt() {
-        blockingQueue.interrupt()
     }
 
     func stop() {

@@ -105,7 +105,7 @@ import Foundation
         if params.config.isTelemetryEnabled {
             telemetryStorage = params.telemetryStorage ?? InMemoryTelemetryStorage()
             params.telemetryStorage = telemetryStorage
-            params.initStopwatch.start()
+            params.initStopwatch.start(unit: .milliseconds)
         }
 
         if let errorInfo = apiKeyValidator.validate(apiKey: params.apiKey) {

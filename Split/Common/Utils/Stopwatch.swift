@@ -15,23 +15,28 @@ import Foundation
 // call start only once and then interval
 
 class Stopwatch {
+    enum TimeUnit {
+        case milliseconds
+        case microseconds
+    }
     private var startTime: Int64 = 0
+    private var startTimeUnit: TimeUnit = .microseconds
 
-    func start() {
+    func start(unit: TimeUnit = .microseconds) {
         if startTime == 0 {
-            startTime = Stopwatch.now()
+            startTime = Stopwatch.now(unit: unit)
         }
     }
 
     func interval() -> Int64 {
-        return Stopwatch.interval(from: startTime)
+        return Stopwatch.interval(from: startTime, unit: startTimeUnit)
     }
 
-    static func now() -> Int64 {
+    static func now(unit: TimeUnit = .microseconds) -> Int64 {
         return Date().unixTimestampInMiliseconds()
     }
 
-    static func interval(from startTime: Int64) -> Int64 {
+    static func interval(from startTime: Int64, unit: TimeUnit = .microseconds) -> Int64 {
         return Stopwatch.now() - startTime
     }
 }
