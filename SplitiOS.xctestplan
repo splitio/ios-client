@@ -35,7 +35,6 @@
   },
   "testTargets" : [
     {
-      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:Split.xcodeproj",
         "identifier" : "592C6AA4211B6C99002D120C",
