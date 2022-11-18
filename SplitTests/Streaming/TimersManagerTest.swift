@@ -53,7 +53,7 @@ class TimersManagerTest: XCTestCase {
         timersManager.add(timer: .refreshAuthToken, task: task1)
         timersManager.add(timer: .appHostBgDisconnect, task: task2)
         timersManager.cancel(timer: .refreshAuthToken)
-        wait(for: [exp], timeout: 3)
+        wait(for: [exp], timeout: 10)
 
         XCTAssertTrue(triggered)
         XCTAssertTrue(cancelled)

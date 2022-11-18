@@ -153,18 +153,18 @@ class MySegmentUpdateV2Test: XCTestCase {
         sdkUpdExp = XCTestExpectation()
         sdkUpdMExp = XCTestExpectation()
         pushMessage(TestingData.kEscapedBoundedNotificationGzip)
-        wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 5)
+        wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 15)
 
         sdkUpdExp = XCTestExpectation()
         sdkUpdMExp = XCTestExpectation()
         pushMessage(TestingData.kEscapedBoundedNotificationZlib)
-        wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 5)
+        wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 15)
 
         // Should trigger unbounded
         sdkUpdExp = XCTestExpectation()
         sdkUpdMExp = XCTestExpectation()
         pushMessage(TestingData.kEscapedBoundedNotificationMalformed)
-        wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 5)
+        wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 15)
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual(4, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
