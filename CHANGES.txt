@@ -1,4 +1,4 @@
-2.18.2: (Nov xx, 2022)
+2.18.2: (Nov 22, 2022)
 - Fixed issue on take method of Blocking Queue component
 
 2.18.1: (Oct 26, 2022)
