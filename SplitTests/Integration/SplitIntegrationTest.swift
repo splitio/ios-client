@@ -249,7 +249,7 @@ class SplitIntegrationTests: XCTestCase {
 
     private func getAndUpdateReqIndex() -> Int {
         var i = 0
-        DispatchQueue.global().sync {
+        DispatchQueue.test.sync {
             i = trackReqIndex
             trackReqIndex+=1
         }

@@ -24,7 +24,7 @@ class MultiClientEvaluationTest: XCTestCase {
     let key5 = "key_5"
     let key6 = "key_6"
 
-    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.global())
+    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.test)
 
     struct Attr {
         static let numValue = "num_value"
@@ -306,7 +306,7 @@ class MultiClientEvaluationTest: XCTestCase {
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.test.asyncAfter(deadline: .now() + 1) {
             }
             return self.streamingBinding!
         }

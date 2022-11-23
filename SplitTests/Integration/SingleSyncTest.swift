@@ -31,7 +31,7 @@ class SingleSyncTest: XCTestCase {
     var uKeyExp: XCTestExpectation?
     var notificationHelper: NotificationHelperStub!
 
-    let queue = DispatchQueue(label: "queue", target: .global())
+    let queue = DispatchQueue(label: "queue", target: .test)
 
     override func setUp() {
         let session = HttpSessionMock()

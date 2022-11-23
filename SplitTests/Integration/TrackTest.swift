@@ -253,7 +253,7 @@ class TrackTest: XCTestCase {
 
     private func getAndIncrement() -> Int {
         var i = 0;
-        DispatchQueue.global().sync {
+        DispatchQueue.test.sync {
             i = self.reqTrackIndex
             self.reqTrackIndex+=1
         }

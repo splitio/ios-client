@@ -25,7 +25,7 @@ class ImpressionsDedupTest: XCTestCase {
     var countExp: XCTestExpectation?
     var impressions: [String: [KeyImpression]]!
     var counts: [String: Int]!
-    let queue = DispatchQueue(label: "queue", target: .global())
+    let queue = DispatchQueue(label: "queue", target: .test)
 
     override func setUp() {
         let session = HttpSessionMock()

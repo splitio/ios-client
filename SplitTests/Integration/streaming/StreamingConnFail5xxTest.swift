@@ -93,7 +93,7 @@ class StreamingConnFail5xxTest: XCTestCase {
             self.sseConnHits+=1
             if self.sseConnHits < self.kMaxSseConnRetries {
                 let bind = TestStreamResponseBinding.createFor(request: request, code: 500)
-                DispatchQueue.global().asyncAfter(deadline: .now() + 0.3) {
+                DispatchQueue.test.asyncAfter(deadline: .now() + 0.3) {
                     bind.complete(error: nil)
                 }
                 return bind

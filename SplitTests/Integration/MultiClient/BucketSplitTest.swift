@@ -30,7 +30,7 @@ class BucketSplitTest: XCTestCase {
         "DC8B43D2-5D06-48D3-B1FD-FEDF1A6DC2F1": "V90",
         "0E7C9914-7268-452A-B855-DF06542C1FE7": "V100"]
 
-    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.global())
+    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.test)
 
     var cachedSplit: Split!
     var clients = [Key: SplitClient]()
@@ -103,7 +103,7 @@ class BucketSplitTest: XCTestCase {
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.test.asyncAfter(deadline: .now() + 1) {
             }
             return self.streamingBinding!
         }

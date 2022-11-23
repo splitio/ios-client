@@ -52,7 +52,13 @@
       </MacroExpansion>
       <TestPlans>
          <TestPlanReference
-            reference = "container:SplitiOS.xctestplan"
+            reference = "container:SplitiOSUnit.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitiOSIntegration.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitiOSFull.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
