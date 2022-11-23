@@ -2,9 +2,25 @@
   "configurations" : [
     {
       "id" : "58DE4B58-E2CE-4405-9907-6EEAB7349405",
-      "name" : "Configuration 1",
+      "name" : "Common",
       "options" : {
 
+      }
+    },
+    {
+      "id" : "EDD654B9-59DA-4614-A00A-565A27E9CBB5",
+      "name" : "WatchOS",
+      "options" : {
+        "commandLineArgumentEntries" : [
+          {
+            "argument" : "    com.apple.CoreData.ConcurrencyDebug"
+          }
+        ],
+        "targetForVariableExpansion" : {
+          "containerPath" : "container:Split.xcodeproj",
+          "identifier" : "95B02CA328D0BD790030EC8B",
+          "name" : "SplitWatchOS"
+        }
       }
     }
   ],
