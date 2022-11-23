@@ -1588,6 +1588,7 @@
 		950B743C2694D768005FD649 /* LegacyStorageCleaner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyStorageCleaner.swift; sourceTree = "<group>"; };
 		950E501E290B38D2005A473E /* SseConnectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseConnectionHandler.swift; sourceTree = "<group>"; };
 		950F72FB292E615D008A0040 /* DispatchQueue+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Test.swift"; sourceTree = "<group>"; };
+		950F72FD292E87A4008A0040 /* SplitiOSIntegration.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSIntegration.xctestplan; sourceTree = "<group>"; };
 		95118EE7281AC6E700782F33 /* bucket_split_test.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bucket_split_test.json; sourceTree = "<group>"; };
 		95118EEA281AC83B00782F33 /* BucketSplitTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketSplitTest.swift; sourceTree = "<group>"; };
 		95118EED281AFF8900782F33 /* MultiClientStreamingResetTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiClientStreamingResetTest.swift; sourceTree = "<group>"; };
@@ -1902,6 +1903,7 @@
 		3B6DEE5020EA6A4D0067435E = {
 			isa = PBXGroup;
 			children = (
+				950F72FD292E87A4008A0040 /* SplitiOSIntegration.xctestplan */,
 				95B0307B28D275020030EC8B /* SplitiOS.xctestplan */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
