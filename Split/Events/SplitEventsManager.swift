@@ -101,7 +101,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             self.isStarted = false
             self.subscriptions.removeAll()
             self.processQueue.sync {
-                self.eventsQueue.interrupt()
+                self.eventsQueue.stop()
                 self.eventsQueue.stop()
             }
 
@@ -133,10 +133,10 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private func takeEvent() -> SplitInternalEvent? {
         do {
             return try eventsQueue.take()
-        } catch BlockingQueueError.hasBeenInterrupted {
+        } catch BlockingQueueError.hasBeenStopped {
             Logger.d("Events manager stoped")
         } catch {
-            Logger.e("Events manager error: \(error.localizedDescription)")
+            Logger.d("Events manager take event has exit because \(error.localizedDescription)")
         }
         return nil
     }

@@ -56,7 +56,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManagerCoordinator()
 
-        //
         let databaseName = SplitDatabaseHelper.databaseName(apiKey: params.apiKey) ?? params.config.defaultDataFolder
         SplitDatabaseHelper.renameDatabaseFromLegacyName(name: databaseName, apiKey: params.apiKey)
 

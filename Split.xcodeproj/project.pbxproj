@@ -400,6 +400,10 @@
 		950D0C0B27C544CB00E617EB /* TelemetryStatsRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B1800F27629B5E002DC9DF /* TelemetryStatsRecorder.swift */; };
 		950D0C0C27C544E500E617EB /* TelemetryConfigRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B17FF8275FCD0A002DC9DF /* TelemetryConfigRecorder.swift */; };
 		950D0C0D27C544F200E617EB /* SplitComponentFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */; };
+		950E501F290B38D2005A473E /* SseConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E501E290B38D2005A473E /* SseConnectionHandler.swift */; };
+		950E50202914590C005A473E /* SseConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E501E290B38D2005A473E /* SseConnectionHandler.swift */; };
+		950F72FC292E615D008A0040 /* DispatchQueue+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950F72FB292E615D008A0040 /* DispatchQueue+Test.swift */; };
+		950F72FF292E8D6C008A0040 /* SplitiOSFull.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */; };
 		95118EE8281AC6E700782F33 /* bucket_split_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95118EE7281AC6E700782F33 /* bucket_split_test.json */; };
 		95118EEB281AC83B00782F33 /* BucketSplitTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95118EEA281AC83B00782F33 /* BucketSplitTest.swift */; };
 		95118EEE281AFF8900782F33 /* MultiClientStreamingResetTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95118EED281AFF8900782F33 /* MultiClientStreamingResetTest.swift */; };
@@ -1583,6 +1587,10 @@
 		950B74302693761A005FD649 /* split_cache_v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v2.xcdatamodel; sourceTree = "<group>"; };
 		950B743326938B5E005FD649 /* KeyImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyImpression.swift; sourceTree = "<group>"; };
 		950B743C2694D768005FD649 /* LegacyStorageCleaner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyStorageCleaner.swift; sourceTree = "<group>"; };
+		950E501E290B38D2005A473E /* SseConnectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseConnectionHandler.swift; sourceTree = "<group>"; };
+		950F72FB292E615D008A0040 /* DispatchQueue+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Test.swift"; sourceTree = "<group>"; };
+		950F72FD292E87A4008A0040 /* SplitiOSIntegration.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSIntegration.xctestplan; sourceTree = "<group>"; };
+		950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSFull.xctestplan; sourceTree = "<group>"; };
 		95118EE7281AC6E700782F33 /* bucket_split_test.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bucket_split_test.json; sourceTree = "<group>"; };
 		95118EEA281AC83B00782F33 /* BucketSplitTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketSplitTest.swift; sourceTree = "<group>"; };
 		95118EED281AFF8900782F33 /* MultiClientStreamingResetTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiClientStreamingResetTest.swift; sourceTree = "<group>"; };
@@ -1735,7 +1743,7 @@
 		95B02CA428D0BD790030EC8B /* SplitWatchOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SplitWatchOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		95B02CA628D0BD790030EC8B /* SplitTvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitTvOS.h; sourceTree = "<group>"; };
 		95B02E0928D130670030EC8B /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.5.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
-		95B0307B28D275020030EC8B /* SplitiOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOS.xctestplan; sourceTree = "<group>"; };
+		95B0307B28D275020030EC8B /* SplitiOSUnit.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSUnit.xctestplan; sourceTree = "<group>"; };
 		95B030BF28D6487C0030EC8B /* StreamingBgReconnectTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingBgReconnectTest.swift; sourceTree = "<group>"; };
 		95B030C228D8B6160030EC8B /* WatchOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WatchOS.xctestplan; sourceTree = "<group>"; };
 		95B17FF0275A52D7002DC9DF /* TelemetryInMemoryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryInMemoryStorage.swift; sourceTree = "<group>"; };
@@ -1897,7 +1905,9 @@
 		3B6DEE5020EA6A4D0067435E = {
 			isa = PBXGroup;
 			children = (
-				95B0307B28D275020030EC8B /* SplitiOS.xctestplan */,
+				950F72FD292E87A4008A0040 /* SplitiOSIntegration.xctestplan */,
+				95B0307B28D275020030EC8B /* SplitiOSUnit.xctestplan */,
+				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
 				956E418E271DC8F1008B4DB6 /* Splitlib */,
@@ -2513,6 +2523,7 @@
 				5912D151219A022000BC698C /* CsvHelper.swift */,
 				5982D937219F57BE00230F44 /* FileHelper.swift */,
 				5919C64721C7D45B00EC35B8 /* SplitTestHelper.swift */,
+				950F72FB292E615D008A0040 /* DispatchQueue+Test.swift */,
 				59FB7C1521F79B8200ECC96A /* EventTypeNameHelper.swift */,
 				593225F924A3855700496D8B /* TestHelper.swift */,
 				5932260E24AAB27900496D8B /* TestUtils.swift */,
@@ -2790,6 +2801,7 @@
 				59EFD30624BCE4810052920D /* SseClient.swift */,
 				595AD26424E6C3D200A7B750 /* Timers.swift */,
 				595AD25A24E5C00100A7B750 /* PushNotificationManager.swift */,
+				950E501E290B38D2005A473E /* SseConnectionHandler.swift */,
 				955BB4942820653F00762D7E /* SseClientFactory.swift */,
 				595AD25C24E5C61C00A7B750 /* ReconnectBackoffCounter.swift */,
 				595AD25624E56E6200A7B750 /* EventStreamParser.swift */,
@@ -3362,6 +3374,7 @@
 				5912D154219A065200BC698C /* legacy_2.csv in Resources */,
 				5912D14D2199FD4D00BC698C /* legacy_1.csv in Resources */,
 				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
+				950F72FF292E8D6C008A0040 /* SplitiOSFull.xctestplan in Resources */,
 				59FB7C2A2202463000ECC96A /* localhost_1.splits in Resources */,
 				95118EE8281AC6E700782F33 /* bucket_split_test.json in Resources */,
 				95B4368D26E9186C00E1EB9C /* lorem_ipsum_result.txt in Resources */,
@@ -3622,6 +3635,7 @@
 				3B6DEF5B20EA6AE50067435E /* SplitInternalEvent.swift in Sources */,
 				59FB7C332203126400ECC96A /* DefaultSplitFactoryBuilder.swift in Sources */,
 				595AD20824DDC66500A7B750 /* SseAuthenticator.swift in Sources */,
+				950E501F290B38D2005A473E /* SseConnectionHandler.swift in Sources */,
 				95825B2E271E227700A0CDAD /* Exports.swift in Sources */,
 				3B6DEF7B20EA6AE50067435E /* HttpDataResponse.swift in Sources */,
 				9595AD7327F4D9F7006E3A54 /* EventsTracker.swift in Sources */,
@@ -3743,6 +3757,7 @@
 				59EFD2FB24B8EF6F0052920D /* HttpRequestMock.swift in Sources */,
 				5921ED3A2538C57D000D6C8B /* StreamingConnFail5xxTest.swift in Sources */,
 				59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */,
+				950F72FC292E615D008A0040 /* DispatchQueue+Test.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
 				59B2043B24F568660092F2E9 /* SynchronizerStub.swift in Sources */,
 				95F3EFEC258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift in Sources */,
@@ -4463,6 +4478,7 @@
 				95B02D7128D0BDC20030EC8B /* SseClient.swift in Sources */,
 				95B02D7228D0BDC20030EC8B /* Timers.swift in Sources */,
 				95B02D7328D0BDC20030EC8B /* PushNotificationManager.swift in Sources */,
+				950E50202914590C005A473E /* SseConnectionHandler.swift in Sources */,
 				95B02D7428D0BDC20030EC8B /* SseClientFactory.swift in Sources */,
 				95B02D7528D0BDC20030EC8B /* ReconnectBackoffCounter.swift in Sources */,
 				95B02D7628D0BDC20030EC8B /* EventStreamParser.swift in Sources */,

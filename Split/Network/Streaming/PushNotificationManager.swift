@@ -27,16 +27,11 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private let kTokenExpiredErrorCode = 40142
 
     private let sseAuthenticator: SseAuthenticator
-    private var sseClient: SseClient?
-    private var sseClientFactory: SseClientFactory
     private var timersManager: TimersManager
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let userKeyRegistry: ByKeyRegistry
-    private let sseConnectionTimer: DispatchSourceTimer? = nil
 
     private let lastConnId = Atomic<Int64>(-1)
-
-    private let taskExecutor = TaskExecutor()
 
     private let connectionQueue = DispatchQueue(label: "Sse connnection",
                                                 attributes: .concurrent)
@@ -47,22 +42,22 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
 
-    private var delayTimer: DefaultTask?
-
     private let telemetryProducer: TelemetryRuntimeProducer?
+    private let sseConnectionHandler: SseConnectionHandler
 
     init(userKeyRegistry: ByKeyRegistry,
          sseAuthenticator: SseAuthenticator,
-         sseClientFactory: SseClientFactory,
          broadcasterChannel: PushManagerEventBroadcaster,
          timersManager: TimersManager,
-         telemetryProducer: TelemetryRuntimeProducer?) {
+         telemetryProducer: TelemetryRuntimeProducer?,
+         sseConnectionHandler: SseConnectionHandler
+    ) {
         self.userKeyRegistry = userKeyRegistry
         self.sseAuthenticator = sseAuthenticator
         self.broadcasterChannel = broadcasterChannel
         self.telemetryProducer = telemetryProducer
         self.timersManager = timersManager
-        self.sseClientFactory = sseClientFactory
+        self.sseConnectionHandler = sseConnectionHandler
     }
 
     // MARK: Public
@@ -99,28 +94,14 @@ class DefaultPushNotificationManager: PushNotificationManager {
     func disconnect() {
         Logger.d("Notification Manager - Disconnecting SSE client")
         timersManager.cancel(timer: .refreshAuthToken)
-        if let delayTimer = delayTimer {
-            delayTimer.cancel()
-        }
-
-        let disconnectingClient = sseClient
+        timersManager.cancel(timer: .streamingDelay)
         isConnecting.set(false)
-        setCurrentSseClient(nil)
-        connectionQueue.async {
-            disconnectingClient?.disconnect()
-        }
-    }
-
-    private let lock = NSLock()
-    private func setCurrentSseClient(_ newClient: SseClient?) {
-        lock.lock()
-        sseClient = newClient
-        lock.unlock()
+        sseConnectionHandler.disconnect()
     }
 
     private func connect() {
         if isStopped.value || isPaused.value ||
-            isConnecting.value || sseClient?.isConnectionOpened ?? false {
+            isConnecting.value || sseConnectionHandler.isConnectionOpened {
             return
         }
 
@@ -155,14 +136,14 @@ class DefaultPushNotificationManager: PushNotificationManager {
         let connectionDelay = result.sseConnectionDelay
         let lastId = lastConnId.value
         if connectionDelay > 0 {
-            self.delayTimer?.cancel()
+            self.timersManager.cancel(timer: .streamingDelay)
             let delayTimer =  DefaultTask(delay: connectionDelay) { [weak self] in
                 guard let self = self else { return }
                 if lastId != self.lastConnId.value { return }
                 self.connectSse(jwt: jwt)
             }
-            self.taskExecutor.run(delayTimer)
-            self.delayTimer = delayTimer
+            self.timersManager.add(timer: .streamingDelay, task: delayTimer)
+
         } else {
             connectSse(jwt: jwt)
         }
@@ -216,14 +197,13 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     private func connectSse(jwt: JwtToken) {
         Logger.d("Streaming connect")
-        let sseClient = sseClientFactory.create()
 
         if isPaused.value || isStopped.value {
             isConnecting.set(false)
             return
         }
 
-        sseClient.connect(token: jwt.rawToken, channels: jwt.channels) { [weak self] success in
+        sseConnectionHandler.connect(jwt: jwt, channels: jwt.channels) { [weak self] success in
             guard let self = self else { return }
             if success {
                 self.handleSubsystemUp()
@@ -232,7 +212,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
                                                          data: nil)
             self.isConnecting.set(false)
         }
-        setCurrentSseClient(sseClient)
     }
 
     private func notifyRecoverableError(message: String) {

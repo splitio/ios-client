@@ -1,0 +1,34 @@
+#!/bin/zsh
+
+clear
+CUR_DIR=$(pwd)
+SCHEMA_NAME=Split
+BUILD_FOLDER=build_size
+XCF_FOLDER=xcframework
+
+rm -rf "${CUR_DIR}/${BUILD_FOLDER}"
+rm -rf "${CUR_DIR}/${XCF_FOLDER}"
+
+mkdir "${CUR_DIR}/${BUILD_FOLDER}"
+mkdir "${CUR_DIR}/${XCF_FOLDER}"
+
+echo "Archiving ${FRAMEWORK_NAME}"
+xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS"  -derivedDataPath "${CUR_DIR}/${BUILD_FOLDER}" -sdk iphoneos -configuration release SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+#Creating XCFramework
+echo "Creating XCFramework from ${BUILD_FOLDER} "
+xcodebuild -create-xcframework -framework "${CUR_DIR}/${BUILD_FOLDER}/Build/Products/Release-iphoneos/${SCHEMA_NAME}.framework" -output "${CUR_DIR}/${XCF_FOLDER}/Split.xcframework"
+
+FRAMEWORK_SIZE=$(du -hs "${CUR_DIR}/${BUILD_FOLDER}/Build/Products/Release-iphoneos/${SCHEMA_NAME}.framework")
+XCF_SIZE=$(du -hs "${CUR_DIR}/${XCF_FOLDER}/Split.xcframework")
+
+echo "\n-----------------------------------"
+echo " Split iOS Size"
+echo "-----------------------------------"
+echo "Framework   --> ${FRAMEWORK_SIZE}"
+echo "XCFramework --> ${XCF_SIZE}"
+echo "-----------------------------------\n"
+
+if read -q "choice?Press Y/y to remove generated files > "; then
+    rm -rf "${CUR_DIR}/${BUILD_FOLDER}"
+    rm -rf "${CUR_DIR}/${XCF_FOLDER}"
+fi

@@ -26,7 +26,7 @@ class MultiClientStreamingResetTest: XCTestCase {
     var authHitCount = 0
     var sseHitCount = 0
 
-    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.global())
+    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.test)
 
     var cachedSplit: Split!
     var clients = [Key: SplitClient]()

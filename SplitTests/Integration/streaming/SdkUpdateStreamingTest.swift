@@ -95,7 +95,7 @@ class SdkUpdateStreamingTest: XCTestCase {
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
 
         let sdkUpdateExp = XCTestExpectation()
-        DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.test.asyncAfter(deadline: .now() + 2) {
             sdkUpdateExp.fulfill()
         }
         wait(for: [sdkUpdateExp], timeout: 2)
@@ -309,7 +309,7 @@ class SdkUpdateStreamingTest: XCTestCase {
         return { request in
             self.sseConnHits+=1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.test.asyncAfter(deadline: .now() + 1) {
                 self.sseExp.fulfill()
             }
             return self.streamingBinding!
@@ -347,7 +347,7 @@ class SdkUpdateStreamingTest: XCTestCase {
     
     private func getAndUpdateHit() -> Int {
         var hitNumber = 0
-        DispatchQueue.global().sync {
+        DispatchQueue.test.sync {
             hitNumber = self.splitsChangesHits
             self.splitsChangesHits+=1
         }

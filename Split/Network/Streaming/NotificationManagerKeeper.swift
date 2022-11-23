@@ -32,22 +32,20 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
 
     private var publishersCount: Int {
         var count = 0
-        DispatchQueue.global().sync {
+        queue.sync {
             count = publishersInfo[kChannelPriIndex].count + publishersInfo[kChannelSecIndex].count
         }
         return count
     }
 
+    private let queue = DispatchQueue(label: "split-not-keeper", target: DispatchQueue.global())
     private let broadcasterChannel: PushManagerEventBroadcaster
     private let telemetryProducer: TelemetryRuntimeProducer?
 
-    private var streamingActive = true
+    private var streamingActive = Atomic(true)
+
     var isStreamingActive: Bool {
-        var active = false
-        DispatchQueue.global().sync {
-            active = streamingActive
-        }
-        return active
+        return streamingActive.value
     }
 
     init(broadcasterChannel: PushManagerEventBroadcaster,
@@ -59,19 +57,19 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
     func handleIncomingControl(notification: ControlNotification) {
         switch notification.controlType {
         case .streamingPaused:
-            updateStreamingState(active: false)
+            streamingActive.set(false)
             broadcasterChannel.push(event: .pushSubsystemDown)
             self.telemetryProducer?.recordStreamingEvent(type: .streamingStatus,
                                                          data: TelemetryStreamingEventValue.streamingPaused)
 
         case .streamingDisabled:
-            updateStreamingState(active: false)
+            streamingActive.set(false)
             broadcasterChannel.push(event: .pushSubsystemDisabled)
             self.telemetryProducer?.recordStreamingEvent(type: .streamingStatus,
                                                          data: TelemetryStreamingEventValue.streamingDisabled)
 
         case .streamingResumed:
-            updateStreamingState(active: true)
+            streamingActive.set(true)
             if publishersCount > 0 {
                 broadcasterChannel.push(event: .pushSubsystemUp)
                 self.telemetryProducer?.recordStreamingEvent(type: .streamingStatus,
@@ -108,7 +106,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
             return
         }
 
-        if publishersCount > 0 && prevPublishersCount == 0 && isStreamingActive {
+        if publishersCount > 0 && prevPublishersCount == 0 && streamingActive.value {
             broadcasterChannel.push(event: .pushSubsystemUp)
             return
         }
@@ -116,27 +114,27 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
 
     private func isOldTimestamp(notification: OccupancyNotification, for channelIndex: Int) -> Bool {
         var timestamp: Int64 = 0
-        DispatchQueue.global().sync {
+        queue.sync {
             timestamp =  publishersInfo[channelIndex].lastTimestamp
         }
         return timestamp >= notification.timestamp
     }
 
     private func update(count: Int, for channelIndex: Int) {
-        DispatchQueue.global().sync {
+        queue.sync {
             publishersInfo[channelIndex].count = count
         }
     }
 
     private func update(timestamp: Int64, for channelIndex: Int) {
-        DispatchQueue.global().sync {
+        queue.sync {
             publishersInfo[channelIndex].lastTimestamp = timestamp
         }
     }
 
     private func publishers(in channelIndex: Int) -> Int {
         var count = 0
-        DispatchQueue.global().sync {
+        queue.sync {
             count =  publishersInfo[channelIndex].count
         }
         return count
@@ -152,11 +150,4 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
             return -1
         }
     }
-
-    private func updateStreamingState(active: Bool) {
-        DispatchQueue.global().sync {
-            streamingActive = active
-        }
-    }
-
 }

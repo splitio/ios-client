@@ -43,7 +43,7 @@ class PushManagerEventBroadcasterTest: XCTestCase {
             exp3.fulfill()
         })
 
-        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 1.0) {
+        DispatchQueue.test.asyncAfter(deadline: DispatchTime.now() + 1.0) {
             self.channel.push(event: .pushSubsystemDown)
         }
         wait(for: [exp1, exp2, exp3], timeout: 5.0)
@@ -65,15 +65,15 @@ class PushManagerEventBroadcasterTest: XCTestCase {
             count+=1
         })
 
-        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 0.2) {
+        DispatchQueue.test.asyncAfter(deadline: DispatchTime.now() + 0.2) {
             self.channel.push(event: .pushSubsystemDown)
         }
 
-        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 0.5) {
+        DispatchQueue.test.asyncAfter(deadline: DispatchTime.now() + 0.5) {
             self.channel.destroy()
         }
 
-        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 1.0) {
+        DispatchQueue.test.asyncAfter(deadline: DispatchTime.now() + 1.0) {
             self.channel.push(event: .pushSubsystemDown)
             exp1.fulfill()
         }

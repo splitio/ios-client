@@ -157,7 +157,7 @@ class StreamingSplitKillTest: XCTestCase {
     
     private func getAndUpdateHit() -> Int {
         var hitNumber = 0
-        DispatchQueue.global().sync {
+        DispatchQueue.test.sync {
             hitNumber = self.splitsChangesHits
             self.splitsChangesHits+=1
         }
