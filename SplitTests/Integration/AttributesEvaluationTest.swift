@@ -17,7 +17,7 @@ class AttributesEvaluationTest: XCTestCase {
     var streamingBinding: TestStreamResponseBinding?
     var userKey = IntegrationHelper.dummyUserKey
 
-    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.global())
+    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.test)
 
     var splitClient: SplitClient!
 
@@ -331,7 +331,7 @@ class AttributesEvaluationTest: XCTestCase {
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.test.asyncAfter(deadline: .now() + 1) {
             }
             return self.streamingBinding!
         }

@@ -402,6 +402,7 @@
 		950D0C0D27C544F200E617EB /* SplitComponentFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */; };
 		950E501F290B38D2005A473E /* SseConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E501E290B38D2005A473E /* SseConnectionHandler.swift */; };
 		950E50202914590C005A473E /* SseConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E501E290B38D2005A473E /* SseConnectionHandler.swift */; };
+		950F72FC292E615D008A0040 /* DispatchQueue+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950F72FB292E615D008A0040 /* DispatchQueue+Test.swift */; };
 		95118EE8281AC6E700782F33 /* bucket_split_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95118EE7281AC6E700782F33 /* bucket_split_test.json */; };
 		95118EEB281AC83B00782F33 /* BucketSplitTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95118EEA281AC83B00782F33 /* BucketSplitTest.swift */; };
 		95118EEE281AFF8900782F33 /* MultiClientStreamingResetTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95118EED281AFF8900782F33 /* MultiClientStreamingResetTest.swift */; };
@@ -1586,6 +1587,7 @@
 		950B743326938B5E005FD649 /* KeyImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyImpression.swift; sourceTree = "<group>"; };
 		950B743C2694D768005FD649 /* LegacyStorageCleaner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyStorageCleaner.swift; sourceTree = "<group>"; };
 		950E501E290B38D2005A473E /* SseConnectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseConnectionHandler.swift; sourceTree = "<group>"; };
+		950F72FB292E615D008A0040 /* DispatchQueue+Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Test.swift"; sourceTree = "<group>"; };
 		95118EE7281AC6E700782F33 /* bucket_split_test.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bucket_split_test.json; sourceTree = "<group>"; };
 		95118EEA281AC83B00782F33 /* BucketSplitTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketSplitTest.swift; sourceTree = "<group>"; };
 		95118EED281AFF8900782F33 /* MultiClientStreamingResetTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiClientStreamingResetTest.swift; sourceTree = "<group>"; };
@@ -2516,6 +2518,7 @@
 				5912D151219A022000BC698C /* CsvHelper.swift */,
 				5982D937219F57BE00230F44 /* FileHelper.swift */,
 				5919C64721C7D45B00EC35B8 /* SplitTestHelper.swift */,
+				950F72FB292E615D008A0040 /* DispatchQueue+Test.swift */,
 				59FB7C1521F79B8200ECC96A /* EventTypeNameHelper.swift */,
 				593225F924A3855700496D8B /* TestHelper.swift */,
 				5932260E24AAB27900496D8B /* TestUtils.swift */,
@@ -3748,6 +3751,7 @@
 				59EFD2FB24B8EF6F0052920D /* HttpRequestMock.swift in Sources */,
 				5921ED3A2538C57D000D6C8B /* StreamingConnFail5xxTest.swift in Sources */,
 				59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */,
+				950F72FC292E615D008A0040 /* DispatchQueue+Test.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
 				59B2043B24F568660092F2E9 /* SynchronizerStub.swift in Sources */,
 				95F3EFEC258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift in Sources */,

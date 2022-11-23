@@ -201,7 +201,7 @@ class SplitChangesTest: XCTestCase {
 
     private func getAndIncrement() -> Int {
         var i = 0;
-        DispatchQueue.global().sync {
+        DispatchQueue.test.sync {
             i = self.reqChangesIndex
             self.reqChangesIndex+=1
         }

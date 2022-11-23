@@ -23,7 +23,7 @@ class ReadyFromCacheTest: XCTestCase {
     var changeHitIndex: AtomicInt!
     var receivedChangeNumber: [Int64]!
 
-    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.global())
+    let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.test)
 
     override func setUp() {
         receivedChangeNumber = Array(repeating: 0, count: 100)

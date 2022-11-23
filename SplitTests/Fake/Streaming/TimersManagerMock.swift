@@ -17,7 +17,7 @@ class TimersManagerMock: TimersManager {
     private var expectations = [TimerName: XCTestExpectation]()
 
     func add(timer: TimerName, task: CancellableTask) {
-        _ = DispatchQueue.global().sync {
+        _ = DispatchQueue.test.sync {
             self.timersAdded.insert(timer)
         }
         if let exp = expectations[timer] {
@@ -26,14 +26,14 @@ class TimersManagerMock: TimersManager {
     }
 
     func cancel(timer: TimerName) {
-        _ = DispatchQueue.global().sync {
+        _ = DispatchQueue.test.sync {
             self.timersCancelled.insert(timer)
         }
     }
 
     func timerIsAdded(timer: TimerName) -> Bool {
         var result = false
-        DispatchQueue.global().sync {
+        DispatchQueue.test.sync {
             result = self.timersAdded.contains(timer)
         }
         return result
@@ -41,7 +41,7 @@ class TimersManagerMock: TimersManager {
 
     func timerIsCancelled(timer: TimerName) -> Bool {
         var result = false
-        DispatchQueue.global().sync {
+        DispatchQueue.test.sync {
             result = self.timersCancelled.contains(timer)
         }
         return result
@@ -52,7 +52,7 @@ class TimersManagerMock: TimersManager {
     }
 
     func reset(timer: TimerName? = nil) {
-        DispatchQueue.global().sync {
+        DispatchQueue.test.sync {
             if let timer = timer {
                 self.timersAdded.remove(timer)
                 self.timersCancelled.remove(timer)

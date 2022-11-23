@@ -227,7 +227,7 @@ class MySegmentUpdatedTest: XCTestCase {
 
     private func getAndIncrement() -> Int {
         var i = 0;
-        DispatchQueue.global().sync {
+        DispatchQueue.test.sync {
             i = self.reqSegmentsIndex
             self.reqSegmentsIndex+=1
         }
@@ -236,7 +236,7 @@ class MySegmentUpdatedTest: XCTestCase {
 
     private func addImpressions(tests: [ImpressionsTest]?) -> Bool {
         var res: Bool = false
-        DispatchQueue.global().sync {
+        DispatchQueue.test.sync {
             if let tests = tests {
                 for test in tests {
                     for imp in test.keyImpressions {

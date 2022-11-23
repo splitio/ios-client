@@ -26,7 +26,7 @@ class ImpressionsNoneTest: XCTestCase {
     var uniqueKeys: [UniqueKeys]!
     var counts: [String: Int]!
     var impressionsHitCount = 0
-    let queue = DispatchQueue(label: "queue", target: .global())
+    let queue = DispatchQueue(label: "queue", target: .test)
 
     enum Splits: Int {
         case facundoTest

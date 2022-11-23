@@ -18,7 +18,7 @@ class BlockingQueueTest: XCTestCase {
     func testAddAndTake() {
         let endExp = XCTestExpectation()
         var local = [SplitInternalEvent]()
-        let globalQ = DispatchQueue.global()
+        let globalQ = DispatchQueue.test
         let queue = DefaultInternalEventBlockingQueue()
 
         globalQ.async {
