@@ -162,7 +162,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
     private func setupImpressionsMode() {
 
-        switch splitConfig.finalImpressionsMode {
+        switch splitConfig.$impressionsMode {
         case .optimized:
             createImpressionsRecorder()
             createImpressionsCountRecorder()
@@ -197,11 +197,11 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     private func isOptimizedImpressionsMode() -> Bool {
-        return ImpressionsMode.optimized == splitConfig.finalImpressionsMode
+        return ImpressionsMode.optimized == splitConfig.$impressionsMode
     }
 
     private func isNoneImpressionsMode() -> Bool {
-        return ImpressionsMode.none == splitConfig.finalImpressionsMode
+        return ImpressionsMode.none == splitConfig.$impressionsMode
     }
 
     private func shouldPush(impression: KeyImpression) -> Bool {

@@ -14,32 +14,63 @@
 
 @implementation ConfigObjcTest
 
-- (void)testInvalid {
+
+// MARK: User Consent
+- (void)testUserConsentInvalid {
     SplitClientConfig* config = [[SplitClientConfig alloc] init];
     config.userConsent = @"pepe";
 
     XCTAssertEqualObjects(@"GRANTED", config.userConsent);
 }
 
-- (void)testGranted {
+- (void)testUserConsentGranted {
     SplitClientConfig* config = [[SplitClientConfig alloc] init];
     config.userConsent = @"granteD";
 
     XCTAssertEqualObjects(@"GRANTED", config.userConsent);
 }
 
-- (void)testDeclined {
+- (void)testUserConsentDeclined {
     SplitClientConfig* config = [[SplitClientConfig alloc] init];
     config.userConsent = @"decLined";
 
     XCTAssertEqualObjects(@"DECLINED", config.userConsent);
 }
 
-- (void)testUnknown {
+- (void)testUserConsentUnknown {
     SplitClientConfig* config = [[SplitClientConfig alloc] init];
     config.userConsent = @"unknOWn";
 
     XCTAssertEqualObjects(@"UNKNOWN", config.userConsent);
 }
 
+
+// MARK: Impressions mode
+- (void)testImpressionsModeInvalid {
+    SplitClientConfig* config = [[SplitClientConfig alloc] init];
+    config.impressionsMode = @"pepe";
+
+    XCTAssertEqualObjects(@"OPTIMIZED", config.impressionsMode);
+}
+
+- (void)testImpressionsModeOptimized {
+    SplitClientConfig* config = [[SplitClientConfig alloc] init];
+    config.impressionsMode = @"optimized";
+
+    XCTAssertEqualObjects(@"OPTIMIZED", config.impressionsMode);
+}
+
+- (void)testImpressionsModedebug {
+    SplitClientConfig* config = [[SplitClientConfig alloc] init];
+    config.impressionsMode = @"debug";
+
+    XCTAssertEqualObjects(@"DEBUG", config.impressionsMode);
+}
+
+- (void)testImpressionsModenone {
+    SplitClientConfig* config = [[SplitClientConfig alloc] init];
+    config.impressionsMode = @"none";
+
+    XCTAssertEqualObjects(@"NONE", config.impressionsMode);
+}
 @end

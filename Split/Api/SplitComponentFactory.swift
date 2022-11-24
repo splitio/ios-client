@@ -229,7 +229,7 @@ class SplitComponentFactory {
                                                          periodicStatsRecorderWorker: periodicStatsRecorderWorker)
         }
         var uniqueKeyTracker: UniqueKeyTracker?
-        if splitClientConfig.finalImpressionsMode == .none,
+        if splitClientConfig.$impressionsMode == .none,
            let uniqueKeyStorage = storageContainer.uniqueKeyStorage {
             uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: uniqueKeyStorage)
         }

@@ -34,7 +34,7 @@ struct SplitDatabaseHelper {
                                                       splitClientConfig: splitClientConfig)
 
         var uniqueKeyStorage: PersistentUniqueKeysStorage?
-        if splitClientConfig.finalImpressionsMode == .none {
+        if splitClientConfig.$impressionsMode == .none {
             uniqueKeyStorage =
             DefaultPersistentUniqueKeysStorage(database: splitDatabase,
                                                expirationPeriod: kExpirationPeriod)

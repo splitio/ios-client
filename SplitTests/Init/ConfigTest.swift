@@ -48,5 +48,41 @@ class ConfigTest: XCTestCase {
         XCTAssertEqual(UserConsent.unknown.rawValue, config.userConsent)
         XCTAssertEqual(UserConsent.unknown, config.$userConsent)
     }
+
+    // MARK: ImpressionsMode
+    func testImpressionsModeEmpty() {
+        config.impressionsMode = ""
+
+        XCTAssertEqual(ImpressionsMode.optimized.rawValue, config.impressionsMode)
+        XCTAssertEqual(ImpressionsMode.optimized, config.$impressionsMode)
+    }
+
+    func testImpressionsModeInvalid() {
+        config.impressionsMode = "invalid"
+
+        XCTAssertEqual(ImpressionsMode.optimized.rawValue, config.impressionsMode)
+        XCTAssertEqual(ImpressionsMode.optimized, config.$impressionsMode)
+    }
+
+    func testImpressionsModeoptimized() {
+        config.impressionsMode = "optimized"
+
+        XCTAssertEqual(ImpressionsMode.optimized.rawValue, config.impressionsMode)
+        XCTAssertEqual(ImpressionsMode.optimized, config.$impressionsMode)
+    }
+
+    func testImpressionsModedebug() {
+        config.impressionsMode = "debug"
+
+        XCTAssertEqual(ImpressionsMode.debug.rawValue, config.impressionsMode)
+        XCTAssertEqual(ImpressionsMode.debug, config.$impressionsMode)
+    }
+
+    func testImpressionsModenone() {
+        config.impressionsMode = "none"
+
+        XCTAssertEqual(ImpressionsMode.none.rawValue, config.impressionsMode)
+        XCTAssertEqual(ImpressionsMode.none, config.$impressionsMode)
+    }
 }
 

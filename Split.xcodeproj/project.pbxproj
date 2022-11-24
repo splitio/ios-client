@@ -794,6 +794,7 @@
 		95ABF4B5292FDF9F006ED016 /* UserConsentTypeWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4B4292FDF9F006ED016 /* UserConsentTypeWrapperTest.swift */; };
 		95ABF4B8292FF451006ED016 /* ConfigObjcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */; };
 		95ABF4BA293003C1006ED016 /* ConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4B9293003C1006ED016 /* ConfigTest.swift */; };
+		95ABF4BC29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4BB29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift */; };
 		95B02CAB28D0BDC10030EC8B /* Yaml.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57422666B84006CBA89 /* Yaml.swift */; };
 		95B02CAC28D0BDC10030EC8B /* YAMLOperators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA56E22666B84006CBA89 /* YAMLOperators.swift */; };
 		95B02CAD28D0BDC10030EC8B /* YAMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57222666B84006CBA89 /* YAMLParser.swift */; };
@@ -1746,6 +1747,7 @@
 		95ABF4B4292FDF9F006ED016 /* UserConsentTypeWrapperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConsentTypeWrapperTest.swift; sourceTree = "<group>"; };
 		95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfigObjcTest.m; sourceTree = "<group>"; };
 		95ABF4B9293003C1006ED016 /* ConfigTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigTest.swift; sourceTree = "<group>"; };
+		95ABF4BB29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsModeTypeWrapperTest.swift; sourceTree = "<group>"; };
 		95B027B328CBEF7E0030EC8B /* SplitMacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitMacOS.h; sourceTree = "<group>"; };
 		95B02B1528CFBD160030EC8B /* SplitWatchOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitWatchOS.h; sourceTree = "<group>"; };
 		95B02CA428D0BD790030EC8B /* SplitWatchOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SplitWatchOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3100,6 +3102,7 @@
 				598EDE7322493008005D4762 /* SplitConfigurationsParsingTest.swift */,
 				59BF3D362231A698004D134D /* BCryptTests.swift */,
 				95ABF4B4292FDF9F006ED016 /* UserConsentTypeWrapperTest.swift */,
+				95ABF4BB29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift */,
 				95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */,
 				95ABF4B9293003C1006ED016 /* ConfigTest.swift */,
 			);
@@ -3794,6 +3797,7 @@
 				955AAB8F283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift in Sources */,
 				59EFD2FB24B8EF6F0052920D /* HttpRequestMock.swift in Sources */,
 				5921ED3A2538C57D000D6C8B /* StreamingConnFail5xxTest.swift in Sources */,
+				95ABF4BC29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift in Sources */,
 				59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */,
 				950F72FC292E615D008A0040 /* DispatchQueue+Test.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,

@@ -190,17 +190,7 @@ public class SplitClientConfig: NSObject {
     /// @return: This builder
     /// @default: OPTIMIZED
     ///
-    @objc public var impressionsMode: String = "OPTIMIZED" {
-        didSet {
-            let mode = impressionsMode.uppercased()
-            if  !["OPTIMIZED", "DEBUG", "NONE"].contains(where: { $0 == mode }) {
-                Logger.w("You passed an invalid impressionsMode (\(impressionsMode)), " +
-                    " impressionsMode should be one of the following values: " +
-                            "'DEBUG', 'OPTIMIZED' or 'NONE'. Defaulting to 'OPTMIZED' mode.")
-            }
-            finalImpressionsMode = ImpressionsMode(rawValue: mode) ?? .optimized
-        }
-    }
+    @ImpressionsModeProperty @objc public var impressionsMode: String = "OPTIMIZED"
 
     ///
     /// How many seconds to wait before re attempting the whole connection flow
@@ -293,8 +283,6 @@ public class SplitClientConfig: NSObject {
 
     var generalRetryBackoffBase = 1
 
-    var finalImpressionsMode: ImpressionsMode = .optimized
-
     /// Make it mutable to allow testing
     var impressionsCountsRefreshRate = 1800
 
@@ -343,9 +331,4 @@ public class SplitClientConfig: NSObject {
     var cdnBackoffTimeBaseInSecs: Int = 10
     var cdnBackoffTimeMaxInSecs: Int = 60
 
-    // Internal function. For testing purposes only
-    // will be removed when .none is available
-    func setImpressionsMode(_ mode: ImpressionsMode) {
-        finalImpressionsMode = mode
-    }
 }

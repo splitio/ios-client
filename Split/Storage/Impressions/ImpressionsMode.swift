@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum ImpressionsMode: String {
+public enum ImpressionsMode: String {
     case optimized = "OPTIMIZED"
     case debug = "DEBUG"
     case none = "NONE"
@@ -24,3 +24,39 @@ enum ImpressionsMode: String {
         }
     }
 }
+
+@propertyWrapper
+public struct ImpressionsModeProperty {
+    private var value: String = ImpressionsMode.optimized.rawValue
+    public var projectedValue: ImpressionsMode = .optimized
+    public var wrappedValue: String {
+        get {
+            return value
+        }
+
+        set {
+            setValue(newValue)
+        }
+    }
+
+    public init(wrappedValue: String) {
+        setValue(wrappedValue)
+    }
+
+    private mutating func setValue(_ newValue: String) {
+        let uppercased = newValue.uppercased()
+        guard let projectedValue = ImpressionsMode(rawValue: uppercased) else {
+                Logger.w("You passed an invalid impressionsMode (\(uppercased)), " +
+                    " impressionsMode should be one of the following values: " +
+                            "'DEBUG', 'OPTIMIZED' or 'NONE'. Defaulting to 'OPTMIZED' mode.")
+
+            value = ImpressionsMode.optimized.rawValue
+            projectedValue = ImpressionsMode.optimized
+            return
+        }
+        self.value = uppercased
+        self.projectedValue = projectedValue
+    }
+
+}
+
