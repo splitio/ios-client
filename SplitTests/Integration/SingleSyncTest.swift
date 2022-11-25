@@ -241,7 +241,7 @@ class SingleSyncTest: XCTestCase {
 
     private func buildFactory(impressionsMode: String) -> SplitFactory {
         let splitConfig = SplitClientConfig()
-        splitConfig.setImpressionsMode(ImpressionsMode(rawValue: impressionsMode) ?? .optimized)
+        splitConfig.impressionsMode = impressionsMode
         splitConfig.trafficType = "user"
         splitConfig.syncEnabled = false
         splitConfig.streamingEnabled = true

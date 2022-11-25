@@ -216,7 +216,7 @@ class ImpressionsTrackerTest: XCTestCase {
     private func createImpressionsTracker(impressionsMode: ImpressionsMode) {
 
         let config = SplitClientConfig()
-        config.setImpressionsMode(impressionsMode)
+        config.impressionsMode = impressionsMode.rawValue
 
         periodicImpressionsRecorderWorker = PeriodicRecorderWorkerStub()
         periodicImpressionsCountRecorderWorker = PeriodicRecorderWorkerStub()

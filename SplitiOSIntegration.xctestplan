@@ -45,6 +45,8 @@
         "ByKeyMySegmentsStorageTests",
         "CdnByPassTest",
         "ConcurrentSetTests",
+        "ConfigObjcTest",
+        "ConfigTest",
         "DatesTest",
         "DecompressionTest",
         "EndpointFactoryTest",
@@ -151,6 +153,7 @@
         "UniqueKeyDaoTests",
         "UniqueKeyTrackerTest",
         "UniqueKeysRecorderCountWorkerTests",
+        "UserConsentTypeWrapperTest",
         "UserKeyEncondingTest",
         "VersionTest",
         "countsRecorderCountWorkerTests"
