@@ -11,6 +11,7 @@ import CoreData
 
 protocol ImpressionDao {
     func insert(_ impression: KeyImpression)
+    func insert(_ impressions: [KeyImpression])
     func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [KeyImpression]
     func update(ids: [String], newStatus: Int32)
     func delete(_ impressions: [KeyImpression])
@@ -42,6 +43,33 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
                     self.coreDataHelper.save()
                 } catch {
                     Logger.e("An error occurred while inserting impressions in storage: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    func insert(_ impressions: [KeyImpression]) {
+        executeAsync { [weak self] in
+            guard let self = self else { return }
+            for impression in impressions {
+                if let obj = self.coreDataHelper.create(entity: .impression) as? ImpressionEntity {
+                    do {
+                        guard let testName = impression.featureName else {
+                            // This should never happen
+                            Logger.d("Impression without test name descarted")
+                            return
+                        }
+                        obj.storageId = self.coreDataHelper.generateId()
+                        obj.testName = testName
+                        obj.body = try self.json.encodeToJson(impression)
+                        obj.createdAt = Date().unixTimestamp()
+                        obj.status = StorageRecordStatus.active
+                        // Saving one by one to avoid losing all
+                        // if an error occurs
+                        self.coreDataHelper.save()
+                    } catch {
+                        Logger.e("An error occurred while inserting split in storage: \(error.localizedDescription)")
+                    }
                 }
             }
         }
