@@ -224,8 +224,8 @@ public class SplitClientConfig: NSObject {
     /// Indicates if events and impressions are tracked and sent to BE.
     /// @param mode Values:<br>
     ///     UNKNOWN: Impressions and events are tracked in memory. They are lost on destroy
-    ///     GRANTED: Impressions and events are tracked and sent. They remains stored when the SDK is destroyed.
-    ///     many times impressions are posted. If previous value was UNKNOWN, tracked data is persisted.
+    ///     GRANTED: Impressions and events are tracked and sent. They remain stored when the SDK is destroyed.
+    ///              If previous value was UNKNOWN, tracked data is persisted.
     ///     DECLINED: Impressions and events are not tracked nor sent.
     ///              if previous value was UNKNOWN, tracked data is cleared.
     ///
