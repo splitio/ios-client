@@ -23,11 +23,11 @@ struct TestingHelper {
         return splitConfig
     }
 
-    static func createEvents(count: Int = 10, timestamp: Int64 = 1000) -> [EventDTO] {
+    static func createEvents(count: Int = 10, timestamp: Int64 = 1000, randomId: Bool = false) -> [EventDTO] {
         var events = [EventDTO]()
         for i in 0..<count {
             let event = EventDTO(trafficType: "name", eventType: "type")
-            event.storageId = "event\(i)"
+            event.storageId = randomId ? UUID().uuidString : "event\(i)"
             event.key = "key1"
             event.eventTypeId = "type1"
             event.trafficTypeName = "name1"

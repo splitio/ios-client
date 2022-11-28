@@ -797,6 +797,8 @@
 		95ABF4BC29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4BB29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift */; };
 		95ABF4BE2930FCEF006ED016 /* ImpressionsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4BD2930FCEF006ED016 /* ImpressionsStorage.swift */; };
 		95ABF4C029314D3D006ED016 /* ImpressionsStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4BF29314D3D006ED016 /* ImpressionsStorageTest.swift */; };
+		95ABF4C2293166A8006ED016 /* EventsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4C1293166A8006ED016 /* EventsStorage.swift */; };
+		95ABF4C42934EFF2006ED016 /* EventsStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4C32934EFF2006ED016 /* EventsStorageTest.swift */; };
 		95B02CAB28D0BDC10030EC8B /* Yaml.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57422666B84006CBA89 /* Yaml.swift */; };
 		95B02CAC28D0BDC10030EC8B /* YAMLOperators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA56E22666B84006CBA89 /* YAMLOperators.swift */; };
 		95B02CAD28D0BDC10030EC8B /* YAMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57222666B84006CBA89 /* YAMLParser.swift */; };
@@ -1752,6 +1754,8 @@
 		95ABF4BB29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsModeTypeWrapperTest.swift; sourceTree = "<group>"; };
 		95ABF4BD2930FCEF006ED016 /* ImpressionsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsStorage.swift; sourceTree = "<group>"; };
 		95ABF4BF29314D3D006ED016 /* ImpressionsStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsStorageTest.swift; sourceTree = "<group>"; };
+		95ABF4C1293166A8006ED016 /* EventsStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EventsStorage.swift; path = Split/Storage/Events/EventsStorage.swift; sourceTree = SOURCE_ROOT; };
+		95ABF4C32934EFF2006ED016 /* EventsStorageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsStorageTest.swift; sourceTree = "<group>"; };
 		95B027B328CBEF7E0030EC8B /* SplitMacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitMacOS.h; sourceTree = "<group>"; };
 		95B02B1528CFBD160030EC8B /* SplitWatchOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitWatchOS.h; sourceTree = "<group>"; };
 		95B02CA428D0BD790030EC8B /* SplitWatchOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SplitWatchOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2421,6 +2425,7 @@
 				95C717E1268CE705002ADB83 /* PersistentImpressionsCountStorageTest.swift */,
 				955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */,
 				95ABF4BF29314D3D006ED016 /* ImpressionsStorageTest.swift */,
+				95ABF4C32934EFF2006ED016 /* EventsStorageTest.swift */,
 				954F9B0E2570499700140B81 /* PersistentSplitsStorageTests.swift */,
 				5905D4E4255B2395006DA3B1 /* MySegmentsStorageTests.swift */,
 				9560354827D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift */,
@@ -3012,6 +3017,7 @@
 				950B7416268F4716005FD649 /* ImpressionsMode.swift */,
 				955428D9256810EC00331356 /* PersistentImpressionsStorage.swift */,
 				95ABF4BD2930FCEF006ED016 /* ImpressionsStorage.swift */,
+				95ABF4C1293166A8006ED016 /* EventsStorage.swift */,
 				9505682B26837A43001D7B10 /* PersistentImpressionsCountStorage.swift */,
 			);
 			path = Impressions;
@@ -3593,6 +3599,7 @@
 				5959C475227B6BA70064F968 /* FactoryMonitor.swift in Sources */,
 				596A7B6E23566BE0004F6139 /* Destroyable.swift in Sources */,
 				95F3F01C258E3B7E00084AF8 /* ImpressionsRecorder.swift in Sources */,
+				95ABF4C2293166A8006ED016 /* EventsStorage.swift in Sources */,
 				59FB7C1121F7572700ECC96A /* ApiKeyValidator.swift in Sources */,
 				95D94468283BE61100D7FFED /* RestClient+UniqueKeys.swift in Sources */,
 				952E26702833E4F20015D633 /* UniqueKeyEntity.swift in Sources */,
@@ -3957,6 +3964,7 @@
 				5932260324A512FB00496D8B /* HttpSessionMock.swift in Sources */,
 				595AD1F824D9CDFB00A7B750 /* SyncConfigTest.swift in Sources */,
 				95825C022721F0F800A0CDAD /* UserKeyEncondingTest.swift in Sources */,
+				95ABF4C42934EFF2006ED016 /* EventsStorageTest.swift in Sources */,
 				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
 				9595C1A2274573DA0092123F /* AttributesEvaluationTest.swift in Sources */,
 				594F5F5E253F641000A945B4 /* BackoffCounterTimerStub.swift in Sources */,
