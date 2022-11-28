@@ -10,6 +10,7 @@ import Foundation
 @testable import Split
 
 class ImpressionsTrackerStub: ImpressionsTracker {
+    var isTrackingEnabled: Bool = true
     var startCalled = false
     func start() {
         startCalled = true
