@@ -19,10 +19,6 @@ class ImpressionsStorageTest: XCTestCase {
         persistentStorage = PersistentImpressionsStorageStub()
     }
 
-//    func enablePersistence(_ enable: Bool)
-//    func push(_ impression: KeyImpression)
-//    func clearInMemory()
-
     func testStartDisabledPersistence() {
         let impressionsStorage = MainImpressionsStorage(persistentStorage: persistentStorage,
                                                         persistenceEnabled: false)
@@ -72,6 +68,30 @@ class ImpressionsStorageTest: XCTestCase {
 
         XCTAssertEqual(0, countBeforeEnable)
         XCTAssertEqual(20, countAfterEnable)
+    }
+
+    func testDisablePersistence() {
+
+        // When disabling persistence data should not be persisted
+        let impressionsStorage = MainImpressionsStorage(persistentStorage: persistentStorage,
+                                                        persistenceEnabled: true)
+
+        TestingHelper.createKeyImpressions(feature: "f1", count: 10).forEach {
+            impressionsStorage.push($0)
+        }
+
+        let countBeforeDisable = persistentStorage.storedImpressions.count
+
+        impressionsStorage.enablePersistence(false)
+
+        TestingHelper.createKeyImpressions(feature: "f12", count: 10).forEach {
+            impressionsStorage.push($0)
+        }
+
+        let countAfterDisable = persistentStorage.storedImpressions.count
+
+        XCTAssertEqual(10, countBeforeDisable)
+        XCTAssertEqual(10, countAfterDisable)
     }
 
     func testClear() {

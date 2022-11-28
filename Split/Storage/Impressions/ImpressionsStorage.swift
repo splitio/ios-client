@@ -28,8 +28,10 @@ class MainImpressionsStorage: ImpressionsStorage {
 
     func enablePersistence(_ enable: Bool) {
         // Here we should save all impressions
-        isPersistenceEnabled.set(true)
-        persistentStorage.push(impressions: impressions.takeAll())
+        isPersistenceEnabled.set(enable)
+        if enable {
+            persistentStorage.push(impressions: impressions.takeAll())
+        }
     }
 
     func push(_ impression: KeyImpression) {
