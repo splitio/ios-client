@@ -795,6 +795,8 @@
 		95ABF4B8292FF451006ED016 /* ConfigObjcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */; };
 		95ABF4BA293003C1006ED016 /* ConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4B9293003C1006ED016 /* ConfigTest.swift */; };
 		95ABF4BC29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4BB29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift */; };
+		95ABF4BE2930FCEF006ED016 /* ImpressionsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4BD2930FCEF006ED016 /* ImpressionsStorage.swift */; };
+		95ABF4C029314D3D006ED016 /* ImpressionsStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4BF29314D3D006ED016 /* ImpressionsStorageTest.swift */; };
 		95B02CAB28D0BDC10030EC8B /* Yaml.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57422666B84006CBA89 /* Yaml.swift */; };
 		95B02CAC28D0BDC10030EC8B /* YAMLOperators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA56E22666B84006CBA89 /* YAMLOperators.swift */; };
 		95B02CAD28D0BDC10030EC8B /* YAMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA57222666B84006CBA89 /* YAMLParser.swift */; };
@@ -1748,6 +1750,8 @@
 		95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfigObjcTest.m; sourceTree = "<group>"; };
 		95ABF4B9293003C1006ED016 /* ConfigTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigTest.swift; sourceTree = "<group>"; };
 		95ABF4BB29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsModeTypeWrapperTest.swift; sourceTree = "<group>"; };
+		95ABF4BD2930FCEF006ED016 /* ImpressionsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsStorage.swift; sourceTree = "<group>"; };
+		95ABF4BF29314D3D006ED016 /* ImpressionsStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsStorageTest.swift; sourceTree = "<group>"; };
 		95B027B328CBEF7E0030EC8B /* SplitMacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitMacOS.h; sourceTree = "<group>"; };
 		95B02B1528CFBD160030EC8B /* SplitWatchOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitWatchOS.h; sourceTree = "<group>"; };
 		95B02CA428D0BD790030EC8B /* SplitWatchOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SplitWatchOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2416,6 +2420,7 @@
 				59F65F0525654EBB005FE8C9 /* PersistentEventsStorageTest.swift */,
 				95C717E1268CE705002ADB83 /* PersistentImpressionsCountStorageTest.swift */,
 				955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */,
+				95ABF4BF29314D3D006ED016 /* ImpressionsStorageTest.swift */,
 				954F9B0E2570499700140B81 /* PersistentSplitsStorageTests.swift */,
 				5905D4E4255B2395006DA3B1 /* MySegmentsStorageTests.swift */,
 				9560354827D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift */,
@@ -3006,6 +3011,7 @@
 				95C717C3268BB426002ADB83 /* ImpressionsCountDao.swift */,
 				950B7416268F4716005FD649 /* ImpressionsMode.swift */,
 				955428D9256810EC00331356 /* PersistentImpressionsStorage.swift */,
+				95ABF4BD2930FCEF006ED016 /* ImpressionsStorage.swift */,
 				9505682B26837A43001D7B10 /* PersistentImpressionsCountStorage.swift */,
 			);
 			path = Impressions;
@@ -3692,6 +3698,7 @@
 				9560354527D0F53300E35BC8 /* SynchronizedDictionarySet.swift in Sources */,
 				3B6DEF6620EA6AE50067435E /* EndsWithMatcher.swift in Sources */,
 				3B6DEF4B20EA6AE50067435E /* Split.swift in Sources */,
+				95ABF4BE2930FCEF006ED016 /* ImpressionsStorage.swift in Sources */,
 				3B6DEF6A20EA6AE50067435E /* GreaterThanOrEqualToMatcher.swift in Sources */,
 				3B6DEF5820EA6AE50067435E /* SplitEvent.swift in Sources */,
 				599EA57822666B84006CBA89 /* YAMLResult.swift in Sources */,
@@ -3851,6 +3858,7 @@
 				954F9B072570309400140B81 /* SplitDaoTests.swift in Sources */,
 				95F20F4A27EB533000B5B30A /* TreatmentManagerTest.swift in Sources */,
 				59F4AAA324FFCD5000A1C69A /* PushManagerEventBroadcasterStub.swift in Sources */,
+				95ABF4C029314D3D006ED016 /* ImpressionsStorageTest.swift in Sources */,
 				5921ED3125378ECD000D6C8B /* StreamingInitTest.swift in Sources */,
 				95C717DE268CE137002ADB83 /* ImpressionsCountDaoStub.swift in Sources */,
 				592C6ABD211B718E002D120C /* DatesTests.swift in Sources */,

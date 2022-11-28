@@ -48,7 +48,7 @@ public struct ImpressionsModeProperty {
         guard let projectedValue = ImpressionsMode(rawValue: uppercased) else {
                 Logger.w("You passed an invalid impressionsMode (\(uppercased)), " +
                     " impressionsMode should be one of the following values: " +
-                            "'DEBUG', 'OPTIMIZED' or 'NONE'. Defaulting to 'OPTMIZED' mode.")
+                            "'DEBUG', 'OPTIMIZED' or 'NONE'. Defaulting to 'OPTIMIZED' mode.")
 
             value = ImpressionsMode.optimized.rawValue
             projectedValue = ImpressionsMode.optimized
@@ -59,4 +59,3 @@ public struct ImpressionsModeProperty {
     }
 
 }
-
