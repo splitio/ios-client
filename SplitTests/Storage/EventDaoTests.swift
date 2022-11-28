@@ -33,6 +33,16 @@ class EventDaoTests: XCTestCase {
         XCTAssertEqual(10, loadedEvents.count)
     }
 
+    func testInsertManyGet() {
+        eventDao.insert(TestingHelper.createEvents(count: 20))
+
+        let loadedEvents = eventDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 40)
+
+        // Initial 10 + 20 here
+        XCTAssertEqual(30, loadedEvents.count)
+    }
+
+
     func testUpdate() {
 
         let loadedEvents = eventDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)

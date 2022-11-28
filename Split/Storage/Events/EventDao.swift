@@ -11,6 +11,7 @@ import CoreData
 
 protocol EventDao {
     func insert(_ event: EventDTO)
+    func insert(_ events: [EventDTO])
     func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [EventDTO]
     func update(ids: [String], newStatus: Int32)
     func delete(_ events: [EventDTO])
@@ -33,6 +34,25 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
                     self.coreDataHelper.save()
                 } catch {
                     Logger.e("An error occurred while inserting events in storage: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    func insert(_ events: [EventDTO]) {
+        executeAsync { [weak self] in
+            guard let self = self else { return }
+            for event in events {
+                if let obj = self.coreDataHelper.create(entity: .event) as? EventEntity {
+                    do {
+                        obj.storageId = self.coreDataHelper.generateId()
+                        obj.body = try Json.dynamicEncodeToJson(event)
+                        obj.createdAt = Date().unixTimestamp()
+                        obj.status = StorageRecordStatus.active
+                        self.coreDataHelper.save()
+                    } catch {
+                        Logger.e("An error occurred while inserting events in storage: \(error.localizedDescription)")
+                    }
                 }
             }
         }

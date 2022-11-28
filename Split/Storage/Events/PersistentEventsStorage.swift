@@ -12,6 +12,7 @@ protocol PersistentEventsStorage {
     func delete(_ events: [EventDTO])
     func pop(count: Int) -> [EventDTO]
     func push(event: EventDTO)
+    func push(events: [EventDTO])
     func getCritical() -> [EventDTO]
     func setActive(_ events: [EventDTO])
 }
@@ -36,6 +37,10 @@ class DefaultEventsStorage: PersistentEventsStorage {
 
     func push(event: EventDTO) {
         eventDao.insert(event)
+    }
+
+    func push(events: [EventDTO]) {
+        eventDao.insert(events)
     }
 
     func getCritical() -> [EventDTO] {
