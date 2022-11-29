@@ -37,13 +37,15 @@ class ImpressionsTrackerTest: XCTestCase {
         XCTAssertEqual(1, telemetryProducer.impressions[.queued])
         XCTAssertEqual(4, telemetryProducer.impressions[.deduped])
         XCTAssertEqual(0, uniqueKeyTracker.trackedKeys.count)
+        XCTAssertEqual(1, impressionsStorage.storedImpressions.count)
     }
 
     func testImpressionPushDebug() {
         createImpressionsTracker(impressionsMode: .debug)
-        let impression = createImpression()
+        var impression = createImpression()
 
         for _ in 0..<5 {
+            impression.storageId = UUID().uuidString
             impressionsTracker.push(impression)
         }
 
@@ -51,6 +53,7 @@ class ImpressionsTrackerTest: XCTestCase {
         XCTAssertEqual(5, telemetryProducer.impressions[.queued] ?? 0)
         XCTAssertEqual(0, telemetryProducer.impressions[.deduped] ?? 0)
         XCTAssertEqual(0, uniqueKeyTracker.trackedKeys.count)
+        XCTAssertEqual(5, impressionsStorage.storedImpressions.count)
     }
 
     func testImpressionPushNone() {
@@ -63,11 +66,23 @@ class ImpressionsTrackerTest: XCTestCase {
         impressionsTracker.push(createImpression(keyName: "k2", featureName: "f2"))
         impressionsTracker.push(createImpression(keyName: "k3", featureName: "f3"))
 
+        // Before save an clear
+        let trackedKeys = uniqueKeyTracker.trackedKeys
+
+        // Callling pause to save items on storage
+        impressionsTracker.pause()
+
         ThreadUtils.delay(seconds: 1)
         XCTAssertEqual(0, telemetryProducer.impressions[.queued] ?? 0)
         XCTAssertEqual(0, telemetryProducer.impressions[.deduped] ?? 0)
-        XCTAssertEqual(3, uniqueKeyTracker.trackedKeys.count)
-        XCTAssertEqual(3, uniqueKeyTracker.trackedKeys["k1"]?.count ?? 0)
+        XCTAssertEqual(3, trackedKeys.count)
+        XCTAssertEqual(3, trackedKeys["k1"]?.count ?? 0)
+        XCTAssertEqual(0, uniqueKeyTracker.trackedKeys.count)
+        XCTAssertEqual(0, uniqueKeyTracker.trackedKeys["k1"]?.count ?? 0)
+        XCTAssertEqual(0, impressionsStorage.storedImpressions.count)
+        XCTAssertEqual(1, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f1"}[0].count)
+        XCTAssertEqual(2, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f2"}[0].count)
+        XCTAssertEqual(3, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f3"}[0].count)
     }
 
     func testStartOptimized() {
@@ -206,10 +221,44 @@ class ImpressionsTrackerTest: XCTestCase {
         XCTAssertTrue(periodicUniqueKeysRecorderWorker.destroyCalled)
     }
 
-    private func createImpression(keyName: String = "k1", featureName: String = "feature") -> KeyImpression {
+    func testImpressionPushTrackingDisabledDebug() {
+        impressionPushTrackingDisabled(mode: .debug)
+    }
+
+    func testImpressionPushTrackingDisabledOptimized() {
+        impressionPushTrackingDisabled(mode: .optimized)
+    }
+
+    func testImpressionPushTrackingDisabledNone() {
+        impressionPushTrackingDisabled(mode: .none)
+    }
+
+    private func impressionPushTrackingDisabled(mode: ImpressionsMode) {
+        createImpressionsTracker(impressionsMode: mode)
+        impressionsTracker.isTrackingEnabled = false
+        let impression = createImpression(randomId: true)
+
+        for _ in 0..<5 {
+            impressionsTracker.push(impression)
+        }
+
+        // Before save an clear
+        let trackedKeys = uniqueKeyTracker.trackedKeys
+
+        // Callling pause to save items on storage
+        impressionsTracker.pause()
+
+        ThreadUtils.delay(seconds: 1)
+        XCTAssertEqual(0, telemetryProducer.impressions[.queued] ?? 0)
+        XCTAssertEqual(0, telemetryProducer.impressions[.deduped] ?? 0)
+        XCTAssertEqual(0, trackedKeys.count)
+        XCTAssertEqual(0, impressionsCountStorage.storedImpressions.count)
+    }
+
+    private func createImpression(keyName: String = "k1", featureName: String = "feature", randomId: Bool = false) -> KeyImpression {
         return KeyImpression(featureName: featureName, keyName: keyName,
                              treatment: "t1", label: "the label", time: Date().unixTimestampInMiliseconds(),
-                             changeNumber: 1, storageId: "idFeature")
+                             changeNumber: 1, storageId: randomId ? UUID().uuidString : "idFeature")
 
     }
 

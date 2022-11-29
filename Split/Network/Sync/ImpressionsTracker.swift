@@ -9,6 +9,7 @@
 import Foundation
 
 protocol ImpressionsTracker {
+    var isTrackingEnabled: Bool { get set }
     func start()
     func pause()
     func resume()
@@ -19,7 +20,6 @@ protocol ImpressionsTracker {
 }
 
 class DefaultImpressionsTracker: ImpressionsTracker {
-
     private let splitConfig: SplitClientConfig
 
     private let syncWorkerFactory: SyncWorkerFactory
@@ -39,6 +39,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
     private let storageContainer: SplitStorageContainer
     private let telemetryProducer: TelemetryRuntimeProducer?
+    var isTrackingEnabled: Bool = true
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -79,6 +80,10 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     func push(_ impression: KeyImpression) {
+
+        if !isTrackingEnabled {
+            return
+        }
 
         // This should not happen
         guard let featureName = impression.featureName else {

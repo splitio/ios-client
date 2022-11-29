@@ -9,6 +9,7 @@
 import Foundation
 
 protocol EventsTracker {
+    var isTrackingEnabled: Bool { get set }
     func track(eventType: String,
                trafficType: String?,
                value: Double?,
@@ -24,6 +25,7 @@ class DefaultEventsTracker: EventsTracker {
     private let anyValueValidator: AnyValueValidator
     private let telemetryProducer: TelemetryEvaluationProducer?
     private let synchronizer: Synchronizer
+    var isTrackingEnabled: Bool = true
 
     init(config: SplitClientConfig,
          synchronizer: Synchronizer,
@@ -43,6 +45,11 @@ class DefaultEventsTracker: EventsTracker {
     func track(eventType: String, trafficType: String? = nil,
                value: Double? = nil, properties: [String: Any]?,
                matchingKey: String) -> Bool {
+
+        if !isTrackingEnabled {
+            return false
+        }
+
         let timeStart = Stopwatch.now()
         let validationTag = "track"
 
