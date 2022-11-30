@@ -24,7 +24,6 @@ class SynchronizerSpy: Synchronizer {
     var forceMySegmentsCalledCount = 0
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
-    var startPeriodicRecordingCalled = false
     var pushEventCalled = false
     var pushImpressionCalled = false
     var flushCalled = false
@@ -53,7 +52,7 @@ class SynchronizerSpy: Synchronizer {
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
          impressionsTracker: ImpressionsTracker,
-         eventsSyncHelper: EventsRecorderSyncHelper,
+         eventsSynchronizer: EventsSynchronizer,
          syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
         = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
@@ -68,7 +67,7 @@ class SynchronizerSpy: Synchronizer {
                                                      splitStorageContainer: splitStorageContainer,
                                                      syncWorkerFactory: syncWorkerFactory,
                                                      impressionsTracker: impressionsTracker,
-                                                     eventsSyncHelper: eventsSyncHelper,
+                                                     eventsSynchronizer: eventsSynchronizer,
                                                      splitsFilterQueryString: splitsFilterQueryString,
                                                      splitEventsManager: splitEventsManager)
     }

@@ -14,8 +14,6 @@ import XCTest
 class SynchronizerTest: XCTestCase {
 
     var splitsFetcher: HttpSplitFetcherStub!
-    var periodicEventsRecorderWorker: PeriodicRecorderWorkerStub!
-    var eventsRecorderWorker: RecorderWorkerStub!
     var splitsSyncWorker: RetryableSyncWorkerStub!
     var mySegmentsSyncWorker: RetryableSyncWorkerStub!
     var periodicSplitsSyncWorker: PeriodicSyncWorkerStub!
@@ -33,6 +31,7 @@ class SynchronizerTest: XCTestCase {
     var telemetryProducer: TelemetryStorageStub!
     var byKeyApiFacade: ByKeyFacadeStub!
     var impressionsTracker: ImpressionsTrackerStub!
+    var eventsSynchronizer: EventsSynchronizerStub!
     var telemetrySynchronizer: TelemetrySynchronizerStub!
 
     let userKey = "CUSTOMER_KEY"
@@ -54,18 +53,14 @@ class SynchronizerTest: XCTestCase {
         splitsSyncWorker = RetryableSyncWorkerStub()
         mySegmentsSyncWorker = RetryableSyncWorkerStub()
         periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
-        periodicEventsRecorderWorker = PeriodicRecorderWorkerStub()
-        eventsRecorderWorker = RecorderWorkerStub()
-
         syncWorkerFactory = SyncWorkerFactoryStub()
 
         impressionsTracker = ImpressionsTrackerStub()
+        eventsSynchronizer = EventsSynchronizerStub()
 
         syncWorkerFactory.splitsSyncWorker = splitsSyncWorker
         syncWorkerFactory.mySegmentsSyncWorker = mySegmentsSyncWorker
         syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
-        syncWorkerFactory.periodicEventsRecorderWorker = periodicEventsRecorderWorker
-        syncWorkerFactory.eventsRecorderWorker = eventsRecorderWorker
 
         mySegmentsStorage = ByKeyMySegmentsStorageStub()
         telemetryProducer = TelemetryStorageStub()
@@ -108,9 +103,7 @@ class SynchronizerTest: XCTestCase {
                                            splitStorageContainer: storageContainer,
                                            syncWorkerFactory: syncWorkerFactory,
                                            impressionsTracker: impressionsTracker,
-                                           eventsSyncHelper:
-                                            EventsRecorderSyncHelper(eventsStorage: PersistentEventsStorageStub(),
-                                                                     accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
+                                           eventsSynchronizer: eventsSynchronizer,
                                            syncTaskByChangeNumberCatalog: updateWorkerCatalog,
                                            splitsFilterQueryString: "",
                                            splitEventsManager: eventsManager)
@@ -249,21 +242,21 @@ class SynchronizerTest: XCTestCase {
 
     func testStartPeriodicRecordingUserData() {
         impressionsTracker.startCalled = false
-        periodicEventsRecorderWorker.startCalled = false
+        eventsSynchronizer.startCalled = false
         synchronizer.startRecordingUserData()
 
         XCTAssertTrue(impressionsTracker.startCalled)
-        XCTAssertTrue(periodicEventsRecorderWorker.startCalled)
+        XCTAssertTrue(eventsSynchronizer.startCalled)
     }
 
     func testStopRecordingUserData() {
         impressionsTracker.startCalled = false
-        periodicEventsRecorderWorker.startCalled = false
+        eventsSynchronizer.startCalled = false
 
         synchronizer.stopRecordingUserData()
 
         XCTAssertTrue(impressionsTracker.stopCalled)
-        XCTAssertTrue(periodicEventsRecorderWorker.stopCalled)
+        XCTAssertTrue(eventsSynchronizer.stopCalled)
     }
 
     func testStartRecordingTelemetry() {
@@ -292,7 +285,7 @@ class SynchronizerTest: XCTestCase {
         synchronizer.flush()
         sleep(1)
         XCTAssertTrue(impressionsTracker.flushCalled)
-        XCTAssertTrue(eventsRecorderWorker.flushCalled)
+        XCTAssertTrue(eventsSynchronizer.flushCalled)
     }
 
     func testDestroy() {
@@ -324,7 +317,7 @@ class SynchronizerTest: XCTestCase {
 
 
         ThreadUtils.delay(seconds: 1)
-        XCTAssertEqual(5, telemetryProducer.events[.queued])
+        XCTAssertTrue(eventsSynchronizer.pushCalled)
 
     }
 

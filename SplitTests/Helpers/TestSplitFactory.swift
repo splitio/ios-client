@@ -126,6 +126,10 @@ class TestSplitFactory {
                                                            uniqueKeyTracker: nil,
                                                            notificationHelper: nil)
 
+        let eventsSynchronizer = DefaultEventsSynchronizer(syncWorkerFactory: syncWorkerFactory,
+                                                           eventsSyncHelper: eventsSyncHelper,
+                                                           telemetryProducer: storageContainer.telemetryStorage)
+
         let byKeyFacade = DefaultByKeyFacade()
 
         self.synchronizer = SynchronizerSpy(splitConfig: splitConfig,
@@ -136,7 +140,7 @@ class TestSplitFactory {
                                             splitStorageContainer: storageContainer,
                                             syncWorkerFactory: syncWorkerFactory,
                                             impressionsTracker: impressionsTracker,
-                                            eventsSyncHelper: eventsSyncHelper,
+                                            eventsSynchronizer: eventsSynchronizer,
                                             splitsFilterQueryString: splitsFilterQueryString,
                                             splitEventsManager: eventsManager)
 
