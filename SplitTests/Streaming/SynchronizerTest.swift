@@ -33,8 +33,11 @@ class SynchronizerTest: XCTestCase {
     var telemetryProducer: TelemetryStorageStub!
     var byKeyApiFacade: ByKeyFacadeStub!
     var impressionsTracker: ImpressionsTrackerStub!
+    var telemetrySynchronizer: TelemetrySynchronizerStub!
 
     let userKey = "CUSTOMER_KEY"
+
+    var splitConfig: SplitClientConfig!
 
     override func setUp() {
         synchronizer = buildSynchronizer()
@@ -89,16 +92,17 @@ class SynchronizerTest: XCTestCase {
             .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
             .build()
 
-        let config =  SplitClientConfig()
-        config.syncEnabled = syncEnabled
-        config.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
+        splitConfig =  SplitClientConfig()
+        splitConfig.syncEnabled = syncEnabled
+        splitConfig.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
 
         byKeyApiFacade = ByKeyFacadeStub()
 
+        telemetrySynchronizer = TelemetrySynchronizerStub()
 
-        synchronizer = DefaultSynchronizer(splitConfig: config,
+        synchronizer = DefaultSynchronizer(splitConfig: splitConfig,
                                            defaultUserKey: userKey,
-                                           telemetrySynchronizer: nil,
+                                           telemetrySynchronizer: telemetrySynchronizer,
                                            byKeyFacade: byKeyApiFacade,
                                            splitApiFacade: apiFacade,
                                            splitStorageContainer: storageContainer,
@@ -243,20 +247,37 @@ class SynchronizerTest: XCTestCase {
         XCTAssertTrue(byKeyApiFacade.stopPeriodicSyncCalled)
     }
 
-    func testStartPeriodicRecording() {
-
-        synchronizer.startPeriodicRecording()
+    func testStartPeriodicRecordingUserData() {
+        impressionsTracker.startCalled = false
+        periodicEventsRecorderWorker.startCalled = false
+        synchronizer.startRecordingUserData()
 
         XCTAssertTrue(impressionsTracker.startCalled)
         XCTAssertTrue(periodicEventsRecorderWorker.startCalled)
     }
 
-    func testStopPeriodicRecording() {
+    func testStopRecordingUserData() {
+        impressionsTracker.startCalled = false
+        periodicEventsRecorderWorker.startCalled = false
 
-        synchronizer.stopPeriodicRecording()
+        synchronizer.stopRecordingUserData()
 
         XCTAssertTrue(impressionsTracker.stopCalled)
         XCTAssertTrue(periodicEventsRecorderWorker.stopCalled)
+    }
+
+    func testStartRecordingTelemetry() {
+        telemetrySynchronizer.startCalled = false
+        synchronizer.startRecordingTelemetry()
+
+        XCTAssertTrue(telemetrySynchronizer.startCalled)
+    }
+
+    func testStopRecordingTelemetry() {
+        telemetrySynchronizer.destroyCalled = true
+        synchronizer.stopRecordingTelemetry()
+
+        XCTAssertTrue(telemetrySynchronizer.destroyCalled)
     }
 
     func testStartByKey() {

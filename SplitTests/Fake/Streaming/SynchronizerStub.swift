@@ -22,8 +22,10 @@ class SynchronizerStub: Synchronizer {
     var forceMySegmentsSyncCalled = false
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
-    var startPeriodicRecordingCalled = false
-    var stopPeriodicRecordingCalled = false
+    var startRecordingTelemetryCalled = false
+    var stopRecordingTelemetryCalled = false
+    var startRecordingUserDataCalled = false
+    var stopRecordingUserDataCalled = false
     var pushEventCalled = false
     var pushImpressionCalled = false
     var flushCalled = false
@@ -117,12 +119,20 @@ class SynchronizerStub: Synchronizer {
         }
     }
 
-    func startPeriodicRecording() {
-        startPeriodicRecordingCalled = true
+    func startRecordingUserData() {
+        startRecordingUserDataCalled = true
     }
 
-    func stopPeriodicRecording() {
-        stopPeriodicRecordingCalled = true
+    func stopRecordingUserData() {
+        stopRecordingUserDataCalled = true
+    }
+
+    func startRecordingTelemetry() {
+        startRecordingTelemetryCalled = true
+    }
+
+    func stopRecordingTelemetry() {
+        stopRecordingTelemetryCalled = true
     }
 
     func pushEvent(event: EventDTO) {
@@ -161,13 +171,6 @@ class SynchronizerStub: Synchronizer {
             exp.fulfill()
         }
     }
-//
-//    func forceMySegmentsSync() {
-//        forceMySegmentsSyncCalled = true
-//        if let exp = forceMySegmentsSyncExp {
-//            exp.fulfill()
-//        }
-//    }
 
     func pause() {
         pauseCalled = true

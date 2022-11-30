@@ -24,8 +24,10 @@ protocol Synchronizer: ImpressionLogger {
     func forceMySegmentsSync(forKey key: String)
     func startPeriodicFetching()
     func stopPeriodicFetching()
-    func startPeriodicRecording()
-    func stopPeriodicRecording()
+    func startRecordingUserData()
+    func stopRecordingUserData()
+    func startRecordingTelemetry()
+    func stopRecordingTelemetry()
     func pushEvent(event: EventDTO)
     func notifySegmentsUpdated(forKey key: String)
     func notifySplitKilled()
@@ -201,15 +203,21 @@ class DefaultSynchronizer: Synchronizer {
         recordSyncModeEvent(TelemetryStreamingEventValue.syncModeStreaming)
     }
 
-    func startPeriodicRecording() {
+    func startRecordingUserData() {
         impressionsTracker.start()
         periodicEventsRecorderWorker.start()
+    }
+
+    func stopRecordingUserData() {
+        impressionsTracker.stop()
+        periodicEventsRecorderWorker.stop()
+    }
+
+    func startRecordingTelemetry() {
         telemetrySynchronizer?.start()
     }
 
-    func stopPeriodicRecording() {
-        impressionsTracker.stop()
-        periodicEventsRecorderWorker.stop()
+    func stopRecordingTelemetry() {
         telemetrySynchronizer?.destroy()
     }
 

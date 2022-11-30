@@ -57,7 +57,10 @@ class DefaultSyncManager: SyncManager {
         synchronizer.loadAttributesFromCache()
         synchronizer.synchronizeMySegments()
         setupSyncMode()
-        synchronizer.startPeriodicRecording()
+        if splitConfig.$userConsent == .granted {
+            synchronizer.startRecordingUserData()
+        }
+        synchronizer.startRecordingTelemetry()
     }
 
     func pause() {
