@@ -102,12 +102,12 @@ class TestSplitFactory {
                                                                   maxQueueSizeInBytes: splitConfig.impressionsQueueSize)
 
         let impressionsSyncHelper = ImpressionsRecorderSyncHelper(
-            impressionsStorage: storageContainer.impressionsStorage, accumulator: impressionsFlushChecker)
+            impressionsStorage: storageContainer.persistentImpressionsStorage, accumulator: impressionsFlushChecker)
 
         let eventsFlushChecker
             = DefaultRecorderFlushChecker(maxQueueSize: Int(splitConfig.eventsQueueSize),
                                           maxQueueSizeInBytes: splitConfig.maxEventsQueueMemorySizeInBytes)
-        let eventsSyncHelper = EventsRecorderSyncHelper(eventsStorage: storageContainer.eventsStorage,
+        let eventsSyncHelper = EventsRecorderSyncHelper(eventsStorage: storageContainer.persistentEventsStorage,
                                                         accumulator: eventsFlushChecker)
 
         let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: key.matchingKey,

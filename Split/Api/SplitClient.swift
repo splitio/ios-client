@@ -52,6 +52,9 @@ public typealias SplitAction = () -> Void
     /// Clears all attributes stored in the SDK.
     func clearAttributes() -> Bool
 
+    // MARK: User consent
+    func setUserConsent(enabled: Bool)
+
     // MARK: Client lifecycle
     func flush()
     func destroy()

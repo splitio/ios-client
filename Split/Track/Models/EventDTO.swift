@@ -7,6 +7,7 @@
 
 import Foundation
 
+// TODO: Rename to Event
 class EventDTO: DynamicCodable {
     var storageId: String?
     var key: String?

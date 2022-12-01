@@ -81,6 +81,9 @@ class FailedClient: SplitClient {
         return false
     }
 
+    func setUserConsent(enabled: Bool) {
+    }
+
     func flush() {
     }
 

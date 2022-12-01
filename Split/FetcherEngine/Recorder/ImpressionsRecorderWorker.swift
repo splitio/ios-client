@@ -10,17 +10,17 @@ import Foundation
 
 class ImpressionsRecorderWorker: RecorderWorker {
 
-    private let impressionsStorage: PersistentImpressionsStorage
+    private let persistentImpressionsStorage: PersistentImpressionsStorage
     private let impressionsRecorder: HttpImpressionsRecorder
     private let impressionsPerPush: Int
     private let impressionsSyncHelper: ImpressionsRecorderSyncHelper?
 
-    init(impressionsStorage: PersistentImpressionsStorage,
+    init(persistentImpressionsStorage: PersistentImpressionsStorage,
          impressionsRecorder: HttpImpressionsRecorder,
          impressionsPerPush: Int,
          impressionsSyncHelper: ImpressionsRecorderSyncHelper? = nil) {
 
-        self.impressionsStorage = impressionsStorage
+        self.persistentImpressionsStorage = persistentImpressionsStorage
         self.impressionsRecorder = impressionsRecorder
         self.impressionsPerPush = impressionsPerPush
         self.impressionsSyncHelper = impressionsSyncHelper
@@ -31,14 +31,14 @@ class ImpressionsRecorderWorker: RecorderWorker {
         var rowCount = 0
         var failedImpressions = [KeyImpression]()
         repeat {
-            let impressions = impressionsStorage.pop(count: impressionsPerPush)
+            let impressions = persistentImpressionsStorage.pop(count: impressionsPerPush)
             rowCount = impressions.count
             if rowCount > 0 {
                 Logger.d("Sending impressions")
                 do {
                     _ = try impressionsRecorder.execute(group(impressions: impressions))
                     // Removing sent impressions
-                    impressionsStorage.delete(impressions)
+                    persistentImpressionsStorage.delete(impressions)
                     Logger.i("Impression posted successfully")
                 } catch let error {
                     Logger.e("Impression error: \(String(describing: error))")
@@ -47,7 +47,7 @@ class ImpressionsRecorderWorker: RecorderWorker {
             }
         } while rowCount == impressionsPerPush
         // Activate non sent impressions to retry in next iteration
-        impressionsStorage.setActive(failedImpressions)
+        persistentImpressionsStorage.setActive(failedImpressions)
         if let syncHelper = impressionsSyncHelper {
             syncHelper.updateAccumulator(count: failedImpressions.count,
                                          bytes: failedImpressions.count *

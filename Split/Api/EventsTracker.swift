@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol EventsTracker {
+protocol EventsTracker: AnyObject {
     var isTrackingEnabled: Bool { get set }
     func track(eventType: String,
                trafficType: String?,

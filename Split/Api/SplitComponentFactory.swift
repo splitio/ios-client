@@ -176,14 +176,14 @@ class SplitComponentFactory {
 
     func buildImpressionsSyncHelper() throws -> ImpressionsRecorderSyncHelper {
         let component = ImpressionsRecorderSyncHelper(
-            impressionsStorage: try getSplitStorageContainer().impressionsStorage,
+            impressionsStorage: try getSplitStorageContainer().persistentImpressionsStorage,
             accumulator: getImpressionsRecorderFlushChecker())
         add(component: component)
         return component
     }
 
     func buildEventsSyncHelper() throws -> EventsRecorderSyncHelper {
-        let component = EventsRecorderSyncHelper(eventsStorage: try getSplitStorageContainer().eventsStorage,
+        let component = EventsRecorderSyncHelper(eventsStorage: try getSplitStorageContainer().persistentEventsStorage,
                                                  accumulator: getEventsRecorderFlushChecker())
         add(component: component)
         return component
