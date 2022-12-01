@@ -55,6 +55,7 @@ import BackgroundTasks
         globalStorage.remove(item: .backgroundSyncSchedule)
     }
 
+    @available(iOSApplicationExtension, unavailable)
     @objc public func schedule(serviceEndpoints: ServiceEndpoints? = nil) {
         if #available(iOS 13.0, tvOS 13.0, macCatalyst 13.1, *) {
             let success = BGTaskScheduler.shared.register(
