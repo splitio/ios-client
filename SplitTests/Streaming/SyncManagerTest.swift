@@ -41,7 +41,7 @@ class SyncManagerTest: XCTestCase {
         XCTAssertTrue(synchronizer.synchronizeMySegmentsCalled)
         XCTAssertNotNil(broadcasterChannel.registeredHandler)
         XCTAssertTrue(pushManager.startCalled)
-        XCTAssertTrue(synchronizer.startPeriodicRecordingCalled)
+        XCTAssertTrue(synchronizer.startRecordingUserDataCalled)
         XCTAssertFalse(synchronizer.startPeriodicFetchingCalled)
     }
 
@@ -59,7 +59,7 @@ class SyncManagerTest: XCTestCase {
         XCTAssertTrue(synchronizer.synchronizeMySegmentsCalled)
         XCTAssertNil(broadcasterChannel.registeredHandler)
         XCTAssertFalse(pushManager.startCalled)
-        XCTAssertTrue(synchronizer.startPeriodicRecordingCalled)
+        XCTAssertTrue(synchronizer.startRecordingUserDataCalled)
         XCTAssertTrue(synchronizer.startPeriodicFetchingCalled)
     }
 
@@ -87,7 +87,7 @@ class SyncManagerTest: XCTestCase {
         XCTAssertNil(broadcasterChannel.registeredHandler)
         XCTAssertFalse(pushManager.startCalled)
         XCTAssertFalse(synchronizer.startPeriodicFetchingCalled)
-        XCTAssertTrue(synchronizer.startPeriodicRecordingCalled)
+        XCTAssertTrue(synchronizer.startRecordingUserDataCalled)
     }
 
     func testPushSubsystemUpReceived() {

@@ -248,6 +248,10 @@ class SplitComponentFactory {
                                                            uniqueKeyTracker: uniqueKeyTracker,
                                                            notificationHelper: macosNotificationHelper)
 
+        let eventsSynchronizer = DefaultEventsSynchronizer(syncWorkerFactory: syncWorkerFactory,
+                                                           eventsSyncHelper: try buildEventsSyncHelper(),
+                                                           telemetryProducer: storageContainer.telemetryStorage)
+
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
                                                           defaultUserKey: userKey,
                                                           telemetrySynchronizer: telemetrySynchronizer,
@@ -256,7 +260,7 @@ class SplitComponentFactory {
                                                           splitStorageContainer: storageContainer,
                                                           syncWorkerFactory: syncWorkerFactory,
                                                           impressionsTracker: impressionsTracker,
-                                                          eventsSyncHelper: try buildEventsSyncHelper(),
+                                                          eventsSynchronizer: eventsSynchronizer,
                                                           splitsFilterQueryString: splitsFilterQueryString,
                                                           splitEventsManager: getSplitEventsManagerCoordinator())
         add(component: component)
