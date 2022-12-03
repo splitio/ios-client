@@ -164,6 +164,12 @@ class TestSplitFactory {
             mySegmentsFetcher: apiFacade.mySegmentsFetcher,
             telemetryProducer: storageContainer.telemetryStorage)
 
+        let eventsTracker = DefaultEventsTracker(config: splitConfig,
+                                                 synchronizer: synchronizer,
+                                                 eventValidator: DefaultEventValidator(splitsStorage: storageContainer.splitsStorage),
+                                                 anyValueValidator: DefaultAnyValueValidator(),
+                                                 validationLogger: DefaultValidationMessageLogger(),
+                                                 telemetryProducer: storageContainer.telemetryStorage)
 
         clientManager = DefaultClientManager(config: splitConfig,
                                              key: key,
@@ -173,6 +179,7 @@ class TestSplitFactory {
                                              storageContainer: storageContainer,
                                              syncManager: syncManager,
                                              synchronizer: synchronizer,
+                                             eventsTracker: eventsTracker,
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: nil)

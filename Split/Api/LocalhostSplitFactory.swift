@@ -96,6 +96,9 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         return newClient
     }
 
+    public func setUserConsent(enabled: Bool) {
+    }
+
     private func buildSplitStorage(eventsManager: SplitEventsManager) -> SplitsStorage {
         let dataFolderName = SplitDatabaseHelper.sanitizeForFolderName(config.localhostDataFolder)
         let fileStorage = FileStorage(dataFolderName: dataFolderName)

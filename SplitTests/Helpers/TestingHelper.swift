@@ -151,4 +151,20 @@ struct TestingHelper {
         }
         return UniqueKeys(keys: allKeys)
     }
+
+    static func createStorageContainer() -> SplitStorageContainer {
+        return SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
+                                     fileStorage: FileStorageStub(),
+                                     splitsStorage: SplitsStorageStub(),
+                                     persistentSplitsStorage: PersistentSplitsStorageStub(),
+                                     impressionsStorage: ImpressionsStorageStub(),
+                                     persistentImpressionsStorage: PersistentImpressionsStorageStub(),
+                                     impressionsCountStorage: PersistentImpressionsCountStorageStub(),
+                                     eventsStorage: EventsStorageStub(),
+                                     persistentEventsStorage: PersistentEventsStorageStub(),
+                                     telemetryStorage: TelemetryStorageStub(),
+                                     mySegmentsStorage: MySegmentsStorageStub(),
+                                     attributesStorage: AttributesStorageStub(),
+                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub())
+    }
 }

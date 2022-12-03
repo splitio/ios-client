@@ -297,6 +297,45 @@ class SplitComponentFactory {
         return component
     }
 
+    func buildEventsTracker() throws -> EventsTracker {
+        let storageContainer = try getSplitStorageContainer()
+        let anyValueValidator = DefaultAnyValueValidator()
+        let validationLogger = DefaultValidationMessageLogger()
+        let eventsValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
+        let component: EventsTracker = DefaultEventsTracker(config: splitClientConfig,
+                                             synchronizer: try getSynchronizer(),
+                                             eventValidator: eventsValidator,
+                                             anyValueValidator: anyValueValidator,
+                                             validationLogger: validationLogger,
+                                             telemetryProducer: storageContainer.telemetryStorage)
+        add(component: component)
+        return component
+    }
+
+    func getEventsTracker() throws -> EventsTracker {
+        if let obj = get(for: EventsTracker.self) as? EventsTracker {
+            return obj
+        }
+        throw ComponentError.notFound(name: "Events Tracker")
+    }
+
+    func getSyncManager() throws -> SyncManager {
+        if let obj = get(for: SyncManager.self) as? SyncManager {
+            return obj
+        }
+        throw ComponentError.notFound(name: "Events Tracker")
+    }
+
+    func buildUserConsentManager() throws -> UserConsentManager {
+
+        let component = DefaultUserConsentManager(splitConfig: splitClientConfig,
+                                                  storageContainer: try getSplitStorageContainer(),
+                                                  syncManager: try getSyncManager(),
+                                                  eventsTracker: try getEventsTracker())
+        add(component: component)
+        return component
+    }
+
     func getRestClient() throws -> SplitApiRestClient {
         if let obj = get(for: SplitApiRestClient.self) as? SplitApiRestClient {
             return obj

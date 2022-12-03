@@ -54,6 +54,13 @@ import Foundation
     var manager: SplitManager { get }
 
     ///
+    /// Enables/Disables User Consents data storing
+    /// If enabled impressions and events are going to be tracked and sent to backend
+    ///
+    ///
+    func setUserConsent(enabled: Bool)
+
+    ///
     /// Current Split SDK Version
     /// - Returns: A String representation of the current SDK version
     ///

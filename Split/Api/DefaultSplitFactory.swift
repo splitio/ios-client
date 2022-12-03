@@ -16,6 +16,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     private static let kInitErrorMessage = "Something happened on Split init and the client couldn't be created"
 
     private var clientManager: SplitClientManager?
+    private var userConsentManager: UserConsentManager?
 
     // Not using default implementation in protocol
     // extension due to Objc interoperability
@@ -77,6 +78,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let byKeyFacade = components.getByKeyFacade()
         let mySegmentsSyncWorkerFactory = try components.buildMySegmentsSyncWorkerFactory()
 
+        let eventsTracker = try components.buildEventsTracker()
+
+        userConsentManager = try components.buildUserConsentManager()
+
         setupBgSync(config: params.config, apiKey: params.apiKey, userKey: params.key.matchingKey)
 
         clientManager = DefaultClientManager(config: params.config,
@@ -87,10 +92,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                              storageContainer: storageContainer,
                                              syncManager: syncManager,
                                              synchronizer: synchronizer,
+                                             eventsTracker: eventsTracker,
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: params.initStopwatch)
-
         components.destroy()
 
     }
@@ -109,6 +114,15 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
     public func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
         return client(key: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
+    }
+
+    public func setUserConsent(enabled: Bool) {
+        let newMode = (enabled ? UserConsent.granted : UserConsent.declined)
+        guard let userConsentManager = self.userConsentManager else {
+            Logger.e("User consent manager not initialized. Unable to set mode \(newMode.rawValue)")
+            return
+        }
+        userConsentManager.set(newMode)
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {

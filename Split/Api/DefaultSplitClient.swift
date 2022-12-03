@@ -187,13 +187,6 @@ extension DefaultSplitClient {
         return true
     }
 
-    public func setUserConsent(enabled: Bool) {
-        config.userConsent = enabled ? UserConsent.granted.rawValue : UserConsent.declined.rawValue
-        eventsTracker.isTrackingEnabled = enabled
-        
-
-    }
-
     private func isValidAttribute(_ value: Any) -> Bool {
         return anyValueValidator.isPrimitiveValue(value: value) ||
             anyValueValidator.isList(value: value)

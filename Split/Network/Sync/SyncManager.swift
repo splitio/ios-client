@@ -11,6 +11,7 @@ import Foundation
 protocol SyncManager {
     func start()
     func resetStreaming()
+    func setupUserConsent(for status: UserConsent)
     func pause()
     func resume()
     func stop()
@@ -128,6 +129,14 @@ class DefaultSyncManager: SyncManager {
 
     func resetStreaming() {
         pushNotificationManager?.reset()
+    }
+
+    func setupUserConsent(for status: UserConsent) {
+        if status == .granted {
+            synchronizer.startRecordingUserData()
+        } else {
+            synchronizer.stopRecordingUserData()
+        }
     }
 
     private func scheduleStreamingReconnection() {
