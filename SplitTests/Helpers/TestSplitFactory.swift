@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class TestSplitFactory {
+class TestSplitFactory: SplitFactory {
 
     // Not using default implementation in protocol
     // extension due to Objc interoperability
@@ -34,6 +34,7 @@ class TestSplitFactory {
     var splitDatabase: SplitDatabase
     var reachabilityChecker: HostReachabilityChecker
     var apiKey: String = IntegrationHelper.dummyApiKey
+    private(set) var userConsentManager: UserConsentManager?
 
     var splitConfig: SplitClientConfig = TestingHelper.basicStreamingConfig()
     var httpClient: HttpClient?
@@ -171,6 +172,11 @@ class TestSplitFactory {
                                                  validationLogger: DefaultValidationMessageLogger(),
                                                  telemetryProducer: storageContainer.telemetryStorage)
 
+        userConsentManager = DefaultUserConsentManager(splitConfig: splitConfig,
+                                                       storageContainer: storageContainer,
+                                                       syncManager: syncManager,
+                                                       eventsTracker: eventsTracker)
+
         clientManager = DefaultClientManager(config: splitConfig,
                                              key: key,
                                              splitManager: manager,
@@ -188,6 +194,18 @@ class TestSplitFactory {
 
     func client(matchingKey: String) -> SplitClient {
         return clientManager!.get(forKey: Key(matchingKey: matchingKey))
+    }
+
+    func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
+        return clientManager!.get(forKey: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
+    }
+
+    func client(key: Key) -> SplitClient {
+        return clientManager!.get(forKey:key)
+    }
+
+    func setUserConsent(enabled: Bool) {
+        userConsentManager?.set(enabled ? .granted : .declined)
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {

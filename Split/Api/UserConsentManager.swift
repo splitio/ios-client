@@ -55,5 +55,6 @@ class DefaultUserConsentManager: UserConsentManager {
         impressionsStorage.enablePersistence(enablePersistence)
         eventsStorage.enablePersistence(enablePersistence)
         syncManager.setupUserConsent(for: status)
+        Logger.d("User consent set to \(status.rawValue)")
     }
 }
