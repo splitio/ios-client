@@ -30,15 +30,19 @@ class MainImpressionsStorage: ImpressionsStorage {
         // Here we should save all impressions
         isPersistenceEnabled.set(enable)
         if enable {
+            Logger.v("Persisting in memory impressions")
             persistentStorage.push(impressions: impressions.takeAll())
         }
+        Logger.d("Persistence for impressions has been \(enable ? "enabled" : "disabled")")
     }
 
     func push(_ impression: KeyImpression) {
         if isPersistenceEnabled.value {
+            Logger.v("Pushing impressions to persistent storage")
             persistentStorage.push(impression: impression)
             return
         }
+        Logger.v("Pushing impressions to in memory storage")
         impressions.append(impression)
     }
 

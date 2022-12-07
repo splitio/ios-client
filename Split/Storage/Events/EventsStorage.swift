@@ -30,15 +30,19 @@ class MainEventsStorage: EventsStorage {
         // Here we should save all events
         isPersistenceEnabled.set(enable)
         if enable {
+            Logger.v("Persisting in memory events")
             persistentStorage.push(events: events.takeAll())
         }
+        Logger.d("Persistence for events has been \(enable ? "enabled" : "disabled")")
     }
 
     func push(_ event: EventDTO) {
         if isPersistenceEnabled.value {
+            Logger.v("Pushing event to persistent storage")
             persistentStorage.push(event: event)
             return
         }
+        Logger.v("Pushing event to in memory storage")
         events.append(event)
     }
 

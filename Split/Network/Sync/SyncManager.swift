@@ -59,6 +59,7 @@ class DefaultSyncManager: SyncManager {
         synchronizer.synchronizeMySegments()
         setupSyncMode()
         if splitConfig.$userConsent == .granted {
+            Logger.v("User consent grated. Recording started")
             synchronizer.startRecordingUserData()
         }
         synchronizer.startRecordingTelemetry()
@@ -133,8 +134,10 @@ class DefaultSyncManager: SyncManager {
 
     func setupUserConsent(for status: UserConsent) {
         if status == .granted {
+            Logger.v("User consent status is granted now. Starting recorders")
             synchronizer.startRecordingUserData()
         } else {
+            Logger.v("User consent status is \(status) now. Stopping recorders")
             synchronizer.stopRecordingUserData()
         }
     }
@@ -154,13 +157,14 @@ class DefaultSyncManager: SyncManager {
     private func enablePolling() {
         if !isPollingEnabled.getAndSet(true) {
             synchronizer.startPeriodicFetching()
-            Logger.i("Polling enabled")
+            Logger.d("Polling enabled")
         }
     }
 
     private func setupSyncMode() {
         if !splitConfig.syncEnabled {
             // No setup is needed
+            Logger.d("Sync is disabled")
             return
         }
         isPollingEnabled.set(!splitConfig.streamingEnabled)
