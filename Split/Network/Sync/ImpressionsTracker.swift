@@ -82,6 +82,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     func push(_ impression: KeyImpression) {
 
         if !isTrackingEnabled {
+            Logger.v("Impression not tracked because tracking is disabled")
             return
         }
 

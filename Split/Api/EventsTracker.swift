@@ -47,6 +47,7 @@ class DefaultEventsTracker: EventsTracker {
                matchingKey: String) -> Bool {
 
         if !isTrackingEnabled {
+            Logger.v("Event not tracked because tracking is disabled")
             return false
         }
 
