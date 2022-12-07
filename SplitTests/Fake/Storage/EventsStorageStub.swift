@@ -24,7 +24,7 @@ class EventsStorageStub: EventsStorage {
         pushCalled = true
     }
 
-    var clearInMemoryCalled = true
+    var clearInMemoryCalled = false
     func clearInMemory() {
         clearInMemoryCalled = true
     }

@@ -24,8 +24,7 @@ class DefaultUserConsentManager: UserConsentManager {
     init(splitConfig: SplitClientConfig,
          storageContainer: SplitStorageContainer,
          syncManager: SyncManager,
-         eventsTracker: EventsTracker,
-         status: UserConsent = .granted) {  // Testing purposes
+         eventsTracker: EventsTracker) {  // Testing purposes
 
         self.splitConfig = splitConfig
         self.currentStatus = splitConfig.$userConsent
@@ -33,7 +32,6 @@ class DefaultUserConsentManager: UserConsentManager {
         self.eventsStorage = storageContainer.eventsStorage
         self.syncManager = syncManager
         self.eventsTracker = eventsTracker
-        self.currentStatus = status
     }
 
     func set(_ status: UserConsent) {
@@ -49,7 +47,7 @@ class DefaultUserConsentManager: UserConsentManager {
             return
         }
 
-        let  enablePersistence = (status == .granted)
+        let enablePersistence = (status == .granted)
         splitConfig.$userConsent = status
         eventsTracker.isTrackingEnabled = (status != .declined)
         impressionsStorage.enablePersistence(enablePersistence)
