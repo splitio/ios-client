@@ -23,7 +23,7 @@ class ImpressionsStorageStub: ImpressionsStorage {
     func push(_ impression: KeyImpression) {
     }
 
-    var clearInMemoryCalled = true
+    var clearInMemoryCalled = false
     func clearInMemory() {
         clearInMemoryCalled = true
     }
