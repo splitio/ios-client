@@ -79,6 +79,7 @@ class UserConsentManagerTest: XCTestCase {
 
     private func createUserConsentManager(status: UserConsent) {
         config = SplitClientConfig()
+        config.userConsent = status.rawValue
         let storageContainer = TestingHelper.createStorageContainer()
         syncManager = SyncManagerStub()
         eventsTracker = EventsTrackerStub()
@@ -87,8 +88,7 @@ class UserConsentManagerTest: XCTestCase {
         userConsentManager = DefaultUserConsentManager(splitConfig: config,
                                                        storageContainer: storageContainer,
                                                        syncManager: syncManager,
-                                                       eventsTracker: eventsTracker,
-                                                       status: status)
+                                                       eventsTracker: eventsTracker)
     }
 
     override func tearDown() {
