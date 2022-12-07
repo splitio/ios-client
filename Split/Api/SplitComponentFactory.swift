@@ -176,14 +176,14 @@ class SplitComponentFactory {
 
     func buildImpressionsSyncHelper() throws -> ImpressionsRecorderSyncHelper {
         let component = ImpressionsRecorderSyncHelper(
-            impressionsStorage: try getSplitStorageContainer().impressionsStorage,
+            impressionsStorage: try getSplitStorageContainer().persistentImpressionsStorage,
             accumulator: getImpressionsRecorderFlushChecker())
         add(component: component)
         return component
     }
 
     func buildEventsSyncHelper() throws -> EventsRecorderSyncHelper {
-        let component = EventsRecorderSyncHelper(eventsStorage: try getSplitStorageContainer().eventsStorage,
+        let component = EventsRecorderSyncHelper(eventsStorage: try getSplitStorageContainer().persistentEventsStorage,
                                                  accumulator: getEventsRecorderFlushChecker())
         add(component: component)
         return component
@@ -293,6 +293,45 @@ class SplitComponentFactory {
             .setSynchronizer(try getSynchronizer())
             .setNotificationHelper(notificationHelper ?? DefaultNotificationHelper.instance)
             .setSplitConfig(splitClientConfig).build()
+        add(component: component)
+        return component
+    }
+
+    func buildEventsTracker() throws -> EventsTracker {
+        let storageContainer = try getSplitStorageContainer()
+        let anyValueValidator = DefaultAnyValueValidator()
+        let validationLogger = DefaultValidationMessageLogger()
+        let eventsValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
+        let component: EventsTracker = DefaultEventsTracker(config: splitClientConfig,
+                                             synchronizer: try getSynchronizer(),
+                                             eventValidator: eventsValidator,
+                                             anyValueValidator: anyValueValidator,
+                                             validationLogger: validationLogger,
+                                             telemetryProducer: storageContainer.telemetryStorage)
+        add(component: component)
+        return component
+    }
+
+    func getEventsTracker() throws -> EventsTracker {
+        if let obj = get(for: EventsTracker.self) as? EventsTracker {
+            return obj
+        }
+        throw ComponentError.notFound(name: "Events Tracker")
+    }
+
+    func getSyncManager() throws -> SyncManager {
+        if let obj = get(for: SyncManager.self) as? SyncManager {
+            return obj
+        }
+        throw ComponentError.notFound(name: "Sync manager")
+    }
+
+    func buildUserConsentManager() throws -> UserConsentManager {
+
+        let component = DefaultUserConsentManager(splitConfig: splitClientConfig,
+                                                  storageContainer: try getSplitStorageContainer(),
+                                                  syncManager: try getSyncManager(),
+                                                  eventsTracker: try getEventsTracker())
         add(component: component)
         return component
     }

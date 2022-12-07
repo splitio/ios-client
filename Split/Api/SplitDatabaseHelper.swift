@@ -25,9 +25,12 @@ struct SplitDatabaseHelper {
         let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
         let splitsStorage = openSplitsStorage(database: splitDatabase)
 
-        let impressionsStorage = openImpressionsStorage(database: splitDatabase)
+        let persistentImpressionsStorage = openPersistentImpressionsStorage(database: splitDatabase)
+        let impressionsStorage = openImpressionsStorage(persistentStorage: persistentImpressionsStorage)
         let impressionsCountStorage = openImpressionsCountStorage(database: splitDatabase)
-        let eventsStorage = openEventsStorage(database: splitDatabase)
+
+        let persistentEventsStorage = openPersistentEventsStorage(database: splitDatabase)
+        let eventsStorage = openEventsStorage(persistentStorage: persistentEventsStorage)
 
         let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase)
         let attributesStorage = openAttributesStorage(database: splitDatabase,
@@ -45,8 +48,10 @@ struct SplitDatabaseHelper {
                                      splitsStorage: splitsStorage,
                                      persistentSplitsStorage: persistentSplitsStorage,
                                      impressionsStorage: impressionsStorage,
+                                     persistentImpressionsStorage: persistentImpressionsStorage,
                                      impressionsCountStorage: impressionsCountStorage,
                                      eventsStorage: eventsStorage,
+                                     persistentEventsStorage: persistentEventsStorage,
                                      telemetryStorage: telemetryStorage,
                                      mySegmentsStorage: mySegmentsStorage,
                                      attributesStorage: attributesStorage,
@@ -95,9 +100,13 @@ struct SplitDatabaseHelper {
         )
     }
 
-    static func openImpressionsStorage(database: SplitDatabase) -> PersistentImpressionsStorage {
+    static func openPersistentImpressionsStorage(database: SplitDatabase) -> PersistentImpressionsStorage {
         return DefaultImpressionsStorage(database: database,
                                          expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+    }
+
+    static func openImpressionsStorage(persistentStorage: PersistentImpressionsStorage) -> ImpressionsStorage {
+        return MainImpressionsStorage(persistentStorage: persistentStorage)
     }
 
     static func openImpressionsCountStorage(database: SplitDatabase) -> PersistentImpressionsCountStorage {
@@ -105,9 +114,13 @@ struct SplitDatabaseHelper {
                                               expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
     }
 
-    static func openEventsStorage(database: SplitDatabase) -> PersistentEventsStorage {
+    static func openPersistentEventsStorage(database: SplitDatabase) -> PersistentEventsStorage {
         return DefaultEventsStorage(database: database,
                                     expirationPeriod: ServiceConstants.recordedDataExpirationPeriodInSeconds)
+    }
+
+    static func openEventsStorage(persistentStorage: PersistentEventsStorage) -> EventsStorage {
+        return MainEventsStorage(persistentStorage: persistentStorage)
     }
 
     static func databaseName(apiKey: String) -> String? {

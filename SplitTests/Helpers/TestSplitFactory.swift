@@ -102,12 +102,12 @@ class TestSplitFactory {
                                                                   maxQueueSizeInBytes: splitConfig.impressionsQueueSize)
 
         let impressionsSyncHelper = ImpressionsRecorderSyncHelper(
-            impressionsStorage: storageContainer.impressionsStorage, accumulator: impressionsFlushChecker)
+            impressionsStorage: storageContainer.persistentImpressionsStorage, accumulator: impressionsFlushChecker)
 
         let eventsFlushChecker
             = DefaultRecorderFlushChecker(maxQueueSize: Int(splitConfig.eventsQueueSize),
                                           maxQueueSizeInBytes: splitConfig.maxEventsQueueMemorySizeInBytes)
-        let eventsSyncHelper = EventsRecorderSyncHelper(eventsStorage: storageContainer.eventsStorage,
+        let eventsSyncHelper = EventsRecorderSyncHelper(eventsStorage: storageContainer.persistentEventsStorage,
                                                         accumulator: eventsFlushChecker)
 
         let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: key.matchingKey,
@@ -164,6 +164,12 @@ class TestSplitFactory {
             mySegmentsFetcher: apiFacade.mySegmentsFetcher,
             telemetryProducer: storageContainer.telemetryStorage)
 
+        let eventsTracker = DefaultEventsTracker(config: splitConfig,
+                                                 synchronizer: synchronizer,
+                                                 eventValidator: DefaultEventValidator(splitsStorage: storageContainer.splitsStorage),
+                                                 anyValueValidator: DefaultAnyValueValidator(),
+                                                 validationLogger: DefaultValidationMessageLogger(),
+                                                 telemetryProducer: storageContainer.telemetryStorage)
 
         clientManager = DefaultClientManager(config: splitConfig,
                                              key: key,
@@ -173,6 +179,7 @@ class TestSplitFactory {
                                              storageContainer: storageContainer,
                                              syncManager: syncManager,
                                              synchronizer: synchronizer,
+                                             eventsTracker: eventsTracker,
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: nil)

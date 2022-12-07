@@ -37,5 +37,6 @@ class SplitFactoryStub: SplitFactory {
         return client
     }
     
-    
+    func setUserConsent(enabled: Bool) {
+    }
 }

@@ -20,7 +20,7 @@ class EventsRecorderWorkerTests: XCTestCase {
     override func setUp() {
         eventStorage = PersistentEventsStorageStub()
         eventsRecorder = HttpEventsRecorderStub()
-        worker = EventsRecorderWorker(eventsStorage: eventStorage,
+        worker = EventsRecorderWorker(persistentEventsStorage: eventStorage,
                                       eventsRecorder: eventsRecorder,
                                       eventsPerPush: 2)
     }
