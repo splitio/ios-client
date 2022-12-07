@@ -323,7 +323,7 @@ class SplitComponentFactory {
         if let obj = get(for: SyncManager.self) as? SyncManager {
             return obj
         }
-        throw ComponentError.notFound(name: "Events Tracker")
+        throw ComponentError.notFound(name: "Sync manager")
     }
 
     func buildUserConsentManager() throws -> UserConsentManager {
