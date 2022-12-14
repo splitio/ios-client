@@ -25,7 +25,7 @@ struct ImpressionsObserver {
         return min(previousTime, impression.time)
     }
 
-    func stop() {
+    func clear() {
         cache.clear()
     }
 }

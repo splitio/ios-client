@@ -45,4 +45,13 @@ class ImpressionsTrackerStub: ImpressionsTracker {
     func destroy() {
         destroyCalled = true
     }
+
+    func enableTracking(_ enable: Bool) {
+        isTrackingEnabled = enable
+    }
+
+    var isPersistenceEnabled = false
+    func enablePersistence(_ enable: Bool) {
+        isPersistenceEnabled = enable
+    }
 }

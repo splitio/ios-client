@@ -27,7 +27,7 @@ class EventsRecorderWorker: RecorderWorker {
     }
 
     func flush() {
-        var rowCount = 0
+        var rowCount = 04
         var failedEvents = [EventDTO]()
         repeat {
             let events = persistentEventsStorage.pop(count: eventsPerPush)

@@ -1128,6 +1128,9 @@
 		95B436A026F1487400E1EB9C /* TestingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B4369F26F1487400E1EB9C /* TestingData.swift */; };
 		95B436A626F1533700E1EB9C /* MySegmentsV2PayloadDecoderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B436A526F1533600E1EB9C /* MySegmentsV2PayloadDecoderMock.swift */; };
 		95BC77EE28368FF1008E14BF /* UniqueKeyDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BC77ED28368FF1008E14BF /* UniqueKeyDaoTests.swift */; };
+		95C0577629476469007E4D6A /* UserConsentModeDebugTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C0577529476469007E4D6A /* UserConsentModeDebugTest.swift */; };
+		95C057792948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C057782948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift */; };
+		95C0577C294A247D007E4D6A /* UserConsentModeNoneTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C0577B294A247C007E4D6A /* UserConsentModeNoneTest.swift */; };
 		95C1600B27D28CB8008562E3 /* OneKeyPersistentAttributesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C1600A27D28CB8008562E3 /* OneKeyPersistentAttributesStorage.swift */; };
 		95C1600D27D28CF4008562E3 /* PersistentAttributesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C1600C27D28CF4008562E3 /* PersistentAttributesStorage.swift */; };
 		95C1600F27D28FD4008562E3 /* PersistentAttributesStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C1600E27D28FD4008562E3 /* PersistentAttributesStorageTests.swift */; };
@@ -1814,6 +1817,9 @@
 		95B4369F26F1487400E1EB9C /* TestingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingData.swift; sourceTree = "<group>"; };
 		95B436A526F1533600E1EB9C /* MySegmentsV2PayloadDecoderMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsV2PayloadDecoderMock.swift; sourceTree = "<group>"; };
 		95BC77ED28368FF1008E14BF /* UniqueKeyDaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeyDaoTests.swift; sourceTree = "<group>"; };
+		95C0577529476469007E4D6A /* UserConsentModeDebugTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConsentModeDebugTest.swift; sourceTree = "<group>"; };
+		95C057782948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserConsentModeOptimizedTest.swift; sourceTree = "<group>"; };
+		95C0577B294A247C007E4D6A /* UserConsentModeNoneTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserConsentModeNoneTest.swift; sourceTree = "<group>"; };
 		95C1600A27D28CB8008562E3 /* OneKeyPersistentAttributesStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OneKeyPersistentAttributesStorage.swift; sourceTree = "<group>"; };
 		95C1600C27D28CF4008562E3 /* PersistentAttributesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentAttributesStorage.swift; sourceTree = "<group>"; };
 		95C1600E27D28FD4008562E3 /* PersistentAttributesStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentAttributesStorageTests.swift; sourceTree = "<group>"; };
@@ -2616,7 +2622,7 @@
 			path = HttpClient;
 			sourceTree = "<group>";
 		};
-		5921ED2925373A29000D6C8B /* streaming */ = {
+		5921ED2925373A29000D6C8B /* Streaming */ = {
 			isa = PBXGroup;
 			children = (
 				5921ED3025378ECD000D6C8B /* StreamingInitTest.swift */,
@@ -2639,7 +2645,7 @@
 				9580C98726FCA6400021D729 /* StreamingDelayTest.swift */,
 				95B2497F26F39C9B00B34507 /* MySegmentUpdateV2Test.swift */,
 			);
-			path = streaming;
+			path = Streaming;
 			sourceTree = "<group>";
 		};
 		592C6AA6211B6C99002D120C /* SplitTests */ = {
@@ -2772,9 +2778,9 @@
 		599A6E3222FC67BF00D3D68C /* Integration */ = {
 			isa = PBXGroup;
 			children = (
-				95118EE9281AC80400782F33 /* General */,
+				95118EE9281AC80400782F33 /* UserConsent */,
 				955B596A2816BB4200D105CD /* MultiClient */,
-				5921ED2925373A29000D6C8B /* streaming */,
+				5921ED2925373A29000D6C8B /* Streaming */,
 				95825C012721F0F800A0CDAD /* UserKeyEncondingTest.swift */,
 				95E81941287894DA00D99093 /* LoggerTest.swift */,
 				9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */,
@@ -2935,11 +2941,14 @@
 			path = Localhost;
 			sourceTree = "<group>";
 		};
-		95118EE9281AC80400782F33 /* General */ = {
+		95118EE9281AC80400782F33 /* UserConsent */ = {
 			isa = PBXGroup;
 			children = (
+				95C0577529476469007E4D6A /* UserConsentModeDebugTest.swift */,
+				95C057782948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift */,
+				95C0577B294A247C007E4D6A /* UserConsentModeNoneTest.swift */,
 			);
-			path = General;
+			path = UserConsent;
 			sourceTree = "<group>";
 		};
 		951229F42758153100D93F90 /* Storage */ = {
@@ -3900,6 +3909,7 @@
 				95F3F020258E3E2F00084AF8 /* HttpImpressionsRecorderTests.swift in Sources */,
 				955B59672811F51A00D105CD /* SplitEventsManagerCoordinatorStub.swift in Sources */,
 				59F4AAC82515436400A1C69A /* SyncWorkerStub.swift in Sources */,
+				95C0577629476469007E4D6A /* UserConsentModeDebugTest.swift in Sources */,
 				59EFD2ED24B4B05E0052920D /* HttpClientTest.swift in Sources */,
 				95ABF4B5292FDF9F006ED016 /* UserConsentTypeWrapperTest.swift in Sources */,
 				954F9B072570309400140B81 /* SplitDaoTests.swift in Sources */,
@@ -3917,6 +3927,7 @@
 				953911B3267A97DF0040433A /* ImpressionHasherTest.swift in Sources */,
 				9530FD7C27F253CA005027AA /* SplitEventsCoordinatorTest.swift in Sources */,
 				5921ED3E2538E3F8000D6C8B /* StreamingAuthFail4xxTest.swift in Sources */,
+				95C057792948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift in Sources */,
 				59F6AA9B215E9DA100A51997 /* LatencyCounterTests.swift in Sources */,
 				952E26752833FF3F0015D633 /* UniqueKeyDaoStub.swift in Sources */,
 				59ED408F24F06EC100EF7B09 /* TimersManagerTest.swift in Sources */,
@@ -3957,6 +3968,7 @@
 				9505682026825B53001D7B10 /* ImpressionsCounterTest.swift in Sources */,
 				59F4AABF2513A97B00A1C69A /* PeriodicSplitsSyncWorkerTest.swift in Sources */,
 				5982D934219F3D2E00230F44 /* MatcherEvalTests.swift in Sources */,
+				95C0577C294A247D007E4D6A /* UserConsentModeNoneTest.swift in Sources */,
 				5921ED362537B277000D6C8B /* StreamingDisabledTest.swift in Sources */,
 				5921ED3C2538D2DA000D6C8B /* StreamingAuthFail5xxTest.swift in Sources */,
 				95F3F00A258E143B00084AF8 /* TestingHelper.swift in Sources */,

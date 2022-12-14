@@ -39,7 +39,7 @@ class ImpressionsRecorderWorker: RecorderWorker {
                     _ = try impressionsRecorder.execute(group(impressions: impressions))
                     // Removing sent impressions
                     persistentImpressionsStorage.delete(impressions)
-                    Logger.i("Impression posted successfully")
+                    Logger.i("Impressions posted successfully")
                 } catch let error {
                     Logger.e("Impression error: \(String(describing: error))")
                     failedImpressions.append(contentsOf: impressions)

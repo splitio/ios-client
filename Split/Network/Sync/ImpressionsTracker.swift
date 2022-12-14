@@ -8,8 +8,7 @@
 
 import Foundation
 
-protocol ImpressionsTracker {
-    var isTrackingEnabled: Bool { get set }
+protocol ImpressionsTracker: AnyObject {
     func start()
     func pause()
     func resume()
@@ -17,6 +16,8 @@ protocol ImpressionsTracker {
     func flush()
     func push(_ impression: KeyImpression)
     func destroy()
+    func enableTracking(_ enable: Bool)
+    func enablePersistence(_ enable: Bool)
 }
 
 class DefaultImpressionsTracker: ImpressionsTracker {
@@ -39,7 +40,9 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
     private let storageContainer: SplitStorageContainer
     private let telemetryProducer: TelemetryRuntimeProducer?
-    var isTrackingEnabled: Bool = true
+
+    private var isTrackingEnabled: Bool = true
+    private var isPersistenceEnabled: Bool = true
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -149,10 +152,23 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         periodicImpressionsRecorderWoker?.destroy()
         periodicImpressionsCountRecorderWoker?.destroy()
         periodicUniqueKeysRecorderWorker?.destroy()
-        impressionsObserver.stop()
+        impressionsObserver.clear()
     }
 
+    func enablePersistence(_ enable: Bool) {
+        isPersistenceEnabled = enable
+    }
+
+    func enableTracking(_ enable: Bool) {
+        isTrackingEnabled = enable
+    }
+
+    // MARK: Private methods
+
     private func saveImpressionsCount() {
+        if !isPersistenceEnabled {
+            return
+        }
         if (isOptimizedImpressionsMode() || isNoneImpressionsMode()),
            let counts = impressionsCounter?.popAll() {
             storageContainer.impressionsCountStorage.pushMany(counts: counts)
@@ -161,6 +177,9 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
     private func saveUniqueKeys() {
         // Just doble checking
+        if !isPersistenceEnabled {
+            return
+        }
         if isNoneImpressionsMode() {
             uniqueKeyTracker?.saveAndClear()
         }

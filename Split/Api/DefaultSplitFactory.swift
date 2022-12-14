@@ -97,7 +97,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: params.initStopwatch)
         components.destroy()
-        userConsentManager?.set(params.config.$userConsent)
 
     }
 

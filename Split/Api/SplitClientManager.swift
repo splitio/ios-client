@@ -108,18 +108,6 @@ class DefaultClientManager: SplitClientManager {
         synchronizer.flush()
     }
 
-    public func enableUserConsent(_ enable: Bool) {
-        config.userConsent = enable ? UserConsent.granted.rawValue : UserConsent.declined.rawValue
-        eventsTracker.isTrackingEnabled = enable
-        storageContainer.eventsStorage.enablePersistence(enable)
-        storageContainer.impressionsStorage.enablePersistence(enable)
-        if enable {
-            synchronizer.startRecordingUserData()
-        } else {
-            synchronizer.stopRecordingUserData()
-        }
-    }
-
     func destroy(forKey key: Key) {
         if let count = byKeyRegistry.removeAndCount(forKey: key),
             count == 0 {

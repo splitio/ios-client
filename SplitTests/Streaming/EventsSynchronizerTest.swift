@@ -30,7 +30,7 @@ class EventsSynchronizerTest: XCTestCase {
         syncWorkerFactory.periodicEventsRecorderWorker = periodicEventsRecorderWorker
         syncWorkerFactory.eventsRecorderWorker = eventsRecorderWorker
 
-        syncHelper = EventsRecorderSyncHelper(eventsStorage: PersistentEventsStorageStub(),
+        syncHelper = EventsRecorderSyncHelper(eventsStorage: EventsStorageStub(),
                                               accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10))
         synchronizer = DefaultEventsSynchronizer(syncWorkerFactory: syncWorkerFactory,
                                                  eventsSyncHelper: syncHelper,
