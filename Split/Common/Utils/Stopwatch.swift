@@ -23,6 +23,7 @@ class Stopwatch {
     private var startTimeUnit: TimeUnit = .microseconds
 
     func start(unit: TimeUnit = .microseconds) {
+        startTimeUnit = unit
         if startTime == 0 {
             startTime = Stopwatch.now(unit: unit)
         }
@@ -33,10 +34,13 @@ class Stopwatch {
     }
 
     static func now(unit: TimeUnit = .microseconds) -> Int64 {
+        if unit == .microseconds {
+                return Date().unixTimestampInMicroseconds()
+        }
         return Date().unixTimestampInMiliseconds()
     }
 
     static func interval(from startTime: Int64, unit: TimeUnit = .microseconds) -> Int64 {
-        return Stopwatch.now() - startTime
+        return Stopwatch.now(unit: unit) - startTime
     }
 }

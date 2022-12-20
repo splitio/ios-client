@@ -25,10 +25,13 @@ class SplitEventExecutorWithClient: SplitEventExecutorProtocol {
         DispatchQueue.global().async {
             // Background thread
             self.task.onPostExecute(client: splitClient)
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async { [weak self] in
                 // UI Updates
+                guard let self = self else { return }
+                let startTime = Date().unixTimestampInMiliseconds()
                 self.task.onPostExecuteView(client: splitClient)
-            })
+                self.logInterval(for: self.event.toString(), from: startTime)
+            }
         }
     }
 

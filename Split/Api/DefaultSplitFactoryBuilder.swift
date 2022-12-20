@@ -102,10 +102,10 @@ import Foundation
     public func build() -> SplitFactory? {
 
         var telemetryStorage: TelemetryStorage?
+        params.initStopwatch.start(unit: .milliseconds)
         if params.config.isTelemetryEnabled {
             telemetryStorage = params.telemetryStorage ?? InMemoryTelemetryStorage()
             params.telemetryStorage = telemetryStorage
-            params.initStopwatch.start(unit: .milliseconds)
         }
 
         if let errorInfo = apiKeyValidator.validate(apiKey: params.apiKey) {

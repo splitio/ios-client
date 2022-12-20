@@ -209,6 +209,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
         // If executionTimes is lower than zero, execute it without limitation
         if let subscriptions = getSubscriptions(for: event) {
+            Logger.v("Triggering \(eventName) event")
             for task in subscriptions {
                 executeTask(event: event, task: task)
             }

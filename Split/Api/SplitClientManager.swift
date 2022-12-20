@@ -83,7 +83,9 @@ class DefaultClientManager: SplitClientManager {
         defaultClient?.on(event: .sdkReadyFromCache) {
             DispatchQueue.global().async { [weak self] in
                 if let self = self {
-                    self.telemetryProducer?.recordTimeUntilReadyFromCache(self.telemetryStopwatch?.interval() ?? 0)
+                    let time = self.telemetryStopwatch?.interval() ?? 0
+                    self.telemetryProducer?.recordTimeUntilReadyFromCache(time)
+                    Logger.v("SDK Ready From Cache time: \(time)")
                 }
             }
         }
@@ -91,8 +93,10 @@ class DefaultClientManager: SplitClientManager {
         defaultClient?.on(event: .sdkReady) {
             DispatchQueue.global().async { [weak self] in
                 if let self = self {
-                    self.telemetryProducer?.recordTimeUntilReady(self.telemetryStopwatch?.interval() ?? 0)
+                    let time = self.telemetryStopwatch?.interval() ?? 0
+                    self.telemetryProducer?.recordTimeUntilReady(time)
                     self.synchronizer.synchronizeTelemetryConfig()
+                    Logger.v("SDK Ready Time: \(time)")
                 }
             }
         }
