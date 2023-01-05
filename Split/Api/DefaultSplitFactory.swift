@@ -92,6 +92,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                              telemetryStopwatch: params.initStopwatch)
 
         components.destroy()
+        Logger.i("Split SDK factory initialized in \(params.initStopwatch.interval()) ms")
 
     }
 
