@@ -10,11 +10,13 @@ import Foundation
 class SplitEventExecutorWithClient: SplitEventExecutorProtocol {
 
     private var task: SplitEventTask
+    private var eventName: String
     private weak var client: SplitClient?
 
-    init(task: SplitEventTask, client: SplitClient?) {
+    init(task: SplitEventTask, client: SplitClient?, eventName: String = "") {
         self.task = task
         self.client = client
+        self.eventName = eventName
     }
 
     func execute() {
@@ -25,14 +27,17 @@ class SplitEventExecutorWithClient: SplitEventExecutorProtocol {
         DispatchQueue.global().async {
             // Background thread
             self.task.onPostExecute(client: splitClient)
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async {
                 // UI Updates
-                guard let self = self else { return }
                 let startTime = Date().unixTimestampInMiliseconds()
                 self.task.onPostExecuteView(client: splitClient)
-                self.logInterval(for: self.event.toString(), from: startTime)
+                self.logInterval(from: startTime)
             }
         }
+    }
+
+    private func logInterval(from: Int64) {
+        Logger.v("Time to run handler for \(eventName) event: \(Date().unixTimestampInMiliseconds() - from) ms")
     }
 
 }
