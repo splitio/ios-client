@@ -24,7 +24,8 @@ protocol EventValidator {
     ///
     func validate(key: String?, trafficTypeName: String?,
                   eventTypeId: String?, value: Double?,
-                  properties: [String: Any]?) -> ValidationErrorInfo?
+                  properties: [String: Any]?,
+                  isSdkReady: Bool) -> ValidationErrorInfo?
 }
 
 class DefaultEventValidator: EventValidator {
@@ -41,7 +42,8 @@ class DefaultEventValidator: EventValidator {
     }
 
     func validate(key: String?, trafficTypeName: String?,
-                  eventTypeId: String?, value: Double?, properties: [String: Any]?) -> ValidationErrorInfo? {
+                  eventTypeId: String?, value: Double?, properties: [String: Any]?,
+                  isSdkReady: Bool) -> ValidationErrorInfo? {
 
         if let resultInfo = keyValidator.validate(matchingKey: key, bucketingKey: nil) {
             return resultInfo
@@ -88,7 +90,7 @@ class DefaultEventValidator: EventValidator {
             lowercasedTrafficType = nonNullTrafficTypeName.lowercased()
         }
 
-        if !splitsStorage.isValidTrafficType(name: lowercasedTrafficType) {
+        if isSdkReady, !splitsStorage.isValidTrafficType(name: lowercasedTrafficType) {
             let message = "traffic_type_name \(nonNullTrafficTypeName) does not have any corresponding " +
                 "Splits in this environment, make sure you’re tracking " +
             "your events to a valid traffic type defined in the Split console"

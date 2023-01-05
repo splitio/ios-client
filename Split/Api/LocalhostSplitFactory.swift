@@ -29,6 +29,10 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         return Version.semantic
     }
 
+    @objc public var userConsent: UserConsent {
+        return .granted
+    }
+
     private var defaulClient: SplitClient?
     private var localhostManager: SplitManager?
     private let config: SplitClientConfig

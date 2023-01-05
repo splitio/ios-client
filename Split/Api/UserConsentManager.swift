@@ -10,6 +10,7 @@ import Foundation
 
 protocol UserConsentManager: AnyObject {
     func set(_ status: UserConsent)
+    func getStatus() -> UserConsent
 }
 
 class DefaultUserConsentManager: UserConsentManager {
@@ -47,6 +48,12 @@ class DefaultUserConsentManager: UserConsentManager {
         }
     }
 
+    func getStatus() -> UserConsent {
+        queue.sync {
+            return currentStatus
+        }
+    }
+
     // Just to make code clearer.
     private func setStatus(_ status: UserConsent) {
         if currentStatus == status {
@@ -56,7 +63,7 @@ class DefaultUserConsentManager: UserConsentManager {
         enableTracking(for: status)
         enablePersistence(for: status)
         syncManager.setupUserConsent(for: status)
-        splitConfig.userConsent = status.rawValue
+        splitConfig.userConsent = status.stringValue
         currentStatus = status
         Logger.d("User consent set to \(status.rawValue)")
     }
