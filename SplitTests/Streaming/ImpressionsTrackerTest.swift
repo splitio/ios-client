@@ -18,6 +18,7 @@ class ImpressionsTrackerTest: XCTestCase {
     var impressionsTracker: ImpressionsTracker!
     var syncWorkerFactory: SyncWorkerFactoryStub!
     var telemetryProducer: TelemetryStorageStub!
+    var impressionsStorage: ImpressionsStorageStub!
     var persistentImpressionsStorage: PersistentImpressionsStorageStub!
     var impressionsCountStorage: PersistentImpressionsCountStorageStub!
     var uniqueKeysRecorderWorker: RecorderWorkerStub!
@@ -37,7 +38,7 @@ class ImpressionsTrackerTest: XCTestCase {
         XCTAssertEqual(1, telemetryProducer.impressions[.queued])
         XCTAssertEqual(4, telemetryProducer.impressions[.deduped])
         XCTAssertEqual(0, uniqueKeyTracker.trackedKeys.count)
-        XCTAssertEqual(1, persistentImpressionsStorage.storedImpressions.count)
+        XCTAssertEqual(1, impressionsStorage.impressions.count)
     }
 
     func testImpressionPushDebug() {
@@ -53,7 +54,7 @@ class ImpressionsTrackerTest: XCTestCase {
         XCTAssertEqual(5, telemetryProducer.impressions[.queued] ?? 0)
         XCTAssertEqual(0, telemetryProducer.impressions[.deduped] ?? 0)
         XCTAssertEqual(0, uniqueKeyTracker.trackedKeys.count)
-        XCTAssertEqual(5, persistentImpressionsStorage.storedImpressions.count)
+        XCTAssertEqual(5, impressionsStorage.impressions.count)
     }
 
     func testImpressionPushNone() {
@@ -79,7 +80,7 @@ class ImpressionsTrackerTest: XCTestCase {
         XCTAssertEqual(3, trackedKeys["k1"]?.count ?? 0)
         XCTAssertEqual(0, uniqueKeyTracker.trackedKeys.count)
         XCTAssertEqual(0, uniqueKeyTracker.trackedKeys["k1"]?.count ?? 0)
-        XCTAssertEqual(0, persistentImpressionsStorage.storedImpressions.count)
+        XCTAssertEqual(0, impressionsStorage.impressions.count)
         XCTAssertEqual(1, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f1"}[0].count)
         XCTAssertEqual(2, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f2"}[0].count)
         XCTAssertEqual(3, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f3"}[0].count)
@@ -235,7 +236,7 @@ class ImpressionsTrackerTest: XCTestCase {
 
     private func impressionPushTrackingDisabled(mode: ImpressionsMode) {
         createImpressionsTracker(impressionsMode: mode)
-        impressionsTracker.isTrackingEnabled = false
+        impressionsTracker.enableTracking(false)
         let impression = createImpression(randomId: true)
 
         for _ in 0..<5 {
@@ -285,6 +286,7 @@ class ImpressionsTrackerTest: XCTestCase {
 
 
         telemetryProducer = TelemetryStorageStub()
+        impressionsStorage = ImpressionsStorageStub()
         persistentImpressionsStorage = PersistentImpressionsStorageStub()
         impressionsCountStorage = PersistentImpressionsCountStorageStub()
 
@@ -313,7 +315,7 @@ class ImpressionsTrackerTest: XCTestCase {
             .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
             .build()
 
-        let impressionsRecorderSyncHelper = ImpressionsRecorderSyncHelper(impressionsStorage: persistentImpressionsStorage,
+        let impressionsRecorderSyncHelper = ImpressionsRecorderSyncHelper(impressionsStorage: impressionsStorage,
                                                                           accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10))
         impressionsTracker = DefaultImpressionsTracker(splitConfig: config,
                                                        splitApiFacade: apiFacade,

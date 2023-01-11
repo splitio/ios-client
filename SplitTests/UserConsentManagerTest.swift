@@ -19,9 +19,7 @@ class UserConsentManagerTest: XCTestCase {
     var eventsStorage: EventsStorageStub!
     var syncManager: SyncManagerStub!
     var eventsTracker: EventsTrackerStub!
-
-    override func setUp() {
-    }
+    var impressionsTracker: ImpressionsTrackerStub!
 
     func testSetGranted() {
 
@@ -37,6 +35,7 @@ class UserConsentManagerTest: XCTestCase {
 
         XCTAssertEqual(UserConsent.granted, config.$userConsent)
         XCTAssertTrue(eventsTracker.isTrackingEnabled)
+        XCTAssertTrue(impressionsTracker.isTrackingEnabled)
         XCTAssertTrue(syncManager.setupUserConsentCalled)
         XCTAssertEqual(.granted, syncManager.setupUserConsentValue ?? .unknown)
     }
@@ -55,6 +54,7 @@ class UserConsentManagerTest: XCTestCase {
 
         XCTAssertEqual(UserConsent.declined, config.$userConsent)
         XCTAssertFalse(eventsTracker.isTrackingEnabled)
+        XCTAssertFalse(impressionsTracker.isTrackingEnabled)
         XCTAssertTrue(syncManager.setupUserConsentCalled)
         XCTAssertEqual(.declined, syncManager.setupUserConsentValue ?? .unknown)
     }
@@ -73,6 +73,7 @@ class UserConsentManagerTest: XCTestCase {
 
         XCTAssertEqual(UserConsent.unknown, config.$userConsent)
         XCTAssertTrue(eventsTracker.isTrackingEnabled)
+        XCTAssertTrue(impressionsTracker.isTrackingEnabled)
         XCTAssertTrue(syncManager.setupUserConsentCalled)
         XCTAssertEqual(.unknown, syncManager.setupUserConsentValue ?? .granted)
     }
@@ -83,15 +84,14 @@ class UserConsentManagerTest: XCTestCase {
         let storageContainer = TestingHelper.createStorageContainer()
         syncManager = SyncManagerStub()
         eventsTracker = EventsTrackerStub()
+        impressionsTracker = ImpressionsTrackerStub()
         impressionsStorage = (storageContainer.impressionsStorage as? ImpressionsStorageStub)!
         eventsStorage = (storageContainer.eventsStorage as? EventsStorageStub)!
         userConsentManager = DefaultUserConsentManager(splitConfig: config,
                                                        storageContainer: storageContainer,
                                                        syncManager: syncManager,
-                                                       eventsTracker: eventsTracker)
-    }
-
-    override func tearDown() {
+                                                       eventsTracker: eventsTracker,
+                                                       impressionsTracker: impressionsTracker)
     }
 }
 

@@ -13,6 +13,7 @@ class ImpressionsStorageStub: ImpressionsStorage {
 
     var enablePersistenceCalled = false
     var enablePersistenceValue: Bool?
+    var impressions = [KeyImpression]()
 
     func enablePersistence(_ enable: Bool) {
         enablePersistenceCalled = true
@@ -21,10 +22,12 @@ class ImpressionsStorageStub: ImpressionsStorage {
 
     var pushCalled = false
     func push(_ impression: KeyImpression) {
+        impressions.append(impression)
     }
 
     var clearInMemoryCalled = false
     func clearInMemory() {
         clearInMemoryCalled = true
+        impressions.removeAll()
     }
 }

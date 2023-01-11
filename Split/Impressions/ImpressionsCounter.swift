@@ -27,7 +27,7 @@ class ImpressionsCounter {
 
     func popAll() -> [ImpressionsCountPerFeature] {
         var poppedCounts = [ImpressionsCountPerFeature]()
-        queue.sync {
+        queue.sync(flags: .barrier) {
             poppedCounts.append(contentsOf: counts.compactMap { ImpressionsCountPerFeature(feature: $0.key.featureName,
                                                                                            timeframe: $0.key.timeframe,
                                                                                            count: $0.value)
@@ -40,6 +40,12 @@ class ImpressionsCounter {
     func isEmpty() -> Bool {
         queue.sync {
             return counts.isEmpty
+        }
+    }
+
+    func clear() {
+        queue.async(flags: .barrier) {
+            self.counts.removeAll()
         }
     }
 }

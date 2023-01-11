@@ -103,12 +103,12 @@ class TestSplitFactory: SplitFactory {
                                                                   maxQueueSizeInBytes: splitConfig.impressionsQueueSize)
 
         let impressionsSyncHelper = ImpressionsRecorderSyncHelper(
-            impressionsStorage: storageContainer.persistentImpressionsStorage, accumulator: impressionsFlushChecker)
+            impressionsStorage: storageContainer.impressionsStorage, accumulator: impressionsFlushChecker)
 
         let eventsFlushChecker
             = DefaultRecorderFlushChecker(maxQueueSize: Int(splitConfig.eventsQueueSize),
                                           maxQueueSizeInBytes: splitConfig.maxEventsQueueMemorySizeInBytes)
-        let eventsSyncHelper = EventsRecorderSyncHelper(eventsStorage: storageContainer.persistentEventsStorage,
+        let eventsSyncHelper = EventsRecorderSyncHelper(eventsStorage: storageContainer.eventsStorage,
                                                         accumulator: eventsFlushChecker)
 
         let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: key.matchingKey,
@@ -175,7 +175,8 @@ class TestSplitFactory: SplitFactory {
         userConsentManager = DefaultUserConsentManager(splitConfig: splitConfig,
                                                        storageContainer: storageContainer,
                                                        syncManager: syncManager,
-                                                       eventsTracker: eventsTracker)
+                                                       eventsTracker: eventsTracker,
+                                                       impressionsTracker: impressionsTracker)
 
         clientManager = DefaultClientManager(config: splitConfig,
                                              key: key,

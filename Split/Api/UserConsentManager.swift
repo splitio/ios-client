@@ -18,13 +18,15 @@ class DefaultUserConsentManager: UserConsentManager {
     private let eventsStorage: EventsStorage
     private let syncManager: SyncManager
     private let eventsTracker: EventsTracker
+    private let impressionsTracker: ImpressionsTracker
     private var currentStatus: UserConsent
     private let queue = DispatchQueue(label: "split-user-consent", target: .global())
 
     init(splitConfig: SplitClientConfig,
          storageContainer: SplitStorageContainer,
          syncManager: SyncManager,
-         eventsTracker: EventsTracker) {  // Testing purposes
+         eventsTracker: EventsTracker,
+         impressionsTracker: ImpressionsTracker) {  // Testing purposes
 
         self.splitConfig = splitConfig
         self.currentStatus = splitConfig.$userConsent
@@ -32,10 +34,14 @@ class DefaultUserConsentManager: UserConsentManager {
         self.eventsStorage = storageContainer.eventsStorage
         self.syncManager = syncManager
         self.eventsTracker = eventsTracker
+        self.impressionsTracker = impressionsTracker
+        self.currentStatus = splitConfig.$userConsent
+        enableTracking(for: self.currentStatus)
+        enablePersistence(for: self.currentStatus)
     }
 
     func set(_ status: UserConsent) {
-        queue.async { [weak self] in
+        queue.sync { [weak self] in
             guard let self = self else { return }
             self.setStatus(status)
         }
@@ -47,13 +53,24 @@ class DefaultUserConsentManager: UserConsentManager {
             return
         }
 
-        let enablePersistence = (status == .granted)
-        splitConfig.$userConsent = status
-        eventsTracker.isTrackingEnabled = (status != .declined)
-        impressionsStorage.enablePersistence(enablePersistence)
-        eventsStorage.enablePersistence(enablePersistence)
+        enableTracking(for: status)
+        enablePersistence(for: status)
         syncManager.setupUserConsent(for: status)
+        splitConfig.userConsent = status.rawValue
         currentStatus = status
         Logger.d("User consent set to \(status.rawValue)")
+    }
+
+    private func enableTracking(for status: UserConsent) {
+        let enable = (status != .declined)
+        eventsTracker.isTrackingEnabled = enable
+        impressionsTracker.enableTracking(enable)
+    }
+
+    private func enablePersistence(for status: UserConsent) {
+        let enable = (status == .granted)
+        impressionsStorage.enablePersistence(enable)
+        eventsStorage.enablePersistence(enable)
+        impressionsTracker.enablePersistence(enable)
     }
 }
