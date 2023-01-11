@@ -60,6 +60,8 @@ import Foundation
     ///
     func setUserConsent(enabled: Bool)
 
+    var userConsent: UserConsent { get }
+
     ///
     /// Current Split SDK Version
     /// - Returns: A String representation of the current SDK version

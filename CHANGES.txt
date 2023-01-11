@@ -1,3 +1,6 @@
+2.19.0: (Dic XX, 2023)
+- Added user consent feature
+
 2.18.2: (Nov 22, 2022)
 - Fixed issue on take method of Blocking Queue component
 

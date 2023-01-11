@@ -330,7 +330,7 @@ class SplitComponentFactory {
         if let obj = get(for: ImpressionsTracker.self) as? ImpressionsTracker {
             return obj
         }
-        throw ComponentError.notFound(name: "ImpressionsTracker Tracker")
+        throw ComponentError.notFound(name: "ImpressionsTracker")
     }
 
     func getSyncManager() throws -> SyncManager {

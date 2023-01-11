@@ -28,7 +28,7 @@ class UserConsentModeDebugTest: XCTestCase {
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
-        impPosted = false
+        evePosted = false
         impPosted = false
     }
 
@@ -212,7 +212,7 @@ class UserConsentModeDebugTest: XCTestCase {
         splitConfig.eventsFirstPushWindow = 0
         splitConfig.logLevel = .verbose
         splitConfig.impressionsMode = "DEBUG"
-        splitConfig.userConsent = userConsent.rawValue
+        splitConfig.userConsent = userConsent
 
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(db)
@@ -225,10 +225,6 @@ class UserConsentModeDebugTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-//            self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-//            DispatchQueue.test.asyncAfter(deadline: .now() + 1) {
-//            }
-//            return self.streamingBinding!
             return TestStreamResponseBinding.createFor(request: request, code: 200)
         }
     }

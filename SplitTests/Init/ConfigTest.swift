@@ -14,41 +14,6 @@ import XCTest
 class ConfigTest: XCTestCase {
     var config = SplitClientConfig()
 
-    func testUserConsentEmpty() {
-        config.userConsent = ""
-
-        XCTAssertEqual(UserConsent.granted.rawValue, config.userConsent)
-        XCTAssertEqual(UserConsent.granted, config.$userConsent)
-    }
-
-    func testUserConsentInvalid() {
-        config.userConsent = "invalid"
-
-        XCTAssertEqual(UserConsent.granted.rawValue, config.userConsent)
-        XCTAssertEqual(UserConsent.granted, config.$userConsent)
-    }
-
-    func testUserConsentGranted() {
-        config.userConsent = "GraNTed"
-
-        XCTAssertEqual(UserConsent.granted.rawValue, config.userConsent)
-        XCTAssertEqual(UserConsent.granted, config.$userConsent)
-    }
-
-    func testUserConsentDeclined() {
-        config.userConsent = "declined"
-
-        XCTAssertEqual(UserConsent.declined.rawValue, config.userConsent)
-        XCTAssertEqual(UserConsent.declined, config.$userConsent)
-    }
-
-    func testUserConsentUnknown() {
-        config.userConsent = "unknowN"
-
-        XCTAssertEqual(UserConsent.unknown.rawValue, config.userConsent)
-        XCTAssertEqual(UserConsent.unknown, config.$userConsent)
-    }
-
     // MARK: ImpressionsMode
     func testImpressionsModeEmpty() {
         config.impressionsMode = ""

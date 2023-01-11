@@ -68,6 +68,7 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
                                timeUntilReady: telemetryConsumer.getTimeUntilReady(),
                                timeUntilReadyFromCache: telemetryConsumer.getTimeUntilReadyFromCache(),
                                nonReadyUsages: telemetryConsumer.getNonReadyUsages(),
+                               userConsent: splitConfig.userConsent.rawValue,
                                integrations: nil, tags: telemetryConsumer.popTags())
     }
 }

@@ -24,6 +24,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         return Version.semantic
     }
 
+    @objc public var userConsent: UserConsent {
+        userConsentManager?.getStatus() ?? .granted
+    }
+
     private var defaultManager: SplitManager?
     private let filterBuilder = FilterBuilder()
 

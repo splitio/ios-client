@@ -14,7 +14,8 @@ protocol EventsTracker: AnyObject {
                trafficType: String?,
                value: Double?,
                properties: [String: Any]?,
-               matchingKey: String) -> Bool
+               matchingKey: String,
+               isSdkReady: Bool) -> Bool
 }
 
 class DefaultEventsTracker: EventsTracker {
@@ -44,7 +45,8 @@ class DefaultEventsTracker: EventsTracker {
 
     func track(eventType: String, trafficType: String? = nil,
                value: Double? = nil, properties: [String: Any]?,
-               matchingKey: String) -> Bool {
+               matchingKey: String,
+               isSdkReady: Bool) -> Bool {
 
         if !isTrackingEnabled {
             Logger.v("Event not tracked because tracking is disabled")
@@ -58,11 +60,13 @@ class DefaultEventsTracker: EventsTracker {
             return false
         }
 
+
         if let errorInfo = eventValidator.validate(key: matchingKey,
                                                    trafficTypeName: trafficType,
                                                    eventTypeId: trafficType,
                                                    value: value,
-                                                   properties: properties) {
+                                                   properties: properties,
+                                                   isSdkReady: isSdkReady) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
                 return false

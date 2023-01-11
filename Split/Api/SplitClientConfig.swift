@@ -232,7 +232,7 @@ public class SplitClientConfig: NSObject {
     /// @return: This builder
     /// @default: GRANTED
     ///
-    @UserConsentProperty @objc public var userConsent: String = "GRANTED"
+    public var userConsent: UserConsent = UserConsent.granted
 
     static let kDefaultTelemetryRefreshRate = 3600
     static let kMinTelemetryRefreshRate = 60

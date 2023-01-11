@@ -18,7 +18,8 @@ class EventsTrackerStub: EventsTracker {
                trafficType: String?,
                value: Double?,
                properties: [String : Any]?,
-               matchingKey: String) -> Bool {
+               matchingKey: String,
+               isSdkReady: Bool) -> Bool {
         return trackResponse
     }
 }
