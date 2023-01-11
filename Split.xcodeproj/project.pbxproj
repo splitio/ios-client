@@ -512,6 +512,7 @@
 		95649FBE260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95649FBD260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift */; };
 		956816BE2836C91B00206FC5 /* UniqueKeyTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956816BD2836C91B00206FC5 /* UniqueKeyTracker.swift */; };
 		9569E1CB2784C00B006FC7E5 /* TelemetryConfigHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9569E1CA2784C00B006FC7E5 /* TelemetryConfigHelper.swift */; };
+		956A7E15296F65890080D53C /* UserConsent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4AE292EC830006ED016 /* UserConsent.swift */; };
 		956D17CD260D1B700037F575 /* ChangesCheckerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17CC260D1B700037F575 /* ChangesCheckerMock.swift */; };
 		956D17D1260D266E0037F575 /* SplitsChangesCheckerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17D0260D266E0037F575 /* SplitsChangesCheckerTest.swift */; };
 		956D17D7260D28320037F575 /* MySegmentsChangeChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17D6260D28320037F575 /* MySegmentsChangeChecker.swift */; };
@@ -4552,6 +4553,7 @@
 				95B02D4728D0BDC20030EC8B /* HttpSplitFetcher.swift in Sources */,
 				95B02D4828D0BDC20030EC8B /* RetryableSyncWorker.swift in Sources */,
 				95B02D4928D0BDC20030EC8B /* BackgroundSyncWorker.swift in Sources */,
+				956A7E15296F65890080D53C /* UserConsent.swift in Sources */,
 				95B02D4A28D0BDC20030EC8B /* SplitsSyncHelper.swift in Sources */,
 				95B02D4B28D0BDC20030EC8B /* PeriodicSyncWorker.swift in Sources */,
 				95B02D4C28D0BDC20030EC8B /* QueryableMySegmentsFetcher.swift in Sources */,
