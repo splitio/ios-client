@@ -9,7 +9,7 @@
 import Foundation
 
 @objc public enum UserConsent: Int {
-    case granted = 0
-    case declined = 1
-    case unknown = 2
+    case unknown = 1
+    case granted = 2
+    case declined = 3
 }
