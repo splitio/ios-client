@@ -33,7 +33,7 @@ class UserConsentManagerTest: XCTestCase {
         // Wait setup because is async
         wait(for: [exp], timeout: 5.0)
 
-        XCTAssertEqual(UserConsent.granted, config.$userConsent)
+        XCTAssertEqual(UserConsent.granted, config.userConsent)
         XCTAssertTrue(eventsTracker.isTrackingEnabled)
         XCTAssertTrue(impressionsTracker.isTrackingEnabled)
         XCTAssertTrue(syncManager.setupUserConsentCalled)
@@ -52,7 +52,7 @@ class UserConsentManagerTest: XCTestCase {
         // Wait setup because is async
         wait(for: [exp], timeout: 5.0)
 
-        XCTAssertEqual(UserConsent.declined, config.$userConsent)
+        XCTAssertEqual(UserConsent.declined, config.userConsent)
         XCTAssertFalse(eventsTracker.isTrackingEnabled)
         XCTAssertFalse(impressionsTracker.isTrackingEnabled)
         XCTAssertTrue(syncManager.setupUserConsentCalled)
@@ -71,7 +71,7 @@ class UserConsentManagerTest: XCTestCase {
         // Wait setup because is async
         wait(for: [exp], timeout: 5.0)
 
-        XCTAssertEqual(UserConsent.unknown, config.$userConsent)
+        XCTAssertEqual(UserConsent.unknown, config.userConsent)
         XCTAssertTrue(eventsTracker.isTrackingEnabled)
         XCTAssertTrue(impressionsTracker.isTrackingEnabled)
         XCTAssertTrue(syncManager.setupUserConsentCalled)
@@ -80,7 +80,7 @@ class UserConsentManagerTest: XCTestCase {
 
     private func createUserConsentManager(status: UserConsent) {
         config = SplitClientConfig()
-        config.userConsent = status.rawValue
+        config.userConsent = status
         let storageContainer = TestingHelper.createStorageContainer()
         syncManager = SyncManagerStub()
         eventsTracker = EventsTrackerStub()

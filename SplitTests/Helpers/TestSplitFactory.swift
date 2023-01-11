@@ -27,6 +27,10 @@ class TestSplitFactory: SplitFactory {
         return defaultManager!
     }
 
+    var userConsent: UserConsent {
+        userConsentManager?.getStatus() ?? .granted
+    }
+
     private(set) var clientManager: SplitClientManager?
     private let filterBuilder = FilterBuilder()
     let userKey: String

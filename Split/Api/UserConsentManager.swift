@@ -30,13 +30,12 @@ class DefaultUserConsentManager: UserConsentManager {
          impressionsTracker: ImpressionsTracker) {  // Testing purposes
 
         self.splitConfig = splitConfig
-        self.currentStatus = splitConfig.$userConsent
+        self.currentStatus = splitConfig.userConsent
         self.impressionsStorage = storageContainer.impressionsStorage
         self.eventsStorage = storageContainer.eventsStorage
         self.syncManager = syncManager
         self.eventsTracker = eventsTracker
         self.impressionsTracker = impressionsTracker
-        self.currentStatus = splitConfig.$userConsent
         enableTracking(for: self.currentStatus)
         enablePersistence(for: self.currentStatus)
     }
@@ -54,7 +53,6 @@ class DefaultUserConsentManager: UserConsentManager {
         }
     }
 
-    // Just to make code clearer.
     private func setStatus(_ status: UserConsent) {
         if currentStatus == status {
             return
@@ -63,7 +61,7 @@ class DefaultUserConsentManager: UserConsentManager {
         enableTracking(for: status)
         enablePersistence(for: status)
         syncManager.setupUserConsent(for: status)
-        splitConfig.userConsent = status.stringValue
+        splitConfig.userConsent = status
         currentStatus = status
         Logger.d("User consent set to \(status.rawValue)")
     }

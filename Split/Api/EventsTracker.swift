@@ -14,7 +14,8 @@ protocol EventsTracker: AnyObject {
                trafficType: String?,
                value: Double?,
                properties: [String: Any]?,
-               matchingKey: String) -> Bool
+               matchingKey: String,
+               isSdkReady: Bool) -> Bool
 }
 
 class DefaultEventsTracker: EventsTracker {

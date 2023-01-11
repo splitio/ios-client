@@ -218,7 +218,7 @@ class UserConsentModeNoneTest: XCTestCase {
         splitConfig.uniqueKeysRefreshRate = 3
         splitConfig.logLevel = .verbose
         splitConfig.impressionsMode = "NONE"
-        splitConfig.userConsent = userConsent.rawValue
+        splitConfig.userConsent = userConsent
 
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(db)

@@ -791,7 +791,6 @@
 		9599083427C742260014B2B5 /* HashHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599083327C742260014B2B5 /* HashHelper.swift */; };
 		9599083627C742F10014B2B5 /* HashHelperLib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599083527C742F10014B2B5 /* HashHelperLib.swift */; };
 		95ABF4AF292EC830006ED016 /* UserConsent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4AE292EC830006ED016 /* UserConsent.swift */; };
-		95ABF4B5292FDF9F006ED016 /* UserConsentTypeWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4B4292FDF9F006ED016 /* UserConsentTypeWrapperTest.swift */; };
 		95ABF4B8292FF451006ED016 /* ConfigObjcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */; };
 		95ABF4BA293003C1006ED016 /* ConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4B9293003C1006ED016 /* ConfigTest.swift */; };
 		95ABF4BC29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4BB29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift */; };
@@ -1763,7 +1762,6 @@
 		9599083327C742260014B2B5 /* HashHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashHelper.swift; sourceTree = "<group>"; };
 		9599083527C742F10014B2B5 /* HashHelperLib.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HashHelperLib.swift; path = Split/Common/Utils/Lib/HashHelperLib.swift; sourceTree = SOURCE_ROOT; };
 		95ABF4AE292EC830006ED016 /* UserConsent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConsent.swift; sourceTree = "<group>"; };
-		95ABF4B4292FDF9F006ED016 /* UserConsentTypeWrapperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConsentTypeWrapperTest.swift; sourceTree = "<group>"; };
 		95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfigObjcTest.m; sourceTree = "<group>"; };
 		95ABF4B9293003C1006ED016 /* ConfigTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigTest.swift; sourceTree = "<group>"; };
 		95ABF4BB29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsModeTypeWrapperTest.swift; sourceTree = "<group>"; };
@@ -3157,7 +3155,6 @@
 				5959C478227B89980064F968 /* FactoryRegistryTest.swift */,
 				598EDE7322493008005D4762 /* SplitConfigurationsParsingTest.swift */,
 				59BF3D362231A698004D134D /* BCryptTests.swift */,
-				95ABF4B4292FDF9F006ED016 /* UserConsentTypeWrapperTest.swift */,
 				95ABF4BB29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift */,
 				95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */,
 				95ABF4B9293003C1006ED016 /* ConfigTest.swift */,
@@ -3911,7 +3908,6 @@
 				59F4AAC82515436400A1C69A /* SyncWorkerStub.swift in Sources */,
 				95C0577629476469007E4D6A /* UserConsentModeDebugTest.swift in Sources */,
 				59EFD2ED24B4B05E0052920D /* HttpClientTest.swift in Sources */,
-				95ABF4B5292FDF9F006ED016 /* UserConsentTypeWrapperTest.swift in Sources */,
 				954F9B072570309400140B81 /* SplitDaoTests.swift in Sources */,
 				95F20F4A27EB533000B5B30A /* TreatmentManagerTest.swift in Sources */,
 				59F4AAA324FFCD5000A1C69A /* PushManagerEventBroadcasterStub.swift in Sources */,

@@ -58,7 +58,7 @@ class DefaultSyncManager: SyncManager {
         synchronizer.loadAttributesFromCache()
         synchronizer.synchronizeMySegments()
         setupSyncMode()
-        if splitConfig.$userConsent == .granted {
+        if splitConfig.userConsent == .granted {
             Logger.v("User consent grated. Recording started")
             synchronizer.startRecordingUserData()
         }

@@ -212,7 +212,7 @@ class UserConsentModeDebugTest: XCTestCase {
         splitConfig.eventsFirstPushWindow = 0
         splitConfig.logLevel = .verbose
         splitConfig.impressionsMode = "DEBUG"
-        splitConfig.userConsent = userConsent.rawValue
+        splitConfig.userConsent = userConsent
 
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(db)

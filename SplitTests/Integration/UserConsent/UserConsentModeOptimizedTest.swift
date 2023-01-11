@@ -218,7 +218,7 @@ class UserConsentModeOptimizedTest: XCTestCase {
         splitConfig.eventsFirstPushWindow = 0
         splitConfig.logLevel = .verbose
         splitConfig.impressionsMode = "OPTIMIZED"
-        splitConfig.userConsent = userConsent.rawValue
+        splitConfig.userConsent = userConsent
 
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(db)

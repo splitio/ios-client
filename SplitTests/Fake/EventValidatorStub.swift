@@ -14,7 +14,8 @@ import XCTest
 class EventValidatorStub: EventValidator {
     func validate(key: String?, trafficTypeName: String?,
                   eventTypeId: String?, value: Double?,
-                  properties: [String: Any]?) -> ValidationErrorInfo? {
+                  properties: [String: Any]?,
+                  isSdkReady: Bool) -> ValidationErrorInfo? {
         return nil
     }
 }
