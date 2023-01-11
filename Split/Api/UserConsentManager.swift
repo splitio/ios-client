@@ -72,6 +72,7 @@ class DefaultUserConsentManager: UserConsentManager {
         let enable = (status != .declined)
         eventsTracker.isTrackingEnabled = enable
         impressionsTracker.enableTracking(enable)
+        Logger.v("Tracking has been set to \(enable)")
     }
 
     private func enablePersistence(for status: UserConsent) {
@@ -79,5 +80,6 @@ class DefaultUserConsentManager: UserConsentManager {
         impressionsStorage.enablePersistence(enable)
         eventsStorage.enablePersistence(enable)
         impressionsTracker.enablePersistence(enable)
+        Logger.v("Persistence has been set to \(enable)")
     }
 }
