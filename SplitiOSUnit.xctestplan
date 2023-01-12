@@ -64,7 +64,10 @@
         "StreamingOccupancyTest",
         "StreamingSplitKillTest",
         "StreamingSplitsSyncTest",
-        "TelemetryIntegrationTest"
+        "TelemetryIntegrationTest",
+        "UserConsentModeDebugTest",
+        "UserConsentModeNoneTest",
+        "UserConsentModeOptimizedTest"
       ],
       "target" : {
         "containerPath" : "container:Split.xcodeproj",
