@@ -35,6 +35,14 @@ class PersistentImpressionsStorageTests: XCTestCase {
         XCTAssertEqual(20, impressionDao.insertedImpressions.count)
     }
 
+    func testPushMany() {
+        impressionsStorage.push(impressions: TestingHelper.createKeyImpressions(count: 20))
+        impressionsStorage.push(impressions: TestingHelper.createKeyImpressions(count: 20))
+        impressionsStorage.push(impressions: TestingHelper.createKeyImpressions(count: 20))
+
+        XCTAssertEqual(60, impressionDao.insertedImpressions.count)
+    }
+
     func testPop() {
         impressionDao.getByImpressions = TestingHelper.createKeyImpressions()
         let popped = impressionsStorage.pop(count: 100)

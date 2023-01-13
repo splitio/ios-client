@@ -23,11 +23,11 @@ struct TestingHelper {
         return splitConfig
     }
 
-    static func createEvents(count: Int = 10, timestamp: Int64 = 1000) -> [EventDTO] {
+    static func createEvents(count: Int = 10, timestamp: Int64 = 1000, randomId: Bool = false) -> [EventDTO] {
         var events = [EventDTO]()
         for i in 0..<count {
             let event = EventDTO(trafficType: "name", eventType: "type")
-            event.storageId = "event\(i)"
+            event.storageId = randomId ? UUID().uuidString : "event\(i)"
             event.key = "key1"
             event.eventTypeId = "type1"
             event.trafficTypeName = "name1"
@@ -150,5 +150,21 @@ struct TestingHelper {
             allKeys.append(uniqueKey)
         }
         return UniqueKeys(keys: allKeys)
+    }
+
+    static func createStorageContainer() -> SplitStorageContainer {
+        return SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
+                                     fileStorage: FileStorageStub(),
+                                     splitsStorage: SplitsStorageStub(),
+                                     persistentSplitsStorage: PersistentSplitsStorageStub(),
+                                     impressionsStorage: ImpressionsStorageStub(),
+                                     persistentImpressionsStorage: PersistentImpressionsStorageStub(),
+                                     impressionsCountStorage: PersistentImpressionsCountStorageStub(),
+                                     eventsStorage: EventsStorageStub(),
+                                     persistentEventsStorage: PersistentEventsStorageStub(),
+                                     telemetryStorage: TelemetryStorageStub(),
+                                     mySegmentsStorage: MySegmentsStorageStub(),
+                                     attributesStorage: AttributesStorageStub(),
+                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub())
     }
 }

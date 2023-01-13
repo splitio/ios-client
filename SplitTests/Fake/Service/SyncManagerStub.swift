@@ -8,8 +8,11 @@
 
 import Foundation
 @testable import Split
+import XCTest
 
 class SyncManagerStub: SyncManager {
+
+    var setupUserConsentExp: XCTestExpectation?
 
     var startCalled = false
     func start() {
@@ -36,5 +39,14 @@ class SyncManagerStub: SyncManager {
         stopCalled = true
     }
 
+    var setupUserConsentCalled = false
+    var setupUserConsentValue: UserConsent?
+    func setupUserConsent(for status: UserConsent) {
+        setupUserConsentCalled = true
+        setupUserConsentValue = status
+        if let exp = setupUserConsentExp {
+            exp.fulfill()
+        }
+    }
 
 }

@@ -29,6 +29,10 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         return Version.semantic
     }
 
+    @objc public var userConsent: UserConsent {
+        return .granted
+    }
+
     private var defaulClient: SplitClient?
     private var localhostManager: SplitManager?
     private let config: SplitClientConfig
@@ -94,6 +98,9 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         clients.setValue(newGroup, forKey: key.matchingKey)
 
         return newClient
+    }
+
+    public func setUserConsent(enabled: Bool) {
     }
 
     private func buildSplitStorage(eventsManager: SplitEventsManager) -> SplitsStorage {

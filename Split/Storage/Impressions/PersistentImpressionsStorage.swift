@@ -12,6 +12,7 @@ protocol PersistentImpressionsStorage {
     func delete(_ impressions: [KeyImpression])
     func pop(count: Int) -> [KeyImpression]
     func push(impression: KeyImpression)
+    func push(impressions: [KeyImpression])
     func getCritical() -> [KeyImpression]
     func setActive(_ impressions: [KeyImpression])
 }
@@ -35,6 +36,10 @@ class DefaultImpressionsStorage: PersistentImpressionsStorage {
 
     func push(impression: KeyImpression) {
         impressionDao.insert(impression)
+    }
+
+    func push(impressions: [KeyImpression]) {
+        impressionDao.insert(impressions)
     }
 
     func getCritical() -> [KeyImpression] {

@@ -14,8 +14,6 @@ import XCTest
 class SynchronizerTest: XCTestCase {
 
     var splitsFetcher: HttpSplitFetcherStub!
-    var periodicEventsRecorderWorker: PeriodicRecorderWorkerStub!
-    var eventsRecorderWorker: RecorderWorkerStub!
     var splitsSyncWorker: RetryableSyncWorkerStub!
     var mySegmentsSyncWorker: RetryableSyncWorkerStub!
     var periodicSplitsSyncWorker: PeriodicSyncWorkerStub!
@@ -33,8 +31,12 @@ class SynchronizerTest: XCTestCase {
     var telemetryProducer: TelemetryStorageStub!
     var byKeyApiFacade: ByKeyFacadeStub!
     var impressionsTracker: ImpressionsTrackerStub!
+    var eventsSynchronizer: EventsSynchronizerStub!
+    var telemetrySynchronizer: TelemetrySynchronizerStub!
 
     let userKey = "CUSTOMER_KEY"
+
+    var splitConfig: SplitClientConfig!
 
     override func setUp() {
         synchronizer = buildSynchronizer()
@@ -51,18 +53,14 @@ class SynchronizerTest: XCTestCase {
         splitsSyncWorker = RetryableSyncWorkerStub()
         mySegmentsSyncWorker = RetryableSyncWorkerStub()
         periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
-        periodicEventsRecorderWorker = PeriodicRecorderWorkerStub()
-        eventsRecorderWorker = RecorderWorkerStub()
-
         syncWorkerFactory = SyncWorkerFactoryStub()
 
         impressionsTracker = ImpressionsTrackerStub()
+        eventsSynchronizer = EventsSynchronizerStub()
 
         syncWorkerFactory.splitsSyncWorker = splitsSyncWorker
         syncWorkerFactory.mySegmentsSyncWorker = mySegmentsSyncWorker
         syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
-        syncWorkerFactory.periodicEventsRecorderWorker = periodicEventsRecorderWorker
-        syncWorkerFactory.eventsRecorderWorker = eventsRecorderWorker
 
         mySegmentsStorage = ByKeyMySegmentsStorageStub()
         telemetryProducer = TelemetryStorageStub()
@@ -73,9 +71,11 @@ class SynchronizerTest: XCTestCase {
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      fileStorage: FileStorageStub(), splitsStorage: splitsStorage,
                                                      persistentSplitsStorage: persistentSplitsStorage,
-                                                     impressionsStorage: PersistentImpressionsStorageStub(),
+                                                     impressionsStorage: ImpressionsStorageStub(),
+                                                     persistentImpressionsStorage: PersistentImpressionsStorageStub(),
                                                      impressionsCountStorage: PersistentImpressionsCountStorageStub(),
-                                                     eventsStorage: PersistentEventsStorageStub(),
+                                                     eventsStorage: EventsStorageStub(),
+                                                     persistentEventsStorage: PersistentEventsStorageStub(),
                                                      telemetryStorage: telemetryProducer,
                                                      mySegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub(),
@@ -89,24 +89,23 @@ class SynchronizerTest: XCTestCase {
             .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
             .build()
 
-        let config =  SplitClientConfig()
-        config.syncEnabled = syncEnabled
-        config.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
+        splitConfig =  SplitClientConfig()
+        splitConfig.syncEnabled = syncEnabled
+        splitConfig.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
 
         byKeyApiFacade = ByKeyFacadeStub()
 
+        telemetrySynchronizer = TelemetrySynchronizerStub()
 
-        synchronizer = DefaultSynchronizer(splitConfig: config,
+        synchronizer = DefaultSynchronizer(splitConfig: splitConfig,
                                            defaultUserKey: userKey,
-                                           telemetrySynchronizer: nil,
+                                           telemetrySynchronizer: telemetrySynchronizer,
                                            byKeyFacade: byKeyApiFacade,
                                            splitApiFacade: apiFacade,
                                            splitStorageContainer: storageContainer,
                                            syncWorkerFactory: syncWorkerFactory,
                                            impressionsTracker: impressionsTracker,
-                                           eventsSyncHelper:
-                                            EventsRecorderSyncHelper(eventsStorage: PersistentEventsStorageStub(),
-                                                                     accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10)),
+                                           eventsSynchronizer: eventsSynchronizer,
                                            syncTaskByChangeNumberCatalog: updateWorkerCatalog,
                                            splitsFilterQueryString: "",
                                            splitEventsManager: eventsManager)
@@ -243,20 +242,37 @@ class SynchronizerTest: XCTestCase {
         XCTAssertTrue(byKeyApiFacade.stopPeriodicSyncCalled)
     }
 
-    func testStartPeriodicRecording() {
-
-        synchronizer.startPeriodicRecording()
+    func testStartPeriodicRecordingUserData() {
+        impressionsTracker.startCalled = false
+        eventsSynchronizer.startCalled = false
+        synchronizer.startRecordingUserData()
 
         XCTAssertTrue(impressionsTracker.startCalled)
-        XCTAssertTrue(periodicEventsRecorderWorker.startCalled)
+        XCTAssertTrue(eventsSynchronizer.startCalled)
     }
 
-    func testStopPeriodicRecording() {
+    func testStopRecordingUserData() {
+        impressionsTracker.startCalled = false
+        eventsSynchronizer.startCalled = false
 
-        synchronizer.stopPeriodicRecording()
+        synchronizer.stopRecordingUserData()
 
         XCTAssertTrue(impressionsTracker.stopCalled)
-        XCTAssertTrue(periodicEventsRecorderWorker.stopCalled)
+        XCTAssertTrue(eventsSynchronizer.stopCalled)
+    }
+
+    func testStartRecordingTelemetry() {
+        telemetrySynchronizer.startCalled = false
+        synchronizer.startRecordingTelemetry()
+
+        XCTAssertTrue(telemetrySynchronizer.startCalled)
+    }
+
+    func testStopRecordingTelemetry() {
+        telemetrySynchronizer.destroyCalled = true
+        synchronizer.stopRecordingTelemetry()
+
+        XCTAssertTrue(telemetrySynchronizer.destroyCalled)
     }
 
     func testStartByKey() {
@@ -271,7 +287,7 @@ class SynchronizerTest: XCTestCase {
         synchronizer.flush()
         sleep(1)
         XCTAssertTrue(impressionsTracker.flushCalled)
-        XCTAssertTrue(eventsRecorderWorker.flushCalled)
+        XCTAssertTrue(eventsSynchronizer.flushCalled)
     }
 
     func testDestroy() {
@@ -303,7 +319,7 @@ class SynchronizerTest: XCTestCase {
 
 
         ThreadUtils.delay(seconds: 1)
-        XCTAssertEqual(5, telemetryProducer.events[.queued])
+        XCTAssertTrue(eventsSynchronizer.pushCalled)
 
     }
 

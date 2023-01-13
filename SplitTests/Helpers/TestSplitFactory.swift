@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class TestSplitFactory {
+class TestSplitFactory: SplitFactory {
 
     // Not using default implementation in protocol
     // extension due to Objc interoperability
@@ -27,6 +27,10 @@ class TestSplitFactory {
         return defaultManager!
     }
 
+    var userConsent: UserConsent {
+        userConsentManager?.getStatus() ?? .granted
+    }
+
     private(set) var clientManager: SplitClientManager?
     private let filterBuilder = FilterBuilder()
     let userKey: String
@@ -34,6 +38,7 @@ class TestSplitFactory {
     var splitDatabase: SplitDatabase
     var reachabilityChecker: HostReachabilityChecker
     var apiKey: String = IntegrationHelper.dummyApiKey
+    private(set) var userConsentManager: UserConsentManager?
 
     var splitConfig: SplitClientConfig = TestingHelper.basicStreamingConfig()
     var httpClient: HttpClient?
@@ -126,6 +131,10 @@ class TestSplitFactory {
                                                            uniqueKeyTracker: nil,
                                                            notificationHelper: nil)
 
+        let eventsSynchronizer = DefaultEventsSynchronizer(syncWorkerFactory: syncWorkerFactory,
+                                                           eventsSyncHelper: eventsSyncHelper,
+                                                           telemetryProducer: storageContainer.telemetryStorage)
+
         let byKeyFacade = DefaultByKeyFacade()
 
         self.synchronizer = SynchronizerSpy(splitConfig: splitConfig,
@@ -136,7 +145,7 @@ class TestSplitFactory {
                                             splitStorageContainer: storageContainer,
                                             syncWorkerFactory: syncWorkerFactory,
                                             impressionsTracker: impressionsTracker,
-                                            eventsSyncHelper: eventsSyncHelper,
+                                            eventsSynchronizer: eventsSynchronizer,
                                             splitsFilterQueryString: splitsFilterQueryString,
                                             splitEventsManager: eventsManager)
 
@@ -160,6 +169,18 @@ class TestSplitFactory {
             mySegmentsFetcher: apiFacade.mySegmentsFetcher,
             telemetryProducer: storageContainer.telemetryStorage)
 
+        let eventsTracker = DefaultEventsTracker(config: splitConfig,
+                                                 synchronizer: synchronizer,
+                                                 eventValidator: DefaultEventValidator(splitsStorage: storageContainer.splitsStorage),
+                                                 anyValueValidator: DefaultAnyValueValidator(),
+                                                 validationLogger: DefaultValidationMessageLogger(),
+                                                 telemetryProducer: storageContainer.telemetryStorage)
+
+        userConsentManager = DefaultUserConsentManager(splitConfig: splitConfig,
+                                                       storageContainer: storageContainer,
+                                                       syncManager: syncManager,
+                                                       eventsTracker: eventsTracker,
+                                                       impressionsTracker: impressionsTracker)
 
         clientManager = DefaultClientManager(config: splitConfig,
                                              key: key,
@@ -169,6 +190,7 @@ class TestSplitFactory {
                                              storageContainer: storageContainer,
                                              syncManager: syncManager,
                                              synchronizer: synchronizer,
+                                             eventsTracker: eventsTracker,
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: nil)
@@ -177,6 +199,18 @@ class TestSplitFactory {
 
     func client(matchingKey: String) -> SplitClient {
         return clientManager!.get(forKey: Key(matchingKey: matchingKey))
+    }
+
+    func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
+        return clientManager!.get(forKey: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
+    }
+
+    func client(key: Key) -> SplitClient {
+        return clientManager!.get(forKey:key)
+    }
+
+    func setUserConsent(enabled: Bool) {
+        userConsentManager?.set(enabled ? .granted : .declined)
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {

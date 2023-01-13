@@ -20,6 +20,10 @@ class EventDaoStub: EventDao {
         insertedEvents.append(event)
     }
 
+    func insert(_ event: [EventDTO]) {
+        insertedEvents.append(contentsOf: event)
+    }
+
     func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [EventDTO] {
         return getByEvents
     }

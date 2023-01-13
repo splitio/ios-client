@@ -57,11 +57,11 @@ class SplitComponentFactory {
                                telemetryStorage: TelemetryStorage?,
                                testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
         let component: SplitStorageContainer =
-            try SplitDatabaseHelper.buildStorageContainer(splitClientConfig: splitClientConfig,
-                                                          userKey: userKey,
-                                                          databaseName: databaseName,
-                                                          telemetryStorage: telemetryStorage,
-                                                          testDatabase: testDatabase)
+        try SplitDatabaseHelper.buildStorageContainer(splitClientConfig: splitClientConfig,
+                                                      userKey: userKey,
+                                                      databaseName: databaseName,
+                                                      telemetryStorage: telemetryStorage,
+                                                      testDatabase: testDatabase)
         add(component: component)
         return component
     }
@@ -162,7 +162,7 @@ class SplitComponentFactory {
             .setSplitsQueryString(splitsFilterQueryString)
 
         if let telemetryStorage = storageContainer.telemetryStorage {
-                _ = builder.setTelemetryStorage(telemetryStorage)
+            _ = builder.setTelemetryStorage(telemetryStorage)
         }
 
         if let httpClient = testHttpClient {
@@ -215,7 +215,6 @@ class SplitComponentFactory {
     func buildSynchronizer(notificationHelper: NotificationHelper?) throws -> Synchronizer {
 
         let syncWorkerFactory = try buildSyncWorkerFactory()
-        let splitApiFacade = try getSplitApiFacade()
         let storageContainer = try getSplitStorageContainer()
 
         var telemetrySynchronizer: TelemetrySynchronizer?
@@ -224,14 +223,10 @@ class SplitComponentFactory {
            let configRecorderWorker = syncWorkerFactory.createTelemetryConfigRecorderWorker(),
            let statsRecorderWorker = syncWorkerFactory.createTelemetryStatsRecorderWorker(),
            let periodicStatsRecorderWorker = syncWorkerFactory.createPeriodicTelemetryStatsRecorderWorker() {
-            telemetrySynchronizer = DefaultTelemetrySynchronizer(configRecorderWorker: configRecorderWorker,
-                                                         statsRecorderWorker: statsRecorderWorker,
-                                                         periodicStatsRecorderWorker: periodicStatsRecorderWorker)
-        }
-        var uniqueKeyTracker: UniqueKeyTracker?
-        if splitClientConfig.finalImpressionsMode == .none,
-           let uniqueKeyStorage = storageContainer.uniqueKeyStorage {
-            uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: uniqueKeyStorage)
+            telemetrySynchronizer =
+            DefaultTelemetrySynchronizer(configRecorderWorker: configRecorderWorker,
+                                         statsRecorderWorker: statsRecorderWorker,
+                                         periodicStatsRecorderWorker: periodicStatsRecorderWorker)
         }
 
         var macosNotificationHelper: NotificationHelper?
@@ -240,13 +235,11 @@ class SplitComponentFactory {
         macosNotificationHelper = notificationHelper ?? DefaultNotificationHelper.instance
 #endif
 
-        let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitClientConfig,
-                                                           splitApiFacade: splitApiFacade,
-                                                           storageContainer: storageContainer,
-                                                           syncWorkerFactory: syncWorkerFactory,
-                                                           impressionsSyncHelper: try buildImpressionsSyncHelper(),
-                                                           uniqueKeyTracker: uniqueKeyTracker,
-                                                           notificationHelper: macosNotificationHelper)
+        let impressionsTracker = try buildImpressionsTracker(notificationHelper: macosNotificationHelper)
+
+        let eventsSynchronizer = DefaultEventsSynchronizer(syncWorkerFactory: syncWorkerFactory,
+                                                           eventsSyncHelper: try buildEventsSyncHelper(),
+                                                           telemetryProducer: storageContainer.telemetryStorage)
 
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
                                                           defaultUserKey: userKey,
@@ -256,7 +249,7 @@ class SplitComponentFactory {
                                                           splitStorageContainer: storageContainer,
                                                           syncWorkerFactory: syncWorkerFactory,
                                                           impressionsTracker: impressionsTracker,
-                                                          eventsSyncHelper: try buildEventsSyncHelper(),
+                                                          eventsSynchronizer: eventsSynchronizer,
                                                           splitsFilterQueryString: splitsFilterQueryString,
                                                           splitEventsManager: getSplitEventsManagerCoordinator())
         add(component: component)
@@ -268,6 +261,24 @@ class SplitComponentFactory {
             return obj
         }
         throw ComponentError.notFound(name: "Synchronizer")
+    }
+
+    func buildImpressionsTracker(notificationHelper: NotificationHelper?) throws -> ImpressionsTracker {
+        let storageContainer = try getSplitStorageContainer()
+        var uniqueKeyTracker: UniqueKeyTracker?
+        if splitClientConfig.$impressionsMode == .none,
+           let uniqueKeyStorage = storageContainer.uniqueKeyStorage {
+            uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: uniqueKeyStorage)
+        }
+        let  component: ImpressionsTracker =  DefaultImpressionsTracker(splitConfig: splitClientConfig,
+                                                                        splitApiFacade: try getSplitApiFacade(),
+                                                                        storageContainer: storageContainer,
+                                                                        syncWorkerFactory: try buildSyncWorkerFactory(),
+                                                                        impressionsSyncHelper: try buildImpressionsSyncHelper(),
+                                                                        uniqueKeyTracker: uniqueKeyTracker,
+                                                                        notificationHelper: notificationHelper)
+        add(component: component)
+        return component
     }
 
     func getByKeyFacade() -> ByKeyFacade {
@@ -289,6 +300,53 @@ class SplitComponentFactory {
             .setSynchronizer(try getSynchronizer())
             .setNotificationHelper(notificationHelper ?? DefaultNotificationHelper.instance)
             .setSplitConfig(splitClientConfig).build()
+        add(component: component)
+        return component
+    }
+
+    func buildEventsTracker() throws -> EventsTracker {
+        let storageContainer = try getSplitStorageContainer()
+        let anyValueValidator = DefaultAnyValueValidator()
+        let validationLogger = DefaultValidationMessageLogger()
+        let eventsValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
+        let component: EventsTracker = DefaultEventsTracker(config: splitClientConfig,
+                                                            synchronizer: try getSynchronizer(),
+                                                            eventValidator: eventsValidator,
+                                                            anyValueValidator: anyValueValidator,
+                                                            validationLogger: validationLogger,
+                                                            telemetryProducer: storageContainer.telemetryStorage)
+        add(component: component)
+        return component
+    }
+
+    func getEventsTracker() throws -> EventsTracker {
+        if let obj = get(for: EventsTracker.self) as? EventsTracker {
+            return obj
+        }
+        throw ComponentError.notFound(name: "Events Tracker")
+    }
+
+    func getImpressionsTracker() throws -> ImpressionsTracker {
+        if let obj = get(for: ImpressionsTracker.self) as? ImpressionsTracker {
+            return obj
+        }
+        throw ComponentError.notFound(name: "ImpressionsTracker")
+    }
+
+    func getSyncManager() throws -> SyncManager {
+        if let obj = get(for: SyncManager.self) as? SyncManager {
+            return obj
+        }
+        throw ComponentError.notFound(name: "Sync manager")
+    }
+
+    func buildUserConsentManager() throws -> UserConsentManager {
+
+        let component = DefaultUserConsentManager(splitConfig: splitClientConfig,
+                                                  storageContainer: try getSplitStorageContainer(),
+                                                  syncManager: try getSyncManager(),
+                                                  eventsTracker: try getEventsTracker(),
+                                                  impressionsTracker: try getImpressionsTracker())
         add(component: component)
         return component
     }

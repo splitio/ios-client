@@ -17,6 +17,10 @@ class SplitFactoryStub: SplitFactory {
     
     var version: String
     var apiKey: String
+
+    var userConsent: UserConsent {
+        return .granted
+    }
     
     init(apiKey: String) {
         self.apiKey = apiKey
@@ -37,5 +41,6 @@ class SplitFactoryStub: SplitFactory {
         return client
     }
     
-    
+    func setUserConsent(enabled: Bool) {
+    }
 }

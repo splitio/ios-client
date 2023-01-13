@@ -8,15 +8,16 @@
 
 import Foundation
 
-protocol UniqueKeyTracker {
+protocol UniqueKeyTracker: AnyObject {
     func track(userKey: String, featureName: String)
     func saveAndClear()
+    func clear()
 }
 
 class DefaultUniqueKeyTracker: UniqueKeyTracker {
 
-    let uniqueKeyStorage: PersistentUniqueKeysStorage
-    let inMemoryKeys = SynchronizedDictionarySet<String, String>()
+    private let uniqueKeyStorage: PersistentUniqueKeysStorage
+    private let inMemoryKeys = SynchronizedDictionarySet<String, String>()
     init(persistentUniqueKeyStorage: PersistentUniqueKeysStorage) {
         self.uniqueKeyStorage = persistentUniqueKeyStorage
     }
@@ -32,5 +33,9 @@ class DefaultUniqueKeyTracker: UniqueKeyTracker {
             uniqueKeys.append(UniqueKey(userKey: userKey, features: features))
         }
         uniqueKeyStorage.pushMany(keys: uniqueKeys)
+    }
+
+    func clear() {
+        inMemoryKeys.removeAll()
     }
 }

@@ -117,7 +117,8 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
             return nil
         }
 
-        let impressionWorker = ImpressionsRecorderWorker(impressionsStorage: storageContainer.impressionsStorage,
+        let impressionWorker = ImpressionsRecorderWorker(persistentImpressionsStorage:
+                                                            storageContainer.persistentImpressionsStorage,
                                                          impressionsRecorder: impressionsRecorder,
                                                          impressionsPerPush: Int(splitConfig.impressionsChunkSize),
                                                          impressionsSyncHelper: syncHelper)
@@ -132,7 +133,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
             return nil
         }
 
-        return ImpressionsRecorderWorker(impressionsStorage: storageContainer.impressionsStorage,
+        return ImpressionsRecorderWorker(persistentImpressionsStorage: storageContainer.persistentImpressionsStorage,
                                          impressionsRecorder: impressionsRecorder,
                                          impressionsPerPush: Int(splitConfig.impressionsChunkSize),
                                          impressionsSyncHelper: syncHelper)
@@ -161,7 +162,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     }
 
     func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker {
-        let eventsWorker = EventsRecorderWorker(eventsStorage: storageContainer.eventsStorage,
+        let eventsWorker = EventsRecorderWorker(persistentEventsStorage: storageContainer.persistentEventsStorage,
                                                 eventsRecorder: apiFacade.eventsRecorder,
                                                 eventsPerPush: Int(splitConfig.eventsPerPush),
                                                 eventsSyncHelper: syncHelper)
@@ -172,7 +173,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     }
 
     func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> RecorderWorker {
-        return EventsRecorderWorker(eventsStorage: storageContainer.eventsStorage,
+        return EventsRecorderWorker(persistentEventsStorage: storageContainer.persistentEventsStorage,
                                     eventsRecorder: apiFacade.eventsRecorder,
                                     eventsPerPush: Int(splitConfig.eventsPerPush),
                                     eventsSyncHelper: syncHelper)
