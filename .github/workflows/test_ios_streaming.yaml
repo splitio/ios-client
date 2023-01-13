@@ -1,0 +1,59 @@
+name: Build and Test iOS
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+      - development
+
+jobs:
+  build:
+    runs-on: [macos-latest]
+
+    steps:
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 13.2.1
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Test iOS Streaming integration
+        uses: sersoft-gmbh/xcodebuild-action@v1
+        with:
+          action: test
+          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=YES
+          configuration: Debug
+          derived-data-path: "${{github.workspace}}/SplitApp"
+          destination: 'platform=iOS Simulator,OS=15.2,name=iPhone 12'
+          project: Split.xcodeproj
+          scheme: Split
+          sdk: 'iphonesimulator'
+          test-plan: 'SplitiOSStreaming'
+          use-xcpretty: true
+
+      - name: SonarQube Install
+        uses: mathrix-education/sonar-scanner@master
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+        with:
+          version: 4.6.2.2472
+          scan: false
+
+      - name: SonarQube Scan
+        run: >
+          sonar-scanner --debug
+          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+          -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} 
+          -Dsonar.projectName=${{ github.event.repository.name }} 
+          -Dsonar.projectKey=splitio_ios-client 
+          -Dsonar.github.token=${{ secrets.GITHUB_TOKEN }} 
+          -Dsonar.c.file.suffixes=- 
+          -Dsonar.cpp.file.suffixes=- 
+          -Dsonar.objc.file.suffixes=-
