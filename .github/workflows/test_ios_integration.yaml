@@ -27,7 +27,7 @@ jobs:
       - name: Test iOS integration
         uses: sersoft-gmbh/xcodebuild-action@v1
         with:
-          action: test
+          action: build test
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=YES
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"

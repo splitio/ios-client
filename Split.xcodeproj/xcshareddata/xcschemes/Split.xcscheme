@@ -61,6 +61,9 @@
             reference = "container:SplitiOSFull.xctestplan"
             default = "YES">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitiOSStreaming.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference
