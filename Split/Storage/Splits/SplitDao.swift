@@ -19,6 +19,8 @@ protocol SplitDao {
 }
 
 class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
+    let decoder: SplitsDecoder = SplitsParallelDecoder()
+//    let decoder: SplitsDecoder = SplitsSerialDecoder
 
     func insertOrUpdate(splits: [Split]) {
         executeAsync { [weak self] in
@@ -56,9 +58,12 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
                 return
             }
 
-            splits = self.coreDataHelper.fetch(entity: .split)
+            let jsonSplits = self.coreDataHelper.fetch(entity: .split)
                 .compactMap { return $0 as? SplitEntity }
-                .compactMap { return try? self.mapEntityToModel($0) }
+                //.compactMap { return try? self.mapEntityToModel($0) }
+                .compactMap { return $0.body }
+            splits = self.decoder.decode(jsonSplits)
+
         }
         return splits ?? []
     }
