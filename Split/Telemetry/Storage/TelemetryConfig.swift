@@ -56,6 +56,7 @@ struct TelemetryConfig: Codable {
     var timeUntilReady: Int64
     var timeUntilReadyFromCache: Int64
     var nonReadyUsages: Int
+    var userConsent: Int = 0
     var integrations: [String]?
     var tags: [String]?
 
@@ -75,6 +76,7 @@ struct TelemetryConfig: Codable {
         case timeUntilReady = "tR"
         case timeUntilReadyFromCache = "tC"
         case nonReadyUsages = "nR"
+        case userConsent = "uC"
         case integrations = "i"
         case tags = "t"
     }

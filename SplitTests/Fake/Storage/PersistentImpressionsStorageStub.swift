@@ -12,6 +12,8 @@ import Foundation
 class PersistentImpressionsStorageStub: PersistentImpressionsStorage {
 
 
+
+
     var storedImpressions = [String: KeyImpression]()
     var impressionsStatus = [String: Int32]()
 
@@ -36,6 +38,15 @@ class PersistentImpressionsStorageStub: PersistentImpressionsStorage {
         if let eId = impression.storageId {
             storedImpressions[eId] = impression
             impressionsStatus[eId] = StorageRecordStatus.active
+        }
+    }
+
+    func push(impressions: [KeyImpression]) {
+        for impression in impressions {
+            if let eId = impression.storageId {
+                storedImpressions[eId] = impression
+                impressionsStatus[eId] = StorageRecordStatus.active
+            }
         }
     }
 

@@ -78,7 +78,7 @@ import Foundation
 
         /// The rest endpoint that sdk will hit to send events and impressions
         ///
-        /// @param eventsEndpoint
+        /// @param eventsEndpoint: Base URL for events and impressions
         /// @return this builder
         ///
         @objc(setEventsEndpoint:)
@@ -90,7 +90,7 @@ import Foundation
         /// The rest endpoint that sdk will hit to get an SSE authentication token
         /// to subscribe to SSE channels and receive update events
         ///
-        /// @param authServiceEndpoint
+        /// @param authServiceEndpoint: Base URL for Split API. Should include /api/vx.
         /// @return this builder
         ///
         @objc(setAuthServiceEndpoint:)
@@ -102,7 +102,7 @@ import Foundation
         /// The rest endpoint that sdk will hit to subscribe to SSE channels
         /// and receive update events
         ///
-        /// @param streamingServiceEndpoint
+        /// @param streamingServiceEndpoint: Base URL for streaming service
         /// @return this builder
         ///
         @objc(setStreamingServiceEndpoint:)
@@ -113,7 +113,7 @@ import Foundation
 
         /// The rest endpoint that sdk will hit to send telemetry data
         ///
-        /// @param telemetryServiceEndpoint
+        /// @param telemetryServiceEndpoint: Base URL for telemetry
         /// @return this builder
         ///
         @objc(setTelemetryServiceEndpoint:)

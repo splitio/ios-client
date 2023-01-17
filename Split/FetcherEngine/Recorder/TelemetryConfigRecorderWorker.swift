@@ -60,7 +60,7 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
                                rates: rates, urlOverrides: urlOverrides,
                                impressionsQueueSize: splitConfig.impressionsQueueSize,
                                eventsQueueSize: splitConfig.eventsQueueSize,
-                               impressionsMode: splitConfig.finalImpressionsMode.intValue(),
+                               impressionsMode: splitConfig.$impressionsMode.intValue(),
                                impressionsListenerEnabled: splitConfig.impressionListener != nil,
                                httpProxyDetected: splitConfig.isProxy(),
                                activeFactories: telemetryConsumer.getActiveFactories(),
@@ -68,6 +68,7 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
                                timeUntilReady: telemetryConsumer.getTimeUntilReady(),
                                timeUntilReadyFromCache: telemetryConsumer.getTimeUntilReadyFromCache(),
                                nonReadyUsages: telemetryConsumer.getNonReadyUsages(),
+                               userConsent: splitConfig.userConsent.rawValue,
                                integrations: nil, tags: telemetryConsumer.popTags())
     }
 }

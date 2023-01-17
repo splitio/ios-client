@@ -44,32 +44,32 @@ class DefaultAccumulatorHelper: AccumulatorHelper {
 
 class EventsRecorderSyncHelper: DefaultAccumulatorHelper, RecorderSyncHelper {
 
-    private let eventsStorage: PersistentEventsStorage
+    private let eventsStorage: EventsStorage
 
-    init(eventsStorage: PersistentEventsStorage,
+    init(eventsStorage: EventsStorage,
          accumulator: RecorderFlushChecker) {
         self.eventsStorage = eventsStorage
         super.init(accumulator: accumulator)
     }
 
     func pushAndCheckFlush(_ item: EventDTO) -> Bool {
-        self.eventsStorage.push(event: item)
+        self.eventsStorage.push(item)
         return accumulator.checkIfFlushIsNeeded(sizeInBytes: item.sizeInBytes)
     }
 }
 
 class ImpressionsRecorderSyncHelper: DefaultAccumulatorHelper, RecorderSyncHelper {
 
-    private let impressionsStorage: PersistentImpressionsStorage
+    private let impressionsStorage: ImpressionsStorage
 
-    init(impressionsStorage: PersistentImpressionsStorage,
+    init(impressionsStorage: ImpressionsStorage,
          accumulator: RecorderFlushChecker) {
         self.impressionsStorage = impressionsStorage
         super.init(accumulator: accumulator)
     }
 
     func pushAndCheckFlush(_ item: KeyImpression) -> Bool {
-        self.impressionsStorage.push(impression: item)
+        self.impressionsStorage.push(item)
         return accumulator.checkIfFlushIsNeeded(sizeInBytes: ServiceConstants.estimatedImpressionSizeInBytes)
     }
 }

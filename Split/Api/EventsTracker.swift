@@ -8,12 +8,14 @@
 
 import Foundation
 
-protocol EventsTracker {
+protocol EventsTracker: AnyObject {
+    var isTrackingEnabled: Bool { get set }
     func track(eventType: String,
                trafficType: String?,
                value: Double?,
                properties: [String: Any]?,
-               matchingKey: String) -> Bool
+               matchingKey: String,
+               isSdkReady: Bool) -> Bool
 }
 
 class DefaultEventsTracker: EventsTracker {
@@ -24,6 +26,7 @@ class DefaultEventsTracker: EventsTracker {
     private let anyValueValidator: AnyValueValidator
     private let telemetryProducer: TelemetryEvaluationProducer?
     private let synchronizer: Synchronizer
+    var isTrackingEnabled: Bool = true
 
     init(config: SplitClientConfig,
          synchronizer: Synchronizer,
@@ -42,7 +45,14 @@ class DefaultEventsTracker: EventsTracker {
 
     func track(eventType: String, trafficType: String? = nil,
                value: Double? = nil, properties: [String: Any]?,
-               matchingKey: String) -> Bool {
+               matchingKey: String,
+               isSdkReady: Bool) -> Bool {
+
+        if !isTrackingEnabled {
+            Logger.v("Event not tracked because tracking is disabled")
+            return false
+        }
+
         let timeStart = Stopwatch.now()
         let validationTag = "track"
 
@@ -50,11 +60,13 @@ class DefaultEventsTracker: EventsTracker {
             return false
         }
 
+
         if let errorInfo = eventValidator.validate(key: matchingKey,
                                                    trafficTypeName: trafficType,
                                                    eventTypeId: trafficType,
                                                    value: value,
-                                                   properties: properties) {
+                                                   properties: properties,
+                                                   isSdkReady: isSdkReady) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
                 return false

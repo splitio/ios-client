@@ -116,6 +116,7 @@ class SplitClientManagerTest: XCTestCase {
                                              storageContainer: storageContainer,
                                              syncManager: syncManager,
                                              synchronizer: synchronizer,
+                                             eventsTracker: EventsTrackerStub(),
                                              eventsManagerCoordinator: splitEventsCoordinator,
                                              mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactoryStub(),
                                              telemetryStopwatch: stopwatch)

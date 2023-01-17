@@ -10,6 +10,7 @@ import Foundation
 @testable import Split
 
 class ImpressionsTrackerStub: ImpressionsTracker {
+    var isTrackingEnabled: Bool = true
     var startCalled = false
     func start() {
         startCalled = true
@@ -43,5 +44,14 @@ class ImpressionsTrackerStub: ImpressionsTracker {
     var destroyCalled = false
     func destroy() {
         destroyCalled = true
+    }
+
+    func enableTracking(_ enable: Bool) {
+        isTrackingEnabled = enable
+    }
+
+    var isPersistenceEnabled = false
+    func enablePersistence(_ enable: Bool) {
+        isPersistenceEnabled = enable
     }
 }

@@ -162,11 +162,12 @@ struct BackgroundSyncExecutor {
                                         syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
         self.eventsRecorderWorker =
-            EventsRecorderWorker(eventsStorage: SplitDatabaseHelper.openEventsStorage(database: splitDatabase),
-                                                         eventsRecorder: eventsRecorder,
-                                                         eventsPerPush: ServiceConstants.eventsPerPush)
+        EventsRecorderWorker(persistentEventsStorage:
+                                SplitDatabaseHelper.openPersistentEventsStorage(database: splitDatabase),
+                             eventsRecorder: eventsRecorder,
+                             eventsPerPush: ServiceConstants.eventsPerPush)
         self.impressionsRecorderWorker = ImpressionsRecorderWorker(
-            impressionsStorage: SplitDatabaseHelper.openImpressionsStorage(database: splitDatabase),
+            persistentImpressionsStorage: SplitDatabaseHelper.openPersistentImpressionsStorage(database: splitDatabase),
             impressionsRecorder: impressionsRecorder,
             impressionsPerPush: ServiceConstants.impressionsQueueSize)
 

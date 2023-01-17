@@ -139,6 +139,9 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return true
     }
 
+    public func setUserConsent(enabled: Bool) {
+    }
+
     public func flush() {
     }
 

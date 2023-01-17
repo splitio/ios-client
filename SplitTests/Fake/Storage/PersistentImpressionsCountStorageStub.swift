@@ -41,8 +41,12 @@ class PersistentImpressionsCountStorageStub: PersistentImpressionsCountStorage {
 
     func pushMany(counts: [ImpressionsCountPerFeature]) {
         for count in counts {
-            if let eId = count.storageId {
-                storedImpressions[eId] = count
+            var row = ImpressionsCountPerFeature(feature: count.feature,
+                                                 timeframe: count.timeframe,
+                                                 count: count.count)
+            row.storageId = count.storageId ?? UUID().uuidString
+            if let eId = row.storageId {
+                storedImpressions[eId] = row
                 impressionsStatus[eId] = StorageRecordStatus.active
             }
         }
