@@ -20,7 +20,7 @@ protocol SplitDao {
 
 class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
     let decoder: SplitsDecoder = SplitsParallelDecoder()
-//    let decoder: SplitsDecoder = SplitsSerialDecoder
+//    let decoder: SplitsDecoder = SplitsSerialDecoder()
 
     func insertOrUpdate(splits: [Split]) {
         executeAsync { [weak self] in
@@ -60,9 +60,13 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
 
             let jsonSplits = self.coreDataHelper.fetch(entity: .split)
                 .compactMap { return $0 as? SplitEntity }
-                //.compactMap { return try? self.mapEntityToModel($0) }
+//                .compactMap { return try? self.mapEntityToModel($0) }
                 .compactMap { return $0.body }
+            let start = Date().unixTimestampInMiliseconds()
+
             splits = self.decoder.decode(jsonSplits)
+            let time = Date().unixTimestampInMiliseconds() - start
+            print("Time to parse splits : \(time)")
 
         }
         return splits ?? []

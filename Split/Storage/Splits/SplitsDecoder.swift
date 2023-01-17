@@ -15,6 +15,11 @@ protocol SplitsDecoder {
 struct SplitsParallelDecoder: SplitsDecoder {
 
     func decode(_ list: [String]) -> [Split] {
+
+        if list.count == 0 {
+            return []
+        }
+        Logger.v("Using parallel decoding for \(list.count) splits")
         let serialDecoder = SplitsSerialDecoder()
         var splits = [Split]()
         let dataQueue = DispatchQueue(label: "split-parallel-parsing-data",
@@ -23,26 +28,28 @@ struct SplitsParallelDecoder: SplitsDecoder {
         let queue = OperationQueue()
         let taskCount = ProcessInfo.processInfo.processorCount
         let chunkSize = Int(list.count / taskCount)
+        Logger.v("Task count for parallel decoding: \(taskCount)")
+        Logger.v("Chunck size for parallel decoding: \(chunkSize)")
         list.chunked(into: chunkSize).forEach { chunk in
-            var parsed = [Split]()
             queue.addOperation {
-                parsed = serialDecoder.decode(chunk)
-            }
-            dataQueue.sync {
-                splits.append(contentsOf: parsed)
+                let parsed = serialDecoder.decode(chunk)
+                dataQueue.sync {
+                    splits.append(contentsOf: parsed)
+                }
             }
         }
         queue.waitUntilAllOperationsAreFinished()
+        print("Parsed count: \(splits.count)")
         return splits
-    }
-
-    func decodeChunk(_ list: [String]) -> [Split] {
-        return list.compactMap { try? Json.encodeFrom(json: $0, to: Split.self) }
     }
 }
 
 struct SplitsSerialDecoder: SplitsDecoder {
     func decode(_ list: [String]) -> [Split] {
+        if list.count == 0 {
+            return []
+        }
+//        Logger.v("Parsing \(list.count) splits")
         return list.compactMap { try? Json.encodeFrom(json: $0, to: Split.self) }
     }
 }
