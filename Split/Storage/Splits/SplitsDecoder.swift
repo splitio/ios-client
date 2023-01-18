@@ -8,20 +8,25 @@
 
 import Foundation
 
+struct ParsedSplit: Codable {
+    let split: Split
+    let json: String
+}
+
 protocol SplitsDecoder {
-    func decode(_ list: [String]) -> [Split]
+    func decode(_ list: [String]) -> [ParsedSplit]
 }
 
 struct SplitsParallelDecoder: SplitsDecoder {
 
-    func decode(_ list: [String]) -> [Split] {
+    func decode(_ list: [String]) -> [ParsedSplit] {
 
         if list.count == 0 {
             return []
         }
         Logger.v("Using parallel decoding for \(list.count) splits")
         let serialDecoder = SplitsSerialDecoder()
-        var splits = [Split]()
+        var splits = [ParsedSplit]()
         let dataQueue = DispatchQueue(label: "split-parallel-parsing-data",
                                       target: DispatchQueue(label: "split-parallel-parsing-data-conc",
                                                             attributes: .concurrent))
@@ -45,11 +50,15 @@ struct SplitsParallelDecoder: SplitsDecoder {
 }
 
 struct SplitsSerialDecoder: SplitsDecoder {
-    func decode(_ list: [String]) -> [Split] {
+    func decode(_ list: [String]) -> [ParsedSplit] {
         if list.count == 0 {
             return []
         }
-//        Logger.v("Parsing \(list.count) splits")
-        return list.compactMap { try? Json.encodeFrom(json: $0, to: Split.self) }
+        return list.compactMap { json in
+            guard let split = try? Json.encodeFrom(json: json, to: Split.self) else {
+                return nil
+            }
+            return ParsedSplit(split: split, json: json)
+        }
     }
 }
