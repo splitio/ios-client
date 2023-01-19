@@ -74,7 +74,7 @@ class CoreDataHelper {
                 let start = Date().unixTimestampInMiliseconds()
                 entities = try self.managedObjectContext.fetch(fetchRequest)
                 let time = Date().unixTimestampInMiliseconds() - start
-                print("Time to load splits \(entities.count) from db: \(time)")
+//                print("Time to load splits \(entities.count) from db: \(time)")
             } catch {
                 Logger.e("Error while loading \(entity.rawValue) objects from storage: \(error.localizedDescription)")
             }
