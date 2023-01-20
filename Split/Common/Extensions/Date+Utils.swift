@@ -47,4 +47,8 @@ extension Date {
     static func now() -> Int64 {
         return Date().unixTimestamp()
     }
+
+    static func nowMilis() -> Int64 {
+        return Date().unixTimestampInMiliseconds()
+    }
 }

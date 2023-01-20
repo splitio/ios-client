@@ -20,16 +20,25 @@ protocol SplitDao {
 
 class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
     let decoder: SplitsDecoder = SplitsParallelDecoder()
+    let encoder: SplitsEncoder = SplitsParallelEncoder()
 //    let decoder: SplitsDecoder = SplitsSerialDecoder()
 
     func insertOrUpdate(splits: [Split]) {
+        let parsed = self.encoder.encode(splits)
         executeAsync { [weak self] in
             guard let self = self else {
                 return
             }
 
-            for split in splits {
-                self.insertOrUpdate(split)
+            parsed.forEach { name, json in
+                if let obj = self.getBy(name: name) ?? self.coreDataHelper.create(entity: .split) as? SplitEntity {
+                    obj.name = name
+                    obj.body = json
+                    obj.updatedAt = Date.now()
+                    // Saving one by one to avoid losing all
+                    // if an error occurs
+                    self.coreDataHelper.save()
+                }
             }
         }
     }
@@ -60,11 +69,10 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
 
             let jsonSplits = self.coreDataHelper.fetch(entity: .split)
                 .compactMap { return $0 as? SplitEntity }
-//                .compactMap { return try? self.mapEntityToModel($0) }
                 .compactMap { return $0.body }
-            let start = Date().unixTimestampInMiliseconds()
 
-            splits = self.decoder.decode(jsonSplits).map { $0.split }
+            let start = Date.nowMilis()
+            splits = self.decoder.decode(jsonSplits).map { $0 }
             let time = Date().unixTimestampInMiliseconds() - start
             print("Time to parse splits : \(time)")
 
@@ -100,7 +108,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             do {
                 obj.name = splitName
                 obj.body = try Json.encodeToJson(split)
-                obj.updatedAt = Date().unixTimestamp()
+                obj.updatedAt = Date.now()
                 // Saving one by one to avoid losing all
                 // if an error occurs
                 self.coreDataHelper.save()
