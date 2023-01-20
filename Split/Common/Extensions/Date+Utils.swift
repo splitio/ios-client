@@ -51,4 +51,8 @@ extension Date {
     static func nowMilis() -> Int64 {
         return Date().unixTimestampInMiliseconds()
     }
+
+    static func interval(ms: Int64) -> Int64 {
+        return ms - Date.nowMilis()
+    }
 }
