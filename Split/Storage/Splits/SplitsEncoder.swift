@@ -43,7 +43,7 @@ struct SplitsParallelEncoder: SplitsEncoder {
             queue.addOperation {
                 let parsed = serialEncoder.encode(split)
                 dataQueue.sync {
-                    splitsJson.merge( parsed, uniquingKeysWith: { (_, new) in new } )
+                    splitsJson.merge( parsed, uniquingKeysWith: {(_, new) in new })
                 }
             }
         }
