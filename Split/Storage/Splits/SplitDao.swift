@@ -75,7 +75,6 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             splits = self.decoder.decode(jsonSplits).map { $0 }
             let time = Date().unixTimestampInMiliseconds() - start
             print("Time to parse splits : \(time)")
-
         }
         return splits ?? []
     }

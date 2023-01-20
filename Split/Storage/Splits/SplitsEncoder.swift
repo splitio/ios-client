@@ -14,6 +14,8 @@ protocol SplitsEncoder {
 
 struct SplitsParallelEncoder: SplitsEncoder {
 
+    private let minTaskPerThread = 10
+
     // Returns Name: Json
     func encode(_ list: [Split]) -> [String: String] {
 
@@ -26,11 +28,17 @@ struct SplitsParallelEncoder: SplitsEncoder {
         let dataQueue = DispatchQueue(label: "split-parallel-encoding-data",
                                       target: DispatchQueue(label: "split-parallel-encoding-data-conc",
                                                             attributes: .concurrent))
-        let queue = OperationQueue()
-        let taskCount = ProcessInfo.processInfo.processorCount
+
+        let taskCount = ThreadUtils.processCount(totalTaskCount: list.count, minTaskPerThread: minTaskPerThread)
         let chunkSize = Int(list.count / taskCount)
-        Logger.v("Task count for parallel decoding: \(taskCount)")
+        Logger.v("Task count for parallel encoding: \(taskCount)")
         Logger.v("Chunck size for parallel decoding: \(chunkSize)")
+
+        if taskCount == 1 {
+            return serialEncoder.encode(list)
+        }
+
+        let queue = OperationQueue()
         list.chunked(into: chunkSize).forEach { split in
             queue.addOperation {
                 let parsed = serialEncoder.encode(split)
@@ -40,7 +48,6 @@ struct SplitsParallelEncoder: SplitsEncoder {
             }
         }
         queue.waitUntilAllOperationsAreFinished()
-        print("Parsed count: \(splitsJson.count)")
         return splitsJson
     }
 }

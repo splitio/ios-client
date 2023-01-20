@@ -13,7 +13,7 @@ protocol SplitsDecoder {
 }
 
 struct SplitsParallelDecoder: SplitsDecoder {
-
+    private let minTaskPerThread = 10
     func decode(_ list: [String]) -> [Split] {
 
         if list.count == 0 {
@@ -25,11 +25,17 @@ struct SplitsParallelDecoder: SplitsDecoder {
         let dataQueue = DispatchQueue(label: "split-parallel-parsing-data",
                                       target: DispatchQueue(label: "split-parallel-parsing-data-conc",
                                                             attributes: .concurrent))
-        let queue = OperationQueue()
-        let taskCount = ProcessInfo.processInfo.processorCount
+
+        let taskCount = ThreadUtils.processCount(totalTaskCount: list.count, minTaskPerThread: minTaskPerThread)
         let chunkSize = Int(list.count / taskCount)
         Logger.v("Task count for parallel decoding: \(taskCount)")
         Logger.v("Chunck size for parallel decoding: \(chunkSize)")
+
+        if taskCount == 1 {
+            return serialDecoder.decode(list)
+        }
+
+        let queue = OperationQueue()
         list.chunked(into: chunkSize).forEach { chunk in
             queue.addOperation {
                 let parsed = serialDecoder.decode(chunk)
