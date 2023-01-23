@@ -14,7 +14,11 @@ protocol SplitsEncoder {
 
 struct SplitsParallelEncoder: SplitsEncoder {
 
-    private let minTaskPerThread = 10
+    private var minTaskPerThread: Int
+
+    init(minTaskPerThread: Int = 10) {
+        self.minTaskPerThread = minTaskPerThread
+    }
 
     // Returns Name: Json
     func encode(_ list: [Split]) -> [String: String] {

@@ -13,7 +13,12 @@ protocol SplitsDecoder {
 }
 
 struct SplitsParallelDecoder: SplitsDecoder {
-    private let minTaskPerThread = 10
+    private var minTaskPerThread: Int
+
+    init(minTaskPerThread: Int = 10) {
+        self.minTaskPerThread = minTaskPerThread
+    }
+
     func decode(_ list: [String]) -> [Split] {
 
         if list.count == 0 {

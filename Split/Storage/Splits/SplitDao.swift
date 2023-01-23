@@ -21,7 +21,6 @@ protocol SplitDao {
 class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
     let decoder: SplitsDecoder = SplitsParallelDecoder()
     let encoder: SplitsEncoder = SplitsParallelEncoder()
-//    let decoder: SplitsDecoder = SplitsSerialDecoder()
 
     func insertOrUpdate(splits: [Split]) {
         let parsed = self.encoder.encode(splits)
