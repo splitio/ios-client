@@ -56,17 +56,11 @@ class DefaultEventsTracker: EventsTracker {
         let timeStart = Stopwatch.now()
         let validationTag = "track"
 
-        guard let trafficType = trafficType ?? config.trafficType else {
-            return false
-        }
+        guard let trafficType = trafficType ?? config.trafficType else { return false }
 
-
-        if let errorInfo = eventValidator.validate(key: matchingKey,
-                                                   trafficTypeName: trafficType,
-                                                   eventTypeId: trafficType,
-                                                   value: value,
-                                                   properties: properties,
-                                                   isSdkReady: isSdkReady) {
+        if let errorInfo = eventValidator.validate(key: matchingKey, trafficTypeName: trafficType,
+                                                   eventTypeId: trafficType, value: value,
+                                                   properties: properties, isSdkReady: isSdkReady) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
                 return false
