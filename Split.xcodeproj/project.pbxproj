@@ -526,6 +526,7 @@
 		956A7E2C297ECB110080D53C /* SplitsDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A7E2B297ECB110080D53C /* SplitsDecoderTest.swift */; };
 		956A7E2E297ED7600080D53C /* SplitsEncoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A7E2D297ED7600080D53C /* SplitsEncoderTest.swift */; };
 		956A7E31297EE5A60080D53C /* ComputeProcessCountTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A7E30297EE5A60080D53C /* ComputeProcessCountTest.swift */; };
+		956A7E33297EF8B10080D53C /* SplitsEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A7E242979F2290080D53C /* SplitsEncoder.swift */; };
 		956D17CD260D1B700037F575 /* ChangesCheckerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17CC260D1B700037F575 /* ChangesCheckerMock.swift */; };
 		956D17D1260D266E0037F575 /* SplitsChangesCheckerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17D0260D266E0037F575 /* SplitsChangesCheckerTest.swift */; };
 		956D17D7260D28320037F575 /* MySegmentsChangeChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D17D6260D28320037F575 /* MySegmentsChangeChecker.swift */; };
@@ -4682,6 +4683,7 @@
 				95B02D7728D0BDC20030EC8B /* JwtTokenParser.swift in Sources */,
 				95B02D7828D0BDC20030EC8B /* DefaultSseNotificationParser.swift in Sources */,
 				95B02D7928D0BDC20030EC8B /* SyncUpdateWorker.swift in Sources */,
+				956A7E33297EF8B10080D53C /* SplitsEncoder.swift in Sources */,
 				95B02D7A28D0BDC20030EC8B /* SseNotificationProcessor.swift in Sources */,
 				95B02D7B28D0BDC30030EC8B /* PushManagerEventBroadcaster.swift in Sources */,
 				95B02D7C28D0BDC30030EC8B /* NotificationManagerKeeper.swift in Sources */,
