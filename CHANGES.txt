@@ -1,3 +1,6 @@
+2.19.1: (Jan 27, 2023)
+ - Improving SDK Ready and SDK Ready from cache events triggering time by parsing loaded / received data in parallel
+
 2.19.0: (Jan 16, 2023)
  - Added user consent feature to allow delaying or disabling the data tracking from SDK until user consent is explicitly granted or declined. Read more in our docs.
 
