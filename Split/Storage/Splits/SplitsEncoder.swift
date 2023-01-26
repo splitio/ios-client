@@ -43,6 +43,7 @@ struct SplitsParallelEncoder: SplitsEncoder {
         }
 
         let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = taskCount
         list.chunked(into: chunkSize).forEach { split in
             queue.addOperation {
                 let parsed = serialEncoder.encode(split)
