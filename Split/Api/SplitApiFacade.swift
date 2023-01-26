@@ -148,7 +148,7 @@ class SplitApiFacadeBuilder {
     }
 
     private func impressionsMode() -> ImpressionsMode {
-        return splitConfig?.finalImpressionsMode ?? .optimized
+        return splitConfig?.$impressionsMode ?? .optimized
     }
 
 }

@@ -141,7 +141,8 @@ extension DefaultSplitClient {
                                    trafficType: trafficType,
                                    value: value,
                                    properties: properties,
-                                   matchingKey: key.matchingKey)
+                                   matchingKey: key.matchingKey,
+                                   isSdkReady: eventsManager.eventAlreadyTriggered(event: .sdkReady))
     }
 }
 

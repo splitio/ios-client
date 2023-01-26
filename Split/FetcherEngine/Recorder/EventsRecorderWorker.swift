@@ -10,17 +10,17 @@ import Foundation
 
 class EventsRecorderWorker: RecorderWorker {
 
-    private let eventsStorage: PersistentEventsStorage
+    private let persistentEventsStorage: PersistentEventsStorage
     private let eventsRecorder: HttpEventsRecorder
     private let eventsPerPush: Int
     private let eventsSyncHelper: EventsRecorderSyncHelper?
 
-    init(eventsStorage: PersistentEventsStorage,
+    init(persistentEventsStorage: PersistentEventsStorage,
          eventsRecorder: HttpEventsRecorder,
          eventsPerPush: Int,
          eventsSyncHelper: EventsRecorderSyncHelper? = nil) {
 
-        self.eventsStorage = eventsStorage
+        self.persistentEventsStorage = persistentEventsStorage
         self.eventsRecorder = eventsRecorder
         self.eventsPerPush = eventsPerPush
         self.eventsSyncHelper = eventsSyncHelper
@@ -30,14 +30,14 @@ class EventsRecorderWorker: RecorderWorker {
         var rowCount = 0
         var failedEvents = [EventDTO]()
         repeat {
-            let events = eventsStorage.pop(count: eventsPerPush)
+            let events = persistentEventsStorage.pop(count: eventsPerPush)
             rowCount = events.count
             if rowCount > 0 {
                 Logger.d("Sending events")
                 do {
                     _ = try eventsRecorder.execute(events)
                     // Removing sent events
-                    eventsStorage.delete(events)
+                    persistentEventsStorage.delete(events)
                     Logger.i("Events posted successfully")
                 } catch let error {
                     Logger.e("Events error: \(String(describing: error))")
@@ -46,7 +46,7 @@ class EventsRecorderWorker: RecorderWorker {
             }
         } while rowCount == eventsPerPush
         // Activate non sent events to retry in next iteration
-        eventsStorage.setActive(failedEvents)
+        persistentEventsStorage.setActive(failedEvents)
         if let syncHelper = eventsSyncHelper {
             syncHelper.updateAccumulator(count: failedEvents.count,
                                          bytes: failedEvents.reduce(0, { $0 + $1.sizeInBytes }))

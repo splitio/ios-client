@@ -84,7 +84,7 @@ class ImpressionsNoneTest: XCTestCase {
         splitConfig.impressionsChunkSize = 500
 
 //        splitConfig.impressionsMode = "none" // Currently unavailable
-        splitConfig.setImpressionsMode(.none) // Available now only for testing. Will be removed
+        splitConfig.impressionsMode = "NONE"
         splitConfig.uniqueKeysRefreshRate = 9999
 
         let key: Key = Key(matchingKey: userKey)

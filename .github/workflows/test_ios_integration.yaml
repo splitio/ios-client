@@ -1,4 +1,4 @@
-name: Build and Test iOS
+name: Build and Test iOS Integration
 
 on:
   push:
@@ -24,24 +24,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build iOS and Test
-        uses: sersoft-gmbh/xcodebuild-action@v1
-        with:
-          action: build test
-          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=YES
-          configuration: Debug
-          derived-data-path: "${{github.workspace}}/SplitApp"
-          destination: 'platform=iOS Simulator,OS=15.2,name=iPhone 12'
-          project: Split.xcodeproj
-          scheme: Split
-          sdk: 'iphonesimulator'
-          test-plan: 'SplitiOSUnit'
-          use-xcpretty: true
-
       - name: Test iOS integration
         uses: sersoft-gmbh/xcodebuild-action@v1
         with:
-          action: test
+          action: build test
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=YES
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"

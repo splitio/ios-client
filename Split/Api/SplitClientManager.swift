@@ -27,8 +27,6 @@ class DefaultClientManager: SplitClientManager {
 
     private var eventsTracker: EventsTracker
     private let telemetryProducer: TelemetryProducer?
-    private let anyValueValidator: AnyValueValidator
-    private let validationLogger: ValidationMessageLogger
     private let defaultKey: Key
     private let syncManager: SyncManager
     private let evaluator: Evaluator
@@ -46,6 +44,7 @@ class DefaultClientManager: SplitClientManager {
          storageContainer: SplitStorageContainer,
          syncManager: SyncManager,
          synchronizer: Synchronizer,
+         eventsTracker: EventsTracker,
          eventsManagerCoordinator: SplitEventsManagerCoordinator,
          mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory,
          telemetryStopwatch: Stopwatch?) {
@@ -61,19 +60,11 @@ class DefaultClientManager: SplitClientManager {
         self.eventsManagerCoordinator = eventsManagerCoordinator
         self.storageContainer = storageContainer
         self.telemetryProducer = storageContainer.telemetryStorage
-        self.anyValueValidator = DefaultAnyValueValidator()
-        self.validationLogger = DefaultValidationMessageLogger()
         self.evaluator = DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
                                           mySegmentsStorage: storageContainer.mySegmentsStorage)
         self.telemetryStopwatch = telemetryStopwatch
 
-        let eventsValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
-        self.eventsTracker = DefaultEventsTracker(config: config,
-                                                  synchronizer: synchronizer,
-                                                  eventValidator: eventsValidator,
-                                                  anyValueValidator: anyValueValidator,
-                                                  validationLogger: validationLogger,
-                                                  telemetryProducer: telemetryProducer)
+        self.eventsTracker = eventsTracker
 
         defaultClient = createClient(forKey: key)
 

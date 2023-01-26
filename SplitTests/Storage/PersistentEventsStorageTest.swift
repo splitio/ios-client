@@ -35,6 +35,14 @@ class PersistentEventsStorageTests: XCTestCase {
         XCTAssertEqual(20, eventDao.insertedEvents.count)
     }
 
+    func testPushMany() {
+        eventsStorage.push(events: TestingHelper.createEvents(count: 20))
+        eventsStorage.push(events: TestingHelper.createEvents(count: 20))
+        eventsStorage.push(events: TestingHelper.createEvents(count: 20))
+
+        XCTAssertEqual(60, eventDao.insertedEvents.count)
+    }
+
     func testPop() {
         eventDao.getByEvents = createEvents()
         let popped = eventsStorage.pop(count: 100)

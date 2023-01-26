@@ -23,4 +23,8 @@ class UniqueKeyTrackerStub: UniqueKeyTracker {
         savedKeys.append(trackedKeys)
         trackedKeys.removeAll()
     }
+
+    func clear() {
+        trackedKeys.removeAll()
+    }
 }

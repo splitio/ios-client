@@ -20,6 +20,10 @@ class ImpressionDaoStub: ImpressionDao {
         insertedImpressions.append(impression)
     }
 
+    func insert(_ impressions: [KeyImpression]) {
+        insertedImpressions.append(contentsOf: impressions)
+    }
+
     func getBy(createdAt: Int64, status: Int32, maxRows: Int) -> [KeyImpression] {
         return getByImpressions
     }

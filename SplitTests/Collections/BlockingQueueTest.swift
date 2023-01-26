@@ -92,7 +92,7 @@ class BlockingQueueTest: XCTestCase {
         let qu2 = DispatchQueue(label: "stress-test-take-q2", attributes: .concurrent)
         let qu3 = DispatchQueue(label: "stress-test-take-q3", attributes: .concurrent)
         let qu4 = DispatchQueue(label: "stress-test-take-q4", attributes: .concurrent)
-        let qu5 = DispatchQueue(label: "stress-test-take-q4", attributes: .concurrent)
+//        let qu5 = DispatchQueue(label: "stress-test-take-q4", attributes: .concurrent)
 
         let quA1 = DispatchQueue(label: "stress-test-take-qa1", attributes: .concurrent)
         let quA2 = DispatchQueue(label: "stress-test-take-qa2", attributes: .concurrent)

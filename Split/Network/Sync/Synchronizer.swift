@@ -24,8 +24,10 @@ protocol Synchronizer: ImpressionLogger {
     func forceMySegmentsSync(forKey key: String)
     func startPeriodicFetching()
     func stopPeriodicFetching()
-    func startPeriodicRecording()
-    func stopPeriodicRecording()
+    func startRecordingUserData()
+    func stopRecordingUserData()
+    func startRecordingTelemetry()
+    func stopRecordingTelemetry()
     func pushEvent(event: EventDTO)
     func notifySegmentsUpdated(forKey key: String)
     func notifySplitKilled()
@@ -36,31 +38,28 @@ protocol Synchronizer: ImpressionLogger {
 }
 
 // TODO: Extract splits sync logic to a new component
-// TODO: Extract events logic
 class DefaultSynchronizer: Synchronizer {
 
-    private let telemetrySynchronizer: TelemetrySynchronizer?
-    private let splitApiFacade: SplitApiFacade
+    private let splitConfig: SplitClientConfig
     private let splitStorageContainer: SplitStorageContainer
+    private let splitApiFacade: SplitApiFacade
     private let syncWorkerFactory: SyncWorkerFactory
     private let syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
-    private let splitConfig: SplitClientConfig
 
     private var periodicSplitsSyncWorker: PeriodicSyncWorker?
     private let splitsSyncWorker: RetryableSyncWorker
-
-    private let periodicEventsRecorderWorker: PeriodicRecorderWorker
-    private let flusherEventsRecorderWorker: RecorderWorker
-
-    private let eventsSyncHelper: EventsRecorderSyncHelper
     private let splitsFilterQueryString: String
+
     private let splitEventsManager: SplitEventsManager
 
     private let flushQueue = DispatchQueue(label: "split-flush-queue", target: DispatchQueue.global())
-    private let telemetryProducer: TelemetryRuntimeProducer?
     private let byKeySynchronizer: ByKeySynchronizer
     private let defaultUserKey: String
+
     private let impressionsTracker: ImpressionsTracker
+    private let eventsSynchronizer: EventsSynchronizer
+    private let telemetrySynchronizer: TelemetrySynchronizer?
+    private let telemetryProducer: TelemetryRuntimeProducer?
 
     private var isDestroyed = Atomic(false)
 
@@ -72,7 +71,7 @@ class DefaultSynchronizer: Synchronizer {
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
          impressionsTracker: ImpressionsTracker,
-         eventsSyncHelper: EventsRecorderSyncHelper,
+         eventsSynchronizer: EventsSynchronizer,
          syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
         = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
@@ -87,10 +86,7 @@ class DefaultSynchronizer: Synchronizer {
 
         self.splitsSyncWorker = syncWorkerFactory.createRetryableSplitsSyncWorker()
         self.impressionsTracker = impressionsTracker
-        self.flusherEventsRecorderWorker = syncWorkerFactory.createEventsRecorderWorker(syncHelper: eventsSyncHelper)
-        self.periodicEventsRecorderWorker =
-            syncWorkerFactory.createPeriodicEventsRecorderWorker(syncHelper: eventsSyncHelper)
-        self.eventsSyncHelper = eventsSyncHelper
+        self.eventsSynchronizer = eventsSynchronizer
         self.splitsFilterQueryString = splitsFilterQueryString
         self.splitEventsManager = splitEventsManager
         self.telemetryProducer = splitStorageContainer.telemetryStorage
@@ -201,25 +197,27 @@ class DefaultSynchronizer: Synchronizer {
         recordSyncModeEvent(TelemetryStreamingEventValue.syncModeStreaming)
     }
 
-    func startPeriodicRecording() {
+    func startRecordingUserData() {
         impressionsTracker.start()
-        periodicEventsRecorderWorker.start()
+        eventsSynchronizer.start()
+    }
+
+    func stopRecordingUserData() {
+        impressionsTracker.stop()
+        eventsSynchronizer.stop()
+    }
+
+    func startRecordingTelemetry() {
         telemetrySynchronizer?.start()
     }
 
-    func stopPeriodicRecording() {
-        impressionsTracker.stop()
-        periodicEventsRecorderWorker.stop()
+    func stopRecordingTelemetry() {
         telemetrySynchronizer?.destroy()
     }
 
     func pushEvent(event: EventDTO) {
         flushQueue.async {
-            if self.eventsSyncHelper.pushAndCheckFlush(event) {
-                self.flusherEventsRecorderWorker.flush()
-                self.eventsSyncHelper.resetAccumulator()
-            }
-            self.telemetryProducer?.recordEventStats(type: .queued, count: 1)
+            self.eventsSynchronizer.push(event)
         }
     }
 
@@ -242,7 +240,7 @@ class DefaultSynchronizer: Synchronizer {
         impressionsTracker.pause()
         periodicSplitsSyncWorker?.pause()
         byKeySynchronizer.pause()
-        periodicEventsRecorderWorker.pause()
+        eventsSynchronizer.pause()
         telemetrySynchronizer?.synchronizeStats()
         telemetrySynchronizer?.pause()
     }
@@ -251,15 +249,14 @@ class DefaultSynchronizer: Synchronizer {
         impressionsTracker.resume()
         periodicSplitsSyncWorker?.resume()
         byKeySynchronizer.resume()
-        periodicEventsRecorderWorker.resume()
+        eventsSynchronizer.resume()
         telemetrySynchronizer?.resume()
     }
 
     func flush() {
         flushQueue.async {
             self.impressionsTracker.flush()
-            self.flusherEventsRecorderWorker.flush()
-            self.eventsSyncHelper.resetAccumulator()
+            self.eventsSynchronizer.flush()
             self.telemetrySynchronizer?.synchronizeStats()
         }
     }
@@ -270,7 +267,7 @@ class DefaultSynchronizer: Synchronizer {
         byKeySynchronizer.stop()
         periodicSplitsSyncWorker?.stop()
         periodicSplitsSyncWorker?.destroy()
-        periodicEventsRecorderWorker.destroy()
+        eventsSynchronizer.destroy()
         impressionsTracker.destroy()
         let updateTasks = syncTaskByChangeNumberCatalog.takeAll()
         for task in updateTasks.values {
