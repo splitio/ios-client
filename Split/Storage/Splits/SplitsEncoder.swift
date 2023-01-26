@@ -26,7 +26,7 @@ struct SplitsParallelEncoder: SplitsEncoder {
         if list.count == 0 {
             return [:]
         }
-        Logger.v("Using parallel decoding for \(list.count) splits")
+        Logger.v("Using parallel encoding for \(list.count) splits")
         let serialEncoder = SplitsSerialEncoder()
         var splitsJson = [String: String]()
         let dataQueue = DispatchQueue(label: "split-parallel-encoding-data",
@@ -36,7 +36,7 @@ struct SplitsParallelEncoder: SplitsEncoder {
         let taskCount = ThreadUtils.processCount(totalTaskCount: list.count, minTaskPerThread: minTaskPerThread)
         let chunkSize = Int(list.count / taskCount)
         Logger.v("Task count for parallel encoding: \(taskCount)")
-        Logger.v("Chunck size for parallel decoding: \(chunkSize)")
+        Logger.v("Chunck size for parallel encoding: \(chunkSize)")
 
         if taskCount == 1 {
             return serialEncoder.encode(list)
@@ -71,7 +71,7 @@ struct SplitsSerialEncoder: SplitsEncoder {
                     result[name] = json
                 }
             } catch {
-                Logger.v("Failed decoding split json: \(split.name ?? "empty name!")")
+                Logger.v("Failed encoding split json: \(split.name ?? "empty name!")")
             }
         }
         return result
