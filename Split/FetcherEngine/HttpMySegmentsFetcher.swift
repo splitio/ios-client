@@ -29,8 +29,9 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
         Logger.d("Fetching segments")
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<[String]>?
-        let startTime = syncHelper.time()
+        let startTime = Date().unixTimestampInMiliseconds()
         restClient.getMySegments(user: userKey, headers: headers) { result in
+            Logger.v("Fetch Splits time: \(Date().unixTimestampInMiliseconds() - startTime)")
             requestResult = result
             semaphore.signal()
         }

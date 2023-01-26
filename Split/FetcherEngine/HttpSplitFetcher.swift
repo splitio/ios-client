@@ -27,8 +27,9 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
 
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SplitChange>?
-        let startTime = syncHelper.time()
+        let startTime = Date().unixTimestampInMiliseconds()
         restClient.getSplitChanges(since: since, till: till, headers: headers) { result in
+            Logger.v("Fetch Splits time: \(Date().unixTimestampInMiliseconds() - startTime)")
             requestResult = result
             semaphore.signal()
         }
