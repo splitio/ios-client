@@ -41,6 +41,7 @@ struct SplitsParallelDecoder: SplitsDecoder {
         }
 
         let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = taskCount
         list.chunked(into: chunkSize).forEach { chunk in
             queue.addOperation {
                 let parsed = serialDecoder.decode(chunk)
