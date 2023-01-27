@@ -290,7 +290,6 @@
 		59D84BDC2215CD52003DA248 /* LocalhostSplitFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BDB2215CD52003DA248 /* LocalhostSplitFetcherTests.swift */; };
 		59D84BE3221734F5003DA248 /* LocalhostSplitClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */; };
 		59D84BE7221AE775003DA248 /* LocalhostManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */; };
-		59DD34B42236989700FA9545 /* FolderApiKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DD34B32236989700FA9545 /* FolderApiKeyTests.swift */; };
 		59E6A38A25557C8D005DE642 /* split_cache.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */; };
 		59ED408424EAB8C900EF7B09 /* PushNotificationManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59ED408324EAB8C900EF7B09 /* PushNotificationManagerTest.swift */; };
 		59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59ED408524EAB95E00EF7B09 /* SseAuthenticationStub.swift */; };
@@ -1518,7 +1517,6 @@
 		59D84BDB2215CD52003DA248 /* LocalhostSplitFetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostSplitFetcherTests.swift; sourceTree = "<group>"; };
 		59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitClientTests.swift; sourceTree = "<group>"; };
 		59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostManagerTests.swift; sourceTree = "<group>"; };
-		59DD34B32236989700FA9545 /* FolderApiKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderApiKeyTests.swift; sourceTree = "<group>"; };
 		59E6A38925557C8D005DE642 /* split_cache.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache.xcdatamodel; sourceTree = "<group>"; };
 		59ED408324EAB8C900EF7B09 /* PushNotificationManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManagerTest.swift; sourceTree = "<group>"; };
 		59ED408524EAB95E00EF7B09 /* SseAuthenticationStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseAuthenticationStub.swift; sourceTree = "<group>"; };
@@ -3174,7 +3172,6 @@
 			children = (
 				59BF90B8239A75520007A896 /* VersionTest.swift */,
 				59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */,
-				59DD34B32236989700FA9545 /* FolderApiKeyTests.swift */,
 				5959C476227B89820064F968 /* FactoryMonitorTest.swift */,
 				5959C478227B89980064F968 /* FactoryRegistryTest.swift */,
 				598EDE7322493008005D4762 /* SplitConfigurationsParsingTest.swift */,
@@ -4020,7 +4017,6 @@
 				95F3EFF4258D2C0300084AF8 /* RecorderWorkerStub.swift in Sources */,
 				95C717E2268CE705002ADB83 /* PersistentImpressionsCountStorageTest.swift in Sources */,
 				955AAB8D283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift in Sources */,
-				59DD34B42236989700FA9545 /* FolderApiKeyTests.swift in Sources */,
 				952BF5FC278DF66700FF6181 /* TelemetryConfigHelperStub.swift in Sources */,
 				956A7E2E297ED7600080D53C /* SplitsEncoderTest.swift in Sources */,
 				59ED408824EABD4700EF7B09 /* SseClientMock.swift in Sources */,
