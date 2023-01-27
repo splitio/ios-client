@@ -1,14 +1,16 @@
 #!/bin/zsh
-
 clear
 CUR_DIR=$(pwd)
 SCHEMA_NAME=Split
-BUILD_FOLDER=build_size
+BUILD_FOLDER=split_build
 XCF_FOLDER=xcframework
 
 echo "-----------------------------------"
 echo "This scrip must be run from the folder containing Split.xcodeproj"
+echo "It is intented to be used as a starter point to build a custom xcframework Split SDK\n"
+echo "Example: ./scripts/generate_xcframework"
 echo "-----------------------------------"
+echo "\n"
 
 rm -rf "${CUR_DIR}/${BUILD_FOLDER}"
 rm -rf "${CUR_DIR}/${XCF_FOLDER}"
@@ -22,17 +24,9 @@ xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS"  -derivedDataPath "${
 echo "Creating XCFramework from ${BUILD_FOLDER} "
 xcodebuild -create-xcframework -framework "${CUR_DIR}/${BUILD_FOLDER}/Build/Products/Release-iphoneos/${SCHEMA_NAME}.framework" -output "${CUR_DIR}/${XCF_FOLDER}/Split.xcframework"
 
-FRAMEWORK_SIZE=$(du -hs "${CUR_DIR}/${BUILD_FOLDER}/Build/Products/Release-iphoneos/${SCHEMA_NAME}.framework")
-XCF_SIZE=$(du -hs "${CUR_DIR}/${XCF_FOLDER}/Split.xcframework")
+echo "Removing build folder"
+rm -rf "${CUR_DIR}/${BUILD_FOLDER}"
 
-echo "\n-----------------------------------"
-echo " Split iOS Size"
 echo "-----------------------------------"
-echo "Framework   --> ${FRAMEWORK_SIZE}"
-echo "XCFramework --> ${XCF_SIZE}"
+echo "Split XCFramework is located in ${XCF_FOLDER}"
 echo "-----------------------------------\n"
-
-if read -q "choice?Press Y/y to remove generated files > "; then
-    rm -rf "${CUR_DIR}/${BUILD_FOLDER}"
-    rm -rf "${CUR_DIR}/${XCF_FOLDER}"
-fi

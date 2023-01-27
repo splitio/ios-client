@@ -1,7 +1,3 @@
 framework module SplitWatchOS {
   umbrella header "SplitWatchOS.h"
-
-  header "JFGC.h"
-  header "JFRandom.h"
-  header "JFBCrypt.h"
 }
