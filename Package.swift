@@ -11,20 +11,12 @@ let package = Package(
     targets: [
         .target(
             name: "Split",
-            dependencies: ["JFBCrypt"],
             path: "Split",
             exclude: [
-                "Common/Utils/JFBCrypt/",
                 "Common/Yaml/LICENSE",
                 "Info.plist",
-                "Split.h",
-                "Common/Utils/framework/HashHelper.swift"
+                "Split.h"
             ]
-        ),
-        .target(
-            name: "JFBCrypt",
-            path: "Split/Common/Utils/JFBCrypt",
-            publicHeadersPath: "."
         )
     ]
 )
