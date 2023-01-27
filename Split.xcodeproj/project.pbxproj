@@ -1868,6 +1868,7 @@
 		95F3F06625ACDE0400084AF8 /* EmptyMySegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyMySegmentsStorage.swift; sourceTree = "<group>"; };
 		95F3F07225ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpMySegmentsFetcherStub.swift; sourceTree = "<group>"; };
 		95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceConstants.swift; sourceTree = "<group>"; };
+		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -3206,6 +3207,7 @@
 		95B02B1428CFBD160030EC8B /* SplitWatchOS */ = {
 			isa = PBXGroup;
 			children = (
+				95F3F45F29842EE6005A4844 /* modules.modulemap */,
 				95B02B1528CFBD160030EC8B /* SplitWatchOS.h */,
 			);
 			path = SplitWatchOS;
@@ -5110,7 +5112,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = SplitWatchOS/module.modulemap;
+				MODULEMAP_FILE = SplitWatchOS/modules.modulemap;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.split.Split;
@@ -5154,7 +5156,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = SplitWatchOS/module.modulemap;
+				MODULEMAP_FILE = SplitWatchOS/modules.modulemap;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.split.Split;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
