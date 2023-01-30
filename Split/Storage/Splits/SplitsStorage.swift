@@ -105,25 +105,10 @@ class DefaultSplitsStorage: SplitsStorage {
         return inMemorySplits.count
     }
 
-    private func increaseTrafficTypeCount(name: String) {
-        let count = countForTrafficType(name: name) + 1
-        trafficTypes.setValue(count, forKey: name)
-    }
-
-    private func decreaseTrafficTypeCount(name: String) {
-        let count = countForTrafficType(name: name)
-        if count > 1 {
-            trafficTypes.setValue(count - 1, forKey: name)
-        } else {
-            trafficTypes.removeValue(forKey: name)
-        }
-    }
-
-    private func countForTrafficType(name: String) -> Int {
-        return trafficTypes.value(forKey: name) ?? 0
-    }
-
     private func processUpdated(splits: [Split], active: Bool) {
+        var cachedSplits = inMemorySplits.all
+        var cachedTrafficTypes = trafficTypes.all
+
         for split in splits {
             guard let splitName = split.name?.lowercased()  else {
                 Logger.e("Invalid split name received while updating splits")
@@ -135,7 +120,7 @@ class DefaultSplitsStorage: SplitsStorage {
                 continue
             }
 
-            let loadedSplit = inMemorySplits.value(forKey: splitName)
+            let loadedSplit = cachedSplits[splitName]
 
             if loadedSplit == nil, !active {
                 // Split to remove not in memory, do nothing
@@ -144,16 +129,23 @@ class DefaultSplitsStorage: SplitsStorage {
 
             if loadedSplit != nil, let oldTrafficType = loadedSplit?.trafficTypeName {
                 // Must decreated old traffic type count if a split is updated or removed
-                decreaseTrafficTypeCount(name: oldTrafficType)
+                let count = cachedTrafficTypes[oldTrafficType] ?? 0
+                if count > 1 {
+                    cachedTrafficTypes[oldTrafficType] = count - 1
+                } else {
+                    cachedTrafficTypes.removeValue(forKey: oldTrafficType)
+                }
             }
 
             if active {
-                increaseTrafficTypeCount(name: trafficTypeName)
-                inMemorySplits.setValue(split, forKey: splitName)
+                cachedTrafficTypes[trafficTypeName] = (cachedTrafficTypes[trafficTypeName] ?? 0) + 1
+                cachedSplits[splitName] = split
             } else {
-                inMemorySplits.removeValue(forKey: splitName)
+                cachedSplits.removeValue(forKey: splitName)
             }
         }
+        inMemorySplits.setValues(cachedSplits)
+        trafficTypes.setValues(cachedTrafficTypes)
     }
 
     func destroy() {
