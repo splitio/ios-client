@@ -62,7 +62,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let eventsManager = components.getSplitEventsManagerCoordinator()
 
         let databaseName = SplitDatabaseHelper.databaseName(apiKey: params.apiKey) ?? params.config.defaultDataFolder
-        SplitDatabaseHelper.renameDatabaseFromLegacyName(name: databaseName, apiKey: params.apiKey)
 
         let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
                                                                     telemetryStorage: params.telemetryStorage,

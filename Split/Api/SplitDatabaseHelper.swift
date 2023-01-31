@@ -124,62 +124,10 @@ struct SplitDatabaseHelper {
     }
 
     static func databaseName(apiKey: String) -> String? {
-        if apiKey.count < kDbMagicCharsCount {
+        if apiKey.count < kDbMagicCharsCount * 2 {
             return nil
         }
         return "\(apiKey.prefix(kDbMagicCharsCount))\(apiKey.suffix(kDbMagicCharsCount))"
-    }
-
-    static func renameDatabaseFromLegacyName(name dbName: String, apiKey: String) {
-        let fileManager = FileManager.default
-        guard let docUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {
-            Logger.d("Could not find document directory")
-            return
-        }
-        guard let cacheUrl = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).last else {
-            Logger.d("Could not find cache directory")
-            return
-        }
-
-        let fullDbName = "\(dbName).\(ServiceConstants.databaseExtension)"
-        let cacheDbUrl = cacheUrl.appendingPathComponent("\(fullDbName)")
-        // Checking if database in cache folder exists
-        // If so, work is done here
-        if fileManager.fileExists(atPath: cacheDbUrl.path) {
-            return
-        }
-
-        // Checking if database without hashing exists
-        // in documents
-        // If so, moving to cache folder
-        if fileManager.fileExists(atPath: docUrl.appendingPathComponent("\(fullDbName)").path) {
-            moveDbFiles(fromFolder: docUrl, fromName: dbName,
-                        toFolder: cacheUrl, toName: dbName)
-            return
-        }
-
-        // Checking if database hashed name exists
-        // in documents
-        // If so, moving to cache folder without a hashed name
-        guard let legacyName = legacyDbName(from: apiKey) else {
-            return
-        }
-        moveDbFiles(fromFolder: docUrl, fromName: legacyName,
-                    toFolder: cacheUrl, toName: dbName)
-    }
-
-    static func moveDbFiles(fromFolder: URL, fromName: String,
-                            toFolder: URL, toName: String) {
-        do {
-            for ext in kDbExt {
-                let fullExt = "\(ServiceConstants.databaseExtension)\(ext)"
-                let fromDbFile = fromFolder.appendingPathComponent("\(fromName).\(fullExt)")
-                let newDbFile = toFolder.appendingPathComponent("\(toName).\(fullExt)")
-                try FileManager.default.moveItem(at: fromDbFile, to: newDbFile)
-            }
-        } catch {
-            Logger.d("Unable to rename / move old db file. Avoiding migration. Message: \(error.localizedDescription)")
-        }
     }
 
     static func sanitizeForFolderName(_ string: String) -> String {
@@ -191,27 +139,6 @@ struct SplitDatabaseHelper {
         }
         let range = NSRange(location: 0, length: string.count)
         return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
-    }
-
-    static func legacyDbName(from apiKey: String) -> String? {
-        let kSaltLength = 29
-        let kSaltPrefix = "$2a$10$"
-        let kCharToFillSalt = "A"
-        let sanitizedApiKey = SplitDatabaseHelper.sanitizeForFolderName(apiKey)
-        var salt = kSaltPrefix
-        if sanitizedApiKey.count >= kSaltLength - kSaltPrefix.count {
-            let endIndex = sanitizedApiKey.index(sanitizedApiKey.startIndex,
-                                                 offsetBy: kSaltLength - kSaltPrefix.count)
-            salt.append(String(sanitizedApiKey[..<endIndex]))
-        } else {
-            salt.append(sanitizedApiKey)
-            salt.append(contentsOf: String(repeating: kCharToFillSalt,
-                                           count: (kSaltLength - kSaltPrefix.count) - sanitizedApiKey.count))
-        }
-        if let hash = HashHelper.hash(sanitizedApiKey, salt: salt) {
-            return SplitDatabaseHelper.sanitizeForFolderName(hash)
-        }
-        return nil
     }
 
     static func createByKeyMySegmentsStorage(mySegmentsStorage: MySegmentsStorage,
