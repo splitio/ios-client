@@ -1,4 +1,4 @@
-name: Build and Test iOS Integration
+name: Build and iOS Integration Tests
 
 on:
   push:
