@@ -45,7 +45,6 @@ jobs:
         with:
           version: 4.8.0.2856
           scan: false
-          with-jre: true
 
       - name: SonarQube Scan
         run: >
