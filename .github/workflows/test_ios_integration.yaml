@@ -1,4 +1,4 @@
-name: Build and Test iOS Integration
+name: Build and iOS Integration Tests
 
 on:
   push:
@@ -37,23 +37,3 @@ jobs:
           sdk: 'iphonesimulator'
           test-plan: 'SplitiOSIntegration'
           use-xcpretty: true
-
-      - name: SonarQube Install
-        uses: mathrix-education/sonar-scanner@master
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-        with:
-          version: 4.6.2.2472
-          scan: false
-
-      - name: SonarQube Scan
-        run: >
-          sonar-scanner --debug
-          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
-          -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} 
-          -Dsonar.projectName=${{ github.event.repository.name }} 
-          -Dsonar.projectKey=splitio_ios-client 
-          -Dsonar.github.token=${{ secrets.GITHUB_TOKEN }} 
-          -Dsonar.c.file.suffixes=- 
-          -Dsonar.cpp.file.suffixes=- 
-          -Dsonar.objc.file.suffixes=-
