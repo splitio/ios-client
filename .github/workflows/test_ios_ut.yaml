@@ -38,6 +38,13 @@ jobs:
           test-plan: 'SplitiOSUnit'
           use-xcpretty: true
 
+      - name: Install java 11
+        - uses: actions/checkout@v3
+        - uses: actions/setup-java@v3
+        with:
+          distribution: 'oracle'
+          java-version: '11'
+
       - name: SonarQube Install
         uses: mathrix-education/sonar-scanner@master
         env:
