@@ -52,6 +52,7 @@ class UserConsentModeOptimizedTest: XCTestCase {
         // and on flush() call
         notificationHelper.simulateApplicationDidEnterBackground()
         notificationHelper.simulateApplicationDidBecomeActive()
+        client.flush()
         wait(for: [impExp, countExp], timeout: 10.0)
 
         XCTAssertTrue(impPosted)
