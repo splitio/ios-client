@@ -1981,7 +1981,7 @@
 		3B6DEE5C20EA6A4E0067435E /* Split */ = {
 			isa = PBXGroup;
 			children = (
-				95F0564C29A6C99C009F5A68 /* SplitFactory+bgSync.swift */,
+				95F0565429A6CC90009F5A68 /* NoOpBgSync */,
 				95F0563829A6B6B5009F5A68 /* BgSync */,
 				954F9BBC25759C4800140B81 /* Package.swift */,
 				59163B11216396EF00C7AA57 /* Common */,
@@ -3275,11 +3275,19 @@
 		95F0563829A6B6B5009F5A68 /* BgSync */ = {
 			isa = PBXGroup;
 			children = (
+				95F0564C29A6C99C009F5A68 /* SplitFactory+bgSync.swift */,
 				95726074262F548500350CCA /* SplitBgSynchronizer.swift */,
 				957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */,
-				95F0564A29A6C8BF009F5A68 /* SplitFactory+noBgSync.swift */,
 			);
 			path = BgSync;
+			sourceTree = "<group>";
+		};
+		95F0565429A6CC90009F5A68 /* NoOpBgSync */ = {
+			isa = PBXGroup;
+			children = (
+				95F0564A29A6C8BF009F5A68 /* SplitFactory+noBgSync.swift */,
+			);
+			path = NoOpBgSync;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
