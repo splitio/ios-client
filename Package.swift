@@ -22,7 +22,10 @@ let package = Package(
         ),
         .target(
             name: "BgSync",
-            path: "Split/BgSync"
+            path: "Split/BgSync",
+            exclude: [
+                "SplitFactory+bgSync.swift"
+            ]
         )
     ]
 )
