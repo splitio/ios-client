@@ -1978,6 +1978,7 @@
 		3B6DEE5C20EA6A4E0067435E /* Split */ = {
 			isa = PBXGroup;
 			children = (
+				95F0563829A6B6B5009F5A68 /* BgSync */,
 				954F9BBC25759C4800140B81 /* Package.swift */,
 				59163B11216396EF00C7AA57 /* Common */,
 				3B6DEEA420EA6AE20067435E /* Models */,
@@ -2016,14 +2017,12 @@
 			isa = PBXGroup;
 			children = (
 				59F4AAB225114A6700A1C69A /* RetryableSyncWorker.swift */,
-				957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */,
 				957E67AB25F66123006F5B19 /* SplitsSyncHelper.swift */,
 				59F4AABA2512ACA100A1C69A /* PeriodicSyncWorker.swift */,
 				598EDE81224C0437005D4762 /* QueryableMySegmentsFetcher.swift */,
 				95F3F05C25A4A70100084AF8 /* YamlSplitsStorage.swift */,
 				95F3F06625ACDE0400084AF8 /* EmptyMySegmentsStorage.swift */,
 				95DFD14B260A156000776E0A /* ChangesChecker.swift */,
-				95726074262F548500350CCA /* SplitBgSynchronizer.swift */,
 			);
 			path = Refresh;
 			sourceTree = "<group>";
@@ -3267,6 +3266,15 @@
 				95C1600C27D28CF4008562E3 /* PersistentAttributesStorage.swift */,
 			);
 			path = Attributes;
+			sourceTree = "<group>";
+		};
+		95F0563829A6B6B5009F5A68 /* BgSync */ = {
+			isa = PBXGroup;
+			children = (
+				95726074262F548500350CCA /* SplitBgSynchronizer.swift */,
+				957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */,
+			);
+			path = BgSync;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
