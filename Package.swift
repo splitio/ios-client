@@ -23,7 +23,6 @@ let package = Package(
         .target(
             name: "BgSync",
             path: "Split/BgSync"
-            ]
         )
     ]
 )
