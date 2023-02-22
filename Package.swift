@@ -22,11 +22,11 @@ let package = Package(
         ),
         .target(
             name: "BgSync",
-            path: "Split/BgSync",
+            path: "Split/BgSync"
         ),
         .target(
             name: "NoOpBgSync",
-            path: "Split/NoOpBgSync",
+            path: "Split/NoOpBgSync"
         )
     ]
 )
