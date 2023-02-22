@@ -15,6 +15,7 @@ let package = Package(
             path: "Split",
             exclude: [
                 "BgSync",
+                "NoOpBgSync",
                 "Common/Yaml/LICENSE",
                 "Info.plist",
                 "Split.h"
