@@ -24,7 +24,8 @@ let package = Package(
             name: "NoOpBgSync",
             path: "Split/NoOpBgSync",
             swiftSettings: [
-                .define("BUILD_SPLIT_FOR_APP_EXTENSION"),
+                .define("BUILD_SPLIT_FOR_APP_EXTENSION", .when(configuration: .release)),
+                .define("BUILD_SPLIT_FOR_APP_EXTENSION", .when(configuration: .debug))
             ]
         )
     ]
