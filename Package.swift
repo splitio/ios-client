@@ -18,6 +18,10 @@ let package = Package(
                 "Common/Yaml/LICENSE",
                 "Info.plist",
                 "Split.h"
+            ],
+            swiftSettings: [
+                .define("BUILD_SPLIT_FOR_APP_EXTENSION", .when(configuration: .release)),
+                .define("BUILD_SPLIT_FOR_APP_EXTENSION", .when(configuration: .debug))
             ]
         ),
         .target(
