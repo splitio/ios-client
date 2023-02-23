@@ -85,7 +85,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         userConsentManager = try components.buildUserConsentManager()
 
-        BgSyncConfigurator.setup(enabled: params.config.synchronizeInBackground, apiKey: params.apiKey, userKey: params.key.matchingKey)
+        setupBgSync(enabled: params.config.synchronizeInBackground, apiKey: params.apiKey, userKey: params.key.matchingKey)
 
         clientManager = DefaultClientManager(config: params.config,
                                              key: params.key,
@@ -126,5 +126,17 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             return
         }
         userConsentManager.set(newMode)
+    }
+
+    private func setupBgSync(enabled: Bool, apiKey: String, userKey: String) {
+#if !BUILD_SPLIT_FOR_APP_EXTENSION
+#if os(iOS)
+        if enabled {
+            SplitBgSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)
+        } else {
+            SplitBgSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)
+        }
+#endif
+#endif
     }
 }

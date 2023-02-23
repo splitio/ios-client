@@ -1166,7 +1166,6 @@
 		95ED4AA3264999BD00FD3569 /* IntegrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ED4AA2264999BD00FD3569 /* IntegrationHelper.swift */; };
 		95ED4AA926499D7D00FD3569 /* SynchronizerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ED4AA826499D7D00FD3569 /* SynchronizerSpy.swift */; };
 		95EEF7C7270E16ED00761B9D /* SplitComponentFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */; };
-		95F0564D29A6C99C009F5A68 /* BgSyncConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F0564C29A6C99C009F5A68 /* BgSyncConfigurator.swift */; };
 		95F20F4627EA6A4300B5B30A /* TreatmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F20F4527EA6A4300B5B30A /* TreatmentManager.swift */; };
 		95F20F4A27EB533000B5B30A /* TreatmentManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F20F4927EB533000B5B30A /* TreatmentManagerTest.swift */; };
 		95F3EFEC258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3EFEB258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift */; };
@@ -1849,8 +1848,6 @@
 		95ED4AA2264999BD00FD3569 /* IntegrationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegrationHelper.swift; sourceTree = "<group>"; };
 		95ED4AA826499D7D00FD3569 /* SynchronizerSpy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizerSpy.swift; sourceTree = "<group>"; };
 		95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitComponentFactory.swift; sourceTree = "<group>"; };
-		95F0564A29A6C8BF009F5A68 /* NoOpBgSyncConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoOpBgSyncConfigurator.swift; sourceTree = "<group>"; };
-		95F0564C29A6C99C009F5A68 /* BgSyncConfigurator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BgSyncConfigurator.swift; sourceTree = "<group>"; };
 		95F20F4527EA6A4300B5B30A /* TreatmentManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreatmentManager.swift; sourceTree = "<group>"; };
 		95F20F4927EB533000B5B30A /* TreatmentManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreatmentManagerTest.swift; sourceTree = "<group>"; };
 		95F3EFEB258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderFlusherCheckerTests.swift; sourceTree = "<group>"; };
@@ -1981,7 +1978,7 @@
 		3B6DEE5C20EA6A4E0067435E /* Split */ = {
 			isa = PBXGroup;
 			children = (
-				95F0565429A6CC90009F5A68 /* NoOpBgSync */,
+				95F0566229A7AEFB009F5A68 /* NoOpBgSync */,
 				95F0563829A6B6B5009F5A68 /* BgSync */,
 				954F9BBC25759C4800140B81 /* Package.swift */,
 				59163B11216396EF00C7AA57 /* Common */,
@@ -3275,17 +3272,15 @@
 		95F0563829A6B6B5009F5A68 /* BgSync */ = {
 			isa = PBXGroup;
 			children = (
-				95F0564C29A6C99C009F5A68 /* BgSyncConfigurator.swift */,
 				95726074262F548500350CCA /* SplitBgSynchronizer.swift */,
 				957E67AF25F6B3E1006F5B19 /* BackgroundSyncWorker.swift */,
 			);
 			path = BgSync;
 			sourceTree = "<group>";
 		};
-		95F0565429A6CC90009F5A68 /* NoOpBgSync */ = {
+		95F0566229A7AEFB009F5A68 /* NoOpBgSync */ = {
 			isa = PBXGroup;
 			children = (
-				95F0564A29A6C8BF009F5A68 /* NoOpBgSyncConfigurator.swift */,
 			);
 			path = NoOpBgSync;
 			sourceTree = "<group>";
@@ -3587,7 +3582,6 @@
 				9505682C26837A43001D7B10 /* PersistentImpressionsCountStorage.swift in Sources */,
 				3B6DEF5620EA6AE50067435E /* SplitEventExecutorResources.swift in Sources */,
 				9577A8432683AD2900D92AE1 /* ImpressionsCountRecorderWorker.swift in Sources */,
-				95F0564D29A6C99C009F5A68 /* BgSyncConfigurator.swift in Sources */,
 				3B6DEF6820EA6AE50067435E /* EqualToMatcher.swift in Sources */,
 				95F3F0242590D35F00084AF8 /* ImpressionsRecorderWorker.swift in Sources */,
 				95B18001275FE87D002DC9DF /* TelemetryConfigRecorderWorker.swift in Sources */,
