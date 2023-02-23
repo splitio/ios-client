@@ -1166,6 +1166,7 @@
 		95ED4AA3264999BD00FD3569 /* IntegrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ED4AA2264999BD00FD3569 /* IntegrationHelper.swift */; };
 		95ED4AA926499D7D00FD3569 /* SynchronizerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ED4AA826499D7D00FD3569 /* SynchronizerSpy.swift */; };
 		95EEF7C7270E16ED00761B9D /* SplitComponentFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */; };
+		95F0566429A7B270009F5A68 /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F0566329A7B270009F5A68 /* Dummy.swift */; };
 		95F20F4627EA6A4300B5B30A /* TreatmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F20F4527EA6A4300B5B30A /* TreatmentManager.swift */; };
 		95F20F4A27EB533000B5B30A /* TreatmentManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F20F4927EB533000B5B30A /* TreatmentManagerTest.swift */; };
 		95F3EFEC258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3EFEB258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift */; };
@@ -1848,6 +1849,7 @@
 		95ED4AA2264999BD00FD3569 /* IntegrationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegrationHelper.swift; sourceTree = "<group>"; };
 		95ED4AA826499D7D00FD3569 /* SynchronizerSpy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizerSpy.swift; sourceTree = "<group>"; };
 		95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitComponentFactory.swift; sourceTree = "<group>"; };
+		95F0566329A7B270009F5A68 /* Dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dummy.swift; sourceTree = "<group>"; };
 		95F20F4527EA6A4300B5B30A /* TreatmentManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreatmentManager.swift; sourceTree = "<group>"; };
 		95F20F4927EB533000B5B30A /* TreatmentManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreatmentManagerTest.swift; sourceTree = "<group>"; };
 		95F3EFEB258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderFlusherCheckerTests.swift; sourceTree = "<group>"; };
@@ -3281,6 +3283,7 @@
 		95F0566229A7AEFB009F5A68 /* NoOpBgSync */ = {
 			isa = PBXGroup;
 			children = (
+				95F0566329A7B270009F5A68 /* Dummy.swift */,
 			);
 			path = NoOpBgSync;
 			sourceTree = "<group>";
@@ -3807,6 +3810,7 @@
 				59AD7ACC246C9DAE00F5B0B4 /* ServiceEndpoints.swift in Sources */,
 				954F9C5825780CA600140B81 /* HttpMySegmentsFetcher.swift in Sources */,
 				590DF9D4214028800082B94F /* SplitView+StringConvertible.swift in Sources */,
+				95F0566429A7B270009F5A68 /* Dummy.swift in Sources */,
 				3B6DEF2520EA6AE50067435E /* Version.swift in Sources */,
 				59B2044324F8FE9A0092F2E9 /* PushManagerEventBroadcaster.swift in Sources */,
 				955428DA256810EC00331356 /* PersistentImpressionsStorage.swift in Sources */,
