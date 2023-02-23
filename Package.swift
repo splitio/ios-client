@@ -6,7 +6,7 @@ let package = Package(
     name: "Split",
     platforms: [.iOS(.v9), .macOS(.v10_11), .watchOS(.v7), .tvOS(.v9)],
     products: [
-        .library(name: "Split", targets: ["Split", "BgSync"]),
+        .library(name: "Split", targets: ["Split"]),
         .library(name: "SplitForExtension", targets: ["Split", "NoOpBgSync"])
     ],
     targets: [
@@ -14,16 +14,11 @@ let package = Package(
             name: "Split",
             path: "Split",
             exclude: [
-                "BgSync",
                 "NoOpBgSync",
                 "Common/Yaml/LICENSE",
                 "Info.plist",
                 "Split.h"
             ]
-        ),
-        .target(
-            name: "BgSync",
-            path: "Split/BgSync"
         ),
         .target(
             name: "NoOpBgSync",
