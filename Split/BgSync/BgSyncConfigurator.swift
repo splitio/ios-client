@@ -8,10 +8,10 @@
 
 import Foundation
 
-extension DefaultSplitFactory {
-    func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
+class BgSyncConfigurator {
+    static func setup(enabled: Bool, apiKey: String, userKey: String) {
 #if os(iOS)
-        if config.synchronizeInBackground {
+        if enabled {
             SplitBgSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)
         } else {
             SplitBgSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)

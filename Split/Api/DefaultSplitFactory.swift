@@ -85,7 +85,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         userConsentManager = try components.buildUserConsentManager()
 
-        setupBgSync(config: params.config, apiKey: params.apiKey, userKey: params.key.matchingKey)
+        BgSyncConfigurator.setup(enabled: params.config.synchronizeInBackground, apiKey: params.apiKey, userKey: params.key.matchingKey)
 
         clientManager = DefaultClientManager(config: params.config,
                                              key: params.key,
