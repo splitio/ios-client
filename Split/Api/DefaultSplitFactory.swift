@@ -129,7 +129,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     private func setupBgSync(enabled: Bool, apiKey: String, userKey: String) {
-#if !BUILD_SPLIT_FOR_APP_EXTENSION
+#if BUILD_SPLIT_FOR_APP_EXTENSION
+#else
 #if os(iOS)
         if enabled {
             SplitBgSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)

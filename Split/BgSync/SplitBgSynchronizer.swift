@@ -52,7 +52,8 @@ import BackgroundTasks
     }
 
     @objc public func schedule(serviceEndpoints: ServiceEndpoints? = nil) {
-#if !BUILD_SPLIT_FOR_APP_EXTENSION
+#if BUILD_SPLIT_FOR_APP_EXTENSION
+#else
         if #available(iOS 13.0, tvOS 13.0, macCatalyst 13.1, *) {
             let success = BGTaskScheduler.shared.register(
                 forTaskWithIdentifier: taskId, using: nil) { task in
@@ -97,7 +98,8 @@ import BackgroundTasks
     }
 
     private func scheduleNextSync(taskId: String) {
-#if !BUILD_SPLIT_FOR_APP_EXTENSION
+#if BUILD_SPLIT_FOR_APP_EXTENSION
+#else
         if #available(iOS 13.0, tvOS 13.0, macCatalyst 13.1, *) {
             let request = BGAppRefreshTaskRequest(identifier: taskId)
             request.earliestBeginDate = Date(timeIntervalSinceNow: SplitBgSynchronizer.kTimeInterval)
