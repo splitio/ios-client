@@ -56,6 +56,10 @@ struct SplitsParallelDecoder: SplitsDecoder {
 }
 
 struct SplitsSerialDecoder: SplitsDecoder {
+    // TODO: Inyect cipher on constructor
+    private var aesCipher: Cipher? = nil//DefaultCipher()
+    // TODO: Replace with a good random key generation
+    private let aesKey = ServiceConstants.aesKeyForPoC
     func decode(_ list: [String]) -> [Split] {
         if list.count == 0 {
             return []
@@ -64,7 +68,8 @@ struct SplitsSerialDecoder: SplitsDecoder {
         // data if one parsing fails
         return list.compactMap { json in
             do {
-                return try Json.encodeFrom(json: json, to: Split.self)
+                let plainJson = aesCipher?.decrypt(json, key: aesKey) ?? json
+                return try Json.encodeFrom(json: plainJson, to: Split.self)
             } catch {
                 Logger.v("Failed decoding split json: \(json)")
             }

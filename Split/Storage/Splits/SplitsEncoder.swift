@@ -58,6 +58,9 @@ struct SplitsParallelEncoder: SplitsEncoder {
 }
 
 struct SplitsSerialEncoder: SplitsEncoder {
+    private var aesCipher: Cipher? = nil//DefaultCipher()
+    // TODO: Replace with a good random key generation
+    private let aesKey = ServiceConstants.aesKeyForPoC
     func encode(_ list: [Split]) -> [String: String] {
         if list.count == 0 {
             return [:]
@@ -69,7 +72,7 @@ struct SplitsSerialEncoder: SplitsEncoder {
             do {
                 if let name = split.name {
                     let json = try Json.encodeToJson(split)
-                    result[name] = json
+                    result[name] = aesCipher?.encrypt(json, key: aesKey) ?? json
                 }
             } catch {
                 Logger.v("Failed encoding split json: \(split.name ?? "empty name!")")
