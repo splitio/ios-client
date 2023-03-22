@@ -6,6 +6,10 @@ SCHEMA_NAME=Split
 BUILD_FOLDER=build_size
 XCF_FOLDER=xcframework
 
+echo "-----------------------------------"
+echo "This scrip must be run from the folder containing Split.xcodeproj"
+echo "-----------------------------------"
+
 rm -rf "${CUR_DIR}/${BUILD_FOLDER}"
 rm -rf "${CUR_DIR}/${XCF_FOLDER}"
 

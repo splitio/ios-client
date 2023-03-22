@@ -39,6 +39,15 @@ class PersistentEventsStorageStub: PersistentEventsStorage {
         }
     }
 
+    func push(events: [EventDTO]) {
+        for event in events {
+            if let eId = event.storageId {
+                storedEvents[eId] = event
+                eventsStatus[eId] = StorageRecordStatus.active
+            }
+        }
+    }
+
     func getCritical() -> [EventDTO] {
         return []
     }

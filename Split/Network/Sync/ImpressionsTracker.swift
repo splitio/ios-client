@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol ImpressionsTracker {
+protocol ImpressionsTracker: AnyObject {
     func start()
     func pause()
     func resume()
@@ -16,10 +16,11 @@ protocol ImpressionsTracker {
     func flush()
     func push(_ impression: KeyImpression)
     func destroy()
+    func enableTracking(_ enable: Bool)
+    func enablePersistence(_ enable: Bool)
 }
 
 class DefaultImpressionsTracker: ImpressionsTracker {
-
     private let splitConfig: SplitClientConfig
 
     private let syncWorkerFactory: SyncWorkerFactory
@@ -39,6 +40,9 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
     private let storageContainer: SplitStorageContainer
     private let telemetryProducer: TelemetryRuntimeProducer?
+
+    private var isTrackingEnabled: Bool = true
+    private var isPersistenceEnabled: Bool = true
 
     init(splitConfig: SplitClientConfig,
          splitApiFacade: SplitApiFacade,
@@ -79,6 +83,11 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     func push(_ impression: KeyImpression) {
+
+        if !isTrackingEnabled {
+            Logger.v("Impression not tracked because tracking is disabled")
+            return
+        }
 
         // This should not happen
         guard let featureName = impression.featureName else {
@@ -143,10 +152,23 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         periodicImpressionsRecorderWoker?.destroy()
         periodicImpressionsCountRecorderWoker?.destroy()
         periodicUniqueKeysRecorderWorker?.destroy()
-        impressionsObserver.stop()
+        impressionsObserver.clear()
     }
 
+    func enablePersistence(_ enable: Bool) {
+        isPersistenceEnabled = enable
+    }
+
+    func enableTracking(_ enable: Bool) {
+        isTrackingEnabled = enable
+    }
+
+    // MARK: Private methods
+
     private func saveImpressionsCount() {
+        if !isPersistenceEnabled {
+            return
+        }
         if (isOptimizedImpressionsMode() || isNoneImpressionsMode()),
            let counts = impressionsCounter?.popAll() {
             storageContainer.impressionsCountStorage.pushMany(counts: counts)
@@ -155,6 +177,9 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
     private func saveUniqueKeys() {
         // Just doble checking
+        if !isPersistenceEnabled {
+            return
+        }
         if isNoneImpressionsMode() {
             uniqueKeyTracker?.saveAndClear()
         }
@@ -162,7 +187,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
     private func setupImpressionsMode() {
 
-        switch splitConfig.finalImpressionsMode {
+        switch splitConfig.$impressionsMode {
         case .optimized:
             createImpressionsRecorder()
             createImpressionsCountRecorder()
@@ -197,11 +222,11 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     private func isOptimizedImpressionsMode() -> Bool {
-        return ImpressionsMode.optimized == splitConfig.finalImpressionsMode
+        return ImpressionsMode.optimized == splitConfig.$impressionsMode
     }
 
     private func isNoneImpressionsMode() -> Bool {
-        return ImpressionsMode.none == splitConfig.finalImpressionsMode
+        return ImpressionsMode.none == splitConfig.$impressionsMode
     }
 
     private func shouldPush(impression: KeyImpression) -> Bool {

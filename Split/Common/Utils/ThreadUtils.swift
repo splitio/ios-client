@@ -18,6 +18,34 @@ class ThreadUtils {
         }
         semaphore.wait()
     }
+
+    // totalTaskCount: Total amount of task to run
+    // minTaskPerThread: Minumum task amount to run per thread
+    static func processCount(totalTaskCount: Int, minTaskPerThread: Int) -> Int {
+
+        if minTaskPerThread == 0 {
+            Logger.d("Min task per thread should be more that 0")
+            return 1
+        }
+
+        // If task count is less than per thread
+        // lets run all in one  thread only to avoid threading overhead
+        let coreCount = ProcessInfo.processInfo.processorCount
+        if totalTaskCount <= minTaskPerThread {
+            return 1
+        }
+
+        // Let's compute thread count if using all means run less
+        // tasks than minTaskPerThread
+        let minTaskTotal = minTaskPerThread * coreCount
+        if  minTaskTotal > totalTaskCount {
+            return coreCount - Int(((minTaskTotal - totalTaskCount) / minTaskPerThread))
+        }
+
+        // Task execeds min amount per task.
+        // Let's use all the cores
+        return coreCount
+    }
 }
 
 protocol CancellableTask {

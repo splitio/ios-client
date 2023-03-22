@@ -33,6 +33,14 @@ class ImpressionDaoTests: XCTestCase {
         XCTAssertEqual(10, loadedImpressions.count)
     }
 
+    func testInsertManyGet() {
+        impressionDao.insert(createImpressions())
+
+        let loadedImpressions = impressionDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 40)
+
+        XCTAssertEqual(20, loadedImpressions.count)
+    }
+
     func testUpdate() {
 
         let loadedImpressions = impressionDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)

@@ -29,15 +29,15 @@ class EventValidatorTests: XCTestCase {
     }
 
     func testValidEventAllValues() {
-        XCTAssertNil(validator.validate(key: "key", trafficTypeName: "custom", eventTypeId: "type1", value: 1.0, properties: nil))
+        XCTAssertNil(validator.validate(key: "key", trafficTypeName: "custom", eventTypeId: "type1", value: 1.0, properties: nil, isSdkReady: true))
     }
 
     func testValidEventNullValue() {
-        XCTAssertNil(validator.validate(key: "key", trafficTypeName: "custom", eventTypeId: "type1", value: nil, properties: nil))
+        XCTAssertNil(validator.validate(key: "key", trafficTypeName: "custom", eventTypeId: "type1", value: nil, properties: nil, isSdkReady: true))
     }
 
     func testNullKey() {
-        let errorInfo = validator.validate(key: nil, trafficTypeName: "custom", eventTypeId: "type1", value: nil, properties: nil)
+        let errorInfo = validator.validate(key: nil, trafficTypeName: "custom", eventTypeId: "type1", value: nil, properties: nil, isSdkReady: true)
         XCTAssertNotNil(errorInfo)
         XCTAssertTrue(errorInfo?.isError ?? false)
         XCTAssertEqual("you passed a null key, the key must be a non-empty string", errorInfo?.errorMessage)
@@ -45,7 +45,7 @@ class EventValidatorTests: XCTestCase {
     }
 
     func testEmptyKey() {
-        let errorInfo = validator.validate(key: "", trafficTypeName: "custom", eventTypeId: "type1", value: nil, properties: nil)
+        let errorInfo = validator.validate(key: "", trafficTypeName: "custom", eventTypeId: "type1", value: nil, properties: nil, isSdkReady: true)
         XCTAssertNotNil(errorInfo)
         XCTAssertTrue(errorInfo?.isError ?? false)
         XCTAssertEqual("you passed an empty string, matching key must a non-empty string", errorInfo?.errorMessage)
@@ -54,7 +54,7 @@ class EventValidatorTests: XCTestCase {
 
     func testLongKey() {
         let key = String(repeating: "p", count: 300)
-        let errorInfo = validator.validate(key: key, trafficTypeName: "custom", eventTypeId: "type1", value: nil, properties: nil)
+        let errorInfo = validator.validate(key: key, trafficTypeName: "custom", eventTypeId: "type1", value: nil, properties: nil, isSdkReady: true)
         XCTAssertNotNil(errorInfo)
         XCTAssertTrue(errorInfo?.isError ?? false)
         XCTAssertEqual("matching key too long - must be \(ValidationConfig.default.maximumKeyLength) characters or less", errorInfo?.errorMessage)
@@ -62,7 +62,7 @@ class EventValidatorTests: XCTestCase {
     }
 
     func testNullType() {
-        let errorInfo = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nil, value: nil, properties: nil)
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nil, value: nil, properties: nil, isSdkReady: true)
         XCTAssertNotNil(errorInfo)
         XCTAssertTrue(errorInfo?.isError ?? false)
         XCTAssertEqual("you passed a null or undefined event_type, event_type must be a non-empty String", errorInfo?.errorMessage)
@@ -70,7 +70,7 @@ class EventValidatorTests: XCTestCase {
     }
 
     func testEmptyType() {
-        let errorInfo = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: "", value: nil, properties: nil)
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: "", value: nil, properties: nil, isSdkReady: true)
         XCTAssertNotNil(errorInfo)
         XCTAssertTrue(errorInfo?.isError ?? false)
         XCTAssertEqual("you passed an empty event_type, event_type must be a non-empty String", errorInfo?.errorMessage)
@@ -80,11 +80,11 @@ class EventValidatorTests: XCTestCase {
     func testTypeName() {
 
         let nameHelper = EventTypeNameHelper()
-        let errorInfo1 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nameHelper.validAllValidChars, value: nil, properties: nil)
-        let errorInfo2 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nameHelper.validStartNumber, value: nil, properties: nil)
-        let errorInfo3 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nameHelper.invalidChars, value: nil, properties: nil)
-        let errorInfo4 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nameHelper.invalidUndercoreStart, value: nil, properties: nil)
-        let errorInfo5 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nameHelper.invalidHypenStart, value: nil, properties: nil)
+        let errorInfo1 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nameHelper.validAllValidChars, value: nil, properties: nil, isSdkReady: true)
+        let errorInfo2 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nameHelper.validStartNumber, value: nil, properties: nil, isSdkReady: true)
+        let errorInfo3 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nameHelper.invalidChars, value: nil, properties: nil, isSdkReady: true)
+        let errorInfo4 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nameHelper.invalidUndercoreStart, value: nil, properties: nil, isSdkReady: true)
+        let errorInfo5 = validator.validate(key: "key1", trafficTypeName: "custom", eventTypeId: nameHelper.invalidHypenStart, value: nil, properties: nil, isSdkReady: true)
 
 
         XCTAssertNil(errorInfo1)
@@ -108,7 +108,7 @@ class EventValidatorTests: XCTestCase {
     }
 
     func testNullTrafficType() {
-        let errorInfo = validator.validate(key: "key1", trafficTypeName: nil, eventTypeId: "type1", value: nil, properties: nil)
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: nil, eventTypeId: "type1", value: nil, properties: nil, isSdkReady: true)
         XCTAssertNotNil(errorInfo)
         XCTAssertTrue(errorInfo?.isError ?? false)
         XCTAssertEqual("you passed a null or undefined traffic_type_name, traffic_type_name must be a non-empty string", errorInfo?.errorMessage)
@@ -116,7 +116,7 @@ class EventValidatorTests: XCTestCase {
     }
 
     func testEmptyTrafficType() {
-        let errorInfo = validator.validate(key: "key1", trafficTypeName: "", eventTypeId: "type1", value: nil, properties: nil)
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: "", eventTypeId: "type1", value: nil, properties: nil, isSdkReady: true)
         XCTAssertNotNil(errorInfo)
         XCTAssertTrue(errorInfo?.isError ?? false)
         XCTAssertEqual("you passed an empty traffic_type_name, traffic_type_name must be a non-empty string", errorInfo?.errorMessage)
@@ -127,9 +127,9 @@ class EventValidatorTests: XCTestCase {
 
         let upperCaseMsg = "traffic_type_name should be all lowercase - converting string to lowercase"
 
-        let errorInfo1 = validator.validate(key: "key1", trafficTypeName: "Custom", eventTypeId: "type1", value: nil, properties: nil)
-        let errorInfo2 = validator.validate(key: "key1", trafficTypeName: "cUSTom", eventTypeId: "type1", value: nil, properties: nil)
-        let errorInfo3 = validator.validate(key: "key1", trafficTypeName: "custoM", eventTypeId: "type1", value: nil, properties: nil)
+        let errorInfo1 = validator.validate(key: "key1", trafficTypeName: "Custom", eventTypeId: "type1", value: nil, properties: nil, isSdkReady: true)
+        let errorInfo2 = validator.validate(key: "key1", trafficTypeName: "cUSTom", eventTypeId: "type1", value: nil, properties: nil, isSdkReady: true)
+        let errorInfo3 = validator.validate(key: "key1", trafficTypeName: "custoM", eventTypeId: "type1", value: nil, properties: nil, isSdkReady: true)
 
         XCTAssertNotNil(errorInfo1)
         XCTAssertFalse(errorInfo1?.isError ?? true)
@@ -151,7 +151,7 @@ class EventValidatorTests: XCTestCase {
     }
 
     func testNoChachedServerTrafficType() {
-        let errorInfo = validator.validate(key: "key1", trafficTypeName: "nocached", eventTypeId: "type1", value: nil, properties: nil)
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: "nocached", eventTypeId: "type1", value: nil, properties: nil, isSdkReady: true)
         XCTAssertNotNil(errorInfo)
         XCTAssertNil(errorInfo?.error)
         XCTAssertNil(errorInfo?.errorMessage)
@@ -161,7 +161,7 @@ class EventValidatorTests: XCTestCase {
     }
 
     func testNoChachedServerAndUppercasedTrafficType() {
-        let errorInfo = validator.validate(key: "key1", trafficTypeName: "noCached", eventTypeId: "type1", value: nil, properties: nil)
+        let errorInfo = validator.validate(key: "key1", trafficTypeName: "noCached", eventTypeId: "type1", value: nil, properties: nil, isSdkReady: true)
         XCTAssertNotNil(errorInfo)
         XCTAssertNil(errorInfo?.error)
         XCTAssertNil(errorInfo?.errorMessage)

@@ -24,8 +24,6 @@ class SynchronizerSpy: Synchronizer {
     var forceMySegmentsCalledCount = 0
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
-    var startPeriodicRecordingCalled = false
-    var stopPeriodicRecordingCalled = false
     var pushEventCalled = false
     var pushImpressionCalled = false
     var flushCalled = false
@@ -54,7 +52,7 @@ class SynchronizerSpy: Synchronizer {
          splitStorageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
          impressionsTracker: ImpressionsTracker,
-         eventsSyncHelper: EventsRecorderSyncHelper,
+         eventsSynchronizer: EventsSynchronizer,
          syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
         = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
@@ -69,7 +67,7 @@ class SynchronizerSpy: Synchronizer {
                                                      splitStorageContainer: splitStorageContainer,
                                                      syncWorkerFactory: syncWorkerFactory,
                                                      impressionsTracker: impressionsTracker,
-                                                     eventsSyncHelper: eventsSyncHelper,
+                                                     eventsSynchronizer: eventsSynchronizer,
                                                      splitsFilterQueryString: splitsFilterQueryString,
                                                      splitEventsManager: splitEventsManager)
     }
@@ -115,14 +113,28 @@ class SynchronizerSpy: Synchronizer {
         }
     }
 
-    func startPeriodicRecording() {
-        startPeriodicRecordingCalled = true
-        splitSynchronizer.startPeriodicRecording()
+    var startRecordingUserDataCalled = false
+    func startRecordingUserData() {
+        startRecordingUserDataCalled = true
+        splitSynchronizer.startRecordingUserData()
     }
 
-    func stopPeriodicRecording() {
-        stopPeriodicRecordingCalled = true
-        splitSynchronizer.stopPeriodicRecording()
+    var stopRecordingUserDataCalled = false
+    func stopRecordingUserData() {
+        stopRecordingUserDataCalled = true
+        splitSynchronizer.stopRecordingUserData()
+    }
+
+    var startRecordingTelemetryCalled = false
+    func startRecordingTelemetry() {
+        startRecordingTelemetryCalled = true
+        splitSynchronizer.startRecordingTelemetry()
+    }
+
+    var stopRecordingTelemetryCalled = false
+    func stopRecordingTelemetry() {
+        stopRecordingTelemetryCalled = false
+        splitSynchronizer.stopRecordingTelemetry()
     }
 
     func pushEvent(event: EventDTO) {
