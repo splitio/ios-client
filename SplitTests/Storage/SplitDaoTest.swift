@@ -71,6 +71,41 @@ class SplitDaoTest: XCTestCase {
         XCTAssertEqual(1, splits.filter { $0.trafficTypeName == "tt_0" }.count)
         XCTAssertEqual(1, splitsUpd.filter { $0.trafficTypeName == "ttype" }.count)
     }
+
+    func testDeleteAllPlainText() {
+        deleteAll(dao: splitDao)
+    }
+
+    func testDeleteAllAes128Cbc() {
+        deleteAll(dao: splitDaoAes128Cbc)
+    }
+
+    func deleteAll(dao: SplitDao) {
+        let splitsBefore = dao.getAll()
+        dao.deleteAll()
+        let splitsAfter = dao.getAll()
+
+        XCTAssertEqual(10, splitsBefore.count)
+        XCTAssertEqual(0, splitsAfter.count)
+    }
+
+    func testCreateGetPlainText() {
+        createGet(dao: splitDao)
+    }
+
+    func testCreateGetAes128Cbc() {
+        createGet(dao: splitDaoAes128Cbc)
+    }
+
+    func createGet(dao: SplitDao) {
+        let splits = dao.getAll()
+
+        dao.insertOrUpdate(split: newSplit(name: "feat_100", trafficType: "ttype"))
+        let splitsUpd = dao.getAll()
+
+        XCTAssertEqual(10, splits.count)
+        XCTAssertEqual(11, splitsUpd.count)
+    }
     
     private func createSplits() -> [Split] {
         var splits = [Split]()
