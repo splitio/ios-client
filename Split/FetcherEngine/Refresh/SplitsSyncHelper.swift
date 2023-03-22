@@ -116,6 +116,7 @@ class SplitsSyncHelper {
             firstFetch = false
             splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))
             Logger.i("Split definitions have been updated")
+            // Line below commented temporary for debug purposes
             //Logger.v(splitChange.description)
             if newSince == newTill, newTill >= since {
                 return newTill
