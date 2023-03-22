@@ -46,9 +46,9 @@ struct SplitsParallelEncoder: SplitsEncoder {
 
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = taskCount
-        list.chunked(into: chunkSize).forEach { split in
+        list.chunked(into: chunkSize).forEach { splits in
             queue.addOperation {
-                let parsed = serialEncoder.encode(split)
+                let parsed = serialEncoder.encode(splits)
                 dataQueue.sync {
                     splitsJson.merge( parsed, uniquingKeysWith: {(_, new) in new })
                 }
@@ -75,7 +75,7 @@ struct SplitsSerialEncoder: SplitsEncoder {
         var result = [String: String]()
         list.forEach { split in
             do {
-                if let name = split.name {
+                if let name = cipher?.encrypt(split.name) ?? split.name {
                     let json = try Json.encodeToJson(split)
                     result[name] = cipher?.encrypt(json) ?? json
                 }
