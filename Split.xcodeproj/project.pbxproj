@@ -451,7 +451,7 @@
 		954F9B0B2570431900140B81 /* GeneralInfoDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B0A2570431900140B81 /* GeneralInfoDaoTests.swift */; };
 		954F9B0F2570499700140B81 /* PersistentSplitsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B0E2570499700140B81 /* PersistentSplitsStorageTests.swift */; };
 		954F9B16257110D700140B81 /* MySegmentsDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B15257110D700140B81 /* MySegmentsDao.swift */; };
-		954F9B1E25715EAB00140B81 /* MySegmentsDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B1D25715EAB00140B81 /* MySegmentsDaoTests.swift */; };
+		954F9B1E25715EAB00140B81 /* MySegmentsDaoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B1D25715EAB00140B81 /* MySegmentsDaoTest.swift */; };
 		954F9B222571605600140B81 /* MySegmentsDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B212571605600140B81 /* MySegmentsDaoStub.swift */; };
 		954F9BB225759BBE00140B81 /* ThreadUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9BB125759BBE00140B81 /* ThreadUtils.swift */; };
 		954F9C472576DE5000140B81 /* HttpSplitFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9C462576DE5000140B81 /* HttpSplitFetcher.swift */; };
@@ -1662,7 +1662,7 @@
 		954F9B0A2570431900140B81 /* GeneralInfoDaoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoDaoTests.swift; sourceTree = "<group>"; };
 		954F9B0E2570499700140B81 /* PersistentSplitsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentSplitsStorageTests.swift; sourceTree = "<group>"; };
 		954F9B15257110D700140B81 /* MySegmentsDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentsDao.swift; sourceTree = "<group>"; };
-		954F9B1D25715EAB00140B81 /* MySegmentsDaoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsDaoTests.swift; sourceTree = "<group>"; };
+		954F9B1D25715EAB00140B81 /* MySegmentsDaoTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsDaoTest.swift; sourceTree = "<group>"; };
 		954F9B212571605600140B81 /* MySegmentsDaoStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsDaoStub.swift; sourceTree = "<group>"; };
 		954F9BB125759BBE00140B81 /* ThreadUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadUtils.swift; sourceTree = "<group>"; };
 		954F9BBC25759C4800140B81 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = SOURCE_ROOT; };
@@ -2467,7 +2467,7 @@
 				5905D4F2255C587F006DA3B1 /* SplitsStorageTests.swift */,
 				954F9B062570309400140B81 /* SplitDaoTest.swift */,
 				954F9B0A2570431900140B81 /* GeneralInfoDaoTests.swift */,
-				954F9B1D25715EAB00140B81 /* MySegmentsDaoTests.swift */,
+				954F9B1D25715EAB00140B81 /* MySegmentsDaoTest.swift */,
 				95DE29522739A7AB00DB3EAD /* AttributesDaoTests.swift */,
 				95C8F78D27D00A5E00E118EA /* PersistentMySegmentsStorageTests.swift */,
 				952E26722833FE8A0015D633 /* PersistentUniqueKeysStorageTests.swift */,
@@ -4074,7 +4074,7 @@
 				95F3EFF0258D2AFE00084AF8 /* PeriodicRecorderWorker.swift in Sources */,
 				95ABF4BA293003C1006ED016 /* ConfigTest.swift in Sources */,
 				95D94464283BA7D400D7FFED /* UniqueKeyTrackerStub.swift in Sources */,
-				954F9B1E25715EAB00140B81 /* MySegmentsDaoTests.swift in Sources */,
+				954F9B1E25715EAB00140B81 /* MySegmentsDaoTest.swift in Sources */,
 				95C717DA268CDAC2002ADB83 /* ImpressionsCountDaoTests.swift in Sources */,
 				59FB7C1821F7ABEF00ECC96A /* ApiKeyValidatorTests.swift in Sources */,
 				95ABF50F293AB954006ED016 /* UserConsentManagerTest.swift in Sources */,
