@@ -1,5 +1,7 @@
 # Split SDK for iOS
-[![Build Status](https://travis-ci.com/splitio/ios-client.svg?branch=master)](https://travis-ci.com/splitio/ios-client)
+![Build Status](https://github.com/splitio/ios-client/actions/workflows/test_ios_ut.yaml/badge.svg?branch=master)
+![Build Status](https://github.com/splitio/ios-client/actions/workflows/test_ios_streaming.yaml/badge.svg?branch=master)
+![Build Status](https://github.com/splitio/ios-client/actions/workflows/test_ios_integration.yaml/badge.svg?branch=master)
 
 ## Overview
 This SDK is designed to work with Split, the platform for controlled rollouts, which serves features to your users via a Split feature flag to manage your complete customer experience.
