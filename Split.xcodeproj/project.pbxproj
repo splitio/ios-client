@@ -447,7 +447,7 @@
 		954F9AF9256EE55B00140B81 /* GeneralInfoDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9AF8256EE55B00140B81 /* GeneralInfoDao.swift */; };
 		954F9AFF2570082C00140B81 /* SplitDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9AFE2570082C00140B81 /* SplitDaoStub.swift */; };
 		954F9B0325700AF700140B81 /* GeneralInfoDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B0225700AF700140B81 /* GeneralInfoDaoStub.swift */; };
-		954F9B072570309400140B81 /* SplitDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B062570309400140B81 /* SplitDaoTests.swift */; };
+		954F9B072570309400140B81 /* SplitDaoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B062570309400140B81 /* SplitDaoTest.swift */; };
 		954F9B0B2570431900140B81 /* GeneralInfoDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B0A2570431900140B81 /* GeneralInfoDaoTests.swift */; };
 		954F9B0F2570499700140B81 /* PersistentSplitsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B0E2570499700140B81 /* PersistentSplitsStorageTests.swift */; };
 		954F9B16257110D700140B81 /* MySegmentsDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B15257110D700140B81 /* MySegmentsDao.swift */; };
@@ -1658,7 +1658,7 @@
 		954F9AF8256EE55B00140B81 /* GeneralInfoDao.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoDao.swift; sourceTree = "<group>"; };
 		954F9AFE2570082C00140B81 /* SplitDaoStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitDaoStub.swift; sourceTree = "<group>"; };
 		954F9B0225700AF700140B81 /* GeneralInfoDaoStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralInfoDaoStub.swift; sourceTree = "<group>"; };
-		954F9B062570309400140B81 /* SplitDaoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDaoTests.swift; sourceTree = "<group>"; };
+		954F9B062570309400140B81 /* SplitDaoTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDaoTest.swift; sourceTree = "<group>"; };
 		954F9B0A2570431900140B81 /* GeneralInfoDaoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoDaoTests.swift; sourceTree = "<group>"; };
 		954F9B0E2570499700140B81 /* PersistentSplitsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentSplitsStorageTests.swift; sourceTree = "<group>"; };
 		954F9B15257110D700140B81 /* MySegmentsDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentsDao.swift; sourceTree = "<group>"; };
@@ -2377,8 +2377,6 @@
 		3B6DEF0220EA6AE30067435E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				9599083827C7437D0014B2B5 /* framework */,
-				9599083727C7436F0014B2B5 /* Lib */,
 				954F9BB125759BBE00140B81 /* ThreadUtils.swift */,
 				95F0568F29B63C5B009F5A68 /* Cipher.swift */,
 				3B6DEE7B20EA6ADF0067435E /* PeriodicTaskManager.swift */,
@@ -2467,7 +2465,7 @@
 				95816FC62739D274004228A3 /* AttributesStorageTests.swift */,
 				9519A91427D6A10F00278AEC /* ByKeyAttributesStorageTests.swift */,
 				5905D4F2255C587F006DA3B1 /* SplitsStorageTests.swift */,
-				954F9B062570309400140B81 /* SplitDaoTests.swift */,
+				954F9B062570309400140B81 /* SplitDaoTest.swift */,
 				954F9B0A2570431900140B81 /* GeneralInfoDaoTests.swift */,
 				954F9B1D25715EAB00140B81 /* MySegmentsDaoTests.swift */,
 				95DE29522739A7AB00DB3EAD /* AttributesDaoTests.swift */,
@@ -3157,20 +3155,6 @@
 				95825BA2271F004800A0CDAD /* Info.plist */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		9599083727C7436F0014B2B5 /* Lib */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Lib;
-			sourceTree = "<group>";
-		};
-		9599083827C7437D0014B2B5 /* framework */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = framework;
 			sourceTree = "<group>";
 		};
 		95ABF4AD292EC809006ED016 /* Config */ = {
@@ -3941,7 +3925,7 @@
 				59F4AAC82515436400A1C69A /* SyncWorkerStub.swift in Sources */,
 				95C0577629476469007E4D6A /* UserConsentModeDebugTest.swift in Sources */,
 				59EFD2ED24B4B05E0052920D /* HttpClientTest.swift in Sources */,
-				954F9B072570309400140B81 /* SplitDaoTests.swift in Sources */,
+				954F9B072570309400140B81 /* SplitDaoTest.swift in Sources */,
 				95F20F4A27EB533000B5B30A /* TreatmentManagerTest.swift in Sources */,
 				59F4AAA324FFCD5000A1C69A /* PushManagerEventBroadcasterStub.swift in Sources */,
 				95ABF4C029314D3D006ED016 /* ImpressionsStorageTest.swift in Sources */,

@@ -65,7 +65,8 @@ class CoreDataSplitDatabase: SplitDatabase {
 
     private let coreDataHelper: CoreDataHelper
 
-    init(coreDataHelper: CoreDataHelper) {
+    // Passing a cipher allows using one from created by the Customer in the future
+    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
         self.coreDataHelper = coreDataHelper
         self.splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper)
         self.eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper)

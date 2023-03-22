@@ -19,8 +19,13 @@ protocol SplitDao {
 }
 
 class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
-    let decoder: SplitsDecoder = SplitsParallelDecoder()
+    let decoder: SplitsDecoder
     let encoder: SplitsEncoder = SplitsParallelEncoder()
+
+    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
+        decoder = SplitsParallelDecoder(cipher: cipher)
+        super.init(coreDataHelper: coreDataHelper)
+    }
 
     func insertOrUpdate(splits: [Split]) {
         let parsed = self.encoder.encode(splits)

@@ -10,26 +10,33 @@ import Foundation
 import CommonCrypto
 
 protocol Cipher {
-    func encrypt(_ text: String?, key: String?) -> String?
-    func decrypt(_ text: String?, key: String?) -> String?
+    func encrypt(_ text: String?) -> String?
+    func decrypt(_ text: String?) -> String?
 }
 
 struct DefaultCipher: Cipher {
-    func encrypt(_ text: String?, key: String?) -> String? {
-        if let text = text, let key = key,
-           let textBytes = text.data(using: .utf8), let keyBytes = key.data(using: .utf8) {
-            return encryptAES256(data: textBytes, key: keyBytes)?.base64EncodedString(options: [])
-        }
-        return nil
+
+    private let keyBytes: Data
+
+    init(key: String) {
+        keyBytes = key.data(using: .utf8) ?? Data()
     }
 
-    func decrypt(_ text: String?, key: String?) -> String? {
-        if let text = text, let key = key,
-           let textBytes = Base64Utils.decodeBase64(text), let keyBytes = key.data(using: .utf8) {
-            return decryptAES256(data: textBytes, key: keyBytes)?.stringRepresentation
+    func encrypt(_ text: String?) -> String? {
+            if let text = text,
+               let textBytes = text.data(using: .utf8) {
+                return encryptAES256(data: textBytes, key: keyBytes)?.base64EncodedString(options: [])
+            }
+            return nil
         }
-        return nil
-    }
+
+        func decrypt(_ text: String?) -> String? {
+            if let text = text,
+               let textBytes = Base64Utils.decodeBase64(text) {
+                return decryptAES256(data: textBytes, key: keyBytes)?.stringRepresentation
+            }
+            return nil
+        }
 
     private func encryptAES256(data: Data, key: Data) -> Data? {
         let cryptLength = size_t(data.count + kCCBlockSizeAES128)

@@ -13,6 +13,12 @@ enum GeneralInfo: String {
     case splitsChangeNumber = "splitChangeNumber"
     case splitsFilterQueryString = "splitsFilterQueryString"
     case databaseMigrationStatus = "databaseMigrationStatus"
+    case databaseEncryptionStatus = "databaseEncryptionStatus"
+}
+
+enum DbEncryptionStatus: Int {
+    case plainText = 0
+    case aes128CbcEncryption = 1
 }
 
 protocol GeneralInfoDao {

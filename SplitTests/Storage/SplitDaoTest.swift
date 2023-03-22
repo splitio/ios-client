@@ -11,37 +11,60 @@ import Foundation
 import XCTest
 @testable import Split
 
-class SplitDaoTests: XCTestCase {
+class SplitDaoTest: XCTestCase {
     
     var splitDao: SplitDao!
+    var splitDaoAes128Cbc: SplitDao!
     
     // TODO: Research delete test in inMemoryDb
     
     override func setUp() {
+        let cipherKey = String(UUID().uuidString.prefix(16))
         let queue = DispatchQueue(label: "split dao test")
         splitDao = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
                                                                                   dispatchQueue: queue))
+
+        splitDaoAes128Cbc = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
+                                                                                  dispatchQueue: queue),
+                                       cipher: DefaultCipher(key: cipherKey))
         let splits = createSplits()
         splitDao.insertOrUpdate(splits: splits)
+        splitDaoAes128Cbc.insertOrUpdate(splits: splits)
     }
     
-    func testGetUpdateSeveral() {
-        let splits = splitDao.getAll()
+    func testGetUpdateSeveralPlainText() {
+        getUpdateSeveral(dao: splitDao)
+    }
+
+    func testGetUpdateSeveralAes128Cbc() {
+        getUpdateSeveral(dao: splitDaoAes128Cbc)
+    }
+
+    func getUpdateSeveral(dao: SplitDao) {
+        let splits = dao.getAll()
         
-        splitDao.insertOrUpdate(splits: [newSplit(name: "feat_0", trafficType: "ttype")])
-        let splitsUpd = splitDao.getAll()
+        dao.insertOrUpdate(splits: [newSplit(name: "feat_0", trafficType: "ttype")])
+        let splitsUpd = dao.getAll()
         
         XCTAssertEqual(10, splits.count)
         XCTAssertEqual(10, splitsUpd.count)
         XCTAssertEqual(1, splits.filter { $0.trafficTypeName == "tt_0" }.count)
         XCTAssertEqual(1, splitsUpd.filter { $0.trafficTypeName == "ttype" }.count)
     }
-    
+
     func testGetUpdate() {
-        let splits = splitDao.getAll()
+        getUpdate(dao: splitDao)
+    }
+
+    func testGetUpdateAes128Cbc() {
+        getUpdate(dao: splitDaoAes128Cbc)
+    }
+
+    func getUpdate(dao: SplitDao) {
+        let splits = dao.getAll()
         
-        splitDao.insertOrUpdate(split: newSplit(name: "feat_0", trafficType: "ttype"))
-        let splitsUpd = splitDao.getAll()
+        dao.insertOrUpdate(split: newSplit(name: "feat_0", trafficType: "ttype"))
+        let splitsUpd = dao.getAll()
         
         XCTAssertEqual(10, splits.count)
         XCTAssertEqual(10, splitsUpd.count)
