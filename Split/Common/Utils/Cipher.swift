@@ -19,24 +19,24 @@ struct DefaultCipher: Cipher {
     private let keyBytes: Data
 
     init(key: String) {
-        keyBytes = key.data(using: .utf8) ?? Data()
+        keyBytes = Self.sanitizeKey(key).data(using: .utf8) ?? Data()
     }
 
     func encrypt(_ text: String?) -> String? {
-            if let text = text,
-               let textBytes = text.data(using: .utf8) {
-                return encryptAES256(data: textBytes, key: keyBytes)?.base64EncodedString(options: [])
-            }
-            return nil
+        if let text = text,
+           let textBytes = text.data(using: .utf8) {
+            return encryptAES256(data: textBytes, key: keyBytes)?.base64EncodedString(options: [])
         }
+        return nil
+    }
 
-        func decrypt(_ text: String?) -> String? {
-            if let text = text,
-               let textBytes = Base64Utils.decodeBase64(text) {
-                return decryptAES256(data: textBytes, key: keyBytes)?.stringRepresentation
-            }
-            return nil
+    func decrypt(_ text: String?) -> String? {
+        if let text = text,
+           let textBytes = Base64Utils.decodeBase64(text) {
+            return decryptAES256(data: textBytes, key: keyBytes)?.stringRepresentation
         }
+        return nil
+    }
 
     private func encryptAES256(data: Data, key: Data) -> Data? {
         let cryptLength = size_t(data.count + kCCBlockSizeAES128)
@@ -112,5 +112,14 @@ struct DefaultCipher: Cipher {
 
     private func logError(_ status: Int, operation: String = "Enc") {
         Logger.v("Error when \(operation): \(errors[status] ?? "Unknown")")
+    }
+
+    private static func sanitizeKey(_ key: String) -> String {
+        if key.count > ServiceConstants.aes128KeyLength {
+            return String(key.prefix(ServiceConstants.aes128KeyLength))
+        } else if key.count < ServiceConstants.aes128KeyLength {
+            return "\(key)\(String(repeating: "0", count: ServiceConstants.aes128KeyLength - key.count))"
+        }
+        return key
     }
 }

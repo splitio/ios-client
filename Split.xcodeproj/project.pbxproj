@@ -468,7 +468,7 @@
 		955428D6256810D300331356 /* ImpressionDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428D5256810D300331356 /* ImpressionDao.swift */; };
 		955428DA256810EC00331356 /* PersistentImpressionsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428D9256810EC00331356 /* PersistentImpressionsStorage.swift */; };
 		955428E02568155B00331356 /* PersistentImpressionsStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */; };
-		955428E4256815B200331356 /* ImpressionDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428E3256815B200331356 /* ImpressionDaoTests.swift */; };
+		955428E4256815B200331356 /* ImpressionDaoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428E3256815B200331356 /* ImpressionDaoTest.swift */; };
 		955428E82568176C00331356 /* ImpressionDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955428E72568176C00331356 /* ImpressionDaoStub.swift */; };
 		9557C1CA2614F67700CD9B5C /* DbForTwoDifferentApiKeyTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9557C1C92614F67700CD9B5C /* DbForTwoDifferentApiKeyTest.swift */; };
 		955892AB25C187EA00F67FBA /* CoreDataContextBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955892AA25C187EA00F67FBA /* CoreDataContextBuilder.swift */; };
@@ -1681,7 +1681,7 @@
 		955428D5256810D300331356 /* ImpressionDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionDao.swift; sourceTree = "<group>"; };
 		955428D9256810EC00331356 /* PersistentImpressionsStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentImpressionsStorage.swift; sourceTree = "<group>"; };
 		955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentImpressionsStorageTest.swift; sourceTree = "<group>"; };
-		955428E3256815B200331356 /* ImpressionDaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionDaoTests.swift; sourceTree = "<group>"; };
+		955428E3256815B200331356 /* ImpressionDaoTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionDaoTest.swift; sourceTree = "<group>"; };
 		955428E72568176C00331356 /* ImpressionDaoStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionDaoStub.swift; sourceTree = "<group>"; };
 		9557C1C92614F67700CD9B5C /* DbForTwoDifferentApiKeyTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbForTwoDifferentApiKeyTest.swift; sourceTree = "<group>"; };
 		955892AA25C187EA00F67FBA /* CoreDataContextBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataContextBuilder.swift; sourceTree = "<group>"; };
@@ -2453,7 +2453,7 @@
 				59F65F002562FF71005FE8C9 /* EventDaoTests.swift */,
 				95BC77ED28368FF1008E14BF /* UniqueKeyDaoTests.swift */,
 				95C717D9268CDAC2002ADB83 /* ImpressionsCountDaoTests.swift */,
-				955428E3256815B200331356 /* ImpressionDaoTests.swift */,
+				955428E3256815B200331356 /* ImpressionDaoTest.swift */,
 				59F65F0525654EBB005FE8C9 /* PersistentEventsStorageTest.swift */,
 				95C717E1268CE705002ADB83 /* PersistentImpressionsCountStorageTest.swift */,
 				955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */,
@@ -3905,7 +3905,7 @@
 				95E81942287894DA00D99093 /* LoggerTest.swift in Sources */,
 				955AAB922840182800ADFB07 /* ImpressionsNoneTest.swift in Sources */,
 				955B59652811F18000D105CD /* SyncManagerStub.swift in Sources */,
-				955428E4256815B200331356 /* ImpressionDaoTests.swift in Sources */,
+				955428E4256815B200331356 /* ImpressionDaoTest.swift in Sources */,
 				590DF9CC213EB7D50082B94F /* SplitManagerTest.swift in Sources */,
 				59ED408A24EADAA100EF7B09 /* ReconnectBackoffCounterStub.swift in Sources */,
 				9546079625BF3945007FFD35 /* ImpressionsLoggerStub.swift in Sources */,
