@@ -19,8 +19,16 @@ protocol SplitDao {
 }
 
 class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
-    let decoder: SplitsDecoder = SplitsParallelDecoder()
-    let encoder: SplitsEncoder = SplitsParallelEncoder()
+    private let decoder: SplitsDecoder
+    private let encoder: SplitsEncoder
+    private var cipher: Cipher?
+
+    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
+        self.decoder = SplitsParallelDecoder(cipher: cipher)
+        self.encoder = SplitsParallelEncoder(cipher: cipher)
+        self.cipher = cipher
+        super.init(coreDataHelper: coreDataHelper)
+    }
 
     func insertOrUpdate(splits: [Split]) {
         let parsed = self.encoder.encode(splits)
@@ -73,7 +81,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             let start = Date.nowMillis()
             splits = self.decoder.decode(jsonSplits).map { $0 }
             let time = Date().unixTimestampInMiliseconds() - start
-            print("Time to parse splits : \(time)")
+            Logger.v("Time to parse splits : \(time)")
         }
         return splits ?? []
     }
@@ -87,7 +95,12 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             guard let self = self else {
                 return
             }
-            self.coreDataHelper.delete(entity: .split, by: "name", values: splits)
+
+            var names = splits
+            if let cipher = self.cipher {
+                names = splits.map { cipher.encrypt($0) ?? $0 }
+            }
+            self.coreDataHelper.delete(entity: .split, by: "name", values: names)
         }
     }
 
@@ -101,11 +114,12 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
     }
 
     private func insertOrUpdate(_ split: Split) {
-        if let splitName = split.name,
+        if let splitName = cipher?.encrypt(split.name) ?? split.name,
            let obj = self.getBy(name: splitName) ?? self.coreDataHelper.create(entity: .split) as? SplitEntity {
             do {
                 obj.name = splitName
-                obj.body = try Json.encodeToJson(split)
+                let json = try Json.encodeToJson(split)
+                obj.body = cipher?.encrypt(json) ?? json
                 obj.updatedAt = Date.now()
                 // Saving one by one to avoid losing all
                 // if an error occurs
@@ -121,10 +135,5 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
         let entities = coreDataHelper.fetch(entity: .split,
                                             where: predicate).compactMap { return $0 as? SplitEntity }
         return entities.count > 0 ? entities[0] : nil
-    }
-
-    private func mapEntityToModel(_ entity: SplitEntity) throws -> Split {
-        let model = try Json.encodeFrom(json: entity.body, to: Split.self)
-        return model
     }
 }

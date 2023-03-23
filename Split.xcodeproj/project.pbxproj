@@ -447,7 +447,7 @@
 		954F9AF9256EE55B00140B81 /* GeneralInfoDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9AF8256EE55B00140B81 /* GeneralInfoDao.swift */; };
 		954F9AFF2570082C00140B81 /* SplitDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9AFE2570082C00140B81 /* SplitDaoStub.swift */; };
 		954F9B0325700AF700140B81 /* GeneralInfoDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B0225700AF700140B81 /* GeneralInfoDaoStub.swift */; };
-		954F9B072570309400140B81 /* SplitDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B062570309400140B81 /* SplitDaoTests.swift */; };
+		954F9B072570309400140B81 /* SplitDaoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B062570309400140B81 /* SplitDaoTest.swift */; };
 		954F9B0B2570431900140B81 /* GeneralInfoDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B0A2570431900140B81 /* GeneralInfoDaoTests.swift */; };
 		954F9B0F2570499700140B81 /* PersistentSplitsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B0E2570499700140B81 /* PersistentSplitsStorageTests.swift */; };
 		954F9B16257110D700140B81 /* MySegmentsDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9B15257110D700140B81 /* MySegmentsDao.swift */; };
@@ -1166,6 +1166,11 @@
 		95ED4AA3264999BD00FD3569 /* IntegrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ED4AA2264999BD00FD3569 /* IntegrationHelper.swift */; };
 		95ED4AA926499D7D00FD3569 /* SynchronizerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ED4AA826499D7D00FD3569 /* SynchronizerSpy.swift */; };
 		95EEF7C7270E16ED00761B9D /* SplitComponentFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */; };
+		95F0569029B63C5B009F5A68 /* Cipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F0568F29B63C5B009F5A68 /* Cipher.swift */; };
+		95F0569129B63C61009F5A68 /* Cipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F0568F29B63C5B009F5A68 /* Cipher.swift */; };
+		95F0569229B63C61009F5A68 /* Cipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F0568F29B63C5B009F5A68 /* Cipher.swift */; };
+		95F0569629B7836E009F5A68 /* CipherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F0569529B7836E009F5A68 /* CipherTest.swift */; };
+		95F0569829B7CDD7009F5A68 /* TestDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F0569729B7CDD7009F5A68 /* TestDataHelper.swift */; };
 		95F20F4627EA6A4300B5B30A /* TreatmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F20F4527EA6A4300B5B30A /* TreatmentManager.swift */; };
 		95F20F4A27EB533000B5B30A /* TreatmentManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F20F4927EB533000B5B30A /* TreatmentManagerTest.swift */; };
 		95F3EFEC258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3EFEB258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift */; };
@@ -1653,7 +1658,7 @@
 		954F9AF8256EE55B00140B81 /* GeneralInfoDao.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoDao.swift; sourceTree = "<group>"; };
 		954F9AFE2570082C00140B81 /* SplitDaoStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitDaoStub.swift; sourceTree = "<group>"; };
 		954F9B0225700AF700140B81 /* GeneralInfoDaoStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralInfoDaoStub.swift; sourceTree = "<group>"; };
-		954F9B062570309400140B81 /* SplitDaoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDaoTests.swift; sourceTree = "<group>"; };
+		954F9B062570309400140B81 /* SplitDaoTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDaoTest.swift; sourceTree = "<group>"; };
 		954F9B0A2570431900140B81 /* GeneralInfoDaoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoDaoTests.swift; sourceTree = "<group>"; };
 		954F9B0E2570499700140B81 /* PersistentSplitsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentSplitsStorageTests.swift; sourceTree = "<group>"; };
 		954F9B15257110D700140B81 /* MySegmentsDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentsDao.swift; sourceTree = "<group>"; };
@@ -1848,6 +1853,10 @@
 		95ED4AA2264999BD00FD3569 /* IntegrationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegrationHelper.swift; sourceTree = "<group>"; };
 		95ED4AA826499D7D00FD3569 /* SynchronizerSpy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizerSpy.swift; sourceTree = "<group>"; };
 		95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitComponentFactory.swift; sourceTree = "<group>"; };
+		95F0568F29B63C5B009F5A68 /* Cipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Cipher.swift; path = Split/Common/Utils/Cipher.swift; sourceTree = SOURCE_ROOT; };
+		95F0569329B66D96009F5A68 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		95F0569529B7836E009F5A68 /* CipherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherTest.swift; sourceTree = "<group>"; };
+		95F0569729B7CDD7009F5A68 /* TestDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDataHelper.swift; sourceTree = "<group>"; };
 		95F20F4527EA6A4300B5B30A /* TreatmentManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreatmentManager.swift; sourceTree = "<group>"; };
 		95F20F4927EB533000B5B30A /* TreatmentManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreatmentManagerTest.swift; sourceTree = "<group>"; };
 		95F3EFEB258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderFlusherCheckerTests.swift; sourceTree = "<group>"; };
@@ -2368,9 +2377,8 @@
 		3B6DEF0220EA6AE30067435E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				9599083827C7437D0014B2B5 /* framework */,
-				9599083727C7436F0014B2B5 /* Lib */,
 				954F9BB125759BBE00140B81 /* ThreadUtils.swift */,
+				95F0568F29B63C5B009F5A68 /* Cipher.swift */,
 				3B6DEE7B20EA6ADF0067435E /* PeriodicTaskManager.swift */,
 				3B6DEE8420EA6AE00067435E /* Version.swift */,
 				3B6DEE8620EA6AE00067435E /* Logger.swift */,
@@ -2457,7 +2465,7 @@
 				95816FC62739D274004228A3 /* AttributesStorageTests.swift */,
 				9519A91427D6A10F00278AEC /* ByKeyAttributesStorageTests.swift */,
 				5905D4F2255C587F006DA3B1 /* SplitsStorageTests.swift */,
-				954F9B062570309400140B81 /* SplitDaoTests.swift */,
+				954F9B062570309400140B81 /* SplitDaoTest.swift */,
 				954F9B0A2570431900140B81 /* GeneralInfoDaoTests.swift */,
 				954F9B1D25715EAB00140B81 /* MySegmentsDaoTests.swift */,
 				95DE29522739A7AB00DB3EAD /* AttributesDaoTests.swift */,
@@ -2529,6 +2537,7 @@
 		590DF9962125F6900082B94F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				95F0569329B66D96009F5A68 /* Security.framework */,
 				95B02E0928D130670030EC8B /* WatchKit.framework */,
 				954F9BBF2575A1AB00140B81 /* UIKit.framework */,
 				5946783722E1144400F94E58 /* Swifter.framework */,
@@ -2575,6 +2584,7 @@
 				5912D151219A022000BC698C /* CsvHelper.swift */,
 				5982D937219F57BE00230F44 /* FileHelper.swift */,
 				5919C64721C7D45B00EC35B8 /* SplitTestHelper.swift */,
+				95F0569729B7CDD7009F5A68 /* TestDataHelper.swift */,
 				950F72FB292E615D008A0040 /* DispatchQueue+Test.swift */,
 				59FB7C1521F79B8200ECC96A /* EventTypeNameHelper.swift */,
 				593225F924A3855700496D8B /* TestHelper.swift */,
@@ -2675,6 +2685,7 @@
 				95F20F4927EB533000B5B30A /* TreatmentManagerTest.swift */,
 				59AD7AC92465C32D00F5B0B4 /* EventDTOJsonTest.swift */,
 				595AD24C24E324D100A7B750 /* Base64UtilsTest.swift */,
+				95F0569529B7836E009F5A68 /* CipherTest.swift */,
 				9595910426DFB1AB009E7944 /* DecompressionTest.swift */,
 			);
 			path = SplitTests;
@@ -3146,20 +3157,6 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		9599083727C7436F0014B2B5 /* Lib */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Lib;
-			sourceTree = "<group>";
-		};
-		9599083827C7437D0014B2B5 /* framework */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = framework;
-			sourceTree = "<group>";
-		};
 		95ABF4AD292EC809006ED016 /* Config */ = {
 			isa = PBXGroup;
 			children = (
@@ -3543,6 +3540,7 @@
 			files = (
 				951256412771318D0091895B /* SyncHelper.swift in Sources */,
 				595AD1F524D9994800A7B750 /* SyncConfig.swift in Sources */,
+				95F0569029B63C5B009F5A68 /* Cipher.swift in Sources */,
 				95D94466283BE5A200D7FFED /* UniqueKeysRecorder.swift in Sources */,
 				59FB7C0B21F0FF1700ECC96A /* ValidationConfig.swift in Sources */,
 				95B1801627629E73002DC9DF /* RestClient+TelemetryStats.swift in Sources */,
@@ -3873,6 +3871,7 @@
 				59EFD2FB24B8EF6F0052920D /* HttpRequestMock.swift in Sources */,
 				95ABF5022937ABFB006ED016 /* EventsSynchronizerTest.swift in Sources */,
 				5921ED3A2538C57D000D6C8B /* StreamingConnFail5xxTest.swift in Sources */,
+				95F0569629B7836E009F5A68 /* CipherTest.swift in Sources */,
 				95ABF4BC29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift in Sources */,
 				59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */,
 				950F72FC292E615D008A0040 /* DispatchQueue+Test.swift in Sources */,
@@ -3916,6 +3915,7 @@
 				95E819402878922000D99093 /* LogPrinterStub.swift in Sources */,
 				954F9B0F2570499700140B81 /* PersistentSplitsStorageTests.swift in Sources */,
 				955428E82568176C00331356 /* ImpressionDaoStub.swift in Sources */,
+				95F0569829B7CDD7009F5A68 /* TestDataHelper.swift in Sources */,
 				9519A91727D6B9EE00278AEC /* AttributesStorageStub.swift in Sources */,
 				95ABF513293ABEC7006ED016 /* EventsStorageStub.swift in Sources */,
 				5932260724A5325A00496D8B /* HttpTaskMock.swift in Sources */,
@@ -3925,7 +3925,7 @@
 				59F4AAC82515436400A1C69A /* SyncWorkerStub.swift in Sources */,
 				95C0577629476469007E4D6A /* UserConsentModeDebugTest.swift in Sources */,
 				59EFD2ED24B4B05E0052920D /* HttpClientTest.swift in Sources */,
-				954F9B072570309400140B81 /* SplitDaoTests.swift in Sources */,
+				954F9B072570309400140B81 /* SplitDaoTest.swift in Sources */,
 				95F20F4A27EB533000B5B30A /* TreatmentManagerTest.swift in Sources */,
 				59F4AAA324FFCD5000A1C69A /* PushManagerEventBroadcasterStub.swift in Sources */,
 				95ABF4C029314D3D006ED016 /* ImpressionsStorageTest.swift in Sources */,
@@ -4195,6 +4195,7 @@
 				956E42C9271DCCE7008B4DB6 /* YamlLocalhostSplitsParser.swift in Sources */,
 				956E42CA271DCCE7008B4DB6 /* SplitEventExecutorWithClient.swift in Sources */,
 				956E42CC271DCCE7008B4DB6 /* SplitEventExecutorProtocol.swift in Sources */,
+				95F0569229B63C61009F5A68 /* Cipher.swift in Sources */,
 				956E42CD271DCCE7008B4DB6 /* CastUtils.swift in Sources */,
 				95DE8EA127C54870009FAC01 /* SplitDatabaseHelper.swift in Sources */,
 				956E42CE271DCCE7008B4DB6 /* RestClientConfiguration.swift in Sources */,
@@ -4407,6 +4408,7 @@
 			files = (
 				956A7E17297043130080D53C /* ImpressionsStorage.swift in Sources */,
 				95B02DCD28D0BDE20030EC8B /* split_cache.xcdatamodeld in Sources */,
+				95F0569129B63C61009F5A68 /* Cipher.swift in Sources */,
 				95B02CAB28D0BDC10030EC8B /* Yaml.swift in Sources */,
 				95B02CAC28D0BDC10030EC8B /* YAMLOperators.swift in Sources */,
 				95B02CAD28D0BDC10030EC8B /* YAMLParser.swift in Sources */,

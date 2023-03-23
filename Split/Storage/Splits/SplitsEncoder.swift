@@ -15,9 +15,11 @@ protocol SplitsEncoder {
 struct SplitsParallelEncoder: SplitsEncoder {
 
     private var minTaskPerThread: Int
+    private let serialEncoder: SplitsEncoder
 
-    init(minTaskPerThread: Int = 10) {
+    init(minTaskPerThread: Int = 10, cipher: Cipher? = nil) {
         self.minTaskPerThread = minTaskPerThread
+        self.serialEncoder = SplitsSerialEncoder(cipher: cipher)
     }
 
     // Returns Name: Json
@@ -27,7 +29,7 @@ struct SplitsParallelEncoder: SplitsEncoder {
             return [:]
         }
         Logger.v("Using parallel encoding for \(list.count) splits")
-        let serialEncoder = SplitsSerialEncoder()
+
         var splitsJson = [String: String]()
         let dataQueue = DispatchQueue(label: "split-parallel-encoding-data",
                                       target: DispatchQueue(label: "split-parallel-encoding-data-conc",
@@ -44,9 +46,9 @@ struct SplitsParallelEncoder: SplitsEncoder {
 
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = taskCount
-        list.chunked(into: chunkSize).forEach { split in
+        list.chunked(into: chunkSize).forEach { splits in
             queue.addOperation {
-                let parsed = serialEncoder.encode(split)
+                let parsed = serialEncoder.encode(splits)
                 dataQueue.sync {
                     splitsJson.merge( parsed, uniquingKeysWith: {(_, new) in new })
                 }
@@ -58,6 +60,12 @@ struct SplitsParallelEncoder: SplitsEncoder {
 }
 
 struct SplitsSerialEncoder: SplitsEncoder {
+    private var cipher: Cipher?
+
+    init(cipher: Cipher?) {
+        self.cipher = cipher
+    }
+
     func encode(_ list: [Split]) -> [String: String] {
         if list.count == 0 {
             return [:]
@@ -67,9 +75,9 @@ struct SplitsSerialEncoder: SplitsEncoder {
         var result = [String: String]()
         list.forEach { split in
             do {
-                if let name = split.name {
+                if let name = cipher?.encrypt(split.name) ?? split.name {
                     let json = try Json.encodeToJson(split)
-                    result[name] = json
+                    result[name] = cipher?.encrypt(json) ?? json
                 }
             } catch {
                 Logger.v("Failed encoding split json: \(split.name ?? "empty name!")")
