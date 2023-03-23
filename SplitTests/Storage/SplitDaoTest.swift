@@ -106,6 +106,50 @@ class SplitDaoTest: XCTestCase {
         XCTAssertEqual(10, splits.count)
         XCTAssertEqual(11, splitsUpd.count)
     }
+
+    func testDataIsEncryptedInDb() {
+        let cipher = DefaultCipher(key: IntegrationHelper.dummyApiKey)
+
+        // Create two datos accessing the same db
+        // One with encryption and the other without it
+        let helper = IntegrationCoreDataHelper.get(databaseName: "test",
+                                               dispatchQueue: DispatchQueue(label: "split dao test"))
+        splitDao = CoreDataSplitDao(coreDataHelper: helper)
+        splitDaoAes128Cbc = CoreDataSplitDao(coreDataHelper: helper,
+                                                       cipher: cipher)
+
+        // create impressions and get one encrypted feature name
+        let splits = createSplits()
+        let testNameEnc = cipher.encrypt(splits[0].name) ?? "fail"
+
+        // Insert encrypted impressions
+        for split in splits {
+            splitDaoAes128Cbc.insertOrUpdate(split: split)
+        }
+
+        // load impressions and filter them by encrypted feature name
+        let loadSplit = getBy(testName: testNameEnc, coreDataHelper: helper)
+
+        let split = try? Json.encodeFrom(json: loadSplit ?? "", to: Split.self)
+
+        XCTAssertNotNil(loadSplit)
+        XCTAssertEqual("==", loadSplit?.suffix(2) ?? "")
+        XCTAssertNil(split)
+}
+
+    func getBy(testName: String, coreDataHelper: CoreDataHelper) -> String? {
+        var body: String? = nil
+        coreDataHelper.performAndWait {
+            let predicate = NSPredicate(format: "name == %@", testName)
+            let entities = coreDataHelper.fetch(entity: .split,
+                                                where: predicate,
+                                                rowLimit: 1).compactMap { return $0 as? SplitEntity }
+            if entities.count > 0 {
+                body = entities[0].body
+            }
+        }
+        return body
+    }
     
     private func createSplits() -> [Split] {
         var splits = [Split]()

@@ -20,9 +20,9 @@ class ImpressionDaoTest: XCTestCase {
     override func setUp() {
         let queue = DispatchQueue(label: "impression dao test")
         impressionDao = CoreDataImpressionDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue))
+                                                                                            dispatchQueue: queue))
         impressionDaoAes128Cbc = CoreDataImpressionDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue),
+                                                                                                     dispatchQueue: queue),
                                                        cipher: DefaultCipher(key: IntegrationHelper.dummyApiKey))
 
         let impressions = createImpressions()
@@ -106,7 +106,7 @@ class ImpressionDaoTest: XCTestCase {
         // Create two datos accessing the same db
         // One with encryption and the other without it
         let helper = IntegrationCoreDataHelper.get(databaseName: "test",
-                                               dispatchQueue: DispatchQueue(label: "impression dao test"))
+                                                   dispatchQueue: DispatchQueue(label: "impression dao test"))
         impressionDao = CoreDataImpressionDao(coreDataHelper: helper)
         impressionDaoAes128Cbc = CoreDataImpressionDao(coreDataHelper: helper,
                                                        cipher: cipher)
@@ -128,7 +128,7 @@ class ImpressionDaoTest: XCTestCase {
         XCTAssertNotNil(loadedImpression)
         XCTAssertEqual("==", loadedImpression?.suffix(2) ?? "")
         XCTAssertNil(impression)
-}
+    }
 
     func getBy(testName: String, coreDataHelper: CoreDataHelper) -> String? {
         var body: String? = nil
