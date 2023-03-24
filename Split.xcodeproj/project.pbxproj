@@ -1132,7 +1132,7 @@
 		95C1600F27D28FD4008562E3 /* PersistentAttributesStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C1600E27D28FD4008562E3 /* PersistentAttributesStorageTests.swift */; };
 		95C717C4268BB426002ADB83 /* ImpressionsCountDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C717C3268BB426002ADB83 /* ImpressionsCountDao.swift */; };
 		95C717CD268BD549002ADB83 /* ImpressionsCountEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C717CC268BD549002ADB83 /* ImpressionsCountEntity.swift */; };
-		95C717DA268CDAC2002ADB83 /* ImpressionsCountDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C717D9268CDAC2002ADB83 /* ImpressionsCountDaoTests.swift */; };
+		95C717DA268CDAC2002ADB83 /* ImpressionsCountDaoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C717D9268CDAC2002ADB83 /* ImpressionsCountDaoTest.swift */; };
 		95C717DE268CE137002ADB83 /* ImpressionsCountDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C717DD268CE137002ADB83 /* ImpressionsCountDaoStub.swift */; };
 		95C717E2268CE705002ADB83 /* PersistentImpressionsCountStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C717E1268CE705002ADB83 /* PersistentImpressionsCountStorageTest.swift */; };
 		95C7569D2696457500696148 /* NotificationHelperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C7569C2696457500696148 /* NotificationHelperStub.swift */; };
@@ -1821,7 +1821,7 @@
 		95C1600E27D28FD4008562E3 /* PersistentAttributesStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentAttributesStorageTests.swift; sourceTree = "<group>"; };
 		95C717C3268BB426002ADB83 /* ImpressionsCountDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsCountDao.swift; sourceTree = "<group>"; };
 		95C717CC268BD549002ADB83 /* ImpressionsCountEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsCountEntity.swift; sourceTree = "<group>"; };
-		95C717D9268CDAC2002ADB83 /* ImpressionsCountDaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsCountDaoTests.swift; sourceTree = "<group>"; };
+		95C717D9268CDAC2002ADB83 /* ImpressionsCountDaoTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsCountDaoTest.swift; sourceTree = "<group>"; };
 		95C717DD268CE137002ADB83 /* ImpressionsCountDaoStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsCountDaoStub.swift; sourceTree = "<group>"; };
 		95C717E1268CE705002ADB83 /* PersistentImpressionsCountStorageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentImpressionsCountStorageTest.swift; sourceTree = "<group>"; };
 		95C7569C2696457500696148 /* NotificationHelperStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHelperStub.swift; sourceTree = "<group>"; };
@@ -2452,7 +2452,7 @@
 				599407DF22403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift */,
 				59F65F002562FF71005FE8C9 /* EventDaoTest.swift */,
 				95BC77ED28368FF1008E14BF /* UniqueKeyDaoTests.swift */,
-				95C717D9268CDAC2002ADB83 /* ImpressionsCountDaoTests.swift */,
+				95C717D9268CDAC2002ADB83 /* ImpressionsCountDaoTest.swift */,
 				955428E3256815B200331356 /* ImpressionDaoTest.swift */,
 				59F65F0525654EBB005FE8C9 /* PersistentEventsStorageTest.swift */,
 				95C717E1268CE705002ADB83 /* PersistentImpressionsCountStorageTest.swift */,
@@ -4075,7 +4075,7 @@
 				95ABF4BA293003C1006ED016 /* ConfigTest.swift in Sources */,
 				95D94464283BA7D400D7FFED /* UniqueKeyTrackerStub.swift in Sources */,
 				954F9B1E25715EAB00140B81 /* MySegmentsDaoTest.swift in Sources */,
-				95C717DA268CDAC2002ADB83 /* ImpressionsCountDaoTests.swift in Sources */,
+				95C717DA268CDAC2002ADB83 /* ImpressionsCountDaoTest.swift in Sources */,
 				59FB7C1821F7ABEF00ECC96A /* ApiKeyValidatorTests.swift in Sources */,
 				95ABF50F293AB954006ED016 /* UserConsentManagerTest.swift in Sources */,
 				95ED4AA3264999BD00FD3569 /* IntegrationHelper.swift in Sources */,
