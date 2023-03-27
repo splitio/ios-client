@@ -19,7 +19,11 @@ protocol ImpressionsCountDao {
 
 class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
 
-    let json = JsonWrapper()
+    private let cipher: Cipher?
+    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
+        self.cipher = cipher
+        super.init(coreDataHelper: coreDataHelper)
+    }
 
     func insert(_ count: ImpressionsCountPerFeature) {
 
@@ -27,19 +31,7 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
             guard let self = self else {
                 return
             }
-
-            if let obj = self.coreDataHelper.create(entity: .impressionsCount) as? ImpressionsCountEntity {
-                do {
-                    obj.storageId = self.coreDataHelper.generateId()
-                    obj.body = try self.json.encodeToJson(count)
-                    obj.createdAt = Date().unixTimestamp()
-                    obj.status = StorageRecordStatus.active
-                    self.coreDataHelper.save()
-                } catch {
-                    Logger.e("An error occurred while inserting impressions " +
-                                "counts in storage: \(error.localizedDescription)")
-                }
-            }
+            self.insert(count: count)
         }
     }
 
@@ -53,17 +45,12 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
             }
             do {
                 for count in counts {
-                    if let obj = self.coreDataHelper.create(entity: .impressionsCount) as? ImpressionsCountEntity {
-                        obj.storageId = self.coreDataHelper.generateId()
-                        obj.body = try self.json.encodeToJson(count)
-                        obj.createdAt = Date().unixTimestamp()
-                        obj.status = StorageRecordStatus.active
-                    }
+                    self.insert(count: count)
                 }
                 self.coreDataHelper.save()
             } catch {
                 Logger.e("An error occurred while inserting impressions " +
-                            "counts in storage: \(error.localizedDescription)")
+                         "counts in storage: \(error.localizedDescription)")
             }
         }
     }
@@ -77,8 +64,8 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
 
             let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
             let entities = self.coreDataHelper.fetch(entity: .impressionsCount,
-                                                where: predicate,
-                                                rowLimit: maxRows).compactMap { return $0 as? ImpressionsCountEntity }
+                                                     where: predicate,
+                                                     rowLimit: maxRows).compactMap { return $0 as? ImpressionsCountEntity }
 
             entities.forEach { entity in
                 if let model = try? self.mapEntityToModel(entity) {
@@ -101,8 +88,8 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
                 return
             }
             let entities =
-                self.coreDataHelper.fetch(entity: .impressionsCount,
-                                          where: predicate).compactMap { return $0 as? ImpressionsCountEntity }
+            self.coreDataHelper.fetch(entity: .impressionsCount,
+                                      where: predicate).compactMap { return $0 as? ImpressionsCountEntity }
             for entity in entities {
                 entity.status = newStatus
             }
@@ -123,8 +110,25 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
         }
     }
 
-    func mapEntityToModel(_ entity: ImpressionsCountEntity) throws -> ImpressionsCountPerFeature {
-        var model = try Json.encodeFrom(json: entity.body, to: ImpressionsCountPerFeature.self)
+    private func insert(count: ImpressionsCountPerFeature) {
+        if let obj = self.coreDataHelper.create(entity: .impressionsCount) as? ImpressionsCountEntity {
+            do {
+                obj.storageId = coreDataHelper.generateId()
+                let body = try Json.encodeToJson(count)
+                obj.body = cipher?.encrypt(body) ?? body
+                obj.createdAt = Date().unixTimestamp()
+                obj.status = StorageRecordStatus.active
+                self.coreDataHelper.save()
+            } catch {
+                Logger.e("An error occurred while inserting impressions " +
+                         "counts in storage: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func mapEntityToModel(_ entity: ImpressionsCountEntity) throws -> ImpressionsCountPerFeature {
+        let body = cipher?.decrypt(entity.body) ?? entity.body
+        var model = try Json.encodeFrom(json: body, to: ImpressionsCountPerFeature.self)
         model.storageId = entity.storageId
         return model
     }
