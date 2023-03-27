@@ -11,7 +11,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class EventDaoTests: XCTestCase {
+class EventDaoTest: XCTestCase {
 
     var eventDao: EventDao!
 
@@ -54,6 +54,59 @@ class EventDaoTests: XCTestCase {
         XCTAssertEqual(5, deleted.count)
     }
 
+    func testLoadOutdated() {
+        let timestamp = Date().unixTimestamp() + 10000
+        let loadedEvents = eventDao.getBy(createdAt: timestamp, status: StorageRecordStatus.active, maxRows: 20)
+        let loadedEvents1 = eventDao.getBy(createdAt: timestamp, status: StorageRecordStatus.deleted, maxRows: 20)
+
+        XCTAssertEqual(0, loadedEvents.count)
+        XCTAssertEqual(0, loadedEvents1.count)
+    }
+
+    func testDataIsEncryptedInDb() {
+        let cipher = DefaultCipher(key: IntegrationHelper.dummyApiKey)
+
+        // Create two datos accessing the same db
+        // One with encryption and the other without it
+        let helper = IntegrationCoreDataHelper.get(databaseName: "test",
+                                                   dispatchQueue: DispatchQueue(label: "impression dao test"))
+        impressionDao = CoreDataImpressionDao(coreDataHelper: helper)
+        impressionDaoAes128Cbc = CoreDataImpressionDao(coreDataHelper: helper,
+                                                       cipher: cipher)
+
+        // create impressions and get one encrypted feature name
+        let impressions = createImpressions()
+        let testNameEnc = cipher.encrypt(impressions[0].featureName) ?? "fail"
+
+        // Insert encrypted impressions
+        for impression in impressions {
+            impressionDaoAes128Cbc.insert(impression)
+        }
+
+        // load impressions and filter them by encrypted feature name
+        let loadedImpression = getBy(testName: testNameEnc, coreDataHelper: helper)
+
+        let impression = try? Json.encodeFrom(json: loadedImpression ?? "", to: KeyImpression.self)
+
+        XCTAssertNotNil(loadedImpression)
+        XCTAssertEqual("==", loadedImpression?.suffix(2) ?? "")
+        XCTAssertNil(impression)
+    }
+
+    func getBy(testName: String, coreDataHelper: CoreDataHelper) -> String? {
+        var body: String? = nil
+        coreDataHelper.performAndWait {
+            let predicate = NSPredicate(format: "testName == %@", testName)
+            let entities = coreDataHelper.fetch(entity: .impression,
+                                                where: predicate,
+                                                rowLimit: 1).compactMap { return $0 as? ImpressionEntity }
+            if entities.count > 0 {
+                body = entities[0].body
+            }
+        }
+        return body
+    }
+
     /// TODO: Check how to test delete in inMemoryDb
     func PausedtestDelete() {
         let toDelete = eventDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20).prefix(5)
@@ -65,19 +118,6 @@ class EventDaoTests: XCTestCase {
 
         XCTAssertEqual(5, loadedEvents.count)
         XCTAssertEqual(0, loadedEvents.filter { notFound.contains($0.storageId)}.count)
-    }
-
-    func testLoadOutdated() {
-        let timestamp = Date().unixTimestamp() + 10000
-        let loadedEvents = eventDao.getBy(createdAt: timestamp, status: StorageRecordStatus.active, maxRows: 20)
-        let loadedEvents1 = eventDao.getBy(createdAt: timestamp, status: StorageRecordStatus.deleted, maxRows: 20)
-
-        XCTAssertEqual(0, loadedEvents.count)
-        XCTAssertEqual(0, loadedEvents1.count)
-    }
-
-    override func tearDown() {
-
     }
 
     func createEvents() -> [EventDTO] {
