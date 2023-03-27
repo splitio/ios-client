@@ -68,12 +68,12 @@ class CoreDataSplitDatabase: SplitDatabase {
     // Passing a cipher allows using one from created by the Customer in the future
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
         self.coreDataHelper = coreDataHelper
-        self.splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper)
+        self.splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper)
         self.impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper)
         self.impressionsCountDao = CoreDataImpressionsCountDao(coreDataHelper: coreDataHelper)
         self.generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
-        self.mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper)
+        self.mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.attributesDao = CoreDataAttributesDao(coreDataHelper: coreDataHelper)
         self.uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: coreDataHelper)
     }

@@ -32,7 +32,5 @@ struct ServiceConstants {
     static let uniqueKeyBulkSize = 50
     static let maxUniqueKeyQueueSize = 30000
 
-
-    // TODO: Remove  this key on final implementation
-    static let aesKeyForPoC = "BFF69D2D-307F-4042-A705-6DDFFB13"
+    static let aes128KeyLength = 16
 }
