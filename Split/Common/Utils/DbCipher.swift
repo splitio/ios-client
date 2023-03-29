@@ -60,7 +60,6 @@ struct DbCipher {
 
             let body = fromCipher?.decrypt(item.body) ?? item.body
             item.body = toCipher?.encrypt(body) ?? body
-            print("what")
         }
     }
 
