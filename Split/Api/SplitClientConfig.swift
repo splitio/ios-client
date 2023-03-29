@@ -146,6 +146,16 @@ public class SplitClientConfig: NSObject {
     }
 
     ///
+    /// Level of encryption of data in cache db
+    /// - Parameters
+    /// - dbEncryptionLevel:
+    ///     * .aes128Cbc: AES 128bit CBC  encryption
+    ///     * .none: No encryption
+    ///
+    @objc public var dbEncryptionLevel: SplitEncryptionLevel = .none
+
+
+    ///
     /// The logic to handle an impression log generated during a getTreatment call
     /// - Parameters
     /// - A closure of type SplitImpressionListener, that means (SplitImpression) -> Void

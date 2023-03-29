@@ -58,6 +58,7 @@ class SplitComponentFactory {
                                testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
         let component: SplitStorageContainer =
         try SplitDatabaseHelper.buildStorageContainer(splitClientConfig: splitClientConfig,
+                                                      apiKey: apiKey,
                                                       userKey: userKey,
                                                       databaseName: databaseName,
                                                       telemetryStorage: telemetryStorage,
