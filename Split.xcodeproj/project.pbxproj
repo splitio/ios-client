@@ -1123,7 +1123,7 @@
 		95B4369A26F147F100E1EB9C /* MySegmentsV2PayloaDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B4369926F147F100E1EB9C /* MySegmentsV2PayloaDecoderTest.swift */; };
 		95B436A026F1487400E1EB9C /* TestingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B4369F26F1487400E1EB9C /* TestingData.swift */; };
 		95B436A626F1533700E1EB9C /* MySegmentsV2PayloadDecoderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B436A526F1533600E1EB9C /* MySegmentsV2PayloadDecoderMock.swift */; };
-		95BC77EE28368FF1008E14BF /* UniqueKeyDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BC77ED28368FF1008E14BF /* UniqueKeyDaoTests.swift */; };
+		95BC77EE28368FF1008E14BF /* UniqueKeyDaoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BC77ED28368FF1008E14BF /* UniqueKeyDaoTest.swift */; };
 		95C0577629476469007E4D6A /* UserConsentModeDebugTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C0577529476469007E4D6A /* UserConsentModeDebugTest.swift */; };
 		95C057792948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C057782948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift */; };
 		95C0577C294A247D007E4D6A /* UserConsentModeNoneTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C0577B294A247C007E4D6A /* UserConsentModeNoneTest.swift */; };
@@ -1812,7 +1812,7 @@
 		95B4369926F147F100E1EB9C /* MySegmentsV2PayloaDecoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsV2PayloaDecoderTest.swift; sourceTree = "<group>"; };
 		95B4369F26F1487400E1EB9C /* TestingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingData.swift; sourceTree = "<group>"; };
 		95B436A526F1533600E1EB9C /* MySegmentsV2PayloadDecoderMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsV2PayloadDecoderMock.swift; sourceTree = "<group>"; };
-		95BC77ED28368FF1008E14BF /* UniqueKeyDaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeyDaoTests.swift; sourceTree = "<group>"; };
+		95BC77ED28368FF1008E14BF /* UniqueKeyDaoTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeyDaoTest.swift; sourceTree = "<group>"; };
 		95C0577529476469007E4D6A /* UserConsentModeDebugTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConsentModeDebugTest.swift; sourceTree = "<group>"; };
 		95C057782948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserConsentModeOptimizedTest.swift; sourceTree = "<group>"; };
 		95C0577B294A247C007E4D6A /* UserConsentModeNoneTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserConsentModeNoneTest.swift; sourceTree = "<group>"; };
@@ -2451,7 +2451,7 @@
 			children = (
 				599407DF22403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift */,
 				59F65F002562FF71005FE8C9 /* EventDaoTest.swift */,
-				95BC77ED28368FF1008E14BF /* UniqueKeyDaoTests.swift */,
+				95BC77ED28368FF1008E14BF /* UniqueKeyDaoTest.swift */,
 				95C717D9268CDAC2002ADB83 /* ImpressionsCountDaoTest.swift */,
 				955428E3256815B200331356 /* ImpressionDaoTest.swift */,
 				59F65F0525654EBB005FE8C9 /* PersistentEventsStorageTest.swift */,
@@ -3964,7 +3964,7 @@
 				59B2043324F549B70092F2E9 /* SyncUpdateWorkerTest.swift in Sources */,
 				5912D14F2199FD8600BC698C /* LegacyHashingTest.swift in Sources */,
 				59FB7C282202457D00ECC96A /* LocalhostParserTests.swift in Sources */,
-				95BC77EE28368FF1008E14BF /* UniqueKeyDaoTests.swift in Sources */,
+				95BC77EE28368FF1008E14BF /* UniqueKeyDaoTest.swift in Sources */,
 				95C1600F27D28FD4008562E3 /* PersistentAttributesStorageTests.swift in Sources */,
 				957E676625E7F8D7006F5B19 /* ReadyFromCacheTest.swift in Sources */,
 				9502B7B42837E70200B779C0 /* UniqueTrackerTest.swift in Sources */,

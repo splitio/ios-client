@@ -43,15 +43,10 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
             guard let self = self else {
                 return
             }
-            do {
-                for count in counts {
-                    self.insert(count: count)
-                }
-                self.coreDataHelper.save()
-            } catch {
-                Logger.e("An error occurred while inserting impressions " +
-                         "counts in storage: \(error.localizedDescription)")
+            for count in counts {
+                self.insert(count: count)
             }
+            self.coreDataHelper.save()
         }
     }
 
@@ -65,7 +60,8 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
             let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
             let entities = self.coreDataHelper.fetch(entity: .impressionsCount,
                                                      where: predicate,
-                                                     rowLimit: maxRows).compactMap { return $0 as? ImpressionsCountEntity }
+                                                     rowLimit: maxRows)
+                .compactMap { return $0 as? ImpressionsCountEntity }
 
             entities.forEach { entity in
                 if let model = try? self.mapEntityToModel(entity) {
