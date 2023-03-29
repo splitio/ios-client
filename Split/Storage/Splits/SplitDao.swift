@@ -36,7 +36,6 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             guard let self = self else {
                 return
             }
-
             parsed.forEach { name, json in
                 if let obj = self.getBy(name: name) ?? self.coreDataHelper.create(entity: .split) as? SplitEntity {
                     obj.name = name

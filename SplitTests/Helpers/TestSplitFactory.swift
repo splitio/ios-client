@@ -77,7 +77,7 @@ class TestSplitFactory: SplitFactory {
         HttpSessionConfig.default.connectionTimeOut = TimeInterval(splitConfig.connectionTimeout)
 
         let storageContainer = try SplitDatabaseHelper.buildStorageContainer(
-            splitClientConfig: splitConfig,
+            splitClientConfig: splitConfig, apiKey: IntegrationHelper.dummyApiKey,
             userKey: key.matchingKey, databaseName: "dummy", telemetryStorage: nil, testDatabase: splitDatabase)
 
         let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)

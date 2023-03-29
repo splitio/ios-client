@@ -759,6 +759,9 @@
 		956E4382271DCCE7008B4DB6 /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953911A7267A4F250040433A /* LRUCache.swift */; };
 		956E4383271DCCE7008B4DB6 /* HttpError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA22E5D463A3928C1D0600 /* HttpError.swift */; };
 		956E4384271DCCE7008B4DB6 /* GeneralInfoDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954F9AF8256EE55B00140B81 /* GeneralInfoDao.swift */; };
+		95715A8129D22C1B00A1B2F9 /* SplitEncryptionLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */; };
+		95715A8329D23F9600A1B2F9 /* DbCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8229D23F9600A1B2F9 /* DbCipher.swift */; };
+		95715A8529D353C100A1B2F9 /* DbCipherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8429D353C100A1B2F9 /* DbCipherTest.swift */; };
 		95726075262F548500350CCA /* SplitBgSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95726074262F548500350CCA /* SplitBgSynchronizer.swift */; };
 		9573FB18273C2FFA00086DDE /* AnyValueValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */; };
 		9573FB26273C50D400086DDE /* EvaluatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB25273C50D400086DDE /* EvaluatorStub.swift */; };
@@ -1152,7 +1155,7 @@
 		95DE293727395E7300DB3EAD /* AttributeEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE293627395E7300DB3EAD /* AttributeEntity.swift */; };
 		95DE293E2739737D00DB3EAD /* AttributeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE293D2739737D00DB3EAD /* AttributeMap.swift */; };
 		95DE294E2739981400DB3EAD /* AttributesDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE294D2739981400DB3EAD /* AttributesDaoStub.swift */; };
-		95DE29532739A7AB00DB3EAD /* AttributesDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE29522739A7AB00DB3EAD /* AttributesDaoTests.swift */; };
+		95DE29532739A7AB00DB3EAD /* AttributesDaoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE29522739A7AB00DB3EAD /* AttributesDaoTest.swift */; };
 		95DE8EA027C54858009FAC01 /* SplitDatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE8E9F27C54858009FAC01 /* SplitDatabaseHelper.swift */; };
 		95DE8EA127C54870009FAC01 /* SplitDatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE8E9F27C54858009FAC01 /* SplitDatabaseHelper.swift */; };
 		95DFD13B2608FFF600776E0A /* SplitSdkUpdatePollingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DFD13A2608FFF600776E0A /* SplitSdkUpdatePollingTest.swift */; };
@@ -1727,6 +1730,9 @@
 		956D17D0260D266E0037F575 /* SplitsChangesCheckerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsChangesCheckerTest.swift; sourceTree = "<group>"; };
 		956D17D6260D28320037F575 /* MySegmentsChangeChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsChangeChecker.swift; sourceTree = "<group>"; };
 		956E418D271DC8F1008B4DB6 /* libSplitlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSplitlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEncryptionLevel.swift; sourceTree = "<group>"; };
+		95715A8229D23F9600A1B2F9 /* DbCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbCipher.swift; sourceTree = "<group>"; };
+		95715A8429D353C100A1B2F9 /* DbCipherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbCipherTest.swift; sourceTree = "<group>"; };
 		95726074262F548500350CCA /* SplitBgSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitBgSynchronizer.swift; sourceTree = "<group>"; };
 		9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyValueValidator.swift; sourceTree = "<group>"; };
 		9573FB25273C50D400086DDE /* EvaluatorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluatorStub.swift; sourceTree = "<group>"; };
@@ -1840,7 +1846,7 @@
 		95DE293627395E7300DB3EAD /* AttributeEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributeEntity.swift; sourceTree = "<group>"; };
 		95DE293D2739737D00DB3EAD /* AttributeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeMap.swift; sourceTree = "<group>"; };
 		95DE294D2739981400DB3EAD /* AttributesDaoStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesDaoStub.swift; sourceTree = "<group>"; };
-		95DE29522739A7AB00DB3EAD /* AttributesDaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesDaoTests.swift; sourceTree = "<group>"; };
+		95DE29522739A7AB00DB3EAD /* AttributesDaoTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesDaoTest.swift; sourceTree = "<group>"; };
 		95DE8E9F27C54858009FAC01 /* SplitDatabaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDatabaseHelper.swift; sourceTree = "<group>"; };
 		95DFD13A2608FFF600776E0A /* SplitSdkUpdatePollingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitSdkUpdatePollingTest.swift; sourceTree = "<group>"; };
 		95DFD140260934E400776E0A /* SdkUpdateStreamingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SdkUpdateStreamingTest.swift; sourceTree = "<group>"; };
@@ -2084,6 +2090,7 @@
 				95DE8E9F27C54858009FAC01 /* SplitDatabaseHelper.swift */,
 				955B59682815687200D105CD /* FailHelpers.swift */,
 				95E8193D28786A1C00D99093 /* SplitLogLevel.swift */,
+				95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -2390,6 +2397,7 @@
 				595AD25E24E5D16300A7B750 /* Atomic.swift */,
 				9595911026DFFF87009E7944 /* CompressionUtil.swift */,
 				95125624276B72B60091895B /* Stopwatch.swift */,
+				95715A8229D23F9600A1B2F9 /* DbCipher.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2468,7 +2476,7 @@
 				954F9B062570309400140B81 /* SplitDaoTest.swift */,
 				954F9B0A2570431900140B81 /* GeneralInfoDaoTests.swift */,
 				954F9B1D25715EAB00140B81 /* MySegmentsDaoTest.swift */,
-				95DE29522739A7AB00DB3EAD /* AttributesDaoTests.swift */,
+				95DE29522739A7AB00DB3EAD /* AttributesDaoTest.swift */,
 				95C8F78D27D00A5E00E118EA /* PersistentMySegmentsStorageTests.swift */,
 				952E26722833FE8A0015D633 /* PersistentUniqueKeysStorageTests.swift */,
 				95C1600E27D28FD4008562E3 /* PersistentAttributesStorageTests.swift */,
@@ -2686,6 +2694,7 @@
 				59AD7AC92465C32D00F5B0B4 /* EventDTOJsonTest.swift */,
 				595AD24C24E324D100A7B750 /* Base64UtilsTest.swift */,
 				95F0569529B7836E009F5A68 /* CipherTest.swift */,
+				95715A8429D353C100A1B2F9 /* DbCipherTest.swift */,
 				9595910426DFB1AB009E7944 /* DecompressionTest.swift */,
 			);
 			path = SplitTests;
@@ -3624,6 +3633,7 @@
 				3B6DEF3320EA6AE50067435E /* Partition.swift in Sources */,
 				3B6DEF2A20EA6AE50067435E /* ImpressionsConstants.swift in Sources */,
 				9519A93827DE2AE600278AEC /* ByKeyFacade.swift in Sources */,
+				95715A8329D23F9600A1B2F9 /* DbCipher.swift in Sources */,
 				595AD25724E56E6200A7B750 /* EventStreamParser.swift in Sources */,
 				3B6DEF2820EA6AE50067435E /* Impression.swift in Sources */,
 				3B6DEF3D20EA6AE50067435E /* BetweenMatcherData.swift in Sources */,
@@ -3648,6 +3658,7 @@
 				5905D4CE2555F99D006DA3B1 /* EventEntity.swift in Sources */,
 				3B6DEF8920EA6AE50067435E /* ConcurrentArrayQueue.swift in Sources */,
 				3B6DEF3520EA6AE50067435E /* SecureDataStore.swift in Sources */,
+				95715A8129D22C1B00A1B2F9 /* SplitEncryptionLevel.swift in Sources */,
 				3B6DEF2720EA6AE50067435E /* Logger.swift in Sources */,
 				3B6DEF5920EA6AE50067435E /* SplitEventsManager.swift in Sources */,
 				3B6DEF4020EA6AE50067435E /* DataType.swift in Sources */,
@@ -3971,10 +3982,11 @@
 				952BF5F8278DF57D00FF6181 /* TelemetryIntegrationTest.swift in Sources */,
 				59F4AAA124FFC94100A1C69A /* NotificationManagerKeeperTest.swift in Sources */,
 				95ABF4FC29369B73006ED016 /* TelemetrySynchronizerStub.swift in Sources */,
+				95715A8529D353C100A1B2F9 /* DbCipherTest.swift in Sources */,
 				59D84BDC2215CD52003DA248 /* LocalhostSplitFetcherTests.swift in Sources */,
 				956D17D1260D266E0037F575 /* SplitsChangesCheckerTest.swift in Sources */,
 				599EA5852268E9C2006CBA89 /* LocalhostTests.swift in Sources */,
-				95DE29532739A7AB00DB3EAD /* AttributesDaoTests.swift in Sources */,
+				95DE29532739A7AB00DB3EAD /* AttributesDaoTest.swift in Sources */,
 				95ABF50029379CCD006ED016 /* EventsSynchronizerStub.swift in Sources */,
 				955428E02568155B00331356 /* PersistentImpressionsStorageTest.swift in Sources */,
 				5912D152219A022000BC698C /* CsvHelper.swift in Sources */,
