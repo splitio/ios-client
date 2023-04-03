@@ -16,6 +16,13 @@ protocol AttributesDao {
 }
 
 class CoreDataAttributesDao: BaseCoreDataDao, AttributesDao {
+
+    private let cipher: Cipher?
+    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
+        self.cipher = cipher
+        super.init(coreDataHelper: coreDataHelper)
+    }
+
     func getBy(userKey: String) -> [String: Any]? {
         var attributes: [String: Any]?
         execute { [weak self] in
@@ -23,7 +30,7 @@ class CoreDataAttributesDao: BaseCoreDataDao, AttributesDao {
                 return
             }
 
-            if let entity = self.getByUserKey(userKey) {
+            if let entity = self.getByUserKey(self.cipher?.encrypt(userKey) ?? userKey) {
                 attributes = self.mapEntityToModel(entity)
             }
         }
@@ -51,17 +58,19 @@ class CoreDataAttributesDao: BaseCoreDataDao, AttributesDao {
     }
 
     private func updateAttributes(_ attributes: [String: Any]?, userKey: String) {
+        let encUserKey = cipher?.encrypt(userKey) ?? userKey
         guard let attributes = attributes else {
             self.coreDataHelper.delete(entity: .attribute, by: "userKey",
-                                       values: [userKey])
+                                       values: [encUserKey])
             return
         }
 
-        if let entity = self.getByUserKey(userKey) ??
+        if let entity = self.getByUserKey(encUserKey) ??
             self.coreDataHelper.create(entity: .attribute) as? AttributeEntity {
-            entity.userKey = userKey
+            entity.userKey = encUserKey
             do {
-                entity.attributes = try Json.dynamicEncodeToJson(AttributeMap(attributes: attributes))
+                let json = try Json.dynamicEncodeToJson(AttributeMap(attributes: attributes))
+                entity.attributes = cipher?.encrypt(json) ?? json
             } catch {
                 Logger.e("Error while parsing attributes to store them in DB: \(error)")
             }
@@ -82,7 +91,8 @@ class CoreDataAttributesDao: BaseCoreDataDao, AttributesDao {
     private func mapEntityToModel(_ entity: AttributeEntity) -> [String: Any]? {
         do {
             if let attributes = entity.attributes {
-                let attributeMap = try Json.dynamicEncodeFrom(json: attributes, to: AttributeMap.self)
+                let json = cipher?.decrypt(attributes) ?? attributes
+                let attributeMap = try Json.dynamicEncodeFrom(json: json, to: AttributeMap.self)
                 return attributeMap.attributes
             }
         } catch {
