@@ -14,48 +14,50 @@ class InitDbCipherTest: XCTestCase {
 
     var dbHelper: CoreDataHelper!
     var db: SplitDatabase!
-    var secureStorage: KeyValueStorage!
-
+    let apiKey1 = IntegrationHelper.dummyApiKey
+    let apiKey2 = "42bc399049fd8653247c5ea42bc3c1ae2c6a"
+    var secureStorage = SecureStorageStub()
     override func setUp() {
-
+        GlobalSecureStorage.testStorage = secureStorage
         dbHelper = createDbHelper()
         db = TestingHelper.createTestDatabase(name: "test",
                                               queue: DispatchQueue.global(),
                                               helper: dbHelper)
-        secureStorage = SecureStorageStub()
+
     }
 
     func testEncryptDb() throws {
-        GlobalSecureStorage.testStorage = secureStorage
-        secureStorage.set(item: SplitEncryptionLevel.none, for: .dbEncryptionLevel)
-        let factory = initSdk(encryptionLevel: .aes128Cbc)
+        secureStorage.set(item: SplitEncryptionLevel.none.rawValue, for: .dbEncryptionLevel(apiKey1))
 
-        let newEnc = secureStorage.get(item: .dbEncryptionLevel, type: SplitEncryptionLevel.self)
+        let factory = initSdk(encryptionLevel: .aes128Cbc, apiKey: apiKey1)
 
-        XCTAssertEqual(SplitEncryptionLevel.aes128Cbc, newEnc)
+        let newEnc = secureStorage.getInt(item: .dbEncryptionLevel(apiKey1))
+
+        print("new enc: \(newEnc) for \(apiKey1)")
+        XCTAssertEqual(SplitEncryptionLevel.aes128Cbc.rawValue, newEnc)
 
         factory.client.destroy()
     }
 
     func testDecryptDb() throws {
-        GlobalSecureStorage.testStorage = secureStorage
-        secureStorage.set(item: SplitEncryptionLevel.aes128Cbc, for: .dbEncryptionLevel)
-        let factory = initSdk(encryptionLevel: .none)
 
-        let newEnc = secureStorage.get(item: .dbEncryptionLevel, type: SplitEncryptionLevel.self)
+        secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(apiKey2))
+        let factory = initSdk(encryptionLevel: .none, apiKey: apiKey2)
 
-        XCTAssertEqual(SplitEncryptionLevel.none, newEnc)
+        let newEnc = secureStorage.getInt(item: .dbEncryptionLevel(apiKey2))
+        print("new enc: \(newEnc) for \(apiKey2)")
+        XCTAssertEqual(SplitEncryptionLevel.none.rawValue, newEnc)
 
         factory.client.destroy()
     }
 
-    private func initSdk(encryptionLevel: SplitEncryptionLevel) -> SplitFactory {
+    private func initSdk(encryptionLevel: SplitEncryptionLevel, apiKey: String) -> SplitFactory {
         let config = SplitClientConfig()
         config.dbEncryptionLevel = encryptionLevel
 
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(db)
-        _ = builder.setApiKey(IntegrationHelper.dummyApiKey)
+        _ = builder.setApiKey(apiKey)
         _ = builder.setKey(Key(matchingKey: IntegrationHelper.dummyUserKey))
         _ = builder.setConfig(config)
 

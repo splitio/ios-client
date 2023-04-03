@@ -10,18 +10,19 @@ import Foundation
 @testable import Split
 
 class SecureStorageStub: KeyValueStorage {
+
     var values = [String: String]()
     func set<T: Encodable>(item: T, for key: SecureItem) {
         do {
             let json = try Json.encodeToJson(item)
             set(item: json, for: key)
         } catch {
-            Logger.e("Error parsing item \(key.rawValue)")
+            Logger.e("Error parsing item \(key.toString())")
         }
     }
 
     func get(item: SecureItem) -> String? {
-        return values[item.rawValue]
+        return values[item.toString()]
     }
 
     func get<T: Decodable>(item: SecureItem, type: T.Type) -> T? {
@@ -31,19 +32,27 @@ class SecureStorageStub: KeyValueStorage {
         do {
             return try Json.encodeFrom(json: data, to: type)
         } catch {
-            Logger.d("Couldn't get \(item.rawValue) item")
+            Logger.d("Couldn't get \(item.toString()) item")
         }
         return nil
     }
 
     func remove(item: SecureItem) {
-        values.removeValue(forKey: item.rawValue)
+        values.removeValue(forKey: item.toString())
     }
 
     func set(item: String, for key: SecureItem) {
-        values[key.rawValue] = item
+        values[key.toString()] = item
     }
 
+    func getInt(item: SecureItem) -> Int? {
+        let value = values[item.toString()] ?? ""
+        print("Value \(value) for \(item.toString())")
+        return Int(value)
+    }
 
-
+    func set(item: Int, for key: SecureItem) {
+        print("SET Value \(item) for \(key.toString())")
+        values[key.toString()] = "\(item)"
+    }
 }

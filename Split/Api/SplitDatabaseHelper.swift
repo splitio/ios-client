@@ -13,13 +13,14 @@ struct SplitDatabaseHelper {
     static private let kDbExt = ["", "-shm", "-wal"]
     static private let kExpirationPeriod = ServiceConstants.recordedDataExpirationPeriodInSeconds
 
-    static func currentEncryptionLevel() -> SplitEncryptionLevel {
-        return GlobalSecureStorage.shared.get(item: .dbEncryptionLevel,
-                                              type: SplitEncryptionLevel.self) ?? .none
+    static func currentEncryptionLevel(apiKey: String) -> SplitEncryptionLevel {
+        let rawValue = GlobalSecureStorage.shared.getInt(item: .dbEncryptionLevel(apiKey))
+        ?? SplitEncryptionLevel.none.rawValue
+        return SplitEncryptionLevel(rawValue: rawValue) ?? .none
     }
 
-    static func setCurrentEncryptionLevel(_ level: SplitEncryptionLevel) {
-        GlobalSecureStorage.shared.set(item: level, for: .dbEncryptionLevel)
+    static func setCurrentEncryptionLevel(_ level: SplitEncryptionLevel, for apiKey: String) {
+        GlobalSecureStorage.shared.set(item: level.rawValue, for: .dbEncryptionLevel(apiKey))
     }
 
     static func buildStorageContainer(splitClientConfig: SplitClientConfig,
@@ -29,7 +30,7 @@ struct SplitDatabaseHelper {
                                       telemetryStorage: TelemetryStorage?,
                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
 
-        let curEncryptionLevel = currentEncryptionLevel()
+        let curEncryptionLevel = currentEncryptionLevel(apiKey: apiKey)
         var splitDatabase = testDatabase
         var dbHelper: CoreDataHelper?
         if let testDb = testDatabase as? TestSplitDatabase {
@@ -43,13 +44,16 @@ struct SplitDatabaseHelper {
             throw GenericError.couldNotCreateCache
         }
 
-        if currentEncryptionLevel() != splitClientConfig.dbEncryptionLevel {
+        if currentEncryptionLevel(apiKey: apiKey) != splitClientConfig.dbEncryptionLevel {
             let dbCipher = try DbCipher(apiKey: apiKey,
                                         from: curEncryptionLevel,
                                         to: splitClientConfig.dbEncryptionLevel,
                                         coreDataHelper: dbHelper)
             dbCipher.apply()
-            setCurrentEncryptionLevel(splitClientConfig.dbEncryptionLevel)
+            setCurrentEncryptionLevel(splitClientConfig.dbEncryptionLevel, for: apiKey)
+            let val = currentEncryptionLevel(apiKey: apiKey)
+            print("New enc: \(splitClientConfig.dbEncryptionLevel.rawValue) for \(apiKey)")
+            print("CURR enc: \(val.rawValue) for \(apiKey)")
 
         }
 
