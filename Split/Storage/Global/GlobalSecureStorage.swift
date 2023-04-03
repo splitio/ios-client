@@ -9,7 +9,10 @@ import Foundation
 
 class GlobalSecureStorage: KeyValueStorage {
 
-    static let shared: KeyValueStorage = GlobalSecureStorage()
+    // Only for testing
+    static var testStorage: KeyValueStorage?
+
+    static let shared: KeyValueStorage = testStorage ?? GlobalSecureStorage()
 
     func set<T: Encodable>(item: T, for key: SecureItem) {
         do {
