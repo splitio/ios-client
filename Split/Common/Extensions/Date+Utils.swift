@@ -11,7 +11,7 @@ private let kTimeIntervalMs: Int64 = 3600 * 1000
 
 extension Date {
 
-    public func isBetweeen(date date1: Date, andDate date2: Date) -> Bool {
+    public func isBetween(date date1: Date, andDate date2: Date) -> Bool {
         return date1.compare(self) == self.compare(date2)
     }
 

@@ -63,6 +63,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let databaseName = SplitDatabaseHelper.databaseName(apiKey: params.apiKey) ?? params.config.defaultDataFolder
 
+
         let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
                                                                     telemetryStorage: params.telemetryStorage,
                                                                     testDatabase: params.testDatabase)

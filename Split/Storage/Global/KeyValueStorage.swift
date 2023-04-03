@@ -9,6 +9,7 @@ import Foundation
 
 enum SecureItem: String {
     case backgroundSyncSchedule = "bgSyncSchedule"
+    case dbEncryptionLevel = "dbEncryptionLevel"
 }
 
 protocol KeyValueStorage {

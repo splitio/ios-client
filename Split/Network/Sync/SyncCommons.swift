@@ -8,7 +8,7 @@
 
 struct SplitStorageContainer {
     let splitDatabase: SplitDatabase
-    let fileStorage: FileStorageProtocol
+//    let fileStorage: FileStorageProtocol
     let splitsStorage: SplitsStorage
     let persistentSplitsStorage: PersistentSplitsStorage
     let impressionsStorage: ImpressionsStorage

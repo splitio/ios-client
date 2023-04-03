@@ -762,6 +762,7 @@
 		95715A8129D22C1B00A1B2F9 /* SplitEncryptionLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */; };
 		95715A8329D23F9600A1B2F9 /* DbCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8229D23F9600A1B2F9 /* DbCipher.swift */; };
 		95715A8529D353C100A1B2F9 /* DbCipherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8429D353C100A1B2F9 /* DbCipherTest.swift */; };
+		95715A9129DB0B9C00A1B2F9 /* AttributesDaoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A9029DB0B9C00A1B2F9 /* AttributesDaoTests.swift */; };
 		95726075262F548500350CCA /* SplitBgSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95726074262F548500350CCA /* SplitBgSynchronizer.swift */; };
 		9573FB18273C2FFA00086DDE /* AnyValueValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */; };
 		9573FB26273C50D400086DDE /* EvaluatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB25273C50D400086DDE /* EvaluatorStub.swift */; };
@@ -1733,6 +1734,7 @@
 		95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEncryptionLevel.swift; sourceTree = "<group>"; };
 		95715A8229D23F9600A1B2F9 /* DbCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbCipher.swift; sourceTree = "<group>"; };
 		95715A8429D353C100A1B2F9 /* DbCipherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbCipherTest.swift; sourceTree = "<group>"; };
+		95715A9029DB0B9C00A1B2F9 /* AttributesDaoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesDaoTests.swift; sourceTree = "<group>"; };
 		95726074262F548500350CCA /* SplitBgSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitBgSynchronizer.swift; sourceTree = "<group>"; };
 		9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyValueValidator.swift; sourceTree = "<group>"; };
 		9573FB25273C50D400086DDE /* EvaluatorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluatorStub.swift; sourceTree = "<group>"; };
@@ -2457,6 +2459,7 @@
 		5905D4E3255B2373006DA3B1 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				95715A9029DB0B9C00A1B2F9 /* AttributesDaoTests.swift */,
 				599407DF22403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift */,
 				59F65F002562FF71005FE8C9 /* EventDaoTest.swift */,
 				95BC77ED28368FF1008E14BF /* UniqueKeyDaoTest.swift */,
@@ -3961,6 +3964,7 @@
 				59F4AAB725128B7000A1C69A /* SplitsSyncWorkerTest.swift in Sources */,
 				95F3F02C2590D8DB00084AF8 /* PersistentImpressionsStorageStub.swift in Sources */,
 				59EFD30424BCA7460052920D /* HttpClientMock.swift in Sources */,
+				95715A9129DB0B9C00A1B2F9 /* AttributesDaoTests.swift in Sources */,
 				95B030C028D6487C0030EC8B /* StreamingBgReconnectTest.swift in Sources */,
 				954F9C4E2577E6D200140B81 /* HttpSplitFetcherTests.swift in Sources */,
 				5932260124A4E91800496D8B /* HttpStreamRequestTest.swift in Sources */,

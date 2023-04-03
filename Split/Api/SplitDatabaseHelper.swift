@@ -13,6 +13,13 @@ struct SplitDatabaseHelper {
     static private let kDbExt = ["", "-shm", "-wal"]
     static private let kExpirationPeriod = ServiceConstants.recordedDataExpirationPeriodInSeconds
 
+
+    static func currentEncryptionLevel() -> SplitEncryptionLevel {
+        return GlobalSecureStorage.shared.get(item: .dbEncryptionLevel,
+                                              type: SplitEncryptionLevel.self) ?? .none
+    }
+
+
     static func buildStorageContainer(splitClientConfig: SplitClientConfig,
                                       apiKey: String,
                                       userKey: String,
@@ -20,10 +27,24 @@ struct SplitDatabaseHelper {
                                       telemetryStorage: TelemetryStorage?,
                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
 
-        let fileStorage = FileStorage(dataFolderName: databaseName)
+        guard let dbHelper = CoreDataHelperBuilder.build(databaseName: databaseName) else {
+            throw GenericError.couldNotCreateCache
+        }
+
+        let curEncryptionLevel = currentEncryptionLevel()
+        if currentEncryptionLevel() != splitClientConfig.dbEncryptionLevel {
+            let dbCipher = try DbCipher(apiKey: apiKey,
+                                        from: curEncryptionLevel,
+                                        to: splitClientConfig.dbEncryptionLevel,
+                                        coreDataHelper: dbHelper)
+            dbCipher.apply()
+
+        }
+
         let splitDatabase = try openDatabase(dataFolderName: databaseName,
                                              apiKey: apiKey,
                                              encryptionLevel: splitClientConfig.dbEncryptionLevel,
+                                             dbHelper: dbHelper,
                                              testDatabase: testDatabase)
 
         let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
@@ -48,7 +69,7 @@ struct SplitDatabaseHelper {
         }
 
         return SplitStorageContainer(splitDatabase: splitDatabase,
-                                     fileStorage: fileStorage,
+//                                     fileStorage: fileStorage,
                                      splitsStorage: splitsStorage,
                                      persistentSplitsStorage: persistentSplitsStorage,
                                      impressionsStorage: impressionsStorage,
@@ -65,16 +86,14 @@ struct SplitDatabaseHelper {
     static func openDatabase(dataFolderName: String,
                              apiKey: String,
                              encryptionLevel: SplitEncryptionLevel,
+                             dbHelper: CoreDataHelper,
                              testDatabase: SplitDatabase? = nil) throws -> SplitDatabase {
 
         if let database = testDatabase {
             return database
         }
 
-        guard let helper = CoreDataHelperBuilder.build(databaseName: dataFolderName) else {
-            throw GenericError.couldNotCreateCache
-        }
-        return CoreDataSplitDatabase(coreDataHelper: helper,
+        return CoreDataSplitDatabase(coreDataHelper: dbHelper,
                                      cipher: createCipher(level: encryptionLevel,
                                                                                   apiKey: apiKey))
     }
