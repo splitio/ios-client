@@ -41,6 +41,7 @@ class CoreDataHelperBuilder {
         }
 
         let databaseUrl = docURL.appendingPathComponent("\(databaseName).\(ServiceConstants.databaseExtension)")
+        Logger.v("Cache URL: \(databaseUrl.absoluteString)")
         do {
             let options = [NSMigratePersistentStoresAutomaticallyOption: true,
                            NSInferMappingModelAutomaticallyOption: true]

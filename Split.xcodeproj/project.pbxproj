@@ -762,6 +762,8 @@
 		95715A8129D22C1B00A1B2F9 /* SplitEncryptionLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */; };
 		95715A8329D23F9600A1B2F9 /* DbCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8229D23F9600A1B2F9 /* DbCipher.swift */; };
 		95715A8529D353C100A1B2F9 /* DbCipherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8429D353C100A1B2F9 /* DbCipherTest.swift */; };
+		95715A9529DB0ED800A1B2F9 /* InitDbCipherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A9429DB0ED800A1B2F9 /* InitDbCipherTest.swift */; };
+		95715A9729DB16A000A1B2F9 /* SecureStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A9629DB16A000A1B2F9 /* SecureStorageStub.swift */; };
 		95726075262F548500350CCA /* SplitBgSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95726074262F548500350CCA /* SplitBgSynchronizer.swift */; };
 		9573FB18273C2FFA00086DDE /* AnyValueValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */; };
 		9573FB26273C50D400086DDE /* EvaluatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB25273C50D400086DDE /* EvaluatorStub.swift */; };
@@ -1733,6 +1735,8 @@
 		95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEncryptionLevel.swift; sourceTree = "<group>"; };
 		95715A8229D23F9600A1B2F9 /* DbCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbCipher.swift; sourceTree = "<group>"; };
 		95715A8429D353C100A1B2F9 /* DbCipherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbCipherTest.swift; sourceTree = "<group>"; };
+		95715A9429DB0ED800A1B2F9 /* InitDbCipherTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitDbCipherTest.swift; sourceTree = "<group>"; };
+		95715A9629DB16A000A1B2F9 /* SecureStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStorageStub.swift; sourceTree = "<group>"; };
 		95726074262F548500350CCA /* SplitBgSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitBgSynchronizer.swift; sourceTree = "<group>"; };
 		9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyValueValidator.swift; sourceTree = "<group>"; };
 		9573FB25273C50D400086DDE /* EvaluatorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluatorStub.swift; sourceTree = "<group>"; };
@@ -2513,6 +2517,7 @@
 				59F65F09256568CF005FE8C9 /* SplitDatabaseStub.swift */,
 				954F9C6F25795CD300140B81 /* SplitsStorageStub.swift */,
 				95B17FF4275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift */,
+				95715A9629DB16A000A1B2F9 /* SecureStorageStub.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -2695,6 +2700,7 @@
 				595AD24C24E324D100A7B750 /* Base64UtilsTest.swift */,
 				95F0569529B7836E009F5A68 /* CipherTest.swift */,
 				95715A8429D353C100A1B2F9 /* DbCipherTest.swift */,
+				95715A9429DB0ED800A1B2F9 /* InitDbCipherTest.swift */,
 				9595910426DFB1AB009E7944 /* DecompressionTest.swift */,
 			);
 			path = SplitTests;
@@ -3890,6 +3896,7 @@
 				59B2043B24F568660092F2E9 /* SynchronizerStub.swift in Sources */,
 				95F3EFEC258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift in Sources */,
 				59F65F012562FF71005FE8C9 /* EventDaoTest.swift in Sources */,
+				95715A9529DB0ED800A1B2F9 /* InitDbCipherTest.swift in Sources */,
 				9519A93A27DE318000278AEC /* ByKeyFacadeTest.swift in Sources */,
 				954F9C75257961C100140B81 /* HttpSplitFetcherStub.swift in Sources */,
 				95649FBE260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift in Sources */,
@@ -4095,6 +4102,7 @@
 				5921ED2F25377316000D6C8B /* HttpRequestManagerTestDispatcher.swift in Sources */,
 				9560354F27D16D5700E35BC8 /* MySegmentsStorageStub.swift in Sources */,
 				595AD1FC24D9ED4C00A7B750 /* FilterBuilderTest.swift in Sources */,
+				95715A9729DB16A000A1B2F9 /* SecureStorageStub.swift in Sources */,
 				955423A726794C58002278D5 /* LRUCacheTest.swift in Sources */,
 				596A7B622343F848004F6139 /* MySegmentUpadatedTest.swift in Sources */,
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,

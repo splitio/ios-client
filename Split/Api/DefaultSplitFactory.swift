@@ -63,11 +63,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         let databaseName = SplitDatabaseHelper.databaseName(apiKey: params.apiKey) ?? params.config.defaultDataFolder
 
+
         let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
                                                                     telemetryStorage: params.telemetryStorage,
                                                                     testDatabase: params.testDatabase)
-
-        LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: params.key.matchingKey)
 
         defaultManager = try components.getSplitManager()
         _ = try components.buildRestClient(

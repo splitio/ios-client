@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public enum SplitEncryptionLevel: Int {
+@objc public enum SplitEncryptionLevel: Int, Codable {
     case aes128Cbc
     case none
 }

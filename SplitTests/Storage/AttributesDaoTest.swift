@@ -95,15 +95,15 @@ class AttributesDaoTest: XCTestCase {
         // Create two datos accessing the same db
         // One with encryption and the other without it
         let helper = IntegrationCoreDataHelper.get(databaseName: "test",
-                                                   dispatchQueue: DispatchQueue(label: "impression dao test"))
+                                                   dispatchQueue: DispatchQueue(label: "attributes dao test"))
         attributesDao = CoreDataAttributesDao(coreDataHelper: helper)
         attributesDaoAes128Cbc = CoreDataAttributesDao(coreDataHelper: helper,
                                                        cipher: cipher)
 
-        // Insert encrypted impressions
+        // Insert encrypted attributess
         attributesDaoAes128Cbc.update(userKey: IntegrationHelper.dummyUserKey, attributes: attributes)
 
-        // load impressions and filter them by encrypted feature name
+        // load attributess and filter them by encrypted feature name
         let values = getBy(coreDataHelper: helper) ?? ("fail", "fail")
 
         let list = try? Json.encodeFrom(json: values.1, to: [String].self)

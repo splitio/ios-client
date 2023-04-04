@@ -42,6 +42,11 @@ class BaseCoreDataDao {
     }
 }
 
+// Dirty but necessary for testing
+protocol TestSplitDatabase {
+    var coreDataHelper: CoreDataHelper { get }
+}
+
 protocol SplitDatabase {
     var splitDao: SplitDao { get }
     var mySegmentsDao: MySegmentsDao { get }
@@ -53,7 +58,7 @@ protocol SplitDatabase {
     var uniqueKeyDao: UniqueKeyDao { get }
 }
 
-class CoreDataSplitDatabase: SplitDatabase {
+class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao
     var eventDao: EventDao
@@ -63,18 +68,18 @@ class CoreDataSplitDatabase: SplitDatabase {
     var attributesDao: AttributesDao
     var uniqueKeyDao: UniqueKeyDao
 
-    private let coreDataHelper: CoreDataHelper
+    let coreDataHelper: CoreDataHelper
 
     // Passing a cipher allows using one from created by the Customer in the future
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
         self.coreDataHelper = coreDataHelper
         self.splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper, cipher: cipher)
-        self.eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper)
-        self.impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper)
-        self.impressionsCountDao = CoreDataImpressionsCountDao(coreDataHelper: coreDataHelper)
+        self.eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper, cipher: cipher)
+        self.impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper, cipher: cipher)
+        self.impressionsCountDao = CoreDataImpressionsCountDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
         self.mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper, cipher: cipher)
-        self.attributesDao = CoreDataAttributesDao(coreDataHelper: coreDataHelper)
-        self.uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: coreDataHelper)
+        self.attributesDao = CoreDataAttributesDao(coreDataHelper: coreDataHelper, cipher: cipher)
+        self.uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: coreDataHelper, cipher: cipher)
     }
 }

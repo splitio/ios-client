@@ -176,7 +176,6 @@ struct TestingHelper {
 
     static func createStorageContainer() -> SplitStorageContainer {
         return SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
-                                     fileStorage: FileStorageStub(),
                                      splitsStorage: SplitsStorageStub(),
                                      persistentSplitsStorage: PersistentSplitsStorageStub(),
                                      impressionsStorage: ImpressionsStorageStub(),

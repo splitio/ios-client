@@ -134,10 +134,16 @@ struct BackgroundSyncExecutor {
         self.apiKey = apiKey
         self.userKeys = userKeys
 
-        let dataFolderName = SplitDatabaseHelper.databaseName(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
-        guard let splitDatabase = try? SplitDatabaseHelper.openDatabase(dataFolderName: dataFolderName,
+        let databaseName = SplitDatabaseHelper.databaseName(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
+
+        guard let dbHelper = CoreDataHelperBuilder.build(databaseName: databaseName) else {
+            throw GenericError.couldNotCreateCache
+        }
+
+        guard let splitDatabase = try? SplitDatabaseHelper.openDatabase(dataFolderName: databaseName,
                                                                         apiKey: apiKey,
-                                                                        encryptionLevel: encryptionLevel) else {
+                                                                        encryptionLevel: encryptionLevel,
+                                                                        dbHelper: dbHelper) else {
             throw GenericError.couldNotCreateCache
         }
         let splitsStorage = SplitDatabaseHelper.openPersistentSplitsStorage(database: splitDatabase)
