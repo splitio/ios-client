@@ -1,3 +1,6 @@
+2.20.0: (Apr xx, 2023)
+ - Added AES 128 CBC encryption to cached data
+
 2.19.1: (Jan 30, 2023)
  - Improving SDK Ready and SDK Ready from cache events triggering time by parsing loaded / received data in parallel
 
