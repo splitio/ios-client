@@ -47,12 +47,10 @@ class SecureStorageStub: KeyValueStorage {
 
     func getInt(item: SecureItem) -> Int? {
         let value = values[item.toString()] ?? ""
-        print("Value \(value) for \(item.toString())")
         return Int(value)
     }
 
     func set(item: Int, for key: SecureItem) {
-        print("SET Value \(item) for \(key.toString())")
         values[key.toString()] = "\(item)"
     }
 }

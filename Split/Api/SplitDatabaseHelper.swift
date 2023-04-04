@@ -51,10 +51,6 @@ struct SplitDatabaseHelper {
                                         coreDataHelper: dbHelper)
             dbCipher.apply()
             setCurrentEncryptionLevel(splitClientConfig.dbEncryptionLevel, for: apiKey)
-            let val = currentEncryptionLevel(apiKey: apiKey)
-            print("New enc: \(splitClientConfig.dbEncryptionLevel.rawValue) for \(apiKey)")
-            print("CURR enc: \(val.rawValue) for \(apiKey)")
-
         }
 
         if splitDatabase == nil {

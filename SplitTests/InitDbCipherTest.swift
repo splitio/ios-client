@@ -33,7 +33,6 @@ class InitDbCipherTest: XCTestCase {
 
         let newEnc = secureStorage.getInt(item: .dbEncryptionLevel(apiKey1))
 
-        print("new enc: \(newEnc) for \(apiKey1)")
         XCTAssertEqual(SplitEncryptionLevel.aes128Cbc.rawValue, newEnc)
 
         factory.client.destroy()
@@ -45,7 +44,6 @@ class InitDbCipherTest: XCTestCase {
         let factory = initSdk(encryptionLevel: .none, apiKey: apiKey2)
 
         let newEnc = secureStorage.getInt(item: .dbEncryptionLevel(apiKey2))
-        print("new enc: \(newEnc) for \(apiKey2)")
         XCTAssertEqual(SplitEncryptionLevel.none.rawValue, newEnc)
 
         factory.client.destroy()

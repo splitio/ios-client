@@ -74,12 +74,12 @@ class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
         self.coreDataHelper = coreDataHelper
         self.splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper, cipher: cipher)
-        self.eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper)
-        self.impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper)
-        self.impressionsCountDao = CoreDataImpressionsCountDao(coreDataHelper: coreDataHelper)
+        self.eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper, cipher: cipher)
+        self.impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper, cipher: cipher)
+        self.impressionsCountDao = CoreDataImpressionsCountDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
         self.mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper, cipher: cipher)
-        self.attributesDao = CoreDataAttributesDao(coreDataHelper: coreDataHelper)
-        self.uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: coreDataHelper)
+        self.attributesDao = CoreDataAttributesDao(coreDataHelper: coreDataHelper, cipher: cipher)
+        self.uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: coreDataHelper, cipher: cipher)
     }
 }
