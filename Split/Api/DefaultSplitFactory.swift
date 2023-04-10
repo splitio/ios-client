@@ -58,11 +58,12 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                apiKey: params.apiKey,
                                                userKey: params.key.matchingKey)
 
+        HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
+
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManagerCoordinator()
 
         let databaseName = SplitDatabaseHelper.databaseName(apiKey: params.apiKey) ?? params.config.defaultDataFolder
-
 
         let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
                                                                     telemetryStorage: params.telemetryStorage,

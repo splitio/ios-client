@@ -21,7 +21,12 @@ protocol HttpRequestManager {
 }
 
 class DefaultHttpRequestManager: NSObject {
-    var requests = HttpRequestList()
+    private var requests = HttpRequestList()
+    private var authenticator: SplitHttpsAuthenticator?
+
+    init(authententicator: SplitHttpsAuthenticator? = nil) {
+        self.authenticator = authententicator
+    }
 }
 
 // MARK: HttpRequestManager - URLSessionTaskDelegate
@@ -41,9 +46,11 @@ extension DefaultHttpRequestManager: URLSessionTaskDelegate {
     }
 }
 
-// MARK: HttpUrlSessionDelegate - URLSessionDataDelegate
+// MARK: URLSessionDataDelegate
 extension DefaultHttpRequestManager: URLSessionDataDelegate {
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse,
+    func urlSession(_ session: URLSession,
+                    dataTask: URLSessionDataTask,
+                    didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
 
         if let urlResponse = response as? HTTPURLResponse {
@@ -57,6 +64,22 @@ extension DefaultHttpRequestManager: URLSessionDataDelegate {
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         append(data: data, to: dataTask.taskIdentifier)
+    }
+}
+
+// MARK: UrlSessionDelegate
+extension DefaultHttpRequestManager: URLSessionDelegate {
+    func urlSession(_ session: URLSession,
+                    didReceive challenge: URLAuthenticationChallenge,
+                    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        if let authenticator = self.authenticator {
+            Logger.v("Triggering external HTTPS authentication handler")
+            authenticator.authenticate(session: session,
+                                       challenge: challenge,
+                                       completionHandler: completionHandler)
+            return
+        }
+        completionHandler(.performDefaultHandling, nil)
     }
 }
 
