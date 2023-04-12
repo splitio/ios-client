@@ -197,4 +197,8 @@ class IntegrationHelper {
             return "splitKilledNotification"
         }
     }
+
+    static var dummyCipherKey: Data {
+        return String("11F17550-01EA-45").dataBytes!
+    }
 }

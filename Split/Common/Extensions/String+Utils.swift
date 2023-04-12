@@ -16,4 +16,8 @@ extension String {
     public func hasUpperCaseChar() -> Bool {
         return self.lowercased() != self
     }
+
+    public var dataBytes: Data? {
+        return self.data(using: .utf8)
+    }
 }

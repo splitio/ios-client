@@ -41,45 +41,45 @@ class DbCipherTest: XCTestCase {
 
         // Encrypted data
         // Splits
-        XCTAssertEqual("=", resultBefore.splits.body.suffix(1))
-        XCTAssertEqual("=", resultBefore.splits.name.suffix(1))
+        XCTAssertFalse(resultBefore.splits.body.contains("name"))
+        XCTAssertFalse(resultBefore.splits.name.contains("feat"))
         // Segments
-        XCTAssertEqual("=", resultBefore.segments.segments.suffix(1))
-        XCTAssertEqual("=", resultBefore.segments.userKey.suffix(1))
+        XCTAssertFalse(resultBefore.segments.segments.contains("s1"))
+        XCTAssertNotEqual(userKey, resultBefore.segments.userKey)
         // Impressions
-        XCTAssertEqual("cRer7", resultBefore.impressions.body.suffix(5))
-        XCTAssertEqual("=", resultBefore.impressions.testName.suffix(1))
+        XCTAssertFalse(resultBefore.impressions.body.contains("key1"))
+        XCTAssertNotEqual("split", resultBefore.impressions.testName)
         // Events
-        XCTAssertEqual("=", resultBefore.events.suffix(1))
-        // Impressions Count
-        XCTAssertEqual("=", resultBefore.impressionsCount.suffix(1))
+        XCTAssertFalse(resultBefore.events.contains("key1"))
+        // Impressions
+        XCTAssertFalse(resultBefore.impressionsCount.contains("pepe"))
         // Unique Keys
-        XCTAssertEqual("=", resultBefore.uniqueKeys.userKey.suffix(1))
-        XCTAssertEqual("FlQ==", resultBefore.uniqueKeys.features.suffix(5))
+        XCTAssertNotEqual(userKey, resultBefore.uniqueKeys.userKey)
+        XCTAssertFalse(resultBefore.uniqueKeys.features.contains("split1"))
         // Attributes
-        XCTAssertEqual("=", resultBefore.attributes.userKey.suffix(1))
-        XCTAssertEqual("=", resultBefore.attributes.attributes.suffix(1))
+        XCTAssertNotEqual(userKey, resultBefore.attributes.userKey)
+        XCTAssertFalse(resultBefore.attributes.attributes.contains("att1"))
 
         // Decrypted data
         // Splits
-        XCTAssertEqual("feat_9",resultAfter.splits.name)
-        XCTAssertEqual("}",resultAfter.splits.body.suffix(1))
+        XCTAssertTrue(resultAfter.splits.body.contains("name"))
+        XCTAssertTrue(resultAfter.splits.name.contains("feat"))
         // Segments
-        XCTAssertEqual("s1",resultAfter.segments.segments)
-        XCTAssertEqual("CUSTOMER_ID",resultAfter.segments.userKey)
+        XCTAssertTrue(resultAfter.segments.segments.contains("s1"))
+        XCTAssertEqual(userKey, resultAfter.segments.userKey)
         // Impressions
-        XCTAssertEqual("}",resultAfter.impressions.body.suffix(1))
-        XCTAssertEqual("split",resultAfter.impressions.testName)
+        XCTAssertTrue(resultAfter.impressions.body.contains("key1"))
+        XCTAssertEqual("split", resultAfter.impressions.testName)
         // Events
-        XCTAssertEqual("}",resultAfter.events.suffix(1))
-        // Impressions Count
-        XCTAssertEqual("}",resultAfter.impressionsCount.suffix(1))
+        XCTAssertTrue(resultAfter.events.contains("key1"))
+        // Impressions
+        XCTAssertTrue(resultAfter.impressionsCount.contains("pepe"))
         // Unique Keys
-        XCTAssertEqual(IntegrationHelper.dummyUserKey,resultAfter.uniqueKeys.userKey)
-        XCTAssertEqual("]",resultAfter.uniqueKeys.features.suffix(1))
+        XCTAssertEqual(userKey, resultAfter.uniqueKeys.userKey)
+        XCTAssertTrue(resultAfter.uniqueKeys.features.contains("split1"))
         // Attributes
-        XCTAssertEqual(IntegrationHelper.dummyUserKey,resultAfter.attributes.userKey)
-        XCTAssertEqual("}",resultAfter.attributes.attributes.suffix(1))
+        XCTAssertEqual(userKey, resultAfter.attributes.userKey)
+        XCTAssertTrue(resultAfter.attributes.attributes.contains("att1"))
     }
 
     struct DataResult {
@@ -125,7 +125,7 @@ class DbCipherTest: XCTestCase {
     private func createCipher(fromLevel: SplitEncryptionLevel,
                               toLevel: SplitEncryptionLevel,
                               dbHelper: CoreDataHelper) throws -> DbCipher {
-        return try DbCipher(apiKey: IntegrationHelper.dummyApiKey,
+        return try DbCipher(cipherKey: IntegrationHelper.dummyCipherKey,
                             from: fromLevel,
                             to: toLevel,
                             coreDataHelper: dbHelper)

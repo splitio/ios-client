@@ -10,6 +10,7 @@ import Foundation
 enum SecureItem {
     case backgroundSyncSchedule
     case dbEncryptionLevel(String)
+    case dbEncryptionKey(String)
 
     func toString() -> String {
         switch self {
@@ -17,6 +18,8 @@ enum SecureItem {
             return "bgSyncSchedule"
         case .dbEncryptionLevel(let apiKey):
             return "dbEncryptionLevel_\(apiKey)"
+        case .dbEncryptionKey(let apiKey):
+            return "dbEncryptionKey_\(apiKey)"
         }
     }
 }
@@ -25,6 +28,7 @@ protocol KeyValueStorage {
     func set<T: Encodable>(item: T, for key: SecureItem)
     func getInt(item: SecureItem) -> Int?
     func get<T: Decodable>(item: SecureItem, type: T.Type) -> T?
+    func getString(item: SecureItem) -> String?
     func remove(item: SecureItem)
     func set(item: String, for key: SecureItem)
     func set(item: Int, for key: SecureItem)

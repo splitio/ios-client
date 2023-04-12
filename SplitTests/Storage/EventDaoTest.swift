@@ -23,7 +23,7 @@ class EventDaoTest: XCTestCase {
 
         eventDaoAes128Cbc = CoreDataEventDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
                                                                                            dispatchQueue: queue),
-                                             cipher: DefaultCipher(key: IntegrationHelper.dummyApiKey))
+                                             cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
         let events = createEvents()
         for event in events {
             eventDao.insert(event)
@@ -98,7 +98,7 @@ class EventDaoTest: XCTestCase {
     }
 
     func testDataIsEncryptedInDb() {
-        let cipher = DefaultCipher(key: IntegrationHelper.dummyApiKey)
+        let cipher = DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey)
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
@@ -122,7 +122,7 @@ class EventDaoTest: XCTestCase {
         let event = try? Json.dynamicEncodeFrom(json: loadedEvent ?? "", to: EventDTO.self)
 
         XCTAssertNotNil(loadedEvent)
-        XCTAssertEqual("==", loadedEvent?.suffix(2) ?? "")
+        XCTAssertFalse(loadedEvent?.contains("key1") ?? true)
         XCTAssertNil(event)
     }
 

@@ -19,14 +19,14 @@ class SplitDaoTest: XCTestCase {
     // TODO: Research delete test in inMemoryDb
     
     override func setUp() {
-        let cipherKey = String(UUID().uuidString.prefix(16))
+        let cipherKey = IntegrationHelper.dummyCipherKey
         let queue = DispatchQueue(label: "split dao test")
         splitDao = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
                                                                                   dispatchQueue: queue))
 
         splitDaoAes128Cbc = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
                                                                                   dispatchQueue: queue),
-                                       cipher: DefaultCipher(key: cipherKey))
+                                             cipher: DefaultCipher(cipherKey: cipherKey))
         let splits = createSplits()
         splitDao.insertOrUpdate(splits: splits)
         splitDaoAes128Cbc.insertOrUpdate(splits: splits)
@@ -108,7 +108,7 @@ class SplitDaoTest: XCTestCase {
     }
 
     func testDataIsEncryptedInDb() {
-        let cipher = DefaultCipher(key: IntegrationHelper.dummyApiKey)
+        let cipher = DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey)
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
@@ -130,14 +130,16 @@ class SplitDaoTest: XCTestCase {
         // load impressions and filter them by encrypted feature name
         let loadSplit = getBy(testName: testNameEnc, coreDataHelper: helper)
 
-        let split = try? Json.encodeFrom(json: loadSplit ?? "", to: Split.self)
+        let split = try? Json.encodeFrom(json: loadSplit.body ?? "", to: Split.self)
 
         XCTAssertNotNil(loadSplit)
-        XCTAssertEqual("==", loadSplit?.suffix(2) ?? "")
+        XCTAssertFalse(loadSplit.name?.contains("feat_") ?? true)
+        XCTAssertFalse(loadSplit.body?.contains("tt_") ?? true)
         XCTAssertNil(split)
 }
 
-    func getBy(testName: String, coreDataHelper: CoreDataHelper) -> String? {
+    func getBy(testName: String, coreDataHelper: CoreDataHelper) -> (name: String?, body: String?) {
+        var name: String? = nil
         var body: String? = nil
         coreDataHelper.performAndWait {
             let predicate = NSPredicate(format: "name == %@", testName)
@@ -145,10 +147,11 @@ class SplitDaoTest: XCTestCase {
                                                 where: predicate,
                                                 rowLimit: 1).compactMap { return $0 as? SplitEntity }
             if entities.count > 0 {
+                name = entities[0].name
                 body = entities[0].body
             }
         }
-        return body
+        return (name: name, body: body)
     }
     
     private func createSplits() -> [Split] {

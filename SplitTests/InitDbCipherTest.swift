@@ -70,7 +70,7 @@ class InitDbCipherTest: XCTestCase {
     private func createCipher(fromLevel: SplitEncryptionLevel,
                               toLevel: SplitEncryptionLevel,
                               dbHelper: CoreDataHelper) throws -> DbCipher {
-        return try DbCipher(apiKey: IntegrationHelper.dummyApiKey,
+        return try DbCipher(cipherKey: IntegrationHelper.dummyCipherKey,
                             from: fromLevel,
                             to: toLevel,
                             coreDataHelper: dbHelper)
