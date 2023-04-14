@@ -26,7 +26,7 @@ class AttributesDaoTest: XCTestCase {
                                                                                   dispatchQueue: queue))
         attributesDaoAes128Cbc = CoreDataAttributesDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
                                                                                   dispatchQueue: queue),
-                                                       cipher: DefaultCipher(key: IntegrationHelper.dummyApiKey))
+                                                       cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
     }
     
     func testUpdateGetPlainText() {
@@ -90,7 +90,7 @@ class AttributesDaoTest: XCTestCase {
     }
 
     func testDataIsEncryptedInDb() {
-        let cipher = DefaultCipher(key: IntegrationHelper.dummyApiKey)
+        let cipher = DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey)
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
@@ -104,26 +104,28 @@ class AttributesDaoTest: XCTestCase {
         attributesDaoAes128Cbc.update(userKey: IntegrationHelper.dummyUserKey, attributes: attributes)
 
         // load attributess and filter them by encrypted feature name
-        let values = getBy(coreDataHelper: helper) ?? ("fail", "fail")
+        let values = getBy(coreDataHelper: helper)
 
-        let list = try? Json.encodeFrom(json: values.1, to: [String].self)
+        let list = try? Json.encodeFrom(json: values.attributes ?? "", to: [String].self)
 
-        XCTAssertEqual("==", values.0.suffix(2))
-        XCTAssertEqual("==", values.1.suffix(2))
+        XCTAssertNotEqual(IntegrationHelper.dummyUserKey, values.userKey)
+        XCTAssertFalse(values.attributes?.contains("att1") ?? true)
         XCTAssertNil(list)
     }
 
-    private func getBy(coreDataHelper: CoreDataHelper) -> (String, String)? {
-        var body: (String, String)? = nil
+    private func getBy(coreDataHelper: CoreDataHelper) -> (userKey: String?, attributes: String?) {
+        var loadedKey: String?
+        var loadedAttributes: String?
         coreDataHelper.performAndWait {
             let entities = coreDataHelper.fetch(entity: .attribute,
                                                 where: nil,
                                                 rowLimit: 1).compactMap { return $0 as? AttributeEntity }
             if entities.count > 0 {
-                body = (entities[0].userKey!, entities[0].attributes!)
+                loadedKey = entities[0].userKey
+                loadedAttributes = entities[0].attributes
             }
         }
-        return body
+        return (userKey: loadedKey, attributes: loadedAttributes)
     }
 }
 

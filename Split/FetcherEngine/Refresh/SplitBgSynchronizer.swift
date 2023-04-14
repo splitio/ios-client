@@ -71,8 +71,7 @@ import BackgroundTasks
                         let encryptionLevel = SplitEncryptionLevel(rawValue: item.encryptionLevel) ?? .none
                         let executor = try BackgroundSyncExecutor(apiKey: item.apiKey,
                                                                   userKeys: item.userKeys,
-                                                                  serviceEndpoints: serviceEndpoints,
-                                                                  encryptionLevel: encryptionLevel)
+                                                                  serviceEndpoints: serviceEndpoints)
                         executor.execute(operationQueue: operationQueue)
                     } catch {
                         Logger.d("Could not create background synchronizer for api key: \(item.apiKey)")
@@ -128,11 +127,13 @@ struct BackgroundSyncExecutor {
     private let mySegmentsFetcher: HttpMySegmentsFetcher
 
     init(apiKey: String, userKeys: [String: Int64],
-         serviceEndpoints: ServiceEndpoints? = nil,
-         encryptionLevel: SplitEncryptionLevel) throws {
+         serviceEndpoints: ServiceEndpoints? = nil) throws {
 
         self.apiKey = apiKey
         self.userKeys = userKeys
+
+        let cipherKey = SplitDatabaseHelper.currentEncryptionKey(for: apiKey)
+        let encryptionLevel = SplitDatabaseHelper.currentEncryptionLevel(apiKey: apiKey)
 
         let databaseName = SplitDatabaseHelper.databaseName(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
 
@@ -141,7 +142,7 @@ struct BackgroundSyncExecutor {
         }
 
         guard let splitDatabase = try? SplitDatabaseHelper.openDatabase(dataFolderName: databaseName,
-                                                                        apiKey: apiKey,
+                                                                        cipherKey: cipherKey,
                                                                         encryptionLevel: encryptionLevel,
                                                                         dbHelper: dbHelper) else {
             throw GenericError.couldNotCreateCache

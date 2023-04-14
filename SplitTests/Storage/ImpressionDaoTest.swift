@@ -23,7 +23,7 @@ class ImpressionDaoTest: XCTestCase {
                                                                                             dispatchQueue: queue))
         impressionDaoAes128Cbc = CoreDataImpressionDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
                                                                                                      dispatchQueue: queue),
-                                                       cipher: DefaultCipher(key: IntegrationHelper.dummyApiKey))
+                                                       cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
 
         let impressions = createImpressions()
         for impression in impressions {
@@ -101,7 +101,7 @@ class ImpressionDaoTest: XCTestCase {
 
 
     func testDataIsEncryptedInDb() {
-        let cipher = DefaultCipher(key: IntegrationHelper.dummyApiKey)
+        let cipher = DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey)
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
@@ -126,7 +126,7 @@ class ImpressionDaoTest: XCTestCase {
         let impression = try? Json.encodeFrom(json: loadedImpression ?? "", to: KeyImpression.self)
 
         XCTAssertNotNil(loadedImpression)
-        XCTAssertEqual("==", loadedImpression?.suffix(2) ?? "")
+        XCTAssertFalse(loadedImpression?.contains("key1") ?? true)
         XCTAssertNil(impression)
     }
 

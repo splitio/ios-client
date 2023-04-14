@@ -453,8 +453,6 @@ class ReadyFromCacheTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         self.changeHitIndex.set(1)
         return { request in
-
-            print ("HIT: \(self.changeHitIndex.value)")
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 if self.globalCacheReadyFired.value {

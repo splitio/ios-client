@@ -15,7 +15,7 @@ import XCTest
 class CipherTest: XCTestCase {
 
     func testBasicEncryptDecrypt() {
-        encryptDecryptTest(originalText: "javier", key: String(repeating: "k", count: 32))
+        encryptDecryptTest(originalText: "javier", key: String(repeating: "k", count: 32).dataBytes!)
     }
 
     func testJsonSplitEncryptDecrypt() {
@@ -43,8 +43,8 @@ class CipherTest: XCTestCase {
         encryptDecryptTest(originalText: text)
     }
 
-    private func encryptDecryptTest(originalText: String, key: String = String(UUID().uuidString.prefix(16))) {
-        let cipher = DefaultCipher(key: key)
+    private func encryptDecryptTest(originalText: String, key: Data = String(UUID().uuidString.prefix(16)).dataBytes!) {
+        let cipher = DefaultCipher(cipherKey: key)
         let encrypted = cipher.encrypt(originalText)
         let decrypted = cipher.decrypt(encrypted)
 

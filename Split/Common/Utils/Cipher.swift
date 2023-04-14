@@ -9,6 +9,22 @@
 import Foundation
 import CommonCrypto
 
+protocol KeyGenerator {
+    func generateKey(size: Int) -> Data?
+}
+struct DefaultKeyGenerator: KeyGenerator {
+    func generateKey(size: Int) -> Data? {
+        let pointer: UnsafeMutablePointer<Int8> = UnsafeMutablePointer.allocate(capacity: size)
+        defer { pointer.deallocate() }
+        let status = SecRandomCopyBytes(kSecRandomDefault, size, pointer)
+
+        if status == errSecSuccess { // Always test the status.
+            return Data(bytes: pointer, count: size)
+        }
+        return nil
+    }
+}
+
 protocol Cipher {
     func encrypt(_ text: String?) -> String?
     func decrypt(_ text: String?) -> String?
@@ -16,16 +32,16 @@ protocol Cipher {
 
 struct DefaultCipher: Cipher {
 
-    private let keyBytes: Data
+    private let cipherKey: Data
 
-    init(key: String) {
-        keyBytes = Self.sanitizeKey(key).data(using: .utf8) ?? Data()
+    init(cipherKey: Data) {
+        self.cipherKey = cipherKey
     }
 
     func encrypt(_ text: String?) -> String? {
         if let text = text,
            let textBytes = text.data(using: .utf8) {
-            return encryptAES256(data: textBytes, key: keyBytes)?.base64EncodedString(options: [])
+            return encryptAES128(data: textBytes, key: cipherKey)?.base64EncodedString(options: [])
         }
         return nil
     }
@@ -33,12 +49,12 @@ struct DefaultCipher: Cipher {
     func decrypt(_ text: String?) -> String? {
         if let text = text,
            let textBytes = Base64Utils.decodeBase64(text) {
-            return decryptAES256(data: textBytes, key: keyBytes)?.stringRepresentation
+            return decryptAES128(data: textBytes, key: cipherKey)?.stringRepresentation
         }
         return nil
     }
 
-    private func encryptAES256(data: Data, key: Data) -> Data? {
+    private func encryptAES128(data: Data, key: Data) -> Data? {
         let cryptLength = size_t(data.count + kCCBlockSizeAES128)
         var cryptData = Data(count: cryptLength)
 
@@ -67,7 +83,7 @@ struct DefaultCipher: Cipher {
         return cryptData
     }
 
-    private func decryptAES256(data: Data, key: Data) -> Data? {
+    private func decryptAES128(data: Data, key: Data) -> Data? {
         let cryptLength = size_t(data.count + kCCBlockSizeAES128)
         var cryptData = Data(count: cryptLength)
 

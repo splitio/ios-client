@@ -29,7 +29,7 @@ class InitDbCipherTest: XCTestCase {
     func testEncryptDb() throws {
         secureStorage.set(item: SplitEncryptionLevel.none.rawValue, for: .dbEncryptionLevel(apiKey1))
 
-        let factory = initSdk(encryptionLevel: .aes128Cbc, apiKey: apiKey1)
+        let factory = initSdk(encryptionEnabled: true, apiKey: apiKey1)
 
         let newEnc = secureStorage.getInt(item: .dbEncryptionLevel(apiKey1))
 
@@ -41,7 +41,7 @@ class InitDbCipherTest: XCTestCase {
     func testDecryptDb() throws {
 
         secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(apiKey2))
-        let factory = initSdk(encryptionLevel: .none, apiKey: apiKey2)
+        let factory = initSdk(encryptionEnabled: false, apiKey: apiKey2)
 
         let newEnc = secureStorage.getInt(item: .dbEncryptionLevel(apiKey2))
         XCTAssertEqual(SplitEncryptionLevel.none.rawValue, newEnc)
@@ -49,9 +49,9 @@ class InitDbCipherTest: XCTestCase {
         factory.client.destroy()
     }
 
-    private func initSdk(encryptionLevel: SplitEncryptionLevel, apiKey: String) -> SplitFactory {
+    private func initSdk(encryptionEnabled: Bool, apiKey: String) -> SplitFactory {
         let config = SplitClientConfig()
-        config.dbEncryptionLevel = encryptionLevel
+        config.encryptionEnabled = encryptionEnabled
 
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(db)
@@ -70,7 +70,7 @@ class InitDbCipherTest: XCTestCase {
     private func createCipher(fromLevel: SplitEncryptionLevel,
                               toLevel: SplitEncryptionLevel,
                               dbHelper: CoreDataHelper) throws -> DbCipher {
-        return try DbCipher(apiKey: IntegrationHelper.dummyApiKey,
+        return try DbCipher(cipherKey: IntegrationHelper.dummyCipherKey,
                             from: fromLevel,
                             to: toLevel,
                             coreDataHelper: dbHelper)
