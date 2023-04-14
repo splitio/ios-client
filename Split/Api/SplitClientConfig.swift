@@ -146,13 +146,9 @@ public class SplitClientConfig: NSObject {
     }
 
     ///
-    /// Level of encryption of data in cache db
-    /// - Parameters
-    /// - dbEncryptionLevel:
-    ///     * .aes128Cbc: AES 128bit CBC  encryption
-    ///     * .none: No encryption
+    /// Enables / Disables cache data encryption (Default: False)
     ///
-    @objc public var dbEncryptionLevel: SplitEncryptionLevel = .none
+    @objc public var encryptionEnabled: Bool = false
 
 
     ///

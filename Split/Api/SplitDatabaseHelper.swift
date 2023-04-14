@@ -57,7 +57,7 @@ struct SplitDatabaseHelper {
                                       telemetryStorage: TelemetryStorage?,
                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
 
-        let curEncryptionLevel = currentEncryptionLevel(apiKey: apiKey)
+        let previousEncryptionLevel = currentEncryptionLevel(apiKey: apiKey)
         var splitDatabase = testDatabase
         var dbHelper: CoreDataHelper?
         if let testDb = testDatabase as? TestSplitDatabase {
@@ -71,20 +71,20 @@ struct SplitDatabaseHelper {
             throw GenericError.couldNotCreateCache
         }
 
-        let encryptionLevel = splitClientConfig.dbEncryptionLevel
+        let encryptionLevel: SplitEncryptionLevel = splitClientConfig.encryptionEnabled ? .aes128Cbc : .none
         var cipherKey: Data?
         if encryptionLevel != .none {
             cipherKey = currentEncryptionKey(for: apiKey)
         }
 
-        if currentEncryptionLevel(apiKey: apiKey) != splitClientConfig.dbEncryptionLevel,
+        if previousEncryptionLevel != encryptionLevel,
            let dbCipherKey = cipherKey ?? currentEncryptionKey(for: apiKey) {
             let dbCipher = try DbCipher(cipherKey: dbCipherKey,
-                                        from: curEncryptionLevel,
-                                        to: splitClientConfig.dbEncryptionLevel,
+                                        from: previousEncryptionLevel,
+                                        to: encryptionLevel,
                                         coreDataHelper: dbHelper)
             dbCipher.apply()
-            setCurrentEncryptionLevel(splitClientConfig.dbEncryptionLevel, for: apiKey)
+            setCurrentEncryptionLevel(encryptionLevel, for: apiKey)
         }
 
         if splitDatabase == nil {
