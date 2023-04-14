@@ -68,7 +68,6 @@ import BackgroundTasks
                 }
                 for item in syncList.values {
                     do {
-                        let encryptionLevel = SplitEncryptionLevel(rawValue: item.encryptionLevel) ?? .none
                         let executor = try BackgroundSyncExecutor(apiKey: item.apiKey,
                                                                   userKeys: item.userKeys,
                                                                   serviceEndpoints: serviceEndpoints)
