@@ -21,12 +21,13 @@ class SecureStorageStub: KeyValueStorage {
         }
     }
 
-    func get(item: SecureItem) -> String? {
+    func getString(item: SecureItem) -> String? {
         return values[item.toString()]
     }
 
+
     func get<T: Decodable>(item: SecureItem, type: T.Type) -> T? {
-        guard let data = get(item: item) else {
+        guard let data = getString(item: item) else {
             return nil
         }
         do {

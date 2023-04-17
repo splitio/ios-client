@@ -16,7 +16,7 @@ struct DbCipher {
     private var toCipher: Cipher?
     private var mustApply: Bool
 
-    init(apiKey: String,
+    init(cipherKey: Data,
          from fromLevel: SplitEncryptionLevel,
          to toLevel: SplitEncryptionLevel,
          coreDataHelper: CoreDataHelper) throws {
@@ -27,8 +27,8 @@ struct DbCipher {
         }
 
         self.dbHelper = coreDataHelper
-        self.fromCipher = createCipher(apiKey: apiKey, level: fromLevel)
-        self.toCipher = createCipher(apiKey: apiKey, level: toLevel)
+        self.fromCipher = createCipher(cipherKey: cipherKey, level: fromLevel)
+        self.toCipher = createCipher(cipherKey: cipherKey, level: toLevel)
         if fromCipher == nil, toCipher == nil {
             Logger.v("Something happend when encrypting / decrypting cache")
             mustApply = false
@@ -119,10 +119,10 @@ struct DbCipher {
         }
     }
 
-    private func createCipher(apiKey: String, level: SplitEncryptionLevel) -> Cipher? {
+    private func createCipher(cipherKey: Data, level: SplitEncryptionLevel) -> Cipher? {
         if level == .none {
             return nil
         }
-        return DefaultCipher(key: apiKey)
+        return DefaultCipher(cipherKey: cipherKey)
     }
 }

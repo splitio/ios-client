@@ -81,7 +81,7 @@ class ImpressionsCountDaoTest: XCTestCase {
     }
 
     func testDataIsEncryptedInDb() {
-        let cipher = DefaultCipher(key: IntegrationHelper.dummyApiKey)
+        let cipher = DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey)
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
@@ -105,7 +105,7 @@ class ImpressionsCountDaoTest: XCTestCase {
         let count = try? Json.encodeFrom(json: loadedCountBody ?? "", to: ImpressionsCountPerFeature.self)
 
         XCTAssertNotNil(loadedCountBody)
-        XCTAssertEqual("I=", loadedCountBody?.suffix(2) ?? "")
+        XCTAssertNotEqual("}", loadedCountBody?.suffix(1) ?? "")
         XCTAssertNil(count)
     }
 

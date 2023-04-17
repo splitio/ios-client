@@ -28,7 +28,7 @@ class UniqueKeyDaoTest: XCTestCase {
         helperAes128Cbc = IntegrationCoreDataHelper.get(databaseName: "test",
                                                  dispatchQueue: queue)
         uniqueKeyDaoAes128Cbc = CoreDataUniqueKeyDao(coreDataHelper: helperAes128Cbc,
-                                                     cipher: DefaultCipher(key: IntegrationHelper.dummyApiKey))
+                                                     cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
         let keys = createUniqueKeys()
         for key in keys {
             uniqueKeyDao.insert(key)
@@ -137,7 +137,7 @@ class UniqueKeyDaoTest: XCTestCase {
     }
 
     func testDataIsEncryptedInDb() {
-        let cipher = DefaultCipher(key: IntegrationHelper.dummyApiKey)
+        let cipher = DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey)
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
@@ -160,8 +160,8 @@ class UniqueKeyDaoTest: XCTestCase {
 
         let list = try? Json.encodeFrom(json: values.1, to: [String].self)
 
-        XCTAssertEqual("==", values.0.suffix(2))
-        XCTAssertEqual("==", values.1.suffix(2))
+        XCTAssertFalse(values.0.contains("key1"))
+        XCTAssertFalse(values.1.contains("name"))
         XCTAssertNil(list)
     }
 

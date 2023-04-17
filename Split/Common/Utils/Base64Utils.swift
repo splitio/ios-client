@@ -53,4 +53,13 @@ class Base64Utils {
     class func encodeToBase64(_ string: String) -> String {
         return Data(string.utf8).base64EncodedString(options: [])
     }
+
+    class func decodeBase64NoPadding(_ base64: String?) -> Data? {
+        guard let base64 = base64 else {
+            return nil
+        }
+        return Data(base64Encoded: base64,
+                    options: Data.Base64DecodingOptions.init(rawValue: 0))
+
+    }
 }

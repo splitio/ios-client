@@ -27,7 +27,7 @@ class GlobalSecureStorage: KeyValueStorage {
         }
     }
 
-    func get(item: SecureItem) -> String? {
+    func getString(item: SecureItem) -> String? {
 
         let itemName = item.toString()
         var query: [String: Any] = [
@@ -52,7 +52,7 @@ class GlobalSecureStorage: KeyValueStorage {
     }
 
     func get<T: Decodable>(item: SecureItem, type: T.Type) -> T? {
-        guard let data = get(item: item) else {
+        guard let data = getString(item: item) else {
             return nil
         }
         do {
@@ -64,7 +64,7 @@ class GlobalSecureStorage: KeyValueStorage {
     }
 
     func getInt(item: SecureItem) -> Int? {
-        guard let data = get(item: item) else {
+        guard let data = getString(item: item) else {
             return nil
         }
         return Int(data)
@@ -89,7 +89,7 @@ class GlobalSecureStorage: KeyValueStorage {
 
     func set(item: String, for key: SecureItem) {
 
-        if get(item: key) != nil {
+        if getString(item: key) != nil {
             remove(item: key)
         }
 
