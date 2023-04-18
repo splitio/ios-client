@@ -145,6 +145,9 @@ class IntegrationHelper {
             } else {
                 segments.append("{\"name\":\"\(name)\"}")
             }
+            if index < names.count - 1 {
+                segments.append(",")
+            }
         }
         return "{\"mySegments\":[\(segments)]}"
     }
