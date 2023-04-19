@@ -67,8 +67,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                                     telemetryStorage: params.telemetryStorage,
                                                                     testDatabase: params.testDatabase)
 
-        LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: params.key.matchingKey)
-
         defaultManager = try components.getSplitManager()
         _ = try components.buildRestClient(
             httpClient: params.httpClient ?? DefaultHttpClient.shared,

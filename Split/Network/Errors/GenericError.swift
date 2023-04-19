@@ -13,6 +13,8 @@ enum GenericError: Error {
     case apiKeyNull
     case nullValueInApiFacade
     case jsonParsingFail
+    case couldNotCreateCiphers
+    case noCipheringNeeded
     case unknown(message: String)
 }
 
@@ -30,6 +32,10 @@ extension GenericError {
             return "Something has occured while parsing json data"
         case .unknown(let message):
             return message
+        case .couldNotCreateCiphers:
+            return "Could not create ciphers"
+        case .noCipheringNeeded:
+            return "Ciphering is not needed"
         }
     }
 }

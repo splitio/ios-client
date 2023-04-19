@@ -105,7 +105,7 @@ class SplitClientManagerTest: XCTestCase {
         splitManager = SplitManagerStub()
         telemetryProducer = TelemetryStorageStub()
         let storageContainer = try! SplitDatabaseHelper.buildStorageContainer(
-            splitClientConfig: config,
+            splitClientConfig: config, apiKey: IntegrationHelper.dummyApiKey,
             userKey: key.matchingKey, databaseName: "dummy",
             telemetryStorage: telemetryProducer, testDatabase: splitDatabase)
         clientManager = DefaultClientManager(config: config,

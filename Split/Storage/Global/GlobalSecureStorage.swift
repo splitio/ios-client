@@ -9,20 +9,27 @@ import Foundation
 
 class GlobalSecureStorage: KeyValueStorage {
 
-    static let shared: KeyValueStorage = GlobalSecureStorage()
+    private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
+
+    // Only for testing
+    static var testStorage: KeyValueStorage?
+
+    static var shared: KeyValueStorage {
+        return testStorage ?? prodStorage
+    }
 
     func set<T: Encodable>(item: T, for key: SecureItem) {
         do {
             let json = try Json.encodeToJson(item)
             set(item: json, for: key)
         } catch {
-            Logger.e("Error parsing item \(key.rawValue)")
+            Logger.e("Error parsing item \(key.toString())")
         }
     }
 
-    func get(item: SecureItem) -> String? {
+    func getString(item: SecureItem) -> String? {
 
-        let itemName = item.rawValue
+        let itemName = item.toString()
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: itemName
@@ -45,19 +52,26 @@ class GlobalSecureStorage: KeyValueStorage {
     }
 
     func get<T: Decodable>(item: SecureItem, type: T.Type) -> T? {
-        guard let data = get(item: item) else {
+        guard let data = getString(item: item) else {
             return nil
         }
         do {
             return try Json.encodeFrom(json: data, to: type)
         } catch {
-            Logger.d("Couldn't get \(item.rawValue) item")
+            Logger.d("Couldn't get \(item.toString()) item")
         }
         return nil
     }
 
+    func getInt(item: SecureItem) -> Int? {
+        guard let data = getString(item: item) else {
+            return nil
+        }
+        return Int(data)
+    }
+
     func remove(item: SecureItem) {
-        let itemName = item.rawValue
+        let itemName = item.toString()
         let queryDelete: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: itemName
@@ -69,9 +83,13 @@ class GlobalSecureStorage: KeyValueStorage {
                     "Error deleting from Keychain: \(resultCode)"))
     }
 
+    func set(item: Int, for key: SecureItem) {
+        set(item: "\(item)", for: key)
+    }
+
     func set(item: String, for key: SecureItem) {
 
-        if get(item: key) != nil {
+        if getString(item: key) != nil {
             remove(item: key)
         }
 
@@ -82,7 +100,7 @@ class GlobalSecureStorage: KeyValueStorage {
 
         let queryAdd: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key.rawValue,
+            kSecAttrAccount as String: key.toString(),
             kSecValueData as String: itemData,
             kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
         ]

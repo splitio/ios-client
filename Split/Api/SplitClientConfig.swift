@@ -146,6 +146,12 @@ public class SplitClientConfig: NSObject {
     }
 
     ///
+    /// Enables / Disables cache data encryption (Default: False)
+    ///
+    @objc public var encryptionEnabled: Bool = false
+
+
+    ///
     /// The logic to handle an impression log generated during a getTreatment call
     /// - Parameters
     /// - A closure of type SplitImpressionListener, that means (SplitImpression) -> Void

@@ -19,23 +19,18 @@ protocol EventDao {
 
 class CoreDataEventDao: BaseCoreDataDao, EventDao {
 
+    private let cipher: Cipher?
+    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
+        self.cipher = cipher
+        super.init(coreDataHelper: coreDataHelper)
+    }
+
     func insert(_ event: EventDTO) {
         execute { [weak self] in
             guard let self = self else {
                 return
             }
-
-            if let obj = self.coreDataHelper.create(entity: .event) as? EventEntity {
-                do {
-                    obj.storageId = self.coreDataHelper.generateId()
-                    obj.body = try Json.dynamicEncodeToJson(event)
-                    obj.createdAt = Date().unixTimestamp()
-                    obj.status = StorageRecordStatus.active
-                    self.coreDataHelper.save()
-                } catch {
-                    Logger.e("An error occurred while inserting events in storage: \(error.localizedDescription)")
-                }
-            }
+            self.insert(event: event)
         }
     }
 
@@ -43,17 +38,7 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
         executeAsync { [weak self] in
             guard let self = self else { return }
             for event in events {
-                if let obj = self.coreDataHelper.create(entity: .event) as? EventEntity {
-                    do {
-                        obj.storageId = self.coreDataHelper.generateId()
-                        obj.body = try Json.dynamicEncodeToJson(event)
-                        obj.createdAt = Date().unixTimestamp()
-                        obj.status = StorageRecordStatus.active
-                        self.coreDataHelper.save()
-                    } catch {
-                        Logger.e("An error occurred while inserting events in storage: \(error.localizedDescription)")
-                    }
-                }
+                self.insert(event: event)
             }
         }
     }
@@ -102,9 +87,27 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
     }
 
     private func mapEntityToModel(_ entity: EventEntity) throws -> EventDTO {
-        let model = try Json.dynamicEncodeFrom(json: entity.body, to: EventDTO.self)
+
+        let body = cipher?.decrypt(entity.body) ?? entity.body
+        let model = try Json.dynamicEncodeFrom(json: body, to: EventDTO.self)
         model.storageId = entity.storageId
         model.sizeInBytes = entity.sizeInBytes
         return model
+    }
+
+    // Call this function within an "execute" or "executeAsync"
+    private func insert(event: EventDTO) {
+        if let obj = self.coreDataHelper.create(entity: .event) as? EventEntity {
+            do {
+                obj.storageId = self.coreDataHelper.generateId()
+                let body = try Json.dynamicEncodeToJson(event)
+                obj.body = cipher?.encrypt(body) ?? body
+                obj.createdAt = Date().unixTimestamp()
+                obj.status = StorageRecordStatus.active
+                self.coreDataHelper.save()
+            } catch {
+                Logger.e("An error occurred while inserting events in storage: \(error.localizedDescription)")
+            }
+        }
     }
 }

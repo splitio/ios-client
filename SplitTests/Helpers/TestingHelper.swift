@@ -82,12 +82,16 @@ struct TestingHelper {
         return impressions
     }
 
-    static func createImpressionsCount(count: Int = 10) -> [ImpressionsCountPerFeature] {
+    static func createImpressionsCount(count: Int = 10, randomId: Bool = true) -> [ImpressionsCountPerFeature] {
 
         var counts = [ImpressionsCountPerFeature]()
         for i in 0..<count {
             var count = ImpressionsCountPerFeature(feature: "feature\(i)", timeframe: Date().unixTimestampInMiliseconds(), count: 1)
-            count.storageId = UUID().uuidString
+            if randomId {
+                count.storageId = UUID().uuidString
+            } else {
+                count.storageId = "row_id_\(i)"
+            }
             counts.append(count)
         }
         return counts
@@ -99,6 +103,18 @@ struct TestingHelper {
         split.trafficTypeName = trafficType
         split.status = status
         return split
+    }
+
+    static func createSplits() -> [Split] {
+        var splits = [Split]()
+        for i in 0..<10 {
+            let split = Split()
+            split.name = "feat_\(i)"
+            split.trafficTypeName = "tt_\(i)"
+            split.status = .active
+            splits.append(split)
+        }
+        return splits
     }
 
     static func buildSplit(name: String, treatment: String) -> Split {
@@ -127,6 +143,11 @@ struct TestingHelper {
         return CoreDataSplitDatabase(coreDataHelper: helper)
     }
 
+    static func createTestDatabase(name: String, queue: DispatchQueue? = nil, helper: CoreDataHelper) -> SplitDatabase {
+        let newQueue = queue ?? DispatchQueue(label: "testqueue", target: DispatchQueue.test)
+        return CoreDataSplitDatabase(coreDataHelper: helper)
+    }
+
     static func createTelemetryConfig() -> TelemetryConfig {
         return TelemetryConfig(streamingEnabled: true, rates: nil, urlOverrides: nil, impressionsQueueSize: 9,
                                eventsQueueSize: 9, impressionsMode: 9, impressionsListenerEnabled: true,
@@ -147,6 +168,7 @@ struct TestingHelper {
                 features.insert("feature\(i)")
             }
             let uniqueKey = UniqueKey(userKey: "key\(k)", features: features)
+            uniqueKey.storageId = "rowid_\(k)"
             allKeys.append(uniqueKey)
         }
         return UniqueKeys(keys: allKeys)
@@ -154,7 +176,6 @@ struct TestingHelper {
 
     static func createStorageContainer() -> SplitStorageContainer {
         return SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
-                                     fileStorage: FileStorageStub(),
                                      splitsStorage: SplitsStorageStub(),
                                      persistentSplitsStorage: PersistentSplitsStorageStub(),
                                      impressionsStorage: ImpressionsStorageStub(),

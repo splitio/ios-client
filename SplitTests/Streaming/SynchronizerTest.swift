@@ -69,7 +69,7 @@ class SynchronizerTest: XCTestCase {
                                                                changeNumber: 100, updateTimestamp: 100))
 
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
-                                                     fileStorage: FileStorageStub(), splitsStorage: splitsStorage,
+                                                     splitsStorage: splitsStorage,
                                                      persistentSplitsStorage: persistentSplitsStorage,
                                                      impressionsStorage: ImpressionsStorageStub(),
                                                      persistentImpressionsStorage: PersistentImpressionsStorageStub(),

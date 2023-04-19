@@ -28,7 +28,7 @@ struct ServiceConstants {
     static let defaultSseConnectionDelayInSecs: Int64 = 60
     static let retryTimeInSeconds = 0.5
     static let retryCount = 3
-
     static let uniqueKeyBulkSize = 50
     static let maxUniqueKeyQueueSize = 30000
+    static let aes128KeyLength = 16
 }
