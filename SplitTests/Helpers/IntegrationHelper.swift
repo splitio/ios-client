@@ -140,7 +140,11 @@ class IntegrationHelper {
     static func mySegments(names: [String]) -> String {
         var segments = ""
         for (index, name) in names.enumerated() {
-            segments.append("{\"id\":\"id\(name)\", \"name\":\"\(name)\"}")
+            if index % 2 == 0 {
+                segments.append("{\"id\":\"id\(name)\", \"name\":\"\(name)\"}")
+            } else {
+                segments.append("{\"name\":\"\(name)\"}")
+            }
             if index < names.count - 1 {
                 segments.append(",")
             }
