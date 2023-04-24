@@ -14,7 +14,15 @@ let package = Package(
             name: "Split",
             path: "Split",
             exclude: [
-                "NoOpBgSync",
+                "Common/Yaml/LICENSE",
+                "Info.plist",
+                "Split.h"
+            ]
+        ),
+        .target(
+            name: "SplitForExtension",
+            path: "Split",
+            exclude: [
                 "Common/Yaml/LICENSE",
                 "Info.plist",
                 "Split.h"
@@ -24,13 +32,5 @@ let package = Package(
                 .define("BUILD_SPLIT_FOR_APP_EXTENSION", .when(configuration: .debug))
             ]
         ),
-        .target(
-            name: "NoOpBgSync",
-            path: "Split/NoOpBgSync",
-            swiftSettings: [
-                .define("BUILD_SPLIT_FOR_APP_EXTENSION", .when(configuration: .release)),
-                .define("BUILD_SPLIT_FOR_APP_EXTENSION", .when(configuration: .debug))
-            ]
-        )
     ]
 )
