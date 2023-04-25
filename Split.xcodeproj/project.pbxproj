@@ -1156,6 +1156,7 @@
 		95D9446B283BEE4D00D7FFED /* UniqueKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D9446A283BEE4D00D7FFED /* UniqueKeys.swift */; };
 		95D9446D283BF76A00D7FFED /* UniqueKeysRecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D9446C283BF76A00D7FFED /* UniqueKeysRecorderWorker.swift */; };
 		95DAF21D29E60CC4001C7BBE /* KeyGeneratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DAF21C29E60CC4001C7BBE /* KeyGeneratorTest.swift */; };
+		95DAF21B29DDFAF4001C7BBE /* SplitHttpsAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DAF21A29DDFAF4001C7BBE /* SplitHttpsAuthenticator.swift */; };
 		95DE29272736AE4E00DB3EAD /* AttributesDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE29262736AE4E00DB3EAD /* AttributesDao.swift */; };
 		95DE293727395E7300DB3EAD /* AttributeEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE293627395E7300DB3EAD /* AttributeEntity.swift */; };
 		95DE293E2739737D00DB3EAD /* AttributeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE293D2739737D00DB3EAD /* AttributeMap.swift */; };
@@ -1850,6 +1851,7 @@
 		95D9446A283BEE4D00D7FFED /* UniqueKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqueKeys.swift; sourceTree = "<group>"; };
 		95D9446C283BF76A00D7FFED /* UniqueKeysRecorderWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeysRecorderWorker.swift; sourceTree = "<group>"; };
 		95DAF21C29E60CC4001C7BBE /* KeyGeneratorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyGeneratorTest.swift; sourceTree = "<group>"; };
+		95DAF21A29DDFAF4001C7BBE /* SplitHttpsAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitHttpsAuthenticator.swift; sourceTree = "<group>"; };
 		95DE29262736AE4E00DB3EAD /* AttributesDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AttributesDao.swift; path = Split/Storage/Attributes/AttributesDao.swift; sourceTree = SOURCE_ROOT; };
 		95DE293627395E7300DB3EAD /* AttributeEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributeEntity.swift; sourceTree = "<group>"; };
 		95DE293D2739737D00DB3EAD /* AttributeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeMap.swift; sourceTree = "<group>"; };
@@ -2099,6 +2101,7 @@
 				955B59682815687200D105CD /* FailHelpers.swift */,
 				95E8193D28786A1C00D99093 /* SplitLogLevel.swift */,
 				95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */,
+				95DAF21A29DDFAF4001C7BBE /* SplitHttpsAuthenticator.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -3771,6 +3774,7 @@
 				59FB7C332203126400ECC96A /* DefaultSplitFactoryBuilder.swift in Sources */,
 				595AD20824DDC66500A7B750 /* SseAuthenticator.swift in Sources */,
 				950E501F290B38D2005A473E /* SseConnectionHandler.swift in Sources */,
+				95DAF21B29DDFAF4001C7BBE /* SplitHttpsAuthenticator.swift in Sources */,
 				3B6DEF7B20EA6AE50067435E /* HttpDataResponse.swift in Sources */,
 				9595AD7327F4D9F7006E3A54 /* EventsTracker.swift in Sources */,
 				59FB7C3122030EFA00ECC96A /* SplitFactoryBuilder.swift in Sources */,

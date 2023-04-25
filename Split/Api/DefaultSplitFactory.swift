@@ -58,6 +58,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                apiKey: params.apiKey,
                                                userKey: params.key.matchingKey)
 
+        HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
+
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManagerCoordinator()
 

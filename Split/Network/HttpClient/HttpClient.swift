@@ -77,6 +77,7 @@ class HttpSessionConfig {
         return HttpSessionConfig()
     }()
     var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
+    var httpsAuthenticator: SplitHttpsAuthenticator?
 }
 
 protocol HttpClient {
@@ -115,7 +116,7 @@ class DefaultHttpClient {
         if let requestManager = requestManager {
             self.requestManager = requestManager
         } else {
-            self.requestManager = DefaultHttpRequestManager()
+            self.requestManager = DefaultHttpRequestManager(authententicator: configuration.httpsAuthenticator)
         }
 
         if let httpSession = session {
