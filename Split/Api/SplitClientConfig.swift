@@ -150,7 +150,6 @@ public class SplitClientConfig: NSObject {
     ///
     @objc public var encryptionEnabled: Bool = false
 
-
     ///
     /// The logic to handle an impression log generated during a getTreatment call
     /// - Parameters
@@ -239,6 +238,14 @@ public class SplitClientConfig: NSObject {
     /// @default: GRANTED
     ///
     public var userConsent: UserConsent = UserConsent.granted
+
+    ///
+    ///    Allows to perform a custom authentication on HTTPS requests.
+    ///    This component must implement SplitHttpsAuthenticator protocol.
+    ///    The function _authenticate:session:challenge:completionHandler_ will be executed when the
+    ///     [urlSession(_:didReceive:completionHandler:)](https://developer.apple.com/documentation/foundation/urlsessiondelegate/1409308-urlsession) is called.
+    ///
+    public var httpsAuthenticator: SplitHttpsAuthenticator?
 
     static let kDefaultTelemetryRefreshRate = 3600
     static let kMinTelemetryRefreshRate = 60
