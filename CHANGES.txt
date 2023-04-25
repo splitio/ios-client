@@ -1,6 +1,7 @@
-2.20.0: (Apr xx, 2023)
+2.20.0: (Apr 25, 2023)
  - Added encryption to cached data
  - Removed Schema causing issues when building with Carthage
+ - Added config to allow setting a customized network requests authenticator
 
 2.19.1: (Jan 30, 2023)
  - Improving SDK Ready and SDK Ready from cache events triggering time by parsing loaded / received data in parallel
