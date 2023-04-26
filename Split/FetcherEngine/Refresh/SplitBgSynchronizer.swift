@@ -16,6 +16,7 @@ import BackgroundTasks
 
     private struct SyncItem: Codable {
         let apiKey: String
+        var encryptionLevel: Int = 0
         var userKeys: [String: Int64] = [:] // UserKey, Timestamp
     }
 
@@ -26,10 +27,13 @@ import BackgroundTasks
 
     var globalStorage: KeyValueStorage = GlobalSecureStorage.shared
 
-    @objc public func register(apiKey: String, userKey: String) {
+    @objc public func register(apiKey: String,
+                               userKey: String,
+                               encryptionLevel: SplitEncryptionLevel = .none) {
         var syncMap = getSyncTaskMap()
         var syncItem = syncMap[apiKey] ?? SyncItem(apiKey: apiKey)
         syncItem.userKeys[userKey] = Date().unixTimestamp()
+        syncItem.encryptionLevel = encryptionLevel.rawValue
         syncMap[apiKey] = syncItem
         globalStorage.set(item: syncMap, for: .backgroundSyncSchedule)
     }
@@ -127,8 +131,19 @@ struct BackgroundSyncExecutor {
         self.apiKey = apiKey
         self.userKeys = userKeys
 
-        let dataFolderName = SplitDatabaseHelper.databaseName(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
-        guard let splitDatabase = try? SplitDatabaseHelper.openDatabase(dataFolderName: dataFolderName) else {
+        let cipherKey = SplitDatabaseHelper.currentEncryptionKey(for: apiKey)
+        let encryptionLevel = SplitDatabaseHelper.currentEncryptionLevel(apiKey: apiKey)
+
+        let databaseName = SplitDatabaseHelper.databaseName(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
+
+        guard let dbHelper = CoreDataHelperBuilder.build(databaseName: databaseName) else {
+            throw GenericError.couldNotCreateCache
+        }
+
+        guard let splitDatabase = try? SplitDatabaseHelper.openDatabase(dataFolderName: databaseName,
+                                                                        cipherKey: cipherKey,
+                                                                        encryptionLevel: encryptionLevel,
+                                                                        dbHelper: dbHelper) else {
             throw GenericError.couldNotCreateCache
         }
         let splitsStorage = SplitDatabaseHelper.openPersistentSplitsStorage(database: splitDatabase)

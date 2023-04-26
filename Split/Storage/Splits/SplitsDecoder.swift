@@ -14,9 +14,10 @@ protocol SplitsDecoder {
 
 struct SplitsParallelDecoder: SplitsDecoder {
     private var minTaskPerThread: Int
-
-    init(minTaskPerThread: Int = 10) {
+    private let serialDecoder: SplitsSerialDecoder
+    init(minTaskPerThread: Int = 10, cipher: Cipher? = nil) {
         self.minTaskPerThread = minTaskPerThread
+        self.serialDecoder = SplitsSerialDecoder(cipher: cipher)
     }
 
     func decode(_ list: [String]) -> [Split] {
@@ -25,7 +26,6 @@ struct SplitsParallelDecoder: SplitsDecoder {
             return []
         }
         Logger.v("Using parallel decoding for \(list.count) splits")
-        let serialDecoder = SplitsSerialDecoder()
         var splits = [Split]()
         let dataQueue = DispatchQueue(label: "split-parallel-parsing-data",
                                       target: DispatchQueue(label: "split-parallel-parsing-data-conc",
@@ -56,6 +56,12 @@ struct SplitsParallelDecoder: SplitsDecoder {
 }
 
 struct SplitsSerialDecoder: SplitsDecoder {
+    private var cipher: Cipher?
+
+    init(cipher: Cipher?) {
+        self.cipher = cipher
+    }
+
     func decode(_ list: [String]) -> [Split] {
         if list.count == 0 {
             return []
@@ -64,7 +70,8 @@ struct SplitsSerialDecoder: SplitsDecoder {
         // data if one parsing fails
         return list.compactMap { json in
             do {
-                return try Json.encodeFrom(json: json, to: Split.self)
+                let plainJson = cipher?.decrypt(json) ?? json
+                return try Json.encodeFrom(json: plainJson, to: Split.self)
             } catch {
                 Logger.v("Failed decoding split json: \(json)")
             }

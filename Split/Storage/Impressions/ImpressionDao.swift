@@ -19,7 +19,11 @@ protocol ImpressionDao {
 
 class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
 
-    let json = JsonWrapper()
+    private let cipher: Cipher?
+    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
+        self.cipher = cipher
+        super.init(coreDataHelper: coreDataHelper)
+    }
 
     func insert(_ impression: KeyImpression) {
 
@@ -27,24 +31,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
             guard let self = self else {
                 return
             }
-
-            if let obj = self.coreDataHelper.create(entity: .impression) as? ImpressionEntity {
-                do {
-                    guard let testName = impression.featureName else {
-                        // This should never happen
-                        Logger.d("Impression without test name descarted")
-                        return
-                    }
-                    obj.storageId = self.coreDataHelper.generateId()
-                    obj.testName = testName
-                    obj.body = try self.json.encodeToJson(impression)
-                    obj.createdAt = Date().unixTimestamp()
-                    obj.status = StorageRecordStatus.active
-                    self.coreDataHelper.save()
-                } catch {
-                    Logger.e("An error occurred while inserting impressions in storage: \(error.localizedDescription)")
-                }
-            }
+            self.insert(impression: impression)
         }
     }
 
@@ -52,28 +39,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
         executeAsync { [weak self] in
             guard let self = self else { return }
             for impression in impressions {
-                if let obj = self.coreDataHelper.create(entity: .impression) as? ImpressionEntity {
-                    do {
-                        guard let testName = impression.featureName else {
-                            // This should never happen
-                            Logger.d("Impression without test name descarted")
-                            return
-                        }
-                        obj.storageId = self.coreDataHelper.generateId()
-                        obj.testName = testName
-                        obj.body = try self.json.encodeToJson(impression)
-                        obj.createdAt = Date().unixTimestamp()
-                        obj.status = StorageRecordStatus.active
-                        // Saving one by one to avoid losing all
-                        // if an error occurs
-                        self.coreDataHelper.save()
-                    } catch {
-                        Logger.e("""
-                                 An error occurred while inserting impressions in storage:
-                                 \(error.localizedDescription)
-                                 """)
-                    }
-                }
+                self.insert(impression: impression)
             }
         }
     }
@@ -132,17 +98,47 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
         }
     }
 
-    func mapEntityToModel(_ entity: ImpressionEntity) throws -> KeyImpression {
+    // Use this function wrapped by "execute" or "executeAsync" functions!!
+    private func insert(impression: KeyImpression) {
+        if let obj = coreDataHelper.create(entity: .impression) as? ImpressionEntity {
+            do {
+                let featureName = cipher?.encrypt(impression.featureName) ?? impression.featureName
+                guard let testName = featureName else {
+                    // This should never happen
+                    Logger.d("Impression without test name descarted")
+                    return
+                }
+                obj.storageId = coreDataHelper.generateId()
+                obj.testName = testName
+                let body = try Json.encodeToJson(impression)
+                obj.body = cipher?.encrypt(body) ?? body
+                obj.createdAt = Date().unixTimestamp()
+                obj.status = StorageRecordStatus.active
+                // Saving one by one to avoid losing all
+                // if an error occurs
+                coreDataHelper.save()
+            } catch {
+                Logger.e("""
+                         An error occurred while inserting impressions in storage:
+                         \(error.localizedDescription)
+                         """)
+            }
+        }
+    }
+
+    private func mapEntityToModel(_ entity: ImpressionEntity) throws -> KeyImpression {
+        let body = cipher?.decrypt(entity.body) ?? entity.body
+        let testName = cipher?.decrypt(entity.testName) ?? entity.testName
         do {
-            var model = try Json.encodeFrom(json: entity.body, to: KeyImpression.self)
+            var model = try Json.encodeFrom(json: body, to: KeyImpression.self)
             model.storageId = entity.storageId
-            model.featureName = entity.testName
+            model.featureName = testName
             return model
         } catch {
             // if an error occurrs try with deprecated property parsing
-            var model = try Json.encodeFrom(json: entity.body, to: DeprecatedImpression.self)
+            var model = try Json.encodeFrom(json: body, to: DeprecatedImpression.self)
             model.storageId = entity.storageId
-            model.featureName = entity.testName
+            model.featureName = testName
             return model.toKeyImpression()
         }
     }

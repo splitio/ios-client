@@ -102,6 +102,7 @@ class SyncManagerBuilder {
     private func buildSseHttpClient(config: SplitClientConfig,
                                     apiFacade: SplitApiFacade) -> HttpClient {
         let sseHttpConfig = HttpSessionConfig()
+        sseHttpConfig.httpsAuthenticator = config.httpsAuthenticator
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
         return apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
     }

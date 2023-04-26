@@ -58,6 +58,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                apiKey: params.apiKey,
                                                userKey: params.key.matchingKey)
 
+        HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
+
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManagerCoordinator()
 
@@ -66,8 +68,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
                                                                     telemetryStorage: params.telemetryStorage,
                                                                     testDatabase: params.testDatabase)
-
-        LegacyStorageCleaner.deleteFiles(fileStorage: storageContainer.fileStorage, userKey: params.key.matchingKey)
 
         defaultManager = try components.getSplitManager()
         _ = try components.buildRestClient(

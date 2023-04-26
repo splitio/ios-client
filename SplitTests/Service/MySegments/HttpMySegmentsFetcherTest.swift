@@ -11,7 +11,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class HttpMySegmentsFetcherTests: XCTestCase {
+class HttpMySegmentsFetcherTest: XCTestCase {
     
     var restClient: RestClientStub!
     var fetcher: HttpMySegmentsFetcher!
