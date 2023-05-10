@@ -35,12 +35,12 @@ struct SplitNameValidator {
 
         if name == nil {
             return ValidationErrorInfo(error: .some,
-                                       message: "you passed a null feature flag name, feature flag name must be a non-empty string")
+                                       message: "you passed a null feature flag name, flag name must be a non-empty string")
         }
 
         if name!.isEmpty() {
             return ValidationErrorInfo(error: .some,
-                                       message: "you passed an empty feature flag name, feature flag name must be a non-empty string")
+                                       message: "you passed an empty feature flag name, flag name must be a non-empty string")
         }
 
         if name!.trimmingCharacters(in: .whitespacesAndNewlines) != name! {
@@ -69,7 +69,7 @@ class DefaultSplitValidator: SplitValidator {
         if splitsStorage.get(name: name) == nil {
             return ValidationErrorInfo(warning: .nonExistingSplit,
                                        message: "you passed '\(name)' that does not exist in this environment, " +
-                "please double check what Feature flags exist in the web console.")
+                "please double check what Feature flags exist in the ui console.")
         }
         return nil
     }
