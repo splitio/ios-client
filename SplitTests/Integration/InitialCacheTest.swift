@@ -290,7 +290,6 @@ class InitialCacheTest: XCTestCase {
             case let(urlString) where urlString.contains("splitChanges"):
                 ThreadUtils.delay(seconds: 0.3) // Simulate network
                 let changesIndex = self.changeHitIndex.getAndAdd(1)
-                print("HIT split: \(changesIndex)")
                 if changesIndex < self.numbers.count {
                     self.receivedChangeNumber[changesIndex] = request.parameters?["since"] as? Int64 ?? 0
                     self.splitsQueryString = urlString

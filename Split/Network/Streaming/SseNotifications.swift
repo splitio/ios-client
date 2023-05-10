@@ -53,7 +53,7 @@ enum NotificationType: Decodable {
     }
 }
 
-/// Types of notifications handled by split events
+/// Types of notifications handled by events
 /// Used to inherit from
 protocol NotificationTypeField: Decodable {
     var type: NotificationType { get }
@@ -63,7 +63,7 @@ struct NotificationTypeValue: NotificationTypeField {
     var type: NotificationType
 }
 
-// Base notification data used by split events
+// Base notification data used by events
 // Json data has real notification data, type is used to parse data
 // to correct DTO
 struct IncomingNotification {
@@ -211,7 +211,7 @@ struct MySegmentsUpdateV2Notification: NotificationTypeField {
     }
 }
 
-/// Indicates that a Split was killed
+/// Indicates that a feature flag was killed
 struct SplitKillNotification: NotificationTypeField {
     var type: NotificationType {
         return .splitKill
@@ -221,7 +221,7 @@ struct SplitKillNotification: NotificationTypeField {
     let defaultTreatment: String
 }
 
-/// indicates Split changes
+/// indicates feature flag changes
 struct SplitsUpdateNotification: NotificationTypeField {
     var type: NotificationType {
         return .splitUpdate

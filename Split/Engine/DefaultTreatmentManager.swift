@@ -123,7 +123,7 @@ class DefaultTreatmentManager: TreatmentManager {
                                                                      validationTag: validationTag)
             }
         } else {
-            Logger.d("\(validationTag): split_names is an empty array or has null values")
+            Logger.d("\(validationTag): feature_flag_names is an empty array or has null values")
         }
         return results
     }

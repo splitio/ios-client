@@ -80,7 +80,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             let start = Date.nowMillis()
             splits = self.decoder.decode(jsonSplits).map { $0 }
             let time = Date().unixTimestampInMiliseconds() - start
-            Logger.v("Time to parse splits : \(time)")
+            Logger.v("Time to parse feature flags : \(time)")
         }
         return splits ?? []
     }
@@ -124,7 +124,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
                 // if an error occurs
                 self.coreDataHelper.save()
             } catch {
-                Logger.e("An error occurred while inserting split in storage: \(error.localizedDescription)")
+                Logger.e("An error occurred while inserting feature flags in storage: \(error.localizedDescription)")
             }
         }
     }

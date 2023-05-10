@@ -324,7 +324,7 @@ class MultiClientEvaluationTest: XCTestCase {
     }
 
     private func setupFactory(database: SplitDatabase? = nil) {
-        // When splits and connection available, ready from cache and Ready should be fired
+        // When feature flags and connection available, ready from cache and Ready should be fired
         let splitDatabase = database ?? TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
 
         let session = HttpSessionMock()

@@ -123,7 +123,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
     
     
     func testChangedTrafficTypeForSplit() {
-        // Testing remove split and recreate it with other tt
+        // Testing remove a feature flag and recreate it with other tt
         let splitName = "n_s2"
         let s2t1 = newSplit(name: splitName, trafficType: "tt", status: .active)
         let s2t2 = newSplit(name: splitName, trafficType: "mytt", status: .active)

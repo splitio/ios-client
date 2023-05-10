@@ -111,12 +111,12 @@ class DefaultSplitsStorage: SplitsStorage {
 
         for split in splits {
             guard let splitName = split.name?.lowercased()  else {
-                Logger.e("Invalid split name received while updating splits")
+                Logger.e("Invalid feature flag name received while updating feature flags")
                 continue
             }
 
             guard let trafficTypeName = split.trafficTypeName else {
-                Logger.e("Invalid split traffic type received while updating splits")
+                Logger.e("Invalid feature flag traffic type received while updating feature flags")
                 continue
             }
 
@@ -128,7 +128,7 @@ class DefaultSplitsStorage: SplitsStorage {
             }
 
             if loadedSplit != nil, let oldTrafficType = loadedSplit?.trafficTypeName {
-                // Must decreated old traffic type count if a split is updated or removed
+                // Must decreated old traffic type count if a feature flag is updated or removed
                 let count = cachedTrafficTypes[oldTrafficType] ?? 0
                 if count > 1 {
                     cachedTrafficTypes[oldTrafficType] = count - 1
