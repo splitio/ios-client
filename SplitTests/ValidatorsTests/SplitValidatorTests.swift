@@ -74,7 +74,7 @@ class SplitValidatorTests: XCTestCase {
         XCTAssertFalse(errorInfo?.isError ?? true)
         XCTAssertEqual(errorInfo?.warnings.count, 1)
         XCTAssertTrue(errorInfo?.hasWarning(.nonExistingSplit) ?? false)
-        XCTAssertEqual("you passed 'split2' that does not exist in this environment, please double check what Splits exist in the ui console.", errorInfo?.warnings[.nonExistingSplit])
+        XCTAssertEqual("you passed 'split2' that does not exist in this environment, please double check what Splits exist in the Split user interface.", errorInfo?.warnings[.nonExistingSplit])
     }
     
     func createSplit(name: String) -> Split {
