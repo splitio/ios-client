@@ -17,7 +17,7 @@ class StreamingAuthFail4xxTest: XCTestCase {
     var isSseConnected = false
     var streamingBinding: TestStreamResponseBinding?
     let mySegExp = XCTestExpectation(description: "MySeg exp")
-    let splitsChgExp = XCTestExpectation(description: "Splits chg exp")
+    let splitsChgExp = XCTestExpectation(description: "Feature flags chg exp")
     let kMaxSseAuthRetries = 3
     var sseAuthHits = 0
     var sseConnHits = 0

@@ -22,14 +22,14 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
     }
 
     func execute(since: Int64, till: Int64?, headers: HttpHeaders? = nil) throws -> SplitChange {
-        Logger.d("Fetching split definitions")
+        Logger.d("Fetching feature flags definitions")
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SplitChange>?
         let startTime = Date.nowMillis()
         restClient.getSplitChanges(since: since, till: till, headers: headers) { result in
-            Logger.v("Time to fetch Splits: \(Date.interval(millis: startTime))")
+            Logger.v("Time to fetch feature flags: \(Date.interval(millis: startTime))")
             requestResult = result
             semaphore.signal()
         }
@@ -45,6 +45,6 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
             try syncHelper.throwIfError(syncHelper.handleError(error, resource: resource, startTime: startTime))
         }
 
-        throw GenericError.unknown(message: "Incorrect split changes retrieved")
+        throw GenericError.unknown(message: "Incorrect feature flags changes retrieved")
     }
 }

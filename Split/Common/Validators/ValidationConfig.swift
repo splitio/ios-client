@@ -11,7 +11,7 @@ import Foundation
 ///
 ///  Default config for validations component
 ///  This configuration should be overwrote in factory or client instantiation
-///  with Split Config values
+///  with Feature flags Config values
 ///
 struct ValidationConfig {
 

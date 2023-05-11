@@ -187,7 +187,7 @@ class AttributesEvaluationTest: XCTestCase {
 
     func testPersistenceDisabled() {
 
-        // When splits and connection available, ready from cache and Ready should be fired
+        // When feature flags and connection available, ready from cache and Ready should be fired
         let attr: [String: Any] = [Attr.numValue: attrValues[Attr.numValue]!,
                                    Attr.strValue: attrValues[Attr.strValue]!]
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test", queue: dbqueue)
@@ -258,7 +258,7 @@ class AttributesEvaluationTest: XCTestCase {
 
     func testEvaluationPrecedence() {
 
-        // When splits and connection available, ready from cache and Ready should be fired
+        // When feature flags and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
         let session = HttpSessionMock()

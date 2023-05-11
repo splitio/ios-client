@@ -73,7 +73,7 @@ struct SplitsSerialDecoder: SplitsDecoder {
                 let plainJson = cipher?.decrypt(json) ?? json
                 return try Json.encodeFrom(json: plainJson, to: Split.self)
             } catch {
-                Logger.v("Failed decoding split json: \(json)")
+                Logger.v("Failed decoding feature flag json: \(json)")
             }
             return nil
         }

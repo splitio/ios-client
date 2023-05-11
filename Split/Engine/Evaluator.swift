@@ -62,7 +62,7 @@ class DefaultEvaluator: Evaluator {
 
         guard let split = splitsStorage.get(name: splitName),
             split.status != .archived else {
-                Logger.w("The SPLIT definition for '\(splitName)' has not been found")
+                Logger.w("The feature flag definition for '\(splitName)' has not been found")
                 return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
         }
 

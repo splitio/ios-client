@@ -258,7 +258,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
             resetBackoffCounter()
             return true
         }
-        Logger.d("Split changes are not updated yet")
+        Logger.d("Feature flag changes are not updated yet")
         return false
     }
 }

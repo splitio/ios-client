@@ -85,9 +85,9 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
     }
 
     //
-    // Splits Yaml by Split to avoid an issue with the library
+    // Feature flags Yaml by Split to avoid an issue with the library
     // when processing large files.
-    // This way the library only parses one Split at a time
+    // This way the library only parses one feature flag at a time
     private func splitYamlBySplitContent(content: String) -> [String] {
         let newLineChar: Character = "\n"
         let newSplitChar = "-"
@@ -97,7 +97,7 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
         for row in rows {
             let line = row.trimmingCharacters(in: .newlines)
             if !line.isEmpty() {
-                if line.hasPrefix(newSplitChar) { // New split found
+                if line.hasPrefix(newSplitChar) { // New feature flag found
                     if !currentSplit.isEmpty() {
                         splitsYaml.append(currentSplit)
                     }

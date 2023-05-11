@@ -92,8 +92,8 @@ class DefaultEventValidator: EventValidator {
 
         if isSdkReady, !splitsStorage.isValidTrafficType(name: lowercasedTrafficType) {
             let message = "traffic_type_name \(nonNullTrafficTypeName) does not have any corresponding " +
-                "Splits in this environment, make sure you’re tracking " +
-            "your events to a valid traffic type defined in the Split console"
+                "feature flags in this environment, make sure you’re tracking " +
+            "your events to a valid traffic type defined in the Split user interface"
 
             if validationInfo != nil {
                 validationInfo?.addWarning(.trafficTypeWithoutSplitInEnvironment, message: message)

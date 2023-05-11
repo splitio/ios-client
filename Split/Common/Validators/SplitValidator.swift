@@ -9,22 +9,22 @@
 import Foundation
 
 ///
-/// A validator for Splits name
+/// A validator for Feture Flag name
 ///
 
 protocol SplitValidator {
     ///
-    /// Validates a split name
+    /// Validates a Feature Flag name
     ///
-    /// - Parameter name: Split name to validate
+    /// - Parameter name: Feature flag name to validate
     /// - Returns: nil when validations succeded, otherwise ValidationErrorInfo instance
     ///
     func validate(name: String?) -> ValidationErrorInfo?
 
     ///
-    /// Validates a split
+    /// Validates a feature flag
     ///
-    /// - Parameter name: Name of the split to validate
+    /// - Parameter name: Name of the feature flag to validate
     /// - Returns: nil when validations succeded, otherwise ValidationErrorInfo instance
     ///
     func validateSplit(name: String) -> ValidationErrorInfo?
@@ -35,17 +35,17 @@ struct SplitNameValidator {
 
         if name == nil {
             return ValidationErrorInfo(error: .some,
-                                       message: "you passed a null split name, split name must be a non-empty string")
+                                       message: "you passed a null feature flag name, flag name must be a non-empty string")
         }
 
         if name!.isEmpty() {
             return ValidationErrorInfo(error: .some,
-                                       message: "you passed an empty split name, split name must be a non-empty string")
+                                       message: "you passed an empty feature flag name, flag name must be a non-empty string")
         }
 
         if name!.trimmingCharacters(in: .whitespacesAndNewlines) != name! {
             return ValidationErrorInfo(warning: .splitNameShouldBeTrimmed,
-                                       message: "split name '\(name!)' has extra whitespace, trimming")
+                                       message: "feature flag name '\(name!)' has extra whitespace, trimming")
         }
 
         return nil
@@ -69,7 +69,7 @@ class DefaultSplitValidator: SplitValidator {
         if splitsStorage.get(name: name) == nil {
             return ValidationErrorInfo(warning: .nonExistingSplit,
                                        message: "you passed '\(name)' that does not exist in this environment, " +
-                "please double check what Splits exist in the web console.")
+                "please double check what feature flags exist in the Split user interface.")
         }
         return nil
     }

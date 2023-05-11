@@ -23,14 +23,14 @@ class HttpSplitFetcherStub: HttpSplitFetcher {
         let hit = hitIndex
         hitIndex+=1
         if splitChanges.count == 0 {
-            throw GenericError.unknown(message: "null split changes")
+            throw GenericError.unknown(message: "null feature flag changes")
         }
 
         if splitChanges.count > hit {
             if let change = splitChanges[hit] {
                 return change
             } else {
-                throw GenericError.unknown(message: "null split changes")
+                throw GenericError.unknown(message: "null feature flag changes")
             }
         }
 
