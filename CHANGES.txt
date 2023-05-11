@@ -90,7 +90,7 @@
 - Updated my segments fetch to avoid cache when update push notification is received
 
 2.10.0: (Apr 9, 2021)
-- Added SDK Updated event to notify when Splits or My Segments change
+- Added SDK Updated event to notify when feature flags or segments change
 
 2.9.1: (Mar 10, 2021)
 - Fixed performance issue when pushing data to local storage and flushing data
@@ -106,7 +106,7 @@
 - Added support for the new Split streaming architecture. When enabled (default), the SDK will not poll for updates but instead receive notifications every time there's a change in your environments, allowing to process those much quicker. If disabled or in the event of an issue, the SDK will fallback to the known polling mechanism to provide a seamless experience.
 
 2.6.0: (Ago 11, 2020)
-- Added `syncConfig.addFilter()` method to SDK configuration to pass a list of filters for the splits that will be downloaded. Read more in our docs.
+- Added `syncConfig.addFilter()` method to SDK configuration to pass a list of filters for the feature flags that will be downloaded. Read more in our docs.
 
 2.5.3: (Jun 30, 2020)
 - Fixed issue duplicating sent impressions
@@ -131,7 +131,7 @@
 - Bugfixing - small issue with traffic types validation warning
 
 2.3.0: (Jun 07, 2019)
- - Added split existence validation
+ - Added feature flag existence validation
  - Added traffic type validation
  - Added multiple factory instance validation
  - Added support for Swift 5.0
@@ -184,7 +184,7 @@
  - Bugfixing - issue in legacy algorithm
 
 1.5.2: (Oct 11, 2018)
- - Added internal split metrics
+ - Added internal Split metrics
  - Updated project structure tree
 
 1.5.1: (Oct 3, 2018)
