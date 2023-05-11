@@ -69,7 +69,7 @@ class DefaultSplitValidator: SplitValidator {
         if splitsStorage.get(name: name) == nil {
             return ValidationErrorInfo(warning: .nonExistingSplit,
                                        message: "you passed '\(name)' that does not exist in this environment, " +
-                "please double check what Feature flags exist in the Split user interface.")
+                "please double check what feature flags exist in the Split user interface.")
         }
         return nil
     }
