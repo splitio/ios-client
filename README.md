@@ -21,7 +21,7 @@ let config = SplitClientConfig()
 let key: Key = Key(matchingKey: "CUSTOMER_ID")
 
 // Setup your Split SDK Key
-let sdkKey: String = "SDK_KEY"
+let sdkKey: String = "YOUR_SDK_KEY"
 
 // Factory builder
 let factoryBuilder = DefaultSplitFactoryBuilder()
