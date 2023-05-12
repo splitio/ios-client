@@ -1,13 +1,16 @@
+2.20.1: (May 15, 2023)
+- Updated terminology on the SDKs codebase to be more aligned with current standard without causing a breaking change. The core change is the term split for feature flag on things like logs and intensense comments.
+
 2.20.0: (Apr 25, 2023)
- - Added the ability to encrypt the local cache of rollout plans via 'encryptionEnabled' config.
- - Removed Schema causing issues when building with Carthage
- - Added config to allow setting a customized network requests authenticator
+- Added the ability to encrypt the local cache of rollout plans via 'encryptionEnabled' config.
+- Removed Schema causing issues when building with Carthage
+- Added config to allow setting a customized network requests authenticator
 
 2.19.1: (Jan 30, 2023)
- - Improving SDK Ready and SDK Ready from cache events triggering time by parsing loaded / received data in parallel
+- Improving SDK Ready and SDK Ready from cache events triggering time by parsing loaded / received data in parallel
 
 2.19.0: (Jan 16, 2023)
- - Added user consent feature to allow delaying or disabling the data tracking from SDK until user consent is explicitly granted or declined. Read more in our docs.
+- Added user consent feature to allow delaying or disabling the data tracking from SDK until user consent is explicitly granted or declined. Read more in our docs.
 
 2.18.2: (Nov 22, 2022)
 - Fixed issue on take method of Blocking Queue component
