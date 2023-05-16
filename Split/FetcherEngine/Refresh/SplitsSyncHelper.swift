@@ -63,7 +63,7 @@ class SplitsSyncHelper {
                                    headers: headers,
                                    useTillParam: true) ).success
         } catch let error {
-            Logger.e("Problem fetching splits: %@", error.localizedDescription)
+            Logger.e("Problem fetching feature flags: %@", error.localizedDescription)
         }
         return false
     }
@@ -115,7 +115,7 @@ class SplitsSyncHelper {
             }
             firstFetch = false
             splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))
-            Logger.i("Split definitions have been updated")
+            Logger.i("Feature flag definitions have been updated")
             // Line below commented temporary for debug purposes
             // Logger.v(splitChange.description)
             if newSince == newTill, newTill >= since {

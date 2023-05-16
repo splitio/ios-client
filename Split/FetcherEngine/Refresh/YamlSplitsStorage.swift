@@ -45,7 +45,7 @@ class LocalhostSplitsStorage: SplitsStorage {
     func loadLocal() {
         dataQueue.async(flags: .barrier) {
             self.loadFile(name: self.fileName)
-            Logger.i("Localhost splits updated")
+            Logger.i("Localhost feature flags updated")
         }
     }
 

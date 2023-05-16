@@ -90,7 +90,6 @@ class StreamingSplitKillTest: XCTestCase {
         
         let treatmentKill = client.getTreatment(splitName)
 
-        print("Updating split")
         streamingBinding?.push(message:
             StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
                                                           changeNumber: numbers[splitsChangesHits]))

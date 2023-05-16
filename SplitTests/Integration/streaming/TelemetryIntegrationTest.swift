@@ -168,7 +168,7 @@ class TelemetryIntegrationTest: XCTestCase {
         XCTAssertTrue(statsItem?.methodLatencies?.track?.count ?? 0 > 0)
 
         XCTAssertEqual(1, statsItem?.eventsQueued)
-        // Two splits, optimized mode
+        // Two feature flags, optimized mode
         XCTAssertEqual(2, statsItem?.impressionsQueued)
 
         XCTAssertEqual(0, statsItem?.segmentCount)
@@ -473,7 +473,6 @@ class TelemetryIntegrationTest: XCTestCase {
                 }
 
                 let changes = self.splitChanges()
-                print("splits success: \(changes)")
                 return TestDispatcherResponse(code: 200, data: Data(changes.utf8))
 
             case let(urlString) where urlString.contains("mySegments"):

@@ -45,9 +45,9 @@ class FilterBuilder {
             }
             if deduptedValues.count > filter.type.maxValuesCount {
                 let message = """
-                Error: \(filter.type.maxValuesCount) different split \(filter.type.queryStringField)
+                Error: \(filter.type.maxValuesCount) different feature flag \(filter.type.queryStringField)
                 can be specified at most. You passed \(filter.values.count)
-                . Please consider reducing the amount or using prefixes to target specific groups of splits.
+                . Please consider reducing the amount or using prefixes to target specific groups of feature flags.
                 """
                 Logger.e(message)
                 throw MaxFilterValuesExcededError(message: message)

@@ -28,7 +28,7 @@ struct SplitsParallelEncoder: SplitsEncoder {
         if list.count == 0 {
             return [:]
         }
-        Logger.v("Using parallel encoding for \(list.count) splits")
+        Logger.v("Using parallel encoding for \(list.count) feature flags")
 
         var splitsJson = [String: String]()
         let dataQueue = DispatchQueue(label: "split-parallel-encoding-data",
@@ -80,7 +80,7 @@ struct SplitsSerialEncoder: SplitsEncoder {
                     result[name] = cipher?.encrypt(json) ?? json
                 }
             } catch {
-                Logger.v("Failed encoding split json: \(split.name ?? "empty name!")")
+                Logger.v("Failed encoding feature flag json: \(split.name ?? "empty name!")")
             }
         }
         return result

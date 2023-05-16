@@ -19,7 +19,7 @@ public class SplitClientConfig: NSObject {
     @objc public var sdkReadyTimeOut: Int = -1
 
     ///
-    /// The SDK will poll Split servers for changes to feature Splits at this rate (in seconds). Default 3600 (1 hour)
+    /// The SDK will poll Split servers for changes to feature flags at this rate (in seconds). Default 3600 (1 hour)
     ///
     @objc public var featuresRefreshRate: Int = 3600
 
@@ -158,13 +158,13 @@ public class SplitClientConfig: NSObject {
     @objc public var impressionListener: SplitImpressionListener?
 
     ///
-    /// Data folder to store localhost splits file
+    /// Data folder to store localhost feature flags file
     /// - Default: localhost
     ///
     @objc public var localhostDataFolder: String = "localhost"
 
     ///
-    /// Localhost splits file name
+    /// Localhost feature flags file name
     ///
     @objc public var splitFile: String = "localhost.splits"
 
@@ -174,8 +174,8 @@ public class SplitClientConfig: NSObject {
     @objc public var isLabelsEnabled = true
 
     ///
-    /// Allows  to pass a list of filters for the splits that will be downloaded
-    /// Use the SyncConfig builder and Split Filter class to build correct filters
+    /// Allows  to pass a list of filters for the feature flags that will be downloaded
+    /// Use the SyncConfig builder and Feature flag Filter class to build correct filters
     ///
     @objc public var sync = SyncConfig.builder().build()
 
@@ -215,7 +215,7 @@ public class SplitClientConfig: NSObject {
     }
 
     ///
-    /// The SDK will load changes from Splits files base on this feature. Default = -1 (Deactivated)
+    /// The SDK will load changes from feature flags files base on this feature. Default = -1 (Deactivated)
     ///
     @objc public var offlineRefreshRate: Int = -1
 

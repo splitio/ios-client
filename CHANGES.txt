@@ -1,13 +1,16 @@
+2.20.1: (May 15, 2023)
+- Updated terminology on the SDKs codebase to be more aligned with current standard without causing a breaking change. The core change is the term split for feature flag on things like logs and quick help comments.
+
 2.20.0: (Apr 25, 2023)
- - Added the ability to encrypt the local cache of rollout plans via 'encryptionEnabled' config.
- - Removed Schema causing issues when building with Carthage
- - Added config to allow setting a customized network requests authenticator
+- Added the ability to encrypt the local cache of rollout plans via 'encryptionEnabled' config.
+- Removed Schema causing issues when building with Carthage
+- Added config to allow setting a customized network requests authenticator
 
 2.19.1: (Jan 30, 2023)
- - Improving SDK Ready and SDK Ready from cache events triggering time by parsing loaded / received data in parallel
+- Improving SDK Ready and SDK Ready from cache events triggering time by parsing loaded / received data in parallel
 
 2.19.0: (Jan 16, 2023)
- - Added user consent feature to allow delaying or disabling the data tracking from SDK until user consent is explicitly granted or declined. Read more in our docs.
+- Added user consent feature to allow delaying or disabling the data tracking from SDK until user consent is explicitly granted or declined. Read more in our docs.
 
 2.18.2: (Nov 22, 2022)
 - Fixed issue on take method of Blocking Queue component
@@ -90,7 +93,7 @@
 - Updated my segments fetch to avoid cache when update push notification is received
 
 2.10.0: (Apr 9, 2021)
-- Added SDK Updated event to notify when Splits or My Segments change
+- Added SDK Updated event to notify when feature flags or segments change
 
 2.9.1: (Mar 10, 2021)
 - Fixed performance issue when pushing data to local storage and flushing data
@@ -106,7 +109,7 @@
 - Added support for the new Split streaming architecture. When enabled (default), the SDK will not poll for updates but instead receive notifications every time there's a change in your environments, allowing to process those much quicker. If disabled or in the event of an issue, the SDK will fallback to the known polling mechanism to provide a seamless experience.
 
 2.6.0: (Ago 11, 2020)
-- Added `syncConfig.addFilter()` method to SDK configuration to pass a list of filters for the splits that will be downloaded. Read more in our docs.
+- Added `syncConfig.addFilter()` method to SDK configuration to pass a list of filters for the feature flags that will be downloaded. Read more in our docs.
 
 2.5.3: (Jun 30, 2020)
 - Fixed issue duplicating sent impressions
@@ -131,7 +134,7 @@
 - Bugfixing - small issue with traffic types validation warning
 
 2.3.0: (Jun 07, 2019)
- - Added split existence validation
+ - Added feature flag existence validation
  - Added traffic type validation
  - Added multiple factory instance validation
  - Added support for Swift 5.0
@@ -184,7 +187,7 @@
  - Bugfixing - issue in legacy algorithm
 
 1.5.2: (Oct 11, 2018)
- - Added internal split metrics
+ - Added internal Split metrics
  - Updated project structure tree
 
 1.5.1: (Oct 3, 2018)

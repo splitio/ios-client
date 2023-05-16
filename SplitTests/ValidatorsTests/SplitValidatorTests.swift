@@ -32,7 +32,7 @@ class SplitValidatorTests: XCTestCase {
         let errorInfo = validator.validate(name: nil)
         XCTAssertNotNil(errorInfo)
         XCTAssertTrue(errorInfo?.isError ?? false)
-        XCTAssertEqual("you passed a null split name, split name must be a non-empty string", errorInfo?.errorMessage)
+        XCTAssertEqual("you passed a null feature flag name, flag name must be a non-empty string", errorInfo?.errorMessage)
         XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
     
@@ -40,7 +40,7 @@ class SplitValidatorTests: XCTestCase {
         let errorInfo = validator.validate(name: "")
         XCTAssertNotNil(errorInfo)
         XCTAssertTrue(errorInfo?.isError ?? false)
-        XCTAssertEqual("you passed an empty split name, split name must be a non-empty string", errorInfo?.errorMessage)
+        XCTAssertEqual("you passed an empty feature flag name, flag name must be a non-empty string", errorInfo?.errorMessage)
         XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
     
@@ -48,7 +48,7 @@ class SplitValidatorTests: XCTestCase {
         let errorInfo = validator.validate(name: " split")
         XCTAssertNotNil(errorInfo)
         XCTAssertFalse(errorInfo?.isError ?? true)
-        XCTAssertEqual("split name ' split' has extra whitespace, trimming", errorInfo?.warnings.values.map ({$0})[0])
+        XCTAssertEqual("feature flag name ' split' has extra whitespace, trimming", errorInfo?.warnings.values.map ({$0})[0])
         XCTAssertEqual(errorInfo?.warnings.count, 1)
         XCTAssertTrue(errorInfo?.hasWarning(.splitNameShouldBeTrimmed) ?? false)
     }
@@ -57,7 +57,7 @@ class SplitValidatorTests: XCTestCase {
         let errorInfo = validator.validate(name: "split ")
         XCTAssertNotNil(errorInfo)
         XCTAssertFalse(errorInfo?.isError ?? true)
-        XCTAssertEqual("split name 'split ' has extra whitespace, trimming", errorInfo?.warnings.values.map ({$0})[0])
+        XCTAssertEqual("feature flag name 'split ' has extra whitespace, trimming", errorInfo?.warnings.values.map ({$0})[0])
         XCTAssertEqual(errorInfo?.warnings.count, 1)
         XCTAssertTrue(errorInfo?.hasWarning(.splitNameShouldBeTrimmed) ?? false)
     }
@@ -74,7 +74,7 @@ class SplitValidatorTests: XCTestCase {
         XCTAssertFalse(errorInfo?.isError ?? true)
         XCTAssertEqual(errorInfo?.warnings.count, 1)
         XCTAssertTrue(errorInfo?.hasWarning(.nonExistingSplit) ?? false)
-        XCTAssertEqual("you passed 'split2' that does not exist in this environment, please double check what Splits exist in the web console.", errorInfo?.warnings[.nonExistingSplit])
+        XCTAssertEqual("you passed 'split2' that does not exist in this environment, please double check what feature flags exist in the Split user interface.", errorInfo?.warnings[.nonExistingSplit])
     }
     
     func createSplit(name: String) -> Split {

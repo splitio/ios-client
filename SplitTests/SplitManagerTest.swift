@@ -44,15 +44,15 @@ class SplitManagerTest: XCTestCase {
         XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), expectedSplitNames.joined(separator: ","), "Loaded splits names are not correct")
         
         let splitLowercase = manager.split(featureName: "sample_feature0")
-        XCTAssertNotNil(splitLowercase, "Lowercase split should be found")
-        XCTAssertEqual(splitLowercase?.name?.lowercased(), "sample_feature0", "Lowercase split name is not equal to expected")
+        XCTAssertNotNil(splitLowercase, "Lowercase feature flag should be found")
+        XCTAssertEqual(splitLowercase?.name?.lowercased(), "sample_feature0", "Lowercase feature flag name is not equal to expected")
         
         let splitUppercase = manager.split(featureName: "SAMPLE_FEATURE0")
-        XCTAssertNotNil(splitUppercase, "Uppercase split should be found")
-        XCTAssertEqual(splitUppercase?.name?.lowercased(), "sample_feature0", "Uppercase split name is not equal to expected")
+        XCTAssertNotNil(splitUppercase, "Uppercase feature flag should be found")
+        XCTAssertEqual(splitUppercase?.name?.lowercased(), "sample_feature0", "Uppercase feature flag name is not equal to expected")
         
         let splitNotExistent = manager.split(featureName: "SAMPLE_FEATURE99")
-        XCTAssertNil(splitNotExistent, "Non existent split should be nil")
+        XCTAssertNil(splitNotExistent, "Non existent feature flag should be nil")
     }
     
     func testSplitInfo(){
@@ -90,8 +90,8 @@ class SplitManagerTest: XCTestCase {
                                                                changeNumber: 2, updateTimestamp: 200))
         let splits = manager.splits
         let names = manager.splitNames
-        XCTAssertEqual(splits.count, 7, "Added one split count")
-        XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), "sample_feature0,sample_feature1,sample_feature2,sample_feature3,sample_feature4,sample_feature5,sample_feature6", "Added one split name check")
+        XCTAssertEqual(splits.count, 7, "Added one feature flag count")
+        XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), "sample_feature0,sample_feature1,sample_feature2,sample_feature3,sample_feature4,sample_feature5,sample_feature6", "Added one feature flag name check")
     }
     
     func testEmptyName(){
