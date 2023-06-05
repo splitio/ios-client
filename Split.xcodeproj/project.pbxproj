@@ -439,6 +439,7 @@
 		952FA1242A2A5D4D00264AB5 /* FeatureFlagsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA1232A2A5D4D00264AB5 /* FeatureFlagsSynchronizer.swift */; };
 		952FA1262A2E255600264AB5 /* FeatureFlagsSynchronizerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA1252A2E255600264AB5 /* FeatureFlagsSynchronizerStub.swift */; };
 		952FA1282A2E31C200264AB5 /* FeatureFlagsSynchronizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA1272A2E31C200264AB5 /* FeatureFlagsSynchronizerTest.swift */; };
+		952FA12B2A2E593900264AB5 /* SplitComponentCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA12A2A2E593900264AB5 /* SplitComponentCatalog.swift */; };
 		9530FD7A27F24306005027AA /* EventsManagerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */; };
 		9530FD7C27F253CA005027AA /* SplitEventsCoordinatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530FD7B27F253CA005027AA /* SplitEventsCoordinatorTest.swift */; };
 		953911A8267A4F250040433A /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953911A7267A4F250040433A /* LRUCache.swift */; };
@@ -1667,6 +1668,7 @@
 		952FA1232A2A5D4D00264AB5 /* FeatureFlagsSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagsSynchronizer.swift; sourceTree = "<group>"; };
 		952FA1252A2E255600264AB5 /* FeatureFlagsSynchronizerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagsSynchronizerStub.swift; sourceTree = "<group>"; };
 		952FA1272A2E31C200264AB5 /* FeatureFlagsSynchronizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagsSynchronizerTest.swift; sourceTree = "<group>"; };
+		952FA12A2A2E593900264AB5 /* SplitComponentCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitComponentCatalog.swift; sourceTree = "<group>"; };
 		9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsManagerCoordinator.swift; sourceTree = "<group>"; };
 		9530FD7B27F253CA005027AA /* SplitEventsCoordinatorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsCoordinatorTest.swift; sourceTree = "<group>"; };
 		953911A7267A4F250040433A /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
@@ -2019,6 +2021,7 @@
 				954F9BBC25759C4800140B81 /* Package.swift */,
 				59163B11216396EF00C7AA57 /* Common */,
 				3B6DEEA420EA6AE20067435E /* Models */,
+				952FA1292A2E58FE00264AB5 /* Initialization */,
 				3B6DEE8020EA6ADF0067435E /* Api */,
 				3B6DEEC820EA6AE20067435E /* Assets */,
 				3B6DEE8E20EA6AE00067435E /* Engine */,
@@ -2094,7 +2097,6 @@
 				3B6DEE7D20EA6ADF0067435E /* SplitError.swift */,
 				3B6DEE8320EA6AE00067435E /* DefaultSplitFactory.swift */,
 				9595AD7427F4DC3B006E3A54 /* SplitClientManager.swift */,
-				95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */,
 				59F4AAD3251A7F4700A1C69A /* SplitApiFacade.swift */,
 				3B6DEECA20EA6AE30067435E /* SplitFactory.swift */,
 				3B6DEEE020EA6AE30067435E /* DefaultSplitManager.swift */,
@@ -3000,6 +3002,15 @@
 			path = UniqueKeys;
 			sourceTree = "<group>";
 		};
+		952FA1292A2E58FE00264AB5 /* Initialization */ = {
+			isa = PBXGroup;
+			children = (
+				95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */,
+				952FA12A2A2E593900264AB5 /* SplitComponentCatalog.swift */,
+			);
+			path = Initialization;
+			sourceTree = "<group>";
+		};
 		953911AB267A648F0040433A /* Impressions */ = {
 			isa = PBXGroup;
 			children = (
@@ -3819,6 +3830,7 @@
 				95C717CD268BD549002ADB83 /* ImpressionsCountEntity.swift in Sources */,
 				9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */,
 				5905D4D82555FE74006DA3B1 /* SplitDatabase.swift in Sources */,
+				952FA12B2A2E593900264AB5 /* SplitComponentCatalog.swift in Sources */,
 				59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */,
 				95C717C4268BB426002ADB83 /* ImpressionsCountDao.swift in Sources */,
 				955428D6256810D300331356 /* ImpressionDao.swift in Sources */,
