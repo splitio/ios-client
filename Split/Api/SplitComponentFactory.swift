@@ -213,6 +213,21 @@ class SplitComponentFactory {
         return component
     }
 
+    func buildFeatureFlagsSynchronizer() throws -> FeatureFlagsSynchronizer {
+
+        let syncWorkerFactory = try buildSyncWorkerFactory()
+        let storageContainer = try getSplitStorageContainer()
+
+        let component: FeatureFlagsSynchronizer = DefaultFeatureFlagsSynchronizer(
+            splitConfig: splitClientConfig,
+            storageContainer: storageContainer,
+            syncWorkerFactory: syncWorkerFactory,
+            splitsFilterQueryString: splitsFilterQueryString,
+            splitEventsManager: getSplitEventsManagerCoordinator()) as FeatureFlagsSynchronizer
+        add(component: component)
+        return component
+    }
+
     func buildSynchronizer(notificationHelper: NotificationHelper?) throws -> Synchronizer {
 
         let syncWorkerFactory = try buildSyncWorkerFactory()
@@ -244,14 +259,12 @@ class SplitComponentFactory {
 
         let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
                                                           defaultUserKey: userKey,
+                                                          featureFlagsSynchronizer: try buildFeatureFlagsSynchronizer(),
                                                           telemetrySynchronizer: telemetrySynchronizer,
                                                           byKeyFacade: getByKeyFacade(),
-                                                          splitApiFacade: try getSplitApiFacade(),
                                                           splitStorageContainer: storageContainer,
-                                                          syncWorkerFactory: syncWorkerFactory,
                                                           impressionsTracker: impressionsTracker,
                                                           eventsSynchronizer: eventsSynchronizer,
-                                                          splitsFilterQueryString: splitsFilterQueryString,
                                                           splitEventsManager: getSplitEventsManagerCoordinator())
         add(component: component)
         return component
