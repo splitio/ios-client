@@ -45,7 +45,7 @@ protocol NotificationHelper {
 
 class DefaultNotificationHelper: NotificationHelper {
 
-    private let queue = DispatchQueue(label: UUID.init().uuidString, attributes: .concurrent)
+    private let queue = DispatchQueue(label: "split-notification-helper", attributes: .concurrent)
     private var actions = [String: [ObserverAction]]()
 
 #if os(iOS) || os(tvOS)

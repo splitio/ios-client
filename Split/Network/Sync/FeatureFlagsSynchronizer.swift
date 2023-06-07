@@ -20,21 +20,22 @@ protocol FeatureFlagsSynchronizer {
     func stop()
 }
 
-
 class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
     private var storageContainer: SplitStorageContainer
-    private let splitsSyncWorker: RetryableSyncWorker!
+    private var splitsSyncWorker: RetryableSyncWorker!
     private let splitsFilterQueryString: String
     private let syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
     private let syncWorkerFactory: SyncWorkerFactory
     private let splitConfig: SplitClientConfig
     private let splitEventsManager: SplitEventsManager
     private var periodicSplitsSyncWorker: PeriodicSyncWorker?
+    private var broadcasterChannel: SyncEventBroadcaster
 
     init(splitConfig: SplitClientConfig,
          storageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
+         broadcasterChannel: SyncEventBroadcaster,
          syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
         = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
@@ -48,9 +49,15 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         self.splitsSyncWorker = syncWorkerFactory.createRetryableSplitsSyncWorker()
         self.splitsFilterQueryString = splitsFilterQueryString
         self.splitEventsManager = splitEventsManager
+        self.broadcasterChannel = broadcasterChannel
 
         if splitConfig.syncEnabled {
             self.periodicSplitsSyncWorker = syncWorkerFactory.createPeriodicSplitsSyncWorker()
+            self.splitsSyncWorker.completion = {[weak self] _ in
+                if let self = self {
+                    self.broadcasterChannel.push(event: .syncExecuted)
+                }
+            }
         }
     }
 

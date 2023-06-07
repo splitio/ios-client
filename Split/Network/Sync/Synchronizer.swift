@@ -110,26 +110,31 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func synchronizeSplits() {
-        featureFlagsSynchronizer.synchronize()
+        runIfSyncEnabled {
+            self.featureFlagsSynchronizer.synchronize()
+        }
     }
 
     func synchronizeSplits(changeNumber: Int64) {
-        featureFlagsSynchronizer.synchronize(changeNumber: changeNumber)
+        runIfSyncEnabled {
+            self.featureFlagsSynchronizer.synchronize(changeNumber: changeNumber)
+        }
     }
 
     func synchronizeMySegments() {
-        synchronizeMySegments(forKey: defaultUserKey)
+        self.synchronizeMySegments(forKey: defaultUserKey)
     }
 
     func synchronizeMySegments(forKey key: String) {
-        byKeySynchronizer.syncMySegments(forKey: key)
+        runIfSyncEnabled {
+            self.byKeySynchronizer.syncMySegments(forKey: key)
+        }
     }
 
     func forceMySegmentsSync(forKey key: String) {
-        if !splitConfig.syncEnabled {
-            return
+        runIfSyncEnabled {
+            self.byKeySynchronizer.forceMySegmentsSync(forKey: key)
         }
-        byKeySynchronizer.forceMySegmentsSync(forKey: key)
     }
 
     func synchronizeTelemetryConfig() {
@@ -137,12 +142,11 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func startPeriodicFetching() {
-        if !splitConfig.syncEnabled {
-            return
-        }
-        featureFlagsSynchronizer.startPeriodicSync()
-        byKeySynchronizer.startPeriodicSync()
-        recordSyncModeEvent(TelemetryStreamingEventValue.syncModePolling)
+        //runIfSyncEnabled {
+            self.featureFlagsSynchronizer.startPeriodicSync()
+            self.byKeySynchronizer.startPeriodicSync()
+            self.recordSyncModeEvent(TelemetryStreamingEventValue.syncModePolling)
+        //}
     }
 
     func stopPeriodicFetching() {
@@ -233,6 +237,13 @@ class DefaultSynchronizer: Synchronizer {
         if splitConfig.streamingEnabled && !isDestroyed.value {
             telemetryProducer?.recordStreamingEvent(type: .syncModeUpdate,
                                                     data: mode)
+        }
+    }
+
+    @inline(__always)
+    private func runIfSyncEnabled(action: () -> Void) {
+        if self.splitConfig.syncEnabled {
+            action()
         }
     }
 }

@@ -31,4 +31,5 @@ struct ServiceConstants {
     static let uniqueKeyBulkSize = 50
     static let maxUniqueKeyQueueSize = 30000
     static let aes128KeyLength = 16
+    static let maxSyncPeriodInMillis = defaultSseConnectionDelayInSecs * 1000
 }
