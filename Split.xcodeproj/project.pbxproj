@@ -441,6 +441,8 @@
 		952FA1282A2E31C200264AB5 /* FeatureFlagsSynchronizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA1272A2E31C200264AB5 /* FeatureFlagsSynchronizerTest.swift */; };
 		952FA12B2A2E593900264AB5 /* SplitComponentCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA12A2A2E593900264AB5 /* SplitComponentCatalog.swift */; };
 		952FA12F2A2F6E4D00264AB5 /* SyncGuardianStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA12E2A2F6E4D00264AB5 /* SyncGuardianStub.swift */; };
+		952FA1302A31DCA200264AB5 /* FeatureFlagsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA1232A2A5D4D00264AB5 /* FeatureFlagsSynchronizer.swift */; };
+		952FA1312A31DCE400264AB5 /* SplitComponentCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA12A2A2E593900264AB5 /* SplitComponentCatalog.swift */; };
 		9530FD7A27F24306005027AA /* EventsManagerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */; };
 		9530FD7C27F253CA005027AA /* SplitEventsCoordinatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530FD7B27F253CA005027AA /* SplitEventsCoordinatorTest.swift */; };
 		953911A8267A4F250040433A /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953911A7267A4F250040433A /* LRUCache.swift */; };
@@ -4660,6 +4662,7 @@
 				95B02D5E28D0BDC20030EC8B /* InSegmentMatcher.swift in Sources */,
 				95B02D5F28D0BDC20030EC8B /* LessThanOrEqualToMatcher.swift in Sources */,
 				95B02D6028D0BDC20030EC8B /* MatchesStringMatcher.swift in Sources */,
+				952FA1312A31DCE400264AB5 /* SplitComponentCatalog.swift in Sources */,
 				95B02D6128D0BDC20030EC8B /* PartOfSetMatcher.swift in Sources */,
 				95B02D6228D0BDC20030EC8B /* StartWithMatcher.swift in Sources */,
 				95B02D6328D0BDC20030EC8B /* Whitelist.swift in Sources */,
@@ -4713,6 +4716,7 @@
 				95B02D9028D0BDC30030EC8B /* NetworkReachabilityManager.swift in Sources */,
 				95B02D9128D0BDC30030EC8B /* RestClient.swift in Sources */,
 				9566744829F03675001B4FA5 /* SplitEncryptionLevel.swift in Sources */,
+				952FA1302A31DCA200264AB5 /* FeatureFlagsSynchronizer.swift in Sources */,
 				95B02D9228D0BDC30030EC8B /* RestClient+TrackEvents.swift in Sources */,
 				95B02D9328D0BDC30030EC8B /* RestClient+TelemetryConfig.swift in Sources */,
 				95B02D9428D0BDC30030EC8B /* RestClient+TelemetryStats.swift in Sources */,
