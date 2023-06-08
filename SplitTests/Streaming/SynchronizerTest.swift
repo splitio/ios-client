@@ -92,13 +92,6 @@ class SynchronizerTest: XCTestCase {
         XCTAssertTrue(byKeyApiFacade.syncAllCalled)
     }
 
-    func testSynchronizeSplits() {
-
-        synchronizer.synchronizeSplits()
-
-        XCTAssertTrue(fFlagsSynchronizer.synchronizeCalled)
-    }
-
     func testLoadAndSynchronizeSplits() {
 
         synchronizer.loadAndSynchronizeSplits()

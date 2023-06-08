@@ -81,9 +81,9 @@ class DefaultSyncManager: SyncManager {
         isPaused.set(false)
         synchronizer.resume()
         pushNotificationManager?.resume()
-//        if syncGuardian.mustSync() {
-//            synchronizer.syncAll()
-//        }
+        if syncGuardian.mustSync() {
+            synchronizer.syncAll()
+        }
 #endif
     }
 

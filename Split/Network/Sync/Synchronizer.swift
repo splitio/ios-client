@@ -17,7 +17,6 @@ protocol Synchronizer: ImpressionLogger {
     func loadMySegmentsFromCache(forKey key: String)
     func loadAttributesFromCache(forKey key: String)
     func syncAll()
-    func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments(forKey key: String)
     func synchronizeTelemetryConfig()
@@ -109,12 +108,6 @@ class DefaultSynchronizer: Synchronizer {
         byKeySynchronizer.syncAll()
     }
 
-    func synchronizeSplits() {
-        runIfSyncEnabled {
-            self.featureFlagsSynchronizer.synchronize()
-        }
-    }
-
     func synchronizeSplits(changeNumber: Int64) {
         runIfSyncEnabled {
             self.featureFlagsSynchronizer.synchronize(changeNumber: changeNumber)
@@ -126,9 +119,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func synchronizeMySegments(forKey key: String) {
-        runIfSyncEnabled {
-            self.byKeySynchronizer.syncMySegments(forKey: key)
-        }
+        byKeySynchronizer.syncMySegments(forKey: key)
     }
 
     func forceMySegmentsSync(forKey key: String) {
@@ -142,11 +133,11 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func startPeriodicFetching() {
-        //runIfSyncEnabled {
-            self.featureFlagsSynchronizer.startPeriodicSync()
-            self.byKeySynchronizer.startPeriodicSync()
-            self.recordSyncModeEvent(TelemetryStreamingEventValue.syncModePolling)
-        //}
+        runIfSyncEnabled {
+            featureFlagsSynchronizer.startPeriodicSync()
+            byKeySynchronizer.startPeriodicSync()
+            recordSyncModeEvent(TelemetryStreamingEventValue.syncModePolling)
+        }
     }
 
     func stopPeriodicFetching() {
@@ -231,6 +222,11 @@ class DefaultSynchronizer: Synchronizer {
         byKeySynchronizer.stop()
         eventsSynchronizer.destroy()
         impressionsTracker.destroy()
+    }
+
+    // MARK: Private
+    private func synchronizeSplits() {
+        self.featureFlagsSynchronizer.synchronize()
     }
 
     private func recordSyncModeEvent(_ mode: Int64) {
