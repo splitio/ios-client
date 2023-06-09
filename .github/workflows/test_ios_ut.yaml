@@ -38,28 +38,28 @@ jobs:
           test-plan: 'SplitiOSUnit'
           use-xcpretty: true
 
-      - name: Install java 11
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'oracle'
-          java-version: '17'
+      # - name: Install java 11
+      #   uses: actions/setup-java@v3
+      #   with:
+      #     distribution: 'oracle'
+      #     java-version: '17'
 
-      - name: SonarQube Install
-        uses: mathrix-education/sonar-scanner@master
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-        with:
-          version: 4.8.0.2856
-          scan: false
+      # - name: SonarQube Install
+      #   uses: mathrix-education/sonar-scanner@master
+      #   env:
+      #     ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      #   with:
+      #     version: 4.8.0.2856
+      #     scan: false
 
-      - name: SonarQube Scan
-        run: >
-          sonar-scanner --debug
-          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
-          -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} 
-          -Dsonar.projectName=${{ github.event.repository.name }} 
-          -Dsonar.projectKey=splitio_ios-client 
-          -Dsonar.github.token=${{ secrets.GITHUB_TOKEN }} 
-          -Dsonar.c.file.suffixes=- 
-          -Dsonar.cpp.file.suffixes=- 
-          -Dsonar.objc.file.suffixes=-
+      # - name: SonarQube Scan
+      #   run: >
+      #     sonar-scanner --debug
+      #     -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+      #     -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} 
+      #     -Dsonar.projectName=${{ github.event.repository.name }} 
+      #     -Dsonar.projectKey=splitio_ios-client 
+      #     -Dsonar.github.token=${{ secrets.GITHUB_TOKEN }} 
+      #     -Dsonar.c.file.suffixes=- 
+      #     -Dsonar.cpp.file.suffixes=- 
+      #     -Dsonar.objc.file.suffixes=-

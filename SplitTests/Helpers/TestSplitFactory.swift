@@ -137,16 +137,20 @@ class TestSplitFactory: SplitFactory {
 
         let byKeyFacade = DefaultByKeyFacade()
 
+        let fFlagsSynchronizer = DefaultFeatureFlagsSynchronizer(splitConfig: splitConfig,
+                                                                 storageContainer: storageContainer,
+                                                                 syncWorkerFactory: syncWorkerFactory,
+                                                                 splitsFilterQueryString: splitsFilterQueryString,
+                                                                 splitEventsManager: eventsManager)
+
         self.synchronizer = SynchronizerSpy(splitConfig: splitConfig,
                                             defaultUserKey: key.matchingKey,
+                                            featureFlagsSynchronizer: fFlagsSynchronizer,
                                             telemetrySynchronizer: nil,
                                             byKeyFacade: byKeyFacade,
-                                            splitApiFacade: apiFacade,
                                             splitStorageContainer: storageContainer,
-                                            syncWorkerFactory: syncWorkerFactory,
                                             impressionsTracker: impressionsTracker,
                                             eventsSynchronizer: eventsSynchronizer,
-                                            splitsFilterQueryString: splitsFilterQueryString,
                                             splitEventsManager: eventsManager)
 
         guard let synchronizer = self.synchronizer else {

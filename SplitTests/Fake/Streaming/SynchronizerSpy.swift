@@ -46,29 +46,23 @@ class SynchronizerSpy: Synchronizer {
 
     init(splitConfig: SplitClientConfig,
          defaultUserKey: String,
+         featureFlagsSynchronizer: FeatureFlagsSynchronizer,
          telemetrySynchronizer: TelemetrySynchronizer?,
          byKeyFacade: ByKeyFacade,
-         splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer,
-         syncWorkerFactory: SyncWorkerFactory,
          impressionsTracker: ImpressionsTracker,
          eventsSynchronizer: EventsSynchronizer,
-         syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
-        = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
-         splitsFilterQueryString: String,
          splitEventsManager: SplitEventsManager) {
 
         self.defaultUserKey = defaultUserKey
         self.splitSynchronizer = DefaultSynchronizer(splitConfig: splitConfig,
                                                      defaultUserKey: defaultUserKey,
+                                                     featureFlagsSynchronizer: featureFlagsSynchronizer,
                                                      telemetrySynchronizer: telemetrySynchronizer,
                                                      byKeyFacade: byKeyFacade,
-                                                     splitApiFacade: splitApiFacade,
                                                      splitStorageContainer: splitStorageContainer,
-                                                     syncWorkerFactory: syncWorkerFactory,
                                                      impressionsTracker: impressionsTracker,
                                                      eventsSynchronizer: eventsSynchronizer,
-                                                     splitsFilterQueryString: splitsFilterQueryString,
                                                      splitEventsManager: splitEventsManager)
     }
 

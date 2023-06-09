@@ -37,18 +37,10 @@ protocol Synchronizer: ImpressionLogger {
     func destroy()
 }
 
-// TODO: Extract splits sync logic to a new component
 class DefaultSynchronizer: Synchronizer {
 
     private let splitConfig: SplitClientConfig
     private let splitStorageContainer: SplitStorageContainer
-    private let splitApiFacade: SplitApiFacade
-    private let syncWorkerFactory: SyncWorkerFactory
-    private let syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
-
-    private var periodicSplitsSyncWorker: PeriodicSyncWorker?
-    private let splitsSyncWorker: RetryableSyncWorker
-    private let splitsFilterQueryString: String
 
     private let splitEventsManager: SplitEventsManager
 
@@ -60,54 +52,36 @@ class DefaultSynchronizer: Synchronizer {
     private let eventsSynchronizer: EventsSynchronizer
     private let telemetrySynchronizer: TelemetrySynchronizer?
     private let telemetryProducer: TelemetryRuntimeProducer?
+    private let featureFlagsSynchronizer: FeatureFlagsSynchronizer
 
     private var isDestroyed = Atomic(false)
 
     init(splitConfig: SplitClientConfig,
          defaultUserKey: String,
+         featureFlagsSynchronizer: FeatureFlagsSynchronizer,
          telemetrySynchronizer: TelemetrySynchronizer?,
          byKeyFacade: ByKeyFacade,
-         splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer,
-         syncWorkerFactory: SyncWorkerFactory,
          impressionsTracker: ImpressionsTracker,
          eventsSynchronizer: EventsSynchronizer,
-         syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
-        = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
-         splitsFilterQueryString: String,
          splitEventsManager: SplitEventsManager) {
 
         self.defaultUserKey = defaultUserKey
         self.splitConfig = splitConfig
-        self.splitApiFacade = splitApiFacade
         self.splitStorageContainer = splitStorageContainer
-        self.syncWorkerFactory = syncWorkerFactory
-        self.syncTaskByChangeNumberCatalog = syncTaskByChangeNumberCatalog
 
-        self.splitsSyncWorker = syncWorkerFactory.createRetryableSplitsSyncWorker()
+        self.featureFlagsSynchronizer = featureFlagsSynchronizer
         self.impressionsTracker = impressionsTracker
         self.eventsSynchronizer = eventsSynchronizer
-        self.splitsFilterQueryString = splitsFilterQueryString
         self.splitEventsManager = splitEventsManager
         self.telemetryProducer = splitStorageContainer.telemetryStorage
         self.telemetrySynchronizer = telemetrySynchronizer
         self.byKeySynchronizer = byKeyFacade
 
-        if splitConfig.syncEnabled {
-            self.periodicSplitsSyncWorker = syncWorkerFactory.createPeriodicSplitsSyncWorker()
-        }
     }
 
     func loadAndSynchronizeSplits() {
-        let splitsStorage = self.splitStorageContainer.splitsStorage
-        DispatchQueue.global().async {
-            self.filterSplitsInCache()
-            splitsStorage.loadLocal()
-            if splitsStorage.getAll().count > 0 {
-                self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
-            }
-            self.synchronizeSplits()
-        }
+        self.featureFlagsSynchronizer.loadAndSynchronize()
     }
 
     func loadMySegmentsFromCache() {
@@ -136,31 +110,11 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func synchronizeSplits() {
-        splitsSyncWorker.start()
+        featureFlagsSynchronizer.synchronize()
     }
 
     func synchronizeSplits(changeNumber: Int64) {
-
-        if !splitConfig.syncEnabled {
-            return
-        }
-
-        if changeNumber <= splitStorageContainer.splitsStorage.changeNumber {
-            return
-        }
-
-        if syncTaskByChangeNumberCatalog.value(forKey: changeNumber) == nil {
-            let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
-            var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(changeNumber: changeNumber,
-                                                                             reconnectBackoffCounter: reconnectBackoff)
-            syncTaskByChangeNumberCatalog.setValue(worker, forKey: changeNumber)
-            worker.start()
-            worker.completion = {[weak self] _ in
-                if let self = self {
-                    self.syncTaskByChangeNumberCatalog.removeValue(forKey: changeNumber)
-                }
-            }
-        }
+        featureFlagsSynchronizer.synchronize(changeNumber: changeNumber)
     }
 
     func synchronizeMySegments() {
@@ -186,13 +140,13 @@ class DefaultSynchronizer: Synchronizer {
         if !splitConfig.syncEnabled {
             return
         }
-        periodicSplitsSyncWorker?.start()
+        featureFlagsSynchronizer.startPeriodicSync()
         byKeySynchronizer.startPeriodicSync()
         recordSyncModeEvent(TelemetryStreamingEventValue.syncModePolling)
     }
 
     func stopPeriodicFetching() {
-        periodicSplitsSyncWorker?.stop()
+        featureFlagsSynchronizer.stopPeriodicSync()
         byKeySynchronizer.stopPeriodicSync()
         recordSyncModeEvent(TelemetryStreamingEventValue.syncModeStreaming)
     }
@@ -216,14 +170,18 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func pushEvent(event: EventDTO) {
-        flushQueue.async {
+        flushQueue.async { [weak self] in
+
+            guard let self = self else { return }
             self.eventsSynchronizer.push(event)
         }
     }
 
     func pushImpression(impression: KeyImpression) {
 
-        flushQueue.async {
+        flushQueue.async { [weak self] in
+            guard let self = self else { return }
+
             self.impressionsTracker.push(impression)
         }
     }
@@ -233,12 +191,12 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func notifySplitKilled() {
-        splitEventsManager.notifyInternalEvent(.splitKilledNotification)
+        featureFlagsSynchronizer.notifyKilled()
     }
 
     func pause() {
         impressionsTracker.pause()
-        periodicSplitsSyncWorker?.pause()
+        featureFlagsSynchronizer.pause()
         byKeySynchronizer.pause()
         eventsSynchronizer.pause()
         telemetrySynchronizer?.synchronizeStats()
@@ -247,14 +205,16 @@ class DefaultSynchronizer: Synchronizer {
 
     func resume() {
         impressionsTracker.resume()
-        periodicSplitsSyncWorker?.resume()
+        featureFlagsSynchronizer.resume()
         byKeySynchronizer.resume()
         eventsSynchronizer.resume()
         telemetrySynchronizer?.resume()
     }
 
     func flush() {
-        flushQueue.async {
+        flushQueue.async {  [weak self] in
+            guard let self = self else { return }
+
             self.impressionsTracker.flush()
             self.eventsSynchronizer.flush()
             self.telemetrySynchronizer?.synchronizeStats()
@@ -263,56 +223,10 @@ class DefaultSynchronizer: Synchronizer {
 
     func destroy() {
         isDestroyed.set(true)
-        splitsSyncWorker.stop()
+        featureFlagsSynchronizer.stop()
         byKeySynchronizer.stop()
-        periodicSplitsSyncWorker?.stop()
-        periodicSplitsSyncWorker?.destroy()
         eventsSynchronizer.destroy()
         impressionsTracker.destroy()
-        let updateTasks = syncTaskByChangeNumberCatalog.takeAll()
-        for task in updateTasks.values {
-            task.stop()
-        }
-    }
-
-    private func filterSplitsInCache() {
-        let splitsStorage = splitStorageContainer.persistentSplitsStorage
-        let currentSplitsQueryString = splitsFilterQueryString
-        if currentSplitsQueryString == splitsStorage.getFilterQueryString() {
-            return
-        }
-
-        let filters = splitConfig.sync.filters
-        let namesToKeep = Set(filters.filter { $0.type == .byName }.flatMap { $0.values })
-        let prefixesToKeep = Set(filters.filter { $0.type == .byPrefix }.flatMap { $0.values })
-
-        let splitsInCache = splitsStorage.getAll()
-        var toDelete = [String]()
-
-        for split in splitsInCache {
-            guard let splitName = split.name else {
-                continue
-            }
-
-            let prefix = getPrefix(for: splitName) ?? ""
-            if !namesToKeep.contains(splitName), (prefix == "" || !prefixesToKeep.contains(prefix)) {
-                toDelete.append(splitName)
-            }
-
-        }
-        if toDelete.count > 0 {
-            splitsStorage.delete(splitNames: toDelete)
-            splitStorageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
-        }
-    }
-
-    private func getPrefix(for splitName: String) -> String? {
-        let kPrefixSeparator = "__"
-        if let range = splitName.range(of: kPrefixSeparator),
-           range.lowerBound != splitName.startIndex, range.upperBound != splitName.endIndex {
-            return String(splitName[range.upperBound...])
-        }
-        return nil
     }
 
     private func recordSyncModeEvent(_ mode: Int64) {
