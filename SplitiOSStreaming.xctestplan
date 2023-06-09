@@ -169,6 +169,7 @@
         "SyncDictionaryCollectionWrapperTest",
         "SyncDictionarySingleWrapperTest",
         "SyncManagerTest",
+        "SyncPostBgTest",
         "SyncUpdateWorker",
         "SynchronizerTest",
         "TelemetryConfigRecorderWorkerTests",
