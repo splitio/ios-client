@@ -443,6 +443,7 @@
 		952FA12F2A2F6E4D00264AB5 /* SyncGuardianStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA12E2A2F6E4D00264AB5 /* SyncGuardianStub.swift */; };
 		952FA1302A31DCA200264AB5 /* FeatureFlagsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA1232A2A5D4D00264AB5 /* FeatureFlagsSynchronizer.swift */; };
 		952FA1312A31DCE400264AB5 /* SplitComponentCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952FA12A2A2E593900264AB5 /* SplitComponentCatalog.swift */; };
+		952FA1392A33778500264AB5 /* SyncGuardian.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9516D01F2A2910C80092A9DC /* SyncGuardian.swift */; };
 		9530FD7A27F24306005027AA /* EventsManagerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */; };
 		9530FD7C27F253CA005027AA /* SplitEventsCoordinatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530FD7B27F253CA005027AA /* SplitEventsCoordinatorTest.swift */; };
 		953911A8267A4F250040433A /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953911A7267A4F250040433A /* LRUCache.swift */; };
@@ -4564,6 +4565,7 @@
 				95B02D0028D0BDC20030EC8B /* SplitComponentFactory.swift in Sources */,
 				95B02D0128D0BDC20030EC8B /* SplitApiFacade.swift in Sources */,
 				95B02D0228D0BDC20030EC8B /* SplitFactory.swift in Sources */,
+				952FA1392A33778500264AB5 /* SyncGuardian.swift in Sources */,
 				95B02D0328D0BDC20030EC8B /* DefaultSplitManager.swift in Sources */,
 				95B02D0428D0BDC20030EC8B /* SplitManager.swift in Sources */,
 				95B02D0528D0BDC20030EC8B /* SplitFactoryBuilder.swift in Sources */,
