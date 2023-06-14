@@ -15,7 +15,8 @@ let package = Package(
             exclude: [
                 "Common/Yaml/LICENSE",
                 "Info.plist",
-                "Split.h"
+                "Split.h",
+                "SplitTests/"
             ]
         )
     ]
