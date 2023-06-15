@@ -39,6 +39,7 @@
         "DestroyTests",
         "FetchSpecificSplitsTest",
         "FlushTests",
+        "InitDbCipherTest",
         "InitialCacheTest",
         "MultiClientEvaluationTest",
         "MultiClientStreamingResetTest",
