@@ -53,8 +53,8 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
         if splitConfig.syncEnabled {
             self.periodicSplitsSyncWorker = syncWorkerFactory.createPeriodicSplitsSyncWorker()
-            self.splitsSyncWorker.completion = {[weak self] _ in
-                if let self = self {
+            self.splitsSyncWorker.completion = {[weak self] success in
+                if let self = self, success {
                     self.broadcasterChannel.push(event: .syncExecuted)
                 }
             }
@@ -92,8 +92,9 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                                                                              reconnectBackoffCounter: reconnectBackoff)
             syncTaskByChangeNumberCatalog.setValue(worker, forKey: changeNumber)
             worker.start()
-            worker.completion = {[weak self] _ in
-                if let self = self {
+            worker.completion = {[weak self] success in
+                if let self = self, success {
+                    self.broadcasterChannel.push(event: .syncExecuted)
                     self.syncTaskByChangeNumberCatalog.removeValue(forKey: changeNumber)
                 }
             }

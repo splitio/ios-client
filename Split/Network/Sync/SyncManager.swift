@@ -82,6 +82,7 @@ class DefaultSyncManager: SyncManager {
         synchronizer.resume()
         pushNotificationManager?.resume()
         if syncGuardian.mustSync() {
+            Logger.d("Triggering sync after being in background.")
             synchronizer.syncAll()
         }
 #endif
@@ -158,6 +159,7 @@ class DefaultSyncManager: SyncManager {
 
     private func scheduleStreamingReconnection() {
         reconnectStreamingTimer?.schedule {
+            Logger.d("Scheduling streaming reconnection.")
             self.pushNotificationManager?.start()
         }
     }
@@ -166,6 +168,7 @@ class DefaultSyncManager: SyncManager {
         reconnectStreamingTimer?.cancel()
         enablePolling()
         pushNotificationManager?.stop()
+        Logger.d("Streaming stopped.")
     }
 
     private func enablePolling() {
