@@ -242,7 +242,7 @@ class SyncManagerTest: XCTestCase {
         syncManager.start()
         broadcasterChannel.push(event: .pushDelayReceived(delaySeconds: 5))
 
-        XCTAssertEqual(5, syncGuardian.maxSyncPeriod)
+        XCTAssertEqual(5000, syncGuardian.maxSyncPeriod)
     }
 
     func testSyncExecutedReceived() {

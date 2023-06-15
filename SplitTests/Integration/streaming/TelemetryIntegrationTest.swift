@@ -31,8 +31,6 @@ class TelemetryIntegrationTest: XCTestCase {
     let kPrimaryChannel = "control_pri"
     let kSecondaryChannel = "control_sec"
 
-    var syncSpy: SynchronizerSpy!
-
     override func setUp() {
         configs = [TelemetryConfig]()
         stats = [TelemetryStats]()

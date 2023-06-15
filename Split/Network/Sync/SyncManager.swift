@@ -135,7 +135,7 @@ class DefaultSyncManager: SyncManager {
 
         case .pushDelayReceived(let delaySeconds):
             Logger.d("Push delay received (\(delaySeconds) secs).")
-            syncGuardian.setMaxSyncPeriod(delaySeconds)
+            syncGuardian.setMaxSyncPeriod(delaySeconds * 1000)
 
         case .syncExecuted:
             Logger.d("Sync has been executed.")
