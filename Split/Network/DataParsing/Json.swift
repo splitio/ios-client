@@ -70,7 +70,7 @@ extension Json {
         return result
     }
 
-    static func encodeFrom<T: Decodable>(json: String, to type: T.Type) throws -> T {
+    static func decodeFrom<T: Decodable>(json: String, to type: T.Type) throws -> T {
         if let jsonData = json.data(using: .utf8), let encoded = try JSON(jsonData).decode(type) {
             return encoded
         }
@@ -94,7 +94,7 @@ extension Json {
         return try JSONSerialization.data(withJSONObject: data.toJsonObject(), options: [])
     }
 
-    static func dynamicEncodeFrom<T: DynamicDecodable>(json: String, to type: T.Type) throws -> T {
+    static func dynamicDecodeFrom<T: DynamicDecodable>(json: String, to type: T.Type) throws -> T {
         guard let jsonData = json.data(using: .utf8) else {
             throw GenericError.jsonParsingFail
         }

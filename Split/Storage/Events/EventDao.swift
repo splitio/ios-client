@@ -89,7 +89,7 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
     private func mapEntityToModel(_ entity: EventEntity) throws -> EventDTO {
 
         let body = cipher?.decrypt(entity.body) ?? entity.body
-        let model = try Json.dynamicEncodeFrom(json: body, to: EventDTO.self)
+        let model = try Json.dynamicDecodeFrom(json: body, to: EventDTO.self)
         model.storageId = entity.storageId
         model.sizeInBytes = entity.sizeInBytes
         return model

@@ -130,13 +130,13 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
         let body = cipher?.decrypt(entity.body) ?? entity.body
         let testName = cipher?.decrypt(entity.testName) ?? entity.testName
         do {
-            var model = try Json.encodeFrom(json: body, to: KeyImpression.self)
+            var model = try Json.decodeFrom(json: body, to: KeyImpression.self)
             model.storageId = entity.storageId
             model.featureName = testName
             return model
         } catch {
             // if an error occurrs try with deprecated property parsing
-            var model = try Json.encodeFrom(json: body, to: DeprecatedImpression.self)
+            var model = try Json.decodeFrom(json: body, to: DeprecatedImpression.self)
             model.storageId = entity.storageId
             model.featureName = testName
             return model.toKeyImpression()

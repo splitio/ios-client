@@ -46,7 +46,7 @@ struct DefaultMySegmentsV2PayloadDecoder: MySegmentsV2PayloadDecoder {
     }
 
     func parseKeyList(jsonString: String) throws -> KeyList {
-        return try Json.encodeFrom(json: jsonString, to: KeyList.self)
+        return try Json.decodeFrom(json: jsonString, to: KeyList.self)
     }
 
     func hashKey(_ key: String) -> UInt64 {

@@ -38,12 +38,12 @@ class DefaultSseNotificationParser: SseNotificationParser {
 
     func parseIncoming(jsonString: String) -> IncomingNotification? {
         do {
-            let rawNotification = try Json.encodeFrom(json: jsonString, to: RawNotification.self)
+            let rawNotification = try Json.decodeFrom(json: jsonString, to: RawNotification.self)
             if isError(notification: rawNotification) {
                 return IncomingNotification(type: .sseError)
             }
             var type = NotificationType.occupancy
-            if let notificationType = try? Json.encodeFrom(json: rawNotification.data,
+            if let notificationType = try? Json.decodeFrom(json: rawNotification.data,
                                                            to: NotificationTypeValue.self) {
                 type = notificationType.type
             }
@@ -56,36 +56,36 @@ class DefaultSseNotificationParser: SseNotificationParser {
     }
 
     func parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification {
-        return try Json.encodeFrom(json: jsonString, to: SplitsUpdateNotification.self)
+        return try Json.decodeFrom(json: jsonString, to: SplitsUpdateNotification.self)
     }
 
     func parseSplitKill(jsonString: String) throws -> SplitKillNotification {
-        return try Json.encodeFrom(json: jsonString, to: SplitKillNotification.self)
+        return try Json.decodeFrom(json: jsonString, to: SplitKillNotification.self)
     }
 
     func parseMySegmentUpdate(jsonString: String, channel: String) throws -> MySegmentsUpdateNotification {
-        let jsonNotification = try Json.encodeFrom(json: jsonString, to: MySegmentsUpdateNotificationJson.self)
+        let jsonNotification = try Json.decodeFrom(json: jsonString, to: MySegmentsUpdateNotificationJson.self)
         return MySegmentsUpdateNotification(json: jsonNotification,
                                             userKeyHash: extractUserKeyHashFromChannel(channel: channel) ?? "unknown")
     }
 
     func parseMySegmentUpdateV2(jsonString: String) throws -> MySegmentsUpdateV2Notification {
-        return try Json.encodeFrom(json: jsonString, to: MySegmentsUpdateV2Notification.self)
+        return try Json.decodeFrom(json: jsonString, to: MySegmentsUpdateV2Notification.self)
     }
 
     func parseOccupancy(jsonString: String, timestamp: Int64, channel: String) throws -> OccupancyNotification {
-        var notification = try Json.encodeFrom(json: jsonString, to: OccupancyNotification.self)
+        var notification = try Json.decodeFrom(json: jsonString, to: OccupancyNotification.self)
         notification.channel = channel
         notification.timestamp = timestamp
         return notification
     }
 
     func parseControl(jsonString: String) throws -> ControlNotification {
-        return try Json.encodeFrom(json: jsonString, to: ControlNotification.self)
+        return try Json.decodeFrom(json: jsonString, to: ControlNotification.self)
     }
 
     func parseSseError(jsonString: String) throws -> StreamingError {
-        return try Json.encodeFrom(json: jsonString, to: StreamingError.self)
+        return try Json.decodeFrom(json: jsonString, to: StreamingError.self)
     }
 
     func isError(notification: RawNotification) -> Bool {
