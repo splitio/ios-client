@@ -227,6 +227,16 @@ struct SplitsUpdateNotification: NotificationTypeField {
         return .splitUpdate
     }
     let changeNumber: Int64
+    let previousChangeNumber: Int64?
+    let definition: String?
+    let compressionType: CompressionType?
+
+    enum CodingKeys: String, CodingKey {
+        case changeNumber
+        case previousChangeNumber = "pcn"
+        case definition = "d"
+        case compressionType = "c"
+    }
 }
 
 /// Indicates a notification related to occupancy
