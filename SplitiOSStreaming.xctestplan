@@ -184,6 +184,7 @@
         "SyncDictionarySingleWrapperTest",
         "SyncGuardianTest",
         "SyncManagerTest",
+        "SyncPostBgTest",
         "SyncUpdateWorker",
         "SynchronizerTest",
         "TelemetryConfigRecorderWorkerTests",

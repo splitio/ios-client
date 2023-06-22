@@ -65,6 +65,7 @@
         "StreamingOccupancyTest",
         "StreamingSplitKillTest",
         "StreamingSplitsSyncTest",
+        "SyncPostBgTest",
         "TelemetryIntegrationTest",
         "UserConsentModeDebugTest",
         "UserConsentModeNoneTest",
