@@ -19,6 +19,7 @@ class PushManagerEventBroadcasterStub: PushManagerEventBroadcaster {
     var pushedEvents = [PushStatusEvent]()
 
     func push(event: PushStatusEvent) {
+        print("Pushed Event Mock: \(event)")
         lastPushedEvent = event
         pushedEvents.append(event)
         pushExpectationCallCount+=1
