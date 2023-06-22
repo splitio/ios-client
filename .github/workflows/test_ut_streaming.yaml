@@ -1,4 +1,4 @@
-name: Build and Test iOS UT
+name: Build and Test streaming UT
 
 on:
   push:
