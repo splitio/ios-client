@@ -1,3 +1,6 @@
+2.20.2: (Jul 23, 2023)
+- Fixed random crash when disconnecting streaming client on connection reset. 
+
 2.20.1: (May 15, 2023)
 - Updated terminology on the SDKs codebase to be more aligned with current standard without causing a breaking change. The core change is the term split for feature flag on things like logs and quick help comments.
 
