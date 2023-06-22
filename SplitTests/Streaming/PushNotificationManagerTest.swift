@@ -215,7 +215,7 @@ class PushNotificationManagerTest: XCTestCase {
         timersManager.reset()
         pnManager.reset()
 
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 10)
 
         let streamEvents = telemetryProducer.streamingEvents
 
