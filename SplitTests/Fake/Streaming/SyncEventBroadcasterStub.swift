@@ -18,7 +18,12 @@ class SyncEventBroadcasterStub: SyncEventBroadcaster {
     var lastPushedEvent: SyncStatusEvent?
     var pushedEvents = [SyncStatusEvent]()
 
+<<<<<<< HEAD:SplitTests/Fake/Streaming/SyncEventBroadcasterStub.swift
     func push(event: SyncStatusEvent) {
+=======
+    func push(event: PushStatusEvent) {
+        print("Pushed Event Mock: \(event)")
+>>>>>>> SDK-7147_issue_sse_disconnect:SplitTests/Fake/Streaming/PushManagerEventBroadcasterStub.swift
         lastPushedEvent = event
         pushedEvents.append(event)
         pushExpectationCallCount+=1
