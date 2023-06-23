@@ -48,9 +48,7 @@ class SseClientMock: SseClient {
             exp.fulfill()
         }
         if let delay = self.disconnectDelay {
-            print("pre delay")
             Thread.sleep(forTimeInterval: delay)
-            print(" aft delay")
         }
     }
 }
