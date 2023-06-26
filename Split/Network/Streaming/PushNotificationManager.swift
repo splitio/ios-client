@@ -88,6 +88,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
         disconnect()
         broadcasterChannel.destroy()
         timersManager.destroy()
+        sseConnectionHandler.destroy()
         isStopped.set(true)
     }
 

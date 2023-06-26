@@ -64,6 +64,9 @@
          <TestPlanReference
             reference = "container:SplitiOSStreaming.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitStreamingUT.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference
