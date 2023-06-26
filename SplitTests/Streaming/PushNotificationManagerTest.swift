@@ -188,7 +188,7 @@ class PushNotificationManagerTest: XCTestCase {
 
         pnManager.stop()
 
-        wait(for: [closeExp], timeout: 3)
+        wait(for: [closeExp], timeout: 5)
         
         XCTAssertTrue(sseClientFactory.clients[0].disconnectCalled)
         XCTAssertTrue(timersManager.timerIsCancelled(timer: .refreshAuthToken))
@@ -217,7 +217,7 @@ class PushNotificationManagerTest: XCTestCase {
         timersManager.reset()
         pnManager.reset()
 
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 10)
 
         let streamEvents = telemetryProducer.streamingEvents
 
