@@ -119,7 +119,7 @@ class FlushTests: XCTestCase {
 
     // MARK: Tracks Hits
     private func buildEventsFromJson(content: String) throws -> [EventDTO] {
-        return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
+        return try Json.dynamicDecodeFrom(json: content, to: [EventDTO].self)
     }
 
     private func getTrackEventBy(value: Double) -> EventDTO? {
@@ -141,7 +141,7 @@ class FlushTests: XCTestCase {
 
     // MARK: Impressions Hits
     private func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
-        return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
+        return try Json.decodeFrom(json: content, to: [ImpressionsTest].self)
     }
 
     private func getImpressionBy(testName: String) -> ImpressionsTest? {
@@ -167,7 +167,7 @@ class FlushTests: XCTestCase {
 
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
             change.till = Int64(Int(change.since))
             return change
         }

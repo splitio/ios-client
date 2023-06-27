@@ -39,7 +39,7 @@ class MatcherEvalTests: XCTestCase {
         XCTAssertNotNil(fileContent, "Matcher file should not be null")
         var matcherTests: [Test]? = nil
         do {
-            matcherTests = try Json.encodeFrom(json: fileContent!, to: [Test].self)
+            matcherTests = try Json.decodeFrom(json: fileContent!, to: [Test].self)
         } catch {
             print("Error loading tests file: \(error)")
         }

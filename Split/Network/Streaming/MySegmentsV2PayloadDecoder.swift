@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MySegmentsV2ParsingException: Error {
+enum NotificationPayloadParsingException: Error {
     case errorDecodingBase64
     case unknown
 }
@@ -39,7 +39,7 @@ struct DefaultMySegmentsV2PayloadDecoder: MySegmentsV2PayloadDecoder {
 
     func decodeAsBytes(payload: String, compressionUtil: CompressionUtil) throws -> Data {
         guard let dec =  Base64Utils.decodeBase64(payload) else {
-            throw MySegmentsV2ParsingException.errorDecodingBase64
+            throw NotificationPayloadParsingException.errorDecodingBase64
         }
         let descomp = try compressionUtil.decompress(data: dec)
         return descomp

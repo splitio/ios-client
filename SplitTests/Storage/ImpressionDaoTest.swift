@@ -123,7 +123,7 @@ class ImpressionDaoTest: XCTestCase {
         // load impressions and filter them by encrypted feature name
         let loadedImpression = getBy(testName: testNameEnc, coreDataHelper: helper)
 
-        let impression = try? Json.encodeFrom(json: loadedImpression ?? "", to: KeyImpression.self)
+        let impression = try? Json.decodeFrom(json: loadedImpression ?? "", to: KeyImpression.self)
 
         XCTAssertNotNil(loadedImpression)
         XCTAssertFalse(loadedImpression?.contains("key1") ?? true)

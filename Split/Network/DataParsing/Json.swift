@@ -35,14 +35,7 @@ struct Json {
         guard let data = data else {
             return nil
         }
-
-        let decoder = JSONDecoder()
-        do {
-            let result = try decoder.decode(T.self, from: data)
-            return result
-        } catch {
-            throw error
-        }
+        return try Self.decodeFrom(json: data, to: type)
     }
 
     func dynamicDecode<T>(_ type: T.Type) throws -> T? where T: DynamicDecodable {
@@ -71,10 +64,14 @@ extension Json {
     }
 
     static func decodeFrom<T: Decodable>(json: String, to type: T.Type) throws -> T {
-        if let jsonData = json.data(using: .utf8), let encoded = try JSON(jsonData).decode(type) {
-            return encoded
+        if let jsonData = json.data(using: .utf8) {
+            return try decodeFrom(json: jsonData, to: type)
         }
         throw GenericError.jsonParsingFail
+    }
+
+    static func decodeFrom<T: Decodable>(json: Data, to type: T.Type) throws -> T {
+        return try JSONDecoder().decode(T.self, from: json)
     }
 
     static func encodeToJsonData<T: Encodable>(_ data: T) throws -> Data {

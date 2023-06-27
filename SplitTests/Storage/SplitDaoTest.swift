@@ -130,7 +130,7 @@ class SplitDaoTest: XCTestCase {
         // load impressions and filter them by encrypted feature name
         let loadSplit = getBy(testName: testNameEnc, coreDataHelper: helper)
 
-        let split = try? Json.encodeFrom(json: loadSplit.body ?? "", to: Split.self)
+        let split = try? Json.decodeFrom(json: loadSplit.body ?? "", to: Split.self)
 
         XCTAssertNotNil(loadSplit)
         XCTAssertFalse(loadSplit.name?.contains("feat_") ?? true)

@@ -76,7 +76,7 @@ struct TestingHelper {
     static func createTestImpressions(count: Int = 10) -> [ImpressionsTest] {
         var impressions = [ImpressionsTest]()
         for _ in 0..<count {
-            let impressionTest = try! Json.encodeFrom(json: "{\"f\":\"T1\", \"i\":[]}", to: ImpressionsTest.self)
+            let impressionTest = try! Json.decodeFrom(json: "{\"f\":\"T1\", \"i\":[]}", to: ImpressionsTest.self)
             impressions.append(impressionTest)
         }
         return impressions

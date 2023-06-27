@@ -115,6 +115,7 @@ class SyncManagerBuilder {
                                  mySegmentsStorage: storageContainer.mySegmentsStorage,
                                  mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
 
+
         return  DefaultSseNotificationProcessor(
             notificationParser: DefaultSseNotificationParser(),
             splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer),

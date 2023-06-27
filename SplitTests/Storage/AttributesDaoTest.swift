@@ -106,7 +106,7 @@ class AttributesDaoTest: XCTestCase {
         // load attributess and filter them by encrypted feature name
         let values = getBy(coreDataHelper: helper)
 
-        let list = try? Json.encodeFrom(json: values.attributes ?? "", to: [String].self)
+        let list = try? Json.decodeFrom(json: values.attributes ?? "", to: [String].self)
 
         XCTAssertNotEqual(IntegrationHelper.dummyUserKey, values.userKey)
         XCTAssertFalse(values.attributes?.contains("att1") ?? true)

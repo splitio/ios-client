@@ -154,7 +154,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
         let jsonSplit = try? Json.encodeToJson(initialSplit)
         var split: Split?
         if let jsonSplit = jsonSplit {
-            split = try? JSON.encodeFrom(json: jsonSplit, to: Split.self)
+            split = try? JSON.decodeFrom(json: jsonSplit, to: Split.self)
         }
         let t1Config = jsonObj(config: split?.configurations?["treatment1"])
         let t2Config = jsonObj(config: split?.configurations?["treatment2"])
@@ -171,7 +171,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
         let jsonSplit = try? Json.encodeToJson(initialSplit)
         var split: Split?
         if let jsonSplit = jsonSplit {
-            split = try? JSON.encodeFrom(json: jsonSplit, to: Split.self)
+            split = try? JSON.decodeFrom(json: jsonSplit, to: Split.self)
         }
         let t1Config = jsonObj(config: split?.configurations?["treatment1"])
         let t2Config = jsonObj(config: split?.configurations?["treatment2"])
@@ -198,7 +198,7 @@ class SplitConfigurationsParsingTest: XCTestCase {
             jsonSplit = "\(jsonSplit), \"configurations\":\(config)"
         }
         jsonSplit = "{\(jsonSplit)}"
-        let split = try? JSON.encodeFrom(json: jsonSplit, to: Split.self)
+        let split = try? JSON.decodeFrom(json: jsonSplit, to: Split.self)
         return split
     }
     
