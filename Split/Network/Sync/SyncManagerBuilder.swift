@@ -115,10 +115,12 @@ class SyncManagerBuilder {
                                  mySegmentsStorage: storageContainer.mySegmentsStorage,
                                  mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
 
-
         return  DefaultSseNotificationProcessor(
             notificationParser: DefaultSseNotificationParser(),
-            splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer),
+            splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer,
+                                                   splitsStorage: storageContainer.splitsStorage,
+                                                   splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                   featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder()),
             splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
                                              splitsStorage: storageContainer.splitsStorage),
             mySegmentsUpdateWorker: mySegmentsUpdateWorker,

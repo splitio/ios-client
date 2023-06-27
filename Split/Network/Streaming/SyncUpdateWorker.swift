@@ -26,34 +26,43 @@ class UpdateWorker<T: NotificationTypeField> {
 
 class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 
-
     private let synchronizer: Synchronizer
-
+    private let splitsStorage: SplitsStorage
+    private let splitChangeProcessor: SplitChangeProcessor
+    private var payloadDecoder: FeatureFlagsPayloadDecoder
     var decompressionProvider: DecompressorProvider = DefaultDecompressorProvider()
 
-    init(synchronizer: Synchronizer) {
+    init(synchronizer: Synchronizer,
+         splitsStorage: SplitsStorage,
+         splitChangeProcessor: SplitChangeProcessor,
+         featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoder) {
         self.synchronizer = synchronizer
+        self.splitsStorage = splitsStorage
+        self.splitChangeProcessor = splitChangeProcessor
+        self.payloadDecoder = featureFlagsPayloadDecoder
         super.init(queueName: "SplitsUpdateWorker")
     }
 
     override func process(notification: SplitsUpdateNotification) throws {
         processQueue.async {
 
-            // CODE For next PR
-//            if self.splitsStorage.changeNumber >= notification.changeNumber {
-//                return
-//            }
+            if self.splitsStorage.changeNumber >= notification.changeNumber {
+                return
+            }
 
-//            if let payload = notification.definition, let compressionType = notification.compressionType {
-//                do {
-//
-//                    let featureFlags = try self.payloadDecoder.decode(payload: payload,
-//                                       compressionUtil: self.decompressionProvider.decompressor(for: compressionType))
-//
-//                } catch {
-//                    Logger.e("Error decoding feature flags payload from notification: \(error)")
-//                }
-//            }
+            if let payload = notification.definition, let compressionType = notification.compressionType {
+                do {
+                    let split = try self.payloadDecoder.decode(payload: payload,
+                                       compressionUtil: self.decompressionProvider.decompressor(for: compressionType))
+                    let change = SplitChange(splits: [split],
+                                             since: notification.previousChangeNumber ?? notification.changeNumber,
+                                             till: notification.changeNumber)
+                    self.splitsStorage.update(splitChange: self.splitChangeProcessor.process(change))
+
+                } catch {
+                    Logger.e("Error decoding feature flags payload from notification: \(error)")
+                }
+            }
             self.synchronizer.synchronizeSplits(changeNumber: notification.changeNumber)
         }
     }
