@@ -84,6 +84,7 @@ class SplitComponentFactory {
             splitConfig: splitClientConfig,
             storageContainer: storageContainer,
             syncWorkerFactory: syncWorkerFactory,
+            broadcasterChannel: try getSyncEventBroadcaster(),
             splitsFilterQueryString: splitsFilterQueryString,
             splitEventsManager: getSplitEventsManagerCoordinator()) as FeatureFlagsSynchronizer
         catalog.add(component: component)
@@ -176,6 +177,7 @@ class SplitComponentFactory {
             .setSplitApiFacade(try getSplitApiFacade())
             .setSynchronizer(try getSynchronizer())
             .setNotificationHelper(notificationHelper ?? DefaultNotificationHelper.instance)
+            .setSyncBroadcaster(try getSyncEventBroadcaster())
             .setSplitConfig(splitClientConfig).build()
         catalog.add(component: component)
         return component
@@ -206,11 +208,20 @@ class SplitComponentFactory {
         throw ComponentError.notFound(name: "Split storage container")
     }
 
+    func getSyncEventBroadcaster() throws -> SyncEventBroadcaster {
+        if let obj = catalog.get(for: SyncEventBroadcaster.self) as? SyncEventBroadcaster {
+            return obj
+        }
+        let component: SyncEventBroadcaster = DefaultSyncEventBroadcaster()
+        catalog.add(component: component)
+        return component
+    }
+
     func getSyncWorkerFactory() throws -> SyncWorkerFactory {
         if let obj = catalog.get(for: SyncWorkerFactory.self) as? SyncWorkerFactory {
             return obj
         }
-        throw ComponentError.notFound(name: "SyncWorkerFactory")
+        throw ComponentError.notFound(name: "Sync worker factory")
     }
 }
 

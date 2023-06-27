@@ -10,16 +10,15 @@ import Foundation
 import XCTest
 @testable import Split
 
-class PushManagerEventBroadcasterStub: PushManagerEventBroadcaster {
+class SyncEventBroadcasterStub: SyncEventBroadcaster {
     var registeredHandler: IncomingMessageHandler?
     private var pushExpectationCallCount = 0
     var pushExpectationTriggerCallCount = 1
     var pushExpectation: XCTestExpectation?
-    var lastPushedEvent: PushStatusEvent?
-    var pushedEvents = [PushStatusEvent]()
+    var lastPushedEvent: SyncStatusEvent?
+    var pushedEvents = [SyncStatusEvent]()
 
-    func push(event: PushStatusEvent) {
-        print("Pushed Event Mock: \(event)")
+    func push(event: SyncStatusEvent) {
         lastPushedEvent = event
         pushedEvents.append(event)
         pushExpectationCallCount+=1

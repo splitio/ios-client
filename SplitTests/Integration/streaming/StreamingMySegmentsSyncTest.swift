@@ -67,11 +67,12 @@ class StreamingMySegmentsSyncTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let  expTimeout:  TimeInterval = 100
+        let  expTimeout:  TimeInterval = 5
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
 
         client.on(event: SplitEvent.sdkReady) {
+            print("Ready triggered")
             sdkReadyExpectation.fulfill()
         }
 
@@ -141,10 +142,13 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                 let respData = self.mySegments[hitNumber]
                 switch hitNumber {
                 case 1:
+                    print("Exp 1 fired")
                     self.exp1.fulfill()
                 case 2:
+                    print("Exp 2 fired")
                     self.self.exp2.fulfill()
                 case 3:
+                    print("Exp 3 fired")
                     self.exp3.fulfill()
                 default:
                     IntegrationHelper.tlog("Exp no fired \(hitNumber)")

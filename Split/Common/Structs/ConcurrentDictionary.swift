@@ -30,7 +30,7 @@ class ConcurrentDictionary<K: Hashable, T> {
     }
 
     init() {
-        queue = DispatchQueue(label: "Split.ConcurrentDictionary",
+        queue = DispatchQueue(label: "split-concurrent-dictionary",
                               attributes: .concurrent)
         items = [K: T]()
     }

@@ -13,9 +13,9 @@ import XCTest
 
 class PushManagerEventBroadcasterTest: XCTestCase {
 
-    var channel: PushManagerEventBroadcaster!
+    var channel: SyncEventBroadcaster!
     override func setUp() {
-        channel = DefaultPushManagerEventBroadcaster()
+        channel = DefaultSyncEventBroadcaster()
     }
 
     func testRegister() {
@@ -24,9 +24,9 @@ class PushManagerEventBroadcasterTest: XCTestCase {
         let exp1 = XCTestExpectation(description: "exp1")
         let exp2 = XCTestExpectation(description: "exp2")
         let exp3 = XCTestExpectation(description: "exp3")
-        var e1: PushStatusEvent?
-        var e2: PushStatusEvent?
-        var e3: PushStatusEvent?
+        var e1: SyncStatusEvent?
+        var e2: SyncStatusEvent?
+        var e3: SyncStatusEvent?
 
         channel.register(handler: { event in
             e1 = event

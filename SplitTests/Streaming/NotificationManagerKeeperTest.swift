@@ -16,13 +16,13 @@ class NotificationManagerKeeperTest: XCTestCase {
     private let kControlPriChannel = "[?occupancy=metrics.publishers]control_pri"
     private let kControlSecChannel = "[?occupancy=metrics.publishers]control_sec"
 
-    var broadcasterChannel: PushManagerEventBroadcasterStub!
+    var broadcasterChannel: SyncEventBroadcasterStub!
     var notificationManager: NotificationManagerKeeper!
     var telemetryProducer: TelemetryStorageStub!
 
     override func setUp() {
         telemetryProducer = TelemetryStorageStub()
-        broadcasterChannel = PushManagerEventBroadcasterStub()
+        broadcasterChannel = SyncEventBroadcasterStub()
         notificationManager = DefaultNotificationManagerKeeper(broadcasterChannel: broadcasterChannel,
                                                                telemetryProducer: telemetryProducer)
     }
@@ -37,7 +37,7 @@ class NotificationManagerKeeperTest: XCTestCase {
 
         let streamEvents = telemetryProducer.streamingEvents
         
-        XCTAssertEqual(PushStatusEvent.pushSubsystemDown, broadcasterChannel.lastPushedEvent)
+        XCTAssertEqual(SyncStatusEvent.pushSubsystemDown, broadcasterChannel.lastPushedEvent)
 
         XCTAssertNotNil(streamEvents[.occupancyPri])
     }
@@ -104,7 +104,7 @@ class NotificationManagerKeeperTest: XCTestCase {
         n2.timestamp = 100
         notificationManager.handleIncomingPresenceEvent(notification: n2)
 
-        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
+        XCTAssertEqual(SyncStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
     }
 
     func testSecondaryAvailableNotificationReceivedWhenNoPublishersOldTimestamp() {
@@ -149,7 +149,7 @@ class NotificationManagerKeeperTest: XCTestCase {
         let controlNotification = ControlNotification(type: .control, controlType: .streamingResumed)
         notificationManager.handleIncomingControl(notification: controlNotification)
 
-        XCTAssertEqual(PushStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
+        XCTAssertEqual(SyncStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
     }
 
     func testIncomingControlStreamingPaused() {
@@ -164,7 +164,7 @@ class NotificationManagerKeeperTest: XCTestCase {
         let controlNotification = ControlNotification(type: .control, controlType: .streamingPaused)
         notificationManager.handleIncomingControl(notification: controlNotification)
 
-        XCTAssertEqual(PushStatusEvent.pushSubsystemDown, broadcasterChannel.lastPushedEvent)
+        XCTAssertEqual(SyncStatusEvent.pushSubsystemDown, broadcasterChannel.lastPushedEvent)
     }
 
     func testIncomingControlStreamingReset() {
@@ -179,7 +179,7 @@ class NotificationManagerKeeperTest: XCTestCase {
         let controlNotification = ControlNotification(type: .control, controlType: .streamingReset)
         notificationManager.handleIncomingControl(notification: controlNotification)
 
-        XCTAssertEqual(PushStatusEvent.pushReset, broadcasterChannel.lastPushedEvent)
+        XCTAssertEqual(SyncStatusEvent.pushReset, broadcasterChannel.lastPushedEvent)
     }
 
     func testIncomingControlStreamingEnabledNoPublishers() {
@@ -211,7 +211,7 @@ class NotificationManagerKeeperTest: XCTestCase {
 
         let streamEvents = telemetryProducer.streamingEvents
 
-        XCTAssertEqual(PushStatusEvent.pushSubsystemDisabled, broadcasterChannel.lastPushedEvent)
+        XCTAssertEqual(SyncStatusEvent.pushSubsystemDisabled, broadcasterChannel.lastPushedEvent)
         XCTAssertNotNil(streamEvents[.streamingStatus])
     }
 
