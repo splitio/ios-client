@@ -1144,6 +1144,8 @@
 		95B436A026F1487400E1EB9C /* TestingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B4369F26F1487400E1EB9C /* TestingData.swift */; };
 		95B436A626F1533700E1EB9C /* MySegmentsV2PayloadDecoderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B436A526F1533600E1EB9C /* MySegmentsV2PayloadDecoderMock.swift */; };
 		95BC77EE28368FF1008E14BF /* UniqueKeyDaoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BC77ED28368FF1008E14BF /* UniqueKeyDaoTest.swift */; };
+		95C027712A4A3FED000B9B4F /* FeatureFlagsPayloadDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C027702A4A3FED000B9B4F /* FeatureFlagsPayloadDecoder.swift */; };
+		95C027732A4B115C000B9B4F /* FeatureFlagsPayloadDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C027722A4B115C000B9B4F /* FeatureFlagsPayloadDecoderTest.swift */; };
 		95C0577629476469007E4D6A /* UserConsentModeDebugTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C0577529476469007E4D6A /* UserConsentModeDebugTest.swift */; };
 		95C057792948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C057782948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift */; };
 		95C0577C294A247D007E4D6A /* UserConsentModeNoneTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C0577B294A247C007E4D6A /* UserConsentModeNoneTest.swift */; };
@@ -1849,6 +1851,8 @@
 		95B4369F26F1487400E1EB9C /* TestingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingData.swift; sourceTree = "<group>"; };
 		95B436A526F1533600E1EB9C /* MySegmentsV2PayloadDecoderMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsV2PayloadDecoderMock.swift; sourceTree = "<group>"; };
 		95BC77ED28368FF1008E14BF /* UniqueKeyDaoTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeyDaoTest.swift; sourceTree = "<group>"; };
+		95C027702A4A3FED000B9B4F /* FeatureFlagsPayloadDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagsPayloadDecoder.swift; sourceTree = "<group>"; };
+		95C027722A4B115C000B9B4F /* FeatureFlagsPayloadDecoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagsPayloadDecoderTest.swift; sourceTree = "<group>"; };
 		95C0577529476469007E4D6A /* UserConsentModeDebugTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConsentModeDebugTest.swift; sourceTree = "<group>"; };
 		95C057782948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserConsentModeOptimizedTest.swift; sourceTree = "<group>"; };
 		95C0577B294A247C007E4D6A /* UserConsentModeNoneTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserConsentModeNoneTest.swift; sourceTree = "<group>"; };
@@ -1969,6 +1973,7 @@
 				595AD21424E1CD4600A7B750 /* JwtTokenParserTest.swift */,
 				595AD25424E477B600A7B750 /* NotificationParserTest.swift */,
 				95B4369926F147F100E1EB9C /* MySegmentsV2PayloaDecoderTest.swift */,
+				95C027722A4B115C000B9B4F /* FeatureFlagsPayloadDecoderTest.swift */,
 				595AD25824E59E6200A7B750 /* EventStreamParserTest.swift */,
 				59ED408324EAB8C900EF7B09 /* PushNotificationManagerTest.swift */,
 				59B2043024F549A60092F2E9 /* SseNotificationProcessorTest.swift */,
@@ -2860,6 +2865,7 @@
 			children = (
 				595AD24E24E41A7B00A7B750 /* SseNotifications.swift */,
 				95B4369526F11F4B00E1EB9C /* MySegmentsV2PayloadDecoder.swift */,
+				95C027702A4A3FED000B9B4F /* FeatureFlagsPayloadDecoder.swift */,
 				595AD20724DDC66500A7B750 /* SseAuthenticator.swift */,
 				59EFD30624BCE4810052920D /* SseClient.swift */,
 				595AD26424E6C3D200A7B750 /* Timers.swift */,
@@ -3923,6 +3929,7 @@
 				31AA2785C12C110A50A5FD4E /* RestClient+TrackEvents.swift in Sources */,
 				31AA2E60DECD00E2B2990F26 /* RestClient+MySegments.swift in Sources */,
 				31AA2C1F4964CD9D0769D021 /* RestClient+Impressions.swift in Sources */,
+				95C027712A4A3FED000B9B4F /* FeatureFlagsPayloadDecoder.swift in Sources */,
 				595AD25B24E5C00100A7B750 /* PushNotificationManager.swift in Sources */,
 				9505681426822C6A001D7B10 /* ImpressionsCountPerFeature.swift in Sources */,
 				31AA22905C46031E68E70266 /* RestClient+SplitChanges.swift in Sources */,
@@ -3966,6 +3973,7 @@
 				5905D4E5255B2395006DA3B1 /* MySegmentsStorageTests.swift in Sources */,
 				59F65F0A256568CF005FE8C9 /* SplitDatabaseStub.swift in Sources */,
 				5905D4E12559D20C006DA3B1 /* ConcurrentSetTests.swift in Sources */,
+				95C027732A4B115C000B9B4F /* FeatureFlagsPayloadDecoderTest.swift in Sources */,
 				955BB49728229E9100762D7E /* SseClientFactoryStub.swift in Sources */,
 				956A7E2C297ECB110080D53C /* SplitsDecoderTest.swift in Sources */,
 				955AAB8F283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift in Sources */,

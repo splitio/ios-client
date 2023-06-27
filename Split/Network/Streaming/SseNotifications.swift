@@ -231,6 +231,16 @@ struct SplitsUpdateNotification: NotificationTypeField {
     let definition: String?
     let compressionType: CompressionType?
 
+    init(changeNumber: Int64,
+         previousChangeNumber: Int64? = nil,
+         definition: String? = nil,
+         compressionType: CompressionType? = nil) {
+        self.changeNumber = changeNumber
+        self.previousChangeNumber = previousChangeNumber
+        self.definition = definition
+        self.compressionType = compressionType
+    }
+
     enum CodingKeys: String, CodingKey {
         case changeNumber
         case previousChangeNumber = "pcn"
