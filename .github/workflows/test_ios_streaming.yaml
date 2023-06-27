@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: [macos-latest]
+    runs-on: 12.6.6
 
     steps:
       - name: Select Xcode
