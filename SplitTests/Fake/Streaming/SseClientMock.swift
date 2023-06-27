@@ -22,6 +22,7 @@ class SseClientMock: SseClient {
     var successHandler: CompletionHandler?
     var results: [Bool]?
     var closeExp: XCTestExpectation?
+    var disconnectDelay: Double?
 
     init(connected: Bool = true) {
         isConnectionOpened = connected
@@ -45,6 +46,9 @@ class SseClientMock: SseClient {
         disconnectCalled = true
         if let exp = closeExp {
             exp.fulfill()
+        }
+        if let delay = self.disconnectDelay {
+            Thread.sleep(forTimeInterval: delay)
         }
     }
 }

@@ -10,7 +10,7 @@ import Foundation
 
 class SplitKeyDictionary<T> {
 
-    private var queue: DispatchQueue = DispatchQueue(label: "Split.SplitKeyDictionary",
+    private var queue: DispatchQueue = DispatchQueue(label: "split-key-dictionary",
                                                      target: .global())
     private var items = [Key: T]()
 

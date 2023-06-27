@@ -17,6 +17,7 @@ class SyncManagerBuilder {
     private var endpointFactory: EndpointFactory?
     private var synchronizer: Synchronizer?
     private var byKeyFacade: ByKeyFacade?
+    private var broadcasterChannel: SyncEventBroadcaster?
     private var notificationHelper: NotificationHelper = DefaultNotificationHelper.instance
 
     func setUserKey(_ userKey: String) -> SyncManagerBuilder {
@@ -54,30 +55,27 @@ class SyncManagerBuilder {
         return self
     }
 
+    func setSyncBroadcaster(_ broadcasterChannel: SyncEventBroadcaster) -> SyncManagerBuilder {
+        self.broadcasterChannel = broadcasterChannel
+        return self
+    }
+
     func setNotificationHelper(_ notificationHelper: NotificationHelper) -> SyncManagerBuilder {
         self.notificationHelper = notificationHelper
         return self
     }
 
-    private struct Components {
-        let userKey: String
-        let byKeyFacade: ByKeyFacade
-        let config: SplitClientConfig
-        let apiFacade: SplitApiFacade
-        let endpointFactory: EndpointFactory
-        let synchronizer: Synchronizer
-        let storageContainer: SplitStorageContainer
-    }
-
     func build() throws -> SyncManager {
 
         guard let config = self.splitConfig,
-              let synchronizer = self.synchronizer
+              let synchronizer = self.synchronizer,
+              let broadcasterChannel = self.broadcasterChannel
         else {
             throw ComponentError.buildFailed(name: "SyncManager")
         }
 
-        let broadcasterChannel = DefaultPushManagerEventBroadcaster()
+        let syncGuardian = DefaultSyncGuardian(maxSyncPeriod: ServiceConstants.maxSyncPeriodInMillis,
+                                               splitConfig: config)
         var pushNotificationManager: PushNotificationManager?
         var sseBackoffTimer: BackoffCounterTimer?
         if config.syncEnabled, config.streamingEnabled {
@@ -91,6 +89,7 @@ class SyncManagerBuilder {
                                   reconnectStreamingTimer: sseBackoffTimer,
                                   notificationHelper: notificationHelper,
                                   synchronizer: synchronizer,
+                                  syncGuardian: syncGuardian,
                                   broadcasterChannel: broadcasterChannel)
     }
 
@@ -128,7 +127,7 @@ class SyncManagerBuilder {
                 payloadDecoder: DefaultMySegmentsV2PayloadDecoder()))
     }
 
-    private func buildPushManager(broadcasterChannel: PushManagerEventBroadcaster)
+    private func buildPushManager(broadcasterChannel: SyncEventBroadcaster)
     throws -> PushNotificationManager {
 
         guard let userKey = self.userKey,

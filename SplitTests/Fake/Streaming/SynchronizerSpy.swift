@@ -151,14 +151,6 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.destroy()
     }
 
-    func synchronizeSplits() {
-        synchronizeSplitsCalled = true
-        splitSynchronizer.synchronizeSplits()
-        if let exp = syncSplitsExp {
-            exp.fulfill()
-        }
-    }
-
     func synchronizeMySegments() {
         synchronizeMySegments(forKey: defaultUserKey)
     }

@@ -17,7 +17,6 @@ protocol Synchronizer: ImpressionLogger {
     func loadMySegmentsFromCache(forKey key: String)
     func loadAttributesFromCache(forKey key: String)
     func syncAll()
-    func synchronizeSplits()
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments(forKey key: String)
     func synchronizeTelemetryConfig()
@@ -109,16 +108,14 @@ class DefaultSynchronizer: Synchronizer {
         byKeySynchronizer.syncAll()
     }
 
-    func synchronizeSplits() {
-        featureFlagsSynchronizer.synchronize()
-    }
-
     func synchronizeSplits(changeNumber: Int64) {
-        featureFlagsSynchronizer.synchronize(changeNumber: changeNumber)
+        runIfSyncEnabled {
+            self.featureFlagsSynchronizer.synchronize(changeNumber: changeNumber)
+        }
     }
 
     func synchronizeMySegments() {
-        synchronizeMySegments(forKey: defaultUserKey)
+        self.synchronizeMySegments(forKey: defaultUserKey)
     }
 
     func synchronizeMySegments(forKey key: String) {
@@ -126,10 +123,9 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func forceMySegmentsSync(forKey key: String) {
-        if !splitConfig.syncEnabled {
-            return
+        runIfSyncEnabled {
+            self.byKeySynchronizer.forceMySegmentsSync(forKey: key)
         }
-        byKeySynchronizer.forceMySegmentsSync(forKey: key)
     }
 
     func synchronizeTelemetryConfig() {
@@ -137,12 +133,11 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func startPeriodicFetching() {
-        if !splitConfig.syncEnabled {
-            return
+        runIfSyncEnabled {
+            featureFlagsSynchronizer.startPeriodicSync()
+            byKeySynchronizer.startPeriodicSync()
+            recordSyncModeEvent(TelemetryStreamingEventValue.syncModePolling)
         }
-        featureFlagsSynchronizer.startPeriodicSync()
-        byKeySynchronizer.startPeriodicSync()
-        recordSyncModeEvent(TelemetryStreamingEventValue.syncModePolling)
     }
 
     func stopPeriodicFetching() {
@@ -229,10 +224,22 @@ class DefaultSynchronizer: Synchronizer {
         impressionsTracker.destroy()
     }
 
+    // MARK: Private
+    private func synchronizeSplits() {
+        self.featureFlagsSynchronizer.synchronize()
+    }
+
     private func recordSyncModeEvent(_ mode: Int64) {
         if splitConfig.streamingEnabled && !isDestroyed.value {
             telemetryProducer?.recordStreamingEvent(type: .syncModeUpdate,
                                                     data: mode)
+        }
+    }
+
+    @inline(__always)
+    private func runIfSyncEnabled(action: () -> Void) {
+        if self.splitConfig.syncEnabled {
+            action()
         }
     }
 }

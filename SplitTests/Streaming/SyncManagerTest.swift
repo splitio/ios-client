@@ -14,15 +14,17 @@ import XCTest
 class SyncManagerTest: XCTestCase {
 
     var pushManager: PushNotificationManagerStub!
-    var broadcasterChannel: PushManagerEventBroadcasterStub!
+    var broadcasterChannel: SyncEventBroadcasterStub!
     var synchronizer: SynchronizerStub!
     var syncManager: SyncManager!
     let splitConfig = SplitClientConfig()
     var retryTimer: BackoffCounterTimerStub!
+    var syncGuardian: SyncGuardianStub!
 
     override func setUp() {
+        syncGuardian = SyncGuardianStub()
         pushManager = PushNotificationManagerStub()
-        broadcasterChannel = PushManagerEventBroadcasterStub()
+        broadcasterChannel = SyncEventBroadcasterStub()
         synchronizer = SynchronizerStub()
         retryTimer = BackoffCounterTimerStub()
     }
@@ -33,7 +35,9 @@ class SyncManagerTest: XCTestCase {
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
                                          notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
         syncManager.start()
 
         XCTAssertTrue(synchronizer.loadAndSynchronizeSplitsCalled)
@@ -51,7 +55,9 @@ class SyncManagerTest: XCTestCase {
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
                                          notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
         syncManager.start()
 
         XCTAssertTrue(synchronizer.loadAndSynchronizeSplitsCalled)
@@ -78,7 +84,9 @@ class SyncManagerTest: XCTestCase {
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
                                          notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
         syncManager.start()
 
         XCTAssertTrue(synchronizer.loadAndSynchronizeSplitsCalled)
@@ -96,7 +104,9 @@ class SyncManagerTest: XCTestCase {
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
                                          notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
         syncManager.start()
         broadcasterChannel.push(event: .pushSubsystemUp)
 
@@ -109,7 +119,9 @@ class SyncManagerTest: XCTestCase {
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
                                          notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
         syncManager.start()
         broadcasterChannel.push(event: .pushSubsystemDown)
 
@@ -122,7 +134,9 @@ class SyncManagerTest: XCTestCase {
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
                                          notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
         syncManager.start()
         broadcasterChannel.push(event: .pushRetryableError)
 
@@ -137,7 +151,9 @@ class SyncManagerTest: XCTestCase {
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
                                          notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
         syncManager.start()
 
         // reseting start called value
@@ -155,7 +171,9 @@ class SyncManagerTest: XCTestCase {
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
                                          notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
         syncManager.start()
 
         // reseting start called value
@@ -172,7 +190,9 @@ class SyncManagerTest: XCTestCase {
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
                                          notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
         syncManager.start()
         syncManager.stop()
 
@@ -185,7 +205,9 @@ class SyncManagerTest: XCTestCase {
         syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
                                          reconnectStreamingTimer: retryTimer,
                                          notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer, broadcasterChannel: broadcasterChannel)
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
 
         syncManager.start()
         syncManager.pause()
@@ -207,7 +229,35 @@ class SyncManagerTest: XCTestCase {
 
     }
 
-    override func tearDown() {
+    func testPushDelayReceived() {
 
+        splitConfig.streamingEnabled = true
+        syncGuardian.maxSyncPeriod = -1
+        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
+                                         reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
+        syncManager.start()
+        broadcasterChannel.push(event: .pushDelayReceived(delaySeconds: 5))
+
+        XCTAssertEqual(5000, syncGuardian.maxSyncPeriod)
+    }
+
+    func testSyncExecutedReceived() {
+
+        splitConfig.streamingEnabled = true
+        syncGuardian.updateLastSyncTimestampCalled = false
+        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
+                                         reconnectStreamingTimer: retryTimer,
+                                         notificationHelper: DefaultNotificationHelper.instance,
+                                         synchronizer: synchronizer,
+                                         syncGuardian: syncGuardian,
+                                         broadcasterChannel: broadcasterChannel)
+        syncManager.start()
+        broadcasterChannel.push(event: .syncExecuted)
+
+        XCTAssertTrue(syncGuardian.updateLastSyncTimestampCalled)
     }
 }

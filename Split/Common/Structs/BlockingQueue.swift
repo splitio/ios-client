@@ -19,7 +19,7 @@ class GenericBlockingQueue<Item> {
     private let semaphore: DispatchSemaphore
     private var isStopped = false
     init() {
-        dispatchQueue = DispatchQueue(label: "Split.GenericBlockingQueue",
+        dispatchQueue = DispatchQueue(label: "split-generic-blocking-queue",
                                       attributes: .concurrent)
         semaphore = DispatchSemaphore(value: 0)
         elements = [Item]()

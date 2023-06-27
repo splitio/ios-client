@@ -22,7 +22,7 @@ class LRUCache<K: Hashable, E> {
         self.elements = [K: E]()
         self.elementsQueue = [K]()
         self.elementsQueue.reserveCapacity(capacity)
-        self.queue = DispatchQueue(label: "Split.LRUCache", attributes: .concurrent)
+        self.queue = DispatchQueue(label: "split-lrucache", attributes: .concurrent)
     }
 
     func set(_ element: E, for key: K) {
