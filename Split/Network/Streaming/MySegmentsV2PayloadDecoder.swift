@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MySegmentsV2ParsingException: Error {
+enum NotificationPayloadParsingException: Error {
     case errorDecodingBase64
     case unknown
 }
@@ -39,14 +39,14 @@ struct DefaultMySegmentsV2PayloadDecoder: MySegmentsV2PayloadDecoder {
 
     func decodeAsBytes(payload: String, compressionUtil: CompressionUtil) throws -> Data {
         guard let dec =  Base64Utils.decodeBase64(payload) else {
-            throw MySegmentsV2ParsingException.errorDecodingBase64
+            throw NotificationPayloadParsingException.errorDecodingBase64
         }
         let descomp = try compressionUtil.decompress(data: dec)
         return descomp
     }
 
     func parseKeyList(jsonString: String) throws -> KeyList {
-        return try Json.encodeFrom(json: jsonString, to: KeyList.self)
+        return try Json.decodeFrom(json: jsonString, to: KeyList.self)
     }
 
     func hashKey(_ key: String) -> UInt64 {

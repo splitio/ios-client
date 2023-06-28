@@ -15,7 +15,7 @@ class MatcherTests: XCTestCase {
     
     func testMatcher() {
         
-        let matcher = try? JSON.encodeFrom(json: "{}", to: Matcher.self)
+        let matcher = try? JSON.decodeFrom(json: "{}", to: Matcher.self)
         let expectedVal = EvaluatorError.matcherNotFound
         do {
             _ = try matcher!.getMatcher()

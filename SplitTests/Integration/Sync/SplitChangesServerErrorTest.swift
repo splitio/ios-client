@@ -175,7 +175,7 @@ class SplitChangesServerErrorTest: XCTestCase {
     }
 
     private func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
-        return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
+        return try Json.decodeFrom(json: content, to: [ImpressionsTest].self)
     }
 }
 

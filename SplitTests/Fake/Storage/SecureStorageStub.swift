@@ -31,7 +31,7 @@ class SecureStorageStub: KeyValueStorage {
             return nil
         }
         do {
-            return try Json.encodeFrom(json: data, to: type)
+            return try Json.decodeFrom(json: data, to: type)
         } catch {
             Logger.d("Couldn't get \(item.toString()) item")
         }

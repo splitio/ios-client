@@ -10,7 +10,7 @@ import Foundation
 
 class SynchronizedDictionarySet<K: Hashable, T: Hashable> {
 
-    private var queue: DispatchQueue = DispatchQueue(label: "Split.SynchronizedDictionarySet",
+    private var queue: DispatchQueue = DispatchQueue(label: "split-synchronized-dictionary-set",
                                                      target: .global())
     private var items = [K: Set<T>]()
 

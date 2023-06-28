@@ -26,7 +26,10 @@ class UpdateWorker<T: NotificationTypeField> {
 
 class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 
+
     private let synchronizer: Synchronizer
+
+    var decompressionProvider: DecompressorProvider = DefaultDecompressorProvider()
 
     init(synchronizer: Synchronizer) {
         self.synchronizer = synchronizer
@@ -35,9 +38,26 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 
     override func process(notification: SplitsUpdateNotification) throws {
         processQueue.async {
+
+            // CODE For next PR
+//            if self.splitsStorage.changeNumber >= notification.changeNumber {
+//                return
+//            }
+
+//            if let payload = notification.definition, let compressionType = notification.compressionType {
+//                do {
+//
+//                    let featureFlags = try self.payloadDecoder.decode(payload: payload,
+//                                       compressionUtil: self.decompressionProvider.decompressor(for: compressionType))
+//
+//                } catch {
+//                    Logger.e("Error decoding feature flags payload from notification: \(error)")
+//                }
+//            }
             self.synchronizer.synchronizeSplits(changeNumber: notification.changeNumber)
         }
     }
+
 }
 
 class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
@@ -98,8 +118,8 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
     private let synchronizer: Synchronizer
     private let mySegmentsStorage: MySegmentsStorage
     private let payloadDecoder: MySegmentsV2PayloadDecoder
-    private let zlib: CompressionUtil = Zlib()
-    private let gzip: CompressionUtil = Gzip()
+    // Visible for testing
+    var decompressionProvider: DecompressorProvider = DefaultDecompressorProvider()
 
     init(userKey: String, synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage,
          payloadDecoder: MySegmentsV2PayloadDecoder) {
@@ -125,13 +145,13 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
             case .boundedFetchRequest:
                 if let json = notification.data {
                     try handleBounded(encodedKeyMap: json,
-                                      compressionUtil: decompressor(for: notification.compressionType))
+                                      compressionUtil: decompressionProvider.decompressor(for: notification.compressionType))
                 }
             case .keyList:
                 if let json = notification.data, let segmentName = notification.segmentName {
                     try updateSegments(encodedkeyList: json,
                                        segmentName: segmentName,
-                                       compressionUtil: decompressor(for: notification.compressionType))
+                                       compressionUtil: decompressionProvider.decompressor(for: notification.compressionType))
                 }
             case .segmentRemoval:
                 if let segmentName = notification.segmentName {
@@ -157,10 +177,6 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
 
     private func fetchMySegments(forKey key: String) {
         synchronizer.forceMySegmentsSync(forKey: key)
-    }
-
-    private func decompressor(for type: CompressionType) -> CompressionUtil {
-        return type == .gzip ? gzip : zlib
     }
 
     private func remove(segment: String) {
@@ -253,5 +269,18 @@ class SplitKillWorker: UpdateWorker<SplitKillNotification> {
         splitsStorage.updateWithoutChecks(split: splitToKill)
         synchronizer.notifySplitKilled()
         synchronizer.synchronizeSplits(changeNumber: notification.changeNumber)
+    }
+}
+
+protocol DecompressorProvider {
+    func decompressor(for type: CompressionType) -> CompressionUtil
+}
+
+struct DefaultDecompressorProvider: DecompressorProvider {
+    private let zlib: CompressionUtil = Zlib()
+    private let gzip: CompressionUtil = Gzip()
+
+    func decompressor(for type: CompressionType) -> CompressionUtil {
+        return type == .gzip ? gzip : zlib
     }
 }

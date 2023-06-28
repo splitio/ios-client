@@ -118,7 +118,7 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
 
         let userKey = cipher?.decrypt(entity.userKey) ?? entity.userKey
         let json = cipher?.decrypt(entity.featureList) ?? entity.featureList
-        let featureList = try Json.encodeFrom(json: json, to: [String].self)
+        let featureList = try Json.decodeFrom(json: json, to: [String].self)
         let model = UniqueKey(storageId: entity.storageId,
                               userKey: userKey,
                               features: Set(featureList))

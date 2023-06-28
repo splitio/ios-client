@@ -162,7 +162,7 @@ class ImpressionsDedupTest: XCTestCase {
                         exp.fulfill()
                     }
                     if let body = request.body?.stringRepresentation.utf8 {
-                        if let tests = try? Json.encodeFrom(json: String(body), to: [ImpressionsTest].self) {
+                        if let tests = try? Json.decodeFrom(json: String(body), to: [ImpressionsTest].self) {
                             for test in tests {
                                 var imps = [KeyImpression]()
                                 if let prevImp = self.impressions[test.testName] {
@@ -181,7 +181,7 @@ class ImpressionsDedupTest: XCTestCase {
                         exp.fulfill()
                     }
                     if let body = request.body?.stringRepresentation.utf8 {
-                        if let counts = try? Json.encodeFrom(json: String(body), to: ImpressionsCount.self) {
+                        if let counts = try? Json.decodeFrom(json: String(body), to: ImpressionsCount.self) {
                             for count in counts.perFeature {
                                 self.counts[count.feature] = count.count + (self.counts[count.feature] ?? 0)
                             }

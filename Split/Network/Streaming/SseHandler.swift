@@ -18,7 +18,7 @@ class DefaultSseHandler: SseHandler {
     let notificationProcessor: SseNotificationProcessor
     let notificationParser: SseNotificationParser
     let notificationManagerKeeper: NotificationManagerKeeper
-    let broadcasterChannel: PushManagerEventBroadcaster
+    let broadcasterChannel: SyncEventBroadcaster
     let telemetryProducer: TelemetryRuntimeProducer?
 
     private var lastControlTimestamp: Int64 = 0
@@ -26,7 +26,7 @@ class DefaultSseHandler: SseHandler {
     init(notificationProcessor: SseNotificationProcessor,
          notificationParser: SseNotificationParser,
          notificationManagerKeeper: NotificationManagerKeeper,
-         broadcasterChannel: PushManagerEventBroadcaster,
+         broadcasterChannel: SyncEventBroadcaster,
          telemetryProducer: TelemetryRuntimeProducer?) {
 
         self.notificationProcessor = notificationProcessor

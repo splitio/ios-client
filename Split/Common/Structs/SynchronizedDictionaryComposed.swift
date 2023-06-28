@@ -10,7 +10,7 @@ import Foundation
 
 class SynchronizedDictionaryComposed<K: Hashable, IK: Hashable> {
 
-    private var queue: DispatchQueue = DispatchQueue(label: "Split.SynchronizedDictionaryComposed",
+    private var queue: DispatchQueue = DispatchQueue(label: "split-synchronized-dictionary-composed",
                                                      target: .global())
     private var items = [K: [IK: Any]]()
 

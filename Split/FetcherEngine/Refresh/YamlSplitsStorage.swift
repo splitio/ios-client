@@ -27,7 +27,7 @@ class LocalhostSplitsStorage: SplitsStorage {
     private let supportedExtensions = ["yaml", "yml", "splits"]
     private let fileName: String
     private let inMemorySplits = ConcurrentDictionary<String, Split>()
-    private let dataQueue = DispatchQueue(label: "Split yaml storage queue", attributes: .concurrent)
+    private let dataQueue = DispatchQueue(label: "split-yaml-storage", attributes: .concurrent)
 
     init(fileStorage: FileStorageProtocol,
          config: YamlSplitStorageConfig = YamlSplitStorageConfig(),

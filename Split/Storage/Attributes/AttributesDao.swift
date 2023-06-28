@@ -92,7 +92,7 @@ class CoreDataAttributesDao: BaseCoreDataDao, AttributesDao {
         do {
             if let attributes = entity.attributes {
                 let json = cipher?.decrypt(attributes) ?? attributes
-                let attributeMap = try Json.dynamicEncodeFrom(json: json, to: AttributeMap.self)
+                let attributeMap = try Json.dynamicDecodeFrom(json: json, to: AttributeMap.self)
                 return attributeMap.attributes
             }
         } catch {

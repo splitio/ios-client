@@ -17,7 +17,7 @@ class EventDTOJsonTest: XCTestCase {
         let event = try? basicEvent(value: 12.0)
 
         let jsonEvent = try? Json.dynamicEncodeToJson(event!)
-        let testEvent  = try? Json.dynamicEncodeFrom(json: jsonEvent!, to: EventDTO.self)
+        let testEvent  = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
 
         XCTAssertEqual(event?.key, testEvent?.key)
         XCTAssertEqual(event?.eventTypeId, testEvent?.eventTypeId)
@@ -45,7 +45,7 @@ class EventDTOJsonTest: XCTestCase {
         event?.properties = props
 
         let jsonEvent = try? Json.dynamicEncodeToJson(event!)
-        let testEvent  = try? Json.dynamicEncodeFrom(json: jsonEvent!, to: EventDTO.self)
+        let testEvent  = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
 
         let testProps = testEvent?.properties
 
@@ -82,7 +82,7 @@ class EventDTOJsonTest: XCTestCase {
         event?.properties = props
 
         let jsonEvent = try? Json.dynamicEncodeToJson(event!)
-        let testEvent  = try? Json.dynamicEncodeFrom(json: jsonEvent!, to: EventDTO.self)
+        let testEvent  = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
 
         let testProps = testEvent?.properties
 
@@ -107,7 +107,7 @@ class EventDTOJsonTest: XCTestCase {
         event?.properties = props
 
         let jsonEvent = try? Json.dynamicEncodeToJson(event!)
-        let testEvent  = try? Json.dynamicEncodeFrom(json: jsonEvent!, to: EventDTO.self)
+        let testEvent  = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
 
         let testProps = testEvent?.properties
 
@@ -123,7 +123,7 @@ class EventDTOJsonTest: XCTestCase {
         {\"key\":\"thekey\",\"eventTypeId\":\"event1\",\"properties\":{\"value2\":22.1,\"valueString\":\"string\",\"valueFalse\":false,\"value5\":2267.1000109,\"value3\":1205.06,\"value4\":22.10001,\"value1\":12,\"valueTrue\":true,\"value6\":9900.0000001,\"value0\":0.1},\"trafficTypeName\":\"custom\",\"value\":217.00001}
         """
 
-        let testEvent  = try? Json.dynamicEncodeFrom(json: jsonEvent, to: EventDTO.self)
+        let testEvent  = try? Json.dynamicDecodeFrom(json: jsonEvent, to: EventDTO.self)
 
         let testProps = testEvent?.properties
 

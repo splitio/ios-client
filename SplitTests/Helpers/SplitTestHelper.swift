@@ -14,7 +14,7 @@ class SplitTestHelper {
     func loadSplitFromFile(name: String) -> Split? {
         var split: Split?
         do {
-            split = try JSON.encodeFrom(json: FileHelper.readDataFromFile(sourceClass: self, name: name, type: "json")!, to: Split.self)
+            split = try JSON.decodeFrom(json: FileHelper.readDataFromFile(sourceClass: self, name: name, type: "json")!, to: Split.self)
         } catch {
             print("Error loading split from file \(name)")
         }

@@ -8,18 +8,20 @@
 
 import Foundation
 
-enum PushStatusEvent {
+enum SyncStatusEvent: Equatable {
     case pushSubsystemUp
     case pushSubsystemDown
     case pushRetryableError
     case pushNonRetryableError
     case pushSubsystemDisabled
     case pushReset
+    case pushDelayReceived(delaySeconds: Int64)
+    case syncExecuted
 }
 
-protocol PushManagerEventBroadcaster {
-    typealias IncomingMessageHandler = (PushStatusEvent) -> Void
-    func push(event: PushStatusEvent)
+protocol SyncEventBroadcaster {
+    typealias IncomingMessageHandler = (SyncStatusEvent) -> Void
+    func push(event: SyncStatusEvent)
     func register(handler: @escaping IncomingMessageHandler)
     func destroy()
 }
@@ -28,12 +30,13 @@ protocol PushManagerEventBroadcaster {
 /// Component to allow push notification manager to comunicate status events
 /// to other components
 ///
-class DefaultPushManagerEventBroadcaster: PushManagerEventBroadcaster {
-    let messageQueue = DispatchQueue(label: "pushMananagerMessagerQueue",
+class DefaultSyncEventBroadcaster: SyncEventBroadcaster {
+    let messageQueue = DispatchQueue(label: "split-sync-event-broadcaster",
                                      attributes: .concurrent)
     var handlers = [IncomingMessageHandler]()
+    var id = UUID().uuidString
 
-    func push(event: PushStatusEvent) {
+    func push(event: SyncStatusEvent) {
         messageQueue.async { [weak self] in
             guard let self = self else { return }
             for handler in self.handlers {

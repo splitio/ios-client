@@ -27,6 +27,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
     var splitConfig: SplitClientConfig!
 
     var synchronizer: FeatureFlagsSynchronizer!
+    var broadcasterChannel: SyncEventBroadcasterStub!
 
     override func setUp() {
         synchronizer = buildSynchronizer()
@@ -43,6 +44,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         syncWorkerFactory.splitsSyncWorker = splitsSyncWorker
         syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
         splitsStorage = SplitsStorageStub()
+        broadcasterChannel = SyncEventBroadcasterStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
 
@@ -66,6 +68,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         synchronizer = DefaultFeatureFlagsSynchronizer(splitConfig: splitConfig,
                                                        storageContainer: storageContainer,
                                                        syncWorkerFactory: syncWorkerFactory,
+                                                       broadcasterChannel: broadcasterChannel,
                                                        syncTaskByChangeNumberCatalog: updateWorkerCatalog,
                                                        splitsFilterQueryString: "",
                                                        splitEventsManager: eventsManager)
@@ -149,8 +152,10 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
         synchronizer = buildSynchronizer(syncEnabled: false)
         synchronizer.synchronize(changeNumber: -1)
+        let syncExecCount = broadcasterChannel.pushedEvents.filter { $0 == .syncExecuted }.count
 
         XCTAssertFalse(splitsSyncWorker.startCalled)
+        XCTAssertEqual(0, syncExecCount)
     }
 
     func testStopPeriodicSync() {
