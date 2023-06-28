@@ -21,23 +21,26 @@ class DefaultSyncManager: SyncManager {
 
     private let splitConfig: SplitClientConfig
     private let synchronizer: Synchronizer
-    private let broadcasterChannel: PushManagerEventBroadcaster
+    private let broadcasterChannel: SyncEventBroadcaster
     private let pushNotificationManager: PushNotificationManager?
     private let reconnectStreamingTimer: BackoffCounterTimer?
     private var isPollingEnabled: Atomic<Bool> = Atomic(false)
     private var isPaused: Atomic<Bool> = Atomic(false)
+    private var syncGuardian: SyncGuardian
 
     init(splitConfig: SplitClientConfig,
          pushNotificationManager: PushNotificationManager?,
          reconnectStreamingTimer: BackoffCounterTimer?,
          notificationHelper: NotificationHelper,
          synchronizer: Synchronizer,
-         broadcasterChannel: PushManagerEventBroadcaster) {
+         syncGuardian: SyncGuardian,
+         broadcasterChannel: SyncEventBroadcaster) {
         self.splitConfig = splitConfig
         self.pushNotificationManager = pushNotificationManager
         self.synchronizer = synchronizer
         self.broadcasterChannel = broadcasterChannel
         self.reconnectStreamingTimer = reconnectStreamingTimer
+        self.syncGuardian = syncGuardian
 
         notificationHelper.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
             if let self = self {
@@ -78,6 +81,10 @@ class DefaultSyncManager: SyncManager {
         isPaused.set(false)
         synchronizer.resume()
         pushNotificationManager?.resume()
+        if syncGuardian.mustSync() {
+            Logger.d("Triggering sync after being in background.")
+            synchronizer.syncAll()
+        }
 #endif
     }
 
@@ -87,7 +94,7 @@ class DefaultSyncManager: SyncManager {
         synchronizer.destroy()
     }
 
-    private func handle(pushEvent: PushStatusEvent) {
+    private func handle(pushEvent: SyncStatusEvent) {
         if isPaused.value {
             return
         }
@@ -125,6 +132,14 @@ class DefaultSyncManager: SyncManager {
             if !isPaused.value {
                 scheduleStreamingReconnection()
             }
+
+        case .pushDelayReceived(let delaySeconds):
+            Logger.d("Push delay received (\(delaySeconds) secs).")
+            syncGuardian.setMaxSyncPeriod(delaySeconds * 1000)
+
+        case .syncExecuted:
+            Logger.d("Sync has been executed.")
+            syncGuardian.updateLastSyncTimestamp()
         }
     }
 
@@ -144,6 +159,7 @@ class DefaultSyncManager: SyncManager {
 
     private func scheduleStreamingReconnection() {
         reconnectStreamingTimer?.schedule {
+            Logger.d("Scheduling streaming reconnection.")
             self.pushNotificationManager?.start()
         }
     }
@@ -152,6 +168,7 @@ class DefaultSyncManager: SyncManager {
         reconnectStreamingTimer?.cancel()
         enablePolling()
         pushNotificationManager?.stop()
+        Logger.d("Streaming stopped.")
     }
 
     private func enablePolling() {

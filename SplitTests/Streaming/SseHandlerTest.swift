@@ -15,7 +15,7 @@ class SseHandlerTest: XCTestCase {
     var notificationProcessor: SseNotificationProcessorStub!
     var notificationParser: SseNotificationParserStub!
     var notificationManagerKeeper: NotificationManagerKeeperStub!
-    var broadcasterChannel: PushManagerEventBroadcasterStub!
+    var broadcasterChannel: SyncEventBroadcasterStub!
 
     var sseHandler: SseHandler!
 
@@ -26,7 +26,7 @@ class SseHandlerTest: XCTestCase {
         notificationParser = SseNotificationParserStub()
         notificationProcessor = SseNotificationProcessorStub()
         notificationManagerKeeper = NotificationManagerKeeperStub()
-        broadcasterChannel = PushManagerEventBroadcasterStub()
+        broadcasterChannel = SyncEventBroadcasterStub()
         sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,
                                        notificationParser: notificationParser,
                                        notificationManagerKeeper: notificationManagerKeeper,
@@ -102,7 +102,7 @@ class SseHandlerTest: XCTestCase {
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertFalse(notificationProcessor.processCalled)
-        XCTAssertEqual(PushStatusEvent.pushRetryableError, broadcasterChannel.lastPushedEvent)
+        XCTAssertEqual(SyncStatusEvent.pushRetryableError, broadcasterChannel.lastPushedEvent)
 
         XCTAssertNotNil(streamEvents[.ablyError])
     }
@@ -124,7 +124,7 @@ class SseHandlerTest: XCTestCase {
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertFalse(notificationProcessor.processCalled)
-        XCTAssertEqual(PushStatusEvent.pushNonRetryableError, broadcasterChannel.lastPushedEvent)
+        XCTAssertEqual(SyncStatusEvent.pushNonRetryableError, broadcasterChannel.lastPushedEvent)
     }
 
     func testIncomingIgnorableSseErrorTest() {

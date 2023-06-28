@@ -28,7 +28,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     private let sseAuthenticator: SseAuthenticator
     private var timersManager: TimersManager
-    private let broadcasterChannel: PushManagerEventBroadcaster
+    private let broadcasterChannel: SyncEventBroadcaster
     private let userKeyRegistry: ByKeyRegistry
 
     private let lastConnId = Atomic<Int64>(-1)
@@ -47,7 +47,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     init(userKeyRegistry: ByKeyRegistry,
          sseAuthenticator: SseAuthenticator,
-         broadcasterChannel: PushManagerEventBroadcaster,
+         broadcasterChannel: SyncEventBroadcaster,
          timersManager: TimersManager,
          telemetryProducer: TelemetryRuntimeProducer?,
          sseConnectionHandler: SseConnectionHandler
@@ -88,6 +88,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
         disconnect()
         broadcasterChannel.destroy()
         timersManager.destroy()
+        sseConnectionHandler.destroy()
         isStopped.set(true)
     }
 
@@ -134,6 +135,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
         Logger.d("Streaming authentication success")
 
         let connectionDelay = result.sseConnectionDelay
+        self.broadcasterChannel.push(event: .pushDelayReceived(delaySeconds: connectionDelay))
         let lastId = lastConnId.value
         if connectionDelay > 0 {
             self.timersManager.cancel(timer: .streamingDelay)

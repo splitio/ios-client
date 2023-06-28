@@ -48,7 +48,7 @@ class FactoryRegistry {
     }
 
     init() {
-        queue = DispatchQueue(label: NSUUID().uuidString)
+        queue = DispatchQueue(label: "split-factory-monitor")
         weakFactories = [String: [WeakFactory]]()
     }
 

@@ -9,6 +9,10 @@
 import Foundation
 
 struct ServiceConstants {
+
+    // Created for testing purposes only
+    static var values: Values?
+
     static let estimatedImpressionSizeInBytes = 150
     // Estimated size of a UniqueKey having a key of 100 chars and
     // 1000 features of 100 chars each
@@ -31,4 +35,14 @@ struct ServiceConstants {
     static let uniqueKeyBulkSize = 50
     static let maxUniqueKeyQueueSize = 30000
     static let aes128KeyLength = 16
+
+    static var maxSyncPeriodInMillis: Int64 {
+        return values?.maxSyncPeriodInMillis ?? (defaultSseConnectionDelayInSecs * 1000)
+    }
+
+    // Created for testing purposes only
+    struct Values {
+        var maxSyncPeriodInMillis: Int64
+    }
 }
+

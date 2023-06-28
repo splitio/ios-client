@@ -46,7 +46,7 @@ class DefaultSseClient: SseClient {
         self.endpoint = endpoint
         self.httpClient = httpClient
         self.sseHandler = sseHandler
-        self.queue = DispatchQueue(label: "Split SSE Client")
+        self.queue = DispatchQueue(label: "split-sse-client")
     }
 
     func connect(token: String, channels: [String], completion: @escaping CompletionHandler) {

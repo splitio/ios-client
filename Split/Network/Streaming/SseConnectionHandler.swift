@@ -9,12 +9,14 @@
 import Foundation
 
 class SseConnectionHandler {
-    private var sseClient: SseClient?
     private let clientLock = NSLock()
     private let sseClientFactory: SseClientFactory
+    private var curClientId: String?
+    private let clients = SynchronizedDictionary<String, SseClient>()
 
     var isConnectionOpened: Bool {
-        return sseClient?.isConnectionOpened ?? false
+        guard let id = curClientId else { return false }
+        return clients.value(forKey: id)?.isConnectionOpened ?? false
     }
 
     init(sseClientFactory: SseClientFactory) {
@@ -23,23 +25,53 @@ class SseConnectionHandler {
 
     func connect(jwt: JwtToken, channels: [String], completion: @escaping SseClient.CompletionHandler) {
         let sseClient = sseClientFactory.create()
+        addSseClient(sseClient)
         sseClient.connect(token: jwt.rawToken, channels: jwt.channels, completion: completion)
-        setCurrentSseClient(sseClient)
     }
 
     func disconnect() {
         Logger.d("Streaming Connection Handler - Disconnecting SSE client")
-
-        let disconnectingClient = sseClient
-        setCurrentSseClient(nil)
-        DispatchQueue.global().async {
-            disconnectingClient?.disconnect()
+        let disconnectingClientId = curClientId
+        clearClientId()
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else { return }
+            guard let clientId = disconnectingClientId else { return }
+            let cli = self.getSseClient(id: clientId)
+            cli?.disconnect()
+            self.removeSseClient(id: clientId)
         }
     }
 
-    private func setCurrentSseClient(_ newClient: SseClient?) {
+    func destroy() {
+        for client in clients.takeAll().values {
+            client.disconnect()
+        }
+    }
+
+    private func clearClientId() {
         clientLock.lock()
-        sseClient = newClient
+        curClientId = nil
         clientLock.unlock()
+    }
+
+    private func newClientId() -> String {
+        let id = UUID().uuidString
+        clientLock.lock()
+        curClientId = id
+        clientLock.unlock()
+        return id
+    }
+
+    private func addSseClient(_ newClient: SseClient) {
+        let id = newClientId()
+        clients.setValue(newClient, forKey: id)
+    }
+
+    private func getSseClient(id: String) -> SseClient? {
+        return  clients.value(forKey: id)
+    }
+
+    private func removeSseClient(id: String) {
+        clients.removeValue(forKey: id)
     }
 }
