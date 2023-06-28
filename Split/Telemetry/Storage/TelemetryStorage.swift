@@ -81,6 +81,7 @@ protocol TelemetryRuntimeProducer {
     func recordStreamingEvent(type: TelemetryStreamingEventType, data: Int64?)
     func addTag(tag: String)
     func recordSessionLength(sessionLength: Int64)
+    func recordUpdatesFromSse(type: TelemetryUpdatesFromSseType)
 }
 
 protocol TelemetryRuntimeConsumer {
@@ -94,6 +95,7 @@ protocol TelemetryRuntimeConsumer {
     func popStreamingEvents() -> [TelemetryStreamingEvent]
     func popTags() -> [String]
     func getSessionLength() -> Int64
+    func popUpdatesFromSse() -> TelemetryUpdatesFromSse
 }
 
 protocol TelemetryProducer: TelemetryInitProducer,

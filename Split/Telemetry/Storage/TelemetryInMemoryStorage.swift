@@ -35,6 +35,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     private var impressionsStats: [TelemetryImpressionsDataType: Int] = [:]
     private var eventsStats: [TelemetryEventsDataType: Int] = [:]
     private let lastSyncStats: ConcurrentDictionary<Resource, Int64> = ConcurrentDictionary()
+    private var updatesFromSse: [TelemetryUpdatesFromSseType: Int] = [:]
 
     // Streaming events
     static let kMaxStreamingEventsCount: Int = 20 // Visible for testing
@@ -85,7 +86,9 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordEventStats(type: TelemetryEventsDataType, count: Int) {
-        self.eventsStats[type] = (self.eventsStats[type] ?? 0) + count
+        queue.async(flags: .barrier) {
+            self.eventsStats[type] = (self.eventsStats[type] ?? 0) + count
+        }
     }
 
     func recordLastSync(resource: Resource, time: Int64) {
@@ -125,6 +128,12 @@ class InMemoryTelemetryStorage: TelemetryStorage {
 
     func recordSessionLength(sessionLength: Int64) {
         self.sessionLength.set(sessionLength)
+    }
+
+    func recordUpdatesFromSse(type: TelemetryUpdatesFromSseType) {
+        queue.async(flags: .barrier) {
+            self.updatesFromSse[type] = (self.updatesFromSse[type] ?? 0) + 1
+        }
     }
 
     func getNonReadyUsages() -> Int {
@@ -212,6 +221,15 @@ class InMemoryTelemetryStorage: TelemetryStorage {
 
     func popTags() -> [String] {
         return Array(tags.takeAll())
+    }
+
+    func popUpdatesFromSse() -> TelemetryUpdatesFromSse {
+        queue.sync(flags: .barrier) {
+            let splitsCount = self.updatesFromSse[.splits] ?? 0
+            let mySegmentsCount = self.updatesFromSse[.mySegments] ?? 0
+            self.updatesFromSse.removeAll()
+            return TelemetryUpdatesFromSse(splits: splitsCount, mySegments: mySegmentsCount)
+        }
     }
 
     func getSessionLength() -> Int64 {

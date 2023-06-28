@@ -11,7 +11,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class SyncUpdateWorker: XCTestCase {
+class SyncUpdateWorkerTest: XCTestCase {
 
     var splitsUpdateWorker: SplitsUpdateWorker!
     var mySegmentsUpdateWorker: MySegmentsUpdateWorker!
@@ -25,6 +25,8 @@ class SyncUpdateWorker: XCTestCase {
     var mySegmentsPayloadDecoder: MySegmentsV2PayloadDecoderMock!
     let userKey = IntegrationHelper.dummyUserKey
     var userKeyHash: String = ""
+    var telemetryProducer: TelemetryStorageStub!
+    var splitChangeProcessor: SplitChangeProcessorStub!
 
     override func setUp() {
         userKeyHash = DefaultMySegmentsPayloadDecoder().hash(userKey: userKey)
@@ -32,14 +34,19 @@ class SyncUpdateWorker: XCTestCase {
         splitsStorage = SplitsStorageStub()
         mySegmentsChangesChecker = MySegmentsChangesCheckerMock()
         mySegmentsPayloadDecoder = MySegmentsV2PayloadDecoderMock()
+        telemetryProducer = TelemetryStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "split1")],
                                                                archivedSplits: [],
                                                                changeNumber: 100,
                                                                updateTimestamp: 100))
         mySegmentsStorage = MySegmentsStorageStub()
         mySegmentsStorage.segments[userKey] = []
-
-        splitsUpdateWorker = SplitsUpdateWorker(synchronizer: synchronizer)
+        splitChangeProcessor = SplitChangeProcessorStub()
+        splitsUpdateWorker = SplitsUpdateWorker(synchronizer: synchronizer,
+                                                splitsStorage: splitsStorage,
+                                                splitChangeProcessor: splitChangeProcessor,
+                                                featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoderMock(),
+                                                telemetryProducer: telemetryProducer)
 
         mySegmentsUpdateWorker =  MySegmentsUpdateWorker(synchronizer: synchronizer,
                                                          mySegmentsStorage: mySegmentsStorage,
@@ -49,12 +56,14 @@ class SyncUpdateWorker: XCTestCase {
         mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
                                                              synchronizer: synchronizer,
                                                              mySegmentsStorage: mySegmentsStorage,
-                                                             payloadDecoder: mySegmentsPayloadDecoder)
+                                                             payloadDecoder: mySegmentsPayloadDecoder,
+                                                             telemetryProducer: telemetryProducer)
         splitKillWorker = SplitKillWorker(synchronizer: synchronizer, splitsStorage: splitsStorage)
     }
 
-    func testSplitUpdateWorker() throws {
-        let notification = SplitsUpdateNotification(changeNumber: -1)
+    func testSplitUpdateWorkerNoPayload() throws {
+        splitsStorage.changeNumber = 10
+        let notification = SplitsUpdateNotification(changeNumber: 100)
         let exp = XCTestExpectation(description: "exp")
         synchronizer.syncSplitsChangeNumberExp = exp
 
@@ -62,6 +71,45 @@ class SyncUpdateWorker: XCTestCase {
 
         wait(for: [exp], timeout: 3)
         XCTAssertTrue(synchronizer.synchronizeSplitsChangeNumberCalled)
+        XCTAssertFalse(telemetryProducer.recordSessionLengthCalled)
+    }
+
+    func testSplitUpdateWorkerWithPayloadChangeNumberBigger() throws {
+        let exp = XCTestExpectation()
+        telemetryProducer.recordUpdatesFromSseExp = exp
+        splitsStorage.changeNumber = 10
+        let notification = SplitsUpdateNotification(changeNumber: 100,
+                                                    previousChangeNumber: 10,
+                                                    definition: "fake_definition",
+                                                    compressionType: .gzip)
+
+        try splitsUpdateWorker.process(notification: notification)
+
+        wait(for: [exp], timeout: 5)
+
+        XCTAssertTrue(splitsStorage.updateSplitChangeCalled)
+        XCTAssertEqual(10, splitChangeProcessor.splitChange?.since)
+        XCTAssertEqual(100, splitChangeProcessor.splitChange?.till)
+        XCTAssertEqual(1, splitChangeProcessor.splitChange?.splits.count)
+        XCTAssertTrue(telemetryProducer.recordUpdatesFromSseCalled)
+        XCTAssertFalse(synchronizer.synchronizeSplitsChangeNumberCalled)
+    }
+
+    func testSplitUpdateWorkerWithPayloadChangeNumberSmaller() throws {
+
+        splitsStorage.changeNumber = 1000
+        splitsStorage.updateSplitChangeCalled = false
+        let notification = SplitsUpdateNotification(changeNumber: 100,
+                                                    previousChangeNumber: 10,
+                                                    definition: "fake_definition",
+                                                    compressionType: .gzip)
+
+        try splitsUpdateWorker.process(notification: notification)
+
+        XCTAssertFalse(splitsStorage.updateSplitChangeCalled)
+        XCTAssertNil(splitChangeProcessor.splitChange)
+        XCTAssertFalse(telemetryProducer.recordUpdatesFromSseCalled)
+        XCTAssertFalse(synchronizer.synchronizeSplitsChangeNumberCalled)
     }
 
     func testSplitKillWorker() throws {
@@ -178,6 +226,7 @@ class SyncUpdateWorker: XCTestCase {
         XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
         XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
         XCTAssertTrue(synchronizer.forceMySegmentsSyncForKeyCalled[userKey] ?? false)
+        XCTAssertFalse(telemetryProducer.recordUpdatesFromSseCalled)
     }
 
     func testMySegmentsUpdateV2WorkerRemoval() throws {
@@ -196,6 +245,7 @@ class SyncUpdateWorker: XCTestCase {
         XCTAssertEqual(["s1", "s2"], mySegmentsStorage.segments[userKey]?.sorted())
         XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
         XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
+        XCTAssertTrue(telemetryProducer.recordUpdatesFromSseCalled)
     }
 
     func testMySegmentsUpdateV2WorkerNonRemoval() throws {
@@ -210,6 +260,7 @@ class SyncUpdateWorker: XCTestCase {
         XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
         XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
         XCTAssertFalse(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
+        XCTAssertFalse(telemetryProducer.recordUpdatesFromSseCalled)
     }
 
     func testMySegmentsUpdateV2KeyListRemove() throws {
@@ -227,7 +278,8 @@ class SyncUpdateWorker: XCTestCase {
         mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
                                                              synchronizer: synchronizer,
                                                              mySegmentsStorage: mySegmentsStorage,
-                                                             payloadDecoder: mySegmentsPayloadDecoder)
+                                                             payloadDecoder: mySegmentsPayloadDecoder,
+                                                             telemetryProducer: telemetryProducer)
 
         let exp = XCTestExpectation(description: "exp")
         synchronizer.notifyMySegmentsUpdatedExp[userKey] = exp
@@ -239,6 +291,7 @@ class SyncUpdateWorker: XCTestCase {
         XCTAssertEqual(2, mySegmentsStorage.segments[userKey]?.count ?? -1)
         XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
         XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
+        XCTAssertTrue(telemetryProducer.recordUpdatesFromSseCalled)
     }
 
     func testMySegmentsUpdateV2KeyLisAdd() throws {
@@ -256,7 +309,8 @@ class SyncUpdateWorker: XCTestCase {
         mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
                                                              synchronizer: synchronizer,
                                                              mySegmentsStorage: mySegmentsStorage,
-                                                             payloadDecoder: mySegmentsPayloadDecoder)
+                                                             payloadDecoder: mySegmentsPayloadDecoder,
+                                                             telemetryProducer: telemetryProducer)
 
         let exp = XCTestExpectation(description: "exp")
         synchronizer.notifyMySegmentsUpdatedExp[userKey] = exp
@@ -267,6 +321,7 @@ class SyncUpdateWorker: XCTestCase {
         XCTAssertEqual(["s1", "s2", "s3", "s5"], mySegmentsStorage.segments[userKey]?.sorted())
         XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
         XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
+        XCTAssertTrue(telemetryProducer.recordUpdatesFromSseCalled)
     }
 
     func testMySegmentsUpdateV2KeyListNoAction() throws {
@@ -286,6 +341,7 @@ class SyncUpdateWorker: XCTestCase {
 
         XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
         XCTAssertFalse(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
+        XCTAssertFalse(telemetryProducer.recordUpdatesFromSseCalled)
     }
 
     override func tearDown() {

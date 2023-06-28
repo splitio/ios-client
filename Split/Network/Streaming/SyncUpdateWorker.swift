@@ -29,17 +29,20 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
     private let synchronizer: Synchronizer
     private let splitsStorage: SplitsStorage
     private let splitChangeProcessor: SplitChangeProcessor
-    private var payloadDecoder: FeatureFlagsPayloadDecoder
-    var decompressionProvider: DecompressorProvider = DefaultDecompressorProvider()
+    private let payloadDecoder: FeatureFlagsPayloadDecoder
+    private let telemetryProducer: TelemetryRuntimeProducer?
+    var decomProvider: CompressionProvider = DefaultDecompressionProvider()
 
     init(synchronizer: Synchronizer,
          splitsStorage: SplitsStorage,
          splitChangeProcessor: SplitChangeProcessor,
-         featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoder) {
+         featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoder,
+         telemetryProducer: TelemetryRuntimeProducer?) {
         self.synchronizer = synchronizer
         self.splitsStorage = splitsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.payloadDecoder = featureFlagsPayloadDecoder
+        self.telemetryProducer = telemetryProducer
         super.init(queueName: "SplitsUpdateWorker")
     }
 
@@ -53,12 +56,13 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
             if let payload = notification.definition, let compressionType = notification.compressionType {
                 do {
                     let split = try self.payloadDecoder.decode(payload: payload,
-                                       compressionUtil: self.decompressionProvider.decompressor(for: compressionType))
+                                       compressionUtil: self.decomProvider.decompressor(for: compressionType))
                     let change = SplitChange(splits: [split],
                                              since: notification.previousChangeNumber ?? notification.changeNumber,
                                              till: notification.changeNumber)
                     self.splitsStorage.update(splitChange: self.splitChangeProcessor.process(change))
-
+                    self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
+                    return
                 } catch {
                     Logger.e("Error decoding feature flags payload from notification: \(error)")
                 }
@@ -127,15 +131,19 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
     private let synchronizer: Synchronizer
     private let mySegmentsStorage: MySegmentsStorage
     private let payloadDecoder: MySegmentsV2PayloadDecoder
+    private let telemetryProducer: TelemetryRuntimeProducer?
     // Visible for testing
-    var decompressionProvider: DecompressorProvider = DefaultDecompressorProvider()
+    var decomProvider: CompressionProvider = DefaultDecompressionProvider()
 
-    init(userKey: String, synchronizer: Synchronizer, mySegmentsStorage: MySegmentsStorage,
-         payloadDecoder: MySegmentsV2PayloadDecoder) {
+    init(userKey: String, synchronizer: Synchronizer,
+         mySegmentsStorage: MySegmentsStorage,
+         payloadDecoder: MySegmentsV2PayloadDecoder,
+         telemetryProducer: TelemetryRuntimeProducer?) {
 
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
         self.payloadDecoder = payloadDecoder
+        self.telemetryProducer = telemetryProducer
         super.init(queueName: "MySegmentsUpdateV2Worker")
     }
 
@@ -154,13 +162,13 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
             case .boundedFetchRequest:
                 if let json = notification.data {
                     try handleBounded(encodedKeyMap: json,
-                                      compressionUtil: decompressionProvider.decompressor(for: notification.compressionType))
+                                      compressionUtil: decomProvider.decompressor(for: notification.compressionType))
                 }
             case .keyList:
                 if let json = notification.data, let segmentName = notification.segmentName {
                     try updateSegments(encodedkeyList: json,
                                        segmentName: segmentName,
-                                       compressionUtil: decompressionProvider.decompressor(for: notification.compressionType))
+                                       compressionUtil: decomProvider.decompressor(for: notification.compressionType))
                 }
             case .segmentRemoval:
                 if let segmentName = notification.segmentName {
@@ -199,6 +207,7 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
         if segments.remove(segment) != nil {
             mySegmentsStorage.set(Array(segments), forKey: key)
             synchronizer.notifySegmentsUpdated(forKey: key)
+            telemetryProducer?.recordUpdatesFromSse(type: .mySegments)
         }
     }
 
@@ -215,6 +224,7 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
                     segments.insert(segmentName)
                     mySegmentsStorage.set(Array(segments), forKey: userKey)
                     synchronizer.notifySegmentsUpdated(forKey: userKey)
+                    telemetryProducer?.recordUpdatesFromSse(type: .mySegments)
                 }
                 return
             }
@@ -281,11 +291,11 @@ class SplitKillWorker: UpdateWorker<SplitKillNotification> {
     }
 }
 
-protocol DecompressorProvider {
+protocol CompressionProvider {
     func decompressor(for type: CompressionType) -> CompressionUtil
 }
 
-struct DefaultDecompressorProvider: DecompressorProvider {
+struct DefaultDecompressionProvider: CompressionProvider {
     private let zlib: CompressionUtil = Zlib()
     private let gzip: CompressionUtil = Gzip()
 
