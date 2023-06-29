@@ -27,7 +27,12 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
 
     var factory: SplitFactory!
 
+    var changes = ""
+
+    var changesLoaded = false
+
     override func setUp() {
+        changesLoaded = false
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -76,8 +81,6 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         XCTAssertEqual(treatmentBefore, "control")
         XCTAssertEqual(treatmentAfter, "off")
 
-
-        print("------")
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
             _ = semaphore.signal()
@@ -129,10 +132,13 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         semaphore.wait()
     }
 
-    func testInstantUpdateRemove() throws {
-
+    func testInstantUpdateArchived() throws {
+        changesLoaded = true
+        loadChanges()
         factory = buildFactory()
         let client = factory.client
+
+        let featureFlag = "NET_CORE_getTreatmentWithConfigAfterArchive"
 
         let sdkReadyExp = XCTestExpectation(description: "SDK READY Expectation")
         var sdkUpdExp = XCTestExpectation(description: "SDK UPDATE Expectation")
@@ -152,19 +158,19 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         ffExp = XCTestExpectation()
         streamingBinding?.push(message: ":keepalive")
         wait(for: [mySegExp!, ffExp!], timeout: 5)
-        let treatmentBefore = client.getTreatment(featureFlagName)
+        let treatmentBefore = client.getTreatment(featureFlag)
         mySegExp = nil
         ffExp = nil
 
         sdkUpdExp = XCTestExpectation()
-        pushMessage(TestingData.kEscapedUpdateSplitsNotificationZlib)
+        pushMessage(TestingData.kArchivedFeatureFlagZlib)
         wait(for: [sdkUpdExp], timeout: 5)
 
-        let treatmentAfter = client.getTreatment(featureFlagName)
+        let treatmentAfter = client.getTreatment(featureFlag)
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
-        XCTAssertEqual(treatmentBefore, "control")
-        XCTAssertEqual(treatmentAfter, "off")
+        XCTAssertEqual(treatmentBefore, "on")
+        XCTAssertEqual(treatmentAfter, "control")
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -179,17 +185,19 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
-                print("CHANGES")
+
                 self.ffExp?.fulfill()
+                if self.changesLoaded {
+                    self.changesLoaded = false
+                    return TestDispatcherResponse(code: 200, data: Data(self.changes.utf8))
+                }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
 
             case let(urlString) where urlString.contains("mySegments"):
-                print("MY SEG")
                 self.mySegExp?.fulfill()
                 return self.createResponse(code: 200, json: IntegrationHelper.emptyMySegments)
 
             case let(urlString) where urlString.contains("auth"):
-                print("AUTH")
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             default:
                 return TestDispatcherResponse(code: 500)
@@ -204,7 +212,6 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            print("STREM")
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             self.sseExp.fulfill()
             return self.streamingBinding!
@@ -242,5 +249,13 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
         return builder.setApiKey(apiKey).setMatchingKey(userKey)
             .setConfig(splitConfig).build()!
+    }
+
+    private func loadChanges() {
+        let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
+        change?.splits[0].name = "NET_CORE_getTreatmentWithConfigAfterArchive"
+        change?.since = 500
+        change?.till = 500
+        changes = (try? Json.encodeToJson(change)) ?? IntegrationHelper.emptySplitChanges
     }
 }

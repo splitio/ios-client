@@ -38,7 +38,6 @@ class DefaultSseNotificationParser: SseNotificationParser {
 
     func parseIncoming(jsonString: String) -> IncomingNotification? {
         do {
-            print("NOT INC: \(jsonString)")
             let rawNotification = try Json.decodeFrom(json: jsonString, to: RawNotification.self)
             if isError(notification: rawNotification) {
                 return IncomingNotification(type: .sseError)

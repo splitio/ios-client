@@ -105,7 +105,6 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func syncAll() {
-        print("SYNC ALL")
         synchronizeSplits()
         byKeySynchronizer.syncAll()
     }
@@ -232,9 +231,7 @@ class DefaultSynchronizer: Synchronizer {
 
     // MARK: Private
     private func synchronizeSplits() {
-        print("BEF SYN FF")
         self.featureFlagsSynchronizer.synchronize()
-        print("AF SYN FF")
     }
 
     private func recordSyncModeEvent(_ mode: Int64) {

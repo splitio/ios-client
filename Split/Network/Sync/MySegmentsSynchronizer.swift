@@ -64,7 +64,6 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func synchronizeMySegments() {
-        print("SYNC MS")
         mySegmentsSyncWorker.start()
     }
 
