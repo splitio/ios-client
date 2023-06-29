@@ -46,7 +46,8 @@ class SplitsStorageStub: SplitsStorage {
     func getAll() -> [String : Split] {
         return inMemorySplits.all
     }
-    
+
+    var updateSplitChangeCalled = false
     func update(splitChange: ProcessedSplitChange) {
         updatedSplitChange = splitChange
         let active = splitChange.activeSplits
@@ -59,6 +60,7 @@ class SplitsStorageStub: SplitsStorage {
         archived.forEach {
             inMemorySplits.removeValue(forKey: $0.name?.lowercased() ?? "")
         }
+        updateSplitChangeCalled = true
     }
     
     func update(filterQueryString: String) {

@@ -362,6 +362,23 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         XCTAssertEqual(2000, length)
     }
 
+    func testUpdatesFromSse() {
+
+        for i in 0..<10 {
+            storage.recordUpdatesFromSse(type: .splits)
+            if (i % 2) == 0 {
+                storage.recordUpdatesFromSse(type: .mySegments)
+            }
+        }
+        let count = storage.popUpdatesFromSse()
+        let afterCount = storage.popUpdatesFromSse()
+
+        XCTAssertEqual(10, count.splits)
+        XCTAssertEqual(5, count.mySegments)
+        XCTAssertEqual(0, afterCount.splits)
+        XCTAssertEqual(0, afterCount.mySegments)
+    }
+
 
     func recordStreamingEvent(type: TelemetryStreamingEventType,
                               data: Int64,

@@ -115,17 +115,21 @@ class SyncManagerBuilder {
                                  mySegmentsStorage: storageContainer.mySegmentsStorage,
                                  mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
 
-
         return  DefaultSseNotificationProcessor(
             notificationParser: DefaultSseNotificationParser(),
-            splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer),
+            splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer,
+                                                   splitsStorage: storageContainer.splitsStorage,
+                                                   splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                   featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder(),
+                                                   telemetryProducer: storageContainer.telemetryStorage),
             splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
                                              splitsStorage: storageContainer.splitsStorage),
             mySegmentsUpdateWorker: mySegmentsUpdateWorker,
             mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker(
                 userKey: userKey, synchronizer: synchronizer,
                 mySegmentsStorage: storageContainer.mySegmentsStorage,
-                payloadDecoder: DefaultMySegmentsV2PayloadDecoder()))
+                payloadDecoder: DefaultMySegmentsV2PayloadDecoder(),
+                telemetryProducer: storageContainer.telemetryStorage))
     }
 
     private func buildPushManager(broadcasterChannel: SyncEventBroadcaster)

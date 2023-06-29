@@ -449,6 +449,8 @@
 		9530FD7A27F24306005027AA /* EventsManagerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */; };
 		9530FD7C27F253CA005027AA /* SplitEventsCoordinatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530FD7B27F253CA005027AA /* SplitEventsCoordinatorTest.swift */; };
 		95342E972A4B34830045B201 /* FeatureFlagsPayloadDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C027702A4A3FED000B9B4F /* FeatureFlagsPayloadDecoder.swift */; };
+		95342E992A4C71300045B201 /* FeatureFlagsPayloadDecoderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95342E982A4C71300045B201 /* FeatureFlagsPayloadDecoderMock.swift */; };
+		95342E9B2A4C97F10045B201 /* DecompressionMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95342E9A2A4C97F10045B201 /* DecompressionMocks.swift */; };
 		953911A8267A4F250040433A /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953911A7267A4F250040433A /* LRUCache.swift */; };
 		953911AD267A64FE0040433A /* ImpresionsObserverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953911AC267A64FE0040433A /* ImpresionsObserverTest.swift */; };
 		953911B3267A97DF0040433A /* ImpressionHasherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953911B2267A97DF0040433A /* ImpressionHasherTest.swift */; };
@@ -1683,6 +1685,8 @@
 		952FA1682A44C0FB00264AB5 /* SplitStreamingUT.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitStreamingUT.xctestplan; sourceTree = "<group>"; };
 		9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsManagerCoordinator.swift; sourceTree = "<group>"; };
 		9530FD7B27F253CA005027AA /* SplitEventsCoordinatorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsCoordinatorTest.swift; sourceTree = "<group>"; };
+		95342E982A4C71300045B201 /* FeatureFlagsPayloadDecoderMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagsPayloadDecoderMock.swift; sourceTree = "<group>"; };
+		95342E9A2A4C97F10045B201 /* DecompressionMocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecompressionMocks.swift; sourceTree = "<group>"; };
 		953911A7267A4F250040433A /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
 		953911AC267A64FE0040433A /* ImpresionsObserverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpresionsObserverTest.swift; sourceTree = "<group>"; };
 		953911B2267A97DF0040433A /* ImpressionHasherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionHasherTest.swift; sourceTree = "<group>"; };
@@ -2909,6 +2913,7 @@
 				59F4AAA224FFCD5000A1C69A /* SyncEventBroadcasterStub.swift */,
 				59F4AA9E24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift */,
 				59F4AAAB2508FD0D00A1C69A /* PushNotificationManagerStub.swift */,
+				95342E9A2A4C97F10045B201 /* DecompressionMocks.swift */,
 			);
 			path = Streaming;
 			sourceTree = "<group>";
@@ -3101,6 +3106,7 @@
 				954F9C74257961C100140B81 /* HttpSplitFetcherStub.swift */,
 				95C7569C2696457500696148 /* NotificationHelperStub.swift */,
 				954F9C7C2579697B00140B81 /* SplitChangeProcessorStub.swift */,
+				95342E982A4C71300045B201 /* FeatureFlagsPayloadDecoderMock.swift */,
 				95F3EFF3258D2C0300084AF8 /* RecorderWorkerStub.swift */,
 				9546079125BF1B7E007FFD35 /* PeriodicRecorderWorkerStub.swift */,
 				95F3F001258D3EE700084AF8 /* HttpEventsRecorderStub.swift */,
@@ -3977,6 +3983,7 @@
 				95C027732A4B115C000B9B4F /* FeatureFlagsPayloadDecoderTest.swift in Sources */,
 				955BB49728229E9100762D7E /* SseClientFactoryStub.swift in Sources */,
 				956A7E2C297ECB110080D53C /* SplitsDecoderTest.swift in Sources */,
+				95342E9B2A4C97F10045B201 /* DecompressionMocks.swift in Sources */,
 				955AAB8F283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift in Sources */,
 				956A7E31297EE5A60080D53C /* ComputeProcessCountTest.swift in Sources */,
 				59EFD2FB24B8EF6F0052920D /* HttpRequestMock.swift in Sources */,
@@ -4164,6 +4171,7 @@
 				5905D4F3255C587F006DA3B1 /* SplitsStorageTests.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
 				95F3F0282590D81B00084AF8 /* ImpressionsRecorderWorkerTests.swift in Sources */,
+				95342E992A4C71300045B201 /* FeatureFlagsPayloadDecoderMock.swift in Sources */,
 				9577A8472683B8C800D92AE1 /* HttpImpressionsCountRecorderTests.swift in Sources */,
 				957F8CF327BD3A41001FF7C2 /* StreamingNoReconectWhenPollingTest.swift in Sources */,
 				954F9C7025795CD300140B81 /* SplitsStorageStub.swift in Sources */,

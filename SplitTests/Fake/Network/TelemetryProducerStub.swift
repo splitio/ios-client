@@ -8,6 +8,7 @@
 
 import Foundation
 @testable import Split
+import XCTest
 
 class TelemetryStorageStub: TelemetryStorage {
 
@@ -182,5 +183,18 @@ class TelemetryStorageStub: TelemetryStorage {
 
     func getTimeUntilReadyFromCache() -> Int64 {
         return 0
+    }
+
+    var recordUpdatesFromSseExp: XCTestExpectation?
+    var recordUpdatesFromSseCalled = false
+    func recordUpdatesFromSse(type: TelemetryUpdatesFromSseType) {
+        recordUpdatesFromSseCalled = true
+        recordUpdatesFromSseExp?.fulfill()
+    }
+
+    var popUpdatesFromSseCalled = false
+    func popUpdatesFromSse() -> TelemetryUpdatesFromSse {
+        popUpdatesFromSseCalled = true
+        return TelemetryUpdatesFromSse(splits: 0, mySegments: 0)
     }
 }
