@@ -38,6 +38,7 @@ class DefaultSseNotificationParser: SseNotificationParser {
 
     func parseIncoming(jsonString: String) -> IncomingNotification? {
         do {
+            print("NOT INC: \(jsonString)")
             let rawNotification = try Json.decodeFrom(json: jsonString, to: RawNotification.self)
             if isError(notification: rawNotification) {
                 return IncomingNotification(type: .sseError)
@@ -50,6 +51,7 @@ class DefaultSseNotificationParser: SseNotificationParser {
             return IncomingNotification(type: type, channel: rawNotification.channel,
                                         jsonData: rawNotification.data, timestamp: rawNotification.timestamp ?? 0)
         } catch {
+            print("ERROR: \(error.localizedDescription)")
             Logger.e("Unexpected error while parsing streaming notification \(error.localizedDescription)")
         }
         return nil

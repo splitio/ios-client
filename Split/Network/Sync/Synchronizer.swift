@@ -28,6 +28,7 @@ protocol Synchronizer: ImpressionLogger {
     func startRecordingTelemetry()
     func stopRecordingTelemetry()
     func pushEvent(event: EventDTO)
+    func notifyFeatureFlagsUpdated()
     func notifySegmentsUpdated(forKey key: String)
     func notifySplitKilled()
     func pause()
@@ -104,6 +105,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func syncAll() {
+        print("SYNC ALL")
         synchronizeSplits()
         byKeySynchronizer.syncAll()
     }
@@ -181,6 +183,10 @@ class DefaultSynchronizer: Synchronizer {
         }
     }
 
+    func notifyFeatureFlagsUpdated() {
+        featureFlagsSynchronizer.notifyUpdated()
+    }
+
     func notifySegmentsUpdated(forKey key: String) {
         byKeySynchronizer.notifyMySegmentsUpdated(forKey: key)
     }
@@ -226,7 +232,9 @@ class DefaultSynchronizer: Synchronizer {
 
     // MARK: Private
     private func synchronizeSplits() {
+        print("BEF SYN FF")
         self.featureFlagsSynchronizer.synchronize()
+        print("AF SYN FF")
     }
 
     private func recordSyncModeEvent(_ mode: Int64) {

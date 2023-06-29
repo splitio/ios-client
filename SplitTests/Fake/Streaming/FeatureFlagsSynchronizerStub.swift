@@ -39,6 +39,11 @@ class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer {
         notifyKilledCalled = true
     }
 
+    var notifyUpdatedCalled = false
+    func notifyUpdated() {
+        notifyUpdatedCalled = true
+    }
+
     var pauseCalled = false
     func pause() {
         pauseCalled = true

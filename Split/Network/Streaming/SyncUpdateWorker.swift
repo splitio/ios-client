@@ -61,6 +61,7 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
                                              since: notification.previousChangeNumber ?? notification.changeNumber,
                                              till: notification.changeNumber)
                     self.splitsStorage.update(splitChange: self.splitChangeProcessor.process(change))
+                    self.synchronizer.notifyFeatureFlagsUpdated()
                     self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
                     return
                 } catch {
