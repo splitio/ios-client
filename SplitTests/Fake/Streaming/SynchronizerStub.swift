@@ -184,7 +184,7 @@ class SynchronizerStub: Synchronizer {
         notifyMySegmentsUpdatedCalled = true
     }
 
-    var notifyFeatureFlagsUpdatedCalled = true
+    var notifyFeatureFlagsUpdatedCalled = false
     func notifyFeatureFlagsUpdated() {
         notifyFeatureFlagsUpdatedCalled = true
     }
