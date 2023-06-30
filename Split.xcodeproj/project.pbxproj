@@ -814,6 +814,7 @@
 		9595AD7527F4DC3B006E3A54 /* SplitClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595AD7427F4DC3B006E3A54 /* SplitClientManager.swift */; };
 		9595C1A2274573DA0092123F /* AttributesEvaluationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */; };
 		9595C1A8274574220092123F /* attributes_test_split.json in Resources */ = {isa = PBXBuildFile; fileRef = 9595C1A7274574220092123F /* attributes_test_split.json */; };
+		959FB1272A4CCE2C009DC9E8 /* InstantFeatureFlagsUpdateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959FB1262A4CCE2C009DC9E8 /* InstantFeatureFlagsUpdateTest.swift */; };
 		95ABF4AF292EC830006ED016 /* UserConsent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4AE292EC830006ED016 /* UserConsent.swift */; };
 		95ABF4B8292FF451006ED016 /* ConfigObjcTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */; };
 		95ABF4BA293003C1006ED016 /* ConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4B9293003C1006ED016 /* ConfigTest.swift */; };
@@ -1802,6 +1803,7 @@
 		9595AD7427F4DC3B006E3A54 /* SplitClientManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitClientManager.swift; sourceTree = "<group>"; };
 		9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesEvaluationTest.swift; sourceTree = "<group>"; };
 		9595C1A7274574220092123F /* attributes_test_split.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = attributes_test_split.json; sourceTree = "<group>"; };
+		959FB1262A4CCE2C009DC9E8 /* InstantFeatureFlagsUpdateTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstantFeatureFlagsUpdateTest.swift; sourceTree = "<group>"; };
 		95ABF4AE292EC830006ED016 /* UserConsent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConsent.swift; sourceTree = "<group>"; };
 		95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfigObjcTest.m; sourceTree = "<group>"; };
 		95ABF4B9293003C1006ED016 /* ConfigTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigTest.swift; sourceTree = "<group>"; };
@@ -2702,6 +2704,7 @@
 				9580C98126FB8A840021D729 /* StreamingControlResetTest.swift */,
 				9580C98726FCA6400021D729 /* StreamingDelayTest.swift */,
 				95B2497F26F39C9B00B34507 /* MySegmentUpdateV2Test.swift */,
+				959FB1262A4CCE2C009DC9E8 /* InstantFeatureFlagsUpdateTest.swift */,
 			);
 			path = Streaming;
 			sourceTree = "<group>";
@@ -4225,6 +4228,7 @@
 				5921ED3325379AA3000D6C8B /* ReachabilityMock.swift in Sources */,
 				95649FBA2603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift in Sources */,
 				95816FC92739D3A4004228A3 /* PersistentAttributesStorageStub.swift in Sources */,
+				959FB1272A4CCE2C009DC9E8 /* InstantFeatureFlagsUpdateTest.swift in Sources */,
 				9580C98826FCA6400021D729 /* StreamingDelayTest.swift in Sources */,
 				95DAF21D29E60CC4001C7BBE /* KeyGeneratorTest.swift in Sources */,
 				955B59522804B52500D105CD /* ByKeyAttributesStorageStub.swift in Sources */,

@@ -12,6 +12,8 @@ import XCTest
 
 class SynchronizerSpy: Synchronizer {
 
+
+
     var splitSynchronizer: Synchronizer
 
     var loadAndSynchronizeSplitsCalled = false
@@ -174,6 +176,11 @@ class SynchronizerSpy: Synchronizer {
     func notifySegmentsUpdated(forKey key: String) {
         notifyMySegmentsUpdatedCalled = true
         splitSynchronizer.notifySegmentsUpdated(forKey: key)
+    }
+
+    var notifyFeatureFlagsUpdatedCalled = false
+    func notifyFeatureFlagsUpdated() {
+        notifyFeatureFlagsUpdatedCalled = true
     }
 
     func notifySplitKilled() {

@@ -28,6 +28,7 @@ protocol Synchronizer: ImpressionLogger {
     func startRecordingTelemetry()
     func stopRecordingTelemetry()
     func pushEvent(event: EventDTO)
+    func notifyFeatureFlagsUpdated()
     func notifySegmentsUpdated(forKey key: String)
     func notifySplitKilled()
     func pause()
@@ -179,6 +180,10 @@ class DefaultSynchronizer: Synchronizer {
 
             self.impressionsTracker.push(impression)
         }
+    }
+
+    func notifyFeatureFlagsUpdated() {
+        featureFlagsSynchronizer.notifyUpdated()
     }
 
     func notifySegmentsUpdated(forKey key: String) {
