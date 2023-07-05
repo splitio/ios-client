@@ -243,4 +243,3 @@ class SyncPostBgTest: XCTestCase {
     }
 
 }
-
