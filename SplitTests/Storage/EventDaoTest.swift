@@ -119,7 +119,7 @@ class EventDaoTest: XCTestCase {
         // load events and filter them by encrypted feature name
         let loadedEvent = getBy(coreDataHelper: helper)
 
-        let event = try? Json.dynamicEncodeFrom(json: loadedEvent ?? "", to: EventDTO.self)
+        let event = try? Json.dynamicDecodeFrom(json: loadedEvent ?? "", to: EventDTO.self)
 
         XCTAssertNotNil(loadedEvent)
         XCTAssertFalse(loadedEvent?.contains("key1") ?? true)

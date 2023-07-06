@@ -95,7 +95,7 @@ class MultiClientEvaluationTest: XCTestCase {
 
     func testEvaluationFromCache() {
         var cache = [String: Bool]()
-        let changes = try! Json.encodeFrom(json: getChanges().stringRepresentation, to: SplitChange.self)
+        let changes = try! Json.decodeFrom(json: getChanges().stringRepresentation, to: SplitChange.self)
         let db = TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
         db.splitDao.syncInsertOrUpdate(split: changes.splits[0])
         setupFactory(database: db)
@@ -347,7 +347,7 @@ class MultiClientEvaluationTest: XCTestCase {
     private func event(from data: Data?) -> [EventDTO]? {
         guard let data = data else { return nil }
         do {
-            return try Json.dynamicEncodeFrom(json: data.stringRepresentation, to: [EventDTO].self)
+            return try Json.dynamicDecodeFrom(json: data.stringRepresentation, to: [EventDTO].self)
         } catch {
             print(error)
         }
@@ -357,7 +357,7 @@ class MultiClientEvaluationTest: XCTestCase {
     private func impressions(from data: Data?) -> [KeyImpression]? {
         guard let data = data else { return nil }
         do {
-            let tests =  try Json.encodeFrom(json: data.stringRepresentation, to: [ImpressionsTest].self)
+            let tests =  try Json.decodeFrom(json: data.stringRepresentation, to: [ImpressionsTest].self)
             return tests.flatMap { $0.keyImpressions }
         } catch {
             print(error)

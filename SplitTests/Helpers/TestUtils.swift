@@ -11,7 +11,7 @@ import Foundation
 
 class TestUtils {
     static func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
-        return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
+        return try Json.decodeFrom(json: content, to: [ImpressionsTest].self)
     }
 
     static func impressionsFromHit(request: HttpDataRequest) throws -> [ImpressionsTest] {

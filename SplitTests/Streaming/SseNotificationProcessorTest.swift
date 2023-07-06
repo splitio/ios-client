@@ -33,13 +33,18 @@ class SseNotificationProcessorTest: XCTestCase {
         let mySegmentsStorage = MySegmentsStorageStub()
 
         sseNotificationParser = SseNotificationParserStub()
-        splitsUpdateWorker = SplitsUpdateWorkerMock(synchronizer: synchronizer)
+        splitsUpdateWorker = SplitsUpdateWorkerMock(synchronizer: synchronizer,
+                                                    splitsStorage: splitsStorage,
+                                                    splitChangeProcessor: SplitChangeProcessorStub(),
+                                                    featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoderMock(),
+                                                    telemetryProducer: TelemetryStorageStub())
         mySegmentsUpdateWorker =  MySegmentsUpdateWorkerMock(synchronizer: synchronizer,
                                                              mySegmentsStorage: mySegmentsStorage,
                                                              mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
         mySegmentsUpdateV2Worker =  MySegmentsUpdateV2WorkerMock(userKey: userKey, synchronizer: synchronizer,
                                                                  mySegmentsStorage: mySegmentsStorage,
-                                                                 payloadDecoder: payloadDecoderMock)
+                                                                 payloadDecoder: payloadDecoderMock,
+                                                                 telemetryProducer: TelemetryStorageStub())
         splitKillWorker = SplitKillWorkerMock(synchronizer: synchronizer, splitsStorage: splitsStorage)
 
         notificationProcessor = DefaultSseNotificationProcessor(notificationParser: sseNotificationParser,

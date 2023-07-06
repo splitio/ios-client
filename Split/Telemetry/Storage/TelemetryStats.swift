@@ -144,6 +144,22 @@ struct TelemetryMethodLatencies: Codable {
     }
 }
 
+struct TelemetryUpdatesFromSse: Codable {
+    var splits: Int = 0
+    var mySegments: Int = 0
+
+    enum CodingKeys: String, CodingKey {
+        case splits = "sp"
+        case mySegments = "ms"
+    }
+}
+
+// create enum
+enum TelemetryUpdatesFromSseType {
+    case splits
+    case mySegments
+}
+
 // Codable to allow testing
 struct TelemetryStats: Codable {
 
@@ -165,6 +181,7 @@ struct TelemetryStats: Codable {
     var eventsDropped: Int?
     var streamingEvents: [TelemetryStreamingEvent]?
     var tags: [String]?
+    var updatesFromSse:TelemetryUpdatesFromSse
 
     enum CodingKeys: String, CodingKey {
         case lastSynchronization = "lS"
@@ -185,5 +202,6 @@ struct TelemetryStats: Codable {
         case eventsDropped = "eD"
         case streamingEvents = "sE"
         case tags = "t"
+        case updatesFromSse = "ufs"
     }
 }

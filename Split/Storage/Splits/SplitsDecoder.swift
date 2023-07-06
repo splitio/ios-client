@@ -71,7 +71,7 @@ struct SplitsSerialDecoder: SplitsDecoder {
         return list.compactMap { json in
             do {
                 let plainJson = cipher?.decrypt(json) ?? json
-                return try Json.encodeFrom(json: plainJson, to: Split.self)
+                return try Json.decodeFrom(json: plainJson, to: Split.self)
             } catch {
                 Logger.v("Failed decoding feature flag json: \(json)")
             }

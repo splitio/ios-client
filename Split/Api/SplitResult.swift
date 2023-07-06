@@ -12,7 +12,7 @@ import Foundation
     @objc public var treatment: String
     @objc public var config: String?
 
-    init(treatment: String, config: String? = nil) {
+    @objc public init(treatment: String, config: String? = nil) {
         self.treatment = treatment
         self.config = config
     }

@@ -422,7 +422,7 @@ class TelemetryIntegrationTest: XCTestCase {
 
             case let(urlString) where urlString.contains("metrics/config"):
                 if let body = request.body?.stringRepresentation.utf8 {
-                    if let config = try? Json.encodeFrom(json: String(body), to: TelemetryConfig.self) {
+                    if let config = try? Json.decodeFrom(json: String(body), to: TelemetryConfig.self) {
                         self.configs.append(config)
                     }
                 }
@@ -432,7 +432,7 @@ class TelemetryIntegrationTest: XCTestCase {
 
             case let(urlString) where urlString.contains("metrics/usage"):
                 if let body = request.body?.stringRepresentation.utf8 {
-                    if let config = try? Json.encodeFrom(json: String(body), to: TelemetryStats.self) {
+                    if let config = try? Json.decodeFrom(json: String(body), to: TelemetryStats.self) {
                         self.stats.append(config)
                     }
                 }
@@ -489,7 +489,7 @@ class TelemetryIntegrationTest: XCTestCase {
 
             case let(urlString) where urlString.contains("metrics/config"):
                 if let body = request.body?.stringRepresentation.utf8 {
-                    if let config = try? Json.encodeFrom(json: String(body), to: TelemetryConfig.self) {
+                    if let config = try? Json.decodeFrom(json: String(body), to: TelemetryConfig.self) {
                         self.configs.append(config)
                     }
                 }
@@ -499,7 +499,7 @@ class TelemetryIntegrationTest: XCTestCase {
 
             case let(urlString) where urlString.contains("metrics/usage"):
                 if let body = request.body?.stringRepresentation.utf8 {
-                    if let config = try? Json.encodeFrom(json: String(body), to: TelemetryStats.self) {
+                    if let config = try? Json.decodeFrom(json: String(body), to: TelemetryStats.self) {
                         self.stats.append(config)
                     }
                 }

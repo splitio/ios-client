@@ -67,6 +67,9 @@
          <TestPlanReference
             reference = "container:SplitStreamingUT.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitPushManagerUT.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference

@@ -76,7 +76,7 @@ struct TestingHelper {
     static func createTestImpressions(count: Int = 10) -> [ImpressionsTest] {
         var impressions = [ImpressionsTest]()
         for _ in 0..<count {
-            let impressionTest = try! Json.encodeFrom(json: "{\"f\":\"T1\", \"i\":[]}", to: ImpressionsTest.self)
+            let impressionTest = try! Json.decodeFrom(json: "{\"f\":\"T1\", \"i\":[]}", to: ImpressionsTest.self)
             impressions.append(impressionTest)
         }
         return impressions
@@ -157,7 +157,7 @@ struct TestingHelper {
     }
 
     static func createTelemetryStats() -> TelemetryStats {
-        return TelemetryStats(lastSynchronization: nil, methodLatencies: nil, methodExceptions: nil, httpErrors: nil, httpLatencies: nil, tokenRefreshes: 1, authRejections: 1, impressionsQueued: 1, impressionsDeduped: 1, impressionsDropped: 1, splitCount: 1, segmentCount: 1, segmentKeyCount: 2, sessionLengthMs: 88888, eventsQueued: 1, eventsDropped: 1, streamingEvents: nil, tags: nil)
+        return TelemetryStats(lastSynchronization: nil, methodLatencies: nil, methodExceptions: nil, httpErrors: nil, httpLatencies: nil, tokenRefreshes: 1, authRejections: 1, impressionsQueued: 1, impressionsDeduped: 1, impressionsDropped: 1, splitCount: 1, segmentCount: 1, segmentKeyCount: 2, sessionLengthMs: 88888, eventsQueued: 1, eventsDropped: 1, streamingEvents: nil, tags: nil, updatesFromSse: TelemetryUpdatesFromSse(splits: 10, mySegments: 20))
     }
 
     static func createUniqueKeys(keyCount: Int = 5, featureCount: Int = 20) -> UniqueKeys {

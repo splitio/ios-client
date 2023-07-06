@@ -17,9 +17,6 @@ class MySegmentsV2PayloaDecoderTest: XCTestCase {
     let gzip = Gzip()
     let zlib = Zlib()
 
-    override func setUp() {
-    }
-
     func testKeyListGzipPayload() throws {
 
         let payload = try decoder.decodeAsString(payload: TestingData.encodedKeyListPayloadGzip(),

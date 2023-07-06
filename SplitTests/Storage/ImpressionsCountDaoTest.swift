@@ -102,7 +102,7 @@ class ImpressionsCountDaoTest: XCTestCase {
         // load impressions and filter them by encrypted feature name
         let loadedCountBody = getBy(coreDataHelper: helper)
 
-        let count = try? Json.encodeFrom(json: loadedCountBody ?? "", to: ImpressionsCountPerFeature.self)
+        let count = try? Json.decodeFrom(json: loadedCountBody ?? "", to: ImpressionsCountPerFeature.self)
 
         XCTAssertNotNil(loadedCountBody)
         XCTAssertNotEqual("}", loadedCountBody?.suffix(1) ?? "")

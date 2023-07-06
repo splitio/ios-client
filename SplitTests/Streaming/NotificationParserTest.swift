@@ -21,6 +21,10 @@ class NotificationParserTest: XCTestCase {
 {\"id\":\"VSEQrcq9D8:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==\",\"timestamp\":1584554772719,\"encoding\":\"json\",\"channel\":\"MzM5Njc0ODcyNg==_MTExMzgwNjgx_splits\",\"data\":\"{\\\"type\\\":\\\"SPLIT_UPDATE\\\",\\\"changeNumber\\\":1584554772108}\"}
 """
 
+    let splitsChangeNotificationMessageWithPayload = """
+{\"id\":\"VSEQrcq9D8:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==\",\"timestamp\":1584554772719,\"encoding\":\"json\",\"channel\":\"MzM5Njc0ODcyNg==_MTExMzgwNjgx_splits\",\"data\":\"{\\\"type\\\":\\\"SPLIT_UPDATE\\\",\\\"changeNumber\\\":1584554772108 ,\\\"pcn\\\":0,\\\"c\\\":1, \\\"d\\\":\\\"H4sIAAAAAAAA/8yT327aTBDFXyU612vJxoTgvUMfKB8qcaSapqoihAZ7DNusvWi9TpUiv3tl/pdQVb1qL+cwc3bOj/EGzlKeq3T6tuaYCoZEXbGFgMogkXXDIM0y31v4C/aCgMnrU9/3gl7Pp4yilMMIAuVusqDamvlXeiWIg/FAa5OSU6aEDHz/ip4wZ5Be1AmjoBsFAtVOCO56UXh31/O7ApUjV1eQGPw3HT+NIPCitG7bctIVC2ScU63d1DK5gksHCZPnEEhXVC45rosFW8ig1++GYej3g85tJEB6aSA7Aqkpc7Ws7XahCnLTbLVM7evnzalsUUHi8//j6WgyTqYQKMilK7b31tRryLa3WKiyfRCDeHhq2Dntiys+JS/J8THUt5VyrFXlHnYTQ3LU2h91yGdQVqhy+0RtTeuhUoNZ08wagTVZdxbBndF5vYVApb7z9m9pZgKaFqwhT+6coRHvg398nEweP/157Bd+S1hz6oxtm88O73B0jbhgM47nyej+YRRfgdNODDlXJWcJL9tUF5SqnRqfbtPr4LdcTHnk4rfp3buLOkG7+Pmp++vRM9w/wVblzX7Pm8OGfxf5YDKZfxh9SS6B/2Pc9t/7ja01o5k1PwIAAP//uTipVskEAAA=\\\"}\"}
+"""
+
     let mySegmentsUpdateNotificationMessage = """
  {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"\(kMySegmentsChannel)\",\"data\":\"{\\\"type\\\":\\\"MY_SEGMENTS_UPDATE\\\",\\\"changeNumber\\\":1584647532812,\\\"includesPayload\\\":false}\"}
 """
@@ -61,6 +65,18 @@ class NotificationParserTest: XCTestCase {
 
         XCTAssertEqual(NotificationType.splitUpdate, incoming?.type);
         XCTAssertEqual(1584554772108, splitUpdate.changeNumber);
+    }
+
+    func testProcessSplitUpdateWithPayload() throws {
+        let incoming = notificationParser.parseIncoming(jsonString: splitsChangeNotificationMessageWithPayload);
+        let splitUpdate = try notificationParser.parseSplitUpdate(jsonString: incoming!.jsonData!);
+
+        XCTAssertEqual(NotificationType.splitUpdate, incoming?.type);
+        XCTAssertEqual(1584554772108, splitUpdate.changeNumber);
+        XCTAssertEqual(0, splitUpdate.previousChangeNumber);
+        XCTAssertEqual(CompressionType.gzip, splitUpdate.compressionType);
+        XCTAssertNotNil(splitUpdate.definition);
+
     }
 
 
