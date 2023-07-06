@@ -210,6 +210,7 @@ class PushNotificationManagerTest: XCTestCase {
         wait(for: [exp], timeout: 3)
 
         exp = XCTestExpectation(description: "reset")
+        broadcasterChannel.pushExpectationCallCount = 0
         broadcasterChannel.pushExpectationTriggerCallCount = 2
         broadcasterChannel.pushExpectation = exp
 
