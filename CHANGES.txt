@@ -1,3 +1,8 @@
+2.21.0: (Jul 18, 2023)
+- Improved streaming architecture implementation to apply feature flag updates from the notification received which is now enhanced, improving efficiency and reliability of the whole update system.
+- Added logic to do a full check of feature flags immediately when the app comes back to foreground, limited to once per minute.
+- Updated SpliResult init to be public in order to improve testability.
+
 2.20.2: (Jun 23, 2023)
 - Improved the streaming disconnection implementation to address and resolve sporadic crashes.
 
