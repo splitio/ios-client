@@ -44,7 +44,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         registerMaxAllowedExecutionTimesPerEvent()
 
         if config.sdkReadyTimeOut > 0 {
-            let readyTimedoutQueue = DispatchQueue(label: "io.Split.Event.TimedOut")
+            let readyTimedoutQueue = DispatchQueue(label: "split-event-timedout")
             readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.sdkReadyTimeOut)) {  [weak self] in
                 guard let self = self else { return }
                 self.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)

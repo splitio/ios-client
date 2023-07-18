@@ -241,7 +241,7 @@ class SplitIntegrationTests: XCTestCase {
 
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
             return change
         }
         return nil

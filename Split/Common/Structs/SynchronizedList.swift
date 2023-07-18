@@ -30,7 +30,7 @@ class SynchronizedList<T> {
     }
 
     init(capacity: Int) {
-        self.queue = DispatchQueue(label: "Split.SynchronizedList",
+        self.queue = DispatchQueue(label: "split-synchronized-list",
                                    target: .global())
         self.items = [T]()
         self.capacity = capacity

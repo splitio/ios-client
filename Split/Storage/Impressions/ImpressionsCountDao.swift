@@ -124,7 +124,7 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
 
     private func mapEntityToModel(_ entity: ImpressionsCountEntity) throws -> ImpressionsCountPerFeature {
         let body = cipher?.decrypt(entity.body) ?? entity.body
-        var model = try Json.encodeFrom(json: body, to: ImpressionsCountPerFeature.self)
+        var model = try Json.decodeFrom(json: body, to: ImpressionsCountPerFeature.self)
         model.storageId = entity.storageId
         return model
     }

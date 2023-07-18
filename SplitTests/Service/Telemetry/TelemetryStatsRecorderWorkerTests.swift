@@ -76,17 +76,10 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
         XCTAssertEqual(0, splitsStorage.getCountCalledCount)
         XCTAssertEqual(0, mySegmentsStorage.getCountCalledCount)
         XCTAssertEqual(0, telemetryStorage.popTagsCallCount)
-
-
     }
 
     func recordTelemetryForTest() {
         telemetryStorage.recordSessionLength(sessionLength: 10000)
         telemetryStorage.addTag(tag: "pepe")
     }
-
-
-    override func tearDown() {
-    }
 }
-

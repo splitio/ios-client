@@ -38,8 +38,8 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
         return count
     }
 
-    private let queue = DispatchQueue(label: "split-not-keeper", target: DispatchQueue.global())
-    private let broadcasterChannel: PushManagerEventBroadcaster
+    private let queue = DispatchQueue(label: "split-notification-keeper", target: DispatchQueue.global())
+    private let broadcasterChannel: SyncEventBroadcaster
     private let telemetryProducer: TelemetryRuntimeProducer?
 
     private var streamingActive = Atomic(true)
@@ -48,7 +48,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
         return streamingActive.value
     }
 
-    init(broadcasterChannel: PushManagerEventBroadcaster,
+    init(broadcasterChannel: SyncEventBroadcaster,
          telemetryProducer: TelemetryRuntimeProducer?) {
         self.broadcasterChannel = broadcasterChannel
         self.telemetryProducer = telemetryProducer

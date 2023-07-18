@@ -136,17 +136,23 @@ class TestSplitFactory: SplitFactory {
                                                            telemetryProducer: storageContainer.telemetryStorage)
 
         let byKeyFacade = DefaultByKeyFacade()
+        let broadcasterChannel = DefaultSyncEventBroadcaster()
+
+        let fFlagsSynchronizer = DefaultFeatureFlagsSynchronizer(splitConfig: splitConfig,
+                                                                 storageContainer: storageContainer,
+                                                                 syncWorkerFactory: syncWorkerFactory,
+                                                                 broadcasterChannel: broadcasterChannel,
+                                                                 splitsFilterQueryString: splitsFilterQueryString,
+                                                                 splitEventsManager: eventsManager)
 
         self.synchronizer = SynchronizerSpy(splitConfig: splitConfig,
                                             defaultUserKey: key.matchingKey,
+                                            featureFlagsSynchronizer: fFlagsSynchronizer,
                                             telemetrySynchronizer: nil,
                                             byKeyFacade: byKeyFacade,
-                                            splitApiFacade: apiFacade,
                                             splitStorageContainer: storageContainer,
-                                            syncWorkerFactory: syncWorkerFactory,
                                             impressionsTracker: impressionsTracker,
                                             eventsSynchronizer: eventsSynchronizer,
-                                            splitsFilterQueryString: splitsFilterQueryString,
                                             splitEventsManager: eventsManager)
 
         guard let synchronizer = self.synchronizer else {
@@ -157,7 +163,9 @@ class TestSplitFactory: SplitFactory {
             .setUserKey(key.matchingKey)
             .setStorageContainer(storageContainer)
             .setEndpointFactory(endpointFactory).setSplitApiFacade(apiFacade).setSynchronizer(synchronizer)
-            .setSplitConfig(splitConfig).setByKeyFacade(byKeyFacade).build()
+            .setSplitConfig(splitConfig)
+            .setSyncBroadcaster(broadcasterChannel)
+            .setByKeyFacade(byKeyFacade).build()
 
         // Sec api not available for testing
         // Should build a mock here
@@ -194,7 +202,6 @@ class TestSplitFactory: SplitFactory {
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: nil)
-
     }
 
     func client(matchingKey: String) -> SplitClient {

@@ -71,6 +71,7 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
                               eventsQueued: storage.getEventStats(type: .queued),
                               eventsDropped: storage.getEventStats(type: .dropped),
                               streamingEvents: storage.popStreamingEvents(),
-                              tags: storage.popTags())
+                              tags: storage.popTags(),
+                              updatesFromSse: storage.popUpdatesFromSse())
     }
 }

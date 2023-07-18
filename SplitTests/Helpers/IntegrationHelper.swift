@@ -86,11 +86,11 @@ class IntegrationHelper {
     }
 
     static func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
-        return try Json.encodeFrom(json: content, to: [ImpressionsTest].self)
+        return try Json.decodeFrom(json: content, to: [ImpressionsTest].self)
     }
 
     static func buildEventsFromJson(content: String) throws -> [EventDTO] {
-        return try Json.dynamicEncodeFrom(json: content, to: [EventDTO].self)
+        return try Json.dynamicDecodeFrom(json: content, to: [EventDTO].self)
     }
 
     static func getTrackEventBy(value: Double, trackHits: [String]) -> EventDTO? {
@@ -132,7 +132,7 @@ class IntegrationHelper {
     static func getChanges(fileName: String) -> SplitChange? {
         var change: SplitChange?
         if let content = FileHelper.readDataFromFile(sourceClass: IntegrationHelper(), name: fileName, type: "json") {
-            change = try? Json.encodeFrom(json: content, to: SplitChange.self)
+            change = try? Json.decodeFrom(json: content, to: SplitChange.self)
         }
         return change
     }
@@ -162,7 +162,7 @@ class IntegrationHelper {
 
     static func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.encodeFrom(json: file, to: SplitChange.self) {
+            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
             return change
         }
         return nil

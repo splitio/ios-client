@@ -319,7 +319,7 @@ class ImpressionsNoneTest: XCTestCase {
                         exp.fulfill()
                     }
                     if let body = request.body?.stringRepresentation.utf8 {
-                        if let counts = try? Json.encodeFrom(json: String(body), to: ImpressionsCount.self) {
+                        if let counts = try? Json.decodeFrom(json: String(body), to: ImpressionsCount.self) {
                             for count in counts.perFeature {
                                 self.counts[count.feature] = count.count + (self.counts[count.feature] ?? 0)
                             }
@@ -331,7 +331,7 @@ class ImpressionsNoneTest: XCTestCase {
             case let(urlString) where urlString.contains("keys/cs"):
                 self.queue.sync {
                     if let body = request.body?.stringRepresentation.utf8 {
-                        if let keys = try? Json.encodeFrom(json: String(body), to: UniqueKeys.self) {
+                        if let keys = try? Json.decodeFrom(json: String(body), to: UniqueKeys.self) {
                             self.uniqueKeys.append(keys)
                         }
                     }

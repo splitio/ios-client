@@ -13,17 +13,9 @@ import XCTest
 
 class SynchronizerTest: XCTestCase {
 
-    var splitsFetcher: HttpSplitFetcherStub!
-    var splitsSyncWorker: RetryableSyncWorkerStub!
     var mySegmentsSyncWorker: RetryableSyncWorkerStub!
-    var periodicSplitsSyncWorker: PeriodicSyncWorkerStub!
     var persistentSplitsStorage: PersistentSplitsStorageStub!
-
-    var splitsStorage: SplitsStorageStub!
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
-
-    var updateWorkerCatalog = ConcurrentDictionary<Int64, RetryableSyncWorker>()
-    var syncWorkerFactory: SyncWorkerFactoryStub!
 
     var synchronizer: Synchronizer!
 
@@ -33,6 +25,8 @@ class SynchronizerTest: XCTestCase {
     var impressionsTracker: ImpressionsTrackerStub!
     var eventsSynchronizer: EventsSynchronizerStub!
     var telemetrySynchronizer: TelemetrySynchronizerStub!
+
+    var fFlagsSynchronizer: FeatureFlagsSynchronizerStub!
 
     let userKey = "CUSTOMER_KEY"
 
@@ -47,30 +41,17 @@ class SynchronizerTest: XCTestCase {
                            syncEnabled: Bool = true) -> Synchronizer {
 
         eventsManager = SplitEventsManagerStub()
-        persistentSplitsStorage = PersistentSplitsStorageStub()
-        splitsFetcher = HttpSplitFetcherStub()
-
-        splitsSyncWorker = RetryableSyncWorkerStub()
         mySegmentsSyncWorker = RetryableSyncWorkerStub()
-        periodicSplitsSyncWorker = PeriodicSyncWorkerStub()
-        syncWorkerFactory = SyncWorkerFactoryStub()
 
         impressionsTracker = ImpressionsTrackerStub()
         eventsSynchronizer = EventsSynchronizerStub()
 
-        syncWorkerFactory.splitsSyncWorker = splitsSyncWorker
-        syncWorkerFactory.mySegmentsSyncWorker = mySegmentsSyncWorker
-        syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
-
         mySegmentsStorage = ByKeyMySegmentsStorageStub()
         telemetryProducer = TelemetryStorageStub()
-        splitsStorage = SplitsStorageStub()
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
-                                                               changeNumber: 100, updateTimestamp: 100))
 
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
-                                                     splitsStorage: splitsStorage,
-                                                     persistentSplitsStorage: persistentSplitsStorage,
+                                                     splitsStorage: SplitsStorageStub(),
+                                                     persistentSplitsStorage: PersistentSplitsStorageStub(),
                                                      impressionsStorage: ImpressionsStorageStub(),
                                                      persistentImpressionsStorage: PersistentImpressionsStorageStub(),
                                                      impressionsCountStorage: PersistentImpressionsCountStorageStub(),
@@ -81,14 +62,6 @@ class SynchronizerTest: XCTestCase {
                                                      attributesStorage: AttributesStorageStub(),
                                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub())
 
-        let apiFacade = try! SplitApiFacade.builder()
-            .setUserKey("userKey")
-            .setRestClient(RestClientStub())
-            .setSplitConfig(SplitClientConfig())
-            .setEventsManager(SplitEventsManagerStub())
-            .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
-            .build()
-
         splitConfig =  SplitClientConfig()
         splitConfig.syncEnabled = syncEnabled
         splitConfig.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
@@ -97,17 +70,16 @@ class SynchronizerTest: XCTestCase {
 
         telemetrySynchronizer = TelemetrySynchronizerStub()
 
+        fFlagsSynchronizer = FeatureFlagsSynchronizerStub()
+
         synchronizer = DefaultSynchronizer(splitConfig: splitConfig,
                                            defaultUserKey: userKey,
+                                           featureFlagsSynchronizer: fFlagsSynchronizer,
                                            telemetrySynchronizer: telemetrySynchronizer,
                                            byKeyFacade: byKeyApiFacade,
-                                           splitApiFacade: apiFacade,
                                            splitStorageContainer: storageContainer,
-                                           syncWorkerFactory: syncWorkerFactory,
                                            impressionsTracker: impressionsTracker,
                                            eventsSynchronizer: eventsSynchronizer,
-                                           syncTaskByChangeNumberCatalog: updateWorkerCatalog,
-                                           splitsFilterQueryString: "",
                                            splitEventsManager: eventsManager)
         return synchronizer
     }
@@ -116,44 +88,15 @@ class SynchronizerTest: XCTestCase {
 
         synchronizer.syncAll()
 
-        XCTAssertTrue(splitsSyncWorker.startCalled)
+        XCTAssertTrue(fFlagsSynchronizer.synchronizeCalled)
         XCTAssertTrue(byKeyApiFacade.syncAllCalled)
     }
 
-    func testSynchronizeSplits() {
+    func testLoadAndSynchronizeSplits() {
 
-        synchronizer.synchronizeSplits()
-
-        XCTAssertTrue(splitsSyncWorker.startCalled)
-    }
-
-    func testLoadAndSyncSplitsClearedOnLoadBecauseNotInFilter() {
-        // Existent splits does not belong to split filter on config so they gonna be deleted because filter has changed
-        persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "pepe"))
-        persistentSplitsStorage.update(filterQueryString: "?p=1")
-        persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "SPLIT_TO_DELETE"))
         synchronizer.loadAndSynchronizeSplits()
 
-        ThreadUtils.delay(seconds: 0.5)
-
-        XCTAssertTrue(persistentSplitsStorage.getAllCalled)
-        XCTAssertTrue(persistentSplitsStorage.deleteCalled)
-        XCTAssertTrue(splitsStorage.loadLocalCalled)
-        XCTAssertEqual(0, eventsManager.splitsLoadedEventFiredCount)
-    }
-
-    func testLoadAndSyncSplitsNoClearedOnLoad() {
-        // Splits filter doesn't vary so splits don't gonna be removed
-        // loaded splits > 0, ready from cache should be fired
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "new_pepe")],
-                                                  archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
-        persistentSplitsStorage.update(filterQueryString: "")
-        synchronizer.loadAndSynchronizeSplits()
-
-        ThreadUtils.delay(seconds: 0.5)
-
-        XCTAssertTrue(splitsStorage.loadLocalCalled)
-        XCTAssertEqual(1, eventsManager.splitsLoadedEventFiredCount)
+        XCTAssertTrue(fFlagsSynchronizer.loadAndSynchronizeCalled)
     }
 
     func testLoadMySegmentsFromCache() {
@@ -181,31 +124,16 @@ class SynchronizerTest: XCTestCase {
 
     func testSynchronizeSplitsWithChangeNumber() {
 
-        let sw1 = RetryableSyncWorkerStub()
-        let sw2 = RetryableSyncWorkerStub()
-
-        syncWorkerFactory.retryableSplitsUpdateWorkers = [sw1, sw2]
         synchronizer.synchronizeSplits(changeNumber: 101)
-        synchronizer.synchronizeSplits(changeNumber: 102)
 
-        let initialSyncCount = updateWorkerCatalog.count
-        sw1.completion?(true)
-        let oneCompletedSyncCount = updateWorkerCatalog.count
-        sw2.completion?(true)
-
-        XCTAssertEqual(2, initialSyncCount)
-        XCTAssertEqual(1, oneCompletedSyncCount)
-        XCTAssertEqual(0, updateWorkerCatalog.count)
-
-        XCTAssertFalse(sw1.stopCalled)
-        XCTAssertFalse(sw2.stopCalled)
+        XCTAssertTrue(fFlagsSynchronizer.synchronizeNumberCalled)
     }
 
     func testStartPeriodicFetching() {
 
         synchronizer.startPeriodicFetching()
 
-        XCTAssertTrue(periodicSplitsSyncWorker.startCalled)
+        XCTAssertTrue(fFlagsSynchronizer.startPeriodicSyncCalled)
         XCTAssertTrue(byKeyApiFacade.startPeriodicSyncCalled)
     }
 
@@ -214,7 +142,7 @@ class SynchronizerTest: XCTestCase {
         synchronizer = buildSynchronizer(syncEnabled: false)
         synchronizer.startPeriodicFetching()
 
-        XCTAssertFalse(periodicSplitsSyncWorker.startCalled)
+        XCTAssertFalse(fFlagsSynchronizer.startPeriodicSyncCalled)
         XCTAssertFalse(byKeyApiFacade.startPeriodicSyncCalled)
     }
 
@@ -223,7 +151,7 @@ class SynchronizerTest: XCTestCase {
         synchronizer = buildSynchronizer(syncEnabled: false)
         synchronizer.synchronizeSplits(changeNumber: -1)
 
-        XCTAssertFalse(splitsSyncWorker.startCalled)
+        XCTAssertFalse(fFlagsSynchronizer.synchronizeCalled)
     }
 
     func testForceMySegmentsSyncSingleModeEnabled() {
@@ -238,7 +166,7 @@ class SynchronizerTest: XCTestCase {
 
         synchronizer.stopPeriodicFetching()
 
-        XCTAssertTrue(periodicSplitsSyncWorker.stopCalled)
+        XCTAssertTrue(fFlagsSynchronizer.stopPeriodicSyncCalled)
         XCTAssertTrue(byKeyApiFacade.stopPeriodicSyncCalled)
     }
 
@@ -292,22 +220,15 @@ class SynchronizerTest: XCTestCase {
 
     func testDestroy() {
 
-        let sw1 = RetryableSyncWorkerStub()
-        let sw2 = RetryableSyncWorkerStub()
 
-        syncWorkerFactory.retryableSplitsUpdateWorkers = [sw1, sw2]
         synchronizer.synchronizeSplits(changeNumber: 101)
         synchronizer.synchronizeSplits(changeNumber: 102)
 
         synchronizer.destroy()
 
-        XCTAssertTrue(splitsSyncWorker.stopCalled)
+        XCTAssertTrue(fFlagsSynchronizer.stopCalled)
         XCTAssertTrue(byKeyApiFacade.destroyCalled)
-        XCTAssertTrue(periodicSplitsSyncWorker.stopCalled)
         XCTAssertTrue(byKeyApiFacade.destroyCalled)
-        XCTAssertTrue(sw1.stopCalled)
-        XCTAssertTrue(sw2.stopCalled)
-        XCTAssertEqual(0, updateWorkerCatalog.count)
     }
 
     func testEventPush() {

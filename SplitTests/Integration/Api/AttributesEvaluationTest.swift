@@ -339,7 +339,7 @@ class AttributesEvaluationTest: XCTestCase {
 
     private func buildSplitEntity() -> Split {
         let content = FileHelper.readDataFromFile(sourceClass: IntegrationHelper(), name: "attributes_test_split", type: "json")!
-        return try! Json.encodeFrom(json: content, to: Split.self)
+        return try! Json.decodeFrom(json: content, to: Split.self)
     }
 
     private func basicSplitConfig() -> SplitClientConfig {

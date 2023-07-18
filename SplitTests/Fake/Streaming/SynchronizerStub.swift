@@ -184,6 +184,11 @@ class SynchronizerStub: Synchronizer {
         notifyMySegmentsUpdatedCalled = true
     }
 
+    var notifyFeatureFlagsUpdatedCalled = true
+    func notifyFeatureFlagsUpdated() {
+        notifyFeatureFlagsUpdatedCalled = true
+    }
+
     func notifySplitKilled() {
         notifySplitKilledCalled = true
     }

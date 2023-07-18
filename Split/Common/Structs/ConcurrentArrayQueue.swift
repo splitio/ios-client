@@ -8,7 +8,7 @@
 import Foundation
 
 class ConcurrentArrayQueue<T> {
-    private let queue = DispatchQueue(label: "Split.ConcurrentArrayQueue",
+    private let queue = DispatchQueue(label: "split-concurrent-array-queue",
                                       attributes: .concurrent)
     private var array = [T]()
     private var firstAppend = true

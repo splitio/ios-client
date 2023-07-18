@@ -21,7 +21,7 @@ class SplitManagerTest: XCTestCase {
         let bundle = Bundle(for: type(of: self))
         let path = bundle.path(forResource: "splits", ofType: "json")!
         let json = try? Data(contentsOf: URL(fileURLWithPath: path)).stringRepresentation
-        loadedSplits = try? JSON.encodeFrom(json: json!, to: [Split].self)
+        loadedSplits = try? JSON.decodeFrom(json: json!, to: [Split].self)
         splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: loadedSplits, archivedSplits: [],
                                                                changeNumber: 1, updateTimestamp: 100))

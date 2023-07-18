@@ -10,7 +10,7 @@ import Foundation
 
 class ConcurrentDictionaryList<K: Hashable, T> {
 
-    private var queue = DispatchQueue(label: "Split.ConcurrentDictionaryList",
+    private var queue = DispatchQueue(label: "split-concurrent-dictionary-list",
                                       attributes: .concurrent)
     private var items = [K: [T]]()
 

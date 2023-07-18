@@ -12,6 +12,8 @@ import XCTest
 
 class SynchronizerSpy: Synchronizer {
 
+
+
     var splitSynchronizer: Synchronizer
 
     var loadAndSynchronizeSplitsCalled = false
@@ -46,29 +48,23 @@ class SynchronizerSpy: Synchronizer {
 
     init(splitConfig: SplitClientConfig,
          defaultUserKey: String,
+         featureFlagsSynchronizer: FeatureFlagsSynchronizer,
          telemetrySynchronizer: TelemetrySynchronizer?,
          byKeyFacade: ByKeyFacade,
-         splitApiFacade: SplitApiFacade,
          splitStorageContainer: SplitStorageContainer,
-         syncWorkerFactory: SyncWorkerFactory,
          impressionsTracker: ImpressionsTracker,
          eventsSynchronizer: EventsSynchronizer,
-         syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
-        = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
-         splitsFilterQueryString: String,
          splitEventsManager: SplitEventsManager) {
 
         self.defaultUserKey = defaultUserKey
         self.splitSynchronizer = DefaultSynchronizer(splitConfig: splitConfig,
                                                      defaultUserKey: defaultUserKey,
+                                                     featureFlagsSynchronizer: featureFlagsSynchronizer,
                                                      telemetrySynchronizer: telemetrySynchronizer,
                                                      byKeyFacade: byKeyFacade,
-                                                     splitApiFacade: splitApiFacade,
                                                      splitStorageContainer: splitStorageContainer,
-                                                     syncWorkerFactory: syncWorkerFactory,
                                                      impressionsTracker: impressionsTracker,
                                                      eventsSynchronizer: eventsSynchronizer,
-                                                     splitsFilterQueryString: splitsFilterQueryString,
                                                      splitEventsManager: splitEventsManager)
     }
 
@@ -157,14 +153,6 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.destroy()
     }
 
-    func synchronizeSplits() {
-        synchronizeSplitsCalled = true
-        splitSynchronizer.synchronizeSplits()
-        if let exp = syncSplitsExp {
-            exp.fulfill()
-        }
-    }
-
     func synchronizeMySegments() {
         synchronizeMySegments(forKey: defaultUserKey)
     }
@@ -188,6 +176,11 @@ class SynchronizerSpy: Synchronizer {
     func notifySegmentsUpdated(forKey key: String) {
         notifyMySegmentsUpdatedCalled = true
         splitSynchronizer.notifySegmentsUpdated(forKey: key)
+    }
+
+    var notifyFeatureFlagsUpdatedCalled = false
+    func notifyFeatureFlagsUpdated() {
+        notifyFeatureFlagsUpdatedCalled = true
     }
 
     func notifySplitKilled() {
