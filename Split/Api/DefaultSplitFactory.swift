@@ -41,7 +41,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
     public var manager: SplitManager {
         if let manager = defaultManager {
-        return manager
+            return manager
         }
         Logger.e(Self.kInitErrorMessage)
         return FailedManager()
@@ -129,7 +129,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
-
 #if os(iOS)
         if config.synchronizeInBackground {
             SplitBgSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)
