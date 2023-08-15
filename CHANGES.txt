@@ -1,3 +1,6 @@
+2.22.0: (Aug 14, 2023)
+- Adding support to use the SDK in extensions. Thanks @Jeff-Meadows!
+
 2.21.0: (Jul 18, 2023)
 - Improved streaming architecture implementation to apply feature flag updates from the notification received which is now enhanced, improving efficiency and reliability of the whole update system.
 - Added logic to do a full check of feature flags immediately when the app comes back to foreground, limited to once per minute.
