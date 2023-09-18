@@ -61,40 +61,6 @@ class FileStorage: FileStorageProtocol {
         return nil
     }
 
-    func readWithProperties(fileName: String) -> String? {
-        if let dataFolderUrl = getDataFolder() {
-            do {
-
-                let fileURL = dataFolderUrl.appendingPathComponent(fileName)
-                let resources = try fileURL.resourceValues(forKeys: [.creationDateKey])
-                let creationDate = resources.creationDate!
-
-                if let diff = Calendar.current.dateComponents([.hour], from: creationDate, to: Date()).hour, diff > 24 {
-                    delete(elementId: fileName)
-                    return nil
-                } else {
-                    return try String(contentsOf: fileURL, encoding: .utf8)
-                }
-            } catch {
-                Logger.w("File Storage - readWithProperties: " + error.localizedDescription)
-            }
-        }
-        return nil
-    }
-
-    func lastModifiedDate(fileName: String) -> Int64 {
-        if let dataFolderUrl = getDataFolder() {
-            do {
-                let fileURL = dataFolderUrl.appendingPathComponent(fileName)
-                let resources = try fileURL.resourceValues(forKeys: [.creationDateKey])
-                return resources.creationDate?.unixTimestamp() ?? 0
-            } catch {
-                Logger.w("File Storage - readWithProperties: " + error.localizedDescription)
-            }
-        }
-        return 0
-    }
-
     private func getDataFolder() -> URL? {
 
         if dataFolderUrl != nil {

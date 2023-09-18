@@ -41,18 +41,6 @@ class FileStorageStub: FileStorageProtocol {
             _ = files.removeValue(forKey: fileName)
         }
     }
-    
-    func readWithProperties(fileName: String) -> String? {
-        var content: String?
-        queue.sync {
-            content = files[fileName]
-        }
-        return content
-    }
-
-    func lastModifiedDate(fileName: String) -> Int64 {
-        return lastModified[fileName] ?? Date().unixTimestamp()
-    }
 
     func getAllIds() -> [String]? {
         return files.keys.map { $0 }

@@ -83,6 +83,7 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
                 return
             }
             self.coreDataHelper.delete(entity: .event, by: "storageId", values: events.map { $0.storageId ?? "" })
+            self.coreDataHelper.save()
         }
     }
 
