@@ -100,6 +100,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
                 names = splits.map { cipher.encrypt($0) ?? $0 }
             }
             self.coreDataHelper.delete(entity: .split, by: "name", values: names)
+            self.coreDataHelper.save()
         }
     }
 
