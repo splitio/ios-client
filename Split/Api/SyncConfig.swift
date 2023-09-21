@@ -51,5 +51,12 @@ import Foundation
             builderFilters.append(filter)
             return self
         }
+
+        @discardableResult
+        @objc(addFlagSet:)
+        public func addFlagSet(_ filter: SplitFilter) -> SyncConfig.Builder {
+            builderFilters.append(filter)
+            return self
+        }
     }
 }

@@ -8,11 +8,9 @@
 
 import Foundation
 
-class MaxFilterValuesExcededError: Error {
-    var message: String
-    init(message: String) {
-        self.message = message
-    }
+enum FilterError: Error {
+    case maxFilterValuesExceded(message: String)
+    case byNamesAndBySetsUsed(message: String)
 }
 
 class FilterBuilder {
@@ -30,11 +28,19 @@ class FilterBuilder {
         }
 
         var groupedFilters = [SplitFilter]()
+        var filterCounts: [SplitFilter.FilterType: Int] = [:]
         let types = Dictionary(grouping: filters, by: {$0.type}).keys
         types.forEach { filterType in
+            let values = filters.filter({ $0.type == filterType }).flatMap({$0.values})
+            filterCounts[filterType] = values.count
             groupedFilters.append(
-                SplitFilter(type: filterType, values: filters.filter({ $0.type == filterType }).flatMap({$0.values}))
+                SplitFilter(type: filterType, values: values)
             )
+        }
+        if (filterCounts[.byName] ?? 0) > 0, (filterCounts[.bySet] ?? 0) > 0 {
+            let message = "SDK Config: names and sets filter cannot be used at the same time."
+            Logger.e(message)
+            throw FilterError.byNamesAndBySetsUsed(message: message)
         }
         groupedFilters.sort(by: { $0.type.rawValue < $1.type.rawValue})
         var queryString = ""
@@ -50,12 +56,23 @@ class FilterBuilder {
                 . Please consider reducing the amount or using prefixes to target specific groups of feature flags.
                 """
                 Logger.e(message)
-                throw MaxFilterValuesExcededError(message: message)
+                throw FilterError.maxFilterValuesExceded(message: message)
             }
             queryString.append("&\(filter.type.queryStringField)=\(deduptedValues.sorted().joined(separator: ","))")
         }
         return queryString
 
+    }
+
+    private func validateSetValues(_ values: String) {
+
+    }
+
+    private func validateSetValue(_ value: String) -> Bool {
+        let pattern = "^[a-zA-Z0-9][a-zA-Z0-9_]{0,49}$"
+        let regex = try? NSRegularExpression(pattern: pattern)
+        let range = NSRange(location: 0, length: value.utf16.count)
+        return regex?.firstMatch(in: value, options: [], range: range) != nil
     }
 
     private func removeDuplicates(values: [String]) -> [String] {
