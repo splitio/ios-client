@@ -71,10 +71,7 @@ class FilterBuilder {
             queryString.append("&\(filter.type.queryStringField)=\(deduptedValues.sorted().joined(separator: ","))")
         }
         return queryString
-
     }
-
-
 
     private func removeDuplicates(values: [String]) -> [String] {
         return Array(Set(values))
