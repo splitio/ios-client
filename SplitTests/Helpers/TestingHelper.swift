@@ -97,11 +97,15 @@ struct TestingHelper {
         return counts
     }
 
-    static func createSplit(name: String, trafficType: String = "t1", status: Status = .active) -> Split {
+    static func createSplit(name: String,
+                            trafficType: String = "t1",
+                            status: Status = .active,
+                            sets: Set<String>? = nil) -> Split {
         let split = Split()
         split.name = name
         split.trafficTypeName = trafficType
         split.status = status
+        split.sets = sets
         return split
     }
 

@@ -146,6 +146,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         let filters = splitConfig.sync.filters
         let namesToKeep = Set(filters.filter { $0.type == .byName }.flatMap { $0.values })
         let prefixesToKeep = Set(filters.filter { $0.type == .byPrefix }.flatMap { $0.values })
+        let setsToKeep = Set(filters.filter { $0.type == .bySet }.flatMap { $0.values })
 
         let splitsInCache = splitsStorage.getAll()
         var toDelete = [String]()
@@ -156,11 +157,14 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             }
 
             let prefix = getPrefix(for: splitName) ?? ""
-            if !namesToKeep.contains(splitName), (prefix == "" || !prefixesToKeep.contains(prefix)) {
+            if (setsToKeep.count > 0 && setsToKeep.isDisjoint(with: split.sets ?? Set())) {
+                toDelete.append(splitName)
+            } else if (prefix == "" && namesToKeep.count > 0 && !namesToKeep.contains(splitName)) ||
+                (prefixesToKeep.count > 0 && prefix != "" && !prefixesToKeep.contains(prefix)) {
                 toDelete.append(splitName)
             }
-
         }
+
         if toDelete.count > 0 {
             splitsStorage.delete(splitNames: toDelete)
             storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
@@ -171,7 +175,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         let kPrefixSeparator = "__"
         if let range = splitName.range(of: kPrefixSeparator),
            range.lowerBound != splitName.startIndex, range.upperBound != splitName.endIndex {
-            return String(splitName[range.upperBound...])
+            return String(splitName.prefix(upTo: range.lowerBound))
         }
         return nil
     }
