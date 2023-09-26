@@ -9,11 +9,12 @@
 import Foundation
 
 protocol FlagSetValidator {
+    func validateOnEvaluation(_ values: [String], calledFrom method: String, setsInFilter: [String]) -> [String]
     func cleanAndValidateValues(_ values: [String], calledFrom method: String) -> [String]
 }
 
 struct MainFlagSetValidator: FlagSetValidator {
-    private let setRegex = "^[a-zA-Z0-9][a-zA-Z0-9_]{0,49}$"
+    private let setRegex = "^[a-z0-9][a-z0-9_]{0,49}$"
 
     func validateOnEvaluation(_ values: [String], calledFrom method: String, setsInFilter: [String]) -> [String] {
         let filterSet = Set(setsInFilter)
