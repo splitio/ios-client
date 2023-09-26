@@ -157,7 +157,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             }
 
             let prefix = getPrefix(for: splitName) ?? ""
-            if (setsToKeep.count > 0 && setsToKeep.isDisjoint(with: split.sets ?? Set())) {
+            if setsToKeep.count > 0 && setsToKeep.isDisjoint(with: split.sets ?? Set()) {
                 toDelete.append(splitName)
             } else if (prefix == "" && namesToKeep.count > 0 && !namesToKeep.contains(splitName)) ||
                 (prefixesToKeep.count > 0 && prefix != "" && !prefixesToKeep.contains(prefix)) {
