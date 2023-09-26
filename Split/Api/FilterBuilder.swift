@@ -41,32 +41,33 @@ class FilterBuilder {
             )
         }
 
-        if (filterCounts[.byName] ?? 0) > 0, (filterCounts[.bySet] ?? 0) > 0 {
-            let message = "SDK Config: names and sets filter cannot be used at the same time."
+        if (filterCounts[.bySet] ?? 0) > 0,
+            ((filterCounts[.byName] ?? 0) > 0 || (filterCounts[.byPrefix] ?? 0) > 0) {
+            let message = "SDK Config: names or prefix and sets filter cannot be used at the same time."
             Logger.e(message)
-            throw FilterError.byNamesAndBySetsUsed(message: message)
+        }
+
+        // If bySets filter is present, ignore byNames and byPrefix
+        if let filter = groupedFilters.first(where: { $0.type == .bySet }) {
+            let values = flagSetValidator.cleanAndValidateValues(filter.values)
+            return "&\(filter.type.queryStringField)=\(values.sorted().joined(separator: ","))"
         }
 
         groupedFilters.sort(by: { $0.type.rawValue < $1.type.rawValue})
         var queryString = ""
         for filter in groupedFilters {
-            var deduptedValues: [String] = []
-            if filter.type == .bySet {
-                deduptedValues = flagSetValidator.cleanAndValidateValues(filter.values)
-            } else {
-                deduptedValues = removeDuplicates(values: filter.values)
-                if deduptedValues.count == 0 {
-                    continue
-                }
-                if deduptedValues.count > filter.type.maxValuesCount {
-                    let message = """
+            let deduptedValues = removeDuplicates(values: filter.values)
+            if deduptedValues.count == 0 {
+                continue
+            }
+            if deduptedValues.count > filter.type.maxValuesCount {
+                let message = """
                 Error: \(filter.type.maxValuesCount) different feature flag \(filter.type.queryStringField)
                 can be specified at most. You passed \(filter.values.count)
                 . Please consider reducing the amount or using prefixes to target specific groups of feature flags.
                 """
-                    Logger.e(message)
-                    throw FilterError.maxFilterValuesExceded(message: message)
-                }
+                Logger.e(message)
+                throw FilterError.maxFilterValuesExceded(message: message)
             }
             queryString.append("&\(filter.type.queryStringField)=\(deduptedValues.sorted().joined(separator: ","))")
         }

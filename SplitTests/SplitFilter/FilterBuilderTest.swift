@@ -34,22 +34,18 @@ class FilterBuilderTest: XCTestCase {
 
         let queryString = try FilterBuilder().add(filters: [byNameFilter, byPrefixFilter]).build()
 
-        XCTAssertEqual("&sets=nf_a,nf_b,nf_c&prefixes=pf_a,pf_b,pf_c", queryString);
+        XCTAssertEqual("&sets=nf_a,nf_b,nf_c", queryString);
     }
 
     func testBySetAndByNameQueryString() throws {
 
         let bySetFilter = SplitFilter.bySet(["nf_a", "nf_c", "nf_b"])
         let byNameFilter = SplitFilter.byName(["pf_c", "pf_b", "pf_a"]);
-        var excThrown = false
 
-        do {
-            _ = try FilterBuilder().add(filters: [bySetFilter, byNameFilter]).build()
-        } catch {
-            excThrown = true
-        }
+        let queryString = try FilterBuilder().add(filters: [bySetFilter, byNameFilter]).build()
 
-        XCTAssertTrue(excThrown);
+
+        XCTAssertEqual("&sets=nf_a,nf_b,nf_c", queryString);
     }
 
     func testOnlyOneTypeQueryString() throws {
@@ -91,7 +87,7 @@ class FilterBuilderTest: XCTestCase {
 
         let queryString = try FilterBuilder().add(filters: filters).build()
 
-        XCTAssertEqual("&set=nf_a,nf_b,nf_c,nf_d&prefixes=pf_a,pf_b,pf_c,pf_d", queryString);
+        XCTAssertEqual("&sets=nf_a,nf_b,nf_c,nf_d", queryString);
     }
 
     func testMaxByNameFilterExceded() throws {
