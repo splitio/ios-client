@@ -15,7 +15,7 @@ class FilterBuilderTest: XCTestCase {
     override func setUp() {
     }
 
-    func testBasicQueryString() throws {
+    func testBasicByNameQueryString() throws {
         // Test that builder generates a query string having the byName filter first
         // then byPrefix filter. Also values should be ordered in each filter
         let byNameFilter = SplitFilter.byName(["nf_a", "nf_c", "nf_b"])
@@ -24,6 +24,28 @@ class FilterBuilderTest: XCTestCase {
         let queryString = try FilterBuilder().add(filters: [byNameFilter, byPrefixFilter]).build()
 
         XCTAssertEqual("&names=nf_a,nf_b,nf_c&prefixes=pf_a,pf_b,pf_c", queryString);
+    }
+
+    func testBasicBySetQueryString() throws {
+        // Test that builder generates a query string having the byName filter first
+        // then byPrefix filter. Also values should be ordered in each filter
+        let byNameFilter = SplitFilter.bySet(["nf_a", "nf_c", "nf_b"])
+        let byPrefixFilter = SplitFilter.byPrefix(["pf_c", "pf_b", "pf_a"]);
+
+        let queryString = try FilterBuilder().add(filters: [byNameFilter, byPrefixFilter]).build()
+
+        XCTAssertEqual("&sets=nf_a,nf_b,nf_c", queryString);
+    }
+
+    func testBySetAndByNameQueryString() throws {
+
+        let bySetFilter = SplitFilter.bySet(["nf_a", "nf_c", "nf_b"])
+        let byNameFilter = SplitFilter.byName(["pf_c", "pf_b", "pf_a"]);
+
+        let queryString = try FilterBuilder().add(filters: [bySetFilter, byNameFilter]).build()
+
+
+        XCTAssertEqual("&sets=nf_a,nf_b,nf_c", queryString);
     }
 
     func testOnlyOneTypeQueryString() throws {
@@ -40,7 +62,7 @@ class FilterBuilderTest: XCTestCase {
         XCTAssertEqual("&prefixes=pf_a,pf_b,pf_c", onlyByPrefixQs);
     }
 
-    func testFilterValuesDeduptedAndGrouped() throws {
+    func testFilterByNamesValuesDeduptedAndGrouped() throws {
         // Duplicated filter values should be removed on builing
         let filters: [SplitFilter] = [
                         SplitFilter.byName(["nf_a", "nf_c", "nf_b"]),
@@ -52,6 +74,20 @@ class FilterBuilderTest: XCTestCase {
         let queryString = try FilterBuilder().add(filters: filters).build()
 
         XCTAssertEqual("&names=nf_a,nf_b,nf_c,nf_d&prefixes=pf_a,pf_b,pf_c,pf_d", queryString);
+    }
+
+    func testFilterBySetsValuesDeduptedAndGrouped() throws {
+        // Duplicated filter values should be removed on builing
+        let filters: [SplitFilter] = [
+                        SplitFilter.bySet(["nf_a", "nf_c", "nf_b"]),
+                        SplitFilter.bySet(["nf_b", "nf_d"]),
+                        SplitFilter.byPrefix(["pf_a", "pf_c", "pf_b"]),
+                        SplitFilter.byPrefix(["pf_d", "pf_a"])
+        ]
+
+        let queryString = try FilterBuilder().add(filters: filters).build()
+
+        XCTAssertEqual("&sets=nf_a,nf_b,nf_c,nf_d", queryString);
     }
 
     func testMaxByNameFilterExceded() throws {

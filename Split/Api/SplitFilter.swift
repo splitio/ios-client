@@ -9,9 +9,10 @@
 import Foundation
 
 @objc public class SplitFilter: NSObject {
-    enum FilterType: Int, CustomStringConvertible {
-        case byName = 0
-        case byPrefix = 1
+    enum FilterType: Int, Hashable, CustomStringConvertible {
+        case bySet = 0
+        case byName = 1
+        case byPrefix = 2
 
         var description: String {
             switch self {
@@ -19,12 +20,16 @@ import Foundation
                 return "by split name"
             case .byPrefix:
                 return "by split prefix"
+            case .bySet:
+                return "by split set"
             }
         }
 
         // Used to build query
         var queryStringField: String {
             switch self {
+            case .bySet:
+                return "sets"
             case .byName:
                 return "names"
             case .byPrefix:
@@ -39,6 +44,8 @@ import Foundation
                 return 400
             case .byPrefix:
                 return 50
+            case .bySet:
+                return 999999
             }
         }
     }
@@ -61,5 +68,10 @@ import Foundation
     @objc(byPrefix:)
     public static func byPrefix(_ values: [String]) -> SplitFilter {
         return SplitFilter(type: .byPrefix, values: values)
+    }
+
+    @objc(bySet:)
+    public static func bySet(_ values: [String]) -> SplitFilter {
+        return SplitFilter(type: .bySet, values: values)
     }
 }
