@@ -59,6 +59,12 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                     self.broadcasterChannel.push(event: .syncExecuted)
                 }
             }
+            self.splitsSyncWorker.errorHandler = {[weak self] error in
+                guard let self = self else { return }
+                if let error = error as? HttpError, error == HttpError.uriTooLong {
+                    self.broadcasterChannel.push(event: .uriTooLongOnSync)
+                }
+            }
         }
     }
 

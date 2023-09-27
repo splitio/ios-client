@@ -90,6 +90,14 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         XCTAssertTrue(splitsSyncWorker.startCalled)
     }
 
+    func testSynchronizeSplitsWithUriTooLong() {
+
+        syncWorkerFactory.splitsSyncWorker.errorToThrowOnStart = .uriTooLong
+        synchronizer.synchronize()
+
+        XCTAssertEqual(SyncStatusEvent.uriTooLongOnSync, broadcasterChannel.lastPushedEvent)
+    }
+
     func testLoadAndSyncSplitsClearedOnLoadBecauseNotInFilter() {
         // Existent splits does not belong to split filter on config so they gonna be deleted because filter has changed
         persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "pepe"))

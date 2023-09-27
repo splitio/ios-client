@@ -24,6 +24,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     func getAll() -> [String: Split]
     func update(splitChange: ProcessedSplitChange)
     func update(filterQueryString: String)
+    func update(bySetsFilter: SplitFilter?)
     func updateWithoutChecks(split: Split)
     func isValidTrafficType(name: String) -> Bool
     func getCount() -> Int
@@ -32,6 +33,7 @@ protocol SplitsStorage: SyncSplitsStorage {
 }
 
 class DefaultSplitsStorage: SplitsStorage {
+
     private var persistentStorage: PersistentSplitsStorage
     private var inMemorySplits: ConcurrentDictionary<String, Split>
     private var trafficTypes: ConcurrentDictionary<String, Int>
@@ -82,6 +84,10 @@ class DefaultSplitsStorage: SplitsStorage {
     func update(filterQueryString: String) {
         splitsFilterQueryString = filterQueryString
         self.persistentStorage.update(filterQueryString: filterQueryString)
+    }
+
+    func update(bySetsFilter filter: SplitFilter?) {
+        self.persistentStorage.update(bySetsFilter: filter)
     }
 
     func updateWithoutChecks(split: Split) {

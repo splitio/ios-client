@@ -13,12 +13,18 @@ import Foundation
 class RetryableSyncWorkerStub: RetryableSyncWorker {
 
     var completion: SyncCompletion?
+    var errorHandler: ErrorHandler?
 
     var startCalled = false
     var stopCalled = false
 
+    var errorToThrowOnStart: HttpError?
+
     func start() {
         startCalled = true
+        if let error = errorToThrowOnStart {
+            errorHandler?(error)
+        }
     }
 
     func stop() {
@@ -56,6 +62,8 @@ class PeriodicSyncWorkerStub: PeriodicSyncWorker {
 }
 
 class RetryableMySegmentsSyncWorkerStub: RetryableSyncWorker {
+
+    var errorHandler: ErrorHandler?
 
     init(userKey: String? = nil, avoidCache: Bool? = nil) {
         self.userKey = userKey

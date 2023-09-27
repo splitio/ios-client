@@ -345,3 +345,9 @@ public class SplitClientConfig: NSObject {
     var cdnBackoffTimeMaxInSecs: Int = 60
 
 }
+
+extension SplitClientConfig {
+    func bySetsFilter() -> SplitFilter? {
+        return self.sync.filters.filter { $0.type == .bySet }.first
+    }
+}

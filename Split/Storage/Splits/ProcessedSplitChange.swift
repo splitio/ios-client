@@ -20,10 +20,31 @@ protocol SplitChangeProcessor {
 }
 
 class DefaultSplitChangeProcessor: SplitChangeProcessor {
+    let filterSet: Set<String>?
+
+    init(filterBySet: SplitFilter?) {
+        filterSet = filterBySet?.values.asSet()
+    }
+
     func process(_ splitChange: SplitChange) -> ProcessedSplitChange {
-        let active = splitChange.splits.filter { $0.status == .active }
-        let archived = splitChange.splits.filter { $0.status == .archived }
-        return ProcessedSplitChange(activeSplits: active, archivedSplits: archived,
+
+        var active = [Split]()
+        var archived = [Split]()
+        if let filterSet = self.filterSet {
+            active = splitChange.splits.filter {
+                $0.status == .active && !(filterSet.isDisjoint(with: $0.sets ?? []))
+            }
+
+            archived = splitChange.splits.filter {
+                $0.status == .archived || filterSet.isDisjoint(with: $0.sets ?? [])
+            }
+        } else {
+            active = splitChange.splits.filter { $0.status == .active }
+            archived = splitChange.splits.filter { $0.status == .archived }
+        }
+
+        return ProcessedSplitChange(activeSplits: active,
+                                    archivedSplits: archived,
                                     changeNumber: splitChange.till, updateTimestamp: Date().unixTimestamp())
     }
 }

@@ -215,6 +215,15 @@ class SplitsStorageTest: XCTestCase {
         XCTAssertEqual("ttupdated", updatedSplit?.trafficTypeName ?? "")
     }
 
+    func testUpdateBySetsFilter() {
+
+        splitsStorage.update(bySetsFilter: SplitFilter(type: .bySet, values: ["set1", "set2"]))
+
+        let updatedFilter = persistentStorage.lastBySetSplitFilter
+        XCTAssertTrue(persistentStorage.updateBySetsFilterCalled)
+        XCTAssertEqual(SplitFilter.FilterType.bySet, updatedFilter?.type)
+        XCTAssertEqual(["set1", "set2"], updatedFilter?.values.sorted())
+    }
 
     private func dummySnapshot() -> SplitsSnapshot {
         return SplitsSnapshot(changeNumber: dummyChangeNumber, splits: [],
@@ -243,9 +252,5 @@ class SplitsStorageTest: XCTestCase {
         split.trafficTypeName = trafficType
         split.status = status
         return split
-    }
-
-    override func tearDown() {
-
     }
 }
