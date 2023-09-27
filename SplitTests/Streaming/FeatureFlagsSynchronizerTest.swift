@@ -33,7 +33,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         synchronizer = buildSynchronizer()
     }
 
-    func buildSynchronizer(syncEnabled: Bool = true) -> FeatureFlagsSynchronizer {
+    func buildSynchronizer(syncEnabled: Bool = true, splitFilters: [SplitFilter]? = nil) -> FeatureFlagsSynchronizer {
 
         eventsManager = SplitEventsManagerStub()
         persistentSplitsStorage = PersistentSplitsStorageStub()
@@ -63,7 +63,15 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
         splitConfig =  SplitClientConfig()
         splitConfig.syncEnabled = syncEnabled
-        splitConfig.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
+        if let splitFilters = splitFilters {
+            var builder = SyncConfig.builder()
+            for splitFilter in splitFilters {
+                builder.addSplitFilter(splitFilter)
+            }
+            splitConfig.sync = builder.build()
+        } else {
+            splitConfig.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
+        }
 
         synchronizer = DefaultFeatureFlagsSynchronizer(splitConfig: splitConfig,
                                                        storageContainer: storageContainer,
@@ -109,6 +117,80 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
         XCTAssertTrue(splitsStorage.loadLocalCalled)
         XCTAssertEqual(1, eventsManager.splitsLoadedEventFiredCount)
+    }
+
+    func testLoadSplitWhenQuerystringNamesChanges() {
+
+
+        let filterByName = SplitFilter.byName(["test1", "test2"])
+        let filterByPrefix = SplitFilter.byPrefix(["pre"])
+        synchronizer = buildSynchronizer(splitFilters: [filterByName, filterByPrefix])
+
+        let names = ["pre__test1", "pre__test2", "apre__test3", "apre__test4",
+                     "test1", "test2", "test3", "test4"]
+
+        for name in names {
+            persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name))
+        }
+
+        persistentSplitsStorage.update(filterQueryString: "?names=pepe")
+
+        synchronizer.loadAndSynchronize()
+
+        ThreadUtils.delay(seconds: 0.5)
+
+        let deleted = Set(persistentSplitsStorage.deletedSplits)
+        XCTAssertTrue(deleted.contains("apre__test3"))
+        XCTAssertTrue(deleted.contains("apre__test4"))
+        XCTAssertTrue(deleted.contains("test3"))
+        XCTAssertTrue(deleted.contains("test4"))
+        XCTAssertEqual(4, deleted.count)
+    }
+
+    func testLoadSplitWhenQuerystringSetsChanges() {
+
+
+        let filterByName = SplitFilter.bySet(["set3", "set4"])
+        let filterByPrefix = SplitFilter.byPrefix(["pre"])
+        synchronizer = buildSynchronizer(splitFilters: [filterByName, filterByPrefix])
+
+        let names = ["pre__test1", "pre__test2", "apre__test1", "apre__test2",
+                     "test1", "test2"]
+
+        let splitSets: [String: Set<String>] = [
+            "tset1": ["set1"],
+            "tset2": ["set1", "set2"],
+            "tset3": ["set2", "set3", "set4"],
+            "tset4": ["set3", "set4"],
+            "pre_tset2": ["set3", "set2"],
+            "apre_tset3": ["set1", "set5"],
+        ]
+
+        for name in names {
+            persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name))
+        }
+
+        for (name, sets) in splitSets {
+            persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name, sets: sets))
+        }
+
+        persistentSplitsStorage.update(filterQueryString: "?names=pepe")
+
+        synchronizer.loadAndSynchronize()
+
+        ThreadUtils.delay(seconds: 0.5)
+
+        let deleted = Set(persistentSplitsStorage.deletedSplits)
+        XCTAssertTrue(deleted.contains("apre__test1"))
+        XCTAssertTrue(deleted.contains("apre__test2"))
+        XCTAssertTrue(deleted.contains("pre__test1"))
+        XCTAssertTrue(deleted.contains("pre__test2"))
+        XCTAssertTrue(deleted.contains("test1"))
+        XCTAssertTrue(deleted.contains("test2"))
+        XCTAssertTrue(deleted.contains("tset1"))
+        XCTAssertTrue(deleted.contains("tset2"))
+        XCTAssertTrue(deleted.contains("apre_tset3"))
+        XCTAssertEqual(9, deleted.count)
     }
 
     func testSynchronizeSplitsWithChangeNumber() {

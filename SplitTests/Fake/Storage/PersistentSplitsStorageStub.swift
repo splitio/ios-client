@@ -25,6 +25,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var clearCalled = false
     var closeCalled = false
     var updateSplitCalled = false
+    var deletedSplits = [String]()
     
     var filterQueryString = ""
     var splits = [String: Split]()
@@ -62,6 +63,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     func delete(splitNames: [String]) {
         deleteCalled = true
+        deletedSplits.append(contentsOf: splitNames)
     }
 
     func clear() {

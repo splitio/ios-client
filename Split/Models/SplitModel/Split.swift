@@ -21,4 +21,5 @@ class Split: NSObject, SplitBase, Codable {
     var trafficAllocationSeed: Int?
     var algo: Int?
     var configurations: [String: String]?
+    var sets: Set<String>?
 }
