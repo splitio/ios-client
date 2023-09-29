@@ -59,7 +59,8 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                      telemetryStorage: TelemetryStorageStub(),
                                                      mySegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub(),
-                                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub())
+                                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
+                                                     flagSetsCache: FlagSetsCacheMock())
 
         splitConfig =  SplitClientConfig()
         splitConfig.syncEnabled = syncEnabled

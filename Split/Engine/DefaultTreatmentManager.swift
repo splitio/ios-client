@@ -67,21 +67,21 @@ class DefaultTreatmentManager: TreatmentManager {
         return result
     }
 
-    func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String] {
+    func getTreatments(splits: [String], attributes: [String: Any]?, validationTag: String?) -> [String: String] {
         let timeStart = startTime()
         let treatments = getTreatmentsWithConfigNoMetrics(splits: splits,
                                                       attributes: attributes,
-                                                      validationTag: ValidationTag.getTreatments)
+                                                      validationTag: validationTag ?? ValidationTag.getTreatments)
         let result = treatments.mapValues { $0.treatment }
         telemetryProducer?.recordLatency(method: .treatments, latency: Stopwatch.interval(from: timeStart))
         return result
     }
 
-    func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult] {
+    func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, validationTag: String?) -> [String: SplitResult] {
         let timeStart = startTime()
         let result = getTreatmentsWithConfigNoMetrics(splits: splits,
                                                       attributes: attributes,
-                                                      validationTag: ValidationTag.getTreatmentsWithConfig)
+                                                      validationTag: validationTag ?? ValidationTag.getTreatmentsWithConfig)
         telemetryProducer?.recordLatency(method: .treatmentsWithConfig, latency: Stopwatch.interval(from: timeStart))
         return result
     }

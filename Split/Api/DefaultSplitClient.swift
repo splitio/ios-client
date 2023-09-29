@@ -24,6 +24,10 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
     private let eventsTracker: EventsTracker
     private weak var clientManager: SplitClientManager?
 
+    // TODO: Get this from storage container
+    private var flagSetsCache: FlagSetsCache
+    private var flagSetsValidator = MainFlagSetValidator()
+
     var initStopwatch: Stopwatch?
 
     init(config: SplitClientConfig,
@@ -44,6 +48,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
         self.treatmentManager = treatmentManager
         self.clientManager = clientManager
         self.anyValueValidator = DefaultAnyValueValidator()
+        self.flagSetsCache = storageContainer.flagSetsCache
 
         super.init()
 
@@ -61,7 +66,7 @@ extension DefaultSplitClient {
         if  event != .sdkReadyFromCache,
             eventsManager.eventAlreadyTriggered(event: event) {
             Logger.w("A handler was added for \(event.toString()) on the SDK, " +
-                "which has already fired and won’t be emitted again. The callback won’t be executed.")
+                     "which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
         }
         let task = SplitEventActionTask(action: action)
@@ -89,11 +94,11 @@ extension DefaultSplitClient {
     }
 
     public func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String] {
-        return treatmentManager.getTreatments(splits: splits, attributes: attributes)
+        return treatmentManager.getTreatments(splits: splits, attributes: attributes, validationTag: nil)
     }
 
     public func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult] {
-        return treatmentManager.getTreatmentsWithConfig(splits: splits, attributes: attributes)
+        return treatmentManager.getTreatmentsWithConfig(splits: splits, attributes: attributes, validationTag: nil)
     }
 }
 
@@ -190,16 +195,51 @@ extension DefaultSplitClient {
 
     private func isValidAttribute(_ value: Any) -> Bool {
         return anyValueValidator.isPrimitiveValue(value: value) ||
-            anyValueValidator.isList(value: value)
+        anyValueValidator.isList(value: value)
     }
 
     private func logInvalidAttribute(name: String) {
         Logger.i("Invalid attribute value for evaluation: \(name). " +
-                    "Types allowed are String, Number, Boolean and List")
+                 "Types allowed are String, Number, Boolean and List")
     }
 
     private func attributesStorage() -> AttributesStorage {
         return storageContainer.attributesStorage
+    }
+}
+
+// MARK: By Sets evaluation
+extension DefaultSplitClient {
+
+    public func getTreatmentsByFlagSet(flagSet: String, attributes: [String: Any]) -> [String: String] {
+        let featureFlags = featureFlagsFromSets([flagSet], validationTag: ValidationTag.getTreatmentsByFlagSet)
+        return treatmentManager.getTreatments(splits: featureFlags, attributes: attributes,
+                                              validationTag: ValidationTag.getTreatmentsByFlagSet)
+    }
+
+    public func getTreatmentsByFlagSets(flagSets: [String], attributes: [String: Any]) -> [String: String] {
+        let featureFlags = featureFlagsFromSets(flagSets, validationTag: ValidationTag.getTreatmentsByFlagSets)
+        return treatmentManager.getTreatments(splits: featureFlags, attributes: attributes,
+                                              validationTag: ValidationTag.getTreatmentsByFlagSets)
+    }
+
+    public func getTreatmentsWithConfigByFlagSet(flagSet: String, attributes: [String: Any]) -> [String: SplitResult] {
+        let featureFlags = featureFlagsFromSets([flagSet], validationTag: ValidationTag.getTreatmentsWithConfigByFlagSet)
+        return treatmentManager.getTreatmentsWithConfig(splits: featureFlags, attributes: attributes,
+                                                        validationTag: ValidationTag.getTreatmentsWithConfigByFlagSet)
+    }
+
+    public func getTreatmentsWithConfigByFlagSets(flagSets: [String], attributes: [String: Any]) -> [String: SplitResult] {
+        let featureFlags = featureFlagsFromSets(flagSets, validationTag: ValidationTag.getTreatmentsWithConfigByFlagSets)
+        return treatmentManager.getTreatmentsWithConfig(splits: featureFlags, attributes: attributes,
+                                             validationTag: ValidationTag.getTreatmentsByFlagSets)
+    }
+
+    private func featureFlagsFromSets(_ sets: [String], validationTag: String) -> [String] {
+        let validatedSets = flagSetsValidator.validateOnEvaluation(sets,
+                                                                   calledFrom: validationTag,
+                                                                   setsInFilter: [])
+        return flagSetsCache.getFeatureFlagNames(forFlagSets: validatedSets)
     }
 }
 
