@@ -24,6 +24,10 @@ enum TelemetryMethod: CaseIterable {
     case treatments
     case treatmentWithConfig
     case treatmentsWithConfig
+    case treatmentsByFlagSet
+    case treatmentsByFlagSets
+    case treatmentsWithConfigByFlagSet
+    case treatmentsWithConfigByFlagSets
     case track
 }
 

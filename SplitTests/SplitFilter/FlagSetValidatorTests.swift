@@ -11,11 +11,11 @@ import XCTest
 
 class FlagSetValidatorTests: XCTestCase {
 
-    var validator: MainFlagSetValidator!
+    var validator: DefaultFlagSetsValidator!
 
     override func setUp() {
         super.setUp()
-        validator = MainFlagSetValidator()
+        validator = DefaultFlagSetsValidator()
     }
 
     func testValidateOnEvaluationWithFilteredValues() {

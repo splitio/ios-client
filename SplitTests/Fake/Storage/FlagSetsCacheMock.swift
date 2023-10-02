@@ -11,16 +11,23 @@ import Foundation
 
 class FlagSetsCacheMock: FlagSetsCache {
 
-    private var flagSets: [String: Set<String>] = [:]
+    var flagSets: [String: Set<String>] = [:]
 
     func getFeatureFlagNamesBySet(byFlagSets sets: [String]) -> [String: Set<String>] {
-        // Simplified mock implementation...
-        return flagSets
+        let setsFilter = Set(sets)
+        let res = flagSets.filter {
+            setsFilter.contains($0.key)
+        }
+        return res
     }
 
     func getFeatureFlagNames(forFlagSets sets: [String]) -> [String] {
-        // Simplified mock implementation...
-        return Array(flagSets.keys)
+        let setsFilter = Set(sets)
+        let res = flagSets.filter {
+            setsFilter.contains($0.key)
+        }
+        let res1 = res.values.reduce([String]()) { $0 + $1 }
+        return res1
     }
 
     func addToFlagSets(_ featureFlag: Split) {

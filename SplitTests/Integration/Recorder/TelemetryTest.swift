@@ -197,12 +197,14 @@ class TelemetryTest: XCTestCase {
     }
 
     func createTreatmentManager(userKey: Key) -> TreatmentManager {
+
+        let storageContainer = TestingHelper.createStorageContainer()
         let splitHelper = SplitHelper()
-        let splitsStorage = SplitsStorageStub()
+        let splitsStorage = storageContainer.splitsStorage
         let split = splitHelper.createDefaultSplit(named: "SPLIT")
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [],
                                                                changeNumber: -1, updateTimestamp: 100))
-        let mySegmentsStorage = MySegmentsStorageStub()
+        let mySegmentsStorage = storageContainer.mySegmentsStorage
 
         _ = InternalSplitClientStub(splitsStorage: splitsStorage,
                                              mySegmentsStorage: mySegmentsStorage)
@@ -218,7 +220,8 @@ class TelemetryTest: XCTestCase {
                                        eventsManager: eventsManager,
                                        impressionLogger: ImpressionsLoggerStub(),
                                        telemetryProducer: telemetryStorage,
-                                       attributesStorage: DefaultAttributesStorage(),
+                                       storageContainer: storageContainer,
+                                       flagSetsValidator: FlagSetsValidatorMock(),
                                        keyValidator: DefaultKeyValidator(),
                                        splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
                                        validationLogger: ValidationMessageLoggerStub())

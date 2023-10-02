@@ -8,10 +8,16 @@
 
 import Foundation
 
-protocol TreatmentManager {
+protocol TreatmentManager: Destroyable {
+    // MARK: Basic evaluation
     func getTreatment(_ splitName: String, attributes: [String: Any]?) -> String
     func getTreatmentWithConfig(_ splitName: String, attributes: [String: Any]?) -> SplitResult
-    func getTreatments(splits: [String], attributes: [String: Any]?, validationTag: String?) -> [String: String]
-    func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, validationTag: String?) -> [String: SplitResult]
-    func destroy()
+    func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String]
+    func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult]
+
+    // MARK: Evaluation with flagsets
+    func getTreatmentsByFlagSet(flagSet: String, attributes: [String: Any]?) -> [String: String]
+    func getTreatmentsByFlagSets(flagSets: [String], attributes: [String: Any]?) -> [String: String]
+    func getTreatmentsWithConfigByFlagSet(flagSet: String, attributes: [String: Any]?) -> [String: SplitResult]
+    func getTreatmentsWithConfigByFlagSets(flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult]
 }

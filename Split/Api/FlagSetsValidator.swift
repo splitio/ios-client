@@ -8,12 +8,12 @@
 
 import Foundation
 
-protocol FlagSetValidator {
+protocol FlagSetsValidator {
     func validateOnEvaluation(_ values: [String], calledFrom method: String, setsInFilter: [String]) -> [String]
     func cleanAndValidateValues(_ values: [String], calledFrom method: String) -> [String]
 }
 
-struct MainFlagSetValidator: FlagSetValidator {
+struct DefaultFlagSetsValidator: FlagSetsValidator {
     private let setRegex = "^[a-z0-9][a-z0-9_]{0,49}$"
 
     func validateOnEvaluation(_ values: [String], calledFrom method: String, setsInFilter: [String]) -> [String] {

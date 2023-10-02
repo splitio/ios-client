@@ -17,7 +17,7 @@ class FilterBuilder {
     private var filters = [SplitFilter]()
 
     // Visible for testing (for now)
-    var flagSetValidator = MainFlagSetValidator()
+    var flagSetValidator = DefaultFlagSetsValidator()
 
     func add(filters: [SplitFilter]) -> Self {
         self.filters.append(contentsOf: filters)

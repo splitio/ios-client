@@ -99,7 +99,8 @@ struct SplitDatabaseHelper {
             throw GenericError.couldNotCreateCache
         }
 
-        let flagSetsCache: FlagSetsCache = DefaultFlagSetsCache(setsInFilter: splitClientConfig.bySetsFilter()?.values.asSet())
+        let flagSetsCache: FlagSetsCache = 
+        DefaultFlagSetsCache(setsInFilter: splitClientConfig.bySetsFilter()?.values.asSet())
         let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
         let splitsStorage = openSplitsStorage(database: splitDatabase, flagSetsCache: flagSetsCache)
 
