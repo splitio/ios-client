@@ -8,8 +8,8 @@
 
 import Foundation
 
-@objc public class SplitFilter: NSObject {
-    enum FilterType: Int, Hashable, CustomStringConvertible {
+@objc public class SplitFilter: NSObject, Codable {
+    enum FilterType: Int, Hashable, CustomStringConvertible, Codable {
         case bySet = 0
         case byName = 1
         case byPrefix = 2

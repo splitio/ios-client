@@ -120,7 +120,7 @@ class TestSplitFactory: SplitFactory {
                                                          splitsFilterQueryString: splitsFilterQueryString,
                                                          apiFacade: apiFacade,
                                                          storageContainer: storageContainer,
-                                                         splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                         splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
                                                          eventsManager: eventsManager)
 
         let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitConfig,

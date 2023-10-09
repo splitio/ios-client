@@ -72,6 +72,6 @@ class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
                 changeNumber = -1
                 clearCache = true
         }
-        _ = syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache)
+        _ = try? syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache)
     }
 }

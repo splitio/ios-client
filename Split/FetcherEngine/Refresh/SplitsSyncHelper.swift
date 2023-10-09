@@ -46,7 +46,7 @@ class SplitsSyncHelper {
     func sync(since: Int64,
               till: Int64? = nil,
               clearBeforeUpdate: Bool = false,
-              headers: HttpHeaders? = nil) -> Bool {
+              headers: HttpHeaders? = nil) throws -> Bool {
         do {
             let res = try tryToSync(since: since,
                                     till: till,
@@ -64,8 +64,8 @@ class SplitsSyncHelper {
                                    useTillParam: true) ).success
         } catch let error {
             Logger.e("Problem fetching feature flags: %@", error.localizedDescription)
+            throw error
         }
-        return false
     }
 
     func tryToSync(since: Int64,

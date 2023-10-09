@@ -785,6 +785,8 @@
 		95715A9529DB0ED800A1B2F9 /* InitDbCipherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A9429DB0ED800A1B2F9 /* InitDbCipherTest.swift */; };
 		95715A9729DB16A000A1B2F9 /* SecureStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A9629DB16A000A1B2F9 /* SecureStorageStub.swift */; };
 		95726075262F548500350CCA /* SplitBgSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95726074262F548500350CCA /* SplitBgSynchronizer.swift */; };
+		9572BA7D2AC37B7400C10FC1 /* Array+asSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572BA7C2AC37B7400C10FC1 /* Array+asSet.swift */; };
+		9572BA812AC4A4B100C10FC1 /* SplitChangeProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572BA802AC4A4B100C10FC1 /* SplitChangeProcessorTests.swift */; };
 		9573FB18273C2FFA00086DDE /* AnyValueValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */; };
 		9573FB26273C50D400086DDE /* EvaluatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB25273C50D400086DDE /* EvaluatorStub.swift */; };
 		9573FB37273D762200086DDE /* AnyValueValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB36273D762200086DDE /* AnyValueValidatorTests.swift */; };
@@ -1777,6 +1779,8 @@
 		95715A9429DB0ED800A1B2F9 /* InitDbCipherTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitDbCipherTest.swift; sourceTree = "<group>"; };
 		95715A9629DB16A000A1B2F9 /* SecureStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStorageStub.swift; sourceTree = "<group>"; };
 		95726074262F548500350CCA /* SplitBgSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitBgSynchronizer.swift; sourceTree = "<group>"; };
+		9572BA7C2AC37B7400C10FC1 /* Array+asSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+asSet.swift"; sourceTree = "<group>"; };
+		9572BA802AC4A4B100C10FC1 /* SplitChangeProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitChangeProcessorTests.swift; sourceTree = "<group>"; };
 		9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyValueValidator.swift; sourceTree = "<group>"; };
 		9573FB25273C50D400086DDE /* EvaluatorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluatorStub.swift; sourceTree = "<group>"; };
 		9573FB36273D762200086DDE /* AnyValueValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyValueValidatorTests.swift; sourceTree = "<group>"; };
@@ -2219,6 +2223,7 @@
 				3B6DEEA120EA6AE10067435E /* Dictionary+JSON.swift */,
 				590DF9D32140287F0082B94F /* SplitView+StringConvertible.swift */,
 				59FB7BC921DFE0A500ECC96A /* String+Utils.swift */,
+				9572BA7C2AC37B7400C10FC1 /* Array+asSet.swift */,
 				5959C485228C429A0064F968 /* Array+DynamicCodable.swift */,
 				5959C487228C4B160064F968 /* Dictionary+DynamicCodable.swift */,
 				957E674B25E48753006F5B19 /* Bundle+Finder.swift */,
@@ -3208,6 +3213,7 @@
 				956A7E2B297ECB110080D53C /* SplitsDecoderTest.swift */,
 				956A7E2D297ED7600080D53C /* SplitsEncoderTest.swift */,
 				956A7E30297EE5A60080D53C /* ComputeProcessCountTest.swift */,
+				9572BA802AC4A4B100C10FC1 /* SplitChangeProcessorTests.swift */,
 			);
 			path = Splits;
 			sourceTree = "<group>";
@@ -3721,6 +3727,7 @@
 				955B595628076BB900D105CD /* MySegmentsPayloadDecoder.swift in Sources */,
 				3B6DEF6020EA6AE50067435E /* BetweenMatcher.swift in Sources */,
 				952C2B7726447FDD009275B4 /* BlockingQueue.swift in Sources */,
+				9572BA7D2AC37B7400C10FC1 /* Array+asSet.swift in Sources */,
 				594F5F5C253F163A00A945B4 /* BackoffCounterTimer.swift in Sources */,
 				3B6DEF3720EA6AE50067435E /* SplitManager.swift in Sources */,
 				599EA57B22666B84006CBA89 /* Yaml.swift in Sources */,
@@ -4201,6 +4208,7 @@
 				95B180222763C00C002DC9DF /* HttpTelemetryStatsRecorderStub.swift in Sources */,
 				595AD25924E59E6200A7B750 /* EventStreamParserTest.swift in Sources */,
 				952C2B7B26449456009275B4 /* BlockingQueueTest.swift in Sources */,
+				9572BA812AC4A4B100C10FC1 /* SplitChangeProcessorTests.swift in Sources */,
 				95ABF4CA29352589006ED016 /* AnyValueValidatorStub.swift in Sources */,
 				596A7B602343D83C004F6139 /* SplitChangesServerErrorTest.swift in Sources */,
 				9577A8532683E98A00D92AE1 /* HttpImpressionsCountRecorderStub.swift in Sources */,

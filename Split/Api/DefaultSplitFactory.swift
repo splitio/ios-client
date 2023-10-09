@@ -29,7 +29,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     private var defaultManager: SplitManager?
-    private let filterBuilder = FilterBuilder()
+//    private let filterBuilder = FilterBuilder()
 
     public var client: SplitClient {
         if let client = clientManager?.defaultClient {
@@ -85,7 +85,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         userConsentManager = try components.buildUserConsentManager()
 
-        setupBgSync(config: params.config, apiKey: params.apiKey, userKey: params.key.matchingKey)
+        setupBgSync(config: params.config, apiKey: params.apiKey, userKey: params.key.matchingKey, storageContainer: storageContainer)
 
         clientManager = DefaultClientManager(config: params.config,
                                              key: params.key,
@@ -128,10 +128,14 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         userConsentManager.set(newMode)
     }
 
-    private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
+    private func setupBgSync(config: SplitClientConfig, 
+                             apiKey: String,
+                             userKey: String,
+                             storageContainer: SplitStorageContainer) {
 #if os(iOS)
         if config.synchronizeInBackground {
             SplitBgSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)
+            storageContainer.splitsStorage.update(bySetsFilter: config.bySetsFilter())
         } else {
             SplitBgSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)
         }

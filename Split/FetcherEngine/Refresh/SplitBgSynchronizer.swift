@@ -164,10 +164,12 @@ struct BackgroundSyncExecutor {
         self.mySegmentsFetcher = DefaultHttpMySegmentsFetcher(restClient: restClient,
                                                               syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
+
+        let bySetsFilter = splitsStorage.getBySetsFilter()
         let cacheExpiration = Int64(ServiceConstants.cacheExpirationInSeconds)
         self.splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitsFetcher,
                                                            persistentSplitsStorage: splitsStorage,
-                                                           splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                           splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: bySetsFilter),
                                                            cacheExpiration: cacheExpiration,
                                                            splitConfig: SplitClientConfig())
 

@@ -172,7 +172,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         let storedChangeNumber = splitsStorage.changeNumber
-        if syncHelper.sync(since: splitsStorage.changeNumber) {
+        if (try? syncHelper.sync(since: splitsStorage.changeNumber)) ?? false {
             if changeChecker.splitsHaveChanged(oldChangeNumber: storedChangeNumber,
                                                newChangeNumber: splitsStorage.changeNumber) {
                 notifySplitsUpdated()
