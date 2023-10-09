@@ -348,6 +348,17 @@ public class SplitClientConfig: NSObject {
 
 extension SplitClientConfig {
     func bySetsFilter() -> SplitFilter? {
-        return self.sync.filters.filter { $0.type == .bySet }.first
+        // Group the filters by type
+        let groupedFilters = Dictionary(grouping: self.sync.filters) { $0.type }
+
+        // Extract and combine values for 'bySet' type
+        guard let sets = groupedFilters[.bySet]?.reduce(into: [String](), { result, filter in
+            result.append(contentsOf: filter.values)
+        }).sorted() else {
+            return nil
+        }
+
+        return SplitFilter(type: .bySet, values: sets)
+
     }
 }
