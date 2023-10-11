@@ -58,6 +58,8 @@ struct TelemetryConfig: Codable {
     var nonReadyUsages: Int
     var userConsent: Int = 0
     var integrations: [String]?
+    var flagSetsTotal: Int?
+    var flagSetsInvalid: Int?
     var tags: [String]?
 
     enum CodingKeys: String, CodingKey {
@@ -78,6 +80,8 @@ struct TelemetryConfig: Codable {
         case nonReadyUsages = "nR"
         case userConsent = "uC"
         case integrations = "i"
+        case flagSetsTotal = "fsT"
+        case flagSetsInvalid = "fsI"
         case tags = "t"
     }
 }

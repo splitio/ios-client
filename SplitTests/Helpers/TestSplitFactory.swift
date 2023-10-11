@@ -32,7 +32,7 @@ class TestSplitFactory: SplitFactory {
     }
 
     private(set) var clientManager: SplitClientManager?
-    private let filterBuilder = FilterBuilder()
+    private let filterBuilder = FilterBuilder(flagSetsValidator: DefaultFlagSetsValidator(telemetryProducer: nil))
     let userKey: String
     private var key: Key!
     var splitDatabase: SplitDatabase

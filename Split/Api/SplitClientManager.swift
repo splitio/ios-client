@@ -156,7 +156,7 @@ class DefaultClientManager: SplitClientManager {
             eventsManager: eventsManager,
             impressionLogger: synchronizer, telemetryProducer: storageContainer.telemetryStorage,
             storageContainer: storageContainer,
-            flagSetsValidator: DefaultFlagSetsValidator(),
+            flagSetsValidator: DefaultFlagSetsValidator(telemetryProducer: storageContainer.telemetryStorage),
             keyValidator: DefaultKeyValidator(),
             splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
             validationLogger: DefaultValidationMessageLogger())

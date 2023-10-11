@@ -12,10 +12,12 @@ import XCTest
 class FlagSetValidatorTests: XCTestCase {
 
     var validator: DefaultFlagSetsValidator!
+    var telemetryProducer: TelemetryStorageStub!
 
     override func setUp() {
         super.setUp()
-        validator = DefaultFlagSetsValidator()
+        telemetryProducer = TelemetryStorageStub()
+        validator = DefaultFlagSetsValidator(telemetryProducer: telemetryProducer)
     }
 
     func testValidateOnEvaluationWithFilteredValues() {
@@ -23,6 +25,8 @@ class FlagSetValidatorTests: XCTestCase {
         let setsInFilter = ["test1", "test2"]
         let result = validator.validateOnEvaluation(values, calledFrom: "TestMethod", setsInFilter: setsInFilter)
         XCTAssertEqual(result.sorted(), ["test1", "test2"])
+        XCTAssertEqual(3, telemetryProducer.getTotalFlagSets())
+        XCTAssertEqual(0, telemetryProducer.getInvalidFlagSets())
     }
 
     func testCleanAndValidateValues() {
@@ -31,6 +35,8 @@ class FlagSetValidatorTests: XCTestCase {
         "*test", "test*test", "test()", "(test)", "1|test", "test\\"]
         let result = validator.cleanAndValidateValues(values, calledFrom: "TestMethod")
         XCTAssertEqual(result.sorted(), ["1test", "test1", "test2", "test3", "test4_"])
+        XCTAssertEqual(5, telemetryProducer.getTotalFlagSets())
+        XCTAssertEqual(10, telemetryProducer.getInvalidFlagSets())
     }
 }
 
