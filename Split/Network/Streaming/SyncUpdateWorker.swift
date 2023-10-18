@@ -48,11 +48,9 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 
     override func process(notification: SplitsUpdateNotification) throws {
         processQueue.async {
-
             if self.splitsStorage.changeNumber >= notification.changeNumber {
                 return
             }
-
             if let payload = notification.definition, let compressionType = notification.compressionType {
                 do {
                     let split = try self.payloadDecoder.decode(payload: payload,
@@ -274,9 +272,8 @@ class SplitKillWorker: UpdateWorker<SplitKillNotification> {
     }
 
     private func process(_ notification: SplitKillNotification) {
-
         if let splitToKill = splitsStorage.get(name: notification.splitName) {
-            if splitToKill.changeNumber ?? -1 >= notification.changeNumber {
+            if splitToKill.changeNumber ?? -1 < notification.changeNumber {
                 splitToKill.defaultTreatment = notification.defaultTreatment
                 splitToKill.changeNumber = notification.changeNumber
                 splitToKill.killed = true
@@ -295,8 +292,16 @@ protocol CompressionProvider {
 struct DefaultDecompressionProvider: CompressionProvider {
     private let zlib: CompressionUtil = Zlib()
     private let gzip: CompressionUtil = Gzip()
+    private let compressionNone: CompressionUtil = CompressionNone()
 
     func decompressor(for type: CompressionType) -> CompressionUtil {
-        return type == .gzip ? gzip : zlib
+        switch type {
+        case .gzip:
+            return gzip
+        case.zlib:
+            return zlib
+        default:
+            return compressionNone
+        }
     }
 }

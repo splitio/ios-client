@@ -199,7 +199,7 @@ struct TelemetryStats: Codable {
     var eventsDropped: Int?
     var streamingEvents: [TelemetryStreamingEvent]?
     var tags: [String]?
-    var updatesFromSse:TelemetryUpdatesFromSse
+    var updatesFromSse: TelemetryUpdatesFromSse
 
     enum CodingKeys: String, CodingKey {
         case lastSynchronization = "lS"

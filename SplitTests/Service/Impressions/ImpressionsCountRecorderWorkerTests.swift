@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class countsRecorderCountWorkerTests: XCTestCase {
+class CountsRecorderCountWorkerTests: XCTestCase {
 
     var worker: ImpressionsCountRecorderWorker!
     var countsStorage: PersistentImpressionsCountStorageStub!

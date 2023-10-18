@@ -2,16 +2,16 @@
     "splits":[
               {
               "trafficTypeName":"account",
-              "name":"SPLIT_1",
+              "name":"{{SPLIT_NAME_1}}",
               "trafficAllocation":59,
               "trafficAllocationSeed":-2108186082,
               "seed":-1947050785,
-              "status":"ACTIVE",
+              "status":"{{SPLIT_STATUS_1}}",
               "killed":false,
               "defaultTreatment":"off",
               "changeNumber":1506703262916,
               "algo":2,
-              "sets": [{{SPLIT_SETS_1}}],
+              "sets": {{SPLIT_SETS_1}},
               "conditions":[
                             {
                             "conditionType":"WHITELIST",
@@ -118,11 +118,11 @@
               },
               {
               "trafficTypeName":"account",
-              "name":"SPLIT_2",
+              "name":"{{SPLIT_NAME_2}}",
               "trafficAllocation":59,
               "trafficAllocationSeed":-2108186082,
               "seed":-1947050785,
-              "status":"ACTIVE",
+              "status":"{{SPLIT_STATUS_2}}",
               "killed":false,
               "defaultTreatment":"off2",
               "changeNumber":1506703262916,
@@ -130,7 +130,7 @@
               "configurations": {
                   "off2": "{\"f1\":\"v1\"}"
               },
-              "sets": [{{SPLIT_SETS_2}}],
+              "sets": {{SPLIT_SETS_2}},
               "conditions":[
                             {
                             "conditionType":"WHITELIST",
@@ -237,16 +237,16 @@
               },
               {
               "trafficTypeName":"account",
-              "name":"SPLIT_3",
+              "name":"{{SPLIT_NAME_3}}",
               "trafficAllocation":59,
               "trafficAllocationSeed":-2108186082,
               "seed":-1947050785,
-              "status":"ACTIVE",
+              "status":"{{SPLIT_STATUS_3}}",
               "killed":false,
               "defaultTreatment":"off3",
               "changeNumber":1506703262916,
               "algo":2,
-              "sets": [{{SPLIT_SETS_3}}],
+              "sets": {{SPLIT_SETS_3}},
               "conditions":[
                             {
                             "conditionType":"WHITELIST",

@@ -22,7 +22,7 @@ class SplitChangeProcessorTests: XCTestCase {
 
         let result = processor.process(createChange())
 
-        XCTAssertEqual(10, result.activeSplits.count)
+        XCTAssertEqual(11, result.activeSplits.count)
         XCTAssertEqual(2, result.archivedSplits.count)
     }
 
@@ -33,7 +33,7 @@ class SplitChangeProcessorTests: XCTestCase {
         let result = processor.process(createChange())
 
         XCTAssertEqual(2, result.activeSplits.count)
-        XCTAssertEqual(10, result.archivedSplits.count)
+        XCTAssertEqual(11, result.archivedSplits.count)
     }
 
     private func createChange() -> SplitChange {
@@ -47,6 +47,8 @@ class SplitChangeProcessorTests: XCTestCase {
         }
 
         splits.append(TestingHelper.createSplit(name: "set_3", status: .active, sets: ["set3"]))
+
+        splits.append(TestingHelper.createSplit(name: "set_empty", status: .active, sets: []))
 
         for i in 0..<2 {
             splits.append(TestingHelper.createSplit(name: "arc_\(i)", status: .archived))

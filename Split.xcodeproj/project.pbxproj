@@ -794,6 +794,8 @@
 		95737E0E2AD474A9007FD15C /* FlagSetsIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E0D2AD474A9007FD15C /* FlagSetsIntegrationTest.swift */; };
 		95737E102AD47A42007FD15C /* Substring+asString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E0F2AD47A42007FD15C /* Substring+asString.swift */; };
 		95737E122AD6D016007FD15C /* splitchanges_flagsets.json in Resources */ = {isa = PBXBuildFile; fileRef = 95737E112AD6D016007FD15C /* splitchanges_flagsets.json */; };
+		95737E142ADEC71A007FD15C /* push_msg-splits_updV2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */; };
+		95737E162ADEC794007FD15C /* StreamingTestingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E152ADEC794007FD15C /* StreamingTestingHelper.swift */; };
 		9573FB18273C2FFA00086DDE /* AnyValueValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */; };
 		9573FB26273C50D400086DDE /* EvaluatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB25273C50D400086DDE /* EvaluatorStub.swift */; };
 		9573FB37273D762200086DDE /* AnyValueValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB36273D762200086DDE /* AnyValueValidatorTests.swift */; };
@@ -1795,6 +1797,8 @@
 		95737E0D2AD474A9007FD15C /* FlagSetsIntegrationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlagSetsIntegrationTest.swift; sourceTree = "<group>"; };
 		95737E0F2AD47A42007FD15C /* Substring+asString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Substring+asString.swift"; sourceTree = "<group>"; };
 		95737E112AD6D016007FD15C /* splitchanges_flagsets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_flagsets.json; sourceTree = "<group>"; };
+		95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "push_msg-splits_updV2.txt"; sourceTree = "<group>"; };
+		95737E152ADEC794007FD15C /* StreamingTestingHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingTestingHelper.swift; sourceTree = "<group>"; };
 		9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyValueValidator.swift; sourceTree = "<group>"; };
 		9573FB25273C50D400086DDE /* EvaluatorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluatorStub.swift; sourceTree = "<group>"; };
 		9573FB36273D762200086DDE /* AnyValueValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyValueValidatorTests.swift; sourceTree = "<group>"; };
@@ -2679,6 +2683,7 @@
 				593225F924A3855700496D8B /* TestHelper.swift */,
 				5932260E24AAB27900496D8B /* TestUtils.swift */,
 				95F3F009258E143B00084AF8 /* TestingHelper.swift */,
+				95737E152ADEC794007FD15C /* StreamingTestingHelper.swift */,
 				95ED4A9726497EEA00FD3569 /* TestSplitFactory.swift */,
 				95B4369F26F1487400E1EB9C /* TestingData.swift */,
 				952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */,
@@ -2824,6 +2829,7 @@
 				95B4369026E959D400E1EB9C /* lorem_ipsum_gzip.txt */,
 				95B4368C26E9186C00E1EB9C /* lorem_ipsum_result.txt */,
 				95B2498326F3E19300B34507 /* push_msg-segment_updV2.txt */,
+				95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3627,6 +3633,7 @@
 				590DF9D1213F07400082B94F /* split_sample_feature6.json in Resources */,
 				5912D154219A065200BC698C /* legacy_2.csv in Resources */,
 				5912D14D2199FD4D00BC698C /* legacy_1.csv in Resources */,
+				95737E142ADEC71A007FD15C /* push_msg-splits_updV2.txt in Resources */,
 				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
 				950F72FF292E8D6C008A0040 /* SplitiOSFull.xctestplan in Resources */,
 				59FB7C2A2202463000ECC96A /* localhost_1.splits in Resources */,
@@ -4210,6 +4217,7 @@
 				599407E022403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift in Sources */,
 				59F4AAC12513C2EC00A1C69A /* PeriodicTimerStub.swift in Sources */,
 				9580C98226FB8A840021D729 /* StreamingControlResetTest.swift in Sources */,
+				95737E162ADEC794007FD15C /* StreamingTestingHelper.swift in Sources */,
 				594F5F58253A340F00A945B4 /* StreamingOccupancyTest.swift in Sources */,
 				59B2047624F9B8230092F2E9 /* PushManagerEventBroadcasterTest.swift in Sources */,
 				95F3F0302590E4BE00084AF8 /* HttpImpressionsRecorderStub.swift in Sources */,
