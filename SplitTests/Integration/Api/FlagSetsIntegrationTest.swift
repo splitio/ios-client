@@ -192,10 +192,10 @@ class FlagSetsIntegrationTests: XCTestCase {
         telemetryStatsExp = XCTestExpectation()
         let client = try startTest(syncConfig: syncConfig, telemetryEnabled: true)
 
-        _ = client?.getTreatmentsByFlagSet(flagSet: "set2", attributes: nil)
-        _ = client?.getTreatmentsByFlagSets(flagSets: ["set10", "set20"], attributes: nil)
-        _ = client?.getTreatmentsWithConfigByFlagSet(flagSet: "set2", attributes: nil)
-        _ = client?.getTreatmentsWithConfigByFlagSets(flagSets: ["set1", "set2"], attributes: nil)
+        _ = client?.getTreatmentsByFlagSet("set2", attributes: nil)
+        _ = client?.getTreatmentsByFlagSets(["set10", "set20"], attributes: nil)
+        _ = client?.getTreatmentsWithConfigByFlagSet("set2", attributes: nil)
+        _ = client?.getTreatmentsWithConfigByFlagSets(["set1", "set2"], attributes: nil)
 
         client?.flush()
 
