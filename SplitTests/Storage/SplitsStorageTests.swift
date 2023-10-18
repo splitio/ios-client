@@ -16,14 +16,15 @@ class SplitsStorageTest: XCTestCase {
     let dummyUpdateTimestamp: Int64 = 1000
     let dummyQs = "dummy=1"
     let kTestCount = 10
-
+    var flagSetsCache: FlagSetsCacheMock!
 
     var persistentStorage: PersistentSplitsStorageStub!
     var splitsStorage: SplitsStorage!
 
     override func setUp() {
         persistentStorage = PersistentSplitsStorageStub()
-        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage)
+        flagSetsCache = FlagSetsCacheMock()
+        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage, flagSetsCache: flagSetsCache)
     }
 
     func testNoLocalLoaded() {

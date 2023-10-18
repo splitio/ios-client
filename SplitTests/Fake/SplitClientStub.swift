@@ -93,7 +93,23 @@ class SplitClientStub: SplitClient {
     func clearAttributes() -> Bool {
         return true
     }
-    
+
+    func getTreatmentsByFlagSet(flagSet: String, attributes: [String : Any]) -> [String : String] {
+        return [:]
+    }
+
+    func getTreatmentsByFlagSets(flagSets: [String], attributes: [String : Any]) -> [String : String] {
+        return [:]
+    }
+
+    func getTreatmentsWithConfigByFlagSet(flagSet: String, attributes: [String : Any]) -> [String : SplitResult] {
+        return [:]
+    }
+
+    func getTreatmentsWithConfigByFlagSets(flagSets: [String], attributes: [String : Any]) -> [String : SplitResult] {
+        return [:]
+    }
+
     func flush() {
     }
 

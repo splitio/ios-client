@@ -21,6 +21,14 @@ class SynchronizedDictionarySet<K: Hashable, T: Hashable> {
         }
     }
 
+    var all: [K: Set<T>] {
+        var all: [K: Set<T>]?
+        queue.sync {
+            all = items
+        }
+        return all ?? [K: Set<T>]()
+    }
+
     func count(forKey key: K) -> Int {
         var count: Int?
         queue.sync {
@@ -73,6 +81,20 @@ class SynchronizedDictionarySet<K: Hashable, T: Hashable> {
     func removeValues(forKey key: K) {
         queue.sync {
             _ = items.removeValue(forKey: key)
+        }
+    }
+
+    func removeValue(_ value: T, forKey key: K) {
+        queue.sync {
+            var values = items[key]
+            values?.remove(value)
+
+            if (values?.count ?? 0) == 0 {
+                items.removeValue(forKey: key)
+            } else {
+                items[key] = values
+            }
+
         }
     }
 
