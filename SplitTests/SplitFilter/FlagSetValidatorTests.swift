@@ -36,7 +36,7 @@ class FlagSetValidatorTests: XCTestCase {
         "*test", "test*test", "test()", "(test)", "1|test", "test\\"]
 
         let result = validator.cleanAndValidateValues(values, calledFrom: "TestMethod")
-        XCTAssertEqual(result.sorted(), ["1test", "test1", "test2", "test3", "test4_"])
+        XCTAssertEqual(result.sorted(), ["1test", "hola", "test1", "test2", "test3", "test4_"])
         XCTAssertEqual(19, telemetryProducer.getTotalFlagSets())
         XCTAssertEqual(13, telemetryProducer.getInvalidFlagSets())
     }
