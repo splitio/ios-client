@@ -32,11 +32,13 @@ class FlagSetValidatorTests: XCTestCase {
     func testCleanAndValidateValues() {
         let values = ["Test1", "TEST2 ", " test2 ", "test_value@", "TEST3",
                       "test4_", "_test1", "test-1", "1test", "-test1",
+                      "HoLA", "hola", "@@@@",
         "*test", "test*test", "test()", "(test)", "1|test", "test\\"]
+
         let result = validator.cleanAndValidateValues(values, calledFrom: "TestMethod")
         XCTAssertEqual(result.sorted(), ["1test", "test1", "test2", "test3", "test4_"])
-        XCTAssertEqual(16, telemetryProducer.getTotalFlagSets())
-        XCTAssertEqual(10, telemetryProducer.getInvalidFlagSets())
+        XCTAssertEqual(19, telemetryProducer.getTotalFlagSets())
+        XCTAssertEqual(13, telemetryProducer.getInvalidFlagSets())
     }
 }
 

@@ -36,7 +36,6 @@ struct DefaultFlagSetsValidator: FlagSetsValidator {
     }
 
     func cleanAndValidateValues(_ values: [String], calledFrom method: String = "SDK Init") -> [String] {
-        var invalidFlagSetsCount = 0
         var cleanSets = Set<String>()
         for value in values {
             let cleanValue = value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
@@ -44,7 +43,6 @@ struct DefaultFlagSetsValidator: FlagSetsValidator {
                 Logger.w("\(method): Flag Set name <<\(value)>> has extra whitespace, trimming")
             }
             if !isValid(cleanValue) {
-                invalidFlagSetsCount+=1
                 Logger.w("\(method): you passed \(cleanValue), Flag Set must adhere to the regular " +
                          "expressions \(setRegex). This means an Flag Set must be start with a letter, " +
                          "be in lowercase, alphanumeric and have a max length of 50 characters." +
@@ -56,7 +54,7 @@ struct DefaultFlagSetsValidator: FlagSetsValidator {
             }
         }
         telemetryProducer?.recordTotalFlagSets(values.asSet().count)
-        telemetryProducer?.recordInvalidFlagSets(invalidFlagSetsCount)
+        telemetryProducer?.recordInvalidFlagSets(values.count - cleanSets.count)
         return Array(cleanSets)
     }
 
