@@ -13,10 +13,8 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = IntegrationHelper.dummyUserKey
-    var streamingBinding: TestStreamResponseBinding?
     let sseExp = XCTestExpectation(description: "Sse conn")
-    var notificationTemplate: String!
-    let kDataField = "[NOTIFICATION_DATA]"
+    var streamingHelper: StreamingTestingHelper!
 
     let featureFlagName = "mauro_java"
 
@@ -37,7 +35,7 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
-        loadNotificationTemplate()
+        streamingHelper = StreamingTestingHelper()
     }
 
     func testInstantUpdateGzip() throws {
@@ -62,8 +60,8 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
 
         mySegExp = XCTestExpectation()
         ffExp = XCTestExpectation()
-        streamingBinding?.push(message: ":keepalive")
-        print("KEEP")
+        streamingHelper.pushKeepalive()
+
         wait(for: [mySegExp!, ffExp!], timeout: 5)
 
         let treatmentBefore = client.getTreatment(featureFlagName)
@@ -72,7 +70,7 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         ffExp = nil
 
         sdkUpdExp = XCTestExpectation()
-        pushMessage(TestingData.kEscapedUpdateSplitsNotificationGzip)
+        streamingHelper.pushSplitsMessage(TestingData.kEscapedUpdateSplitsNotificationGzip)
         wait(for: [sdkUpdExp], timeout: 5)
 
         let treatmentAfter = client.getTreatment(featureFlagName)
@@ -109,14 +107,14 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
 
         mySegExp = XCTestExpectation()
         ffExp = XCTestExpectation()
-        streamingBinding?.push(message: ":keepalive")
+        streamingHelper.pushKeepalive()
         wait(for: [mySegExp!, ffExp!], timeout: 5)
         let treatmentBefore = client.getTreatment(featureFlagName)
         mySegExp = nil
         ffExp = nil
 
         sdkUpdExp = XCTestExpectation()
-        pushMessage(TestingData.kEscapedUpdateSplitsNotificationZlib)
+        streamingHelper.pushSplitsMessage(TestingData.kEscapedUpdateSplitsNotificationZlib)
         wait(for: [sdkUpdExp], timeout: 5)
 
         let treatmentAfter = client.getTreatment(featureFlagName)
@@ -156,14 +154,14 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
 
         mySegExp = XCTestExpectation()
         ffExp = XCTestExpectation()
-        streamingBinding?.push(message: ":keepalive")
+        streamingHelper.pushKeepalive()
         wait(for: [mySegExp!, ffExp!], timeout: 5)
         let treatmentBefore = client.getTreatment(featureFlag)
         mySegExp = nil
         ffExp = nil
 
         sdkUpdExp = XCTestExpectation()
-        pushMessage(TestingData.kArchivedFeatureFlagZlib)
+        streamingHelper.pushSplitsMessage(TestingData.kArchivedFeatureFlagZlib)
         wait(for: [sdkUpdExp], timeout: 5)
 
         let treatmentAfter = client.getTreatment(featureFlag)
@@ -212,26 +210,14 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
+            self.streamingHelper.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             self.sseExp.fulfill()
-            return self.streamingBinding!
+            return self.streamingHelper.streamingBinding!
         }
     }
 
     private func wait() {
         ThreadUtils.delay(seconds: Double(self.kRefreshRate) * 2.0)
-    }
-
-    private func loadNotificationTemplate() {
-        if let template = FileHelper.readDataFromFile(sourceClass: self, name: "push_msg-segment_updV2", type: "txt") {
-            notificationTemplate = template
-        }
-    }
-
-    private func pushMessage(_ text: String) {
-        var msg = text.replacingOccurrences(of: "\n", with: " ")
-        msg = notificationTemplate.replacingOccurrences(of: kDataField, with: msg)
-        streamingBinding?.push(message: msg)
     }
 
     private func buildFactory() -> SplitFactory {

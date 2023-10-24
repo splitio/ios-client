@@ -791,6 +791,11 @@
 		9572BA852AC7611400C10FC1 /* FlagSetsCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572BA842AC7611400C10FC1 /* FlagSetsCacheTests.swift */; };
 		9572BA872AC76EA800C10FC1 /* FlagSetsCacheMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572BA862AC76EA800C10FC1 /* FlagSetsCacheMock.swift */; };
 		95737DFB2ACB09CA007FD15C /* FlagSetsValidatorMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737DFA2ACB09CA007FD15C /* FlagSetsValidatorMock.swift */; };
+		95737E0E2AD474A9007FD15C /* FlagSetsIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E0D2AD474A9007FD15C /* FlagSetsIntegrationTest.swift */; };
+		95737E102AD47A42007FD15C /* Substring+asString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E0F2AD47A42007FD15C /* Substring+asString.swift */; };
+		95737E122AD6D016007FD15C /* splitchanges_flagsets.json in Resources */ = {isa = PBXBuildFile; fileRef = 95737E112AD6D016007FD15C /* splitchanges_flagsets.json */; };
+		95737E142ADEC71A007FD15C /* push_msg-splits_updV2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */; };
+		95737E162ADEC794007FD15C /* StreamingTestingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E152ADEC794007FD15C /* StreamingTestingHelper.swift */; };
 		9573FB18273C2FFA00086DDE /* AnyValueValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */; };
 		9573FB26273C50D400086DDE /* EvaluatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB25273C50D400086DDE /* EvaluatorStub.swift */; };
 		9573FB37273D762200086DDE /* AnyValueValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9573FB36273D762200086DDE /* AnyValueValidatorTests.swift */; };
@@ -1789,6 +1794,11 @@
 		9572BA842AC7611400C10FC1 /* FlagSetsCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagSetsCacheTests.swift; sourceTree = "<group>"; };
 		9572BA862AC76EA800C10FC1 /* FlagSetsCacheMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagSetsCacheMock.swift; sourceTree = "<group>"; };
 		95737DFA2ACB09CA007FD15C /* FlagSetsValidatorMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagSetsValidatorMock.swift; sourceTree = "<group>"; };
+		95737E0D2AD474A9007FD15C /* FlagSetsIntegrationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlagSetsIntegrationTest.swift; sourceTree = "<group>"; };
+		95737E0F2AD47A42007FD15C /* Substring+asString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Substring+asString.swift"; sourceTree = "<group>"; };
+		95737E112AD6D016007FD15C /* splitchanges_flagsets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_flagsets.json; sourceTree = "<group>"; };
+		95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "push_msg-splits_updV2.txt"; sourceTree = "<group>"; };
+		95737E152ADEC794007FD15C /* StreamingTestingHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingTestingHelper.swift; sourceTree = "<group>"; };
 		9573FB17273C2FFA00086DDE /* AnyValueValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyValueValidator.swift; sourceTree = "<group>"; };
 		9573FB25273C50D400086DDE /* EvaluatorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluatorStub.swift; sourceTree = "<group>"; };
 		9573FB36273D762200086DDE /* AnyValueValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyValueValidatorTests.swift; sourceTree = "<group>"; };
@@ -2226,6 +2236,7 @@
 			isa = PBXGroup;
 			children = (
 				3B6DEE9E20EA6AE10067435E /* Data+StringRepresentation.swift */,
+				95737E0F2AD47A42007FD15C /* Substring+asString.swift */,
 				3B6DEE9F20EA6AE10067435E /* Date+Utils.swift */,
 				3B6DEEA020EA6AE10067435E /* Dictionary+Extensions.swift */,
 				3B6DEEA120EA6AE10067435E /* Dictionary+JSON.swift */,
@@ -2672,6 +2683,7 @@
 				593225F924A3855700496D8B /* TestHelper.swift */,
 				5932260E24AAB27900496D8B /* TestUtils.swift */,
 				95F3F009258E143B00084AF8 /* TestingHelper.swift */,
+				95737E152ADEC794007FD15C /* StreamingTestingHelper.swift */,
 				95ED4A9726497EEA00FD3569 /* TestSplitFactory.swift */,
 				95B4369F26F1487400E1EB9C /* TestingData.swift */,
 				952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */,
@@ -2794,6 +2806,7 @@
 				592C6AE1211CBBB0002D120C /* murmur3-sample-data-v2.csv */,
 				592C6AE0211CBBB0002D120C /* regex.csv */,
 				592C6AE4211CBBB0002D120C /* splitchanges_1.json */,
+				95737E112AD6D016007FD15C /* splitchanges_flagsets.json */,
 				592C6AE3211CBBB0002D120C /* splitchanges_2.json */,
 				592C6ADD211CBBB0002D120C /* splitchanges_3.json */,
 				590DF9C9213DAC9D0082B94F /* splits.json */,
@@ -2816,6 +2829,7 @@
 				95B4369026E959D400E1EB9C /* lorem_ipsum_gzip.txt */,
 				95B4368C26E9186C00E1EB9C /* lorem_ipsum_result.txt */,
 				95B2498326F3E19300B34507 /* push_msg-segment_updV2.txt */,
+				95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3088,6 +3102,7 @@
 				95E81941287894DA00D99093 /* LoggerTest.swift */,
 				9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */,
 				5946783922E1147600F94E58 /* SplitIntegrationTest.swift */,
+				95737E0D2AD474A9007FD15C /* FlagSetsIntegrationTest.swift */,
 				596A7B722358E142004F6139 /* SplitSdkTimeoutTest.swift */,
 				596A7B70235729B5004F6139 /* DestroyTest.swift */,
 			);
@@ -3618,6 +3633,7 @@
 				590DF9D1213F07400082B94F /* split_sample_feature6.json in Resources */,
 				5912D154219A065200BC698C /* legacy_2.csv in Resources */,
 				5912D14D2199FD4D00BC698C /* legacy_1.csv in Resources */,
+				95737E142ADEC71A007FD15C /* push_msg-splits_updV2.txt in Resources */,
 				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
 				950F72FF292E8D6C008A0040 /* SplitiOSFull.xctestplan in Resources */,
 				59FB7C2A2202463000ECC96A /* localhost_1.splits in Resources */,
@@ -3631,6 +3647,7 @@
 				95D7D7E226DD44FB002E4D75 /* murmur3_64_uuids.csv in Resources */,
 				592C6AEB211CBBB0002D120C /* murmur3-sample-data-v2.csv in Resources */,
 				95B4369126E959D400E1EB9C /* lorem_ipsum_gzip.txt in Resources */,
+				95737E122AD6D016007FD15C /* splitchanges_flagsets.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3818,6 +3835,7 @@
 				95ABF4FE2936AECB006ED016 /* EventsSynchronizer.swift in Sources */,
 				5959C486228C429A0064F968 /* Array+DynamicCodable.swift in Sources */,
 				954F9BB225759BBE00140B81 /* ThreadUtils.swift in Sources */,
+				95737E102AD47A42007FD15C /* Substring+asString.swift in Sources */,
 				3B6DEF3B20EA6AE50067435E /* Dictionary+JSON.swift in Sources */,
 				3B6DEF1A20EA6AE50067435E /* EventDTO.swift in Sources */,
 				95122A142759410100D93F90 /* TelemetryStorage.swift in Sources */,
@@ -4199,6 +4217,7 @@
 				599407E022403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift in Sources */,
 				59F4AAC12513C2EC00A1C69A /* PeriodicTimerStub.swift in Sources */,
 				9580C98226FB8A840021D729 /* StreamingControlResetTest.swift in Sources */,
+				95737E162ADEC794007FD15C /* StreamingTestingHelper.swift in Sources */,
 				594F5F58253A340F00A945B4 /* StreamingOccupancyTest.swift in Sources */,
 				59B2047624F9B8230092F2E9 /* PushManagerEventBroadcasterTest.swift in Sources */,
 				95F3F0302590E4BE00084AF8 /* HttpImpressionsRecorderStub.swift in Sources */,
@@ -4287,6 +4306,7 @@
 				31AA21DE01A000A7C30630F2 /* SseClientTest.swift in Sources */,
 				59F4AAB52512581200A1C69A /* MySegmentsSyncWorkerTest.swift in Sources */,
 				31AA2DCDCA8E9F63F47F7D29 /* SplitEventsManagerStub.swift in Sources */,
+				95737E0E2AD474A9007FD15C /* FlagSetsIntegrationTest.swift in Sources */,
 				95E6DA58261CC02E00BA1BCF /* InitialCacheTest.swift in Sources */,
 				95125629276BB85F0091895B /* TelemetryTest.swift in Sources */,
 			);

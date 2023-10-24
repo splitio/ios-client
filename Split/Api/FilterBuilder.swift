@@ -15,9 +15,11 @@ enum FilterError: Error {
 
 class FilterBuilder {
     private var filters = [SplitFilter]()
+    private let flagSetValidator: FlagSetsValidator
 
-    // Visible for testing (for now)
-    var flagSetValidator = DefaultFlagSetsValidator()
+    init(flagSetsValidator: FlagSetsValidator) {
+        self.flagSetValidator = flagSetsValidator
+    }
 
     func add(filters: [SplitFilter]) -> Self {
         self.filters.append(contentsOf: filters)
@@ -49,7 +51,7 @@ class FilterBuilder {
 
         // If bySets filter is present, ignore byNames and byPrefix
         if let filter = groupedFilters.first(where: { $0.type == .bySet }) {
-            let values = flagSetValidator.cleanAndValidateValues(filter.values)
+            let values = flagSetValidator.cleanAndValidateValues(filter.values, calledFrom: "FilterBuilder.build")
             return "&\(filter.type.queryStringField)=\(values.sorted().joined(separator: ","))"
         }
 

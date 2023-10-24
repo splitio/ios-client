@@ -206,20 +206,20 @@ extension DefaultSplitClient {
 // MARK: By Sets evaluation
 extension DefaultSplitClient {
 
-    public func getTreatmentsByFlagSet(flagSet: String, attributes: [String: Any]) -> [String: String] {
+    public func getTreatmentsByFlagSet(flagSet: String, attributes: [String: Any]?) -> [String: String] {
         return treatmentManager.getTreatmentsByFlagSet(flagSet: flagSet, attributes: attributes)
     }
 
-    public func getTreatmentsByFlagSets(flagSets: [String], attributes: [String: Any]) -> [String: String] {
+    public func getTreatmentsByFlagSets(flagSets: [String], attributes: [String: Any]?) -> [String: String] {
         return treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes)
     }
 
-    public func getTreatmentsWithConfigByFlagSet(flagSet: String, attributes: [String: Any]) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSet(flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
         return treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes)
     }
 
-    public func getTreatmentsWithConfigByFlagSets(flagSets: [String], 
-                                                  attributes: [String: Any]) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSets(flagSets: [String],
+                                                  attributes: [String: Any]?) -> [String: SplitResult] {
         return treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: flagSets, attributes: attributes)
     }
 }

@@ -14,6 +14,13 @@ protocol FlagSetsValidator {
 }
 
 struct DefaultFlagSetsValidator: FlagSetsValidator {
+
+    private var telemetryProducer: TelemetryInitProducer?
+
+    init(telemetryProducer: TelemetryInitProducer?) {
+        self.telemetryProducer = telemetryProducer
+    }
+
     private let setRegex = "^[a-z0-9][a-z0-9_]{0,49}$"
 
     func validateOnEvaluation(_ values: [String], calledFrom method: String, setsInFilter: [String]) -> [String] {
@@ -29,6 +36,7 @@ struct DefaultFlagSetsValidator: FlagSetsValidator {
     }
 
     func cleanAndValidateValues(_ values: [String], calledFrom method: String = "SDK Init") -> [String] {
+        var invalidFlagSetsCount = 0
         var cleanSets = Set<String>()
         for value in values {
             let cleanValue = value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
@@ -36,6 +44,7 @@ struct DefaultFlagSetsValidator: FlagSetsValidator {
                 Logger.w("\(method): Flag Set name <<\(value)>> has extra whitespace, trimming")
             }
             if !isValid(cleanValue) {
+                invalidFlagSetsCount+=1
                 Logger.w("\(method): you passed \(cleanValue), Flag Set must adhere to the regular " +
                          "expressions \(setRegex). This means an Flag Set must be start with a letter, " +
                          "be in lowercase, alphanumeric and have a max length of 50 characters." +
@@ -46,6 +55,8 @@ struct DefaultFlagSetsValidator: FlagSetsValidator {
                 Logger.w("\(method): you passed duplicated Flag Set. \(cleanValue) was deduplicated.")
             }
         }
+        telemetryProducer?.recordTotalFlagSets(values.asSet().count)
+        telemetryProducer?.recordInvalidFlagSets(invalidFlagSetsCount)
         return Array(cleanSets)
     }
 

@@ -37,6 +37,9 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     private let lastSyncStats: ConcurrentDictionary<Resource, Int64> = ConcurrentDictionary()
     private var updatesFromSse: [TelemetryUpdatesFromSseType: Int] = [:]
 
+    private let totalFlagSets: AtomicInt = AtomicInt(0)
+    private let invalidFlagSets: AtomicInt = AtomicInt(0)
+
     // Streaming events
     static let kMaxStreamingEventsCount: Int = 20 // Visible for testing
     private let streamingEvents: SynchronizedList<TelemetryStreamingEvent> =
@@ -45,8 +48,6 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     // Tags
     static let kMaxTagsCount = 10 // Visible for testing
     private let tags: ConcurrentSet<String> = ConcurrentSet(capacity: kMaxTagsCount)
-
-    let what = Date().unixTimestampInMicroseconds()
 
     init() {
         for method in TelemetryMethod.allCases {
@@ -136,6 +137,14 @@ class InMemoryTelemetryStorage: TelemetryStorage {
         }
     }
 
+    func recordTotalFlagSets(_ value: Int) {
+        totalFlagSets.set(value)
+    }
+
+    func recordInvalidFlagSets(_ value: Int) {
+        invalidFlagSets.set(value)
+    }
+
     func getNonReadyUsages() -> Int {
         return nonReadyCounter.value
     }
@@ -156,6 +165,10 @@ class InMemoryTelemetryStorage: TelemetryStorage {
                                             treatments: popLatencies(method: .treatments),
                                             treatmentWithConfig: popLatencies(method: .treatmentWithConfig),
                                             treatmentsWithConfig: popLatencies(method: .treatmentsWithConfig),
+                                            treatmentsByFlagSet: popLatencies(method: .treatmentsByFlagSet),
+                                            treatmentsByFlagSets: popLatencies(method: .treatmentsByFlagSets),
+                                            treatmentsWithConfigByFlagSet: popLatencies(method: .treatmentsWithConfigByFlagSet),
+                                            treatmentsWithConfigByFlagSets: popLatencies(method: .treatmentsWithConfigByFlagSets),
                                             track: popLatencies(method: .track))
         }
     }
@@ -265,6 +278,14 @@ class InMemoryTelemetryStorage: TelemetryStorage {
         return timeUntilReadyFromCache.value
     }
 
+    func getTotalFlagSets() -> Int {
+        return totalFlagSets.value
+    }
+
+    func getInvalidFlagSets() -> Int {
+        return invalidFlagSets.value
+    }
+
     // MARK: Private methods
     //
     // IMPORTANT!!
@@ -283,14 +304,10 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     private func popException(method: TelemetryMethod) -> Int? {
-        let count =  methodExceptionCounters[method]
-        methodExceptionCounters[method] = 0
-        return count
+        return  methodExceptionCounters.removeValue(forKey: method)
     }
 
     private func popErrors(resource: Resource) -> [Int: Int]? {
-        let errors =  httpErrors[resource]
-        httpErrors[resource] = nil
-        return errors
+        return httpErrors.removeValue(forKey: resource)
     }
 }

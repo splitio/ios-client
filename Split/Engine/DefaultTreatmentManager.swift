@@ -136,7 +136,8 @@ extension DefaultTreatmentManager {
         let result = getTreatmentsWithConfigNoMetrics(splits: featureFlags,
                                                       attributes: attributes,
                                                       validationTag: ValidationTag.getTreatmentsWithConfigByFlagSets)
-        telemetryProducer?.recordLatency(method: .treatmentsWithConfigByFlagSets, latency: Stopwatch.interval(from: timeStart))
+        telemetryProducer?.recordLatency(method: .treatmentsWithConfigByFlagSets, 
+                                         latency: Stopwatch.interval(from: timeStart))
         return result
     }
 }
@@ -154,7 +155,7 @@ extension DefaultTreatmentManager {
     private func featureFlagsFromSets(_ sets: [String], validationTag: String) -> [String] {
         let validatedSets = flagSetsValidator.validateOnEvaluation(sets,
                                                                    calledFrom: validationTag,
-                                                                   setsInFilter: [])
+                                                                   setsInFilter: splitConfig.bySetsFilter()?.values ?? [])
         return flagSetsCache.getFeatureFlagNames(forFlagSets: validatedSets)
     }
 

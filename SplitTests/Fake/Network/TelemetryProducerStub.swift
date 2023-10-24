@@ -197,4 +197,22 @@ class TelemetryStorageStub: TelemetryStorage {
         popUpdatesFromSseCalled = true
         return TelemetryUpdatesFromSse(splits: 0, mySegments: 0)
     }
+
+    var totalFlagSetsCount = 0
+    func recordTotalFlagSets(_ value: Int) {
+        totalFlagSetsCount = value
+    }
+
+    var invalidFlagSetsCount = 0
+    func recordInvalidFlagSets(_ value: Int) {
+        invalidFlagSetsCount = value
+    }
+
+    func getTotalFlagSets() -> Int {
+        return totalFlagSetsCount
+    }
+
+    func getInvalidFlagSets() -> Int {
+        return invalidFlagSetsCount
+    }
 }

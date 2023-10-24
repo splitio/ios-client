@@ -12,8 +12,7 @@ import XCTest
 @testable import Split
 
 class FilterBuilderTest: XCTestCase {
-    override func setUp() {
-    }
+    let flagSetsValidator = DefaultFlagSetsValidator(telemetryProducer: nil)
 
     func testBasicByNameQueryString() throws {
         // Test that builder generates a query string having the byName filter first
@@ -21,7 +20,7 @@ class FilterBuilderTest: XCTestCase {
         let byNameFilter = SplitFilter.byName(["nf_a", "nf_c", "nf_b"])
         let byPrefixFilter = SplitFilter.byPrefix(["pf_c", "pf_b", "pf_a"]);
 
-        let queryString = try FilterBuilder().add(filters: [byNameFilter, byPrefixFilter]).build()
+        let queryString = try FilterBuilder(flagSetsValidator: flagSetsValidator).add(filters: [byNameFilter, byPrefixFilter]).build()
 
         XCTAssertEqual("&names=nf_a,nf_b,nf_c&prefixes=pf_a,pf_b,pf_c", queryString);
     }
@@ -32,7 +31,7 @@ class FilterBuilderTest: XCTestCase {
         let byNameFilter = SplitFilter.bySet(["nf_a", "nf_c", "nf_b"])
         let byPrefixFilter = SplitFilter.byPrefix(["pf_c", "pf_b", "pf_a"]);
 
-        let queryString = try FilterBuilder().add(filters: [byNameFilter, byPrefixFilter]).build()
+        let queryString = try FilterBuilder(flagSetsValidator: flagSetsValidator).add(filters: [byNameFilter, byPrefixFilter]).build()
 
         XCTAssertEqual("&sets=nf_a,nf_b,nf_c", queryString);
     }
@@ -42,7 +41,7 @@ class FilterBuilderTest: XCTestCase {
         let bySetFilter = SplitFilter.bySet(["nf_a", "nf_c", "nf_b"])
         let byNameFilter = SplitFilter.byName(["pf_c", "pf_b", "pf_a"]);
 
-        let queryString = try FilterBuilder().add(filters: [bySetFilter, byNameFilter]).build()
+        let queryString = try FilterBuilder(flagSetsValidator: flagSetsValidator).add(filters: [bySetFilter, byNameFilter]).build()
 
 
         XCTAssertEqual("&sets=nf_a,nf_b,nf_c", queryString);
@@ -54,8 +53,8 @@ class FilterBuilderTest: XCTestCase {
         let byNameFilter = SplitFilter.byName(["nf_a", "nf_c", "nf_b"])
         let byPrefixFilter = SplitFilter.byPrefix(["pf_c", "pf_b", "pf_a"]);
 
-        let onlyByNameQs = try FilterBuilder().add(filters: [byNameFilter]).build()
-        let onlyByPrefixQs = try FilterBuilder().add(filters: [byPrefixFilter]).build()
+        let onlyByNameQs = try FilterBuilder(flagSetsValidator: flagSetsValidator).add(filters: [byNameFilter]).build()
+        let onlyByPrefixQs = try FilterBuilder(flagSetsValidator: flagSetsValidator).add(filters: [byPrefixFilter]).build()
 
 
         XCTAssertEqual("&names=nf_a,nf_b,nf_c", onlyByNameQs);
@@ -71,7 +70,7 @@ class FilterBuilderTest: XCTestCase {
                         SplitFilter.byPrefix(["pf_d", "pf_a"])
         ]
 
-        let queryString = try FilterBuilder().add(filters: filters).build()
+        let queryString = try FilterBuilder(flagSetsValidator: flagSetsValidator).add(filters: filters).build()
 
         XCTAssertEqual("&names=nf_a,nf_b,nf_c,nf_d&prefixes=pf_a,pf_b,pf_c,pf_d", queryString);
     }
@@ -85,7 +84,7 @@ class FilterBuilderTest: XCTestCase {
                         SplitFilter.byPrefix(["pf_d", "pf_a"])
         ]
 
-        let queryString = try FilterBuilder().add(filters: filters).build()
+        let queryString = try FilterBuilder(flagSetsValidator: flagSetsValidator).add(filters: filters).build()
 
         XCTAssertEqual("&sets=nf_a,nf_b,nf_c,nf_d", queryString);
     }
@@ -96,7 +95,7 @@ class FilterBuilderTest: XCTestCase {
         let values = Array(0...400).map { "f\($0)" }
 
         do {
-            _ = try FilterBuilder()
+            _ = try FilterBuilder(flagSetsValidator: flagSetsValidator)
                 .add(filters: [SplitFilter.byName(values)])
                 .build()
         } catch {
@@ -112,7 +111,7 @@ class FilterBuilderTest: XCTestCase {
         let values = Array(0...50).map { "f\($0)" }
 
         do {
-            _ = try FilterBuilder()
+            _ = try FilterBuilder(flagSetsValidator: flagSetsValidator)
                 .add(filters: [SplitFilter.byPrefix(values)])
                 .build()
         } catch {
@@ -124,7 +123,7 @@ class FilterBuilderTest: XCTestCase {
 
     func testNoFilters() throws {
         // When no filter added, query string has to be empty
-        let queryString = try FilterBuilder().build()
+        let queryString = try FilterBuilder(flagSetsValidator: flagSetsValidator).build()
 
         XCTAssertEqual("", queryString);
     }
@@ -136,7 +135,7 @@ class FilterBuilderTest: XCTestCase {
                         SplitFilter.byName(["ausgefüllt"]),
         ]
 
-        let queryString = try FilterBuilder().add(filters: filters).build()
+        let queryString = try FilterBuilder(flagSetsValidator: flagSetsValidator).add(filters: filters).build()
 
         XCTAssertEqual("&names=abc\u{0223},abc\u{0223}asd,ausgefüllt,\u{0223}abc", queryString);
     }
@@ -149,7 +148,7 @@ class FilterBuilderTest: XCTestCase {
                         SplitFilter.byName([])
         ]
 
-        let queryString = try FilterBuilder().add(filters: filters).build()
+        let queryString = try FilterBuilder(flagSetsValidator: flagSetsValidator).add(filters: filters).build()
 
         XCTAssertEqual("&prefixes=abc\u{0223},abc\u{0223}asd,ausgefüllt,\u{0223}abc", queryString);
     }
@@ -163,7 +162,7 @@ class FilterBuilderTest: XCTestCase {
                         SplitFilter.byName(["ausgefüllt"])
         ]
 
-        let queryString = try FilterBuilder().add(filters: filters).build()
+        let queryString = try FilterBuilder(flagSetsValidator: flagSetsValidator).add(filters: filters).build()
 
         XCTAssertEqual("&names=abc\u{0223},abc\u{0223}asd,ausgefüllt,\u{0223}abc&prefixes=abc\u{0223},abc\u{0223}asd,ausgefüllt,\u{0223}abc", queryString);
     }
@@ -174,7 +173,7 @@ class FilterBuilderTest: XCTestCase {
                         SplitFilter.byName(["__ш", "__a", "%", "%25", " __ш ", "%  "])
         ]
 
-        let queryString = try FilterBuilder().add(filters: filters).build()
+        let queryString = try FilterBuilder(flagSetsValidator: flagSetsValidator).add(filters: filters).build()
 
         XCTAssertEqual("&names=%,%25,__a,__ш", queryString);
     }

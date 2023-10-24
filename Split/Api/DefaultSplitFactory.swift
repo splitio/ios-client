@@ -29,7 +29,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     private var defaultManager: SplitManager?
-//    private let filterBuilder = FilterBuilder()
 
     public var client: SplitClient {
         if let client = clientManager?.defaultClient {

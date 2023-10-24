@@ -32,11 +32,15 @@ class DefaultSplitChangeProcessor: SplitChangeProcessor {
         var archived = [Split]()
         if let filterSet = self.filterSet {
             active = splitChange.splits.filter {
-                $0.status == .active && !(filterSet.isDisjoint(with: $0.sets ?? []))
+                $0.status == .active
+                && ($0.sets?.count ?? -1) > 0
+                && !(filterSet.isDisjoint(with: $0.sets ?? []))
             }
 
             archived = splitChange.splits.filter {
-                $0.status == .archived || filterSet.isDisjoint(with: $0.sets ?? [])
+                $0.status == .archived
+                || ($0.sets?.count ?? 0) == 0
+                || filterSet.isDisjoint(with: $0.sets ?? [])
             }
         } else {
             active = splitChange.splits.filter { $0.status == .active }
