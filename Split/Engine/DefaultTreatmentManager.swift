@@ -136,7 +136,7 @@ extension DefaultTreatmentManager {
         let result = getTreatmentsWithConfigNoMetrics(splits: featureFlags,
                                                       attributes: attributes,
                                                       validationTag: ValidationTag.getTreatmentsWithConfigByFlagSets)
-        telemetryProducer?.recordLatency(method: .treatmentsWithConfigByFlagSets, 
+        telemetryProducer?.recordLatency(method: .treatmentsWithConfigByFlagSets,
                                          latency: Stopwatch.interval(from: timeStart))
         return result
     }

@@ -74,8 +74,8 @@ public typealias SplitAction = () -> Void
                                                            properties: [String: Any]?) -> Bool
 
     // MARK: Evaluation with flagsets
-    func getTreatmentsByFlagSet(flagSet: String, attributes: [String: Any]?) -> [String: String]
-    func getTreatmentsByFlagSets(flagSets: [String], attributes: [String: Any]?) -> [String: String]
-    func getTreatmentsWithConfigByFlagSet(flagSet: String, attributes: [String: Any]?) -> [String: SplitResult]
-    func getTreatmentsWithConfigByFlagSets(flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult]
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String]
+    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String]
+    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult]
+    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult]
 }

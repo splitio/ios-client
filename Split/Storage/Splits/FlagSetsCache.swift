@@ -9,6 +9,7 @@
 import Foundation
 
 protocol FlagSetsCache {
+    var setsInFilter: Set<String>? { get }
     func getFeatureFlagNamesBySet(byFlagSets sets: [String]) -> [String: Set<String>]
     func getFeatureFlagNames(forFlagSets sets: [String]) -> [String]
     func addToFlagSets(_ featureFlag: Split)
@@ -16,7 +17,7 @@ protocol FlagSetsCache {
 }
 
 class DefaultFlagSetsCache: FlagSetsCache {
-    private let setsInFilter: Set<String>?
+    private(set) var setsInFilter: Set<String>?
     private let flagSets = SynchronizedDictionarySet<String, String>()
 
     init(setsInFilter: Set<String>?) {

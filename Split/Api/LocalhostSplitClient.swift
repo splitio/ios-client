@@ -185,19 +185,19 @@ extension LocalhostSplitClient {
 
 // MARK: TreatmentBySets Feature
 extension LocalhostSplitClient {
-    public func getTreatmentsByFlagSet(flagSet: String, attributes: [String : Any]?) -> [String : String] {
+    public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String: String] {
         return [String: String]()
     }
 
-    public func getTreatmentsByFlagSets(flagSets: [String], attributes: [String : Any]?) -> [String : String] {
+    public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String: String] {
         return [String: String]()
     }
 
-    public func getTreatmentsWithConfigByFlagSet(flagSet: String, attributes: [String : Any]?) -> [String : SplitResult] {
+    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 
-    public func getTreatmentsWithConfigByFlagSets(flagSets: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 }

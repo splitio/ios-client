@@ -152,7 +152,7 @@ class DefaultSplitsStorage: SplitsStorage {
                 flagSetsCache.addToFlagSets(split)
             } else {
                 cachedSplits.removeValue(forKey: splitName)
-                if let name = split.name, let sets = split.sets {
+                if let name = split.name, let sets = flagSetsCache.setsInFilter {
                     flagSetsCache.removeFromFlagSets(featureFlagName: name, sets: sets)
                 }
             }
