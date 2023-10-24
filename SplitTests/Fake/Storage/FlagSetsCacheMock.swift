@@ -10,6 +10,8 @@ import Foundation
 @testable import Split
 
 class FlagSetsCacheMock: FlagSetsCache {
+    var setsInFilter: Set<String>?
+
 
     var flagSets: [String: Set<String>] = [:]
 
