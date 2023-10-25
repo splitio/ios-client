@@ -53,7 +53,7 @@ struct DefaultFlagSetsValidator: FlagSetsValidator {
                 Logger.w("\(method): you passed duplicated Flag Set. \(cleanValue) was deduplicated.")
             }
         }
-        telemetryProducer?.recordTotalFlagSets(values.asSet().count)
+        telemetryProducer?.recordTotalFlagSets(values.count)
         telemetryProducer?.recordInvalidFlagSets(values.count - cleanSets.count)
         return Array(cleanSets)
     }

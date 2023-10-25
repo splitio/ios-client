@@ -175,8 +175,8 @@ class FlagSetsIntegrationTests: XCTestCase {
         wait(for: [telemetryConfigExp!], timeout: 3)
 
         XCTAssertEqual("since=-1&sets=a,c,d", querystring)
-        XCTAssertEqual(5, telemetryConfigSent?.flagSetsTotal ?? -1)
-        XCTAssertEqual(2, telemetryConfigSent?.flagSetsInvalid ?? -1)
+        XCTAssertEqual(7, telemetryConfigSent?.flagSetsTotal ?? -1)
+        XCTAssertEqual(4, telemetryConfigSent?.flagSetsInvalid ?? -1)
     }
 
     func testTelemetryStats() throws {
