@@ -229,7 +229,9 @@ extension DefaultTreatmentManager {
         let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
         let mergedAttributes = mergeAttributes(attributes: attributes)
         do {
-            let result = try evaluateIfReady(splitName: trimmedSplitName, attributes: mergedAttributes)
+            let result = try evaluateIfReady(splitName: trimmedSplitName,
+                                             attributes: mergedAttributes,
+                                             validationTag: validationTag)
             logImpression(label: result.label, changeNumber: result.changeNumber,
                           treatment: result.treatment, splitName: trimmedSplitName, attributes: mergedAttributes)
             return SplitResult(treatment: result.treatment, config: result.configuration)
@@ -240,8 +242,14 @@ extension DefaultTreatmentManager {
         }
     }
 
-    private func evaluateIfReady(splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
+    private func sdkNoReadyMessage(splitName: String) -> String {
+        return "The SDK is not ready, results may be incorrect for feature flag \(splitName)."
+                           + "Make sure to wait for SDK readiness before using this method"
+    }
+
+    private func evaluateIfReady(splitName: String, attributes: [String: Any]?, validationTag: String) throws -> EvaluationResult {
         if !isSdkReady() {
+            validationLogger.w(message: sdkNoReadyMessage(splitName: splitName), tag: validationTag)
             telemetryProducer?.recordNonReadyUsage()
             return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.notReady)
         }
