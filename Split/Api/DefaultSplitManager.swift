@@ -39,6 +39,7 @@ import Foundation
                 splitView.name = split.name
                 splitView.changeNumber = split.changeNumber
                 splitView.trafficType = split.trafficTypeName
+                splitView.defaultTreatment = split.defaultTreatment
                 splitView.killed = split.killed
                 splitView.configs = split.configurations ?? [String: String]()
 

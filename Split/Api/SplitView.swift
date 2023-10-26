@@ -12,6 +12,7 @@ public class SplitView: NSObject, Codable {
 
     @objc public var name: String?
     @objc public var trafficType: String?
+    @objc public var defaultTreatment: String?
     public var killed: Bool?
     @objc public var isKilled: Bool {
         return killed ?? false
