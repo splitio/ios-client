@@ -8,9 +8,10 @@
 
 import Foundation
 
-enum HttpError: Error {
+enum HttpError: Error, Equatable {
     case serverUnavailable
     case requestTimeOut
+    case uriTooLong
     case clientRelated(code: Int)
     case couldNotCreateRequest(message: String)
     case unknown(code: Int, message: String)
@@ -41,6 +42,8 @@ extension HttpError {
             return message
         case .requestTimeOut:
             return "Request Time Out"
+        case .uriTooLong:
+            return "Uri too long"
         }
     }
 }

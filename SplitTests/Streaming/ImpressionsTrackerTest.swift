@@ -23,6 +23,7 @@ class ImpressionsTrackerTest: XCTestCase {
     var impressionsCountStorage: PersistentImpressionsCountStorageStub!
     var uniqueKeysRecorderWorker: RecorderWorkerStub!
     var periodicUniqueKeysRecorderWorker: PeriodicRecorderWorkerStub!
+    var flagSetsCache: FlagSetsCacheMock!
 
     var uniqueKeyTracker: UniqueKeyTrackerStub!
 
@@ -291,7 +292,7 @@ class ImpressionsTrackerTest: XCTestCase {
         impressionsCountStorage = PersistentImpressionsCountStorageStub()
 
         uniqueKeyTracker = UniqueKeyTrackerStub()
-
+        flagSetsCache = FlagSetsCacheMock()
 
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      splitsStorage: SplitsStorageStub(),
@@ -304,7 +305,8 @@ class ImpressionsTrackerTest: XCTestCase {
                                                      telemetryStorage: telemetryProducer,
                                                      mySegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub(),
-                                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub())
+                                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub(), 
+                                                     flagSetsCache: flagSetsCache)
 
         let apiFacade = try! SplitApiFacade.builder()
             .setUserKey("userKey")

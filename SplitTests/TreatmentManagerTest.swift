@@ -21,11 +21,11 @@ class TreatmentManagerTest: XCTestCase {
 
     var impressionsLogger: ImpressionsLoggerStub!
     var telemetryProducer: TelemetryStorageStub!
+    var flagSetsCache: FlagSetsCacheMock!
 
     var validationLoggerStub: ValidationMessageLoggerStub {
         return validationLogger as! ValidationMessageLoggerStub
     }
-
 
     override func setUp() {
 
@@ -33,6 +33,16 @@ class TreatmentManagerTest: XCTestCase {
         validationLogger = ValidationMessageLoggerStub()
         attributesStorage = DefaultAttributesStorage()
         telemetryProducer = TelemetryStorageStub()
+        flagSetsCache = FlagSetsCacheMock()
+
+        flagSetsCache.flagSets = ["set1": ["TEST_SETS_1"],
+                                  "set2": ["TEST_SETS_1", "TEST_SETS_2"],
+                                  "set3": ["TEST_SETS_2"],
+                                  "set5": ["TEST_SETS_2"],
+                                  "set10": ["TEST_SETS_3"],
+                                  "set20": ["TEST_SETS_3"],
+        ]
+
         if storageContainer == nil {
             let splits = loadSplitsFile()
             let mySegments = ["s1", "s2", "test_copy"]
@@ -52,7 +62,8 @@ class TreatmentManagerTest: XCTestCase {
                                                      telemetryStorage: telemetryProducer,
                                                      mySegmentsStorage: mySegmentsStorage,
                                                      attributesStorage: attributesStorage,
-                                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub())
+                                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub(), 
+                                                     flagSetsCache: flagSetsCache)
         }
     }
 
@@ -241,6 +252,56 @@ class TreatmentManagerTest: XCTestCase {
         XCTAssertFalse(validationLoggerStub.hasWarnings)
     }
 
+    func testBasicEvaluationsBySets() {
+        let matchingKey = "the_key"
+        let splitNames = ["TEST_SETS_1", "TEST_SETS_2", "TEST_SETS_3"]
+
+        let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
+        let res1 = treatmentManager.getTreatmentsByFlagSet(flagSet: "set1", attributes: nil)
+        let res2 = treatmentManager.getTreatmentsByFlagSets(flagSets: ["set1", "set5"], attributes: nil)
+        let res3 = treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: "set2", attributes: nil)
+        let res4 = treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: ["set1", "set5", "set10"], attributes: nil)
+        let res5 = treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: ["set100", "set500"], attributes: nil)
+
+
+        let impressionsCount = impressionsLogger.impressionsPushedCount
+        let imp1 = impressionsLogger.impressions[splitNames[0]]
+        let imp2 = impressionsLogger.impressions[splitNames[1]]
+        let imp3 = impressionsLogger.impressions[splitNames[2]]
+
+        XCTAssertEqual("off1", res1[splitNames[0]])
+
+        XCTAssertEqual("off1", res2[splitNames[0]])
+        XCTAssertEqual("off2", res2[splitNames[1]])
+
+        XCTAssertEqual("off1", res3[splitNames[0]]?.treatment)
+        XCTAssertEqual("off2", res3[splitNames[1]]?.treatment)
+        XCTAssertEqual("{\"f1\":\"v1\"}", res3[splitNames[1]]?.config)
+
+        XCTAssertEqual("off1", res4[splitNames[0]]?.treatment)
+        XCTAssertEqual("off2", res4[splitNames[1]]?.treatment)
+        XCTAssertEqual("{\"f1\":\"v1\"}", res3[splitNames[1]]?.config)
+        XCTAssertEqual("off3", res4[splitNames[2]]?.treatment)
+
+        XCTAssertEqual(0, res5.count)
+
+        XCTAssertEqual(8, impressionsCount)
+        XCTAssertNotNil(imp1)
+        XCTAssertNotNil(imp2)
+        XCTAssertNotNil(imp3)
+
+        XCTAssertEqual(0, telemetryProducer.methodLatencies[.treatment] ?? 0)
+        XCTAssertEqual(0, telemetryProducer.methodLatencies[.treatments] ?? 0)
+        XCTAssertEqual(0, telemetryProducer.methodLatencies[.treatmentWithConfig] ?? 0)
+        XCTAssertEqual(0, telemetryProducer.methodLatencies[.treatmentsWithConfig] ?? 0)
+
+        XCTAssertEqual(1, telemetryProducer.methodLatencies[.treatmentsByFlagSet])
+        XCTAssertEqual(1, telemetryProducer.methodLatencies[.treatmentsByFlagSets])
+        XCTAssertEqual(1, telemetryProducer.methodLatencies[.treatmentsWithConfigByFlagSet])
+        XCTAssertEqual(2, telemetryProducer.methodLatencies[.treatmentsWithConfigByFlagSets])
+
+    }
+
     func testNoStoredAttributes() {
         let userKey = "key"
         let splitName = "FACUNDO_TEST"
@@ -348,9 +409,6 @@ class TreatmentManagerTest: XCTestCase {
         }
     }
 
-    override func tearDown() {
-    }
-
     func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil, evaluator: Evaluator? = nil) -> TreatmentManager {
         let key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
         client = InternalSplitClientStub(splitsStorage: storageContainer.splitsStorage, mySegmentsStorage: storageContainer.mySegmentsStorage)
@@ -363,10 +421,15 @@ class TreatmentManagerTest: XCTestCase {
         eventsManager.isSegmentsReadyFromCacheFired = true
         eventsManager.isSplitsReadyFromCacheFired = true
 
+        let flagSetsValidator = FlagSetsValidatorMock()
+        flagSetsValidator.validateOnEvaluatioResults = ["set1", "set2", "set3", "set5", "set10", "set20"]
+
         return DefaultTreatmentManager(evaluator: defaultEvaluator,
                                        key: key, splitConfig: SplitClientConfig(),
                                        eventsManager: eventsManager, impressionLogger: impressionsLogger,
-                                       telemetryProducer: telemetryProducer, attributesStorage: attributesStorage,
+                                       telemetryProducer: telemetryProducer,
+                                       storageContainer: storageContainer,
+                                       flagSetsValidator: flagSetsValidator,
                                        keyValidator: DefaultKeyValidator(),
                                        splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
                                        validationLogger: validationLogger)

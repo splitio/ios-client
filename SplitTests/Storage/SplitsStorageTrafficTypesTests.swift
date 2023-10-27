@@ -13,6 +13,7 @@ import XCTest
 class SplitsStorageTrafficTypesTests: XCTestCase {
     
     var splitsStorage: SplitsStorage!
+    var flagSetsCache: FlagSetsCacheMock!
 
     override func setUp() {
         
@@ -22,9 +23,10 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         }
 
         let persistent = PersistentSplitsStorageStub()
+        flagSetsCache = FlagSetsCacheMock()
 
         persistent.snapshot = SplitsSnapshot(changeNumber: 1, splits: splits, updateTimestamp: 100, splitsFilterQueryString: "")
-        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistent)
+        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistent, flagSetsCache: flagSetsCache)
         splitsStorage.loadLocal()
     }
 

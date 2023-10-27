@@ -18,6 +18,7 @@ public class SplitView: NSObject, Codable {
         return killed ?? false
     }
     @objc public var treatments: [String]?
+    @objc public var sets: [String]?
     public var changeNumber: Int64?
 
     @objc public var changeNum: NSNumber? {

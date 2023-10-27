@@ -16,6 +16,10 @@ struct ValidationTag {
     static let getTreatmentsWithConfig = "getTreatmentsWithConfig"
     static let getTreatment = "getTreatment"
     static let getTreatments = "getTreatments"
+    static let getTreatmentsByFlagSet = "getTreatmentsByFlagSet"
+    static let getTreatmentsByFlagSets = "getTreatmentsByFlagSets"
+    static let getTreatmentsWithConfigByFlagSet = "getTreatmentsWithConfigByFlagSet"
+    static let getTreatmentsWithConfigByFlagSets = "getTreatmentsWithConfigByFlagSets"
 }
 
 ///

@@ -253,3 +253,9 @@ struct Gzip: CompressionUtil {
         return headerSize
     }
 }
+
+struct CompressionNone: CompressionUtil {
+    func decompress(data: Data) throws -> Data {
+        return data
+    }
+}

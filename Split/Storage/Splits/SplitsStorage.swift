@@ -24,6 +24,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     func getAll() -> [String: Split]
     func update(splitChange: ProcessedSplitChange)
     func update(filterQueryString: String)
+    func update(bySetsFilter: SplitFilter?)
     func updateWithoutChecks(split: Split)
     func isValidTrafficType(name: String) -> Bool
     func getCount() -> Int
@@ -32,18 +33,22 @@ protocol SplitsStorage: SyncSplitsStorage {
 }
 
 class DefaultSplitsStorage: SplitsStorage {
+
     private var persistentStorage: PersistentSplitsStorage
     private var inMemorySplits: ConcurrentDictionary<String, Split>
     private var trafficTypes: ConcurrentDictionary<String, Int>
+    private let flagSetsCache: FlagSetsCache
 
     private (set) var changeNumber: Int64 = -1
     private (set) var updateTimestamp: Int64 = -1
     private (set) var splitsFilterQueryString: String = ""
 
-    init(persistentSplitsStorage: PersistentSplitsStorage) {
+    init(persistentSplitsStorage: PersistentSplitsStorage,
+         flagSetsCache: FlagSetsCache) {
         self.persistentStorage = persistentSplitsStorage
         self.inMemorySplits = ConcurrentDictionary()
         self.trafficTypes = ConcurrentDictionary()
+        self.flagSetsCache = flagSetsCache
     }
 
     func loadLocal() {
@@ -82,6 +87,10 @@ class DefaultSplitsStorage: SplitsStorage {
     func update(filterQueryString: String) {
         splitsFilterQueryString = filterQueryString
         self.persistentStorage.update(filterQueryString: filterQueryString)
+    }
+
+    func update(bySetsFilter filter: SplitFilter?) {
+        self.persistentStorage.update(bySetsFilter: filter)
     }
 
     func updateWithoutChecks(split: Split) {
@@ -140,8 +149,12 @@ class DefaultSplitsStorage: SplitsStorage {
             if active {
                 cachedTrafficTypes[trafficTypeName] = (cachedTrafficTypes[trafficTypeName] ?? 0) + 1
                 cachedSplits[splitName] = split
+                flagSetsCache.addToFlagSets(split)
             } else {
                 cachedSplits.removeValue(forKey: splitName)
+                if let name = split.name, let sets = flagSetsCache.setsInFilter {
+                    flagSetsCache.removeFromFlagSets(featureFlagName: name, sets: sets)
+                }
             }
         }
         inMemorySplits.setValues(cachedSplits)

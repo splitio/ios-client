@@ -59,11 +59,14 @@ class SplitManagerTest: XCTestCase {
         
         let split0 = manager.split(featureName: "sample_feature0")
         let treatments0 = split0?.treatments
-        
+
+        let splitWithoutSets = manager.split(featureName: "sample_feature1")
+
         XCTAssertEqual(split0?.name?.lowercased(), "sample_feature0", "Split0 name")
         XCTAssertEqual(split0?.changeNumber, 1, "Split0 change number")
         XCTAssertFalse(split0?.killed ?? true, "Split0 killed")
         XCTAssertEqual(split0?.trafficType, "custom", "Split0 traffic type")
+        XCTAssertEqual(split0?.sets?.sorted(), ["set1", "set2"])
         XCTAssertNotNil(split0?.configs)
         
         XCTAssertEqual(treatments0?.count, 6, "Split0 treatment count")
@@ -81,6 +84,8 @@ class SplitManagerTest: XCTestCase {
         XCTAssertEqual(0, split1?.configs?.count)
         XCTAssertEqual(treatments1?.count, 6, "Split1 treatment count")
         XCTAssertEqual(treatments1?.sorted().joined(separator: ",").lowercased(), "t1_1,t2_1,t3_1,t4_1,t5_1,t6_1", "Split1 treatment names")
+
+        XCTAssertEqual([], splitWithoutSets!.sets!)
     }
     
     func testAddOneSplit() {

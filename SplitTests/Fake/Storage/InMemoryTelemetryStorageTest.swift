@@ -66,11 +66,11 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         XCTAssertEqual(9, exceptions.treatmentsWithConfig)
         XCTAssertEqual(0, exceptions.track)
 
-        XCTAssertEqual(0, emptyExceptions.treatment)
-        XCTAssertEqual(0, emptyExceptions.treatments)
-        XCTAssertEqual(0, emptyExceptions.treatmentWithConfig)
-        XCTAssertEqual(0, emptyExceptions.treatmentsWithConfig)
-        XCTAssertEqual(0, emptyExceptions.track)
+        XCTAssertEqual(0, emptyExceptions.treatment ?? 0)
+        XCTAssertEqual(0, emptyExceptions.treatments ?? 0)
+        XCTAssertEqual(0, emptyExceptions.treatmentWithConfig ?? 0)
+        XCTAssertEqual(0, emptyExceptions.treatmentsWithConfig ?? 0)
+        XCTAssertEqual(0, emptyExceptions.track ?? 0)
     }
 
     func testImpression() {

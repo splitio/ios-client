@@ -108,6 +108,22 @@ class FailedClient: SplitClient {
     func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool {
         return false
     }
+
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : String] {
+        return [:]
+    }
+
+    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : String] {
+        return [:]
+    }
+
+    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : SplitResult] {
+        return [:]
+    }
+
+    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+        return [:]
+    }
 }
 
 class FailedManager: SplitManager {

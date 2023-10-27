@@ -80,7 +80,10 @@ class DefaultRestClient: SplitApiRestClient {
                 }
             case .failure:
                 completion(DataResult {
-                    if response.code >= 400, response.code < 500 {
+                    if response.code == HttpCode.uriTooLong {
+                        throw HttpError.uriTooLong
+                    }
+                    if response.code >= HttpCode.badRequest, response.code < HttpCode.internalServerError {
                         throw HttpError.clientRelated(code: response.code)
                     }
                     throw HttpError.unknown(code: response.code, message: "unknown")
