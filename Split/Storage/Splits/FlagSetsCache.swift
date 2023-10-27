@@ -47,11 +47,25 @@ class DefaultFlagSetsCache: FlagSetsCache {
                 flagSets.insert(name, forKey: flagSet)
             }
         }
+
+        let sets = featureFlag.sets ?? [].asSet()
+        for flagSet in flagSets.keys {
+            if !sets.contains(flagSet) {
+                flagSets.removeValue(name, forKey: flagSet)
+            }
+        }
     }
 
     func removeFromFlagSets(featureFlagName: String, sets: Set<String>) {
-        sets.forEach { flagSet in
-            flagSets.removeValue(featureFlagName, forKey: flagSet)
+        let allSets = flagSets.all.keys
+        if sets.count > 0 {
+            sets.forEach { flagSet in
+                flagSets.removeValue(featureFlagName, forKey: flagSet)
+            }
+        } else {
+            allSets.forEach { flagSet in
+                flagSets.removeValue(featureFlagName, forKey: flagSet)
+            }
         }
     }
 }

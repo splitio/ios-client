@@ -371,16 +371,20 @@ class FlagSetsIntegrationTests: XCTestCase {
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
 
         pollingFlagSetsHits = [ getChangeFlagSetsJson(since: 100, till: 100,
-                                                      sets1: ["set_1"],
+                                                      sets1: ["set_1", "set_20"],
                                                       sets2: ["set_3"],
                                                       sets3: ["set_4"],
                                                       names: ["mauro_java", "sp1", "sp2"])!,
-
                                 getChangeFlagSetsJson(since: 200, till: 200,
-                                                                              sets1: ["set_20"],
-                                                                              sets2: ["set_3"],
-                                                                              sets3: ["set_4"],
-                                                                              names: ["mauro_java", "sp1", "sp2"])!
+                                                      sets1: ["set_20"],
+                                                      sets2: ["set_3"],
+                                                      sets3: ["set_4"],
+                                                      names: ["mauro_java", "sp1", "sp2"])!,
+                                getChangeFlagSetsJson(since: 300, till: 300,
+                                                      sets1: [],
+                                                      sets2: ["set_3"],
+                                                      sets3: ["set_4"],
+                                                      names: ["mauro_java", "sp1", "sp2"])!
         ]
 
         pollingExps = [XCTestExpectation(description: "EXP_P0"), XCTestExpectation(description: "EXP_P1")]
@@ -413,7 +417,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         destroyTest(client: client)
         IntegrationCoreDataHelper.stopObservingChanges()
 
-        XCTAssertEqual(["set_1"], split1Change01.sets?.sorted())
+        XCTAssertEqual(["set_1", "set_20"], split1Change01.sets?.sorted())
         XCTAssertEqual(["set_20"], split1Change02.sets?.sorted())
         XCTAssertNil(split1Change03.sets)
     }

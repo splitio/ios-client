@@ -26,7 +26,7 @@ struct DefaultFlagSetsValidator: FlagSetsValidator {
     func validateOnEvaluation(_ values: [String], calledFrom method: String, setsInFilter: [String]) -> [String] {
         let filterSet = Set(setsInFilter)
         return cleanAndValidateValues(values, calledFrom: method).filter { value in
-            if !filterSet.contains(value) {
+            if filterSet.count > 0, !filterSet.contains(value) {
                 Logger.w("\(method): you passed Flag Set: \(value) and is not part of " +
                          "the configured Flag set list, ignoring the request.")
                 return false
