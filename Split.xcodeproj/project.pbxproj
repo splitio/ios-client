@@ -820,6 +820,10 @@
 		95825BDD271F4E8700A0CDAD /* Bundle+Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95825BDC271F4E8700A0CDAD /* Bundle+Name.swift */; };
 		95825C022721F0F800A0CDAD /* UserKeyEncondingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95825C012721F0F800A0CDAD /* UserKeyEncondingTest.swift */; };
 		9583554028464FD300014F0C /* SingleSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9583553F28464FD300014F0C /* SingleSyncTest.swift */; };
+		95880CFA2AEFF159000498A0 /* FlagSetsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572BA822AC5F66700C10FC1 /* FlagSetsCache.swift */; };
+		95880CFB2AEFF177000498A0 /* FlagSetsValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953DAA5E2ABDC10C004056CE /* FlagSetsValidator.swift */; };
+		95880CFC2AEFF193000498A0 /* Array+asSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572BA7C2AC37B7400C10FC1 /* Array+asSet.swift */; };
+		95880CFD2AEFF1B2000498A0 /* Substring+asString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E0F2AD47A42007FD15C /* Substring+asString.swift */; };
 		9595910526DFB1AB009E7944 /* DecompressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595910426DFB1AB009E7944 /* DecompressionTest.swift */; };
 		9595910D26DFE149009E7944 /* lorem_ipsum_zlib.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9595910C26DFE149009E7944 /* lorem_ipsum_zlib.txt */; };
 		9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595911026DFFF87009E7944 /* CompressionUtil.swift */; };
@@ -4604,6 +4608,7 @@
 				95B02CB028D0BDC10030EC8B /* YAMLTokenizer.swift in Sources */,
 				95B02CB128D0BDC10030EC8B /* KeyValidator.swift in Sources */,
 				95B02CB228D0BDC10030EC8B /* ApiKeyValidator.swift in Sources */,
+				95880CFA2AEFF159000498A0 /* FlagSetsCache.swift in Sources */,
 				95B02CB328D0BDC10030EC8B /* EventValidator.swift in Sources */,
 				95B02CB428D0BDC10030EC8B /* SplitValidator.swift in Sources */,
 				95B02CB528D0BDC10030EC8B /* ValidationConfig.swift in Sources */,
@@ -4704,6 +4709,7 @@
 				95B02D1528D0BDC20030EC8B /* LegacyHash.swift in Sources */,
 				95B02D1628D0BDC20030EC8B /* Murmur3Hash.swift in Sources */,
 				95B02D1728D0BDC20030EC8B /* Murmur64x128.swift in Sources */,
+				95880CFC2AEFF193000498A0 /* Array+asSet.swift in Sources */,
 				95B02D1828D0BDC20030EC8B /* Partition.swift in Sources */,
 				95B02D1928D0BDC20030EC8B /* Splitter.swift in Sources */,
 				95B02D1A28D0BDC20030EC8B /* TreatmentManager.swift in Sources */,
@@ -4732,6 +4738,7 @@
 				95B02D3028D0BDC20030EC8B /* ImpressionsCountEntity.swift in Sources */,
 				95B02D3128D0BDC20030EC8B /* TelemetryStorage.swift in Sources */,
 				95B02D3228D0BDC20030EC8B /* TelemetryConfig.swift in Sources */,
+				95880CFD2AEFF1B2000498A0 /* Substring+asString.swift in Sources */,
 				95B02D3328D0BDC20030EC8B /* TelemetryStats.swift in Sources */,
 				95B02D3428D0BDC20030EC8B /* TelemetryInMemoryStorage.swift in Sources */,
 				95B02D3528D0BDC20030EC8B /* LatencyCounter.swift in Sources */,
@@ -4784,6 +4791,7 @@
 				952FA1312A31DCE400264AB5 /* SplitComponentCatalog.swift in Sources */,
 				95B02D6128D0BDC20030EC8B /* PartOfSetMatcher.swift in Sources */,
 				95B02D6228D0BDC20030EC8B /* StartWithMatcher.swift in Sources */,
+				95880CFB2AEFF177000498A0 /* FlagSetsValidator.swift in Sources */,
 				95B02D6328D0BDC20030EC8B /* Whitelist.swift in Sources */,
 				95B02D6428D0BDC20030EC8B /* SecureDataStore.swift in Sources */,
 				95B02D6528D0BDC20030EC8B /* SyncManagerBuilder.swift in Sources */,

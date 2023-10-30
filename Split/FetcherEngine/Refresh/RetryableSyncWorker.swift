@@ -10,7 +10,7 @@ import Foundation
 
 protocol RetryableSyncWorker {
     typealias SyncCompletion = (Bool) -> Void
-    typealias ErrorHandler = (any Error) -> Void
+    typealias ErrorHandler = (Error) -> Void
     var completion: SyncCompletion? { get set }
     var errorHandler: ErrorHandler? { get set }
     func start()
