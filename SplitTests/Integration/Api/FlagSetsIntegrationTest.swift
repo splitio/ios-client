@@ -99,6 +99,9 @@ class FlagSetsIntegrationTests: XCTestCase {
                 return TestDispatcherResponse(code: 200)
 
             case let(urlString) where urlString.contains("metrics/usage"):
+
+                print("json: = \(request.body?.stringRepresentation ?? "wak")")
+
                 if !self.firstStats {
                     return TestDispatcherResponse(code: 200)
                 }
@@ -632,7 +635,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         splitConfig.sdkReadyTimeOut = 6000
         splitConfig.logLevel = .verbose
         splitConfig.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: telemetryEnabled)
-        splitConfig.internalTelemetryRefreshRate = 1
+        splitConfig.internalTelemetryRefreshRate = 10000
 
         if refreshRate > -1 {
             splitConfig.streamingEnabled = false
