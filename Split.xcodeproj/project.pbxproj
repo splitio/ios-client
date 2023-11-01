@@ -824,6 +824,7 @@
 		95880CFB2AEFF177000498A0 /* FlagSetsValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953DAA5E2ABDC10C004056CE /* FlagSetsValidator.swift */; };
 		95880CFC2AEFF193000498A0 /* Array+asSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572BA7C2AC37B7400C10FC1 /* Array+asSet.swift */; };
 		95880CFD2AEFF1B2000498A0 /* Substring+asString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E0F2AD47A42007FD15C /* Substring+asString.swift */; };
+		95880D092AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95880D082AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan */; };
 		9595910526DFB1AB009E7944 /* DecompressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595910426DFB1AB009E7944 /* DecompressionTest.swift */; };
 		9595910D26DFE149009E7944 /* lorem_ipsum_zlib.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9595910C26DFE149009E7944 /* lorem_ipsum_zlib.txt */; };
 		9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595911026DFFF87009E7944 /* CompressionUtil.swift */; };
@@ -1827,6 +1828,7 @@
 		95825BDC271F4E8700A0CDAD /* Bundle+Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Name.swift"; sourceTree = "<group>"; };
 		95825C012721F0F800A0CDAD /* UserKeyEncondingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserKeyEncondingTest.swift; sourceTree = "<group>"; };
 		9583553F28464FD300014F0C /* SingleSyncTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleSyncTest.swift; sourceTree = "<group>"; };
+		95880D082AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSStreaming_1.xctestplan; sourceTree = "<group>"; };
 		9595910426DFB1AB009E7944 /* DecompressionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecompressionTest.swift; sourceTree = "<group>"; };
 		9595910C26DFE149009E7944 /* lorem_ipsum_zlib.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = lorem_ipsum_zlib.txt; sourceTree = "<group>"; };
 		9595911026DFFF87009E7944 /* CompressionUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionUtil.swift; sourceTree = "<group>"; };
@@ -2041,6 +2043,7 @@
 			children = (
 				950F72FD292E87A4008A0040 /* SplitiOSIntegration.xctestplan */,
 				956A7E1A2970B0F20080D53C /* SplitiOSStreaming.xctestplan */,
+				95880D082AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan */,
 				952FA1682A44C0FB00264AB5 /* SplitStreamingUT.xctestplan */,
 				95D83A962A561CB000ADA55E /* SplitPushManagerUT.xctestplan */,
 				95B0307B28D275020030EC8B /* SplitiOSUnit.xctestplan */,
@@ -3599,6 +3602,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95880D092AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan in Resources */,
 				599EA57622666B84006CBA89 /* LICENSE in Resources */,
 				3B6DEF5C20EA6AE50067435E /* .gitkeep in Resources */,
 				952FA1692A44C0FB00264AB5 /* SplitStreamingUT.xctestplan in Resources */,
