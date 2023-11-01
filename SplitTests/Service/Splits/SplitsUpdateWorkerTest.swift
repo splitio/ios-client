@@ -98,7 +98,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
             exp.fulfill()
         }
         splitsUpdateWorker.start()
-        sleep(1)
+        sleep(3)
         splitsUpdateWorker.stop()
 
         wait(for: [exp], timeout: 3)

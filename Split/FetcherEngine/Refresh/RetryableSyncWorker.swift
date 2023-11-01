@@ -165,7 +165,6 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     private let cacheExpiration: Int
     private let defaultQueryString: String
     private let syncHelper: SplitsSyncHelper
-    var changeChecker: SplitsChangesChecker
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
@@ -181,7 +180,6 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         self.splitChangeProcessor = splitChangeProcessor
         self.cacheExpiration = cacheExpiration
         self.defaultQueryString = defaultQueryString
-        self.changeChecker = DefaultSplitsChangesChecker()
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
@@ -208,10 +206,10 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         }
 
         do {
-            if try syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache) {
+            let result = try syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache)
+            if result.success {
                 if !isSdkReadyTriggered() ||
-                    changeChecker.splitsHaveChanged(oldChangeNumber: changeNumber,
-                                                    newChangeNumber: splitsStorage.changeNumber) {
+                    result.featureFlagsUpdated {
                     notifySplitsUpdated()
                 }
                 resetBackoffCounter()
@@ -262,12 +260,12 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         }
 
         do {
-            if try syncHelper.sync(since: storedChangeNumber,
-                                   till: changeNumber,
-                                   clearBeforeUpdate: false,
-                                   headers: ServiceConstants.controlNoCacheHeader) {
-                if changeChecker.splitsHaveChanged(oldChangeNumber: storedChangeNumber,
-                                                   newChangeNumber: splitsStorage.changeNumber) {
+            let result = try syncHelper.sync(since: storedChangeNumber,
+                                             till: changeNumber,
+                                             clearBeforeUpdate: false,
+                                             headers: ServiceConstants.controlNoCacheHeader)
+            if result.success {
+                if result.featureFlagsUpdated {
                     notifySplitsUpdated()
                 }
                 resetBackoffCounter()

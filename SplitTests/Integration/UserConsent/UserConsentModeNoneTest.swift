@@ -57,6 +57,12 @@ class UserConsentModeNoneTest: XCTestCase {
 
         XCTAssertTrue(keysPosted)
         XCTAssertTrue(countPosted)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     func testUserConsentDeclined() {
@@ -88,6 +94,12 @@ class UserConsentModeNoneTest: XCTestCase {
         XCTAssertFalse(countPosted)
         XCTAssertEqual(0, keys.count)
         XCTAssertEqual(0, eve.count)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     func testUserConsentUnknownThenGranted() {
@@ -134,6 +146,12 @@ class UserConsentModeNoneTest: XCTestCase {
         // Not measu
         XCTAssertTrue(keysPostedAfterEnable)
         XCTAssertTrue(countPostedAfterEnable)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     func testUserConsentUnknownThenDeclined() {
@@ -189,6 +207,12 @@ class UserConsentModeNoneTest: XCTestCase {
 
         XCTAssertEqual(0, imp.count)
         XCTAssertEqual(0, eve.count)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func evaluate(client: SplitClient) {
@@ -216,7 +240,7 @@ class UserConsentModeNoneTest: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.impressionsCountsRefreshRate = 3
         splitConfig.uniqueKeysRefreshRate = 3
-        splitConfig.logLevel = .verbose
+        splitConfig.logLevel = TestingHelper.testLogLevel
         splitConfig.impressionsMode = "NONE"
         splitConfig.userConsent = userConsent
 

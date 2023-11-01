@@ -105,7 +105,7 @@ class SplitsSyncWorkerTest: XCTestCase {
             exp.fulfill()
         }
         splitsSyncWorker.start()
-        sleep(1)
+        sleep(3)
         splitsSyncWorker.stop()
 
         wait(for: [exp], timeout: 3)

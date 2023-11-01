@@ -103,7 +103,6 @@ class MultiClientStreamingResetTest: XCTestCase {
                 expReady.fulfill()
                 results[key.matchingKey] = client.getTreatment(self.splitName)
             }
-            print("---------------------------------------------")
             wait(for: exps, timeout: 20)
         }
 

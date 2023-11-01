@@ -625,15 +625,138 @@ class FlagSetsIntegrationTests: XCTestCase {
         XCTAssertEqual(0, split1Change04.count)
     }
 
+    func testFlagsetsSdkUpdateNoFiredWhenFFNotInFilterSets() throws {
+        loadSplitChangesFlagSetsJson()
+        let session = HttpSessionMock()
+        streamingHelper = StreamingTestingHelper()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildPollingTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+
+        pollingFlagSetsHits = [ getChangeFlagSetsJson(since: 1, till: 1,
+                                                      sets1: ["p_set_1", "set2"],
+                                                      sets2: ["set_3"],
+                                                      sets3: ["set_4"])!,
+
+                                getChangeFlagSetsJson(since: 1, till: 1,
+                                                      sets1: ["p_set_1", "set_2"],
+                                                      sets2: ["set_3"],
+                                                      sets3: ["set_4"])!
+        ]
+
+        pollingExps = [XCTestExpectation(description: "EXP_P0"), XCTestExpectation(description: "EXP_P1")]
+        IntegrationCoreDataHelper.observeChanges()
+        let dbExp1 = IntegrationCoreDataHelper.getDbExp(count: 1, entity: .split, operation: CrudKey.insert)
+
+        let syncConfig = SyncConfig.builder()
+            .addSplitFilter(SplitFilter.bySet(["p_set_1", "p_set_2"]))
+            .build()
+
+        let client = try startTest(syncConfig: syncConfig)
+
+        var sdkUpdateFired = false
+        client?.on(event: .sdkUpdated) {
+            sdkUpdateFired = true
+        }
+
+        // Wait for db update
+        wait(for: [dbExp1], timeout: 5)
+
+        let split1Change01 = testDb.splitDao.getAll().filter { $0.name == "workm" }
+
+        streamingHelper.pushKeepalive()
+
+        // Wait for db update
+        wait(for: [pollingExps![0]], timeout: 3)
+
+        // Update sets again (set_1, set_2)
+        streamingHelper.pushSplitsMessage(TestingData.kFlagSetsNotification2)
+
+        ThreadUtils.delay(seconds: 2)
+
+        let split1Change02 = testDb.splitDao.getAll().filter { $0.name == "workm" }
+
+        destroyTest(client: client)
+        IntegrationCoreDataHelper.stopObservingChanges()
+
+        XCTAssertEqual(0, split1Change01.count)
+        XCTAssertEqual(0, split1Change02.count)
+        XCTAssertFalse(sdkUpdateFired)
+    }
+
+    func testFlagsetsSdkUpdateFiredWhenFFInFilterSets() throws {
+        loadSplitChangesFlagSetsJson()
+        let session = HttpSessionMock()
+        streamingHelper = StreamingTestingHelper()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildPollingTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+
+        pollingFlagSetsHits = [ getChangeFlagSetsJson(since: 1, till: 1,
+                                                      sets1: ["set_1", "set_2"],
+                                                      sets2: ["set_3"],
+                                                      sets3: ["set_4"])!,
+
+                                getChangeFlagSetsJson(since: 1, till: 1,
+                                                      sets1: ["set_1", "set_2"],
+                                                      sets2: ["set_3"],
+                                                      sets3: ["set_4"])!
+        ]
+
+        pollingExps = [XCTestExpectation(description: "EXP_P0"), XCTestExpectation(description: "EXP_P1")]
+        IntegrationCoreDataHelper.observeChanges()
+        let dbExp1 = IntegrationCoreDataHelper.getDbExp(count: 1, entity: .split, operation: CrudKey.insert)
+
+        let syncConfig = SyncConfig.builder()
+            .addSplitFilter(SplitFilter.bySet(["set_1", "set_2"]))
+            .build()
+
+        let client = try startTest(syncConfig: syncConfig)
+
+        var updExp: XCTestExpectation? = nil
+        var sdkUpdateFired = false
+        client?.on(event: .sdkUpdated) {
+            sdkUpdateFired = true
+            updExp?.fulfill()
+        }
+
+        // Wait for db update
+        wait(for: [dbExp1], timeout: 5)
+
+        let split1Change01 = testDb.splitDao.getAll().filter { $0.name == "workm" }
+
+        streamingHelper.pushKeepalive()
+
+        // Wait for db update
+        wait(for: [pollingExps![0]], timeout: 3)
+
+        updExp = XCTestExpectation(description: "SDK update expectation")
+        // Update sets again (set_1, set_2)
+        streamingHelper.pushSplitsMessage(TestingData.kFlagSetsNotification2)
+
+        wait(for: [updExp!], timeout: 3)
+
+        let split1Change02 = testDb.splitDao.getAll().filter { $0.name == "workm" }
+
+        destroyTest(client: client)
+        IntegrationCoreDataHelper.stopObservingChanges()
+
+        XCTAssertEqual(0, split1Change01.count)
+        XCTAssertEqual(1, split1Change02.count)
+        XCTAssertTrue(sdkUpdateFired)
+    }
+
     private func bodyTest(syncConfig: SyncConfig, telemetryEnabled: Bool = false) throws {
         let client = try startTest(syncConfig: syncConfig, telemetryEnabled: telemetryEnabled)
         destroyTest(client: client)
     }
 
-    private func startTest(syncConfig: SyncConfig?, telemetryEnabled: Bool = false, refreshRate: Int = -1) throws -> SplitClient?  {
+    private func startTest(syncConfig: SyncConfig?, 
+                           telemetryEnabled: Bool = false,
+                           refreshRate: Int = -1) throws -> SplitClient?  {
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.sdkReadyTimeOut = 6000
-        splitConfig.logLevel = .verbose
+        splitConfig.logLevel = TestingHelper.testLogLevel
         splitConfig.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: telemetryEnabled)
         splitConfig.internalTelemetryRefreshRate = 10000
 
@@ -657,7 +780,6 @@ class FlagSetsIntegrationTests: XCTestCase {
         let client = factory?.client
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-
         client?.on(event: SplitEvent.sdkReady) {
             sdkReadyExpectation.fulfill()
         }
@@ -665,6 +787,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         client?.on(event: SplitEvent.sdkReadyTimedOut) {
             sdkReadyExpectation.fulfill()
         }
+
         var expectations = [sdkReadyExpectation]
         if let sseExp = self.sseExp {
             expectations.append(sseExp)
