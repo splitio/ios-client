@@ -10,7 +10,9 @@ import Foundation
 
 protocol RetryableSyncWorker {
     typealias SyncCompletion = (Bool) -> Void
+    typealias ErrorHandler = (Error) -> Void
     var completion: SyncCompletion? { get set }
+    var errorHandler: ErrorHandler? { get set }
     func start()
     func stop()
 }
@@ -24,6 +26,7 @@ protocol RetryableSyncWorker {
 class BaseRetryableSyncWorker: RetryableSyncWorker {
 
     var completion: SyncCompletion?
+    var errorHandler: ErrorHandler?
     private var reconnectBackoffCounter: ReconnectBackoffCounter
     private weak var splitEventsManager: SplitEventsManager?
     private var isRunning: Atomic<Bool> = Atomic(false)
@@ -44,7 +47,12 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
             }
             self.isRunning.set(true)
             self.reconnectBackoffCounter.resetCounter()
-            self.fetchFromRemoteLoop()
+            do {
+                try self.fetchFromRemoteLoop()
+            } catch {
+                Logger.e("Error fetching data: \(self)")
+                self.errorHandler?(error)
+            }
         }
     }
 
@@ -55,10 +63,10 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
         }
     }
 
-    private func fetchFromRemoteLoop() {
+    private func fetchFromRemoteLoop() throws {
         var success = false
         while isRunning.value, !success {
-            success = fetchFromRemote()
+            success = try fetchFromRemote()
             if !success {
                 let retryTimeInSeconds = reconnectBackoffCounter.getNextRetryTime()
                 Logger.d("Retrying fetch in: \(retryTimeInSeconds)")
@@ -88,7 +96,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     }
 
     // This methods should be overrided by child class
-    func fetchFromRemote() -> Bool {
+    func fetchFromRemote() throws -> Bool {
         Logger.i("fetch from remote not overriden")
         return true
     }
@@ -139,6 +147,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             }
         } catch let error {
             Logger.e("Problem fetching mySegments: %@", error.localizedDescription)
+            errorHandler?(error)
         }
         return false
     }
@@ -198,14 +207,19 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             clearCache = true
         }
 
-        if syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache) {
-            if !isSdkReadyTriggered() ||
-                changeChecker.splitsHaveChanged(oldChangeNumber: changeNumber,
-                                                newChangeNumber: splitsStorage.changeNumber) {
-                notifySplitsUpdated()
+        do {
+            if try syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache) {
+                if !isSdkReadyTriggered() ||
+                    changeChecker.splitsHaveChanged(oldChangeNumber: changeNumber,
+                                                    newChangeNumber: splitsStorage.changeNumber) {
+                    notifySplitsUpdated()
+                }
+                resetBackoffCounter()
+                return true
             }
-            resetBackoffCounter()
-            return true
+        } catch {
+            Logger.e("Error while fetching splits in method: \(error.localizedDescription)")
+            errorHandler?(error)
         }
         return false
     }
@@ -241,22 +255,27 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
-    override func fetchFromRemote() -> Bool {
+    override func fetchFromRemote() throws -> Bool {
         let storedChangeNumber = splitsStorage.changeNumber
         if changeNumber <= storedChangeNumber {
             return true
         }
 
-        if syncHelper.sync(since: storedChangeNumber,
-                           till: changeNumber,
-                           clearBeforeUpdate: false,
-                           headers: ServiceConstants.controlNoCacheHeader) {
-            if changeChecker.splitsHaveChanged(oldChangeNumber: storedChangeNumber,
-                                               newChangeNumber: splitsStorage.changeNumber) {
-                notifySplitsUpdated()
+        do {
+            if try syncHelper.sync(since: storedChangeNumber,
+                                   till: changeNumber,
+                                   clearBeforeUpdate: false,
+                                   headers: ServiceConstants.controlNoCacheHeader) {
+                if changeChecker.splitsHaveChanged(oldChangeNumber: storedChangeNumber,
+                                                   newChangeNumber: splitsStorage.changeNumber) {
+                    notifySplitsUpdated()
+                }
+                resetBackoffCounter()
+                return true
             }
-            resetBackoffCounter()
-            return true
+        } catch {
+            Logger.e("Error while fetching splits in method \(#function): \(error.localizedDescription)")
+            errorHandler?(error)
         }
         Logger.d("Feature flag changes are not updated yet")
         return false

@@ -95,6 +95,10 @@ struct TelemetryMethodExceptions: Codable {
     var treatments: Int?
     var treatmentWithConfig: Int?
     var treatmentsWithConfig: Int?
+    var treatmentsByFlagSet: Int?
+    var treatmentsByFlagSets: Int?
+    var treatmentsWithConfigByFlagSet: Int?
+    var treatmentsWithConfigByFlagSets: Int?
     var track: Int?
 
     enum CodingKeys: String, CodingKey {
@@ -102,6 +106,10 @@ struct TelemetryMethodExceptions: Codable {
         case treatments = "ts"
         case treatmentWithConfig = "tc"
         case treatmentsWithConfig = "tcs"
+        case treatmentsByFlagSet = "tf"
+        case treatmentsByFlagSets = "tfs"
+        case treatmentsWithConfigByFlagSet = "tcf"
+        case treatmentsWithConfigByFlagSets = "tcfs"
         case track = "tr"
     }
 }
@@ -133,6 +141,12 @@ struct TelemetryMethodLatencies: Codable {
     var treatments: [Int]?
     var treatmentWithConfig: [Int]?
     var treatmentsWithConfig: [Int]?
+
+    var treatmentsByFlagSet: [Int]?
+    var treatmentsByFlagSets: [Int]?
+    var treatmentsWithConfigByFlagSet: [Int]?
+    var treatmentsWithConfigByFlagSets: [Int]?
+
     var track: [Int]?
 
     enum CodingKeys: String, CodingKey {
@@ -140,6 +154,10 @@ struct TelemetryMethodLatencies: Codable {
         case treatments = "ts"
         case treatmentWithConfig = "tc"
         case treatmentsWithConfig = "tcs"
+        case treatmentsByFlagSet = "tf"
+        case treatmentsByFlagSets = "tfs"
+        case treatmentsWithConfigByFlagSet = "tcf"
+        case treatmentsWithConfigByFlagSets = "tcfs"
         case track = "tr"
     }
 }
@@ -181,7 +199,7 @@ struct TelemetryStats: Codable {
     var eventsDropped: Int?
     var streamingEvents: [TelemetryStreamingEvent]?
     var tags: [String]?
-    var updatesFromSse:TelemetryUpdatesFromSse
+    var updatesFromSse: TelemetryUpdatesFromSse
 
     enum CodingKeys: String, CodingKey {
         case lastSynchronization = "lS"

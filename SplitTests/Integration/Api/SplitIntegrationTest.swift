@@ -161,7 +161,7 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertEqual(SplitConstants.control, ts1?["NO_EXISTING_FEATURE1"])
         XCTAssertEqual(SplitConstants.control, ts1?["NO_EXISTING_FEATURE2"])
 
-        XCTAssertEqual(30, splits?.count)
+        XCTAssertEqual(33, splits?.count)
         XCTAssertNotNil(s1)
         XCTAssertNil(s2)
         XCTAssertNotNil(i1)

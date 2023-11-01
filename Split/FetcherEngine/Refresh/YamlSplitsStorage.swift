@@ -80,6 +80,9 @@ class LocalhostSplitsStorage: SplitsStorage {
     func update(filterQueryString: String) {
     }
 
+    func update(bySetsFilter: SplitFilter?) {
+    }
+
     func updateWithoutChecks(split: Split) {
     }
 

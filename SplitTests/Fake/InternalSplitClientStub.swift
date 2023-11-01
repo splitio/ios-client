@@ -99,6 +99,22 @@ class InternalSplitClientStub: InternalSplitClient {
         return true
     }
 
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : String] {
+        return [:]
+    }
+
+    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : String] {
+        return [:]
+    }
+
+    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : SplitResult] {
+        return [:]
+    }
+
+    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+        return [:]
+    }
+
     func clearAttributes() -> Bool {
         return true
     }

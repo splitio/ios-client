@@ -25,9 +25,11 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var clearCalled = false
     var closeCalled = false
     var updateSplitCalled = false
+    var deletedSplits = [String]()
     
     var filterQueryString = ""
     var splits = [String: Split]()
+    var lastBySetSplitFilter: SplitFilter?
 
     func getFilterQueryString() -> String {
         return snapshot.splitsFilterQueryString
@@ -62,6 +64,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     func delete(splitNames: [String]) {
         deleteCalled = true
+        deletedSplits.append(contentsOf: splitNames)
     }
 
     func clear() {
@@ -78,5 +81,17 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     func getUpdateTimestamp() -> Int64 {
         return updateTimestamp
+    }
+
+    var updateBySetsFilterCalled = false
+    func update(bySetsFilter: SplitFilter?) {
+        updateBySetsFilterCalled = true
+        lastBySetSplitFilter = bySetsFilter
+    }
+
+    var getBySetsFilterCalled = true
+    func getBySetsFilter() -> SplitFilter? {
+        getBySetsFilterCalled = false
+        return nil
     }
 }

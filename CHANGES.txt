@@ -1,3 +1,6 @@
+2.22.1: (x x, 2023)
+- Flagsets info here
+
 2.22.0: (Aug 14, 2023)
 - Adding support to use the SDK in extensions. Thanks @Jeff-Meadows!
 

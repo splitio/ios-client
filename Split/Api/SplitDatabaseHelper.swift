@@ -99,8 +99,10 @@ struct SplitDatabaseHelper {
             throw GenericError.couldNotCreateCache
         }
 
+        let flagSetsCache: FlagSetsCache = 
+        DefaultFlagSetsCache(setsInFilter: splitClientConfig.bySetsFilter()?.values.asSet())
         let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
-        let splitsStorage = openSplitsStorage(database: splitDatabase)
+        let splitsStorage = openSplitsStorage(database: splitDatabase, flagSetsCache: flagSetsCache)
 
         let persistentImpressionsStorage = openPersistentImpressionsStorage(database: splitDatabase)
         let impressionsStorage = openImpressionsStorage(persistentStorage: persistentImpressionsStorage)
@@ -131,7 +133,8 @@ struct SplitDatabaseHelper {
                                      telemetryStorage: telemetryStorage,
                                      mySegmentsStorage: mySegmentsStorage,
                                      attributesStorage: attributesStorage,
-                                     uniqueKeyStorage: uniqueKeyStorage)
+                                     uniqueKeyStorage: uniqueKeyStorage,
+                                     flagSetsCache: flagSetsCache)
     }
 
     static func openDatabase(dataFolderName: String,
@@ -148,8 +151,8 @@ struct SplitDatabaseHelper {
         return DefaultPersistentSplitsStorage(database: database)
     }
 
-    static func openSplitsStorage(database: SplitDatabase) -> SplitsStorage {
-        return DefaultSplitsStorage(persistentSplitsStorage: openPersistentSplitsStorage(database: database))
+    static func openSplitsStorage(database: SplitDatabase, flagSetsCache: FlagSetsCache) -> SplitsStorage {
+        return DefaultSplitsStorage(persistentSplitsStorage: openPersistentSplitsStorage(database: database), flagSetsCache: flagSetsCache)
     }
 
     static func openPersistentMySegmentsStorage(database: SplitDatabase) -> PersistentMySegmentsStorage {

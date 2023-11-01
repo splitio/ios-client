@@ -60,7 +60,25 @@ class PersistentSplitsStorageTest: XCTestCase {
         
         XCTAssertEqual("qs", qs)
     }
-    
+
+    func testUpdateBySetFilter() {
+        splitsStorage.update(bySetsFilter: SplitFilter(type: .bySet, values: ["set1", "set2"]))
+
+        let filter = try? Json.decodeFrom(json: generalInfoDao.stringValue(info: .bySetsFilter) ?? "", to: SplitFilter.self)
+
+        XCTAssertEqual(SplitFilter.FilterType.bySet, filter?.type)
+        XCTAssertEqual(["set1", "set2"], filter?.values.sorted())
+    }
+
+    func testGetBySetFilter() {
+        generalInfoDao.update(info: .bySetsFilter, stringValue: "{\"values\":[\"set1\",\"set2\"],\"type\":0}")
+
+        let filter = splitsStorage.getBySetsFilter()
+
+        XCTAssertEqual(SplitFilter.FilterType.bySet, filter?.type)
+        XCTAssertEqual(["set1", "set2"], filter?.values.sorted())
+    }
+
     func testDelete() {
 
         splitsStorage.delete(splitNames: ["s1", "s2"])
@@ -75,10 +93,6 @@ class PersistentSplitsStorageTest: XCTestCase {
         splitsStorage.clear()
         
         XCTAssertTrue(splitDao.deleteAllCalled)
-    }
-
-    
-    override func tearDown() {
     }
     
     private func createSplits() -> [Split] {
@@ -101,14 +115,4 @@ class PersistentSplitsStorageTest: XCTestCase {
         return split
     }
 }
-
-
-//func update(splitChange: ProcessedSplitChange)
-//func update(split: Split)
-//func getFilterQueryString() -> String
-//func getSplitsSnapshot() -> SplitsSnapshot
-//func getAll() -> [Split]
-//func delete(splitNames: [String])
-//func clear()
-//func close()
 

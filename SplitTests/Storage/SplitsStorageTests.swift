@@ -16,14 +16,15 @@ class SplitsStorageTest: XCTestCase {
     let dummyUpdateTimestamp: Int64 = 1000
     let dummyQs = "dummy=1"
     let kTestCount = 10
-
+    var flagSetsCache: FlagSetsCacheMock!
 
     var persistentStorage: PersistentSplitsStorageStub!
     var splitsStorage: SplitsStorage!
 
     override func setUp() {
         persistentStorage = PersistentSplitsStorageStub()
-        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage)
+        flagSetsCache = FlagSetsCacheMock()
+        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage, flagSetsCache: flagSetsCache)
     }
 
     func testNoLocalLoaded() {
@@ -215,6 +216,15 @@ class SplitsStorageTest: XCTestCase {
         XCTAssertEqual("ttupdated", updatedSplit?.trafficTypeName ?? "")
     }
 
+    func testUpdateBySetsFilter() {
+
+        splitsStorage.update(bySetsFilter: SplitFilter(type: .bySet, values: ["set1", "set2"]))
+
+        let updatedFilter = persistentStorage.lastBySetSplitFilter
+        XCTAssertTrue(persistentStorage.updateBySetsFilterCalled)
+        XCTAssertEqual(SplitFilter.FilterType.bySet, updatedFilter?.type)
+        XCTAssertEqual(["set1", "set2"], updatedFilter?.values.sorted())
+    }
 
     private func dummySnapshot() -> SplitsSnapshot {
         return SplitsSnapshot(changeNumber: dummyChangeNumber, splits: [],
@@ -243,9 +253,5 @@ class SplitsStorageTest: XCTestCase {
         split.trafficTypeName = trafficType
         split.status = status
         return split
-    }
-
-    override func tearDown() {
-
     }
 }

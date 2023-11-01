@@ -39,7 +39,9 @@ import Foundation
                 splitView.name = split.name
                 splitView.changeNumber = split.changeNumber
                 splitView.trafficType = split.trafficTypeName
+                splitView.defaultTreatment = split.defaultTreatment
                 splitView.killed = split.killed
+                splitView.sets = Array(split.sets ?? [])
                 splitView.configs = split.configurations ?? [String: String]()
 
                 if let conditions = split.conditions {

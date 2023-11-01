@@ -31,6 +31,7 @@ class SynchronizerTest: XCTestCase {
     let userKey = "CUSTOMER_KEY"
 
     var splitConfig: SplitClientConfig!
+    var flagSetsCache: FlagSetsCacheMock!
 
     override func setUp() {
         synchronizer = buildSynchronizer()
@@ -48,6 +49,7 @@ class SynchronizerTest: XCTestCase {
 
         mySegmentsStorage = ByKeyMySegmentsStorageStub()
         telemetryProducer = TelemetryStorageStub()
+        flagSetsCache = FlagSetsCacheMock()
 
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      splitsStorage: SplitsStorageStub(),
@@ -60,7 +62,8 @@ class SynchronizerTest: XCTestCase {
                                                      telemetryStorage: telemetryProducer,
                                                      mySegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub(),
-                                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub())
+                                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
+                                                     flagSetsCache: flagSetsCache)
 
         splitConfig =  SplitClientConfig()
         splitConfig.syncEnabled = syncEnabled

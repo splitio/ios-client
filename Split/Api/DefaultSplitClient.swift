@@ -61,7 +61,7 @@ extension DefaultSplitClient {
         if  event != .sdkReadyFromCache,
             eventsManager.eventAlreadyTriggered(event: event) {
             Logger.w("A handler was added for \(event.toString()) on the SDK, " +
-                "which has already fired and won’t be emitted again. The callback won’t be executed.")
+                     "which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
         }
         let task = SplitEventActionTask(action: action)
@@ -190,16 +190,37 @@ extension DefaultSplitClient {
 
     private func isValidAttribute(_ value: Any) -> Bool {
         return anyValueValidator.isPrimitiveValue(value: value) ||
-            anyValueValidator.isList(value: value)
+        anyValueValidator.isList(value: value)
     }
 
     private func logInvalidAttribute(name: String) {
         Logger.i("Invalid attribute value for evaluation: \(name). " +
-                    "Types allowed are String, Number, Boolean and List")
+                 "Types allowed are String, Number, Boolean and List")
     }
 
     private func attributesStorage() -> AttributesStorage {
         return storageContainer.attributesStorage
+    }
+}
+
+// MARK: By Sets evaluation
+extension DefaultSplitClient {
+
+    public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
+        return treatmentManager.getTreatmentsByFlagSet(flagSet: flagSet, attributes: attributes)
+    }
+
+    public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String] {
+        return treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes)
+    }
+
+    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
+        return treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes)
+    }
+
+    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
+                                                  attributes: [String: Any]?) -> [String: SplitResult] {
+        return treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: flagSets, attributes: attributes)
     }
 }
 

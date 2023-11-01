@@ -13,6 +13,7 @@ enum GeneralInfo: String {
     case splitsChangeNumber = "splitChangeNumber"
     case splitsFilterQueryString = "splitsFilterQueryString"
     case databaseMigrationStatus = "databaseMigrationStatus"
+    case bySetsFilter = "bySetsFilter"
 }
 
 protocol GeneralInfoDao {
@@ -20,6 +21,7 @@ protocol GeneralInfoDao {
     func update(info: GeneralInfo, longValue: Int64)
     func stringValue(info: GeneralInfo) -> String?
     func longValue(info: GeneralInfo) -> Int64?
+    func delete(info: GeneralInfo)
 }
 
 class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
@@ -66,6 +68,16 @@ class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
             }
         }
         return value
+    }
+
+    func delete(info: GeneralInfo) {
+        execute { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.coreDataHelper.delete(entity: .generalInfo, by: "name", values: [info.rawValue])
+            self.coreDataHelper.save()
+        }
     }
 
     private func update(info: GeneralInfo, stringValue: String?, longValue: Int64?) {
