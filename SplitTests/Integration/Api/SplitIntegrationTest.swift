@@ -96,7 +96,7 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.eventsQueueSize = 100
         splitConfig.eventsPushRate = 999999
         splitConfig.eventsFirstPushWindow = 999
-        splitConfig.logLevel = .verbose
+        splitConfig.logLevel = TestingHelper.testLogLevel
         splitConfig.impressionsMode = "DEBUG"
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
         .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()

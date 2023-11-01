@@ -60,7 +60,7 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
 
         do {
             generalInfoDao.update(info: .bySetsFilter, stringValue: try Json.encodeToJson(filter))
-        }  catch {
+        } catch {
             Logger.e("Could not encode By Sets filter to store in cache. Error: \(error.localizedDescription)")
             return
         }

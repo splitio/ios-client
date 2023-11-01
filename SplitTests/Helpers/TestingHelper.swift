@@ -11,6 +11,10 @@ import Foundation
 
 struct TestingHelper {
 
+    static var testLogLevel: SplitLogLevel {
+        return .none
+    }
+
     static func basicStreamingConfig() -> SplitClientConfig {
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 3

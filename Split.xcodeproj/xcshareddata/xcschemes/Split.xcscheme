@@ -38,8 +38,8 @@
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <MacroExpansion>
          <BuildableReference
@@ -69,6 +69,9 @@
          </TestPlanReference>
          <TestPlanReference
             reference = "container:SplitPushManagerUT.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitiOSStreaming_1.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>

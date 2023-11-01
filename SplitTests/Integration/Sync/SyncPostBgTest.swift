@@ -229,7 +229,7 @@ class SyncPostBgTest: XCTestCase {
         splitConfig.eventsFirstPushWindow = 999999
         splitConfig.eventsPushRate = 999999
         splitConfig.uniqueKeysRefreshRate = 999999
-        splitConfig.logLevel = .none
+        splitConfig.logLevel = TestingHelper.testLogLevel
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()

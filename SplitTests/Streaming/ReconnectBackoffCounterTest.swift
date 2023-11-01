@@ -43,7 +43,7 @@ class ReconnectBackoffCounterTest: XCTestCase {
         let v4 = counter.getNextRetryTime()
 
         for _ in 0..<2000 {
-            print(counter.getNextRetryTime())
+            _ = counter.getNextRetryTime()
         }
         let vMax = counter.getNextRetryTime()
         counter.resetCounter();
