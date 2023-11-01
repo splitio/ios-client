@@ -8,11 +8,17 @@
 
 import Foundation
 
+struct SyncResult {
+    let success: Bool
+    let changeNumber: Int64
+    let featureFlagsUpdated: Bool
+}
+
 class SplitsSyncHelper {
 
-    struct SyncResult {
-        let success: Bool
-        let changeNumber: Int64
+    struct FetchResult {
+        let till: Int64
+        let featureFlagsUpdated: Bool
     }
 
     private let splitFetcher: HttpSplitFetcher
@@ -46,7 +52,7 @@ class SplitsSyncHelper {
     func sync(since: Int64,
               till: Int64? = nil,
               clearBeforeUpdate: Bool = false,
-              headers: HttpHeaders? = nil) -> Bool {
+              headers: HttpHeaders? = nil) throws -> SyncResult {
         do {
             let res = try tryToSync(since: since,
                                     till: till,
@@ -54,18 +60,18 @@ class SplitsSyncHelper {
                                     headers: headers)
 
             if res.success {
-                return true
+                return res
             }
 
-            return ( try tryToSync(since: res.changeNumber,
+            return try tryToSync(since: res.changeNumber,
                                    till: res.changeNumber,
                                    clearBeforeUpdate: clearBeforeUpdate && res.changeNumber == since,
                                    headers: headers,
-                                   useTillParam: true) ).success
+                                   useTillParam: true)
         } catch let error {
             Logger.e("Problem fetching feature flags: %@", error.localizedDescription)
+            throw error
         }
-        return false
     }
 
     func tryToSync(since: Int64,
@@ -80,29 +86,33 @@ class SplitsSyncHelper {
         var attemptCount = 0
         let goalTill = till ?? -10
         while attemptCount < maxAttempts {
-            nextSince = try fetchUntil(since: nextSince,
+            let result = try fetchUntil(since: nextSince,
                                        till: useTillParam ? till : nil,
                                        clearBeforeUpdate: clearBeforeUpdate,
                                        headers: headers)
+            nextSince = result.till
 
             if nextSince >= goalTill {
-                return SyncResult(success: true, changeNumber: nextSince)
+                return SyncResult(success: true,
+                                  changeNumber: nextSince, 
+                                  featureFlagsUpdated: result.featureFlagsUpdated)
             }
 
             Thread.sleep(forTimeInterval: backoffCounter.getNextRetryTime())
             attemptCount+=1
         }
-        return SyncResult(success: false, changeNumber: nextSince)
+        return SyncResult(success: false, changeNumber: nextSince, featureFlagsUpdated: false)
     }
 
     func fetchUntil(since: Int64,
                     till: Int64? = nil,
                     clearBeforeUpdate: Bool = false,
-                    headers: HttpHeaders? = nil) throws -> Int64 {
+                    headers: HttpHeaders? = nil) throws -> FetchResult {
 
         var clearCache = clearBeforeUpdate
         var firstFetch = true
         var nextSince = since
+        var featureFlagsUpdated = false
         while true {
             clearCache = clearCache && firstFetch
             let splitChange = try self.splitFetcher.execute(since: nextSince,
@@ -114,12 +124,14 @@ class SplitsSyncHelper {
                 splitsStorage.clear()
             }
             firstFetch = false
-            splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange))
+            if splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange)) {
+                featureFlagsUpdated = true
+            }
             Logger.i("Feature flag definitions have been updated")
             // Line below commented temporary for debug purposes
             // Logger.v(splitChange.description)
             if newSince == newTill, newTill >= since {
-                return newTill
+                return FetchResult(till: newTill, featureFlagsUpdated: featureFlagsUpdated)
             }
             nextSince = newTill
         }

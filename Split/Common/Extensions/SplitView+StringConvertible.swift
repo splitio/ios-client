@@ -16,6 +16,11 @@ extension SplitView {
         } else {
             output+="name = nil\n"
         }
+        if let defaultTreatment = defaultTreatment {
+            output+="defaultTreatment = \(defaultTreatment) \n"
+        } else {
+            output+="defaultTreatment = nil\n"
+        }
         if let trafficType = trafficType {
             output+="trafficType = \(trafficType) \n"
         } else {
@@ -25,6 +30,11 @@ extension SplitView {
             output+="treatments = [\(treatments.joined(separator: ","))]\n"
         } else {
             output+="treatments = nil\n"
+        }
+        if let sets = sets {
+            output+="sets = [\(sets.joined(separator: ","))]\n"
+        } else {
+            output+="sets = nil\n"
         }
         if let changeNumber = changeNumber {
             output+="changeNumber = \(changeNumber) \n"

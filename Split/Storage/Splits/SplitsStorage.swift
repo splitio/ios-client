@@ -9,7 +9,7 @@
 import Foundation
 
 protocol SyncSplitsStorage {
-    func update(splitChange: ProcessedSplitChange)
+    func update(splitChange: ProcessedSplitChange) -> Bool
     func clear()
 }
 
@@ -22,8 +22,9 @@ protocol SplitsStorage: SyncSplitsStorage {
     func get(name: String) -> Split?
     func getMany(splits: [String]) -> [String: Split]
     func getAll() -> [String: Split]
-    func update(splitChange: ProcessedSplitChange)
+    func update(splitChange: ProcessedSplitChange) -> Bool
     func update(filterQueryString: String)
+    func update(bySetsFilter: SplitFilter?)
     func updateWithoutChecks(split: Split)
     func isValidTrafficType(name: String) -> Bool
     func getCount() -> Int
@@ -32,26 +33,30 @@ protocol SplitsStorage: SyncSplitsStorage {
 }
 
 class DefaultSplitsStorage: SplitsStorage {
+
     private var persistentStorage: PersistentSplitsStorage
     private var inMemorySplits: ConcurrentDictionary<String, Split>
     private var trafficTypes: ConcurrentDictionary<String, Int>
+    private let flagSetsCache: FlagSetsCache
 
     private (set) var changeNumber: Int64 = -1
     private (set) var updateTimestamp: Int64 = -1
     private (set) var splitsFilterQueryString: String = ""
 
-    init(persistentSplitsStorage: PersistentSplitsStorage) {
+    init(persistentSplitsStorage: PersistentSplitsStorage,
+         flagSetsCache: FlagSetsCache) {
         self.persistentStorage = persistentSplitsStorage
         self.inMemorySplits = ConcurrentDictionary()
         self.trafficTypes = ConcurrentDictionary()
+        self.flagSetsCache = flagSetsCache
     }
 
     func loadLocal() {
         let snapshot = persistentStorage.getSplitsSnapshot()
         let active = snapshot.splits.filter { $0.status == .active }
         let archived = snapshot.splits.filter { $0.status == .archived }
-        processUpdated(splits: active, active: true)
-        processUpdated(splits: archived, active: false)
+        _ = processUpdated(splits: active, active: true)
+        _ = processUpdated(splits: archived, active: false)
         changeNumber = snapshot.changeNumber
         updateTimestamp = snapshot.updateTimestamp
         splitsFilterQueryString = snapshot.splitsFilterQueryString
@@ -70,18 +75,23 @@ class DefaultSplitsStorage: SplitsStorage {
         return inMemorySplits.all
     }
 
-    func update(splitChange: ProcessedSplitChange) {
-        processUpdated(splits: splitChange.activeSplits, active: true)
-        processUpdated(splits: splitChange.archivedSplits, active: false)
+    func update(splitChange: ProcessedSplitChange) -> Bool {
+        let updated = processUpdated(splits: splitChange.activeSplits, active: true)
+        let removed = processUpdated(splits: splitChange.archivedSplits, active: false)
 
         changeNumber = splitChange.changeNumber
         updateTimestamp = splitChange.updateTimestamp
         persistentStorage.update(splitChange: splitChange)
+        return updated || removed
     }
 
     func update(filterQueryString: String) {
         splitsFilterQueryString = filterQueryString
         self.persistentStorage.update(filterQueryString: filterQueryString)
+    }
+
+    func update(bySetsFilter filter: SplitFilter?) {
+        self.persistentStorage.update(bySetsFilter: filter)
     }
 
     func updateWithoutChecks(split: Split) {
@@ -105,9 +115,11 @@ class DefaultSplitsStorage: SplitsStorage {
         return inMemorySplits.count
     }
 
-    private func processUpdated(splits: [Split], active: Bool) {
+    private func processUpdated(splits: [Split], active: Bool) -> Bool {
         var cachedSplits = inMemorySplits.all
         var cachedTrafficTypes = trafficTypes.all
+        var splitsUpdated = false
+        var splitsRemoved = false
 
         for split in splits {
             guard let splitName = split.name?.lowercased()  else {
@@ -140,12 +152,19 @@ class DefaultSplitsStorage: SplitsStorage {
             if active {
                 cachedTrafficTypes[trafficTypeName] = (cachedTrafficTypes[trafficTypeName] ?? 0) + 1
                 cachedSplits[splitName] = split
+                flagSetsCache.addToFlagSets(split)
+                splitsUpdated = true
             } else {
                 cachedSplits.removeValue(forKey: splitName)
+                splitsRemoved = true
+                if let name = split.name {
+                    flagSetsCache.removeFromFlagSets(featureFlagName: name, sets: flagSetsCache.setsInFilter ?? [])
+                }
             }
         }
         inMemorySplits.setValues(cachedSplits)
         trafficTypes.setValues(cachedTrafficTypes)
+        return splitsUpdated || splitsRemoved
     }
 
     func destroy() {
@@ -161,8 +180,9 @@ class BackgroundSyncSplitsStorage: SyncSplitsStorage {
         self.persistentStorage = persistentSplitsStorage
     }
 
-    func update(splitChange: ProcessedSplitChange) {
+    func update(splitChange: ProcessedSplitChange) -> Bool {
         persistentStorage.update(splitChange: splitChange)
+        return true
     }
 
     func clear() {

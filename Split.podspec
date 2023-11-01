@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'Split'
   s.module_name      = 'Split'
-  s.version          = '2.22.0'
+  s.version          = '2.23.0'
   s.summary          = 'iOS SDK for Split'
   s.description      = <<-DESC
 This SDK is designed to work with Split, the platform for controlled rollouts, serving features to your users via the Split feature flag to manage your complete customer experience.
@@ -11,7 +11,7 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.license          = { :type => 'Apache 2.0', :file => 'LICENSE' }
   s.author           = { 'Patricio Echague' => 'pato@split.io', 'Sebastian Arrubia' => 'sebastian@split.io', 'Fernando Martin' => 'fernando@split.io'}
   s.source = { :git => 'https://github.com/splitio/ios-client.git', :tag => s.version.to_s }
-  s.platforms = { :ios => "9.0", :osx => "10.11", :watchos => "7.0", :tvos => "9.0" }
+  s.platforms = { :ios => "12.0", :osx => "10.13", :watchos => "7.0", :tvos => "12.0" }
   s.frameworks = 'Foundation'
   s.swift_versions = ['4.0', '4.2', '5.0', '5.1', '5.2', '5.3']
   s.resources = "Split/Storage/split_cache.xcdatamodeld"

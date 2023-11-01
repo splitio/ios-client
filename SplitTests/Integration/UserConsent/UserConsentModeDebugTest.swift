@@ -52,6 +52,12 @@ class UserConsentModeDebugTest: XCTestCase {
 
         wait(for: [impExp, eveExp], timeout: 10.0)
 
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+
         XCTAssertTrue(impPosted)
         XCTAssertTrue(evePosted)
     }
@@ -84,6 +90,12 @@ class UserConsentModeDebugTest: XCTestCase {
         // Flush and wait
         client.flush()
         ThreadUtils.delay(seconds: 2)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
 
         XCTAssertFalse(impPosted)
         XCTAssertFalse(evePosted)
@@ -129,6 +141,12 @@ class UserConsentModeDebugTest: XCTestCase {
         wait(for: [impExp, eveExp], timeout: 10.0)
         let impPostedAfterEnable = impPosted
         let evePostedAfterEnable = evePosted
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
 
         XCTAssertFalse(impPostedBeforeEnable)
         XCTAssertFalse(evePostedBeforeEnable)
@@ -185,6 +203,12 @@ class UserConsentModeDebugTest: XCTestCase {
         let imp = impDao.getBy(createdAt: -1, status: StorageRecordStatus.active, maxRows: 100)
         let eve = eveDao.getBy(createdAt: -1, status: StorageRecordStatus.active, maxRows: 100)
 
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+
         XCTAssertFalse(impPostedBeforeEnable)
         XCTAssertFalse(evePostedBeforeEnable)
 
@@ -210,7 +234,7 @@ class UserConsentModeDebugTest: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPushRate = 3
         splitConfig.eventsFirstPushWindow = 0
-        splitConfig.logLevel = .verbose
+        splitConfig.logLevel = TestingHelper.testLogLevel
         splitConfig.impressionsMode = "DEBUG"
         splitConfig.userConsent = userConsent
 

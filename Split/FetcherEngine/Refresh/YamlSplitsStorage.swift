@@ -74,10 +74,14 @@ class LocalhostSplitsStorage: SplitsStorage {
         return splitMap ?? [String: Split]()
     }
 
-    func update(splitChange: ProcessedSplitChange) {
+    func update(splitChange: ProcessedSplitChange) -> Bool {
+        return true
     }
 
     func update(filterQueryString: String) {
+    }
+
+    func update(bySetsFilter: SplitFilter?) {
     }
 
     func updateWithoutChecks(split: Split) {

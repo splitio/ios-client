@@ -51,7 +51,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
         // Factory 1
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.sdkReadyTimeOut = 60000
-        splitConfig.logLevel = .verbose
+        splitConfig.logLevel = TestingHelper.testLogLevel
         splitConfig.cdnBackoffTimeBaseInSecs = 1
 
         let session = HttpSessionMock()

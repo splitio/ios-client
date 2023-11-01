@@ -96,7 +96,8 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
                     }
                 }
             }
-            self.delete(toDelete)
+            self.coreDataHelper.delete(entity: .uniqueKey, by: "storageId",
+                                       values: toDelete)
             self.coreDataHelper.save()
         }
     }
@@ -111,6 +112,7 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
             }
             self.coreDataHelper.delete(entity: .uniqueKey, by: "storageId",
                                        values: ids)
+            self.coreDataHelper.save()
         }
     }
 

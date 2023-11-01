@@ -34,12 +34,12 @@ class SplitsSyncWorkerTest: XCTestCase {
     func testOneTimeFetchSuccess() {
         // Cache expiration timestamp set to 0 (no clearing cache)
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                           splitsStorage: splitStorage,
-                                                           splitChangeProcessor: splitChangeProcessor,
-                                                           cacheExpiration: 100,
-                                                           defaultQueryString: "",
-                                                           eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter,
+                                                     splitsStorage: splitStorage,
+                                                     splitChangeProcessor: splitChangeProcessor,
+                                                     cacheExpiration: 100,
+                                                     defaultQueryString: "",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
 
         var resultIsSuccess = false
@@ -62,12 +62,12 @@ class SplitsSyncWorkerTest: XCTestCase {
 
     func testRetryAndSuccess() {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                           splitsStorage: splitStorage,
-                                                           splitChangeProcessor: splitChangeProcessor,
-                                                           cacheExpiration: 100,
-                                                           defaultQueryString: "",
-                                                           eventsManager: eventsManager,
-                                                           reconnectBackoffCounter: backoffCounter,
+                                                     splitsStorage: splitStorage,
+                                                     splitChangeProcessor: splitChangeProcessor,
+                                                     cacheExpiration: 100,
+                                                     defaultQueryString: "",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
@@ -105,7 +105,7 @@ class SplitsSyncWorkerTest: XCTestCase {
             exp.fulfill()
         }
         splitsSyncWorker.start()
-        sleep(1)
+        sleep(3)
         splitsSyncWorker.stop()
 
         wait(for: [exp], timeout: 3)
@@ -271,7 +271,43 @@ class SplitsSyncWorkerTest: XCTestCase {
         XCTAssertEqual("&q=1", splitStorage.splitsFilterQueryString)
     }
 
-    override func tearDown() {
+    func testUriTooLongError() {
+
+        let expiration = 10000
+        splitFetcher.httpError = .uriTooLong
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
+                                                     splitsStorage: splitStorage,
+                                                     splitChangeProcessor: splitChangeProcessor,
+                                                     cacheExpiration: 100,
+                                                     defaultQueryString: "&q=1",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter,
+                                                     splitConfig: SplitClientConfig())
+
+        let change = SplitChange(splits: [], since: 200, till: 200)
+        splitStorage.updateTimestamp = Int64(Int(Date().timeIntervalSince1970) - expiration / 2) // Non Expired cache
+        splitFetcher.splitChanges = [change]
+        splitStorage.splitsFilterQueryString = "&q=1"
+        var resultIsSuccess = false
+        let exp = XCTestExpectation(description: "exp")
+
+        var thrownError: HttpError?
+        splitsSyncWorker.completion = { success in
+            resultIsSuccess = success
+            exp.fulfill()
+        }
+
+        splitsSyncWorker.errorHandler = { error in
+            thrownError = error as? HttpError
+            exp.fulfill()
+        }
+
+        splitsSyncWorker.start()
+
+        wait(for: [exp], timeout: 3)
+
+        XCTAssertFalse(resultIsSuccess)
+        XCTAssertEqual(HttpError.uriTooLong, thrownError)
     }
 
     private func createSplit(name: String) -> Split {

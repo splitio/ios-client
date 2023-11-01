@@ -182,3 +182,22 @@ extension LocalhostSplitClient {
         return true
     }
 }
+
+// MARK: TreatmentBySets Feature
+extension LocalhostSplitClient {
+    public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String: String] {
+        return [String: String]()
+    }
+
+    public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String: String] {
+        return [String: String]()
+    }
+
+    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String: SplitResult] {
+        return [String: SplitResult]()
+    }
+
+    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String: SplitResult] {
+        return [String: SplitResult]()
+    }
+}

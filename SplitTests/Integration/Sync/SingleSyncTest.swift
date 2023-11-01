@@ -252,7 +252,7 @@ class SingleSyncTest: XCTestCase {
         splitConfig.eventsFirstPushWindow = 1
         splitConfig.eventsPushRate = 1
         splitConfig.uniqueKeysRefreshRate = 1
-        splitConfig.logLevel = .none
+        splitConfig.logLevel = TestingHelper.testLogLevel
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()

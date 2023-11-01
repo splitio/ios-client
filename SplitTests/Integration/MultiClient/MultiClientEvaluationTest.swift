@@ -319,7 +319,7 @@ class MultiClientEvaluationTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 3000
         splitConfig.eventsPushRate = 999999
-        splitConfig.logLevel = .verbose
+        splitConfig.logLevel = TestingHelper.testLogLevel
         return splitConfig
     }
 

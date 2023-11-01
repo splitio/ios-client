@@ -12,7 +12,9 @@ protocol PersistentSplitsStorage {
     func update(splitChange: ProcessedSplitChange)
     func update(split: Split)
     func update(filterQueryString: String)
+    func update(bySetsFilter: SplitFilter?)
     func getFilterQueryString() -> String
+    func getBySetsFilter() -> SplitFilter?
     func getSplitsSnapshot() -> SplitsSnapshot
     func getChangeNumber() -> Int64
     func getUpdateTimestamp() -> Int64
@@ -48,6 +50,34 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
 
     func getFilterQueryString() -> String {
         return generalInfoDao.stringValue(info: .splitsFilterQueryString) ?? ""
+    }
+
+    func update(bySetsFilter filter: SplitFilter?) {
+        guard let filter = filter else {
+            generalInfoDao.delete(info: .bySetsFilter)
+            return
+        }
+
+        do {
+            generalInfoDao.update(info: .bySetsFilter, stringValue: try Json.encodeToJson(filter))
+        } catch {
+            Logger.e("Could not encode By Sets filter to store in cache. Error: \(error.localizedDescription)")
+            return
+        }
+    }
+
+    func getBySetsFilter() -> SplitFilter? {
+
+        guard let filterString = generalInfoDao.stringValue(info: .bySetsFilter) else {
+            return nil
+        }
+
+        do {
+            return try Json.decodeFrom(json: filterString, to: SplitFilter.self)
+        } catch {
+            Logger.e("Could not decode stored by Sets split filter. Error: \(error.localizedDescription)")
+        }
+        return nil
     }
 
     func getSplitsSnapshot() -> SplitsSnapshot {

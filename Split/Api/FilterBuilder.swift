@@ -8,15 +8,18 @@
 
 import Foundation
 
-class MaxFilterValuesExcededError: Error {
-    var message: String
-    init(message: String) {
-        self.message = message
-    }
+enum FilterError: Error {
+    case maxFilterValuesExceded(message: String)
+    case byNamesAndBySetsUsed(message: String)
 }
 
 class FilterBuilder {
     private var filters = [SplitFilter]()
+    private let flagSetValidator: FlagSetsValidator
+
+    init(flagSetsValidator: FlagSetsValidator) {
+        self.flagSetValidator = flagSetsValidator
+    }
 
     func add(filters: [SplitFilter]) -> Self {
         self.filters.append(contentsOf: filters)
@@ -30,12 +33,28 @@ class FilterBuilder {
         }
 
         var groupedFilters = [SplitFilter]()
+        var filterCounts: [SplitFilter.FilterType: Int] = [:]
         let types = Dictionary(grouping: filters, by: {$0.type}).keys
         types.forEach { filterType in
+            let values = filters.filter({ $0.type == filterType }).flatMap({$0.values})
+            filterCounts[filterType] = values.count
             groupedFilters.append(
-                SplitFilter(type: filterType, values: filters.filter({ $0.type == filterType }).flatMap({$0.values}))
+                SplitFilter(type: filterType, values: values)
             )
         }
+
+        if (filterCounts[.bySet] ?? 0) > 0,
+            ((filterCounts[.byName] ?? 0) > 0 || (filterCounts[.byPrefix] ?? 0) > 0) {
+            let message = "SDK Config: names or prefix and sets filter cannot be used at the same time."
+            Logger.e(message)
+        }
+
+        // If bySets filter is present, ignore byNames and byPrefix
+        if let filter = groupedFilters.first(where: { $0.type == .bySet }) {
+            let values = flagSetValidator.cleanAndValidateValues(filter.values, calledFrom: "FilterBuilder.build")
+            return "&\(filter.type.queryStringField)=\(values.sorted().joined(separator: ","))"
+        }
+
         groupedFilters.sort(by: { $0.type.rawValue < $1.type.rawValue})
         var queryString = ""
         for filter in groupedFilters {
@@ -50,12 +69,11 @@ class FilterBuilder {
                 . Please consider reducing the amount or using prefixes to target specific groups of feature flags.
                 """
                 Logger.e(message)
-                throw MaxFilterValuesExcededError(message: message)
+                throw FilterError.maxFilterValuesExceded(message: message)
             }
             queryString.append("&\(filter.type.queryStringField)=\(deduptedValues.sorted().joined(separator: ","))")
         }
         return queryString
-
     }
 
     private func removeDuplicates(values: [String]) -> [String] {

@@ -11,6 +11,10 @@ import Foundation
 
 struct TestingHelper {
 
+    static var testLogLevel: SplitLogLevel {
+        return .none
+    }
+
     static func basicStreamingConfig() -> SplitClientConfig {
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 3
@@ -97,11 +101,15 @@ struct TestingHelper {
         return counts
     }
 
-    static func createSplit(name: String, trafficType: String = "t1", status: Status = .active) -> Split {
+    static func createSplit(name: String,
+                            trafficType: String = "t1",
+                            status: Status = .active,
+                            sets: Set<String>? = nil) -> Split {
         let split = Split()
         split.name = name
         split.trafficTypeName = trafficType
         split.status = status
+        split.sets = sets
         return split
     }
 
@@ -186,6 +194,7 @@ struct TestingHelper {
                                      telemetryStorage: TelemetryStorageStub(),
                                      mySegmentsStorage: MySegmentsStorageStub(),
                                      attributesStorage: AttributesStorageStub(),
-                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub())
+                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
+                                     flagSetsCache: FlagSetsCacheMock())
     }
 }

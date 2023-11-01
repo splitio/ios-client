@@ -99,7 +99,11 @@ class AttributesEvaluationTest: XCTestCase {
         XCTAssertEqual("on_num_20", evalAfterRemoveOne)
         XCTAssertEqual("on", evalAfterClear)
 
-        splitClient.destroy()
+        let semaphore = DispatchSemaphore(value: 0)
+        splitClient.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     func testAttributesPersistentedCorrectly() {
@@ -182,7 +186,11 @@ class AttributesEvaluationTest: XCTestCase {
 
         XCTAssertNil(dbClearedAttributes?.count)
 
-        splitClient.destroy()
+        let semaphore = DispatchSemaphore(value: 0)
+        splitClient.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     func testPersistenceDisabled() {
@@ -253,7 +261,11 @@ class AttributesEvaluationTest: XCTestCase {
         XCTAssertEqual(2, dbClearedAttributes?.count ?? 0)
         XCTAssertEqual(3, inMemoryAttributes?.count ?? 0)
 
-        splitClient.destroy()
+        let semaphore = DispatchSemaphore(value: 0)
+        splitClient.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     func testEvaluationPrecedence() {
@@ -303,7 +315,11 @@ class AttributesEvaluationTest: XCTestCase {
         XCTAssertEqual("on_str_yes", evalAfterOverwrite)
         XCTAssertEqual("on_num_10", evalPrecedence)
 
-        splitClient.destroy()
+        let semaphore = DispatchSemaphore(value: 0)
+        splitClient.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
 
     private func getChanges() -> Data {

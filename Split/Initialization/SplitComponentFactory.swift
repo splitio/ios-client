@@ -66,7 +66,9 @@ class SplitComponentFactory {
         if let obj = catalog.get(for: EndpointFactory.self) as? EndpointFactory {
             return obj
         }
-        let filterBuilder = FilterBuilder()
+
+        let flagSetsValidator = DefaultFlagSetsValidator(telemetryProducer: try getSplitStorageContainer().telemetryStorage)
+        let filterBuilder = FilterBuilder(flagSetsValidator: flagSetsValidator)
         splitsFilterQueryString = try filterBuilder.add(filters: splitClientConfig.sync.filters).build()
         let component: EndpointFactory = EndpointFactory(serviceEndpoints: splitClientConfig.serviceEndpoints,
                                                          apiKey: apiKey,
@@ -334,7 +336,7 @@ extension SplitComponentFactory {
                                                  splitsFilterQueryString: splitsFilterQueryString,
                                                  apiFacade: try getSplitApiFacade(),
                                                  storageContainer: try getSplitStorageContainer(),
-                                                 splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                 splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: splitClientConfig.bySetsFilter()),
                                                  eventsManager: getSplitEventsManagerCoordinator())
         catalog.add(component: component)
         return component

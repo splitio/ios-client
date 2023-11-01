@@ -9,15 +9,17 @@
 import Foundation
 
 extension String {
-    public func isEmpty() -> Bool {
+    func isEmpty() -> Bool {
         return (self.trimmingCharacters(in: .whitespacesAndNewlines) == "")
     }
 
-    public func hasUpperCaseChar() -> Bool {
+    func hasUpperCaseChar() -> Bool {
         return self.lowercased() != self
     }
 
-    public var dataBytes: Data? {
+    var dataBytes: Data? {
         return self.data(using: .utf8)
     }
+
+
 }

@@ -83,7 +83,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
             exp.fulfill()
         }
         mySegmentsSyncWorker.start()
-        sleep(1)
+        sleep(3)
         mySegmentsSyncWorker.stop()
 
         wait(for: [exp], timeout: 3)

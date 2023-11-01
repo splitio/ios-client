@@ -10,6 +10,7 @@
 import Foundation
 
 class GeneralInfoDaoStub: GeneralInfoDao {
+
     var updatedString = [String: String]()
     var updatedLong = [String: Int64]()
 
@@ -27,5 +28,10 @@ class GeneralInfoDaoStub: GeneralInfoDao {
     
     func longValue(info: GeneralInfo) -> Int64? {
         return updatedLong[info.rawValue]
+    }
+
+    func delete(info: GeneralInfo) {
+        updatedString.removeValue(forKey: info.rawValue)
+        updatedLong.removeValue(forKey: info.rawValue)
     }
 }

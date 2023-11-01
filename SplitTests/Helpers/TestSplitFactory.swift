@@ -32,7 +32,7 @@ class TestSplitFactory: SplitFactory {
     }
 
     private(set) var clientManager: SplitClientManager?
-    private let filterBuilder = FilterBuilder()
+    private let filterBuilder = FilterBuilder(flagSetsValidator: DefaultFlagSetsValidator(telemetryProducer: nil))
     let userKey: String
     private var key: Key!
     var splitDatabase: SplitDatabase
@@ -120,7 +120,7 @@ class TestSplitFactory: SplitFactory {
                                                          splitsFilterQueryString: splitsFilterQueryString,
                                                          apiFacade: apiFacade,
                                                          storageContainer: storageContainer,
-                                                         splitChangeProcessor: DefaultSplitChangeProcessor(),
+                                                         splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
                                                          eventsManager: eventsManager)
 
         let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitConfig,

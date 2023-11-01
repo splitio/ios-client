@@ -11,7 +11,7 @@ import XCTest
 @testable import Split
 
 class SplitsStorageStub: SplitsStorage {
-    
+
     var updatedSplitChange: ProcessedSplitChange? = nil
     
     var changeNumber: Int64 = 0
@@ -48,7 +48,8 @@ class SplitsStorageStub: SplitsStorage {
     }
 
     var updateSplitChangeCalled = false
-    func update(splitChange: ProcessedSplitChange) {
+    var splitsWereUpdated = false
+    func update(splitChange: ProcessedSplitChange) -> Bool {
         updatedSplitChange = splitChange
         let active = splitChange.activeSplits
         let archived = splitChange.archivedSplits
@@ -61,6 +62,7 @@ class SplitsStorageStub: SplitsStorage {
             inMemorySplits.removeValue(forKey: $0.name?.lowercased() ?? "")
         }
         updateSplitChangeCalled = true
+        return splitsWereUpdated
     }
     
     func update(filterQueryString: String) {
@@ -93,5 +95,10 @@ class SplitsStorageStub: SplitsStorage {
     func getCount() -> Int {
         getCountCalledCount+=1
         return inMemorySplits.count
+    }
+
+    var updateBySetsFilterCount = 0
+    func update(bySetsFilter: SplitFilter?) {
+        updateBySetsFilterCount+=1
     }
 }

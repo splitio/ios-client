@@ -185,8 +185,8 @@ class DestroyTests: XCTestCase {
         XCTAssertEqual("off", treatmentsWithConfigBeforeDestroy?[splitName]?.treatment)
         XCTAssertEqual(true, trackBeforeDestroy)
         XCTAssertEqual(splitName, splitBeforeDestroy?.name)
-        XCTAssertEqual(30, splitCountBeforeDestroy)
-        XCTAssertEqual(30, splitNamesCountBeforeDestroy)
+        XCTAssertEqual(33, splitCountBeforeDestroy)
+        XCTAssertEqual(33, splitNamesCountBeforeDestroy)
 
         XCTAssertEqual(SplitConstants.control, treatmentAfterDestroy)
         XCTAssertEqual(SplitConstants.control, treatmentWithConfigAfterDestroy?.treatment)

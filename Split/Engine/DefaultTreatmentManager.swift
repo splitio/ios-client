@@ -20,6 +20,9 @@ class DefaultTreatmentManager: TreatmentManager {
     private let evaluator: Evaluator
     private let splitConfig: SplitClientConfig
     private let attributesStorage: AttributesStorage
+    private let flagSetsCache: FlagSetsCache
+    private let flagSetsValidator: FlagSetsValidator
+
     private var isDestroyed = false
 
     init(evaluator: Evaluator,
@@ -28,7 +31,8 @@ class DefaultTreatmentManager: TreatmentManager {
          eventsManager: SplitEventsManager,
          impressionLogger: ImpressionLogger,
          telemetryProducer: TelemetryProducer?,
-         attributesStorage: AttributesStorage,
+         storageContainer: SplitStorageContainer,
+         flagSetsValidator: FlagSetsValidator,
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
          validationLogger: ValidationMessageLogger) {
@@ -39,7 +43,9 @@ class DefaultTreatmentManager: TreatmentManager {
         self.eventsManager = eventsManager
         self.impressionLogger = impressionLogger
         self.telemetryProducer = telemetryProducer
-        self.attributesStorage = attributesStorage
+        self.attributesStorage = storageContainer.attributesStorage
+        self.flagSetsCache = storageContainer.flagSetsCache
+        self.flagSetsValidator = flagSetsValidator
         self.keyValidator = keyValidator
         self.splitValidator = splitValidator
         self.validationLogger = validationLogger
@@ -70,8 +76,8 @@ class DefaultTreatmentManager: TreatmentManager {
     func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String] {
         let timeStart = startTime()
         let treatments = getTreatmentsWithConfigNoMetrics(splits: splits,
-                                                      attributes: attributes,
-                                                      validationTag: ValidationTag.getTreatments)
+                                                          attributes: attributes,
+                                                          validationTag: ValidationTag.getTreatments)
         let result = treatments.mapValues { $0.treatment }
         telemetryProducer?.recordLatency(method: .treatments, latency: Stopwatch.interval(from: timeStart))
         return result
@@ -85,9 +91,72 @@ class DefaultTreatmentManager: TreatmentManager {
         telemetryProducer?.recordLatency(method: .treatmentsWithConfig, latency: Stopwatch.interval(from: timeStart))
         return result
     }
+}
 
+// MARK: FlagSets evaluation
+extension DefaultTreatmentManager {
+    func getTreatmentsByFlagSet(flagSet: String, attributes: [String: Any]?) -> [String: String] {
+        let featureFlags = featureFlagsFromSets([flagSet], validationTag: ValidationTag.getTreatmentsByFlagSet)
+        let timeStart = startTime()
+        let treatments = getTreatmentsWithConfigNoMetrics(splits: featureFlags,
+                                                          attributes: attributes,
+                                                          validationTag: ValidationTag.getTreatmentsByFlagSet)
+        let result = treatments.mapValues { $0.treatment }
+        telemetryProducer?.recordLatency(method: .treatmentsByFlagSet, latency: Stopwatch.interval(from: timeStart))
+        return result
+    }
+
+    func getTreatmentsByFlagSets(flagSets: [String], attributes: [String: Any]?) -> [String: String] {
+        let timeStart = startTime()
+        let featureFlags = featureFlagsFromSets(flagSets, validationTag: ValidationTag.getTreatmentsByFlagSets)
+        let treatments = getTreatmentsWithConfigNoMetrics(splits: featureFlags,
+                                                          attributes: attributes,
+                                                          validationTag: ValidationTag.getTreatmentsByFlagSets)
+        let result = treatments.mapValues { $0.treatment }
+        telemetryProducer?.recordLatency(method: .treatmentsByFlagSets, latency: Stopwatch.interval(from: timeStart))
+        return result
+    }
+
+    func getTreatmentsWithConfigByFlagSet(flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
+        let timeStart = startTime()
+        let featureFlags = featureFlagsFromSets([flagSet],
+                                                validationTag: ValidationTag.getTreatmentsWithConfigByFlagSet)
+        let result = getTreatmentsWithConfigNoMetrics(splits: featureFlags,
+                                                      attributes: attributes,
+                                                      validationTag: ValidationTag.getTreatmentsWithConfigByFlagSet)
+        telemetryProducer?.recordLatency(method: .treatmentsWithConfigByFlagSet,
+                                         latency: Stopwatch.interval(from: timeStart))
+        return result
+    }
+
+    func getTreatmentsWithConfigByFlagSets(flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult] {
+        let timeStart = startTime()
+        let featureFlags = featureFlagsFromSets(flagSets,
+                                                validationTag: ValidationTag.getTreatmentsWithConfigByFlagSets)
+        let result = getTreatmentsWithConfigNoMetrics(splits: featureFlags,
+                                                      attributes: attributes,
+                                                      validationTag: ValidationTag.getTreatmentsWithConfigByFlagSets)
+        telemetryProducer?.recordLatency(method: .treatmentsWithConfigByFlagSets,
+                                         latency: Stopwatch.interval(from: timeStart))
+        return result
+    }
+}
+
+// MARK: Destroyable
+extension DefaultTreatmentManager {
     func destroy() {
         isDestroyed = true
+    }
+}
+
+// MARK: Treatment manager
+extension DefaultTreatmentManager {
+
+    private func featureFlagsFromSets(_ sets: [String], validationTag: String) -> [String] {
+        let validatedSets = flagSetsValidator.validateOnEvaluation(sets,
+                                                                   calledFrom: validationTag,
+                                                                   setsInFilter: splitConfig.bySetsFilter()?.values ?? [])
+        return flagSetsCache.getFeatureFlagNames(forFlagSets: validatedSets)
     }
 
     private func getTreatmentsWithConfigNoMetrics(splits: [String],
@@ -160,7 +229,9 @@ class DefaultTreatmentManager: TreatmentManager {
         let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
         let mergedAttributes = mergeAttributes(attributes: attributes)
         do {
-            let result = try evaluateIfReady(splitName: trimmedSplitName, attributes: mergedAttributes)
+            let result = try evaluateIfReady(splitName: trimmedSplitName,
+                                             attributes: mergedAttributes,
+                                             validationTag: validationTag)
             logImpression(label: result.label, changeNumber: result.changeNumber,
                           treatment: result.treatment, splitName: trimmedSplitName, attributes: mergedAttributes)
             return SplitResult(treatment: result.treatment, config: result.configuration)
@@ -171,8 +242,14 @@ class DefaultTreatmentManager: TreatmentManager {
         }
     }
 
-    private func evaluateIfReady(splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
+    private func sdkNoReadyMessage(splitName: String) -> String {
+        return "The SDK is not ready, results may be incorrect for feature flag \(splitName)."
+                           + "Make sure to wait for SDK readiness before using this method"
+    }
+
+    private func evaluateIfReady(splitName: String, attributes: [String: Any]?, validationTag: String) throws -> EvaluationResult {
         if !isSdkReady() {
+            validationLogger.w(message: sdkNoReadyMessage(splitName: splitName), tag: validationTag)
             telemetryProducer?.recordNonReadyUsage()
             return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.notReady)
         }

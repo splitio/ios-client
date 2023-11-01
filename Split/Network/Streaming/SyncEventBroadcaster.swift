@@ -17,6 +17,7 @@ enum SyncStatusEvent: Equatable {
     case pushReset
     case pushDelayReceived(delaySeconds: Int64)
     case syncExecuted
+    case uriTooLongOnSync
 }
 
 protocol SyncEventBroadcaster {

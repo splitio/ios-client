@@ -103,6 +103,7 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
             }
             self.coreDataHelper.delete(entity: .impressionsCount, by: "storageId",
                                        values: counts.map { $0.storageId ?? "" })
+            self.coreDataHelper.save()
         }
     }
 

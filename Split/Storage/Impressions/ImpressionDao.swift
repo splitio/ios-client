@@ -95,6 +95,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
             }
             self.coreDataHelper.delete(entity: .impression, by: "storageId",
                                        values: impressions.map { $0.storageId ?? "" })
+            self.coreDataHelper.save()
         }
     }
 
