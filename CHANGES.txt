@@ -1,4 +1,4 @@
-2.22.1: (Nov 1, 2023)
+2.23.0: (Nov 1, 2023)
 - Added support for Flag Sets on the SDK, which enables grouping feature flags and interacting with the group rather than individually (more details in our documentation):
   - Added new variations of the get treatment methods to support evaluating flags in given flag set/s.
     - getTreatmentsByFlagSet and getTreatmentsByFlagSets
