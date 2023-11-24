@@ -221,11 +221,12 @@ class TestSplitFactory: SplitFactory {
     }
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
+        let dbKey = SplitDatabaseHelper.buildDbKey(prefix: config.prefix, sdkKey: apiKey)
 #if os(iOS) || os(tvOS)
         if config.synchronizeInBackground {
-            SplitBgSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)
+            SplitBgSynchronizer.shared.register(dbKey: dbKey, prefix: config.prefix, userKey: userKey)
         } else {
-            SplitBgSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)
+            SplitBgSynchronizer.shared.unregister(dbKey: dbKey, userKey: userKey)
         }
 #endif
     }
