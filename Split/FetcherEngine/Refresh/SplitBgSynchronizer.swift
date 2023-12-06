@@ -14,38 +14,44 @@ import BackgroundTasks
 
     @objc public static let shared = SplitBgSynchronizer()
 
-    private struct SyncItem: Codable {
+    // Visible for testing
+    struct SyncItem: Codable {
         let apiKey: String
         var encryptionLevel: Int = 0
         var userKeys: [String: Int64] = [:] // UserKey, Timestamp
+        var prefix: String?
     }
 
-    private typealias BgSyncSchedule = [String: SyncItem]
+    // Visible for testing
+    typealias BgSyncSchedule = [String: SyncItem]
+
     private let taskId = "io.split.bg-sync.task"
     private static let kTimeInterval = ServiceConstants.backgroundSyncPeriod
     static let kRegistrationExpiration = 3600 * 24 * 90 // 90 days
 
     var globalStorage: KeyValueStorage = GlobalSecureStorage.shared
 
-    @objc public func register(apiKey: String,
+    @objc public func register(dbKey: String, // prefix + apiKey
+                               prefix: String?,
                                userKey: String,
                                encryptionLevel: SplitEncryptionLevel = .none) {
         var syncMap = getSyncTaskMap()
-        var syncItem = syncMap[apiKey] ?? SyncItem(apiKey: apiKey)
+        var syncItem = syncMap[dbKey] ?? SyncItem(apiKey: dbKey)
+        syncItem.prefix = prefix
         syncItem.userKeys[userKey] = Date().unixTimestamp()
         syncItem.encryptionLevel = encryptionLevel.rawValue
-        syncMap[apiKey] = syncItem
+        syncMap[dbKey] = syncItem
         globalStorage.set(item: syncMap, for: .backgroundSyncSchedule)
     }
 
-    @objc public func unregister(apiKey: String, userKey: String) {
+    @objc public func unregister(dbKey: String, userKey: String) {
         var syncMap = getSyncTaskMap()
-        if var item = syncMap[apiKey], item.userKeys[userKey] != nil {
+        if var item = syncMap[dbKey], item.userKeys[userKey] != nil {
             item.userKeys.removeValue(forKey: userKey)
             if item.userKeys.count > 0 {
-                syncMap[apiKey] = item
+                syncMap[dbKey] = item
             } else {
-                syncMap.removeValue(forKey: apiKey)
+                syncMap.removeValue(forKey: dbKey)
             }
             globalStorage.set(item: syncMap, for: .backgroundSyncSchedule)
         }
@@ -70,7 +76,9 @@ import BackgroundTasks
                 }
                 for item in syncList.values {
                     do {
-                        let executor = try BackgroundSyncExecutor(apiKey: item.apiKey,
+                        // TODO: Create BGSyncExecutor using a factory to allow testing
+                        let executor = try BackgroundSyncExecutor(prefix: item.prefix,
+                                                                  apiKey: item.apiKey,
                                                                   userKeys: item.userKeys,
                                                                   serviceEndpoints: serviceEndpoints)
                         executor.execute(operationQueue: operationQueue)
@@ -123,20 +131,21 @@ struct BackgroundSyncExecutor {
     private let splitsSyncWorker: BackgroundSyncWorker
     private let eventsRecorderWorker: RecorderWorker
     private let impressionsRecorderWorker: RecorderWorker
-    private let apiKey: String
+    private let mapKey: String
     private let userKeys: [String: Int64]
     private let mySegmentsFetcher: HttpMySegmentsFetcher
 
-    init(apiKey: String, userKeys: [String: Int64],
+    init(prefix: String?, apiKey: String, userKeys: [String: Int64],
          serviceEndpoints: ServiceEndpoints? = nil) throws {
 
-        self.apiKey = apiKey
+        self.mapKey = SplitDatabaseHelper.buildDbKey(prefix: prefix, sdkKey: apiKey)
         self.userKeys = userKeys
 
-        let cipherKey = SplitDatabaseHelper.currentEncryptionKey(for: apiKey)
-        let encryptionLevel = SplitDatabaseHelper.currentEncryptionLevel(apiKey: apiKey)
+        let cipherKey = SplitDatabaseHelper.currentEncryptionKey(for: mapKey)
+        let encryptionLevel = SplitDatabaseHelper.currentEncryptionLevel(dbKey: mapKey)
 
-        let databaseName = SplitDatabaseHelper.databaseName(apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
+        let databaseName = SplitDatabaseHelper.databaseName(prefix: prefix,
+                                                            apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
 
         guard let dbHelper = CoreDataHelperBuilder.build(databaseName: databaseName) else {
             throw GenericError.couldNotCreateCache
@@ -164,12 +173,12 @@ struct BackgroundSyncExecutor {
         self.mySegmentsFetcher = DefaultHttpMySegmentsFetcher(restClient: restClient,
                                                               syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
-
         let bySetsFilter = splitsStorage.getBySetsFilter()
         let cacheExpiration = Int64(ServiceConstants.cacheExpirationInSeconds)
+        let changeProcessor = DefaultSplitChangeProcessor(filterBySet: bySetsFilter)
         self.splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitsFetcher,
                                                            persistentSplitsStorage: splitsStorage,
-                                                           splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: bySetsFilter),
+                                                           splitChangeProcessor: changeProcessor,
                                                            cacheExpiration: cacheExpiration,
                                                            splitConfig: SplitClientConfig())
 
@@ -204,7 +213,7 @@ struct BackgroundSyncExecutor {
         operationQueue.addOperation {
             for (userKey, timestamp) in self.userKeys {
                 if self.isExpired(timestamp: timestamp) {
-                    SplitBgSynchronizer.shared.unregister(apiKey: self.apiKey, userKey: userKey)
+                    SplitBgSynchronizer.shared.unregister(dbKey: self.mapKey, userKey: userKey)
                     return
                 }
 
@@ -226,6 +235,10 @@ struct BackgroundSyncExecutor {
 
     func isExpired(timestamp: Int64) -> Bool {
         return Date().unixTimestamp() - timestamp > SplitBgSynchronizer.kRegistrationExpiration
+    }
+
+    private func buildMapKey(prefix: String?, apiKey: String) -> String {
+        return "\(prefix ?? "")_\(apiKey)"
     }
 }
 #endif

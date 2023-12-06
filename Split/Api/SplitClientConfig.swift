@@ -315,6 +315,11 @@ public class SplitClientConfig: NSObject {
     @objc public var syncEnabled = true
 
     ///
+    /// Prefix applied to the cache database name (Default: nil)
+    /// This is useful when using two factories with the same SDK Key to avoid having issues with the shared data
+    @objc public var prefix: String?
+
+    ///
     ///  Update this variable to enable / disable telemetry for testing
     ///
 

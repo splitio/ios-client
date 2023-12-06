@@ -10,8 +10,8 @@ import Foundation
 
 public class Key: NSObject {
 
-    let matchingKey: String
-    let bucketingKey: String?
+    public let matchingKey: String
+    public let bucketingKey: String?
 
     @objc(initWithMatchingKey:bucketingKey:) public init(matchingKey: String, bucketingKey: String? = nil) {
         self.matchingKey = matchingKey

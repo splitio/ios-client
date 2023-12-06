@@ -62,7 +62,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManagerCoordinator()
 
-        let databaseName = SplitDatabaseHelper.databaseName(apiKey: params.apiKey) ?? params.config.defaultDataFolder
+        let databaseName = SplitDatabaseHelper.databaseName(prefix: params.config.prefix, apiKey: params.apiKey) ?? params.config.defaultDataFolder
 
         let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
                                                                     telemetryStorage: params.telemetryStorage,
@@ -84,7 +84,9 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         userConsentManager = try components.buildUserConsentManager()
 
-        setupBgSync(config: params.config, apiKey: params.apiKey, userKey: params.key.matchingKey, storageContainer: storageContainer)
+        setupBgSync(config: params.config, apiKey: params.apiKey,
+                    userKey: params.key.matchingKey,
+                    storageContainer: storageContainer)
 
         clientManager = DefaultClientManager(config: params.config,
                                              key: params.key,
@@ -127,16 +129,17 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         userConsentManager.set(newMode)
     }
 
-    private func setupBgSync(config: SplitClientConfig, 
+    private func setupBgSync(config: SplitClientConfig,
                              apiKey: String,
                              userKey: String,
                              storageContainer: SplitStorageContainer) {
 #if os(iOS)
+        let dbKey = SplitDatabaseHelper.buildDbKey(prefix: config.prefix, sdkKey: apiKey)
         if config.synchronizeInBackground {
-            SplitBgSynchronizer.shared.register(apiKey: apiKey, userKey: userKey)
+            SplitBgSynchronizer.shared.register(dbKey: dbKey, prefix: config.prefix, userKey: userKey)
             storageContainer.splitsStorage.update(bySetsFilter: config.bySetsFilter())
         } else {
-            SplitBgSynchronizer.shared.unregister(apiKey: apiKey, userKey: userKey)
+            SplitBgSynchronizer.shared.unregister(dbKey: dbKey, userKey: userKey)
         }
 #endif
     }
