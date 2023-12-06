@@ -1,4 +1,4 @@
-2.24.0: (Nov 29, 2023)
+2.24.0: (Dec 6, 2023)
 - Added `prefix` configuration parameter, which allows to use a prefix when naming the SDK storage. Use this when using multiple `SplitFactory` instances with the same SDK key.
 
 2.23.0: (Nov 1, 2023)
