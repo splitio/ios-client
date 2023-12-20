@@ -171,7 +171,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         if !isSdkReadyFired() {
             return
         }
-
+        let storedChangeNumber = splitsStorage.changeNumber
         guard let result = try? syncHelper.sync(since: splitsStorage.changeNumber) else {
             return
         }
