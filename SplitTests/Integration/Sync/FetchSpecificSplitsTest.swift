@@ -19,7 +19,7 @@ class FetchSpecificSplitsTest: XCTestCase {
     var streamingBinding: TestStreamResponseBinding?
 
     var splitChange: SplitChange?
-    var serverUrl = ""
+    var serverUrl = "https://split.test.ing"
     var splitsRequestUrl = ""
     var lastChangeNumber = 0
     
@@ -120,8 +120,8 @@ class FetchSpecificSplitsTest: XCTestCase {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
-
-                self.splitsRequestUrl = String(request.url.absoluteString.suffix(request.url.absoluteString.count - 24))
+                print("RequestURL: " + request.url.absoluteString)
+                self.splitsRequestUrl = String(request.url.absoluteString)
                 let since = self.lastChangeNumber
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
 

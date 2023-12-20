@@ -16,34 +16,34 @@ import Foundation
     static let kStreamingEndpoint = "https://streaming.split.io/sse"
     static let kTelemetryEndpoint = "https://telemetry.split.io/api/v1"
 
-    private (set) var sdkEndpoint: URL
-    private (set) var eventsEndpoint: URL
-    private (set) var authServiceEndpoint: URL
-    private (set) var streamingServiceEndpoint: URL
-    private (set) var telemetryServiceEndpoint: URL
+    private (set) var sdkEndpoint: URL?
+    private (set) var eventsEndpoint: URL?
+    private (set) var authServiceEndpoint: URL?
+    private (set) var streamingServiceEndpoint: URL?
+    private (set) var telemetryServiceEndpoint: URL?
 
     var isCustomSdkEndpoint: Bool {
-        return sdkEndpoint.absoluteString != ServiceEndpoints.kSdkEndpoint
+        return sdkEndpoint?.absoluteString != ServiceEndpoints.kSdkEndpoint
     }
 
     var isCustomEventsEndpoint: Bool {
-        return eventsEndpoint.absoluteString != ServiceEndpoints.kEventsEndpoint
+        return eventsEndpoint?.absoluteString != ServiceEndpoints.kEventsEndpoint
     }
 
     var isCustomAuthServiceEndpoint: Bool {
-        return authServiceEndpoint.absoluteString != ServiceEndpoints.kAuthServiceEndpoint
+        return authServiceEndpoint?.absoluteString != ServiceEndpoints.kAuthServiceEndpoint
     }
 
     var isCustomStreamingEndpoint: Bool {
-        return streamingServiceEndpoint.absoluteString != ServiceEndpoints.kStreamingEndpoint
+        return streamingServiceEndpoint?.absoluteString != ServiceEndpoints.kStreamingEndpoint
     }
 
     var isCustomTelemetryEndpoint: Bool {
-        return telemetryServiceEndpoint.absoluteString != ServiceEndpoints.kTelemetryEndpoint
+        return telemetryServiceEndpoint?.absoluteString != ServiceEndpoints.kTelemetryEndpoint
     }
 
-    private init(sdkEndpoint: URL, eventsEndpoint: URL, authServiceEndpoint: URL,
-                 streamingServiceEndpoint: URL, telemetryServiceEndpoint: URL) {
+    private init(sdkEndpoint: URL?, eventsEndpoint: URL?, authServiceEndpoint: URL?,
+                 streamingServiceEndpoint: URL?, telemetryServiceEndpoint: URL?) {
         self.sdkEndpoint = sdkEndpoint
         self.eventsEndpoint = eventsEndpoint
         self.authServiceEndpoint = authServiceEndpoint
@@ -131,46 +131,49 @@ import Foundation
                                     telemetryServiceEndpoint: telemetryServiceUrl())
         }
 
-        private func sdkUrl() -> URL {
+        private func sdkUrl() -> URL? {
             if let url = URL(string: sdkEndpoint) {
                 return url
+            } else {
+                Logger.w("SDK URL is not valid")
+                return nil
             }
-            Logger.w("SDK URL is not valid, using default")
-            return URL(string: ServiceEndpoints.kSdkEndpoint)!
         }
 
-        private func eventsUrl() -> URL {
+        private func eventsUrl() -> URL? {
             if let url = URL(string: eventsEndpoint) {
                 return url
+            } else {
+                Logger.w("Events URL is not valid")
+                return nil
             }
-            Logger.w("Events URL is not valid, using default")
-            return URL(string: ServiceEndpoints.kEventsEndpoint)!
         }
 
-        private func authServiceUrl() -> URL {
+        private func authServiceUrl() -> URL? {
             if let url = URL(string: authServiceEndpoint) {
                 return url
+            } else {
+                Logger.w("Authentication service URL is not valid")
+                return nil
             }
-            Logger.w("Authentication service URL is not valid, using default")
-            return URL(string: ServiceEndpoints.kAuthServiceEndpoint)!
         }
 
-        private func streamingServiceUrl() -> URL {
-
+        private func streamingServiceUrl() -> URL? {
             if let url = URL(string: streamingServiceEndpoint) {
                 return url
+            } else {
+                Logger.w("Streaming URL is not valid")
+                return nil
             }
-            Logger.w("Streaming URL is not valid, using default")
-            return URL(string: ServiceEndpoints.kStreamingEndpoint)!
         }
 
-        private func telemetryServiceUrl() -> URL {
-
+        private func telemetryServiceUrl() -> URL? {
             if let url = URL(string: telemetryServiceEndpoint) {
                 return url
+            } else {
+                Logger.w("Telemetry URL is not valid")
+                return nil
             }
-            Logger.w("Telemetry URL is not valid, using default")
-            return URL(string: ServiceEndpoints.kTelemetryEndpoint)!
         }
     }
 }

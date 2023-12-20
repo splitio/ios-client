@@ -9,8 +9,8 @@
 import Foundation
 
 protocol RestClient {
-    func isServerAvailable(_ url: URL) -> Bool
-    func isServerAvailable(path url: String) -> Bool
+    func isServerAvailable(_ url: URL?) -> Bool
+    func isServerAvailable(path url: String?) -> Bool
     func isEventsServerAvailable() -> Bool
     func isSdkServerAvailable() -> Bool
 }
@@ -101,12 +101,18 @@ class DefaultRestClient: SplitApiRestClient {
 }
 
 extension DefaultRestClient: RestClient {
-    func isServerAvailable(_ url: URL) -> Bool {
-        return self.isServerAvailable(path: url.absoluteString)
+    func isServerAvailable(_ url: URL?) -> Bool {
+        guard let urlString = url?.absoluteString else {
+            return false
+        }
+        return self.isServerAvailable(path: urlString)
     }
 
-    func isServerAvailable(path url: String) -> Bool {
-        return reachabilityChecker.isReachable(path: url)
+    func isServerAvailable(path url: String?) -> Bool {
+        guard let urlString = url else {
+            return false
+        }
+        return reachabilityChecker.isReachable(path: urlString)
     }
 
     func isEventsServerAvailable() -> Bool {

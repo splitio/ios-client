@@ -18,7 +18,7 @@ class DestroyTests: XCTestCase {
     var impressionsHitCount = 0
     var splitChangesHitCount = 0
     var mySegmentsHitCount = 0
-    var serverUrl = ""
+    var serverUrl = "https://split.test.ing"
     var lastChangeNumber = 1
 
     var impressions: [KeyImpression]!

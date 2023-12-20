@@ -10,49 +10,53 @@ import Foundation
 
 class Endpoint {
 
-    private (set) var url: URL
+    private (set) var url: URL?
     private (set) var method: HttpMethod
     private (set) var headers = [String: String]()
 
-    private init(baseUrl: URL, path: String?, isPathEncoded: Bool = false, defaultQueryString: String? = nil) {
+    private init(baseUrl: URL?, path: String?, isPathEncoded: Bool = false, defaultQueryString: String? = nil) {
 
         var comp = URLComponents()
-        comp.host = baseUrl.host
-        comp.scheme = baseUrl.scheme
-        comp.port = baseUrl.port
-        if let path = path {
-            let newPath = "\(baseUrl.path)/\(path)"
-            if isPathEncoded {
-                comp.percentEncodedPath = newPath
+        if let baseUrl = baseUrl {
+            comp.host = baseUrl.host
+            comp.scheme = baseUrl.scheme
+            comp.port = baseUrl.port
+
+            if let path = path {
+                let newPath = "\(baseUrl.path)/\(path)"
+                if isPathEncoded {
+                    comp.percentEncodedPath = newPath
+                } else {
+                    comp.path = newPath
+                }
             } else {
-                comp.path = newPath
+                comp.path = baseUrl.path
             }
-        } else {
-            comp.path = baseUrl.path
+
+            if var queryString = defaultQueryString, let from = queryString.firstIndex(of: "&") {
+                let upperLimit = queryString.index(from, offsetBy: 1)
+                queryString = queryString.replacingOccurrences(of: "&", with: "",
+                                                               options: .caseInsensitive, range: from..<upperLimit)
+                comp.query = queryString
+            }
+            self.url = comp.url ?? baseUrl
         }
 
-        if var queryString = defaultQueryString, let from = queryString.firstIndex(of: "&") {
-            let upperLimit = queryString.index(from, offsetBy: 1)
-            queryString = queryString.replacingOccurrences(of: "&", with: "",
-                                                           options: .caseInsensitive, range: from..<upperLimit)
-            comp.query = queryString
-        }
-        self.url = comp.url ?? baseUrl
         self.method = .get
     }
 
-    static func builder(baseUrl: URL, path: String? = nil, defaultQueryString: String? = nil) -> Builder {
+    static func builder(baseUrl: URL?, path: String? = nil, defaultQueryString: String? = nil) -> Builder {
         return Builder(baseUrl: baseUrl, path: path, isPathEncoded: false, defaultQueryString: defaultQueryString)
     }
 
-    static func builder(baseUrl: URL, encodedPath: String, defaultQueryString: String? = nil) -> Builder {
+    static func builder(baseUrl: URL?, encodedPath: String, defaultQueryString: String? = nil) -> Builder {
         return Builder(baseUrl: baseUrl, path: encodedPath, isPathEncoded: true, defaultQueryString: defaultQueryString)
     }
 
     struct Builder {
         private var endpoint: Endpoint
 
-        init(baseUrl: URL, path: String?, isPathEncoded: Bool, defaultQueryString: String? = nil) {
+        init(baseUrl: URL?, path: String?, isPathEncoded: Bool, defaultQueryString: String? = nil) {
             endpoint = Endpoint(baseUrl: baseUrl, path: path,
                                 isPathEncoded: isPathEncoded, defaultQueryString: defaultQueryString)
         }

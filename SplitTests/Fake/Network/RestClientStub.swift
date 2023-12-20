@@ -45,8 +45,8 @@ class RestClientStub: SplitApiRestClient {
 }
 
 extension RestClientStub: RestClient {
-    func isServerAvailable(_ url: URL) -> Bool { return isServerAvailable }
-    func isServerAvailable(path url: String) -> Bool { return isServerAvailable }
+    func isServerAvailable(_ url: URL?) -> Bool { return isServerAvailable }
+    func isServerAvailable(path url: String?) -> Bool { return isServerAvailable }
     func isEventsServerAvailable() -> Bool { return isServerAvailable }
     func isSdkServerAvailable() -> Bool { return isServerAvailable }
 }
