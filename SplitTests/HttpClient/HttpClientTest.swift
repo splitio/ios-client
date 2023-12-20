@@ -158,6 +158,31 @@ class HttpClientTest: XCTestCase {
         XCTAssertTrue(closedOk)
     }
 
+    func testEndpointWithNilUrlThrows() throws {
+        // When an error occurred errorHandler closure should be called
+        var theError: HttpError?
+        factory = EndpointFactory(serviceEndpoints: ServiceEndpoints.builder()
+            .set(sdkEndpoint: "")
+            .build(), apiKey: CommonValues.apiKey, splitsQueryString: "")
+        let expectation = XCTestExpectation(description: "complete req err")
+        do {
+            _ = try httpClient.sendRequest(endpoint: factory.splitChangesEndpoint, parameters:["since": 100])
+                .getResponse(completionHandler: { response in },
+                             errorHandler: { error in
+                                theError = error
+                                expectation.fulfill()
+                })
+        } catch {
+            theError = error as? HttpError
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10)
+
+        XCTAssertEqual(0, httpSession.dataTaskCallCount)
+        XCTAssertEqual(0, requestManager.addRequestCallCount)
+        XCTAssertEqual("Invalid URL", theError?.message)
+    }
+
     override func tearDown() {
     }
 }

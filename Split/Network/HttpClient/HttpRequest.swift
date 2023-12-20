@@ -51,23 +51,26 @@ class BaseHttpRequest: HttpRequest {
         return task?.identifier ?? -1
     }
 
-    init(session: HttpSession, url: URL, method: HttpMethod,
+    init(session: HttpSession, url: URL?, method: HttpMethod,
          parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
 
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        let initialQueryItems = components?.queryItems
-        if let parameters = parameters {
-            components?.queryItems = parameters.map { key, value in
-                var parsedValue = "\(value)"
-                if let array = value as? [Any] {
-                    parsedValue = array.compactMap { "\($0)" }.joined(separator: ",")
+        var components: URLComponents?
+        if let url = url {
+            components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+            let initialQueryItems = components?.queryItems
+            if let parameters = parameters {
+                components?.queryItems = parameters.map { key, value in
+                    var parsedValue = "\(value)"
+                    if let array = value as? [Any] {
+                        parsedValue = array.compactMap { "\($0)" }.joined(separator: ",")
+                    }
+                    return URLQueryItem(name: key, value: parsedValue)
                 }
-                return URLQueryItem(name: key, value: parsedValue)
             }
-        }
 
-        if let initialQueryItems = initialQueryItems {
-            components?.queryItems?.append(contentsOf: initialQueryItems)
+            if let initialQueryItems = initialQueryItems {
+                components?.queryItems?.append(contentsOf: initialQueryItems)
+            }
         }
 
         guard let finalUrl = components?.url else {

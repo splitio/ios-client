@@ -138,14 +138,14 @@ class DefaultHttpClient {
 // MARK: DefaultHttpClient - Private
 extension DefaultHttpClient {
 
-    private func createRequest(_ url: URL, method: HttpMethod = .get, parameters: HttpParameters? = nil,
+    private func createRequest(_ url: URL?, method: HttpMethod = .get, parameters: HttpParameters? = nil,
                                headers: HttpHeaders? = nil, body: Data? = nil) throws -> HttpDataRequest {
         let request = try DefaultHttpDataRequest(session: httpSession, url: url, method: method,
                                                  parameters: parameters, headers: headers, body: body)
         return request
     }
 
-    private func createStreamRequest(_ url: URL, parameters: HttpParameters? = nil,
+    private func createStreamRequest(_ url: URL?, parameters: HttpParameters? = nil,
                                      headers: HttpHeaders? = nil) throws -> HttpStreamRequest {
         let request = try DefaultHttpStreamRequest(session: httpSession, url: url,
                                                    parameters: parameters, headers: headers)
@@ -164,7 +164,7 @@ extension DefaultHttpClient: HttpClient {
             httpHeaders += headers
         }
 
-        let request = try self.createRequest(endpoint.url!, method: endpoint.method, parameters: parameters,
+        let request = try self.createRequest(endpoint.url, method: endpoint.method, parameters: parameters,
                                              headers: httpHeaders, body: body)
         request.send()
         requestManager.addRequest(request)

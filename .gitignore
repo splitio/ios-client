@@ -37,3 +37,4 @@ Carthage/
 .build/
 Split.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 release_type
+.swiftpm/

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1242,6 +1242,7 @@
 		95F3F07325ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F07225ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift */; };
 		95F3F09525AE1F3800084AF8 /* ServiceConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
+		C5B748CC2B337EEA00DEDEEB /* InvalidServiceEndpointTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B748CB2B337EEA00DEDEEB /* InvalidServiceEndpointTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1968,6 +1969,7 @@
 		95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceConstants.swift; sourceTree = "<group>"; };
 		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
+		C5B748CB2B337EEA00DEDEEB /* InvalidServiceEndpointTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidServiceEndpointTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3121,6 +3123,7 @@
 				95737E0D2AD474A9007FD15C /* FlagSetsIntegrationTest.swift */,
 				596A7B722358E142004F6139 /* SplitSdkTimeoutTest.swift */,
 				596A7B70235729B5004F6139 /* DestroyTest.swift */,
+				C5B748CB2B337EEA00DEDEEB /* InvalidServiceEndpointTest.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -4066,6 +4069,7 @@
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
 				59B2043B24F568660092F2E9 /* SynchronizerStub.swift in Sources */,
 				95F3EFEC258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift in Sources */,
+				C5B748CC2B337EEA00DEDEEB /* InvalidServiceEndpointTest.swift in Sources */,
 				59F65F012562FF71005FE8C9 /* EventDaoTest.swift in Sources */,
 				95715A9529DB0ED800A1B2F9 /* InitDbCipherTest.swift in Sources */,
 				9519A93A27DE318000278AEC /* ByKeyFacadeTest.swift in Sources */,

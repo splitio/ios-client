@@ -41,7 +41,7 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(endpointUrl, endpoint.url?.absoluteString)
+        XCTAssertEqual(endpointUrl, endpoint.url!.absoluteString)
     }
 
     func testMySegmentsEndpointSlashKeyEncoding() {
@@ -55,7 +55,7 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(endpointUrl, endpoint.url?.absoluteString)
+        XCTAssertEqual(endpointUrl, endpoint.url!.absoluteString)
     }
 
     func testSplitChangesEndpoint() {
@@ -67,7 +67,7 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(endpointUrl, endpoint.url?.absoluteString)
+        XCTAssertEqual(endpointUrl, endpoint.url!.absoluteString)
     }
 
     func testRecordImpressionsEndpoint() {
@@ -79,7 +79,7 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(endpointUrl, endpoint.url?.absoluteString)
+        XCTAssertEqual(endpointUrl, endpoint.url!.absoluteString)
     }
 
     func testRecordEventsEndpoint() {
@@ -91,7 +91,7 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(endpointUrl, endpoint.url?.absoluteString)
+        XCTAssertEqual(endpointUrl, endpoint.url!.absoluteString)
     }
 
     func testTelemetryConfigEndpoint() {
@@ -103,7 +103,7 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(endpointUrl, endpoint.url?.absoluteString)
+        XCTAssertEqual(endpointUrl, endpoint.url!.absoluteString)
     }
 
     func testTelemetryUsageEndpoint() {
@@ -115,7 +115,7 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(endpointUrl, endpoint.url?.absoluteString)
+        XCTAssertEqual(endpointUrl, endpoint.url!.absoluteString)
     }
 
     func testStreamingAuthEndpoint() {
@@ -127,7 +127,7 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
         XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(endpointUrl, endpoint.url?.absoluteString)
+        XCTAssertEqual(endpointUrl, endpoint.url!.absoluteString)
     }
 
     func testStreamingEndpoint() {
@@ -139,7 +139,24 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(kContentTypeEventStream, endpoint.headers[kContentTypeHeader])
         XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
         XCTAssertEqual(kAblyClientKey, endpoint.headers[kAblySplitSdkClientKey])
-        XCTAssertEqual(endpointUrl, endpoint.url?.absoluteString)
+        XCTAssertEqual(endpointUrl, endpoint.url!.absoluteString)
+    }
+
+    func testCanBeNil() {
+        let endpointUrl: String? = nil
+        serviceEndpoints = ServiceEndpoints.builder().set(sdkEndpoint: "").build()
+        factory = EndpointFactory(serviceEndpoints: serviceEndpoints,
+                                      apiKey: CommonValues.apiKey,
+                                      splitsQueryString: "")
+        let endpoint = factory.splitChangesEndpoint
+
+        XCTAssertEqual(HttpMethod.get, endpoint.method)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
+        XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
+        XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
+        XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
+        XCTAssertNil(serviceEndpoints.sdkEndpoint)
+        XCTAssertNil(endpoint.url)
     }
 
     override func tearDown() {
