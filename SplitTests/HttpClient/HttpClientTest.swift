@@ -159,7 +159,6 @@ class HttpClientTest: XCTestCase {
     }
 
     func testRequestToEndpointWithNilUrlThrowsInvalidURLError() throws {
-        // When an error occurred errorHandler closure should be called
         var theError: HttpError?
         factory = EndpointFactory(serviceEndpoints: ServiceEndpoints.builder()
             .set(sdkEndpoint: "")
@@ -182,7 +181,6 @@ class HttpClientTest: XCTestCase {
     }
 
     func testStreamRequestToEndpointWithNilUrlThrowsInvalidURLError() throws {
-        // When an error occurred errorHandler closure should be called
         var theError: HttpError?
         factory = EndpointFactory(serviceEndpoints: ServiceEndpoints.builder()
             .set(sdkEndpoint: "")
