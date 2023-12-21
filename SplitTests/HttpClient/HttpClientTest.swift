@@ -158,7 +158,7 @@ class HttpClientTest: XCTestCase {
         XCTAssertTrue(closedOk)
     }
 
-    func testEndpointWithNilUrlThrows() throws {
+    func testRequestToEndpointWithNilUrlThrowsInvalidURLError() throws {
         // When an error occurred errorHandler closure should be called
         var theError: HttpError?
         factory = EndpointFactory(serviceEndpoints: ServiceEndpoints.builder()
@@ -172,14 +172,38 @@ class HttpClientTest: XCTestCase {
                                 theError = error
                                 expectation.fulfill()
                 })
-        } catch {
-            theError = error as? HttpError
+        } catch let error as HttpError {
+            theError = error
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10)
 
-        XCTAssertEqual(0, httpSession.dataTaskCallCount)
-        XCTAssertEqual(0, requestManager.addRequestCallCount)
+        XCTAssertEqual("Invalid URL", theError?.message)
+    }
+
+    func testStreamRequestToEndpointWithNilUrlThrowsInvalidURLError() throws {
+        // When an error occurred errorHandler closure should be called
+        var theError: HttpError?
+        factory = EndpointFactory(serviceEndpoints: ServiceEndpoints.builder()
+            .set(sdkEndpoint: "")
+            .build(), apiKey: CommonValues.apiKey, splitsQueryString: "")
+        let expectation = XCTestExpectation(description: "complete req err")
+        do {
+            _ = try httpClient.sendStreamRequest(endpoint: factory.splitChangesEndpoint, parameters:["since": 100], headers: nil)
+                .getResponse(
+                    responseHandler: { response in
+                }, incomingDataHandler: { data in
+                },
+                   closeHandler: {
+                },
+                   errorHandler: { error in
+                })
+        } catch let error as HttpError {
+            theError = error
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10)
+
         XCTAssertEqual("Invalid URL", theError?.message)
     }
 

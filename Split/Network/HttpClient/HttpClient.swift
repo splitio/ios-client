@@ -173,7 +173,7 @@ extension DefaultHttpClient: HttpClient {
 
     func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?,
                            headers: [String: String]?) throws -> HttpStreamRequest {
-        let request = try self.createStreamRequest(endpoint.url!, parameters: parameters, headers: headers)
+        let request = try self.createStreamRequest(endpoint.url, parameters: parameters, headers: headers)
         request.send()
         requestManager.addRequest(request)
         return request
