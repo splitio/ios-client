@@ -14,7 +14,7 @@ class SplitChangesTest: XCTestCase {
     let kNeverRefreshRate = 9999999
     let kChangeNbInterval: Int64 = 86400
     var reqChangesIndex = 0
-    var serverUrl = "https://split.test.ing"
+    var serverUrl = "https://split"
     let kMatchingKey = IntegrationHelper.dummyUserKey
     var factory: SplitFactory?
 

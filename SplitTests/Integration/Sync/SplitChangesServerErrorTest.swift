@@ -23,7 +23,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         XCTestExpectation(description: "upd 3")
     ]
 
-    var serverUrl = "https://split.test.ing"
+    var serverUrl = "https://split"
 
     let impExp = XCTestExpectation(description: "impressions")
 
