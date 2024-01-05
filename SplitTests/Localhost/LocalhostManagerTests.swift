@@ -19,11 +19,16 @@ class LocalhostManagerTests: XCTestCase {
     override func setUp() {
         eventsManager = SplitEventsManagerMock()
         let storage: FileStorageProtocol = FileStorageStub()
-        var config = YamlSplitStorageConfig()
+        var config = FeatureFlagsFileLoaderConfig()
         config.refreshInterval = 0
-        let splitsStorage = LocalhostSplitsStorage(fileStorage: storage, config: config,
-                                              eventsManager: eventsManager, dataFolderName: folder, splitsFileName: fileName,
-                                                      bundle: Bundle(for: type(of: self)))
+//        let splitsStorage = LocalhostSplitsStorage(fileStorage: storage, config: config,
+//                                              eventsManager: eventsManager, dataFolderName: folder, splitsFileName: fileName,
+//                                                      bundle: Bundle(for: type(of: self)))
+
+        
+        let splitsStorage = LocalhostSplitsStorage()
+
+
         splitsStorage.loadLocal()
         manager = DefaultSplitManager(splitsStorage: splitsStorage)
     }

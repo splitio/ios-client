@@ -18,12 +18,6 @@ import Foundation
 ///
 public class LocalhostSplitFactory: NSObject, SplitFactory {
 
-    struct LocalhostComponentsGroup {
-        let client: SplitClient
-        let eventsManager: SplitEventsManager
-    }
-
-    private var clients = SynchronizedDictionary<String, LocalhostComponentsGroup>()
 
     @objc public static var sdkVersion: String {
         return Version.semantic
@@ -33,17 +27,19 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         return .granted
     }
 
-    private var defaulClient: SplitClient?
-    private var localhostManager: SplitManager?
+    private var localhostManager: SplitManager
     private let config: SplitClientConfig
     private let bundle: Bundle
+    private let synchronizer: FeatureFlagsSynchronizer
+    private let externalDataSource: LocalhostInputDataProducer?
+    private let clientManager: SplitClientManager
 
     public var client: SplitClient {
-        return defaulClient ?? FailedClient()
+        return clientManager.defaultClient ?? FailedClient()
     }
 
     public var manager: SplitManager {
-        return localhostManager ?? FailedManager()
+        return localhostManager
     }
 
     public var version: String {
@@ -54,14 +50,25 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         Logger.d("Initializing localhost mode")
         self.config = config
         self.bundle = bundle
-        super.init()
-
-        let eventsManager = DefaultSplitEventsManager(config: config)
-        let splitsStorage = buildSplitStorage(eventsManager: eventsManager)
-        defaulClient = client(forKey: key,
-                              eventsManager: eventsManager,
-                              splitsStorage: splitsStorage)
+        let dataSource = Self.splitsDataSource(config: config, bundle: bundle)
+        self.externalDataSource = dataSource as? LocalhostInputDataProducer
+ 
+//        let eventsManager = DefaultSplitEventsManager(config: config)
+        let eventsManager = MainSplitEventsManager()
+        let splitsStorage = LocalhostSplitsStorage()
         localhostManager = DefaultSplitManager(splitsStorage: splitsStorage)
+
+        self.synchronizer = LocalhostSynchronizer(featureFlagsStorage: splitsStorage,
+                                                   featureFlagsDataSource: dataSource,
+                                                   eventsManager: eventsManager)
+
+        clientManager = LocalhostClientManager(config: config,
+                                               key: key,
+                                               splitManager: localhostManager,
+                                               splitsStorage: splitsStorage,
+                                               synchronizer: synchronizer,
+                                               eventsManagerCoordinator: eventsManager)
+        super.init()
     }
 
     public func client(key: Key) -> SplitClient {
@@ -80,41 +87,38 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
                         eventsManager: SplitEventsManager? = nil,
                         splitsStorage: SplitsStorage? = nil) -> SplitClient {
 
-        if let group = clients.value(forKey: key.matchingKey) {
-            return group.client
-        }
-
-        let newEventsManager = eventsManager ?? DefaultSplitEventsManager(config: config)
-        newEventsManager.start()
-
-        let newSplitStorage = splitsStorage ?? buildSplitStorage(eventsManager: newEventsManager)
-
-        let newClient = LocalhostSplitClient(key: key,
-                                             splitsStorage: newSplitStorage,
-                                             eventsManager: newEventsManager)
-
-        let newGroup = LocalhostComponentsGroup(client: newClient, eventsManager: newEventsManager)
-        newEventsManager.executorResources.client = newClient
-        clients.setValue(newGroup, forKey: key.matchingKey)
-
-        return newClient
+        clientManager.get(forKey: key)
     }
 
     public func setUserConsent(enabled: Bool) {
     }
 
-    private func buildSplitStorage(eventsManager: SplitEventsManager) -> SplitsStorage {
+    private static func splitsDataSource(config: SplitClientConfig, bundle: Bundle) -> LocalhostDataSource {
         let dataFolderName = SplitDatabaseHelper.sanitizeForFolderName(config.localhostDataFolder)
         let fileStorage = FileStorage(dataFolderName: dataFolderName)
+        var loaderConfig = FeatureFlagsFileLoaderConfig()
+        loaderConfig.refreshInterval = config.offlineRefreshRate
 
-        var storageConfig = YamlSplitStorageConfig()
-        storageConfig.refreshInterval = config.offlineRefreshRate
+        do {
+            return try FeatureFlagsFileLoader(fileStorage: fileStorage,
+                                              config: loaderConfig,
+                                              dataFolderName: config.localhostDataFolder,
+                                              splitsFileName: config.splitFile,
+                                              bundle: bundle)
+        } catch {
+            Logger.i("Split file not found. Using inMemory datasource for localhost mode")
+        }
 
-        return LocalhostSplitsStorage(fileStorage: fileStorage,
-                                      config: storageConfig,
-                                      eventsManager: eventsManager,
-                                      dataFolderName: dataFolderName,
-                                      splitsFileName: config.splitFile,
-                                      bundle: bundle)
+        return LocalhostApiDataSource()
+    }
+}
+
+extension LocalhostSplitFactory: SplitLocalhostDataSource {
+    public func updateLocalhost(yaml: String) -> Bool {
+        return (externalDataSource?.update(yaml: yaml)) != nil
+    }
+
+    public func updateLocalhost(splits: String) -> Bool {
+        return (externalDataSource?.update(splits: splits)) != nil
     }
 }

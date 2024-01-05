@@ -25,8 +25,8 @@ class LocalhostYamlParserTest: XCTestCase {
         guard let content = FileHelper.readDataFromFile(sourceClass: self, name: "splits", type: "yaml") else { return }
         
         let parser = YamlLocalhostSplitsParser()
-        let splits = parser.parseContent(content)
-        
+        let splits = parser.parseContent(content)!
+
         XCTAssertEqual(8, splits.count)
         XCTAssertNotNil(splits["my_feature"])
         XCTAssertNotNil(splits["split_0"])
@@ -68,8 +68,8 @@ class LocalhostYamlParserTest: XCTestCase {
     func testMissingSplitData() {
         let content = "- s1:\n    treatment: \"t1\"\n- s2:\n"
         let parser = YamlLocalhostSplitsParser()
-        let splits = parser.parseContent(content)
-        
+        let splits = parser.parseContent(content)!
+
         XCTAssertEqual(1, splits.count)
         
         XCTAssertEqual(1, splits["s1"]?.conditions?.count)
@@ -82,8 +82,8 @@ class LocalhostYamlParserTest: XCTestCase {
     func testMissingSplitTreatment() {
         let content = "- s1:\n    treatment: \"t1\"\n- s2:\n    keys: \"thekey\""
         let parser = YamlLocalhostSplitsParser()
-        let splits = parser.parseContent(content)
-        
+        let splits = parser.parseContent(content)!
+
         XCTAssertEqual(2, splits.count)
         
         XCTAssertEqual(1, splits["s1"]?.conditions?.count)
@@ -100,13 +100,13 @@ class LocalhostYamlParserTest: XCTestCase {
         let content = "this is not yaml content"
         let parser = YamlLocalhostSplitsParser()
         let splits = parser.parseContent(content)
-        XCTAssertEqual(0, splits.count)
+        XCTAssertNil(splits)
     }
     
     func testMissingFirstSplit() {
         let content = "treatment: \"t1\"\n- s2:\n    keys: \"thekey\""
         let parser = YamlLocalhostSplitsParser()
-        let splits = parser.parseContent(content)
+        let splits = parser.parseContent(content)!
         XCTAssertEqual(1, splits.count)
     }
 }

@@ -94,7 +94,7 @@ class SplitsSyncHelper {
 
             if nextSince >= goalTill {
                 return SyncResult(success: true,
-                                  changeNumber: nextSince, 
+                                  changeNumber: nextSince,
                                   featureFlagsUpdated: result.featureFlagsUpdated)
             }
 

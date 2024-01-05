@@ -15,8 +15,9 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
     private let kConfigField = "config"
     private let kKeysField = "keys"
 
-    func parseContent(_ content: String) -> LocalhostSplits {
-
+    func parseContent(_ content: String) -> LocalhostSplits? {
+        
+        var errorOccurred = false
         var loadedSplits = LocalhostSplits()
 
         let splittedYaml = splitYamlBySplitContent(content: content)
@@ -26,6 +27,7 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
                 document = try Yaml.load(splitRow)
             } catch {
                 Logger.e("Error parsing Yaml content row: \(splitRow) \n \(error)")
+                errorOccurred = true
                 continue
             }
 
@@ -37,10 +39,15 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
                 loadedSplits[splitName] = split
             }
         }
+
+        if loadedSplits.count == 0, errorOccurred {
+            return nil
+        }
+
         return loadedSplits
     }
 
-    func parseSplit(row: Yaml, splits: LocalhostSplits) -> Split? {
+    private func parseSplit(row: Yaml, splits: LocalhostSplits) -> Split? {
         if let rowDic = row.dictionary {
             let splitNameField = rowDic.keys[rowDic.keys.startIndex]
             if let splitName = splitNameField.string {

@@ -126,11 +126,13 @@ class LocalhostSplitFetcherTests: XCTestCase {
         eventsManager.timeoutExp = XCTestExpectation()
 
         storage = FileStorageStub()
-        var config = YamlSplitStorageConfig()
+        var config = FeatureFlagsFileLoaderConfig()
         config.refreshInterval = 0
-        return LocalhostSplitsStorage(fileStorage: storage, config: config,
-                                 eventsManager: eventsManager, dataFolderName: "localhost", splitsFileName: fileName,
-                                                      bundle: Bundle(for: type(of: self)))
+//        return LocalhostSplitsStorage(fileStorage: storage, config: config,
+//                                 eventsManager: eventsManager, dataFolderName: "localhost", splitsFileName: fileName,
+//                                                      bundle: Bundle(for: type(of: self)))
+
+                return LocalhostSplitsStorage()
 
     }
 

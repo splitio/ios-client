@@ -19,7 +19,7 @@ class LocalhostSplitClientTests: XCTestCase {
         eventsManager = SplitEventsManagerMock()
         let fileName = "localhost.splits"
         let storage = FileStorageStub()
-        var config = YamlSplitStorageConfig()
+        var config = FeatureFlagsFileLoaderConfig()
         config.refreshInterval = 0
         let splitsStorage = LocalhostSplitsStorage(fileStorage: storage, config: config,
                                               eventsManager: eventsManager, dataFolderName: "localhost", splitsFileName: fileName,
