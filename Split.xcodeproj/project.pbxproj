@@ -287,7 +287,7 @@
 		59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */ = {isa = PBXBuildFile; fileRef = 59C493042167E3B400F5F774 /* murmur3-sample-v4.csv */; };
 		59D84BD422158A07003DA248 /* LocalhostSplitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BD322158A07003DA248 /* LocalhostSplitClient.swift */; };
 		59D84BD622158A24003DA248 /* LocalhostSplitFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BD522158A24003DA248 /* LocalhostSplitFactory.swift */; };
-		59D84BDC2215CD52003DA248 /* LocalhostSplitFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BDB2215CD52003DA248 /* LocalhostSplitFetcherTests.swift */; };
+		59D84BDC2215CD52003DA248 /* LocalhostSplitLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BDB2215CD52003DA248 /* LocalhostSplitLoaderTests.swift */; };
 		59D84BE3221734F5003DA248 /* LocalhostSplitClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */; };
 		59D84BE7221AE775003DA248 /* LocalhostManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */; };
 		59E6A38A25557C8D005DE642 /* split_cache.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */; };
@@ -1191,6 +1191,8 @@
 		95CED03A2B45D665005E3C34 /* LocalhostApiDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED0392B45D665005E3C34 /* LocalhostApiDataSource.swift */; };
 		95CED03C2B482CFB005E3C34 /* SplitLocalhostDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED03B2B482CFB005E3C34 /* SplitLocalhostDataSource.swift */; };
 		95CED03E2B48435E005E3C34 /* LocalhostClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED03D2B48435E005E3C34 /* LocalhostClientManager.swift */; };
+		95CED04A2B4D7903005E3C34 /* LocalhostSplitsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED0492B4D7903005E3C34 /* LocalhostSplitsStorageTests.swift */; };
+		95CED04C2B4D8B88005E3C34 /* LocalhostSynchronizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED04B2B4D8B88005E3C34 /* LocalhostSynchronizerTests.swift */; };
 		95D7D7DE26D97FE8002E4D75 /* UInt64+bits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D7D7DD26D97FE8002E4D75 /* UInt64+bits.swift */; };
 		95D7D7E226DD44FB002E4D75 /* murmur3_64_uuids.csv in Resources */ = {isa = PBXBuildFile; fileRef = 95D7D7E126DD44FB002E4D75 /* murmur3_64_uuids.csv */; };
 		95D7D7EA26DD621D002E4D75 /* Murmur64x128.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D7D7E926DD621D002E4D75 /* Murmur64x128.swift */; };
@@ -1574,7 +1576,7 @@
 		59C493042167E3B400F5F774 /* murmur3-sample-v4.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "murmur3-sample-v4.csv"; sourceTree = "<group>"; };
 		59D84BD322158A07003DA248 /* LocalhostSplitClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitClient.swift; sourceTree = "<group>"; };
 		59D84BD522158A24003DA248 /* LocalhostSplitFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostSplitFactory.swift; sourceTree = "<group>"; };
-		59D84BDB2215CD52003DA248 /* LocalhostSplitFetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostSplitFetcherTests.swift; sourceTree = "<group>"; };
+		59D84BDB2215CD52003DA248 /* LocalhostSplitLoaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostSplitLoaderTests.swift; sourceTree = "<group>"; };
 		59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitClientTests.swift; sourceTree = "<group>"; };
 		59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostManagerTests.swift; sourceTree = "<group>"; };
 		59E6A38925557C8D005DE642 /* split_cache.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache.xcdatamodel; sourceTree = "<group>"; };
@@ -1924,6 +1926,8 @@
 		95CED0392B45D665005E3C34 /* LocalhostApiDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostApiDataSource.swift; sourceTree = "<group>"; };
 		95CED03B2B482CFB005E3C34 /* SplitLocalhostDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitLocalhostDataSource.swift; sourceTree = "<group>"; };
 		95CED03D2B48435E005E3C34 /* LocalhostClientManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostClientManager.swift; sourceTree = "<group>"; };
+		95CED0492B4D7903005E3C34 /* LocalhostSplitsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsStorageTests.swift; sourceTree = "<group>"; };
+		95CED04B2B4D8B88005E3C34 /* LocalhostSynchronizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSynchronizerTests.swift; sourceTree = "<group>"; };
 		95D7D7DD26D97FE8002E4D75 /* UInt64+bits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UInt64+bits.swift"; sourceTree = "<group>"; };
 		95D7D7E126DD44FB002E4D75 /* murmur3_64_uuids.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = murmur3_64_uuids.csv; sourceTree = "<group>"; };
 		95D7D7E926DD621D002E4D75 /* Murmur64x128.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Murmur64x128.swift; sourceTree = "<group>"; };
@@ -3026,7 +3030,9 @@
 		59FB7C262202454700ECC96A /* Localhost */ = {
 			isa = PBXGroup;
 			children = (
-				59D84BDB2215CD52003DA248 /* LocalhostSplitFetcherTests.swift */,
+				59D84BDB2215CD52003DA248 /* LocalhostSplitLoaderTests.swift */,
+				95CED0492B4D7903005E3C34 /* LocalhostSplitsStorageTests.swift */,
+				95CED04B2B4D8B88005E3C34 /* LocalhostSynchronizerTests.swift */,
 				59D84BE6221AE775003DA248 /* LocalhostManagerTests.swift */,
 				59FB7C272202457D00ECC96A /* LocalhostParserTests.swift */,
 				59D84BE2221734F5003DA248 /* LocalhostSplitClientTests.swift */,
@@ -4188,7 +4194,7 @@
 				59F4AAA124FFC94100A1C69A /* NotificationManagerKeeperTest.swift in Sources */,
 				95ABF4FC29369B73006ED016 /* TelemetrySynchronizerStub.swift in Sources */,
 				95715A8529D353C100A1B2F9 /* DbCipherTest.swift in Sources */,
-				59D84BDC2215CD52003DA248 /* LocalhostSplitFetcherTests.swift in Sources */,
+				59D84BDC2215CD52003DA248 /* LocalhostSplitLoaderTests.swift in Sources */,
 				956D17D1260D266E0037F575 /* SplitsChangesCheckerTest.swift in Sources */,
 				599EA5852268E9C2006CBA89 /* LocalhostTests.swift in Sources */,
 				95DE29532739A7AB00DB3EAD /* AttributesDaoTest.swift in Sources */,
@@ -4322,6 +4328,7 @@
 				9573FB26273C50D400086DDE /* EvaluatorStub.swift in Sources */,
 				5921ED3325379AA3000D6C8B /* ReachabilityMock.swift in Sources */,
 				95649FBA2603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift in Sources */,
+				95CED04A2B4D7903005E3C34 /* LocalhostSplitsStorageTests.swift in Sources */,
 				95816FC92739D3A4004228A3 /* PersistentAttributesStorageStub.swift in Sources */,
 				959FB1272A4CCE2C009DC9E8 /* InstantFeatureFlagsUpdateTest.swift in Sources */,
 				9580C98826FCA6400021D729 /* StreamingDelayTest.swift in Sources */,
@@ -4333,6 +4340,7 @@
 				59F4AAD02518D4BB00A1C69A /* SyncWorkerFactoryStub.swift in Sources */,
 				59FB7C1A21F7ACF300ECC96A /* SplitValidatorTests.swift in Sources */,
 				5932260A24A66F3D00496D8B /* HttpDataRequestTest.swift in Sources */,
+				95CED04C2B4D8B88005E3C34 /* LocalhostSynchronizerTests.swift in Sources */,
 				95B436A626F1533700E1EB9C /* MySegmentsV2PayloadDecoderMock.swift in Sources */,
 				95B1802B2763DE4B002DC9DF /* HttpTelemetryStatsRecorderTest.swift in Sources */,
 				95B17FF5275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift in Sources */,

@@ -21,6 +21,7 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
         self.featureFlagsStorage = featureFlagsStorage
         self.featureFlagsDataSource = featureFlagsDataSource
         self.eventsManager = eventsManager
+        setup()
         featureFlagsDataSource.start()
     }
 
