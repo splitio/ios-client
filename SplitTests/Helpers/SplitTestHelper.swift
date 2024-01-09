@@ -141,4 +141,24 @@ class SplitTestHelper {
               }
 """
     }
+
+    static func createSplits(namePrefix: String, count: Int) -> [Split] {
+        var splits = [Split]()
+        for i in 0..<count {
+            let split = Split()
+            split.name = "\(namePrefix)\(i)"
+            split.trafficTypeName = "tt_\(i)"
+            split.status = .active
+            splits.append(split)
+        }
+        return splits
+    }
+
+    static func newSplit(name: String, trafficType: String) -> Split {
+        let split = Split()
+        split.name = name
+        split.trafficTypeName = trafficType
+        split.status = .active
+        return split
+    }
 }

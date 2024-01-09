@@ -18,7 +18,6 @@ import Foundation
 ///
 public class LocalhostSplitFactory: NSObject, SplitFactory {
 
-
     @objc public static var sdkVersion: String {
         return Version.semantic
     }
@@ -52,8 +51,6 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         self.bundle = bundle
         let dataSource = Self.splitsDataSource(config: config, bundle: bundle)
         self.externalDataSource = dataSource as? LocalhostInputDataProducer
- 
-//        let eventsManager = DefaultSplitEventsManager(config: config)
         let eventsManager = MainSplitEventsManager()
         let splitsStorage = LocalhostSplitsStorage()
         localhostManager = DefaultSplitManager(splitsStorage: splitsStorage)

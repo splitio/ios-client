@@ -14,18 +14,23 @@ class LocalhostSplitClientTests: XCTestCase {
 
     var client: SplitClient!
     var eventsManager: SplitEventsManager!
-    
+    let fileName = "localhost"
+    let fileType = "splits"
+
     override func setUp() {
-        eventsManager = SplitEventsManagerMock()
-        let fileName = "localhost.splits"
-        let storage = FileStorageStub()
-        var config = FeatureFlagsFileLoaderConfig()
-        config.refreshInterval = 0
-        let splitsStorage = LocalhostSplitsStorage(fileStorage: storage, config: config,
-                                              eventsManager: eventsManager, dataFolderName: "localhost", splitsFileName: fileName,
-                                                      bundle: Bundle(for: type(of: self)))
-        splitsStorage.loadLocal()
-        client = LocalhostSplitClient(key: Key(matchingKey: "thekey"), splitsStorage: splitsStorage, eventsManager: eventsManager)
+        let fileContent = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: fileType)!
+        let content = LocalhostParserProvider.parser(for: .splits).parseContent(fileContent)
+        let splitsStorage = LocalhostSplitsStorage()
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: content!.values.map { $0 as Split },
+                                                               archivedSplits: [],
+                                                               changeNumber: 1,
+                                                               updateTimestamp: 1))
+
+        client = LocalhostSplitClient(key: Key(matchingKey: "thekey"),
+                                      splitsStorage: splitsStorage,
+                                      eventsManager: eventsManager,
+                                      evaluator: DefaultEvaluator(splitsStorage: splitsStorage,
+                                                                  mySegmentsStorage: EmptyMySegmentsStorage()))
     }
     
     override func tearDown() {

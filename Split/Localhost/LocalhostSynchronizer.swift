@@ -77,9 +77,9 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
             _ = self.featureFlagsStorage.update(splitChange: change)
 
             if self.isFirstLoad.getAndSet(false) {
-                triggerEvents(segments: true)
+                self.triggerEvents(segments: true)
             } else {
-                triggerEvents()
+                self.triggerEvents()
             }
         }
     }

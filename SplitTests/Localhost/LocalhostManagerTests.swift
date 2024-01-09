@@ -13,22 +13,17 @@ class LocalhostManagerTests: XCTestCase {
 
     var manager: SplitManager!
     var eventsManager: SplitEventsManager!
-    let fileName = "localhost.splits"
-    let folder = "localhost"
+    let fileName = "localhost"
+    let fileType = "splits"
 
     override func setUp() {
-        eventsManager = SplitEventsManagerMock()
-        let storage: FileStorageProtocol = FileStorageStub()
-        var config = FeatureFlagsFileLoaderConfig()
-        config.refreshInterval = 0
-//        let splitsStorage = LocalhostSplitsStorage(fileStorage: storage, config: config,
-//                                              eventsManager: eventsManager, dataFolderName: folder, splitsFileName: fileName,
-//                                                      bundle: Bundle(for: type(of: self)))
-
-        
+        let fileContent = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: fileType)!
+        let content = LocalhostParserProvider.parser(for: .splits).parseContent(fileContent)
         let splitsStorage = LocalhostSplitsStorage()
-
-
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: content!.values.map { $0 as Split },
+                                                               archivedSplits: [],
+                                                               changeNumber: 1,
+                                                               updateTimestamp: 1))
         splitsStorage.loadLocal()
         manager = DefaultSplitManager(splitsStorage: splitsStorage)
     }
