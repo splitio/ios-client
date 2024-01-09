@@ -1193,6 +1193,11 @@
 		95CED03E2B48435E005E3C34 /* LocalhostClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED03D2B48435E005E3C34 /* LocalhostClientManager.swift */; };
 		95CED04A2B4D7903005E3C34 /* LocalhostSplitsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED0492B4D7903005E3C34 /* LocalhostSplitsStorageTests.swift */; };
 		95CED04C2B4D8B88005E3C34 /* LocalhostSynchronizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED04B2B4D8B88005E3C34 /* LocalhostSynchronizerTests.swift */; };
+		95CED04D2B4DCD9C005E3C34 /* LocalhostSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED0352B459A10005E3C34 /* LocalhostSynchronizer.swift */; };
+		95CED04E2B4DCDA1005E3C34 /* LocalhostApiDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED0392B45D665005E3C34 /* LocalhostApiDataSource.swift */; };
+		95CED04F2B4DCDAB005E3C34 /* LocalhostFileDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED0372B45D115005E3C34 /* LocalhostFileDataSource.swift */; };
+		95CED0502B4DCDB1005E3C34 /* LocalhostClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED03D2B48435E005E3C34 /* LocalhostClientManager.swift */; };
+		95CED0512B4DCDEE005E3C34 /* SplitLocalhostDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED03B2B482CFB005E3C34 /* SplitLocalhostDataSource.swift */; };
 		95D7D7DE26D97FE8002E4D75 /* UInt64+bits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D7D7DD26D97FE8002E4D75 /* UInt64+bits.swift */; };
 		95D7D7E226DD44FB002E4D75 /* murmur3_64_uuids.csv in Resources */ = {isa = PBXBuildFile; fileRef = 95D7D7E126DD44FB002E4D75 /* murmur3_64_uuids.csv */; };
 		95D7D7EA26DD621D002E4D75 /* Murmur64x128.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D7D7E926DD621D002E4D75 /* Murmur64x128.swift */; };
@@ -4694,6 +4699,7 @@
 				95B02CDB28D0BDC20030EC8B /* Bundle+Finder.swift in Sources */,
 				95B02CDC28D0BDC20030EC8B /* Bundle+Name.swift in Sources */,
 				95B02CDD28D0BDC20030EC8B /* UInt64+bits.swift in Sources */,
+				95CED04D2B4DCD9C005E3C34 /* LocalhostSynchronizer.swift in Sources */,
 				95B02CDF28D0BDC20030EC8B /* ServiceConstants.swift in Sources */,
 				95B02CE028D0BDC20030EC8B /* Split.swift in Sources */,
 				95B02CE128D0BDC20030EC8B /* SplitBase.swift in Sources */,
@@ -4710,6 +4716,7 @@
 				95B02CEC28D0BDC20030EC8B /* MatcherCombiner.swift in Sources */,
 				956A7E21297590DF0080D53C /* Array+Chunked.swift in Sources */,
 				95B02CED28D0BDC20030EC8B /* MatcherGroup.swift in Sources */,
+				95CED0502B4DCDB1005E3C34 /* LocalhostClientManager.swift in Sources */,
 				95B02CEE28D0BDC20030EC8B /* MatcherProtocol.swift in Sources */,
 				95B02CEF28D0BDC20030EC8B /* MatcherType.swift in Sources */,
 				95B02CF028D0BDC20030EC8B /* Segment.swift in Sources */,
@@ -4784,6 +4791,7 @@
 				95B02D3228D0BDC20030EC8B /* TelemetryConfig.swift in Sources */,
 				95880CFD2AEFF1B2000498A0 /* Substring+asString.swift in Sources */,
 				95B02D3328D0BDC20030EC8B /* TelemetryStats.swift in Sources */,
+				95CED0512B4DCDEE005E3C34 /* SplitLocalhostDataSource.swift in Sources */,
 				95B02D3428D0BDC20030EC8B /* TelemetryInMemoryStorage.swift in Sources */,
 				95B02D3528D0BDC20030EC8B /* LatencyCounter.swift in Sources */,
 				95B02D3628D0BDC20030EC8B /* EventDTO.swift in Sources */,
@@ -4804,6 +4812,7 @@
 				95B02D4528D0BDC20030EC8B /* SyncHelper.swift in Sources */,
 				95B02D4628D0BDC20030EC8B /* HttpMySegmentsFetcher.swift in Sources */,
 				95B02D4728D0BDC20030EC8B /* HttpSplitFetcher.swift in Sources */,
+				95CED04E2B4DCDA1005E3C34 /* LocalhostApiDataSource.swift in Sources */,
 				95B02D4828D0BDC20030EC8B /* RetryableSyncWorker.swift in Sources */,
 				95B02D4928D0BDC20030EC8B /* BackgroundSyncWorker.swift in Sources */,
 				956A7E15296F65890080D53C /* UserConsent.swift in Sources */,
@@ -4919,6 +4928,7 @@
 				95B02DAD28D0BDC30030EC8B /* GeneralInfoDao.swift in Sources */,
 				95B02DAE28D0BDC30030EC8B /* ImpressionEntity.swift in Sources */,
 				95B02DAF28D0BDC30030EC8B /* ImpressionDao.swift in Sources */,
+				95CED04F2B4DCDAB005E3C34 /* LocalhostFileDataSource.swift in Sources */,
 				95B02DB028D0BDC30030EC8B /* ImpressionsCountDao.swift in Sources */,
 				95B02DB128D0BDC30030EC8B /* ImpressionsMode.swift in Sources */,
 				95B02DB228D0BDC30030EC8B /* PersistentImpressionsStorage.swift in Sources */,
