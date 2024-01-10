@@ -50,7 +50,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     private var evaluator: Evaluator
     private let key: Key
 
-    init(key: Key, splitsStorage: SplitsStorage, 
+    init(key: Key, splitsStorage: SplitsStorage,
          eventsManager: SplitEventsManager? = nil,
          evaluator: Evaluator) {
         self.eventsManager = eventsManager

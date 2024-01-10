@@ -66,6 +66,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
                                                synchronizer: synchronizer,
                                                eventsManagerCoordinator: eventsManager)
         super.init()
+        self.synchronizer.synchronize()
     }
 
     public func client(key: Key) -> SplitClient {

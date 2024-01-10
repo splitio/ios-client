@@ -14,7 +14,8 @@ class LocalhostTests: XCTestCase {
 
 
     var bundle: Bundle!
-    
+    var factory: SplitFactory!
+
     override func setUp() {
         bundle = Bundle(for: type(of: self))
     }
@@ -25,10 +26,18 @@ class LocalhostTests: XCTestCase {
     func testUsingYamlFile() {
         let config = SplitClientConfig()
         config.splitFile = "localhost.yaml"
-        let factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
+        config.offlineRefreshRate = 1
+
+        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
         let client = factory.client
         let manager = factory.manager
-        
+
+        let readyExp = XCTestExpectation()
+        client.on(event: .sdkReady) {
+            readyExp.fulfill()
+        }
+        wait(for: [readyExp], timeout: 10.0)
+
         let splits = manager.splits
         let sv0 = manager.split(featureName: "split_0")
         let sv1 = manager.split(featureName: "split_1")
@@ -109,10 +118,16 @@ class LocalhostTests: XCTestCase {
     func testUsingSpaceSeparatedFile() {
         let config = SplitClientConfig()
         config.splitFile = "localhost_legacy.splits"
-        let factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
+        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
         let client = factory.client
         let manager = factory.manager
         
+        let readyExp = XCTestExpectation()
+        client.on(event: .sdkReady) {
+            readyExp.fulfill()
+        }
+        wait(for: [readyExp], timeout: 10.0)
+
         let splits = manager.splits
         let sva = manager.split(featureName: "split_a")
         let svb = manager.split(featureName: "split_b")
@@ -178,8 +193,15 @@ class LocalhostTests: XCTestCase {
     func testLoadYml() {
         let config = SplitClientConfig()
         config.splitFile = "localhost_yml.yml"
-        let factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
+        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
         let client = factory.client
+
+        let readyExp = XCTestExpectation()
+        client.on(event: .sdkReady) {
+            readyExp.fulfill()
+        }
+        wait(for: [readyExp], timeout: 10.0)
+
         let t = client.getTreatment("split_0")
         XCTAssertNotNil(factory)
         XCTAssertNotNil(client)

@@ -22,19 +22,20 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
         self.featureFlagsDataSource = featureFlagsDataSource
         self.eventsManager = eventsManager
         setup()
-        featureFlagsDataSource.start()
     }
 
     func loadAndSynchronize() {
     }
 
     func synchronize() {
+        featureFlagsDataSource.start()
     }
 
     func synchronize(changeNumber: Int64) {
     }
 
     func startPeriodicSync() {
+        featureFlagsDataSource.start()
     }
 
     func stopPeriodicSync() {
@@ -66,28 +67,15 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
                 }
                 return
             }
-
             let values = featureFlags.values.map { $0 as Split }
             let change = ProcessedSplitChange(activeSplits: values,
                                               archivedSplits: [],
                                               changeNumber: -1, updateTimestamp: -1)
 
-            let oldValues = self.featureFlagsStorage.getAll().values.map { $0 as Split }
             // Update will remove all records before insert new ones
             _ = self.featureFlagsStorage.update(splitChange: change)
 
-            if self.isFirstLoad.getAndSet(false) {
-                self.triggerEvents(segments: true)
-            } else {
-                self.triggerEvents()
-            }
+            eventsManager.notifyInternalEvent(.splitsUpdated)
         }
-    }
-
-    private func triggerEvents(segments: Bool = false) {
-        if segments {
-            eventsManager.notifyInternalEvent(.mySegmentsUpdated)
-        }
-        eventsManager.notifyInternalEvent(.splitsUpdated)
     }
 }

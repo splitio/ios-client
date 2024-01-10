@@ -46,8 +46,7 @@ class LocalhostClientManager: SplitClientManager {
         self.evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
                                           mySegmentsStorage: EmptyMySegmentsStorage())
 
-        defaultClient = client(forKey: key,
-                               eventsManager: eventsManagerCoordinator)
+        defaultClient = client(forKey: key)
 
         eventsManagerCoordinator.start()
 
@@ -62,7 +61,7 @@ class LocalhostClientManager: SplitClientManager {
 
     func destroy(forKey key: Key) {
 
-        if let _ = clients.takeValue(forKey: key.matchingKey),
+        if clients.takeValue(forKey: key.matchingKey) != nil,
            clients.count == 0 {
             splitsStorage.destroy()
             (self.splitManager as? Destroyable)?.destroy()
@@ -81,16 +80,16 @@ class LocalhostClientManager: SplitClientManager {
         }
 
         let newEventsManager = eventsManager ?? DefaultSplitEventsManager(config: config)
-        newEventsManager.start()
-
         let newClient = LocalhostSplitClient(key: key,
                                              splitsStorage: splitsStorage,
                                              eventsManager: newEventsManager,
                                              evaluator: evaluator)
-
+        
         let newGroup = LocalhostComponentsGroup(client: newClient, eventsManager: newEventsManager)
-        newEventsManager.executorResources.client = newClient
         clients.setValue(newGroup, forKey: key.matchingKey)
+        newEventsManager.executorResources.client = newClient
+        eventsManagerCoordinator.add(newEventsManager, forKey: key)
+        newEventsManager.notifyInternalEvent(.mySegmentsUpdated)
 
         return newClient
     }
