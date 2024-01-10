@@ -75,7 +75,7 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
             // Update will remove all records before insert new ones
             _ = self.featureFlagsStorage.update(splitChange: change)
 
-            eventsManager.notifyInternalEvent(.splitsUpdated)
+            self.eventsManager.notifyInternalEvent(.splitsUpdated)
         }
     }
 }
