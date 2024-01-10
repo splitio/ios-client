@@ -14,16 +14,14 @@ import XCTest
 class LocalhostYamlParserTest: XCTestCase {
     
     var client: SplitClient!
-    
-    override func setUp() {
-    }
-    
-    override func tearDown() {
-    }
+
     
     func testCorrectFile() {
-        guard let content = FileHelper.readDataFromFile(sourceClass: self, name: "splits", type: "yaml") else { return }
-        
+        guard let content = FileHelper.readDataFromFile(sourceClass: self, name: "splits", type: "yaml") else {
+            XCTAssertTrue(false)
+            return
+        }
+
         let parser = YamlLocalhostSplitsParser()
         let splits = parser.parseContent(content)!
 
@@ -100,7 +98,7 @@ class LocalhostYamlParserTest: XCTestCase {
         let content = "this is not yaml content"
         let parser = YamlLocalhostSplitsParser()
         let splits = parser.parseContent(content)
-        XCTAssertNil(splits)
+        XCTAssertEqual([:], splits)
     }
     
     func testMissingFirstSplit() {

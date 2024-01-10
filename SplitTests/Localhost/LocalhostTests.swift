@@ -23,9 +23,30 @@ class LocalhostTests: XCTestCase {
     override func tearDown() {
     }
     
+    func testUsingYamlFromApi() {
+        guard let content = FileHelper.readDataFromFile(sourceClass: self, name: "localhost", type: "yaml") else {
+            XCTAssertTrue(false)
+            return
+        }
+        yamlTest(yamlContent: content)
+    }
+
     func testUsingYamlFile() {
+        yamlTest(yamlContent: nil)
+    }
+
+    func yamlTest(yamlContent: String?) {
         let config = SplitClientConfig()
-        config.splitFile = "localhost.yaml"
+
+        if yamlContent == nil {
+            config.splitFile = "localhost.yaml"
+        } else {
+            // If file not present with this name, API provide data
+            // will be used
+            config.splitFile = "this_file_should_not_exists_never"
+
+        }
+
         config.offlineRefreshRate = 1
 
         factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
@@ -36,7 +57,11 @@ class LocalhostTests: XCTestCase {
         client.on(event: .sdkReady) {
             readyExp.fulfill()
         }
-        wait(for: [readyExp], timeout: 10.0)
+
+        if let content = yamlContent {
+            _ = (factory as? SplitLocalhostDataSource)?.updateLocalhost(yaml: content)
+        }
+        wait(for: [readyExp], timeout: 5.0)
 
         let splits = manager.splits
         let sv0 = manager.split(featureName: "split_0")
@@ -60,7 +85,30 @@ class LocalhostTests: XCTestCase {
         let splitNames = ["split_0", "x_feature", "my_feature"]
         let treatments = client.getTreatments(splits: splitNames, attributes: nil)
         let results = client.getTreatmentsWithConfig(splits: splitNames, attributes: nil)
-        
+
+        if yamlContent != nil {
+            let updExp = XCTestExpectation()
+            _ = (factory as? SplitLocalhostDataSource)?.updateLocalhost(yaml: onlyFeature())
+            client.on(event: .sdkUpdated) {
+                updExp.fulfill()
+            }
+            wait(for: [updExp], timeout: 5.0)
+
+            let splits = manager.splits
+            let sv0 = manager.split(featureName: "split_0")
+            let sOnly = manager.split(featureName: "only_feature")
+            let s0 = client.getTreatment("split_0")
+            let onlyTreatment = client.getTreatment("only_feature")
+
+            XCTAssertEqual(1, splits.count)
+            XCTAssertEqual("control", s0)
+            XCTAssertEqual("on", onlyTreatment)
+
+            XCTAssertNil(sv0)
+            XCTAssertNotNil(sOnly)
+        }
+
+
         XCTAssertNotNil(factory)
         XCTAssertNotNil(client)
         XCTAssertNotNil(manager)
@@ -220,4 +268,12 @@ class LocalhostTests: XCTestCase {
         XCTAssertNotNil(factory)
     }
 
+
+    func onlyFeature() -> String {
+        return """
+        - only_feature:
+            keys: "key"
+            treatment: "on"
+        """
+    }
 }
