@@ -101,6 +101,14 @@ import Foundation
 
     public func build() -> SplitFactory? {
 
+        if !params.config.serviceEndpoints.allEndpointsValid {
+            Logger.e("Could not create the factory, there are invalid endpoints")
+            if let message = params.config.serviceEndpoints.endpointsInvalidMessage {
+                Logger.e(message)
+            }
+            return nil
+        }
+
         var telemetryStorage: TelemetryStorage?
         if params.config.isTelemetryEnabled {
             telemetryStorage = params.telemetryStorage ?? InMemoryTelemetryStorage()
