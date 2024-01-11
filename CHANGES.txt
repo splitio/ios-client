@@ -1,3 +1,8 @@
+2.24.1: (Dec 6, 2023)
+- Added methods to update feature flags definitions to Localhost factory, overcoming certain limitations encountered during testing.
+- Added required privacy manifest.
+- Fixed validation when using custom endpoints.
+
 2.24.0: (Dec 6, 2023)
 - Added `prefix` configuration parameter, which allows to use a prefix when naming the SDK storage. Use this when using multiple `SplitFactory` instances with the same SDK key.
 
@@ -14,7 +19,7 @@
 2.22.0: (Aug 14, 2023)
 - Adding support to use the SDK in extensions. Thanks @Jeff-Meadows!
 
-2.21.0: (Jul 18, 2023)
+2.21.0: (Jul 18, 2023) (2.13.2: (Mar 28, 2022))
 - Improved streaming architecture implementation to apply feature flag updates from the notification received which is now enhanced, improving efficiency and reliability of the whole update system.
 - Added logic to do a full check of feature flags immediately when the app comes back to foreground, limited to once per minute.
 - Updated SpliResult init to be public in order to improve testability.
