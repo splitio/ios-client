@@ -19,7 +19,7 @@ class FetchSpecificSplitsTest: XCTestCase {
     var streamingBinding: TestStreamResponseBinding?
 
     var splitChange: SplitChange?
-    var serverUrl = ""
+    var serverUrl = "localhost"
     var splitsRequestUrl = ""
     var lastChangeNumber = 0
     
