@@ -17,7 +17,7 @@ class SplitIntegrationTests: XCTestCase {
     let trafficType = "account"
     let kNeverRefreshRate = 9999999
     var splitChange: SplitChange?
-    var serverUrl = ""
+    var serverUrl = "localhost"
     var trackReqIndex = 0
     var impHit = [[ImpressionsTest]]()
 

@@ -16,7 +16,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
     var httpClient: HttpClient!
     let kChangeNbInterval: Int64 = 86400
     var reqChangesIndex = 0
-    var serverUrl = ""
+    var serverUrl = "localhost"
     let kMatchingKey = IntegrationHelper.dummyUserKey
     var factory: SplitFactory?
     var mySegmentsHits = 0

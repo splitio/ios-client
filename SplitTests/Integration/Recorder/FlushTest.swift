@@ -14,7 +14,7 @@ class FlushTests: XCTestCase {
     let kNeverRefreshRate = 9999999
     var httpClient: HttpClient!
     var splitChange: SplitChange?
-    var serverUrl = ""
+    var serverUrl = "localhost"
     var streamingBinding: TestStreamResponseBinding?
     let sseExp = XCTestExpectation(description: "Sse conn")
     var trackRequestData = [String]()
