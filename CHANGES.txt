@@ -1,3 +1,8 @@
+2.24.1: (Jan 11, 2023)
+- Added methods to update feature flags definitions to Localhost factory, overcoming certain limitations encountered during testing.
+- Added required privacy manifest.
+- Fixed validation when using custom endpoints.
+
 2.24.0: (Dec 6, 2023)
 - Added `prefix` configuration parameter, which allows to use a prefix when naming the SDK storage. Use this when using multiple `SplitFactory` instances with the same SDK key.
 
