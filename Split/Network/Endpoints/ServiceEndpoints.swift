@@ -22,6 +22,8 @@ import Foundation
     private (set) var streamingServiceEndpoint: URL
     private (set) var telemetryServiceEndpoint: URL
 
+    private var invalidEndpoints: [String]
+
     var isCustomSdkEndpoint: Bool {
         return sdkEndpoint.absoluteString != ServiceEndpoints.kSdkEndpoint
     }
@@ -42,13 +44,28 @@ import Foundation
         return telemetryServiceEndpoint.absoluteString != ServiceEndpoints.kTelemetryEndpoint
     }
 
+    var allEndpointsValid: Bool {
+        return invalidEndpoints.isEmpty
+    }
+
+    var endpointsInvalidMessage: String? {
+        var message = ""
+        invalidEndpoints.forEach { val in
+            message = "".appending("Endpoint is invalid: \(val)\n")
+        }
+
+        return message == "" ? nil : message
+    }
+
     private init(sdkEndpoint: URL, eventsEndpoint: URL, authServiceEndpoint: URL,
-                 streamingServiceEndpoint: URL, telemetryServiceEndpoint: URL) {
+                 streamingServiceEndpoint: URL, telemetryServiceEndpoint: URL, invalidEndpoints: [String]) {
+
         self.sdkEndpoint = sdkEndpoint
         self.eventsEndpoint = eventsEndpoint
         self.authServiceEndpoint = authServiceEndpoint
         self.streamingServiceEndpoint = streamingServiceEndpoint
         self.telemetryServiceEndpoint = telemetryServiceEndpoint
+        self.invalidEndpoints = invalidEndpoints
     }
 
     @objc public static func builder() -> Builder {
@@ -128,49 +145,56 @@ import Foundation
                                     eventsEndpoint: eventsUrl(),
                                     authServiceEndpoint: authServiceUrl(),
                                     streamingServiceEndpoint: streamingServiceUrl(),
-                                    telemetryServiceEndpoint: telemetryServiceUrl())
+                                    telemetryServiceEndpoint: telemetryServiceUrl(),
+                                    invalidEndpoints: invalidEndpoints
+            )
         }
 
+        // Using dummy approach and validation array to
+        // avoid modifying masive amounts of code
+        private var invalidEndpoints = [String]()
         private func sdkUrl() -> URL {
             if let url = URL(string: sdkEndpoint) {
                 return url
             }
-            Logger.w("SDK URL is not valid, using default")
-            return URL(string: ServiceEndpoints.kSdkEndpoint)!
+            invalidEndpoints.append(sdkEndpoint)
+            return dummyEndpoint()
         }
 
         private func eventsUrl() -> URL {
             if let url = URL(string: eventsEndpoint) {
                 return url
             }
-            Logger.w("Events URL is not valid, using default")
-            return URL(string: ServiceEndpoints.kEventsEndpoint)!
+            invalidEndpoints.append(eventsEndpoint)
+            return dummyEndpoint()
         }
 
         private func authServiceUrl() -> URL {
             if let url = URL(string: authServiceEndpoint) {
                 return url
             }
-            Logger.w("Authentication service URL is not valid, using default")
-            return URL(string: ServiceEndpoints.kAuthServiceEndpoint)!
+            invalidEndpoints.append(authServiceEndpoint)
+            return dummyEndpoint()
         }
 
         private func streamingServiceUrl() -> URL {
-
             if let url = URL(string: streamingServiceEndpoint) {
                 return url
             }
-            Logger.w("Streaming URL is not valid, using default")
-            return URL(string: ServiceEndpoints.kStreamingEndpoint)!
+            invalidEndpoints.append(streamingServiceEndpoint)
+            return dummyEndpoint()
         }
 
         private func telemetryServiceUrl() -> URL {
-
             if let url = URL(string: telemetryServiceEndpoint) {
                 return url
             }
-            Logger.w("Telemetry URL is not valid, using default")
-            return URL(string: ServiceEndpoints.kTelemetryEndpoint)!
+            invalidEndpoints.append(telemetryServiceEndpoint)
+            return dummyEndpoint()
+        }
+
+        private func dummyEndpoint() -> URL {
+            return URL(string: "http://127.0.0.1")!
         }
     }
 }

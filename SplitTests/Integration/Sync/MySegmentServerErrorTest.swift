@@ -15,7 +15,7 @@ class MySegmentServerErrorTest: XCTestCase {
     let kChangeNbInterval: Int64 = 86400
     var reqSegmentsIndex = 0
     var isFirstChangesReq = true
-    var serverUrl = ""
+    var serverUrl = "localhost"
     var lastChangeNumber = 0
 
     let sgExp = [

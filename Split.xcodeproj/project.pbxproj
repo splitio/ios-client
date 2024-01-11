@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1186,6 +1186,7 @@
 		95C8F78B27D006BF00E118EA /* PersistentMySegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C8F78927D006BF00E118EA /* PersistentMySegmentsStorage.swift */; };
 		95C8F78E27D00A5E00E118EA /* PersistentMySegmentsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C8F78D27D00A5E00E118EA /* PersistentMySegmentsStorageTests.swift */; };
 		95CC53C62695F68500A07A04 /* ImpressionsDedupTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CC53C52695F68500A07A04 /* ImpressionsDedupTest.swift */; };
+		95CED0532B4F3EA2005E3C34 /* ServiceEndpointsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED0522B4F3EA2005E3C34 /* ServiceEndpointsTests.swift */; };
 		95D7D7DE26D97FE8002E4D75 /* UInt64+bits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D7D7DD26D97FE8002E4D75 /* UInt64+bits.swift */; };
 		95D7D7E226DD44FB002E4D75 /* murmur3_64_uuids.csv in Resources */ = {isa = PBXBuildFile; fileRef = 95D7D7E126DD44FB002E4D75 /* murmur3_64_uuids.csv */; };
 		95D7D7EA26DD621D002E4D75 /* Murmur64x128.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D7D7E926DD621D002E4D75 /* Murmur64x128.swift */; };
@@ -1914,6 +1915,7 @@
 		95C8F78927D006BF00E118EA /* PersistentMySegmentsStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentMySegmentsStorage.swift; sourceTree = "<group>"; };
 		95C8F78D27D00A5E00E118EA /* PersistentMySegmentsStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentMySegmentsStorageTests.swift; sourceTree = "<group>"; };
 		95CC53C52695F68500A07A04 /* ImpressionsDedupTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsDedupTest.swift; sourceTree = "<group>"; };
+		95CED0522B4F3EA2005E3C34 /* ServiceEndpointsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceEndpointsTests.swift; sourceTree = "<group>"; };
 		95D7D7DD26D97FE8002E4D75 /* UInt64+bits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UInt64+bits.swift"; sourceTree = "<group>"; };
 		95D7D7E126DD44FB002E4D75 /* murmur3_64_uuids.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = murmur3_64_uuids.csv; sourceTree = "<group>"; };
 		95D7D7E926DD621D002E4D75 /* Murmur64x128.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Murmur64x128.swift; sourceTree = "<group>"; };
@@ -2730,6 +2732,7 @@
 				5932260024A4E91800496D8B /* HttpStreamRequestTest.swift */,
 				5932260924A66F3D00496D8B /* HttpDataRequestTest.swift */,
 				593225F724A384B300496D8B /* EndpointFactoryTest.swift */,
+				95CED0522B4F3EA2005E3C34 /* ServiceEndpointsTests.swift */,
 				59EFD2EC24B4B05E0052920D /* HttpClientTest.swift */,
 			);
 			path = HttpClient;
@@ -4040,6 +4043,7 @@
 				95F3EFFE258D3C8600084AF8 /* EventsRecorderWorkerTests.swift in Sources */,
 				955B5960280DF75E00D105CD /* MySegmentsPayloadDecoderTest.swift in Sources */,
 				59F65F0825654F44005FE8C9 /* EventDaoStub.swift in Sources */,
+				95CED0532B4F3EA2005E3C34 /* ServiceEndpointsTests.swift in Sources */,
 				596A7B652344C1EF004F6139 /* MySegmentServerErrorTest.swift in Sources */,
 				95816FC72739D274004228A3 /* AttributesStorageTests.swift in Sources */,
 				9583554028464FD300014F0C /* SingleSyncTest.swift in Sources */,
