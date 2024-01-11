@@ -20,9 +20,6 @@ class LocalhostTests: XCTestCase {
         bundle = Bundle(for: type(of: self))
     }
     
-    override func tearDown() {
-    }
-    
     func testUsingYamlFromApi() {
         guard let content = FileHelper.readDataFromFile(sourceClass: self, name: "localhost", type: "yaml") else {
             XCTAssertTrue(false)
@@ -165,6 +162,7 @@ class LocalhostTests: XCTestCase {
     
     func testUsingSpaceSeparatedFile() {
         let config = SplitClientConfig()
+        config.offlineRefreshRate = 1
         config.splitFile = "localhost_legacy.splits"
         factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
         let client = factory.client
@@ -240,6 +238,7 @@ class LocalhostTests: XCTestCase {
     
     func testLoadYml() {
         let config = SplitClientConfig()
+        config.offlineRefreshRate = 1
         config.splitFile = "localhost_yml.yml"
         factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
         let client = factory.client
