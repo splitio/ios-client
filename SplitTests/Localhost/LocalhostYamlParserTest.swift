@@ -17,7 +17,7 @@ class LocalhostYamlParserTest: XCTestCase {
 
     
     func testCorrectFile() {
-        guard let content = FileHelper.readDataFromFile(sourceClass: self, name: "splits", type: "yaml") else {
+        guard let content = FileHelper.readDataFromFile(sourceClass: self, name: "localhost", type: "yaml") else {
             XCTAssertTrue(false)
             return
         }
@@ -25,7 +25,7 @@ class LocalhostYamlParserTest: XCTestCase {
         let parser = YamlLocalhostSplitsParser()
         let splits = parser.parseContent(content)!
 
-        XCTAssertEqual(8, splits.count)
+        XCTAssertEqual(9, splits.count)
         XCTAssertNotNil(splits["my_feature"])
         XCTAssertNotNil(splits["split_0"])
         XCTAssertNotNil(splits["split_1"])
@@ -38,13 +38,12 @@ class LocalhostYamlParserTest: XCTestCase {
         XCTAssertEqual("my_feature", splits["my_feature"]?.name)
         XCTAssertEqual("other_feature_2", splits["other_feature_2"]?.name)
         
-        XCTAssertEqual(4, splits["my_feature"]?.conditions?.count)
-        
+        XCTAssertEqual(3, splits["my_feature"]?.conditions?.count)
+
         XCTAssertEqual(SplitConstants.control, splits["my_feature"]?.defaultTreatment)
         XCTAssertEqual(ConditionType.whitelist, splits["my_feature"]?.conditions?[0].conditionType)
         XCTAssertEqual(ConditionType.whitelist, splits["my_feature"]?.conditions?[1].conditionType)
-        XCTAssertEqual(ConditionType.whitelist, splits["my_feature"]?.conditions?[2].conditionType)
-        XCTAssertEqual(ConditionType.rollout, splits["my_feature"]?.conditions?[3].conditionType)
+        XCTAssertEqual(ConditionType.rollout, splits["my_feature"]?.conditions?[2].conditionType)
         XCTAssertNil(splits["my_feature"]?.configurations?["white"])
         XCTAssertEqual("{\"desc\" : \"this applies only to ON treatment\"}", splits["my_feature"]?.configurations?["on"])
 
@@ -54,7 +53,7 @@ class LocalhostYamlParserTest: XCTestCase {
         
         XCTAssertEqual(SplitConstants.control, splits["x_feature"]?.defaultTreatment)
         XCTAssertEqual(ConditionType.whitelist, splits["x_feature"]?.conditions?[0].conditionType)
-        XCTAssertEqual(ConditionType.rollout, splits["x_feature"]?.conditions?[1].conditionType)
+        XCTAssertEqual(ConditionType.whitelist, splits["x_feature"]?.conditions?[1].conditionType)
         XCTAssertNil(splits["x_feature"]?.configurations?["on"])
         XCTAssertEqual("{\"desc\" : \"this applies only to OFF and only for only_key. The rest will receive ON\"}", splits["x_feature"]?.configurations?["off"])
         
