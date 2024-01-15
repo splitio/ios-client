@@ -62,11 +62,10 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
         featureFlagsDataSource.loadHandler = { [weak self] featureFlags in
             guard let self = self else { return }
             guard let featureFlags = featureFlags else {
-                if self.isFirstLoad.getAndSet(false) {
-                    self.eventsManager.notifyInternalEvent(.sdkReadyTimeoutReached)
-                }
+                Logger.i("New provided localhost data is empty")
                 return
             }
+
             let values = featureFlags.values.map { $0 as Split }
             let change = ProcessedSplitChange(activeSplits: values,
                                               archivedSplits: [],
