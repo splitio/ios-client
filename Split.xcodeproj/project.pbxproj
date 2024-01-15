@@ -1199,6 +1199,8 @@
 		95CED0502B4DCDB1005E3C34 /* LocalhostClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED03D2B48435E005E3C34 /* LocalhostClientManager.swift */; };
 		95CED0512B4DCDEE005E3C34 /* SplitLocalhostDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED03B2B482CFB005E3C34 /* SplitLocalhostDataSource.swift */; };
 		95CED0532B4F3EA2005E3C34 /* ServiceEndpointsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CED0522B4F3EA2005E3C34 /* ServiceEndpointsTests.swift */; };
+		95CED0632B50584F005E3C34 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 95CED0622B5057A1005E3C34 /* PrivacyInfo.xcprivacy */; };
+		95CED0642B505851005E3C34 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 95CED0622B5057A1005E3C34 /* PrivacyInfo.xcprivacy */; };
 		95D7D7DE26D97FE8002E4D75 /* UInt64+bits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D7D7DD26D97FE8002E4D75 /* UInt64+bits.swift */; };
 		95D7D7E226DD44FB002E4D75 /* murmur3_64_uuids.csv in Resources */ = {isa = PBXBuildFile; fileRef = 95D7D7E126DD44FB002E4D75 /* murmur3_64_uuids.csv */; };
 		95D7D7EA26DD621D002E4D75 /* Murmur64x128.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D7D7E926DD621D002E4D75 /* Murmur64x128.swift */; };
@@ -1935,6 +1937,7 @@
 		95CED0492B4D7903005E3C34 /* LocalhostSplitsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsStorageTests.swift; sourceTree = "<group>"; };
 		95CED04B2B4D8B88005E3C34 /* LocalhostSynchronizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSynchronizerTests.swift; sourceTree = "<group>"; };
 		95CED0522B4F3EA2005E3C34 /* ServiceEndpointsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceEndpointsTests.swift; sourceTree = "<group>"; };
+		95CED0622B5057A1005E3C34 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		95D7D7DD26D97FE8002E4D75 /* UInt64+bits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UInt64+bits.swift"; sourceTree = "<group>"; };
 		95D7D7E126DD44FB002E4D75 /* murmur3_64_uuids.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = murmur3_64_uuids.csv; sourceTree = "<group>"; };
 		95D7D7E926DD621D002E4D75 /* Murmur64x128.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Murmur64x128.swift; sourceTree = "<group>"; };
@@ -3347,6 +3350,7 @@
 		95825BA1271F004700A0CDAD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				95CED0622B5057A1005E3C34 /* PrivacyInfo.xcprivacy */,
 				95825BA2271F004800A0CDAD /* Info.plist */,
 			);
 			path = Resources;
@@ -3641,6 +3645,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				958F987B2B1669BC001F35B3 /* SplitiOSStreaming_2.xctestplan in Resources */,
+				95CED0632B50584F005E3C34 /* PrivacyInfo.xcprivacy in Resources */,
 				95880D092AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan in Resources */,
 				599EA57622666B84006CBA89 /* LICENSE in Resources */,
 				3B6DEF5C20EA6AE50067435E /* .gitkeep in Resources */,
@@ -3710,6 +3715,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95CED0642B505851005E3C34 /* PrivacyInfo.xcprivacy in Resources */,
 				954DAFAE28DBD014009E108F /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
