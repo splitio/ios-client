@@ -61,7 +61,7 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
         self.fileStorage = fileStorage
         self.refreshInterval = Self.sanitizeRefreshInterval(config.refreshInterval)
         if !self.setup(bundle: bundle, dataFolderName: dataFolderName) {
-            throw GenericError.unknown(message: "wtf localhost")
+            throw GenericError.unknown(message: "Could setup localhost file loader.")
         }
         self.taskExecutor = self.createTaskExecutor()
     }
@@ -76,7 +76,7 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
 
     private func setup(bundle: Bundle, dataFolderName: String) -> Bool {
         guard let fileInfo = validateAndCopyFile(bundle: bundle) else {
-            Logger.e("Fail here. Timeout")
+            Logger.e("Could not load localhost file.")
             return false
         }
 
