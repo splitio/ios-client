@@ -33,4 +33,21 @@ public enum SplitLogLevel: String {
             return 5
         }
     }
+
+    static func fromOrder(_ order: Int) -> SplitLogLevel {
+        switch order {
+        case 0:
+            return .verbose
+        case 1:
+            return .debug
+        case 2:
+            return .info
+        case 3:
+            return .warning
+        case 4:
+            return .error
+        default:
+            return .none
+        }
+    }
 }

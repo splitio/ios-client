@@ -18,19 +18,46 @@ class DefaultLogPrinter: LogPrinter {
     }
 }
 
-class Logger {
+@objc public protocol SplitLoggerObjC {
+    var level: Int { get set }
+    func log(level: Int, msg: String)
+}
+
+public protocol SplitLogger {
+    var level: SplitLogLevel { get set }
+    func log(level: SplitLogLevel, msg: String, _ ctx: Any ...)
+}
+
+class LoggerAdapter: SplitLogger {
+
+    var objcLogger: SplitLoggerObjC
+    var level: SplitLogLevel = .none
+
+    init(objcLogger: SplitLoggerObjC) {
+        self.objcLogger = objcLogger
+        self.level = SplitLogLevel.fromOrder(objcLogger.level)
+    }
+
+    func log(level: SplitLogLevel, msg: String, _ ctx: Any ...) {
+        objcLogger.log(level: level.order(), msg: msg)
+    }
+}
+
+class Logger: SplitLogger {
+
+    static var logger: SplitLogger?
     var printer: LogPrinter = DefaultLogPrinter()
     private let tag: String = "SplitSDK"
 
     var level: SplitLogLevel = .none
 
-    static let shared: Logger = {
-        return Logger()
+    static var shared: SplitLogger = {
+        return logger ?? Logger()
     }()
 
     private init() {}
 
-    private func log(level: SplitLogLevel, msg: String, _ ctx: Any ...) {
+    func log(level: SplitLogLevel, msg: String, _ ctx: Any ...) {
 
         if level.order() < self.level.order() {
             return

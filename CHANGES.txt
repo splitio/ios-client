@@ -1,5 +1,5 @@
-2.24.2: (Jan 15, 2024)
-- Added required privacy manifest.
+2.24.1: (Jan 15, 2024)
+- Added methods to locahost mode to allow updating feature flag definitions by code.
 - Fixed validation when using custom endpoints.
 
 2.24.1: (Jan 12, 2024)

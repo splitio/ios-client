@@ -130,6 +130,25 @@ public class SplitClientConfig: NSObject {
         }
     }
 
+    /// Set Custom Logger
+    /// Swift only method
+    public var customLogger: SplitLogger? {
+        get {
+            return Logger.logger
+        }
+        set {
+            Logger.logger = newValue
+            print("Custom logger set")
+        }
+    }
+
+    @objc public func set(logger: SplitLoggerObjC) {
+
+        let loggerAdapter = LoggerAdapter(objcLogger: logger)
+        Logger.logger = loggerAdapter
+    }
+
+
     /// Set the log level
     /// Swift only method
     public var logLevel: SplitLogLevel {
