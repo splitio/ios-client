@@ -47,8 +47,11 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
     }
 
     override func process(notification: SplitsUpdateNotification) throws {
-        processQueue.async {
+        processQueue.async { [weak self] in
+
+            guard let self = self else { return }
             if self.splitsStorage.changeNumber >= notification.changeNumber {
+                Logger.v("Split update notification, avoiding change: \(self.splitsStorage.changeNumber) >= \(notification.changeNumber)")
                 return
             }
             if let payload = notification.definition, let compressionType = notification.compressionType {
