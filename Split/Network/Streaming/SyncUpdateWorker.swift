@@ -58,6 +58,7 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
                     let change = SplitChange(splits: [split],
                                              since: notification.previousChangeNumber ?? notification.changeNumber,
                                              till: notification.changeNumber)
+                    Logger.v("Split update received: \(change)")
                     if self.splitsStorage.update(splitChange: self.splitChangeProcessor.process(change)) {
                         self.synchronizer.notifyFeatureFlagsUpdated()
                     }
