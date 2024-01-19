@@ -1,6 +1,7 @@
 2.24.2: (Jan 15, 2024)
 - Added required privacy manifest.
 - Fixed validation when using custom endpoints.
+- Added previous change number check when applying instant feature flag update
 
 2.24.1: (Jan 12, 2024)
 - Added required privacy manifest.
