@@ -411,7 +411,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
 
         let dbExp3Upd = IntegrationCoreDataHelper.getDbExp(count: 1, entity: .split, operation: CrudKey.update)
-        streamingHelper.pushSplitsMessage(TestingData.kEscapedUpdateSplitsNotificationGzip)
+        streamingHelper.pushSplitsMessage(TestingData.escapedUpdateSplitsNotificationGzip(pcn: 200))
 
         wait(for: [dbExp3Upd], timeout: 3)
 
@@ -732,7 +732,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         updExp = XCTestExpectation(description: "SDK update expectation")
         // Update sets again (set_1, set_2)
-        streamingHelper.pushSplitsMessage(TestingData.kFlagSetsNotification2)
+        streamingHelper.pushSplitsMessage(TestingData.flagSetsNotification(pcn: 1))
 
         wait(for: [updExp!], timeout: 3)
 

@@ -47,24 +47,33 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
     }
 
     override func process(notification: SplitsUpdateNotification) throws {
-        processQueue.async {
-            if self.splitsStorage.changeNumber >= notification.changeNumber {
+        processQueue.async { [weak self] in
+
+            guard let self = self else { return }
+            let storedChangeNumber = self.splitsStorage.changeNumber
+            if storedChangeNumber >= notification.changeNumber {
                 return
             }
-            if let payload = notification.definition, let compressionType = notification.compressionType {
-                do {
-                    let split = try self.payloadDecoder.decode(payload: payload,
-                                       compressionUtil: self.decomProvider.decompressor(for: compressionType))
-                    let change = SplitChange(splits: [split],
-                                             since: notification.previousChangeNumber ?? notification.changeNumber,
-                                             till: notification.changeNumber)
-                    if self.splitsStorage.update(splitChange: self.splitChangeProcessor.process(change)) {
-                        self.synchronizer.notifyFeatureFlagsUpdated()
+            if let previousChangeNumber = notification.previousChangeNumber,
+                previousChangeNumber == storedChangeNumber {
+                if let payload = notification.definition, let compressionType = notification.compressionType {
+                    do {
+                        let split = try self.payloadDecoder.decode(
+                            payload: payload,
+                            compressionUtil: self.decomProvider.decompressor(for: compressionType))
+                        let change = SplitChange(splits: [split],
+                                                 since: previousChangeNumber,
+                                                 till: notification.changeNumber)
+                        Logger.v("Split update received: \(change)")
+                        if self.splitsStorage.update(splitChange: self.splitChangeProcessor.process(change)) {
+                            self.synchronizer.notifyFeatureFlagsUpdated()
+                        }
+                        self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
+                        return
+
+                    } catch {
+                        Logger.e("Error decoding feature flags payload from notification: \(error)")
                     }
-                    self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
-                    return
-                } catch {
-                    Logger.e("Error decoding feature flags payload from notification: \(error)")
                 }
             }
             self.synchronizer.synchronizeSplits(changeNumber: notification.changeNumber)

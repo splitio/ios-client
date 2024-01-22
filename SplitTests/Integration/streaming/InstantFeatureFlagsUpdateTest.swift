@@ -220,7 +220,9 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         ThreadUtils.delay(seconds: Double(self.kRefreshRate) * 2.0)
     }
 
-    private func buildFactory() -> SplitFactory {
+    private func buildFactory(changeNumber: Int64 = 0) -> SplitFactory {
+        let db = TestingHelper.createTestDatabase(name: "test")
+        db.generalInfoDao.update(info: .splitsChangeNumber, longValue: changeNumber)
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
@@ -232,7 +234,7 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
-        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
+        _ = builder.setTestDatabase(db)
         return builder.setApiKey(apiKey).setMatchingKey(userKey)
             .setConfig(splitConfig).build()!
     }
