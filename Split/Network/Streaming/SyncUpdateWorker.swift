@@ -54,12 +54,13 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
             if storedChangeNumber >= notification.changeNumber {
                 return
             }
-            if let payload = notification.definition, let compressionType = notification.compressionType {
-                do {
-                    let split = try self.payloadDecoder.decode(payload: payload,
-                                                               compressionUtil: self.decomProvider.decompressor(for: compressionType))
-
-                    if let previousChangeNumber = notification.previousChangeNumber, previousChangeNumber == storedChangeNumber {
+            if let previousChangeNumber = notification.previousChangeNumber,
+                previousChangeNumber == storedChangeNumber {
+                if let payload = notification.definition, let compressionType = notification.compressionType {
+                    do {
+                        let split = try self.payloadDecoder.decode(
+                            payload: payload,
+                            compressionUtil: self.decomProvider.decompressor(for: compressionType))
                         let change = SplitChange(splits: [split],
                                                  since: previousChangeNumber,
                                                  till: notification.changeNumber)
@@ -69,9 +70,10 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
                         }
                         self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
                         return
+
+                    } catch {
+                        Logger.e("Error decoding feature flags payload from notification: \(error)")
                     }
-                } catch {
-                    Logger.e("Error decoding feature flags payload from notification: \(error)")
                 }
             }
             self.synchronizer.synchronizeSplits(changeNumber: notification.changeNumber)
