@@ -43,21 +43,22 @@ import Foundation
 
 public final class LocalhostSplitClient: NSObject, SplitClient {
 
-    var splitsStorage: SplitsStorage
-    var mySegmentsStorage: MySegmentsStorage
+    private let splitsStorage: SplitsStorage
+    private let mySegmentsStorage = EmptyMySegmentsStorage()
 
     private let eventsManager: SplitEventsManager?
-    private var evaluator: Evaluator!
+    private var evaluator: Evaluator
     private let key: Key
 
-    init(key: Key, splitsStorage: SplitsStorage, eventsManager: SplitEventsManager? = nil) {
+    init(key: Key, splitsStorage: SplitsStorage,
+         eventsManager: SplitEventsManager? = nil,
+         evaluator: Evaluator) {
         self.eventsManager = eventsManager
         self.key = key
         self.splitsStorage = splitsStorage
-        self.mySegmentsStorage = EmptyMySegmentsStorage()
+
+        self.evaluator = evaluator
         super.init()
-        self.evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
-                                          mySegmentsStorage: mySegmentsStorage)
     }
 
     public func getTreatment(_ split: String, attributes: [String: Any]?) -> String {
@@ -185,19 +186,21 @@ extension LocalhostSplitClient {
 
 // MARK: TreatmentBySets Feature
 extension LocalhostSplitClient {
-    public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String: String] {
+    public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
         return [String: String]()
     }
 
-    public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String: String] {
+    public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String] {
         return [String: String]()
     }
 
-    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String,
+                                                 attributes: [String: Any]?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 
-    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
+                                                  attributes: [String: Any]?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 }

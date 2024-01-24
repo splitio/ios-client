@@ -12,7 +12,7 @@ class SpaceDelimitedLocalhostSplitsParser: LocalhostSplitsParser {
 
     let splitHelper = SplitHelper()
 
-    func parseContent(_ content: String) -> LocalhostSplits {
+    func parseContent(_ content: String) -> LocalhostSplits? {
 
         var loadedSplits = LocalhostSplits()
 
@@ -30,6 +30,11 @@ class SpaceDelimitedLocalhostSplitsParser: LocalhostSplitsParser {
                     loadedSplits[splitName] = split
                 }
             }
+        }
+
+        if rows.count > 0, loadedSplits.count == 0 {
+            Logger.e("Error loading localhost Splits file")
+            return nil
         }
         return loadedSplits
     }

@@ -17,5 +17,27 @@ typealias LocalhostSplits = [String: Split]
  feature flags loaded for localhost feature
  */
 protocol LocalhostSplitsParser {
-    func parseContent(_ content: String) -> LocalhostSplits
+    func parseContent(_ content: String) -> LocalhostSplits?
+}
+
+struct LocalhostParserProvider {
+    static func parser(for type: String) -> LocalhostSplitsParser {
+        if type == "yaml" || type == "yml" {
+            return YamlLocalhostSplitsParser()
+        }
+        Logger.w("""
+            Localhost mode: .split mocks will be deprecated soon in favor of YAML files,
+            which provide more targeting power. Take a look in our documentation.
+            """)
+        return SpaceDelimitedLocalhostSplitsParser()
+    }
+
+    static func parser(for type: LocalhostFile) -> LocalhostSplitsParser {
+        switch type {
+        case .splits:
+            return SpaceDelimitedLocalhostSplitsParser()
+        case .yaml:
+            return YamlLocalhostSplitsParser()
+        }
+    }
 }

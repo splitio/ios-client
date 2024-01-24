@@ -27,13 +27,16 @@ class SplitEventsManagerMock: SplitEventsManager {
     var isSegmentsReadyFromCacheFired = false
     var isSplitsReadyFromCacheFired = false
     var isSdkTimeoutFired = false
-    
+
+    var isSplitUpdatedTriggered = false
+
     func notifyInternalEvent(_ event:SplitInternalEvent) {
         switch event {
         case .mySegmentsUpdated:
             isSegmentsReadyFired = true
         case .splitsUpdated:
             isSplitsReadyFired = true
+            isSplitUpdatedTriggered = true
             if let exp = readyExp {
                 exp.fulfill()
             }

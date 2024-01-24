@@ -15,7 +15,7 @@ class MySegmentUpdatedTest: XCTestCase {
     let kChangeNbInterval: Int64 = 86400
     var reqSegmentsIndex = 0
     var isFirstChangesReq = true
-    var serverUrl = ""
+    var serverUrl = "localhost"
 
     let sgExp = [
         XCTestExpectation(description: "upd 0"),

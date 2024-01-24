@@ -245,7 +245,7 @@ public class SplitClientConfig: NSObject {
     ///    The function _authenticate:session:challenge:completionHandler_ will be executed when the
     ///     [urlSession(_:didReceive:completionHandler:)](https://developer.apple.com/documentation/foundation/urlsessiondelegate/1409308-urlsession) is called.
     ///
-    public var httpsAuthenticator: SplitHttpsAuthenticator?
+    @objc public var httpsAuthenticator: SplitHttpsAuthenticator?
 
     static let kDefaultTelemetryRefreshRate = 3600
     static let kMinTelemetryRefreshRate = 60

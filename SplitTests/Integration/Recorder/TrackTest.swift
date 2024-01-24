@@ -14,7 +14,7 @@ class TrackTest: XCTestCase {
     let kNeverRefreshRate = 9999999
     let kChangeNbInterval: Int64 = 86400
     var reqTrackIndex = 0
-    var serverUrl = ""
+    var serverUrl = "localhost"
 
     var trackHits = [[EventDTO]]()
 
