@@ -1,4 +1,5 @@
 2.24.2: (Jan 24, 2024)
+- Added method in localhost API to update feature flag definitions programmatically.
 - Fixed validation when using custom endpoints.
 - Fixed instant feature flag update validation by adding previous change number check.
 
