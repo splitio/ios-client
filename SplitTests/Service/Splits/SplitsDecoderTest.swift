@@ -21,7 +21,7 @@ class SplitsDecoderTest: XCTestCase {
         let splits = decoder.decode(jsons)
 
         XCTAssertEqual(jsons.count, splits.count)
-        XCTAssertEqual(String(describing: type(of: splits[0])), "Split")
+        XCTAssertEqual(String(describing: type(of: splits[0])), "SplitDTO")
     }
 
     func testDecodeTwoThreads() throws {
@@ -32,7 +32,7 @@ class SplitsDecoderTest: XCTestCase {
         let splits = decoder.decode(jsons)
 
         XCTAssertEqual(jsons.count, splits.count)
-        XCTAssertEqual(String(describing: type(of: splits[0])), "Split")
+        XCTAssertEqual(String(describing: type(of: splits[0])), "SplitDTO")
     }
 
     func testDecodeMultiThreads() throws {
@@ -43,7 +43,7 @@ class SplitsDecoderTest: XCTestCase {
         let splits = decoder.decode(jsons)
 
         XCTAssertEqual(jsons.count, splits.count)
-        XCTAssertEqual(String(describing: type(of: splits[0])), "Split")
+        XCTAssertEqual(String(describing: type(of: splits[0])), "SplitDTO")
     }
 
     func loadJsonSplits(times: Int = 1) -> [String] {
