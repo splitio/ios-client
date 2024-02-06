@@ -2,12 +2,13 @@
 clear
 CUR_DIR=$(pwd)
 SCHEMA_NAME=Split
+PRODUCT_NAME=Split
 BUILD_FOLDER=split_build
 XCF_FOLDER=xcframework
 
 echo "-----------------------------------"
-echo "This scrip must be run from the folder containing Split.xcodeproj"
-echo "It is intented to be used as a starter point to build a custom xcframework Split SDK\n"
+echo "This script must be run from the folder containing Split.xcodeproj"
+echo "It is intented to be used as a starter point to build a custom xcframework for Split SDK\n"
 echo "Example: ./scripts/generate_xcframework"
 echo "-----------------------------------"
 echo "\n"
@@ -18,15 +19,45 @@ rm -rf "${CUR_DIR}/${XCF_FOLDER}"
 mkdir "${CUR_DIR}/${BUILD_FOLDER}"
 mkdir "${CUR_DIR}/${XCF_FOLDER}"
 
-echo "Archiving ${FRAMEWORK_NAME}"
-xcodebuild build -scheme ${SCHEMA_NAME} -destination="iOS"  -derivedDataPath "${CUR_DIR}/${BUILD_FOLDER}" -sdk iphoneos -configuration release SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+echo "Archiving ${PRODUCT_NAME} for devices"
+xcodebuild build    -scheme ${SCHEMA_NAME} \
+                    -derivedDataPath "${CUR_DIR}/${BUILD_FOLDER}" \
+                    -destination generic/platform=iOS \
+                    -configuration release \
+                    SKIP_INSTALL=NO \
+                    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+                    > /dev/null
+
+#read -s -k "?Press any key to continue."
+
+echo "Archiving ${PRODUCT_NAME} for simulators"
+xcodebuild build    -scheme ${SCHEMA_NAME} \
+                    -derivedDataPath "${CUR_DIR}/${BUILD_FOLDER}" \
+                    -destination generic/platform="iOS Simulator" \
+                    -configuration release \
+                    SKIP_INSTALL=NO \
+                    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+                    > /dev/null
+
+XCF_NAME_PATH="${CUR_DIR}/${XCF_FOLDER}/${PRODUCT_NAME}"
+XCF_PATH="${XCF_NAME_PATH}.xcframework"
+
+XCF_FOLDER="${CUR_DIR}/${XCF_FOLDER}"
+XCF_NAME="${PRODUCT_NAME}.xcframework"
+
 #Creating XCFramework
 echo "Creating XCFramework from ${BUILD_FOLDER} "
-xcodebuild -create-xcframework -framework "${CUR_DIR}/${BUILD_FOLDER}/Build/Products/Release-iphoneos/${SCHEMA_NAME}.framework" -output "${CUR_DIR}/${XCF_FOLDER}/Split.xcframework"
+xcodebuild  -create-xcframework \
+            -framework "${CUR_DIR}/${BUILD_FOLDER}/Build/Products/Release-iphoneos/${PRODUCT_NAME}.framework" \
+            -debug-symbols "${CUR_DIR}/${BUILD_FOLDER}/Build/Products/Release-iphoneos/${PRODUCT_NAME}.framework.dSYM" \
+            -framework "${CUR_DIR}/${BUILD_FOLDER}/Build/Products/Release-iphonesimulator/${PRODUCT_NAME}.framework" \
+            -debug-symbols "${CUR_DIR}/${BUILD_FOLDER}/Build/Products/Release-iphonesimulator/${PRODUCT_NAME}.framework.dSYM" \
+            -output "${XCF_PATH}" \
+            > /dev/null
 
 echo "Removing build folder"
 rm -rf "${CUR_DIR}/${BUILD_FOLDER}"
 
 echo "-----------------------------------"
-echo "Split XCFramework is located in ${XCF_FOLDER}"
+echo "Split SDK XCFramework is located in ${XCF_FOLDER}"
 echo "-----------------------------------\n"
