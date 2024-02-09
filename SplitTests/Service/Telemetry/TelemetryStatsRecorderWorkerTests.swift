@@ -82,4 +82,25 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
         telemetryStorage.recordSessionLength(sessionLength: 10000)
         telemetryStorage.addTag(tag: "pepe")
     }
+
+    func testConcurrentFlush() {
+        let queue = DispatchQueue(label: "concurrent-test", attributes: .concurrent)
+        let group = DispatchGroup()
+
+        for _ in 0..<6 {
+            group.enter()
+            queue.async {
+                self.worker.flush()
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) {
+            XCTAssertEqual(6, self.statsRecorder.executeCallCount)
+            XCTAssertNotNil(self.statsRecorder.statsSent)
+            XCTAssertEqual(6, self.splitsStorage.getCountCalledCount)
+            XCTAssertEqual(6, self.mySegmentsStorage.getCountCalledCount)
+            XCTAssertEqual(6, self.telemetryStorage.popTagsCallCount)
+        }
+    }
 }

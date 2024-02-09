@@ -14,6 +14,7 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
     private let statsRecorder: HttpTelemetryStatsRecorder
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage: MySegmentsStorage
+    private let queue = DispatchQueue(label: "split-stats-flush-queue")
 
     init(telemetryStatsRecorder: HttpTelemetryStatsRecorder,
          telemetryConsumer: TelemetryConsumer,
@@ -27,16 +28,18 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
     }
 
     func flush() {
-        if !statsRecorder.isEndpointAvailable() {
-            Logger.d("Endpoint not reachable. Telemetry stats post will be delayed")
-            return
-        }
+        queue.sync {
+            if !self.statsRecorder.isEndpointAvailable() {
+                Logger.d("Endpoint not reachable. Telemetry stats post will be delayed")
+                return
+            }
 
-        let stats = buildRequestData()
-        var sendCount = 1
-        while !send(stats: stats) && sendCount < ServiceConstants.retryCount {
-            sendCount+=1
-            ThreadUtils.delay(seconds: ServiceConstants.retryTimeInSeconds)
+            let stats = self.buildRequestData()
+            var sendCount = 1
+            while !self.send(stats: stats) && sendCount < ServiceConstants.retryCount {
+                sendCount+=1
+                ThreadUtils.delay(seconds: ServiceConstants.retryTimeInSeconds)
+            }
         }
     }
 
