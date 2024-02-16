@@ -218,9 +218,8 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func popHttpLatencies() -> TelemetryHttpLatencies {
-        var res: TelemetryHttpLatencies?
         queue.sync {
-            res =  TelemetryHttpLatencies(splits: popLatencies(resource: .splits),
+            return TelemetryHttpLatencies(splits: popLatencies(resource: .splits),
                                           mySegments: popLatencies(resource: .mySegments),
                                           impressions: popLatencies(resource: .impressions),
                                           impressionsCount: popLatencies(resource: .impressionsCount),
@@ -228,7 +227,6 @@ class InMemoryTelemetryStorage: TelemetryStorage {
                                           token: popLatencies(resource: .token),
                                           telemetry: popLatencies(resource: .telemetry))
         }
-        return res!
     }
 
     func popAuthRejections() -> Int {
