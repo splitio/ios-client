@@ -202,6 +202,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         client?.flush()
 
+
         wait(for: [telemetryStatsExp!], timeout: 3)
 
         destroyTest(client: client)

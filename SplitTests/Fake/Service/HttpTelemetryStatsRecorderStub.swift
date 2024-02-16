@@ -11,6 +11,7 @@ import Foundation
 
 class HttpTelemetryStatsRecorderStub: HttpTelemetryStatsRecorder {
 
+    var queue: DispatchQueue?
     var endpointAvailable = true
 
     func isEndpointAvailable() -> Bool {
@@ -22,6 +23,17 @@ class HttpTelemetryStatsRecorderStub: HttpTelemetryStatsRecorder {
     var executeCallCount = 0
 
     func execute(_ stats: TelemetryStats) throws {
+
+        if let queue = self.queue {
+            try queue.sync {
+                try exec(stats)
+            }
+        } else {
+            try exec(stats)
+        }
+    }
+
+    private func exec(_ stats: TelemetryStats) throws {
         statsSent = stats
         executeCallCount+=1
         if errorOccurredCallCount >= executeCallCount {
