@@ -27,17 +27,17 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
     }
 
     func flush() {
-            if !self.statsRecorder.isEndpointAvailable() {
-                Logger.d("Endpoint not reachable. Telemetry stats post will be delayed")
-                return
-            }
+        if !self.statsRecorder.isEndpointAvailable() {
+            Logger.d("Endpoint not reachable. Telemetry stats post will be delayed")
+            return
+        }
 
-            let stats = self.buildRequestData()
-            var sendCount = 1
-            while !self.send(stats: stats) && sendCount < ServiceConstants.retryCount {
-                sendCount+=1
-                ThreadUtils.delay(seconds: ServiceConstants.retryTimeInSeconds)
-            }
+        let stats = self.buildRequestData()
+        var sendCount = 1
+        while !self.send(stats: stats) && sendCount < ServiceConstants.retryCount {
+            sendCount+=1
+            ThreadUtils.delay(seconds: ServiceConstants.retryTimeInSeconds)
+        }
     }
 
     private func send(stats: TelemetryStats) -> Bool {
