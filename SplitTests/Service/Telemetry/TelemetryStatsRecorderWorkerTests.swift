@@ -84,6 +84,7 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
     }
 
     func testConcurrentFlush() {
+        statsRecorder.queue = DispatchQueue(label: "pepe")
         let queue = DispatchQueue(label: "concurrent-test", attributes: .concurrent)
         let group = DispatchGroup()
 

@@ -11,7 +11,7 @@ import Foundation
 class InMemoryTelemetryStorage: TelemetryStorage {
 
     private static let kQueuePrefix = "split-telemetry"
-    private let queue = DispatchQueue(label: "split-telemetry", attributes: .concurrent)
+    private let queue = DispatchQueue(label: "split-telemetry")
 
     // Latencies
     private var methodLatencies: [TelemetryMethod: LatencyCounter] = [:]
@@ -65,13 +65,14 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordLatency(method: TelemetryMethod, latency: Int64) {
-        queue.async(flags: .barrier) {
+        queue.async { [weak self] in
+            guard let self = self else { return }
             self.methodLatencies[method]?.addLatency(microseconds: latency)
         }
     }
 
     func recordException(method: TelemetryMethod) {
-        queue.async(flags: .barrier) {
+        queue.async {
             self.methodExceptionCounters[method]?+=1
         }
     }
@@ -81,13 +82,13 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordImpressionStats(type: TelemetryImpressionsDataType, count: Int) {
-        queue.async(flags: .barrier) {
+        queue.async {
             self.impressionsStats[type] = (self.impressionsStats[type] ?? 0) + count
         }
     }
 
     func recordEventStats(type: TelemetryEventsDataType, count: Int) {
-        queue.async(flags: .barrier) {
+        queue.async {
             self.eventsStats[type] = (self.eventsStats[type] ?? 0) + count
         }
     }
@@ -97,7 +98,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordHttpError(resource: Resource, status: Int) {
-        queue.async(flags: .barrier) {
+        queue.async {
             if self.httpErrors[resource] == nil {
                 self.httpErrors[resource] = [status: 1]
             } else {
@@ -108,7 +109,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordHttpLatency(resource: Resource, latency: Int64) {
-        queue.async(flags: .barrier) {
+        queue.async {
             self.httpLatencies[resource]?.addLatency(microseconds: latency)
         }
     }
@@ -132,7 +133,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordUpdatesFromSse(type: TelemetryUpdatesFromSseType) {
-        queue.async(flags: .barrier) {
+        queue.async {
             self.updatesFromSse[type] = (self.updatesFromSse[type] ?? 0) + 1
         }
     }
@@ -167,8 +168,10 @@ class InMemoryTelemetryStorage: TelemetryStorage {
                                             treatmentsWithConfig: popLatencies(method: .treatmentsWithConfig),
                                             treatmentsByFlagSet: popLatencies(method: .treatmentsByFlagSet),
                                             treatmentsByFlagSets: popLatencies(method: .treatmentsByFlagSets),
-                                            treatmentsWithConfigByFlagSet: popLatencies(method: .treatmentsWithConfigByFlagSet),
-                                            treatmentsWithConfigByFlagSets: popLatencies(method: .treatmentsWithConfigByFlagSets),
+                                            treatmentsWithConfigByFlagSet:
+                                                popLatencies(method: .treatmentsWithConfigByFlagSet),
+                                            treatmentsWithConfigByFlagSets:
+                                                popLatencies(method: .treatmentsWithConfigByFlagSets),
                                             track: popLatencies(method: .track))
         }
     }
@@ -209,8 +212,9 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func popHttpLatencies() -> TelemetryHttpLatencies {
+        var res: TelemetryHttpLatencies?
         queue.sync {
-            return TelemetryHttpLatencies(splits: popLatencies(resource: .splits),
+            res =  TelemetryHttpLatencies(splits: popLatencies(resource: .splits),
                                           mySegments: popLatencies(resource: .mySegments),
                                           impressions: popLatencies(resource: .impressions),
                                           impressionsCount: popLatencies(resource: .impressionsCount),
@@ -218,6 +222,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
                                           token: popLatencies(resource: .token),
                                           telemetry: popLatencies(resource: .telemetry))
         }
+        return res!
     }
 
     func popAuthRejections() -> Int {
@@ -237,7 +242,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func popUpdatesFromSse() -> TelemetryUpdatesFromSse {
-        queue.sync(flags: .barrier) {
+        queue.sync {
             let splitsCount = self.updatesFromSse[.splits] ?? 0
             let mySegmentsCount = self.updatesFromSse[.mySegments] ?? 0
             self.updatesFromSse.removeAll()
