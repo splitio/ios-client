@@ -379,8 +379,57 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         XCTAssertEqual(0, afterCount.mySegments)
     }
 
+    func testConcurrence() {
 
-    func recordStreamingEvent(type: TelemetryStreamingEventType,
+        let queue = DispatchQueue(label: "concurrent-test", attributes: .concurrent)
+        let group = DispatchGroup()
+        let count = AtomicInt(0)
+        for _ in 0..<50 {
+            group.enter()
+            queue.async {
+
+                self.storage.recordLatency(method: .track, latency: 1)
+                self.storage.recordException(method: .treatment)
+                self.storage.recordHttpError(resource: .events, status: 1)
+                self.storage.recordHttpLatency(resource: .impressions, latency: 1)
+
+                _ = self.storage.popMethodLatencies()
+                _ = self.storage.popMethodExceptions()
+                _ = self.storage.popHttpErrors()
+                _ = self.storage.popHttpLatencies()
+                _ = self.storage.popAuthRejections()
+                _ = self.storage.popTokenRefreshes()
+                _ = self.storage.popStreamingEvents()
+                _ = count.addAndGet(1)
+                group.leave()
+            }
+
+            group.enter()
+            queue.async {
+
+                self.storage.recordAuthRejections()
+                self.storage.recordTokenRefreshes()
+                self.storage.recordStreamingEvent(type: .ablyError, data: 3)
+                self.storage.recordUpdatesFromSse(type: .mySegments)
+
+                _ = self.storage.popMethodLatencies()
+                _ = self.storage.popMethodExceptions()
+                _ = self.storage.popHttpLatencies()
+                _ = self.storage.popAuthRejections()
+                _ = self.storage.popTokenRefreshes()
+                _ = self.storage.popUpdatesFromSse()
+                _ = count.addAndGet(1)
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) {
+            XCTAssertEqual(100, count.value)
+        }
+    }
+
+
+    private func recordStreamingEvent(type: TelemetryStreamingEventType,
                               data: Int64,
                               count: Int) {
         for _ in 0..<count {
@@ -394,9 +443,7 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         }
     }
 
-    //    func recordStreamingEvents(streamingEvent: TelemetryStreamingEvent)
-
-    func recordHttpError(resource: Resource, factor: Int) {
+    private func recordHttpError(resource: Resource, factor: Int) {
         for _ in 0..<factor {
             storage.recordHttpError(resource: resource, status: 400)
             storage.recordHttpError(resource: resource, status: 401)
@@ -404,41 +451,37 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         }
     }
 
-    func recordLatency(method: TelemetryMethod, count: Int) {
+    private func recordLatency(method: TelemetryMethod, count: Int) {
         for _ in (0..<count) {
             storage.recordLatency(method: method, latency: rnd)
         }
     }
 
-    func recordHttpLatency(resource: Resource, count: Int) {
+    private func recordHttpLatency(resource: Resource, count: Int) {
         for _ in (0..<count) {
             storage.recordHttpLatency(resource: resource, latency: rnd)
         }
     }
 
-    func recordException(method: TelemetryMethod, count: Int) {
+    private func recordException(method: TelemetryMethod, count: Int) {
         for _ in (0..<count) {
             storage.recordException(method: method)
         }
     }
 
-    func recordImpression(type: TelemetryImpressionsDataType, countStat: Int, count: Int) {
+    private func recordImpression(type: TelemetryImpressionsDataType, countStat: Int, count: Int) {
         for _ in (0..<count) {
             storage.recordImpressionStats(type: type, count: countStat)
         }
     }
 
-    func recordEvent(type: TelemetryEventsDataType, countStat: Int, count: Int) {
+    private func recordEvent(type: TelemetryEventsDataType, countStat: Int, count: Int) {
         for _ in (0..<count) {
             storage.recordEventStats(type: type, count: countStat)
         }
     }
 
-    func sum(_ values: [Int]?) -> Int {
+    private func sum(_ values: [Int]?) -> Int {
         return values?.reduce(0) { $0 + $1 } ?? -1
     }
-
-    override func tearDown() {
-    }
 }
-

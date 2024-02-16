@@ -1,3 +1,7 @@
+2.24.3: (Feb 6, 2024)
+- Renamed internal class to avoid conflicts when using SDK as an XCFramework.
+- Improved generate_xcframework script.
+
 2.24.2: (Jan 24, 2024)
 - Added method in localhost API to update feature flag definitions programmatically.
 - Fixed validation when using custom endpoints.
