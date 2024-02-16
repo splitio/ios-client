@@ -72,7 +72,8 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordException(method: TelemetryMethod) {
-        queue.async {
+        queue.async { [weak self] in
+            guard let self = self else { return }
             self.methodExceptionCounters[method]?+=1
         }
     }
@@ -82,13 +83,15 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordImpressionStats(type: TelemetryImpressionsDataType, count: Int) {
-        queue.async {
+        queue.async { [weak self] in
+            guard let self = self else { return }
             self.impressionsStats[type] = (self.impressionsStats[type] ?? 0) + count
         }
     }
 
     func recordEventStats(type: TelemetryEventsDataType, count: Int) {
-        queue.async {
+        queue.async { [weak self] in
+            guard let self = self else { return }
             self.eventsStats[type] = (self.eventsStats[type] ?? 0) + count
         }
     }
@@ -98,7 +101,8 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordHttpError(resource: Resource, status: Int) {
-        queue.async {
+        queue.async { [weak self] in
+            guard let self = self else { return }
             if self.httpErrors[resource] == nil {
                 self.httpErrors[resource] = [status: 1]
             } else {
@@ -109,7 +113,8 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordHttpLatency(resource: Resource, latency: Int64) {
-        queue.async {
+        queue.async { [weak self] in
+            guard let self = self else { return }
             self.httpLatencies[resource]?.addLatency(microseconds: latency)
         }
     }
@@ -133,7 +138,8 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordUpdatesFromSse(type: TelemetryUpdatesFromSseType) {
-        queue.async {
+        queue.async { [weak self] in
+            guard let self = self else { return }
             self.updatesFromSse[type] = (self.updatesFromSse[type] ?? 0) + 1
         }
     }
