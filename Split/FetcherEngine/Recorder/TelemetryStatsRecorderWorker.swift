@@ -52,7 +52,6 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
     }
 
     private func buildRequestData() -> TelemetryStats {
-
         let storage = telemetryConsumer
         return TelemetryStats(lastSynchronization: storage.getLastSync(),
                               methodLatencies: storage.popMethodLatencies(),
