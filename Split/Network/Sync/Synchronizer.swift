@@ -10,9 +10,10 @@ import Foundation
 
 protocol Synchronizer: ImpressionLogger {
     func start(forKey key: Key)
-    func loadAndSynchronizeSplits()
+    func loadSplitsFromCache()
     func loadMySegmentsFromCache()
     func loadAttributesFromCache()
+    func synchronizeSplits()
     func synchronizeMySegments()
     func loadMySegmentsFromCache(forKey key: String)
     func loadAttributesFromCache(forKey key: String)
@@ -80,8 +81,8 @@ class DefaultSynchronizer: Synchronizer {
 
     }
 
-    func loadAndSynchronizeSplits() {
-        self.featureFlagsSynchronizer.loadAndSynchronize()
+    func loadSplitsFromCache() {
+        self.featureFlagsSynchronizer.load()
     }
 
     func loadMySegmentsFromCache() {
@@ -229,11 +230,11 @@ class DefaultSynchronizer: Synchronizer {
         impressionsTracker.destroy()
     }
 
-    // MARK: Private
-    private func synchronizeSplits() {
+    func synchronizeSplits() {
         self.featureFlagsSynchronizer.synchronize()
     }
 
+    // MARK: Private
     private func recordSyncModeEvent(_ mode: Int64) {
         if splitConfig.streamingEnabled && !isDestroyed.value {
             telemetryProducer?.recordStreamingEvent(type: .syncModeUpdate,

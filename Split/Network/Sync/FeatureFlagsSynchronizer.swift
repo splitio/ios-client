@@ -9,7 +9,7 @@
 import Foundation
 
 protocol FeatureFlagsSynchronizer {
-    func loadAndSynchronize()
+    func load()
     func synchronize()
     func synchronize(changeNumber: Int64)
     func startPeriodicSync()
@@ -68,9 +68,9 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         }
     }
 
-    func loadAndSynchronize() {
+    func load() {
         let splitsStorage = self.storageContainer.splitsStorage
-        DispatchQueue.storage.async {
+        DispatchQueue.global().async {
             let start = Date.nowMillis()
             self.filterSplitsInCache()
             splitsStorage.loadLocal()

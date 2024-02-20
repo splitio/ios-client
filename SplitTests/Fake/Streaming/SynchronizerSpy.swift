@@ -71,9 +71,9 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.synchronizeSplits()
     }
 
-    func loadAndSynchronizeSplits() {
+    func loadSplitsFromCache() {
         loadAndSynchronizeSplitsCalled = true
-        splitSynchronizer.loadAndSynchronizeSplits()
+        splitSynchronizer.loadSplitsFromCache()
     }
 
     func loadMySegmentsFromCache() {

@@ -10,7 +10,7 @@ import Foundation
 
 class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer {
     var loadAndSynchronizeCalled = false
-    func loadAndSynchronize() {
+    func load() {
         loadAndSynchronizeCalled = true
     }
 

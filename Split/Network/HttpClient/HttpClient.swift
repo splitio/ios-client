@@ -110,7 +110,7 @@ class DefaultHttpClient {
     private var requestManager: HttpRequestManager!
     private var configuration: HttpSessionConfig
     private var isStarted = false
-    private var startQueue = DispatchQueue(label: "http-client-start", target: DispatchQueue.network)
+    private var startQueue = DispatchQueue(label: "http-client-start", target: DispatchQueue.global())
 
     init(configuration: HttpSessionConfig = HttpSessionConfig.default,
          session: HttpSession? = nil,

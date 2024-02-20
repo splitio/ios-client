@@ -97,7 +97,7 @@ class SynchronizerTest: XCTestCase {
 
     func testLoadAndSynchronizeSplits() {
 
-        synchronizer.loadAndSynchronizeSplits()
+        synchronizer.loadSplitsFromCache()
 
         XCTAssertTrue(fFlagsSynchronizer.loadAndSynchronizeCalled)
     }

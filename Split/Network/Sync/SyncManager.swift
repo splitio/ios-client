@@ -66,7 +66,7 @@ class DefaultSyncManager: SyncManager {
     }
 
     private func loadData() {
-        synchronizer.loadAndSynchronizeSplits()
+        synchronizer.loadSplitsFromCache()
         synchronizer.loadMySegmentsFromCache()
         synchronizer.loadAttributesFromCache()
     }

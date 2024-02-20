@@ -104,7 +104,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "pepe"))
         persistentSplitsStorage.update(filterQueryString: "?p=1")
         persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "SPLIT_TO_DELETE"))
-        synchronizer.loadAndSynchronize()
+        synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
@@ -120,7 +120,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "new_pepe")],
                                                   archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
         persistentSplitsStorage.update(filterQueryString: "")
-        synchronizer.loadAndSynchronize()
+        synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
@@ -144,7 +144,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
         persistentSplitsStorage.update(filterQueryString: "?names=pepe")
 
-        synchronizer.loadAndSynchronize()
+        synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
@@ -185,7 +185,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
         persistentSplitsStorage.update(filterQueryString: "?names=pepe")
 
-        synchronizer.loadAndSynchronize()
+        synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
