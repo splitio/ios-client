@@ -99,39 +99,57 @@ extension HttpClient {
 
 class DefaultHttpClient {
 
-    static let shared: DefaultHttpClient = {
+    static let shared: HttpClient = {
         return DefaultHttpClient()
     }()
 
-    private var httpSession: HttpSession
-    private var requestManager: HttpRequestManager
+    private var testSession: HttpSession?
+    private var testRequestManager: HttpRequestManager?
+
+    private var httpSession: HttpSession!
+    private var requestManager: HttpRequestManager!
+    private var configuration: HttpSessionConfig
+    private var isStarted = false
+    private var startQueue = DispatchQueue(label: "http-client-start", target: DispatchQueue.global())
 
     init(configuration: HttpSessionConfig = HttpSessionConfig.default,
          session: HttpSession? = nil,
          requestManager: HttpRequestManager? = nil) {
 
-        let urlSessionConfig = URLSessionConfiguration.default
+        self.configuration = configuration
+        self.testSession = session
+        self.testRequestManager = requestManager
+    }
 
-        urlSessionConfig.timeoutIntervalForRequest = configuration.connectionTimeOut
+    func startIfNeeded() {
+        startQueue.sync {
+            if !isStarted {
+                let urlSessionConfig = URLSessionConfiguration.default
 
-        if let requestManager = requestManager {
-            self.requestManager = requestManager
-        } else {
-            self.requestManager = DefaultHttpRequestManager(authententicator: configuration.httpsAuthenticator)
-        }
+                urlSessionConfig.timeoutIntervalForRequest = configuration.connectionTimeOut
 
-        if let httpSession = session {
-            self.httpSession = httpSession
-        } else {
-            let delegate = self.requestManager as? URLSessionDelegate
-            self.httpSession = DefaultHttpSession(urlSession: URLSession(
-                configuration: urlSessionConfig, delegate: delegate, delegateQueue: nil))
+                if let requestManager = testRequestManager {
+                    self.requestManager = requestManager
+                } else {
+                    self.requestManager = DefaultHttpRequestManager(authententicator: configuration.httpsAuthenticator)
+                }
+
+                if let httpSession = testSession {
+                    self.httpSession = httpSession
+                } else {
+                    let delegate = self.requestManager as? URLSessionDelegate
+                    self.httpSession = DefaultHttpSession(urlSession: URLSession(
+                        configuration: urlSessionConfig, delegate: delegate, delegateQueue: nil))
+                }
+                Logger.d("Http client started")
+                isStarted = true
+            }
         }
     }
 
     deinit {
-        requestManager.destroy()
-        httpSession.finalize()
+        requestManager?.destroy()
+        httpSession?.finalize()
     }
 }
 
@@ -140,6 +158,7 @@ extension DefaultHttpClient {
 
     private func createRequest(_ url: URL, method: HttpMethod = .get, parameters: HttpParameters? = nil,
                                headers: HttpHeaders? = nil, body: Data? = nil) throws -> HttpDataRequest {
+        startIfNeeded()
         let request = try DefaultHttpDataRequest(session: httpSession, url: url, method: method,
                                                  parameters: parameters, headers: headers, body: body)
         return request
@@ -147,6 +166,7 @@ extension DefaultHttpClient {
 
     private func createStreamRequest(_ url: URL, parameters: HttpParameters? = nil,
                                      headers: HttpHeaders? = nil) throws -> HttpStreamRequest {
+        startIfNeeded()
         let request = try DefaultHttpStreamRequest(session: httpSession, url: url,
                                                    parameters: parameters, headers: headers)
         return request

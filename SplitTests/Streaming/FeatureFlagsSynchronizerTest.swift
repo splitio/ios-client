@@ -99,32 +99,34 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         XCTAssertEqual(SyncStatusEvent.uriTooLongOnSync, broadcasterChannel.lastPushedEvent)
     }
 
-    func testLoadAndSyncSplitsClearedOnLoadBecauseNotInFilter() {
+    func testLoadSplitsClearedOnLoadBecauseNotInFilter() {
         // Existent splits does not belong to split filter on config so they gonna be deleted because filter has changed
         persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "pepe"))
         persistentSplitsStorage.update(filterQueryString: "?p=1")
         persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "SPLIT_TO_DELETE"))
-        synchronizer.loadAndSynchronize()
+        synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
         XCTAssertTrue(persistentSplitsStorage.getAllCalled)
         XCTAssertTrue(persistentSplitsStorage.deleteCalled)
         XCTAssertTrue(splitsStorage.loadLocalCalled)
+        XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
         XCTAssertEqual(0, eventsManager.splitsLoadedEventFiredCount)
     }
 
-    func testLoadAndSyncSplitsNoClearedOnLoad() {
+    func testLoadSplitsNoClearedOnLoad() {
         // Splits filter doesn't vary so splits don't gonna be removed
         // loaded splits > 0, ready from cache should be fired
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "new_pepe")],
                                                   archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
         persistentSplitsStorage.update(filterQueryString: "")
-        synchronizer.loadAndSynchronize()
+        synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
         XCTAssertTrue(splitsStorage.loadLocalCalled)
+        XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
         XCTAssertEqual(1, eventsManager.splitsLoadedEventFiredCount)
     }
 
@@ -144,7 +146,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
         persistentSplitsStorage.update(filterQueryString: "?names=pepe")
 
-        synchronizer.loadAndSynchronize()
+        synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
@@ -154,6 +156,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         XCTAssertTrue(deleted.contains("test3"))
         XCTAssertTrue(deleted.contains("test4"))
         XCTAssertEqual(4, deleted.count)
+        XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 
     func testLoadSplitWhenQuerystringSetsChanges() {
@@ -185,7 +188,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
         persistentSplitsStorage.update(filterQueryString: "?names=pepe")
 
-        synchronizer.loadAndSynchronize()
+        synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
@@ -200,6 +203,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         XCTAssertTrue(deleted.contains("tset2"))
         XCTAssertTrue(deleted.contains("apre_tset3"))
         XCTAssertEqual(9, deleted.count)
+        XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 
     func testSynchronizeSplitsWithChangeNumber() {
