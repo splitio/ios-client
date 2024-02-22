@@ -23,13 +23,15 @@ class SplitEventExecutorWithClient: SplitEventExecutorProtocol {
         }
 
         DispatchQueue.global().async {
-            // Background thread
+            TimeChecker.logTime("Running event on global: \(self.task.event?.toString())")
             self.task.onPostExecute(client: splitClient)
-            DispatchQueue.main.async(execute: {
-                // UI Updates
-                self.task.onPostExecuteView(client: splitClient)
-            })
         }
+
+        DispatchQueue.main.async(execute: {
+            TimeChecker.logTime("Running event on main: \(self.task.event?.toString())")
+            // UI Updates
+            self.task.onPostExecuteView(client: splitClient)
+        })
     }
 
 }

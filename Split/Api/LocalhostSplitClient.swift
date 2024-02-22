@@ -98,7 +98,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return results
     }
 
-    public func on(_ event: SplitEvent, _ task: SplitEventTask) {
+    public func on(event: SplitEvent, executeTask task: SplitEventTask) {
     }
 
     public func on(event: SplitEvent, execute action: @escaping SplitAction) {
