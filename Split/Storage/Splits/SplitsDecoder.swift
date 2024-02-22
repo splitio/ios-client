@@ -25,7 +25,10 @@ struct SplitsParallelDecoder: SplitsDecoder {
         if list.count == 0 {
             return []
         }
+
+
         Logger.v("Using parallel decoding for \(list.count) splits")
+        let start = Date.nowMillis()
         var splits = [Split]()
         let dataQueue = DispatchQueue(label: "split-parallel-parsing-data",
                                       target: DispatchQueue(label: "split-parallel-parsing-data-conc",
@@ -51,6 +54,7 @@ struct SplitsParallelDecoder: SplitsDecoder {
             }
         }
         queue.waitUntilAllOperationsAreFinished()
+        Logger.v("Time to parse loaded splits: \(Date.nowMillis() - start)")
         return splits
     }
 }
