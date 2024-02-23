@@ -11,21 +11,46 @@ struct TimeChecker {
 
     private static var startTime: Int64 = 0
     private static let tag = "[SPTPRF] "
+    private static let showTimestamp = true
+    private static let showSinceMsg = true
     static func start() {
         startTime = Date.nowMillis()
         Logger.v("\(tag) TimeChecker started at: \(startTime)")
     }
 
     static func logInterval(_ msg: String) {
-        Logger.v("\(tag) \(msg): \(Date.nowMillis() - startTime)")
+        let now = Date.nowMillis()
+        let interval = now - startTime
+        Logger.v("\(tag) \(msg) \(formatTimestamp(now)) \(formatIntervalSinceStart(interval))")
     }
 
     static func logTime(_ msg: String) {
-        Logger.v("\(tag) \(msg)")
+        Logger.v("\(tag) \(msg) \(formatIntervalSinceStart(Date.nowMillis()))")
     }
 
     static func logInterval(_ msg: String, startTime: Int64) {
-        Logger.v("\(tag) \(msg): \(Date.nowMillis() - startTime)")
+        Logger.v("\(tag) \(msg) \(Date.nowMillis() - startTime) ms \(formatTimestamp(Date.nowMillis()))")
+    }
+
+    static func formatInterval(_ interval: Int64) -> String {
+        if !showSinceMsg {
+            return "\(interval)"
+        }
+        return "Time since instanciation start \(interval) ms"
+    }
+
+    static func formatIntervalSinceStart(_ interval: Int64) -> String {
+        if !showSinceMsg {
+            return "\(interval)"
+        }
+        return "\(interval) ms since instanciation start"
+    }
+
+    static func formatTimestamp(_ now: Int64) -> String {
+        if !showTimestamp {
+            return ""
+        }
+        return "at \(now)"
     }
 }
 

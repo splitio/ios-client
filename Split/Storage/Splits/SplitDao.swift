@@ -67,9 +67,10 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
     }
 
     func getAll() -> [Split] {
-        let start = Date.nowMillis()
+
         var splits: [Split]?
         execute { [weak self] in
+            let start = Date.nowMillis()
             guard let self = self else {
                 return
             }
@@ -77,10 +78,9 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             let jsonSplits = self.coreDataHelper.fetch(entity: .split)
                 .compactMap { return $0 as? SplitEntity }
                 .compactMap { return $0.body }
-
+            TimeChecker.logInterval("Time to load feature flags", startTime: start)
             splits = self.decoder.decode(jsonSplits).map { $0 }
         }
-        TimeChecker.logInterval("Time to load feature flags", startTime: start)
         return splits ?? []
     }
 
