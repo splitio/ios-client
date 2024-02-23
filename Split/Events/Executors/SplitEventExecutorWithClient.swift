@@ -21,14 +21,14 @@ class SplitEventExecutorWithClient: SplitEventExecutorProtocol {
         guard let splitClient = client else {
             return
         }
-
+        let eventName = task.event?.toString() ?? "No name provided"
         DispatchQueue.global().async {
-            TimeChecker.logTime("Running event on global: \(self.task.event?.toString())")
+            TimeChecker.logInterval("Running event on global: \(eventName)")
             self.task.onPostExecute(client: splitClient)
         }
 
         DispatchQueue.main.async(execute: {
-            TimeChecker.logTime("Running event on main: \(self.task.event?.toString())")
+            TimeChecker.logInterval("Running event on main: \(eventName)")
             // UI Updates
             self.task.onPostExecuteView(client: splitClient)
         })

@@ -7,6 +7,28 @@
 
 import Foundation
 
+struct TimeChecker {
+
+    private static var startTime: Int64 = 0
+    private static let tag = "[SPTPRF] "
+    static func start() {
+        startTime = Date.nowMillis()
+        Logger.v("\(tag) TimeChecker started at: \(startTime)")
+    }
+
+    static func logInterval(_ msg: String) {
+        Logger.v("\(tag) \(msg): \(Date.nowMillis() - startTime)")
+    }
+
+    static func logTime(_ msg: String) {
+        Logger.v("\(tag) \(msg)")
+    }
+
+    static func logInterval(_ msg: String, startTime: Int64) {
+        Logger.v("\(tag) \(msg): \(Date.nowMillis() - startTime)")
+    }
+}
+
 // Protocol to enable testing for Logger class
 protocol LogPrinter {
     func stdout(_ items: Any...)
@@ -36,10 +58,11 @@ class Logger {
             return
         }
 
+        let timeLabel = Date.nowLabel()
         if ctx.count == 0 {
-            printer.stdout(level.rawValue, tag, msg)
+            printer.stdout(timeLabel, level.rawValue, tag, msg)
         } else {
-            printer.stdout(level.rawValue, tag, msg, ctx[0])
+            printer.stdout(timeLabel, level.rawValue, tag, msg, ctx[0])
         }
     }
 

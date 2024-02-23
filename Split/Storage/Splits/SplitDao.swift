@@ -80,7 +80,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
 
             splits = self.decoder.decode(jsonSplits).map { $0 }
         }
-        Logger.v("Time to load splits: \(Date.nowMillis() - start)")
+        TimeChecker.logInterval("Time to load feature flags", startTime: start)
         return splits ?? []
     }
 

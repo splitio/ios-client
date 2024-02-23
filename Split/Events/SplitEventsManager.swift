@@ -223,7 +223,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
                                             task: task,
                                             resources: self.executorResources)
 
-        TimeChecker.logTime("Triggering event: \(event.toString())")
+        TimeChecker.logInterval("Triggering event: \(event.toString())")
         executor.execute()
 //        }
     }

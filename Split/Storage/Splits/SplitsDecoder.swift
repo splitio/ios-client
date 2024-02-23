@@ -54,7 +54,7 @@ struct SplitsParallelDecoder: SplitsDecoder {
             }
         }
         queue.waitUntilAllOperationsAreFinished()
-        Logger.v("Time to parse loaded splits: \(Date.nowMillis() - start)")
+        TimeChecker.logInterval("Time to parse loaded splits", startTime: start)
         return splits
     }
 }

@@ -8,25 +8,6 @@
 
 import Foundation
 
-class TimeChecker {
-
-    private static var startTime: Int64 = 0
-
-    static func start() {
-        startTime = Date.nowMillis()
-        Logger.v("TimeChecker started at: \(startTime)")
-    }
-
-    static func logInterval(_ msg: String) {
-        Logger.v("\(msg): \(Date.nowMillis() - startTime)")
-    }
-
-    static func logTime(_ msg: String) {
-        Logger.v("\(msg): \(Date.nowMillis())")
-    }
-}
-
-
 /**
  Default implementation of SplitManager protocol
  */

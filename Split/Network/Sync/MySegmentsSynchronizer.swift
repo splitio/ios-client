@@ -60,6 +60,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         DispatchQueue.global().async {
             self.mySegmentsStorage.loadLocal()
             self.splitEventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
+            TimeChecker.logInterval("Time until my segments loaded from cache")
         }
     }
 

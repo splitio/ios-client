@@ -74,6 +74,8 @@ class DefaultSseAuthenticator: SseAuthenticator {
             return errorResult(recoverable: true)
         }
 
+        print("AUTH CALLED")
+        
         restClient.authenticate(userKeys: userKeys) { result in
             requestResult = result
             semaphore.signal()
