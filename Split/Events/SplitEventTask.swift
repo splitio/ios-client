@@ -8,7 +8,7 @@
 import Foundation
 
 open class SplitEventTask: NSObject {
-    var event: SplitEvent?
+    public var event: SplitEvent?
     @objc open func onPostExecute(client: SplitClient) {
         debugPrint("* running superclass.onPostExecute. This method should be override by developers")
     }
