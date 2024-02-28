@@ -83,3 +83,10 @@ struct TaskExecutor {
         }
     }
 }
+
+extension DispatchQueue {
+    static var critical: DispatchQueue = {
+        Logger.v("CRITICAL QUEUE CREATION")
+        return DispatchQueue(label: "split-general", qos: .userInteractive, attributes: .concurrent)
+    }()
+}
