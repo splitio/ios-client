@@ -48,6 +48,8 @@ class FlagSetsIntegrationTests: XCTestCase {
 
     var streamingHelper: StreamingTestingHelper!
 
+    var factory: SplitFactory!
+
     override func setUp() {
         testDb = TestingHelper.createTestDatabase(name: "GralIntegrationTest")
         if splitChange == nil {
@@ -685,6 +687,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         XCTAssertFalse(sdkUpdateFired)
     }
 
+    var client: SplitClient!
     func testFlagsetsSdkUpdateFiredWhenFFInFilterSets() throws {
         loadSplitChangesFlagSetsJson()
         let session = HttpSessionMock()
@@ -712,7 +715,7 @@ class FlagSetsIntegrationTests: XCTestCase {
             .addSplitFilter(SplitFilter.bySet(["set_1", "set_2"]))
             .build()
 
-        let client = try startTest(syncConfig: syncConfig)
+        client = try startTest(syncConfig: syncConfig)
 
         var updExp: XCTestExpectation? = nil
         var sdkUpdateFired = false
@@ -723,7 +726,6 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         // Wait for db update
         wait(for: [dbExp1], timeout: 5)
-
         let split1Change01 = testDb.splitDao.getAll().filter { $0.name == "workm" }
 
         streamingHelper.pushKeepalive()
@@ -736,7 +738,6 @@ class FlagSetsIntegrationTests: XCTestCase {
         streamingHelper.pushSplitsMessage(TestingData.flagSetsNotification(pcn: 1))
 
         wait(for: [updExp!], timeout: 3)
-
         let split1Change02 = testDb.splitDao.getAll().filter { $0.name == "workm" }
 
         destroyTest(client: client)
@@ -776,7 +777,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(testDb)
         _ = builder.setHttpClient(httpClient)
-        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
 
         let client = factory?.client
 
@@ -799,9 +800,9 @@ class FlagSetsIntegrationTests: XCTestCase {
     }
 
     private func destroyTest(client: SplitClient?) {
+        guard let client = client else { return }
         let semaphore = DispatchSemaphore(value: 0)
-
-        client?.destroy(completion: {
+        client.destroy(completion: {
             _ = semaphore.signal()
         })
         semaphore.wait()
