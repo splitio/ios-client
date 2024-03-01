@@ -26,7 +26,6 @@ struct SplitsParallelDecoder: SplitsDecoder {
             return []
         }
 
-
         Logger.v("Using parallel decoding for \(list.count) splits")
         let start = Date.nowMillis()
         var splits = [Split]()
@@ -75,11 +74,45 @@ struct SplitsSerialDecoder: SplitsDecoder {
         return list.compactMap { json in
             do {
                 let plainJson = cipher?.decrypt(json) ?? json
-                return try Json.decodeFrom(json: plainJson, to: Split.self)
+                return try self.getSplit(plainJson)
+//                return try Json.decodeFrom(json: plainJson, to: Split.self)
             } catch {
+                print("Failed decoding feature flag json: \(json)")
                 Logger.v("Failed decoding feature flag json: \(json)")
             }
             return nil
         }
+    }
+
+    func getSplit(_ json: String) throws -> Split {
+
+        guard let data  = json.data(using: .utf8) else {
+            throw GenericError.unknown(message: "parsing pepe")
+        }
+
+        print("getSplit 1")
+        let jsonObj = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+        let name = jsonObj?["name"] as? String
+        let trafficType = jsonObj?["trafficTypeName"] as? String
+        let status = jsonObj?["status"] as? String
+        let setsArray = jsonObj?["sets"] as? [String]
+        let killed = jsonObj?["killed"] as? Bool
+        let sets = setsArray != nil ? Set<String>(setsArray ?? []) : nil
+
+        print("getSplit 2")
+
+        if let name = name, let trafficType = trafficType, let status = status,
+           let statusValue = Status.enumFromString(string: status),
+           let killed = killed {
+            return Split(name: name, trafficType: trafficType, status: statusValue, sets: sets, json: json, killed: killed)
+        }
+        print("1: \(name)")
+        print("2: \(trafficType)")
+        print("3: \(status)")
+        print("4: \(killed)")
+        Logger.e("Error decoding split")
+        throw GenericError.unknown(message: "Error decoding split")
+//        print("SPLIT NAME: \(name)")
+
     }
 }
