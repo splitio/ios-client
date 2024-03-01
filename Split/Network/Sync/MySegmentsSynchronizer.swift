@@ -57,7 +57,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func loadMySegmentsFromCache() {
-        DispatchQueue.global().async {
+        DispatchQueue.general.async {
             self.mySegmentsStorage.loadLocal()
             self.splitEventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
             TimeChecker.logInterval("Time until my segments loaded from cache")

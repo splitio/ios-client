@@ -44,6 +44,7 @@ class ThreadUtils {
 
         // Task execeds min amount per task.
         // Let's use all the cores
+        Logger.v("Using all Cores to process splits: \(coreCount)")
         return coreCount
     }
 }
@@ -86,7 +87,10 @@ struct TaskExecutor {
 
 extension DispatchQueue {
     static var critical: DispatchQueue = {
-        Logger.v("CRITICAL QUEUE CREATION")
-        return DispatchQueue(label: "split-general", qos: .userInteractive, attributes: .concurrent)
+        return DispatchQueue(label: "split-critical", qos: .userInteractive, attributes: .concurrent)
+    }()
+
+    static var general: DispatchQueue = {
+        return DispatchQueue(label: "split-general", attributes: .concurrent)
     }()
 }

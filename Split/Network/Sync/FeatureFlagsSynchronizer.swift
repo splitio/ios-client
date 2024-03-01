@@ -70,7 +70,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
     func load() {
         let splitsStorage = self.storageContainer.splitsStorage
-        DispatchQueue.global().async {
+        DispatchQueue.general.async {
             let start = Date.nowMillis()
             self.filterSplitsInCache()
             splitsStorage.loadLocal()

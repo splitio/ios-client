@@ -45,7 +45,7 @@ class DefaultSynchronizer: Synchronizer {
 
     private let splitEventsManager: SplitEventsManager
 
-    private let flushQueue = DispatchQueue(label: "split-flush-queue", target: DispatchQueue.global())
+    private let flushQueue = DispatchQueue(label: "split-flush-queue", target: DispatchQueue.general)
     private let byKeySynchronizer: ByKeySynchronizer
     private let defaultUserKey: String
 

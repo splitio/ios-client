@@ -33,7 +33,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     init(config: SplitClientConfig) {
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process", attributes: .concurrent)
-        self.dataAccessQueue = DispatchQueue(label: "split-evt-mngr-data", target: DispatchQueue.global())
+        self.dataAccessQueue = DispatchQueue(label: "split-evt-mngr-data", target: DispatchQueue.general)
         self.isStarted = false
         self.sdkReadyTimeStart = Date().unixTimestampInMiliseconds()
         self.readingRefreshTime = 300

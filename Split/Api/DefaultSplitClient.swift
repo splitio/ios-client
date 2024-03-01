@@ -239,7 +239,7 @@ extension DefaultSplitClient {
     }
 
     public func flush() {
-        DispatchQueue.global().async {
+        DispatchQueue.general.async {
             self.syncFlush()
         }
     }

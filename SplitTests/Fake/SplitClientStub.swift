@@ -10,6 +10,10 @@ import Foundation
 @testable import Split
 
 class SplitClientStub: SplitClient {
+    func on(event: SplitEvent, executeTask: SplitEventTask) {
+
+    }
+    
 
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
         return SplitConstants.control

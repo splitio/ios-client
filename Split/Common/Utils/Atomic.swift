@@ -9,7 +9,7 @@
 import Foundation
 
 final class Atomic<T> {
-//    private let queue = DispatchQueue(label: "split-atomic", target: DispatchQueue.global())
+//    private let queue = DispatchQueue(label: "split-atomic", target: DispatchQueue.general)
     private var currentValue: T
 
     private var lock = NSLock()
@@ -83,7 +83,7 @@ final class Atomic<T> {
 //}
 
 final class AtomicInt {
-    private let queue = DispatchQueue(label: "split-atomic-int", target: DispatchQueue.global())
+    private let queue = DispatchQueue(label: "split-atomic-int", target: DispatchQueue.general)
     private var curValue: Int
     private var lock = NSLock()
 
