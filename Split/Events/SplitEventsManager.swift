@@ -216,8 +216,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     private func executeTask(event: SplitEvent, task: SplitEventTask) {
-//        DispatchQueue.main.async {  [weak self] in
-//            guard let self = self else { return }
         let executor: SplitEventExecutorProtocol
         = SplitEventExecutorFactory.factory(event: event,
                                             task: task,
@@ -225,7 +223,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
         TimeChecker.logInterval("Triggering event: \(event.toString())")
         executor.execute()
-//        }
     }
 
     private func isTriggered(internal event: SplitInternalEvent) -> Bool {

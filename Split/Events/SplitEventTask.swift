@@ -7,13 +7,20 @@
 
 import Foundation
 
-open class SplitEventTask: NSObject {
-    public var event: SplitEvent?
-    @objc open func onPostExecute(client: SplitClient) {
-        debugPrint("* running superclass.onPostExecute. This method should be override by developers")
-    }
+//open class SplitEventTask: NSObject {
+//    public var event: SplitEvent?
+//    @objc open func onPostExecute(client: SplitClient) {
+//        debugPrint("* running superclass.onPostExecute. This method should be override by developers")
+//    }
+//
+//    @objc open func onPostExecuteView(client: SplitClient) {
+//        debugPrint("* running superclass.onPostExecuteView. This method should be override by developers")
+//    }
+//}
 
-    @objc open func onPostExecuteView(client: SplitClient) {
-        debugPrint("* running superclass.onPostExecuteView. This method should be override by developers")
-    }
+protocol SplitEventTask {
+    var event: SplitEvent { get }
+    var runInBackground: Bool { get }
+    var queue: DispatchQueue? { get }
+    func run()
 }

@@ -21,17 +21,22 @@ class SplitEventExecutorWithClient: SplitEventExecutorProtocol {
         guard let splitClient = client else {
             return
         }
-        let eventName = task.event?.toString() ?? "No name provided"
-        DispatchQueue.general.async {
-            TimeChecker.logInterval("Running event on general: \(eventName)")
-            self.task.onPostExecute(client: splitClient)
+        let eventName = task.event.toString()
+
+        if task.runInBackground {
+            let queue = task.queue ?? DispatchQueue.general
+            queue.async {
+                TimeChecker.logInterval("Running event on general: \(eventName)")
+                self.task.run()
+            }
+            return
         }
 
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             TimeChecker.logInterval("Running event on main: \(eventName)")
             // UI Updates
-            self.task.onPostExecuteView(client: splitClient)
-        })
+            self.task.run()
+        }
     }
 
 }

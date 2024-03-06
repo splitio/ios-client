@@ -289,6 +289,12 @@ class SplitEventsManagerTest: XCTestCase {
 }
 
 class TestTask: SplitEventTask {
+    var event: SplitEvent = .sdkReady
+
+    var runInBackground: Bool = false
+
+    var queue: DispatchQueue?
+    
     var taskTriggered = false
     let label: String
     var exp: XCTestExpectation?
@@ -296,12 +302,9 @@ class TestTask: SplitEventTask {
         self.exp = exp
         self.label = label
     }
-    override func onPostExecute(client: SplitClient) {
-        print("onPostExecute: \(self.label)")
-    }
 
-    override func onPostExecuteView(client: SplitClient) {
-        print("onPostExecuteView: \(self.label)")
+    func run() {
+        print("run: \(self.label)")
         taskTriggered = true
         if let exp = self.exp {
             exp.fulfill()
