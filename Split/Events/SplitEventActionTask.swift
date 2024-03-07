@@ -10,9 +10,9 @@ import Foundation
 class SplitEventActionTask: SplitEventTask {
 
     private var eventHandler: SplitAction?
+    private var queue: DispatchQueue?
     var event: SplitEvent
     var runInBackground: Bool = false
-    var queue: DispatchQueue? = nil
 
     init(action: @escaping SplitAction,
          event: SplitEvent,
@@ -23,6 +23,11 @@ class SplitEventActionTask: SplitEventTask {
         self.event = event
         self.runInBackground = runInBackground
         self.queue = queue
+    }
+
+    func takeQueue() -> DispatchQueue? {
+        defer { queue = nil }
+        return queue
     }
 
     func run() {

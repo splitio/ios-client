@@ -21,6 +21,6 @@ import Foundation
 protocol SplitEventTask {
     var event: SplitEvent { get }
     var runInBackground: Bool { get }
-    var queue: DispatchQueue? { get }
+    func takeQueue() -> DispatchQueue?
     func run()
 }
