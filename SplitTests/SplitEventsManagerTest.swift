@@ -289,6 +289,7 @@ class SplitEventsManagerTest: XCTestCase {
 }
 
 class TestTask: SplitEventTask {
+
     var event: SplitEvent = .sdkReady
 
     var runInBackground: Bool = false
@@ -301,6 +302,10 @@ class TestTask: SplitEventTask {
     init(exp: XCTestExpectation?, label: String = "") {
         self.exp = exp
         self.label = label
+    }
+
+    func takeQueue() -> DispatchQueue? {
+        return nil
     }
 
     func run() {

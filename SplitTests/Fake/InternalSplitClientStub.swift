@@ -47,6 +47,9 @@ class InternalSplitClientStub: InternalSplitClient {
 
     }
 
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
+    }
+
     func on(event: SplitEvent, execute action: @escaping SplitAction) {
     
     }

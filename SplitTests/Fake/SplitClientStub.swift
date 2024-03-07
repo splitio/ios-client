@@ -38,6 +38,9 @@ class SplitClientStub: SplitClient {
     func on(event: SplitEvent, execute action: @escaping SplitAction) {
     }
 
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
+    }
+
     func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
     }
 
