@@ -194,11 +194,15 @@ import Foundation
         }
 
         private func createUrl(string: String) -> URL? {
+#if swift(>=5.9)
             if #available(iOS 17.0, *) {
                 return URL(string: string, encodingInvalidCharacters: false)
             } else {
                 return URL(string: string)
             }
+#else
+            return URL(string: string)
+#endif
         }
 
         private func dummyEndpoint() -> URL {
