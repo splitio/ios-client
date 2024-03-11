@@ -67,7 +67,6 @@
 		3B6DEF5120EA6AE50067435E /* UnaryNumericMatcherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEBB20EA6AE20067435E /* UnaryNumericMatcherData.swift */; };
 		3B6DEF5220EA6AE50067435E /* UserDefinedSegmentMatcherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEBC20EA6AE20067435E /* UserDefinedSegmentMatcherData.swift */; };
 		3B6DEF5320EA6AE50067435E /* WhitelistMatcherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEBD20EA6AE20067435E /* WhitelistMatcherData.swift */; };
-		3B6DEF5620EA6AE50067435E /* SplitEventExecutorResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC220EA6AE20067435E /* SplitEventExecutorResources.swift */; };
 		3B6DEF5820EA6AE50067435E /* SplitEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC420EA6AE20067435E /* SplitEvent.swift */; };
 		3B6DEF5920EA6AE50067435E /* SplitEventsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC520EA6AE20067435E /* SplitEventsManager.swift */; };
 		3B6DEF5A20EA6AE50067435E /* SplitEventTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC620EA6AE20067435E /* SplitEventTask.swift */; };
@@ -555,7 +554,6 @@
 		956E429F271DCCE7008B4DB6 /* DefaultSplitFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE8320EA6AE00067435E /* DefaultSplitFactory.swift */; };
 		956E42A0271DCCE7008B4DB6 /* KeyValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7BCD21E68E2400ECC96A /* KeyValidator.swift */; };
 		956E42A1271DCCE7008B4DB6 /* PersistentImpressionsCountStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9505682B26837A43001D7B10 /* PersistentImpressionsCountStorage.swift */; };
-		956E42A2271DCCE7008B4DB6 /* SplitEventExecutorResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC220EA6AE20067435E /* SplitEventExecutorResources.swift */; };
 		956E42A3271DCCE7008B4DB6 /* ImpressionsCountRecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9577A8422683AD2900D92AE1 /* ImpressionsCountRecorderWorker.swift */; };
 		956E42A4271DCCE7008B4DB6 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		956E42A5271DCCE7008B4DB6 /* EqualToMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEED720EA6AE30067435E /* EqualToMatcher.swift */; };
@@ -960,7 +958,6 @@
 		95B02D1928D0BDC20030EC8B /* Splitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9820EA6AE00067435E /* Splitter.swift */; };
 		95B02D1A28D0BDC20030EC8B /* TreatmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F20F4527EA6A4300B5B30A /* TreatmentManager.swift */; };
 		95B02D1B28D0BDC20030EC8B /* DefaultTreatmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594677E122CFA7E300F94E58 /* DefaultTreatmentManager.swift */; };
-		95B02D1E28D0BDC20030EC8B /* SplitEventExecutorResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC220EA6AE20067435E /* SplitEventExecutorResources.swift */; };
 		95B02D2028D0BDC20030EC8B /* SplitEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC420EA6AE20067435E /* SplitEvent.swift */; };
 		95B02D2128D0BDC20030EC8B /* SplitEventsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEEC520EA6AE20067435E /* SplitEventsManager.swift */; };
 		95B02D2228D0BDC20030EC8B /* EventsManagerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */; };
@@ -1353,7 +1350,6 @@
 		3B6DEEBB20EA6AE20067435E /* UnaryNumericMatcherData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnaryNumericMatcherData.swift; sourceTree = "<group>"; };
 		3B6DEEBC20EA6AE20067435E /* UserDefinedSegmentMatcherData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefinedSegmentMatcherData.swift; sourceTree = "<group>"; };
 		3B6DEEBD20EA6AE20067435E /* WhitelistMatcherData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhitelistMatcherData.swift; sourceTree = "<group>"; };
-		3B6DEEC220EA6AE20067435E /* SplitEventExecutorResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEventExecutorResources.swift; sourceTree = "<group>"; };
 		3B6DEEC420EA6AE20067435E /* SplitEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEvent.swift; sourceTree = "<group>"; };
 		3B6DEEC520EA6AE20067435E /* SplitEventsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEventsManager.swift; sourceTree = "<group>"; };
 		3B6DEEC620EA6AE20067435E /* SplitEventTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitEventTask.swift; sourceTree = "<group>"; };
@@ -2328,7 +2324,6 @@
 		3B6DEEBE20EA6AE20067435E /* Events */ = {
 			isa = PBXGroup;
 			children = (
-				3B6DEEBF20EA6AE20067435E /* Executors */,
 				3B6DEEC420EA6AE20067435E /* SplitEvent.swift */,
 				3B6DEEC520EA6AE20067435E /* SplitEventsManager.swift */,
 				9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */,
@@ -2337,14 +2332,6 @@
 				3B6DEEC720EA6AE20067435E /* SplitInternalEvent.swift */,
 			);
 			path = Events;
-			sourceTree = "<group>";
-		};
-		3B6DEEBF20EA6AE20067435E /* Executors */ = {
-			isa = PBXGroup;
-			children = (
-				3B6DEEC220EA6AE20067435E /* SplitEventExecutorResources.swift */,
-			);
-			path = Executors;
 			sourceTree = "<group>";
 		};
 		3B6DEEC820EA6AE20067435E /* Assets */ = {
@@ -3757,7 +3744,6 @@
 				59FB7BCE21E68E2400ECC96A /* KeyValidator.swift in Sources */,
 				95118EF3281C551A00782F33 /* KeyStorage.swift in Sources */,
 				9505682C26837A43001D7B10 /* PersistentImpressionsCountStorage.swift in Sources */,
-				3B6DEF5620EA6AE50067435E /* SplitEventExecutorResources.swift in Sources */,
 				9577A8432683AD2900D92AE1 /* ImpressionsCountRecorderWorker.swift in Sources */,
 				3B6DEF6820EA6AE50067435E /* EqualToMatcher.swift in Sources */,
 				95F3F0242590D35F00084AF8 /* ImpressionsRecorderWorker.swift in Sources */,
@@ -4380,7 +4366,6 @@
 				956E429F271DCCE7008B4DB6 /* DefaultSplitFactory.swift in Sources */,
 				956E42A0271DCCE7008B4DB6 /* KeyValidator.swift in Sources */,
 				956E42A1271DCCE7008B4DB6 /* PersistentImpressionsCountStorage.swift in Sources */,
-				956E42A2271DCCE7008B4DB6 /* SplitEventExecutorResources.swift in Sources */,
 				956E42A3271DCCE7008B4DB6 /* ImpressionsCountRecorderWorker.swift in Sources */,
 				956E42A4271DCCE7008B4DB6 /* (null) in Sources */,
 				950D0C0127C5435B00E617EB /* Stopwatch.swift in Sources */,
@@ -4754,7 +4739,6 @@
 				95B02D1928D0BDC20030EC8B /* Splitter.swift in Sources */,
 				95B02D1A28D0BDC20030EC8B /* TreatmentManager.swift in Sources */,
 				95B02D1B28D0BDC20030EC8B /* DefaultTreatmentManager.swift in Sources */,
-				95B02D1E28D0BDC20030EC8B /* SplitEventExecutorResources.swift in Sources */,
 				95B02D2028D0BDC20030EC8B /* SplitEvent.swift in Sources */,
 				95B02D2128D0BDC20030EC8B /* SplitEventsManager.swift in Sources */,
 				956A7E1E2971EA250080D53C /* SplitsDecoder.swift in Sources */,
