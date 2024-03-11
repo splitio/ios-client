@@ -9,6 +9,7 @@
 import Foundation
 
 protocol SplitEventsManager: AnyObject {
+    var executorResources: SplitEventExecutorResources { get }
     func register(event: SplitEvent, task: SplitEventTask)
     func notifyInternalEvent(_ event: SplitInternalEvent)
     func start()
@@ -17,6 +18,7 @@ protocol SplitEventsManager: AnyObject {
 }
 
 class DefaultSplitEventsManager: SplitEventsManager {
+    let executorResources: SplitEventExecutorResources
     private let readingRefreshTime: Int
 
     private var sdkReadyTimeStart: Int64
