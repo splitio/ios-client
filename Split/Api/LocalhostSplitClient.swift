@@ -103,17 +103,21 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
     }
 
-    public func on(event: SplitEvent, runInBackground: Bool = false, 
-                   queue: DispatchQueue? = nil, execute action: @escaping SplitAction) {
-        if let eventsManager = self.eventsManager {
-            let task = SplitEventActionTask(action: action, event: event,
-                                            runInBackground: runInBackground, queue: queue)
-            eventsManager.register(event: event, task: task)
-        }
+    public func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
+        on(event: event, runInBackground: false, queue: queue, execute: action)
     }
 
     public func on(event: SplitEvent, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: false, queue: nil, execute: action)
+    }
+
+    private func on(event: SplitEvent, runInBackground: Bool,
+                    queue: DispatchQueue?, execute action: @escaping SplitAction) {
+        if let eventsManager = self.eventsManager {
+            let task = SplitEventActionTask(action: action, event: event,
+                                            runInBackground: true, queue: queue)
+            eventsManager.register(event: event, task: task)
+        }
     }
 
     public func track(trafficType: String, eventType: String) -> Bool {

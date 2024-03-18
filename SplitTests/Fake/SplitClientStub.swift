@@ -35,6 +35,9 @@ class SplitClientStub: SplitClient {
         return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
     
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
+    }
+
     func on(event: SplitEvent, execute action: @escaping SplitAction) {
     }
 

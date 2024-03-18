@@ -67,10 +67,15 @@ extension DefaultSplitClient {
         on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
     }
 
-    public func on(event: SplitEvent, runInBackground: Bool = false,
-                   queue: DispatchQueue? = nil, execute action: @escaping SplitAction) {
+    public func on(event: SplitEvent,
+                   queue: DispatchQueue, execute action: @escaping SplitAction) {
+        on(event: event, runInBackground: true, execute: action)
+    }
+
+    private func on(event: SplitEvent, runInBackground: Bool,
+                   queue: DispatchQueue?, execute action: @escaping SplitAction) {
         let task = SplitEventActionTask(action: action, event: event,
-                                        runInBackground: runInBackground, queue: queue)
+                                        runInBackground: true, queue: queue)
         task.event = event
         on(event: event, executeTask: task)
     }

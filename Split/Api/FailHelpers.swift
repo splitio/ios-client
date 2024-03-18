@@ -13,14 +13,6 @@ import Foundation
 ///
 
 class FailedClient: SplitClient {
-    func on(event: SplitEvent, runInBackground: Bool,
-                   execute action: @escaping SplitAction) {
-        on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
-    }
-
-    func on(event: SplitEvent, runInBackground: Bool = false,
-            queue: DispatchQueue? = nil, execute action: @escaping SplitAction) {
-    }
 
     func getTreatment(_ split: String) -> String {
         return SplitConstants.control
@@ -47,6 +39,14 @@ class FailedClient: SplitClient {
     }
 
     func on(event: SplitEvent, execute action: @escaping SplitAction) {
+    }
+
+    func on(event: SplitEvent, runInBackground: Bool,
+                   execute action: @escaping SplitAction) {
+    }
+
+    func on(event: SplitEvent,
+            queue: DispatchQueue, execute action: @escaping SplitAction) {
     }
 
     func track(trafficType: String, eventType: String) -> Bool {
