@@ -38,7 +38,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
         return count
     }
 
-    private let queue = DispatchQueue(label: "split-notification-keeper", target: DispatchQueue.global())
+    private let queue = DispatchQueue(label: "split-notification-keeper", target: DispatchQueue.general)
     private let broadcasterChannel: SyncEventBroadcaster
     private let telemetryProducer: TelemetryRuntimeProducer?
 

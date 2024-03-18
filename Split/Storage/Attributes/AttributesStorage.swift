@@ -30,9 +30,11 @@ class DefaultAttributesStorage: AttributesStorage {
     }
 
     func loadLocal(forKey key: String) {
+        let start = Date.nowMillis()
         if let attributes = persistentStorage?.getAll(forKey: key) {
             inMemoryAttributes.set(attributes, forKey: key)
         }
+        TimeChecker.logInterval("Time to load attributes from cache", startTime: start)
     }
 
     func set(_ attributes: [String: Any], forKey key: String) {

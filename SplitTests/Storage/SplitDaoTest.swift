@@ -155,22 +155,10 @@ class SplitDaoTest: XCTestCase {
     }
     
     private func createSplits() -> [Split] {
-        var splits = [Split]()
-        for i in 0..<10 {
-            let split = Split()
-            split.name = "feat_\(i)"
-            split.trafficTypeName = "tt_\(i)"
-            split.status = .active
-            splits.append(split)
-        }
-        return splits
+        return SplitTestHelper.createSplits(namePrefix: "feat_", count: 10)
     }
     
     private func newSplit(name: String, trafficType: String) -> Split {
-        let split = Split()
-        split.name = name
-        split.trafficTypeName = trafficType
-        split.status = .active
-        return split
+        return SplitTestHelper.newSplit(name: name, trafficType: trafficType)
     }
 }

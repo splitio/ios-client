@@ -139,8 +139,6 @@ class SplitsUpdateWorkerTest: XCTestCase {
     }
 
     private func createSplit(name: String) -> Split {
-        let split = Split()
-        split.name = name
-        return split
+        return Split(name: name, trafficType: "user", status: .active, sets: nil, json: "")
     }
 }
