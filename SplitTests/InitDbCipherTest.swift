@@ -21,7 +21,7 @@ class InitDbCipherTest: XCTestCase {
         GlobalSecureStorage.testStorage = secureStorage
         dbHelper = createDbHelper()
         db = TestingHelper.createTestDatabase(name: "test",
-                                              queue: DispatchQueue.global(),
+                                              queue: DispatchQueue.test,
                                               helper: dbHelper)
 
     }

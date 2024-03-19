@@ -87,7 +87,6 @@ class LocalhostClientManager: SplitClientManager {
         
         let newGroup = LocalhostComponentsGroup(client: newClient, eventsManager: newEventsManager)
         clients.setValue(newGroup, forKey: key.matchingKey)
-        newEventsManager.executorResources.client = newClient
         eventsManagerCoordinator.add(newEventsManager, forKey: key)
         newEventsManager.notifyInternalEvent(.mySegmentsUpdated)
 

@@ -139,7 +139,6 @@ class DefaultClientManager: SplitClientManager {
         addToByKeyRegistry(key: key,
                            client: client,
                            eventsManager: eventsManager)
-        eventsManager.executorResources.client = client
         eventsManagerCoordinator.add(eventsManager, forKey: key)
 
         if shouldStartSyncKey() {

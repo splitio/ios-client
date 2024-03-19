@@ -9,7 +9,6 @@
 import Foundation
 
 protocol SplitEventsManager: AnyObject {
-    var executorResources: SplitEventExecutorResources { get }
     func register(event: SplitEvent, task: SplitEventTask)
     func notifyInternalEvent(_ event: SplitInternalEvent)
     func start()
@@ -18,7 +17,6 @@ protocol SplitEventsManager: AnyObject {
 }
 
 class DefaultSplitEventsManager: SplitEventsManager {
-    let executorResources: SplitEventExecutorResources
     private let readingRefreshTime: Int
 
     private var sdkReadyTimeStart: Int64
@@ -39,7 +37,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
         self.readingRefreshTime = 300
         self.triggered = [SplitInternalEvent]()
         self.eventsQueue = DefaultInternalEventBlockingQueue()
-        self.executorResources = SplitEventExecutorResources()
         self.executionTimes = [String: Int]()
         registerMaxAllowedExecutionTimesPerEvent()
 
@@ -216,16 +213,25 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     private func executeTask(event: SplitEvent, task: SplitEventTask) {
-//        DispatchQueue.main.async {  [weak self] in
-//            guard let self = self else { return }
-        let executor: SplitEventExecutorProtocol
-        = SplitEventExecutorFactory.factory(event: event,
-                                            task: task,
-                                            resources: self.executorResources)
 
-        TimeChecker.logInterval("Triggering event: \(event.toString())")
-        executor.execute()
-//        }
+        let eventName = task.event.toString()
+
+        if task.runInBackground {
+            TimeChecker.logInterval("Previous to run \(eventName) in Background")
+
+            let queue = task.takeQueue() ?? DispatchQueue.general
+            queue.async {
+                TimeChecker.logInterval("Running \(eventName) in Background queue \(queue)")
+                task.run()
+            }
+            return
+        }
+
+        DispatchQueue.main.async {
+            TimeChecker.logInterval("Running event on main: \(eventName)")
+            // UI Updates
+            task.run()
+        }
     }
 
     private func isTriggered(internal event: SplitInternalEvent) -> Bool {

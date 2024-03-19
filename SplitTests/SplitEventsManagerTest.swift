@@ -28,7 +28,6 @@ class SplitEventsManagerTest: XCTestCase {
         let client = SplitClientStub()
         let config: SplitClientConfig = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
-        eventManager.executorResources.client = client
         let updatedTask = TestTask(exp: nil)
         eventManager.register(event: .sdkUpdated, task: updatedTask)
         eventManager.start()
@@ -95,7 +94,6 @@ class SplitEventsManagerTest: XCTestCase {
         config.sdkReadyTimeOut = 1000
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         let client = SplitClientStub()
-        eventManager.executorResources.client = client
         eventManager.start()
 
         let cacheExp = XCTestExpectation()
@@ -123,7 +121,6 @@ class SplitEventsManagerTest: XCTestCase {
         config.sdkReadyTimeOut = 1000
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         let client = SplitClientStub()
-        eventManager.executorResources.client = client
         eventManager.start()
 
         let timeoutExp = XCTestExpectation()
@@ -142,7 +139,6 @@ class SplitEventsManagerTest: XCTestCase {
         config.sdkReadyTimeOut = 1000
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         let client = SplitClientStub()
-        eventManager.executorResources.client = client
         eventManager.start()
 
         let expectationTimeout = XCTestExpectation(description: "SDK Readky triggered")
@@ -173,7 +169,6 @@ class SplitEventsManagerTest: XCTestCase {
         let client =  SplitClientStub()
         let config: SplitClientConfig = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
-        eventManager.executorResources.client = client
         eventManager.start()
 
         let readyExp = XCTestExpectation()
@@ -201,7 +196,6 @@ class SplitEventsManagerTest: XCTestCase {
         let client =  SplitClientStub()
         let config: SplitClientConfig = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
-        eventManager.executorResources.client = client
         eventManager.start()
         let readyExp = XCTestExpectation()
         let updatedTask = sdkTask(exp: sdkUpdatedExp)
@@ -229,7 +223,6 @@ class SplitEventsManagerTest: XCTestCase {
         let client =  SplitClientStub()
         let config: SplitClientConfig = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
-        eventManager.executorResources.client = client
         eventManager.start()
         let readyExp = XCTestExpectation()
         let sdkUpdatedExp = XCTestExpectation()
@@ -258,7 +251,6 @@ class SplitEventsManagerTest: XCTestCase {
         let config: SplitClientConfig = SplitClientConfig()
         config.sdkReadyTimeOut = Int(timeout) - 1
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
-        eventManager.executorResources.client = client
         let timeOutTask = sdkTask(exp: sdkTiemoutExp)
         let updatedTask = sdkTask(exp: sdkTiemoutExp)
         eventManager.register(event: .sdkUpdated, task: updatedTask)
@@ -289,6 +281,13 @@ class SplitEventsManagerTest: XCTestCase {
 }
 
 class TestTask: SplitEventTask {
+
+    var event: SplitEvent = .sdkReady
+
+    var runInBackground: Bool = false
+
+    var queue: DispatchQueue?
+    
     var taskTriggered = false
     let label: String
     var exp: XCTestExpectation?
@@ -296,12 +295,13 @@ class TestTask: SplitEventTask {
         self.exp = exp
         self.label = label
     }
-    override func onPostExecute(client: SplitClient) {
-        print("onPostExecute: \(self.label)")
+
+    func takeQueue() -> DispatchQueue? {
+        return nil
     }
 
-    override func onPostExecuteView(client: SplitClient) {
-        print("onPostExecuteView: \(self.label)")
+    func run() {
+        print("run: \(self.label)")
         taskTriggered = true
         if let exp = self.exp {
             exp.fulfill()
