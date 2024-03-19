@@ -268,10 +268,8 @@ class SplitsStorageTest: XCTestCase {
     private func getTestSnapshot(count: Int = 10, sets: [[String]]? = nil) -> SplitsSnapshot {
         var splits = [Split]()
         for i in 0..<count {
-            let split = Split()
-            split.name = "s\(i)"
-            split.trafficTypeName = "t1"
-            split.status = .active
+            let split = Split(name: "s\(i)", trafficType: "t1", status: .active, sets: nil, json: "")
+            split.isParsed = true
             if let sets = sets {
                 sets.forEach { fset in
                     split.sets = fset.asSet()
@@ -294,9 +292,7 @@ class SplitsStorageTest: XCTestCase {
                           status: Status = .active,
                           trafficType: String = "t1",
                           sets: [String]? = nil) -> Split {
-        let split = Split()
-        split.name = name
-        split.trafficTypeName = trafficType
+        let split = SplitTestHelper.newSplit(name: name, trafficType: trafficType)
         split.status = status
         if let sets = sets {
             split.sets = sets.asSet()

@@ -25,6 +25,7 @@ public typealias SplitAction = () -> Void
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult]
 
     func on(event: SplitEvent, execute action: @escaping SplitAction)
+    func on(event: SplitEvent, executeTask: SplitEventTask)
 
     // MARK: Track feature
     func track(trafficType: String, eventType: String) -> Bool

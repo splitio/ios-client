@@ -55,4 +55,11 @@ extension Date {
     static func interval(millis: Int64) -> Int64 {
         return Date.nowMillis() - millis
     }
+
+    static func nowLabel() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd-MM-yyyy HH:mm:ss.SSS"
+        return formatter.string(from: Date())
+    }
+
 }

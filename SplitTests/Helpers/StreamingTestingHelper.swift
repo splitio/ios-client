@@ -40,13 +40,18 @@ class StreamingTestingHelper {
     }
 
     func pushKeepalive() {
-        print("Keep \(streamingBinding)")
+        print("Streaming helper: Keep alive \(streamingBinding)")
         streamingBinding?.push(message: TestingData.keepalive)
     }
 
     private func pushMessage(_ text: String, template: String) {
         var msg = text.replacingOccurrences(of: "\n", with: " ")
         msg = template.replacingOccurrences(of: kDataField, with: msg)
-        streamingBinding?.push(message: msg)
+        if let strBin = self.streamingBinding {
+            print("Streaming helper: pushing message")
+            strBin.push(message: msg)
+        } else {
+            print("Streaming helper: binding is null")
+        }
     }
 }

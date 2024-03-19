@@ -52,6 +52,7 @@ class SplitsDecoderTest: XCTestCase {
             let news = FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_1")!.splits
             splits.append(contentsOf: news.compactMap { split in
                 split.name = UUID().uuidString
+                split.killed = false
                 return try? Json.encodeToJson(split)
             })
         }

@@ -33,7 +33,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     init(config: SplitClientConfig) {
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process", attributes: .concurrent)
-        self.dataAccessQueue = DispatchQueue(label: "split-evt-mngr-data", target: DispatchQueue.global())
+        self.dataAccessQueue = DispatchQueue(label: "split-evt-mngr-data", target: DispatchQueue.general)
         self.isStarted = false
         self.sdkReadyTimeStart = Date().unixTimestampInMiliseconds()
         self.readingRefreshTime = 300
@@ -216,14 +216,16 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     private func executeTask(event: SplitEvent, task: SplitEventTask) {
-        DispatchQueue.main.async {  [weak self] in
-            guard let self = self else { return }
-            let executor: SplitEventExecutorProtocol
-            = SplitEventExecutorFactory.factory(event: event,
-                                                task: task,
-                                                resources: self.executorResources)
-            executor.execute()
-        }
+//        DispatchQueue.main.async {  [weak self] in
+//            guard let self = self else { return }
+        let executor: SplitEventExecutorProtocol
+        = SplitEventExecutorFactory.factory(event: event,
+                                            task: task,
+                                            resources: self.executorResources)
+
+        TimeChecker.logInterval("Triggering event: \(event.toString())")
+        executor.execute()
+//        }
     }
 
     private func isTriggered(internal event: SplitInternalEvent) -> Bool {

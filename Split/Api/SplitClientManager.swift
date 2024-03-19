@@ -71,19 +71,21 @@ class DefaultClientManager: SplitClientManager {
         (defaultClient as? TelemetrySplitClient)?.initStopwatch = telemetryStopwatch
         eventsManagerCoordinator.start()
 
-        defaultClient?.on(event: .sdkReadyFromCache) {
-            DispatchQueue.global().async { [weak self] in
-                if let self = self {
-                    self.telemetryProducer?.recordTimeUntilReadyFromCache(self.telemetryStopwatch?.interval() ?? 0)
+        if let producer = telemetryProducer {
+            defaultClient?.on(event: .sdkReadyFromCache) {
+                DispatchQueue.general.async { [weak self] in
+                    if let self = self {
+                        producer.recordTimeUntilReadyFromCache(self.telemetryStopwatch?.interval() ?? 0)
+                    }
                 }
             }
-        }
 
-        defaultClient?.on(event: .sdkReady) {
-            DispatchQueue.global().async { [weak self] in
-                if let self = self {
-                    self.telemetryProducer?.recordTimeUntilReady(self.telemetryStopwatch?.interval() ?? 0)
-                    self.synchronizer.synchronizeTelemetryConfig()
+            defaultClient?.on(event: .sdkReady) {
+                DispatchQueue.general.async { [weak self] in
+                    if let self = self {
+                        producer.recordTimeUntilReady(self.telemetryStopwatch?.interval() ?? 0)
+                        self.synchronizer.synchronizeTelemetryConfig()
+                    }
                 }
             }
         }

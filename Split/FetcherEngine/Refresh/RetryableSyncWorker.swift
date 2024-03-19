@@ -30,7 +30,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     private var reconnectBackoffCounter: ReconnectBackoffCounter
     private weak var splitEventsManager: SplitEventsManager?
     private var isRunning: Atomic<Bool> = Atomic(false)
-    private let syncQueue = DispatchQueue.global()
+    private let syncQueue = DispatchQueue.general
 
     init(eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {

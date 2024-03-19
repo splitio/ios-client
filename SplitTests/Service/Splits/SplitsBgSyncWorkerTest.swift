@@ -98,9 +98,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
     }
 
     private func createSplit(name: String) -> Split {
-        let split = Split()
-        split.name = name
-        return split
+        return SplitTestHelper.newSplit(name: name, trafficType: "tt1")
     }
 
 }
