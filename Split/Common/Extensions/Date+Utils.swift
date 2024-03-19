@@ -52,7 +52,7 @@ extension Date {
         return Date.nowMillis() - millis
     }
 
-    private static var formatter = {
+    private static var formatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd-MM-yyyy HH:mm:ss.SSS"
         return formatter
