@@ -13,6 +13,10 @@ import Foundation
 ///
 
 class FailedClient: SplitClient {
+    func on(event: SplitEvent, executeTask: SplitEventTask) {
+        
+    }
+    
 
     func getTreatment(_ split: String) -> String {
         return SplitConstants.control

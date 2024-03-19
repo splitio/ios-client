@@ -29,7 +29,7 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
         var requestResult: DataResult<SplitChange>?
         let startTime = Date.nowMillis()
         restClient.getSplitChanges(since: since, till: till, headers: headers) { result in
-            Logger.v("Time to fetch feature flags: \(Date.interval(millis: startTime))")
+            TimeChecker.logInterval("Time to fetch feature flags", startTime: startTime)
             requestResult = result
             semaphore.signal()
         }

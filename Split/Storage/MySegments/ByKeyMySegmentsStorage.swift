@@ -27,7 +27,9 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
     }
 
     func loadLocal() {
+        let start = Date.nowMillis()
         mySegmentsStorage.loadLocal(forKey: userKey)
+        TimeChecker.logInterval("Time to load segments from cache", startTime: start)
     }
 
     func getAll() -> Set<String> {

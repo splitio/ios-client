@@ -20,7 +20,7 @@ class DefaultPeriodicRecorderWorker: PeriodicRecorderWorker {
 
     private let recorderWorker: RecorderWorker
     private var fetchTimer: PeriodicTimer
-    private let fetchQueue = DispatchQueue.global()
+    private let fetchQueue = DispatchQueue.general
     private var isPaused: Atomic<Bool> = Atomic(false)
 
     init(timer: PeriodicTimer,

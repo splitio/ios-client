@@ -127,4 +127,8 @@ class InternalSplitClientStub: InternalSplitClient {
 
     func destroy(completion: (() -> Void)?) {
     }
+
+    func on(event: SplitEvent, executeTask: SplitEventTask) {
+
+    }
 }

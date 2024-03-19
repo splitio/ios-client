@@ -175,10 +175,9 @@ class EventValidatorTests: XCTestCase {
     }
 
     private func newSplit(trafficType: String, status: Status = .active) -> Split {
-        let split = Split()
-        split.name = UUID().uuidString
-        split.trafficTypeName = trafficType
+        let split = SplitTestHelper.newSplit(name: UUID().uuidString, trafficType: trafficType)
         split.status = status
+        split.isParsed = true
         return split
     }
 
