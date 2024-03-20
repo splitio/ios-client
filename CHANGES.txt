@@ -1,5 +1,12 @@
-2.24.5: (Feb 21, 2024)
-- Improved Ready From Cache event triggering time
+2.24.5: (Mar 20, 2024)
+- Improved Ready From Cache event triggering time by applying the following:
+  - Triggering feature flags fetch after loading local data
+  - Replacing Codable JSON parsing by JSONSerializable
+  - Allowing run SDK events handler in a custom DispatchQueue
+
+2.24.4: (Feb 16, 2024)
+- Fixed issue when sending telemetry stats
+- Fixed issue with CoreData scopes when using SPM to link the SDK
 
 2.24.3: (Feb 6, 2024)
 - Renamed internal class to avoid conflicts when using SDK as an XCFramework.
