@@ -105,21 +105,17 @@ struct TestingHelper {
                             trafficType: String = "t1",
                             status: Status = .active,
                             sets: Set<String>? = nil) -> Split {
-        let split = Split()
-        split.name = name
-        split.trafficTypeName = trafficType
-        split.status = status
-        split.sets = sets
+
+        let split = Split(name: name, trafficType: trafficType, status: status, sets: sets, json: "")
+        split.isParsed = true
         return split
     }
 
     static func createSplits() -> [Split] {
         var splits = [Split]()
         for i in 0..<10 {
-            let split = Split()
-            split.name = "feat_\(i)"
-            split.trafficTypeName = "tt_\(i)"
-            split.status = .active
+            let split = Split(name: "feat_\(i)", trafficType: "tt_\(i)", status: .active, sets: nil, json: "")
+            split.isParsed = true
             splits.append(split)
         }
         return splits

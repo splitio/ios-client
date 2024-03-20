@@ -15,7 +15,6 @@ class SplitEventsManagerMock: SplitEventsManager {
     var timeoutExp: XCTestExpectation?
     var readyExp: XCTestExpectation?
 
-    let executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
     var isSdkReadyFired: Bool {
         return isSegmentsReadyFired && isSplitsReadyFired
     }

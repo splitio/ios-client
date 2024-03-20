@@ -57,14 +57,36 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
 
 // MARK: Events
 extension DefaultSplitClient {
+
     public func on(event: SplitEvent, execute action: @escaping SplitAction) {
+        on(event: event, runInBackground: false, queue: nil, execute: action)
+    }
+
+    public func on(event: SplitEvent, runInBackground: Bool,
+                   execute action: @escaping SplitAction) {
+        on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
+    }
+
+    public func on(event: SplitEvent,
+                   queue: DispatchQueue, execute action: @escaping SplitAction) {
+        on(event: event, runInBackground: true, execute: action)
+    }
+
+    private func on(event: SplitEvent, runInBackground: Bool,
+                   queue: DispatchQueue?, execute action: @escaping SplitAction) {
+        let task = SplitEventActionTask(action: action, event: event,
+                                        runInBackground: true, queue: queue)
+        task.event = event
+        on(event: event, executeTask: task)
+    }
+
+    private func on(event: SplitEvent, executeTask task: SplitEventTask) {
         if  event != .sdkReadyFromCache,
             eventsManager.eventAlreadyTriggered(event: event) {
             Logger.w("A handler was added for \(event.toString()) on the SDK, " +
                      "which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
         }
-        let task = SplitEventActionTask(action: action)
         eventsManager.register(event: event, task: task)
     }
 }
@@ -234,7 +256,7 @@ extension DefaultSplitClient {
     }
 
     public func flush() {
-        DispatchQueue.global().async {
+        DispatchQueue.general.async {
             self.syncFlush()
         }
     }

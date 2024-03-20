@@ -12,8 +12,9 @@ class ThreadUtils {
     static func delay(seconds: Double) {
         // Using this method to avoid blocking the
         // thread using sleep
+        let queue = DispatchQueue(label: "thread-utils", target: .global())
         let semaphore = DispatchSemaphore(value: 0)
-        DispatchQueue.global().asyncAfter(deadline: .now() + seconds) {
+        queue.asyncAfter(deadline: .now() + seconds) {
             semaphore.signal()
         }
         semaphore.wait()
@@ -44,6 +45,7 @@ class ThreadUtils {
 
         // Task execeds min amount per task.
         // Let's use all the cores
+        Logger.v("Using all Cores to process splits: \(coreCount)")
         return coreCount
     }
 }
@@ -82,4 +84,14 @@ struct TaskExecutor {
             }
         }
     }
+}
+
+extension DispatchQueue {
+    static var critical: DispatchQueue = {
+        return DispatchQueue(label: "split-critical", qos: .userInteractive, attributes: .concurrent)
+    }()
+
+    static var general: DispatchQueue = {
+        return DispatchQueue(label: "split-general", attributes: .concurrent)
+    }()
 }

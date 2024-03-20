@@ -9,5 +9,7 @@
 import Foundation
 
 extension DispatchQueue {
-    static let test = DispatchQueue(label: "split-test-queue", attributes: .concurrent)
+    static let test = { DispatchQueue(label: "split-test-queue", attributes: .concurrent) }()
+
+    static let reqManager = { DispatchQueue(label: "split-reqman-queue", attributes: .concurrent) }()
 }

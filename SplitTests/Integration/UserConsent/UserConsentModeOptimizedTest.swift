@@ -102,6 +102,7 @@ class UserConsentModeOptimizedTest: XCTestCase {
         semaphore.wait()
     }
 
+    // test crash
     func testUserConsentUnknownThenGranted() {
         let factory = createFactory(userConsent: .unknown)
         let readyExp = XCTestExpectation()

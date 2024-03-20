@@ -22,7 +22,7 @@ class DefaultTelemetrySynchronizer: TelemetrySynchronizer {
     private let configRecorderWorker: RecorderWorker
     private let statsRecorderWorker: RecorderWorker
     private let periodicStatsRecorderWorker: PeriodicRecorderWorker
-    private let syncQueue = DispatchQueue.global()
+    private let syncQueue = DispatchQueue.general
 
     init(configRecorderWorker: RecorderWorker,
          statsRecorderWorker: RecorderWorker,

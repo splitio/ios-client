@@ -52,7 +52,7 @@ class HttpRequestManagerTestDispatcher: HttpRequestManager {
     private var streamingBinding = [TestStreamResponseBinding]()
     private var dispatcher: HttpClientTestDispatcher
     private var streamingHandler: TestStreamResponseBindingHandler
-    private var queue = DispatchQueue(label: "requestManagerDispatcher", attributes: .concurrent)
+    private var queue = DispatchQueue.reqManager
 
     init(dispatcher: @escaping HttpClientTestDispatcher,
          streamingHandler: @escaping TestStreamResponseBindingHandler) {

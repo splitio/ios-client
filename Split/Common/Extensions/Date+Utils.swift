@@ -16,13 +16,9 @@ extension Date {
     }
 
     public static func dateFromInt(number: Int64) -> Date {
-
         let time = TimeInterval(number)
-
         return Date(timeIntervalSince1970: time)
-
     }
-
 }
 
 extension Date {
@@ -55,4 +51,15 @@ extension Date {
     static func interval(millis: Int64) -> Int64 {
         return Date.nowMillis() - millis
     }
+
+    private static var formatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd-MM-yyyy HH:mm:ss.SSS"
+        return formatter
+    }()
+
+    static func nowLabel() -> String {
+        return formatter.string(from: Date())
+    }
+
 }
