@@ -124,6 +124,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
+                print("Changes hit: \(self.splitChangesHit)")
                 if self.splitChangesHit < 3 {
                     let change = self.pollingFlagSetsHits[self.splitChangesHit]
                     if self.splitChangesHit > 0 {
@@ -641,7 +642,7 @@ class FlagSetsIntegrationTests: XCTestCase {
                                                       sets2: ["set_3"],
                                                       sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 1, till: 1,
+                                getChangeFlagSetsJson(since: 2, till: 2,
                                                       sets1: ["p_set_1", "set_2"],
                                                       sets2: ["set_3"],
                                                       sets3: ["set_4"])!
@@ -657,9 +658,9 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         let client = try startTest(syncConfig: syncConfig)
 
-        var sdkUpdateFired = false
+        var sdkUpdateFiredCount = 0
         client?.on(event: .sdkUpdated) {
-            sdkUpdateFired = true
+            sdkUpdateFiredCount+=1
         }
 
         // Wait for db update
@@ -671,7 +672,8 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         // Wait for db update
         wait(for: [pollingExps![0]], timeout: 3)
-
+        ThreadUtils.delay(seconds: 2)
+        let updateCountBeforeNot=sdkUpdateFiredCount
         // Update sets again (set_1, set_2)
         streamingHelper.pushSplitsMessage(TestingData.kFlagSetsNotification2)
 
@@ -684,7 +686,8 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         XCTAssertEqual(0, split1Change01.count)
         XCTAssertEqual(0, split1Change02.count)
-        XCTAssertFalse(sdkUpdateFired)
+        XCTAssertEqual(1, updateCountBeforeNot)
+        XCTAssertEqual(1, sdkUpdateFiredCount)
     }
 
     var client: SplitClient!
