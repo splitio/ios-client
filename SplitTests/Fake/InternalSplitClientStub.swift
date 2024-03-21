@@ -43,8 +43,13 @@ class InternalSplitClientStub: InternalSplitClient {
         return ["": SplitResult(treatment: SplitConstants.control)]
     }
     
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
+    }
+
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
+    }
+
     func on(event: SplitEvent, execute action: @escaping SplitAction) {
-    
     }
     
     func track(trafficType: String, eventType: String) -> Bool {
@@ -126,5 +131,9 @@ class InternalSplitClientStub: InternalSplitClient {
     }
 
     func destroy(completion: (() -> Void)?) {
+    }
+
+    func on(event: SplitEvent, executeTask: SplitEventTask) {
+
     }
 }

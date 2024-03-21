@@ -24,7 +24,7 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
         setup()
     }
 
-    func loadAndSynchronize() {
+    func load() {
     }
 
     func synchronize() {

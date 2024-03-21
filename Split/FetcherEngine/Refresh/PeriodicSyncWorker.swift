@@ -25,7 +25,7 @@ class DefaultPeriodicTimer: PeriodicTimer {
         self.deadLineInSecs = deadlineInSecs
         self.intervalInSecs = intervalInSecs
         self.isRunning = Atomic(false)
-        fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
+        fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.general)
         self.fetchTimer.resume()
     }
 
@@ -73,7 +73,7 @@ protocol PeriodicSyncWorker {
 class BasePeriodicSyncWorker: PeriodicSyncWorker {
 
     private var fetchTimer: PeriodicTimer
-    private let fetchQueue = DispatchQueue.global()
+    private let fetchQueue = DispatchQueue.general
     private weak var eventsManager: SplitEventsManager?
     private var isPaused: Atomic<Bool> = Atomic(false)
 

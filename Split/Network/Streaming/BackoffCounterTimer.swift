@@ -16,7 +16,7 @@ protocol BackoffCounterTimer {
 class DefaultBackoffCounterTimer: BackoffCounterTimer {
     private let reconnectBackoffCounter: ReconnectBackoffCounter
     private let queue = DispatchQueue(label: "split-backoff-timer")
-    private let timersQueue = DispatchQueue.global()
+    private let timersQueue = DispatchQueue.general
     private var workItem: DispatchWorkItem?
     private var isScheduled: Atomic<Bool> = Atomic(false)
 

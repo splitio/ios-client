@@ -14,7 +14,6 @@ class SplitEventsManagerStub: SplitEventsManager {
     var splitsLoadedEventFiredCount = 0
     var splitsKilledEventFiredCount = 0
     var splitsUpdatedEventFiredCount = 0
-    var executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
     var mySegmentsLoadedEventFiredCount = 0
     var mySegmentsLoadedEventExp: XCTestExpectation?
     var startCalled = false

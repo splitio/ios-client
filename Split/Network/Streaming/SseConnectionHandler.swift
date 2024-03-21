@@ -33,7 +33,7 @@ class SseConnectionHandler {
         Logger.d("Streaming Connection Handler - Disconnecting SSE client")
         let disconnectingClientId = curClientId
         clearClientId()
-        DispatchQueue.global().async { [weak self] in
+        DispatchQueue.general.async { [weak self] in
             guard let self = self else { return }
             guard let clientId = disconnectingClientId else { return }
             let cli = self.getSseClient(id: clientId)

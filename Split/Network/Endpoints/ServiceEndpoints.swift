@@ -154,7 +154,7 @@ import Foundation
         // avoid modifying masive amounts of code
         private var invalidEndpoints = [String]()
         private func sdkUrl() -> URL {
-            if let url = URL(string: sdkEndpoint) {
+            if let url = createUrl(string: sdkEndpoint) {
                 return url
             }
             invalidEndpoints.append(sdkEndpoint)
@@ -162,7 +162,7 @@ import Foundation
         }
 
         private func eventsUrl() -> URL {
-            if let url = URL(string: eventsEndpoint) {
+            if let url = createUrl(string: eventsEndpoint) {
                 return url
             }
             invalidEndpoints.append(eventsEndpoint)
@@ -170,7 +170,7 @@ import Foundation
         }
 
         private func authServiceUrl() -> URL {
-            if let url = URL(string: authServiceEndpoint) {
+            if let url = createUrl(string: authServiceEndpoint) {
                 return url
             }
             invalidEndpoints.append(authServiceEndpoint)
@@ -178,7 +178,7 @@ import Foundation
         }
 
         private func streamingServiceUrl() -> URL {
-            if let url = URL(string: streamingServiceEndpoint) {
+            if let url = createUrl(string: streamingServiceEndpoint) {
                 return url
             }
             invalidEndpoints.append(streamingServiceEndpoint)
@@ -186,11 +186,23 @@ import Foundation
         }
 
         private func telemetryServiceUrl() -> URL {
-            if let url = URL(string: telemetryServiceEndpoint) {
+            if let url = createUrl(string: telemetryServiceEndpoint) {
                 return url
             }
             invalidEndpoints.append(telemetryServiceEndpoint)
             return dummyEndpoint()
+        }
+
+        private func createUrl(string: String) -> URL? {
+#if swift(>=5.9)
+            if #available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *) {
+                return URL(string: string, encodingInvalidCharacters: false)
+            } else {
+                return URL(string: string)
+            }
+#else
+            return URL(string: string)
+#endif
         }
 
         private func dummyEndpoint() -> URL {

@@ -10,21 +10,27 @@ import Foundation
 class SplitEventActionTask: SplitEventTask {
 
     private var eventHandler: SplitAction?
+    private var queue: DispatchQueue?
+    var event: SplitEvent
+    var runInBackground: Bool = false
 
-    override private init() {
-        super.init()
+    init(action: @escaping SplitAction,
+         event: SplitEvent,
+         runInBackground: Bool = false,
+         queue: DispatchQueue? = nil) {
+
+        self.eventHandler = action
+        self.event = event
+        self.runInBackground = runInBackground
+        self.queue = queue
     }
 
-    convenience init(action: @escaping SplitAction) {
-        self.init()
-        eventHandler = action
+    func takeQueue() -> DispatchQueue? {
+        defer { queue = nil }
+        return queue
     }
 
-    override func onPostExecute(client: SplitClient) {
-        // Do nothing
-    }
-
-    override func onPostExecuteView(client: SplitClient) {
+    func run() {
         eventHandler?()
     }
 }

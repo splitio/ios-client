@@ -12,8 +12,6 @@ import XCTest
 
 class SynchronizerSpy: Synchronizer {
 
-
-
     var splitSynchronizer: Synchronizer
 
     var loadAndSynchronizeSplitsCalled = false
@@ -68,9 +66,14 @@ class SynchronizerSpy: Synchronizer {
                                                      splitEventsManager: splitEventsManager)
     }
 
-    func loadAndSynchronizeSplits() {
+    func synchronizeSplits() {
+        synchronizeSplitsCalled = true
+        splitSynchronizer.synchronizeSplits()
+    }
+
+    func loadSplitsFromCache() {
         loadAndSynchronizeSplitsCalled = true
-        splitSynchronizer.loadAndSynchronizeSplits()
+        splitSynchronizer.loadSplitsFromCache()
     }
 
     func loadMySegmentsFromCache() {

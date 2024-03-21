@@ -9,7 +9,7 @@
 import Foundation
 
 protocol FeatureFlagsSynchronizer {
-    func loadAndSynchronize()
+    func load()
     func synchronize()
     func synchronize(changeNumber: Int64)
     func startPeriodicSync()
@@ -68,15 +68,18 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         }
     }
 
-    func loadAndSynchronize() {
+    func load() {
         let splitsStorage = self.storageContainer.splitsStorage
-        DispatchQueue.global().async {
+        DispatchQueue.general.async {
+            let start = Date.nowMillis()
             self.filterSplitsInCache()
             splitsStorage.loadLocal()
             if splitsStorage.getAll().count > 0 {
                 self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
             }
-            self.synchronize()
+            self.broadcasterChannel.push(event: .splitLoadedFromCache)
+            TimeChecker.logInterval("Time for ready from cache process", startTime: start)
+            TimeChecker.logInterval("Time until feature flags process ended")
         }
     }
 

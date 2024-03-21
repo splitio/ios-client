@@ -85,7 +85,7 @@ class DefaultRecorderFlushChecker: RecorderFlushChecker {
     private let maxQueueSizeInBytes: Int
     private var pushedCount = 0
     private var totalPushedSizeInBytes = 0
-    private var queue = DispatchQueue(label: "split-recorder-worker", target: DispatchQueue.global())
+    private var queue = DispatchQueue(label: "split-recorder-worker", target: DispatchQueue.general)
 
     init(maxQueueSize: Int,
          maxQueueSizeInBytes: Int) {

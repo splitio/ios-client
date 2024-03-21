@@ -95,11 +95,11 @@ class SynchronizerTest: XCTestCase {
         XCTAssertTrue(byKeyApiFacade.syncAllCalled)
     }
 
-    func testLoadAndSynchronizeSplits() {
+    func testLoadSplits() {
 
-        synchronizer.loadAndSynchronizeSplits()
+        synchronizer.loadSplitsFromCache()
 
-        XCTAssertTrue(fFlagsSynchronizer.loadAndSynchronizeCalled)
+        XCTAssertTrue(fFlagsSynchronizer.loadCalled)
     }
 
     func testLoadMySegmentsFromCache() {

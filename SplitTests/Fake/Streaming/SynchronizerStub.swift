@@ -48,7 +48,7 @@ class SynchronizerStub: Synchronizer {
     var pauseCalled = false
     var resumeCalled = false
 
-    func loadAndSynchronizeSplits() {
+    func loadSplitsFromCache() {
         loadAndSynchronizeSplitsCalled = true
     }
 

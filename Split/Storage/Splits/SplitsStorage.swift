@@ -63,7 +63,17 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func get(name: String) -> Split? {
-        return inMemorySplits.value(forKey: name.lowercased())
+        guard let split = inMemorySplits.value(forKey: name.lowercased()) else {
+            return nil
+        }
+        if !split.isParsed {
+            if let parsed = try? Json.decodeFrom(json: split.json, to: Split.self) {
+                inMemorySplits.setValue(split, forKey: name)
+                return parsed
+            }
+            return nil
+        }
+        return split
     }
 
     func getMany(splits: [String]) -> [String: Split] {

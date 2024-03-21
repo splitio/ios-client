@@ -11,15 +11,17 @@ import Foundation
 class SplitHelper {
 
     func createDefaultSplit(named splitName: String) -> Split {
-        let split = Split()
-        split.name = splitName
+
+        let split = Split(name: splitName, trafficType: "custom", status: .active, sets: nil, json: "")
+
         split.defaultTreatment = SplitConstants.control
-        split.status = .active
+//        split.status = .active
         split.algo = Algorithm.murmur3.rawValue
-        split.trafficTypeName = "custom"
+//        split.trafficTypeName = "custom"
         split.trafficAllocation = 100
         split.trafficAllocationSeed = 1
         split.seed = 1
+        split.isParsed = true
         return split
     }
 

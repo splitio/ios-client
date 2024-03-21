@@ -56,9 +56,23 @@ class DefaultSyncManager: SyncManager {
     }
 
     func start() {
-        synchronizer.loadAndSynchronizeSplits()
+        broadcasterChannel.register { [weak self] event in
+            guard let self = self else { return }
+            self.handle(pushEvent: event)
+        }
+        loadData()
+        // When split loaded, an events is pushed to
+        // the broadcaster channel to start remote sync
+    }
+
+    private func loadData() {
+        synchronizer.loadSplitsFromCache()
         synchronizer.loadMySegmentsFromCache()
         synchronizer.loadAttributesFromCache()
+    }
+
+    private func startSync() {
+        synchronizer.synchronizeSplits()
         synchronizer.synchronizeMySegments()
         setupSyncMode()
         if splitConfig.userConsent == .granted {
@@ -144,6 +158,10 @@ class DefaultSyncManager: SyncManager {
         case .uriTooLongOnSync:
             stopStreaming()
             synchronizer.stopPeriodicFetching()
+
+        case .splitLoadedFromCache:
+            Logger.d("Features flags has been loaded from cache.")
+            startSync()
         }
     }
 
@@ -197,9 +215,6 @@ class DefaultSyncManager: SyncManager {
         if splitConfig.streamingEnabled,
            pushNotificationManager != nil,
            reconnectStreamingTimer != nil {
-            broadcasterChannel.register { event in
-                self.handle(pushEvent: event)
-            }
             pushNotificationManager?.start()
         } else {
             synchronizer.startPeriodicFetching()

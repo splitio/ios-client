@@ -14,8 +14,6 @@ protocol SplitEventsManagerCoordinator: SplitEventsManager {
 }
 
 class MainSplitEventsManager: SplitEventsManagerCoordinator {
-    var executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
-
     private var defaultManager: SplitEventsManager?
     private var managers = [Key: SplitEventsManager]()
     private var triggered = Set<SplitInternalEvent>()
