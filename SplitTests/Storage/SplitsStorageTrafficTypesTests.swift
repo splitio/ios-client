@@ -163,10 +163,9 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
     }
  
     private func newSplit(name: String, trafficType: String, status: Status = .active) -> Split {
-        let split = Split()
-        split.name = name
-        split.trafficTypeName = trafficType
+        let split = SplitTestHelper.newSplit(name: name, trafficType: trafficType)
         split.status = status
+        split.isParsed = true
         return split
     }
 }

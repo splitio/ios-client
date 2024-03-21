@@ -48,6 +48,8 @@ class FlagSetsIntegrationTests: XCTestCase {
 
     var streamingHelper: StreamingTestingHelper!
 
+    var factory: SplitFactory!
+
     override func setUp() {
         testDb = TestingHelper.createTestDatabase(name: "GralIntegrationTest")
         if splitChange == nil {
@@ -122,6 +124,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         return { request in
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
+                print("Changes hit: \(self.splitChangesHit)")
                 if self.splitChangesHit < 3 {
                     let change = self.pollingFlagSetsHits[self.splitChangesHit]
                     if self.splitChangesHit > 0 {
@@ -639,7 +642,7 @@ class FlagSetsIntegrationTests: XCTestCase {
                                                       sets2: ["set_3"],
                                                       sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 1, till: 1,
+                                getChangeFlagSetsJson(since: 2, till: 2,
                                                       sets1: ["p_set_1", "set_2"],
                                                       sets2: ["set_3"],
                                                       sets3: ["set_4"])!
@@ -655,9 +658,9 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         let client = try startTest(syncConfig: syncConfig)
 
-        var sdkUpdateFired = false
+        var sdkUpdateFiredCount = 0
         client?.on(event: .sdkUpdated) {
-            sdkUpdateFired = true
+            sdkUpdateFiredCount+=1
         }
 
         // Wait for db update
@@ -669,7 +672,8 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         // Wait for db update
         wait(for: [pollingExps![0]], timeout: 3)
-
+        ThreadUtils.delay(seconds: 2)
+        let updateCountBeforeNot=sdkUpdateFiredCount
         // Update sets again (set_1, set_2)
         streamingHelper.pushSplitsMessage(TestingData.kFlagSetsNotification2)
 
@@ -682,9 +686,11 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         XCTAssertEqual(0, split1Change01.count)
         XCTAssertEqual(0, split1Change02.count)
-        XCTAssertFalse(sdkUpdateFired)
+        XCTAssertEqual(1, updateCountBeforeNot)
+        XCTAssertEqual(1, sdkUpdateFiredCount)
     }
 
+    var client: SplitClient!
     func testFlagsetsSdkUpdateFiredWhenFFInFilterSets() throws {
         loadSplitChangesFlagSetsJson()
         let session = HttpSessionMock()
@@ -712,7 +718,7 @@ class FlagSetsIntegrationTests: XCTestCase {
             .addSplitFilter(SplitFilter.bySet(["set_1", "set_2"]))
             .build()
 
-        let client = try startTest(syncConfig: syncConfig)
+        client = try startTest(syncConfig: syncConfig)
 
         var updExp: XCTestExpectation? = nil
         var sdkUpdateFired = false
@@ -723,7 +729,6 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         // Wait for db update
         wait(for: [dbExp1], timeout: 5)
-
         let split1Change01 = testDb.splitDao.getAll().filter { $0.name == "workm" }
 
         streamingHelper.pushKeepalive()
@@ -736,7 +741,6 @@ class FlagSetsIntegrationTests: XCTestCase {
         streamingHelper.pushSplitsMessage(TestingData.flagSetsNotification(pcn: 1))
 
         wait(for: [updExp!], timeout: 3)
-
         let split1Change02 = testDb.splitDao.getAll().filter { $0.name == "workm" }
 
         destroyTest(client: client)
@@ -776,7 +780,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(testDb)
         _ = builder.setHttpClient(httpClient)
-        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
 
         let client = factory?.client
 
@@ -799,9 +803,9 @@ class FlagSetsIntegrationTests: XCTestCase {
     }
 
     private func destroyTest(client: SplitClient?) {
+        guard let client = client else { return }
         let semaphore = DispatchSemaphore(value: 0)
-
-        client?.destroy(completion: {
+        client.destroy(completion: {
             _ = semaphore.signal()
         })
         semaphore.wait()

@@ -96,21 +96,11 @@ class PersistentSplitsStorageTest: XCTestCase {
     }
     
     private func createSplits() -> [Split] {
-        var splits = [Split]()
-        for i in 0..<10 {
-            let split = Split()
-            split.name = "feat_\(i)"
-            split.trafficTypeName = "tt_\(i)"
-            split.status = .active
-            splits.append(split)
-        }
-        return splits
+        return SplitTestHelper.createSplits(namePrefix: "feat_", count: 10)
     }
     
     private func newSplit(name: String, trafficType: String, status: Status = .active) -> Split {
-        let split = Split()
-        split.name = name
-        split.trafficTypeName = trafficType
+        let split = SplitTestHelper.newSplit(name: name, trafficType: trafficType)
         split.status = status
         return split
     }

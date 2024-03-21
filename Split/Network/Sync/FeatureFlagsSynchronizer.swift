@@ -70,7 +70,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
     func load() {
         let splitsStorage = self.storageContainer.splitsStorage
-        DispatchQueue.global().async {
+        DispatchQueue.general.async {
             let start = Date.nowMillis()
             self.filterSplitsInCache()
             splitsStorage.loadLocal()
@@ -78,7 +78,8 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                 self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
-            Logger.v("Time for ready from cache process: \(Date.nowMillis() - start)")
+            TimeChecker.logInterval("Time for ready from cache process", startTime: start)
+            TimeChecker.logInterval("Time until feature flags process ended")
         }
     }
 

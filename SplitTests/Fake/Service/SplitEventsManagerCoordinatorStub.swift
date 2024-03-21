@@ -22,8 +22,6 @@ class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
         managers[key] = nil
     }
 
-    var executorResources: SplitEventExecutorResources = SplitEventExecutorResources()
-
     func register(event: SplitEvent, task: SplitEventTask) {
 
     }

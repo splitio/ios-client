@@ -77,6 +77,7 @@ class DefaultByKeyFacade: ByKeyFacade {
             group.attributesStorage.loadLocal()
             group.eventsManager.notifyInternalEvent(.attributesLoadedFromCache)
         }
+        TimeChecker.logInterval("Time until attributes loaded from cache")
     }
 
     func startPeriodicSync() {
