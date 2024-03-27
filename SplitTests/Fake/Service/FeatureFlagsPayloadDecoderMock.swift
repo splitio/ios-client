@@ -11,7 +11,7 @@ import Foundation
 
 class FeatureFlagsPayloadDecoderMock: FeatureFlagsPayloadDecoder {
     let helper = SplitHelper()
-    func decode(payload: String, compressionUtil: CompressionUtil) throws -> Split {
+    func decode(payload: String, compressionUtil: CompressionUtil) throws -> SplitDTO {
         return helper.createDefaultSplit(named: "dummy_split")
     }
 }

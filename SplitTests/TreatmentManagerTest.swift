@@ -435,16 +435,16 @@ class TreatmentManagerTest: XCTestCase {
                                        validationLogger: validationLogger)
     }
 
-    func loadSplitsFile() -> [Split] {
+    func loadSplitsFile() -> [SplitDTO] {
         return loadSplitFile(name: "splitchanges_1")
     }
 
-    func loadSplitFile(name fileName: String) -> [Split] {
+    func loadSplitFile(name fileName: String) -> [SplitDTO] {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
             return change.splits
         }
-        return [Split]()
+        return [SplitDTO]()
     }
 
     func testAttributes() -> [String: Any] {

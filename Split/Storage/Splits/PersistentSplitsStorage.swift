@@ -10,7 +10,7 @@ import Foundation
 
 protocol PersistentSplitsStorage {
     func update(splitChange: ProcessedSplitChange)
-    func update(split: Split)
+    func update(split: SplitDTO)
     func update(filterQueryString: String)
     func update(bySetsFilter: SplitFilter?)
     func getFilterQueryString() -> String
@@ -18,7 +18,7 @@ protocol PersistentSplitsStorage {
     func getSplitsSnapshot() -> SplitsSnapshot
     func getChangeNumber() -> Int64
     func getUpdateTimestamp() -> Int64
-    func getAll() -> [Split]
+    func getAll() -> [SplitDTO]
     func delete(splitNames: [String])
     func clear()
 }
@@ -40,7 +40,7 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
         generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: splitChange.updateTimestamp)
     }
 
-    func update(split: Split) {
+    func update(split: SplitDTO) {
         splitDao.insertOrUpdate(split: split)
     }
 
@@ -95,7 +95,7 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
         return generalInfoDao.longValue(info: .splitsUpdateTimestamp) ?? 0
     }
 
-    func getAll() -> [Split] {
+    func getAll() -> [SplitDTO] {
         return splitDao.getAll()
     }
 

@@ -23,7 +23,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
         splitFetcher = HttpSplitFetcherStub()
         splitFetcher.splitChanges = [SplitChange(splits: [], since: 102, till: 102)]
         splitsStorage = SplitsStorageStub()
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [Split](), archivedSplits: [],
+        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [SplitDTO](), archivedSplits: [],
                                                   changeNumber: 100, updateTimestamp: 0))
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
@@ -138,7 +138,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
     override func tearDown() {
     }
 
-    private func createSplit(name: String) -> Split {
-        return Split(name: name, trafficType: "user", status: .active, sets: nil, json: "")
+    private func createSplit(name: String) -> SplitDTO {
+        return SplitDTO(name: name, trafficType: "user", status: .active, sets: nil, json: "")
     }
 }

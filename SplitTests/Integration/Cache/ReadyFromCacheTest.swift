@@ -501,7 +501,7 @@ class ReadyFromCacheTest: XCTestCase {
         return change!
     }
 
-    private func buildSplit(name: String, treatment: String) -> Split {
+    private func buildSplit(name: String, treatment: String) -> SplitDTO {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.since = Int64(1)
         change?.till = Int64(1)
@@ -521,7 +521,7 @@ class ReadyFromCacheTest: XCTestCase {
         return split
     }
 
-    private func buildSplitWithAttrEval(name: String, treatment: String) -> Split {
+    private func buildSplitWithAttrEval(name: String, treatment: String) -> SplitDTO {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.since = Int64(1)
         change?.till = Int64(1)

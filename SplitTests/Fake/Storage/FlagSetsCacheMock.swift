@@ -32,7 +32,7 @@ class FlagSetsCacheMock: FlagSetsCache {
         return res1
     }
 
-    func addToFlagSets(_ featureFlag: Split) {
+    func addToFlagSets(_ featureFlag: SplitDTO) {
         guard let name = featureFlag.name else {
             return
         }

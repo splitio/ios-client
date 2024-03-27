@@ -45,8 +45,8 @@ class SplitsEncoderTest: XCTestCase {
         XCTAssertEqual(splits.count, jsons.count)
     }
 
-    func loadSplits(times: Int = 1) -> [Split] {
-        var splits = [Split]()
+    func loadSplits(times: Int = 1) -> [SplitDTO] {
+        var splits = [SplitDTO]()
         for _ in 0..<times {
             let news = FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_1")!.splits
             splits.append(contentsOf: news.map { split in

@@ -266,9 +266,9 @@ class SplitsStorageTest: XCTestCase {
     }
 
     private func getTestSnapshot(count: Int = 10, sets: [[String]]? = nil) -> SplitsSnapshot {
-        var splits = [Split]()
+        var splits = [SplitDTO]()
         for i in 0..<count {
-            let split = Split(name: "s\(i)", trafficType: "t1", status: .active, sets: nil, json: "")
+            let split = SplitDTO(name: "s\(i)", trafficType: "t1", status: .active, sets: nil, json: "")
             split.isParsed = true
             if let sets = sets {
                 sets.forEach { fset in
@@ -291,7 +291,7 @@ class SplitsStorageTest: XCTestCase {
     private func newSplit(name: String,
                           status: Status = .active,
                           trafficType: String = "t1",
-                          sets: [String]? = nil) -> Split {
+                          sets: [String]? = nil) -> SplitDTO {
         let split = SplitTestHelper.newSplit(name: name, trafficType: trafficType)
         split.status = status
         if let sets = sets {

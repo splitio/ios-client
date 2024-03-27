@@ -8,7 +8,7 @@
 
 import Foundation
 
-typealias Split = SplitDTO
+//typealias Split = SplitDTO
 
 class SplitDTO: NSObject, SplitBase, Codable {
     var name: String?

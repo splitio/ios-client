@@ -9,14 +9,14 @@
 import Foundation
 
 protocol FeatureFlagsPayloadDecoder {
-    func decode(payload: String, compressionUtil: CompressionUtil) throws -> Split
+    func decode(payload: String, compressionUtil: CompressionUtil) throws -> SplitDTO
 }
 
 struct DefaultFeatureFlagsPayloadDecoder: FeatureFlagsPayloadDecoder {
 
-    func decode(payload: String, compressionUtil: CompressionUtil) throws -> Split {
+    func decode(payload: String, compressionUtil: CompressionUtil) throws -> SplitDTO {
         let json = try decodeAsBytes(payload: payload, compressionUtil: compressionUtil).stringRepresentation
-        return try Json.decodeFrom(json: json, to: Split.self)
+        return try Json.decodeFrom(json: json, to: SplitDTO.self)
     }
 
     private func decodeAsBytes(payload: String, compressionUtil: CompressionUtil) throws -> Data {

@@ -20,7 +20,7 @@ class LocalhostManagerTests: XCTestCase {
         let fileContent = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: fileType)!
         let content = LocalhostParserProvider.parser(for: .splits).parseContent(fileContent)
         let splitsStorage = LocalhostSplitsStorage()
-        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: content!.values.map { $0 as Split },
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: content!.values.map { $0 as SplitDTO },
                                                                archivedSplits: [],
                                                                changeNumber: 1,
                                                                updateTimestamp: 1))

@@ -130,7 +130,7 @@ class SplitDaoTest: XCTestCase {
         // load impressions and filter them by encrypted feature name
         let loadSplit = getBy(testName: testNameEnc, coreDataHelper: helper)
 
-        let split = try? Json.decodeFrom(json: loadSplit.body ?? "", to: Split.self)
+        let split = try? Json.decodeFrom(json: loadSplit.body ?? "", to: SplitDTO.self)
 
         XCTAssertNotNil(loadSplit)
         XCTAssertFalse(loadSplit.name?.contains("feat_") ?? true)
@@ -154,11 +154,11 @@ class SplitDaoTest: XCTestCase {
         return (name: name, body: body)
     }
     
-    private func createSplits() -> [Split] {
+    private func createSplits() -> [SplitDTO] {
         return SplitTestHelper.createSplits(namePrefix: "feat_", count: 10)
     }
     
-    private func newSplit(name: String, trafficType: String) -> Split {
+    private func newSplit(name: String, trafficType: String) -> SplitDTO {
         return SplitTestHelper.newSplit(name: name, trafficType: trafficType)
     }
 }

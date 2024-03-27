@@ -46,7 +46,7 @@ class HttpSplitFetcherTests: XCTestCase {
         XCTAssertEqual(0, c.splits.count)
     }
     
-    func newChange(since: Int64, till: Int64, splits: [Split] = []) -> SplitChange {
+    func newChange(since: Int64, till: Int64, splits: [SplitDTO] = []) -> SplitChange {
         return SplitChange(splits: [], since: since, till: till)
     }
 

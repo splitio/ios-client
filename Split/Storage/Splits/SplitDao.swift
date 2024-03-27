@@ -10,12 +10,12 @@ import Foundation
 import CoreData
 
 protocol SplitDao {
-    func insertOrUpdate(splits: [Split])
-    func insertOrUpdate(split: Split)
-    func getAll() -> [Split]
+    func insertOrUpdate(splits: [SplitDTO])
+    func insertOrUpdate(split: SplitDTO)
+    func getAll() -> [SplitDTO]
     func delete(_ splits: [String])
     func deleteAll()
-    func syncInsertOrUpdate(split: Split)
+    func syncInsertOrUpdate(split: SplitDTO)
 }
 
 class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
@@ -30,7 +30,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
         super.init(coreDataHelper: coreDataHelper)
     }
 
-    func insertOrUpdate(splits: [Split]) {
+    func insertOrUpdate(splits: [SplitDTO]) {
         let parsed = self.encoder.encode(splits)
         executeAsync { [weak self] in
             guard let self = self else {
@@ -49,7 +49,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
         }
     }
 
-    func insertOrUpdate(split: Split) {
+    func insertOrUpdate(split: SplitDTO) {
         executeAsync { [weak self] in
             if let self = self {
                 self.insertOrUpdate(split)
@@ -58,7 +58,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
     }
 
     // For testing purposes only
-    func syncInsertOrUpdate(split: Split) {
+    func syncInsertOrUpdate(split: SplitDTO) {
         execute { [weak self] in
             if let self = self {
                 self.insertOrUpdate(split)
@@ -66,9 +66,9 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
         }
     }
 
-    func getAll() -> [Split] {
+    func getAll() -> [SplitDTO] {
 
-        var splits: [Split]?
+        var splits: [SplitDTO]?
         execute { [weak self] in
             let start = Date.nowMillis()
             guard let self = self else {
@@ -112,7 +112,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
         }
     }
 
-    private func insertOrUpdate(_ split: Split) {
+    private func insertOrUpdate(_ split: SplitDTO) {
         if let splitName = cipher?.encrypt(split.name) ?? split.name,
            let obj = self.getBy(name: splitName) ?? self.coreDataHelper.create(entity: .split) as? SplitEntity {
             do {

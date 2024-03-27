@@ -357,16 +357,16 @@ class EvaluatorTests: XCTestCase {
         XCTAssertEqual(treatment, "on", "Result should be 'on'")
     }
     
-    func loadSplitsFile() -> [Split] {
+    func loadSplitsFile() -> [SplitDTO] {
         return loadSplitFile(name: "splitchanges_1")
     }
     
-    func loadSplitFile(name fileName: String) -> [Split] {
+    func loadSplitFile(name fileName: String) -> [SplitDTO] {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
             return change.splits
         }
-        return [Split]()
+        return [SplitDTO]()
     }
     
     func customEvaluator(splitFile fileName: String) -> Evaluator {
@@ -381,7 +381,7 @@ class EvaluatorTests: XCTestCase {
         return evaluator
     }
     
-    func customEvaluator(split: Split) -> Evaluator {
+    func customEvaluator(split: SplitDTO) -> Evaluator {
         let splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
         let mySegmentsStorage = MySegmentsStorageStub()
@@ -391,10 +391,10 @@ class EvaluatorTests: XCTestCase {
         return evaluator
     }
     
-    func loadSplit(splitName: String) -> Split? {
+    func loadSplit(splitName: String) -> SplitDTO? {
         if let splitContent = FileHelper.readDataFromFile(sourceClass: self, name: splitName, type: "json") {
             do {
-                return try JSON(splitContent.data(using: .utf8)).decode(Split.self)
+                return try JSON(splitContent.data(using: .utf8)).decode(SplitDTO.self)
             } catch {
                 print("Decoding split for algo null test failed")
             }

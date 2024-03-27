@@ -104,24 +104,24 @@ struct TestingHelper {
     static func createSplit(name: String,
                             trafficType: String = "t1",
                             status: Status = .active,
-                            sets: Set<String>? = nil) -> Split {
+                            sets: Set<String>? = nil) -> SplitDTO {
 
-        let split = Split(name: name, trafficType: trafficType, status: status, sets: sets, json: "")
+        let split = SplitDTO(name: name, trafficType: trafficType, status: status, sets: sets, json: "")
         split.isParsed = true
         return split
     }
 
-    static func createSplits() -> [Split] {
-        var splits = [Split]()
+    static func createSplits() -> [SplitDTO] {
+        var splits = [SplitDTO]()
         for i in 0..<10 {
-            let split = Split(name: "feat_\(i)", trafficType: "tt_\(i)", status: .active, sets: nil, json: "")
+            let split = SplitDTO(name: "feat_\(i)", trafficType: "tt_\(i)", status: .active, sets: nil, json: "")
             split.isParsed = true
             splits.append(split)
         }
         return splits
     }
 
-    static func buildSplit(name: String, treatment: String) -> Split {
+    static func buildSplit(name: String, treatment: String) -> SplitDTO {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.since = Int64(1)
         change?.till = Int64(1)

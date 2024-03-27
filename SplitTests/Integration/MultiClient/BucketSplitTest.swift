@@ -32,7 +32,7 @@ class BucketSplitTest: XCTestCase {
 
     let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.test)
 
-    var cachedSplit: Split!
+    var cachedSplit: SplitDTO!
     var clients = [Key: SplitClient]()
     var readyExps = [Key: XCTestExpectation]()
     var factory: SplitFactory!

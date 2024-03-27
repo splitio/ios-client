@@ -40,7 +40,7 @@ class MultiClientEvaluationTest: XCTestCase {
         Attr.strValueA: "no"
     ]
 
-    var cachedSplit: Split!
+    var cachedSplit: SplitDTO!
     var clients = [String: SplitClient]()
     var readyExps = [String: XCTestExpectation]()
     var factory: SplitFactory!

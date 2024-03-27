@@ -23,27 +23,27 @@ class SplitsStorageStub: SplitsStorage {
     var loadLocalCalled = false
     var clearCalled = false
 
-    var updatedWithoutChecksSplit: Split?
+    var updatedWithoutChecksSplit: SplitDTO?
     var updatedWithoutChecksExp: XCTestExpectation?
 
     var getCountCalledCount = 0
 
-    private let inMemorySplits = ConcurrentDictionary<String, Split>()
-    
+    private let inMemorySplits = ConcurrentDictionary<String, SplitDTO>()
+
     func loadLocal() {
         loadLocalCalled = true
     }
     
-    func get(name: String) -> Split? {
+    func get(name: String) -> SplitDTO? {
         return inMemorySplits.value(forKey: name.lowercased())
     }
     
-    func getMany(splits: [String]) -> [String : Split] {
+    func getMany(splits: [String]) -> [String : SplitDTO] {
         let names = Set(splits.compactMap { $0.lowercased() })
         return inMemorySplits.all.filter { return names.contains($0.key) }
     }
     
-    func getAll() -> [String : Split] {
+    func getAll() -> [String : SplitDTO] {
         return inMemorySplits.all
     }
 
@@ -69,7 +69,7 @@ class SplitsStorageStub: SplitsStorage {
         self.splitsFilterQueryString = filterQueryString
     }
     
-    func updateWithoutChecks(split: Split) {
+    func updateWithoutChecks(split: SplitDTO) {
         inMemorySplits.setValue(split, forKey: split.name ?? "")
         updatedWithoutChecksSplit = split
         if let exp = updatedWithoutChecksExp {

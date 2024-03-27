@@ -13,7 +13,7 @@ import XCTest
 
 class SplitManagerTest: XCTestCase {
     
-    var loadedSplits: [Split]!
+    var loadedSplits: [SplitDTO]!
     var manager: SplitManager!
     var splitsStorage: SplitsStorageStub!
     
@@ -21,7 +21,7 @@ class SplitManagerTest: XCTestCase {
         let bundle = Bundle(for: type(of: self))
         let path = bundle.path(forResource: "splits", ofType: "json")!
         let json = try? Data(contentsOf: URL(fileURLWithPath: path)).stringRepresentation
-        loadedSplits = try? JSON.decodeFrom(json: json!, to: [Split].self)
+        loadedSplits = try? JSON.decodeFrom(json: json!, to: [SplitDTO].self)
         splitsStorage = SplitsStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: loadedSplits, archivedSplits: [],
                                                                changeNumber: 1, updateTimestamp: 100))
@@ -91,7 +91,7 @@ class SplitManagerTest: XCTestCase {
     func testAddOneSplit() {
         let bundle = Bundle(for: type(of: self))
         let path = bundle.path(forResource: "split_sample_feature6", ofType: "json")!
-        let newSplit = try! JSON(Data(contentsOf: URL(fileURLWithPath: path))).decode(Split.self)!
+        let newSplit = try! JSON(Data(contentsOf: URL(fileURLWithPath: path))).decode(SplitDTO.self)!
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [newSplit], archivedSplits: [],
                                                                changeNumber: 2, updateTimestamp: 200))
         let splits = manager.splits

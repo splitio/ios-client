@@ -35,7 +35,7 @@ class AttributesEvaluationTest: XCTestCase {
         Attr.strValueA: "no"
     ]
 
-    var cachedSplit: Split!
+    var cachedSplit: SplitDTO!
 
     override func setUp() {
         cachedSplit = buildSplitEntity()
@@ -353,9 +353,9 @@ class AttributesEvaluationTest: XCTestCase {
         }
     }
 
-    private func buildSplitEntity() -> Split {
+    private func buildSplitEntity() -> SplitDTO {
         let content = FileHelper.readDataFromFile(sourceClass: IntegrationHelper(), name: "attributes_test_split", type: "json")!
-        return try! Json.decodeFrom(json: content, to: Split.self)
+        return try! Json.decodeFrom(json: content, to: SplitDTO.self)
     }
 
     private func basicSplitConfig() -> SplitClientConfig {

@@ -47,11 +47,11 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
         return loadedSplits
     }
 
-    private func parseSplit(row: Yaml, splits: LocalhostSplits) -> Split? {
+    private func parseSplit(row: Yaml, splits: LocalhostSplits) -> SplitDTO? {
         if let rowDic = row.dictionary {
             let splitNameField = rowDic.keys[rowDic.keys.startIndex]
             if let splitName = splitNameField.string {
-                var split: Split
+                var split: SplitDTO
                 if let existingSplit = splits[splitName] {
                     split = existingSplit
                 } else {

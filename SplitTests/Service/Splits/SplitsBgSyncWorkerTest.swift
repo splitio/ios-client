@@ -97,7 +97,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
     override func tearDown() {
     }
 
-    private func createSplit(name: String) -> Split {
+    private func createSplit(name: String) -> SplitDTO {
         return SplitTestHelper.newSplit(name: name, trafficType: "tt1")
     }
 

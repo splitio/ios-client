@@ -10,24 +10,24 @@
 import Foundation
 
 class SplitDaoStub: SplitDao {
-    var insertedSplits = [Split]()
-    var splits = [Split]()
+    var insertedSplits = [SplitDTO]()
+    var splits = [SplitDTO]()
     var deletedSplits: [String]?
     var deleteAllCalled = false
     
-    func insertOrUpdate(splits: [Split]) {
+    func insertOrUpdate(splits: [SplitDTO]) {
         insertedSplits = splits
     }
 
-    func syncInsertOrUpdate(split: Split) {
+    func syncInsertOrUpdate(split: SplitDTO) {
        insertOrUpdate(split: split)
     }
     
-    func insertOrUpdate(split: Split) {
+    func insertOrUpdate(split: SplitDTO) {
         insertedSplits.append(split)
     }
     
-    func getAll() -> [Split] {
+    func getAll() -> [SplitDTO] {
         return splits
     }
     

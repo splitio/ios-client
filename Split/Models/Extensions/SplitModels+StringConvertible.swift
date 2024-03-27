@@ -173,7 +173,7 @@ extension MatcherGroup {
   }
 }
 
-extension Split {
+extension SplitDTO {
   override public var debugDescription: String {
     var output: String = "Split {\n"
     if let name = name {

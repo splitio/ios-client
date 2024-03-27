@@ -9,7 +9,7 @@
 import Foundation
 
 protocol LocalhostDataSource: AnyObject {
-    typealias IncomingDataHandler = ([String: Split]?) -> Void
+    typealias IncomingDataHandler = ([String: SplitDTO]?) -> Void
     var loadHandler: IncomingDataHandler? { get set }
     func start()
     func stop()
@@ -151,7 +151,7 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
         return fileInfo
     }
 
-    private func loadFile() -> [String: Split]? {
+    private func loadFile() -> [String: SplitDTO]? {
         let name = fileName
         guard let content = fileStorage.read(fileName: name), let parser = fileParser else {
             return nil

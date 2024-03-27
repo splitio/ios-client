@@ -9,7 +9,7 @@
 import Foundation
 
 protocol SplitsEncoder {
-    func encode(_ list: [Split]) -> [String: String]
+    func encode(_ list: [SplitDTO]) -> [String: String]
 }
 
 struct SplitsParallelEncoder: SplitsEncoder {
@@ -23,7 +23,7 @@ struct SplitsParallelEncoder: SplitsEncoder {
     }
 
     // Returns Name: Json
-    func encode(_ list: [Split]) -> [String: String] {
+    func encode(_ list: [SplitDTO]) -> [String: String] {
 
         if list.count == 0 {
             return [:]
@@ -66,7 +66,7 @@ struct SplitsSerialEncoder: SplitsEncoder {
         self.cipher = cipher
     }
 
-    func encode(_ list: [Split]) -> [String: String] {
+    func encode(_ list: [SplitDTO]) -> [String: String] {
         if list.count == 0 {
             return [:]
         }

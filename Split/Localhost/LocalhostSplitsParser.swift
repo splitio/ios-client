@@ -10,7 +10,7 @@ import Foundation
 /**
  Data structure to hold parsed feature flags and its corresponding treatment
  */
-typealias LocalhostSplits = [String: Split]
+typealias LocalhostSplits = [String: SplitDTO]
 
 /**
  Interface to implement by classes intended to parse

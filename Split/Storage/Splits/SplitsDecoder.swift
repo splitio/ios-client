@@ -9,7 +9,7 @@
 import Foundation
 
 protocol SplitsDecoder {
-    func decode(_ list: [String]) -> [Split]
+    func decode(_ list: [String]) -> [SplitDTO]
 }
 
 struct SplitsParallelDecoder: SplitsDecoder {
@@ -20,7 +20,7 @@ struct SplitsParallelDecoder: SplitsDecoder {
         self.serialDecoder = SplitsSerialDecoder(cipher: cipher)
     }
 
-    func decode(_ list: [String]) -> [Split] {
+    func decode(_ list: [String]) -> [SplitDTO] {
 
         if list.count == 0 {
             return []
@@ -28,7 +28,7 @@ struct SplitsParallelDecoder: SplitsDecoder {
 
         Logger.v("Using parallel decoding for \(list.count) splits")
         let start = Date.nowMillis()
-        var splits = [Split]()
+        var splits = [SplitDTO]()
         let dataQueue = DispatchQueue(label: "split-parallel-parsing-data",
                                       target: DispatchQueue(label: "split-parallel-parsing-data-conc",
                                                             attributes: .concurrent))
@@ -65,7 +65,7 @@ struct SplitsSerialDecoder: SplitsDecoder {
         self.cipher = cipher
     }
 
-    func decode(_ list: [String]) -> [Split] {
+    func decode(_ list: [String]) -> [SplitDTO] {
         if list.count == 0 {
             return []
         }
@@ -83,7 +83,7 @@ struct SplitsSerialDecoder: SplitsDecoder {
         }
     }
 
-    func getSplit(_ json: String) throws -> Split {
+    func getSplit(_ json: String) throws -> SplitDTO {
 
         guard let data  = json.data(using: .utf8) else {
             throw GenericError.unknown(message: "parsing pepe")
@@ -100,7 +100,7 @@ struct SplitsSerialDecoder: SplitsDecoder {
         if let name = name, let trafficType = trafficType, let status = status,
            let statusValue = Status.enumFromString(string: status),
            let killed = killed {
-            return Split(name: name, trafficType: trafficType, status: statusValue, 
+            return SplitDTO(name: name, trafficType: trafficType, status: statusValue, 
                          sets: sets, json: json, killed: killed)
         }
 

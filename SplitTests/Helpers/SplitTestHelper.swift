@@ -11,10 +11,10 @@ import Foundation
 
 class SplitTestHelper {
 
-    func loadSplitFromFile(name: String) -> Split? {
-        var split: Split?
+    func loadSplitFromFile(name: String) -> SplitDTO? {
+        var split: SplitDTO?
         do {
-            split = try JSON.decodeFrom(json: FileHelper.readDataFromFile(sourceClass: self, name: name, type: "json")!, to: Split.self)
+            split = try JSON.decodeFrom(json: FileHelper.readDataFromFile(sourceClass: self, name: name, type: "json")!, to: SplitDTO.self)
         } catch {
             print("Error loading split from file \(name)")
         }
@@ -142,18 +142,18 @@ class SplitTestHelper {
 """
     }
 
-    static func createSplits(namePrefix: String, count: Int) -> [Split] {
-        var splits = [Split]()
+    static func createSplits(namePrefix: String, count: Int) -> [SplitDTO] {
+        var splits = [SplitDTO]()
         for i in 0..<count {
-            let split = Split(name: "\(namePrefix)\(i)", trafficType: "tt_\(i)", status: .active, sets: nil, json: "")
+            let split = SplitDTO(name: "\(namePrefix)\(i)", trafficType: "tt_\(i)", status: .active, sets: nil, json: "")
             split.isParsed = true
             splits.append(split)
         }
         return splits
     }
 
-    static func newSplit(name: String, trafficType: String) -> Split {
-        let split = Split(name: name, trafficType: trafficType, status: .active, sets: nil, json: "")
+    static func newSplit(name: String, trafficType: String) -> SplitDTO {
+        let split = SplitDTO(name: name, trafficType: trafficType, status: .active, sets: nil, json: "")
         split.isParsed = true
         return split
     }

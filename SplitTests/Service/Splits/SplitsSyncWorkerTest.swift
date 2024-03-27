@@ -310,7 +310,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         XCTAssertEqual(HttpError.uriTooLong, thrownError)
     }
 
-    private func createSplit(name: String) -> Split {
+    private func createSplit(name: String) -> SplitDTO {
         let split = SplitTestHelper.newSplit(name: name, trafficType: "tt")
         split.isParsed = true
         return split

@@ -10,9 +10,9 @@ import Foundation
 // swiftlint:disable inclusive_language
 class SplitHelper {
 
-    func createDefaultSplit(named splitName: String) -> Split {
+    func createDefaultSplit(named splitName: String) -> SplitDTO {
 
-        let split = Split(name: splitName, trafficType: "custom", status: .active, sets: nil, json: "")
+        let split = SplitDTO(name: splitName, trafficType: "custom", status: .active, sets: nil, json: "")
 
         split.defaultTreatment = SplitConstants.control
 //        split.status = .active

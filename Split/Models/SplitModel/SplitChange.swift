@@ -9,11 +9,11 @@
 import Foundation
 
 @objc class SplitChange: NSObject, Codable {
-    var splits: [Split]
+    var splits: [SplitDTO]
     var since: Int64
     var till: Int64
 
-    init(splits: [Split], since: Int64, till: Int64) {
+    init(splits: [SplitDTO], since: Int64, till: Int64) {
         self.splits = splits
         self.since = since
         self.till = till

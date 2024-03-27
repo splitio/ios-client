@@ -19,13 +19,13 @@ protocol SplitsStorage: SyncSplitsStorage {
     var splitsFilterQueryString: String { get }
 
     func loadLocal()
-    func get(name: String) -> Split?
-    func getMany(splits: [String]) -> [String: Split]
-    func getAll() -> [String: Split]
+    func get(name: String) -> SplitDTO?
+    func getMany(splits: [String]) -> [String: SplitDTO]
+    func getAll() -> [String: SplitDTO]
     func update(splitChange: ProcessedSplitChange) -> Bool
     func update(filterQueryString: String)
     func update(bySetsFilter: SplitFilter?)
-    func updateWithoutChecks(split: Split)
+    func updateWithoutChecks(split: SplitDTO)
     func isValidTrafficType(name: String) -> Bool
     func getCount() -> Int
     func clear()
@@ -35,7 +35,7 @@ protocol SplitsStorage: SyncSplitsStorage {
 class DefaultSplitsStorage: SplitsStorage {
 
     private var persistentStorage: PersistentSplitsStorage
-    private var inMemorySplits: ConcurrentDictionary<String, Split>
+    private var inMemorySplits: ConcurrentDictionary<String, SplitDTO>
     private var trafficTypes: ConcurrentDictionary<String, Int>
     private let flagSetsCache: FlagSetsCache
 
@@ -62,12 +62,12 @@ class DefaultSplitsStorage: SplitsStorage {
         splitsFilterQueryString = snapshot.splitsFilterQueryString
     }
 
-    func get(name: String) -> Split? {
+    func get(name: String) -> SplitDTO? {
         guard let split = inMemorySplits.value(forKey: name.lowercased()) else {
             return nil
         }
         if !split.isParsed {
-            if let parsed = try? Json.decodeFrom(json: split.json, to: Split.self) {
+            if let parsed = try? Json.decodeFrom(json: split.json, to: SplitDTO.self) {
                 inMemorySplits.setValue(split, forKey: name)
                 return parsed
             }
@@ -76,12 +76,12 @@ class DefaultSplitsStorage: SplitsStorage {
         return split
     }
 
-    func getMany(splits: [String]) -> [String: Split] {
+    func getMany(splits: [String]) -> [String: SplitDTO] {
         let filter = Set(splits.compactMap { $0.lowercased() })
         return inMemorySplits.all.filter { splitName, _ in return filter.contains(splitName) }
     }
 
-    func getAll() -> [String: Split] {
+    func getAll() -> [String: SplitDTO] {
         return inMemorySplits.all
     }
 
@@ -104,7 +104,7 @@ class DefaultSplitsStorage: SplitsStorage {
         self.persistentStorage.update(bySetsFilter: filter)
     }
 
-    func updateWithoutChecks(split: Split) {
+    func updateWithoutChecks(split: SplitDTO) {
         if let splitName = split.name?.lowercased() {
             inMemorySplits.setValue(split, forKey: splitName)
             persistentStorage.update(split: split)
@@ -125,7 +125,7 @@ class DefaultSplitsStorage: SplitsStorage {
         return inMemorySplits.count
     }
 
-    private func processUpdated(splits: [Split], active: Bool) -> Bool {
+    private func processUpdated(splits: [SplitDTO], active: Bool) -> Bool {
         var cachedSplits = inMemorySplits.all
         var cachedTrafficTypes = trafficTypes.all
         var splitsUpdated = false

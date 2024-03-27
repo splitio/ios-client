@@ -19,9 +19,9 @@ class LocalhostSplitLoaderTests: XCTestCase {
         storage = FileStorageStub()
     }
 
-    func loadSplits(loader: FeatureFlagsFileLoader) -> [String: Split] {
+    func loadSplits(loader: FeatureFlagsFileLoader) -> [String: SplitDTO] {
 
-        var splits: [String: Split]?
+        var splits: [String: SplitDTO]?
         let exp = XCTestExpectation()
         loader.loadHandler = {
             splits = $0

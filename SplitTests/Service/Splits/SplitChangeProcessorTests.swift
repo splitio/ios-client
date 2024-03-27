@@ -37,7 +37,7 @@ class SplitChangeProcessorTests: XCTestCase {
     }
 
     private func createChange() -> SplitChange {
-        var splits = [Split]()
+        var splits = [SplitDTO]()
         for i in 0..<7 {
             splits.append(TestingHelper.createSplit(name: "act_\(i)", status: .active))
         }

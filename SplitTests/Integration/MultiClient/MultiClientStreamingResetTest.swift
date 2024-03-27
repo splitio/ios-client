@@ -28,7 +28,7 @@ class MultiClientStreamingResetTest: XCTestCase {
 
     let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.test)
 
-    var cachedSplit: Split!
+    var cachedSplit: SplitDTO!
     var clients = [Key: SplitClient]()
     var readyExps = [String: XCTestExpectation]()
     var streamExps = [String: XCTestExpectation]()

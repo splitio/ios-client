@@ -22,7 +22,7 @@ class InitialCacheTest: XCTestCase {
     var numbers = [500, 1000, 2000, 3000, 4000]
     var changeHitIndex: AtomicInt!
     var receivedChangeNumber: [Int64]!
-    var cachedSplit: Split?
+    var cachedSplit: SplitDTO?
     var splitsQueryString = ""
 
     override func setUp() {

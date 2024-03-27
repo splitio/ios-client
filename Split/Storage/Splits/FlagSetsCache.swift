@@ -12,7 +12,7 @@ protocol FlagSetsCache {
     var setsInFilter: Set<String>? { get }
     func getFeatureFlagNamesBySet(byFlagSets sets: [String]) -> [String: Set<String>]
     func getFeatureFlagNames(forFlagSets sets: [String]) -> [String]
-    func addToFlagSets(_ featureFlag: Split)
+    func addToFlagSets(_ featureFlag: SplitDTO)
     func removeFromFlagSets(featureFlagName: String, sets: Set<String>)
 }
 
@@ -37,7 +37,7 @@ class DefaultFlagSetsCache: FlagSetsCache {
         })
     }
 
-    func addToFlagSets(_ featureFlag: Split) {
+    func addToFlagSets(_ featureFlag: SplitDTO) {
         guard let name = featureFlag.name else {
             return
         }

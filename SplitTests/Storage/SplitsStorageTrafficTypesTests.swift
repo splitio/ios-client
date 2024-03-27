@@ -17,7 +17,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
 
     override func setUp() {
         
-        var splits = [Split]()
+        var splits = [SplitDTO]()
         for i in 0..<5 {
             splits.append(newSplit(name: "s\(i)", trafficType: "trafficType\(i)"))
         }
@@ -41,7 +41,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
     }
     
     func testRemove2TrafficTypes() {
-        var splitsAr = [Split]()
+        var splitsAr = [SplitDTO]()
         splitsAr.append(newSplit(name: "s0", trafficType: "trafficType0", status: .archived))
         splitsAr.append(newSplit(name: "s1", trafficType: "trafficType1", status: .archived))
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: splitsAr,
@@ -54,8 +54,8 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
     }
     
     func testSeveralTrafficTypeUpdatesFinalActive() {
-        var splitsAc = [Split]()
-        var splitsAr = [Split]()
+        var splitsAc = [SplitDTO]()
+        var splitsAr = [SplitDTO]()
         splitsAr.append(newSplit(name: "s0", trafficType: "trafficType0", status: .archived))
         splitsAc.append(newSplit(name: "s01", trafficType: "trafficType0", status: .active))
         splitsAr.append(newSplit(name: "s01", trafficType: "trafficType0", status: .archived))
@@ -71,7 +71,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
     }
     
     func testSeveralTrafficTypeUpdatesFinalArchived() {
-        var splits = [Split]()
+        var splits = [SplitDTO]()
         splits.append(newSplit(name: "s0", trafficType: "trafficType0", status: .archived))
         splits.append(newSplit(name: "s01", trafficType: "trafficType0", status: .active))
         splits.append(newSplit(name: "s01", trafficType: "trafficType0", status: .archived))
@@ -88,7 +88,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
     }
     
     func testOverflowArchived() {
-        var splits = [Split]()
+        var splits = [SplitDTO]()
         splits.append(newSplit(name: "s0", trafficType: "trafficType0", status: .archived))
         splits.append(newSplit(name: "s01", trafficType: "trafficType0", status: .archived))
         splits.append(newSplit(name: "s01", trafficType: "trafficType0", status: .archived))
@@ -110,7 +110,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         let s2 = newSplit(name: "n_s2", trafficType: "mytt", status: .active)
         let s2ar = newSplit(name: "n_s2", trafficType: "mytt", status: .archived)
 
-        var splits = [Split]()
+        var splits = [SplitDTO]()
         splits.append(s1)
         splits.append(s2)
         splits.append(s2)
@@ -129,7 +129,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         let splitName = "n_s2"
         let s2t1 = newSplit(name: splitName, trafficType: "tt", status: .active)
         let s2t2 = newSplit(name: splitName, trafficType: "mytt", status: .active)
-        var splits = [Split]()
+        var splits = [SplitDTO]()
         splits.append(s2t1)
         splits.append(s2t1)
         splits.append(s2t1)
@@ -147,7 +147,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         let s2t1 = newSplit(name: splitName, trafficType: "tt", status: .active)
         let s2t2 = newSplit(name: splitName, trafficType: "mytt", status: .active)
 
-        var splits = [Split]()
+        var splits = [SplitDTO]()
         splits.append(s1)
         splits.append(s2t1)
         splits.append(s2t1)
@@ -162,7 +162,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         XCTAssertTrue(splitsStorage.isValidTrafficType(name:  "mytt"))
     }
  
-    private func newSplit(name: String, trafficType: String, status: Status = .active) -> Split {
+    private func newSplit(name: String, trafficType: String, status: Status = .active) -> SplitDTO {
         let split = SplitTestHelper.newSplit(name: name, trafficType: trafficType)
         split.status = status
         split.isParsed = true

@@ -152,9 +152,9 @@ class SplitConfigurationsParsingTest: XCTestCase {
         let config = "{ \"treatment1\": \"{\\\"c1\\\": \\\"v1\\\"}\", \"treatment2\": \"{\\\"c1\\\": \\\"v1\\\"}\"}"
         let initialSplit = createAndParseSplit(config: config)
         let jsonSplit = try? Json.encodeToJson(initialSplit)
-        var split: Split?
+        var split: SplitDTO?
         if let jsonSplit = jsonSplit {
-            split = try? JSON.decodeFrom(json: jsonSplit, to: Split.self)
+            split = try? JSON.decodeFrom(json: jsonSplit, to: SplitDTO.self)
         }
         let t1Config = jsonObj(config: split?.configurations?["treatment1"])
         let t2Config = jsonObj(config: split?.configurations?["treatment2"])
@@ -169,9 +169,9 @@ class SplitConfigurationsParsingTest: XCTestCase {
         let config = "{ \"treatment1\": \"{\\\"c1\\\": \\\"v1\\\"}\", \"treatment2\": \"{\\\"a1\\\": [1,2,3,4], \\\"m1\\\": {\\\"c1\\\": \\\"v1\\\"}}\"}"
         let initialSplit = createAndParseSplit(config: config)
         let jsonSplit = try? Json.encodeToJson(initialSplit)
-        var split: Split?
+        var split: SplitDTO?
         if let jsonSplit = jsonSplit {
-            split = try? JSON.decodeFrom(json: jsonSplit, to: Split.self)
+            split = try? JSON.decodeFrom(json: jsonSplit, to: SplitDTO.self)
         }
         let t1Config = jsonObj(config: split?.configurations?["treatment1"])
         let t2Config = jsonObj(config: split?.configurations?["treatment2"])
@@ -191,14 +191,14 @@ class SplitConfigurationsParsingTest: XCTestCase {
         XCTAssertEqual("v1", map?["c1"])
     }
     
-    private func createAndParseSplit(config: String?) -> Split? {
+    private func createAndParseSplit(config: String?) -> SplitDTO? {
         
         var jsonSplit = "\"name\":\"TEST_FEATURE\""
         if let config = config {
             jsonSplit = "\(jsonSplit), \"configurations\":\(config)"
         }
         jsonSplit = "{\(jsonSplit)}"
-        let split = try? JSON.decodeFrom(json: jsonSplit, to: Split.self)
+        let split = try? JSON.decodeFrom(json: jsonSplit, to: SplitDTO.self)
         return split
     }
     

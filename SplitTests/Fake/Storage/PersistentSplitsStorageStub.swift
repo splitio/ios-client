@@ -14,7 +14,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var changeNumber: Int64 = -1
     var updateTimestamp: Int64 = 0
 
-    var snapshot: SplitsSnapshot = SplitsSnapshot(changeNumber: -1, splits: [Split](),
+    var snapshot: SplitsSnapshot = SplitsSnapshot(changeNumber: -1, splits: [SplitDTO](),
                                                   updateTimestamp: -1, splitsFilterQueryString: "")
 
     var processedSplitChange: ProcessedSplitChange?
@@ -28,7 +28,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var deletedSplits = [String]()
     
     var filterQueryString = ""
-    var splits = [String: Split]()
+    var splits = [String: SplitDTO]()
     var lastBySetSplitFilter: SplitFilter?
 
     func getFilterQueryString() -> String {
@@ -40,7 +40,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
         updateCalled = true
     }
 
-    func update(split: Split) {
+    func update(split: SplitDTO) {
         updateSplitCalled  = true
         splits[split.name ?? ""] = split
         snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: splits.values.compactMap { $0 },
@@ -57,7 +57,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
         return snapshot
     }
 
-    func getAll() -> [Split] {
+    func getAll() -> [SplitDTO] {
         getAllCalled = true
         return snapshot.splits
     }

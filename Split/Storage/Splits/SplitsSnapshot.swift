@@ -10,7 +10,7 @@ import Foundation
 
 struct SplitsSnapshot {
     let changeNumber: Int64
-    let splits: [Split]
+    let splits: [SplitDTO]
     let updateTimestamp: Int64
     let splitsFilterQueryString: String
 }

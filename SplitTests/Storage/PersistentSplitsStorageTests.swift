@@ -95,11 +95,11 @@ class PersistentSplitsStorageTest: XCTestCase {
         XCTAssertTrue(splitDao.deleteAllCalled)
     }
     
-    private func createSplits() -> [Split] {
+    private func createSplits() -> [SplitDTO] {
         return SplitTestHelper.createSplits(namePrefix: "feat_", count: 10)
     }
     
-    private func newSplit(name: String, trafficType: String, status: Status = .active) -> Split {
+    private func newSplit(name: String, trafficType: String, status: Status = .active) -> SplitDTO {
         let split = SplitTestHelper.newSplit(name: name, trafficType: trafficType)
         split.status = status
         return split

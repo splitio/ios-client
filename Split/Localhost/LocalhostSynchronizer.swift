@@ -66,7 +66,7 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
                 return
             }
 
-            let values = featureFlags.values.map { $0 as Split }
+            let values = featureFlags.values.map { $0 as SplitDTO }
             let change = ProcessedSplitChange(activeSplits: values,
                                               archivedSplits: [],
                                               changeNumber: -1, updateTimestamp: -1)

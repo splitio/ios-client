@@ -77,7 +77,7 @@ class SplitValidatorTests: XCTestCase {
         XCTAssertEqual("you passed 'split2' that does not exist in this environment, please double check what feature flags exist in the Split user interface.", errorInfo?.warnings[.nonExistingSplit])
     }
     
-    func createSplit(name: String) -> Split {
+    func createSplit(name: String) -> SplitDTO {
         let split = SplitTestHelper.newSplit(name: name, trafficType: "")
         split.isParsed = true
         return split

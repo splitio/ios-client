@@ -9,8 +9,8 @@
 import Foundation
 
 struct ProcessedSplitChange {
-    let activeSplits: [Split]
-    let archivedSplits: [Split]
+    let activeSplits: [SplitDTO]
+    let archivedSplits: [SplitDTO]
     let changeNumber: Int64
     let updateTimestamp: Int64
 }
@@ -28,8 +28,8 @@ class DefaultSplitChangeProcessor: SplitChangeProcessor {
 
     func process(_ splitChange: SplitChange) -> ProcessedSplitChange {
 
-        var active = [Split]()
-        var archived = [Split]()
+        var active = [SplitDTO]()
+        var archived = [SplitDTO]()
         if let filterSet = self.filterSet {
             active = splitChange.splits.filter {
                 $0.status == .active
