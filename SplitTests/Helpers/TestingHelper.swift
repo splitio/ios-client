@@ -12,7 +12,7 @@ import Foundation
 struct TestingHelper {
 
     static var testLogLevel: SplitLogLevel {
-        return .verbose
+        return .none
     }
 
     static func basicStreamingConfig() -> SplitClientConfig {
