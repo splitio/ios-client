@@ -94,13 +94,7 @@ class SplitClientManagerTest: XCTestCase {
 
     private func createClientManager() {
         let splitDatabase = TestingHelper.createTestDatabase(name: UUID().uuidString)
-        let apiFacade = try! SplitApiFacade.builder()
-            .setUserKey("userKey")
-            .setRestClient(RestClientStub())
-            .setSplitConfig(SplitClientConfig())
-            .setEventsManager(SplitEventsManagerStub())
-            .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
-            .build()
+        let apiFacade = TestingHelper.createApiFacade()
 
         splitManager = SplitManagerStub()
         telemetryProducer = TelemetryStorageStub()

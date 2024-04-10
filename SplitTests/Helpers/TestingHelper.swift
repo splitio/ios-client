@@ -12,7 +12,7 @@ import Foundation
 struct TestingHelper {
 
     static var testLogLevel: SplitLogLevel {
-        return .none
+        return .verbose
     }
 
     static func basicStreamingConfig() -> SplitClientConfig {
@@ -192,5 +192,15 @@ struct TestingHelper {
                                      attributesStorage: AttributesStorageStub(),
                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
                                      flagSetsCache: FlagSetsCacheMock())
+    }
+
+    static func createApiFacade() -> SplitApiFacade {
+        return try! SplitApiFacade.builder()
+            .setUserKey("userKey")
+            .setRestClient(RestClientStub())
+            .setSplitConfig(SplitClientConfig())
+            .setEventsManager(SplitEventsManagerStub())
+            .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
+            .build()
     }
 }

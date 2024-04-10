@@ -50,12 +50,15 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
         processQueue.async { [weak self] in
 
             guard let self = self else { return }
+            print("proc upd 1")
             let storedChangeNumber = self.splitsStorage.changeNumber
             if storedChangeNumber >= notification.changeNumber {
                 return
             }
+            print("proc upd 2")
             if let previousChangeNumber = notification.previousChangeNumber,
                 previousChangeNumber == storedChangeNumber {
+                print("proc upd 3")
                 if let payload = notification.definition, let compressionType = notification.compressionType {
                     do {
                         let split = try self.payloadDecoder.decode(
