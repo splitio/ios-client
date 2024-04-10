@@ -1,3 +1,6 @@
+2.24.6: (Apr 10, 2024)
+- Fixed issue when triggering SDK events
+
 2.24.5: (Mar 20, 2024)
 - Improved Ready From Cache event triggering time by applying the following changes:
   - Triggering feature flags fetch after loading local data
