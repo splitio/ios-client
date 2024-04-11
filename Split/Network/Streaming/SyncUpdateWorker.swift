@@ -54,6 +54,7 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
             if storedChangeNumber >= notification.changeNumber {
                 return
             }
+
             if let previousChangeNumber = notification.previousChangeNumber,
                 previousChangeNumber == storedChangeNumber {
                 if let payload = notification.definition, let compressionType = notification.compressionType {

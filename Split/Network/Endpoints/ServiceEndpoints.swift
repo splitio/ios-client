@@ -195,7 +195,7 @@ import Foundation
 
         private func createUrl(string: String) -> URL? {
 #if swift(>=5.9)
-            if #available(iOS 17.0, *) {
+            if #available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *) {
                 return URL(string: string, encodingInvalidCharacters: false)
             } else {
                 return URL(string: string)

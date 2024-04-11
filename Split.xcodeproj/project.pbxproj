@@ -1131,6 +1131,9 @@
 		95B02DCA28D0BDC30030EC8B /* YamlLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA5802266719C006CBA89 /* YamlLocalhostSplitsParser.swift */; };
 		95B02DCD28D0BDE20030EC8B /* split_cache.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */; };
 		95B030C028D6487C0030EC8B /* StreamingBgReconnectTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B030BF28D6487C0030EC8B /* StreamingBgReconnectTest.swift */; };
+		95B0A9A02BC6B72200C31A9E /* SplitClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B0A99F2BC6B72200C31A9E /* SplitClientTests.swift */; };
+		95B0A9A22BC6BF3500C31A9E /* ClientManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B0A9A12BC6BF3500C31A9E /* ClientManagerMock.swift */; };
+		95B0A9AA2BC6C62900C31A9E /* TreatmentManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B0A9A92BC6C62900C31A9E /* TreatmentManagerMock.swift */; };
 		95B17FF1275A52D7002DC9DF /* TelemetryInMemoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B17FF0275A52D7002DC9DF /* TelemetryInMemoryStorage.swift */; };
 		95B17FF5275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B17FF4275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift */; };
 		95B17FF9275FCD0A002DC9DF /* TelemetryConfigRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B17FF8275FCD0A002DC9DF /* TelemetryConfigRecorder.swift */; };
@@ -1870,6 +1873,9 @@
 		95B0307B28D275020030EC8B /* SplitiOSUnit.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSUnit.xctestplan; sourceTree = "<group>"; };
 		95B030BF28D6487C0030EC8B /* StreamingBgReconnectTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingBgReconnectTest.swift; sourceTree = "<group>"; };
 		95B030C228D8B6160030EC8B /* WatchOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WatchOS.xctestplan; sourceTree = "<group>"; };
+		95B0A99F2BC6B72200C31A9E /* SplitClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitClientTests.swift; sourceTree = "<group>"; };
+		95B0A9A12BC6BF3500C31A9E /* ClientManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientManagerMock.swift; sourceTree = "<group>"; };
+		95B0A9A92BC6C62900C31A9E /* TreatmentManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreatmentManagerMock.swift; sourceTree = "<group>"; };
 		95B17FF0275A52D7002DC9DF /* TelemetryInMemoryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryInMemoryStorage.swift; sourceTree = "<group>"; };
 		95B17FF4275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryTelemetryStorageTest.swift; sourceTree = "<group>"; };
 		95B17FF8275FCD0A002DC9DF /* TelemetryConfigRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelemetryConfigRecorder.swift; sourceTree = "<group>"; };
@@ -2678,6 +2684,8 @@
 				9573FB25273C50D400086DDE /* EvaluatorStub.swift */,
 				95E8193F2878922000D99093 /* LogPrinterStub.swift */,
 				958F98732B1129D7001F35B3 /* KeyValueStorageMock.swift */,
+				95B0A9A12BC6BF3500C31A9E /* ClientManagerMock.swift */,
+				95B0A9A92BC6C62900C31A9E /* TreatmentManagerMock.swift */,
 			);
 			path = Fake;
 			sourceTree = "<group>";
@@ -3347,6 +3355,7 @@
 				95ABF4BB29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift */,
 				95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */,
 				95ABF4B9293003C1006ED016 /* ConfigTest.swift */,
+				95B0A99F2BC6B72200C31A9E /* SplitClientTests.swift */,
 			);
 			path = Init;
 			sourceTree = "<group>";
@@ -4109,6 +4118,7 @@
 				590DF9CC213EB7D50082B94F /* SplitManagerTest.swift in Sources */,
 				59ED408A24EADAA100EF7B09 /* ReconnectBackoffCounterStub.swift in Sources */,
 				9572BA872AC76EA800C10FC1 /* FlagSetsCacheMock.swift in Sources */,
+				95B0A9AA2BC6C62900C31A9E /* TreatmentManagerMock.swift in Sources */,
 				9546079625BF3945007FFD35 /* ImpressionsLoggerStub.swift in Sources */,
 				95F3EFF8258D36F800084AF8 /* HttpEventsRecorderTests.swift in Sources */,
 				958F98742B1129D7001F35B3 /* KeyValueStorageMock.swift in Sources */,
@@ -4141,6 +4151,7 @@
 				5912D14B2195F3C900BC698C /* FileStorageStub.swift in Sources */,
 				5905D4E8255B23DD006DA3B1 /* PersistentMySegmentsStorageStub.swift in Sources */,
 				953911B3267A97DF0040433A /* ImpressionHasherTest.swift in Sources */,
+				95B0A9A02BC6B72200C31A9E /* SplitClientTests.swift in Sources */,
 				9530FD7C27F253CA005027AA /* SplitEventsCoordinatorTest.swift in Sources */,
 				5921ED3E2538E3F8000D6C8B /* StreamingAuthFail4xxTest.swift in Sources */,
 				95C057792948B0E4007E4D6A /* UserConsentModeOptimizedTest.swift in Sources */,
@@ -4195,6 +4206,7 @@
 				59EFD2EF24B4E8990052920D /* HttpRequestManagerMock.swift in Sources */,
 				5919C64A21C7E8EC00EC35B8 /* SplitterAllocationFake.swift in Sources */,
 				5921ED402538E8BF000D6C8B /* StreamingSplitsSyncTest.swift in Sources */,
+				95B0A9A22BC6BF3500C31A9E /* ClientManagerMock.swift in Sources */,
 				592C6AC2211B718E002D120C /* MatcherTest.swift in Sources */,
 				9519A92C27DA9CB700278AEC /* MySegmentsSynchronizerStub.swift in Sources */,
 				5959C482228074800064F968 /* ValidationMessageLoggerStub.swift in Sources */,
