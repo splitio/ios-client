@@ -39,7 +39,9 @@ class SplitEventsManagerStub: SplitEventsManager {
         }
     }
 
+    var registeredEvents = [SplitEvent: SplitEventTask]()
     func register(event: SplitEvent, task: SplitEventTask) {
+        registeredEvents[event] = task
     }
 
     func start() {

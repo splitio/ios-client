@@ -193,4 +193,14 @@ struct TestingHelper {
                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
                                      flagSetsCache: FlagSetsCacheMock())
     }
+
+    static func createApiFacade() -> SplitApiFacade {
+        return try! SplitApiFacade.builder()
+            .setUserKey("userKey")
+            .setRestClient(RestClientStub())
+            .setSplitConfig(SplitClientConfig())
+            .setEventsManager(SplitEventsManagerStub())
+            .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
+            .build()
+    }
 }

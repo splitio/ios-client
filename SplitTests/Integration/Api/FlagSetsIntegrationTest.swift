@@ -642,10 +642,10 @@ class FlagSetsIntegrationTests: XCTestCase {
                                                       sets2: ["set_3"],
                                                       sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 2, till: 2,
+                                getChangeFlagSetsJson(since: 1, till: 1,
                                                       sets1: ["p_set_1", "set_2"],
                                                       sets2: ["set_3"],
-                                                      sets3: ["set_4"])!
+                                                      sets3: ["set_4"])!,
         ]
 
         pollingExps = [XCTestExpectation(description: "EXP_P0"), XCTestExpectation(description: "EXP_P1")]
@@ -659,7 +659,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         let client = try startTest(syncConfig: syncConfig)
 
         var sdkUpdateFiredCount = 0
-        client?.on(event: .sdkUpdated) {
+        client?.on(event: .sdkUpdated, runInBackground: true) {
             sdkUpdateFiredCount+=1
         }
 

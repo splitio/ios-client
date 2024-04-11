@@ -28,6 +28,7 @@ class SplitEventsManagerMock: SplitEventsManager {
     var isSdkTimeoutFired = false
 
     var isSplitUpdatedTriggered = false
+    var isSdkUpdatedFired = false
 
     func notifyInternalEvent(_ event:SplitInternalEvent) {
         switch event {
@@ -49,8 +50,9 @@ class SplitEventsManagerMock: SplitEventsManager {
         }
     }
 
-    
+    var registeredEvents = [SplitEvent: SplitEventTask]()
     func register(event: SplitEvent, task: SplitEventTask) {
+        registeredEvents[event] = task
     }
     
     func start() {
@@ -67,6 +69,8 @@ class SplitEventsManagerMock: SplitEventsManager {
             return isSdkReadyFromCacheFired
         case .sdkReadyTimedOut:
             return isSdkTimeoutFired
+        case .sdkUpdated:
+            return isSdkUpdatedFired
 
         default:
             return true
