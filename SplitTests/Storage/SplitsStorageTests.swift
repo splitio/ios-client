@@ -265,6 +265,27 @@ class SplitsStorageTest: XCTestCase {
         XCTAssertFalse(resultOnNoChange)
     }
 
+    func testUnsupportedMatcherHasDefaultCondition() {
+        let split = unsupportedMatcherSplit()
+
+        persistentStorage.snapshot = getTestSnapshot()
+        splitsStorage.loadLocal()
+
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split],
+                                                                   archivedSplits: [],
+                                                                   changeNumber: 1, updateTimestamp: 1))
+        let splitFromStorage = splitsStorage.get(name: "feature_flag_for_test")
+        let condition = splitFromStorage!.conditions![0]
+        XCTAssertTrue(splitFromStorage != nil)
+        XCTAssertTrue(splitFromStorage?.conditions?.count == 1)
+        XCTAssertTrue(condition.conditionType == ConditionType.whitelist)
+        XCTAssertTrue(condition.label == "targeting rule type unsupported by sdk")
+        XCTAssertTrue(condition.partitions?.count == 1)
+        XCTAssertTrue(condition.partitions?[0].size == 100)
+        XCTAssertTrue(condition.partitions?[0].treatment == "control")
+        XCTAssertTrue(condition.matcherGroup?.matcherCombiner == .and)
+    }
+
     private func getTestSnapshot(count: Int = 10, sets: [[String]]? = nil) -> SplitsSnapshot {
         var splits = [Split]()
         for i in 0..<count {
@@ -298,5 +319,10 @@ class SplitsStorageTest: XCTestCase {
             split.sets = sets.asSet()
         }
         return split
+    }
+
+    private func unsupportedMatcherSplit() -> Split {
+       return Split(name: "feature_flag_for_test", trafficType: "user",
+                    status: Status.active, sets: [], json: SplitTestHelper.getUnsupportedMatcherSplitJson(sourceClass: self)!)
     }
 }

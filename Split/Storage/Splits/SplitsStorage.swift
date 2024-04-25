@@ -68,7 +68,12 @@ class DefaultSplitsStorage: SplitsStorage {
         }
         if !split.isParsed {
             if let parsed = try? Json.decodeFrom(json: split.json, to: Split.self) {
-                inMemorySplits.setValue(split, forKey: name)
+                if isUnsupportedMatcher(split: parsed) {
+                    let defaultCondition = SplitHelper.createDefaultCondition()
+                    parsed.conditions = [defaultCondition]
+                }
+
+                inMemorySplits.setValue(parsed, forKey: name)
                 return parsed
             }
             return nil
@@ -179,6 +184,26 @@ class DefaultSplitsStorage: SplitsStorage {
 
     func destroy() {
         inMemorySplits.removeAll()
+    }
+
+    private func isUnsupportedMatcher(split: Split?) -> Bool {
+        guard let conditions = split?.conditions else {
+            return false
+        }
+
+        return conditions.contains { condition in
+            guard let matcherGroup = condition.matcherGroup else {
+                return false
+            }
+
+            guard let matchers = matcherGroup.matchers else {
+                return false
+            }
+
+            return matchers.contains { matcher in
+                matcher.matcherType == nil
+            }
+        }
     }
 }
 

@@ -67,4 +67,24 @@ class SplitHelper {
 
         return condition
     }
+
+    static func createDefaultCondition() -> Condition {
+        let condition = Condition()
+        let matcherGroup = MatcherGroup()
+        let matcher = Matcher()
+        let partition = Partition()
+
+        condition.conditionType = ConditionType.whitelist
+        matcherGroup.matcherCombiner = .and
+        matcher.matcherType = MatcherType.allKeys
+        partition.size = 100
+        partition.treatment = SplitConstants.control
+
+        matcherGroup.matchers = [matcher]
+        condition.matcherGroup = matcherGroup
+        condition.partitions = [partition]
+        condition.label = "targeting rule type unsupported by sdk"
+
+        return condition
+    }
 }
