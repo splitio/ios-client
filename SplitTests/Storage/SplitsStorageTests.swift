@@ -279,7 +279,7 @@ class SplitsStorageTest: XCTestCase {
         XCTAssertTrue(splitFromStorage != nil)
         XCTAssertTrue(splitFromStorage?.conditions?.count == 1)
         XCTAssertTrue(condition.conditionType == ConditionType.whitelist)
-        XCTAssertTrue(condition.label == "unsupported matcher type")
+        XCTAssertTrue(condition.label == "targeting rule type unsupported by sdk")
         XCTAssertTrue(condition.partitions?.count == 1)
         XCTAssertTrue(condition.partitions?[0].size == 100)
         XCTAssertTrue(condition.partitions?[0].treatment == "control")
@@ -323,6 +323,6 @@ class SplitsStorageTest: XCTestCase {
 
     private func unsupportedMatcherSplit() -> Split {
        return Split(name: "feature_flag_for_test", trafficType: "user",
-                    status: Status.active, sets: [], json: SplitTestHelper.unsupportedMatcherSplitJson)
+                    status: Status.active, sets: [], json: SplitTestHelper.getUnsupportedMatcherSplitJson(sourceClass: self)!)
     }
 }

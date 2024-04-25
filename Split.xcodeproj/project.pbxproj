@@ -1248,6 +1248,7 @@
 		95F3F07325ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F07225ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift */; };
 		95F3F09525AE1F3800084AF8 /* ServiceConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
+		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1982,6 +1983,7 @@
 		95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceConstants.swift; sourceTree = "<group>"; };
 		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
+		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2851,6 +2853,7 @@
 				95B4368C26E9186C00E1EB9C /* lorem_ipsum_result.txt */,
 				95B2498326F3E19300B34507 /* push_msg-segment_updV2.txt */,
 				95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */,
+				C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3640,6 +3643,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				592C6AE6211CBBB0002D120C /* murmur.csv in Resources */,
+				C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */,
 				95D83A972A561CB000ADA55E /* SplitPushManagerUT.xctestplan in Resources */,
 				5982D936219F494500230F44 /* matchers.json in Resources */,
 				592C6AE9211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
@@ -5193,7 +5197,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D5VPZG3BF4;
+				DEVELOPMENT_TEAM = F5648SKKXL;
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -5221,7 +5225,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D5VPZG3BF4;
+				DEVELOPMENT_TEAM = F5648SKKXL;
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;

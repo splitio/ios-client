@@ -69,7 +69,7 @@ class DefaultSplitsStorage: SplitsStorage {
         if !split.isParsed {
             if let parsed = try? Json.decodeFrom(json: split.json, to: Split.self) {
                 if isUnsupportedMatcher(split: parsed) {
-                    let defaultCondition = createDefaultCondition()
+                    let defaultCondition = SplitHelper.createDefaultCondition()
                     parsed.conditions = [defaultCondition]
                 }
 
@@ -204,26 +204,6 @@ class DefaultSplitsStorage: SplitsStorage {
                 matcher.matcherType == nil
             }
         }
-    }
-
-    private func createDefaultCondition() -> Condition {
-        let condition = Condition()
-        let matcherGroup = MatcherGroup()
-        let matcher = Matcher()
-        let partition = Partition()
-
-        condition.conditionType = ConditionType.whitelist
-        matcherGroup.matcherCombiner = .and
-        matcher.matcherType = MatcherType.allKeys
-        partition.size = 100
-        partition.treatment = SplitConstants.control
-
-        matcherGroup.matchers = [matcher]
-        condition.matcherGroup = matcherGroup
-        condition.partitions = [partition]
-        condition.label = "unsupported matcher type"
-
-        return condition
     }
 }
 
