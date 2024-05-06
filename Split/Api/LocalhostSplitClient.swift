@@ -107,7 +107,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
 
     public func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
-        on(event: event, runInBackground: false, queue: queue, execute: action)
+        on(event: event, runInBackground: true, queue: queue, execute: action)
     }
 
     public func on(event: SplitEvent, execute action: @escaping SplitAction) {
@@ -120,8 +120,8 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         guard let factory = clientManger?.splitFactory else { return }
         if let eventsManager = self.eventsManager {
             let task = SplitEventActionTask(action: action, event: event,
-                                            runInBackground: true, 
-                                            factory: factory, 
+                                            runInBackground: runInBackground,
+                                            factory: factory,
                                             queue: queue)
             eventsManager.register(event: event, task: task)
         }

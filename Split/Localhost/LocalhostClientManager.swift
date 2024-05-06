@@ -35,7 +35,8 @@ class LocalhostClientManager: SplitClientManager {
          splitManager: SplitManager,
          splitsStorage: SplitsStorage,
          synchronizer: FeatureFlagsSynchronizer,
-         eventsManagerCoordinator: SplitEventsManagerCoordinator) {
+         eventsManagerCoordinator: SplitEventsManagerCoordinator,
+         factory: SplitFactory) {
 
         self.defaultKey = key
         self.config = config
@@ -43,6 +44,7 @@ class LocalhostClientManager: SplitClientManager {
         self.synchronizer = synchronizer
         self.eventsManagerCoordinator = eventsManagerCoordinator
         self.splitsStorage = splitsStorage
+        self.splitFactory = factory
 
         self.evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
                                           mySegmentsStorage: EmptyMySegmentsStorage())
