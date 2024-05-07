@@ -69,7 +69,7 @@ class BaseHttpRequest: HttpRequest {
             // Use order array, otherwise default order
             let keys = parameters.order ?? Array(parameters.values.keys)
             for key in keys {
-                if let value = parameters.values[key] {
+                if let value = parameters[key] {
                     var parsedValue = "\(value)"
                     if let array = value as? [Any] {
                         parsedValue = array.compactMap { "\($0)" }.joined(separator: ",")
