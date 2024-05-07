@@ -53,7 +53,7 @@ class DefaultRestClient: SplitApiRestClient {
     }
 
     func execute<T>(endpoint: Endpoint,
-                    parameters: [String: Any]? = nil,
+                    parameters: HttpParameters? = nil,
                     body: Data? = nil,
                     headers: HttpHeaders? = nil,
                     completion: @escaping (DataResult<T>) -> Void) where T: Decodable {

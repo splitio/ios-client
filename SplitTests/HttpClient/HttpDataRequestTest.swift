@@ -31,6 +31,21 @@ class HttpDataRequestTest: XCTestCase {
         XCTAssertTrue("http://split.com?p2=2&p1=v1" == httpRequest.url.absoluteString || "http://split.com?p1=v1&p2=2" == httpRequest.url.absoluteString)
     }
 
+    func testRequestCreationWithOrder() throws {
+        // Testing parameter setup on request creation
+        let parameters: HttpParameters = HttpParameters(values: ["p1": "v1", "p2": 2, "p3": [1,2,3]], order: ["p2", "p3", "defaultParam", "p1"])
+        let headers: HttpHeaders = ["h1": "v1", "h2": "v2"]
+        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: URL(string: (url.absoluteString + "?defaultParam=4"))!, method: .get, parameters: parameters, headers: headers)
+
+        XCTAssertEqual("v1", httpRequest.parameters!["p1"] as! String)
+        XCTAssertEqual(2, httpRequest.parameters!["p2"] as! Int)
+        XCTAssertEqual([1,2,3], httpRequest.parameters!["p3"] as! [Int])
+        XCTAssertEqual("v1", httpRequest.headers["h1"])
+        XCTAssertEqual("v2", httpRequest.headers["h2"])
+        XCTAssertEqual(headers, httpRequest.headers)
+        XCTAssertTrue("http://split.com?p2=2&p3=1,2,3&defaultParam=4&p1=v1" == httpRequest.url.absoluteString)
+    }
+
     func testRequestEnquedOnSend() throws {
         // When a request is sent, it has to be created in
         // in an http session

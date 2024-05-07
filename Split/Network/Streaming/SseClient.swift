@@ -59,7 +59,7 @@ class DefaultSseClient: SseClient {
             ]
             do {
                 self.streamRequest = try self.httpClient.sendStreamRequest(endpoint: self.endpoint,
-                                                          parameters: parameters, headers: self.endpoint.headers)
+                                                                           parameters: HttpParameters(values: parameters), headers: self.endpoint.headers)
                 .getResponse(responseHandler: self.responseHandler(completion: completion),
                              incomingDataHandler: self.incommingDataHandler(completion: completion),
                              closeHandler: self.closeHandler(),
