@@ -405,6 +405,7 @@
 		951256412771318D0091895B /* SyncHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951256402771318D0091895B /* SyncHelper.swift */; };
 		9516D0202A2910C80092A9DC /* SyncGuardian.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9516D01F2A2910C80092A9DC /* SyncGuardian.swift */; };
 		9516D0222A291D180092A9DC /* SyncGuardianTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9516D0212A291D180092A9DC /* SyncGuardianTest.swift */; };
+		95192EAA2BEA9806004084EA /* SplitiOSUnit_1.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95192EA92BEA9806004084EA /* SplitiOSUnit_1.xctestplan */; };
 		9519A8F827D2AE2400278AEC /* AttributesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A8F727D2AE2400278AEC /* AttributesStorage.swift */; };
 		9519A90F27D686A900278AEC /* SynchronizedDictionaryComposed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A90E27D686A900278AEC /* SynchronizedDictionaryComposed.swift */; };
 		9519A91127D6935700278AEC /* ByKeyAttributesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A91027D6935700278AEC /* ByKeyAttributesStorage.swift */; };
@@ -1673,6 +1674,7 @@
 		951256402771318D0091895B /* SyncHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncHelper.swift; sourceTree = "<group>"; };
 		9516D01F2A2910C80092A9DC /* SyncGuardian.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncGuardian.swift; sourceTree = "<group>"; };
 		9516D0212A291D180092A9DC /* SyncGuardianTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncGuardianTest.swift; sourceTree = "<group>"; };
+		95192EA92BEA9806004084EA /* SplitiOSUnit_1.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = SplitiOSUnit_1.xctestplan; sourceTree = "<group>"; };
 		9519A8F727D2AE2400278AEC /* AttributesStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesStorage.swift; sourceTree = "<group>"; };
 		9519A90E27D686A900278AEC /* SynchronizedDictionaryComposed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizedDictionaryComposed.swift; sourceTree = "<group>"; };
 		9519A91027D6935700278AEC /* ByKeyAttributesStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByKeyAttributesStorage.swift; sourceTree = "<group>"; };
@@ -2068,6 +2070,7 @@
 				952FA1682A44C0FB00264AB5 /* SplitStreamingUT.xctestplan */,
 				95D83A962A561CB000ADA55E /* SplitPushManagerUT.xctestplan */,
 				95B0307B28D275020030EC8B /* SplitiOSUnit.xctestplan */,
+				95192EA92BEA9806004084EA /* SplitiOSUnit_1.xctestplan */,
 				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
@@ -3629,6 +3632,7 @@
 				95CED0632B50584F005E3C34 /* PrivacyInfo.xcprivacy in Resources */,
 				95880D092AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan in Resources */,
 				599EA57622666B84006CBA89 /* LICENSE in Resources */,
+				95192EAA2BEA9806004084EA /* SplitiOSUnit_1.xctestplan in Resources */,
 				3B6DEF5C20EA6AE50067435E /* .gitkeep in Resources */,
 				952FA1692A44C0FB00264AB5 /* SplitStreamingUT.xctestplan in Resources */,
 				956A7E1B2970B0F20080D53C /* SplitiOSStreaming.xctestplan in Resources */,
