@@ -26,7 +26,7 @@ extension DefaultRestClient: RestClientSplitChanges {
         }
         self.execute(
             endpoint: endpointFactory.splitChangesEndpoint,
-            parameters: parameters,
+            parameters: HttpParameters(values: parameters, order: ["since", "sets", "names", "prefixes", "till"]),
             headers: headers,
             completion: completion)
     }
