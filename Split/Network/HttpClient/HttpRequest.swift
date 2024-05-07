@@ -67,9 +67,9 @@ class BaseHttpRequest: HttpRequest {
 
             var finalQueryItems: [URLQueryItem] = []
             // Use order array, otherwise default order
-            let keys = parameters.order ?? Array(parameters.values.keys)
+            let keys = parameters.order ?? Array(queryItems.keys)
             for key in keys {
-                if let value = parameters[key] {
+                if let value = queryItems[key] {
                     var parsedValue = "\(value)"
                     if let array = value as? [Any] {
                         parsedValue = array.compactMap { "\($0)" }.joined(separator: ",")
@@ -78,7 +78,7 @@ class BaseHttpRequest: HttpRequest {
                 }
             }
 
-            components?.queryItems?.append(contentsOf: finalQueryItems)
+            components?.queryItems = finalQueryItems
         }
 
         guard let finalUrl = components?.url else {
