@@ -1248,6 +1248,7 @@
 		95F3F07325ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F07225ACE53600084AF8 /* HttpMySegmentsFetcherStub.swift */; };
 		95F3F09525AE1F3800084AF8 /* ServiceConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
+		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1982,6 +1983,7 @@
 		95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceConstants.swift; sourceTree = "<group>"; };
 		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
+		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2438,6 +2440,7 @@
 				31AA22E5D463A3928C1D0600 /* HttpError.swift */,
 				59EFD2F124B5F9C80052920D /* HttpRequestList.swift */,
 				59EFD2F524B5FB7B0052920D /* HttpSession.swift */,
+				C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */,
 			);
 			path = HttpClient;
 			sourceTree = "<group>";
@@ -3863,6 +3866,7 @@
 				59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */,
 				952E266D2833E4120015D633 /* UniqueKeyDao.swift in Sources */,
 				3B6DEF3620EA6AE50067435E /* SplitClient.swift in Sources */,
+				C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */,
 				3B6DEF3F20EA6AE50067435E /* ConditionType.swift in Sources */,
 				95D9446B283BEE4D00D7FFED /* UniqueKeys.swift in Sources */,
 				95ABF4FE2936AECB006ED016 /* EventsSynchronizer.swift in Sources */,
