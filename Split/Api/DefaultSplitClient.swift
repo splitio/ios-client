@@ -74,8 +74,16 @@ extension DefaultSplitClient {
 
     private func on(event: SplitEvent, runInBackground: Bool,
                    queue: DispatchQueue?, execute action: @escaping SplitAction) {
+
+
+        guard let factory = clientManager?.splitFactory else {
+            return
+        }
+
         let task = SplitEventActionTask(action: action, event: event,
-                                        runInBackground: runInBackground, queue: queue)
+                                        runInBackground: runInBackground,
+                                        factory: factory, 
+                                        queue: queue)
         task.event = event
         on(event: event, executeTask: task)
     }

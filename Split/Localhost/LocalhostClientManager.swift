@@ -9,7 +9,7 @@
 import Foundation
 
 class LocalhostClientManager: SplitClientManager {
-    
+
     struct LocalhostComponentsGroup {
         let client: SplitClient
         let eventsManager: SplitEventsManager
@@ -28,13 +28,15 @@ class LocalhostClientManager: SplitClientManager {
     private let evaluator: Evaluator
     private let splitsStorage: SplitsStorage
     private let splitManager: SplitManager
+    weak var splitFactory: SplitFactory?
 
     init(config: SplitClientConfig,
          key: Key,
          splitManager: SplitManager,
          splitsStorage: SplitsStorage,
          synchronizer: FeatureFlagsSynchronizer,
-         eventsManagerCoordinator: SplitEventsManagerCoordinator) {
+         eventsManagerCoordinator: SplitEventsManagerCoordinator,
+         factory: SplitFactory) {
 
         self.defaultKey = key
         self.config = config
@@ -42,6 +44,7 @@ class LocalhostClientManager: SplitClientManager {
         self.synchronizer = synchronizer
         self.eventsManagerCoordinator = eventsManagerCoordinator
         self.splitsStorage = splitsStorage
+        self.splitFactory = factory
 
         self.evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
                                           mySegmentsStorage: EmptyMySegmentsStorage())
@@ -81,10 +84,10 @@ class LocalhostClientManager: SplitClientManager {
 
         let newEventsManager = eventsManager ?? DefaultSplitEventsManager(config: config)
         let newClient = LocalhostSplitClient(key: key,
-                                             splitsStorage: splitsStorage,
+                                             splitsStorage: splitsStorage, clientManager: self,
                                              eventsManager: newEventsManager,
                                              evaluator: evaluator)
-        
+
         let newGroup = LocalhostComponentsGroup(client: newClient, eventsManager: newEventsManager)
         clients.setValue(newGroup, forKey: key.matchingKey)
         eventsManagerCoordinator.add(newEventsManager, forKey: key)

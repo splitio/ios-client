@@ -13,6 +13,7 @@ protocol SplitClientManager: AnyObject {
     func get(forKey key: Key) -> SplitClient
     func flush()
     func destroy(forKey key: Key)
+    var splitFactory: SplitFactory? { get }
 }
 
 class DefaultClientManager: SplitClientManager {
@@ -34,7 +35,7 @@ class DefaultClientManager: SplitClientManager {
     private let splitManager: SplitManager
     private let byKeyRegistry: ByKeyRegistry
     private let mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory
-    private weak var splitFactory: SplitFactory?
+    weak var splitFactory: SplitFactory?
 
     init(config: SplitClientConfig,
          key: Key,
@@ -47,7 +48,8 @@ class DefaultClientManager: SplitClientManager {
          eventsTracker: EventsTracker,
          eventsManagerCoordinator: SplitEventsManagerCoordinator,
          mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory,
-         telemetryStopwatch: Stopwatch?) {
+         telemetryStopwatch: Stopwatch?,
+         factory: SplitFactory) {
 
         self.defaultKey = key
         self.apiFacade = apiFacade
@@ -62,9 +64,11 @@ class DefaultClientManager: SplitClientManager {
         self.telemetryProducer = storageContainer.telemetryStorage
         self.evaluator = DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
                                           mySegmentsStorage: storageContainer.mySegmentsStorage)
+
         self.telemetryStopwatch = telemetryStopwatch
 
         self.eventsTracker = eventsTracker
+        self.splitFactory = factory
 
         defaultClient = createClient(forKey: key)
 

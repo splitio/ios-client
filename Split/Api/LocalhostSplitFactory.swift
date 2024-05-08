@@ -31,10 +31,10 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
     private let bundle: Bundle
     private let synchronizer: FeatureFlagsSynchronizer
     private let externalDataSource: LocalhostInputDataProducer?
-    private let clientManager: SplitClientManager
+    private var clientManager: SplitClientManager?
 
     public var client: SplitClient {
-        return clientManager.defaultClient ?? FailedClient()
+        return clientManager?.defaultClient ?? FailedClient()
     }
 
     public var manager: SplitManager {
@@ -58,14 +58,15 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         self.synchronizer = LocalhostSynchronizer(featureFlagsStorage: splitsStorage,
                                                    featureFlagsDataSource: dataSource,
                                                    eventsManager: eventsManager)
-
+        super.init()
         clientManager = LocalhostClientManager(config: config,
                                                key: key,
                                                splitManager: localhostManager,
                                                splitsStorage: splitsStorage,
                                                synchronizer: synchronizer,
-                                               eventsManagerCoordinator: eventsManager)
-        super.init()
+                                               eventsManagerCoordinator: eventsManager,
+                                               factory: self)
+
         self.synchronizer.synchronize()
     }
 
@@ -85,7 +86,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
                         eventsManager: SplitEventsManager? = nil,
                         splitsStorage: SplitsStorage? = nil) -> SplitClient {
 
-        clientManager.get(forKey: key)
+        clientManager?.get(forKey: key) ?? FailedClient()
     }
 
     public func setUserConsent(enabled: Bool) {

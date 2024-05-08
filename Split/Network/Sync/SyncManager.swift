@@ -109,6 +109,7 @@ class DefaultSyncManager: SyncManager {
     }
 
     private func handle(pushEvent: SyncStatusEvent) {
+
         if isPaused.value {
             return
         }
