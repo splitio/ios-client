@@ -280,12 +280,13 @@ class SplitsStorageTest: XCTestCase {
 
         return SplitsSnapshot(changeNumber: dummyChangeNumber, splits: splits,
                               updateTimestamp: dummyUpdateTimestamp,
-                              splitsFilterQueryString: dummyQs)
+                              splitsFilterQueryString: dummyQs,
+                              flagsSpec: "")
     }
 
     private func dummySnapshot() -> SplitsSnapshot {
         return SplitsSnapshot(changeNumber: dummyChangeNumber, splits: [],
-                              updateTimestamp: dummyUpdateTimestamp, splitsFilterQueryString: dummyQs)
+                              updateTimestamp: dummyUpdateTimestamp, splitsFilterQueryString: dummyQs, flagsSpec: "")
     }
 
     private func newSplit(name: String,

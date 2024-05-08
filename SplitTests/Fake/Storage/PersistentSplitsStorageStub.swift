@@ -15,7 +15,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var updateTimestamp: Int64 = 0
 
     var snapshot: SplitsSnapshot = SplitsSnapshot(changeNumber: -1, splits: [Split](),
-                                                  updateTimestamp: -1, splitsFilterQueryString: "")
+                                                  updateTimestamp: -1, splitsFilterQueryString: "", flagsSpec: "")
 
     var processedSplitChange: ProcessedSplitChange?
 
@@ -28,11 +28,16 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var deletedSplits = [String]()
     
     var filterQueryString = ""
+    var flagsSpec = ""
     var splits = [String: Split]()
     var lastBySetSplitFilter: SplitFilter?
 
     func getFilterQueryString() -> String {
         return snapshot.splitsFilterQueryString
+    }
+
+    func getFlagsSpec() -> String {
+        return snapshot.flagsSpec
     }
 
     func update(splitChange: ProcessedSplitChange) {
@@ -44,13 +49,20 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
         updateSplitCalled  = true
         splits[split.name ?? ""] = split
         snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: splits.values.compactMap { $0 },
-                                  updateTimestamp: snapshot.updateTimestamp, splitsFilterQueryString: filterQueryString)
+                                  updateTimestamp: snapshot.updateTimestamp, splitsFilterQueryString: filterQueryString,
+                                  flagsSpec: flagsSpec)
     }
     
     func update(filterQueryString: String) {
         self.filterQueryString = filterQueryString
         snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: snapshot.splits,
-                                  updateTimestamp: snapshot.updateTimestamp, splitsFilterQueryString: filterQueryString)
+                                  updateTimestamp: snapshot.updateTimestamp, splitsFilterQueryString: filterQueryString,
+                                  flagsSpec: flagsSpec)
+    }
+
+    func update(flagsSpec: String) {
+        self.flagsSpec = flagsSpec
+        snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: snapshot.splits, updateTimestamp: snapshot.updateTimestamp, splitsFilterQueryString: filterQueryString, flagsSpec: flagsSpec)
     }
 
     func getSplitsSnapshot() -> SplitsSnapshot {

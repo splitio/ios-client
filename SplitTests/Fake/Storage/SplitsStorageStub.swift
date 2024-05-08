@@ -20,6 +20,8 @@ class SplitsStorageStub: SplitsStorage {
     
     var splitsFilterQueryString: String = ""
 
+    var flagsSpec: String = ""
+
     var loadLocalCalled = false
     var clearCalled = false
 
