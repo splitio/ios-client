@@ -12,8 +12,19 @@ class HttpParameters: ExpressibleByDictionaryLiteral {
     let order: [String]?
     let values: [String: Any]
 
-    init(values: [String: Any]?, order: [String]? = nil) {
-        self.values = values ?? [:]
+    init (values: [String: Any]) {
+        self.values = values
+        self.order = nil
+    }
+
+    init(_ parameters: [HttpParameter]) {
+        var order: [String] = []
+        self.values = parameters.reduce(into: [:], { (dict, item) in
+            if item.value != nil {
+                dict[item.key] = item.value
+            }
+            order.append(item.key)
+        })
         self.order = order
     }
 

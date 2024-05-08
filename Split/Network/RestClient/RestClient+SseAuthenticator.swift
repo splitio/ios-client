@@ -27,13 +27,20 @@ protocol RestClientSseAuthenticator: RestClient {
 extension DefaultRestClient: RestClientSseAuthenticator {
     var kUserKeyParameter: String { "users" }
     func authenticate(userKeys: [String], completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void) {
-        var parameters: [String: Any] = [kUserKeyParameter: userKeys]
-        if !Spec.flagsSpec.isEmpty() {
-            parameters["s"] = Spec.flagsSpec
-        }
         self.execute(
             endpoint: endpointFactory.sseAuthenticationEndpoint,
-            parameters: HttpParameters(values: parameters, order: ["s", kUserKeyParameter]),
+            parameters: buildParameters(userKeys: userKeys),
             completion: completion)
+    }
+
+    private func buildParameters(userKeys: [String]) -> HttpParameters {
+        var parameters: [HttpParameter] = []
+        if !Spec.flagsSpec.isEmpty() {
+            parameters.append(HttpParameter("s", Spec.flagsSpec))
+        }
+
+        parameters.append(HttpParameter(kUserKeyParameter, userKeys))
+
+        return HttpParameters(parameters)
     }
 }

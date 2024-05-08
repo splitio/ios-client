@@ -20,17 +20,29 @@ extension DefaultRestClient: RestClientSplitChanges {
                          till: Int64?,
                          headers: HttpHeaders?,
                          completion: @escaping (DataResult<SplitChange>) -> Void) {
-        var parameters: [String: Any] = ["since": since]
-        if let till = till {
-            parameters["till"] = till
-        }
-        if !Spec.flagsSpec.isEmpty() {
-            parameters["s"] = Spec.flagsSpec
-        }
         self.execute(
             endpoint: endpointFactory.splitChangesEndpoint,
-            parameters: HttpParameters(values: parameters, order: ["s", "since", "sets", "names", "prefixes", "till"]),
+            parameters: buildParameters(since: since, till: till),
             headers: headers,
             completion: completion)
+    }
+
+    private func buildParameters(since: Int64,
+                                 till: Int64?) -> HttpParameters {
+        var parameters: [HttpParameter] = []
+        if !Spec.flagsSpec.isEmpty() {
+            parameters.append(HttpParameter("s", Spec.flagsSpec))
+        }
+
+        parameters.append(HttpParameter("since", since))
+        parameters.append(HttpParameter("sets"))
+        parameters.append(HttpParameter("names"))
+        parameters.append(HttpParameter("prefixes"))
+
+        if let till = till {
+            parameters.append(HttpParameter("till", till))
+        }
+
+        return HttpParameters(parameters)
     }
 }

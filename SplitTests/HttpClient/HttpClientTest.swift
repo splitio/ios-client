@@ -60,7 +60,7 @@ class HttpClientTest: XCTestCase {
         var splitsChange: SplitChange? = nil
         let dummyChanges = Data(IntegrationHelper.emptySplitChanges(since: 1, till: 2).utf8)
         let expectation = XCTestExpectation(description: "complete req")
-        let request = try httpClient.sendRequest(endpoint: factory.splitChangesEndpoint, parameters: HttpParameters(values: ["since": 100, "s": "2.2"], order: ["s", "since"])).getResponse(completionHandler: { response in
+        let request = try httpClient.sendRequest(endpoint: factory.splitChangesEndpoint, parameters: HttpParameters([HttpParameter("s", "2.2"), HttpParameter("since", 100)])).getResponse(completionHandler: { response in
             splitsChange = try? response.result.value?.decode(SplitChange.self)
             expectation.fulfill()
         }, errorHandler: { error in })
