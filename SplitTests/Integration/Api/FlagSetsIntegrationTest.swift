@@ -51,6 +51,7 @@ class FlagSetsIntegrationTests: XCTestCase {
     var factory: SplitFactory!
 
     override func setUp() {
+        Version.spec = ""
         testDb = TestingHelper.createTestDatabase(name: "GralIntegrationTest")
         if splitChange == nil {
             splitChange = loadSplitsChangeFile()
@@ -61,7 +62,6 @@ class FlagSetsIntegrationTests: XCTestCase {
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
-
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
@@ -157,7 +157,6 @@ class FlagSetsIntegrationTests: XCTestCase {
     }
 
     func testInitialQuerystring() throws {
-
         let syncConfig = SyncConfig.builder()
                    .addSplitFilter(SplitFilter.bySet(["set_x", "set_x", "set_3"]))
                    .addSplitFilter(SplitFilter.bySet(["set_2", "set_3", "set_ww", "invalid+"]))
@@ -166,6 +165,18 @@ class FlagSetsIntegrationTests: XCTestCase {
         try bodyTest(syncConfig: syncConfig)
 
         XCTAssertEqual("since=-1&sets=set_2,set_3,set_ww,set_x", querystring)
+    }
+
+    func testInitialQuerystringWithSpec() throws {
+        Version.spec = "1.1"
+        let syncConfig = SyncConfig.builder()
+                   .addSplitFilter(SplitFilter.bySet(["set_x", "set_x", "set_3"]))
+                   .addSplitFilter(SplitFilter.bySet(["set_2", "set_3", "set_ww", "invalid+"]))
+                   .build()
+
+        try bodyTest(syncConfig: syncConfig)
+
+        XCTAssertEqual("s=1.1&since=-1&sets=set_2,set_3,set_ww,set_x", querystring)
     }
 
     func testTotalAndInvalidFlagSetsTelemetry() throws {

@@ -27,9 +27,13 @@ protocol RestClientSseAuthenticator: RestClient {
 extension DefaultRestClient: RestClientSseAuthenticator {
     var kUserKeyParameter: String { "users" }
     func authenticate(userKeys: [String], completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void) {
+        var parameters: [String: Any] = [kUserKeyParameter: userKeys]
+        if !Version.spec.isEmpty() {
+            parameters["s"] = Version.spec
+        }
         self.execute(
             endpoint: endpointFactory.sseAuthenticationEndpoint,
-            parameters: [kUserKeyParameter: userKeys],
+            parameters: HttpParameters(values: parameters, order: ["s", kUserKeyParameter]),
             completion: completion)
     }
 }
