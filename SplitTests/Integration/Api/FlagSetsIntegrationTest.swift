@@ -51,7 +51,7 @@ class FlagSetsIntegrationTests: XCTestCase {
     var factory: SplitFactory!
 
     override func setUp() {
-        Version.spec = ""
+        Spec.flagsSpec = ""
         testDb = TestingHelper.createTestDatabase(name: "GralIntegrationTest")
         if splitChange == nil {
             splitChange = loadSplitsChangeFile()
@@ -168,7 +168,7 @@ class FlagSetsIntegrationTests: XCTestCase {
     }
 
     func testInitialQuerystringWithSpec() throws {
-        Version.spec = "1.1"
+        Spec.flagsSpec = "1.1"
         let syncConfig = SyncConfig.builder()
                    .addSplitFilter(SplitFilter.bySet(["set_x", "set_x", "set_3"]))
                    .addSplitFilter(SplitFilter.bySet(["set_2", "set_3", "set_ww", "invalid+"]))

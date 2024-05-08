@@ -52,12 +52,12 @@ class CdnByPassTest: XCTestCase {
     }
 
     func testInit() {
-        Version.spec = "1.1"
+        Spec.flagsSpec = "1.1"
         performTest(expectedRequestUrl: "https://sdk.split.io/api/splitChanges?s=1.1&since=1200&sets=c,nset1,nset2&till=1200")
     }
 
     func testInitWithoutSpec() {
-        Version.spec = ""
+        Spec.flagsSpec = ""
         performTest(expectedRequestUrl: "https://sdk.split.io/api/splitChanges?since=1200&sets=c,nset1,nset2&till=1200")
     }
 

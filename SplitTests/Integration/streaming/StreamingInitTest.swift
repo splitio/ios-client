@@ -28,12 +28,12 @@ class StreamingInitTest: XCTestCase {
     }
 
     func testInit() {
-        Version.spec = "1.1"
+        Spec.flagsSpec = "1.1"
         performTest(expectedAuthUrl: "https://auth.split.io/api/v2/auth?s=1.1&users=CUSTOMER_ID")
     }
 
     func testInitWithoutSpec() {
-        Version.spec = ""
+        Spec.flagsSpec = ""
 
         performTest(expectedAuthUrl: "https://auth.split.io/api/v2/auth?users=CUSTOMER_ID")
     }

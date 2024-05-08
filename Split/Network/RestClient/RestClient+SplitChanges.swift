@@ -24,8 +24,8 @@ extension DefaultRestClient: RestClientSplitChanges {
         if let till = till {
             parameters["till"] = till
         }
-        if !Version.spec.isEmpty() {
-            parameters["s"] = Version.spec
+        if !Spec.flagsSpec.isEmpty() {
+            parameters["s"] = Spec.flagsSpec
         }
         self.execute(
             endpoint: endpointFactory.splitChangesEndpoint,
