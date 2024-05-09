@@ -29,6 +29,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     
     var filterQueryString = ""
     var flagsSpec = ""
+    var updateFlagsSpecCalled = false
     var splits = [String: Split]()
     var lastBySetSplitFilter: SplitFilter?
 
@@ -63,6 +64,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     func update(flagsSpec: String) {
         self.flagsSpec = flagsSpec
         snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: snapshot.splits, updateTimestamp: snapshot.updateTimestamp, splitsFilterQueryString: filterQueryString, flagsSpec: flagsSpec)
+        self.updateFlagsSpecCalled = true
     }
 
     func getSplitsSnapshot() -> SplitsSnapshot {
