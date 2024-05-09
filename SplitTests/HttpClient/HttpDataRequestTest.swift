@@ -33,7 +33,7 @@ class HttpDataRequestTest: XCTestCase {
 
     func testRequestCreationWithOrder() throws {
         // Testing parameter setup on request creation
-        let parameters: HttpParameters = HttpParameters([HttpParameter("p2", 2), HttpParameter("p3", [1,2,3]), HttpParameter("defaultParam"), HttpParameter("p1", "v1")])
+        let parameters: HttpParameters = HttpParameters([HttpParameter(key: "p2", value: 2), HttpParameter(key: "p3", value: [1,2,3]), HttpParameter(key: "defaultParam"), HttpParameter(key: "p1", value: "v1")])
         let headers: HttpHeaders = ["h1": "v1", "h2": "v2"]
         let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: URL(string: (url.absoluteString + "?defaultParam=4"))!, method: .get, parameters: parameters, headers: headers)
 

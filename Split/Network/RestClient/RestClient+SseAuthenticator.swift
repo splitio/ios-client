@@ -36,10 +36,10 @@ extension DefaultRestClient: RestClientSseAuthenticator {
     private func buildParameters(userKeys: [String]) -> HttpParameters {
         var parameters: [HttpParameter] = []
         if !Spec.flagsSpec.isEmpty() {
-            parameters.append(HttpParameter("s", Spec.flagsSpec))
+            parameters.append(HttpParameter(key: "s", value: Spec.flagsSpec))
         }
 
-        parameters.append(HttpParameter(kUserKeyParameter, userKeys))
+        parameters.append(HttpParameter(key: kUserKeyParameter, value: userKeys))
 
         return HttpParameters(parameters)
     }
