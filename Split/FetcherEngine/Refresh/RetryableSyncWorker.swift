@@ -202,8 +202,15 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             }
         }
 
-        if defaultQueryString != splitsStorage.splitsFilterQueryString {
-            splitsStorage.update(filterQueryString: defaultQueryString)
+        let queryStringHasChanged = defaultQueryString != splitsStorage.splitsFilterQueryString
+        let flagsSpecHasChanged = flagsSpec != splitsStorage.flagsSpec
+        if queryStringHasChanged || flagsSpecHasChanged {
+            if queryStringHasChanged {
+                splitsStorage.update(filterQueryString: defaultQueryString)
+            }
+            if flagsSpecHasChanged {
+                splitsStorage.update(flagsSpec: flagsSpec)
+            }
             changeNumber = -1
             clearCache = true
         }

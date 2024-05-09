@@ -17,6 +17,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     var changeNumber: Int64 { get }
     var updateTimestamp: Int64 { get }
     var splitsFilterQueryString: String { get }
+    var flagsSpec: String { get }
 
     func loadLocal()
     func get(name: String) -> Split?
@@ -25,6 +26,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     func update(splitChange: ProcessedSplitChange) -> Bool
     func update(filterQueryString: String)
     func update(bySetsFilter: SplitFilter?)
+    func update(flagsSpec: String)
     func updateWithoutChecks(split: Split)
     func isValidTrafficType(name: String) -> Bool
     func getCount() -> Int
