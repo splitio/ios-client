@@ -1251,6 +1251,7 @@
 		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
+		C5A3F5242BED4ED3009FACD3 /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5232BED4ED3009FACD3 /* Semver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1988,6 +1989,7 @@
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
+		C5A3F5232BED4ED3009FACD3 /* Semver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2357,6 +2359,7 @@
 		3B6DEECB20EA6AE30067435E /* Matchers */ = {
 			isa = PBXGroup;
 			children = (
+				C5A3F5222BED4EC5009FACD3 /* Semver */,
 				3B6DEECC20EA6AE30067435E /* AllKeysMatcher.swift */,
 				3B6DEECD20EA6AE30067435E /* BaseMatcher.swift */,
 				3B6DEECE20EA6AE30067435E /* BetweenMatcher.swift */,
@@ -3457,6 +3460,14 @@
 			path = Attributes;
 			sourceTree = "<group>";
 		};
+		C5A3F5222BED4EC5009FACD3 /* Semver */ = {
+			isa = PBXGroup;
+			children = (
+				C5A3F5232BED4ED3009FACD3 /* Semver.swift */,
+			);
+			path = Semver;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -3986,6 +3997,7 @@
 				95C717CD268BD549002ADB83 /* ImpressionsCountEntity.swift in Sources */,
 				9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */,
 				5905D4D82555FE74006DA3B1 /* SplitDatabase.swift in Sources */,
+				C5A3F5242BED4ED3009FACD3 /* Semver.swift in Sources */,
 				952FA12B2A2E593900264AB5 /* SplitComponentCatalog.swift in Sources */,
 				59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */,
 				95C717C4268BB426002ADB83 /* ImpressionsCountDao.swift in Sources */,
