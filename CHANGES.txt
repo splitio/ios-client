@@ -1,3 +1,6 @@
+2.24.7: (May 8, 2024)
+- Fixed issue triggering SDK Ready when using a local method reference to the factory. This issue was introduced in version 2.24.5.
+
 2.24.6: (Apr 10, 2024)
 - Fixed issue when triggering SDK events
 

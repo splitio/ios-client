@@ -233,6 +233,40 @@ class SplitIntegrationTests: XCTestCase {
         factory = nil
     }
 
+    func testReadyNoRef() throws {
+
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+
+        splitConfig.impressionRefreshRate = 2
+        splitConfig.sdkReadyTimeOut = 5000
+        splitConfig.trafficType = trafficType
+
+        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "IntegrationTest"))
+        _ = builder.setHttpClient(httpClient)
+        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+
+        let client = factory?.client
+
+        var readyFired = false
+
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+
+        client?.on(event: SplitEvent.sdkReady) {
+            readyFired = true
+            sdkReadyExpectation.fulfill()
+        }
+
+        client?.on(event: SplitEvent.sdkReadyTimedOut) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        wait(for: [sdkReadyExpectation], timeout: 10)
+
+        XCTAssertTrue(readyFired)
+    }
+
     private func loadSplitsChangeFile() -> SplitChange? {
         let change = loadSplitChangeFile(name: "splitchanges_1")
         change?.since = change?.till ?? -1

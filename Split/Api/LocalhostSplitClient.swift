@@ -49,13 +49,16 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     private let eventsManager: SplitEventsManager?
     private var evaluator: Evaluator
     private let key: Key
+    weak var clientManger: SplitClientManager?
 
     init(key: Key, splitsStorage: SplitsStorage,
+         clientManager: SplitClientManager?,
          eventsManager: SplitEventsManager? = nil,
          evaluator: Evaluator) {
         self.eventsManager = eventsManager
         self.key = key
         self.splitsStorage = splitsStorage
+        self.clientManger = clientManager
 
         self.evaluator = evaluator
         super.init()
@@ -104,7 +107,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
 
     public func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
-        on(event: event, runInBackground: false, queue: queue, execute: action)
+        on(event: event, runInBackground: true, queue: queue, execute: action)
     }
 
     public func on(event: SplitEvent, execute action: @escaping SplitAction) {
@@ -113,9 +116,13 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
 
     private func on(event: SplitEvent, runInBackground: Bool,
                     queue: DispatchQueue?, execute action: @escaping SplitAction) {
+
+        guard let factory = clientManger?.splitFactory else { return }
         if let eventsManager = self.eventsManager {
             let task = SplitEventActionTask(action: action, event: event,
-                                            runInBackground: true, queue: queue)
+                                            runInBackground: runInBackground,
+                                            factory: factory,
+                                            queue: queue)
             eventsManager.register(event: event, task: task)
         }
     }

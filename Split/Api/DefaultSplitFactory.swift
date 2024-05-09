@@ -99,7 +99,9 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                              eventsTracker: eventsTracker,
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
-                                             telemetryStopwatch: params.initStopwatch)
+                                             telemetryStopwatch: params.initStopwatch,
+                                             factory: self)
+
         components.destroy()
 
     }
