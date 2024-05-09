@@ -326,7 +326,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      cacheExpiration: 100,
                                                      defaultQueryString: "&q=1",
-                                                     flagsSpec: "",
+                                                     flagsSpec: "1.1",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -335,7 +335,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitStorage.updateTimestamp = Int64(Int(Date().timeIntervalSince1970) - expiration / 2) // Non Expired cache
         splitFetcher.splitChanges = [change]
         splitStorage.splitsFilterQueryString = "&q=1"
-        splitStorage.flagsSpec = "1.1"
+        splitStorage.flagsSpec = ""
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         splitsSyncWorker.completion = { success in
@@ -351,6 +351,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         XCTAssertTrue(eventsManager.isSplitsReadyFired)
         XCTAssertEqual("&q=1", splitStorage.splitsFilterQueryString)
         XCTAssertEqual("1.1", splitStorage.flagsSpec)
+        XCTAssertTrue(splitStorage.updateFlagsSpecCalled)
     }
 
     private func createSplit(name: String) -> Split {

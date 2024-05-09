@@ -51,6 +51,9 @@ class LocalhostSplitsStorage: SplitsStorage {
     func update(filterQueryString: String) {
     }
 
+    func update(flagsSpec: String) {
+    }
+
     func update(bySetsFilter: SplitFilter?) {
     }
 
