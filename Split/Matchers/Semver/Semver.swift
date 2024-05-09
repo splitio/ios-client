@@ -18,14 +18,14 @@ class Semver: Equatable {
     private let kPreReleaseDelimiter: Character = "-"
     private let kValueDelimiter: Character = "."
     
-    private var major: Int64?
-    private var minor: Int64?
-    private var patch: Int64?
-    private var preRelease: [String] = []
-    private var isStable: Bool
-    private var metadata: String?
+    private var major: Int64? = nil
+    private var minor: Int64? = nil
+    private var patch: Int64? = nil
+    private var preRelease: [String]? = nil
+    private var isStable: Bool = true
+    private var metadata: String? = nil
     
-    private let version: String
+    private var version: String = ""
 
     static func build(version: String) -> Semver? {
         return try? Semver(version)
@@ -52,29 +52,102 @@ class Semver: Equatable {
 
     private func setAndRemoveMetadataIfExists(_ version: String) throws -> String {
         if let index = version.firstIndex(of: kMetadataDelimiter) {
-            if let nextIndex = version.index(index, offsetBy: 1, limitedBy: version.endIndex) {
-                metadata = version[...nextIndex]
+            let metadataIndex = version.index(after: index)
 
-                if let metadata = metadata, !metadata.isEmpty {
-                    throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect metadata")
-                }
-            
-                return version[...index].asString()
+            guard metadataIndex < version.endIndex else {
+                throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect metadata")
             }
-        } else {
-            return version
+
+            let metadataString = String(version[metadataIndex...])
+
+            if metadataString.isEmpty {
+                throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect metadata")
+            }
+
+            metadata = metadataString
+
+            let versionSubstring = version[..<index]
+
+            return String(versionSubstring)
         }
+
+        return version
     }
 
     private func setAndRemovePreReleaseIfExists(_ vWithoutMetadata: String) throws -> String {
-        // TODO
+        if let index = vWithoutMetadata.firstIndex(of: kPreReleaseDelimiter) {
+            let preReleaseDataIndex = vWithoutMetadata.index(after: index)
+
+            guard preReleaseDataIndex < vWithoutMetadata.endIndex else {
+                throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect pre release data")
+            }
+
+            let preReleaseData = String(vWithoutMetadata[preReleaseDataIndex...])
+            let preReleaseComponents = preReleaseData.split(separator: kValueDelimiter).map(String.init)
+
+            if preReleaseComponents.isEmpty || preReleaseComponents.contains(where: { $0.isEmpty }) {
+                throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect pre release data")
+            }
+
+            preRelease = preReleaseComponents
+            isStable = false
+
+            return String(vWithoutMetadata[..<index])
+        }
+
+        isStable = true
+        return vWithoutMetadata
     }
 
     private func setMajorMinorAndPatch(_ version: String) throws {
-        // TODO
+        let vParts = version.split(separator: kValueDelimiter)
+
+        if vParts.count != 3 {
+            // Log the error if needed
+            print("Unable to convert to Semver, incorrect format: \(version)")
+            throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect format: \(version)")
+        }
+
+        guard let major = Int64(vParts[0]), let minor = Int64(vParts[1]), let patch = Int64(vParts[2]) else {
+            throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect format: \(version)")
+        }
+
+        self.major = major
+        self.minor = minor
+        self.patch = patch
     }
 
     private func setVersion() -> String {
-        // TODO
+        var toReturn = ""
+        if let major = major {
+            toReturn += "\(major)"
+        }
+        if let minor = minor {
+            toReturn += "\(kValueDelimiter)\(minor)"
+        }
+        if let patch = patch {
+            toReturn += "\(kValueDelimiter)\(patch)"
+        }
+
+        if let preRelease = preRelease, !preRelease.isEmpty {
+            let numericPreRelease = preRelease.map { component -> String in
+                if isNumeric(component) {
+                    return String(Int64(component) ?? 0)
+                }
+                return component
+            }
+
+            toReturn += String(kPreReleaseDelimiter) + numericPreRelease.joined(separator: String(kValueDelimiter))
+        }
+
+        if let metadata = metadata, !metadata.isEmpty {
+            toReturn += String(kMetadataDelimiter) + metadata
+        }
+
+        return toReturn
+    }
+
+    private func isNumeric(_ str: String) -> Bool {
+        return Int(str) != nil || Double(str) != nil
     }
 }
