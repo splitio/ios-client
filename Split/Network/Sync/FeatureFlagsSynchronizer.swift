@@ -152,45 +152,43 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         let splitsStorage = storageContainer.persistentSplitsStorage
         let currentSplitsQueryString = splitsFilterQueryString
 
-        // if the filter and flags spec have not changed, we don't need to do anything
-        let filterHasNotChanged = currentSplitsQueryString == splitsStorage.getFilterQueryString()
-        let flagsSpecHasNotChanged = flagsSpec == splitsStorage.getFlagsSpec()
-        if filterHasNotChanged, flagsSpecHasNotChanged {
-            return
-        }
+        let filterHasChanged = currentSplitsQueryString != splitsStorage.getFilterQueryString()
+        let flagsSpecHasChanged = flagsSpec != splitsStorage.getFlagsSpec()
 
-        let filters = splitConfig.sync.filters
+        // if neither the filter nor the flags spec have changed, we don't need to do anything
+        if filterHasChanged || flagsSpecHasChanged {
+            let splitsInCache = splitsStorage.getAll()
+            var toDelete = [String]()
 
-        // when flagsSpec has changed, we delete everything
-        let namesToKeep = !flagsSpecHasNotChanged ? Set() : Set(filters.filter { $0.type == .byName }.flatMap { $0.values })
-        let prefixesToKeep = !flagsSpecHasNotChanged ? Set() : Set(filters.filter { $0.type == .byPrefix }.flatMap { $0.values })
-        let setsToKeep = !flagsSpecHasNotChanged ? Set() : Set(filters.filter { $0.type == .bySet }.flatMap { $0.values })
+            if flagsSpecHasChanged {
+                // when flagsSpec has changed, we delete everything
+                toDelete = splitsInCache.compactMap { $0.name }
+            } else if filterHasChanged {
+                // if the filter has changed, we need to delete according to it
+                let filters = splitConfig.sync.filters
+                let namesToKeep = Set(filters.filter { $0.type == .byName }.flatMap { $0.values })
+                let prefixesToKeep = Set(filters.filter { $0.type == .byPrefix }.flatMap { $0.values })
+                let setsToKeep = Set(filters.filter { $0.type == .bySet }.flatMap { $0.values })
 
-        let splitsInCache = splitsStorage.getAll()
-        var toDelete = [String]()
+                for split in splitsInCache {
+                    guard let splitName = split.name else {
+                        continue
+                    }
 
-        if flagsSpecHasNotChanged {
-            for split in splitsInCache {
-                guard let splitName = split.name else {
-                    continue
-                }
-
-                let prefix = getPrefix(for: splitName) ?? ""
-                if setsToKeep.count > 0 && setsToKeep.isDisjoint(with: split.sets ?? Set()) {
-                    toDelete.append(splitName)
-                } else if (prefix == "" && namesToKeep.count > 0 && !namesToKeep.contains(splitName)) ||
-                    (prefixesToKeep.count > 0 && prefix != "" && !prefixesToKeep.contains(prefix)) {
-                    toDelete.append(splitName)
+                    let prefix = getPrefix(for: splitName) ?? ""
+                    if setsToKeep.count > 0 && setsToKeep.isDisjoint(with: split.sets ?? Set()) {
+                        toDelete.append(splitName)
+                    } else if (prefix == "" && namesToKeep.count > 0 && !namesToKeep.contains(splitName)) ||
+                        (prefixesToKeep.count > 0 && prefix != "" && !prefixesToKeep.contains(prefix)) {
+                        toDelete.append(splitName)
+                    }
                 }
             }
-        } else {
-            toDelete = splitsInCache.compactMap { $0.name }
-        }
 
-
-        if toDelete.count > 0 {
-            splitsStorage.delete(splitNames: toDelete)
-            storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
+            if toDelete.count > 0 {
+                splitsStorage.delete(splitNames: toDelete)
+                storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
+            }
         }
     }
 
