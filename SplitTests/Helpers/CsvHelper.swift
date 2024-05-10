@@ -27,6 +27,9 @@ class CsvHelper {
         var result: [[String]] = []
         let rows = data.components(separatedBy: "\n")
         for row in rows {
+            if row.isEmpty {
+                continue
+            }
             let columns = row.components(separatedBy: ",")
             result.append(columns)
         }

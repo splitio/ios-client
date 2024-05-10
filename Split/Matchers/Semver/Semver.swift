@@ -2,7 +2,6 @@
 //  Semver.swift
 //  Split
 //
-//  Created by Gaston Thea on 09/05/2024.
 //  Copyright © 2024 Split. All rights reserved.
 //
 
@@ -64,7 +63,7 @@ class Semver: Equatable {
             }
 
             let preReleaseData = String(vWithoutMetadata[preReleaseDataIndex...])
-            let preReleaseComponents = preReleaseData.split(separator: kValueDelimiter).map(String.init)
+            let preReleaseComponents = preReleaseData.split(separator: kValueDelimiter, omittingEmptySubsequences: false).map { String($0) }
 
             if preReleaseComponents.isEmpty || preReleaseComponents.contains(where: { $0.isEmpty }) {
                 throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect pre release data")
@@ -80,7 +79,7 @@ class Semver: Equatable {
         }
 
         // set major, minor and patch
-        let vParts = vWithoutPreRelease.split(separator: kValueDelimiter)
+        let vParts = vWithoutPreRelease.split(separator: kValueDelimiter, omittingEmptySubsequences: false)
 
         if vParts.count != 3 {
             throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect format: \(version)")
@@ -101,9 +100,9 @@ class Semver: Equatable {
     /**
      * Precedence comparison between 2 Semver objects.
      *
-     * @return the value {@code 0} if {@code self == toCompare};
-     * a value less than {@code 0} if {@code self < toCompare}; and
-     * a value greater than {@code 0} if {@code self > toCompare}
+     * returns the value 0 if self == to;
+     * a value less than 0 if self < to; and
+     * a value greater than 0 if self > to
      */
     func compare(to: Semver) -> Int {
         if version == to.getVersion() {
@@ -138,10 +137,10 @@ class Semver: Equatable {
             if preRelease[index] == to.preRelease[index] {
                 continue
             }
-            if let nPreRelease = Int64(preRelease[index]), let nToPreRelease = Int64(preRelease[index]) {
+            if let nPreRelease = Int64(preRelease[index]), let nToPreRelease = Int64(to.preRelease[index]) {
                 return numericCompare(nPreRelease, nToPreRelease)
             }
-            return stringCompare(preRelease[index], preRelease[index])
+            return stringCompare(preRelease[index], to.preRelease[index])
         }
 
         // Compare lengths of pre-release versions
@@ -165,6 +164,12 @@ class Semver: Equatable {
                 }
                 return component
             }
+
+            toReturn += "\(kPreReleaseDelimiter)\(numericPreRelease.joined(separator: String(kPreReleaseDelimiter)))"
+        }
+
+        if let metadata = metadata, !metadata.isEmpty {
+            toReturn += "\(kMetadataDelimiter)\(metadata)"
         }
 
         return toReturn
