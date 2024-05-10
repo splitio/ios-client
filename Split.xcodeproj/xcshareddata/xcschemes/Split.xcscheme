@@ -85,6 +85,9 @@
          <TestPlanReference
             reference = "container:SplitiOSUnit_3.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitiOSUnit_4.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference
