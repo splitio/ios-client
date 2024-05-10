@@ -19,7 +19,7 @@ class Semver: Equatable {
     private var major: Int64
     private var minor: Int64
     private var patch: Int64
-    private var preRelease: [String]?
+    private var preRelease: [String] = []
     private var isStable: Bool = true
     private var metadata: String?
 
@@ -106,66 +106,59 @@ class Semver: Equatable {
      * a value greater than {@code 0} if {@code self > toCompare}
      */
     func compare(to: Semver) -> Int {
-        // TODO
-        if (version == to.getVersion()) {
+        if version == to.getVersion() {
             return 0
         }
-//
-//        // Compare major, minor, and patch versions numerically
-//        int result = Long.compare(mMajor, toCompare.mMajor);
-//        if (result != 0) {
-//            return result;
-//        }
+
         // Compare major, minor, and patch versions numerically
-//        let result = numericCompare(major, to.major)
-        
-//
-//        result = Long.compare(mMinor, toCompare.mMinor);
-//        if (result != 0) {
-//            return result;
-//        }
-//
-//        result = Long.compare(mPatch, toCompare.mPatch);
-//        if (result != 0) {
-//            return result;
-//        }
-//
-//        if (!mIsStable && toCompare.mIsStable) {
-//            return -1;
-//        } else if (mIsStable && !toCompare.mIsStable) {
-//            return 1;
-//        }
-//
-//        // Compare pre-release versions lexically
-//        int minLength = Math.min(mPreRelease.length, toCompare.mPreRelease.length);
-//        for (int i = 0; i < minLength; i++) {
-//            if (mPreRelease[i].equals(toCompare.mPreRelease[i])) {
-//                continue;
-//            }
-//
-//            if (isNumeric(mPreRelease[i]) && isNumeric(toCompare.mPreRelease[i])) {
-//                return Long.compare(Long.parseLong(mPreRelease[i]), Long.parseLong(toCompare.mPreRelease[i]));
-//            }
-//
-//            return mPreRelease[i].compareTo(toCompare.mPreRelease[i]);
-//        }
-//
-//        // Compare lengths of pre-release versions
-//        return Integer.compare(mPreRelease.length, toCompare.mPreRelease.length);
-        return 0 //TODO
+        var result = numericCompare(major, to.major)
+        if result != 0 {
+            return result
+        }
+
+        result = numericCompare(minor, to.minor)
+        if result != 0 {
+            return result
+        }
+
+        result = numericCompare(patch, to.patch)
+        if result != 0 {
+            return result
+        }
+
+        if !isStable && to.isStable {
+            return -1
+        } else if isStable && !to.isStable {
+            return 1
+        }
+
+        // Compare pre-release versions lexically
+        let minLength = min(preRelease.count, to.preRelease.count)
+        for index in 0..<minLength {
+            if preRelease[index] == to.preRelease[index] {
+                continue
+            }
+            if let nPreRelease = Int64(preRelease[index]), let nToPreRelease = Int64(preRelease[index]) {
+                return numericCompare(nPreRelease, nToPreRelease)
+            }
+            return stringCompare(preRelease[index], preRelease[index])
+        }
+
+        // Compare lengths of pre-release versions
+        return numericCompare(Int64(preRelease.count), Int64(to.preRelease.count))
     }
 
     func getVersion() -> String {
         return version
     }
 
-    static func ==(lhs: Semver, rhs: Semver) -> Bool {
+    static func == (lhs: Semver, rhs: Semver) -> Bool {
         return lhs.version == rhs.version
     }
 
     private func setVersion() -> String {
         var toReturn = "\(major)\(kValueDelimiter)\(minor)\(kValueDelimiter)\(patch)"
-        if let preRelease = preRelease, !preRelease.isEmpty {
+        if !preRelease.isEmpty {
             let numericPreRelease = preRelease.map { component -> String in
                 if isNumeric(component) {
                     return String(Int64(component) ?? 0)
@@ -178,10 +171,20 @@ class Semver: Equatable {
     }
 
     private func isNumeric(_ str: String) -> Bool {
-        return Int(str) != nil || Double(str) != nil
+        return Int64(str) != nil || Double(str) != nil
     }
 
     private func numericCompare(_ one: Int64, _ two: Int64) -> Int {
+        if one < two {
+            return -1
+        } else if one > two {
+            return 1
+        } else {
+            return 0
+        }
+    }
+
+    private func stringCompare(_ one: String, _ two: String) -> Int {
         if one < two {
             return -1
         } else if one > two {
