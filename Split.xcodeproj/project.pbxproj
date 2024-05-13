@@ -1249,16 +1249,20 @@
 		95F3F09525AE1F3800084AF8 /* ServiceConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
 		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
-		C5977BF72BEEA2F7003E293A /* SemverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977BF62BEEA2F7003E293A /* SemverTest.swift */; };
-		C5977BF92BEEA8A8003E293A /* equal_to_semver.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977BF82BEEA8A8003E293A /* equal_to_semver.csv */; };
-		C5977BFB2BEEB149003E293A /* invalid_semantic_versions.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977BFA2BEEB149003E293A /* invalid_semantic_versions.csv */; };
-		C5977BFD2BEEB164003E293A /* valid_semantic_versions.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977BFC2BEEB164003E293A /* valid_semantic_versions.csv */; };
+		C5977BF72BEEA2F7003E293A /* (null) in Sources */ = {isa = PBXBuildFile; };
+		C5977BF92BEEA8A8003E293A /* (null) in Resources */ = {isa = PBXBuildFile; };
+		C5977BFB2BEEB149003E293A /* (null) in Resources */ = {isa = PBXBuildFile; };
+		C5977BFD2BEEB164003E293A /* (null) in Resources */ = {isa = PBXBuildFile; };
+		C5977C122BF29894003E293A /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C112BF29894003E293A /* Semver.swift */; };
+		C5977C142BF298B0003E293A /* SemverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C132BF298B0003E293A /* SemverTest.swift */; };
+		C5977C192BF298C1003E293A /* equal_to_semver.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C152BF298C1003E293A /* equal_to_semver.csv */; };
+		C5977C1A2BF298C1003E293A /* valid_semantic_versions.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C162BF298C1003E293A /* valid_semantic_versions.csv */; };
+		C5977C1B2BF298C1003E293A /* between_semver.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C172BF298C1003E293A /* between_semver.csv */; };
+		C5977C1C2BF298C1003E293A /* invalid_semantic_versions.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C182BF298C1003E293A /* invalid_semantic_versions.csv */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
-		C5A3F5242BED4ED3009FACD3 /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5232BED4ED3009FACD3 /* Semver.swift */; };
-		C5D507CC2BEE97DF0080A707 /* between_semver.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5D507CB2BEE97DF0080A707 /* between_semver.csv */; };
-		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
-		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
+		C5A3F5242BED4ED3009FACD3 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		C5D507CC2BEE97DF0080A707 /* (null) in Resources */ = {isa = PBXBuildFile; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1994,6 +1998,12 @@
 		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
+		C5977C112BF29894003E293A /* Semver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
+		C5977C132BF298B0003E293A /* SemverTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemverTest.swift; sourceTree = "<group>"; };
+		C5977C152BF298C1003E293A /* equal_to_semver.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = equal_to_semver.csv; sourceTree = "<group>"; };
+		C5977C162BF298C1003E293A /* valid_semantic_versions.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = valid_semantic_versions.csv; sourceTree = "<group>"; };
+		C5977C172BF298C1003E293A /* between_semver.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = between_semver.csv; sourceTree = "<group>"; };
+		C5977C182BF298C1003E293A /* invalid_semantic_versions.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = invalid_semantic_versions.csv; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -2788,6 +2798,7 @@
 		592C6AA6211B6C99002D120C /* SplitTests */ = {
 			isa = PBXGroup;
 			children = (
+				C5977C132BF298B0003E293A /* SemverTest.swift */,
 				95ABF4B1292FDE60006ED016 /* Collections */,
 				95ABF4B0292FDDC0006ED016 /* Init */,
 				953911AB267A648F0040433A /* Impressions */,
@@ -2824,7 +2835,6 @@
 				95715A8429D353C100A1B2F9 /* DbCipherTest.swift */,
 				95715A9429DB0ED800A1B2F9 /* InitDbCipherTest.swift */,
 				9595910426DFB1AB009E7944 /* DecompressionTest.swift */,
-				C5977BF62BEEA2F7003E293A /* SemverTest.swift */,
 			);
 			path = SplitTests;
 			sourceTree = "<group>";
@@ -2832,6 +2842,10 @@
 		592C6ADB211CBB86002D120C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C5977C172BF298C1003E293A /* between_semver.csv */,
+				C5977C152BF298C1003E293A /* equal_to_semver.csv */,
+				C5977C182BF298C1003E293A /* invalid_semantic_versions.csv */,
+				C5977C162BF298C1003E293A /* valid_semantic_versions.csv */,
 				595B66D2231DB8690030F330 /* Integration */,
 				599EA58B226903DF006CBA89 /* localhost.yaml */,
 				9595C1A7274574220092123F /* attributes_test_split.json */,
@@ -2870,10 +2884,6 @@
 				95B4368C26E9186C00E1EB9C /* lorem_ipsum_result.txt */,
 				95B2498326F3E19300B34507 /* push_msg-segment_updV2.txt */,
 				95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */,
-				C5D507CB2BEE97DF0080A707 /* between_semver.csv */,
-				C5977BF82BEEA8A8003E293A /* equal_to_semver.csv */,
-				C5977BFA2BEEB149003E293A /* invalid_semantic_versions.csv */,
-				C5977BFC2BEEB164003E293A /* valid_semantic_versions.csv */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3474,7 +3484,7 @@
 		C5A3F5222BED4EC5009FACD3 /* Semver */ = {
 			isa = PBXGroup;
 			children = (
-				C5A3F5232BED4ED3009FACD3 /* Semver.swift */,
+				C5977C112BF29894003E293A /* Semver.swift */,
 			);
 			path = Semver;
 			sourceTree = "<group>";
@@ -3686,7 +3696,7 @@
 				5959C4722279EBBC0064F968 /* in_segment_condition_split.json in Resources */,
 				59FB7C2E220247D300ECC96A /* localhost_3.splits in Resources */,
 				5921ED442538F19E000D6C8B /* simple_split_change.json in Resources */,
-				C5977BF92BEEA8A8003E293A /* equal_to_semver.csv in Resources */,
+				C5977BF92BEEA8A8003E293A /* (null) in Resources */,
 				590DF9CA213DAC9D0082B94F /* splits.json in Resources */,
 				592C6AEA211CBBB0002D120C /* regex.csv in Resources */,
 				5959C46E2278D9AD0064F968 /* segment_conta_condition.json in Resources */,
@@ -3697,23 +3707,27 @@
 				599EDAF32270A15B00D7DACB /* localhost.splits in Resources */,
 				590DF9D1213F07400082B94F /* split_sample_feature6.json in Resources */,
 				5912D154219A065200BC698C /* legacy_2.csv in Resources */,
+				C5977C1B2BF298C1003E293A /* between_semver.csv in Resources */,
 				5912D14D2199FD4D00BC698C /* legacy_1.csv in Resources */,
 				95737E142ADEC71A007FD15C /* push_msg-splits_updV2.txt in Resources */,
 				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
 				950F72FF292E8D6C008A0040 /* SplitiOSFull.xctestplan in Resources */,
 				59FB7C2A2202463000ECC96A /* localhost_1.splits in Resources */,
+				C5977C1A2BF298C1003E293A /* valid_semantic_versions.csv in Resources */,
 				95118EE8281AC6E700782F33 /* bucket_split_test.json in Resources */,
 				95B4368D26E9186C00E1EB9C /* lorem_ipsum_result.txt in Resources */,
 				95F8F06828170473009E09B1 /* multi_client_test.json in Resources */,
 				5919C64221C7C8A600EC35B8 /* split_traffic_allocation_1.json in Resources */,
-				C5977BFB2BEEB149003E293A /* invalid_semantic_versions.csv in Resources */,
-				C5D507CC2BEE97DF0080A707 /* between_semver.csv in Resources */,
-				C5977BFD2BEEB164003E293A /* valid_semantic_versions.csv in Resources */,
+				C5977BFB2BEEB149003E293A /* (null) in Resources */,
+				C5D507CC2BEE97DF0080A707 /* (null) in Resources */,
+				C5977BFD2BEEB164003E293A /* (null) in Resources */,
+				C5977C1C2BF298C1003E293A /* invalid_semantic_versions.csv in Resources */,
 				595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */,
 				59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */,
 				599EA58E226916CB006CBA89 /* localhost_legacy.splits in Resources */,
 				95D7D7E226DD44FB002E4D75 /* murmur3_64_uuids.csv in Resources */,
 				592C6AEB211CBBB0002D120C /* murmur3-sample-data-v2.csv in Resources */,
+				C5977C192BF298C1003E293A /* equal_to_semver.csv in Resources */,
 				95B4369126E959D400E1EB9C /* lorem_ipsum_gzip.txt in Resources */,
 				95737E122AD6D016007FD15C /* splitchanges_flagsets.json in Resources */,
 			);
@@ -3792,6 +3806,7 @@
 				3B6DEF6820EA6AE50067435E /* EqualToMatcher.swift in Sources */,
 				95F3F0242590D35F00084AF8 /* ImpressionsRecorderWorker.swift in Sources */,
 				95B18001275FE87D002DC9DF /* TelemetryConfigRecorderWorker.swift in Sources */,
+				C5977C122BF29894003E293A /* Semver.swift in Sources */,
 				3B6DEF5020EA6AE50067435E /* Treatment.swift in Sources */,
 				595AD25324E441AA00A7B750 /* DefaultSseNotificationParser.swift in Sources */,
 				95F3F05D25A4A70100084AF8 /* LocalhostSplitsStorage.swift in Sources */,
@@ -4012,7 +4027,7 @@
 				95C717CD268BD549002ADB83 /* ImpressionsCountEntity.swift in Sources */,
 				9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */,
 				5905D4D82555FE74006DA3B1 /* SplitDatabase.swift in Sources */,
-				C5A3F5242BED4ED3009FACD3 /* Semver.swift in Sources */,
+				C5A3F5242BED4ED3009FACD3 /* (null) in Sources */,
 				952FA12B2A2E593900264AB5 /* SplitComponentCatalog.swift in Sources */,
 				59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */,
 				95C717C4268BB426002ADB83 /* ImpressionsCountDao.swift in Sources */,
@@ -4209,6 +4224,7 @@
 				95737DFB2ACB09CA007FD15C /* FlagSetsValidatorMock.swift in Sources */,
 				952FA1342A32099500264AB5 /* SyncPostBgTest.swift in Sources */,
 				9550334A282F0FF400E5330F /* ImpressionsTrackerTest.swift in Sources */,
+				C5977C142BF298B0003E293A /* SemverTest.swift in Sources */,
 				595AD24D24E324D200A7B750 /* Base64UtilsTest.swift in Sources */,
 				599EDAF12270970500D7DACB /* SplitEventsManagerMock.swift in Sources */,
 				955B59632811E8E700D105CD /* SplitClientManagerTest.swift in Sources */,
@@ -4297,7 +4313,7 @@
 				599407E022403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift in Sources */,
 				59F4AAC12513C2EC00A1C69A /* PeriodicTimerStub.swift in Sources */,
 				9580C98226FB8A840021D729 /* StreamingControlResetTest.swift in Sources */,
-				C5977BF72BEEA2F7003E293A /* SemverTest.swift in Sources */,
+				C5977BF72BEEA2F7003E293A /* (null) in Sources */,
 				95737E162ADEC794007FD15C /* StreamingTestingHelper.swift in Sources */,
 				594F5F58253A340F00A945B4 /* StreamingOccupancyTest.swift in Sources */,
 				59B2047624F9B8230092F2E9 /* PushManagerEventBroadcasterTest.swift in Sources */,
