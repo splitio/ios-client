@@ -12,9 +12,11 @@ protocol PersistentSplitsStorage {
     func update(splitChange: ProcessedSplitChange)
     func update(split: Split)
     func update(filterQueryString: String)
+    func update(flagsSpec: String)
     func update(bySetsFilter: SplitFilter?)
     func getFilterQueryString() -> String
     func getBySetsFilter() -> SplitFilter?
+    func getFlagsSpec() -> String
     func getSplitsSnapshot() -> SplitsSnapshot
     func getChangeNumber() -> Int64
     func getUpdateTimestamp() -> Int64
@@ -48,8 +50,16 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
         generalInfoDao.update(info: .splitsFilterQueryString, stringValue: filterQueryString)
     }
 
+    func update(flagsSpec: String) {
+        generalInfoDao.update(info: .flagsSpec, stringValue: flagsSpec)
+    }
+
     func getFilterQueryString() -> String {
         return generalInfoDao.stringValue(info: .splitsFilterQueryString) ?? ""
+    }
+
+    func getFlagsSpec() -> String {
+        return generalInfoDao.stringValue(info: .flagsSpec) ?? ""
     }
 
     func update(bySetsFilter filter: SplitFilter?) {
@@ -84,7 +94,7 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
         return SplitsSnapshot(changeNumber: generalInfoDao.longValue(info: .splitsChangeNumber) ?? -1,
                               splits: splitDao.getAll(),
                               updateTimestamp: generalInfoDao.longValue(info: .splitsUpdateTimestamp) ?? 0,
-                              splitsFilterQueryString: getFilterQueryString())
+                              splitsFilterQueryString: getFilterQueryString(), flagsSpec: getFlagsSpec())
     }
 
     func getChangeNumber() -> Int64 {

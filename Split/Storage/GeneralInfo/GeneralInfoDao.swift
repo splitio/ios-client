@@ -14,6 +14,7 @@ enum GeneralInfo: String {
     case splitsFilterQueryString = "splitsFilterQueryString"
     case databaseMigrationStatus = "databaseMigrationStatus"
     case bySetsFilter = "bySetsFilter"
+    case flagsSpec = "flagsSpec"
 }
 
 protocol GeneralInfoDao {

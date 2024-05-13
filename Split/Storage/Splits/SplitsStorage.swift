@@ -17,6 +17,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     var changeNumber: Int64 { get }
     var updateTimestamp: Int64 { get }
     var splitsFilterQueryString: String { get }
+    var flagsSpec: String { get }
 
     func loadLocal()
     func get(name: String) -> Split?
@@ -25,6 +26,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     func update(splitChange: ProcessedSplitChange) -> Bool
     func update(filterQueryString: String)
     func update(bySetsFilter: SplitFilter?)
+    func update(flagsSpec: String)
     func updateWithoutChecks(split: Split)
     func isValidTrafficType(name: String) -> Bool
     func getCount() -> Int
@@ -42,6 +44,7 @@ class DefaultSplitsStorage: SplitsStorage {
     private (set) var changeNumber: Int64 = -1
     private (set) var updateTimestamp: Int64 = -1
     private (set) var splitsFilterQueryString: String = ""
+    private (set) var flagsSpec: String = ""
 
     init(persistentSplitsStorage: PersistentSplitsStorage,
          flagSetsCache: FlagSetsCache) {
@@ -60,6 +63,7 @@ class DefaultSplitsStorage: SplitsStorage {
         changeNumber = snapshot.changeNumber
         updateTimestamp = snapshot.updateTimestamp
         splitsFilterQueryString = snapshot.splitsFilterQueryString
+        flagsSpec = snapshot.flagsSpec
     }
 
     func get(name: String) -> Split? {
@@ -102,6 +106,11 @@ class DefaultSplitsStorage: SplitsStorage {
 
     func update(bySetsFilter filter: SplitFilter?) {
         self.persistentStorage.update(bySetsFilter: filter)
+    }
+
+    func update(flagsSpec: String) {
+        self.flagsSpec = flagsSpec
+        self.persistentStorage.update(flagsSpec: flagsSpec)
     }
 
     func updateWithoutChecks(split: Split) {

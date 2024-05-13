@@ -21,6 +21,7 @@ class SplitComponentFactory {
     private let userKey: String
     private let splitClientConfig: SplitClientConfig
     private var splitsFilterQueryString = ""
+    private var flagsSpec = Spec.flagsSpec
     private var catalog = SplitComponentCatalog()
 
     init(splitClientConfig: SplitClientConfig, apiKey: String, userKey: String) {
@@ -88,6 +89,7 @@ class SplitComponentFactory {
             syncWorkerFactory: syncWorkerFactory,
             broadcasterChannel: try getSyncEventBroadcaster(),
             splitsFilterQueryString: splitsFilterQueryString,
+            flagsSpec: flagsSpec,
             splitEventsManager: getSplitEventsManagerCoordinator()) as FeatureFlagsSynchronizer
         catalog.add(component: component)
         return component
@@ -334,6 +336,7 @@ extension SplitComponentFactory {
         let component = DefaultSyncWorkerFactory(userKey: userKey,
                                                  splitConfig: splitClientConfig,
                                                  splitsFilterQueryString: splitsFilterQueryString,
+                                                 flagsSpec: flagsSpec,
                                                  apiFacade: try getSplitApiFacade(),
                                                  storageContainer: try getSplitStorageContainer(),
                                                  splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: splitClientConfig.bySetsFilter()),

@@ -13,6 +13,7 @@ class LocalhostSplitsStorage: SplitsStorage {
     var changeNumber: Int64 = -1
     var updateTimestamp: Int64 = 1
     var splitsFilterQueryString: String = ""
+    var flagsSpec: String = ""
 
     private let inMemorySplits = ConcurrentDictionary<String, Split>()
 
@@ -48,6 +49,9 @@ class LocalhostSplitsStorage: SplitsStorage {
     }
 
     func update(filterQueryString: String) {
+    }
+
+    func update(flagsSpec: String) {
     }
 
     func update(bySetsFilter: SplitFilter?) {

@@ -13,4 +13,5 @@ struct SplitsSnapshot {
     let splits: [Split]
     let updateTimestamp: Int64
     let splitsFilterQueryString: String
+    let flagsSpec: String
 }
