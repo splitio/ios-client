@@ -8,6 +8,6 @@
 import Foundation
 
 @objc class BetweenStringMatcherData: NSObject, Codable {
-    var start: Int64?
-    var end: Int64?
+    var start: String?
+    var end: String?
 }

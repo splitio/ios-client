@@ -1261,6 +1261,7 @@
 		C5977C092BF273A3003E293A /* between_semver.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C052BF273A3003E293A /* between_semver.csv */; };
 		C5977C0B2BF2751B003E293A /* BetweenStringMatcherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0A2BF2751B003E293A /* BetweenStringMatcherData.swift */; };
 		C5977C0D2BF27786003E293A /* BetweenSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0C2BF27786003E293A /* BetweenSemverMatcher.swift */; };
+		C5977C102BF28846003E293A /* BetweenSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 		C5A3F5242BED4ED3009FACD3 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -2008,6 +2009,7 @@
 		C5977C052BF273A3003E293A /* between_semver.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = between_semver.csv; sourceTree = "<group>"; };
 		C5977C0A2BF2751B003E293A /* BetweenStringMatcherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenStringMatcherData.swift; sourceTree = "<group>"; };
 		C5977C0C2BF27786003E293A /* BetweenSemverMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenSemverMatcher.swift; sourceTree = "<group>"; };
+		C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenSemverMatcherTest.swift; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -3490,6 +3492,7 @@
 			isa = PBXGroup;
 			children = (
 				C5977C002BF27390003E293A /* SemverTest.swift */,
+				C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */,
 			);
 			path = Matcher;
 			sourceTree = "<group>";
@@ -4410,6 +4413,7 @@
 				95CED04C2B4D8B88005E3C34 /* LocalhostSynchronizerTests.swift in Sources */,
 				95B436A626F1533700E1EB9C /* MySegmentsV2PayloadDecoderMock.swift in Sources */,
 				95B1802B2763DE4B002DC9DF /* HttpTelemetryStatsRecorderTest.swift in Sources */,
+				C5977C102BF28846003E293A /* BetweenSemverMatcherTest.swift in Sources */,
 				95B17FF5275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift in Sources */,
 				95ABF511293ABDDC006ED016 /* ImpressionsStorageStub.swift in Sources */,
 				9557C1CA2614F67700CD9B5C /* DbForTwoDifferentApiKeyTest.swift in Sources */,
