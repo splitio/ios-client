@@ -1257,6 +1257,8 @@
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 		C5A3F5242BED4ED3009FACD3 /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5232BED4ED3009FACD3 /* Semver.swift */; };
 		C5D507CC2BEE97DF0080A707 /* between_semver.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5D507CB2BEE97DF0080A707 /* between_semver.csv */; };
+		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
+		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1992,14 +1994,8 @@
 		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
-		C5977BF62BEEA2F7003E293A /* SemverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemverTest.swift; sourceTree = "<group>"; };
-		C5977BF82BEEA8A8003E293A /* equal_to_semver.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = equal_to_semver.csv; sourceTree = "<group>"; };
-		C5977BFA2BEEB149003E293A /* invalid_semantic_versions.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = invalid_semantic_versions.csv; sourceTree = "<group>"; };
-		C5977BFC2BEEB164003E293A /* valid_semantic_versions.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = valid_semantic_versions.csv; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
-		C5A3F5232BED4ED3009FACD3 /* Semver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
-		C5D507CB2BEE97DF0080A707 /* between_semver.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = between_semver.csv; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

@@ -12,7 +12,7 @@ struct HttpParameter {
     let key: String
     let value: Any?
 
-    init(_ key: String, _ value: Any? = nil) {
+    init(key: String, value: Any? = nil) {
         self.key = key
         self.value = value
     }
