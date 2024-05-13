@@ -139,6 +139,10 @@
         case .betweenSemver: return BetweenSemverMatcher(
             data: self.betweenStringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
             type: self.matcherType)
+
+        case .inListSemver: return InListSemverMatcher(
+            data: self.whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
         }
     }
  }

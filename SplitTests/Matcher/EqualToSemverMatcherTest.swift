@@ -9,7 +9,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class EqualToSemverMatcherTest : XCTest {
+class EqualToSemverMatcherTest : XCTestCase {
 
     func testMatchShouldReturnFalseWhenPatchDiffers() {
         XCTAssertFalse(match(this: "1.0.0", to: "1.0.1"))

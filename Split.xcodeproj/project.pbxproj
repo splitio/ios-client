@@ -1264,6 +1264,8 @@
 		C5977C102BF28846003E293A /* BetweenSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */; };
 		C5977C1E2BF29CB1003E293A /* EqualToSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C1D2BF29CB1003E293A /* EqualToSemverMatcher.swift */; };
 		C5977C202BF29F5B003E293A /* EqualToSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C1F2BF29F5B003E293A /* EqualToSemverMatcherTest.swift */; };
+		C5977C222BF2A54D003E293A /* InListSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C212BF2A54D003E293A /* InListSemverMatcher.swift */; };
+		C5977C242BF2AD78003E293A /* InListSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C232BF2AD78003E293A /* InListSemverMatcherTest.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 		C5A3F5242BED4ED3009FACD3 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -2014,6 +2016,8 @@
 		C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenSemverMatcherTest.swift; sourceTree = "<group>"; };
 		C5977C1D2BF29CB1003E293A /* EqualToSemverMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqualToSemverMatcher.swift; sourceTree = "<group>"; };
 		C5977C1F2BF29F5B003E293A /* EqualToSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqualToSemverMatcherTest.swift; sourceTree = "<group>"; };
+		C5977C212BF2A54D003E293A /* InListSemverMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InListSemverMatcher.swift; sourceTree = "<group>"; };
+		C5977C232BF2AD78003E293A /* InListSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InListSemverMatcherTest.swift; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -3498,6 +3502,7 @@
 				C5977C002BF27390003E293A /* SemverTest.swift */,
 				C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */,
 				C5977C1F2BF29F5B003E293A /* EqualToSemverMatcherTest.swift */,
+				C5977C232BF2AD78003E293A /* InListSemverMatcherTest.swift */,
 			);
 			path = Matcher;
 			sourceTree = "<group>";
@@ -3508,6 +3513,7 @@
 				C5977BFE2BF27375003E293A /* Semver.swift */,
 				C5977C0C2BF27786003E293A /* BetweenSemverMatcher.swift */,
 				C5977C1D2BF29CB1003E293A /* EqualToSemverMatcher.swift */,
+				C5977C212BF2A54D003E293A /* InListSemverMatcher.swift */,
 			);
 			path = Semver;
 			sourceTree = "<group>";
@@ -3843,6 +3849,7 @@
 				3B6DEF4A20EA6AE50067435E /* Segment.swift in Sources */,
 				95ABF50C293A439E006ED016 /* UserConsentManager.swift in Sources */,
 				95CED03C2B482CFB005E3C34 /* SplitLocalhostDataSource.swift in Sources */,
+				C5977C222BF2A54D003E293A /* InListSemverMatcher.swift in Sources */,
 				95B17FFD275FCD92002DC9DF /* RestClient+TelemetryConfig.swift in Sources */,
 				3B6DEF6120EA6AE50067435E /* ContainsAllOfSetMatcher.swift in Sources */,
 				3B6DEF7320EA6AE50067435E /* Json.swift in Sources */,
@@ -4248,6 +4255,7 @@
 				954F9C4E2577E6D200140B81 /* HttpSplitFetcherTests.swift in Sources */,
 				5932260124A4E91800496D8B /* HttpStreamRequestTest.swift in Sources */,
 				95737DFB2ACB09CA007FD15C /* FlagSetsValidatorMock.swift in Sources */,
+				C5977C242BF2AD78003E293A /* InListSemverMatcherTest.swift in Sources */,
 				952FA1342A32099500264AB5 /* SyncPostBgTest.swift in Sources */,
 				9550334A282F0FF400E5330F /* ImpressionsTrackerTest.swift in Sources */,
 				C5977C012BF27390003E293A /* SemverTest.swift in Sources */,
