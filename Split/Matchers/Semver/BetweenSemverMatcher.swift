@@ -20,7 +20,6 @@ class BetweenSemverMatcher: BaseMatcher, MatcherProtocol {
         self.startTarget = Semver.build(version: data?.start as? String)
         self.endTarget = Semver.build(version: data?.end as? String)
     }
-    
     func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
         guard let keyValue = values.matchValue as? String, let startTarget = startTarget, let endTarget = endTarget else {
             return false
@@ -37,4 +36,3 @@ class BetweenSemverMatcher: BaseMatcher, MatcherProtocol {
         return result
     }
 }
-

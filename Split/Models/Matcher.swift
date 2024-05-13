@@ -69,72 +69,76 @@
         case .allKeys: return AllKeysMatcher()
 
         case .containsAllOfSet: return ContainsAllOfSetMatcher(
-        data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .containsString: return ContainsStringMatcher(
-        data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .endsWith: return EndsWithMatcher(
-        data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .startsWith: return StartWithMatcher(
-        data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .equalTo: return EqualToMatcher(
-        data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .equalToBoolean: return EqualToBooleanMatcher(
-        data: self.booleanMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: self.booleanMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .equalToSet: return EqualToSetMatcher(
-        data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .inSegment: return InSegmentMatcher(
-        data: self.userDefinedSegmentMatcherData, negate: self.negate,
-        attribute: self.keySelector?.attribute, type: self.matcherType)
+            data: self.userDefinedSegmentMatcherData, negate: self.negate,
+            attribute: self.keySelector?.attribute, type: self.matcherType)
 
         case .matchesString: return MatchesStringMatcher(
-        data: self.stringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: self.stringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .whitelist: return Whitelist(
-        data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .dependency: return DependencyMatcher(
-        negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType, dependencyData: self.dependencyMatcherData)
+            negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType, dependencyData: self.dependencyMatcherData)
 
         case .containsAnyOfSet: return ContainsAnyOfSetMatcher(
-        data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .partOfSet: return PartOfSetMatcher(
-        data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: whitelistMatcherData?.whitelist, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .lessThanOrEqualTo: return LessThanOrEqualToMatcher(
-        data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .greaterThanOrEqualTo: return GreaterThanOrEqualToMatcher(
-        data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: self.unaryNumericMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .between: return BetweenMatcher(
-        data: self.betweenMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: self.betweenMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
+
+        case .equalToSemver: return EqualToSemverMatcher(
+            data: self.stringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
 
         case .betweenSemver: return BetweenSemverMatcher(
-        data: self.betweenStringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
-        type: self.matcherType)
+            data: self.betweenStringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
         }
     }
  }
