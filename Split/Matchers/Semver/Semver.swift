@@ -24,7 +24,11 @@ class Semver: Equatable {
 
     private var version: String = ""
 
-    static func build(version: String) -> Semver? {
+    static func build(version: String?) -> Semver? {
+        guard let version = version else {
+            return nil
+        }
+
         return try? Semver(version)
     }
 

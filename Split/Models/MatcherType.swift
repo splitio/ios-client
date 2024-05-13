@@ -37,4 +37,7 @@ enum MatcherType: String, Codable {
 
     /* Dependency Matcher */
     case dependency = "IN_SPLIT_TREATMENT"
+
+    /* Semver */
+    case betweenSemver = "BETWEEN_SEMVER"
 }
