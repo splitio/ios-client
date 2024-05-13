@@ -136,6 +136,12 @@
             data: self.stringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
             type: self.matcherType)
 
+        case .greaterThanOrEqualToSemver: return GreaterThanOrEqualToSemverMatcher(
+            data: self.stringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
+            type: self.matcherType)
+
+        case .lessThanOrEqualToSemver: return LessThanOrEqualToSemverMatcher(data: self.stringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute, type: self.matcherType)
+
         case .betweenSemver: return BetweenSemverMatcher(
             data: self.betweenStringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
             type: self.matcherType)

@@ -40,6 +40,8 @@ enum MatcherType: String, Codable {
 
     /* Semver */
     case equalToSemver = "EQUAL_TO_SEMVER"
+    case greaterThanOrEqualToSemver = "GREATER_THAN_OR_EQUAL_TO_SEMVER"
+    case lessThanOrEqualToSemver = "LESS_THAN_OR_EQUAL_TO_SEMVER"
     case betweenSemver = "BETWEEN_SEMVER"
     case inListSemver = "IN_LIST_SEMVER"
 }
