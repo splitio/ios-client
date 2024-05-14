@@ -25,22 +25,22 @@ class Semver: Equatable {
     private var version: String = ""
 
     static func build(version: String) -> Semver? {
-        return try? Semver(version)
+        return try? Semver(version: version)
     }
 
-    private init(_ version: String) throws {
+    private init(version: String) throws {
         // set and remove metadata if exists
-        let (metadata, vWithoutMetadata) = try getAndRemoveMetadataIfExists(version)
+        let (metadata, vWithoutMetadata) = try getAndRemoveMetadataIfExists(version: version)
         self.metadata = metadata
 
         // set and remove preRelease if exists
-        let (preRelease, isStable, vWithoutPreRelease) = try getAndRemovePreReleaseIfExists(vWithoutMetadata)
+        let (preRelease, isStable, vWithoutPreRelease) = try getAndRemovePreReleaseIfExists(vWithoutMetadata: vWithoutMetadata)
 
         self.preRelease = preRelease
         self.isStable = isStable
 
         // set major, minor and patch
-        (self.major, self.minor, self.patch) = try getMajorMinorAndPatch(vWithoutPreRelease)
+        (self.major, self.minor, self.patch) = try getMajorMinorAndPatch(vWithoutPreRelease: vWithoutPreRelease)
 
         self.version = setVersion()
     }
@@ -103,7 +103,7 @@ class Semver: Equatable {
         return lhs.version == rhs.version
     }
 
-    private func getAndRemoveMetadataIfExists(_ version: String) throws -> (metadata: String?, versionWithoutMetadata: String) {
+    private func getAndRemoveMetadataIfExists(version: String) throws -> (metadata: String?, versionWithoutMetadata: String) {
         var vWithoutMetadata = ""
         var tMetadata = ""
         if let index = version.firstIndex(of: kMetadataDelimiter) {
@@ -135,7 +135,7 @@ class Semver: Equatable {
         return metadataString
     }
 
-    private func getAndRemovePreReleaseIfExists(_ vWithoutMetadata: String) throws -> (preRelease: [String], isStable: Bool, versionWithoutPreRelease: String) {
+    private func getAndRemovePreReleaseIfExists(vWithoutMetadata: String) throws -> (preRelease: [String], isStable: Bool, versionWithoutPreRelease: String) {
         var vWithoutPreRelease = ""
         var tPreRelease: [String] = []
         var tIsStable = true
@@ -165,7 +165,7 @@ class Semver: Equatable {
         return (tPreRelease, tIsStable, vWithoutPreRelease)
     }
 
-    private func getMajorMinorAndPatch(_ vWithoutPreRelease: String) throws -> (major: Int64, minor: Int64, patch: Int64) {
+    private func getMajorMinorAndPatch(vWithoutPreRelease: String) throws -> (major: Int64, minor: Int64, patch: Int64) {
         let vParts = vWithoutPreRelease.split(separator: kValueDelimiter, omittingEmptySubsequences: false)
 
         if vParts.count != 3 {
