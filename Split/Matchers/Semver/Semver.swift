@@ -15,9 +15,9 @@ class Semver: Equatable {
     private let kMetadataDelimiter: Character = "+"
     private let kPreReleaseDelimiter: Character = "-"
     private let kValueDelimiter: Character = "."
-    private var major: Int64
-    private var minor: Int64
-    private var patch: Int64
+    private var major: Int64 = -1
+    private var minor: Int64 = -1
+    private var patch: Int64 = -1
     private var preRelease: [String] = []
     private var isStable: Bool = true
     private var metadata: String?
@@ -30,70 +30,18 @@ class Semver: Equatable {
 
     private init(_ version: String) throws {
         // set and remove metadata if exists
-        var vWithoutMetadata: String = ""
-        if let index = version.firstIndex(of: kMetadataDelimiter) {
-            let metadataIndex = version.index(after: index)
-
-            guard metadataIndex < version.endIndex else {
-                throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect metadata")
-            }
-
-            let metadataString = String(version[metadataIndex...])
-
-            if metadataString.isEmpty {
-                throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect metadata")
-            }
-
-            metadata = metadataString
-
-            let versionSubstring = version[..<index]
-
-            vWithoutMetadata = String(versionSubstring)
-        } else {
-            vWithoutMetadata = version
-        }
+        let (metadata, vWithoutMetadata) = try getAndRemoveMetadataIfExists(version)
+        self.metadata = metadata
 
         // set and remove preRelease if exists
-        var vWithoutPreRelease = ""
-        if let index = vWithoutMetadata.firstIndex(of: kPreReleaseDelimiter) {
-            let preReleaseDataIndex = vWithoutMetadata.index(after: index)
+        let (preRelease, isStable, vWithoutPreRelease) = try getAndRemovePreReleaseIfExists(vWithoutMetadata)
 
-            guard preReleaseDataIndex < vWithoutMetadata.endIndex else {
-                throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect pre release data")
-            }
-
-            let preReleaseData = String(vWithoutMetadata[preReleaseDataIndex...])
-            let preReleaseComponents = preReleaseData.split(separator: kValueDelimiter, omittingEmptySubsequences: false).map { String($0) }
-
-            if preReleaseComponents.isEmpty || preReleaseComponents.contains(where: { $0.isEmpty }) {
-                throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect pre release data")
-            }
-
-            preRelease = preReleaseComponents
-            isStable = false
-
-            vWithoutPreRelease = String(vWithoutMetadata[..<index])
-        } else {
-            isStable = true
-            vWithoutPreRelease = vWithoutMetadata
-        }
+        self.preRelease = preRelease
+        self.isStable = isStable
 
         // set major, minor and patch
-        let vParts = vWithoutPreRelease.split(separator: kValueDelimiter, omittingEmptySubsequences: false)
+        (self.major, self.minor, self.patch) = try getMajorMinorAndPatch(vWithoutPreRelease)
 
-        if vParts.count != 3 {
-            throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect format: \(version)")
-        }
-
-        guard let major = Int64(vParts[0]), let minor = Int64(vParts[1]), let patch = Int64(vParts[2]) else {
-            throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect format: \(version)")
-        }
-
-        self.major = major
-        self.minor = minor
-        self.patch = patch
-
-        // set version
         self.version = setVersion()
     }
 
@@ -153,6 +101,82 @@ class Semver: Equatable {
 
     static func == (lhs: Semver, rhs: Semver) -> Bool {
         return lhs.version == rhs.version
+    }
+
+    private func getAndRemoveMetadataIfExists(_ version: String) throws -> (metadata: String?, versionWithoutMetadata: String) {
+        var vWithoutMetadata = ""
+        var tMetadata = ""
+        if let index = version.firstIndex(of: kMetadataDelimiter) {
+            let metadataIndex = version.index(after: index)
+
+            if metadataIndex >= version.endIndex {
+                throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect metadata")
+            }
+
+            tMetadata = try getMetadata(version, metadataIndex)
+
+            let versionSubstring = version[..<index]
+
+            vWithoutMetadata = String(versionSubstring)
+        } else {
+            vWithoutMetadata = version
+        }
+
+        return (tMetadata, vWithoutMetadata)
+    }
+
+    private func getMetadata(_ version: String, _ index: String.Index) throws -> String {
+        let metadataString = String(version[index...])
+
+        if metadataString.isEmpty {
+            throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect metadata")
+        }
+
+        return metadataString
+    }
+
+    private func getAndRemovePreReleaseIfExists(_ vWithoutMetadata: String) throws -> (preRelease: [String], isStable: Bool, versionWithoutPreRelease: String) {
+        var vWithoutPreRelease = ""
+        var tPreRelease: [String] = []
+        var tIsStable = true
+        if let index = vWithoutMetadata.firstIndex(of: kPreReleaseDelimiter) {
+            let preReleaseDataIndex = vWithoutMetadata.index(after: index)
+
+            guard preReleaseDataIndex < vWithoutMetadata.endIndex else {
+                throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect pre release data")
+            }
+
+            let preReleaseData = String(vWithoutMetadata[preReleaseDataIndex...])
+            let preReleaseComponents = preReleaseData.split(separator: kValueDelimiter, omittingEmptySubsequences: false).map { String($0) }
+
+            if preReleaseComponents.isEmpty || preReleaseComponents.contains(where: { $0.isEmpty }) {
+                throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect pre release data")
+            }
+
+            tPreRelease = preReleaseComponents
+            tIsStable = false
+
+            vWithoutPreRelease = String(vWithoutMetadata[..<index])
+        } else {
+            tIsStable = true
+            vWithoutPreRelease = vWithoutMetadata
+        }
+
+        return (tPreRelease, tIsStable, vWithoutPreRelease)
+    }
+
+    private func getMajorMinorAndPatch(_ vWithoutPreRelease: String) throws -> (major: Int64, minor: Int64, patch: Int64) {
+        let vParts = vWithoutPreRelease.split(separator: kValueDelimiter, omittingEmptySubsequences: false)
+
+        if vParts.count != 3 {
+            throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect format: \(version)")
+        }
+
+        guard let major = Int64(vParts[0]), let minor = Int64(vParts[1]), let patch = Int64(vParts[2]) else {
+            throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect format: \(version)")
+        }
+
+        return (major, minor, patch)
     }
 
     private func setVersion() -> String {
