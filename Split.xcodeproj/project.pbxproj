@@ -1266,6 +1266,8 @@
 		C5977C282BF2B923003E293A /* GreaterThanOrEqualToSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C272BF2B923003E293A /* GreaterThanOrEqualToSemverMatcherTest.swift */; };
 		C5977C2A2BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C292BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift */; };
 		C5977C2C2BF2C068003E293A /* LessThanOrEqualToSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C2B2BF2C068003E293A /* LessThanOrEqualToSemverMatcherTest.swift */; };
+		C5977C322BF4031A003E293A /* split_changes_semver.json in Resources */ = {isa = PBXBuildFile; fileRef = C5977C312BF4031A003E293A /* split_changes_semver.json */; };
+		C5977C342BF403EA003E293A /* SemverIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C332BF403EA003E293A /* SemverIntegrationTest.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 /* End PBXBuildFile section */
@@ -2020,6 +2022,8 @@
 		C5977C272BF2B923003E293A /* GreaterThanOrEqualToSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreaterThanOrEqualToSemverMatcherTest.swift; sourceTree = "<group>"; };
 		C5977C292BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessThanOrEqualToSemverMatcher.swift; sourceTree = "<group>"; };
 		C5977C2B2BF2C068003E293A /* LessThanOrEqualToSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessThanOrEqualToSemverMatcherTest.swift; sourceTree = "<group>"; };
+		C5977C312BF4031A003E293A /* split_changes_semver.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_changes_semver.json; sourceTree = "<group>"; };
+		C5977C332BF403EA003E293A /* SemverIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemverIntegrationTest.swift; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -2816,7 +2820,6 @@
 			isa = PBXGroup;
 			children = (
 				C5977C0E2BF2832A003E293A /* Matcher */,
-				C5977C132BF298B0003E293A /* SemverTest.swift */,
 				95ABF4B1292FDE60006ED016 /* Collections */,
 				95ABF4B0292FDDC0006ED016 /* Init */,
 				953911AB267A648F0040433A /* Impressions */,
@@ -2902,6 +2905,7 @@
 				95B4368C26E9186C00E1EB9C /* lorem_ipsum_result.txt */,
 				95B2498326F3E19300B34507 /* push_msg-segment_updV2.txt */,
 				95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */,
+				C5977C312BF4031A003E293A /* split_changes_semver.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3184,6 +3188,7 @@
 				95737E0D2AD474A9007FD15C /* FlagSetsIntegrationTest.swift */,
 				596A7B722358E142004F6139 /* SplitSdkTimeoutTest.swift */,
 				596A7B70235729B5004F6139 /* DestroyTest.swift */,
+				C5977C332BF403EA003E293A /* SemverIntegrationTest.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -3733,11 +3738,11 @@
 				5959C4722279EBBC0064F968 /* in_segment_condition_split.json in Resources */,
 				59FB7C2E220247D300ECC96A /* localhost_3.splits in Resources */,
 				5921ED442538F19E000D6C8B /* simple_split_change.json in Resources */,
-				C5977BF92BEEA8A8003E293A /* (null) in Resources */,
 				590DF9CA213DAC9D0082B94F /* splits.json in Resources */,
 				592C6AEA211CBBB0002D120C /* regex.csv in Resources */,
 				5959C46E2278D9AD0064F968 /* segment_conta_condition.json in Resources */,
 				59C493052167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv in Resources */,
+				C5977C322BF4031A003E293A /* split_changes_semver.json in Resources */,
 				599EA59022691D57006CBA89 /* localhost_yml.yml in Resources */,
 				599EA58C226903DF006CBA89 /* localhost.yaml in Resources */,
 				C5977C062BF273A3003E293A /* valid_semantic_versions.csv in Resources */,
@@ -3745,26 +3750,22 @@
 				599EDAF32270A15B00D7DACB /* localhost.splits in Resources */,
 				590DF9D1213F07400082B94F /* split_sample_feature6.json in Resources */,
 				5912D154219A065200BC698C /* legacy_2.csv in Resources */,
-				C5977C1B2BF298C1003E293A /* between_semver.csv in Resources */,
 				5912D14D2199FD4D00BC698C /* legacy_1.csv in Resources */,
 				95737E142ADEC71A007FD15C /* push_msg-splits_updV2.txt in Resources */,
 				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
 				950F72FF292E8D6C008A0040 /* SplitiOSFull.xctestplan in Resources */,
 				59FB7C2A2202463000ECC96A /* localhost_1.splits in Resources */,
-				C5977C1A2BF298C1003E293A /* valid_semantic_versions.csv in Resources */,
 				95118EE8281AC6E700782F33 /* bucket_split_test.json in Resources */,
 				95B4368D26E9186C00E1EB9C /* lorem_ipsum_result.txt in Resources */,
 				95F8F06828170473009E09B1 /* multi_client_test.json in Resources */,
 				5919C64221C7C8A600EC35B8 /* split_traffic_allocation_1.json in Resources */,
 				C5977C082BF273A3003E293A /* equal_to_semver.csv in Resources */,
 				C5977C092BF273A3003E293A /* between_semver.csv in Resources */,
-				C5977C1C2BF298C1003E293A /* invalid_semantic_versions.csv in Resources */,
 				595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */,
 				59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */,
 				599EA58E226916CB006CBA89 /* localhost_legacy.splits in Resources */,
 				95D7D7E226DD44FB002E4D75 /* murmur3_64_uuids.csv in Resources */,
 				592C6AEB211CBBB0002D120C /* murmur3-sample-data-v2.csv in Resources */,
-				C5977C192BF298C1003E293A /* equal_to_semver.csv in Resources */,
 				95B4369126E959D400E1EB9C /* lorem_ipsum_gzip.txt in Resources */,
 				95737E122AD6D016007FD15C /* splitchanges_flagsets.json in Resources */,
 			);
@@ -4069,7 +4070,6 @@
 				95C717CD268BD549002ADB83 /* ImpressionsCountEntity.swift in Sources */,
 				9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */,
 				5905D4D82555FE74006DA3B1 /* SplitDatabase.swift in Sources */,
-				C5A3F5242BED4ED3009FACD3 /* (null) in Sources */,
 				952FA12B2A2E593900264AB5 /* SplitComponentCatalog.swift in Sources */,
 				59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */,
 				95C717C4268BB426002ADB83 /* ImpressionsCountDao.swift in Sources */,
@@ -4358,7 +4358,6 @@
 				599407E022403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift in Sources */,
 				59F4AAC12513C2EC00A1C69A /* PeriodicTimerStub.swift in Sources */,
 				9580C98226FB8A840021D729 /* StreamingControlResetTest.swift in Sources */,
-				C5977BF72BEEA2F7003E293A /* (null) in Sources */,
 				95737E162ADEC794007FD15C /* StreamingTestingHelper.swift in Sources */,
 				594F5F58253A340F00A945B4 /* StreamingOccupancyTest.swift in Sources */,
 				59B2047624F9B8230092F2E9 /* PushManagerEventBroadcasterTest.swift in Sources */,
@@ -4405,6 +4404,7 @@
 				95ED4AA3264999BD00FD3569 /* IntegrationHelper.swift in Sources */,
 				595AD25524E477B600A7B750 /* NotificationParserTest.swift in Sources */,
 				5921ED2F25377316000D6C8B /* HttpRequestManagerTestDispatcher.swift in Sources */,
+				C5977C342BF403EA003E293A /* SemverIntegrationTest.swift in Sources */,
 				9560354F27D16D5700E35BC8 /* MySegmentsStorageStub.swift in Sources */,
 				952FA1282A2E31C200264AB5 /* FeatureFlagsSynchronizerTest.swift in Sources */,
 				595AD1FC24D9ED4C00A7B750 /* FilterBuilderTest.swift in Sources */,
