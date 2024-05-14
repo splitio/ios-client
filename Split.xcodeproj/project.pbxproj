@@ -1249,20 +1249,25 @@
 		95F3F09525AE1F3800084AF8 /* ServiceConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
 		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
-		C5977BF72BEEA2F7003E293A /* (null) in Sources */ = {isa = PBXBuildFile; };
-		C5977BF92BEEA8A8003E293A /* (null) in Resources */ = {isa = PBXBuildFile; };
-		C5977BFB2BEEB149003E293A /* (null) in Resources */ = {isa = PBXBuildFile; };
-		C5977BFD2BEEB164003E293A /* (null) in Resources */ = {isa = PBXBuildFile; };
-		C5977C122BF29894003E293A /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C112BF29894003E293A /* Semver.swift */; };
-		C5977C142BF298B0003E293A /* SemverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C132BF298B0003E293A /* SemverTest.swift */; };
-		C5977C192BF298C1003E293A /* equal_to_semver.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C152BF298C1003E293A /* equal_to_semver.csv */; };
-		C5977C1A2BF298C1003E293A /* valid_semantic_versions.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C162BF298C1003E293A /* valid_semantic_versions.csv */; };
-		C5977C1B2BF298C1003E293A /* between_semver.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C172BF298C1003E293A /* between_semver.csv */; };
-		C5977C1C2BF298C1003E293A /* invalid_semantic_versions.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C182BF298C1003E293A /* invalid_semantic_versions.csv */; };
+		C5977BFF2BF27375003E293A /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977BFE2BF27375003E293A /* Semver.swift */; };
+		C5977C012BF27390003E293A /* SemverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C002BF27390003E293A /* SemverTest.swift */; };
+		C5977C062BF273A3003E293A /* valid_semantic_versions.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C022BF273A3003E293A /* valid_semantic_versions.csv */; };
+		C5977C072BF273A3003E293A /* invalid_semantic_versions.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C032BF273A3003E293A /* invalid_semantic_versions.csv */; };
+		C5977C082BF273A3003E293A /* equal_to_semver.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C042BF273A3003E293A /* equal_to_semver.csv */; };
+		C5977C092BF273A3003E293A /* between_semver.csv in Resources */ = {isa = PBXBuildFile; fileRef = C5977C052BF273A3003E293A /* between_semver.csv */; };
+		C5977C0B2BF2751B003E293A /* BetweenStringMatcherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0A2BF2751B003E293A /* BetweenStringMatcherData.swift */; };
+		C5977C0D2BF27786003E293A /* BetweenSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0C2BF27786003E293A /* BetweenSemverMatcher.swift */; };
+		C5977C102BF28846003E293A /* BetweenSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */; };
+		C5977C1E2BF29CB1003E293A /* EqualToSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C1D2BF29CB1003E293A /* EqualToSemverMatcher.swift */; };
+		C5977C202BF29F5B003E293A /* EqualToSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C1F2BF29F5B003E293A /* EqualToSemverMatcherTest.swift */; };
+		C5977C222BF2A54D003E293A /* InListSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C212BF2A54D003E293A /* InListSemverMatcher.swift */; };
+		C5977C242BF2AD78003E293A /* InListSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C232BF2AD78003E293A /* InListSemverMatcherTest.swift */; };
+		C5977C262BF2B7EF003E293A /* GreaterThanOrEqualToSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C252BF2B7EF003E293A /* GreaterThanOrEqualToSemverMatcher.swift */; };
+		C5977C282BF2B923003E293A /* GreaterThanOrEqualToSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C272BF2B923003E293A /* GreaterThanOrEqualToSemverMatcherTest.swift */; };
+		C5977C2A2BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C292BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift */; };
+		C5977C2C2BF2C068003E293A /* LessThanOrEqualToSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C2B2BF2C068003E293A /* LessThanOrEqualToSemverMatcherTest.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
-		C5A3F5242BED4ED3009FACD3 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		C5D507CC2BEE97DF0080A707 /* (null) in Resources */ = {isa = PBXBuildFile; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1998,12 +2003,23 @@
 		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
-		C5977C112BF29894003E293A /* Semver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
-		C5977C132BF298B0003E293A /* SemverTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemverTest.swift; sourceTree = "<group>"; };
-		C5977C152BF298C1003E293A /* equal_to_semver.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = equal_to_semver.csv; sourceTree = "<group>"; };
-		C5977C162BF298C1003E293A /* valid_semantic_versions.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = valid_semantic_versions.csv; sourceTree = "<group>"; };
-		C5977C172BF298C1003E293A /* between_semver.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = between_semver.csv; sourceTree = "<group>"; };
-		C5977C182BF298C1003E293A /* invalid_semantic_versions.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = invalid_semantic_versions.csv; sourceTree = "<group>"; };
+		C5977BFE2BF27375003E293A /* Semver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
+		C5977C002BF27390003E293A /* SemverTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemverTest.swift; sourceTree = "<group>"; };
+		C5977C022BF273A3003E293A /* valid_semantic_versions.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = valid_semantic_versions.csv; sourceTree = "<group>"; };
+		C5977C032BF273A3003E293A /* invalid_semantic_versions.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = invalid_semantic_versions.csv; sourceTree = "<group>"; };
+		C5977C042BF273A3003E293A /* equal_to_semver.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = equal_to_semver.csv; sourceTree = "<group>"; };
+		C5977C052BF273A3003E293A /* between_semver.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = between_semver.csv; sourceTree = "<group>"; };
+		C5977C0A2BF2751B003E293A /* BetweenStringMatcherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenStringMatcherData.swift; sourceTree = "<group>"; };
+		C5977C0C2BF27786003E293A /* BetweenSemverMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenSemverMatcher.swift; sourceTree = "<group>"; };
+		C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenSemverMatcherTest.swift; sourceTree = "<group>"; };
+		C5977C1D2BF29CB1003E293A /* EqualToSemverMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqualToSemverMatcher.swift; sourceTree = "<group>"; };
+		C5977C1F2BF29F5B003E293A /* EqualToSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqualToSemverMatcherTest.swift; sourceTree = "<group>"; };
+		C5977C212BF2A54D003E293A /* InListSemverMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InListSemverMatcher.swift; sourceTree = "<group>"; };
+		C5977C232BF2AD78003E293A /* InListSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InListSemverMatcherTest.swift; sourceTree = "<group>"; };
+		C5977C252BF2B7EF003E293A /* GreaterThanOrEqualToSemverMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreaterThanOrEqualToSemverMatcher.swift; sourceTree = "<group>"; };
+		C5977C272BF2B923003E293A /* GreaterThanOrEqualToSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreaterThanOrEqualToSemverMatcherTest.swift; sourceTree = "<group>"; };
+		C5977C292BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessThanOrEqualToSemverMatcher.swift; sourceTree = "<group>"; };
+		C5977C2B2BF2C068003E293A /* LessThanOrEqualToSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessThanOrEqualToSemverMatcherTest.swift; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -2329,6 +2345,7 @@
 				3B6DEEBB20EA6AE20067435E /* UnaryNumericMatcherData.swift */,
 				3B6DEEBC20EA6AE20067435E /* UserDefinedSegmentMatcherData.swift */,
 				3B6DEEBD20EA6AE20067435E /* WhitelistMatcherData.swift */,
+				C5977C0A2BF2751B003E293A /* BetweenStringMatcherData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2798,6 +2815,7 @@
 		592C6AA6211B6C99002D120C /* SplitTests */ = {
 			isa = PBXGroup;
 			children = (
+				C5977C0E2BF2832A003E293A /* Matcher */,
 				C5977C132BF298B0003E293A /* SemverTest.swift */,
 				95ABF4B1292FDE60006ED016 /* Collections */,
 				95ABF4B0292FDDC0006ED016 /* Init */,
@@ -2842,10 +2860,10 @@
 		592C6ADB211CBB86002D120C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				C5977C172BF298C1003E293A /* between_semver.csv */,
-				C5977C152BF298C1003E293A /* equal_to_semver.csv */,
-				C5977C182BF298C1003E293A /* invalid_semantic_versions.csv */,
-				C5977C162BF298C1003E293A /* valid_semantic_versions.csv */,
+				C5977C052BF273A3003E293A /* between_semver.csv */,
+				C5977C042BF273A3003E293A /* equal_to_semver.csv */,
+				C5977C032BF273A3003E293A /* invalid_semantic_versions.csv */,
+				C5977C022BF273A3003E293A /* valid_semantic_versions.csv */,
 				595B66D2231DB8690030F330 /* Integration */,
 				599EA58B226903DF006CBA89 /* localhost.yaml */,
 				9595C1A7274574220092123F /* attributes_test_split.json */,
@@ -3481,10 +3499,28 @@
 			path = Attributes;
 			sourceTree = "<group>";
 		};
+		C5977C0E2BF2832A003E293A /* Matcher */ = {
+			isa = PBXGroup;
+			children = (
+				C5977C002BF27390003E293A /* SemverTest.swift */,
+				C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */,
+				C5977C1F2BF29F5B003E293A /* EqualToSemverMatcherTest.swift */,
+				C5977C232BF2AD78003E293A /* InListSemverMatcherTest.swift */,
+				C5977C272BF2B923003E293A /* GreaterThanOrEqualToSemverMatcherTest.swift */,
+				C5977C2B2BF2C068003E293A /* LessThanOrEqualToSemverMatcherTest.swift */,
+			);
+			path = Matcher;
+			sourceTree = "<group>";
+		};
 		C5A3F5222BED4EC5009FACD3 /* Semver */ = {
 			isa = PBXGroup;
 			children = (
-				C5977C112BF29894003E293A /* Semver.swift */,
+				C5977BFE2BF27375003E293A /* Semver.swift */,
+				C5977C0C2BF27786003E293A /* BetweenSemverMatcher.swift */,
+				C5977C1D2BF29CB1003E293A /* EqualToSemverMatcher.swift */,
+				C5977C212BF2A54D003E293A /* InListSemverMatcher.swift */,
+				C5977C252BF2B7EF003E293A /* GreaterThanOrEqualToSemverMatcher.swift */,
+				C5977C292BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift */,
 			);
 			path = Semver;
 			sourceTree = "<group>";
@@ -3689,6 +3725,7 @@
 				592C6AE7211CBBB0002D120C /* splitchanges_3.json in Resources */,
 				598EDF04225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json in Resources */,
 				59C493062167E3B400F5F774 /* murmur3-sample-v3.csv in Resources */,
+				C5977C072BF273A3003E293A /* invalid_semantic_versions.csv in Resources */,
 				592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */,
 				9595C1A8274574220092123F /* attributes_test_split.json in Resources */,
 				95B2498426F3E19300B34507 /* push_msg-segment_updV2.txt in Resources */,
@@ -3703,6 +3740,7 @@
 				59C493052167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv in Resources */,
 				599EA59022691D57006CBA89 /* localhost_yml.yml in Resources */,
 				599EA58C226903DF006CBA89 /* localhost.yaml in Resources */,
+				C5977C062BF273A3003E293A /* valid_semantic_versions.csv in Resources */,
 				5982D92F219C83D000230F44 /* legacy_1_short.csv in Resources */,
 				599EDAF32270A15B00D7DACB /* localhost.splits in Resources */,
 				590DF9D1213F07400082B94F /* split_sample_feature6.json in Resources */,
@@ -3718,9 +3756,8 @@
 				95B4368D26E9186C00E1EB9C /* lorem_ipsum_result.txt in Resources */,
 				95F8F06828170473009E09B1 /* multi_client_test.json in Resources */,
 				5919C64221C7C8A600EC35B8 /* split_traffic_allocation_1.json in Resources */,
-				C5977BFB2BEEB149003E293A /* (null) in Resources */,
-				C5D507CC2BEE97DF0080A707 /* (null) in Resources */,
-				C5977BFD2BEEB164003E293A /* (null) in Resources */,
+				C5977C082BF273A3003E293A /* equal_to_semver.csv in Resources */,
+				C5977C092BF273A3003E293A /* between_semver.csv in Resources */,
 				C5977C1C2BF298C1003E293A /* invalid_semantic_versions.csv in Resources */,
 				595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */,
 				59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */,
@@ -3806,7 +3843,7 @@
 				3B6DEF6820EA6AE50067435E /* EqualToMatcher.swift in Sources */,
 				95F3F0242590D35F00084AF8 /* ImpressionsRecorderWorker.swift in Sources */,
 				95B18001275FE87D002DC9DF /* TelemetryConfigRecorderWorker.swift in Sources */,
-				C5977C122BF29894003E293A /* Semver.swift in Sources */,
+				C5977BFF2BF27375003E293A /* Semver.swift in Sources */,
 				3B6DEF5020EA6AE50067435E /* Treatment.swift in Sources */,
 				595AD25324E441AA00A7B750 /* DefaultSseNotificationParser.swift in Sources */,
 				95F3F05D25A4A70100084AF8 /* LocalhostSplitsStorage.swift in Sources */,
@@ -3820,6 +3857,7 @@
 				3B6DEF4A20EA6AE50067435E /* Segment.swift in Sources */,
 				95ABF50C293A439E006ED016 /* UserConsentManager.swift in Sources */,
 				95CED03C2B482CFB005E3C34 /* SplitLocalhostDataSource.swift in Sources */,
+				C5977C222BF2A54D003E293A /* InListSemverMatcher.swift in Sources */,
 				95B17FFD275FCD92002DC9DF /* RestClient+TelemetryConfig.swift in Sources */,
 				3B6DEF6120EA6AE50067435E /* ContainsAllOfSetMatcher.swift in Sources */,
 				3B6DEF7320EA6AE50067435E /* Json.swift in Sources */,
@@ -3851,6 +3889,7 @@
 				957E67B025F6B3E1006F5B19 /* BackgroundSyncWorker.swift in Sources */,
 				3B6DEF2620EA6AE50067435E /* SplitClientConfig.swift in Sources */,
 				95825BD8271F4E3700A0CDAD /* Bundle+Name.swift in Sources */,
+				C5977C0B2BF2751B003E293A /* BetweenStringMatcherData.swift in Sources */,
 				956A7E20297590DF0080D53C /* Array+Chunked.swift in Sources */,
 				3B6DEF3220EA6AE50067435E /* Murmur3Hash.swift in Sources */,
 				599EA5812266719C006CBA89 /* YamlLocalhostSplitsParser.swift in Sources */,
@@ -3914,6 +3953,7 @@
 				59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */,
 				952E266D2833E4120015D633 /* UniqueKeyDao.swift in Sources */,
 				3B6DEF3620EA6AE50067435E /* SplitClient.swift in Sources */,
+				C5977C1E2BF29CB1003E293A /* EqualToSemverMatcher.swift in Sources */,
 				C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */,
 				3B6DEF3F20EA6AE50067435E /* ConditionType.swift in Sources */,
 				95D9446B283BEE4D00D7FFED /* UniqueKeys.swift in Sources */,
@@ -3923,6 +3963,7 @@
 				95737E102AD47A42007FD15C /* Substring+asString.swift in Sources */,
 				3B6DEF3B20EA6AE50067435E /* Dictionary+JSON.swift in Sources */,
 				3B6DEF1A20EA6AE50067435E /* EventDTO.swift in Sources */,
+				C5977C262BF2B7EF003E293A /* GreaterThanOrEqualToSemverMatcher.swift in Sources */,
 				95122A142759410100D93F90 /* TelemetryStorage.swift in Sources */,
 				955423A326793AEF002278D5 /* ImpressionsObserver.swift in Sources */,
 				9569E1CB2784C00B006FC7E5 /* TelemetryConfigHelper.swift in Sources */,
@@ -3966,6 +4007,7 @@
 				59B2042924F42DE80092F2E9 /* SseNotificationProcessor.swift in Sources */,
 				3B6DEF6D20EA6AE50067435E /* MatchesStringMatcher.swift in Sources */,
 				3B6DEF3420EA6AE50067435E /* Splitter.swift in Sources */,
+				C5977C2A2BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift in Sources */,
 				598EDE84224CE2C4005D4762 /* SplitResult.swift in Sources */,
 				3B6DEF4120EA6AE50067435E /* DependencyMatcherData.swift in Sources */,
 				595AD24B24E30C0C00A7B750 /* Base64Utils.swift in Sources */,
@@ -4053,6 +4095,7 @@
 				9519A90F27D686A900278AEC /* SynchronizedDictionaryComposed.swift in Sources */,
 				9519A91E27D947C300278AEC /* SyncCommons.swift in Sources */,
 				59D84BD422158A07003DA248 /* LocalhostSplitClient.swift in Sources */,
+				C5977C0D2BF27786003E293A /* BetweenSemverMatcher.swift in Sources */,
 				3B6DEF1D20EA6AE50067435E /* PeriodicTaskManager.swift in Sources */,
 				5903C497210A5E0900A754B0 /* SynchronizedList.swift in Sources */,
 				3B6DEF2F20EA6AE50067435E /* EvaluatorError.swift in Sources */,
@@ -4222,9 +4265,11 @@
 				954F9C4E2577E6D200140B81 /* HttpSplitFetcherTests.swift in Sources */,
 				5932260124A4E91800496D8B /* HttpStreamRequestTest.swift in Sources */,
 				95737DFB2ACB09CA007FD15C /* FlagSetsValidatorMock.swift in Sources */,
+				C5977C242BF2AD78003E293A /* InListSemverMatcherTest.swift in Sources */,
 				952FA1342A32099500264AB5 /* SyncPostBgTest.swift in Sources */,
+				C5977C282BF2B923003E293A /* GreaterThanOrEqualToSemverMatcherTest.swift in Sources */,
 				9550334A282F0FF400E5330F /* ImpressionsTrackerTest.swift in Sources */,
-				C5977C142BF298B0003E293A /* SemverTest.swift in Sources */,
+				C5977C012BF27390003E293A /* SemverTest.swift in Sources */,
 				595AD24D24E324D200A7B750 /* Base64UtilsTest.swift in Sources */,
 				599EDAF12270970500D7DACB /* SplitEventsManagerMock.swift in Sources */,
 				955B59632811E8E700D105CD /* SplitClientManagerTest.swift in Sources */,
@@ -4318,6 +4363,7 @@
 				594F5F58253A340F00A945B4 /* StreamingOccupancyTest.swift in Sources */,
 				59B2047624F9B8230092F2E9 /* PushManagerEventBroadcasterTest.swift in Sources */,
 				95F3F0302590E4BE00084AF8 /* HttpImpressionsRecorderStub.swift in Sources */,
+				C5977C2C2BF2C068003E293A /* LessThanOrEqualToSemverMatcherTest.swift in Sources */,
 				954F9C5C25780FDD00140B81 /* HttpMySegmentsFetcherTest.swift in Sources */,
 				59F4AA9924FE8DA200A1C69A /* NotificationProcessorStub.swift in Sources */,
 				595AD21324E1849500A7B750 /* JwtParserStub.swift in Sources */,
@@ -4367,6 +4413,7 @@
 				596A7B622343F848004F6139 /* MySegmentUpadatedTest.swift in Sources */,
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				95B180272763DA0E002DC9DF /* HttpTelemetryConfigRecorderTest.swift in Sources */,
+				C5977C202BF29F5B003E293A /* EqualToSemverMatcherTest.swift in Sources */,
 				59ED408424EAB8C900EF7B09 /* PushNotificationManagerTest.swift in Sources */,
 				9523B8CF28622B6500AEE178 /* CdnByPassTest.swift in Sources */,
 				59F4AABD2513A2E900A1C69A /* SplitsUpdateWorkerTest.swift in Sources */,
@@ -4394,6 +4441,7 @@
 				95CED04C2B4D8B88005E3C34 /* LocalhostSynchronizerTests.swift in Sources */,
 				95B436A626F1533700E1EB9C /* MySegmentsV2PayloadDecoderMock.swift in Sources */,
 				95B1802B2763DE4B002DC9DF /* HttpTelemetryStatsRecorderTest.swift in Sources */,
+				C5977C102BF28846003E293A /* BetweenSemverMatcherTest.swift in Sources */,
 				95B17FF5275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift in Sources */,
 				95ABF511293ABDDC006ED016 /* ImpressionsStorageStub.swift in Sources */,
 				9557C1CA2614F67700CD9B5C /* DbForTwoDifferentApiKeyTest.swift in Sources */,

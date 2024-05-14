@@ -11,7 +11,7 @@ enum SemverParseError: Error {
     case invalidVersionFormat(String)
 }
 
-class Semver: Equatable {
+class Semver: Equatable, Hashable {
     private let kMetadataDelimiter: Character = "+"
     private let kPreReleaseDelimiter: Character = "-"
     private let kValueDelimiter: Character = "."
@@ -24,8 +24,20 @@ class Semver: Equatable {
 
     private var version: String = ""
 
-    static func build(version: String) -> Semver? {
-        return try? Semver(version: version)
+    static func build(version: String?) -> Semver? {
+        guard let version = version else {
+            return nil
+        }
+
+        do {
+            return try Semver(version: version)
+        } catch SemverParseError.invalidVersionFormat(let message) {
+            Logger.e("\(message)")
+            return nil
+        } catch {
+            Logger.e("An unknown error occurred parsing version")
+            return nil
+        }
     }
 
     private init(version: String) throws {
@@ -101,6 +113,10 @@ class Semver: Equatable {
 
     static func == (lhs: Semver, rhs: Semver) -> Bool {
         return lhs.version == rhs.version
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(version)
     }
 
     private func getAndRemoveMetadataIfExists(version: String) throws -> (metadata: String?, versionWithoutMetadata: String) {
