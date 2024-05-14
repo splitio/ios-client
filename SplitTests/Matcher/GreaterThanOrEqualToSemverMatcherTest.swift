@@ -2,7 +2,6 @@
 //  GreaterThanOrEqualToSemverMatcherTest.swift
 //  SplitTests
 //
-//  Created by Gaston Thea on 13/05/2024.
 //  Copyright © 2024 Split. All rights reserved.
 //
 
