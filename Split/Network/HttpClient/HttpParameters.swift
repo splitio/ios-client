@@ -2,7 +2,6 @@
 //  HttpParameters.swift
 //  Split
 //
-//  Created by Gaston Thea on 07/05/2024.
 //  Copyright © 2024 Split. All rights reserved.
 //
 
