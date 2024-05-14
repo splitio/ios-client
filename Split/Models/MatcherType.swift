@@ -39,5 +39,6 @@ enum MatcherType: String, Codable {
     case dependency = "IN_SPLIT_TREATMENT"
 
     /* Semver */
+    case equalToSemver = "EQUAL_TO_SEMVER"
     case betweenSemver = "BETWEEN_SEMVER"
 }

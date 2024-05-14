@@ -1262,6 +1262,8 @@
 		C5977C0B2BF2751B003E293A /* BetweenStringMatcherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0A2BF2751B003E293A /* BetweenStringMatcherData.swift */; };
 		C5977C0D2BF27786003E293A /* BetweenSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0C2BF27786003E293A /* BetweenSemverMatcher.swift */; };
 		C5977C102BF28846003E293A /* BetweenSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */; };
+		C5977C1E2BF29CB1003E293A /* EqualToSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C1D2BF29CB1003E293A /* EqualToSemverMatcher.swift */; };
+		C5977C202BF29F5B003E293A /* EqualToSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C1F2BF29F5B003E293A /* EqualToSemverMatcherTest.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 		C5A3F5242BED4ED3009FACD3 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -2010,6 +2012,8 @@
 		C5977C0A2BF2751B003E293A /* BetweenStringMatcherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenStringMatcherData.swift; sourceTree = "<group>"; };
 		C5977C0C2BF27786003E293A /* BetweenSemverMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenSemverMatcher.swift; sourceTree = "<group>"; };
 		C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetweenSemverMatcherTest.swift; sourceTree = "<group>"; };
+		C5977C1D2BF29CB1003E293A /* EqualToSemverMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqualToSemverMatcher.swift; sourceTree = "<group>"; };
+		C5977C1F2BF29F5B003E293A /* EqualToSemverMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqualToSemverMatcherTest.swift; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -3493,6 +3497,7 @@
 			children = (
 				C5977C002BF27390003E293A /* SemverTest.swift */,
 				C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */,
+				C5977C1F2BF29F5B003E293A /* EqualToSemverMatcherTest.swift */,
 			);
 			path = Matcher;
 			sourceTree = "<group>";
@@ -3502,6 +3507,7 @@
 			children = (
 				C5977BFE2BF27375003E293A /* Semver.swift */,
 				C5977C0C2BF27786003E293A /* BetweenSemverMatcher.swift */,
+				C5977C1D2BF29CB1003E293A /* EqualToSemverMatcher.swift */,
 			);
 			path = Semver;
 			sourceTree = "<group>";
@@ -3932,6 +3938,7 @@
 				59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */,
 				952E266D2833E4120015D633 /* UniqueKeyDao.swift in Sources */,
 				3B6DEF3620EA6AE50067435E /* SplitClient.swift in Sources */,
+				C5977C1E2BF29CB1003E293A /* EqualToSemverMatcher.swift in Sources */,
 				C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */,
 				3B6DEF3F20EA6AE50067435E /* ConditionType.swift in Sources */,
 				95D9446B283BEE4D00D7FFED /* UniqueKeys.swift in Sources */,
@@ -4386,6 +4393,7 @@
 				596A7B622343F848004F6139 /* MySegmentUpadatedTest.swift in Sources */,
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				95B180272763DA0E002DC9DF /* HttpTelemetryConfigRecorderTest.swift in Sources */,
+				C5977C202BF29F5B003E293A /* EqualToSemverMatcherTest.swift in Sources */,
 				59ED408424EAB8C900EF7B09 /* PushNotificationManagerTest.swift in Sources */,
 				9523B8CF28622B6500AEE178 /* CdnByPassTest.swift in Sources */,
 				59F4AABD2513A2E900A1C69A /* SplitsUpdateWorkerTest.swift in Sources */,
