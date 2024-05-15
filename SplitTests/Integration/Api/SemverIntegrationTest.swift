@@ -49,6 +49,57 @@ class SemverIntegrationTest: XCTestCase {
         assertImpressions(labelCount: 1, defaultLabelCount: 4, totalCount: 5, defaultLabel: "equal to semver")
     }
 
+    func testInListSemverMatcher() throws {
+        let client = try? startTest()
+
+        XCTAssertEqual("on", client?.getTreatment("semver_inlist", attributes: ["version": "2.1.0"]))
+        XCTAssertEqual("on", client?.getTreatment("semver_inlist", attributes: ["version": "1.22.9"]))
+        XCTAssertEqual("off", client?.getTreatment("semver_inlist", attributes: ["version": "1.22.9+build"]))
+        XCTAssertEqual("off", client?.getTreatment("semver_inlist", attributes: ["version": "1.22.9-rc.0"]))
+        XCTAssertEqual("off", client?.getTreatment("semver_inlist", attributes: ["version": nil]))
+
+        assertImpressions(labelCount: 2, defaultLabelCount: 3, totalCount: 5, defaultLabel: "in list semver")
+    }
+
+    func testGreaterThanOrEqualToSemverMatcher() throws {
+        let client = try? startTest()
+
+        XCTAssertEqual("on", client?.getTreatment("semver_greater_or_equalto", attributes: ["version": "1.23.9"]))
+        XCTAssertEqual("on", client?.getTreatment("semver_greater_or_equalto", attributes: ["version": "1.22.9"]))
+        XCTAssertEqual("on", client?.getTreatment("semver_greater_or_equalto", attributes: ["version": "1.22.9+build"]))
+        XCTAssertEqual("off", client?.getTreatment("semver_greater_or_equalto", attributes: ["version": "1.22.9-rc.0"]))
+        XCTAssertEqual("off", client?.getTreatment("semver_greater_or_equalto", attributes: ["version": "1.21.9"]))
+        XCTAssertEqual("off", client?.getTreatment("semver_greater_or_equalto", attributes: ["version": "invalid"]))
+
+        assertImpressions(labelCount: 3, defaultLabelCount: 3, totalCount: 6, defaultLabel: "greater than or equal to semver")
+    }
+
+    func testLessThanOrEqualToSemverMatcher() throws {
+        let client = try? startTest()
+
+        XCTAssertEqual("off", client?.getTreatment("semver_less_or_equalto", attributes: ["version": "1.22.11"]))
+        XCTAssertEqual("on", client?.getTreatment("semver_less_or_equalto", attributes: ["version": "1.22.9"]))
+        XCTAssertEqual("on", client?.getTreatment("semver_less_or_equalto", attributes: ["version": "1.22.9+build"]))
+        XCTAssertEqual("on", client?.getTreatment("semver_less_or_equalto", attributes: ["version": "1.22.9-rc.0"]))
+        XCTAssertEqual("on", client?.getTreatment("semver_less_or_equalto", attributes: ["version": "1.21.9"]))
+        XCTAssertEqual("off", client?.getTreatment("semver_less_or_equalto", attributes: ["version": nil]))
+
+        assertImpressions(labelCount: 4, defaultLabelCount: 2, totalCount: 6, defaultLabel: "less than or equal to semver")
+    }
+
+    func testBetweenSemverMatcher() throws {
+        let client = try? startTest()
+
+        XCTAssertEqual("off", client?.getTreatment("semver_between", attributes: ["version": "2.1.1"]))
+        XCTAssertEqual("on", client?.getTreatment("semver_between", attributes: ["version": "2.1.0+build"]))
+        XCTAssertEqual("on", client?.getTreatment("semver_between", attributes: ["version": "1.25.0"]))
+        XCTAssertEqual("on", client?.getTreatment("semver_between", attributes: ["version": "1.25.9"]))
+        XCTAssertEqual("off", client?.getTreatment("semver_between", attributes: ["version": "1.22.9-rc.0"]))
+        XCTAssertEqual("off", client?.getTreatment("semver_between", attributes: ["version": []]))
+
+        assertImpressions(labelCount: 3, defaultLabelCount: 3, totalCount: 6, defaultLabel: "between semver")
+    }
+
     private func startTest() throws -> SplitClient?  {
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.sdkReadyTimeOut = 6000
@@ -146,11 +197,14 @@ class SemverIntegrationTest: XCTestCase {
     }
 
     private func assertImpressions(labelCount: Int, defaultLabelCount: Int, totalCount: Int, defaultLabel: String) {
-        var impEntities = testDb.impressionDao.getBy(createdAt: 1, status: StorageRecordStatus.active, maxRows: 100)
+        sleep(1)
+        let impEntities = testDb.impressionDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 100)
 
         XCTAssertEqual(labelCount, impEntities.filter { $0.label == defaultLabel }.count)
         XCTAssertEqual(defaultLabelCount, impEntities.filter { $0.label == "default rule" }.count)
         XCTAssertEqual(totalCount, impEntities.count)
+        XCTAssertEqual(labelCount, impressionsOnListener.filter { $0.label == defaultLabel }.count)
+        XCTAssertEqual(defaultLabelCount, impressionsOnListener.filter { $0.label == "default rule" }.count)
         XCTAssertEqual(totalCount, impressionsOnListener.count)
     }
 }
