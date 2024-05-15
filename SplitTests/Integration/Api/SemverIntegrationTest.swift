@@ -36,7 +36,7 @@ class SemverIntegrationTest: XCTestCase {
                                                           streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
-
+    
     func testEqualToSemverMatcher() throws {
         let client = try? startTest()
         
@@ -136,15 +136,6 @@ class SemverIntegrationTest: XCTestCase {
         wait(for: expectations, timeout: 5)
 
         return client
-    }
-
-    private func destroyTest(client: SplitClient?) {
-        guard let client = client else { return }
-        let semaphore = DispatchSemaphore(value: 0)
-        client.destroy(completion: {
-            _ = semaphore.signal()
-        })
-        semaphore.wait()
     }
 
     private func loadSplitsChangeFile() -> SplitChange? {
