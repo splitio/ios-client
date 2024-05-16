@@ -77,6 +77,9 @@ class DefaultSplitsStorage: SplitsStorage {
                 return parsed
             }
             return nil
+        } else if isUnsupportedMatcher(split: split) {
+            let defaultCondition = SplitHelper.createDefaultCondition()
+            split.conditions = [defaultCondition]
         }
         return split
     }
@@ -187,11 +190,12 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     private func isUnsupportedMatcher(split: Split?) -> Bool {
+        var result = false
         guard let conditions = split?.conditions else {
             return false
         }
 
-        return conditions.contains { condition in
+        result = conditions.contains { condition in
             guard let matcherGroup = condition.matcherGroup else {
                 return false
             }
@@ -204,6 +208,12 @@ class DefaultSplitsStorage: SplitsStorage {
                 matcher.matcherType == nil
             }
         }
+
+        if result {
+            Logger.w("Unable to create matcher for matcher type")
+        }
+
+        return result
     }
 }
 
