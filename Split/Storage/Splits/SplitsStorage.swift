@@ -69,14 +69,15 @@ class DefaultSplitsStorage: SplitsStorage {
         if !split.isParsed {
             if let parsed = try? Json.decodeFrom(json: split.json, to: Split.self) {
                 if isUnsupportedMatcher(split: parsed) {
-                    let defaultCondition = SplitHelper.createDefaultCondition()
-                    parsed.conditions = [defaultCondition]
+                    parsed.conditions = [SplitHelper.createDefaultCondition()]
                 }
 
                 inMemorySplits.setValue(parsed, forKey: name)
                 return parsed
             }
             return nil
+        } else if isUnsupportedMatcher(split: split) {
+            split.conditions = [SplitHelper.createDefaultCondition()]
         }
         return split
     }
@@ -187,11 +188,12 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     private func isUnsupportedMatcher(split: Split?) -> Bool {
+        var result = false
         guard let conditions = split?.conditions else {
             return false
         }
 
-        return conditions.contains { condition in
+        result = conditions.contains { condition in
             guard let matcherGroup = condition.matcherGroup else {
                 return false
             }
@@ -204,6 +206,12 @@ class DefaultSplitsStorage: SplitsStorage {
                 matcher.matcherType == nil
             }
         }
+
+        if result {
+            Logger.w("Unable to create matcher for matcher type")
+        }
+
+        return result
     }
 }
 

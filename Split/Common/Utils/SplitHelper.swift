@@ -83,7 +83,7 @@ class SplitHelper {
         matcherGroup.matchers = [matcher]
         condition.matcherGroup = matcherGroup
         condition.partitions = [partition]
-        condition.label = "targeting rule type unsupported by sdk"
+        condition.label = ImpressionsConstants.unsupportedMatcherType
 
         return condition
     }
