@@ -113,7 +113,7 @@ class SplitClientManagerTest: XCTestCase {
                                              eventsTracker: EventsTrackerStub(),
                                              eventsManagerCoordinator: splitEventsCoordinator,
                                              mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactoryStub(),
-                                             telemetryStopwatch: stopwatch)
+                                             telemetryStopwatch: stopwatch, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
     }
 
     override func tearDown() {

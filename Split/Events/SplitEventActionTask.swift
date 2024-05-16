@@ -13,16 +13,19 @@ class SplitEventActionTask: SplitEventTask {
     private var queue: DispatchQueue?
     var event: SplitEvent
     var runInBackground: Bool = false
+    var factory: SplitFactory
 
     init(action: @escaping SplitAction,
          event: SplitEvent,
          runInBackground: Bool = false,
+         factory: SplitFactory,
          queue: DispatchQueue? = nil) {
 
         self.eventHandler = action
         self.event = event
         self.runInBackground = runInBackground
         self.queue = queue
+        self.factory = factory
     }
 
     func takeQueue() -> DispatchQueue? {

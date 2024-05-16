@@ -10,6 +10,8 @@ import Foundation
 @testable import Split
 
 class ClientManagerMock: SplitClientManager {
+    var splitFactory: SplitFactory? = SplitFactoryStub(apiKey: "apiKey")
+
     var defaultClient: SplitClient?
     var clients = [Key: SplitClient]()
 

@@ -76,6 +76,12 @@
          <TestPlanReference
             reference = "container:SplitiOSStreaming_2.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitiOSUnit_1.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitiOSUnit_2.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference

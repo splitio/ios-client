@@ -28,6 +28,7 @@ class LocalhostSplitClientTests: XCTestCase {
 
         client = LocalhostSplitClient(key: Key(matchingKey: "thekey"),
                                       splitsStorage: splitsStorage,
+                                      clientManager: ClientManagerMock(),
                                       eventsManager: eventsManager,
                                       evaluator: DefaultEvaluator(splitsStorage: splitsStorage,
                                                                   mySegmentsStorage: EmptyMySegmentsStorage()))
