@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build iOS and Test
+      - name: Build iOS and Test 4
         uses: sersoft-gmbh/xcodebuild-action@v1
         with:
           action: build test
@@ -35,7 +35,7 @@ jobs:
           project: Split.xcodeproj
           scheme: Split
           sdk: 'iphonesimulator'
-          test-plan: 'SplitiOSUnit_1'
+          test-plan: 'SplitiOSUnit_4'
           use-xcpretty: true
 
       # - name: Install java 11
