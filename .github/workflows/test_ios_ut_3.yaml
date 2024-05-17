@@ -1,4 +1,4 @@
-name: Build and Test iOS UT (1)
+name: Build and Test iOS UT (3)
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
           project: Split.xcodeproj
           scheme: Split
           sdk: 'iphonesimulator'
-          test-plan: 'SplitiOSUnit_1'
+          test-plan: 'SplitiOSUnit_3'
           use-xcpretty: true
 
       # - name: Install java 11
