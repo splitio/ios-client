@@ -1268,6 +1268,16 @@
 		C5977C2C2BF2C068003E293A /* LessThanOrEqualToSemverMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C2B2BF2C068003E293A /* LessThanOrEqualToSemverMatcherTest.swift */; };
 		C5977C322BF4031A003E293A /* split_changes_semver.json in Resources */ = {isa = PBXBuildFile; fileRef = C5977C312BF4031A003E293A /* split_changes_semver.json */; };
 		C5977C342BF403EA003E293A /* SemverIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C332BF403EA003E293A /* SemverIntegrationTest.swift */; };
+		C5977C5B2BF7D385003E293A /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
+		C5977C5C2BF7D3EB003E293A /* BetweenStringMatcherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0A2BF2751B003E293A /* BetweenStringMatcherData.swift */; };
+		C5977C5D2BF7D4C1003E293A /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977BFE2BF27375003E293A /* Semver.swift */; };
+		C5977C5E2BF7D4CD003E293A /* BetweenSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C0C2BF27786003E293A /* BetweenSemverMatcher.swift */; };
+		C5977C5F2BF7D4D1003E293A /* EqualToSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C1D2BF29CB1003E293A /* EqualToSemverMatcher.swift */; };
+		C5977C602BF7D4D4003E293A /* InListSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C212BF2A54D003E293A /* InListSemverMatcher.swift */; };
+		C5977C612BF7D4D7003E293A /* GreaterThanOrEqualToSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C252BF2B7EF003E293A /* GreaterThanOrEqualToSemverMatcher.swift */; };
+		C5977C622BF7D4D9003E293A /* LessThanOrEqualToSemverMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C292BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift */; };
+		C5977C632BF7D5F4003E293A /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
+		C5977C642BF7D5FC003E293A /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 /* End PBXBuildFile section */
@@ -4761,6 +4771,7 @@
 				95B02CBF28D0BDC10030EC8B /* Logger.swift in Sources */,
 				95B02CC028D0BDC10030EC8B /* InfoUtils.swift in Sources */,
 				95B02CC128D0BDC10030EC8B /* NotificationsHelper.swift in Sources */,
+				C5977C5D2BF7D4C1003E293A /* Semver.swift in Sources */,
 				95B02CC228D0BDC10030EC8B /* CastUtils.swift in Sources */,
 				95B02CC328D0BDC10030EC8B /* SplitHelper.swift in Sources */,
 				95B02CC428D0BDC10030EC8B /* Base64Utils.swift in Sources */,
@@ -4814,6 +4825,7 @@
 				95B02CF228D0BDC20030EC8B /* TrafficType.swift in Sources */,
 				95B02CF328D0BDC20030EC8B /* Treatment.swift in Sources */,
 				95B02CF428D0BDC20030EC8B /* UnaryNumericMatcherData.swift in Sources */,
+				C5977C602BF7D4D4003E293A /* InListSemverMatcher.swift in Sources */,
 				95B02CF528D0BDC20030EC8B /* UserDefinedSegmentMatcherData.swift in Sources */,
 				95B02CF628D0BDC20030EC8B /* WhitelistMatcherData.swift in Sources */,
 				95B02CF728D0BDC20030EC8B /* DefaultSplitClient.swift in Sources */,
@@ -4840,7 +4852,9 @@
 				95B02D0B28D0BDC20030EC8B /* Destroyable.swift in Sources */,
 				95B02D0C28D0BDC20030EC8B /* SplitFilter.swift in Sources */,
 				95B02D0D28D0BDC20030EC8B /* SyncConfig.swift in Sources */,
+				C5977C5B2BF7D385003E293A /* HttpParameters.swift in Sources */,
 				95B02D0E28D0BDC20030EC8B /* FilterBuilder.swift in Sources */,
+				C5977C5C2BF7D3EB003E293A /* BetweenStringMatcherData.swift in Sources */,
 				95B02D0F28D0BDC20030EC8B /* SplitDatabaseHelper.swift in Sources */,
 				95B02D1028D0BDC20030EC8B /* FailHelpers.swift in Sources */,
 				95B02D1128D0BDC20030EC8B /* SplitLogLevel.swift in Sources */,
@@ -4857,6 +4871,7 @@
 				95B02D1B28D0BDC20030EC8B /* DefaultTreatmentManager.swift in Sources */,
 				95B02D2028D0BDC20030EC8B /* SplitEvent.swift in Sources */,
 				95B02D2128D0BDC20030EC8B /* SplitEventsManager.swift in Sources */,
+				C5977C612BF7D4D7003E293A /* GreaterThanOrEqualToSemverMatcher.swift in Sources */,
 				956A7E1E2971EA250080D53C /* SplitsDecoder.swift in Sources */,
 				95B02D2228D0BDC20030EC8B /* EventsManagerCoordinator.swift in Sources */,
 				95B02D2328D0BDC20030EC8B /* SplitEventTask.swift in Sources */,
@@ -4886,6 +4901,7 @@
 				95B02D3928D0BDC20030EC8B /* TelemetryConfigRecorder.swift in Sources */,
 				95B02D3A28D0BDC20030EC8B /* ImpressionsRecorder.swift in Sources */,
 				95B02D3B28D0BDC20030EC8B /* ImpressionsCountRecorder.swift in Sources */,
+				C5977C622BF7D4D9003E293A /* LessThanOrEqualToSemverMatcher.swift in Sources */,
 				95B02D3C28D0BDC20030EC8B /* UniqueKeysRecorder.swift in Sources */,
 				95B02D3D28D0BDC20030EC8B /* EventsRecorderWorker.swift in Sources */,
 				95B02D3E28D0BDC20030EC8B /* TelemetryStatsRecorderWorker.swift in Sources */,
@@ -4925,6 +4941,7 @@
 				95B02D5C28D0BDC20030EC8B /* EqualToSetMatcher.swift in Sources */,
 				95B02D5D28D0BDC20030EC8B /* GreaterThanOrEqualToMatcher.swift in Sources */,
 				95B02D5E28D0BDC20030EC8B /* InSegmentMatcher.swift in Sources */,
+				C5977C5F2BF7D4D1003E293A /* EqualToSemverMatcher.swift in Sources */,
 				95B02D5F28D0BDC20030EC8B /* LessThanOrEqualToMatcher.swift in Sources */,
 				95B02D6028D0BDC20030EC8B /* MatchesStringMatcher.swift in Sources */,
 				952FA1312A31DCE400264AB5 /* SplitComponentCatalog.swift in Sources */,
@@ -4937,7 +4954,9 @@
 				95B02D6628D0BDC20030EC8B /* SyncManager.swift in Sources */,
 				95B02D6728D0BDC20030EC8B /* Synchronizer.swift in Sources */,
 				95B02D6828D0BDC20030EC8B /* ImpressionsTracker.swift in Sources */,
+				C5977C632BF7D5F4003E293A /* Spec.swift in Sources */,
 				95B02D6928D0BDC20030EC8B /* UniqueKeyTracker.swift in Sources */,
+				C5977C5E2BF7D4CD003E293A /* BetweenSemverMatcher.swift in Sources */,
 				95B02D6A28D0BDC20030EC8B /* MySegmentsSynchronizer.swift in Sources */,
 				95B02D6B28D0BDC20030EC8B /* ByKeyFacade.swift in Sources */,
 				95B02D6C28D0BDC20030EC8B /* TelemetrySynchronizer.swift in Sources */,
@@ -5032,6 +5051,7 @@
 				95B02DBD28D0BDC30030EC8B /* PersistentMySegmentsStorage.swift in Sources */,
 				95B02DBE28D0BDC30030EC8B /* MySegmentsDao.swift in Sources */,
 				95342E972A4B34830045B201 /* FeatureFlagsPayloadDecoder.swift in Sources */,
+				C5977C642BF7D5FC003E293A /* HttpParameter.swift in Sources */,
 				95B02DBF28D0BDC30030EC8B /* MySegmentEntity.swift in Sources */,
 				95B02DC028D0BDC30030EC8B /* ByKeyMySegmentsStorage.swift in Sources */,
 				95B02DC128D0BDC30030EC8B /* MySegmentsStorage.swift in Sources */,
