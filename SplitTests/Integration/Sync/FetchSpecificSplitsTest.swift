@@ -39,21 +39,21 @@ class FetchSpecificSplitsTest: XCTestCase {
         .addSplitFilter(SplitFilter.byName(["s1", "s2", "s3"]))
         .addSplitFilter(SplitFilter.byPrefix(["s1", "s2", "s3"]))
         .build()
-        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?since=-1&names=s1,s2,s3&prefixes=s1,s2,s3")
+        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=1.1&since=-1&names=s1,s2,s3&prefixes=s1,s2,s3")
     }
 
     func testByNamesFilter() {
         let syncConfig = SyncConfig.builder()
         .addSplitFilter(SplitFilter.byName(["s1", "s2", "s3"]))
         .build()
-        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?since=-1&names=s1,s2,s3")
+        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=1.1&since=-1&names=s1,s2,s3")
     }
 
     func testByPrefixFilter() {
         let syncConfig = SyncConfig.builder()
         .addSplitFilter(SplitFilter.byPrefix(["s1", "s2", "s3"]))
         .build()
-        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?since=-1&prefixes=s1,s2,s3")
+        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=1.1&since=-1&prefixes=s1,s2,s3")
     }
 
 

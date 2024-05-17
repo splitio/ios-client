@@ -118,6 +118,7 @@ class TestSplitFactory: SplitFactory {
         let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: key.matchingKey,
                                                          splitConfig: splitConfig,
                                                          splitsFilterQueryString: splitsFilterQueryString,
+                                                         flagsSpec: "1.1",
                                                          apiFacade: apiFacade,
                                                          storageContainer: storageContainer,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
@@ -143,6 +144,7 @@ class TestSplitFactory: SplitFactory {
                                                                  syncWorkerFactory: syncWorkerFactory,
                                                                  broadcasterChannel: broadcasterChannel,
                                                                  splitsFilterQueryString: splitsFilterQueryString,
+                                                                 flagsSpec: "1.1",
                                                                  splitEventsManager: eventsManager)
 
         self.synchronizer = SynchronizerSpy(splitConfig: splitConfig,

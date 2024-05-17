@@ -17,15 +17,28 @@ class StreamingInitTest: XCTestCase {
     var isSseHit = false
     var streamingBinding: TestStreamResponseBinding?
     let sseExp = XCTestExpectation(description: "Sse conn")
+    var authRequestUrl: String?
 
     override func setUp() {
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
+        authRequestUrl = nil
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
     func testInit() {
+        Spec.flagsSpec = "1.1"
+        performTest(expectedAuthUrl: "https://auth.split.io/api/v2/auth?s=1.1&users=CUSTOMER_ID")
+    }
+
+    func testInitWithoutSpec() {
+        Spec.flagsSpec = ""
+
+        performTest(expectedAuthUrl: "https://auth.split.io/api/v2/auth?users=CUSTOMER_ID")
+    }
+
+    private func performTest(expectedAuthUrl: String) {
 
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 30
@@ -66,6 +79,7 @@ class StreamingInitTest: XCTestCase {
         XCTAssertFalse(timeOutFired)
         XCTAssertTrue(isSseAuthHit)
         XCTAssertTrue(isSseHit)
+        XCTAssertEqual(expectedAuthUrl, authRequestUrl)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -77,12 +91,14 @@ class StreamingInitTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
+            self.authRequestUrl = request.url.absoluteString
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             case let(urlString) where urlString.contains("mySegments"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             case let(urlString) where urlString.contains("auth"):
+                self.authRequestUrl = urlString
                 self.isSseAuthHit = true
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             default:

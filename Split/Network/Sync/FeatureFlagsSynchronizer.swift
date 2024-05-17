@@ -26,6 +26,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     private var storageContainer: SplitStorageContainer
     private var splitsSyncWorker: RetryableSyncWorker!
     private let splitsFilterQueryString: String
+    private let flagsSpec: String
     private let syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
     private let syncWorkerFactory: SyncWorkerFactory
     private let splitConfig: SplitClientConfig
@@ -40,6 +41,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
          syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
         = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
+         flagsSpec: String,
          splitEventsManager: SplitEventsManager) {
 
         self.splitConfig = splitConfig
@@ -49,6 +51,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
         self.splitsSyncWorker = syncWorkerFactory.createRetryableSplitsSyncWorker()
         self.splitsFilterQueryString = splitsFilterQueryString
+        self.flagsSpec = flagsSpec
         self.splitEventsManager = splitEventsManager
         self.broadcasterChannel = broadcasterChannel
 
@@ -149,35 +152,44 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     private func filterSplitsInCache() {
         let splitsStorage = storageContainer.persistentSplitsStorage
         let currentSplitsQueryString = splitsFilterQueryString
-        if currentSplitsQueryString == splitsStorage.getFilterQueryString() {
-            return
-        }
 
-        let filters = splitConfig.sync.filters
-        let namesToKeep = Set(filters.filter { $0.type == .byName }.flatMap { $0.values })
-        let prefixesToKeep = Set(filters.filter { $0.type == .byPrefix }.flatMap { $0.values })
-        let setsToKeep = Set(filters.filter { $0.type == .bySet }.flatMap { $0.values })
+        let filterHasChanged = currentSplitsQueryString != splitsStorage.getFilterQueryString()
+        let flagsSpecHasChanged = flagsSpec != splitsStorage.getFlagsSpec()
 
-        let splitsInCache = splitsStorage.getAll()
-        var toDelete = [String]()
+        // if neither the filter nor the flags spec have changed, we don't need to do anything
+        if filterHasChanged || flagsSpecHasChanged {
+            let splitsInCache = splitsStorage.getAll()
+            var toDelete = [String]()
 
-        for split in splitsInCache {
-            guard let splitName = split.name else {
-                continue
+            if flagsSpecHasChanged {
+                // when flagsSpec has changed, we delete everything
+                toDelete = splitsInCache.compactMap { $0.name }
+            } else if filterHasChanged {
+                // if the filter has changed, we need to delete according to it
+                let filters = splitConfig.sync.filters
+                let namesToKeep = Set(filters.filter { $0.type == .byName }.flatMap { $0.values })
+                let prefixesToKeep = Set(filters.filter { $0.type == .byPrefix }.flatMap { $0.values })
+                let setsToKeep = Set(filters.filter { $0.type == .bySet }.flatMap { $0.values })
+
+                for split in splitsInCache {
+                    guard let splitName = split.name else {
+                        continue
+                    }
+
+                    let prefix = getPrefix(for: splitName) ?? ""
+                    if setsToKeep.count > 0 && setsToKeep.isDisjoint(with: split.sets ?? Set()) {
+                        toDelete.append(splitName)
+                    } else if (prefix == "" && namesToKeep.count > 0 && !namesToKeep.contains(splitName)) ||
+                        (prefixesToKeep.count > 0 && prefix != "" && !prefixesToKeep.contains(prefix)) {
+                        toDelete.append(splitName)
+                    }
+                }
             }
 
-            let prefix = getPrefix(for: splitName) ?? ""
-            if setsToKeep.count > 0 && setsToKeep.isDisjoint(with: split.sets ?? Set()) {
-                toDelete.append(splitName)
-            } else if (prefix == "" && namesToKeep.count > 0 && !namesToKeep.contains(splitName)) ||
-                (prefixesToKeep.count > 0 && prefix != "" && !prefixesToKeep.contains(prefix)) {
-                toDelete.append(splitName)
+            if toDelete.count > 0 {
+                splitsStorage.delete(splitNames: toDelete)
+                storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
             }
-        }
-
-        if toDelete.count > 0 {
-            splitsStorage.delete(splitNames: toDelete)
-            storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
         }
     }
 

@@ -91,8 +91,24 @@ class PersistentSplitsStorageTest: XCTestCase {
     func testClear() {
 
         splitsStorage.clear()
-        
+
         XCTAssertTrue(splitDao.deleteAllCalled)
+    }
+
+    func testGetFlagsSpec() {
+        generalInfoDao.update(info: .flagsSpec, stringValue: "3.3")
+
+        let flagsSpec = splitsStorage.getFlagsSpec()
+
+        XCTAssertEqual("3.3", flagsSpec)
+    }
+
+    func testUpdateFlagsSpec() {
+        splitsStorage.update(flagsSpec: "4.4")
+
+        let flagsSpec = splitsStorage.getFlagsSpec()
+
+        XCTAssertEqual("4.4", flagsSpec)
     }
     
     private func createSplits() -> [Split] {
