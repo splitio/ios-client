@@ -35,7 +35,7 @@ jobs:
           project: Split.xcodeproj
           scheme: Split
           sdk: 'iphonesimulator'
-          test-plan: 'SplitiOSUnit'
+          test-plan: 'SplitiOSUnit_1'
           use-xcpretty: true
 
       # - name: Install java 11

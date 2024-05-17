@@ -81,6 +81,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                 self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
+            Logger.v("Notifying Splits loaded from cache")
             TimeChecker.logInterval("Time for ready from cache process", startTime: start)
             TimeChecker.logInterval("Time until feature flags process ended")
         }

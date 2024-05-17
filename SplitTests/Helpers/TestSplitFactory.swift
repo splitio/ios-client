@@ -203,7 +203,8 @@ class TestSplitFactory: SplitFactory {
                                              eventsTracker: eventsTracker,
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
-                                             telemetryStopwatch: nil)
+                                             telemetryStopwatch: nil,
+                                             factory: self)
     }
 
     func client(matchingKey: String) -> SplitClient {
