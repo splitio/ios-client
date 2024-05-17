@@ -1213,6 +1213,8 @@
 		95DE8EA027C54858009FAC01 /* SplitDatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE8E9F27C54858009FAC01 /* SplitDatabaseHelper.swift */; };
 		95DE8EA127C54870009FAC01 /* SplitDatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE8E9F27C54858009FAC01 /* SplitDatabaseHelper.swift */; };
 		95DF58EC2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95DF58EB2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan */; };
+		95DF58F82BEC5432009220B8 /* SplitiOSUnit_3.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95DF58F72BEC5432009220B8 /* SplitiOSUnit_3.xctestplan */; };
+		95DF58FA2BEE5140009220B8 /* SplitiOSUnit_4.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95DF58F92BEE513F009220B8 /* SplitiOSUnit_4.xctestplan */; };
 		95DFD13B2608FFF600776E0A /* SplitSdkUpdatePollingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DFD13A2608FFF600776E0A /* SplitSdkUpdatePollingTest.swift */; };
 		95DFD141260934E400776E0A /* SdkUpdateStreamingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DFD140260934E400776E0A /* SdkUpdateStreamingTest.swift */; };
 		95DFD14C260A156000776E0A /* ChangesChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DFD14B260A156000776E0A /* ChangesChecker.swift */; };
@@ -1282,6 +1284,9 @@
 		C5977C642BF7D5FC003E293A /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
+		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
+		C5977C572BF53D60003E293A /* UnsupportedMatcherIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C562BF53D60003E293A /* UnsupportedMatcherIntegrationTest.swift */; };
+		C5977C592BF53F43003E293A /* splitchanges_unsupported.json in Resources */ = {isa = PBXBuildFile; fileRef = C5977C582BF53F43003E293A /* splitchanges_unsupported.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1981,6 +1986,8 @@
 		95DE29522739A7AB00DB3EAD /* AttributesDaoTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesDaoTest.swift; sourceTree = "<group>"; };
 		95DE8E9F27C54858009FAC01 /* SplitDatabaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDatabaseHelper.swift; sourceTree = "<group>"; };
 		95DF58EB2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSUnit_2.xctestplan; sourceTree = "<group>"; };
+		95DF58F72BEC5432009220B8 /* SplitiOSUnit_3.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSUnit_3.xctestplan; sourceTree = "<group>"; };
+		95DF58F92BEE513F009220B8 /* SplitiOSUnit_4.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSUnit_4.xctestplan; sourceTree = "<group>"; };
 		95DFD13A2608FFF600776E0A /* SplitSdkUpdatePollingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitSdkUpdatePollingTest.swift; sourceTree = "<group>"; };
 		95DFD140260934E400776E0A /* SdkUpdateStreamingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SdkUpdateStreamingTest.swift; sourceTree = "<group>"; };
 		95DFD14B260A156000776E0A /* ChangesChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangesChecker.swift; sourceTree = "<group>"; };
@@ -2040,6 +2047,9 @@
 		C5977C332BF403EA003E293A /* SemverIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemverIntegrationTest.swift; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
+		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
+		C5977C562BF53D60003E293A /* UnsupportedMatcherIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsupportedMatcherIntegrationTest.swift; sourceTree = "<group>"; };
+		C5977C582BF53F43003E293A /* splitchanges_unsupported.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_unsupported.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2128,6 +2138,8 @@
 				95B0307B28D275020030EC8B /* SplitiOSUnit.xctestplan */,
 				95192EA92BEA9806004084EA /* SplitiOSUnit_1.xctestplan */,
 				95DF58EB2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan */,
+				95DF58F72BEC5432009220B8 /* SplitiOSUnit_3.xctestplan */,
+				95DF58F92BEE513F009220B8 /* SplitiOSUnit_4.xctestplan */,
 				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
@@ -2922,6 +2934,8 @@
 				95B2498326F3E19300B34507 /* push_msg-segment_updV2.txt */,
 				95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */,
 				C5977C312BF4031A003E293A /* split_changes_semver.json */,
+				C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */,
+				C5977C582BF53F43003E293A /* splitchanges_unsupported.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3205,6 +3219,7 @@
 				596A7B722358E142004F6139 /* SplitSdkTimeoutTest.swift */,
 				596A7B70235729B5004F6139 /* DestroyTest.swift */,
 				C5977C332BF403EA003E293A /* SemverIntegrationTest.swift */,
+				C5977C562BF53D60003E293A /* UnsupportedMatcherIntegrationTest.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -3739,6 +3754,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				592C6AE6211CBBB0002D120C /* murmur.csv in Resources */,
+				C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */,
 				95D83A972A561CB000ADA55E /* SplitPushManagerUT.xctestplan in Resources */,
 				5982D936219F494500230F44 /* matchers.json in Resources */,
 				592C6AE9211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
@@ -3749,6 +3765,7 @@
 				59C493062167E3B400F5F774 /* murmur3-sample-v3.csv in Resources */,
 				C5977C072BF273A3003E293A /* invalid_semantic_versions.csv in Resources */,
 				95DF58EC2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan in Resources */,
+				95DF58F82BEC5432009220B8 /* SplitiOSUnit_3.xctestplan in Resources */,
 				592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */,
 				9595C1A8274574220092123F /* attributes_test_split.json in Resources */,
 				95B2498426F3E19300B34507 /* push_msg-segment_updV2.txt in Resources */,
@@ -3765,8 +3782,10 @@
 				599EA58C226903DF006CBA89 /* localhost.yaml in Resources */,
 				C5977C062BF273A3003E293A /* valid_semantic_versions.csv in Resources */,
 				5982D92F219C83D000230F44 /* legacy_1_short.csv in Resources */,
+				95DF58FA2BEE5140009220B8 /* SplitiOSUnit_4.xctestplan in Resources */,
 				599EDAF32270A15B00D7DACB /* localhost.splits in Resources */,
 				590DF9D1213F07400082B94F /* split_sample_feature6.json in Resources */,
+				C5977C592BF53F43003E293A /* splitchanges_unsupported.json in Resources */,
 				5912D154219A065200BC698C /* legacy_2.csv in Resources */,
 				5912D14D2199FD4D00BC698C /* legacy_1.csv in Resources */,
 				95737E142ADEC71A007FD15C /* push_msg-splits_updV2.txt in Resources */,
@@ -4464,6 +4483,7 @@
 				95ABF511293ABDDC006ED016 /* ImpressionsStorageStub.swift in Sources */,
 				9557C1CA2614F67700CD9B5C /* DbForTwoDifferentApiKeyTest.swift in Sources */,
 				9560354927D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift in Sources */,
+				C5977C572BF53D60003E293A /* UnsupportedMatcherIntegrationTest.swift in Sources */,
 				95B1800527626C70002DC9DF /* TelemetryConfigRecorderWorkerTests.swift in Sources */,
 				95ABF4C6293522D6006ED016 /* EventsTrackerTest.swift in Sources */,
 				95ABF4C829352425006ED016 /* EventValidatorStub.swift in Sources */,
@@ -5325,7 +5345,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D5VPZG3BF4;
+				DEVELOPMENT_TEAM = F5648SKKXL;
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -5353,7 +5373,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D5VPZG3BF4;
+				DEVELOPMENT_TEAM = F5648SKKXL;
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;

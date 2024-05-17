@@ -142,6 +142,10 @@ class SplitTestHelper {
 """
     }
 
+    static func getUnsupportedMatcherSplitJson(sourceClass: Any) -> String? {
+        return FileHelper.readDataFromFile(sourceClass: sourceClass, name: "split_unsupported_matcher", type: "json")
+    }
+
     static func createSplits(namePrefix: String, count: Int) -> [Split] {
         var splits = [Split]()
         for i in 0..<count {
