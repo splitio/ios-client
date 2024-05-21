@@ -68,7 +68,6 @@ enum HttpMethod: String, CustomStringConvertible {
 }
 
 // MARK: HttpSession Delegate
-typealias HttpParameters = [String: Any]
 typealias HttpHeaders = [String: String]
 
 class HttpSessionConfig {
@@ -83,15 +82,15 @@ class HttpSessionConfig {
 
 protocol HttpClient {
 
-    func sendRequest(endpoint: Endpoint, parameters: [String: Any]?,
+    func sendRequest(endpoint: Endpoint, parameters: HttpParameters?,
                      headers: [String: String]?, body: Data?) throws -> HttpDataRequest
 
-    func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?,
+    func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?,
                            headers: [String: String]?) throws -> HttpStreamRequest
 }
 
 extension HttpClient {
-    func sendRequest(endpoint: Endpoint, parameters: [String: Any]? = nil,
+    func sendRequest(endpoint: Endpoint, parameters: HttpParameters? = nil,
                      headers: [String: String]? = nil) throws -> HttpDataRequest {
         return try sendRequest(endpoint: endpoint, parameters: parameters, headers: headers, body: nil)
     }
@@ -177,7 +176,7 @@ extension DefaultHttpClient {
 // MARK: DefaultHttpClient - HttpClient
 extension DefaultHttpClient: HttpClient {
 
-    func sendRequest(endpoint: Endpoint, parameters: [String: Any]?, headers: [String: String]?,
+    func sendRequest(endpoint: Endpoint, parameters: HttpParameters?, headers: [String: String]?,
                      body: Data?) throws -> HttpDataRequest {
         var httpHeaders = endpoint.headers
         if let headers = headers {
@@ -191,9 +190,9 @@ extension DefaultHttpClient: HttpClient {
         return request
     }
 
-    func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?,
+    func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?,
                            headers: [String: String]?) throws -> HttpStreamRequest {
-        let request = try self.createStreamRequest(endpoint.url, parameters: parameters, headers: headers)
+            let request = try self.createStreamRequest(endpoint.url, parameters: parameters, headers: headers)
         request.send()
         requestManager.addRequest(request)
         return request

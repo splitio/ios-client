@@ -25,7 +25,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         let persistent = PersistentSplitsStorageStub()
         flagSetsCache = FlagSetsCacheMock()
 
-        persistent.snapshot = SplitsSnapshot(changeNumber: 1, splits: splits, updateTimestamp: 100, splitsFilterQueryString: "")
+        persistent.snapshot = SplitsSnapshot(changeNumber: 1, splits: splits, updateTimestamp: 100, splitsFilterQueryString: "", flagsSpec: "")
         splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistent, flagSetsCache: flagSetsCache)
         splitsStorage.loadLocal()
     }

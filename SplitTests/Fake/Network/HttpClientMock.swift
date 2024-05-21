@@ -35,7 +35,7 @@ class HttpClientMock: HttpClient {
         }
     }
 
-    func sendRequest(endpoint: Endpoint, parameters: [String: Any]?,
+    func sendRequest(endpoint: Endpoint, parameters: HttpParameters?,
                      headers: [String: String]?, body: Data?) throws -> HttpDataRequest {
 
         if throwOnSend {
@@ -44,7 +44,7 @@ class HttpClientMock: HttpClient {
         return httpDataRequest
     }
 
-    func sendStreamRequest(endpoint: Endpoint, parameters: [String: Any]?,
+    func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?,
                            headers: [String: String]?) throws -> HttpStreamRequest {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             if let exp = self.streamReqExp {

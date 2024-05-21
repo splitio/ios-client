@@ -20,6 +20,8 @@ class SplitsStorageStub: SplitsStorage {
     
     var splitsFilterQueryString: String = ""
 
+    var flagsSpec: String = ""
+
     var loadLocalCalled = false
     var clearCalled = false
 
@@ -64,11 +66,17 @@ class SplitsStorageStub: SplitsStorage {
         updateSplitChangeCalled = true
         return splitsWereUpdated
     }
-    
+
+    var updateFlagsSpecCalled = false
+    func update(flagsSpec: String) {
+        self.flagsSpec = flagsSpec
+        updateFlagsSpecCalled = true
+    }
+
     func update(filterQueryString: String) {
         self.splitsFilterQueryString = filterQueryString
     }
-    
+
     func updateWithoutChecks(split: Split) {
         inMemorySplits.setValue(split, forKey: split.name ?? "")
         updatedWithoutChecksSplit = split

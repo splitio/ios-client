@@ -60,11 +60,13 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     private let userKey: String
     private let eventsManager: SplitEventsManager
     private let splitsFilterQueryString: String
+    private let flagsSpec: String
     private let telemetryProducer: TelemetryProducer?
 
     init(userKey: String,
          splitConfig: SplitClientConfig,
          splitsFilterQueryString: String,
+         flagsSpec: String,
          apiFacade: SplitApiFacade,
          storageContainer: SplitStorageContainer,
          splitChangeProcessor: SplitChangeProcessor,
@@ -73,6 +75,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         self.userKey = userKey
         self.splitConfig = splitConfig
         self.splitsFilterQueryString = splitsFilterQueryString
+        self.flagsSpec = flagsSpec
         self.apiFacade = apiFacade
         self.storageContainer = storageContainer
         self.splitChangeProcessor = splitChangeProcessor
@@ -87,6 +90,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                          splitChangeProcessor: splitChangeProcessor,
                                          cacheExpiration: splitConfig.cacheExpirationInSeconds,
                                          defaultQueryString: splitsFilterQueryString,
+                                         flagsSpec: flagsSpec,
                                          eventsManager: eventsManager,
                                          reconnectBackoffCounter: backoffCounter,
                                          splitConfig: splitConfig)

@@ -35,8 +35,10 @@ class CdnByPassTest: XCTestCase {
     var keepAliveExp: XCTestExpectation!
     var cdnByPassExp: XCTestExpectation!
     var cdnReceived = false
+    var requestUrl: String?
 
     override func setUp() {
+        requestUrl = nil
         for i in 1..<20 {
             numbers.append(Int64(100 * i))
         }
@@ -50,6 +52,16 @@ class CdnByPassTest: XCTestCase {
     }
 
     func testInit() {
+        Spec.flagsSpec = "1.1"
+        performTest(expectedRequestUrl: "https://sdk.split.io/api/splitChanges?s=1.1&since=1200&sets=c,nset1,nset2&till=1200")
+    }
+
+    func testInitWithoutSpec() {
+        Spec.flagsSpec = ""
+        performTest(expectedRequestUrl: "https://sdk.split.io/api/splitChanges?since=1200&sets=c,nset1,nset2&till=1200")
+    }
+
+    private func performTest(expectedRequestUrl: String) {
         let expTimeout = 15.0
         sseExp = XCTestExpectation()
 
@@ -80,6 +92,7 @@ class CdnByPassTest: XCTestCase {
 
 
         XCTAssertTrue(cdnReceived)
+        XCTAssertEqual(expectedRequestUrl, requestUrl)
 
         // 1 hit for sdk ready
         // 1 hit for full sync after streaming
@@ -103,6 +116,7 @@ class CdnByPassTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
+            self.requestUrl = request.url.absoluteString
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 let hitNumber = self.getAndUpdateHit()
@@ -173,6 +187,9 @@ class CdnByPassTest: XCTestCase {
         let splitConfig: SplitClientConfig = SplitClientConfig()
         //splitConfig.isDebugModeEnabled = true
         splitConfig.cdnBackoffTimeBaseInSecs = 0
+        splitConfig.sync = SyncConfig.builder()
+            .addSplitFilter(SplitFilter.bySet(["nset1", "nset2", "c"]))
+            .build()
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()

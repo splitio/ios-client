@@ -55,19 +55,30 @@ class BaseHttpRequest: HttpRequest {
          parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
 
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        let initialQueryItems = components?.queryItems
-        if let parameters = parameters {
-            components?.queryItems = parameters.map { key, value in
-                var parsedValue = "\(value)"
-                if let array = value as? [Any] {
-                    parsedValue = array.compactMap { "\($0)" }.joined(separator: ",")
-                }
-                return URLQueryItem(name: key, value: parsedValue)
-            }
-        }
 
-        if let initialQueryItems = initialQueryItems {
-            components?.queryItems?.append(contentsOf: initialQueryItems)
+        if let parameters = parameters {
+            let initialQueryItems = components?.queryItems ?? []
+            components?.queryItems?.removeAll()
+            var queryItems: [String: Any] = initialQueryItems.reduce(into: [:], { (dict, item) in
+                dict[item.name] = item.value
+            })
+
+            queryItems.merge(parameters.values) { (current, _) in current }
+
+            var finalQueryItems: [URLQueryItem] = []
+            // Use order array, otherwise default order
+            let keys = parameters.order ?? Array(queryItems.keys)
+            for key in keys {
+                if let value = queryItems[key] {
+                    var parsedValue = "\(value)"
+                    if let array = value as? [Any] {
+                        parsedValue = array.compactMap { "\($0)" }.joined(separator: ",")
+                    }
+                    finalQueryItems.append(URLQueryItem(name: key, value: parsedValue))
+                }
+            }
+
+            components?.queryItems = finalQueryItems
         }
 
         guard let finalUrl = components?.url else {

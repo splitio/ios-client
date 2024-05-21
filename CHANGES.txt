@@ -1,3 +1,7 @@
+2.25.0: (May 21, 2024)
+- Added support for targeting rules based on semantic versions (https://semver.org/).
+- Added special impression label "targeting rule type unsupported by sdk" when the matcher type is not supported by the SDK, which returns 'control' treatment.
+
 2.24.7: (May 8, 2024)
 - Fixed issue triggering SDK Ready when using a local method reference to the factory. This issue was introduced in version 2.24.5.
 

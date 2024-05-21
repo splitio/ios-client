@@ -38,6 +38,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      cacheExpiration: 100,
                                                      defaultQueryString: "",
+                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -66,6 +67,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      cacheExpiration: 100,
                                                      defaultQueryString: "",
+                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -93,6 +95,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      cacheExpiration: 100,
                                                      defaultQueryString: "",
+                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -123,6 +126,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      cacheExpiration: 100,
                                                      defaultQueryString: "",
+                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -154,6 +158,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      cacheExpiration: 2000,
                                                      defaultQueryString: "",
+                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -183,6 +188,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      cacheExpiration: 100,
                                                      defaultQueryString: "&q=1",
+                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -215,6 +221,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      cacheExpiration: 100,
                                                      defaultQueryString: "&q=1",
+                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -246,6 +253,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      cacheExpiration: 100,
                                                      defaultQueryString: "&q=1",
+                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -280,6 +288,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      cacheExpiration: 100,
                                                      defaultQueryString: "&q=1",
+                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -308,6 +317,41 @@ class SplitsSyncWorkerTest: XCTestCase {
 
         XCTAssertFalse(resultIsSuccess)
         XCTAssertEqual(HttpError.uriTooLong, thrownError)
+    }
+
+    func testChangedFlagsSpecString() {
+        let expiration = 10000
+        splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
+                                                     splitsStorage: splitStorage,
+                                                     splitChangeProcessor: splitChangeProcessor,
+                                                     cacheExpiration: 100,
+                                                     defaultQueryString: "&q=1",
+                                                     flagsSpec: "1.1",
+                                                     eventsManager: eventsManager,
+                                                     reconnectBackoffCounter: backoffCounter,
+                                                     splitConfig: SplitClientConfig())
+
+        let change = SplitChange(splits: [], since: 200, till: 200)
+        splitStorage.updateTimestamp = Int64(Int(Date().timeIntervalSince1970) - expiration / 2) // Non Expired cache
+        splitFetcher.splitChanges = [change]
+        splitStorage.splitsFilterQueryString = "&q=1"
+        splitStorage.flagsSpec = ""
+        var resultIsSuccess = false
+        let exp = XCTestExpectation(description: "exp")
+        splitsSyncWorker.completion = { success in
+            resultIsSuccess = success
+            exp.fulfill()
+        }
+        splitsSyncWorker.start()
+
+        wait(for: [exp], timeout: 3)
+
+        XCTAssertTrue(resultIsSuccess)
+        XCTAssertTrue(splitStorage.clearCalled)
+        XCTAssertTrue(eventsManager.isSplitsReadyFired)
+        XCTAssertEqual("&q=1", splitStorage.splitsFilterQueryString)
+        XCTAssertEqual("1.1", splitStorage.flagsSpec)
+        XCTAssertTrue(splitStorage.updateFlagsSpecCalled)
     }
 
     private func createSplit(name: String) -> Split {

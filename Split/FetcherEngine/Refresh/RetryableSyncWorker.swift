@@ -164,6 +164,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     private let splitChangeProcessor: SplitChangeProcessor
     private let cacheExpiration: Int
     private let defaultQueryString: String
+    private let flagsSpec: String
     private let syncHelper: SplitsSyncHelper
 
     init(splitFetcher: HttpSplitFetcher,
@@ -171,6 +172,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
          splitChangeProcessor: SplitChangeProcessor,
          cacheExpiration: Int,
          defaultQueryString: String,
+         flagsSpec: String,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter,
          splitConfig: SplitClientConfig) {
@@ -180,6 +182,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         self.splitChangeProcessor = splitChangeProcessor
         self.cacheExpiration = cacheExpiration
         self.defaultQueryString = defaultQueryString
+        self.flagsSpec = flagsSpec
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
@@ -199,8 +202,15 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             }
         }
 
-        if defaultQueryString != splitsStorage.splitsFilterQueryString {
-            splitsStorage.update(filterQueryString: defaultQueryString)
+        let queryStringHasChanged = defaultQueryString != splitsStorage.splitsFilterQueryString
+        let flagsSpecHasChanged = flagsSpec != splitsStorage.flagsSpec
+        if queryStringHasChanged || flagsSpecHasChanged {
+            if queryStringHasChanged {
+                splitsStorage.update(filterQueryString: defaultQueryString)
+            }
+            if flagsSpecHasChanged {
+                splitsStorage.update(flagsSpec: flagsSpec)
+            }
             changeNumber = -1
             clearCache = true
         }

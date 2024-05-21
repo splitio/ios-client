@@ -15,4 +15,5 @@ struct ImpressionsConstants {
     static let matcherNotFound: String = "matcher not found"
     static let exception: String = "exception"
     static let notReady: String = "not ready"
+    static let unsupportedMatcherType: String = "targeting rule type unsupported by sdk"
 }

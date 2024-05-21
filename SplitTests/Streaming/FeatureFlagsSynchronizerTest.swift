@@ -80,6 +80,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                        broadcasterChannel: broadcasterChannel,
                                                        syncTaskByChangeNumberCatalog: updateWorkerCatalog,
                                                        splitsFilterQueryString: "",
+                                                       flagsSpec: "",
                                                        splitEventsManager: eventsManager)
         return synchronizer
     }
@@ -203,6 +204,52 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         XCTAssertTrue(deleted.contains("tset2"))
         XCTAssertTrue(deleted.contains("apre_tset3"))
         XCTAssertEqual(9, deleted.count)
+        XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
+    }
+
+    func testLoadSplitsWhenFlagsSetsHasChangedClearsAllFeatureFlags() {
+        let names = ["test1", "test2", "test3", "test4"]
+
+        for name in names {
+            persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name))
+        }
+
+        persistentSplitsStorage.update(filterQueryString: "")
+        persistentSplitsStorage.update(flagsSpec: "1.1")
+
+        synchronizer.load()
+
+        ThreadUtils.delay(seconds: 0.5)
+
+        let deleted = Set(persistentSplitsStorage.deletedSplits)
+        XCTAssertTrue(deleted.contains("test1"))
+        XCTAssertTrue(deleted.contains("test2"))
+        XCTAssertTrue(deleted.contains("test3"))
+        XCTAssertTrue(deleted.contains("test4"))
+        XCTAssertEqual(4, deleted.count)
+        XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
+    }
+
+    func testLoadSplitsWhenFlagsSetsAndFilterHasChangedClearsAllFeatureFlags() {
+        let names = ["test1", "test2", "test3", "test4"]
+
+        for name in names {
+            persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name))
+        }
+
+        persistentSplitsStorage.update(filterQueryString: "?names=pepe")
+        persistentSplitsStorage.update(flagsSpec: "1.1")
+
+        synchronizer.load()
+
+        ThreadUtils.delay(seconds: 0.5)
+
+        let deleted = Set(persistentSplitsStorage.deletedSplits)
+        XCTAssertTrue(deleted.contains("test1"))
+        XCTAssertTrue(deleted.contains("test2"))
+        XCTAssertTrue(deleted.contains("test3"))
+        XCTAssertTrue(deleted.contains("test4"))
+        XCTAssertEqual(4, deleted.count)
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 

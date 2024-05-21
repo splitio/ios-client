@@ -46,6 +46,7 @@ class AttributesEvaluationTest: XCTestCase {
         // When splits and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -114,6 +115,7 @@ class AttributesEvaluationTest: XCTestCase {
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
         splitDatabase.attributesDao.syncUpdate(userKey: userKey, attributes: attr)
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -201,6 +203,7 @@ class AttributesEvaluationTest: XCTestCase {
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
         splitDatabase.attributesDao.syncUpdate(userKey: userKey, attributes: attr)
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
@@ -273,6 +276,7 @@ class AttributesEvaluationTest: XCTestCase {
         // When feature flags and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "attr_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: cachedSplit)
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
