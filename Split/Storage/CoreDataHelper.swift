@@ -16,6 +16,7 @@ enum CoreDataEntity: String {
     case generalInfo = "GeneralInfo"
     case attribute = "Attribute"
     case uniqueKey = "UniqueKey"
+    case hashedImpression = "HashedImpression"
 }
 
 class CoreDataHelper {
