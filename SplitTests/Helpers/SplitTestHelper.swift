@@ -156,6 +156,17 @@ class SplitTestHelper {
         return splits
     }
 
+    static func createHashedImpressions(start: Int = 1, count: Int = 10) -> [HashedImpression] {
+        var items = [HashedImpression]()
+        for i in start..<(start + count) {
+            let item = HashedImpression(impressionHash: Int64(i),
+                                         time: Date.nowMillis(),
+                                         createdAt: Date.nowMillis())
+            items.append(item)
+        }
+        return items
+    }
+
     static func newSplit(name: String, trafficType: String) -> Split {
         let split = Split(name: name, trafficType: trafficType, status: .active, sets: nil, json: "")
         split.isParsed = true
