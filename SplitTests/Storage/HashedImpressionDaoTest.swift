@@ -19,12 +19,12 @@ class HashedImpressionDaoTest: XCTestCase {
         let queue = DispatchQueue(label: "hashed impression dao test")
         dao = CoreDataHashedImpressionDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
                                                                                   dispatchQueue: queue))
-        dao.set( createHashedImpressions())
+        dao.set(SplitTestHelper.createHashedImpressions())
     }
 
     func testSet() {
         let all1 = dao.getAll().sorted(by: { $0.impressionHash < $1.impressionHash })
-        dao.set(createHashedImpressions(start: 11, count: 15))
+        dao.set(SplitTestHelper.createHashedImpressions(start: 11, count: 15))
         let all2 = dao.getAll().sorted(by: { $0.impressionHash < $1.impressionHash })
 
         XCTAssertEqual(10, all1.count)
@@ -35,16 +35,5 @@ class HashedImpressionDaoTest: XCTestCase {
 
         XCTAssertEqual(11, all2[0].impressionHash)
         XCTAssertEqual(25, all2[14].impressionHash)
-    }
-
-    func createHashedImpressions(start: Int = 1, count: Int = 10) -> [HashedImpression] {
-        var items = [HashedImpression]()
-        for i in start..<(start + count) {
-            let item = HashedImpression(impressionHash: Int64(i),
-                                         time: Date.nowMillis(),
-                                         createdAt: Date.nowMillis())
-            items.append(item)
-        }
-        return items
     }
 }
