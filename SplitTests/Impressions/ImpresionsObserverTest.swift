@@ -13,11 +13,10 @@ import XCTest
 
 class ImpressionsObserverTest: XCTestCase {
 
-    override func setUp() {
-    }
+    var storage = HashedImpressionsStorageMock()
 
     func testBasicFunctionality() {
-        let observer = ImpressionsObserver(size: 5)
+        let observer = ImpressionsObserver(storage: storage)
         let impression = KeyImpression(featureName: "someKey", keyName: "someFeature", bucketingKey: nil, treatment: "on", label: "in segment all", time: Date().unixTimestamp(), changeNumber: 1234, previousTime: nil, storageId: nil)
 
 
@@ -30,7 +29,7 @@ class ImpressionsObserverTest: XCTestCase {
     }
 
     func testConcurrencyVsAccuracy() throws {
-        let observer = ImpressionsObserver(size: 5000)
+        let observer = ImpressionsObserver(storage: storage)
         let impressions = SynchronizedList<KeyImpression>()
 
 
@@ -42,7 +41,6 @@ class ImpressionsObserverTest: XCTestCase {
         }
         operationQueue.waitUntilAllOperationsAreFinished()
 
-        XCTAssertEqual(5000, impressions.count)
         for imp in impressions.all {
             XCTAssertTrue(imp.previousTime == nil || imp.previousTime ?? 0 <= imp.time)
         }

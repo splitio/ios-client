@@ -512,8 +512,12 @@
 		955E12332BFBF22800AE6D10 /* UniqueKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12322BFBF22800AE6D10 /* UniqueKey.swift */; };
 		955E12352BFCD9F000AE6D10 /* ImpressionsCountDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12342BFCD9F000AE6D10 /* ImpressionsCountDao.swift */; };
 		955E12372BFCDEAC00AE6D10 /* HashedImpressionDaoMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12362BFCDEAC00AE6D10 /* HashedImpressionDaoMock.swift */; };
-		955E12392BFD276C00AE6D10 /* PersistentHashedImpressionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12382BFD276C00AE6D10 /* PersistentHashedImpressionStorage.swift */; };
+		955E12392BFD276C00AE6D10 /* PersistentHashedImpressionsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12382BFD276C00AE6D10 /* PersistentHashedImpressionsStorage.swift */; };
 		955E123D2BFD2A6700AE6D10 /* PersistentHashedImpressionsStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E123C2BFD2A6700AE6D10 /* PersistentHashedImpressionsStorageTest.swift */; };
+		955E123F2BFE1E7A00AE6D10 /* HashedImpressionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E123E2BFE1E7A00AE6D10 /* HashedImpressionStorage.swift */; };
+		955E12412BFE6F5500AE6D10 /* PersistentHashImpressionStorageMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12402BFE6F5500AE6D10 /* PersistentHashImpressionStorageMock.swift */; };
+		955E12432BFE704400AE6D10 /* HashedImpressionsStorageMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12422BFE704400AE6D10 /* HashedImpressionsStorageMock.swift */; };
+		955E12452BFE758F00AE6D10 /* HashedImpressionsStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12442BFE758F00AE6D10 /* HashedImpressionsStorageTest.swift */; };
 		9560354327D01E8300E35BC8 /* MySegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9560354227D01E8300E35BC8 /* MySegmentsStorage.swift */; };
 		9560354527D0F53300E35BC8 /* SynchronizedDictionarySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9560354427D0F53300E35BC8 /* SynchronizedDictionarySet.swift */; };
 		9560354927D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9560354827D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift */; };
@@ -1820,8 +1824,12 @@
 		955E12322BFBF22800AE6D10 /* UniqueKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKey.swift; sourceTree = "<group>"; };
 		955E12342BFCD9F000AE6D10 /* ImpressionsCountDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpressionsCountDao.swift; sourceTree = "<group>"; };
 		955E12362BFCDEAC00AE6D10 /* HashedImpressionDaoMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashedImpressionDaoMock.swift; sourceTree = "<group>"; };
-		955E12382BFD276C00AE6D10 /* PersistentHashedImpressionStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentHashedImpressionStorage.swift; sourceTree = "<group>"; };
+		955E12382BFD276C00AE6D10 /* PersistentHashedImpressionsStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentHashedImpressionsStorage.swift; sourceTree = "<group>"; };
 		955E123C2BFD2A6700AE6D10 /* PersistentHashedImpressionsStorageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentHashedImpressionsStorageTest.swift; sourceTree = "<group>"; };
+		955E123E2BFE1E7A00AE6D10 /* HashedImpressionStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashedImpressionStorage.swift; sourceTree = "<group>"; };
+		955E12402BFE6F5500AE6D10 /* PersistentHashImpressionStorageMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentHashImpressionStorageMock.swift; sourceTree = "<group>"; };
+		955E12422BFE704400AE6D10 /* HashedImpressionsStorageMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashedImpressionsStorageMock.swift; sourceTree = "<group>"; };
+		955E12442BFE758F00AE6D10 /* HashedImpressionsStorageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashedImpressionsStorageTest.swift; sourceTree = "<group>"; };
 		9560354227D01E8300E35BC8 /* MySegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsStorage.swift; sourceTree = "<group>"; };
 		9560354427D0F53300E35BC8 /* SynchronizedDictionarySet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizedDictionarySet.swift; sourceTree = "<group>"; };
 		9560354827D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByKeyMySegmentsStorageTests.swift; sourceTree = "<group>"; };
@@ -2653,6 +2661,7 @@
 				59F65F0525654EBB005FE8C9 /* PersistentEventsStorageTest.swift */,
 				95C717E1268CE705002ADB83 /* PersistentImpressionsCountStorageTest.swift */,
 				955E123C2BFD2A6700AE6D10 /* PersistentHashedImpressionsStorageTest.swift */,
+				955E12442BFE758F00AE6D10 /* HashedImpressionsStorageTest.swift */,
 				955428DF2568155B00331356 /* PersistentImpressionsStorageTest.swift */,
 				95ABF4BF29314D3D006ED016 /* ImpressionsStorageTest.swift */,
 				95ABF4C32934EFF2006ED016 /* EventsStorageTest.swift */,
@@ -2695,6 +2704,8 @@
 				59F65F0725654F44005FE8C9 /* EventDaoStub.swift */,
 				954F9B0225700AF700140B81 /* GeneralInfoDaoStub.swift */,
 				9572BA862AC76EA800C10FC1 /* FlagSetsCacheMock.swift */,
+				955E12402BFE6F5500AE6D10 /* PersistentHashImpressionStorageMock.swift */,
+				955E12422BFE704400AE6D10 /* HashedImpressionsStorageMock.swift */,
 				954F9AFE2570082C00140B81 /* SplitDaoStub.swift */,
 				954F9B212571605600140B81 /* MySegmentsDaoStub.swift */,
 				952E26742833FF3F0015D633 /* UniqueKeyDaoStub.swift */,
@@ -3356,7 +3367,8 @@
 			children = (
 				9594A4602BFB930C00D4E50B /* HashedImpressionEntity.swift */,
 				9594A45E2BFB917100D4E50B /* HashedImpressionDao.swift */,
-				955E12382BFD276C00AE6D10 /* PersistentHashedImpressionStorage.swift */,
+				955E12382BFD276C00AE6D10 /* PersistentHashedImpressionsStorage.swift */,
+				955E123E2BFE1E7A00AE6D10 /* HashedImpressionStorage.swift */,
 			);
 			path = HashedImpression;
 			sourceTree = "<group>";
@@ -3923,7 +3935,7 @@
 				95ABF50C293A439E006ED016 /* UserConsentManager.swift in Sources */,
 				95CED03C2B482CFB005E3C34 /* SplitLocalhostDataSource.swift in Sources */,
 				C5977C222BF2A54D003E293A /* InListSemverMatcher.swift in Sources */,
-				955E12392BFD276C00AE6D10 /* PersistentHashedImpressionStorage.swift in Sources */,
+				955E12392BFD276C00AE6D10 /* PersistentHashedImpressionsStorage.swift in Sources */,
 				955E12332BFBF22800AE6D10 /* UniqueKey.swift in Sources */,
 				95B17FFD275FCD92002DC9DF /* RestClient+TelemetryConfig.swift in Sources */,
 				3B6DEF6120EA6AE50067435E /* ContainsAllOfSetMatcher.swift in Sources */,
@@ -3951,6 +3963,7 @@
 				3B6DEF3720EA6AE50067435E /* SplitManager.swift in Sources */,
 				599EA57B22666B84006CBA89 /* Yaml.swift in Sources */,
 				952E267A283410620015D633 /* HashedImpression.swift in Sources */,
+				955E123F2BFE1E7A00AE6D10 /* HashedImpressionStorage.swift in Sources */,
 				3B6DEF3A20EA6AE50067435E /* Dictionary+Extensions.swift in Sources */,
 				95125625276B72B60091895B /* Stopwatch.swift in Sources */,
 				957E67B025F6B3E1006F5B19 /* BackgroundSyncWorker.swift in Sources */,
@@ -4210,6 +4223,7 @@
 			files = (
 				954F9B0B2570431900140B81 /* GeneralInfoDaoTests.swift in Sources */,
 				95C8F78E27D00A5E00E118EA /* PersistentMySegmentsStorageTests.swift in Sources */,
+				955E12452BFE758F00AE6D10 /* HashedImpressionsStorageTest.swift in Sources */,
 				5959C47E228051040064F968 /* SplitClientStub.swift in Sources */,
 				95ABF4B8292FF451006ED016 /* ConfigObjcTest.m in Sources */,
 				95B1801E2763BF7E002DC9DF /* TelemetryStatsRecorderWorkerTests.swift in Sources */,
@@ -4359,6 +4373,7 @@
 				95715A8529D353C100A1B2F9 /* DbCipherTest.swift in Sources */,
 				59D84BDC2215CD52003DA248 /* LocalhostSplitLoaderTests.swift in Sources */,
 				956D17D1260D266E0037F575 /* SplitsChangesCheckerTest.swift in Sources */,
+				955E12432BFE704400AE6D10 /* HashedImpressionsStorageMock.swift in Sources */,
 				599EA5852268E9C2006CBA89 /* LocalhostTests.swift in Sources */,
 				95DE29532739A7AB00DB3EAD /* AttributesDaoTest.swift in Sources */,
 				95ABF50029379CCD006ED016 /* EventsSynchronizerStub.swift in Sources */,
@@ -4473,6 +4488,7 @@
 				95ABF50F293AB954006ED016 /* UserConsentManagerTest.swift in Sources */,
 				95ED4AA3264999BD00FD3569 /* IntegrationHelper.swift in Sources */,
 				595AD25524E477B600A7B750 /* NotificationParserTest.swift in Sources */,
+				955E12412BFE6F5500AE6D10 /* PersistentHashImpressionStorageMock.swift in Sources */,
 				5921ED2F25377316000D6C8B /* HttpRequestManagerTestDispatcher.swift in Sources */,
 				C5977C342BF403EA003E293A /* SemverIntegrationTest.swift in Sources */,
 				9560354F27D16D5700E35BC8 /* MySegmentsStorageStub.swift in Sources */,

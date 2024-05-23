@@ -12,7 +12,7 @@ import XCTest
 
 class PersistentHashedImpressionsStorageTests: XCTestCase {
 
-    var hashedStorage: PersistentHashedImpressionStorage!
+    var hashedStorage: PersistentHashedImpressionsStorage!
     var hashDao: HashedImpressionDaoMock!
 
     override func setUp() {
@@ -28,9 +28,9 @@ class PersistentHashedImpressionsStorageTests: XCTestCase {
                                                                                    hashedImpressionDao: hashDao))
     }
 
-    func testSet() {
+    func testUpdate() {
         let all1 = hashDao.items
-        hashedStorage.set(SplitTestHelper.createHashedImpressions(start: 10, count: 15))
+        hashedStorage.update(SplitTestHelper.createHashedImpressions(start: 10, count: 15))
         let all2 = hashDao.items
 
         XCTAssertEqual(0, all1.count)
@@ -39,9 +39,11 @@ class PersistentHashedImpressionsStorageTests: XCTestCase {
 
     func testGetAll() {
         let count = 20
-        hashDao.items = SplitTestHelper.createHashedImpressions(start: 1, count: count)
+        hashDao.items = SplitTestHelper.createHashedImpressionsDic(start: 1, count: count)
         let all = hashedStorage.getAll()
 
         XCTAssertEqual(count, all.count)
     }
 }
+
+

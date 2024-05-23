@@ -11,16 +11,18 @@ import Foundation
 
 
 class HashedImpressionDaoMock: HashedImpressionDao {
-    var items = [HashedImpression]()
+    var items = [UInt32: HashedImpression]()
+    func update(_ hashes: [HashedImpression]) {
+        hashes.forEach {
+            items[$0.impressionHash] = $0
+        }
+    }
+    
+    func delete(_ hashes: [HashedImpression]) {
+        items.removeAll()
+    }
 
     func getAll() -> [HashedImpression] {
-        return items
+        return items.values.map { $0 as HashedImpression }
     }
-
-    func set(_ hashes: [HashedImpression]) {
-        items.removeAll()
-        items.append(contentsOf: hashes)
-    }
-
-
 }

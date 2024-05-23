@@ -159,12 +159,21 @@ class SplitTestHelper {
     static func createHashedImpressions(start: Int = 1, count: Int = 10) -> [HashedImpression] {
         var items = [HashedImpression]()
         for i in start..<(start + count) {
-            let item = HashedImpression(impressionHash: Int64(i),
+            let item = HashedImpression(impressionHash: UInt32(i),
                                          time: Date.nowMillis(),
                                          createdAt: Date.nowMillis())
             items.append(item)
         }
         return items
+    }
+
+    static func createHashedImpressionsDic(start: Int = 1, count: Int = 10) -> [UInt32: HashedImpression] {
+        let items = createHashedImpressions(start: start, count: count)
+        var dic = [UInt32: HashedImpression]()
+        for item in items {
+            dic[item.impressionHash] = item
+        }
+        return dic
     }
 
     static func newSplit(name: String, trafficType: String) -> Split {

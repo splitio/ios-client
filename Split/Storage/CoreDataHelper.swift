@@ -44,6 +44,10 @@ class CoreDataHelper {
         delete(entity: entity, predicate: NSPredicate(format: "\(field) IN %@", values))
     }
 
+    func delete(entity: CoreDataEntity, by field: String, values: [Int]) {
+        delete(entity: entity, predicate: NSPredicate(format: "\(field) IN %@", values))
+    }
+
     func save() {
         managedObjectContext.performAndWait {
             do {

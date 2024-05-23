@@ -8,12 +8,13 @@
 
 import Foundation
 
-protocol PersistentHashedImpressionStorage {
-    func set(_ hashes: [HashedImpression])
+protocol PersistentHashedImpressionsStorage {
+    func update(_ hashes: [HashedImpression])
+    func delete(_ hashes: [HashedImpression])
     func getAll() -> [HashedImpression]
 }
 
-class DefaultPersistentHashedImpressionsStorage: PersistentHashedImpressionStorage {
+class DefaultPersistentHashedImpressionsStorage: PersistentHashedImpressionsStorage {
 
     private let hashedImpressionDao: HashedImpressionDao
 
@@ -21,8 +22,12 @@ class DefaultPersistentHashedImpressionsStorage: PersistentHashedImpressionStora
         self.hashedImpressionDao = database.hashedImpressionDao
     }
 
-    func set(_ hashes: [HashedImpression]) {
-        hashedImpressionDao.set(hashes)
+    func update(_ hashes: [HashedImpression]) {
+        hashedImpressionDao.update(hashes)
+    }
+
+    func delete(_ hashes: [HashedImpression]) {
+        hashedImpressionDao.delete(hashes)
     }
 
     func getAll() -> [HashedImpression] {
