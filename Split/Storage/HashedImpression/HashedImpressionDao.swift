@@ -11,7 +11,8 @@ import CoreData
 
 protocol HashedImpressionDao {
     func getAll() -> [HashedImpression]
-    func set(_ hashes: [HashedImpression])
+    func update(_ hashes: [HashedImpression])
+    func delete(_ hashes: [HashedImpression])
 }
 
 class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
@@ -29,14 +30,14 @@ class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
 
             result = self.coreDataHelper.fetch(entity: .hashedImpression,
                                                where: nil,
-                                               rowLimit: ServiceConstants.impressionHashSize)
+                                               rowLimit: ServiceConstants.lastSeenImpressionCachSize * 2)
             .compactMap { return $0 as? HashedImpressionEntity }
             .compactMap { return self.mapEntityToModel($0) }
         }
         return result
     }
 
-    func set(_ hashes: [HashedImpression]) {
+    func update(_ hashes: [HashedImpression]) {
 
         executeAsync { [weak self] in
             guard let self = self else {
@@ -44,19 +45,41 @@ class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
             }
             self.coreDataHelper.deleteAll(entity: .hashedImpression)
             for hash in hashes {
-                self.insert(hash)
+                self.insertOrUpdate(hash)
             }
             self.coreDataHelper.save()
         }
     }
 
-    private func insert(_ hash: HashedImpression) {
-        if let obj = self.coreDataHelper.create(entity: .hashedImpression) as? HashedImpressionEntity {
-            obj.impressionHash = hash.impressionHash
-            obj.time = hash.time
+    func delete(_ hashes: [HashedImpression]) {
+        if hashes.count == 0 {
+            return
+        }
+        execute { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.coreDataHelper.delete(entity: .hashedImpression,
+                                       by: "impressionHash", values: hashes.map { Int($0.impressionHash) })
+            self.coreDataHelper.save()
+        }
+    }
+
+    private func insertOrUpdate(_ hashed: HashedImpression) {
+        if let obj = self.getBy(hash: hashed.impressionHash) ??
+            self.coreDataHelper.create(entity: .hashedImpression) as? HashedImpressionEntity {
+            obj.impressionHash = hashed.impressionHash
+            obj.time = hashed.time
             obj.createdAt = Date().unixTimestamp()
             self.coreDataHelper.save()
         }
+    }
+
+    private func getBy(hash: UInt32) -> HashedImpressionEntity? {
+        let predicate = NSPredicate(format: "impressionHash == %d", hash)
+        let entities = coreDataHelper.fetch(entity: .hashedImpression,
+                                            where: predicate).compactMap { return $0 as? HashedImpressionEntity }
+        return entities.count > 0 ? entities[0] : nil
     }
 
     private func mapEntityToModel(_ entity: HashedImpressionEntity) -> HashedImpression {

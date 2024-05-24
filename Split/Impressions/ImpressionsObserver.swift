@@ -9,16 +9,16 @@
 import Foundation
 
 struct ImpressionsObserver {
-    private let cache: LRUCache<UInt32, Int64>
+    private let storage: HashedImpressionsStorage
 
-    init(size: Int) {
-        cache = LRUCache(capacity: size)
+    init(storage: HashedImpressionsStorage) {
+        self.storage = storage
     }
 
     func testAndSet(impression: KeyImpression) -> Int64? {
         let hash = ImpressionHasher.process(impression: impression)
-        let previous = cache.element(for: hash)
-        cache.set(impression.time, for: hash)
+        let previous = storage.get(for: hash)
+        storage.set(impression.time, for: hash)
         guard let previousTime = previous else {
             return nil
         }
@@ -26,7 +26,7 @@ struct ImpressionsObserver {
     }
 
     func clear() {
-        cache.clear()
+        storage.clear()
     }
 }
 

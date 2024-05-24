@@ -47,6 +47,14 @@ class LRUCache<K: Hashable, E> {
         return element
     }
 
+    func all() -> [K: E] {
+        var items: [K: E]?
+        queue.sync {
+            items = self.elements
+        }
+        return items ?? [:]
+    }
+
     // Private function to avoid using self
     // Call this functions only from within queue closure
     private func put(_ element: E, for key: K) {

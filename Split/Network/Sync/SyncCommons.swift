@@ -20,6 +20,8 @@ struct SplitStorageContainer {
     let attributesStorage: AttributesStorage
     let uniqueKeyStorage: PersistentUniqueKeysStorage?
     let flagSetsCache: FlagSetsCache
+    let persistentHashedImpressionsStorage: PersistentHashedImpressionsStorage
+    let hashedImpressionsStorage: HashedImpressionsStorage
 }
 
 protocol ImpressionLogger {

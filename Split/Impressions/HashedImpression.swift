@@ -9,11 +9,11 @@
 import Foundation
 
 class HashedImpression {
-    let impressionHash: Int64
+    let impressionHash: UInt32
     let time: Int64
     let createdAt: Int64
 
-    init(impressionHash: Int64, time: Int64, createdAt: Int64) {
+    init(impressionHash: UInt32, time: Int64, createdAt: Int64) {
         self.impressionHash = impressionHash
         self.time = time
         self.createdAt = createdAt

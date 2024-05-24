@@ -30,7 +30,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     private var flusherImpressionsCountRecorderWorker: RecorderWorker?
     private var flusherImpressionsRecorderWorker: RecorderWorker?
 
-    private let impressionsObserver = ImpressionsObserver(size: ServiceConstants.lastSeenImpressionCachSize)
+    private let impressionsObserver: ImpressionsObserver
     private var impressionsCounter: ImpressionsCounter?
 
     private var uniqueKeyTracker: UniqueKeyTracker?
@@ -58,6 +58,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         self.telemetryProducer = storageContainer.telemetryStorage
         self.uniqueKeyTracker = uniqueKeyTracker
         self.impressionsSyncHelper = impressionsSyncHelper
+        self.impressionsObserver = ImpressionsObserver(storage: storageContainer.hashedImpressionsStorage)
 
 #if os(macOS)
         notificationHelper?.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
