@@ -30,9 +30,15 @@ class DefaultHashedImpressionsStorage: HashedImpressionsStorage {
 
     func loadFromDb() {
         let items = persistentStorage.getAll()
+        var toDelete = [HashedImpression]()
         items.forEach { hashed in
-            cache.set(hashed.time, for: hashed.impressionHash)
+            if !isExpired(hashed) {
+                cache.set(hashed.time, for: hashed.impressionHash)
+            } else {
+                toDelete.append(hashed)
+            }
         }
+        persistentStorage.delete(toDelete)
     }
 
     func set(_ time: Int64, for hash: UInt32) {
@@ -48,8 +54,12 @@ class DefaultHashedImpressionsStorage: HashedImpressionsStorage {
     }
 
     func save() {
-        persistentStorage.update(cache.all().map { HashedImpression(impressionHash: $0.key, 
+        persistentStorage.update(cache.all().map { HashedImpression(impressionHash: $0.key,
                                                                     time: $0.value,
                                                                     createdAt: $0.value)})
+    }
+
+    private func isExpired(_ impression: HashedImpression) -> Bool {
+        return ((Date.nowMillis() - ServiceConstants.hashedImpressionsExpiration) > impression.time)
     }
 }

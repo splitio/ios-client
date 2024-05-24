@@ -35,7 +35,7 @@ struct ServiceConstants {
     static let uniqueKeyBulkSize = 50
     static let maxUniqueKeyQueueSize = 30000
     static let aes128KeyLength = 16
-    static let hashedImpressionsExpiration = 60 * 60 * 1000 * 4 // 4 hs
+    static let hashedImpressionsExpiration: Int64 = 60 * 60 * 1000 * 4 // 4 hs
 
     static let defaultLocalhostRefreshRate = 10
 

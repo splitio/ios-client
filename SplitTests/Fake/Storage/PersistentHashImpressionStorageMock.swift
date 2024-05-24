@@ -24,7 +24,9 @@ class PersistentHashedImpressionStorageMock: PersistentHashedImpressionsStorage 
 
     func delete(_ hashes: [HashedImpression]) {
         queue.sync {
-            items.removeAll()
+            for hash in hashes {
+                items[hash.impressionHash] = nil
+            }
         }
     }
 

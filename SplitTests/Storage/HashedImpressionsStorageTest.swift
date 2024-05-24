@@ -1,5 +1,5 @@
 //
-//  PersistentHashedImpressionsStorageTest.swift
+//  HashedImpressionsStorageTests.swift
 //  SplitTests
 //
 //  Created by Javier L. Avrudsky on 20/05/2024.
@@ -21,6 +21,9 @@ class HashedImpressionsStorageTests: XCTestCase {
         lruCache = LRUCache(capacity: 200)
         persistentStorage = PersistentHashedImpressionStorageMock()
         persistentStorage.items = SplitTestHelper.createHashedImpressionsDic(start: 1, count: count)
+        // Adding expired
+        persistentStorage.items[1000] = HashedImpression(impressionHash: 1000, time: 999, createdAt: 999)
+
         hashedStorage = DefaultHashedImpressionsStorage(cache: lruCache,
                                                         persistentStorage: persistentStorage)
     }
@@ -33,6 +36,7 @@ class HashedImpressionsStorageTests: XCTestCase {
 
         XCTAssertEqual(0, loadedBef.count)
         XCTAssertEqual(count, loadedAfter.count)
+        XCTAssertNil(loadedAfter[1000])
     }
 
     func testUpdateNoSave() {
@@ -63,8 +67,8 @@ class HashedImpressionsStorageTests: XCTestCase {
         hashedStorage.save()
         let countAfterSave = persistentStorage.items.count
         XCTAssertEqual(count, countBef)
-        XCTAssertEqual(countAfter, count)
-        XCTAssertEqual(countAfterSave, count + sum)
+        XCTAssertEqual(count, countAfter)
+        XCTAssertEqual(count + sum, countAfterSave)
     }
 
 
