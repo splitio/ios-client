@@ -130,7 +130,8 @@ class TestSplitFactory: SplitFactory {
                                                            syncWorkerFactory: syncWorkerFactory,
                                                            impressionsSyncHelper: impressionsSyncHelper,
                                                            uniqueKeyTracker: nil,
-                                                           notificationHelper: nil)
+                                                           notificationHelper: nil,
+                                                           impressionsObserver: DefaultImpressionsObserver(storage: storageContainer.hashedImpressionsStorage))
 
         let eventsSynchronizer = DefaultEventsSynchronizer(syncWorkerFactory: syncWorkerFactory,
                                                            eventsSyncHelper: eventsSyncHelper,

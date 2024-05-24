@@ -158,7 +158,8 @@ class SplitComponentFactory {
                                      syncWorkerFactory: try buildSyncWorkerFactory(),
                                      impressionsSyncHelper: try buildImpressionsSyncHelper(),
                                      uniqueKeyTracker: uniqueKeyTracker,
-                                     notificationHelper: notificationHelper)
+                                     notificationHelper: notificationHelper,
+                                     impressionsObserver: DefaultImpressionsObserver(storage: storageContainer.hashedImpressionsStorage))
         catalog.add(component: component)
         return component
     }

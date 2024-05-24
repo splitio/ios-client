@@ -39,7 +39,9 @@ class PersistentImpressionsCountStorageStub: PersistentImpressionsCountStorage {
         }
     }
 
+    var pushManyCalled = false
     func pushMany(counts: [ImpressionsCountPerFeature]) {
+        pushManyCalled = true
         for count in counts {
             var row = ImpressionsCountPerFeature(feature: count.feature,
                                                  timeframe: count.timeframe,

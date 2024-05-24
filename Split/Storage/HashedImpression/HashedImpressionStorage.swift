@@ -20,6 +20,8 @@ class DefaultHashedImpressionsStorage: HashedImpressionsStorage {
 
     private let cache: LRUCache<UInt32, Int64>
     private let persistentStorage: PersistentHashedImpressionsStorage
+    private let counter = AtomicInt(0)
+    private let queueSize = ServiceConstants.maxHashedImpressionsQueueSize
 
     init(cache: LRUCache<UInt32, Int64>,
          persistentStorage: PersistentHashedImpressionsStorage) {
@@ -43,6 +45,10 @@ class DefaultHashedImpressionsStorage: HashedImpressionsStorage {
 
     func set(_ time: Int64, for hash: UInt32) {
         cache.set(time, for: hash)
+        if counter.addAndGet(1) >= queueSize {
+            save()
+            counter.set(0)
+        }
     }
 
     func get(for hash: UInt32) -> Int64? {
