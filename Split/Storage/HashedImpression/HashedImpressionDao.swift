@@ -33,11 +33,7 @@ class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
                                                rowLimit: ServiceConstants.lastSeenImpressionCachSize * 2)
             .compactMap { return $0 as? HashedImpressionEntity }
             .compactMap { return self.mapEntityToModel($0) }
-
-            print("what")
-            print(result)
         }
-        print("what 1")
         return result
     }
 
