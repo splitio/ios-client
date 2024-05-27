@@ -87,7 +87,6 @@ class HashedImpressionsStorageTests: XCTestCase {
         XCTAssertEqual(count + ServiceConstants.maxHashedImpressionsQueueSize, countAfter)
     }
 
-
     private func updateTest(save: Bool) {
         hashedStorage.loadFromDb()
 

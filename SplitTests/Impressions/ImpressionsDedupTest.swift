@@ -26,6 +26,7 @@ class ImpressionsDedupTest: XCTestCase {
     var impressions: [String: [KeyImpression]]!
     var counts: [String: Int]!
     let queue = DispatchQueue(label: "queue", target: .test)
+    var db: SplitDatabase!
 
     override func setUp() {
         let session = HttpSessionMock()
@@ -50,6 +51,8 @@ class ImpressionsDedupTest: XCTestCase {
 
         let notificationHelper = NotificationHelperStub()
 
+        db = TestingHelper.createTestDatabase(name: "test")
+
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 30
         splitConfig.segmentsRefreshRate = 30
@@ -67,7 +70,7 @@ class ImpressionsDedupTest: XCTestCase {
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
-        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
+        _ = builder.setTestDatabase(db)
         _ = builder.setNotificationHelper(notificationHelper)
         let factory = builder.setApiKey(apiKey).setKey(key)
             .setConfig(splitConfig).build()!
@@ -102,6 +105,9 @@ class ImpressionsDedupTest: XCTestCase {
         }
         sleep(1)
 
+        IntegrationCoreDataHelper.observeChanges()
+        let dbHashedImp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .hashedImpression, operation: CrudKey.insert)
+
         // Impressions count are saved on app bg
         // Here that situation is simulated
         notificationHelper.simulateApplicationDidEnterBackground()
@@ -119,12 +125,16 @@ class ImpressionsDedupTest: XCTestCase {
         client.flush()
 
         var expFor = [impExp!]
+        expFor.append(dbHashedImp)
+
         if let exp = countExp {
             expFor.append(exp)
         }
         wait(for: expFor , timeout: 10)
 
         sleep(1)
+
+        let hashedImp = db.hashedImpressionDao.getAll()
 
         XCTAssertEqual(impValues[0], impressions["FACUNDO_TEST"]?.count ?? 0)
         XCTAssertEqual(impValues[1], impressions["Test_Save_1"]?.count ?? 0)
@@ -134,6 +144,9 @@ class ImpressionsDedupTest: XCTestCase {
         XCTAssertEqual(countValues[1], counts["Test_Save_1"] ?? 0)
         XCTAssertEqual(countValues[2], counts["TEST"] ?? 0)
 
+        XCTAssertEqual(3, hashedImp.count)
+
+        IntegrationCoreDataHelper.stopObservingChanges()
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
             _ = semaphore.signal()
