@@ -8,7 +8,13 @@
 
 import Foundation
 
-struct ImpressionsObserver {
+protocol ImpressionsObserver {
+    func testAndSet(impression: KeyImpression) -> Int64?
+    func clear()
+    func saveHashes()
+}
+
+struct DefaultImpressionsObserver: ImpressionsObserver {
     private let storage: HashedImpressionsStorage
 
     init(storage: HashedImpressionsStorage) {
@@ -27,6 +33,10 @@ struct ImpressionsObserver {
 
     func clear() {
         storage.clear()
+    }
+
+    func saveHashes() {
+        storage.save()
     }
 }
 

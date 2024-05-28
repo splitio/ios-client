@@ -50,7 +50,8 @@ class DefaultImpressionsTracker: ImpressionsTracker {
          syncWorkerFactory: SyncWorkerFactory,
          impressionsSyncHelper: ImpressionsRecorderSyncHelper?,
          uniqueKeyTracker: UniqueKeyTracker?,
-         notificationHelper: NotificationHelper?) {
+         notificationHelper: NotificationHelper?,
+         impressionsObserver: ImpressionsObserver) {
 
         self.splitConfig = splitConfig
         self.syncWorkerFactory = syncWorkerFactory
@@ -58,13 +59,14 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         self.telemetryProducer = storageContainer.telemetryStorage
         self.uniqueKeyTracker = uniqueKeyTracker
         self.impressionsSyncHelper = impressionsSyncHelper
-        self.impressionsObserver = ImpressionsObserver(storage: storageContainer.hashedImpressionsStorage)
+        self.impressionsObserver = impressionsObserver
 
 #if os(macOS)
         notificationHelper?.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
             if let self = self {
                 self.saveUniqueKeys()
                 self.saveImpressionsCount()
+                self.saveHashedImpressions()
             }
         }
 #endif
@@ -128,6 +130,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     func pause() {
         saveImpressionsCount()
         saveUniqueKeys()
+        saveHashedImpressions()
         periodicImpressionsRecorderWoker?.pause()
         periodicImpressionsCountRecorderWoker?.pause()
         periodicUniqueKeysRecorderWorker?.pause()
@@ -153,6 +156,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         periodicImpressionsRecorderWoker?.destroy()
         periodicImpressionsCountRecorderWoker?.destroy()
         periodicUniqueKeysRecorderWorker?.destroy()
+        saveHashedImpressions()
         impressionsObserver.clear()
     }
 
@@ -184,6 +188,10 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         if isNoneImpressionsMode() {
             uniqueKeyTracker?.saveAndClear()
         }
+    }
+
+    private func saveHashedImpressions() {
+        impressionsObserver.saveHashes()
     }
 
     private func setupImpressionsMode() {

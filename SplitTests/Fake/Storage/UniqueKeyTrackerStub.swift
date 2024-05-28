@@ -19,7 +19,9 @@ class UniqueKeyTrackerStub: UniqueKeyTracker {
         trackedKeys[userKey] = features
     }
 
+    var saveAndClearCalled = false
     func saveAndClear() {
+        saveAndClearCalled = true
         savedKeys.append(trackedKeys)
         trackedKeys.removeAll()
     }

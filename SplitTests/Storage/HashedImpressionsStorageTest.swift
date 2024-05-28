@@ -71,6 +71,21 @@ class HashedImpressionsStorageTests: XCTestCase {
         XCTAssertEqual(count + sum, countAfterSave)
     }
 
+    func testSaveOnQueue() {
+        hashedStorage.loadFromDb()
+        let countBef = persistentStorage.items.count
+        for i in SplitTestHelper.createHashedImpressions(start: 30, count: ServiceConstants.maxHashedImpressionsQueueSize - 1) {
+            hashedStorage.set(i.time, for: i.impressionHash)
+        }
+
+        let i = SplitTestHelper.createHashedImpressions(start: 100, count: ServiceConstants.maxHashedImpressionsQueueSize - 1)[0]
+        hashedStorage.set(i.time, for: i.impressionHash)
+
+        let countAfter = persistentStorage.items.count
+
+        XCTAssertEqual(count, countBef)
+        XCTAssertEqual(count + ServiceConstants.maxHashedImpressionsQueueSize, countAfter)
+    }
 
     private func updateTest(save: Bool) {
         hashedStorage.loadFromDb()
