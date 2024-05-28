@@ -39,6 +39,20 @@ class HashedImpressionsStorageTests: XCTestCase {
         XCTAssertNil(loadedAfter[1000])
     }
 
+    func testLoadExpired() {
+        persistentStorage.items[1000] = HashedImpression(impressionHash: 1000, time: 999, createdAt: 1)
+        for item in SplitTestHelper.createHashedImpressionsDic(start: count - 4, count: 10, expired: true) {
+            persistentStorage.items[item.key] = item.value
+        }
+
+        hashedStorage.loadFromDb()
+
+        let loaded = lruCache.all()
+
+        XCTAssertEqual(count - 5, loaded.count)
+        XCTAssertNil(loaded[1000])
+    }
+
     func testUpdateNoSave() {
         updateTest(save: false)
     }
