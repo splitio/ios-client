@@ -43,10 +43,11 @@ class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
             guard let self = self else {
                 return
             }
-            self.coreDataHelper.deleteAll(entity: .hashedImpression)
+
             for hash in hashes {
                 self.insertOrUpdate(hash)
             }
+            self.deleteExpired()
             self.coreDataHelper.save()
         }
     }
@@ -65,12 +66,29 @@ class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
         }
     }
 
+    private func deleteExpired() {
+        let expirationTime = Date.nowMillis() - ServiceConstants.hashedImpressionsExpirationMs
+        let predicate = NSPredicate(format: "createdAt <= %d", expirationTime)
+        execute { [weak self] in
+            guard let self = self else {
+                return
+            }
+            let hashes = self.coreDataHelper.fetch(entity: .hashedImpression,
+                                                     where: predicate)
+                .compactMap { return $0 as? HashedImpressionEntity }
+
+            self.coreDataHelper.delete(entity: .hashedImpression, by: "impressionHash",
+                                       values: hashes.map { Int($0.impressionHash) })
+            self.coreDataHelper.save()
+        }
+    }
+
     private func insertOrUpdate(_ hashed: HashedImpression) {
         if let obj = self.getBy(hash: hashed.impressionHash) ??
             self.coreDataHelper.create(entity: .hashedImpression) as? HashedImpressionEntity {
             obj.impressionHash = hashed.impressionHash
             obj.time = hashed.time
-            obj.createdAt = Date().unixTimestamp()
+            obj.createdAt = obj.createdAt == 0 ? Date.nowMillis() : obj.createdAt
             self.coreDataHelper.save()
         }
     }

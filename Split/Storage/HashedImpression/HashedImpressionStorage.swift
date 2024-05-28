@@ -63,9 +63,10 @@ class DefaultHashedImpressionsStorage: HashedImpressionsStorage {
         persistentStorage.update(cache.all().map { HashedImpression(impressionHash: $0.key,
                                                                     time: $0.value,
                                                                     createdAt: $0.value)})
+        Logger.v("Hashed impressions persisted")
     }
 
     private func isExpired(_ impression: HashedImpression) -> Bool {
-        return ((Date.nowMillis() - ServiceConstants.hashedImpressionsExpiration) > impression.time)
+        return ((Date.nowMillis() - ServiceConstants.hashedImpressionsExpirationMs) > impression.createdAt)
     }
 }

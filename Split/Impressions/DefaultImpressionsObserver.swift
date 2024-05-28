@@ -19,6 +19,7 @@ struct DefaultImpressionsObserver: ImpressionsObserver {
 
     init(storage: HashedImpressionsStorage) {
         self.storage = storage
+        storage.loadFromDb()
     }
 
     func testAndSet(impression: KeyImpression) -> Int64? {
