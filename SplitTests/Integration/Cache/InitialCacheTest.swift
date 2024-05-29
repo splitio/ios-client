@@ -41,6 +41,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -93,6 +94,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildNoChangesTestDispatcher(),
@@ -149,6 +151,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: Date().unixTimestamp())
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildNoChangesTestDispatcher(),
@@ -209,6 +212,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: Date().unixTimestamp())
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .splitsFilterQueryString, stringValue: "")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
 
         let split = TestingHelper.buildSplit(name: splitInFilter, treatment: "t2")
         let change = SplitChange(splits: [split], since: 9000, till: 9000)
@@ -275,6 +279,60 @@ class InitialCacheTest: XCTestCase {
         })
         semaphore.wait()
     }
+
+    func testFlagsSpecChanged() {
+
+        let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
+        splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
+        splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
+        splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.2")
+
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        let splitConfig = basicSplitConfig()
+
+        let readyExp = XCTestExpectation()
+
+        let key: Key = Key(matchingKey: IntegrationHelper.dummyUserKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(splitDatabase)
+        let factory = builder.setApiKey(IntegrationHelper.dummyApiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+
+        let client = factory.client
+
+        var treatmentCache = ""
+        var treatmentReady = ""
+
+        var readyCacheNotFired = false
+        client.on(event: SplitEvent.sdkReadyFromCache) {
+            treatmentCache = client.getTreatment(self.splitName)
+            var readyCacheNotFired = true
+        }
+
+        client.on(event: SplitEvent.sdkReady) {
+            treatmentReady = client.getTreatment(self.splitName)
+            readyExp.fulfill()
+        }
+
+        client.on(event: SplitEvent.sdkReadyTimedOut) {
+            readyExp.fulfill()
+        }
+
+        wait(for: [readyExp], timeout: 10)
+
+        client.destroy()
+
+        XCTAssertEqual("", treatmentCache)
+        XCTAssertEqual("on0", treatmentReady)
+    }
+
+
 
     private func getChanges(for hitNumber: Int) -> Data {
         if hitNumber < jsonChanges.count {
@@ -382,21 +440,6 @@ class InitialCacheTest: XCTestCase {
             jsonChanges.insert(json, at: i)
         }
     }
-
-//    private func loadChanges1() {
-//        for i in 0..<5 {
-//            let change = getChanges(withIndex: i,
-//                                    since: numbers[i],
-//                                    till: numbers[i])
-//
-//            if i==2 {
-//                change.splits.append(buildSplit(name: "split1", treatment: "t1"))
-//            }
-//            changes.append(change)
-//            let json =  (try? Json.encodeToJson(change)) ?? ""
-//            jsonChanges.insert(json, at: i)
-//        }
-//    }
 
     private func basicSplitConfig() -> SplitClientConfig {
         let splitConfig: SplitClientConfig = SplitClientConfig()

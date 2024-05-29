@@ -106,7 +106,7 @@ class ImpressionsDedupTest: XCTestCase {
         sleep(1)
 
         IntegrationCoreDataHelper.observeChanges()
-        let dbHashedImp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .hashedImpression, operation: CrudKey.insert)
+        let dbHashedImp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .hashedImpression, operation: CrudKey.update)
 
         // Impressions count are saved on app bg
         // Here that situation is simulated

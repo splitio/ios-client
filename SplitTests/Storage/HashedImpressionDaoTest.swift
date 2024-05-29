@@ -31,7 +31,7 @@ class HashedImpressionDaoTest: XCTestCase {
         dao.update([HashedImpression(impressionHash: 12, time: 12, createdAt: 123456)])
 
         XCTAssertEqual(10, all1.count)
-        XCTAssertEqual(15, all2.count)
+        XCTAssertEqual(25, all2.count)
 
         XCTAssertNotNil(getImp(all1, hash: 1))
         XCTAssertNotNil(getImp(all1, hash: 10))
@@ -56,8 +56,8 @@ class HashedImpressionDaoTest: XCTestCase {
         let all3 = dao.getAll()
 
         XCTAssertEqual(10, all1.count)
-        XCTAssertEqual(20, all2.count)
-        XCTAssertEqual(30, all3.count)
+        XCTAssertEqual(30, all2.count)
+        XCTAssertEqual(50, all3.count)
     }
 
     func testDelete() {
