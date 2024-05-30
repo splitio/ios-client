@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
 
       - name: Test iOS Streaming integration
-        uses: sersoft-gmbh/xcodebuild-action@v1
+        uses: sersoft-gmbh/xcodebuild-action@v3
         with:
           action: build test
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=YES
