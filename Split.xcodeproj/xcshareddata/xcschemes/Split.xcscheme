@@ -91,6 +91,9 @@
          <TestPlanReference
             reference = "container:SemVer.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitiOSIntegration_1.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference
