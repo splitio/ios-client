@@ -37,11 +37,19 @@ class InitialCacheTest: XCTestCase {
 
     func testExpiredCache() {
 
+        IntegrationCoreDataHelper.observeChanges()
+        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .generalInfo,
+                                                       operation: CrudKey.insert)
+
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+
+        wait(for: [dbExp], timeout: 10.0)
+
+        print("Setup completed, starting test")
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -90,11 +98,19 @@ class InitialCacheTest: XCTestCase {
 
     func testClearExpiredCache() {
 
+        IntegrationCoreDataHelper.observeChanges()
+        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .generalInfo,
+                                                       operation: CrudKey.insert)
+
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+
+        wait(for: [dbExp], timeout: 10.0)
+        
+        print("Setup completed, starting test")
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildNoChangesTestDispatcher(),
@@ -118,12 +134,16 @@ class InitialCacheTest: XCTestCase {
         var treatmentCache = ""
         var treatmentReady = ""
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        client.on(event: SplitEvent.sdkReadyFromCache) { [weak self] in
+            guard let self = self else { return }
+
             treatmentCache = client.getTreatment(self.splitName)
             cacheReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: SplitEvent.sdkReady) { [weak self] in
+            guard let self = self else { return }
+
             treatmentReady = client.getTreatment(self.splitName)
             readyExp.fulfill()
         }
@@ -147,11 +167,19 @@ class InitialCacheTest: XCTestCase {
 
     func testNoClearNoExpiredCache() {
 
+        IntegrationCoreDataHelper.observeChanges()
+        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .generalInfo,
+                                                       operation: CrudKey.insert)
+
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: Date().unixTimestamp())
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+
+        wait(for: [dbExp], timeout: 10.0)
+
+        print("Setup completed, starting test")
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildNoChangesTestDispatcher(),
@@ -205,6 +233,10 @@ class InitialCacheTest: XCTestCase {
 
     func testClearChangedSplitFilter() throws {
 
+        IntegrationCoreDataHelper.observeChanges()
+        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 4, entity: .generalInfo,
+                                                       operation: CrudKey.insert)
+
         let splitInFilter = "sample1"
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
@@ -213,6 +245,10 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .splitsFilterQueryString, stringValue: "")
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+
+        wait(for: [dbExp], timeout: 10.0)
+
+        print("Setup completed, starting test")
 
         let split = TestingHelper.buildSplit(name: splitInFilter, treatment: "t2")
         let change = SplitChange(splits: [split], since: 9000, till: 9000)
@@ -282,11 +318,19 @@ class InitialCacheTest: XCTestCase {
 
     func testFlagsSpecChanged() {
 
+        IntegrationCoreDataHelper.observeChanges()
+        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 4, entity: .generalInfo,
+                                                       operation: CrudKey.insert)
+
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.2")
+
+        wait(for: [dbExp], timeout: 10.0)
+
+        print("Setup completed, starting test")
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
