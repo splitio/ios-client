@@ -222,6 +222,7 @@
         "TreatmentManagerTest",
         "UniqueKeyTrackerTest",
         "UniqueKeysRecorderCountWorkerTests",
+        "UnsupportedMatcherIntegrationTest",
         "UserConsentManagerTest",
         "UserConsentModeDebugTest",
         "UserConsentModeNoneTest",

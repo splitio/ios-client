@@ -178,6 +178,7 @@
         "UniqueKeyDaoTest",
         "UniqueKeyTrackerTest",
         "UniqueKeysRecorderCountWorkerTests",
+        "UnsupportedMatcherIntegrationTest",
         "UserConsentManagerTest",
         "UserConsentModeDebugTest",
         "UserConsentModeNoneTest",
