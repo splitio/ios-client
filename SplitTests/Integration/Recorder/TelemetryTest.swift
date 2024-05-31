@@ -33,6 +33,7 @@ class TelemetryTest: XCTestCase {
         splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
         // To allow firing ready from cache
         splitDatabase.splitDao.insertOrUpdate(split: TestingHelper.buildSplit(name: splitName, treatment: "t1"))
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
 
         session = HttpSessionMock()
         reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
