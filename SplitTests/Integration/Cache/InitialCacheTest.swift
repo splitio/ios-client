@@ -319,7 +319,7 @@ class InitialCacheTest: XCTestCase {
     func testFlagsSpecChanged() {
 
         IntegrationCoreDataHelper.observeChanges()
-        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 4, entity: .generalInfo,
+        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .generalInfo,
                                                        operation: CrudKey.insert)
 
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
@@ -356,7 +356,7 @@ class InitialCacheTest: XCTestCase {
         var readyCacheNotFired = false
         client.on(event: SplitEvent.sdkReadyFromCache) {
             treatmentCache = client.getTreatment(self.splitName)
-            var readyCacheNotFired = true
+            readyCacheNotFired = true
         }
 
         client.on(event: SplitEvent.sdkReady) {
@@ -374,6 +374,7 @@ class InitialCacheTest: XCTestCase {
 
         XCTAssertEqual("", treatmentCache)
         XCTAssertEqual("on0", treatmentReady)
+        XCTAssertFalse(readyCacheNotFired)
     }
 
 
@@ -496,5 +497,8 @@ class InitialCacheTest: XCTestCase {
         return splitConfig
     }
     
+    override func tearDown() {
+        IntegrationCoreDataHelper.stopObservingChanges()
+    }
 }
 
