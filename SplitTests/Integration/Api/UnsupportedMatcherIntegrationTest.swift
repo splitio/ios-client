@@ -121,7 +121,7 @@ class UnsupportedMatcherIntegrationTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        var expectations = [sdkReadyExpectation]
+        let expectations = [sdkReadyExpectation]
         wait(for: expectations, timeout: 5)
 
         return factory

@@ -156,6 +156,26 @@ class SplitTestHelper {
         return splits
     }
 
+    static func createHashedImpressions(start: Int = 1, count: Int = 10, expired: Bool = false) -> [HashedImpression] {
+        var items = [HashedImpression]()
+        for i in start..<(start + count) {
+            let item = HashedImpression(impressionHash: UInt32(i),
+                                        time: Date.nowMillis(),
+                                        createdAt: (expired ? 1 : Date.nowMillis()))
+            items.append(item)
+        }
+        return items
+    }
+
+    static func createHashedImpressionsDic(start: Int = 1, count: Int = 10, expired: Bool = false) -> [UInt32: HashedImpression] {
+        let items = createHashedImpressions(start: start, count: count, expired: expired)
+        var dic = [UInt32: HashedImpression]()
+        for item in items {
+            dic[item.impressionHash] = item
+        }
+        return dic
+    }
+
     static func newSplit(name: String, trafficType: String) -> Split {
         let split = Split(name: name, trafficType: trafficType, status: .active, sets: nil, json: "")
         split.isParsed = true

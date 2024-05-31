@@ -46,7 +46,8 @@ class Semver: Equatable, Hashable {
         self.metadata = metadata
 
         // set and remove preRelease if exists
-        let (preRelease, isStable, vWithoutPreRelease) = try getAndRemovePreReleaseIfExists(vWithoutMetadata: vWithoutMetadata)
+        let (preRelease, isStable, vWithoutPreRelease)
+        = try getAndRemovePreReleaseIfExists(vWithoutMetadata: vWithoutMetadata)
 
         self.preRelease = preRelease
         self.isStable = isStable
@@ -119,7 +120,8 @@ class Semver: Equatable, Hashable {
         hasher.combine(version)
     }
 
-    private func getAndRemoveMetadataIfExists(version: String) throws -> (metadata: String?, versionWithoutMetadata: String) {
+    private func getAndRemoveMetadataIfExists(version: String) throws -> (metadata: String?,
+                                                                          versionWithoutMetadata: String) {
         var vWithoutMetadata = ""
         var tMetadata = ""
         if let index = version.firstIndex(of: kMetadataDelimiter) {
@@ -151,7 +153,9 @@ class Semver: Equatable, Hashable {
         return metadataString
     }
 
-    private func getAndRemovePreReleaseIfExists(vWithoutMetadata: String) throws -> (preRelease: [String], isStable: Bool, versionWithoutPreRelease: String) {
+    private func getAndRemovePreReleaseIfExists(vWithoutMetadata: String) throws -> (preRelease: [String],
+                                                                                     isStable: Bool,
+                                                                                     versionWithoutPreRelease: String) {
         var vWithoutPreRelease = ""
         var tPreRelease: [String] = []
         var tIsStable = true
@@ -181,7 +185,9 @@ class Semver: Equatable, Hashable {
         return (tPreRelease, tIsStable, vWithoutPreRelease)
     }
 
-    private func getMajorMinorAndPatch(vWithoutPreRelease: String) throws -> (major: Int64, minor: Int64, patch: Int64) {
+    private func getMajorMinorAndPatch(vWithoutPreRelease: String) throws -> (major: Int64,
+                                                                              minor: Int64,
+                                                                              patch: Int64) {
         let vParts = vWithoutPreRelease.split(separator: kValueDelimiter, omittingEmptySubsequences: false)
 
         if vParts.count != 3 {

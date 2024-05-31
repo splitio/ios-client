@@ -23,8 +23,10 @@ class SplitsUpdateWorkerTest: XCTestCase {
         splitFetcher = HttpSplitFetcherStub()
         splitFetcher.splitChanges = [SplitChange(splits: [], since: 102, till: 102)]
         splitsStorage = SplitsStorageStub()
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [Split](), archivedSplits: [],
-                                                  changeNumber: 100, updateTimestamp: 0))
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [Split](),
+                                                                   archivedSplits: [],
+                                                                   changeNumber: 100,
+                                                                   updateTimestamp: 0))
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false

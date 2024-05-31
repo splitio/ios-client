@@ -35,7 +35,7 @@ class SyncUpdateWorkerTest: XCTestCase {
         mySegmentsChangesChecker = MySegmentsChangesCheckerMock()
         mySegmentsPayloadDecoder = MySegmentsV2PayloadDecoderMock()
         telemetryProducer = TelemetryStorageStub()
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "split1")],
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "split1")],
                                                                archivedSplits: [],
                                                                changeNumber: 100,
                                                                updateTimestamp: 100))

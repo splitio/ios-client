@@ -87,17 +87,17 @@ class IntegrationCoreDataHelper  {
             if let values = info[key] as? Set<NSManagedObject> {
                 for value in values {
                     if let entityType = getEntityType(value) {
-//                        print("ObsCrud processing key: \(key)")
+                        print("ObsCrud processing key: \(key) for \(entityType)")
                         let key = buildObsRowKey(entity: entityType, operation: key)
                         if var row = obsCrud[key] {
                             row.increaseCount()
                             if row.shouldTrigger() {
                                 row.expectation.fulfill()
                                 obsCrud.removeValue(forKey: key)
-//                                print("ObsCrud triggered for: \(key)")
+                                print("ObsCrud triggered for: \(key)")
                             } else {
                                 obsCrud[key] = row
-//                                print("ObsCrud got : \(key) -> limit, curr: [\(row.triggerCount), \(row.currentCount)]")
+                                print("ObsCrud got : \(key) -> limit, curr: [\(row.triggerCount), \(row.currentCount)]")
                             }
                         }
                     }
@@ -114,6 +114,15 @@ class IntegrationCoreDataHelper  {
         if let _ = entity as? MySegmentEntity {
             return .mySegment
         }
+
+        if let _ = entity as? HashedImpressionEntity {
+            return .hashedImpression
+        }
+
+        if let _ = entity as? GeneralInfoEntity {
+            return .generalInfo
+        }
+
         return nil
     }
 

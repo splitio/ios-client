@@ -28,7 +28,8 @@ class PersistentMySegmentsStorageTests: XCTestCase {
                                                                            splitDao: SplitDaoStub(),
                                                                            mySegmentsDao: mySegmentsDao,
                                                                            attributesDao: AttributesDaoStub(),
-                                                                           uniqueKeyDao: UniqueKeyDaoStub()))
+                                                                           uniqueKeyDao: UniqueKeyDaoStub(), 
+                                                                           hashedImpressionDao: HashedImpressionDaoMock()))
     }
     
     func  testSet() {

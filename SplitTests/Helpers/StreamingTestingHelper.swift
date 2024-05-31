@@ -40,7 +40,6 @@ class StreamingTestingHelper {
     }
 
     func pushKeepalive() {
-        print("Streaming helper: Keep alive \(streamingBinding)")
         streamingBinding?.push(message: TestingData.keepalive)
     }
 

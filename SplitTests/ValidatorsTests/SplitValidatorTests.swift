@@ -15,9 +15,10 @@ class SplitValidatorTests: XCTestCase {
     
     override func setUp() {
         let splitsStorage = SplitsStorageStub()
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [createSplit(name: "split1")],
-                                                               archivedSplits: [],
-                                                               changeNumber: 100, updateTimestamp: 100))
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [createSplit(name: "split1")],
+                                                                   archivedSplits: [],
+                                                                   changeNumber: 100,
+                                                                   updateTimestamp: 100))
         validator = DefaultSplitValidator(splitsStorage: splitsStorage)
     }
     

@@ -44,7 +44,7 @@ class TelemetryConfigRecorderWorkerTests: XCTestCase {
         configRecorder.errorOccurredCallCount = 10
 
         worker.flush()
-
+        sleep(2) // To pass in GHA
         XCTAssertEqual(3, configRecorder.executeCallCount)
 
     }
@@ -61,9 +61,6 @@ class TelemetryConfigRecorderWorkerTests: XCTestCase {
                                      impressionsListenerEnabled: false, httpProxyDetected: false,
                                      activeFactories: 10, redundantFactories: 2, timeUntilReady: 10, timeUntilReadyFromCache: 5,
                                      nonReadyUsages: 2, integrations: ["i1"], tags: ["tag1"])
-    }
-
-    override func tearDown() {
     }
 }
 

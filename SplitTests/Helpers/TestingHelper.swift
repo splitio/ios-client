@@ -148,7 +148,6 @@ struct TestingHelper {
     }
 
     static func createTestDatabase(name: String, queue: DispatchQueue? = nil, helper: CoreDataHelper) -> SplitDatabase {
-        let newQueue = queue ?? DispatchQueue(label: "testqueue", target: DispatchQueue.test)
         return CoreDataSplitDatabase(coreDataHelper: helper)
     }
 
@@ -191,7 +190,9 @@ struct TestingHelper {
                                      mySegmentsStorage: MySegmentsStorageStub(),
                                      attributesStorage: AttributesStorageStub(),
                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
-                                     flagSetsCache: FlagSetsCacheMock())
+                                     flagSetsCache: FlagSetsCacheMock(),
+                                     persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
+                                     hashedImpressionsStorage: HashedImpressionsStorageMock())
     }
 
     static func createApiFacade() -> SplitApiFacade {

@@ -34,13 +34,15 @@ struct SplitNameValidator {
     func validate(name: String?) -> ValidationErrorInfo? {
 
         if name == nil {
-            return ValidationErrorInfo(error: .some,
-                                       message: "you passed a null feature flag name, flag name must be a non-empty string")
+            return ValidationErrorInfo(
+                error: .some,
+                message: "you passed a null feature flag name, flag name must be a non-empty string")
         }
 
         if name!.isEmpty() {
-            return ValidationErrorInfo(error: .some,
-                                       message: "you passed an empty feature flag name, flag name must be a non-empty string")
+            return ValidationErrorInfo(
+                error: .some,
+                message: "you passed an empty feature flag name, flag name must be a non-empty string")
         }
 
         if name!.trimmingCharacters(in: .whitespacesAndNewlines) != name! {

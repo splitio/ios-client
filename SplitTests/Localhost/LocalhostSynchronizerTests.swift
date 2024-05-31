@@ -49,6 +49,8 @@ class LocalhostSynchronizerTests: XCTestCase {
         datasource.update(yaml: yamlContent)
         XCTAssertFalse(prevSdkReady)
         XCTAssertTrue(eventsManager.isSplitsReadyFired)
+
+        sync.stop()
     }
 
     func testUpdateYaml() {

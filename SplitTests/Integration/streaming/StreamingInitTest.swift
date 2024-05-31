@@ -17,13 +17,13 @@ class StreamingInitTest: XCTestCase {
     var isSseHit = false
     var streamingBinding: TestStreamResponseBinding?
     let sseExp = XCTestExpectation(description: "Sse conn")
-    var authRequestUrl: String?
+    var authRequestUrl: String = ""
 
     override func setUp() {
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
-        authRequestUrl = nil
+        authRequestUrl = ""
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
@@ -91,7 +91,6 @@ class StreamingInitTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            self.authRequestUrl = request.url.absoluteString
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))

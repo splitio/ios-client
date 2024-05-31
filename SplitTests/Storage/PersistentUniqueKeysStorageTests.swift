@@ -20,13 +20,14 @@ class PersistentUniqueKeysStorageTests: XCTestCase {
     override func setUp() {
         keyDao = UniqueKeyDaoStub()
         keysStorage = DefaultPersistentUniqueKeysStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
-                                                                                   impressionDao: ImpressionDaoStub(),
-                                                                                   impressionsCountDao: ImpressionsCountDaoStub(),
-                                                                                   generalInfoDao: GeneralInfoDaoStub(),
-                                                                                   splitDao: SplitDaoStub(),
-                                                                                   mySegmentsDao: MySegmentsDaoStub(),
-                                                                                   attributesDao: AttributesDaoStub(),
-                                                                                   uniqueKeyDao: keyDao), expirationPeriod: 100)
+                                                                                     impressionDao: ImpressionDaoStub(),
+                                                                                     impressionsCountDao: ImpressionsCountDaoStub(),
+                                                                                     generalInfoDao: GeneralInfoDaoStub(),
+                                                                                     splitDao: SplitDaoStub(),
+                                                                                     mySegmentsDao: MySegmentsDaoStub(),
+                                                                                     attributesDao: AttributesDaoStub(),
+                                                                                     uniqueKeyDao: keyDao,
+                                                                                     hashedImpressionDao: HashedImpressionDaoMock()), expirationPeriod: 100)
 
     }
 
