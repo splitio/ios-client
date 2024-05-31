@@ -49,4 +49,3 @@ struct ServiceConstants {
         var maxSyncPeriodInMillis: Int64
     }
 }
-

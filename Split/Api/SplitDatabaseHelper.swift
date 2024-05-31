@@ -124,8 +124,9 @@ struct SplitDatabaseHelper {
         }
 
         let persistentHashedImpressionsStorage = DefaultPersistentHashedImpressionsStorage(database: splitDatabase)
-        let hashedImpressionsStorage = DefaultHashedImpressionsStorage(cache: LRUCache(capacity: ServiceConstants.lastSeenImpressionCachSize),
-                                                                       persistentStorage: persistentHashedImpressionsStorage)
+        let hashedImpressionsStorage = DefaultHashedImpressionsStorage(
+            cache: LRUCache(capacity: ServiceConstants.lastSeenImpressionCachSize),
+            persistentStorage: persistentHashedImpressionsStorage)
 
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      splitsStorage: splitsStorage,

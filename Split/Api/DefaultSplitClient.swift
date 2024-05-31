@@ -72,9 +72,10 @@ extension DefaultSplitClient {
         on(event: event, runInBackground: true, queue: queue, execute: action)
     }
 
-    private func on(event: SplitEvent, runInBackground: Bool,
-                   queue: DispatchQueue?, execute action: @escaping SplitAction) {
-
+    private func on(event: SplitEvent,
+                    runInBackground: Bool,
+                    queue: DispatchQueue?,
+                    execute action: @escaping SplitAction) {
 
         guard let factory = clientManager?.splitFactory else {
             return
@@ -82,7 +83,7 @@ extension DefaultSplitClient {
 
         let task = SplitEventActionTask(action: action, event: event,
                                         runInBackground: runInBackground,
-                                        factory: factory, 
+                                        factory: factory,
                                         queue: queue)
         task.event = event
         on(event: event, executeTask: task)
@@ -244,7 +245,8 @@ extension DefaultSplitClient {
         return treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes)
     }
 
-    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, 
+                                                 attributes: [String: Any]?) -> [String: SplitResult] {
         return treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes)
     }
 
