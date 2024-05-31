@@ -41,7 +41,7 @@ class LocalhostSynchronizerTests: XCTestCase {
         let eventsManager = SplitEventsManagerMock()
         let datasource = LocalhostApiDataSource()
 
-        _ =  LocalhostSynchronizer(featureFlagsStorage: storage,
+        let sync =  LocalhostSynchronizer(featureFlagsStorage: storage,
                                           featureFlagsDataSource: datasource,
                                           eventsManager: eventsManager)
 
@@ -49,6 +49,8 @@ class LocalhostSynchronizerTests: XCTestCase {
         datasource.update(yaml: yamlContent)
         XCTAssertFalse(prevSdkReady)
         XCTAssertTrue(eventsManager.isSplitsReadyFired)
+
+        sync.stop()
     }
 
     func testUpdateYaml() {

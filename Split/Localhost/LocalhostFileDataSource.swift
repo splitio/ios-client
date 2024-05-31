@@ -142,9 +142,9 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
         }
 
         if !LocalhostFileCopier.copySourceFile(name: fileInfo.name,
-                                                               type: fileInfo.type,
-                                                               fileStorage: fileStorage,
-                                                               bundle: bundle) {
+                                               type: fileInfo.type,
+                                               fileStorage: fileStorage,
+                                               bundle: bundle) {
             Logger.e("Localhost file name \(fileName) not found. Please check name.")
             return nil
         }
