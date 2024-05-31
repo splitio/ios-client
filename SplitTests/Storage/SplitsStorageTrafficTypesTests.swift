@@ -44,8 +44,10 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         var splitsAr = [Split]()
         splitsAr.append(newSplit(name: "s0", trafficType: "trafficType0", status: .archived))
         splitsAr.append(newSplit(name: "s1", trafficType: "trafficType1", status: .archived))
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: splitsAr,
-                                                               changeNumber: 200, updateTimestamp: 200))
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [],
+                                                                   archivedSplits: splitsAr,
+                                                                   changeNumber: 200, 
+                                                                   updateTimestamp: 200))
 
         XCTAssertFalse(splitsStorage.isValidTrafficType(name:  "trafficType0"))
         XCTAssertFalse(splitsStorage.isValidTrafficType(name:  "trafficType1"))
@@ -61,8 +63,10 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         splitsAr.append(newSplit(name: "s01", trafficType: "trafficType0", status: .archived))
         splitsAc.append(newSplit(name: "s02", trafficType: "trafficType0", status: .active))
 
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splitsAc, archivedSplits: splitsAr,
-                                                               changeNumber: 200, updateTimestamp: 200))
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splitsAc,
+                                                                   archivedSplits: splitsAr,
+                                                                   changeNumber: 200,
+                                                                   updateTimestamp: 200))
 
         XCTAssertTrue(splitsStorage.isValidTrafficType(name:  "trafficType0"))
         XCTAssertTrue(splitsStorage.isValidTrafficType(name:  "trafficType1"))
@@ -78,8 +82,10 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         splits.append(newSplit(name: "s02", trafficType: "trafficType0", status: .active))
         splits.append(newSplit(name: "s02", trafficType: "trafficType0", status: .archived))
 
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: splits,
-                                                               changeNumber: 200, updateTimestamp: 200))
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [],
+                                                                   archivedSplits: splits,
+                                                                   changeNumber: 200,
+                                                                   updateTimestamp: 200))
 
         XCTAssertFalse(splitsStorage.isValidTrafficType(name:  "trafficType0"))
         XCTAssertTrue(splitsStorage.isValidTrafficType(name:  "trafficType1"))
@@ -95,9 +101,11 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         splits.append(newSplit(name: "s02", trafficType: "trafficType0", status: .archived))
         splits.append(newSplit(name: "s02", trafficType: "trafficType0", status: .archived))
 
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: splits,
-                                                               changeNumber: 200, updateTimestamp: 200))
-    
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [],
+                                                                   archivedSplits: splits,
+                                                                   changeNumber: 200,
+                                                                   updateTimestamp: 200))
+
         XCTAssertFalse(splitsStorage.isValidTrafficType(name:  "trafficType0"))
         XCTAssertTrue(splitsStorage.isValidTrafficType(name:  "trafficType1"))
         XCTAssertTrue(splitsStorage.isValidTrafficType(name:  "trafficType2"))
@@ -116,9 +124,11 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         splits.append(s2)
         splits.append(s2)
 
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [s2ar],
-                                                               changeNumber: 200, updateTimestamp: 200))
-        
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits,
+                                                                   archivedSplits: [s2ar],
+                                                                   changeNumber: 200,
+                                                                   updateTimestamp: 200))
+
         XCTAssertTrue(splitsStorage.isValidTrafficType(name:  "tt"))
         XCTAssertFalse(splitsStorage.isValidTrafficType(name:  "mytt"))
     }
@@ -135,8 +145,10 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         splits.append(s2t1)
         splits.append(s2t1)
         splits.append(s2t2)
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [],
-                                                               changeNumber: 200, updateTimestamp: 200))
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits,
+                                                                   archivedSplits: [],
+                                                                   changeNumber: 200,
+                                                                   updateTimestamp: 200))
         XCTAssertFalse(splitsStorage.isValidTrafficType(name:  "tt"))
         XCTAssertTrue(splitsStorage.isValidTrafficType(name:  "mytt"))
     }
@@ -155,9 +167,11 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         splits.append(s2t1)
         splits.append(s2t2)
 
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [],
-                                                               changeNumber: 200, updateTimestamp: 200))
-        
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits,
+                                                                   archivedSplits: [],
+                                                                   changeNumber: 200,
+                                                                   updateTimestamp: 200))
+
         XCTAssertTrue(splitsStorage.isValidTrafficType(name:  "tt"))
         XCTAssertTrue(splitsStorage.isValidTrafficType(name:  "mytt"))
     }

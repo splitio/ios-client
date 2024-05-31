@@ -15,7 +15,7 @@ class HashedImpressionsStorageMock: HashedImpressionsStorage {
 
     var loadDbCalled = false
     func loadFromDb() {
-        var loadDbCalled = true
+        loadDbCalled = true
     }
 
     var saveCalled = false

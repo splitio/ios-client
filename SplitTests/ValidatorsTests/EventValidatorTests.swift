@@ -19,9 +19,10 @@ class EventValidatorTests: XCTestCase {
         let split3 = newSplit(trafficType: "archivedtraffictype", status: .archived)
 
         let splitsStorage = SplitsStorageStub()
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split1, split2],
-                                                               archivedSplits: [split3], changeNumber: 100,
-                                                               updateTimestamp: 100))
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split1, split2],
+                                                                   archivedSplits: [split3],
+                                                                   changeNumber: 100,
+                                                                   updateTimestamp: 100))
         validator = DefaultEventValidator(splitsStorage: splitsStorage)
     }
 

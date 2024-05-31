@@ -43,7 +43,7 @@ class SemverIntegrationTest: XCTestCase {
         XCTAssertEqual("on", client?.getTreatment("semver_equalto", attributes: ["version": "1.22.9"]))
         XCTAssertEqual("off", client?.getTreatment("semver_equalto", attributes: ["version": "1.22.9+build"]))
         XCTAssertEqual("off", client?.getTreatment("semver_equalto", attributes: ["version": "1.22.9-rc.0"]))
-        XCTAssertEqual("off", client?.getTreatment("semver_equalto", attributes: ["version": nil]))
+        XCTAssertEqual("off", client?.getTreatment("semver_equalto", attributes: nil))
         XCTAssertEqual("off", client?.getTreatment("semver_equalto"))
 
         assertImpressions(labelCount: 1, defaultLabelCount: 4, totalCount: 5, defaultLabel: "equal to semver")
@@ -56,7 +56,7 @@ class SemverIntegrationTest: XCTestCase {
         XCTAssertEqual("on", client?.getTreatment("semver_inlist", attributes: ["version": "1.22.9"]))
         XCTAssertEqual("off", client?.getTreatment("semver_inlist", attributes: ["version": "1.22.9+build"]))
         XCTAssertEqual("off", client?.getTreatment("semver_inlist", attributes: ["version": "1.22.9-rc.0"]))
-        XCTAssertEqual("off", client?.getTreatment("semver_inlist", attributes: ["version": nil]))
+        XCTAssertEqual("off", client?.getTreatment("semver_inlist", attributes: nil))
 
         assertImpressions(labelCount: 2, defaultLabelCount: 3, totalCount: 5, defaultLabel: "in list semver")
     }
@@ -82,7 +82,7 @@ class SemverIntegrationTest: XCTestCase {
         XCTAssertEqual("on", client?.getTreatment("semver_less_or_equalto", attributes: ["version": "1.22.9+build"]))
         XCTAssertEqual("on", client?.getTreatment("semver_less_or_equalto", attributes: ["version": "1.22.9-rc.0"]))
         XCTAssertEqual("on", client?.getTreatment("semver_less_or_equalto", attributes: ["version": "1.21.9"]))
-        XCTAssertEqual("off", client?.getTreatment("semver_less_or_equalto", attributes: ["version": nil]))
+        XCTAssertEqual("off", client?.getTreatment("semver_less_or_equalto", attributes: nil))
 
         assertImpressions(labelCount: 4, defaultLabelCount: 2, totalCount: 6, defaultLabel: "less than or equal to semver")
     }

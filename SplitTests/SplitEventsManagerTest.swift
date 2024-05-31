@@ -17,15 +17,8 @@ class SplitEventsManagerTest: XCTestCase {
     let intervalExecutionTime = 1
     var queue = DispatchQueue(label: "test", attributes: .concurrent)
     
-    override func setUp() {
-    }
-    
-    override func tearDown() {
-    }
-    
     func testSdkReady() {
         var shouldStop = false
-        let client = SplitClientStub()
         let config: SplitClientConfig = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         let updatedTask = TestTask(exp: nil)
@@ -93,7 +86,6 @@ class SplitEventsManagerTest: XCTestCase {
         let config: SplitClientConfig = SplitClientConfig()
         config.sdkReadyTimeOut = 1000
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
-        let client = SplitClientStub()
         eventManager.start()
 
         let cacheExp = XCTestExpectation()
@@ -120,7 +112,6 @@ class SplitEventsManagerTest: XCTestCase {
         let config: SplitClientConfig = SplitClientConfig()
         config.sdkReadyTimeOut = 1000
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
-        let client = SplitClientStub()
         eventManager.start()
 
         let timeoutExp = XCTestExpectation()
@@ -138,7 +129,6 @@ class SplitEventsManagerTest: XCTestCase {
         let config: SplitClientConfig = SplitClientConfig()
         config.sdkReadyTimeOut = 1000
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
-        let client = SplitClientStub()
         eventManager.start()
 
         let expectationTimeout = XCTestExpectation(description: "SDK Readky triggered")
@@ -166,7 +156,6 @@ class SplitEventsManagerTest: XCTestCase {
     func testSdkUpdateSplits() {
         let sdkUpdatedExp = XCTestExpectation()
 
-        let client =  SplitClientStub()
         let config: SplitClientConfig = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
@@ -193,7 +182,6 @@ class SplitEventsManagerTest: XCTestCase {
     func testSdkUpdateMySegments() {
         let sdkUpdatedExp = XCTestExpectation()
 
-        let client =  SplitClientStub()
         let config: SplitClientConfig = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
@@ -219,8 +207,6 @@ class SplitEventsManagerTest: XCTestCase {
 
     func testSplitKilledWhenReady() {
 
-
-        let client =  SplitClientStub()
         let config: SplitClientConfig = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
@@ -247,7 +233,6 @@ class SplitEventsManagerTest: XCTestCase {
     func testSplitKilledNoSdkReady() {
         let sdkTiemoutExp = XCTestExpectation()
         let timeout = 3.0
-        let client =  SplitClientStub()
         let config: SplitClientConfig = SplitClientConfig()
         config.sdkReadyTimeOut = Int(timeout) - 1
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)

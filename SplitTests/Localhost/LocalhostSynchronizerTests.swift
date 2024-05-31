@@ -41,7 +41,7 @@ class LocalhostSynchronizerTests: XCTestCase {
         let eventsManager = SplitEventsManagerMock()
         let datasource = LocalhostApiDataSource()
 
-        let sync =  LocalhostSynchronizer(featureFlagsStorage: storage,
+        _ =  LocalhostSynchronizer(featureFlagsStorage: storage,
                                           featureFlagsDataSource: datasource,
                                           eventsManager: eventsManager)
 

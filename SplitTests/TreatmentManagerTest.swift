@@ -47,8 +47,10 @@ class TreatmentManagerTest: XCTestCase {
             let splits = loadSplitsFile()
             let mySegments = ["s1", "s2", "test_copy"]
             splitsStorage = SplitsStorageStub()
-            splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [],
-                                                                   changeNumber: -1, updateTimestamp: 100))
+            _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits,
+                                                                       archivedSplits: [],
+                                                                       changeNumber: -1, 
+                                                                       updateTimestamp: 100))
             mySegmentsStorage = MySegmentsStorageStub()
             mySegmentsStorage.set(mySegments, forKey: "the_key")
             storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
