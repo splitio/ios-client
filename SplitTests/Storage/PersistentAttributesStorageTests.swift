@@ -32,7 +32,8 @@ class PersistentAttributesStorageTests: XCTestCase {
                                                                        splitDao: SplitDaoStub(),
                                                                        mySegmentsDao: MySegmentsDaoStub(),
                                                                        attributesDao: attributesDao,
-                                                                       uniqueKeyDao: UniqueKeyDaoStub()))
+                                                                       uniqueKeyDao: UniqueKeyDaoStub(), 
+                                                                       hashedImpressionDao: HashedImpressionDaoMock()))
     }
     
     func  testSet() {

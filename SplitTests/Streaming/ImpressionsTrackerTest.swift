@@ -24,11 +24,14 @@ class ImpressionsTrackerTest: XCTestCase {
     var uniqueKeysRecorderWorker: RecorderWorkerStub!
     var periodicUniqueKeysRecorderWorker: PeriodicRecorderWorkerStub!
     var flagSetsCache: FlagSetsCacheMock!
+    var impressionsObserver: ImpressionsObserver!
 
     var uniqueKeyTracker: UniqueKeyTrackerStub!
 
+    var notificationHelper: NotificationHelperStub!
+
     func testImpressionPushOptimized() {
-        createImpressionsTracker(impressionsMode: .optimized)
+        createImpressionsTracker(impressionsMode: .optimized, realObserver: true)
         let impression = createImpression()
 
         for _ in 0..<5 {
@@ -114,15 +117,41 @@ class ImpressionsTrackerTest: XCTestCase {
         XCTAssertTrue(periodicUniqueKeysRecorderWorker.startCalled)
     }
 
-    func testPause() {
-        createImpressionsTracker(impressionsMode: .optimized)
+    func testPauseOptimized() {
+        pauseTest(mode: .optimized)
+    }
+
+    func testPauseDebug() {
+        pauseTest(mode: .debug)
+    }
+
+    func testPauseNone() {
+        pauseTest(mode: .none)
+    }
+
+    func pauseTest(mode: ImpressionsMode) {
+        createImpressionsTracker(impressionsMode: mode)
+
+        let observer = impressionsObserver as! ImpressionsObserverMock
+
         impressionsTracker.start()
         impressionsTracker.pause()
 
-        XCTAssertTrue(periodicImpressionsRecorderWorker.pauseCalled)
-        XCTAssertTrue(periodicImpressionsCountRecorderWorker.pauseCalled)
-        XCTAssertFalse(periodicUniqueKeysRecorderWorker.pauseCalled)
+        if mode != .none {
+            XCTAssertTrue(periodicImpressionsRecorderWorker.pauseCalled)
+        }
 
+        if mode != .debug {
+            XCTAssertTrue(periodicImpressionsCountRecorderWorker.pauseCalled)
+            XCTAssertTrue(impressionsCountStorage.pushManyCalled)
+        }
+
+        if mode == .none {
+            XCTAssertTrue(periodicUniqueKeysRecorderWorker.pauseCalled)
+            XCTAssertTrue(uniqueKeyTracker.saveAndClearCalled)
+        }
+
+        XCTAssertTrue(observer.saveCalled)
     }
 
     func testResume() {
@@ -198,11 +227,13 @@ class ImpressionsTrackerTest: XCTestCase {
 
     func testDestroyOptimized() {
         createImpressionsTracker(impressionsMode: .optimized)
+        let observer = impressionsObserver as! ImpressionsObserverMock
         impressionsTracker.start()
         impressionsTracker.destroy()
         XCTAssertTrue(periodicImpressionsRecorderWorker.destroyCalled)
         XCTAssertTrue(periodicImpressionsCountRecorderWorker.destroyCalled)
         XCTAssertFalse(periodicUniqueKeysRecorderWorker.destroyCalled)
+        XCTAssertTrue(observer.saveCalled)
     }
 
     func testDestroyDebug() {
@@ -264,7 +295,8 @@ class ImpressionsTrackerTest: XCTestCase {
 
     }
 
-    private func createImpressionsTracker(impressionsMode: ImpressionsMode) {
+    private func createImpressionsTracker(impressionsMode: ImpressionsMode, 
+                                          realObserver: Bool = false) {
 
         let config = SplitClientConfig()
         config.impressionsMode = impressionsMode.rawValue
@@ -306,7 +338,9 @@ class ImpressionsTrackerTest: XCTestCase {
                                                      mySegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub(),
                                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(), 
-                                                     flagSetsCache: flagSetsCache)
+                                                     flagSetsCache: flagSetsCache,
+                                                     persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
+                                                     hashedImpressionsStorage: HashedImpressionsStorageMock())
 
         let apiFacade = try! SplitApiFacade.builder()
             .setUserKey("userKey")
@@ -318,12 +352,18 @@ class ImpressionsTrackerTest: XCTestCase {
 
         let impressionsRecorderSyncHelper = ImpressionsRecorderSyncHelper(impressionsStorage: impressionsStorage,
                                                                           accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10))
+
+        self.impressionsObserver = (realObserver ? DefaultImpressionsObserver(storage: storageContainer.hashedImpressionsStorage) : ImpressionsObserverMock())
+
+        notificationHelper = NotificationHelperStub()
         impressionsTracker = DefaultImpressionsTracker(splitConfig: config,
                                                        splitApiFacade: apiFacade,
                                                        storageContainer: storageContainer,
                                                        syncWorkerFactory: syncWorkerFactory,
                                                        impressionsSyncHelper: impressionsRecorderSyncHelper,
-        uniqueKeyTracker: uniqueKeyTracker, notificationHelper: nil)
+                                                       uniqueKeyTracker: uniqueKeyTracker,
+                                                       notificationHelper: notificationHelper,
+                                                       impressionsObserver: impressionsObserver)
     }
 }
 

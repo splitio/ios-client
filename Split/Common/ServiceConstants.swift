@@ -27,14 +27,16 @@ struct ServiceConstants {
     static let controlNoCacheHeader = [ServiceConstants.cacheControlHeader: ServiceConstants.cacheControlNoCache]
     static let backgroundSyncPeriod = 15.0 * 60 // 15 min
     static let defaultImpressionCountRowsPop = 200
-    static let lastSeenImpressionCachSize = 500
+    static let lastSeenImpressionCachSize = 2000
     static let databaseExtension = "sqlite"
     static let defaultSseConnectionDelayInSecs: Int64 = 60
     static let retryTimeInSeconds = 0.5
     static let retryCount = 3
     static let uniqueKeyBulkSize = 50
     static let maxUniqueKeyQueueSize = 30000
+    static let maxHashedImpressionsQueueSize = 30
     static let aes128KeyLength = 16
+    static let hashedImpressionsExpirationMs: Int64 = 60 * 60 * 1000 * 4 // 4 hs
 
     static let defaultLocalhostRefreshRate = 10
 
@@ -47,4 +49,3 @@ struct ServiceConstants {
         var maxSyncPeriodInMillis: Int64
     }
 }
-

@@ -53,6 +53,7 @@ protocol SplitDatabase {
     var eventDao: EventDao { get }
     var impressionDao: ImpressionDao { get }
     var impressionsCountDao: ImpressionsCountDao { get }
+    var hashedImpressionDao: HashedImpressionDao { get }
     var generalInfoDao: GeneralInfoDao { get }
     var attributesDao: AttributesDao { get }
     var uniqueKeyDao: UniqueKeyDao { get }
@@ -64,6 +65,7 @@ class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
     var eventDao: EventDao
     var impressionDao: ImpressionDao
     var impressionsCountDao: ImpressionsCountDao
+    var hashedImpressionDao: HashedImpressionDao
     var generalInfoDao: GeneralInfoDao
     var attributesDao: AttributesDao
     var uniqueKeyDao: UniqueKeyDao
@@ -81,5 +83,6 @@ class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
         self.mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.attributesDao = CoreDataAttributesDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: coreDataHelper, cipher: cipher)
+        self.hashedImpressionDao = CoreDataHashedImpressionDao(coreDataHelper: coreDataHelper)
     }
 }

@@ -123,6 +123,11 @@ struct SplitDatabaseHelper {
                                                expirationPeriod: kExpirationPeriod)
         }
 
+        let persistentHashedImpressionsStorage = DefaultPersistentHashedImpressionsStorage(database: splitDatabase)
+        let hashedImpressionsStorage = DefaultHashedImpressionsStorage(
+            cache: LRUCache(capacity: ServiceConstants.lastSeenImpressionCachSize),
+            persistentStorage: persistentHashedImpressionsStorage)
+
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      splitsStorage: splitsStorage,
                                      persistentSplitsStorage: persistentSplitsStorage,
@@ -135,7 +140,9 @@ struct SplitDatabaseHelper {
                                      mySegmentsStorage: mySegmentsStorage,
                                      attributesStorage: attributesStorage,
                                      uniqueKeyStorage: uniqueKeyStorage,
-                                     flagSetsCache: flagSetsCache)
+                                     flagSetsCache: flagSetsCache,
+                                     persistentHashedImpressionsStorage: persistentHashedImpressionsStorage,
+                                     hashedImpressionsStorage: hashedImpressionsStorage)
     }
 
     static func openDatabase(dataFolderName: String,

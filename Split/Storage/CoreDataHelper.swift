@@ -16,6 +16,7 @@ enum CoreDataEntity: String {
     case generalInfo = "GeneralInfo"
     case attribute = "Attribute"
     case uniqueKey = "UniqueKey"
+    case hashedImpression = "HashedImpression"
 }
 
 class CoreDataHelper {
@@ -40,6 +41,10 @@ class CoreDataHelper {
     }
 
     func delete(entity: CoreDataEntity, by field: String, values: [String]) {
+        delete(entity: entity, predicate: NSPredicate(format: "\(field) IN %@", values))
+    }
+
+    func delete(entity: CoreDataEntity, by field: String, values: [Int]) {
         delete(entity: entity, predicate: NSPredicate(format: "\(field) IN %@", values))
     }
 

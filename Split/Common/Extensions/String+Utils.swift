@@ -20,6 +20,4 @@ extension String {
     var dataBytes: Data? {
         return self.data(using: .utf8)
     }
-
-
 }

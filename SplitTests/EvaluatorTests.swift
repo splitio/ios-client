@@ -22,7 +22,10 @@ class EvaluatorTests: XCTestCase {
 
             let splits = loadSplitsFile()
             let splitsStorage = SplitsStorageStub()
-            splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits, archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
+            _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits,
+                                                                       archivedSplits: [],
+                                                                       changeNumber: 100,
+                                                                       updateTimestamp: 100))
             mySegmentsStorage = MySegmentsStorageStub()
             mySegmentsStorage.set(mySegments, forKey: matchingKey)
             client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
@@ -373,7 +376,10 @@ class EvaluatorTests: XCTestCase {
         let mySegments: [String] = []
         let split = loadSplit(splitName: fileName)!
         let splitsStorage = SplitsStorageStub()
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split],
+                                                               archivedSplits: [],
+                                                               changeNumber: 100, 
+                                                               updateTimestamp: 100))
         let mySegmentsStorage = MySegmentsStorageStub()
         mySegmentsStorage.set(mySegments, forKey: matchingKey)
         client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
@@ -383,7 +389,10 @@ class EvaluatorTests: XCTestCase {
     
     func customEvaluator(split: Split) -> Evaluator {
         let splitsStorage = SplitsStorageStub()
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], 
+                                                               archivedSplits: [],
+                                                               changeNumber: 100,
+                                                               updateTimestamp: 100))
         let mySegmentsStorage = MySegmentsStorageStub()
         mySegmentsStorage.set([], forKey: matchingKey)
         client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)

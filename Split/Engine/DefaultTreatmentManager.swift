@@ -153,9 +153,10 @@ extension DefaultTreatmentManager {
 extension DefaultTreatmentManager {
 
     private func featureFlagsFromSets(_ sets: [String], validationTag: String) -> [String] {
-        let validatedSets = flagSetsValidator.validateOnEvaluation(sets,
-                                                                   calledFrom: validationTag,
-                                                                   setsInFilter: splitConfig.bySetsFilter()?.values ?? [])
+        let validatedSets = flagSetsValidator.validateOnEvaluation(
+            sets,
+            calledFrom: validationTag,
+            setsInFilter: splitConfig.bySetsFilter()?.values ?? [])
         return flagSetsCache.getFeatureFlagNames(forFlagSets: validatedSets)
     }
 
@@ -247,7 +248,9 @@ extension DefaultTreatmentManager {
                            + "Make sure to wait for SDK readiness before using this method"
     }
 
-    private func evaluateIfReady(splitName: String, attributes: [String: Any]?, validationTag: String) throws -> EvaluationResult {
+    private func evaluateIfReady(splitName: String, 
+                                 attributes: [String: Any]?,
+                                 validationTag: String) throws -> EvaluationResult {
         if !isSdkReady() {
             validationLogger.w(message: sdkNoReadyMessage(splitName: splitName), tag: validationTag)
             telemetryProducer?.recordNonReadyUsage()

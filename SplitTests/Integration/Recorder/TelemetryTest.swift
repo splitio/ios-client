@@ -33,6 +33,7 @@ class TelemetryTest: XCTestCase {
         splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
         // To allow firing ready from cache
         splitDatabase.splitDao.insertOrUpdate(split: TestingHelper.buildSplit(name: splitName, treatment: "t1"))
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
 
         session = HttpSessionMock()
         reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -202,8 +203,10 @@ class TelemetryTest: XCTestCase {
         let splitHelper = SplitHelper()
         let splitsStorage = storageContainer.splitsStorage
         let split = splitHelper.createDefaultSplit(named: "SPLIT")
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], archivedSplits: [],
-                                                               changeNumber: -1, updateTimestamp: 100))
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split],
+                                                                   archivedSplits: [],
+                                                                   changeNumber: -1, 
+                                                                   updateTimestamp: 100))
         let mySegmentsStorage = storageContainer.mySegmentsStorage
 
         _ = InternalSplitClientStub(splitsStorage: splitsStorage,

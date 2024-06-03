@@ -243,7 +243,8 @@ public class SplitClientConfig: NSObject {
     ///    Allows to perform a custom authentication on HTTPS requests.
     ///    This component must implement SplitHttpsAuthenticator protocol.
     ///    The function _authenticate:session:challenge:completionHandler_ will be executed when the
-    ///     [urlSession(_:didReceive:completionHandler:)](https://developer.apple.com/documentation/foundation/urlsessiondelegate/1409308-urlsession) is called.
+    ///     [urlSession(_:didReceive:completionHandler:)]
+    ///     (https://developer.apple.com/documentation/foundation/urlsessiondelegate/1409308-urlsession) is called.
     ///
     @objc public var httpsAuthenticator: SplitHttpsAuthenticator?
 

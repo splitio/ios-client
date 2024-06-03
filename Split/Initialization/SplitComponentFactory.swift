@@ -68,7 +68,8 @@ class SplitComponentFactory {
             return obj
         }
 
-        let flagSetsValidator = DefaultFlagSetsValidator(telemetryProducer: try getSplitStorageContainer().telemetryStorage)
+        let flagSetsValidator = DefaultFlagSetsValidator(
+            telemetryProducer: try getSplitStorageContainer().telemetryStorage)
         let filterBuilder = FilterBuilder(flagSetsValidator: flagSetsValidator)
         splitsFilterQueryString = try filterBuilder.add(filters: splitClientConfig.sync.filters).build()
         let component: EndpointFactory = EndpointFactory(serviceEndpoints: splitClientConfig.serviceEndpoints,
@@ -152,13 +153,15 @@ class SplitComponentFactory {
             uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: uniqueKeyStorage)
         }
         let  component: ImpressionsTracker
-        =  DefaultImpressionsTracker(splitConfig: splitClientConfig,
-                                     splitApiFacade: try getSplitApiFacade(),
-                                     storageContainer: storageContainer,
-                                     syncWorkerFactory: try buildSyncWorkerFactory(),
-                                     impressionsSyncHelper: try buildImpressionsSyncHelper(),
-                                     uniqueKeyTracker: uniqueKeyTracker,
-                                     notificationHelper: notificationHelper)
+        =  DefaultImpressionsTracker(
+            splitConfig: splitClientConfig,
+            splitApiFacade: try getSplitApiFacade(),
+            storageContainer: storageContainer,
+            syncWorkerFactory: try buildSyncWorkerFactory(),
+            impressionsSyncHelper: try buildImpressionsSyncHelper(),
+            uniqueKeyTracker: uniqueKeyTracker,
+            notificationHelper: notificationHelper,
+            impressionsObserver: DefaultImpressionsObserver(storage: storageContainer.hashedImpressionsStorage))
         catalog.add(component: component)
         return component
     }
@@ -333,14 +336,15 @@ extension SplitComponentFactory {
     }
 
     func buildSyncWorkerFactory() throws -> SyncWorkerFactory {
-        let component = DefaultSyncWorkerFactory(userKey: userKey,
-                                                 splitConfig: splitClientConfig,
-                                                 splitsFilterQueryString: splitsFilterQueryString,
-                                                 flagsSpec: flagsSpec,
-                                                 apiFacade: try getSplitApiFacade(),
-                                                 storageContainer: try getSplitStorageContainer(),
-                                                 splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: splitClientConfig.bySetsFilter()),
-                                                 eventsManager: getSplitEventsManagerCoordinator())
+        let component = DefaultSyncWorkerFactory(
+            userKey: userKey,
+            splitConfig: splitClientConfig,
+            splitsFilterQueryString: splitsFilterQueryString,
+            flagsSpec: flagsSpec,
+            apiFacade: try getSplitApiFacade(),
+            storageContainer: try getSplitStorageContainer(),
+            splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: splitClientConfig.bySetsFilter()),
+            eventsManager: getSplitEventsManagerCoordinator())
         catalog.add(component: component)
         return component
     }

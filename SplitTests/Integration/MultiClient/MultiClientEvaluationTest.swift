@@ -47,12 +47,16 @@ class MultiClientEvaluationTest: XCTestCase {
 
 
     override func setUp() {
+        IntegrationCoreDataHelper.observeChanges()
         readyExps = [String: XCTestExpectation]()
         setupFactory()
     }
 
+    override func tearDown() {
+        IntegrationCoreDataHelper.stopObservingChanges()
+    }
+
     func testEvaluation() {
-//        var cache = [String: Bool]()
         clients[defaultKey] = factory.client
 
         // Using all new API methods
@@ -91,14 +95,20 @@ class MultiClientEvaluationTest: XCTestCase {
         }
     }
 
-    // str_value_a = no
-
     func testEvaluationFromCache() {
+
+        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 1, entity: .generalInfo,
+                                                       operation: CrudKey.insert)
         var cache = [String: Bool]()
         let changes = try! Json.decodeFrom(json: getChanges().stringRepresentation, to: SplitChange.self)
         let db = TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
         db.splitDao.syncInsertOrUpdate(split: changes.splits[0])
+        db.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+
+        
         setupFactory(database: db)
+
+        wait(for: [dbExp], timeout: 10.0)
 
         clients[defaultKey] = factory.client
 
@@ -109,7 +119,6 @@ class MultiClientEvaluationTest: XCTestCase {
         doInAllClients { key, client in
             readyExps[key] = XCTestExpectation(description: "Ready \(key)")
             clients[key]?.on(event: SplitEvent.sdkReadyFromCache) {
-                print("key: \(key) ready")
                 self.readyExps[key]?.fulfill()
                 cache[key] = true
             }

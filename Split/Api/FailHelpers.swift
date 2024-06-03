@@ -42,7 +42,7 @@ class FailedClient: SplitClient {
     }
 
     func on(event: SplitEvent, runInBackground: Bool,
-                   execute action: @escaping SplitAction) {
+            execute action: @escaping SplitAction) {
     }
 
     func on(event: SplitEvent,
@@ -117,19 +117,19 @@ class FailedClient: SplitClient {
         return false
     }
 
-    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : String] {
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
         return [:]
     }
 
-    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : String] {
+    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String] {
         return [:]
     }
 
-    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : SplitResult] {
+    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
         return [:]
     }
 
-    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult] {
         return [:]
     }
 }

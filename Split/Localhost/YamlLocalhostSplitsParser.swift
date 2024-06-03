@@ -16,7 +16,7 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
     private let kKeysField = "keys"
 
     func parseContent(_ content: String) -> LocalhostSplits? {
-        
+
         var errorOccurred = false
         var loadedSplits = LocalhostSplits()
 

@@ -13,4 +13,3 @@ import Foundation
                       challenge: URLAuthenticationChallenge,
                       completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
 }
-

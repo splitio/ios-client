@@ -117,11 +117,12 @@ class SyncManagerBuilder {
 
         return  DefaultSseNotificationProcessor(
             notificationParser: DefaultSseNotificationParser(),
-            splitsUpdateWorker: SplitsUpdateWorker(synchronizer: synchronizer,
-                                                   splitsStorage: storageContainer.splitsStorage,
-                                                   splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: splitConfig?.bySetsFilter()),
-                                                   featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder(),
-                                                   telemetryProducer: storageContainer.telemetryStorage),
+            splitsUpdateWorker: SplitsUpdateWorker(
+                synchronizer: synchronizer,
+                splitsStorage: storageContainer.splitsStorage,
+                splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: splitConfig?.bySetsFilter()),
+                featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder(),
+                telemetryProducer: storageContainer.telemetryStorage),
             splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
                                              splitsStorage: storageContainer.splitsStorage),
             mySegmentsUpdateWorker: mySegmentsUpdateWorker,

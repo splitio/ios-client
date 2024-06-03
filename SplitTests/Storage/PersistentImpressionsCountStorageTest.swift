@@ -24,7 +24,9 @@ class PersistentImpressionsCountStorageTests: XCTestCase {
                                                                                    splitDao: SplitDaoStub(),
                                                                                    mySegmentsDao: MySegmentsDaoStub(),
                                                                                    attributesDao: AttributesDaoStub(),
-                                                                                   uniqueKeyDao: UniqueKeyDaoStub()), expirationPeriod: 100)
+                                                                                   uniqueKeyDao: UniqueKeyDaoStub(), 
+                                                                                   hashedImpressionDao: HashedImpressionDaoMock()),
+                                                       expirationPeriod: 100)
 
     }
 

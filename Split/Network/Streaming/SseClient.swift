@@ -58,8 +58,10 @@ class DefaultSseClient: SseClient {
                 SseClientConstants.pushNotificationVersionParam: SseClientConstants.pushNotificationVersionValue
             ]
             do {
-                self.streamRequest = try self.httpClient.sendStreamRequest(endpoint: self.endpoint,
-                                                                           parameters: HttpParameters(values: parameters), headers: self.endpoint.headers)
+                self.streamRequest = try self.httpClient.sendStreamRequest(
+                    endpoint: self.endpoint,
+                    parameters: HttpParameters(values: parameters),
+                    headers: self.endpoint.headers)
                 .getResponse(responseHandler: self.responseHandler(completion: completion),
                              incomingDataHandler: self.incommingDataHandler(completion: completion),
                              closeHandler: self.closeHandler(),

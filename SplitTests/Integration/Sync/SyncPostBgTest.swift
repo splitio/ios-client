@@ -153,7 +153,7 @@ class SyncPostBgTest: XCTestCase {
             switch request.url.absoluteString {
             case let(urlString) where urlString.contains("splitChanges"):
                 let json = self.loadSplitsChangeFile()
-                self.increaseChangesHitCount()
+                _ = self.increaseChangesHitCount()
                 self.changesExp?.fulfill()
                 self.changesExp = nil
                 return TestDispatcherResponse(code: 200, data: Data(json.utf8))

@@ -107,6 +107,8 @@ class StreamingControlTest: XCTestCase {
 
         let treatmentDisabled = client.getTreatment(splitName)
 
+        wait()
+
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual("on", treatmentReady)
         XCTAssertEqual("on", treatmentPaused)
