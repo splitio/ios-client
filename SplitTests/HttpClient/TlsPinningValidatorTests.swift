@@ -7,104 +7,62 @@
 //
 
 import Foundation
+import Security
 import XCTest
 @testable import Split
 
 class TlsPinningValidatorTests: XCTestCase {
 
-    let validator = DefaultTlsPinValidator()
+    var validator: TlsPinValidator!
     override func setUp() {
+        validator = DefaultTlsPinValidator()
         Logger.shared.level = .verbose
     }
 
-    func testWhat() {
-        //        let keyData = SecurityHelper().loadPemData(name:"apple_public_key")
-        let keyData = FileHelper.loadFileData(sourceClass:self, name:"ec_apple_public_key", type: "der")
-
-        print("------------------")
-        print(keyData?.hexadecimalRepresentation ?? "NO KEY DATA")
-        print(" PERM------------------")
-
-        //        let cerDataPem = SecurityHelper().loadPemData(name:"developer.apple.com_ecpk", type: "cer")
-        //        print(cerDataPem?.hexadecimalRepresentation ?? "NO CER DATA")
-
-        let cerData = FileHelper.loadFileData(sourceClass:self, name:"developer.apple.com_ecpk", type: "der") as! NSData
-        print("DER ------------------")
-        //        print((cerData as Data?)?.hexadecimalRepresentation ?? "NO CER DATA")
-        let cert = SecCertificateCreateWithData(nil, cerData)
-
-        if let cert = cert {
-            let extKey  = validator.spki(from: cert)
-            print("ext key: \(extKey)")
-        }
-
-        XCTAssertNil(keyData)
-
-        XCTAssertNil(cerData)
+    func testEc256r1Spki() {
+        publicKeyExtractionTest(certName: "ec_256v1_cert",
+                                pubKeyName: "ec_256v1_pub",
+                                keyType: CertKeyType.secp256r1, debug: true)
     }
 
-    func testEc256k1_() {
-
-        let keyData = FileHelper.loadFileData(sourceClass:self, name:"ec_secp384r1_pub", type: "der")
-
-        print("------------------")
-        print(keyData?.hexadecimalRepresentation ?? "NO KEY DATA")
-        print(" PERM------------------")
-
-        //        let cerDataPem = SecurityHelper().loadPemData(name:"developer.apple.com_ecpk", type: "cer")
-        //        print(cerDataPem?.hexadecimalRepresentation ?? "NO CER DATA")
-
-        let cerData = FileHelper.loadFileData(sourceClass:self, name:"ec_secp384r1_cert", type: "der") as! NSData
-        print("DER ------------------")
-        //        print((cerData as Data?)?.hexadecimalRepresentation ?? "NO CER DATA")
-        let cert = SecCertificateCreateWithData(nil, cerData)
-
-        if let cert = cert {
-            let extKey  = validator.spki(from: cert)
-            print("ext key: \(extKey)")
-        }
-
-        XCTAssertNil(keyData)
-
-        XCTAssertNil(cerData)
+    func testEc384r1Spki() {
+        publicKeyExtractionTest(certName: "ec_secp384r1_cert",
+                                pubKeyName: "ec_secp384r1_pub",
+                                keyType: CertKeyType.secp384r1, debug: true)
     }
 
-    func testEc256k1() {
-        publicKeyExtractionTest(certName: "ec_secp256k1_cert", pubKeyName: "ec_secp256k1_pub", debug: true)
+    func testEc521r1Spki() {
+        publicKeyExtractionTest(certName: "ec_secp521r1_cert",
+                                pubKeyName: "ec_secp521r1_pub",
+                                keyType: CertKeyType.secp521r1, debug: true)
     }
 
-    func testEc384r1() {
-        publicKeyExtractionTest(certName: "ec_secp384r1_cert", pubKeyName: "ec_secp384r1_pub", debug: true)
+    func testAppleEcSpki() {
+        publicKeyExtractionTest(certName: "developer.apple.com_ecpk",
+                                pubKeyName: "ec_apple_public_key",
+                                keyType: CertKeyType.secp256r1, debug: true)
     }
 
-    func testEc521r1() {
-        publicKeyExtractionTest(certName: "ec_secp521r1_cert", pubKeyName: "ec_secp521r1_pub", debug: true)
+    func testRsa2048Spki() {
+        publicKeyExtractionTest(certName: "rsa_2048_cert.pem",
+                                pubKeyName: "rsa_2048_pub",
+                                keyType: CertKeyType.rsa2048, debug: true)
     }
 
-    func testAppleEc() {
-        publicKeyExtractionTest(certName: "developer.apple.com_ecpk", pubKeyName: "ec_apple_public_key", debug: true)
+    func testRsa3072Spki() {
+        publicKeyExtractionTest(certName: "rsa_3072_cert.pem",
+                                pubKeyName: "rsa_3072_pub",
+                                keyType: CertKeyType.rsa3072, debug: true)
     }
 
-    func testRsa2048() {
-        publicKeyExtractionTest(certName: "rsa_2048_cert.pem", pubKeyName: "rsa_2048_pub", debug: true)
+    func testRsa4096Spki() {
+        publicKeyExtractionTest(certName: "rsa_4096_cert.pem", 
+                                pubKeyName: "rsa_4096_pub",
+                                keyType: CertKeyType.rsa4096, debug: true)
     }
 
-    func testRsa3072() {
-        publicKeyExtractionTest(certName: "rsa_3072_cert.pem", pubKeyName: "rsa_3072_pub", debug: true)
-    }
-
-    func testRsa4096() {
-        publicKeyExtractionTest(certName: "rsa_4096_cert.pem", pubKeyName: "rsa_4096_pub", debug: true)
-    }
-
-    func testEd25519() {
-        publicKeyExtractionTest(certName: "ed25519-cert", pubKeyName: "ed25519-pub", debug: true)
-
-        _ = SecurityHelper().loadPemData(name: "ed25519-cert")
-    }
-
-    func publicKeyExtractionTest(certName: String, pubKeyName: String, debug: Bool = false) {
-
+    func publicKeyExtractionTest(certName: String, pubKeyName: String, keyType: CertKeyType, debug: Bool = false) {
+        let secHelper = SecurityHelper()
         let keyData = FileHelper.loadFileData(sourceClass:self, name: pubKeyName, type: "der")
 
         if debug {
@@ -114,25 +72,27 @@ class TlsPinningValidatorTests: XCTestCase {
         }
 
         let loadedData = FileHelper.loadFileData(sourceClass:self, name: certName, type: "der")!
-        let cerData = loadedData as! NSData
-
-//        print("CER DATA ------------------------------")
-//        print(loadedData.hexadecimalRepresentation)
-//        print("---------------")
+        guard let cerData = loadedData as? NSData else {
+            print("Could not load certificate \(certName) for name")
+            XCTAssertTrue(false)
+            return
+        }
 
         let cert = SecCertificateCreateWithData(nil, cerData)
 
+        var extractedKey: CertSpki?
         if let cert = cert {
-            let extKey  = validator.spki(from: cert)
-
-            print("EXTRACTED PUB KEY ------------")
-            print(extKey?.data.hexadecimalRepresentation ?? "NO EXT KEY DATA")
-            print("------------------------------")
+            extractedKey  = validator.spki(from: cert)
+            if debug {
+                secHelper.inspect(certificate: cert)
+                print("EXTRACTED PUB KEY ------------")
+                print(extractedKey?.data.hexadecimalRepresentation ?? "NO EXT KEY DATA")
+                print("------------------------------")
+            }
         }
 
-        XCTAssertNil(keyData)
-
-        XCTAssertNil(cerData)
+        XCTAssertEqual(keyType, extractedKey?.type)
+        XCTAssertEqual(keyData, extractedKey?.data)
     }
 }
 
@@ -158,5 +118,87 @@ class SecurityHelper  {
 
         return  Data(final)
 
+    }
+
+    func inspect(certificate: SecCertificate) {
+        print("Certificate summary:")
+        print(SecCertificateCopySubjectSummary(certificate) as? String)
+        print(String(repeating: "-", count: 50))
+    }
+
+    func createProtectionSpace(host: String, certName: String) -> URLProtectionSpace? {
+        guard let serverTrust = createServerTrust(certName: certName) else {
+            return nil
+        }
+        return ProtectionSpaceMock(host: host, secTrust: serverTrust)
+    }
+
+    func createServerTrust(certName: String) -> SecTrust? {
+
+        guard let certificate = certificateFromFile(name: certName) else {
+            return nil
+        }
+
+        var trust: SecTrust?
+        SecTrustCreateWithCertificates(certificate, SecPolicyCreateBasicX509(), &trust)
+        return trust
+    }
+
+    func certificateFromFile(name: String) -> SecCertificate? {
+
+        let loadedData = FileHelper.loadFileData(sourceClass:self, name: name, type: "der")!
+        guard let cerData = loadedData as? NSData else {
+            print("Could not load certificate \(name) for name")
+            return nil
+        }
+
+        return SecCertificateCreateWithData(nil, cerData)
+    }
+
+    func createAuthChallenge(host: String, certName: String) -> URLAuthenticationChallenge? {
+
+        guard let protectionSpace = createProtectionSpace(host: host, certName: certName) else {
+            Logger.d("Could not create protection space mock")
+            return nil
+        }
+
+        // Create a mock URLAuthenticationChallenge
+        return URLAuthenticationChallenge(
+            protectionSpace: protectionSpace,
+            proposedCredential: nil,
+            previousFailureCount: 0,
+            failureResponse: nil,
+            error: nil,
+            sender: ChallengeSenderMock()
+        )
+    }
+
+}
+
+
+class ChallengeSenderMock: NSObject, URLAuthenticationChallengeSender {
+    func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) {}
+    func continueWithoutCredential(for challenge: URLAuthenticationChallenge) {}
+    func cancel(_ challenge: URLAuthenticationChallenge) {}
+}
+
+
+class ProtectionSpaceMock: URLProtectionSpace {
+
+    var serverTrustMock: SecTrust
+    init(host: String, secTrust: SecTrust) {
+        super.init(host: host, port: 443, 
+                   protocol: NSURLProtectionSpaceHTTPS,
+                   realm: nil,
+                   authenticationMethod: NSURLAuthenticationMethodServerTrust)
+        self.serverTrustMock = secTrust
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override var serverTrust: SecTrust? {
+        return serverTrustMock
     }
 }

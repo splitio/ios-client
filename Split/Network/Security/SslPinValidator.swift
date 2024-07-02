@@ -44,7 +44,7 @@ struct CertKeyTypeHelper {
         "\(kSecAttrKeyTypeRSA)_3072": .rsa3072,
         "\(kSecAttrKeyTypeRSA)_4096": .rsa4096,
         "\(kSecAttrKeyTypeEC)_256": .secp256r1,
-        "\(kSecAttrKeyTypeEC)_348": .secp384r1,
+        "\(kSecAttrKeyTypeEC)_384": .secp384r1,
         "\(kSecAttrKeyTypeEC)_521": .secp521r1
         ]
 
@@ -82,8 +82,6 @@ enum CertKeyType {
     }
 }
 
-
-
 struct CertSpki {
     let type: CertKeyType
     var data: Data {
@@ -108,15 +106,14 @@ struct CertSpki {
 }
 
 protocol TlsPinValidator {
-    func validate(credential: AnyObject) -> CredentialValidationResult
+    func validate(credential: AnyObject, pins: [CredentialPin]) -> CredentialValidationResult
 }
 
 struct DefaultTlsPinValidator {
-    let pins = [CredentialPin]()
 
     // Using a generic parameter to aisolate Apple's framework and
     // also to make the component easily mockable
-    func validate(credential: AnyObject) -> CredentialValidationResult {
+    func validate(credential: AnyObject, pins: [CredentialPin]) -> CredentialValidationResult {
 
         guard let challenge = credential as? URLAuthenticationChallenge else {
             Logger.e("The credential received is not a URLAuthenticationChallenge")
@@ -150,7 +147,7 @@ struct DefaultTlsPinValidator {
             return .noServerTrust
         }
 
-        if checkValidity(of: serverTrust, protectionSpace: protectionSpace) != .success {
+        if checkValidity(of: serverTrust, protectionSpace: protectionSpace, pins: pins) != .success {
             // Credentials are invalid
             // invalid, and cancel the load.
             // completionHandler(.cancelAuthenticationChallenge, nil)
@@ -164,11 +161,11 @@ struct DefaultTlsPinValidator {
         return .success
     }
 
-    private func checkValidity(of secTrust: SecTrust, protectionSpace: URLProtectionSpace) -> CredentialValidationResult {
+    private func checkValidity(of secTrust: SecTrust, protectionSpace: URLProtectionSpace, pins: [CredentialPin]) -> CredentialValidationResult {
 
         // Check if we have pins for the domain
         let host = protectionSpace.host
-        let domainPins = pinsFor(domain: host)
+        let domainPins = pinsFor(domain: host, pins: pins)
         if domainPins.count == 0 {
             return .noPinsForDomain
         }
@@ -200,15 +197,26 @@ struct DefaultTlsPinValidator {
     }
 
     private func isPinned(spki: CertSpki, pins: [CredentialPin]) -> Bool {
-        return pins.filter { $0.hash == spki.hash }.count > 0
+        // Cache to avoid hashing more than one time
+        var hashCache = [KeyHashAlgo: Data]()
+        for pin in pins {
+            let hash = hashCache[pin.algo] ?? AlgoHelper.computeHash(spki.data, algo: pin.algo)
+            if hash == spki.hash {
+                return true
+            }
+            hashCache[pin.algo] = hash
+        }
+        return false
     }
 
-    private func pinsFor(domain: String) -> [CredentialPin] {
+    private func pinsFor(domain: String, pins: [CredentialPin]) -> [CredentialPin] {
         // TODO: Implement also using wildcards
         return pins.filter { $0.host == domain }
     }
 
     // Geting Subject Public Key Info (SPKI)
+    // This is visible for testing purposes, because this logic is simple but has a tricky implementation
+    // It is not part of the implemented protocol
     func spki(from certificate: SecCertificate) -> CertSpki? {
         // TODO: This whole operation is expensive, create a hash cache
         // Extract and hash public key
@@ -242,31 +250,6 @@ struct DefaultTlsPinValidator {
 
     private func base64Encoded(_ data: Data) -> Data? {
         return data.base64EncodedString().dataBytes
-    }
-
-    private func computeHash(_ data: Data, algo: KeyHashAlgo) -> Data? {
-        switch algo {
-        case .sha1:
-            return hashSha1(data)
-        case .sha256:
-            return hashSha256(data)
-        }
-    }
-
-    private func hashSha256(_ data: Data) -> Data? {
-        var sha256 = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-        data.withUnsafeBytes {
-            _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &sha256)
-        }
-        return Data(sha256)
-    }
-
-    private func hashSha1(_ data: Data) -> Data? {
-        var sha1 = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
-        data.withUnsafeBytes {
-            _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &sha1)
-        }
-        return Data(sha1)
     }
 
     private func isValidSecurityChain(_ secTrust: SecTrust, host: String) -> Bool {
@@ -329,5 +312,33 @@ struct DefaultTlsPinValidator {
 
     private func logValidationAvoidance(host: String, method: String, message: String) {
         Logger.d("Skipping validation for host \(host) and method \(method): \(message)")
+    }
+}
+
+
+struct AlgoHelper {
+    static func computeHash(_ data: Data, algo: KeyHashAlgo) -> Data? {
+        switch algo {
+        case .sha1:
+            return hashSha1(data)
+        case .sha256:
+            return hashSha256(data)
+        }
+    }
+
+    private static func hashSha256(_ data: Data) -> Data? {
+        var sha256 = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        data.withUnsafeBytes {
+            _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &sha256)
+        }
+        return Data(sha256)
+    }
+
+    private static  func hashSha1(_ data: Data) -> Data? {
+        var sha1 = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
+        data.withUnsafeBytes {
+            _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &sha1)
+        }
+        return Data(sha1)
     }
 }
