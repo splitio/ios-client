@@ -25,17 +25,17 @@ enum CredentialValidationResult {
     case error
     case noPinsForDomain
     case invalidChain
-    case invalidCertificate
+    case credentialNotPinned
     case spkiError
     case noServerTrustMethod
-    case noServerTrust
+    case unavailableServerTrust
     case invalidCredential
     case invalidParameter
 }
 
-enum KeyHashAlgo {
-    case sha256
-    case sha1
+enum KeyHashAlgo: String {
+    case sha256 = "sha256"
+    case sha1 = "sha1"
 }
 
 struct CertKeyTypeHelper {
@@ -87,9 +87,7 @@ struct CertSpki {
     var data: Data {
         return rawData
     }
-
     private var rawData: Data
-    var hash: Data?
 
     init(type: CertKeyType, data: Data) {
         self.type = type
@@ -109,7 +107,7 @@ protocol TlsPinValidator {
     func validate(credential: AnyObject, pins: [CredentialPin]) -> CredentialValidationResult
 }
 
-struct DefaultTlsPinValidator {
+struct DefaultTlsPinValidator: TlsPinValidator {
 
     // Using a generic parameter to aisolate Apple's framework and
     // also to make the component easily mockable
@@ -127,15 +125,6 @@ struct DefaultTlsPinValidator {
             logValidationAvoidance(host: protectionSpace.host,
                                    method: protectionSpace.authenticationMethod,
                                    message: "No server trust")
-            //completionHandler(.performDefaultHandling, nil)
-            return .noServerTrustMethod
-        }
-
-        if protectionSpace.authenticationMethod != NSURLAuthenticationMethodServerTrust {
-            logValidationAvoidance(host: protectionSpace.host,
-                                   method: protectionSpace.authenticationMethod,
-                                   message: "Host not pinned")
-            // completionHandler(.performDefaultHandling, nil)
             return .noServerTrustMethod
         }
 
@@ -143,25 +132,23 @@ struct DefaultTlsPinValidator {
             logValidationAvoidance(host: protectionSpace.host,
                                    method: protectionSpace.authenticationMethod,
                                    message: "No server trust info")
-            //completionHandler(.performDefaultHandling, nil)
-            return .noServerTrust
+            return .unavailableServerTrust
         }
 
-        if checkValidity(of: serverTrust, protectionSpace: protectionSpace, pins: pins) != .success {
+        let result = checkValidity(of: serverTrust, protectionSpace: protectionSpace, pins: pins)
+
+        if result != .success {
             // Credentials are invalid
             // invalid, and cancel the load.
-            // completionHandler(.cancelAuthenticationChallenge, nil)
             Logger.w("Invalid credentials for host \(protectionSpace.host) " +
                      "and method \(protectionSpace.authenticationMethod)")
-            return .invalidCredential
         }
-
-        // let credential = URLCredential(trust: serverTrust)
-        // completionHandler(.useCredential, credential)
-        return .success
+        return result
     }
 
-    private func checkValidity(of secTrust: SecTrust, protectionSpace: URLProtectionSpace, pins: [CredentialPin]) -> CredentialValidationResult {
+    private func checkValidity(of secTrust: SecTrust, 
+                               protectionSpace: URLProtectionSpace,
+                               pins: [CredentialPin]) -> CredentialValidationResult {
 
         // Check if we have pins for the domain
         let host = protectionSpace.host
@@ -193,7 +180,7 @@ struct DefaultTlsPinValidator {
                 return .success
             }
         }
-        return .invalidCertificate
+        return .credentialNotPinned
     }
 
     private func isPinned(spki: CertSpki, pins: [CredentialPin]) -> Bool {
@@ -201,7 +188,8 @@ struct DefaultTlsPinValidator {
         var hashCache = [KeyHashAlgo: Data]()
         for pin in pins {
             let hash = hashCache[pin.algo] ?? AlgoHelper.computeHash(spki.data, algo: pin.algo)
-            if hash == spki.hash {
+            Logger.v("Checking pinned \(pin.hash.base64EncodedString()) vs \(hash?.base64EncodedString())")
+            if hash == pin.hash {
                 return true
             }
             hashCache[pin.algo] = hash
@@ -253,16 +241,16 @@ struct DefaultTlsPinValidator {
     }
 
     private func isValidSecurityChain(_ secTrust: SecTrust, host: String) -> Bool {
-        var evalError: UnsafeMutablePointer<CFError?>?
+//        var evalError: UnsafeMutablePointer<CFError?>?
+        var evalError: CFError?
 
         // Creating a default SSL policy
         let policy = SecPolicyCreateSSL(true, host as CFString)
         SecTrustSetPolicies(secTrust, policy)
-        let result = SecTrustEvaluateWithError(secTrust, evalError)
-
-        if let error = evalError {
+        let result = SecTrustEvaluateWithError(secTrust, &evalError)
+        if let err = evalError {
             // If there's an error, check what is it about and log result
-            Logger.e("Error evaluating TLS Certificate: \(error.pointee?.localizedDescription ?? "Unknown")")
+            Logger.e("Error evaluating TLS Certificate: \(err.localizedDescription ?? "Unknown")")
 
             // Get more details about the error while evaluating
             var resultType = UnsafeMutablePointer<SecTrustResultType>.allocate(capacity: MemoryLayout<Int>.size)

@@ -14,6 +14,8 @@ import XCTest
 class TlsPinningValidatorTests: XCTestCase {
 
     var validator: TlsPinValidator!
+    let secHelper = SecurityHelper()
+
     override func setUp() {
         validator = DefaultTlsPinValidator()
         Logger.shared.level = .verbose
@@ -61,8 +63,101 @@ class TlsPinningValidatorTests: XCTestCase {
                                 keyType: CertKeyType.rsa4096, debug: true)
     }
 
+
+    let validHost = "developer.apple.com"
+    let validCertName = "developer.apple.com_ecpk"
+    let validKeyName =  "ec_apple_public_key"
+    func testPinnedValidCertificateSha256() {
+
+        let algo = KeyHashAlgo.sha256
+        let expectedHash = secHelper.hashedKey(keyName: validKeyName, algo: algo)
+        let pins = [CredentialPin(host: validHost, hash: expectedHash, algo: algo)]
+
+        pinValidationTest(host: validHost, certName: validCertName,
+                          algo: algo, pins: pins, expectedResult: .success)
+
+    }
+
+    func testPinnedValidCertificateSha1() {
+
+        let algo = KeyHashAlgo.sha1
+        let expectedHash = secHelper.hashedKey(keyName: validKeyName, algo: algo)
+        let pins = [CredentialPin(host: validHost, hash: expectedHash, algo: algo)]
+
+        pinValidationTest(host: validHost, certName: validCertName,
+                          algo: algo, pins: pins, expectedResult: .success)
+
+    }
+
+    func testUnPinnedValidCertificate() {
+
+        let algo = KeyHashAlgo.sha256
+        let expectedHash = secHelper.hashedKey(keyName: "rsa_4096_pub", algo: algo)
+        let pins = [CredentialPin(host: validHost, hash: expectedHash, algo: algo)]
+
+        pinValidationTest(host: validHost, certName: validCertName,
+                          algo: algo, pins: pins, expectedResult: .credentialNotPinned)
+
+    }
+
+    func testUntrustedCertificate() {
+
+        let algo = KeyHashAlgo.sha256
+        let expectedHash = secHelper.hashedKey(keyName: "rsa_4096_pub", algo: algo)
+        let pins = [CredentialPin(host: validHost, hash: expectedHash, algo: algo)]
+
+        pinValidationTest(host: validHost, certName: "rsa_4096_cert.pem",
+                          algo: algo, pins: pins, expectedResult: .invalidChain)
+
+    }
+
+    func testInvalidChallengeMethod() {
+
+        let credential = secHelper.createInvalidChallenge(
+            authMethod: NSURLAuthenticationMethodClientCertificate)
+        let res = validator.validate(credential: credential,
+                                      pins: [CredentialPin(host: validHost, hash: Data(), algo: .sha256)])
+        
+        XCTAssertEqual(CredentialValidationResult.noServerTrustMethod, res)
+    }
+
+    func testInvalidChallengeNoSecTrust() {
+
+        let credential = secHelper.createInvalidChallenge(
+            authMethod: NSURLAuthenticationMethodServerTrust)
+        let res = validator.validate(credential: credential,
+                                      pins: [CredentialPin(host: validHost, hash: Data(), algo: .sha256)])
+
+        XCTAssertEqual(CredentialValidationResult.unavailableServerTrust, res)
+    }
+
+    func testValidationParameter() {
+
+        let res = validator.validate(credential: [String: String]() as AnyObject,
+                                      pins: [CredentialPin(host: validHost, hash: Data(), algo: .sha256)])
+
+        XCTAssertEqual(CredentialValidationResult.invalidParameter, res)
+    }
+
+    func pinValidationTest(host: String,
+                           certName: String,
+                           algo: KeyHashAlgo,
+                           pins: [CredentialPin],
+                           expectedResult: CredentialValidationResult) {
+
+
+        guard let challenge = secHelper.createAuthChallenge(host: host, certName: certName) else {
+            Logger.d("Could not create sec trust for certificate pinning test certificate \(certName)")
+            XCTFail()
+            return
+        }
+
+        let result = validator.validate(credential: challenge, pins: pins)
+        
+        XCTAssertEqual(expectedResult, result)
+    }
+
     func publicKeyExtractionTest(certName: String, pubKeyName: String, keyType: CertKeyType, debug: Bool = false) {
-        let secHelper = SecurityHelper()
         let keyData = FileHelper.loadFileData(sourceClass:self, name: pubKeyName, type: "der")
 
         if debug {
@@ -74,7 +169,7 @@ class TlsPinningValidatorTests: XCTestCase {
         let loadedData = FileHelper.loadFileData(sourceClass:self, name: certName, type: "der")!
         guard let cerData = loadedData as? NSData else {
             print("Could not load certificate \(certName) for name")
-            XCTAssertTrue(false)
+            XCTFail()
             return
         }
 
@@ -82,7 +177,8 @@ class TlsPinningValidatorTests: XCTestCase {
 
         var extractedKey: CertSpki?
         if let cert = cert {
-            extractedKey  = validator.spki(from: cert)
+            // Casting to validate this implementation in particular
+            extractedKey  = (validator as! DefaultTlsPinValidator).spki(from: cert)
             if debug {
                 secHelper.inspect(certificate: cert)
                 print("EXTRACTED PUB KEY ------------")
@@ -173,8 +269,45 @@ class SecurityHelper  {
         )
     }
 
-}
+    func createInvalidChallenge(authMethod: String) -> URLAuthenticationChallenge {
+        return URLAuthenticationChallenge(
+            protectionSpace: ProtectionSpaceMock(authMethod: authMethod),
+            proposedCredential: nil,
+            previousFailureCount: 0,
+            failureResponse: nil,
+            error: nil,
+            sender: ChallengeSenderMock()
+        )
+    }
 
+    func createInvalidChallengeWithoutSecTrust() -> URLAuthenticationChallenge {
+        return URLAuthenticationChallenge(
+            protectionSpace: ProtectionSpaceMock(authMethod: NSURLAuthenticationMethodServerTrust),
+            proposedCredential: nil,
+            previousFailureCount: 0,
+            failureResponse: nil,
+            error: nil,
+            sender: ChallengeSenderMock()
+        )
+    }
+
+    func hashedKey(keyName: String, algo: KeyHashAlgo) -> Data {
+        guard let keyData = FileHelper.loadFileData(sourceClass:self, name: keyName, type: "der") else {
+            Logger.d("Could not create key for certificate pinning test key \(keyName)")
+            XCTFail()
+            return Data()
+        }
+
+        guard let expectedHash = AlgoHelper.computeHash(keyData, algo: algo) else {
+            Logger.d("Could not create key for certificate pinning test key \(keyName)")
+            XCTFail()
+            return Data()
+        }
+
+        return expectedHash
+    }
+
+}
 
 class ChallengeSenderMock: NSObject, URLAuthenticationChallengeSender {
     func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) {}
@@ -182,18 +315,29 @@ class ChallengeSenderMock: NSObject, URLAuthenticationChallengeSender {
     func cancel(_ challenge: URLAuthenticationChallenge) {}
 }
 
-
 class ProtectionSpaceMock: URLProtectionSpace {
 
-    var serverTrustMock: SecTrust
+    var serverTrustMock: SecTrust?
     init(host: String, secTrust: SecTrust) {
-        super.init(host: host, port: 443, 
+        self.serverTrustMock = secTrust
+        super.init(host: host, port: 443,
                    protocol: NSURLProtectionSpaceHTTPS,
                    realm: nil,
                    authenticationMethod: NSURLAuthenticationMethodServerTrust)
-        self.serverTrustMock = secTrust
+
     }
-    
+
+    init(host: String = "www.testhost.com",
+         authProtocol: String = NSURLProtectionSpaceHTTPS,
+         authMethod: String = NSURLAuthenticationMethodServerTrust) {
+
+        super.init(host: host, port: 443,
+                   protocol: authProtocol,
+                   realm: nil,
+                   authenticationMethod: authMethod)
+
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
