@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class FileStorageStub: FileStorageProtocol {
+class FileStorageStub: FileStorage {
 
     private var queue: DispatchQueue
     private var files: [String: String]

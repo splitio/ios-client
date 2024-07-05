@@ -9,7 +9,7 @@
 import Foundation
 
 class Base64Utils {
-    static let kOffsetLenght = 4
+    static let kOffsetLength = 4
     class func decodeBase64URL(base64: String?) -> String? {
         guard let base64 = base64 else {
             return nil

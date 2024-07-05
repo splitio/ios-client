@@ -11,7 +11,7 @@ import XCTest
 
 class LocalhostSplitLoaderTests: XCTestCase {
 
-    var storage: FileStorageProtocol!
+    var storage: FileStorage!
     var eventsManager: SplitEventsManagerMock!
     var fileLoader: FeatureFlagsFileLoader!
 
