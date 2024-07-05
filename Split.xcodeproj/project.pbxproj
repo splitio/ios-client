@@ -1009,7 +1009,7 @@
 		95F7BBC32C077D7800C5F2E4 /* UniqueKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12322BFBF22800AE6D10 /* UniqueKey.swift */; };
 		95F7BBC42C077DD200C5F2E4 /* ImpressionsCountDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12342BFCD9F000AE6D10 /* ImpressionsCountDao.swift */; };
 		95F7BBCC2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */; };
-		95F7BBCF2C10FD4700C5F2E4 /* SslPinChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BBCE2C10FD4700C5F2E4 /* SslPinChecker.swift */; };
+		95F7BBCF2C10FD4700C5F2E4 /* TlsPinChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BBCE2C10FD4700C5F2E4 /* TlsPinChecker.swift */; };
 		95F7BBD12C139AA200C5F2E4 /* PublicKeyHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BBD02C139AA200C5F2E4 /* PublicKeyHeaders.swift */; };
 		95F7BBDA2C1A27C200C5F2E4 /* rsa_2048_public_01.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBD42C1A27C200C5F2E4 /* rsa_2048_public_01.pem */; };
 		95F7BBDB2C1A27C200C5F2E4 /* rsa_4096_public_01.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBD52C1A27C200C5F2E4 /* rsa_4096_public_01.pem */; };
@@ -1039,6 +1039,7 @@
 		95F7BC172C35D9C000C5F2E4 /* CertificatePinningConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC162C35D9C000C5F2E4 /* CertificatePinningConfig.swift */; };
 		95F7BC192C36DE2300C5F2E4 /* FileUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC182C36DE2300C5F2E4 /* FileUtil.swift */; };
 		95F7BC1C2C37370D00C5F2E4 /* CertificatePinningConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC1B2C37370D00C5F2E4 /* CertificatePinningConfigTests.swift */; };
+		95F7BC232C3876C800C5F2E4 /* SplitCertPinningAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC222C3876C800C5F2E4 /* SplitCertPinningAuthenticator.swift */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
 		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
 		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
@@ -1808,7 +1809,7 @@
 		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F7BBC52C07D02F00C5F2E4 /* SemVer.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SemVer.xctestplan; sourceTree = "<group>"; };
 		95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSIntegration_1.xctestplan; sourceTree = "<group>"; };
-		95F7BBCE2C10FD4700C5F2E4 /* SslPinChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SslPinChecker.swift; sourceTree = "<group>"; };
+		95F7BBCE2C10FD4700C5F2E4 /* TlsPinChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TlsPinChecker.swift; sourceTree = "<group>"; };
 		95F7BBD02C139AA200C5F2E4 /* PublicKeyHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyHeaders.swift; sourceTree = "<group>"; };
 		95F7BBD42C1A27C200C5F2E4 /* rsa_2048_public_01.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_2048_public_01.pem; sourceTree = "<group>"; };
 		95F7BBD52C1A27C200C5F2E4 /* rsa_4096_public_01.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_4096_public_01.pem; sourceTree = "<group>"; };
@@ -1838,6 +1839,7 @@
 		95F7BC162C35D9C000C5F2E4 /* CertificatePinningConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificatePinningConfig.swift; sourceTree = "<group>"; };
 		95F7BC182C36DE2300C5F2E4 /* FileUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUtil.swift; sourceTree = "<group>"; };
 		95F7BC1B2C37370D00C5F2E4 /* CertificatePinningConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificatePinningConfigTests.swift; sourceTree = "<group>"; };
+		95F7BC222C3876C800C5F2E4 /* SplitCertPinningAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitCertPinningAuthenticator.swift; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
 		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
@@ -2078,6 +2080,7 @@
 				95E8193D28786A1C00D99093 /* SplitLogLevel.swift */,
 				95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */,
 				95DAF21A29DDFAF4001C7BBE /* SplitHttpsAuthenticator.swift */,
+				95F7BC222C3876C800C5F2E4 /* SplitCertPinningAuthenticator.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -3371,7 +3374,7 @@
 		95F7BBCD2C10FD1100C5F2E4 /* Security */ = {
 			isa = PBXGroup;
 			children = (
-				95F7BBCE2C10FD4700C5F2E4 /* SslPinChecker.swift */,
+				95F7BBCE2C10FD4700C5F2E4 /* TlsPinChecker.swift */,
 				95F7BBD02C139AA200C5F2E4 /* PublicKeyHeaders.swift */,
 			);
 			path = Security;
@@ -3889,7 +3892,7 @@
 				3B6DEF5A20EA6AE50067435E /* SplitEventTask.swift in Sources */,
 				5905D4DA2559BB42006DA3B1 /* ByKeyMySegmentsStorage.swift in Sources */,
 				5905D4CE2555F99D006DA3B1 /* EventEntity.swift in Sources */,
-				95F7BBCF2C10FD4700C5F2E4 /* SslPinChecker.swift in Sources */,
+				95F7BBCF2C10FD4700C5F2E4 /* TlsPinChecker.swift in Sources */,
 				3B6DEF8920EA6AE50067435E /* ConcurrentArrayQueue.swift in Sources */,
 				3B6DEF3520EA6AE50067435E /* SecureDataStore.swift in Sources */,
 				95715A8129D22C1B00A1B2F9 /* SplitEncryptionLevel.swift in Sources */,
@@ -4071,6 +4074,7 @@
 				3B6DEF2020EA6AE50067435E /* DefaultSplitClient.swift in Sources */,
 				3B6DEF3820EA6AE50067435E /* Data+StringRepresentation.swift in Sources */,
 				3B6DEF7D20EA6AE50067435E /* NetworkReachabilityManager.swift in Sources */,
+				95F7BC232C3876C800C5F2E4 /* SplitCertPinningAuthenticator.swift in Sources */,
 				954F9AEA256D9D9E00140B81 /* SplitDao.swift in Sources */,
 				9519A91A27D7CC6500278AEC /* MySegmentsSynchronizer.swift in Sources */,
 				3B6DEF4E20EA6AE50067435E /* Status.swift in Sources */,
