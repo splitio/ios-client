@@ -31,8 +31,8 @@ class SplitCertPinningAuthenticator: NSObject, SplitHttpsAuthenticator {
     ///   - challenge: The URL authentication challenge.
     ///   - completionHandler: The completion handler to call with the authentication disposition and credential.
     func authenticate(session: URLSession,
-                             challenge: URLAuthenticationChallenge,
-                             completionHandler: @escaping AuthCompletion) {
+                      challenge: URLAuthenticationChallenge,
+                      completionHandler: @escaping AuthCompletion) {
 
         // Validate the server trust using the PinValidator
         switch pinChecker.check(credential: challenge, pins: pins) {
@@ -44,9 +44,8 @@ class SplitCertPinningAuthenticator: NSObject, SplitHttpsAuthenticator {
             let credential = URLCredential(trust: serverTrust)
             completionHandler(.useCredential, credential)
 
-        case .error, .invalidChain, .credentialNotPinned, .spkiError:
-            fallthrough
-        case .invalidCredential, .invalidParameter, .unavailableServerTrust:
+        case .error, .invalidChain, .credentialNotPinned, .spkiError,
+                .invalidCredential, .invalidParameter, .unavailableServerTrust:
             cancel(completionHandler)
 
         case .noServerTrustMethod, .noPinsForDomain:
