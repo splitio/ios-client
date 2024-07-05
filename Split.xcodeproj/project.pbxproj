@@ -1009,6 +1009,33 @@
 		95F7BBC32C077D7800C5F2E4 /* UniqueKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12322BFBF22800AE6D10 /* UniqueKey.swift */; };
 		95F7BBC42C077DD200C5F2E4 /* ImpressionsCountDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12342BFCD9F000AE6D10 /* ImpressionsCountDao.swift */; };
 		95F7BBCC2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */; };
+		95F7BBCF2C10FD4700C5F2E4 /* SslPinValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BBCE2C10FD4700C5F2E4 /* SslPinValidator.swift */; };
+		95F7BBD12C139AA200C5F2E4 /* PublicKeyHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BBD02C139AA200C5F2E4 /* PublicKeyHeaders.swift */; };
+		95F7BBDA2C1A27C200C5F2E4 /* rsa_2048_public_01.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBD42C1A27C200C5F2E4 /* rsa_2048_public_01.pem */; };
+		95F7BBDB2C1A27C200C5F2E4 /* rsa_4096_public_01.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBD52C1A27C200C5F2E4 /* rsa_4096_public_01.pem */; };
+		95F7BBDC2C1A27C200C5F2E4 /* rsa_4096_public.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBD62C1A27C200C5F2E4 /* rsa_4096_public.pem */; };
+		95F7BBDD2C1A27C200C5F2E4 /* rsa_3072_public.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBD72C1A27C200C5F2E4 /* rsa_3072_public.pem */; };
+		95F7BBDE2C1A27C200C5F2E4 /* rsa_3072_public_01.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBD82C1A27C200C5F2E4 /* rsa_3072_public_01.pem */; };
+		95F7BBDF2C1A27C200C5F2E4 /* rsa_2048_public.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBD92C1A27C200C5F2E4 /* rsa_2048_public.pem */; };
+		95F7BBE12C1A27FA00C5F2E4 /* TlsPinningValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BBE02C1A27FA00C5F2E4 /* TlsPinningValidatorTests.swift */; };
+		95F7BBEA2C1A3D4100C5F2E4 /* apple_public_key.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBE82C1A3D4100C5F2E4 /* apple_public_key.pem */; };
+		95F7BBED2C1B137F00C5F2E4 /* developer.apple.com_ecpk.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBEC2C1B137F00C5F2E4 /* developer.apple.com_ecpk.der */; };
+		95F7BBEF2C1B413500C5F2E4 /* ec_apple_public_key.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBEE2C1B413500C5F2E4 /* ec_apple_public_key.der */; };
+		95F7BBF72C1C953000C5F2E4 /* ec_secp384r1_pub.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBF12C1C953000C5F2E4 /* ec_secp384r1_pub.der */; };
+		95F7BBFA2C1C953000C5F2E4 /* ec_secp384r1_cert.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBF42C1C953000C5F2E4 /* ec_secp384r1_cert.der */; };
+		95F7BBFB2C1C953000C5F2E4 /* ec_secp521r1_pub.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBF52C1C953000C5F2E4 /* ec_secp521r1_pub.der */; };
+		95F7BBFC2C1C953000C5F2E4 /* ec_secp521r1_cert.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBF62C1C953000C5F2E4 /* ec_secp521r1_cert.der */; };
+		95F7BC042C1CE84500C5F2E4 /* rsa_3072_pub.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBFE2C1CE84500C5F2E4 /* rsa_3072_pub.der */; };
+		95F7BC052C1CE84500C5F2E4 /* rsa_2048_pub.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBFF2C1CE84500C5F2E4 /* rsa_2048_pub.der */; };
+		95F7BC062C1CE84500C5F2E4 /* rsa_4096_cert.pem.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC002C1CE84500C5F2E4 /* rsa_4096_cert.pem.der */; };
+		95F7BC072C1CE84500C5F2E4 /* rsa_4096_pub.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC012C1CE84500C5F2E4 /* rsa_4096_pub.der */; };
+		95F7BC082C1CE84500C5F2E4 /* rsa_2048_cert.pem.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC022C1CE84500C5F2E4 /* rsa_2048_cert.pem.der */; };
+		95F7BC092C1CE84500C5F2E4 /* rsa_3072_cert.pem.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC032C1CE84500C5F2E4 /* rsa_3072_cert.pem.der */; };
+		95F7BC0D2C2A1F3700C5F2E4 /* ed25519-cert.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC0B2C2A1F3600C5F2E4 /* ed25519-cert.der */; };
+		95F7BC0E2C2A1F3700C5F2E4 /* ed25519-pub.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC0C2C2A1F3600C5F2E4 /* ed25519-pub.der */; };
+		95F7BC102C2A249A00C5F2E4 /* ed25519-cert.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC0F2C2A249A00C5F2E4 /* ed25519-cert.pem */; };
+		95F7BC142C346BB400C5F2E4 /* ec_256v1_pub.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC122C346BB400C5F2E4 /* ec_256v1_pub.der */; };
+		95F7BC152C346BB400C5F2E4 /* ec_256v1_cert.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC132C346BB400C5F2E4 /* ec_256v1_cert.der */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
 		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
 		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
@@ -1778,6 +1805,33 @@
 		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F7BBC52C07D02F00C5F2E4 /* SemVer.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SemVer.xctestplan; sourceTree = "<group>"; };
 		95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSIntegration_1.xctestplan; sourceTree = "<group>"; };
+		95F7BBCE2C10FD4700C5F2E4 /* SslPinValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SslPinValidator.swift; sourceTree = "<group>"; };
+		95F7BBD02C139AA200C5F2E4 /* PublicKeyHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyHeaders.swift; sourceTree = "<group>"; };
+		95F7BBD42C1A27C200C5F2E4 /* rsa_2048_public_01.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_2048_public_01.pem; sourceTree = "<group>"; };
+		95F7BBD52C1A27C200C5F2E4 /* rsa_4096_public_01.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_4096_public_01.pem; sourceTree = "<group>"; };
+		95F7BBD62C1A27C200C5F2E4 /* rsa_4096_public.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_4096_public.pem; sourceTree = "<group>"; };
+		95F7BBD72C1A27C200C5F2E4 /* rsa_3072_public.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_3072_public.pem; sourceTree = "<group>"; };
+		95F7BBD82C1A27C200C5F2E4 /* rsa_3072_public_01.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_3072_public_01.pem; sourceTree = "<group>"; };
+		95F7BBD92C1A27C200C5F2E4 /* rsa_2048_public.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_2048_public.pem; sourceTree = "<group>"; };
+		95F7BBE02C1A27FA00C5F2E4 /* TlsPinningValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TlsPinningValidatorTests.swift; sourceTree = "<group>"; };
+		95F7BBE82C1A3D4100C5F2E4 /* apple_public_key.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = apple_public_key.pem; sourceTree = "<group>"; };
+		95F7BBEC2C1B137F00C5F2E4 /* developer.apple.com_ecpk.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = developer.apple.com_ecpk.der; sourceTree = "<group>"; };
+		95F7BBEE2C1B413500C5F2E4 /* ec_apple_public_key.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ec_apple_public_key.der; sourceTree = "<group>"; };
+		95F7BBF12C1C953000C5F2E4 /* ec_secp384r1_pub.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ec_secp384r1_pub.der; sourceTree = "<group>"; };
+		95F7BBF42C1C953000C5F2E4 /* ec_secp384r1_cert.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ec_secp384r1_cert.der; sourceTree = "<group>"; };
+		95F7BBF52C1C953000C5F2E4 /* ec_secp521r1_pub.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ec_secp521r1_pub.der; sourceTree = "<group>"; };
+		95F7BBF62C1C953000C5F2E4 /* ec_secp521r1_cert.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ec_secp521r1_cert.der; sourceTree = "<group>"; };
+		95F7BBFE2C1CE84500C5F2E4 /* rsa_3072_pub.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = rsa_3072_pub.der; sourceTree = "<group>"; };
+		95F7BBFF2C1CE84500C5F2E4 /* rsa_2048_pub.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = rsa_2048_pub.der; sourceTree = "<group>"; };
+		95F7BC002C1CE84500C5F2E4 /* rsa_4096_cert.pem.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = rsa_4096_cert.pem.der; sourceTree = "<group>"; };
+		95F7BC012C1CE84500C5F2E4 /* rsa_4096_pub.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = rsa_4096_pub.der; sourceTree = "<group>"; };
+		95F7BC022C1CE84500C5F2E4 /* rsa_2048_cert.pem.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = rsa_2048_cert.pem.der; sourceTree = "<group>"; };
+		95F7BC032C1CE84500C5F2E4 /* rsa_3072_cert.pem.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = rsa_3072_cert.pem.der; sourceTree = "<group>"; };
+		95F7BC0B2C2A1F3600C5F2E4 /* ed25519-cert.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ed25519-cert.der"; sourceTree = "<group>"; };
+		95F7BC0C2C2A1F3600C5F2E4 /* ed25519-pub.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ed25519-pub.der"; sourceTree = "<group>"; };
+		95F7BC0F2C2A249A00C5F2E4 /* ed25519-cert.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "ed25519-cert.pem"; sourceTree = "<group>"; };
+		95F7BC122C346BB400C5F2E4 /* ec_256v1_pub.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ec_256v1_pub.der; sourceTree = "<group>"; };
+		95F7BC132C346BB400C5F2E4 /* ec_256v1_cert.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ec_256v1_cert.der; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
 		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
@@ -2208,6 +2262,7 @@
 		3B6DEEE220EA6AE30067435E /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				95F7BBCD2C10FD1100C5F2E4 /* Security */,
 				95B1802E2767DDC4002DC9DF /* Sync */,
 				59EFD30524BCE3CF0052920D /* Streaming */,
 				3B6DEEE320EA6AE30067435E /* Configuration */,
@@ -2571,6 +2626,7 @@
 				593225F724A384B300496D8B /* EndpointFactoryTest.swift */,
 				95CED0522B4F3EA2005E3C34 /* ServiceEndpointsTests.swift */,
 				59EFD2EC24B4B05E0052920D /* HttpClientTest.swift */,
+				95F7BBE02C1A27FA00C5F2E4 /* TlsPinningValidatorTests.swift */,
 			);
 			path = HttpClient;
 			sourceTree = "<group>";
@@ -2649,6 +2705,7 @@
 		592C6ADB211CBB86002D120C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				95F7BBD32C1A273900C5F2E4 /* Cert */,
 				C5977C052BF273A3003E293A /* between_semver.csv */,
 				C5977C042BF273A3003E293A /* equal_to_semver.csv */,
 				C5977C032BF273A3003E293A /* invalid_semantic_versions.csv */,
@@ -3303,6 +3360,78 @@
 			path = Attributes;
 			sourceTree = "<group>";
 		};
+		95F7BBCD2C10FD1100C5F2E4 /* Security */ = {
+			isa = PBXGroup;
+			children = (
+				95F7BBCE2C10FD4700C5F2E4 /* SslPinValidator.swift */,
+				95F7BBD02C139AA200C5F2E4 /* PublicKeyHeaders.swift */,
+			);
+			path = Security;
+			sourceTree = "<group>";
+		};
+		95F7BBD32C1A273900C5F2E4 /* Cert */ = {
+			isa = PBXGroup;
+			children = (
+				95F7BC0A2C2A1F3600C5F2E4 /* ed */,
+				95F7BBFD2C1CE84500C5F2E4 /* rsa */,
+				95F7BBF02C1C953000C5F2E4 /* ec */,
+				95F7BBEB2C1A3D5900C5F2E4 /* apple */,
+				95F7BBD42C1A27C200C5F2E4 /* rsa_2048_public_01.pem */,
+				95F7BBD92C1A27C200C5F2E4 /* rsa_2048_public.pem */,
+				95F7BBD82C1A27C200C5F2E4 /* rsa_3072_public_01.pem */,
+				95F7BBD72C1A27C200C5F2E4 /* rsa_3072_public.pem */,
+				95F7BBD52C1A27C200C5F2E4 /* rsa_4096_public_01.pem */,
+				95F7BBD62C1A27C200C5F2E4 /* rsa_4096_public.pem */,
+			);
+			path = Cert;
+			sourceTree = "<group>";
+		};
+		95F7BBEB2C1A3D5900C5F2E4 /* apple */ = {
+			isa = PBXGroup;
+			children = (
+				95F7BBEE2C1B413500C5F2E4 /* ec_apple_public_key.der */,
+				95F7BBEC2C1B137F00C5F2E4 /* developer.apple.com_ecpk.der */,
+				95F7BBE82C1A3D4100C5F2E4 /* apple_public_key.pem */,
+			);
+			path = apple;
+			sourceTree = "<group>";
+		};
+		95F7BBF02C1C953000C5F2E4 /* ec */ = {
+			isa = PBXGroup;
+			children = (
+				95F7BC132C346BB400C5F2E4 /* ec_256v1_cert.der */,
+				95F7BC122C346BB400C5F2E4 /* ec_256v1_pub.der */,
+				95F7BBF12C1C953000C5F2E4 /* ec_secp384r1_pub.der */,
+				95F7BBF42C1C953000C5F2E4 /* ec_secp384r1_cert.der */,
+				95F7BBF52C1C953000C5F2E4 /* ec_secp521r1_pub.der */,
+				95F7BBF62C1C953000C5F2E4 /* ec_secp521r1_cert.der */,
+			);
+			path = ec;
+			sourceTree = "<group>";
+		};
+		95F7BBFD2C1CE84500C5F2E4 /* rsa */ = {
+			isa = PBXGroup;
+			children = (
+				95F7BBFE2C1CE84500C5F2E4 /* rsa_3072_pub.der */,
+				95F7BBFF2C1CE84500C5F2E4 /* rsa_2048_pub.der */,
+				95F7BC002C1CE84500C5F2E4 /* rsa_4096_cert.pem.der */,
+				95F7BC012C1CE84500C5F2E4 /* rsa_4096_pub.der */,
+				95F7BC022C1CE84500C5F2E4 /* rsa_2048_cert.pem.der */,
+				95F7BC032C1CE84500C5F2E4 /* rsa_3072_cert.pem.der */,
+			);
+			path = rsa;
+			sourceTree = "<group>";
+		};
+		95F7BC0A2C2A1F3600C5F2E4 /* ed */ = {
+			isa = PBXGroup;
+			children = (
+				95F7BC0F2C2A249A00C5F2E4 /* ed25519-cert.pem */,
+				95F7BC0B2C2A1F3600C5F2E4 /* ed25519-cert.der */,
+				95F7BC0C2C2A1F3600C5F2E4 /* ed25519-pub.der */,
+			);
+			path = ed;
+			sourceTree = "<group>";
+		};
 		C5977C0E2BF2832A003E293A /* Matcher */ = {
 			isa = PBXGroup;
 			children = (
@@ -3500,23 +3629,34 @@
 			buildActionMask = 2147483647;
 			files = (
 				592C6AE6211CBBB0002D120C /* murmur.csv in Resources */,
+				95F7BBED2C1B137F00C5F2E4 /* developer.apple.com_ecpk.der in Resources */,
 				C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */,
 				95D83A972A561CB000ADA55E /* SplitPushManagerUT.xctestplan in Resources */,
 				5982D936219F494500230F44 /* matchers.json in Resources */,
 				592C6AE9211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
+				95F7BC072C1CE84500C5F2E4 /* rsa_4096_pub.der in Resources */,
+				95F7BC0D2C2A1F3700C5F2E4 /* ed25519-cert.der in Resources */,
 				59FB7C2C2202467C00ECC96A /* localhost_2.splits in Resources */,
+				95F7BC152C346BB400C5F2E4 /* ec_256v1_cert.der in Resources */,
+				95F7BBEA2C1A3D4100C5F2E4 /* apple_public_key.pem in Resources */,
 				599EDAF52270AD6700D7DACB /* wrong_format.yaml in Resources */,
 				592C6AE7211CBBB0002D120C /* splitchanges_3.json in Resources */,
 				598EDF04225FD83E005D4762 /* split_traffic_alloc_50_default_rule_50.json in Resources */,
+				95F7BBDC2C1A27C200C5F2E4 /* rsa_4096_public.pem in Resources */,
 				59C493062167E3B400F5F774 /* murmur3-sample-v3.csv in Resources */,
 				C5977C072BF273A3003E293A /* invalid_semantic_versions.csv in Resources */,
 				95DF58EC2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan in Resources */,
 				95DF58F82BEC5432009220B8 /* SplitiOSUnit_3.xctestplan in Resources */,
 				592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */,
 				9595C1A8274574220092123F /* attributes_test_split.json in Resources */,
+				95F7BC092C1CE84500C5F2E4 /* rsa_3072_cert.pem.der in Resources */,
 				95B2498426F3E19300B34507 /* push_msg-segment_updV2.txt in Resources */,
+				95F7BC142C346BB400C5F2E4 /* ec_256v1_pub.der in Resources */,
 				95F7BBCC2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan in Resources */,
 				9595910D26DFE149009E7944 /* lorem_ipsum_zlib.txt in Resources */,
+				95F7BC062C1CE84500C5F2E4 /* rsa_4096_cert.pem.der in Resources */,
+				95F7BBFC2C1C953000C5F2E4 /* ec_secp521r1_cert.der in Resources */,
+				95F7BC042C1CE84500C5F2E4 /* rsa_3072_pub.der in Resources */,
 				5959C4722279EBBC0064F968 /* in_segment_condition_split.json in Resources */,
 				59FB7C2E220247D300ECC96A /* localhost_3.splits in Resources */,
 				5921ED442538F19E000D6C8B /* simple_split_change.json in Resources */,
@@ -3524,34 +3664,47 @@
 				592C6AEA211CBBB0002D120C /* regex.csv in Resources */,
 				5959C46E2278D9AD0064F968 /* segment_conta_condition.json in Resources */,
 				59C493052167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv in Resources */,
+				95F7BC082C1CE84500C5F2E4 /* rsa_2048_cert.pem.der in Resources */,
 				C5977C322BF4031A003E293A /* split_changes_semver.json in Resources */,
 				599EA59022691D57006CBA89 /* localhost_yml.yml in Resources */,
+				95F7BBFB2C1C953000C5F2E4 /* ec_secp521r1_pub.der in Resources */,
 				599EA58C226903DF006CBA89 /* localhost.yaml in Resources */,
 				C5977C062BF273A3003E293A /* valid_semantic_versions.csv in Resources */,
+				95F7BBDB2C1A27C200C5F2E4 /* rsa_4096_public_01.pem in Resources */,
 				5982D92F219C83D000230F44 /* legacy_1_short.csv in Resources */,
 				95DF58FA2BEE5140009220B8 /* SplitiOSUnit_4.xctestplan in Resources */,
 				599EDAF32270A15B00D7DACB /* localhost.splits in Resources */,
 				590DF9D1213F07400082B94F /* split_sample_feature6.json in Resources */,
+				95F7BBEF2C1B413500C5F2E4 /* ec_apple_public_key.der in Resources */,
+				95F7BC052C1CE84500C5F2E4 /* rsa_2048_pub.der in Resources */,
 				C5977C592BF53F43003E293A /* splitchanges_unsupported.json in Resources */,
 				5912D154219A065200BC698C /* legacy_2.csv in Resources */,
+				95F7BBFA2C1C953000C5F2E4 /* ec_secp384r1_cert.der in Resources */,
 				5912D14D2199FD4D00BC698C /* legacy_1.csv in Resources */,
 				95737E142ADEC71A007FD15C /* push_msg-splits_updV2.txt in Resources */,
+				95F7BBDE2C1A27C200C5F2E4 /* rsa_3072_public_01.pem in Resources */,
+				95F7BBDA2C1A27C200C5F2E4 /* rsa_2048_public_01.pem in Resources */,
 				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
 				950F72FF292E8D6C008A0040 /* SplitiOSFull.xctestplan in Resources */,
 				59FB7C2A2202463000ECC96A /* localhost_1.splits in Resources */,
+				95F7BBDD2C1A27C200C5F2E4 /* rsa_3072_public.pem in Resources */,
 				95118EE8281AC6E700782F33 /* bucket_split_test.json in Resources */,
 				95B4368D26E9186C00E1EB9C /* lorem_ipsum_result.txt in Resources */,
 				95F8F06828170473009E09B1 /* multi_client_test.json in Resources */,
 				5919C64221C7C8A600EC35B8 /* split_traffic_allocation_1.json in Resources */,
 				C5977C082BF273A3003E293A /* equal_to_semver.csv in Resources */,
 				C5977C092BF273A3003E293A /* between_semver.csv in Resources */,
+				95F7BBF72C1C953000C5F2E4 /* ec_secp384r1_pub.der in Resources */,
 				595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */,
 				59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */,
 				599EA58E226916CB006CBA89 /* localhost_legacy.splits in Resources */,
 				95D7D7E226DD44FB002E4D75 /* murmur3_64_uuids.csv in Resources */,
+				95F7BC102C2A249A00C5F2E4 /* ed25519-cert.pem in Resources */,
 				592C6AEB211CBBB0002D120C /* murmur3-sample-data-v2.csv in Resources */,
 				95B4369126E959D400E1EB9C /* lorem_ipsum_gzip.txt in Resources */,
+				95F7BBDF2C1A27C200C5F2E4 /* rsa_2048_public.pem in Resources */,
 				95737E122AD6D016007FD15C /* splitchanges_flagsets.json in Resources */,
+				95F7BC0E2C2A1F3700C5F2E4 /* ed25519-pub.der in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3599,6 +3752,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95F7BBD12C139AA200C5F2E4 /* PublicKeyHeaders.swift in Sources */,
 				951256412771318D0091895B /* SyncHelper.swift in Sources */,
 				595AD1F524D9994800A7B750 /* SyncConfig.swift in Sources */,
 				95F0569029B63C5B009F5A68 /* Cipher.swift in Sources */,
@@ -3718,6 +3872,7 @@
 				3B6DEF5A20EA6AE50067435E /* SplitEventTask.swift in Sources */,
 				5905D4DA2559BB42006DA3B1 /* ByKeyMySegmentsStorage.swift in Sources */,
 				5905D4CE2555F99D006DA3B1 /* EventEntity.swift in Sources */,
+				95F7BBCF2C10FD4700C5F2E4 /* SslPinValidator.swift in Sources */,
 				3B6DEF8920EA6AE50067435E /* ConcurrentArrayQueue.swift in Sources */,
 				3B6DEF3520EA6AE50067435E /* SecureDataStore.swift in Sources */,
 				95715A8129D22C1B00A1B2F9 /* SplitEncryptionLevel.swift in Sources */,
@@ -4195,6 +4350,7 @@
 				59FB7C1821F7ABEF00ECC96A /* ApiKeyValidatorTests.swift in Sources */,
 				95ABF50F293AB954006ED016 /* UserConsentManagerTest.swift in Sources */,
 				95ED4AA3264999BD00FD3569 /* IntegrationHelper.swift in Sources */,
+				95F7BBE12C1A27FA00C5F2E4 /* TlsPinningValidatorTests.swift in Sources */,
 				595AD25524E477B600A7B750 /* NotificationParserTest.swift in Sources */,
 				955E12412BFE6F5500AE6D10 /* PersistentHashImpressionStorageMock.swift in Sources */,
 				5921ED2F25377316000D6C8B /* HttpRequestManagerTestDispatcher.swift in Sources */,
