@@ -1009,7 +1009,7 @@
 		95F7BBC32C077D7800C5F2E4 /* UniqueKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12322BFBF22800AE6D10 /* UniqueKey.swift */; };
 		95F7BBC42C077DD200C5F2E4 /* ImpressionsCountDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E12342BFCD9F000AE6D10 /* ImpressionsCountDao.swift */; };
 		95F7BBCC2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */; };
-		95F7BBCF2C10FD4700C5F2E4 /* SslPinValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BBCE2C10FD4700C5F2E4 /* SslPinValidator.swift */; };
+		95F7BBCF2C10FD4700C5F2E4 /* SslPinChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BBCE2C10FD4700C5F2E4 /* SslPinChecker.swift */; };
 		95F7BBD12C139AA200C5F2E4 /* PublicKeyHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BBD02C139AA200C5F2E4 /* PublicKeyHeaders.swift */; };
 		95F7BBDA2C1A27C200C5F2E4 /* rsa_2048_public_01.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBD42C1A27C200C5F2E4 /* rsa_2048_public_01.pem */; };
 		95F7BBDB2C1A27C200C5F2E4 /* rsa_4096_public_01.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBD52C1A27C200C5F2E4 /* rsa_4096_public_01.pem */; };
@@ -1808,7 +1808,7 @@
 		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F7BBC52C07D02F00C5F2E4 /* SemVer.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SemVer.xctestplan; sourceTree = "<group>"; };
 		95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSIntegration_1.xctestplan; sourceTree = "<group>"; };
-		95F7BBCE2C10FD4700C5F2E4 /* SslPinValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SslPinValidator.swift; sourceTree = "<group>"; };
+		95F7BBCE2C10FD4700C5F2E4 /* SslPinChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SslPinChecker.swift; sourceTree = "<group>"; };
 		95F7BBD02C139AA200C5F2E4 /* PublicKeyHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyHeaders.swift; sourceTree = "<group>"; };
 		95F7BBD42C1A27C200C5F2E4 /* rsa_2048_public_01.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_2048_public_01.pem; sourceTree = "<group>"; };
 		95F7BBD52C1A27C200C5F2E4 /* rsa_4096_public_01.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_4096_public_01.pem; sourceTree = "<group>"; };
@@ -3371,7 +3371,7 @@
 		95F7BBCD2C10FD1100C5F2E4 /* Security */ = {
 			isa = PBXGroup;
 			children = (
-				95F7BBCE2C10FD4700C5F2E4 /* SslPinValidator.swift */,
+				95F7BBCE2C10FD4700C5F2E4 /* SslPinChecker.swift */,
 				95F7BBD02C139AA200C5F2E4 /* PublicKeyHeaders.swift */,
 			);
 			path = Security;
@@ -3889,7 +3889,7 @@
 				3B6DEF5A20EA6AE50067435E /* SplitEventTask.swift in Sources */,
 				5905D4DA2559BB42006DA3B1 /* ByKeyMySegmentsStorage.swift in Sources */,
 				5905D4CE2555F99D006DA3B1 /* EventEntity.swift in Sources */,
-				95F7BBCF2C10FD4700C5F2E4 /* SslPinValidator.swift in Sources */,
+				95F7BBCF2C10FD4700C5F2E4 /* SslPinChecker.swift in Sources */,
 				3B6DEF8920EA6AE50067435E /* ConcurrentArrayQueue.swift in Sources */,
 				3B6DEF3520EA6AE50067435E /* SecureDataStore.swift in Sources */,
 				95715A8129D22C1B00A1B2F9 /* SplitEncryptionLevel.swift in Sources */,
