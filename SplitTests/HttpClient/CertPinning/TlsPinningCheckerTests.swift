@@ -11,13 +11,13 @@ import Security
 import XCTest
 @testable import Split
 
-class TlsPinningValidatorTests: XCTestCase {
+class TlsPinningCheckerTests: XCTestCase {
 
-    var validator: TlsPinValidator!
+    var validator: TlsPinChecker!
     let secHelper = SecurityHelper()
 
     override func setUp() {
-        validator = DefaultTlsPinValidator()
+        validator = DefaultTlsPinChecker()
         Logger.shared.level = .verbose
     }
 
@@ -115,7 +115,7 @@ class TlsPinningValidatorTests: XCTestCase {
 
         let credential = secHelper.createInvalidChallenge(
             authMethod: NSURLAuthenticationMethodClientCertificate)
-        let res = validator.validate(credential: credential,
+        let res = validator.check(credential: credential,
                                       pins: [CredentialPin(host: validHost, hash: Data(), algo: .sha256)])
         
         XCTAssertEqual(CredentialValidationResult.noServerTrustMethod, res)
@@ -125,7 +125,7 @@ class TlsPinningValidatorTests: XCTestCase {
 
         let credential = secHelper.createInvalidChallenge(
             authMethod: NSURLAuthenticationMethodServerTrust)
-        let res = validator.validate(credential: credential,
+        let res = validator.check(credential: credential,
                                       pins: [CredentialPin(host: validHost, hash: Data(), algo: .sha256)])
 
         XCTAssertEqual(CredentialValidationResult.unavailableServerTrust, res)
@@ -133,7 +133,7 @@ class TlsPinningValidatorTests: XCTestCase {
 
     func testValidationParameter() {
 
-        let res = validator.validate(credential: [String: String]() as AnyObject,
+        let res = validator.check(credential: [String: String]() as AnyObject,
                                       pins: [CredentialPin(host: validHost, hash: Data(), algo: .sha256)])
 
         XCTAssertEqual(CredentialValidationResult.invalidParameter, res)
@@ -152,7 +152,7 @@ class TlsPinningValidatorTests: XCTestCase {
             return
         }
 
-        let result = validator.validate(credential: challenge, pins: pins)
+        let result = validator.check(credential: challenge, pins: pins)
         
         XCTAssertEqual(expectedResult, result)
     }
@@ -178,7 +178,7 @@ class TlsPinningValidatorTests: XCTestCase {
         var extractedKey: CertSpki?
         if let cert = cert {
             // Casting to validate this implementation in particular
-            extractedKey  = (validator as! DefaultTlsPinValidator).spki(from: cert)
+            extractedKey  = TlsCertificateParser.spki(from: cert)
             if debug {
                 secHelper.inspect(certificate: cert)
                 print("EXTRACTED PUB KEY ------------")
@@ -298,12 +298,7 @@ class SecurityHelper  {
             return Data()
         }
 
-        guard let expectedHash = AlgoHelper.computeHash(keyData, algo: algo) else {
-            Logger.d("Could not create key for certificate pinning test key \(keyName)")
-            XCTFail()
-            return Data()
-        }
-
+        let expectedHash = AlgoHelper.computeHash(keyData, algo: algo)
         return expectedHash
     }
 
