@@ -320,6 +320,32 @@ public class SplitClientConfig: NSObject {
     /// This is useful when using two factories with the same SDK Key to avoid having issues with the shared data
     @objc public var prefix: String?
 
+
+    /// The `CertificatePinningConfig` class is used to configure certificate pinning for a given set of hosts.
+    /// It holds an array of credentials, each of which represents a pin for a specific host,
+    /// either in the form of a certificate name or a base64-encoded key hash.
+    /// This configuration ensures that only trusted certificates are used for secure communication.
+    ///
+    /// ### Usage Example:
+    /// ```swift
+    /// // Create a new builder instance
+    /// let builder = CertificatePinningConfig.builder()
+    ///
+    /// // Add certificate pin for a host
+    /// builder.addPin(host: "example.com", certificateName: "example_cert")
+    ///
+    /// // Add key hash pin for a host
+    /// builder.addPin(host: "example.com", keyHash: "sha256/aGVsbG8gd29ybGQ=")
+    ///
+    /// // Build the CertificatePinningConfig
+    /// let config = try builder.build()
+    /// ```
+    ///
+    /// This example demonstrates how to add certificate and key hash pins for a host and build the configuration.
+    ///
+    /// - Note: The certificate files must be in DER format and included in the app bundle.
+    @objc public var certificatePinningConfig: CertificatePinningConfig?
+
     ///
     ///  Update this variable to enable / disable telemetry for testing
     ///

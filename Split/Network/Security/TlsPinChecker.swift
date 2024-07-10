@@ -34,8 +34,8 @@ enum CredentialValidationResult {
 }
 
 enum KeyHashAlgo: String {
-    case sha256 = "sha256"
-    case sha1 = "sha1"
+    case sha256
+    case sha1
 }
 
 struct CertKeyTypeHelper {
