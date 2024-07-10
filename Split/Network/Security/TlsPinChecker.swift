@@ -31,6 +31,31 @@ enum CredentialValidationResult {
     case unavailableServerTrust
     case invalidCredential
     case invalidParameter
+
+    var description: String {
+        switch self {
+        case .success:
+            return "success"
+        case .error:
+            return "Error validating credentials"
+        case .noPinsForDomain:
+            return "No pins found for domain"
+        case .invalidChain:
+            return "Key chain invalided"
+        case .credentialNotPinned:
+            return "Credential is not pinned"
+        case .spkiError:
+            return "Unable to get SPKI from public key"
+        case .noServerTrustMethod:
+            return "Validation method is not Server Trust"
+        case .unavailableServerTrust:
+            return "No server trust available"
+        case .invalidCredential:
+            return "Invalid credentials"
+        case .invalidParameter:
+            return "Incorrect credentials type"
+        }
+    }
 }
 
 enum KeyHashAlgo: String {

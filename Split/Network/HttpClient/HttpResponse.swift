@@ -15,11 +15,14 @@ import Foundation
 struct HttpResponse {
     let code: Int
     let result: HttpResultWrapper
+    let internalCode: Int // InternalHttpErrorCode
     var isClientError: Bool {
         return code >= HttpCode.badRequest && code < HttpCode.internalServerError
     }
-    init(code: Int, data: Data? = nil) {
+
+    init(code: Int, data: Data? = nil, internalCode: Int = InternalHttpErrorCode.noCode) {
         self.code = code
+        self.internalCode = internalCode
         if code >= HttpCode.requestOk && code < HttpCode.multipleChoice {
             self.result = HttpResultWrapper.success(Json(data))
         } else {
