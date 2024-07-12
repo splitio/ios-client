@@ -79,6 +79,7 @@ class HttpSessionConfig {
     var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
     var httpsAuthenticator: SplitHttpsAuthenticator?
     var pinChecker: TlsPinChecker?
+    var notificationHelper: NotificationHelper? = DefaultNotificationHelper.instance
 }
 
 protocol HttpClient {
@@ -132,7 +133,8 @@ class DefaultHttpClient {
                     self.requestManager = requestManager
                 } else {
                     self.requestManager = DefaultHttpRequestManager(authententicator: configuration.httpsAuthenticator,
-                                                                    pinChecker: configuration.pinChecker)
+                                                                    pinChecker: configuration.pinChecker,
+                                                                    notificationHelper: configuration.notificationHelper)
                 }
 
                 if let httpSession = testSession {

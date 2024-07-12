@@ -36,6 +36,10 @@ protocol Synchronizer: ImpressionLogger {
     func resume()
     func flush()
     func destroy()
+
+    func disableSdk()
+    func disableEvents()
+    func disableTelemetry()
 }
 
 class DefaultSynchronizer: Synchronizer {
@@ -54,6 +58,10 @@ class DefaultSynchronizer: Synchronizer {
     private let telemetrySynchronizer: TelemetrySynchronizer?
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let featureFlagsSynchronizer: FeatureFlagsSynchronizer
+
+    private let isSdkDisabled = Atomic(false)
+    private let isEventsDisabled = Atomic(false)
+    private let isTelemetryDisabled = Atomic(false)
 
     private var isDestroyed = Atomic(false)
 
@@ -149,6 +157,9 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func startRecordingUserData() {
+        if isEventsDisabled.value {
+            return
+        }
         impressionsTracker.start()
         eventsSynchronizer.start()
     }
@@ -159,6 +170,9 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func startRecordingTelemetry() {
+        if isTelemetryDisabled.value {
+            return
+        }
         telemetrySynchronizer?.start()
     }
 
@@ -168,6 +182,7 @@ class DefaultSynchronizer: Synchronizer {
 
     func pushEvent(event: EventDTO) {
         flushQueue.async { [weak self] in
+
 
             guard let self = self else { return }
             self.eventsSynchronizer.push(event)
@@ -234,6 +249,25 @@ class DefaultSynchronizer: Synchronizer {
         self.featureFlagsSynchronizer.synchronize()
     }
 
+    func disableSdk() {
+        isSdkDisabled.set(true)
+        if !splitConfig.streamingEnabled {
+            stopPeriodicFetching()
+        }
+    }
+
+    func disableTelemetry() {
+        isTelemetryDisabled.set(true)
+        if splitConfig.isTelemetryEnabled {
+            stopRecordingTelemetry()
+        }
+    }
+    
+    func disableEvents() {
+        isEventsDisabled.set(true)
+        stopRecordingUserData()
+    }
+
     // MARK: Private
     private func recordSyncModeEvent(_ mode: Int64) {
         if splitConfig.streamingEnabled && !isDestroyed.value {
@@ -244,7 +278,7 @@ class DefaultSynchronizer: Synchronizer {
 
     @inline(__always)
     private func runIfSyncEnabled(action: () -> Void) {
-        if self.splitConfig.syncEnabled {
+        if self.splitConfig.syncEnabled, !self.isSdkDisabled.value {
             action()
         }
     }

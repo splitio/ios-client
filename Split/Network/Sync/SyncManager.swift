@@ -42,17 +42,26 @@ class DefaultSyncManager: SyncManager {
         self.reconnectStreamingTimer = reconnectStreamingTimer
         self.syncGuardian = syncGuardian
 
-        notificationHelper.addObserver(for: AppNotification.didBecomeActive) { [weak self] in
+        notificationHelper.addObserver(for: AppNotification.didBecomeActive) { [weak self] _ in
             if let self = self {
                 self.resume()
             }
         }
 
-        notificationHelper.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
+        notificationHelper.addObserver(for: AppNotification.didEnterBackground) { [weak self] _ in
             if let self = self {
                 self.pause()
             }
         }
+
+        notificationHelper.addObserver(for: AppNotification.pinnedCredentialValidationFail) { [weak self] host in
+            if let self = self, let host = host as? String {
+                self.handleBannedHost(host)
+                self.pause()
+            }
+        }
+
+
     }
 
     func start() {
@@ -220,5 +229,29 @@ class DefaultSyncManager: SyncManager {
         } else {
             synchronizer.startPeriodicFetching()
         }
+    }
+
+    private func handleBannedHost(_ host: String) {
+
+        let endpoints = splitConfig.serviceEndpoints
+
+        if check(url: endpoints.eventsEndpoint, host: host) {
+            synchronizer.disableEvents()
+
+        } else if check(url: endpoints.sdkEndpoint, host: host) {
+            synchronizer.disableSdk()
+
+        } else if check(url: endpoints.authServiceEndpoint, host: host),
+            check(url: endpoints.streamingServiceEndpoint, host: host) {
+            pushNotificationManager?.stop()
+
+        } else if check(url: endpoints.telemetryServiceEndpoint, host: host) {
+            synchronizer.disableTelemetry()
+        }
+
+    }
+
+    private func check(url: URL, host: String) -> Bool {
+        return url.absoluteString.contains(host)
     }
 }
