@@ -24,6 +24,10 @@ class DefaultHttpRequestManager: NSObject {
     private var requests = HttpRequestList()
     private var authenticator: SplitHttpsAuthenticator?
 
+    // TODO: Add pin checker param... And make pins part of pin checker?
+    private let pinChecker: TlsPinChecker? = DefaultTlsPinChecker()
+    private let pins: [CredentialPin] = []
+
     init(authententicator: SplitHttpsAuthenticator? = nil) {
         self.authenticator = authententicator
     }
@@ -72,6 +76,19 @@ extension DefaultHttpRequestManager: URLSessionDelegate {
     func urlSession(_ session: URLSession,
                     didReceive challenge: URLAuthenticationChallenge,
                     completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+
+        // If doing certificate pinning and a custom authenticator is implemented
+        // the pin checker has priority
+        if let pinChecker = self.pinChecker {
+            Logger.v("Checking pinned credentials")
+            checkPins(pinChecker: pinChecker,
+                      session: session,
+                      challenge: challenge,
+                      completionHandler: completionHandler)
+            return
+        }
+
+
         if let authenticator = self.authenticator {
             Logger.v("Triggering external HTTPS authentication handler")
             authenticator.authenticate(session: session,
@@ -110,5 +127,45 @@ extension DefaultHttpRequestManager: HttpRequestManager {
 
     func destroy() {
         requests.clear()
+    }
+}
+
+// MARK: Certificate pinning
+// Handle certificate pinning result
+extension DefaultHttpRequestManager {
+    /// Authenticates the session with a URL authentication challenge.
+    /// - Parameters:
+    ///   - session: The URL session.
+    ///   - challenge: The URL authentication challenge.
+    ///   - completionHandler: The completion handler to call with the authentication disposition and credential.
+    func checkPins(pinChecker: TlsPinChecker,
+                   session: URLSession,
+                   challenge: URLAuthenticationChallenge,
+                   completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+
+        // Validate the server trust using the PinValidator
+        let checkResult = pinChecker.check(credential: challenge, pins: pins)
+        switch checkResult {
+        case .success:
+            guard let serverTrust = challenge.protectionSpace.serverTrust else {
+                // This shouldn't happen
+                completionHandler(.cancelAuthenticationChallenge, nil)
+                return
+            }
+            let credential = URLCredential(trust: serverTrust)
+            completionHandler(.useCredential, credential)
+
+        case .error, .invalidChain, .credentialNotPinned, .spkiError,
+                .invalidCredential, .invalidParameter, .unavailableServerTrust:
+            if let task = challenge.sender as? URLSessionTask {
+                let taskId = task.taskIdentifier
+                requests.stopRetrying(identifier: taskId)
+            }
+            completionHandler(.cancelAuthenticationChallenge, nil)
+
+        case .noServerTrustMethod, .noPinsForDomain:
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
     }
 }

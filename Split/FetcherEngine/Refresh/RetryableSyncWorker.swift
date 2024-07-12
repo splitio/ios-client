@@ -52,6 +52,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
             } catch {
                 Logger.e("Error fetching data: \(self)")
                 self.errorHandler?(error)
+
             }
         }
     }

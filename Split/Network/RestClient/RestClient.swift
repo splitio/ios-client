@@ -84,7 +84,7 @@ class DefaultRestClient: SplitApiRestClient {
                         throw HttpError.uriTooLong
                     }
                     if response.code >= HttpCode.badRequest, response.code < HttpCode.internalServerError {
-                        throw HttpError.clientRelated(code: response.code)
+                        throw HttpError.clientRelated(code: response.code, internalCode: InternalHttpErrorCode.noCode)
                     }
                     throw HttpError.unknown(code: response.code, message: "unknown")
                 })
