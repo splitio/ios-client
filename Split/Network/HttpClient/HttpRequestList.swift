@@ -46,7 +46,7 @@ class HttpRequestList {
         return request
     }
 
-    func stopRetrying(identifier: Int) {
+    func notifyPinnedCredentialFail(identifier: Int) {
         queue.sync(flags: .barrier) {
             requests[identifier]?.notifyPinnedCredentialFail()
         }
