@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 protocol RetryableSyncWorker {
     typealias SyncCompletion = (Bool) -> Void
     typealias ErrorHandler = (Error) -> Void
@@ -52,7 +53,6 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
             } catch {
                 Logger.e("Error fetching data: \(self)")
                 self.errorHandler?(error)
-
             }
         }
     }
@@ -134,7 +134,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                    reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
-    override func fetchFromRemote() -> Bool {
+    override func fetchFromRemote() throws -> Bool {
         do {
             let oldSegments = mySegmentsStorage.getAll()
             if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: getHeaders()) {
@@ -149,6 +149,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
         } catch let error {
             Logger.e("Problem fetching mySegments: %@", error.localizedDescription)
             errorHandler?(error)
+            try SyncWorkerHelper.handlePinValidationFail(worker: self, error: error)
         }
         return false
     }
@@ -191,7 +192,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
-    override func fetchFromRemote() -> Bool {
+    override func fetchFromRemote() throws -> Bool {
         var changeNumber = splitsStorage.changeNumber
         var clearCache = false
         if changeNumber != -1 {
@@ -229,6 +230,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         } catch {
             Logger.e("Error while fetching splits in method: \(error.localizedDescription)")
             errorHandler?(error)
+            try SyncWorkerHelper.handlePinValidationFail(worker: self, error: error)
         }
         return false
     }
@@ -285,8 +287,21 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         } catch {
             Logger.e("Error while fetching splits in method \(#function): \(error.localizedDescription)")
             errorHandler?(error)
+            try SyncWorkerHelper.handlePinValidationFail(worker: self, error: error)
         }
         Logger.d("Feature flag changes are not updated yet")
         return false
+    }
+}
+
+struct SyncWorkerHelper {
+    static func handlePinValidationFail(worker: RetryableSyncWorker?, error: Error?) throws {
+        if let error = error as? HttpError,
+            error == HttpError.clientRelated(code: -1,
+                                            internalCode: InternalHttpErrorCode.pinningValidationFail) {
+            Logger.w("Pinned credential validation fail. Stop retrying.")
+            worker?.stop()
+            throw error
+        }
     }
 }

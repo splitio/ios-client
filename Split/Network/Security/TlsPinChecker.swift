@@ -129,14 +129,20 @@ struct CertSpki {
 }
 
 protocol TlsPinChecker {
-    func check(credential: AnyObject, pins: [CredentialPin]) -> CredentialValidationResult
+    func check(credential: AnyObject) -> CredentialValidationResult
 }
 
 struct DefaultTlsPinChecker: TlsPinChecker {
 
+    private let pins: [CredentialPin]
+
+    init(pins: [CredentialPin]) {
+        self.pins = pins
+    }
+
     // Using a generic parameter to aisolate Apple's framework and
     // also to make the component easily mockable
-    func check(credential: AnyObject, pins: [CredentialPin]) -> CredentialValidationResult {
+    func check(credential: AnyObject) -> CredentialValidationResult {
 
         guard let challenge = credential as? URLAuthenticationChallenge else {
             Logger.e("The credential received is not a URLAuthenticationChallenge")
@@ -160,20 +166,14 @@ struct DefaultTlsPinChecker: TlsPinChecker {
             return .unavailableServerTrust
         }
 
-        let result = checkValidity(of: serverTrust, protectionSpace: protectionSpace, pins: pins)
-
-        if result != .success {
-            // Credentials are invalid
-            // invalid, and cancel the load.
-            Logger.w("Invalid credentials for host \(protectionSpace.host) " +
-                     "and method \(protectionSpace.authenticationMethod)")
-        }
+        let result = checkValidity(of: serverTrust, protectionSpace: protectionSpace)
+        Logger.d("Credential validation result for host \(protectionSpace.host) " +
+                     "and method \(protectionSpace.authenticationMethod): \(result.description)")
         return result
     }
 
-    private func checkValidity(of secTrust: SecTrust, 
-                               protectionSpace: URLProtectionSpace,
-                               pins: [CredentialPin]) -> CredentialValidationResult {
+    private func checkValidity(of secTrust: SecTrust,
+                               protectionSpace: URLProtectionSpace) -> CredentialValidationResult {
 
         // Check if we have pins for the domain
         let host = protectionSpace.host
@@ -235,30 +235,33 @@ struct DefaultTlsPinChecker: TlsPinChecker {
     }
 
     private func isValidSecurityChain(_ secTrust: SecTrust, host: String) -> Bool {
-//        var evalError: UnsafeMutablePointer<CFError?>?
-        var evalError: CFError?
 
-        // Creating a default SSL policy
-        let policy = SecPolicyCreateSSL(true, host as CFString)
-        SecTrustSetPolicies(secTrust, policy)
-        let result = SecTrustEvaluateWithError(secTrust, &evalError)
-        if let err = evalError {
-            // If there's an error, check what is it about and log result
-            Logger.e("Error evaluating TLS Certificate: \(err.localizedDescription)")
+        if #available(macOSApplicationExtension 10.14, *) {
+            var evalError: CFError?
 
-            // Get more details about the error while evaluating
-            var resultType = UnsafeMutablePointer<SecTrustResultType>.allocate(capacity: MemoryLayout<Int>.size)
-            let status = SecTrustGetTrustResult(secTrust, resultType)
+            // Creating a default SSL policy
+            let policy = SecPolicyCreateSSL(true, host as CFString)
+            SecTrustSetPolicies(secTrust, policy)
+            let result = SecTrustEvaluateWithError(secTrust, &evalError)
+            if let err = evalError {
+                // If there's an error, check what is it about and log result
+                Logger.e("Error evaluating TLS Certificate: \(err.localizedDescription)")
 
-            // Get readable message
-            let message = SecCopyErrorMessageString(status, nil) as? String
-            Logger.v("Validation chain failed: \(message ?? "Unknown")")
+                // Get more details about the error while evaluating
+                var resultType = UnsafeMutablePointer<SecTrustResultType>.allocate(capacity: MemoryLayout<Int>.size)
+                let status = SecTrustGetTrustResult(secTrust, resultType)
+
+                // Get readable message
+                let message = SecCopyErrorMessageString(status, nil) as? String
+                Logger.v("Validation chain failed: \(message ?? "Unknown")")
+            }
+            return result
         }
-        return result
+        return false
     }
 
     private func certificate(at index: Int, from secTrust: SecTrust) -> SecCertificate? {
-        if #available(iOS 15.0, *) {
+        if #available(iOS 15.0, macOS 12.0, *) {
             guard let certs = SecTrustCopyCertificateChain(secTrust) as? [SecCertificate] else { return nil }
             // Double checking just in case
             if certs.count > index {
@@ -282,7 +285,6 @@ struct DefaultTlsPinChecker: TlsPinChecker {
         Logger.d("Skipping validation for host \(host) and method \(method): \(message)")
     }
 }
-
 
 struct AlgoHelper {
     static func computeHash(_ data: Data, algo: KeyHashAlgo) -> Data {
@@ -356,12 +358,14 @@ struct TlsCertificateParser {
 
     static private func publicKey(from certificate: SecCertificate) -> CertSpki? {
         // Extract the public key from the server's certificate
-        if let publicKey = SecCertificateCopyKey(certificate) {
-            let keyType = typeOf(key: publicKey)
-            if keyType.isSupported(),
-               let publicKeyData = SecKeyCopyExternalRepresentation(publicKey, nil) as Data? {
-                Logger.v("Plain PublicKey Data: \(publicKeyData.hexadecimalRepresentation)")
-                return CertSpki(type: keyType, data: publicKeyData)
+        if #available(macOSApplicationExtension 10.14, *) {
+            if let publicKey = SecCertificateCopyKey(certificate) {
+                let keyType = typeOf(key: publicKey)
+                if keyType.isSupported(),
+                   let publicKeyData = SecKeyCopyExternalRepresentation(publicKey, nil) as Data? {
+                    Logger.v("Plain PublicKey Data: \(publicKeyData.hexadecimalRepresentation)")
+                    return CertSpki(type: keyType, data: publicKeyData)
+                }
             }
         }
         return nil

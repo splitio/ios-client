@@ -44,11 +44,6 @@ public class CertificatePinningError: NSObject, LocalizedError {
     /// Builder class for constructing a CertificatePinningConfig.
     @objc(CertificatePinningConfigBuilder)
     public class Builder: NSObject {
-        private struct HashField {
-            static let algo = 0
-            static let key = 1
-            private init() {}
-        }
 
         private enum PinType {
             case key
@@ -139,17 +134,17 @@ public class CertificatePinningError: NSObject, LocalizedError {
         /// - Throws: CertificatePinningError if the key hash is invalid.
         /// - Returns: A CredentialPin object.
         private func parseHash(pin: Pin) throws -> CredentialPin {
-            let hashComponents = pin.data.split(separator: "/")
-            if hashComponents.count != 2 {
+            let hash = pin.data
+            guard let separatorIndex = hash.firstIndex(of: "/") else {
                 throw errLog("Unable to add pin for host \(pin.host), invalid key hash")
             }
 
-            let algoName = String(hashComponents[HashField.algo])
+            let algoName = String(hash[hash.startIndex..<separatorIndex])
             guard let algo = KeyHashAlgo(rawValue: algoName) else {
                 throw errLog("Key hash algorithm not supported for pin: \(algoName)")
             }
 
-            let keyHash = String(hashComponents[HashField.key])
+            let keyHash = String(hash[hash.index(after: separatorIndex)..<hash.endIndex])
             guard let dataHash = Data(base64Encoded: keyHash) else {
                 throw errLog("Key hash not valid for pin: \(algoName)")
             }

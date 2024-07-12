@@ -78,6 +78,7 @@ class HttpSessionConfig {
     }()
     var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
     var httpsAuthenticator: SplitHttpsAuthenticator?
+    var pinChecker: TlsPinChecker?
 }
 
 protocol HttpClient {
@@ -130,7 +131,8 @@ class DefaultHttpClient {
                 if let requestManager = testRequestManager {
                     self.requestManager = requestManager
                 } else {
-                    self.requestManager = DefaultHttpRequestManager(authententicator: configuration.httpsAuthenticator)
+                    self.requestManager = DefaultHttpRequestManager(authententicator: configuration.httpsAuthenticator,
+                                                                    pinChecker: configuration.pinChecker)
                 }
 
                 if let httpSession = testSession {
