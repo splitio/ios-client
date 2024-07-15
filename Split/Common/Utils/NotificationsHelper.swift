@@ -41,7 +41,7 @@ enum AppNotification: String {
 protocol NotificationHelper {
     func addObserver(for notification: AppNotification, action: @escaping ObserverAction)
     func removeAllObservers()
-    func post(notification: AppNotification, info: Any)
+    func post(notification: AppNotification, info: AnyObject)
 }
 
 class DefaultNotificationHelper: NotificationHelper {
@@ -139,7 +139,7 @@ class DefaultNotificationHelper: NotificationHelper {
         }
     }
 
-    func post(notification: AppNotification, info: Any) {
-        executeActions(for: AppNotification.pinnedCredentialValidationFail)
+    func post(notification: AppNotification, info: AnyObject) {
+        executeActions(for: AppNotification.pinnedCredentialValidationFail, info: info)
     }
 }

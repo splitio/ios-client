@@ -53,7 +53,7 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
     func resume() {
     }
 
-    func stop() {
+    func destroy() {
         featureFlagsDataSource.stop()
         featureFlagsStorage.destroy()
     }

@@ -182,8 +182,6 @@ class DefaultSynchronizer: Synchronizer {
 
     func pushEvent(event: EventDTO) {
         flushQueue.async { [weak self] in
-
-
             guard let self = self else { return }
             self.eventsSynchronizer.push(event)
         }
@@ -239,7 +237,7 @@ class DefaultSynchronizer: Synchronizer {
 
     func destroy() {
         isDestroyed.set(true)
-        featureFlagsSynchronizer.stop()
+        featureFlagsSynchronizer.destroy()
         byKeySynchronizer.stop()
         eventsSynchronizer.destroy()
         impressionsTracker.destroy()
@@ -251,9 +249,8 @@ class DefaultSynchronizer: Synchronizer {
 
     func disableSdk() {
         isSdkDisabled.set(true)
-        if !splitConfig.streamingEnabled {
-            stopPeriodicFetching()
-        }
+        featureFlagsSynchronizer.destroy()
+        byKeySynchronizer.stopSync()
     }
 
     func disableTelemetry() {
@@ -262,7 +259,7 @@ class DefaultSynchronizer: Synchronizer {
             stopRecordingTelemetry()
         }
     }
-    
+
     func disableEvents() {
         isEventsDisabled.set(true)
         stopRecordingUserData()

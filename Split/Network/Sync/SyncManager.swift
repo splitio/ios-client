@@ -57,11 +57,8 @@ class DefaultSyncManager: SyncManager {
         notificationHelper.addObserver(for: AppNotification.pinnedCredentialValidationFail) { [weak self] host in
             if let self = self, let host = host as? String {
                 self.handleBannedHost(host)
-                self.pause()
             }
         }
-
-
     }
 
     func start() {
@@ -235,6 +232,7 @@ class DefaultSyncManager: SyncManager {
 
         let endpoints = splitConfig.serviceEndpoints
 
+        Logger.w("Pinned credential validation fails for \(host). Sync disabled.")
         if check(url: endpoints.eventsEndpoint, host: host) {
             synchronizer.disableEvents()
 
@@ -248,7 +246,6 @@ class DefaultSyncManager: SyncManager {
         } else if check(url: endpoints.telemetryServiceEndpoint, host: host) {
             synchronizer.disableTelemetry()
         }
-
     }
 
     private func check(url: URL, host: String) -> Bool {

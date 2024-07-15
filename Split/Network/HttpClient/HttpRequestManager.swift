@@ -105,10 +105,6 @@ extension DefaultHttpRequestManager: URLSessionDataDelegate {
     }
 }
 
-// MARK: UrlSessionDelegate
-extension DefaultHttpRequestManager: URLSessionDelegate {
-}
-
 extension DefaultHttpRequestManager: HttpRequestManager {
     func set(responseCode: Int, to taskIdentifier: Int) -> Bool {
         if let request = requests.get(identifier: taskIdentifier) {
@@ -168,7 +164,8 @@ extension DefaultHttpRequestManager {
         case .error, .invalidChain, .credentialNotPinned, .spkiError,
                 .invalidCredential, .invalidParameter, .unavailableServerTrust:
             requests.notifyPinnedCredentialFail(identifier: taskId)
-            notificationHelper?.post(notification: .pinnedCredentialValidationFail, info: challenge.protectionSpace.host)
+            notificationHelper?.post(notification: .pinnedCredentialValidationFail,
+                                     info: challenge.protectionSpace.host as AnyObject)
             completionHandler(.cancelAuthenticationChallenge, nil)
 
         case .noServerTrustMethod, .noPinsForDomain:
