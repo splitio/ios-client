@@ -241,7 +241,7 @@ class DefaultSyncManager: SyncManager {
 
         } else if check(url: endpoints.authServiceEndpoint, host: host),
             check(url: endpoints.streamingServiceEndpoint, host: host) {
-            pushNotificationManager?.stop()
+            switchToPolling()
 
         } else if check(url: endpoints.telemetryServiceEndpoint, host: host) {
             synchronizer.disableTelemetry()
