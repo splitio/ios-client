@@ -36,6 +36,10 @@ protocol Synchronizer: ImpressionLogger {
     func resume()
     func flush()
     func destroy()
+
+    func disableSdk()
+    func disableEvents()
+    func disableTelemetry()
 }
 
 class DefaultSynchronizer: Synchronizer {
@@ -54,6 +58,13 @@ class DefaultSynchronizer: Synchronizer {
     private let telemetrySynchronizer: TelemetrySynchronizer?
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let featureFlagsSynchronizer: FeatureFlagsSynchronizer
+    
+    // These three variables indicates what
+    // endpoints are not available because
+    // pinned credential validation has failed
+    private let isSdkDisabled = Atomic(false)
+    private let isEventsDisabled = Atomic(false)
+    private let isTelemetryDisabled = Atomic(false)
 
     private var isDestroyed = Atomic(false)
 
@@ -149,16 +160,22 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func startRecordingUserData() {
+        if isEventsDisabled.value {
+            return
+        }
         impressionsTracker.start()
         eventsSynchronizer.start()
     }
 
     func stopRecordingUserData() {
-        impressionsTracker.stop()
+        impressionsTracker.stop(.all)
         eventsSynchronizer.stop()
     }
 
     func startRecordingTelemetry() {
+        if isTelemetryDisabled.value {
+            return
+        }
         telemetrySynchronizer?.start()
     }
 
@@ -168,7 +185,6 @@ class DefaultSynchronizer: Synchronizer {
 
     func pushEvent(event: EventDTO) {
         flushQueue.async { [weak self] in
-
             guard let self = self else { return }
             self.eventsSynchronizer.push(event)
         }
@@ -224,7 +240,7 @@ class DefaultSynchronizer: Synchronizer {
 
     func destroy() {
         isDestroyed.set(true)
-        featureFlagsSynchronizer.stop()
+        featureFlagsSynchronizer.destroy()
         byKeySynchronizer.stop()
         eventsSynchronizer.destroy()
         impressionsTracker.destroy()
@@ -232,6 +248,31 @@ class DefaultSynchronizer: Synchronizer {
 
     func synchronizeSplits() {
         self.featureFlagsSynchronizer.synchronize()
+    }
+
+    func disableSdk() {
+        isSdkDisabled.set(true)
+        featureFlagsSynchronizer.destroy()
+        byKeySynchronizer.stopSync()
+    }
+
+    // Unique keys are sent to telemetry endpoint
+    // Because of this function disables data being sent
+    // to telemetry endpoint, unique keys submitter is
+    // stopped too
+    func disableTelemetry() {
+        isTelemetryDisabled.set(true)
+        // Unique keys are sent to telemetry endpoint
+        impressionsTracker.stop(.uniqueKeys)
+        if splitConfig.isTelemetryEnabled {
+            stopRecordingTelemetry()
+        }
+    }
+
+    func disableEvents() {
+        isEventsDisabled.set(true)
+        impressionsTracker.stop(.impressions)
+        eventsSynchronizer.stop()
     }
 
     // MARK: Private
@@ -244,7 +285,7 @@ class DefaultSynchronizer: Synchronizer {
 
     @inline(__always)
     private func runIfSyncEnabled(action: () -> Void) {
-        if self.splitConfig.syncEnabled {
+        if self.splitConfig.syncEnabled, !self.isSdkDisabled.value {
             action()
         }
     }

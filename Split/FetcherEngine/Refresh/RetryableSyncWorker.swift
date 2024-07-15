@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 protocol RetryableSyncWorker {
     typealias SyncCompletion = (Bool) -> Void
     typealias ErrorHandler = (Error) -> Void
@@ -149,7 +148,6 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
         } catch let error {
             Logger.e("Problem fetching mySegments: %@", error.localizedDescription)
             errorHandler?(error)
-            try SyncWorkerHelper.handlePinValidationFail(worker: self, error: error)
         }
         return false
     }
@@ -230,7 +228,6 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         } catch {
             Logger.e("Error while fetching splits in method: \(error.localizedDescription)")
             errorHandler?(error)
-            try SyncWorkerHelper.handlePinValidationFail(worker: self, error: error)
         }
         return false
     }
@@ -287,21 +284,8 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         } catch {
             Logger.e("Error while fetching splits in method \(#function): \(error.localizedDescription)")
             errorHandler?(error)
-            try SyncWorkerHelper.handlePinValidationFail(worker: self, error: error)
         }
         Logger.d("Feature flag changes are not updated yet")
         return false
-    }
-}
-
-struct SyncWorkerHelper {
-    static func handlePinValidationFail(worker: RetryableSyncWorker?, error: Error?) throws {
-        if let error = error as? HttpError,
-            error == HttpError.clientRelated(code: -1,
-                                            internalCode: InternalHttpErrorCode.pinningValidationFail) {
-            Logger.w("Pinned credential validation fail. Stop retrying.")
-            worker?.stop()
-            throw error
-        }
     }
 }

@@ -24,11 +24,12 @@ import WatchKit
 import TVUIKit
 #endif
 
-typealias ObserverAction = () -> Void
+typealias ObserverAction = (Any?) -> Void
 
 enum AppNotification: String {
     case didEnterBackground
     case didBecomeActive
+    case pinnedCredentialValidationFail
 }
 
 /// ** NotificationHelper **
@@ -38,15 +39,17 @@ enum AppNotification: String {
 /// that way the code becomes streight and simple.
 
 protocol NotificationHelper {
-
     func addObserver(for notification: AppNotification, action: @escaping ObserverAction)
     func removeAllObservers()
+    func post(notification: AppNotification, info: AnyObject)
 }
 
 class DefaultNotificationHelper: NotificationHelper {
 
     private let queue = DispatchQueue(label: "split-notification-helper", attributes: .concurrent)
     private var actions = [String: [ObserverAction]]()
+
+    static let pinnedCredentialValidationFailed = NSNotification.Name("pinnedCredentialValidationFailed")
 
 #if os(iOS) || os(tvOS)
 
@@ -107,14 +110,14 @@ class DefaultNotificationHelper: NotificationHelper {
         NotificationCenter.default.removeObserver(self, name: Self.didBecomeActiveNotification, object: nil)
     }
 
-    private func executeActions(for notification: AppNotification) {
+    private func executeActions(for notification: AppNotification, info: AnyObject? = nil) {
         var actions: [ObserverAction]?
         queue.sync {
             actions = self.actions[notification.rawValue]
         }
         if let actions =  actions {
             for action in actions {
-                action()
+                action(info)
             }
         }
     }
@@ -134,5 +137,9 @@ class DefaultNotificationHelper: NotificationHelper {
             guard let self = self else { return }
             self.actions.removeAll()
         }
+    }
+
+    func post(notification: AppNotification, info: AnyObject) {
+        executeActions(for: AppNotification.pinnedCredentialValidationFail, info: info)
     }
 }

@@ -18,7 +18,7 @@ protocol FeatureFlagsSynchronizer {
     func notifyUpdated()
     func pause()
     func resume()
-    func stop()
+    func destroy()
 }
 
 class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
@@ -33,6 +33,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     private let splitEventsManager: SplitEventsManager
     private var periodicSplitsSyncWorker: PeriodicSyncWorker?
     private var broadcasterChannel: SyncEventBroadcaster
+    private var isDestroyed = Atomic(false)
 
     init(splitConfig: SplitClientConfig,
          storageContainer: SplitStorageContainer,
@@ -72,6 +73,11 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     }
 
     func load() {
+
+        if isDestroyed.value {
+            return
+        }
+
         let splitsStorage = self.storageContainer.splitsStorage
         DispatchQueue.general.async {
             let start = Date.nowMillis()
@@ -88,11 +94,14 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     }
 
     func synchronize() {
+        if isDestroyed.value {
+            return
+        }
         splitsSyncWorker.start()
     }
 
     func synchronize(changeNumber: Int64) {
-        if !splitConfig.syncEnabled {
+        if isDestroyed.value || !splitConfig.syncEnabled {
             return
         }
 
@@ -116,10 +125,16 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     }
 
     func startPeriodicSync() {
+        if isDestroyed.value {
+            return
+        }
         periodicSplitsSyncWorker?.start()
     }
 
     func stopPeriodicSync() {
+        if isDestroyed.value {
+            return
+        }
         periodicSplitsSyncWorker?.stop()
     }
 
@@ -136,10 +151,14 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     }
 
     func resume() {
+        if isDestroyed.value {
+            return
+        }
         periodicSplitsSyncWorker?.resume()
     }
 
-    func stop() {
+    func destroy() {
+        isDestroyed.set(true)
         splitsSyncWorker.stop()
         periodicSplitsSyncWorker?.stop()
         periodicSplitsSyncWorker?.destroy()

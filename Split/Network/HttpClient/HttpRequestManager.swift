@@ -26,10 +26,14 @@ class DefaultHttpRequestManager: NSObject {
 
     private let pinChecker: TlsPinChecker?
 
+    private let notificationHelper: NotificationHelper?
+
     init(authententicator: SplitHttpsAuthenticator? = nil,
-         pinChecker: TlsPinChecker?) {
+         pinChecker: TlsPinChecker?,
+         notificationHelper: NotificationHelper?) {
         self.authenticator = authententicator
         self.pinChecker = pinChecker
+        self.notificationHelper = notificationHelper
     }
 }
 
@@ -101,10 +105,6 @@ extension DefaultHttpRequestManager: URLSessionDataDelegate {
     }
 }
 
-// MARK: UrlSessionDelegate
-extension DefaultHttpRequestManager: URLSessionDelegate {
-}
-
 extension DefaultHttpRequestManager: HttpRequestManager {
     func set(responseCode: Int, to taskIdentifier: Int) -> Bool {
         if let request = requests.get(identifier: taskIdentifier) {
@@ -164,6 +164,8 @@ extension DefaultHttpRequestManager {
         case .error, .invalidChain, .credentialNotPinned, .spkiError,
                 .invalidCredential, .invalidParameter, .unavailableServerTrust:
             requests.notifyPinnedCredentialFail(identifier: taskId)
+            notificationHelper?.post(notification: .pinnedCredentialValidationFail,
+                                     info: challenge.protectionSpace.host as AnyObject)
             completionHandler(.cancelAuthenticationChallenge, nil)
 
         case .noServerTrustMethod, .noPinsForDomain:

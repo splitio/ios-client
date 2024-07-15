@@ -57,6 +57,9 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func loadMySegmentsFromCache() {
+        if isDestroyed.value {
+            return
+        }
         DispatchQueue.general.async {
             self.mySegmentsStorage.loadLocal()
             self.splitEventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
@@ -65,18 +68,30 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func synchronizeMySegments() {
+        if isDestroyed.value {
+            return
+        }
         mySegmentsSyncWorker.start()
     }
 
     func forceMySegmentsSync() {
+        if isDestroyed.value {
+            return
+        }
         mySegmentsForcedSyncWorker?.start()
     }
 
     func startPeriodicFetching() {
+        if isDestroyed.value {
+            return
+        }
         periodicMySegmentsSyncWorker?.start()
     }
 
     func stopPeriodicFetching() {
+        if isDestroyed.value {
+            return
+        }
         periodicMySegmentsSyncWorker?.stop()
     }
 
@@ -89,6 +104,9 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func resume() {
+        if isDestroyed.value {
+            return
+        }
         periodicMySegmentsSyncWorker?.resume()
     }
 
