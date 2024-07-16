@@ -11,6 +11,7 @@ import Foundation
 
 class ByKeyFacadeStub: ByKeyFacade {
 
+    var stopSyncCalled = false
     var components = [Key: ByKeyComponentGroup]()
     var loadMySegmentsFromCacheCalled = [String: Bool]()
     var startPeriodicSyncCalled = false
@@ -109,4 +110,9 @@ class ByKeyFacadeStub: ByKeyFacade {
     func notifyMySegmentsUpdated(forKey key: String) {
         notifyMySegmentsUpdatedCalled = true
     }
+
+    func stopSync() {
+        stopSyncCalled = true
+    }
 }
+

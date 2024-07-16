@@ -50,7 +50,7 @@ class LocalhostSynchronizerTests: XCTestCase {
         XCTAssertFalse(prevSdkReady)
         XCTAssertTrue(eventsManager.isSplitsReadyFired)
 
-        sync.stop()
+        sync.destroy()
     }
 
     func testUpdateYaml() {

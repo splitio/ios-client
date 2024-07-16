@@ -231,7 +231,7 @@ class SynchronizerTest: XCTestCase {
 
         synchronizer.destroy()
 
-        XCTAssertTrue(fFlagsSynchronizer.stopCalled)
+        XCTAssertTrue(fFlagsSynchronizer.destroyCalled)
         XCTAssertTrue(byKeyApiFacade.destroyCalled)
         XCTAssertTrue(byKeyApiFacade.destroyCalled)
     }

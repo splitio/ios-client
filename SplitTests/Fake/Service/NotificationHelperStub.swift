@@ -22,24 +22,28 @@ class NotificationHelperStub: NotificationHelper {
         }
     }
 
-    private func executeActions(for notification: AppNotification) {
+    func post(notification: AppNotification, info: AnyObject?) {
+        executeActions(for: AppNotification.pinnedCredentialValidationFail, info: info)
+    }
+
+    private func executeActions(for notification: AppNotification, info: AnyObject?) {
         var actions: [ObserverAction]?
         queue.sync {
             actions = self.actions[notification.rawValue]
         }
         if let actions =  actions {
             for action in actions {
-                action()
+                action(info)
             }
         }
     }
 
     func simulateApplicationDidEnterBackground() {
-        executeActions(for: AppNotification.didEnterBackground)
+        executeActions(for: AppNotification.didEnterBackground, info: nil)
     }
 
     func simulateApplicationDidBecomeActive() {
-        executeActions(for: AppNotification.didBecomeActive)
+        executeActions(for: AppNotification.didBecomeActive, info: nil)
     }
 
     func removeAllObservers() {
@@ -47,5 +51,4 @@ class NotificationHelperStub: NotificationHelper {
             actions.removeAll()
         }
     }
-
 }
