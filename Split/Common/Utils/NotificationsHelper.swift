@@ -24,7 +24,7 @@ import WatchKit
 import TVUIKit
 #endif
 
-typealias ObserverAction = (Any?) -> Void
+typealias ObserverAction = (AnyObject?) -> Void
 
 enum AppNotification: String {
     case didEnterBackground

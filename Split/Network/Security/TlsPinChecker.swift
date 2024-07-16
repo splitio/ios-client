@@ -20,7 +20,7 @@ struct CredentialPin {
     let algo: KeyHashAlgo
 }
 
-enum CredentialValidationResult {
+enum CredentialValidationResult: CaseIterable {
     case success
     case error
     case noPinsForDomain
