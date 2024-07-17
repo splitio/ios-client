@@ -144,7 +144,7 @@ class DefaultHttpClient {
                     self.httpSession = DefaultHttpSession(urlSession: URLSession(
                         configuration: urlSessionConfig, delegate: delegate, delegateQueue: nil))
                 }
-                Logger.d("Http client started")
+                Logger.d("HTTP Client started")
                 isStarted = true
             }
         }
