@@ -12,6 +12,7 @@ import XCTest
 @testable import Split
 
 class HttpStreamRequestMock: HttpStreamRequest {
+    var pinnedCredentialFail: Bool = false
 
     var responseHandler: ResponseHandler?
     var incomingDataHandler: IncomingDataHandler?
@@ -77,4 +78,6 @@ class HttpStreamRequestMock: HttpStreamRequest {
         return self
     }
 
+    func notifyPinnedCredentialFail() {
+    }
 }

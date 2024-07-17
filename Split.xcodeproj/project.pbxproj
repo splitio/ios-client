@@ -1040,6 +1040,9 @@
 		95F7BC192C36DE2300C5F2E4 /* FileUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC182C36DE2300C5F2E4 /* FileUtil.swift */; };
 		95F7BC1C2C37370D00C5F2E4 /* CertificatePinningConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC1B2C37370D00C5F2E4 /* CertificatePinningConfigTests.swift */; };
 		95F7BC232C3876C800C5F2E4 /* SplitCertPinningAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC222C3876C800C5F2E4 /* SplitCertPinningAuthenticator.swift */; };
+		95F7BC252C45B8EC00C5F2E4 /* HttpRequestManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC242C45B8EC00C5F2E4 /* HttpRequestManagerTests.swift */; };
+		95F7BC272C45C12700C5F2E4 /* TlsPinCheckerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC262C45C12700C5F2E4 /* TlsPinCheckerMock.swift */; };
+		95F7BC292C46A4C800C5F2E4 /* SecurityHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC282C46A4C800C5F2E4 /* SecurityHelper.swift */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
 		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
 		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
@@ -1840,6 +1843,9 @@
 		95F7BC182C36DE2300C5F2E4 /* FileUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUtil.swift; sourceTree = "<group>"; };
 		95F7BC1B2C37370D00C5F2E4 /* CertificatePinningConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificatePinningConfigTests.swift; sourceTree = "<group>"; };
 		95F7BC222C3876C800C5F2E4 /* SplitCertPinningAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitCertPinningAuthenticator.swift; sourceTree = "<group>"; };
+		95F7BC242C45B8EC00C5F2E4 /* HttpRequestManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequestManagerTests.swift; sourceTree = "<group>"; };
+		95F7BC262C45C12700C5F2E4 /* TlsPinCheckerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TlsPinCheckerMock.swift; sourceTree = "<group>"; };
+		95F7BC282C46A4C800C5F2E4 /* SecurityHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityHelper.swift; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
 		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
@@ -2608,6 +2614,7 @@
 				95ED4A9726497EEA00FD3569 /* TestSplitFactory.swift */,
 				95B4369F26F1487400E1EB9C /* TestingData.swift */,
 				952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */,
+				95F7BC282C46A4C800C5F2E4 /* SecurityHelper.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -3090,6 +3097,7 @@
 			children = (
 				954F9C74257961C100140B81 /* HttpSplitFetcherStub.swift */,
 				95C7569C2696457500696148 /* NotificationHelperStub.swift */,
+				95F7BC262C45C12700C5F2E4 /* TlsPinCheckerMock.swift */,
 				954F9C7C2579697B00140B81 /* SplitChangeProcessorStub.swift */,
 				95342E982A4C71300045B201 /* FeatureFlagsPayloadDecoderMock.swift */,
 				95F3EFF3258D2C0300084AF8 /* RecorderWorkerStub.swift */,
@@ -3448,6 +3456,7 @@
 			children = (
 				95F7BBE02C1A27FA00C5F2E4 /* TlsPinningCheckerTests.swift */,
 				95F7BC1B2C37370D00C5F2E4 /* CertificatePinningConfigTests.swift */,
+				95F7BC242C45B8EC00C5F2E4 /* HttpRequestManagerTests.swift */,
 			);
 			path = CertPinning;
 			sourceTree = "<group>";
@@ -4136,6 +4145,7 @@
 				5905D4E12559D20C006DA3B1 /* ConcurrentSetTests.swift in Sources */,
 				95C027732A4B115C000B9B4F /* FeatureFlagsPayloadDecoderTest.swift in Sources */,
 				955BB49728229E9100762D7E /* SseClientFactoryStub.swift in Sources */,
+				95F7BC252C45B8EC00C5F2E4 /* HttpRequestManagerTests.swift in Sources */,
 				956A7E2C297ECB110080D53C /* SplitsDecoderTest.swift in Sources */,
 				95342E9B2A4C97F10045B201 /* DecompressionMocks.swift in Sources */,
 				955AAB8F283FF1FE00ADFB07 /* HttpUniqueKeysRecorderStub.swift in Sources */,
@@ -4149,6 +4159,7 @@
 				950F72FC292E615D008A0040 /* DispatchQueue+Test.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
 				59B2043B24F568660092F2E9 /* SynchronizerStub.swift in Sources */,
+				95F7BC272C45C12700C5F2E4 /* TlsPinCheckerMock.swift in Sources */,
 				95F3EFEC258D26ED00084AF8 /* RecorderFlusherCheckerTests.swift in Sources */,
 				59F65F012562FF71005FE8C9 /* EventDaoTest.swift in Sources */,
 				95715A9529DB0ED800A1B2F9 /* InitDbCipherTest.swift in Sources */,
@@ -4389,6 +4400,7 @@
 				95B180272763DA0E002DC9DF /* HttpTelemetryConfigRecorderTest.swift in Sources */,
 				C5977C202BF29F5B003E293A /* EqualToSemverMatcherTest.swift in Sources */,
 				59ED408424EAB8C900EF7B09 /* PushNotificationManagerTest.swift in Sources */,
+				95F7BC292C46A4C800C5F2E4 /* SecurityHelper.swift in Sources */,
 				9523B8CF28622B6500AEE178 /* CdnByPassTest.swift in Sources */,
 				955E123D2BFD2A6700AE6D10 /* PersistentHashedImpressionsStorageTest.swift in Sources */,
 				59F4AABD2513A2E900A1C69A /* SplitsUpdateWorkerTest.swift in Sources */,

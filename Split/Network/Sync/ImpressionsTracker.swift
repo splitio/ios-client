@@ -68,7 +68,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         self.impressionsObserver = impressionsObserver
 
 #if os(macOS)
-        notificationHelper?.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
+        notificationHelper?.addObserver(for: AppNotification.didEnterBackground) { [weak self] _ in
             if let self = self {
                 self.saveUniqueKeys()
                 self.saveImpressionsCount()

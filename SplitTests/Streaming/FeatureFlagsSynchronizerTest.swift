@@ -318,7 +318,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         synchronizer.synchronize(changeNumber: 101)
         synchronizer.synchronize(changeNumber: 102)
 
-        synchronizer.stop()
+        synchronizer.destroy()
 
         XCTAssertTrue(splitsSyncWorker.stopCalled)
         XCTAssertTrue(periodicSplitsSyncWorker.stopCalled)

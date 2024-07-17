@@ -43,6 +43,9 @@ class SynchronizerSpy: Synchronizer {
 
     var forceMySegmentsSyncCalled = [String: Bool]()
     var forceMySegmentsSyncCount = [String: Int]()
+    var disableTelemetryCalled = true
+    var disableEventsCalled = true
+    var disableSdkCalled = true
 
     init(splitConfig: SplitClientConfig,
          defaultUserKey: String,
@@ -212,5 +215,17 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.forceMySegmentsSync(forKey: key)
         forceMySegmentsSyncCalled[key] = true
         forceMySegmentsSyncCount[key]=(forceMySegmentsSyncCount[key] ?? 0) + 1
+    }
+
+    func disableSdk() {
+        disableSdkCalled = true
+    }
+
+    func disableEvents() {
+        disableEventsCalled = true
+    }
+
+    func disableTelemetry() {
+        disableTelemetryCalled = true
     }
 }
