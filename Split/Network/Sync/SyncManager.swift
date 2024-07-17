@@ -229,9 +229,7 @@ class DefaultSyncManager: SyncManager {
     }
 
     private func handleBannedHost(_ host: String) {
-
         let endpoints = splitConfig.serviceEndpoints
-
         Logger.w("Pinned credential validation fails for \(host). Sync disabled.")
         if check(url: endpoints.eventsEndpoint, host: host) {
             synchronizer.disableEvents()
@@ -239,7 +237,7 @@ class DefaultSyncManager: SyncManager {
         } else if check(url: endpoints.sdkEndpoint, host: host) {
             synchronizer.disableSdk()
 
-        } else if check(url: endpoints.authServiceEndpoint, host: host),
+        } else if check(url: endpoints.authServiceEndpoint, host: host) ||
             check(url: endpoints.streamingServiceEndpoint, host: host) {
             switchToPolling()
 
