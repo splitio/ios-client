@@ -249,6 +249,46 @@ class SynchronizerTest: XCTestCase {
 
     }
 
-    override func tearDown() {
+    // When SDK endpoint credential validation fails
+    // only Splits and MySegments sync should stop
+    func testDisableSdkEndpoint() {
+        synchronizer.disableSdk()
+        XCTAssertTrue(fFlagsSynchronizer.destroyCalled)
+        XCTAssertFalse(impressionsTracker.stopCalled)
+        XCTAssertFalse(impressionsTracker.stopImpressionsCalled)
+        XCTAssertFalse(impressionsTracker.stopUniqueKeysCalled)
+        XCTAssertFalse(eventsSynchronizer.stopCalled)
+        XCTAssertFalse(telemetrySynchronizer.destroyCalled)
     }
+
+    // When telemetry endpoint is disabled (i.e. host is banned by credential validation fails)
+    // all the services using that enpoint should be stopped
+    // but the ones using other endpoints should continue working
+    // Unique keys uses telemetry endpoint, so, it should be stopped too.
+    func testDisableTelemetry() {
+        // Simulate telemetry enabled
+        splitConfig.telemetryConfigHelper = TelemetryConfigHelperStub.init(enabled: true)
+        synchronizer.disableTelemetry()
+        XCTAssertFalse(fFlagsSynchronizer.destroyCalled)
+        XCTAssertFalse(impressionsTracker.stopCalled)
+        XCTAssertFalse(impressionsTracker.stopImpressionsCalled)
+        XCTAssertTrue(impressionsTracker.stopUniqueKeysCalled)
+        XCTAssertFalse(eventsSynchronizer.stopCalled)
+        XCTAssertTrue(telemetrySynchronizer.destroyCalled)
+    }
+
+    // When disabling events enpoint, Events and Impressions
+    // services should be stopped.
+    // Unique keys are sent to telemetry endpoint, so it should continue
+    // working
+    func testDisableEventsEndpoint() {
+        synchronizer.disableEvents()
+        XCTAssertFalse(fFlagsSynchronizer.destroyCalled)
+        XCTAssertFalse(impressionsTracker.stopCalled)
+        XCTAssertTrue(impressionsTracker.stopImpressionsCalled)
+        XCTAssertFalse(impressionsTracker.stopUniqueKeysCalled)
+        XCTAssertTrue(eventsSynchronizer.stopCalled)
+        XCTAssertFalse(telemetrySynchronizer.destroyCalled)
+    }
+
 }
