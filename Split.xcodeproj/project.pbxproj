@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -575,6 +575,8 @@
 		958F98722B1124EC001F35B3 /* SplitBgSynchronizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958F98712B1124EC001F35B3 /* SplitBgSynchronizerTests.swift */; };
 		958F98742B1129D7001F35B3 /* KeyValueStorageMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958F98732B1129D7001F35B3 /* KeyValueStorageMock.swift */; };
 		958F987B2B1669BC001F35B3 /* SplitiOSStreaming_2.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 958F987A2B1669BC001F35B3 /* SplitiOSStreaming_2.xctestplan */; };
+		958FD89A2C4AAF4B00E5609B /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 958FD8952C4AAE7C00E5609B /* Security.framework */; platformFilters = (ios, macos, tvos, ); };
+		958FD89B2C4AAF4B00E5609B /* Security.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 958FD8952C4AAE7C00E5609B /* Security.framework */; platformFilters = (ios, macos, tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		9594A45F2BFB917100D4E50B /* HashedImpressionDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9594A45E2BFB917100D4E50B /* HashedImpressionDao.swift */; };
 		9594A4612BFB930C00D4E50B /* HashedImpressionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9594A4602BFB930C00D4E50B /* HashedImpressionEntity.swift */; };
 		9595910526DFB1AB009E7944 /* DecompressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595910426DFB1AB009E7944 /* DecompressionTest.swift */; };
@@ -1099,6 +1101,17 @@
 			dstSubfolderSpec = 10;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		958FD89C2C4AAF4B00E5609B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				958FD89B2C4AAF4B00E5609B /* Security.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1662,6 +1675,7 @@
 		958F98712B1124EC001F35B3 /* SplitBgSynchronizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitBgSynchronizerTests.swift; sourceTree = "<group>"; };
 		958F98732B1129D7001F35B3 /* KeyValueStorageMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueStorageMock.swift; sourceTree = "<group>"; };
 		958F987A2B1669BC001F35B3 /* SplitiOSStreaming_2.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSStreaming_2.xctestplan; sourceTree = "<group>"; };
+		958FD8952C4AAE7C00E5609B /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS17.0.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		9594A45E2BFB917100D4E50B /* HashedImpressionDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HashedImpressionDao.swift; path = Split/Storage/HashedImpression/HashedImpressionDao.swift; sourceTree = SOURCE_ROOT; };
 		9594A4602BFB930C00D4E50B /* HashedImpressionEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashedImpressionEntity.swift; sourceTree = "<group>"; };
 		9595910426DFB1AB009E7944 /* DecompressionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecompressionTest.swift; sourceTree = "<group>"; };
@@ -1879,6 +1893,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				958FD89A2C4AAF4B00E5609B /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2554,6 +2569,7 @@
 			isa = PBXGroup;
 			children = (
 				95F0569329B66D96009F5A68 /* Security.framework */,
+				958FD8952C4AAE7C00E5609B /* Security.framework */,
 				95B02E0928D130670030EC8B /* WatchKit.framework */,
 				954F9BBF2575A1AB00140B81 /* UIKit.framework */,
 				5946783722E1144400F94E58 /* Swifter.framework */,
@@ -3518,6 +3534,7 @@
 				3B6DEE5620EA6A4E0067435E /* Frameworks */,
 				3B6DEE5820EA6A4E0067435E /* Resources */,
 				598F9BE1230DAEBC00F0E4C0 /* ShellScript */,
+				958FD89C2C4AAF4B00E5609B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
