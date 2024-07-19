@@ -40,32 +40,32 @@ class DefaultHttpRequestManager: NSObject {
 // MARK: HttpRequestManager - URLSessionTaskDelegate
 extension DefaultHttpRequestManager: URLSessionTaskDelegate {
 
-    func urlSession(_ session: URLSession, task: URLSessionTask,
-                    didReceive challenge: URLAuthenticationChallenge,
-                    completionHandler: @escaping @Sendable (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
-    ) {
-
-        // If doing certificate pinning and a custom authenticator is implemented
-        // the pin checker has priority
-        if let pinChecker = self.pinChecker {
-            Logger.v("Checking pinned credentials")
-            checkPins(pinChecker: pinChecker,
-                      session: session,
-                      taskId: task.taskIdentifier,
-                      challenge: challenge,
-                      completionHandler: completionHandler)
-            return
-        }
-
-        if let authenticator = self.authenticator {
-            Logger.v("Triggering external HTTPS authentication handler")
-            authenticator.authenticate(session: session,
-                                       challenge: challenge,
-                                       completionHandler: completionHandler)
-            return
-        }
-        completionHandler(.performDefaultHandling, nil)
-    }
+//    func urlSession(_ session: URLSession, task: URLSessionTask,
+//                    didReceive challenge: URLAuthenticationChallenge,
+//                    completionHandler: @escaping @Sendable (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+//    ) {
+//
+//        // If doing certificate pinning and a custom authenticator is implemented
+//        // the pin checker has priority
+//        if let pinChecker = self.pinChecker {
+//            Logger.v("Checking pinned credentials")
+//            checkPins(pinChecker: pinChecker,
+//                      session: session,
+//                      taskId: task.taskIdentifier,
+//                      challenge: challenge,
+//                      completionHandler: completionHandler)
+//            return
+//        }
+//
+//        if let authenticator = self.authenticator {
+//            Logger.v("Triggering external HTTPS authentication handler")
+//            authenticator.authenticate(session: session,
+//                                       challenge: challenge,
+//                                       completionHandler: completionHandler)
+//            return
+//        }
+//        completionHandler(.performDefaultHandling, nil)
+//    }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
 
