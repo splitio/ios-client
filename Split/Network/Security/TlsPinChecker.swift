@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import CommonCrypto
+//import CommonCrypto
 
 enum PinType {
     case key
@@ -297,19 +297,22 @@ struct AlgoHelper {
     }
 
     private static func hashSha256(_ data: Data) -> Data {
-        var sha256 = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-        data.withUnsafeBytes {
-            _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &sha256)
-        }
-        return Data(sha256)
+        return data
+//
+//        var sha256 = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+//        data.withUnsafeBytes {
+//            _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &sha256)
+//        }
+//        return Data(sha256)
     }
 
     private static  func hashSha1(_ data: Data) -> Data {
-        var sha1 = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
-        data.withUnsafeBytes {
-            _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &sha1)
-        }
-        return Data(sha1)
+        return data
+//        var sha1 = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
+//        data.withUnsafeBytes {
+//            _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &sha1)
+//        }
+//        return Data(sha1)
     }
 }
 
