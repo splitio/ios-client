@@ -146,7 +146,10 @@ public class CertificatePinningError: NSObject, LocalizedError {
 
             let keyHash = String(hash[hash.index(after: separatorIndex)..<hash.endIndex])
             guard let dataHash = Data(base64Encoded: keyHash) else {
-                throw errLog("Key hash not valid for pin: \(algoName)")
+                throw errLog("Key hash not valid for host \(pin.host) and algorithm: \(algoName)")
+            }
+            if dataHash.isEmpty {
+                throw errLog("Key hash is empty for host \(pin.host) algorithm: \(algoName)")
             }
             return CredentialPin(host: pin.host, hash: dataHash, algo: algo)
         }

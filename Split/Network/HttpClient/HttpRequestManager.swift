@@ -163,7 +163,6 @@ extension DefaultHttpRequestManager {
 
         case .error, .invalidChain, .credentialNotPinned, .spkiError,
                 .invalidCredential, .invalidParameter, .unavailableServerTrust:
-            requests.notifyPinnedCredentialFail(identifier: taskId)
             notificationHelper?.post(notification: .pinnedCredentialValidationFail,
                                      info: challenge.protectionSpace.host as AnyObject)
             completionHandler(.cancelAuthenticationChallenge, nil)

@@ -36,7 +36,7 @@ class CertificatePinningConfigTests: XCTestCase {
 
     func testAddWrongSpkiCertificate() {
         var msg = ""
-        builder.addPin(host: testHost, certificateName: "ec_secp521r1_cert")
+        builder.addPin(host: testHost, certificateName: "ed25519-cert")
         do {
             _ = try builder.build()
         } catch {
@@ -78,8 +78,7 @@ class CertificatePinningConfigTests: XCTestCase {
         } catch {
             msg = error.localizedDescription
         }
-
-        XCTAssertTrue(msg.contains("Unable to add pin for host"))
+        XCTAssertEqual(msg, "Key hash is empty for host \(testHost) algorithm: sha256")
     }
 
     func testAddCertificateAndHashes() {

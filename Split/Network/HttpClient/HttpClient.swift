@@ -79,7 +79,7 @@ class HttpSessionConfig {
     var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
     var httpsAuthenticator: SplitHttpsAuthenticator?
     var pinChecker: TlsPinChecker?
-    var notificationHelper: NotificationHelper? = DefaultNotificationHelper.instance
+    var notificationHelper: NotificationHelper?
 }
 
 protocol HttpClient {
