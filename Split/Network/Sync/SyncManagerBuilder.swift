@@ -103,6 +103,9 @@ class SyncManagerBuilder {
         let sseHttpConfig = HttpSessionConfig()
         sseHttpConfig.httpsAuthenticator = config.httpsAuthenticator
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
+        if let pinningConfig = config.certificatePinningConfig {
+            sseHttpConfig.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
+        }
         return apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
     }
 

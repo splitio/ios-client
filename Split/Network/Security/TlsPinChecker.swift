@@ -193,7 +193,7 @@ struct DefaultTlsPinChecker: TlsPinChecker {
         for index in 0..<certficateCount {
             guard let certificate = certificate(at: index, from: secTrust) else {
                 // This should not happen. Only if something went really wrong
-                Logger.v("Something went wrong when validating certificate chain")
+                Logger.e("Something went wrong when validating certificate chain")
                 return .error
             }
 
@@ -253,7 +253,7 @@ struct DefaultTlsPinChecker: TlsPinChecker {
 
                 // Get readable message
                 let message = SecCopyErrorMessageString(status, nil) as? String
-                Logger.v("Validation chain failed: \(message ?? "Unknown")")
+                Logger.d("Validation chain failed: \(message ?? "Unknown")")
             }
             return result
         }
