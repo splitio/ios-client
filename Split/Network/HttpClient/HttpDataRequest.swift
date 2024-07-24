@@ -37,8 +37,7 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
     }
 
     override func complete(error: HttpError?) {
-        requestQueue.async(flags: .barrier) { [weak self] in
-            guard let self = self else { return }
+        requestQueue.async(flags: .barrier) {
             var internalCode = InternalHttpErrorCode.noCode
             if self.pinnedCredentialFail {
                 internalCode = InternalHttpErrorCode.pinningValidationFail
