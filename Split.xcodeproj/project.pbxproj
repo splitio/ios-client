@@ -575,6 +575,10 @@
 		958F98722B1124EC001F35B3 /* SplitBgSynchronizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958F98712B1124EC001F35B3 /* SplitBgSynchronizerTests.swift */; };
 		958F98742B1129D7001F35B3 /* KeyValueStorageMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958F98732B1129D7001F35B3 /* KeyValueStorageMock.swift */; };
 		958F987B2B1669BC001F35B3 /* SplitiOSStreaming_2.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 958F987A2B1669BC001F35B3 /* SplitiOSStreaming_2.xctestplan */; };
+		958FD8A02C51318600E5609B /* TlsPinChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BBCE2C10FD4700C5F2E4 /* TlsPinChecker.swift */; };
+		958FD8A12C51318B00E5609B /* PublicKeyHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BBD02C139AA200C5F2E4 /* PublicKeyHeaders.swift */; };
+		958FD8A22C5131A000E5609B /* CertificatePinningConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC162C35D9C000C5F2E4 /* CertificatePinningConfig.swift */; };
+		958FD8A32C51321A00E5609B /* FileUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC182C36DE2300C5F2E4 /* FileUtil.swift */; };
 		9594A45F2BFB917100D4E50B /* HashedImpressionDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9594A45E2BFB917100D4E50B /* HashedImpressionDao.swift */; };
 		9594A4612BFB930C00D4E50B /* HashedImpressionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9594A4602BFB930C00D4E50B /* HashedImpressionEntity.swift */; };
 		9595910526DFB1AB009E7944 /* DecompressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595910426DFB1AB009E7944 /* DecompressionTest.swift */; };
@@ -4461,6 +4465,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				958FD8A12C51318B00E5609B /* PublicKeyHeaders.swift in Sources */,
 				956A7E17297043130080D53C /* ImpressionsStorage.swift in Sources */,
 				95B02DCD28D0BDE20030EC8B /* split_cache.xcdatamodeld in Sources */,
 				95F0569129B63C61009F5A68 /* Cipher.swift in Sources */,
@@ -4619,6 +4624,7 @@
 				95B02D3A28D0BDC20030EC8B /* ImpressionsRecorder.swift in Sources */,
 				95B02D3B28D0BDC20030EC8B /* ImpressionsCountRecorder.swift in Sources */,
 				C5977C622BF7D4D9003E293A /* LessThanOrEqualToSemverMatcher.swift in Sources */,
+				958FD8A32C51321A00E5609B /* FileUtil.swift in Sources */,
 				95B02D3C28D0BDC20030EC8B /* UniqueKeysRecorder.swift in Sources */,
 				95B02D3D28D0BDC20030EC8B /* EventsRecorderWorker.swift in Sources */,
 				95B02D3E28D0BDC20030EC8B /* TelemetryStatsRecorderWorker.swift in Sources */,
@@ -4633,7 +4639,9 @@
 				95B02D4728D0BDC20030EC8B /* HttpSplitFetcher.swift in Sources */,
 				95CED04E2B4DCDA1005E3C34 /* LocalhostApiDataSource.swift in Sources */,
 				95B02D4828D0BDC20030EC8B /* RetryableSyncWorker.swift in Sources */,
+				958FD8A22C5131A000E5609B /* CertificatePinningConfig.swift in Sources */,
 				95B02D4928D0BDC20030EC8B /* BackgroundSyncWorker.swift in Sources */,
+				958FD8A02C51318600E5609B /* TlsPinChecker.swift in Sources */,
 				956A7E15296F65890080D53C /* UserConsent.swift in Sources */,
 				95B02D4A28D0BDC20030EC8B /* SplitsSyncHelper.swift in Sources */,
 				95B02D4B28D0BDC20030EC8B /* PeriodicSyncWorker.swift in Sources */,
