@@ -236,7 +236,7 @@ struct DefaultTlsPinChecker: TlsPinChecker {
 
     private func isValidSecurityChain(_ secTrust: SecTrust, host: String) -> Bool {
 
-        if #available(macOSApplicationExtension 10.14, *) {
+        if #available(macOSApplicationExtension 10.14, macOS 10.14, *) {
             var evalError: CFError?
 
             // Creating a default SSL policy
@@ -248,7 +248,7 @@ struct DefaultTlsPinChecker: TlsPinChecker {
                 Logger.e("Error evaluating TLS Certificate: \(err.localizedDescription)")
 
                 // Get more details about the error while evaluating
-                var resultType = UnsafeMutablePointer<SecTrustResultType>.allocate(capacity: MemoryLayout<Int>.size)
+                let resultType = UnsafeMutablePointer<SecTrustResultType>.allocate(capacity: MemoryLayout<Int>.size)
                 let status = SecTrustGetTrustResult(secTrust, resultType)
 
                 // Get readable message
@@ -261,7 +261,7 @@ struct DefaultTlsPinChecker: TlsPinChecker {
     }
 
     private func certificate(at index: Int, from secTrust: SecTrust) -> SecCertificate? {
-        if #available(iOS 15.0, macOS 12.0, *) {
+        if #available(iOS 15.0, macOS 12.0, watchOS 8.0, tvOS 15.0, *) {
             guard let certs = SecTrustCopyCertificateChain(secTrust) as? [SecCertificate] else { return nil }
             // Double checking just in case
             if certs.count > index {
@@ -358,7 +358,7 @@ struct TlsCertificateParser {
 
     static private func publicKey(from certificate: SecCertificate) -> CertSpki? {
         // Extract the public key from the server's certificate
-        if #available(macOSApplicationExtension 10.14, *) {
+        if #available(macOSApplicationExtension 10.14, macOS 10.14, *) {
             if let publicKey = SecCertificateCopyKey(certificate) {
                 let keyType = typeOf(key: publicKey)
                 if keyType.isSupported(),

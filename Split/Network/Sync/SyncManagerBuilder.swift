@@ -103,6 +103,7 @@ class SyncManagerBuilder {
         let sseHttpConfig = HttpSessionConfig()
         sseHttpConfig.httpsAuthenticator = config.httpsAuthenticator
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
+        sseHttpConfig.notificationHelper = notificationHelper
         if let pinningConfig = config.certificatePinningConfig {
             sseHttpConfig.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
         }

@@ -37,19 +37,17 @@ class HttpRequestList {
 
     func take(identifier: Int) -> HttpRequest? {
         var request: HttpRequest?
-        queue.sync(flags: .barrier) {
+        queue.sync {
             request = requests[identifier]
             if request != nil {
-                self.requests.removeValue(forKey: identifier)
+                queue.async(flags: .barrier) { [weak self] in
+                    if let self = self {
+                        self.requests.removeValue(forKey: identifier)
+                    }
+                }
             }
         }
         return request
-    }
-
-    func notifyPinnedCredentialFail(identifier: Int) {
-        queue.sync(flags: .barrier) {
-            requests[identifier]?.notifyPinnedCredentialFail()
-        }
     }
 
     func clear() {
