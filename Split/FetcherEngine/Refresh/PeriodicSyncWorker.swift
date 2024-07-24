@@ -222,18 +222,6 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
             }
         } catch let error {
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
-            PeriodicSyncWorkerHelper.handlePinValidationFail(worker: self, error: error)
-        }
-    }
-}
-
-struct PeriodicSyncWorkerHelper {
-    static func handlePinValidationFail(worker: PeriodicSyncWorker?, error: Error?) {
-        if let error = error as? HttpError,
-            error == HttpError.clientRelated(code: -1,
-                                            internalCode: InternalHttpErrorCode.pinningValidationFail) {
-            Logger.w("Pinned credential validation fail. Periodic fetching stopped.")
-            worker?.stop()
         }
     }
 }
