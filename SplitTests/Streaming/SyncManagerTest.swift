@@ -17,7 +17,7 @@ class SyncManagerTest: XCTestCase {
     var broadcasterChannel: SyncEventBroadcasterStub!
     var synchronizer: SynchronizerStub!
     var syncManager: SyncManager!
-    let splitConfig = SplitClientConfig()
+    var splitConfig = SplitClientConfig()
     var retryTimer: BackoffCounterTimerStub!
     var syncGuardian: SyncGuardianStub!
 
@@ -32,12 +32,7 @@ class SyncManagerTest: XCTestCase {
     func testStartStreamingEnabled() {
 
         splitConfig.streamingEnabled = true
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
         syncManager.start()
         broadcasterChannel.push(event: .splitLoadedFromCache)
 
@@ -53,12 +48,7 @@ class SyncManagerTest: XCTestCase {
     func testStartStreamingDisabled() {
 
         splitConfig.streamingEnabled = false
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
         syncManager.start()
         broadcasterChannel.push(event: .splitLoadedFromCache)
 
@@ -83,12 +73,7 @@ class SyncManagerTest: XCTestCase {
 
         splitConfig.streamingEnabled = streamingEnabled
         splitConfig.syncEnabled = false
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
         syncManager.start()
         broadcasterChannel.push(event: .splitLoadedFromCache)
 
@@ -104,12 +89,7 @@ class SyncManagerTest: XCTestCase {
     func testPushSubsystemUpReceived() {
 
         splitConfig.streamingEnabled = true
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
         syncManager.start()
         broadcasterChannel.push(event: .pushSubsystemUp)
 
@@ -119,12 +99,7 @@ class SyncManagerTest: XCTestCase {
     func testPushSubsystemDownReceived() {
 
         splitConfig.streamingEnabled = true
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
         syncManager.start()
         broadcasterChannel.push(event: .pushSubsystemDown)
 
@@ -134,12 +109,7 @@ class SyncManagerTest: XCTestCase {
     func testPushRetryableError() {
 
         splitConfig.streamingEnabled = true
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
         syncManager.start()
         broadcasterChannel.push(event: .splitLoadedFromCache)
         broadcasterChannel.push(event: .pushRetryableError)
@@ -152,12 +122,7 @@ class SyncManagerTest: XCTestCase {
     func testPushNonRetryableError() {
 
         splitConfig.streamingEnabled = true
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
         syncManager.start()
 
         // reseting start called value
@@ -172,12 +137,7 @@ class SyncManagerTest: XCTestCase {
     func testPushReset() {
 
         splitConfig.streamingEnabled = true
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
         syncManager.start()
 
         // reseting start called value
@@ -191,12 +151,7 @@ class SyncManagerTest: XCTestCase {
     func testStop() {
 
         splitConfig.streamingEnabled = true
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
         syncManager.start()
         syncManager.stop()
 
@@ -206,12 +161,7 @@ class SyncManagerTest: XCTestCase {
 
     func testPauseResume() {
         splitConfig.streamingEnabled = true
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
 
         syncManager.start()
         syncManager.pause()
@@ -219,17 +169,17 @@ class SyncManagerTest: XCTestCase {
 
         // macOS doesn't have to pause sdk process
         // when is no active
-        #if !os(macOS)
+#if !os(macOS)
         XCTAssertTrue(pushManager.pauseCalled)
         XCTAssertTrue(pushManager.resumeCalled)
         XCTAssertTrue(synchronizer.pauseCalled)
         XCTAssertTrue(synchronizer.resumeCalled)
-        #else
+#else
         XCTAssertFalse(pushManager.pauseCalled)
         XCTAssertFalse(pushManager.resumeCalled)
         XCTAssertFalse(synchronizer.pauseCalled)
         XCTAssertFalse(synchronizer.resumeCalled)
-        #endif
+#endif
 
     }
 
@@ -237,12 +187,7 @@ class SyncManagerTest: XCTestCase {
 
         splitConfig.streamingEnabled = true
         syncGuardian.maxSyncPeriod = -1
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
         syncManager.start()
         broadcasterChannel.push(event: .pushDelayReceived(delaySeconds: 5))
 
@@ -253,15 +198,78 @@ class SyncManagerTest: XCTestCase {
 
         splitConfig.streamingEnabled = true
         syncGuardian.updateLastSyncTimestampCalled = false
-        syncManager = DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                         reconnectStreamingTimer: retryTimer,
-                                         notificationHelper: DefaultNotificationHelper.instance,
-                                         synchronizer: synchronizer,
-                                         syncGuardian: syncGuardian,
-                                         broadcasterChannel: broadcasterChannel)
+        syncManager = createSyncManager()
         syncManager.start()
         broadcasterChannel.push(event: .syncExecuted)
 
         XCTAssertTrue(syncGuardian.updateLastSyncTimestampCalled)
+    }
+
+
+    func testCredentialPinnedFailNotification() {
+        let endpoints = [ "auth.com", "stream.com", "sdk.com", "tele.com", "event.com"]
+
+        let epConfig = ServiceEndpoints.builder()
+            .set(authServiceEndpoint: endpoints[0])
+            .set(sdkEndpoint: endpoints[2])
+            .set(streamingServiceEndpoint: endpoints[1])
+            .set(telemetryServiceEndpoint: endpoints[3])
+            .set(eventsEndpoint: endpoints[4])
+            .build()
+       splitConfig.serviceEndpoints = epConfig
+        splitConfig.streamingEnabled = true
+        var exp: XCTestExpectation?
+        let nHelper = DefaultNotificationHelper.instance
+        nHelper.addObserver(for: .pinnedCredentialValidationFail) { host in
+            exp?.fulfill()
+        }
+        for (oIndex, oEndpoint) in endpoints.enumerated() {
+            exp = XCTestExpectation()
+            synchronizer = SynchronizerStub()
+            pushManager = PushNotificationManagerStub()
+            syncManager = createSyncManager()
+            syncManager.start()
+            nHelper.post(notification: .pinnedCredentialValidationFail, info: oEndpoint as AnyObject)
+            wait(for: [exp!], timeout: 5.0)
+
+            print("Evaluating: \(oEndpoint)")
+            switch oIndex {
+            case 0, 1:
+                XCTAssertTrue(pushManager.stopCalled)
+                XCTAssertTrue(synchronizer.startPeriodicFetchingCalled)
+                XCTAssertFalse(synchronizer.disableSdkCalled)
+                XCTAssertFalse(synchronizer.disableEventsCalled)
+                XCTAssertFalse(synchronizer.disableTelemetryCalled)
+            case 2:
+                XCTAssertFalse(pushManager.stopCalled)
+                XCTAssertFalse(synchronizer.startPeriodicFetchingCalled)
+                XCTAssertTrue(synchronizer.disableSdkCalled)
+                XCTAssertFalse(synchronizer.disableEventsCalled)
+                XCTAssertFalse(synchronizer.disableTelemetryCalled)
+             case 3:
+                XCTAssertFalse(pushManager.stopCalled)
+                XCTAssertFalse(synchronizer.startPeriodicFetchingCalled)
+                XCTAssertFalse(synchronizer.disableSdkCalled)
+                XCTAssertFalse(synchronizer.disableEventsCalled)
+                XCTAssertTrue(synchronizer.disableTelemetryCalled)
+            case 4:
+                XCTAssertFalse(pushManager.stopCalled)
+                XCTAssertFalse(synchronizer.startPeriodicFetchingCalled)
+                XCTAssertFalse(synchronizer.disableSdkCalled)
+                XCTAssertTrue(synchronizer.disableEventsCalled)
+                XCTAssertFalse(synchronizer.disableTelemetryCalled)
+            default:
+                print("nones")
+            }
+        }
+    }
+
+    private func createSyncManager() -> SyncManager {
+        return DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
+                                  reconnectStreamingTimer: retryTimer,
+                                  notificationHelper: DefaultNotificationHelper.instance,
+                                  synchronizer: synchronizer,
+                                  syncGuardian: syncGuardian,
+                                  broadcasterChannel: broadcasterChannel)
     }
 }

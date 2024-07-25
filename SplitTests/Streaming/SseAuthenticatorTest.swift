@@ -102,7 +102,7 @@ class SseAuthenticatorTest: XCTestCase {
     func testNoRecoverableError() {
         // Check token error response
         // If no credentials error, error is recoverable
-        restClient.updateFailedSseAuth(error: HttpError.clientRelated(code: -1))
+        restClient.updateFailedSseAuth(error: HttpError.clientRelated(code: -1, internalCode: -1))
         let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
                                                        syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
 

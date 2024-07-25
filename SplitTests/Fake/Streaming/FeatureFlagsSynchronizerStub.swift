@@ -9,7 +9,7 @@ import Foundation
 @testable import Split
 
 class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer {
-    var loadCalled = false
+   var loadCalled = false
     func load() {
         loadCalled = true
     }
@@ -54,8 +54,8 @@ class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer {
         resumeCalled = true
     }
 
-    var stopCalled = false
-    func stop() {
-        stopCalled = true
+    var destroyCalled = false
+    func destroy() {
+        destroyCalled = true
     }
 }

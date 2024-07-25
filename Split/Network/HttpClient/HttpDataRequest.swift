@@ -38,10 +38,22 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
 
     override func complete(error: HttpError?) {
         requestQueue.async(flags: .barrier) {
+            var internalCode = InternalHttpErrorCode.noCode
+            if self.pinnedCredentialFail {
+                internalCode = InternalHttpErrorCode.pinningValidationFail
+            }
+
             if let error = error, let errorHandler = self.errorHandler {
+                if internalCode == InternalHttpErrorCode.pinningValidationFail {
+                    errorHandler(.clientRelated(code: error.code, internalCode: internalCode))
+                    return
+                }
                 errorHandler(error)
             } else if let completionHandler = self.completionHandler {
-                completionHandler(HttpResponse(code: self.responseCode, data: self.data))
+                completionHandler(HttpResponse(code: self.responseCode,
+                                               data: self.data,
+                                               internalCode: internalCode)
+                )
             }
         }
     }

@@ -43,7 +43,7 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
     typealias FileInfo = (name: String, type: String)
     private let refreshInterval: Int
 
-    private let fileStorage: FileStorageProtocol
+    private let fileStorage: FileStorage
     private var taskExecutor: PeriodicTaskExecutor?
     private var fileParser: LocalhostSplitsParser?
     private let fileName: String
@@ -51,7 +51,7 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
     private let dataQueue = DispatchQueue(label: "split-yaml-storage",
                                           attributes: .concurrent)
 
-    init(fileStorage: FileStorageProtocol,
+    init(fileStorage: FileStorage,
          config: FeatureFlagsFileLoaderConfig = FeatureFlagsFileLoaderConfig(),
          dataFolderName: String,
          splitsFileName: String,
@@ -141,7 +141,7 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
             return nil
         }
 
-        if !LocalhostFileCopier.copySourceFile(name: fileInfo.name,
+        if !FileUtil.copySourceFile(name: fileInfo.name,
                                                type: fileInfo.type,
                                                fileStorage: fileStorage,
                                                bundle: bundle) {
@@ -162,29 +162,5 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
         }
         lastContent = content
         return parser.parseContent(content)
-    }
-}
-
-struct LocalhostFileCopier {
-
-    static func copySourceFile(name: String, type: String, fileStorage: FileStorageProtocol, bundle: Bundle) -> Bool {
-
-        guard let fileContent = loadInitialFile(name: name, type: type, bundle: bundle) else {
-            return false
-        }
-        fileStorage.write(fileName: "\(name).\(type)", content: fileContent)
-        return true
-    }
-
-    private static func loadInitialFile(name fileName: String, type fileType: String, bundle: Bundle) -> String? {
-        var fileContent: String?
-        if let filepath = bundle.path(forResource: fileName, ofType: fileType) {
-            do {
-                fileContent = try String(contentsOfFile: filepath, encoding: .utf8)
-            } catch {
-                Logger.e("Could not load localhost file: \(filepath)")
-            }
-        }
-        return fileContent
     }
 }

@@ -8,11 +8,17 @@
 
 import Foundation
 
+enum RecordingService {
+    case uniqueKeys
+    case impressions
+    case all
+}
+
 protocol ImpressionsTracker: AnyObject {
     func start()
     func pause()
     func resume()
-    func stop()
+    func stop(_ service: RecordingService)
     func flush()
     func push(_ impression: KeyImpression)
     func destroy()
@@ -62,7 +68,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         self.impressionsObserver = impressionsObserver
 
 #if os(macOS)
-        notificationHelper?.addObserver(for: AppNotification.didEnterBackground) { [weak self] in
+        notificationHelper?.addObserver(for: AppNotification.didEnterBackground) { [weak self] _ in
             if let self = self {
                 self.saveUniqueKeys()
                 self.saveImpressionsCount()
@@ -79,10 +85,15 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         periodicUniqueKeysRecorderWorker?.start()
     }
 
-    func stop() {
-        periodicImpressionsRecorderWoker?.stop()
-        periodicImpressionsCountRecorderWoker?.stop()
-        periodicUniqueKeysRecorderWorker?.stop()
+    func stop(_ service: RecordingService = .all) {
+        if [.all, .impressions].contains(service) {
+            periodicImpressionsRecorderWoker?.stop()
+            periodicImpressionsCountRecorderWoker?.stop()
+        }
+
+        if [.all, .uniqueKeys].contains(service) {
+            periodicUniqueKeysRecorderWorker?.stop()
+        }
     }
 
     func push(_ impression: KeyImpression) {

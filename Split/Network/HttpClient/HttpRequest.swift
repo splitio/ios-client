@@ -18,11 +18,13 @@ protocol HttpRequest {
     var headers: HttpHeaders { get }
     var body: Data? { get }
     var responseCode: Int { get }
+    var pinnedCredentialFail: Bool { get }
 
     func send()
     func setResponse(code: Int)
     func notifyIncomingData(_ data: Data)
     func complete(error: HttpError?)
+    func notifyPinnedCredentialFail()
 
 }
 
@@ -42,6 +44,8 @@ class BaseHttpRequest: HttpRequest {
     private (set) weak var session: HttpSession?
     private (set) var task: HttpTask?
     private (set) var error: Error?
+    private (set) var pinnedCredentialFail: Bool = false
+
     var requestQueue = DispatchQueue(label: "split-http-base-request", attributes: .concurrent)
     var completionHandler: RequestCompletionHandler?
     var errorHandler: RequestErrorHandler?
@@ -118,5 +122,9 @@ class BaseHttpRequest: HttpRequest {
 
     func notifyIncomingData(_ data: Data) {
         Logger.e("Http notifyIncomingData method should be implemented")
+    }
+
+    func notifyPinnedCredentialFail() {
+        pinnedCredentialFail = true
     }
 }

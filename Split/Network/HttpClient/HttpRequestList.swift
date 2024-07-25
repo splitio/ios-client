@@ -40,7 +40,11 @@ class HttpRequestList {
         queue.sync {
             request = requests[identifier]
             if request != nil {
-                self.requests.removeValue(forKey: identifier)
+                queue.async(flags: .barrier) { [weak self] in
+                    if let self = self {
+                        self.requests.removeValue(forKey: identifier)
+                    }
+                }
             }
         }
         return request

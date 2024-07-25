@@ -29,6 +29,7 @@ protocol ByKeySynchronizer {
     func pause()
     func resume()
     func stop()
+    func stopSync()
 }
 
 protocol ByKeyFacade: ByKeyRegistry, ByKeySynchronizer {}
@@ -151,6 +152,12 @@ class DefaultByKeyFacade: ByKeyFacade {
             group.eventsManager.stop()
         }
         byKeyComponents.removeAll()
+    }
+
+    func stopSync() {
+        doInAll {
+            $0.mySegmentsSynchronizer.destroy()
+        }
     }
 
     func isEmpty() -> Bool {

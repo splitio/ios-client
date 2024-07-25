@@ -10,6 +10,11 @@ import Foundation
 @testable import Split
 
 class HttpRequestMock: HttpRequest {
+    var pinnedCredentialFail: Bool = false
+    
+    func notifyPinnedCredentialFail() {
+    }
+
     var identifier: Int
 
     var url: URL = URL(string: "http://split.com")!

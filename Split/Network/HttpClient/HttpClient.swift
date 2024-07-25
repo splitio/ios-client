@@ -78,6 +78,8 @@ class HttpSessionConfig {
     }()
     var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
     var httpsAuthenticator: SplitHttpsAuthenticator?
+    var pinChecker: TlsPinChecker?
+    var notificationHelper: NotificationHelper?
 }
 
 protocol HttpClient {
@@ -130,7 +132,9 @@ class DefaultHttpClient {
                 if let requestManager = testRequestManager {
                     self.requestManager = requestManager
                 } else {
-                    self.requestManager = DefaultHttpRequestManager(authententicator: configuration.httpsAuthenticator)
+                    self.requestManager = DefaultHttpRequestManager(authententicator: configuration.httpsAuthenticator,
+                                                                    pinChecker: configuration.pinChecker,
+                                                                    notificationHelper: configuration.notificationHelper)
                 }
 
                 if let httpSession = testSession {
@@ -140,7 +144,7 @@ class DefaultHttpClient {
                     self.httpSession = DefaultHttpSession(urlSession: URLSession(
                         configuration: urlSessionConfig, delegate: delegate, delegateQueue: nil))
                 }
-                Logger.d("Http client started")
+                Logger.d("HTTP Client started")
                 isStarted = true
             }
         }

@@ -27,8 +27,17 @@ class ImpressionsTrackerStub: ImpressionsTracker {
     }
 
     var stopCalled = false
-    func stop() {
-        stopCalled = true
+    var stopImpressionsCalled = false
+    var stopUniqueKeysCalled = false
+    func stop(_ service: RecordingService) {
+        switch service {
+        case .all:
+            stopCalled = true
+        case .impressions:
+            stopImpressionsCalled = true
+        case .uniqueKeys:
+            stopUniqueKeysCalled = true
+        }
     }
 
     var flushCalled = false

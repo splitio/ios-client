@@ -94,7 +94,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
 
     private static func splitsDataSource(config: SplitClientConfig, bundle: Bundle) -> LocalhostDataSource {
         let dataFolderName = SplitDatabaseHelper.sanitizeForFolderName(config.localhostDataFolder)
-        let fileStorage = FileStorage(dataFolderName: dataFolderName)
+        let fileStorage = DefaultFileStorage(dataFolderName: dataFolderName)
         var loaderConfig = FeatureFlagsFileLoaderConfig()
         loaderConfig.refreshInterval = config.offlineRefreshRate
 
