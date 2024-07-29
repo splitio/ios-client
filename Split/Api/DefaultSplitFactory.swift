@@ -60,6 +60,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
         if let pinningConfig = params.config.certificatePinningConfig {
             HttpSessionConfig.default.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
+            if let handler = pinningConfig.failureHandler {
+                (params.notificationHelper ?? DefaultNotificationHelper.instance)
+                    .addObserver(for: .pinnedCredentialValidationFail) { host in
+                    handler(host as? String ?? "Unknown")
+                }
+            }
+            savePins(pinningConfig.pins, apiKey: params.apiKey)
         }
 
         // Creating Events Manager first speeds up init process
@@ -149,5 +156,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             SplitBgSynchronizer.shared.unregister(dbKey: dbKey, userKey: userKey)
         }
 #endif
+    }
+
+    func savePins(_ pins: [CredentialPin], apiKey: String) {
+        guard let json = try? Json.encodeToJson(pins) else {
+            Logger.e("Unable to save pins. Encoding error.")
+            return
+        }
+        GlobalSecureStorage.shared.set(item: json, for: .pinsConfig(apiKey))
     }
 }
