@@ -44,7 +44,7 @@ class TelemetryConfigRecorderWorkerTests: XCTestCase {
         configRecorder.errorOccurredCallCount = 10
 
         worker.flush()
-        sleep(2) // To pass in GHA
+        sleep(1) // To pass in GHA
         XCTAssertEqual(3, configRecorder.executeCallCount)
 
     }
