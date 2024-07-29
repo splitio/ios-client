@@ -228,6 +228,26 @@ struct DefaultTlsPinChecker: TlsPinChecker {
     private func pinsFor(domain: String, pins: [CredentialPin]) -> [CredentialPin] {
         // TODO: Implement also using wildcards
         return pins.filter { $0.host == domain }
+
+        
+//        for (String configuredHost : configuredPins.keySet()) {
+//            if (configuredHost.startsWith("**.")) {
+//                String configuredSubdomain = configuredHost.substring(3);
+//                if (pattern.regionMatches(pattern.length() - configuredSubdomain.length(), configuredSubdomain, 0, configuredSubdomain.length())) {
+//                    wildcardPins.addAll(configuredPins.get(configuredHost));
+//                }
+//            } else if (configuredHost.startsWith("*.")) {
+//                String configuredSubdomain = configuredHost.substring(2);
+//                int index = pattern.lastIndexOf(configuredSubdomain);
+//                if (index != -1 && pattern.charAt(index - 1) == '.' &&
+//                    pattern.regionMatches(index, configuredSubdomain, 0, configuredSubdomain.length())) {
+//                    String[] hostParts = pattern.substring(0, index - 1).split("\\.");
+//                    if (hostParts.length == 1) {
+//                        wildcardPins.addAll(configuredPins.get(configuredHost));
+//                    }
+//                }
+//            }
+//        }
     }
 
     private func base64Encoded(_ data: Data) -> Data? {

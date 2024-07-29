@@ -356,6 +356,7 @@
 		59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */; };
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
+		9500D9922C56F9BA00383593 /* CredentialPinParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9912C56F9BA00383593 /* CredentialPinParserTests.swift */; };
 		9502B7B42837E70200B779C0 /* UniqueTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9502B7B32837E70200B779C0 /* UniqueTrackerTest.swift */; };
 		9502B7B62837E75800B779C0 /* PersistentUniqueKeyStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9502B7B52837E75800B779C0 /* PersistentUniqueKeyStorageStub.swift */; };
 		9505681426822C6A001D7B10 /* ImpressionsCountPerFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9505681326822C6A001D7B10 /* ImpressionsCountPerFeature.swift */; };
@@ -541,7 +542,6 @@
 		9572BA872AC76EA800C10FC1 /* FlagSetsCacheMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572BA862AC76EA800C10FC1 /* FlagSetsCacheMock.swift */; };
 		95737DFB2ACB09CA007FD15C /* FlagSetsValidatorMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737DFA2ACB09CA007FD15C /* FlagSetsValidatorMock.swift */; };
 		95737E0E2AD474A9007FD15C /* FlagSetsIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E0D2AD474A9007FD15C /* FlagSetsIntegrationTest.swift */; };
-		95737E102AD47A42007FD15C /* Substring+asString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E0F2AD47A42007FD15C /* Substring+asString.swift */; };
 		95737E122AD6D016007FD15C /* splitchanges_flagsets.json in Resources */ = {isa = PBXBuildFile; fileRef = 95737E112AD6D016007FD15C /* splitchanges_flagsets.json */; };
 		95737E142ADEC71A007FD15C /* push_msg-splits_updV2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */; };
 		95737E162ADEC794007FD15C /* StreamingTestingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E152ADEC794007FD15C /* StreamingTestingHelper.swift */; };
@@ -570,7 +570,6 @@
 		95880CFA2AEFF159000498A0 /* FlagSetsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572BA822AC5F66700C10FC1 /* FlagSetsCache.swift */; };
 		95880CFB2AEFF177000498A0 /* FlagSetsValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953DAA5E2ABDC10C004056CE /* FlagSetsValidator.swift */; };
 		95880CFC2AEFF193000498A0 /* Array+asSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572BA7C2AC37B7400C10FC1 /* Array+asSet.swift */; };
-		95880CFD2AEFF1B2000498A0 /* Substring+asString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95737E0F2AD47A42007FD15C /* Substring+asString.swift */; };
 		95880D092AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95880D082AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan */; };
 		958F98722B1124EC001F35B3 /* SplitBgSynchronizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958F98712B1124EC001F35B3 /* SplitBgSynchronizerTests.swift */; };
 		958F98742B1129D7001F35B3 /* KeyValueStorageMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958F98732B1129D7001F35B3 /* KeyValueStorageMock.swift */; };
@@ -1462,6 +1461,7 @@
 		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		9500D9912C56F9BA00383593 /* CredentialPinParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialPinParserTests.swift; sourceTree = "<group>"; };
 		9502B7B32837E70200B779C0 /* UniqueTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqueTrackerTest.swift; sourceTree = "<group>"; };
 		9502B7B52837E75800B779C0 /* PersistentUniqueKeyStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentUniqueKeyStorageStub.swift; sourceTree = "<group>"; };
 		9505681326822C6A001D7B10 /* ImpressionsCountPerFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsCountPerFeature.swift; sourceTree = "<group>"; };
@@ -1634,7 +1634,6 @@
 		9572BA862AC76EA800C10FC1 /* FlagSetsCacheMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagSetsCacheMock.swift; sourceTree = "<group>"; };
 		95737DFA2ACB09CA007FD15C /* FlagSetsValidatorMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagSetsValidatorMock.swift; sourceTree = "<group>"; };
 		95737E0D2AD474A9007FD15C /* FlagSetsIntegrationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlagSetsIntegrationTest.swift; sourceTree = "<group>"; };
-		95737E0F2AD47A42007FD15C /* Substring+asString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Substring+asString.swift"; sourceTree = "<group>"; };
 		95737E112AD6D016007FD15C /* splitchanges_flagsets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splitchanges_flagsets.json; sourceTree = "<group>"; };
 		95737E132ADEC71A007FD15C /* push_msg-splits_updV2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "push_msg-splits_updV2.txt"; sourceTree = "<group>"; };
 		95737E152ADEC794007FD15C /* StreamingTestingHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingTestingHelper.swift; sourceTree = "<group>"; };
@@ -2160,7 +2159,6 @@
 			isa = PBXGroup;
 			children = (
 				3B6DEE9E20EA6AE10067435E /* Data+StringRepresentation.swift */,
-				95737E0F2AD47A42007FD15C /* Substring+asString.swift */,
 				3B6DEE9F20EA6AE10067435E /* Date+Utils.swift */,
 				3B6DEEA020EA6AE10067435E /* Dictionary+Extensions.swift */,
 				3B6DEEA120EA6AE10067435E /* Dictionary+JSON.swift */,
@@ -3463,6 +3461,7 @@
 				95F7BBE02C1A27FA00C5F2E4 /* TlsPinningCheckerTests.swift */,
 				95F7BC1B2C37370D00C5F2E4 /* CertificatePinningConfigTests.swift */,
 				95F7BC242C45B8EC00C5F2E4 /* HttpRequestManagerTests.swift */,
+				9500D9912C56F9BA00383593 /* CredentialPinParserTests.swift */,
 			);
 			path = CertPinning;
 			sourceTree = "<group>";
@@ -3939,7 +3938,6 @@
 				95ABF4FE2936AECB006ED016 /* EventsSynchronizer.swift in Sources */,
 				5959C486228C429A0064F968 /* Array+DynamicCodable.swift in Sources */,
 				954F9BB225759BBE00140B81 /* ThreadUtils.swift in Sources */,
-				95737E102AD47A42007FD15C /* Substring+asString.swift in Sources */,
 				3B6DEF3B20EA6AE50067435E /* Dictionary+JSON.swift in Sources */,
 				3B6DEF1A20EA6AE50067435E /* EventDTO.swift in Sources */,
 				C5977C262BF2B7EF003E293A /* GreaterThanOrEqualToSemverMatcher.swift in Sources */,
@@ -4357,6 +4355,7 @@
 				59F4AAAC2508FD0D00A1C69A /* PushNotificationManagerStub.swift in Sources */,
 				5905D4F3255C587F006DA3B1 /* SplitsStorageTests.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
+				9500D9922C56F9BA00383593 /* CredentialPinParserTests.swift in Sources */,
 				95F3F0282590D81B00084AF8 /* ImpressionsRecorderWorkerTests.swift in Sources */,
 				955E12312BFBEA8600AE6D10 /* HashedImpressionDaoTest.swift in Sources */,
 				95342E992A4C71300045B201 /* FeatureFlagsPayloadDecoderMock.swift in Sources */,
@@ -4612,7 +4611,6 @@
 				95B02D3028D0BDC20030EC8B /* ImpressionsCountEntity.swift in Sources */,
 				95B02D3128D0BDC20030EC8B /* TelemetryStorage.swift in Sources */,
 				95B02D3228D0BDC20030EC8B /* TelemetryConfig.swift in Sources */,
-				95880CFD2AEFF1B2000498A0 /* Substring+asString.swift in Sources */,
 				95B02D3328D0BDC20030EC8B /* TelemetryStats.swift in Sources */,
 				95CED0512B4DCDEE005E3C34 /* SplitLocalhostDataSource.swift in Sources */,
 				95B02D3428D0BDC20030EC8B /* TelemetryInMemoryStorage.swift in Sources */,
