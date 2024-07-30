@@ -14,7 +14,7 @@ enum PinType {
     case certificate
 }
 
-struct CredentialPin {
+struct CredentialPin: Codable {
     let host: String
     let hash: Data
     let algo: KeyHashAlgo
@@ -58,7 +58,7 @@ enum CredentialValidationResult: CaseIterable {
     }
 }
 
-enum KeyHashAlgo: String {
+enum KeyHashAlgo: String, Codable {
     case sha256
     case sha1
 }
@@ -226,8 +226,7 @@ struct DefaultTlsPinChecker: TlsPinChecker {
     }
 
     private func pinsFor(domain: String, pins: [CredentialPin]) -> [CredentialPin] {
-        // TODO: Implement also using wildcards
-        return pins.filter { $0.host == domain }
+        return HostDomainFilter.pinsFor(host: domain, pins: pins)
     }
 
     private func base64Encoded(_ data: Data) -> Data? {
