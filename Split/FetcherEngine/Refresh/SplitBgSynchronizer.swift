@@ -75,12 +75,14 @@ import BackgroundTasks
                     return
                 }
                 for item in syncList.values {
+                    let pins = self.globalStorage.get(item: .pinsConfig(item.apiKey), type: [CredentialPin].self)
                     do {
                         // TODO: Create BGSyncExecutor using a factory to allow testing
                         let executor = try BackgroundSyncExecutor(prefix: item.prefix,
                                                                   apiKey: item.apiKey,
                                                                   userKeys: item.userKeys,
-                                                                  serviceEndpoints: serviceEndpoints)
+                                                                  serviceEndpoints: serviceEndpoints,
+                                                                  pinnedCredentials: pins)
                         executor.execute(operationQueue: operationQueue)
                     } catch {
                         Logger.d("Could not create background synchronizer for api key: \(item.apiKey)")
@@ -135,8 +137,11 @@ struct BackgroundSyncExecutor {
     private let userKeys: [String: Int64]
     private let mySegmentsFetcher: HttpMySegmentsFetcher
 
-    init(prefix: String?, apiKey: String, userKeys: [String: Int64],
-         serviceEndpoints: ServiceEndpoints? = nil) throws {
+    init(prefix: String?, 
+         apiKey: String,
+         userKeys: [String: Int64],
+         serviceEndpoints: ServiceEndpoints? = nil,
+         pinnedCredentials: [CredentialPin]?) throws {
 
         self.mapKey = SplitDatabaseHelper.buildDbKey(prefix: prefix, sdkKey: apiKey)
         self.userKeys = userKeys
@@ -163,7 +168,13 @@ struct BackgroundSyncExecutor {
                                                apiKey: apiKey,
                                                splitsQueryString: splitsStorage.getFilterQueryString())
 
-        let restClient = DefaultRestClient(httpClient: DefaultHttpClient.shared,
+        var httpClient: HttpClient?
+        if let pins = pinnedCredentials {
+            let httpConfig = HttpSessionConfig.default
+            httpConfig.pinChecker = DefaultTlsPinChecker(pins: pins)
+            httpClient = DefaultHttpClient(configuration: httpConfig)
+        }
+        let restClient = DefaultRestClient(httpClient: httpClient ?? DefaultHttpClient.shared,
                                            endpointFactory: endpointFactory,
                                            reachabilityChecker: ReachabilityWrapper())
 

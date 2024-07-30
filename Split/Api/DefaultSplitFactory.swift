@@ -53,14 +53,22 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     init(_ params: SplitFactoryParams) throws {
         super.init()
 
+        HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
+        if let pinningConfig = params.config.certificatePinningConfig {
+            let notificationHelper = params.notificationHelper ?? DefaultNotificationHelper.instance
+            HttpSessionConfig.default.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
+            HttpSessionConfig.default.notificationHelper = notificationHelper
+            if let handler = pinningConfig.failureHandler {
+                notificationHelper.addObserver(for: .pinnedCredentialValidationFail) { host in
+                    handler(host as? String ?? "Unknown")
+                }
+            }
+            savePins(pinningConfig.pins, apiKey: params.apiKey)
+        }
+
         let components = SplitComponentFactory(splitClientConfig: params.config,
                                                apiKey: params.apiKey,
                                                userKey: params.key.matchingKey)
-
-        HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
-        if let pinningConfig = params.config.certificatePinningConfig {
-            HttpSessionConfig.default.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
-        }
 
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManagerCoordinator()
@@ -149,5 +157,9 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             SplitBgSynchronizer.shared.unregister(dbKey: dbKey, userKey: userKey)
         }
 #endif
+    }
+
+    func savePins(_ pins: [CredentialPin], apiKey: String) {
+        GlobalSecureStorage.shared.set(item: pins, for: .pinsConfig(apiKey))
     }
 }

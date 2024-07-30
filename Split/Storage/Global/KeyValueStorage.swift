@@ -11,6 +11,7 @@ enum SecureItem {
     case backgroundSyncSchedule
     case dbEncryptionLevel(String)
     case dbEncryptionKey(String)
+    case pinsConfig(String)
 
     func toString() -> String {
         switch self {
@@ -20,6 +21,8 @@ enum SecureItem {
             return "dbEncryptionLevel_\(apiKey)"
         case .dbEncryptionKey(let apiKey):
             return "dbEncryptionKey_\(apiKey)"
+        case .pinsConfig(let apiKey):
+            return "pinsConfig_\(apiKey)"
         }
     }
 }

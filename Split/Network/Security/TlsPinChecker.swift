@@ -14,7 +14,7 @@ enum PinType {
     case certificate
 }
 
-struct CredentialPin {
+struct CredentialPin: Codable {
     let host: String
     let hash: Data
     let algo: KeyHashAlgo
@@ -58,7 +58,7 @@ enum CredentialValidationResult: CaseIterable {
     }
 }
 
-enum KeyHashAlgo: String {
+enum KeyHashAlgo: String, Codable {
     case sha256
     case sha1
 }
