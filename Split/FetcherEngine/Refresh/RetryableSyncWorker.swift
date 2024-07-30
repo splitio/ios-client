@@ -133,7 +133,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                    reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
-    override func fetchFromRemote() -> Bool {
+    override func fetchFromRemote() throws -> Bool {
         do {
             let oldSegments = mySegmentsStorage.getAll()
             if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: getHeaders()) {
@@ -190,7 +190,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
-    override func fetchFromRemote() -> Bool {
+    override func fetchFromRemote() throws -> Bool {
         var changeNumber = splitsStorage.changeNumber
         var clearCache = false
         if changeNumber != -1 {

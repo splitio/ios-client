@@ -58,6 +58,9 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                userKey: params.key.matchingKey)
 
         HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
+        if let pinningConfig = params.config.certificatePinningConfig {
+            HttpSessionConfig.default.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
+        }
 
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManagerCoordinator()

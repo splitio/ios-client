@@ -51,7 +51,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
                                                       cacheExpiration: 100,
                                                       splitConfig: SplitClientConfig())
 
-        splitFetcher.httpError = HttpError.clientRelated(code: -1)
+        splitFetcher.httpError = HttpError.clientRelated(code: -1, internalCode: -1)
 
         splitsSyncWorker.execute()
 

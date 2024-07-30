@@ -179,6 +179,4 @@ class HttpClientTest: XCTestCase {
         XCTAssertTrue(closedOk)
     }
 
-    override func tearDown() {
-    }
 }

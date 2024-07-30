@@ -11,6 +11,10 @@ import XCTest
 @testable import Split
 
 class SynchronizerStub: Synchronizer {
+   
+    var disableSdkCalled = false
+    var disableEventsCalled = false
+    var disableTelemetryCalled = false
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
@@ -191,5 +195,17 @@ class SynchronizerStub: Synchronizer {
 
     func notifySplitKilled() {
         notifySplitKilledCalled = true
+    }
+
+    func disableSdk() {
+        disableSdkCalled = true
+    }
+
+    func disableEvents() {
+        disableEventsCalled = true
+    }
+
+    func disableTelemetry() {
+        disableTelemetryCalled = true
     }
 }

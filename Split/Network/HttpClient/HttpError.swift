@@ -8,11 +8,16 @@
 
 import Foundation
 
+struct InternalHttpErrorCode {
+    static let pinningValidationFail = 1
+    static let noCode = -1
+}
+
 enum HttpError: Error, Equatable {
     case serverUnavailable
     case requestTimeOut
     case uriTooLong
-    case clientRelated(code: Int)
+    case clientRelated(code: Int, internalCode: Int)
     case couldNotCreateRequest(message: String)
     case unknown(code: Int, message: String)
 }
@@ -21,7 +26,7 @@ enum HttpError: Error, Equatable {
 extension HttpError {
     var code: Int {
         switch self {
-        case .clientRelated(let code):
+        case .clientRelated(let code, _):
             return code
         case .unknown(let code, _):
             return code
@@ -44,6 +49,15 @@ extension HttpError {
             return "Request Time Out"
         case .uriTooLong:
             return "Uri too long"
+        }
+    }
+
+    var internalCode: Int {
+        switch self {
+        case .clientRelated(_, let internalCode):
+            return internalCode
+        default:
+            return InternalHttpErrorCode.noCode
         }
     }
 }

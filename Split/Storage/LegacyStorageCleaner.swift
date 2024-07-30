@@ -15,7 +15,7 @@ struct LegacyStorageCleaner {
     static private let kSplitsFileName: String = "SPLITIO.splits"
     static private let kMySegmentsFileNamePrefix  = "SPLITIO.mySegments"
 
-    static func deleteFiles(fileStorage: FileStorageProtocol, userKey: String) {
+    static func deleteFiles(fileStorage: FileStorage, userKey: String) {
         DispatchQueue.general.async {
             let mySegmentsFileName = "\(kMySegmentsFileNamePrefix)_\(userKey)"
             fileStorage.delete(fileName: kImpressionsFileName)

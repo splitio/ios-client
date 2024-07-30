@@ -8,6 +8,7 @@
       }
     },
     {
+      "enabled" : false,
       "id" : "00529E1C-25A9-4843-8676-E48C4769483F",
       "name" : "WatchOS",
       "options" : {

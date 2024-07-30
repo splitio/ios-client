@@ -70,7 +70,7 @@ class LocalhostClientManager: SplitClientManager {
             (self.splitManager as? Destroyable)?.destroy()
 
             eventsManagerCoordinator.stop()
-            synchronizer.stop()
+            synchronizer.destroy()
             Logger.i("Localhost Split SDK destroyed")
         }
     }

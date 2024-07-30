@@ -13,7 +13,7 @@ import Foundation
     case sdkReadyFromCache
     case sdkUpdated
 
-    func toString() -> String {
+    public func toString() -> String {
         switch self {
         case .sdkReady:
             return "SDK_READY"

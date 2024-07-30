@@ -168,7 +168,7 @@ class ImpressionsTrackerTest: XCTestCase {
     func testStopOptimized() {
         createImpressionsTracker(impressionsMode: .optimized)
         impressionsTracker.start()
-        impressionsTracker.stop()
+        impressionsTracker.stop(.all)
 
         XCTAssertTrue(periodicImpressionsRecorderWorker.stopCalled)
         XCTAssertTrue(periodicImpressionsCountRecorderWorker.stopCalled)
@@ -178,7 +178,7 @@ class ImpressionsTrackerTest: XCTestCase {
     func testStopDebug() {
         createImpressionsTracker(impressionsMode: .optimized)
         impressionsTracker.start()
-        impressionsTracker.stop()
+        impressionsTracker.stop(.all)
 
         XCTAssertTrue(periodicImpressionsRecorderWorker.stopCalled)
         XCTAssertTrue(periodicImpressionsCountRecorderWorker.stopCalled)
@@ -188,7 +188,7 @@ class ImpressionsTrackerTest: XCTestCase {
     func testStopNone() {
         createImpressionsTracker(impressionsMode: .none)
         impressionsTracker.start()
-        impressionsTracker.stop()
+        impressionsTracker.stop(.all)
 
         XCTAssertFalse(periodicImpressionsRecorderWorker.stopCalled)
         XCTAssertTrue(periodicImpressionsCountRecorderWorker.stopCalled)
