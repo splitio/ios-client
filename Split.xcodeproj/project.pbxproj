@@ -358,6 +358,7 @@
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
 		9500D9922C56F9BA00383593 /* HostDomainFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */; };
 		9500D9A92C59297400383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
+		9500D9AA2C59382000383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
 		9502B7B42837E70200B779C0 /* UniqueTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9502B7B32837E70200B779C0 /* UniqueTrackerTest.swift */; };
 		9502B7B62837E75800B779C0 /* PersistentUniqueKeyStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9502B7B52837E75800B779C0 /* PersistentUniqueKeyStorageStub.swift */; };
 		9505681426822C6A001D7B10 /* ImpressionsCountPerFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9505681326822C6A001D7B10 /* ImpressionsCountPerFeature.swift */; };
@@ -4615,6 +4616,7 @@
 				95B02D3028D0BDC20030EC8B /* ImpressionsCountEntity.swift in Sources */,
 				95B02D3128D0BDC20030EC8B /* TelemetryStorage.swift in Sources */,
 				95B02D3228D0BDC20030EC8B /* TelemetryConfig.swift in Sources */,
+				9500D9AA2C59382000383593 /* HostDomainFilter.swift in Sources */,
 				95B02D3328D0BDC20030EC8B /* TelemetryStats.swift in Sources */,
 				95CED0512B4DCDEE005E3C34 /* SplitLocalhostDataSource.swift in Sources */,
 				95B02D3428D0BDC20030EC8B /* TelemetryInMemoryStorage.swift in Sources */,
