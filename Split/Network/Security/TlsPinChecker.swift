@@ -226,8 +226,7 @@ struct DefaultTlsPinChecker: TlsPinChecker {
     }
 
     private func pinsFor(domain: String, pins: [CredentialPin]) -> [CredentialPin] {
-        // TODO: Implement also using wildcards
-        return pins.filter { $0.host == domain }
+        return HostDomainFilter.pinsFor(host: domain, pins: pins)
     }
 
     private func base64Encoded(_ data: Data) -> Data? {
