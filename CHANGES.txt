@@ -1,4 +1,7 @@
-2.25.1 (Jun 3, 2024)
+2.26.0: (Jul 29, 2024)
+- Added certificate pinning functionality. This feature allows you to pin a certificate to the SDK, ensuring that the SDK only communicates with servers that present this certificate. Read more in our documentation.
+
+2.25.1: (Jun 3, 2024)
 - Updated impressions deduplication to apply across sessions.
 
 2.25.0: (May 21, 2024)
