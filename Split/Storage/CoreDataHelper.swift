@@ -13,6 +13,7 @@ enum CoreDataEntity: String {
     case impressionsCount = "ImpressionsCount"
     case split = "Split"
     case mySegment = "MySegment"
+    case myLargeSegment = "MyLargeSegment"
     case generalInfo = "GeneralInfo"
     case attribute = "Attribute"
     case uniqueKey = "UniqueKey"

@@ -14,11 +14,18 @@ protocol MySegmentsDao {
     func update(userKey: String, segmentList: [String])
 }
 
+/// Added a new parameter to specify the entity to work with.
+/// Since Segments and LargeSegments are handled the same way,
+/// it is not necessary to create a new DAO class for them.
 class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
 
+    private let coreDataEntity: CoreDataEntity
     private let cipher: Cipher?
-    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
+    init(coreDataHelper: CoreDataHelper, 
+         coreDataEntity: CoreDataEntity,
+         cipher: Cipher? = nil) {
         self.cipher = cipher
+        self.coreDataEntity = coreDataEntity
         super.init(coreDataHelper: coreDataHelper)
     }
 
@@ -45,7 +52,7 @@ class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
 
             let searchKey = self.cipher?.encrypt(userKey) ?? userKey
             if let entity = self.getByUserKey(userKey) ??
-                self.coreDataHelper.create(entity: .mySegment) as? MySegmentEntity {
+                self.coreDataHelper.create(entity: coreDataEntity) as? MySegmentEntity {
                 let segmentListString = segmentList.joined(separator: ",")
                 entity.userKey = searchKey
                 entity.segmentList = self.cipher?.encrypt(segmentListString) ?? segmentListString
@@ -56,7 +63,7 @@ class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
 
     private func getByUserKey(_ userKey: String) -> MySegmentEntity? {
         let predicate = NSPredicate(format: "userKey == %@", cipher?.encrypt(userKey) ?? userKey)
-        let entities = self.coreDataHelper.fetch(entity: .mySegment,
+        let entities = self.coreDataHelper.fetch(entity: coreDataEntity,
                                                  where: predicate).compactMap { return $0 as? MySegmentEntity }
         if entities.count > 0 {
             return entities[0]
