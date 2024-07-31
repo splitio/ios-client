@@ -62,6 +62,7 @@ protocol SplitDatabase {
 class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao
+    var myLargeSegmentsDao: MySegmentsDao
     var eventDao: EventDao
     var impressionDao: ImpressionDao
     var impressionsCountDao: ImpressionsCountDao
@@ -80,7 +81,12 @@ class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
         self.impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.impressionsCountDao = CoreDataImpressionsCountDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
-        self.mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper, cipher: cipher)
+        self.mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper,
+                                                   coreDataEntity: .mySegment,
+                                                   cipher: cipher)
+        self.myLargeSegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper,
+                                                        coreDataEntity: .myLargeSegment,
+                                                        cipher: cipher)
         self.attributesDao = CoreDataAttributesDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.hashedImpressionDao = CoreDataHashedImpressionDao(coreDataHelper: coreDataHelper)
