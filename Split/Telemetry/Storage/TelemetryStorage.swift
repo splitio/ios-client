@@ -34,6 +34,7 @@ enum TelemetryMethod: CaseIterable {
 enum Resource: CaseIterable {
     case splits
     case mySegments
+    case myLargeSegments
     case impressions
     case impressionsCount
     case events
