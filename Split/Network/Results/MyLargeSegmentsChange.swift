@@ -10,10 +10,10 @@ import Foundation
 
 struct MyLargeSegmentChange: Codable {
     var segments: [Segment]
-    var till: Int64
+    var changeNumber: Int64
 
-    init(segments: [Segment], till: Int64) {
+    init(segments: [Segment], changeNumber: Int64) {
         self.segments = segments
-        self.till = till
+        self.changeNumber = changeNumber
     }
 }
