@@ -58,6 +58,32 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
+    func testMyLargeSegmentsEndpoint() {
+        let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/myLargeSegments/\(CommonValues.userKey)"
+        let endpoint = factory.myLargeSegmentsEndpoint(userKey: CommonValues.userKey)
+
+        XCTAssertEqual(HttpMethod.get, endpoint.method)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
+        XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
+        XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
+        XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
+        XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
+    }
+
+    func testMyLargeSegmentsEndpointSlashKeyEncoding() {
+        let userKey = "fake/key"
+        let encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
+        let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/myLargeSegments/\(encodedUserKey)"
+        let endpoint = factory.myLargeSegmentsEndpoint(userKey: userKey)
+
+        XCTAssertEqual(HttpMethod.get, endpoint.method)
+        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
+        XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
+        XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
+        XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
+        XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
+    }
+
     func testSplitChangesEndpoint() {
         let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/splitChanges"
         let endpoint = factory.splitChangesEndpoint

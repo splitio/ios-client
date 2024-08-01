@@ -42,6 +42,41 @@ public class SplitClientConfig: NSObject {
     @objc public var segmentsRefreshRate: Int = 1800
 
     ///
+    /// Enables synchronization of large segments
+    /// Default: false
+    ///
+    @objc public var largeSegmentsEnabled = false
+
+    ///
+    /// The SDK polls Split servers for changes to large segment definitions. This parameter controls this polling period in seconds.
+    /// This only applies when `largeSegmentsEnabled` is set to true and streaming is disabled.
+    /// Default: 60
+    ///
+    private static let kDefaultLargeSegmentsRefreshRate = 60
+    private var validLargeSegmentsRefreshRate = kDefaultLargeSegmentsRefreshRate
+    @objc public var largeSegmentsRefreshRate: Int {
+        get {
+            return validLargeSegmentsRefreshRate
+        }
+
+        set {
+            if newValue < Self.kDefaultLargeSegmentsRefreshRate {
+                Logger.w("Refresh rate value \(largeSegmentsRefreshRate) for large segments is invalid, using default")
+            } else {
+                validLargeSegmentsRefreshRate = newValue
+            }
+        }
+    }
+
+    ///
+    /// Whether the SDK should wait for large segments to be ready before emitting SDK_READY event.
+    /// This only applies when `largeSegmentsEnabled` is set to true.
+    ///
+    /// Default: true
+
+    @objc public var waitForLargeSegments = false
+
+    ///
     /// Default queue size for impressions. Default: 30K
     ///
     @objc public var impressionsQueueSize: Int = ServiceConstants.impressionsQueueSize

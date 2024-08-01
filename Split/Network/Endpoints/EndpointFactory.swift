@@ -17,10 +17,12 @@ class EndpointFactory {
     private static let kContentTypeEventStream = "text/event-stream"
     private static let kAblySplitSdkClientKey = "SplitSDKClientKey"
     private static let kAblySplitSdkClientKeyLength = 4
+
     private struct EndpointsPath {
         static let sseAuth = "auth"
         static let splitChanges = "splitChanges"
         static let mySegments = "mySegments"
+        static let myLargeSegments = "myLargeSegments"
         static let impressions = "testImpressions/bulk"
         static let impressionsCount = "testImpressions/count"
         static let events = "events/bulk"
@@ -93,6 +95,16 @@ class EndpointFactory {
         return Endpoint
             .builder(baseUrl: serviceEndpoints.sdkEndpoint,
                      encodedPath: "\(EndpointsPath.mySegments)/\(encodedUserKey)")
+            .add(headers: commonHeaders).add(headers: typeHeader).build()
+    }
+
+    func myLargeSegmentsEndpoint(userKey: String) -> Endpoint {
+        let commonHeaders = Self.basicHeaders(apiKey: self.apiKey)
+        let typeHeader = Self.typeHeader()
+        let encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? userKey
+        return Endpoint
+            .builder(baseUrl: serviceEndpoints.sdkEndpoint,
+                     encodedPath: "\(EndpointsPath.myLargeSegments)/\(encodedUserKey)")
             .add(headers: commonHeaders).add(headers: typeHeader).build()
     }
 

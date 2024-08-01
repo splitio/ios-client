@@ -359,6 +359,9 @@
 		9500D9922C56F9BA00383593 /* HostDomainFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */; };
 		9500D9A92C59297400383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
 		9500D9AA2C59382000383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
+		9500D9B52C5ADAE200383593 /* RestClient+MyLargeSegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9B42C5ADAE200383593 /* RestClient+MyLargeSegments.swift */; };
+		9500D9B72C5ADBDF00383593 /* MyLargeSegmentsChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9B62C5ADBDF00383593 /* MyLargeSegmentsChange.swift */; };
+		9500D9B82C5ADBFD00383593 /* MyLargeSegmentsChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9B62C5ADBDF00383593 /* MyLargeSegmentsChange.swift */; };
 		9502B7B42837E70200B779C0 /* UniqueTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9502B7B32837E70200B779C0 /* UniqueTrackerTest.swift */; };
 		9502B7B62837E75800B779C0 /* PersistentUniqueKeyStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9502B7B52837E75800B779C0 /* PersistentUniqueKeyStorageStub.swift */; };
 		9505681426822C6A001D7B10 /* ImpressionsCountPerFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9505681326822C6A001D7B10 /* ImpressionsCountPerFeature.swift */; };
@@ -1466,6 +1469,8 @@
 		9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilterTests.swift; sourceTree = "<group>"; };
 		9500D9A82C59297400383593 /* HostDomainFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilter.swift; sourceTree = "<group>"; };
 		9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v5.xcdatamodel; sourceTree = "<group>"; };
+		9500D9B42C5ADAE200383593 /* RestClient+MyLargeSegments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+MyLargeSegments.swift"; sourceTree = "<group>"; };
+		9500D9B62C5ADBDF00383593 /* MyLargeSegmentsChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyLargeSegmentsChange.swift; sourceTree = "<group>"; };
 		9502B7B32837E70200B779C0 /* UniqueTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqueTrackerTest.swift; sourceTree = "<group>"; };
 		9502B7B52837E75800B779C0 /* PersistentUniqueKeyStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentUniqueKeyStorageStub.swift; sourceTree = "<group>"; };
 		9505681326822C6A001D7B10 /* ImpressionsCountPerFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsCountPerFeature.swift; sourceTree = "<group>"; };
@@ -2353,6 +2358,7 @@
 				95B17FFC275FCD92002DC9DF /* RestClient+TelemetryConfig.swift */,
 				95B1801527629E73002DC9DF /* RestClient+TelemetryStats.swift */,
 				31AA203D93FA685145C3BCCD /* RestClient+MySegments.swift */,
+				9500D9B42C5ADAE200383593 /* RestClient+MyLargeSegments.swift */,
 				595AD20924DDC77C00A7B750 /* RestClient+SseAuthenticator.swift */,
 				31AA229CA74193186137A991 /* RestClient+Impressions.swift */,
 				95D94467283BE61100D7FFED /* RestClient+UniqueKeys.swift */,
@@ -2365,6 +2371,7 @@
 		3B6DEEF920EA6AE30067435E /* Results */ = {
 			isa = PBXGroup;
 			children = (
+				9500D9B62C5ADBDF00383593 /* MyLargeSegmentsChange.swift */,
 				3B6DEEFA20EA6AE30067435E /* DataResult.swift */,
 			);
 			path = Results;
@@ -4098,6 +4105,7 @@
 				9519A91A27D7CC6500278AEC /* MySegmentsSynchronizer.swift in Sources */,
 				3B6DEF4E20EA6AE50067435E /* Status.swift in Sources */,
 				5959C488228C4B160064F968 /* Dictionary+DynamicCodable.swift in Sources */,
+				9500D9B52C5ADAE200383593 /* RestClient+MyLargeSegments.swift in Sources */,
 				5912D1472194715500BC698C /* FileStorage.swift in Sources */,
 				3B6DEF6720EA6AE50067435E /* EqualToBooleanMatcher.swift in Sources */,
 				3B6DEF6920EA6AE50067435E /* EqualToSetMatcher.swift in Sources */,
@@ -4113,6 +4121,7 @@
 				31AA2036872EEC62D9EDF4AB /* Endpoint.swift in Sources */,
 				31AA2D91508DE344F676AB46 /* EndpointFactory.swift in Sources */,
 				5905D4F7255D7784006DA3B1 /* PersistentEventsStorage.swift in Sources */,
+				9500D9B72C5ADBDF00383593 /* MyLargeSegmentsChange.swift in Sources */,
 				31AA228978A886748090A790 /* HttpStreamResponse.swift in Sources */,
 				31AA2B3F13E1D2DC717701A1 /* HttpStreamRequest.swift in Sources */,
 				953911A8267A4F250040433A /* LRUCache.swift in Sources */,
@@ -4689,6 +4698,7 @@
 				95B02D6928D0BDC20030EC8B /* UniqueKeyTracker.swift in Sources */,
 				C5977C5E2BF7D4CD003E293A /* BetweenSemverMatcher.swift in Sources */,
 				95B02D6A28D0BDC20030EC8B /* MySegmentsSynchronizer.swift in Sources */,
+				9500D9B82C5ADBFD00383593 /* MyLargeSegmentsChange.swift in Sources */,
 				95B02D6B28D0BDC20030EC8B /* ByKeyFacade.swift in Sources */,
 				95B02D6C28D0BDC20030EC8B /* TelemetrySynchronizer.swift in Sources */,
 				95B02D6D28D0BDC20030EC8B /* SyncCommons.swift in Sources */,
