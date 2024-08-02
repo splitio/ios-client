@@ -152,7 +152,8 @@ struct TestingHelper {
     }
 
     static func createTelemetryConfig() -> TelemetryConfig {
-        return TelemetryConfig(streamingEnabled: true, rates: nil, urlOverrides: nil, impressionsQueueSize: 9,
+        return TelemetryConfig(streamingEnabled: true, largeSegmentsEnabled: true, waitForLargeSegments: true,
+                               rates: nil, urlOverrides: nil, impressionsQueueSize: 9,
                                eventsQueueSize: 9, impressionsMode: 9, impressionsListenerEnabled: true,
                                httpProxyDetected: true, activeFactories: 1, redundantFactories: 12,
                                timeUntilReady: 9, timeUntilReadyFromCache: 5, nonReadyUsages: 2,

@@ -45,6 +45,7 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
 
         let rates = TelemetryRates(splits: splitConfig.featuresRefreshRate,
                                    mySegments: splitConfig.segmentsRefreshRate,
+                                   myLargeSegments: splitConfig.largeSegmentsRefreshRate,
                                    impressions: splitConfig.impressionRefreshRate,
                                    events: splitConfig.eventsPushRate,
                                    telemetry: splitConfig.internalTelemetryRefreshRate)
@@ -56,7 +57,8 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
                                                  stream: endpoints.isCustomStreamingEndpoint,
                                                  telemetry: endpoints.isCustomTelemetryEndpoint)
 
-        return TelemetryConfig(streamingEnabled: splitConfig.streamingEnabled,
+        return TelemetryConfig(streamingEnabled: splitConfig.streamingEnabled, largeSegmentsEnabled: splitConfig.largeSegmentsEnabled,
+                               waitForLargeSegments: splitConfig.waitForLargeSegments,
                                rates: rates, urlOverrides: urlOverrides,
                                impressionsQueueSize: splitConfig.impressionsQueueSize,
                                eventsQueueSize: splitConfig.eventsQueueSize,
