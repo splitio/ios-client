@@ -16,11 +16,11 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
 
     private let syncHelper: SyncHelper
     private let resource: Resource
-    private let fetcher: SegmentsFetcher
+    private let fetcher: SegmentsRetriever
     private let restClient: RestClient
 
     init(restClient: RestClientMySegments,
-         segmentsFetcher: SegmentsFetcher,
+         segmentsFetcher: SegmentsRetriever,
          syncHelper: SyncHelper) {
 
         self.restClient = restClient
@@ -34,7 +34,7 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
         Logger.d("Fetching segments")
 
         let startTime = syncHelper.time()
-        let requestResult = fetcher.fetch(userKey: userKey, headers: headers)
+        let requestResult = fetcher.retrieve(userKey: userKey, headers: headers)
         syncHelper.recordTelemetry(resource: resource, startTime: startTime)
 
         do {
@@ -48,12 +48,12 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
     }
 }
 
-protocol SegmentsFetcher {
+protocol SegmentsRetriever {
     var resource: Resource { get }
-    func fetch(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>?
+    func retrieve(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>?
 }
 
-struct MySegmentsFetcher: SegmentsFetcher {
+struct MySegmentsRetriever: SegmentsRetriever {
     let resource = Resource.mySegments
     private let restClient: RestClientMySegments
 
@@ -61,7 +61,7 @@ struct MySegmentsFetcher: SegmentsFetcher {
         self.restClient = restClient
     }
 
-    func fetch(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>? {
+    func retrieve(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>? {
         var requestResult: DataResult<SegmentChange>?
         let semaphore = DispatchSemaphore(value: 0)
 
@@ -74,7 +74,7 @@ struct MySegmentsFetcher: SegmentsFetcher {
     }
 }
 
-struct MyLargeSegmentsFetcher: SegmentsFetcher {
+struct MyLargeSegmentsRetriever: SegmentsRetriever {
     let resource = Resource.myLargeSegments
     private let restClient: RestClientMyLargeSegments
 
@@ -82,7 +82,7 @@ struct MyLargeSegmentsFetcher: SegmentsFetcher {
         self.restClient = restClient
     }
 
-    func fetch(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>? {
+    func retrieve(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>? {
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SegmentChange>?
         restClient.getMyLargeSegments(user: userKey, headers: headers) { result in

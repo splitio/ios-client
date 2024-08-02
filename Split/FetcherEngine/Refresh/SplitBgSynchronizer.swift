@@ -183,7 +183,7 @@ struct BackgroundSyncExecutor {
                                                     syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
         self.mySegmentsFetcher = DefaultHttpMySegmentsFetcher(restClient: restClient, 
-                                                              segmentsFetcher: MySegmentsFetcher(restClient: restClient),
+                                                              segmentsFetcher: MySegmentsRetriever(restClient: restClient),
                                                               syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
         let bySetsFilter = splitsStorage.getBySetsFilter()
