@@ -14,6 +14,7 @@ protocol SplitsChangesChecker {
 
 protocol MySegmentsChangesChecker {
     func mySegmentsHaveChanged(old: SegmentChange, new: SegmentChange) -> Bool
+    func mySegmentsHaveChanged(oldSegments: [String], newSegments: [String]) -> Bool
 }
 
 struct DefaultSplitsChangesChecker: SplitsChangesChecker {
@@ -31,5 +32,10 @@ struct DefaultMySegmentsChangesChecker: MySegmentsChangesChecker {
                      oldSegments.sorted() == newSegments.sorted())
         }
         return old.changeNumber < new.changeNumber
+    }
+
+    func mySegmentsHaveChanged(oldSegments: [String], newSegments: [String]) -> Bool {
+        return !(oldSegments.count == newSegments.count &&
+                 oldSegments.sorted() == newSegments.sorted())
     }
 }

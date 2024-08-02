@@ -16,11 +16,11 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
 
     private let syncHelper: SyncHelper
     private let resource: Resource
-    private let fetcher: SegmentFetcher
+    private let fetcher: SegmentsFetcher
     private let restClient: RestClient
 
     init(restClient: RestClientMySegments,
-         segmentsFetcher: SegmentFetcher,
+         segmentsFetcher: SegmentsFetcher,
          syncHelper: SyncHelper) {
 
         self.restClient = restClient
@@ -48,18 +48,23 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
     }
 }
 
-protocol SegmentFetcher {
+protocol SegmentsFetcher {
     var resource: Resource { get }
     func fetch(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>?
 }
 
-struct MySegmentFetcher {
+struct MySegmentsFetcher: SegmentsFetcher {
     let resource = Resource.mySegments
     private let restClient: RestClientMySegments
-    private let semaphore = DispatchSemaphore(value: 0)
+
+    init(restClient: RestClientMySegments) {
+        self.restClient = restClient
+    }
 
     func fetch(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>? {
         var requestResult: DataResult<SegmentChange>?
+        let semaphore = DispatchSemaphore(value: 0)
+
         restClient.getMySegments(user: userKey, headers: headers) { result in
             requestResult = result
             semaphore.signal()
@@ -69,12 +74,16 @@ struct MySegmentFetcher {
     }
 }
 
-struct MyLargeSegmentFetcher {
+struct MyLargeSegmentsFetcher: SegmentsFetcher {
     let resource = Resource.myLargeSegments
     private let restClient: RestClientMyLargeSegments
-    private let semaphore = DispatchSemaphore(value: 0)
+
+    init(restClient: RestClientMyLargeSegments) {
+        self.restClient = restClient
+    }
 
     func fetch(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>? {
+        let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SegmentChange>?
         restClient.getMyLargeSegments(user: userKey, headers: headers) { result in
             requestResult = result

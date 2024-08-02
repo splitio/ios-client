@@ -28,8 +28,8 @@ class BackgroundMySegmentsSyncWorker: BackgroundSyncWorker {
 
     func execute() {
         do {
-            if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: nil) {
-                mySegmentsStorage.set(segments, forKey: userKey)
+            if let change = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: nil) {
+                mySegmentsStorage.set(change.segments, forKey: userKey)
             }
         } catch let error {
             Logger.e("Problem fetching mySegments: %@", error.localizedDescription)

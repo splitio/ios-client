@@ -25,7 +25,7 @@ extension DefaultRestClient: RestClientMySegments {
                 if let data = data {
                     segments = data["mySegments"] ?? []
                 }
-                completion(DataResult.success(value: SegmentChange(segments: segments,
+                completion(DataResult.success(value: SegmentChange(segments: segments.map { $0.name },
                                                                    changeNumber: -1))
                 )
             } catch {

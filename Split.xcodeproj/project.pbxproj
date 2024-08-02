@@ -363,6 +363,8 @@
 		9500D9B72C5ADBDF00383593 /* SegmentsChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9B62C5ADBDF00383593 /* SegmentsChange.swift */; };
 		9500D9B82C5ADBFD00383593 /* SegmentsChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9B62C5ADBDF00383593 /* SegmentsChange.swift */; };
 		9500D9BF2C5D371900383593 /* Set+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9BE2C5D371900383593 /* Set+Extension.swift */; };
+		9500D9C02C5D458F00383593 /* Set+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9BE2C5D371900383593 /* Set+Extension.swift */; };
+		9500D9C12C5D45B400383593 /* RestClient+MyLargeSegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9B42C5ADAE200383593 /* RestClient+MyLargeSegments.swift */; };
 		9502B7B42837E70200B779C0 /* UniqueTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9502B7B32837E70200B779C0 /* UniqueTrackerTest.swift */; };
 		9502B7B62837E75800B779C0 /* PersistentUniqueKeyStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9502B7B52837E75800B779C0 /* PersistentUniqueKeyStorageStub.swift */; };
 		9505681426822C6A001D7B10 /* ImpressionsCountPerFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9505681326822C6A001D7B10 /* ImpressionsCountPerFeature.swift */; };
@@ -4512,6 +4514,7 @@
 				95B02CC128D0BDC10030EC8B /* NotificationsHelper.swift in Sources */,
 				C5977C5D2BF7D4C1003E293A /* Semver.swift in Sources */,
 				95B02CC228D0BDC10030EC8B /* CastUtils.swift in Sources */,
+				9500D9C02C5D458F00383593 /* Set+Extension.swift in Sources */,
 				95B02CC328D0BDC10030EC8B /* SplitHelper.swift in Sources */,
 				95B02CC428D0BDC10030EC8B /* Base64Utils.swift in Sources */,
 				95B02CC528D0BDC10030EC8B /* Atomic.swift in Sources */,
@@ -4744,6 +4747,7 @@
 				95B02D8E28D0BDC30030EC8B /* HttpRequestList.swift in Sources */,
 				95B02D8F28D0BDC30030EC8B /* HttpSession.swift in Sources */,
 				95B02D9028D0BDC30030EC8B /* NetworkReachabilityManager.swift in Sources */,
+				9500D9C12C5D45B400383593 /* RestClient+MyLargeSegments.swift in Sources */,
 				95B02D9128D0BDC30030EC8B /* RestClient.swift in Sources */,
 				9566744829F03675001B4FA5 /* SplitEncryptionLevel.swift in Sources */,
 				952FA1302A31DCA200264AB5 /* FeatureFlagsSynchronizer.swift in Sources */,
