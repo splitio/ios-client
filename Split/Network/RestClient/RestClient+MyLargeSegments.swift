@@ -7,25 +7,26 @@
 //
 
 import Foundation
-
-protocol RestClientMyLargeSegments: RestClient {
+protocol RestClientMyLargeSegments {
     func getMyLargeSegments(user: String,
                             headers: [String: String]?,
-                            completion: @escaping (DataResult<MyLargeSegmentChange>) -> Void)
+                            completion: @escaping (DataResult<SegmentChange>) -> Void)
 }
 
 extension DefaultRestClient: RestClientMyLargeSegments {
     func getMyLargeSegments(user: String,
                             headers: [String: String]? = nil,
-                            completion: @escaping (DataResult<MyLargeSegmentChange>) -> Void) {
+                            completion: @escaping (DataResult<SegmentChange>) -> Void) {
 
-        let completionHandler: ((DataResult<MyLargeSegmentChange>) -> Void) = { result in
+        let completionHandler: ((DataResult<SegmentChange>) -> Void) = { result in
             do {
                 let data = try result.unwrap()
                 if let segmentsChange = data {
                     completion(DataResult.success(value: segmentsChange))
                 } else {
-                    completion(DataResult.failure(error: HttpError.unknown(code: -1, message: "No data received") as NSError))
+                    completion(
+                        DataResult.failure(error: HttpError.unknown(code: -1,
+                                                                    message: "No data received") as NSError))
                 }
 
             } catch {

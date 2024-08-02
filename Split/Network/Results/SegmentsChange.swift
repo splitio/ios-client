@@ -8,11 +8,11 @@
 
 import Foundation
 
-struct MyLargeSegmentChange: Codable {
-    var segments: [Segment]
+struct SegmentChange: Codable {
+    var segments: [String]
     var changeNumber: Int64
 
-    init(segments: [Segment], changeNumber: Int64) {
+    init(segments: [String], changeNumber: Int64) {
         self.segments = segments
         self.changeNumber = changeNumber
     }
