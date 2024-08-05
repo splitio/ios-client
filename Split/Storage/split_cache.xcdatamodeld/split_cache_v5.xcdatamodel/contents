@@ -66,8 +66,8 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="MyLargeSegment" representedClassName="MySegmentEntity" syncable="YES">
-        <attribute name="segmentList" attributeType="String"/>
+    <entity name="MyLargeSegment" representedClassName="MyLargeSegmentEntity" syncable="YES">
+        <attribute name="body" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="userKey" attributeType="String"/>
         <uniquenessConstraints>

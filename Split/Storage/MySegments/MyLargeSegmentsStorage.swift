@@ -1,5 +1,5 @@
 //
-//  MySegmentsStorage.swift
+//  MyLargeSegmentsStorage.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 02-Mar-2022.
@@ -8,24 +8,9 @@
 
 import Foundation
 
-protocol MySegmentsStorage {
-    var changeNumber: Int64 { get }
-    var keys: Set<String> { get }
-    func loadLocal(forKey key: String)
-    func getAll(forKey key: String) -> Set<String>
-    func set(_ change: SegmentChange, forKey key: String)
-    func clear(forKey key: String)
-    func destroy()
-    func getCount(forKey key: String) -> Int
-    func getCount() -> Int
-}
+class MyLargeSegmentsStorage: MySegmentsStorage {
 
-class DefaultMySegmentsStorage: MySegmentsStorage {
-
-    var changeNumber: Int64 {
-        return -1
-    }
-
+    private(set) var changeNumber: Int64 = -1
     private var inMemoryMySegments: SynchronizedDictionarySet<String, String> = SynchronizedDictionarySet()
     private let persistenStorage: PersistentMySegmentsStorage
 
