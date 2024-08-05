@@ -11,21 +11,23 @@ import Foundation
 protocol RestClientMySegments: RestClient {
     func getMySegments(user: String,
                        headers: [String: String]?,
-                       completion: @escaping (DataResult<[String]>) -> Void)
+                       completion: @escaping (DataResult<SegmentChange>) -> Void)
 }
 
 extension DefaultRestClient: RestClientMySegments {
     func getMySegments(user: String,
                        headers: [String: String]? = nil,
-                       completion: @escaping (DataResult<[String]>) -> Void) {
+                       completion: @escaping (DataResult<SegmentChange>) -> Void) {
         let completionHandler: (DataResult<[String: [Segment]]>) -> Void = { result in
             do {
                 let data = try result.unwrap()
-                var segmentsNames = [String]()
-                if let data = data, let segments = data["mySegments"] {
-                    segmentsNames = segments.map { segment in  return segment.name }
+                var segments = [Segment]()
+                if let data = data {
+                    segments = data["mySegments"] ?? []
                 }
-                completion(DataResult.success(value: segmentsNames))
+                completion(DataResult.success(value: SegmentChange(segments: segments.map { $0.name },
+                                                                   changeNumber: -1))
+                )
             } catch {
                 completion(DataResult.failure(error: error as NSError))
             }

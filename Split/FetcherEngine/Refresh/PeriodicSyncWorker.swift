@@ -211,13 +211,14 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         do {
-            let oldSegments = mySegmentsStorage.getAll()
-            if let segments = try mySegmentsFetcher.execute(userKey: userKey, headers: nil) {
-                if changeChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segments) {
-                    mySegmentsStorage.set(segments)
+            let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(), 
+                                          changeNumber: -1)
+            if let change = try mySegmentsFetcher.execute(userKey: userKey, headers: nil) {
+                if changeChecker.mySegmentsHaveChanged(old: oldChange, new: change) {
+                    mySegmentsStorage.set(change.segments)
                     notifyMySegmentsUpdated()
                     Logger.i("My Segments have been updated")
-                    Logger.v(segments.joined(separator: ","))
+                    Logger.v(change.segments.joined(separator: ","))
                 }
             }
         } catch let error {

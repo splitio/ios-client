@@ -75,7 +75,8 @@ import BackgroundTasks
                     return
                 }
                 for item in syncList.values {
-                    let pins = self.globalStorage.get(item: .pinsConfig(item.apiKey), type: [CredentialPin].self)
+                    let pins = self.globalStorage.get(item: .pinsConfig(item.apiKey), 
+                                                      type: [CredentialPin].self)
                     do {
                         // TODO: Create BGSyncExecutor using a factory to allow testing
                         let executor = try BackgroundSyncExecutor(prefix: item.prefix,
@@ -181,7 +182,8 @@ struct BackgroundSyncExecutor {
         let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
                                                     syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
-        self.mySegmentsFetcher = DefaultHttpMySegmentsFetcher(restClient: restClient,
+        self.mySegmentsFetcher = DefaultHttpMySegmentsFetcher(restClient: restClient, 
+                                                              segmentsFetcher: MySegmentsRetriever(restClient: restClient),
                                                               syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
         let bySetsFilter = splitsStorage.getBySetsFilter()

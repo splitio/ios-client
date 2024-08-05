@@ -135,11 +135,14 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
 
     override func fetchFromRemote() throws -> Bool {
         do {
-            let oldSegments = mySegmentsStorage.getAll()
-            if let segments = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: getHeaders()) {
+            // TODO: Update change number logic line will be updated
+            let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(),
+                                          changeNumber: -1)
+            if let change = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: getHeaders()) {
                 if !isSdkReadyTriggered() ||
-                    changeChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segments) {
-                    mySegmentsStorage.set(segments)
+                    changeChecker.mySegmentsHaveChanged(old: oldChange,
+                                                        new: change) {
+                    mySegmentsStorage.set(change.segments)
                     notifyMySegmentsUpdated()
                 }
                 resetBackoffCounter()

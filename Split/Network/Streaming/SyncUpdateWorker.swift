@@ -112,8 +112,10 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
         }
         if notification.includesPayload {
             if let segmentList = notification.segmentList {
-                let oldSegments = mySegmentsStorage.getAll(forKey: userKey)
-                if changesChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segmentList) {
+                // TODO: Update change number logic
+                let oldSegments = mySegmentsStorage.getAll(forKey: userKey).asArray()
+                if changesChecker.mySegmentsHaveChanged(oldSegments: oldSegments,
+                                                        newSegments: segmentList) {
                     mySegmentsStorage.set(segmentList, forKey: userKey)
                     synchronizer.notifySegmentsUpdated(forKey: userKey)
                 }
