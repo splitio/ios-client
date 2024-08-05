@@ -9,6 +9,11 @@
 import Foundation
 
 class EmptyMySegmentsStorage: MySegmentsStorage {
+    var changeNumber: Int64 = -1
+
+    func set(_ change: SegmentChange, forKey key: String) {
+    }
+    
     var keys: Set<String> = Set()
 
     func loadLocal(forKey key: String) {
@@ -16,9 +21,6 @@ class EmptyMySegmentsStorage: MySegmentsStorage {
 
     func getAll(forKey key: String) -> Set<String> {
         return Set()
-    }
-
-    func set(_ segments: [String], forKey key: String) {
     }
 
     func clear(forKey key: String) {

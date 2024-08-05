@@ -112,11 +112,12 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
         }
         if notification.includesPayload {
             if let segmentList = notification.segmentList {
-                // TODO: Update change number logic
+                // TODO: Check change number logic when implementing my large storage
                 let oldSegments = mySegmentsStorage.getAll(forKey: userKey).asArray()
                 if changesChecker.mySegmentsHaveChanged(oldSegments: oldSegments,
                                                         newSegments: segmentList) {
-                    mySegmentsStorage.set(segmentList, forKey: userKey)
+                    mySegmentsStorage.set(SegmentChange(segments: segmentList),
+                                          forKey: userKey)
                     synchronizer.notifySegmentsUpdated(forKey: userKey)
                 }
             } else {
@@ -217,7 +218,8 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
     private func remove(segment: String, forKey key: String) {
         var segments = mySegmentsStorage.getAll(forKey: key)
         if segments.remove(segment) != nil {
-            mySegmentsStorage.set(Array(segments), forKey: key)
+            mySegmentsStorage.set(SegmentChange(segments: segments.asArray()),
+                                  forKey: key)
             synchronizer.notifySegmentsUpdated(forKey: key)
             telemetryProducer?.recordUpdatesFromSse(type: .mySegments)
         }
@@ -234,7 +236,8 @@ class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
                 var segments = mySegmentsStorage.getAll(forKey: userKey)
                 if !segments.contains(segmentName) {
                     segments.insert(segmentName)
-                    mySegmentsStorage.set(Array(segments), forKey: userKey)
+                    mySegmentsStorage.set(SegmentChange(segments: segments.asArray()),
+                                          forKey: userKey)
                     synchronizer.notifySegmentsUpdated(forKey: userKey)
                     telemetryProducer?.recordUpdatesFromSse(type: .mySegments)
                 }
