@@ -38,7 +38,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
 
     func testOneTimeFetchSuccess() {
 
-        mySegmentsFetcher.allSegments = [["s1", "s2"]]
+        mySegmentsFetcher.allSegments = [SegmentChange(segments: ["s1", "s2"])]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in
@@ -57,7 +57,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
 
     func testRetryAndSuccess() {
 
-        mySegmentsFetcher.allSegments = [nil, nil, ["s1", "s2"]]
+        mySegmentsFetcher.allSegments = [nil, nil, SegmentChange(segments: ["s1", "s2"])]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in
@@ -102,7 +102,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
             reconnectBackoffCounter: backoffCounter,
             avoidCache: true)
 
-        mySegmentsFetcher.allSegments = [["s1", "s2"]]
+        mySegmentsFetcher.allSegments = [SegmentChange(segments: ["s1", "s2"])]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in

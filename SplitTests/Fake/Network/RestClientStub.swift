@@ -10,7 +10,7 @@ import XCTest
 @testable import Split
 
 protocol RestClientTest {
-    func update(segments: [String]?)
+    func update(segments: [SegmentChange]?)
     func update(change: SplitChange?)
     func update(changes: [SplitChange])
     func update(response: SseAuthenticationResponse?)
@@ -19,7 +19,7 @@ protocol RestClientTest {
 
 class RestClientStub: SplitApiRestClient {
     private var sseAuthResult: DataResult<SseAuthenticationResponse>?
-    private var segments: [String]?
+    private var segments: [SegmentChange]?
     private var splitChanges: [SplitChange] = []
     private var sendTrackEventsCount = 0
     private var sendImpressionsCount = 0
@@ -30,7 +30,8 @@ class RestClientStub: SplitApiRestClient {
     var sendUniqueKeysCount = 0
     var isServerAvailable = true
     private var splitChangeHitIndex = 0
-    
+    private var segmentsChangeHitIndex = 0
+
     func getSendTrackEventsCount() -> Int {
         return sendTrackEventsCount;
     }
@@ -68,8 +69,8 @@ extension RestClientStub: RestClientSplitChanges {
 }
 
 extension RestClientStub: RestClientMySegments {
-    func getMySegments(user: String, headers: [String: String]?, completion: @escaping (DataResult<[String]>) -> Void) {
-        completion(DataResult.success(value: segments))
+    func getMySegments(user: String, headers: [String: String]?, completion: @escaping (DataResult<SegmentChange>) -> Void) {
+        completion(DataResult.success(value: segments?[segmentsChangeHitIndex]))
     }
 }
 
@@ -126,7 +127,7 @@ extension RestClientStub: RestClientTest {
         self.splitChanges = changes
     }
     
-    func update(segments: [String]?) {
+    func update(segments: [SegmentChange]?) {
         self.segments = segments
     }
 

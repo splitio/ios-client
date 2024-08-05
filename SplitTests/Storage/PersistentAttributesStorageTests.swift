@@ -24,16 +24,10 @@ class PersistentAttributesStorageTests: XCTestCase {
     
     override func setUp() {
         attributesDao = AttributesDaoStub()
+        var daoProvider = CoreDataDaoProviderMock()
+        daoProvider.attributesDao = attributesDao
         attributesStorage =
-        DefaultPersistentAttributesStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
-                                                                       impressionDao: ImpressionDaoStub(),
-                                                                       impressionsCountDao: ImpressionsCountDaoStub(),
-                                                                       generalInfoDao: GeneralInfoDaoStub(),
-                                                                       splitDao: SplitDaoStub(),
-                                                                       mySegmentsDao: MySegmentsDaoStub(),
-                                                                       attributesDao: attributesDao,
-                                                                       uniqueKeyDao: UniqueKeyDaoStub(), 
-                                                                       hashedImpressionDao: HashedImpressionDaoMock()))
+        DefaultPersistentAttributesStorage(database: SplitDatabaseStub(daoProvider: daoProvider))
     }
     
     func  testSet() {

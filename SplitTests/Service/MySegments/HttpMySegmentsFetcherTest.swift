@@ -16,11 +16,13 @@ class HttpMySegmentsFetcherTest: XCTestCase {
     var restClient: RestClientStub!
     var fetcher: HttpMySegmentsFetcher!
     var telemetryProducer: TelemetryStorageStub!
-    
+    var retriever: SegmentsRetriever!
     override func setUp() {
         restClient = RestClientStub()
         telemetryProducer = TelemetryStorageStub()
+        retriever = SegmentsRetrieverMock(resource: .mySegments)
         fetcher = DefaultHttpMySegmentsFetcher(restClient: restClient,
+                                               segmentsFetcher: retriever,
                                                syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
     }
     
@@ -39,17 +41,15 @@ class HttpMySegmentsFetcherTest: XCTestCase {
     
     func testSuccessFulFetch() throws {
         restClient.isServerAvailable = true
-        restClient.update(segments: ["s1", "s2", "s3"])
-        
+        restClient.update(segments: [SegmentChange(segments: ["s1", "s2", "s3"], changeNumber: 100)])
+
         let c = try fetcher.execute(userKey: "user", headers: nil)
         
-        XCTAssertEqual(3, c?.count)
+        XCTAssertEqual(3, c?.segments.count)
+        XCTAssertEqual(100, c?.changeNumber)
         XCTAssertEqual(1, telemetryProducer.recordHttpLastSyncCallCount)
         XCTAssertEqual(1, telemetryProducer.recordHttpLatencyCallCount)
         XCTAssertEqual(0, telemetryProducer.recordHttpErrorCallCount)
-    }
-    
-    override func tearDown() {
     }
 }
 

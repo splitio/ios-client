@@ -18,7 +18,7 @@ class EvaluatorTests: XCTestCase {
     
     override func setUp() {
         if evaluator == nil {
-            let mySegments = ["s1", "s2", "test_copy"]
+            let change = SegmentChange(segments: ["s1", "s2", "test_copy"])
 
             let splits = loadSplitsFile()
             let splitsStorage = SplitsStorageStub()
@@ -27,7 +27,7 @@ class EvaluatorTests: XCTestCase {
                                                                        changeNumber: 100,
                                                                        updateTimestamp: 100))
             mySegmentsStorage = MySegmentsStorageStub()
-            mySegmentsStorage.set(mySegments, forKey: matchingKey)
+            mySegmentsStorage.set(change, forKey: matchingKey)
             client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
             evaluator = DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
         }
@@ -381,7 +381,7 @@ class EvaluatorTests: XCTestCase {
                                                                changeNumber: 100, 
                                                                updateTimestamp: 100))
         let mySegmentsStorage = MySegmentsStorageStub()
-        mySegmentsStorage.set(mySegments, forKey: matchingKey)
+        mySegmentsStorage.set(SegmentChange(segments: mySegments), forKey: matchingKey)
         client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
         evaluator = DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
         return evaluator
@@ -394,7 +394,7 @@ class EvaluatorTests: XCTestCase {
                                                                changeNumber: 100,
                                                                updateTimestamp: 100))
         let mySegmentsStorage = MySegmentsStorageStub()
-        mySegmentsStorage.set([], forKey: matchingKey)
+        mySegmentsStorage.set(SegmentChange(segments:[]), forKey: matchingKey)
         client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
         evaluator = DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
         return evaluator
