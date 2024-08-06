@@ -25,13 +25,7 @@ struct DefaultSplitsChangesChecker: SplitsChangesChecker {
 
 struct DefaultMySegmentsChangesChecker: MySegmentsChangesChecker {
     func mySegmentsHaveChanged(old: SegmentChange, new: SegmentChange) -> Bool {
-        if old.changeNumber == new.changeNumber {
-            let oldSegments = old.segments
-            let newSegments = new.segments
-            return !(oldSegments.count == newSegments.count &&
-                     oldSegments.sorted() == newSegments.sorted())
-        }
-        return old.changeNumber < new.changeNumber
+        return mySegmentsHaveChanged(oldSegments: old.segments, newSegments: new.segments)
     }
 
     func mySegmentsHaveChanged(oldSegments: [String], newSegments: [String]) -> Bool {

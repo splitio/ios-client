@@ -142,7 +142,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                 if !isSdkReadyTriggered() ||
                     changeChecker.mySegmentsHaveChanged(old: oldChange,
                                                         new: change) {
-                    mySegmentsStorage.set(change.segments)
+                    mySegmentsStorage.set(change)
                     notifyMySegmentsUpdated()
                 }
                 resetBackoffCounter()

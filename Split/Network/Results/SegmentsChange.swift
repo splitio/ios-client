@@ -12,7 +12,7 @@ struct SegmentChange: Codable {
     var segments: [String]
     var changeNumber: Int64
 
-    init(segments: [String], changeNumber: Int64) {
+    init(segments: [String], changeNumber: Int64 = -1) {
         self.segments = segments
         self.changeNumber = changeNumber
     }
