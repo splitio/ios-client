@@ -15,37 +15,21 @@ class MySegmentsDaoTest: XCTestCase {
     
     var mySegmentsDao: MySegmentsDao!
     var mySegmentsDaoAes128Cbc: MySegmentsDao!
-    var queue: DispatchQueue!
-
+    
     override func setUp() {
-        queue = DispatchQueue(label: "my segments dao test")
-    }
-
-    func initDao(entity: CoreDataEntity) {
+        let queue = DispatchQueue(label: "my segments dao test")
         mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                            dispatchQueue: queue),
-                                              coreDataEntity: entity)
+                                                                                  dispatchQueue: queue))
         mySegmentsDaoAes128Cbc = CoreDataMySegmentsDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                                     dispatchQueue: queue),
-                                                       coreDataEntity: entity,
+                                                                                  dispatchQueue: queue),
                                                        cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
     }
-
-
+    
     func testUpdateGetPlainText() {
-        initDao(entity: .mySegment)
         updateGet(dao: mySegmentsDao)
-
-        initDao(entity: .myLargeSegment)
-        updateGet(dao: mySegmentsDao)
-
     }
 
     func testUpdateGetAes128Cbc() {
-        initDao(entity: .mySegment)
-        updateGet(dao: mySegmentsDaoAes128Cbc)
-        
-        initDao(entity: .myLargeSegment)
         updateGet(dao: mySegmentsDaoAes128Cbc)
     }
 
@@ -61,12 +45,10 @@ class MySegmentsDaoTest: XCTestCase {
     }
 
     func testGetInvalidKeyPlainText() {
-        initDao(entity: .mySegment)
         getInvalidKey(dao: mySegmentsDao)
     }
 
     func testGetInvalidKeyAes128Cbc() {
-        initDao(entity: .mySegment)
         getInvalidKey(dao: mySegmentsDaoAes128Cbc)
     }
 
@@ -79,16 +61,14 @@ class MySegmentsDaoTest: XCTestCase {
     }
 
     func testDataIsEncryptedInDb() {
-        initDao(entity: .mySegment)
         let cipher = DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey)
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
         let helper = IntegrationCoreDataHelper.get(databaseName: "test",
                                                dispatchQueue: DispatchQueue(label: "impression dao test"))
-        mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: helper, coreDataEntity: .mySegment)
+        mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: helper)
         mySegmentsDaoAes128Cbc = CoreDataMySegmentsDao(coreDataHelper: helper,
-                                                       coreDataEntity: .mySegment,
                                                        cipher: cipher)
 
         // create segment and get one encrypted feature name

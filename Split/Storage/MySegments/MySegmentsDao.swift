@@ -19,13 +19,11 @@ protocol MySegmentsDao {
 /// it is not necessary to create a new DAO class for them.
 class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
 
-    private let coreDataEntity: CoreDataEntity
+    private let coreDataEntity: CoreDataEntity = .mySegment
     private let cipher: Cipher?
-    init(coreDataHelper: CoreDataHelper, 
-         coreDataEntity: CoreDataEntity,
+    init(coreDataHelper: CoreDataHelper,
          cipher: Cipher? = nil) {
         self.cipher = cipher
-        self.coreDataEntity = coreDataEntity
         super.init(coreDataHelper: coreDataHelper)
     }
 
