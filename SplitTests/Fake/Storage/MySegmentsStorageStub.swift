@@ -18,6 +18,7 @@ class MySegmentsStorageStub: MySegmentsStorage {
     var clearExpectation = [String: XCTestExpectation]()
     var getCountByKeyCalledCount = 0
     var getCountCalledCount = 0
+    var changeNumber: Int64 = -1
 
     var keys: Set<String> {
         return Set(segments.keys.map { $0 })
@@ -33,8 +34,9 @@ class MySegmentsStorageStub: MySegmentsStorage {
         return segments[key] ?? Set()
     }
 
-    func set(_ segments: [String], forKey key: String) {
-        self.segments[key] = Set(segments)
+    func set(_ change: SegmentChange, forKey key: String) {
+        self.segments[key] = change.segments.asSet()
+        self.changeNumber = change.changeNumber
         if let exp = updateExpectation[key] {
             exp.fulfill()
         }

@@ -21,7 +21,7 @@ class MySegmentsChangesCheckerTest: XCTestCase {
 
         let old = ["s1", "s2", "s3"]
         let new = ["s1"]
-        let result = mySegmentsChangesChecker.mySegmentsHaveChanged(old: old, new: new)
+        let result = mySegmentsChangesChecker.mySegmentsHaveChanged(oldSegments: old, newSegments: new)
 
         XCTAssertTrue(result)
     }
@@ -31,7 +31,10 @@ class MySegmentsChangesCheckerTest: XCTestCase {
 
         let new = ["s1", "s2", "s3"]
         let old = ["s1"]
-        let result = mySegmentsChangesChecker.mySegmentsHaveChanged(old: old, new: new)
+        let result = mySegmentsChangesChecker.mySegmentsHaveChanged(oldSegments: old, newSegments: new)
+        let result1 = mySegmentsChangesChecker.mySegmentsHaveChanged(old: SegmentChange(segments: old), 
+                                                                     new: SegmentChange(segments: new)
+        )
 
         XCTAssertTrue(result)
     }
@@ -40,7 +43,10 @@ class MySegmentsChangesCheckerTest: XCTestCase {
 
         let new = ["s1", "s2", "s3"]
         let old = ["s1", "s2", "s3"]
-        let result = mySegmentsChangesChecker.mySegmentsHaveChanged(old: old, new: new)
+        let result = mySegmentsChangesChecker.mySegmentsHaveChanged(oldSegments: old, newSegments: new)
+        let result1 = mySegmentsChangesChecker.mySegmentsHaveChanged(old: SegmentChange(segments: old),
+                                                                     new: SegmentChange(segments: new)
+        )
 
         XCTAssertFalse(result)
     }
@@ -49,7 +55,10 @@ class MySegmentsChangesCheckerTest: XCTestCase {
 
         let new = [String]()
         let old = [String]()
-        let result = mySegmentsChangesChecker.mySegmentsHaveChanged(old: old, new: new)
+        let result = mySegmentsChangesChecker.mySegmentsHaveChanged(oldSegments: old, newSegments: new)
+        let result1 = mySegmentsChangesChecker.mySegmentsHaveChanged(old: SegmentChange(segments: old),
+                                                                     new: SegmentChange(segments: new)
+        )
 
         XCTAssertFalse(result)
     }
@@ -58,7 +67,10 @@ class MySegmentsChangesCheckerTest: XCTestCase {
 
         let new = [String]()
         let old = ["s1", "s2", "s3"]
-        let result = mySegmentsChangesChecker.mySegmentsHaveChanged(old: old, new: new)
+        let result = mySegmentsChangesChecker.mySegmentsHaveChanged(oldSegments: old, newSegments: new)
+        let result1 = mySegmentsChangesChecker.mySegmentsHaveChanged(old: SegmentChange(segments: old),
+                                                                     new: SegmentChange(segments: new)
+        )
 
         XCTAssertTrue(result)
     }

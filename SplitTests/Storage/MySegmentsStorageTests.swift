@@ -46,7 +46,7 @@ class MySegmentsStorageTests: XCTestCase {
         persistentStorage.persistedSegments = [userKey : dummySegments]
         mySegmentsStorage.loadLocal(forKey: userKey)
         let segments = mySegmentsStorage.getAll(forKey: userKey)
-        mySegmentsStorage.set(["n1", "n2"], forKey: userKey)
+        mySegmentsStorage.set(SegmentChange(segments: ["n1", "n2"]), forKey: userKey)
         let newSegments = mySegmentsStorage.getAll(forKey: userKey)
         let persistedSegments = persistentStorage.getSnapshot(forKey: userKey)
         let otherSegments = mySegmentsStorage.getAll(forKey: "otherKey")
@@ -70,7 +70,7 @@ class MySegmentsStorageTests: XCTestCase {
         persistentStorage.persistedSegments = [userKey : dummySegments]
         mySegmentsStorage.loadLocal(forKey: userKey)
         let segments = mySegmentsStorage.getAll(forKey: userKey)
-        mySegmentsStorage.set([String](), forKey: userKey)
+        mySegmentsStorage.set(SegmentChange(segments: []), forKey: userKey)
         let newSegments = mySegmentsStorage.getAll(forKey: userKey)
         let persistedSegments = persistentStorage.getSnapshot(forKey: userKey)
 

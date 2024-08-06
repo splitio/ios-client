@@ -20,16 +20,10 @@ class PersistentSplitsStorageTest: XCTestCase {
     override func setUp() {
         splitDao = SplitDaoStub()
         generalInfoDao = GeneralInfoDaoStub()
-        splitsStorage = DefaultPersistentSplitsStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
-                                                                                   impressionDao: ImpressionDaoStub(),
-                                                                                   impressionsCountDao: ImpressionsCountDaoStub(),
-                                                                                   generalInfoDao: generalInfoDao,
-                                                                                   splitDao: splitDao,
-                                                                                   mySegmentsDao: MySegmentsDaoStub(),
-                                                                                   attributesDao: AttributesDaoStub(),
-                                                                                   uniqueKeyDao: UniqueKeyDaoStub(),
-                                                                                   hashedImpressionDao: HashedImpressionDaoMock()))
-
+        var daoProvider = CoreDataDaoProviderMock()
+        daoProvider.splitDao = splitDao
+        daoProvider.generalInfoDao = generalInfoDao
+        splitsStorage = DefaultPersistentSplitsStorage(database: SplitDatabaseStub(daoProvider: daoProvider))
     }
     
     func testUpdateProcessedChange() {

@@ -17,16 +17,10 @@ class PersistentImpressionsStorageTests: XCTestCase {
 
     override func setUp() {
         impressionDao = ImpressionDaoStub()
-        impressionsStorage = DefaultImpressionsStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
-                                                                                   impressionDao: impressionDao,
-                                                                                   impressionsCountDao: ImpressionsCountDaoStub(),
-                                                                                   generalInfoDao: GeneralInfoDaoStub(),
-                                                                                   splitDao: SplitDaoStub(),
-                                                                                   mySegmentsDao: MySegmentsDaoStub(),
-                                                                                   attributesDao: AttributesDaoStub(),
-                                                                                   uniqueKeyDao: UniqueKeyDaoStub(),
-                                                                                   hashedImpressionDao: HashedImpressionDaoMock()), expirationPeriod: 100)
-
+        var daoProvider = CoreDataDaoProviderMock()
+        daoProvider.impressionDao = impressionDao
+        impressionsStorage = DefaultImpressionsStorage(database: SplitDatabaseStub(daoProvider: daoProvider),
+                                                       expirationPeriod: 100)
     }
 
     func testPush() {

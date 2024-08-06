@@ -20,16 +20,10 @@ class PersistentMySegmentsStorageTests: XCTestCase {
     
     override func setUp() {
         mySegmentsDao = MySegmentsDaoStub()
+        var daoProvider = CoreDataDaoProviderMock()
+        daoProvider.mySegmentsDao = mySegmentsDao
         mySegmentsStorage =
-            DefaultPersistentMySegmentsStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
-                                                                           impressionDao: ImpressionDaoStub(),
-                                                                           impressionsCountDao: ImpressionsCountDaoStub(),
-                                                                           generalInfoDao: GeneralInfoDaoStub(),
-                                                                           splitDao: SplitDaoStub(),
-                                                                           mySegmentsDao: mySegmentsDao,
-                                                                           attributesDao: AttributesDaoStub(),
-                                                                           uniqueKeyDao: UniqueKeyDaoStub(), 
-                                                                           hashedImpressionDao: HashedImpressionDaoMock()))
+            DefaultPersistentMySegmentsStorage(database: SplitDatabaseStub(daoProvider: daoProvider))
     }
     
     func  testSet() {

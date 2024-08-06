@@ -30,7 +30,7 @@ class MySegmentsBgSyncWorkerTest: XCTestCase {
 
     func testOneTimeFetchSuccess() {
 
-        mySegmentsFetcher.allSegments = [["s1", "s2"]]
+        mySegmentsFetcher.allSegments = segments()
         mySegmentsSyncWorker.execute()
 
         XCTAssertNotNil(mySegmentsStorage.persistedSegments[userKey])
@@ -40,12 +40,13 @@ class MySegmentsBgSyncWorkerTest: XCTestCase {
     func testNoSuccess() {
 
         mySegmentsFetcher.httpError = HttpError.clientRelated(code: -1, internalCode: -1)
-        mySegmentsFetcher.allSegments = [["s1", "s2"]]
+        mySegmentsFetcher.allSegments = segments()
         mySegmentsSyncWorker.execute()
 
         XCTAssertNil(mySegmentsStorage.persistedSegments[userKey])
     }
 
-    override func tearDown() {
+    func segments() -> [SegmentChange] {
+        return [SegmentChange(segments: ["s1", "s2"])]
     }
 }

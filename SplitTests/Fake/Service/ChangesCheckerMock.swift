@@ -12,7 +12,11 @@ import Foundation
 
 struct MySegmentsChangesCheckerMock: MySegmentsChangesChecker {
     var haveChanged = false
-    func mySegmentsHaveChanged(old: [String], new: [String]) -> Bool {
+    func mySegmentsHaveChanged(old: SegmentChange, new: SegmentChange) -> Bool {
+        return haveChanged
+    }
+
+    func mySegmentsHaveChanged(oldSegments old: [String], newSegments new: [String]) -> Bool {
         return haveChanged
     }
 }
