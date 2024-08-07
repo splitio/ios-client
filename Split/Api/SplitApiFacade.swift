@@ -88,7 +88,6 @@ class SplitApiFacadeBuilder {
 
         let mySegmentsFetcher: HttpMySegmentsFetcher
             = DefaultHttpMySegmentsFetcher(restClient: restClient,
-                                           segmentsFetcher: MySegmentsRetriever(restClient: restClient),
                                            syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
         let eventsRecorder

@@ -12,29 +12,27 @@ protocol HttpMySegmentsFetcher {
     func execute(userKey: String, headers: [String: String]?) throws -> SegmentChange?
 }
 
-class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
-
+/// Base clase to fetche segments
+class HttpSegmentsFetcher: HttpMySegmentsFetcher {
     private let syncHelper: SyncHelper
-    private let resource: Resource
-    private let fetcher: SegmentsRetriever
-    private let restClient: RestClient
+    private var resource: Resource
+    private let restClient: RestClientSegments
 
-    init(restClient: RestClientMySegments,
-         segmentsFetcher: SegmentsRetriever,
-         syncHelper: SyncHelper) {
+    init(restClient: RestClientSegments,
+         syncHelper: SyncHelper,
+         resource: Resource = .mySegments) {
 
         self.restClient = restClient
-        self.fetcher = segmentsFetcher
         self.syncHelper = syncHelper
-        self.resource = segmentsFetcher.resource
+        self.resource = resource
     }
 
     func execute(userKey: String, headers: [String: String]? = nil) throws -> SegmentChange? {
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
-        Logger.d("Fetching segments")
+        Logger.d("Fetching segments from \(resource)")
 
         let startTime = syncHelper.time()
-        let requestResult = fetcher.retrieve(userKey: userKey, headers: headers)
+        let requestResult = fetch(userKey: userKey, headers: headers)
         syncHelper.recordTelemetry(resource: resource, startTime: startTime)
 
         do {
@@ -46,22 +44,27 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
         }
         return nil
     }
+
+    func fetch(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>? {
+        return nil
+    }
 }
 
-protocol SegmentsRetriever {
-    var resource: Resource { get }
-    func retrieve(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>?
-}
+class DefaultHttpMySegmentsFetcher: HttpSegmentsFetcher {
 
-struct MySegmentsRetriever: SegmentsRetriever {
-    let resource = Resource.mySegments
-    private let restClient: RestClientMySegments
+    private let syncHelper: SyncHelper
+    private let resource: Resource = .mySegments
+    private let restClient: RestClientSegments
 
-    init(restClient: RestClientMySegments) {
+    init(restClient: RestClientSegments,
+         syncHelper: SyncHelper) {
+
         self.restClient = restClient
+        self.syncHelper = syncHelper
+        super.init(restClient: restClient, syncHelper: syncHelper, resource: .mySegments)
     }
 
-    func retrieve(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>? {
+    override func fetch(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>? {
         var requestResult: DataResult<SegmentChange>?
         let semaphore = DispatchSemaphore(value: 0)
 
@@ -74,15 +77,21 @@ struct MySegmentsRetriever: SegmentsRetriever {
     }
 }
 
-struct MyLargeSegmentsRetriever: SegmentsRetriever {
-    let resource = Resource.myLargeSegments
+class HttpMyLargeSegmentsFetcher: HttpSegmentsFetcher {
+
+    private let syncHelper: SyncHelper
+    private let resource: Resource = .myLargeSegments
     private let restClient: RestClientMyLargeSegments
 
-    init(restClient: RestClientMyLargeSegments) {
+    init(restClient: RestClientSegments,
+         syncHelper: SyncHelper) {
+
         self.restClient = restClient
+        self.syncHelper = syncHelper
+        super.init(restClient: restClient, syncHelper: syncHelper, resource: resource)
     }
 
-    func retrieve(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>? {
+    override func fetch(userKey: String, headers: [String: String]?) -> DataResult<SegmentChange>? {
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SegmentChange>?
         restClient.getMyLargeSegments(user: userKey, headers: headers) { result in
@@ -91,5 +100,5 @@ struct MyLargeSegmentsRetriever: SegmentsRetriever {
         }
         semaphore.wait()
         return requestResult
-    }
+   }
 }

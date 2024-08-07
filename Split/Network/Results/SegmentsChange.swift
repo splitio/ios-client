@@ -16,4 +16,8 @@ struct SegmentChange: Codable {
         self.segments = segments
         self.changeNumber = changeNumber
     }
+
+    static func empty() -> SegmentChange {
+        return Self(segments: [])
+    }
 }
