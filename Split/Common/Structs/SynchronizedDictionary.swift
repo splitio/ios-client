@@ -13,6 +13,12 @@ class SynchronizedDictionary<K: Hashable, T> {
     private var queue: DispatchQueue = DispatchQueue(label: "split-synchronized-dictionary", target: .global())
     private var items = [K: T]()
 
+    var keys: Set<K> {
+        queue.sync {
+            let keys = items.keys
+            return Set(keys.map { $0 as K})
+        }
+    }
     var all: [K: T] {
         var allItems: [K: T]?
         queue.sync {
