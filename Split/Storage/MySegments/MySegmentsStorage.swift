@@ -9,9 +9,9 @@
 import Foundation
 
 protocol MySegmentsStorage {
-    var changeNumber: Int64 { get }
     var keys: Set<String> { get }
     func loadLocal(forKey key: String)
+    func changeNumber(forKey key: String) -> Int64?
     func getAll(forKey key: String) -> Set<String>
     func set(_ change: SegmentChange, forKey key: String)
     func clear(forKey key: String)
@@ -21,10 +21,6 @@ protocol MySegmentsStorage {
 }
 
 class DefaultMySegmentsStorage: MySegmentsStorage {
-
-    var changeNumber: Int64 {
-        return -1
-    }
 
     private var inMemoryMySegments: SynchronizedDictionarySet<String, String> = SynchronizedDictionarySet()
     private let persistenStorage: PersistentMySegmentsStorage
@@ -39,6 +35,10 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
 
     func loadLocal(forKey key: String) {
         inMemoryMySegments.set(Set(persistenStorage.getSnapshot(forKey: key)), forKey: key)
+    }
+    
+    func changeNumber(forKey key: String) -> Int64? {
+        return -1
     }
 
     func getAll(forKey key: String) -> Set<String> {

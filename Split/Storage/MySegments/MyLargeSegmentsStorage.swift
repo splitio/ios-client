@@ -2,58 +2,64 @@
 //  MyLargeSegmentsStorage.swift
 //  Split
 //
-//  Created by Javier Avrudsky on 02-Mar-2022.
-//  Copyright © 2022 Split. All rights reserved.
+//  Created by Javier Avrudsky on 02-Mar-2024.
+//  Copyright © 2024 Split. All rights reserved.
 //
 
 import Foundation
 
 class MyLargeSegmentsStorage: MySegmentsStorage {
 
-    private(set) var changeNumber: Int64 = -1
-    private var inMemoryMySegments: SynchronizedDictionarySet<String, String> = SynchronizedDictionarySet()
-    private let persistenStorage: PersistentMySegmentsStorage
+    private var inMemorySegments: SynchronizedDictionary<String, SegmentChange> = SynchronizedDictionary()
+    private let persistentStorage: PersistentMyLargeSegmentsStorage
+    private let defaultChangeNumber = ServiceConstants.mlsDefaultChangeNumber
 
     var keys: Set<String> {
-        return inMemoryMySegments.keys
+        return inMemorySegments.keys
     }
 
-    init(persistentMySegmentsStorage: PersistentMySegmentsStorage) {
-        persistenStorage = persistentMySegmentsStorage
+    init(persistentStorage: PersistentMyLargeSegmentsStorage) {
+        self.persistentStorage = persistentStorage
     }
 
     func loadLocal(forKey key: String) {
-        inMemoryMySegments.set(Set(persistenStorage.getSnapshot(forKey: key)), forKey: key)
+        let change = persistentStorage.getSnapshot(forKey: key) ?? SegmentChange.empty()
+        inMemorySegments.setValue(change, forKey: key)
+    }
+
+    func changeNumber(forKey key: String) -> Int64? {
+        return inMemorySegments.value(forKey: key)?.changeNumber ?? defaultChangeNumber
     }
 
     func getAll(forKey key: String) -> Set<String> {
-        return inMemoryMySegments.values(forKey: key) ?? Set<String>()
+        return inMemorySegments.value(forKey: key)?.segments.asSet() ?? Set<String>()
     }
 
     func set(_ change: SegmentChange, forKey key: String) {
-        let segments = change.segments
-        inMemoryMySegments.set(segments.asSet(), forKey: key)
-        persistenStorage.set(segments, forKey: key)
+        inMemorySegments.setValue(change, forKey: key)
+        persistentStorage.set(change, forKey: key)
     }
 
     func clear(forKey key: String) {
-        inMemoryMySegments.removeValues(forKey: key)
-        persistenStorage.set([String](), forKey: key)
+        let change = inMemorySegments.value(forKey: key)
+        let clearChange = SegmentChange(segments: [], changeNumber: change?.changeNumber ?? defaultChangeNumber)
+        inMemorySegments.setValue(clearChange, forKey: key)
+        persistentStorage.set(clearChange, forKey: key)
     }
 
     func destroy() {
-        inMemoryMySegments.removeAll()
+        inMemorySegments.removeAll()
     }
 
     func getCount(forKey key: String) -> Int {
-        return inMemoryMySegments.count(forKey: key)
+        return inMemorySegments.value(forKey: key)?.segments.count ?? 0
     }
 
     func getCount() -> Int {
-        let keys = inMemoryMySegments.keys
+        let keys = inMemorySegments.keys
         var count = 0
         for key in keys {
-            count+=(inMemoryMySegments.values(forKey: key)?.count ?? 0)
+            count+=(inMemorySegments.value(forKey: key)?.segments.count ?? 0)
         }
         return count
     }
