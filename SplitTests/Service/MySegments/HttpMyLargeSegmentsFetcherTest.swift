@@ -1,9 +1,9 @@
 //
-//  HttpMySegmentsFetcherTests.swift
+//  HttpMyLargeSegmentsFetcherTests.swift
 //  SplitTests
 //
-//  Created by Javier Avrudsky on 02/12/2020.
-//  Copyright © 2020 Split. All rights reserved.
+//  Created by Javier Avrudsky on 07/08/2024.
+//  Copyright © 2024 Split. All rights reserved.
 //
 
 import Foundation
@@ -11,16 +11,16 @@ import Foundation
 import XCTest
 @testable import Split
 
-class HttpMySegmentsFetcherTest: XCTestCase {
+class HttpMyLargeSegmentsFetcherTest: XCTestCase {
     
     var restClient: RestClientStub!
-    var fetcher: HttpMySegmentsFetcher!
+    var fetcher: HttpMyLargeSegmentsFetcher!
     var telemetryProducer: TelemetryStorageStub!
     override func setUp() {
         restClient = RestClientStub()
         telemetryProducer = TelemetryStorageStub()
-        fetcher = DefaultHttpMySegmentsFetcher(restClient: restClient,
-                                               syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
+        fetcher = HttpMyLargeSegmentsFetcher(restClient: restClient,
+                                             syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
     }
     
     func testServerNoReachable() {
@@ -38,7 +38,7 @@ class HttpMySegmentsFetcherTest: XCTestCase {
     
     func testSuccessFulFetch() throws {
         restClient.isServerAvailable = true
-        restClient.update(segments: [SegmentChange(segments: ["s1", "s2", "s3"], changeNumber: 100)])
+        restClient.update(largeSegments: [SegmentChange(segments: ["s1", "s2", "s3"], changeNumber: 100)])
 
         let c = try fetcher.execute(userKey: "user", headers: nil)
         

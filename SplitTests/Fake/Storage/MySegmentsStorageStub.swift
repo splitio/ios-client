@@ -11,6 +11,7 @@ import XCTest
 @testable import Split
 
 class MySegmentsStorageStub: MySegmentsStorage {
+
     var segments: [String: Set<String>] = [String: Set<String>]()
     var persistedSegments = [String: Set<String>]()
 
@@ -22,6 +23,11 @@ class MySegmentsStorageStub: MySegmentsStorage {
 
     var keys: Set<String> {
         return Set(segments.keys.map { $0 })
+    }
+    
+
+    func changeNumber(forKey key: String) -> Int64? {
+        return changeNumber
     }
 
     var loadLocalForKeyCalled = [String: Bool]()
