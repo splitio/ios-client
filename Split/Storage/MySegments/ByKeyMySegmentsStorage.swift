@@ -22,7 +22,7 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
     private let userKey: String
 
     var changeNumber: Int64 {
-        return mySegmentsStorage.changeNumber
+        return mySegmentsStorage.changeNumber(forKey: userKey) ?? -1
     }
 
     init(mySegmentsStorage: MySegmentsStorage,
