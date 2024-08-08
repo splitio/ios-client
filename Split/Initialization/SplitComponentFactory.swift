@@ -331,6 +331,26 @@ extension SplitComponentFactory {
                                                            mySegmentsFetcher: try getSplitApiFacade().mySegmentsFetcher,
                                                            telemetryProducer: storageContainer.telemetryStorage)
         catalog.add(component: component)
+        return component
+    }
+
+    func buildMyLargeSegmentsSyncWorkerFactory() throws -> MySegmentsSyncWorkerFactory? {
+
+        let storageContainer = try getSplitStorageContainer()
+        guard let storage = storageContainer.myLargeSegmentsStorage else {
+            Logger.e("Error creating sync factory ,my large segments storage is nil")
+            return nil
+        }
+
+        guard let fetcher = try getSplitApiFacade().myLargeSegmentsFetcher else {
+            Logger.e("Error creating sync factory ,my large segments fetcher is nil")
+            return nil
+        }
+        let component = DefaultMySegmentsSyncWorkerFactory(splitConfig: splitClientConfig,
+                                                           mySegmentsStorage: storage,
+                                                           mySegmentsFetcher: fetcher,
+                                                           telemetryProducer: storageContainer.telemetryStorage)
+        catalog.add(component: component)
 
         return component
     }

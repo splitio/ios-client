@@ -113,6 +113,7 @@ struct SplitDatabaseHelper {
         let eventsStorage = openEventsStorage(persistentStorage: persistentEventsStorage)
 
         let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase)
+        let myLargeSegmentsStorage = openMyLargeSegmentsStorage(database: splitDatabase)
         let attributesStorage = openAttributesStorage(database: splitDatabase,
                                                       splitClientConfig: splitClientConfig)
 
@@ -138,6 +139,7 @@ struct SplitDatabaseHelper {
                                      persistentEventsStorage: persistentEventsStorage,
                                      telemetryStorage: telemetryStorage,
                                      mySegmentsStorage: mySegmentsStorage,
+                                     myLargeSegmentsStorage: myLargeSegmentsStorage,
                                      attributesStorage: attributesStorage,
                                      uniqueKeyStorage: uniqueKeyStorage,
                                      flagSetsCache: flagSetsCache,
@@ -169,9 +171,18 @@ struct SplitDatabaseHelper {
         return DefaultPersistentMySegmentsStorage(database: database)
     }
 
+    static func openPersistentMyLargeSegmentsStorage(database: SplitDatabase) -> PersistentMyLargeSegmentsStorage {
+        return DefaultPersistentMyLargeSegmentsStorage(database: database)
+    }
+
     static func openMySegmentsStorage(database: SplitDatabase) -> MySegmentsStorage {
         let persistentMySegmentsStorage = openPersistentMySegmentsStorage(database: database)
         return DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
+    }
+
+    static func openMyLargeSegmentsStorage(database: SplitDatabase) -> MySegmentsStorage {
+        let persistentMyLargeSegmentsStorage = openPersistentMySegmentsStorage(database: database)
+        return DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMyLargeSegmentsStorage)
     }
 
     static func openPersistentAttributesStorage(database: SplitDatabase) -> PersistentAttributesStorage {

@@ -424,6 +424,7 @@
 		9519A93A27DE318000278AEC /* ByKeyFacadeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A93927DE318000278AEC /* ByKeyFacadeTest.swift */; };
 		9523B8CF28622B6500AEE178 /* CdnByPassTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9523B8CE28622B6500AEE178 /* CdnByPassTest.swift */; };
 		9524EFF82C63BDD800ECBF7B /* HttpMyLargeSegmentsFetcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524EFF72C63BDD800ECBF7B /* HttpMyLargeSegmentsFetcherTest.swift */; };
+		9524EFFC2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524EFFB2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift */; };
 		952BF5F8278DF57D00FF6181 /* TelemetryIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BF5F7278DF57D00FF6181 /* TelemetryIntegrationTest.swift */; };
 		952BF5FC278DF66700FF6181 /* TelemetryConfigHelperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */; };
 		952C2B7726447FDD009275B4 /* BlockingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7626447FDD009275B4 /* BlockingQueue.swift */; };
@@ -1544,6 +1545,7 @@
 		9519A93927DE318000278AEC /* ByKeyFacadeTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByKeyFacadeTest.swift; sourceTree = "<group>"; };
 		9523B8CE28622B6500AEE178 /* CdnByPassTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CdnByPassTest.swift; sourceTree = "<group>"; };
 		9524EFF72C63BDD800ECBF7B /* HttpMyLargeSegmentsFetcherTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpMyLargeSegmentsFetcherTest.swift; sourceTree = "<group>"; };
+		9524EFFB2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsManagerWrapper.swift; sourceTree = "<group>"; };
 		952BF5F7278DF57D00FF6181 /* TelemetryIntegrationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelemetryIntegrationTest.swift; sourceTree = "<group>"; };
 		952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryConfigHelperStub.swift; sourceTree = "<group>"; };
 		952C2B7626447FDD009275B4 /* BlockingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueue.swift; sourceTree = "<group>"; };
@@ -2264,6 +2266,7 @@
 				3B6DEEC420EA6AE20067435E /* SplitEvent.swift */,
 				3B6DEEC520EA6AE20067435E /* SplitEventsManager.swift */,
 				9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */,
+				9524EFFB2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift */,
 				3B6DEEC620EA6AE20067435E /* SplitEventTask.swift */,
 				3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */,
 				3B6DEEC720EA6AE20067435E /* SplitInternalEvent.swift */,
@@ -4066,6 +4069,7 @@
 				956A7E252979F2290080D53C /* SplitsEncoder.swift in Sources */,
 				955A5A52258D04DF00CAEE9F /* RecorderWorker.swift in Sources */,
 				593225FF24A4D8FD00496D8B /* HttpResponse.swift in Sources */,
+				9524EFFC2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift in Sources */,
 				952E266B2833E35A0015D633 /* PersistentUniqueKeysStorage.swift in Sources */,
 				59F65EFE2562C215005FE8C9 /* CoreDataHelper.swift in Sources */,
 				9516D0202A2910C80092A9DC /* SyncGuardian.swift in Sources */,

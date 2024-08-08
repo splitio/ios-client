@@ -9,8 +9,10 @@ import Foundation
 
 enum SplitInternalEvent {
     case mySegmentsUpdated
+    case myLargeSegmentsUpdated
     case splitsUpdated
     case mySegmentsLoadedFromCache
+    case myLargeSegmentsLoadedFromCache
     case splitsLoadedFromCache
     case attributesLoadedFromCache
     case sdkReadyTimeoutReached

@@ -107,11 +107,12 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     }
 
     func createPeriodicSplitsSyncWorker() -> PeriodicSyncWorker {
+        
         return  PeriodicSplitsSyncWorker(
             splitFetcher: apiFacade.splitsFetcher, splitsStorage: storageContainer.splitsStorage,
             splitChangeProcessor: splitChangeProcessor,
-            timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate), eventsManager: eventsManager,
-            splitConfig: splitConfig)
+            timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate),
+            eventsWrapper: SplitsEventsManagerWrapper(eventsManager), splitConfig: splitConfig)
     }
 
     func createPeriodicImpressionsRecorderWorker(
@@ -297,6 +298,6 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
             mySegmentsStorage: byKeyStorage,
             telemetryProducer: telemetryProducer,
             timer: DefaultPeriodicTimer(interval: splitConfig.segmentsRefreshRate),
-            eventsManager: eventsManager)
+            eventsWrapper: MySegmentsEventsManagerWrapper(eventsManager))
     }
 }
