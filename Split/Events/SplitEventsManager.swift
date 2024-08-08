@@ -27,6 +27,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private let processQueue: DispatchQueue
     private let dataAccessQueue: DispatchQueue
     private var isStarted: Bool
+    private var waitForLargeSegments: Bool
     private var eventsQueue: InternalEventBlockingQueue
 
     init(config: SplitClientConfig) {
@@ -35,6 +36,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         self.isStarted = false
         self.sdkReadyTimeStart = Date().unixTimestampInMiliseconds()
         self.readingRefreshTime = 300
+        self.waitForLargeSegments = (config.largeSegmentsEnabled && config.waitForLargeSegments)
         self.triggered = [SplitInternalEvent]()
         self.eventsQueue = DefaultInternalEventBlockingQueue()
         self.executionTimes = [String: Int]()
@@ -145,16 +147,18 @@ class DefaultSplitEventsManager: SplitEventsManager {
             }
             self.triggered.append(event)
             switch event {
-            case .splitsUpdated, .mySegmentsUpdated:
+            case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
                 if isTriggered(external: .sdkReady) {
                     trigger(event: .sdkUpdated)
                     continue
                 }
                 self.triggerSdkReadyIfNeeded()
 
-            case .mySegmentsLoadedFromCache, .splitsLoadedFromCache, .attributesLoadedFromCache:
+            case .mySegmentsLoadedFromCache, .myLargeSegmentsLoadedFromCache,
+                    .splitsLoadedFromCache, .attributesLoadedFromCache:
                 if isTriggered(internal: .splitsLoadedFromCache),
                    isTriggered(internal: .mySegmentsLoadedFromCache),
+                   (isTriggered(internal: .myLargeSegmentsLoadedFromCache) || !waitForLargeSegments),
                    isTriggered(internal: .attributesLoadedFromCache) {
                     trigger(event: SplitEvent.sdkReadyFromCache)
                 }
@@ -187,6 +191,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private func triggerSdkReadyIfNeeded() {
         if isTriggered(internal: .mySegmentsUpdated),
            isTriggered(internal: .splitsUpdated),
+           (isTriggered(internal: .myLargeSegmentsUpdated) || !waitForLargeSegments),
            !isTriggered(external: .sdkReady) {
             self.trigger(event: SplitEvent.sdkReady)
         }

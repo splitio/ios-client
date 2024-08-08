@@ -74,12 +74,12 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
 
     private var fetchTimer: PeriodicTimer
     private let fetchQueue = DispatchQueue.general
-    private weak var eventsManager: SplitEventsManager?
+    private let eventsWrapper: SplitEventsManagerWrapper
     private var isPaused: Atomic<Bool> = Atomic(false)
 
     init(timer: PeriodicTimer,
-         eventsManager: SplitEventsManager) {
-        self.eventsManager = eventsManager
+         eventsWrapper: SplitEventsManagerWrapper) {
+        self.eventsWrapper = eventsWrapper
         self.fetchTimer = timer
         self.fetchTimer.handler { [weak self] in
             guard let self = self else {
@@ -123,21 +123,19 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 
     func isSdkReadyFired() -> Bool {
-        return eventsManager?.eventAlreadyTriggered(event: .sdkReady) ?? false
+        return eventsWrapper.isSdkReady
     }
 
     func fetchFromRemote() {
         Logger.i("Fetch from remote not implemented")
     }
 
-    func notifyMySegmentsUpdated() {
-        eventsManager?.notifyInternalEvent(.mySegmentsUpdated)
-    }
-
-    func notifySplitsUpdated() {
-        eventsManager?.notifyInternalEvent(.splitsUpdated)
+    func notifyUpdate() {
+        eventsWrapper.notifyUpdate()
     }
 }
+
+
 
 class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
@@ -151,7 +149,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
          splitsStorage: SplitsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          timer: PeriodicTimer,
-         eventsManager: SplitEventsManager,
+         eventsWrapper: SplitEventsManagerWrapper,
          splitConfig: SplitClientConfig) {
 
         self.splitFetcher = splitFetcher
@@ -163,7 +161,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
                                            splitChangeProcessor: splitChangeProcessor,
                                            splitConfig: splitConfig)
         super.init(timer: timer,
-                   eventsManager: eventsManager)
+                   eventsWrapper: eventsWrapper)
     }
 
     override func fetchFromRemote() {
@@ -176,7 +174,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         if result.success, result.featureFlagsUpdated {
-            notifySplitsUpdated()
+            notifyUpdate()
         }
     }
 }
@@ -194,7 +192,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
          mySegmentsStorage: ByKeyMySegmentsStorage,
          telemetryProducer: TelemetryRuntimeProducer?,
          timer: PeriodicTimer,
-         eventsManager: SplitEventsManager) {
+         eventsWrapper: SplitEventsManagerWrapper) {
 
         self.userKey = userKey
         self.mySegmentsFetcher = mySegmentsFetcher
@@ -202,7 +200,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         self.telemetryProducer = telemetryProducer
         changeChecker = DefaultMySegmentsChangesChecker()
         super.init(timer: timer,
-                   eventsManager: eventsManager)
+                   eventsWrapper: eventsWrapper)
     }
 
     override func fetchFromRemote() {
@@ -211,12 +209,12 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         do {
-            let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(), 
+            let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(),
                                           changeNumber: -1)
             if let change = try mySegmentsFetcher.execute(userKey: userKey, headers: nil) {
                 if changeChecker.mySegmentsHaveChanged(old: oldChange, new: change) {
                     mySegmentsStorage.set(change)
-                    notifyMySegmentsUpdated()
+                    notifyUpdate()
                     Logger.i("My Segments have been updated")
                     Logger.v(change.segments.joined(separator: ","))
                 }
