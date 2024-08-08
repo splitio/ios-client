@@ -12,10 +12,10 @@ import Foundation
 protocol MySegmentsSyncWorkerFactory {
     func createRetryableMySegmentsSyncWorker(forKey key: String,
                                              avoidCache: Bool,
-                                             eventsManager: SplitEventsManager) -> RetryableSyncWorker
+                                             eventsWrapper: SplitEventsManagerWrapper) -> RetryableSyncWorker
 
     func createPeriodicMySegmentsSyncWorker(forKey key: String,
-                                            eventsManager: SplitEventsManager) -> PeriodicSyncWorker
+                                            eventsWrapper: SplitEventsManagerWrapper) -> PeriodicSyncWorker
 }
 
 protocol SyncWorkerFactory {
@@ -275,7 +275,7 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
 
     func createRetryableMySegmentsSyncWorker(forKey key: String,
                                              avoidCache: Bool,
-                                             eventsManager: SplitEventsManager) -> RetryableSyncWorker {
+                                             eventsWrapper: SplitEventsManagerWrapper) -> RetryableSyncWorker {
 
         let backoffBase =  splitConfig.generalRetryBackoffBase
         let mySegmentsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
@@ -284,13 +284,13 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
                                              mySegmentsFetcher: mySegmentsFetcher,
                                              mySegmentsStorage: byKeyStorage,
                                              telemetryProducer: telemetryProducer,
-                                             eventsManager: eventsManager,
+                                             eventsWrapper: eventsWrapper,
                                              reconnectBackoffCounter: mySegmentsBackoffCounter,
                                              avoidCache: avoidCache)
     }
 
     func createPeriodicMySegmentsSyncWorker(forKey key: String,
-                                            eventsManager: SplitEventsManager) -> PeriodicSyncWorker {
+                                            eventsWrapper: SplitEventsManagerWrapper) -> PeriodicSyncWorker {
         let byKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
 
         return PeriodicMySegmentsSyncWorker(
@@ -298,6 +298,6 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
             mySegmentsStorage: byKeyStorage,
             telemetryProducer: telemetryProducer,
             timer: DefaultPeriodicTimer(interval: splitConfig.segmentsRefreshRate),
-            eventsWrapper: MySegmentsEventsManagerWrapper(eventsManager))
+            eventsWrapper: eventsWrapper)
     }
 }

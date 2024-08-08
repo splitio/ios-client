@@ -27,32 +27,32 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     private var periodicMySegmentsSyncWorker: PeriodicSyncWorker?
     private let mySegmentsSyncWorker: RetryableSyncWorker
     private var mySegmentsForcedSyncWorker: RetryableSyncWorker?
-    private let splitEventsManager: SplitEventsManager
+    private let eventsWrapper: SplitEventsManagerWrapper
     private var isDestroyed = Atomic(false)
 
     init(userKey: String,
          splitConfig: SplitClientConfig,
          mySegmentsStorage: ByKeyMySegmentsStorage,
          syncWorkerFactory: MySegmentsSyncWorkerFactory,
-         splitEventsManager: SplitEventsManager) {
+         eventsWrapper: SplitEventsManagerWrapper) {
 
         self.splitConfig = splitConfig
         self.mySegmentsStorage = mySegmentsStorage
         self.syncWorkerFactory = syncWorkerFactory
-        self.splitEventsManager = splitEventsManager
+        self.eventsWrapper = eventsWrapper
         self.mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
             forKey: userKey,
             avoidCache: false,
-            eventsManager: splitEventsManager)
+            eventsWrapper: eventsWrapper)
         // If no single sync mode is enabled, create periodic and forced worker (polling and streaming)
         if splitConfig.syncEnabled {
             self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker(
                 forKey: userKey,
-                eventsManager: splitEventsManager)
+                eventsWrapper: eventsWrapper)
             self.mySegmentsForcedSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
                 forKey: userKey,
                 avoidCache: true,
-                eventsManager: splitEventsManager)
+                eventsWrapper: eventsWrapper)
         }
     }
 
@@ -62,7 +62,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         }
         DispatchQueue.general.async {
             self.mySegmentsStorage.loadLocal()
-            self.splitEventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
+            self.eventsWrapper.notifyLoadedFromCache()
             TimeChecker.logInterval("Time until my segments loaded from cache")
         }
     }
@@ -96,7 +96,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func notifiySegmentsUpdated() {
-        splitEventsManager.notifyInternalEvent(.mySegmentsUpdated)
+        eventsWrapper.notifyUpdate()
     }
 
     func pause() {
