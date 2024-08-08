@@ -35,6 +35,7 @@ class DefaultClientManager: SplitClientManager {
     private let splitManager: SplitManager
     private let byKeyRegistry: ByKeyRegistry
     private let mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory
+    private let myLargeSegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory?
     weak var splitFactory: SplitFactory?
 
     init(config: SplitClientConfig,
@@ -48,6 +49,7 @@ class DefaultClientManager: SplitClientManager {
          eventsTracker: EventsTracker,
          eventsManagerCoordinator: SplitEventsManagerCoordinator,
          mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory,
+         myLargeSegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory?,
          telemetryStopwatch: Stopwatch?,
          factory: SplitFactory) {
 
@@ -58,6 +60,7 @@ class DefaultClientManager: SplitClientManager {
         self.splitManager = splitManager
         self.syncManager = syncManager
         self.mySegmentsSyncWorkerFactory = mySegmentsSyncWorkerFactory
+        self.myLargeSegmentsSyncWorkerFactory = myLargeSegmentsSyncWorkerFactory
         self.synchronizer = synchronizer
         self.eventsManagerCoordinator = eventsManagerCoordinator
         self.storageContainer = storageContainer
@@ -177,19 +180,50 @@ class DefaultClientManager: SplitClientManager {
                                       splitConfig: config,
                                       mySegmentsStorage: buildMySegmentsStorage(forKey: matchingKey),
                                       syncWorkerFactory: mySegmentsSyncWorkerFactory,
-                                      splitEventsManager: eventsManager)
+                                      eventsWrapper: MySegmentsEventsManagerWrapper(eventsManager))
+
+        var myLargeSegmentsSynchronizer = buildMyLargeSegmentsSynchronizer(forKey: matchingKey,
+                                                                           eventsManager: eventsManager,
+                                                                           myLargeSegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory)
 
         let byKeyGroup = ByKeyComponentGroup(splitClient: client,
                                              eventsManager: eventsManager,
                                              mySegmentsSynchronizer: mySegmentsSynchronizer,
+                                             myLargeSegmentsSynchronizer: myLargeSegmentsSynchronizer,
                                              attributesStorage: attributesStorage(forKey: matchingKey))
 
         byKeyRegistry.append(byKeyGroup, forKey: key)
     }
 
+    private func buildMyLargeSegmentsSynchronizer(forKey key: String,
+                                                  eventsManager: SplitEventsManager,
+                                                  myLargeSegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory?) -> MySegmentsSynchronizer? {
+        guard let storage = buildMyLargeSegmentsStorage(forKey: key) else {
+            return nil
+        }
+        guard let syncFactory = myLargeSegmentsSyncWorkerFactory else {
+            return nil
+        }
+        return DefaultMySegmentsSynchronizer(userKey: key,
+                                             splitConfig: config,
+                                             mySegmentsStorage: storage,
+                                             syncWorkerFactory: syncFactory,
+                                             eventsWrapper: MyLargeSegmentsEventsManagerWrapper(eventsManager))
+    }
+
     private func buildMySegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage {
         return DefaultByKeyMySegmentsStorage(
             mySegmentsStorage: storageContainer.mySegmentsStorage,
+            userKey: key)
+    }
+
+    private func buildMyLargeSegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage? {
+        guard let storage = storageContainer.myLargeSegmentsStorage else {
+            Logger.e("My large segments is not available for by key synchronizer")
+            return nil
+        }
+        return DefaultByKeyMySegmentsStorage(
+            mySegmentsStorage: storage,
             userKey: key)
     }
 

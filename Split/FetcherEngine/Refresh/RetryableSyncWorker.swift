@@ -28,14 +28,14 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     var completion: SyncCompletion?
     var errorHandler: ErrorHandler?
     private var reconnectBackoffCounter: ReconnectBackoffCounter
-    private weak var splitEventsManager: SplitEventsManager?
+    private let eventsWrapper: SplitEventsManagerWrapper
     private var isRunning: Atomic<Bool> = Atomic(false)
     private let syncQueue = DispatchQueue.general
 
-    init(eventsManager: SplitEventsManager,
+    init(eventsWrapper: SplitEventsManagerWrapper,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
 
-        self.splitEventsManager = eventsManager
+        self.eventsWrapper = eventsWrapper
         self.reconnectBackoffCounter = reconnectBackoffCounter
     }
 
@@ -79,16 +79,12 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
         }
     }
 
-    func notifySplitsUpdated() {
-        splitEventsManager?.notifyInternalEvent(.splitsUpdated)
-    }
-
-    func notifyMySegmentsUpdated() {
-        splitEventsManager?.notifyInternalEvent(.mySegmentsUpdated)
+    func notifyUpdate() {
+        eventsWrapper.notifyUpdate()
     }
 
     func isSdkReadyTriggered() -> Bool {
-        return splitEventsManager?.eventAlreadyTriggered(event: .sdkReady) ?? false
+        return eventsWrapper.isSdkReady
     }
 
     func resetBackoffCounter() {
@@ -118,7 +114,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
     init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
          mySegmentsStorage: ByKeyMySegmentsStorage,
          telemetryProducer: TelemetryRuntimeProducer?,
-         eventsManager: SplitEventsManager,
+         eventsWrapper: SplitEventsManagerWrapper,
          reconnectBackoffCounter: ReconnectBackoffCounter,
          avoidCache: Bool) {
 
@@ -129,7 +125,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
         self.changeChecker = DefaultMySegmentsChangesChecker()
         self.avoidCache = avoidCache
 
-        super.init(eventsManager: eventsManager,
+        super.init(eventsWrapper: eventsWrapper,
                    reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
@@ -143,7 +139,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                     changeChecker.mySegmentsHaveChanged(old: oldChange,
                                                         new: change) {
                     mySegmentsStorage.set(change)
-                    notifyMySegmentsUpdated()
+                    notifyUpdate()
                 }
                 resetBackoffCounter()
                 return true
@@ -190,7 +186,8 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            splitConfig: splitConfig)
-        super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
+        super.init(eventsWrapper: SplitsEventsManagerWrapper(eventsManager),
+                   reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() throws -> Bool {
@@ -223,7 +220,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             if result.success {
                 if !isSdkReadyTriggered() ||
                     result.featureFlagsUpdated {
-                    notifySplitsUpdated()
+                    notifyUpdate()
                 }
                 resetBackoffCounter()
                 return true
@@ -263,7 +260,8 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            splitConfig: splitConfig)
-        super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
+        super.init(eventsWrapper: SplitsEventsManagerWrapper(eventsManager),
+                   reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() throws -> Bool {
@@ -279,7 +277,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
                 if result.featureFlagsUpdated {
-                    notifySplitsUpdated()
+                    notifyUpdate()
                 }
                 resetBackoffCounter()
                 return true
