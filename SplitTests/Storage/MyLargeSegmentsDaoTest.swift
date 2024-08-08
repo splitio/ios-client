@@ -15,14 +15,14 @@ class MyLargeSegmentDaoTest: XCTestCase {
 
     var myLargeSegmentsDao: MyLargeSegmentsDao!
     var myLargeSegmentsDaoAes128Cbc: MyLargeSegmentsDao!
-    
+
     override func setUp() {
-        let queue = DispatchQueue(label: "my segments dao test")
+        let queue = DispatchQueue(label: "my large segments dao test")
         myLargeSegmentsDao = CoreDataMyLargeSegmentsDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue))
+                                                                                                      dispatchQueue: queue))
         myLargeSegmentsDaoAes128Cbc = CoreDataMyLargeSegmentsDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue),
-                                                       cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
+                                                                                                               dispatchQueue: queue),
+                                                                 cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
     }
     
     func testUpdateGetPlainText() {
@@ -62,7 +62,7 @@ class MyLargeSegmentDaoTest: XCTestCase {
         let changeNumber = dao.getBy(userKey: userKey)?.changeNumber ?? -100
 
         XCTAssertEqual(0, mySegments.count)
-        XCTAssertEqual(-1, changeNumber)
+        XCTAssertEqual(-100, changeNumber)
     }
 
     func testDataIsEncryptedInDb() {
@@ -108,4 +108,3 @@ class MyLargeSegmentDaoTest: XCTestCase {
         return (userKey: loadedUserKey, body: body)
     }
 }
-

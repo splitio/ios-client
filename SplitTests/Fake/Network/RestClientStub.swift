@@ -20,6 +20,7 @@ protocol RestClientTest {
 class RestClientStub: SplitApiRestClient {
     private var sseAuthResult: DataResult<SseAuthenticationResponse>?
     private var segments: [SegmentChange]?
+    private var largeSegments: [SegmentChange]?
     private var splitChanges: [SplitChange] = []
     private var sendTrackEventsCount = 0
     private var sendImpressionsCount = 0
@@ -31,6 +32,7 @@ class RestClientStub: SplitApiRestClient {
     var isServerAvailable = true
     private var splitChangeHitIndex = 0
     private var segmentsChangeHitIndex = 0
+    private var largeSegmentsChangeHitIndex = 0
 
     func getSendTrackEventsCount() -> Int {
         return sendTrackEventsCount;
@@ -71,6 +73,12 @@ extension RestClientStub: RestClientSplitChanges {
 extension RestClientStub: RestClientMySegments {
     func getMySegments(user: String, headers: [String: String]?, completion: @escaping (DataResult<SegmentChange>) -> Void) {
         completion(DataResult.success(value: segments?[segmentsChangeHitIndex]))
+    }
+}
+
+extension RestClientStub: RestClientMyLargeSegments {
+    func getMyLargeSegments(user: String, headers: [String: String]?, completion: @escaping (DataResult<SegmentChange>) -> Void) {
+        completion(DataResult.success(value: largeSegments?[largeSegmentsChangeHitIndex]))
     }
 }
 
@@ -130,6 +138,10 @@ extension RestClientStub: RestClientTest {
     func update(segments: [SegmentChange]?) {
         self.segments = segments
     }
+
+    func update(largeSegments: [SegmentChange]?) {
+        self.largeSegments = largeSegments
+    }   
 
     func update(change: SplitChange?) {
         if let change = change {

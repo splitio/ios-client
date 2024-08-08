@@ -25,7 +25,7 @@ protocol DaoProvider {
 struct CoreDataDaoProviderMock: DaoProvider {
     var splitDao: SplitDao = SplitDaoStub()
     var mySegmentsDao: MySegmentsDao = MySegmentsDaoStub()
-    var myLargeSegmentsDao: MyLargeSegmentsDao = MyLargeSegmentsDaoStub()
+    var myLargeSegmentsDao: MyLargeSegmentsDao = MyLargeSegmentsDaoMock()
     var eventDao: EventDao = EventDaoStub()
     var impressionDao: ImpressionDao = ImpressionDaoStub()
     var impressionsCountDao: ImpressionsCountDao = ImpressionsCountDaoStub()
