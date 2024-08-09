@@ -18,11 +18,11 @@ extension DefaultRestClient: RestClientMyLargeSegments {
                             headers: [String: String]? = nil,
                             completion: @escaping (DataResult<SegmentChange>) -> Void) {
 
-        let completionHandler: ((DataResult<SegmentChange>) -> Void) = { result in
+        let completionHandler: ((DataResult<MyLargeSegmentsChange>) -> Void) = { result in
             do {
                 let data = try result.unwrap()
                 if let segmentsChange = data {
-                    completion(DataResult.success(value: segmentsChange))
+                    completion(DataResult.success(value: segmentsChange.asSegmentChange()))
                 } else {
                     completion(
                         DataResult.failure(error: HttpError.unknown(code: -1,
