@@ -48,7 +48,7 @@ class MyLargeSegmentsStorageTests: XCTestCase {
         XCTAssertTrue(segments.contains("s1"))
         XCTAssertTrue(segments.contains("s3"))
 
-        XCTAssertNil(segments1)
+        XCTAssertEqual(0, segments1.count)
     }
 
     func testUpdateSegments() {
@@ -138,15 +138,14 @@ class MyLargeSegmentsStorageTests: XCTestCase {
     }
 
     func testChangeNumber() {
-        // Change number should be -1 for my segments
         persistentStorage.persistedSegments = [userKey : dummyChange]
         mySegmentsStorage.loadLocal(forKey: userKey)
         let cn1 = mySegmentsStorage.changeNumber(forKey: userKey)
 
-        mySegmentsStorage.set(SegmentChange(segments: [], changeNumber: 100), forKey: userKey)
+        mySegmentsStorage.set(SegmentChange(segments: [], changeNumber: 200), forKey: userKey)
         let cn2 = mySegmentsStorage.changeNumber(forKey: userKey)
 
-        XCTAssertEqual(-1, cn1)
-        XCTAssertEqual(-1, cn2)
+        XCTAssertEqual(100, cn1)
+        XCTAssertEqual(200, cn2)
     }
 }

@@ -201,6 +201,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     private func trigger(event: SplitEvent) {
         let eventName = event.toString()
+
         // If executionTimes is zero, maximum executions has been reached
         if executionTimes(for: eventName) == 0 {
             return
@@ -211,6 +212,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             updateExecutionTimes(for: eventName, count: times - 1)
         }
 
+        Logger.d("Triggering SDK event \(eventName)")
         // If executionTimes is lower than zero, execute it without limitation
         if let subscriptions = getSubscriptions(for: event) {
             for task in subscriptions {

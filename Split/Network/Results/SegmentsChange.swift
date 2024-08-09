@@ -1,5 +1,5 @@
 //
-//  MyLargeSegmentsChange.swift
+//  SegmentsChange.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 31/07/2024.
@@ -18,6 +18,6 @@ struct SegmentChange: Codable {
     }
 
     static func empty() -> SegmentChange {
-        return Self(segments: [])
+        return SegmentChange(segments: [])
     }
 }

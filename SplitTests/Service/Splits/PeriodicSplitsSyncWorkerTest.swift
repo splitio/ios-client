@@ -26,6 +26,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         splitsStorage = SplitsStorageStub()
         splitChangeProcessor = SplitChangeProcessorStub()
         eventsManager = SplitEventsManagerMock()
+        eventsWrapper = SplitsEventsManagerWrapper(eventsManager)
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
     }

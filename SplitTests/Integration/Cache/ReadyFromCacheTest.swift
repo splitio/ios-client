@@ -389,7 +389,11 @@ class ReadyFromCacheTest: XCTestCase {
         persistentAttributes(enabled: false, treatment: "on")
     }
 
-    func persistentAttributes(enabled: Bool, treatment: String) {
+    func testLargeSegmentsEnabled() {
+        persistentAttributes(enabled: true, treatment: "ta1", largeSegmentsEnabled: true)
+    }
+
+    func persistentAttributes(enabled: Bool, treatment: String, largeSegmentsEnabled: Bool = false) {
         loadChangesAttr()
         let userKey = "otherKey"
         // When splits and connection available, ready from cache and Ready should be fired
@@ -405,6 +409,7 @@ class ReadyFromCacheTest: XCTestCase {
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
         splitConfig.persistentAttributesEnabled = enabled
+        splitConfig.largeSegmentsEnabled = largeSegmentsEnabled
 
         let readyExp = XCTestExpectation()
         let cacheReadyExp = XCTestExpectation()

@@ -425,6 +425,7 @@
 		9523B8CF28622B6500AEE178 /* CdnByPassTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9523B8CE28622B6500AEE178 /* CdnByPassTest.swift */; };
 		9524EFF82C63BDD800ECBF7B /* HttpMyLargeSegmentsFetcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524EFF72C63BDD800ECBF7B /* HttpMyLargeSegmentsFetcherTest.swift */; };
 		9524EFFC2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524EFFB2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift */; };
+		9524EFFE2C666C5700ECBF7B /* MyLargeSegmentsChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524EFFD2C666C5700ECBF7B /* MyLargeSegmentsChange.swift */; };
 		952BF5F8278DF57D00FF6181 /* TelemetryIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BF5F7278DF57D00FF6181 /* TelemetryIntegrationTest.swift */; };
 		952BF5FC278DF66700FF6181 /* TelemetryConfigHelperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */; };
 		952C2B7726447FDD009275B4 /* BlockingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7626447FDD009275B4 /* BlockingQueue.swift */; };
@@ -1546,6 +1547,7 @@
 		9523B8CE28622B6500AEE178 /* CdnByPassTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CdnByPassTest.swift; sourceTree = "<group>"; };
 		9524EFF72C63BDD800ECBF7B /* HttpMyLargeSegmentsFetcherTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpMyLargeSegmentsFetcherTest.swift; sourceTree = "<group>"; };
 		9524EFFB2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsManagerWrapper.swift; sourceTree = "<group>"; };
+		9524EFFD2C666C5700ECBF7B /* MyLargeSegmentsChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyLargeSegmentsChange.swift; sourceTree = "<group>"; };
 		952BF5F7278DF57D00FF6181 /* TelemetryIntegrationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelemetryIntegrationTest.swift; sourceTree = "<group>"; };
 		952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryConfigHelperStub.swift; sourceTree = "<group>"; };
 		952C2B7626447FDD009275B4 /* BlockingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueue.swift; sourceTree = "<group>"; };
@@ -2402,6 +2404,7 @@
 			isa = PBXGroup;
 			children = (
 				9500D9B62C5ADBDF00383593 /* SegmentsChange.swift */,
+				9524EFFD2C666C5700ECBF7B /* MyLargeSegmentsChange.swift */,
 				3B6DEEFA20EA6AE30067435E /* DataResult.swift */,
 			);
 			path = Results;
@@ -4043,6 +4046,7 @@
 				3B6DEF6D20EA6AE50067435E /* MatchesStringMatcher.swift in Sources */,
 				3B6DEF3420EA6AE50067435E /* Splitter.swift in Sources */,
 				C5977C2A2BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift in Sources */,
+				9524EFFE2C666C5700ECBF7B /* MyLargeSegmentsChange.swift in Sources */,
 				9500D9C52C5D99CE00383593 /* MyLargeSegmentEntity.swift in Sources */,
 				598EDE84224CE2C4005D4762 /* SplitResult.swift in Sources */,
 				3B6DEF4120EA6AE50067435E /* DependencyMatcherData.swift in Sources */,

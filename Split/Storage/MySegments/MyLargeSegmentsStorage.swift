@@ -41,8 +41,7 @@ class MyLargeSegmentsStorage: MySegmentsStorage {
     }
 
     func clear(forKey key: String) {
-        let change = inMemorySegments.value(forKey: key)
-        let clearChange = SegmentChange(segments: [], changeNumber: change?.changeNumber ?? defaultChangeNumber)
+        let clearChange = SegmentChange(segments: [])
         inMemorySegments.setValue(clearChange, forKey: key)
         persistentStorage.set(clearChange, forKey: key)
     }

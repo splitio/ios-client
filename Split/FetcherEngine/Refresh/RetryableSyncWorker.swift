@@ -133,7 +133,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
         do {
             // TODO: Update change number logic line will be updated
             let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(),
-                                          changeNumber: -1)
+                                          changeNumber: mySegmentsStorage.changeNumber)
             if let change = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: getHeaders()) {
                 if !isSdkReadyTriggered() ||
                     changeChecker.mySegmentsHaveChanged(old: oldChange,

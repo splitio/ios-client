@@ -83,6 +83,7 @@ class DefaultSyncManager: SyncManager {
     private func startSync() {
         synchronizer.synchronizeSplits()
         synchronizer.synchronizeMySegments()
+        synchronizer.synchronizeMyLargeSegments()
         setupSyncMode()
         if splitConfig.userConsent == .granted {
             Logger.v("User consent grated. Recording started")
