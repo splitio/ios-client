@@ -11,16 +11,17 @@ import XCTest
 @testable import Split
 
 class SynchronizerSpy: Synchronizer {
-
     var splitSynchronizer: Synchronizer
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
+    var loadMyLargeSegmentsFromCacheCalled = false
     var loadAttributesFromCacheCalled = false
     var syncAllCalled = false
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
     var synchronizeMySegmentsCalled = false
+    var synchronizeMyLargeSegmentsCalled = false
     var forceMySegmentsCalledCount = 0
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
@@ -30,6 +31,7 @@ class SynchronizerSpy: Synchronizer {
     var destroyCalled = false
 
     var notifyMySegmentsUpdatedCalled = false
+    var notifyMyLargeSegmentsUpdatedCalled = false
     var notifySplitKilledCalled = false
 
     var syncSplitsExp: XCTestExpectation?
@@ -43,7 +45,9 @@ class SynchronizerSpy: Synchronizer {
 
     var forceMySegmentsSyncCalled = [String: Bool]()
     var forceMySegmentsSyncCount = [String: Int]()
-    var disableTelemetryCalled = true
+    var forceMyLargeSegmentsSyncCalled = [String: Bool]()
+    var forceMyLargeSegmentsSyncCount = [String: Int]()
+   var disableTelemetryCalled = true
     var disableEventsCalled = true
     var disableSdkCalled = true
 
@@ -82,6 +86,11 @@ class SynchronizerSpy: Synchronizer {
     func loadMySegmentsFromCache() {
         loadMySegmentsFromCacheCalled = true
         splitSynchronizer.loadMySegmentsFromCache()
+    }
+    
+    func loadMyLargeSegmentsFromCache() {
+        loadMyLargeSegmentsFromCacheCalled = true
+        splitSynchronizer.loadMyLargeSegmentsFromCache()
     }
 
     func loadAttributesFromCache() {
@@ -163,6 +172,10 @@ class SynchronizerSpy: Synchronizer {
         synchronizeMySegments(forKey: defaultUserKey)
     }
 
+    func synchronizeMyLargeSegments() {
+        synchronizeMyLargeSegments(forKey: defaultUserKey)
+    }
+
     func synchronizeSplits(changeNumber: Int64) {
         synchronizeSplitsChangeNumberCalled = true
         splitSynchronizer.synchronizeSplits(changeNumber: changeNumber)
@@ -184,6 +197,11 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.notifySegmentsUpdated(forKey: key)
     }
 
+    func notifyLargeSegmentsUpdated(forKey key: String) {
+        notifyMyLargeSegmentsUpdatedCalled = true
+        splitSynchronizer.notifyLargeSegmentsUpdated(forKey: key)
+    }
+
     var notifyFeatureFlagsUpdatedCalled = false
     func notifyFeatureFlagsUpdated() {
         notifyFeatureFlagsUpdatedCalled = true
@@ -202,6 +220,10 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.loadMySegmentsFromCache(forKey: key)
     }
 
+    func loadMyLargeSegmentsFromCache(forKey key: String) {
+        splitSynchronizer.loadMyLargeSegmentsFromCache(forKey: key)
+    }
+
     func loadAttributesFromCache(forKey key: String) {
         splitSynchronizer.loadAttributesFromCache(forKey: key)
     }
@@ -215,6 +237,17 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.forceMySegmentsSync(forKey: key)
         forceMySegmentsSyncCalled[key] = true
         forceMySegmentsSyncCount[key]=(forceMySegmentsSyncCount[key] ?? 0) + 1
+    }
+
+    func synchronizeMyLargeSegments(forKey key: String) {
+        synchronizeMyLargeSegmentsCalled = true
+        splitSynchronizer.synchronizeMyLargeSegments(forKey: key)
+    }
+
+    func forceMyLargeSegmentsSync(forKey key: String) {
+        splitSynchronizer.forceMyLargeSegmentsSync(forKey: key)
+        forceMyLargeSegmentsSyncCalled[key] = true
+        forceMyLargeSegmentsSyncCount[key]=(forceMyLargeSegmentsSyncCount[key] ?? 0) + 1
     }
 
     func disableSdk() {

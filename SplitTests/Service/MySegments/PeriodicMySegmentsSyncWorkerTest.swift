@@ -16,6 +16,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
     var mySegmentsStorage: MySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
+    var eventsWrapper: SplitEventsManagerWrapper!
     var backoffCounter: ReconnectBackoffCounterStub!
     var mySegmentsSyncWorker: PeriodicMySegmentsSyncWorker!
     let userKey = "CUSTOMER_ID"
@@ -24,6 +25,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsFetcher = HttpMySegmentsFetcherStub()
         mySegmentsStorage = MySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
+        eventsWrapper = SplitsEventsManagerWrapper(eventsManager)
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
     }
@@ -38,7 +40,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
                                                             mySegmentsStorage: byKeyMySegmentsStorage,
                                                             telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
-                                                            eventsManager: eventsManager)
+                                                            eventsWrapper: eventsWrapper)
         mySegmentsSyncWorker.start()
 
         for _ in 0..<5 {
@@ -59,7 +61,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
                                                             mySegmentsStorage: byKeyMySegmentsStorage,
                                                             telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
-                                                            eventsManager: eventsManager)
+                                                            eventsWrapper: eventsWrapper)
 
         mySegmentsSyncWorker.start()
 

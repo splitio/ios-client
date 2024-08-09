@@ -199,6 +199,10 @@ class IntegrationHelper {
             return "sdkReadyTimeoutReached"
         case .splitKilledNotification:
             return "splitKilledNotification"
+        case .myLargeSegmentsUpdated:
+            return "myLargeSegmentsUpdated"
+        case .myLargeSegmentsLoadedFromCache:
+            return "myLargeSegmentsLoadedFromCache"
         }
     }
 

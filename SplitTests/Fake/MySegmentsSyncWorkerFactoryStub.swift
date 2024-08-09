@@ -15,11 +15,11 @@ class MySegmentsSyncWorkerFactoryStub: MySegmentsSyncWorkerFactory {
     var periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
 
     func createRetryableMySegmentsSyncWorker(forKey key: String, avoidCache: Bool,
-                                             eventsManager: SplitEventsManager) -> RetryableSyncWorker {
+                                             eventsWrapper: SplitEventsManagerWrapper) -> RetryableSyncWorker {
         return mySegmentsSyncWorkers["\(key)_\(avoidCache)"] ?? RetryableMySegmentsSyncWorkerStub()
     }
 
-    func createPeriodicMySegmentsSyncWorker(forKey key: String, eventsManager: SplitEventsManager) -> PeriodicSyncWorker {
+    func createPeriodicMySegmentsSyncWorker(forKey key: String, eventsWrapper: SplitEventsManagerWrapper) -> PeriodicSyncWorker {
         return periodicMySegmentsSyncWorker
     }
 

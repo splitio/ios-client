@@ -336,6 +336,7 @@ class ImpressionsTrackerTest: XCTestCase {
                                                      persistentEventsStorage: PersistentEventsStorageStub(),
                                                      telemetryStorage: telemetryProducer,
                                                      mySegmentsStorage: MySegmentsStorageStub(),
+                                                     myLargeSegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub(),
                                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(), 
                                                      flagSetsCache: flagSetsCache,

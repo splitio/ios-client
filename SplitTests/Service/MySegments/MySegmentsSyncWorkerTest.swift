@@ -16,6 +16,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
+    var eventsWrapper: SplitEventsManagerWrapper!
     var backoffCounter: ReconnectBackoffCounterStub!
     var mySegmentsSyncWorker: RetryableMySegmentsSyncWorker!
 
@@ -23,6 +24,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsFetcher = HttpMySegmentsFetcherStub()
         mySegmentsStorage = ByKeyMySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
+        eventsWrapper = MySegmentsEventsManagerWrapper(eventsManager)
         backoffCounter = ReconnectBackoffCounterStub()
 
         eventsManager.isSegmentsReadyFired = false
@@ -31,7 +33,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
             userKey: "CUSTOMER_ID",
             mySegmentsFetcher: mySegmentsFetcher,
             mySegmentsStorage: mySegmentsStorage, telemetryProducer: TelemetryStorageStub(),
-            eventsManager: eventsManager,
+            eventsWrapper: eventsWrapper,
             reconnectBackoffCounter: backoffCounter,
             avoidCache: false)
     }
@@ -98,7 +100,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
             userKey: "CUSTOMER_ID",
             mySegmentsFetcher: mySegmentsFetcher,
             mySegmentsStorage: mySegmentsStorage, telemetryProducer: TelemetryStorageStub(),
-            eventsManager: eventsManager,
+            eventsWrapper: eventsWrapper,
             reconnectBackoffCounter: backoffCounter,
             avoidCache: true)
 
@@ -122,8 +124,5 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         XCTAssertEqual(0, backoffCounter.retryCallCount)
         XCTAssertTrue(eventsManager.isSegmentsReadyFired)
         XCTAssertEqual(ServiceConstants.cacheControlNoCache, headers?[ServiceConstants.cacheControlHeader])
-    }
-
-    override func tearDown() {
     }
 }
