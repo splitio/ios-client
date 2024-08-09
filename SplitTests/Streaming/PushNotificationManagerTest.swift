@@ -22,7 +22,7 @@ class PushNotificationManagerTest: XCTestCase {
     var jwtParser: JwtTokenParser!
     let rawToken = "the_token"
     var telemetryProducer: TelemetryStorageStub!
-    var byKeyFacade: ByKeyFacadeStub!
+    var byKeyFacade: ByKeyFacadeMock!
     var sseClientFactory: SseClientFactoryStub!
 
     override func setUp() {
@@ -30,10 +30,11 @@ class PushNotificationManagerTest: XCTestCase {
         timersManager = TimersManagerMock()
         broadcasterChannel = SyncEventBroadcasterStub()
         telemetryProducer = TelemetryStorageStub()
-        byKeyFacade = ByKeyFacadeStub()
+        byKeyFacade = ByKeyFacadeMock()
         let byKeyGroup = ByKeyComponentGroup(splitClient: SplitClientStub(),
                                              eventsManager: SplitEventsManagerStub(),
                                              mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
+                                             myLargeSegmentsSynchronizer: MySegmentsSynchronizerStub(),
                                              attributesStorage: ByKeyAttributesStorageStub(userKey: userKey,
                                                                                            attributesStorage: AttributesStorageStub()))
         byKeyFacade.append(byKeyGroup, forKey: key)

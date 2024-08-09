@@ -11,19 +11,21 @@ import XCTest
 @testable import Split
 
 class SynchronizerStub: Synchronizer {
-   
     var disableSdkCalled = false
     var disableEventsCalled = false
     var disableTelemetryCalled = false
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
+    var loadMyLargeSegmentsFromCacheCalled = false
     var loadAttributesFromCacheCalled = false
     var syncAllCalled = false
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
     var synchronizeMySegmentsCalled = false
+    var synchronizeMyLargeSegmentsCalled = false
     var forceMySegmentsSyncCalled = false
+    var forceMyLargeSegmentsSyncCalled = false
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
     var startRecordingTelemetryCalled = false
@@ -41,8 +43,12 @@ class SynchronizerStub: Synchronizer {
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
     var syncMySegmentsExp: XCTestExpectation?
+    var syncMyLargeSegmentsExp: XCTestExpectation?
     var forceMySegmentsSyncExp = [String: XCTestExpectation]()
     var notifyMySegmentsUpdatedExp = [String: XCTestExpectation]()
+
+    var forceMyLargeSegmentsSyncExp = [String: XCTestExpectation]()
+    var notifyMyLargeSegmentsUpdatedExp = [String: XCTestExpectation]()
 
     var startPeriodicFetchingExp: XCTestExpectation?
     var stopPeriodicFetchingExp: XCTestExpectation?
@@ -60,6 +66,10 @@ class SynchronizerStub: Synchronizer {
         loadMySegmentsFromCacheCalled = true
     }
 
+    func loadMyLargeSegmentsFromCache() {
+        loadMyLargeSegmentsFromCacheCalled = true
+    }
+
     func loadAttributesFromCache() {
         loadAttributesFromCacheCalled = true
     }
@@ -74,6 +84,11 @@ class SynchronizerStub: Synchronizer {
         loadMySegmentsFromCacheForKeyCalled[key] = true
     }
 
+    var loadMyLargeSegmentsFromCacheForKeyCalled = [String: Bool]()
+    func loadMyLargeSegmentsFromCache(forKey key: String) {
+        loadMyLargeSegmentsFromCacheForKeyCalled[key] = true
+    }
+
     var loadAttributesFromCacheForKeyCalled = [String: Bool]()
     func loadAttributesFromCache(forKey key: String) {
         loadAttributesFromCacheForKeyCalled[key] = true
@@ -82,6 +97,11 @@ class SynchronizerStub: Synchronizer {
     var synchronizeMySegmentsForKeyCalled = [String: Bool]()
     func synchronizeMySegments(forKey key: String) {
         synchronizeMySegmentsForKeyCalled[key] = true
+    }
+    
+    var synchronizeMyLargeSegmentsForKeyCalled = [String: Bool]()
+    func synchronizeMyLargeSegments(forKey key: String) {
+        synchronizeMyLargeSegmentsForKeyCalled[key] = true
     }
 
     var forceMySegmentsSyncForKeyCalled = [String: Bool]()
@@ -93,6 +113,15 @@ class SynchronizerStub: Synchronizer {
         }
     }
 
+    var forceMyLargeSegmentsSyncForKeyCalled = [String: Bool]()
+    func forceMyLargeSegmentsSync(forKey key: String) {
+        forceMyLargeSegmentsSyncForKeyCalled[key] = true
+
+        if let exp = forceMyLargeSegmentsSyncExp[key] {
+            exp.fulfill()
+        }
+    }
+
     var notifySegmentsUpdatedForKeyCalled = [String: Bool]()
     func notifySegmentsUpdated(forKey key: String) {
         notifySegmentsUpdatedForKeyCalled[key] = true
@@ -100,6 +129,15 @@ class SynchronizerStub: Synchronizer {
             exp.fulfill()
         }
     }
+
+    var notifyLargeSegmentsUpdatedForKeyCalled = [String: Bool]()
+    func notifyLargeSegmentsUpdated(forKey key: String) {
+        notifyLargeSegmentsUpdatedForKeyCalled[key] = true
+        if let exp = notifyMyLargeSegmentsUpdatedExp[key] {
+            exp.fulfill()
+        }
+    }
+
 
     func syncAll() {
         syncAllCalled = true
@@ -172,6 +210,13 @@ class SynchronizerStub: Synchronizer {
     func synchronizeMySegments() {
         synchronizeMySegmentsCalled = true
         if let exp = syncMySegmentsExp {
+            exp.fulfill()
+        }
+    }
+
+    func synchronizeMyLargeSegments() {
+        synchronizeMyLargeSegmentsCalled = true
+        if let exp = syncMyLargeSegmentsExp {
             exp.fulfill()
         }
     }

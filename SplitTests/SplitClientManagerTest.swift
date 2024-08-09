@@ -14,7 +14,7 @@ class SplitClientManagerTest: XCTestCase {
 
     var clientManager: SplitClientManager!
     var config: SplitClientConfig! = SplitClientConfig()
-    var byKeyFacade: ByKeyFacadeStub!
+    var byKeyFacade: ByKeyFacadeMock!
     var syncManager: SyncManagerStub!
     var splitEventsCoordinator: SplitEventsManagerCoordinatorStub!
     var synchronizer: SynchronizerStub!
@@ -26,7 +26,7 @@ class SplitClientManagerTest: XCTestCase {
 
     override func setUp() {
         config = SplitClientConfig()
-        byKeyFacade = ByKeyFacadeStub()
+        byKeyFacade = ByKeyFacadeMock()
         syncManager = SyncManagerStub()
         splitEventsCoordinator = SplitEventsManagerCoordinatorStub()
         synchronizer = SynchronizerStub()
@@ -113,6 +113,7 @@ class SplitClientManagerTest: XCTestCase {
                                              eventsTracker: EventsTrackerStub(),
                                              eventsManagerCoordinator: splitEventsCoordinator,
                                              mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactoryStub(),
+                                             myLargeSegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactoryStub(),
                                              telemetryStopwatch: stopwatch, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
     }
 

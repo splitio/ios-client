@@ -63,6 +63,7 @@ class TreatmentManagerTest: XCTestCase {
                                                      persistentEventsStorage: PersistentEventsStorageStub(),
                                                      telemetryStorage: telemetryProducer,
                                                      mySegmentsStorage: mySegmentsStorage,
+                                                     myLargeSegmentsStorage: mySegmentsStorage,
                                                      attributesStorage: attributesStorage,
                                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(), 
                                                      flagSetsCache: flagSetsCache,
