@@ -182,9 +182,13 @@ class DefaultClientManager: SplitClientManager {
                                       syncWorkerFactory: mySegmentsSyncWorkerFactory,
                                       eventsWrapper: MySegmentsEventsManagerWrapper(eventsManager))
 
-        var myLargeSegmentsSynchronizer = buildMyLargeSegmentsSynchronizer(forKey: matchingKey,
-                                                                           eventsManager: eventsManager,
-                                                                           myLargeSegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory)
+        var myLargeSegmentsSynchronizer: MySegmentsSynchronizer?
+        if config.largeSegmentsEnabled {
+            myLargeSegmentsSynchronizer =
+            buildMyLargeSegmentsSynchronizer(forKey: matchingKey,
+                                             eventsManager: eventsManager,
+                                             myLargeSegmentsSyncWorkerFactory: myLargeSegmentsSyncWorkerFactory)
+        }
 
         let byKeyGroup = ByKeyComponentGroup(splitClient: client,
                                              eventsManager: eventsManager,

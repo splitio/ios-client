@@ -416,7 +416,7 @@
 		9519A91E27D947C300278AEC /* SyncCommons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A91D27D947C300278AEC /* SyncCommons.swift */; };
 		9519A92A27DA9AF000278AEC /* SynchronizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A92927DA9AF000278AEC /* SynchronizerTest.swift */; };
 		9519A92C27DA9CB700278AEC /* MySegmentsSynchronizerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A92B27DA9CB700278AEC /* MySegmentsSynchronizerStub.swift */; };
-		9519A93027DAA73400278AEC /* ByKeyFacadeStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A92F27DAA73400278AEC /* ByKeyFacadeStub.swift */; };
+		9519A93027DAA73400278AEC /* ByKeyFacadeMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A92F27DAA73400278AEC /* ByKeyFacadeMock.swift */; };
 		9519A93227DBC25B00278AEC /* MySegmentsSynchronizerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A93127DBC25B00278AEC /* MySegmentsSynchronizerTest.swift */; };
 		9519A93427DBD38F00278AEC /* ByKeyMySegmentsStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A93327DBD38F00278AEC /* ByKeyMySegmentsStorageStub.swift */; };
 		9519A93627DBD41100278AEC /* MySegmentsSyncWorkerFactoryStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A93527DBD41100278AEC /* MySegmentsSyncWorkerFactoryStub.swift */; };
@@ -1537,7 +1537,7 @@
 		9519A91D27D947C300278AEC /* SyncCommons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCommons.swift; sourceTree = "<group>"; };
 		9519A92927DA9AF000278AEC /* SynchronizerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SynchronizerTest.swift; sourceTree = "<group>"; };
 		9519A92B27DA9CB700278AEC /* MySegmentsSynchronizerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsSynchronizerStub.swift; sourceTree = "<group>"; };
-		9519A92F27DAA73400278AEC /* ByKeyFacadeStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByKeyFacadeStub.swift; sourceTree = "<group>"; };
+		9519A92F27DAA73400278AEC /* ByKeyFacadeMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByKeyFacadeMock.swift; sourceTree = "<group>"; };
 		9519A93127DBC25B00278AEC /* MySegmentsSynchronizerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsSynchronizerTest.swift; sourceTree = "<group>"; };
 		9519A93327DBD38F00278AEC /* ByKeyMySegmentsStorageStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByKeyMySegmentsStorageStub.swift; sourceTree = "<group>"; };
 		9519A93527DBD41100278AEC /* MySegmentsSyncWorkerFactoryStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySegmentsSyncWorkerFactoryStub.swift; sourceTree = "<group>"; };
@@ -3166,7 +3166,7 @@
 				95B436A526F1533600E1EB9C /* MySegmentsV2PayloadDecoderMock.swift */,
 				955B59662811F51A00D105CD /* SplitEventsManagerCoordinatorStub.swift */,
 				9519A92B27DA9CB700278AEC /* MySegmentsSynchronizerStub.swift */,
-				9519A92F27DAA73400278AEC /* ByKeyFacadeStub.swift */,
+				9519A92F27DAA73400278AEC /* ByKeyFacadeMock.swift */,
 				95ABF4FB29369B73006ED016 /* TelemetrySynchronizerStub.swift */,
 				95ABF4FF29379CCD006ED016 /* EventsSynchronizerStub.swift */,
 				955B59642811F18000D105CD /* SyncManagerStub.swift */,
@@ -4435,7 +4435,7 @@
 				59F4AA9F24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift in Sources */,
 				954F9AFF2570082C00140B81 /* SplitDaoStub.swift in Sources */,
 				593AE9FC226F4825000D61B0 /* RestClientStub.swift in Sources */,
-				9519A93027DAA73400278AEC /* ByKeyFacadeStub.swift in Sources */,
+				9519A93027DAA73400278AEC /* ByKeyFacadeMock.swift in Sources */,
 				596A7B71235729B5004F6139 /* DestroyTest.swift in Sources */,
 				95B180222763C00C002DC9DF /* HttpTelemetryStatsRecorderStub.swift in Sources */,
 				595AD25924E59E6200A7B750 /* EventStreamParserTest.swift in Sources */,
