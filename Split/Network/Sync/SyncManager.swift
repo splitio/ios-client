@@ -75,6 +75,9 @@ class DefaultSyncManager: SyncManager {
         synchronizer.loadSplitsFromCache()
         synchronizer.loadMySegmentsFromCache()
         synchronizer.loadAttributesFromCache()
+        if splitConfig.largeSegmentsEnabled {
+            synchronizer.loadMyLargeSegmentsFromCache()
+        }
     }
 
     private func startSync() {

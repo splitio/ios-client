@@ -335,7 +335,9 @@ extension SplitComponentFactory {
     }
 
     func buildMyLargeSegmentsSyncWorkerFactory() throws -> MySegmentsSyncWorkerFactory? {
-
+        if !splitClientConfig.largeSegmentsEnabled {
+            return nil
+        }
         let storageContainer = try getSplitStorageContainer()
         guard let storage = storageContainer.myLargeSegmentsStorage else {
             Logger.e("Error creating sync factory ,my large segments storage is nil")
