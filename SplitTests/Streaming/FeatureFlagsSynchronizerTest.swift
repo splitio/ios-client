@@ -58,6 +58,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                      persistentEventsStorage: PersistentEventsStorageStub(),
                                                      telemetryStorage: TelemetryStorageStub(),
                                                      mySegmentsStorage: MySegmentsStorageStub(),
+                                                     myLargeSegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub(),
                                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
                                                      flagSetsCache: FlagSetsCacheMock(),

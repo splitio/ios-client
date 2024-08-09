@@ -21,7 +21,7 @@ class SynchronizerTest: XCTestCase {
 
     var eventsManager: SplitEventsManagerStub!
     var telemetryProducer: TelemetryStorageStub!
-    var byKeyApiFacade: ByKeyFacadeStub!
+    var byKeyApiFacade: ByKeyFacadeMock!
     var impressionsTracker: ImpressionsTrackerStub!
     var eventsSynchronizer: EventsSynchronizerStub!
     var telemetrySynchronizer: TelemetrySynchronizerStub!
@@ -61,6 +61,7 @@ class SynchronizerTest: XCTestCase {
                                                      persistentEventsStorage: PersistentEventsStorageStub(),
                                                      telemetryStorage: telemetryProducer,
                                                      mySegmentsStorage: MySegmentsStorageStub(),
+                                                     myLargeSegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub(),
                                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
                                                      flagSetsCache: flagSetsCache,
@@ -71,7 +72,7 @@ class SynchronizerTest: XCTestCase {
         splitConfig.syncEnabled = syncEnabled
         splitConfig.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
 
-        byKeyApiFacade = ByKeyFacadeStub()
+        byKeyApiFacade = ByKeyFacadeMock()
 
         telemetrySynchronizer = TelemetrySynchronizerStub()
 

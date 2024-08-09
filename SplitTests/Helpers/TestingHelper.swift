@@ -189,6 +189,7 @@ struct TestingHelper {
                                      persistentEventsStorage: PersistentEventsStorageStub(),
                                      telemetryStorage: TelemetryStorageStub(),
                                      mySegmentsStorage: MySegmentsStorageStub(),
+                                     myLargeSegmentsStorage: MySegmentsStorageStub(),
                                      attributesStorage: AttributesStorageStub(),
                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
                                      flagSetsCache: FlagSetsCacheMock(),

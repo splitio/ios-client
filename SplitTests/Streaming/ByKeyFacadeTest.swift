@@ -25,6 +25,7 @@ class ByKeyFacadeTest: XCTestCase {
             let group = ByKeyComponentGroup(splitClient: SplitClientStub(),
                 eventsManager: SplitEventsManagerStub(),
                                            mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
+                                            myLargeSegmentsSynchronizer: MySegmentsSynchronizerStub(),
                                            attributesStorage: attrStorage)
             componentGroups[key] = group
             byKeyFacade.append(group, forKey: key)
@@ -42,6 +43,7 @@ class ByKeyFacadeTest: XCTestCase {
         let group = ByKeyComponentGroup(splitClient: SplitClientStub(),
                                         eventsManager: SplitEventsManagerStub(),
                                         mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
+                                        myLargeSegmentsSynchronizer: MySegmentsSynchronizerStub(),
                                         attributesStorage: attributesStorage)
         byKeyFacade.append(group, forKey: key)
         byKeyFacade.startPeriodicSync()
