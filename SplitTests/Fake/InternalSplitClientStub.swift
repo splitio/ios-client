@@ -13,10 +13,14 @@ class InternalSplitClientStub: InternalSplitClient {
 
     var splitsStorage: SplitsStorage?
     var mySegmentsStorage: MySegmentsStorage?
+    var myLargeSegmentsStorage: MySegmentsStorage?
 
-    init(splitsStorage: SplitsStorage?, mySegmentsStorage: MySegmentsStorage?) {
+    init(splitsStorage: SplitsStorage?,
+         mySegmentsStorage: MySegmentsStorage?,
+         myLargeSegmentsStorage: MySegmentsStorage?) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
+        self.myLargeSegmentsStorage = myLargeSegmentsStorage
     }
 
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {

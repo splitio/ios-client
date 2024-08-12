@@ -100,6 +100,10 @@
             data: self.userDefinedSegmentMatcherData, negate: self.negate,
             attribute: self.keySelector?.attribute, type: self.matcherType)
 
+        case .inLargeSegment: return InLargeSegmentMatcher(
+            data: self.userDefinedSegmentMatcherData, negate: self.negate,
+            attribute: self.keySelector?.attribute, type: self.matcherType)
+
         case .matchesString: return MatchesStringMatcher(
             data: self.stringMatcherData, negate: self.negate, attribute: self.keySelector?.attribute,
             type: self.matcherType)

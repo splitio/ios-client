@@ -66,7 +66,8 @@ class DefaultClientManager: SplitClientManager {
         self.storageContainer = storageContainer
         self.telemetryProducer = storageContainer.telemetryStorage
         self.evaluator = DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
-                                          mySegmentsStorage: storageContainer.mySegmentsStorage)
+                                          mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                          myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage)
 
         self.telemetryStopwatch = telemetryStopwatch
 
