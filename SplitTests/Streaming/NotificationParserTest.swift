@@ -44,6 +44,39 @@ class NotificationParserTest: XCTestCase {
  {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"\(kMySegmentsChannel)\",\"data\": \"{\\\"type\\\": \\\"MY_SEGMENTS_UPDATE_V2\\\", \\"u\\": 3, \\"c\\": 0, \\"segmentName\\":\\"segment_remove\\"}\"}
 """
 
+    let myLargeSegmentsUpdateNotificationUnboundedMessage = """
+    {
+      \"id\": \"diSrQttrC9:0:0\",
+      \"clientId\": \"pri:MjcyNDE2NDUxMA==\",
+      \"timestamp\": 1702507131100,
+      \"encoding\": \"json\",
+      \"channel\": \"NzM2MDI5Mzc0_MTc1MTYwODQxMQ==_mylargesegments\",
+      \"data\": \"{\\\"type\\\":\\\"MY_LARGE_SEGMENTS_UPDATE\\\",\\\"changeNumber\\\":1702507130121,\\\"c\\\":2,\\\"u\\\":0, \\\"i\\\": 100}\"
+    }
+"""
+
+    let myLargeSegmentsUpdateNotificationSegmentRemovalMessage = """
+    {
+      \"id\": \"diSrQttrC9:0:0\",
+      \"clientId\": \"pri:MjcyNDE2NDUxMA==\",
+      \"timestamp\": 1702507131100,
+      \"encoding\": \"json\",
+      \"channel\": \"NzM2MDI5Mzc0_MTc1MTYwODQxMQ==_mylargesegments\",
+      \"data\": \"{\\\"type\\\":\\\"MY_LARGE_SEGMENTS_UPDATE\\\",\\\"changeNumber\\\":1702507130121,\\\"u\\\":3,\\\"c\\\":0, \\\"largeSegments\\\":[\\\"android_test\\\", \\\"ios_test\\\"]}\"
+    }
+"""
+
+    let myLargeSegmentsUpdateNotificationAllFieldsMessage = """
+    {
+      \"id\": \"diSrQttrC9:0:0\",
+      \"clientId\": \"pri:MjcyNDE2NDUxMA==\",
+      \"timestamp\": 1702507131100,
+      \"encoding\": \"json\",
+      \"channel\": \"NzM2MDI5Mzc0_MTc1MTYwODQxMQ==_mylargesegments\",
+      \"data\": \"{\\\"type\\\":\\\"MY_LARGE_SEGMENTS_UPDATE\\\",\\\"changeNumber\\\":1702507130121,\\\"c\\\":2,\\\"s\\\":200,\\\"u\\\":0,\\\"h\\\":100,\\\"i\\\": 300,\\\"largeSegments\\\": [\\\"test\\\"], \\\"d\\\":\\\"eJwEwLsRwzAMA9BdWKsg+IFBraJTkRXS5rK7388+tg+KdC8+jq4eBBQLFcUnO8FAAC36gndOSEyFqJFP32Vf2+f+3wAAAP//hUQQ9A==\\\"}\"
+    }
+"""
+
     let occupancyNotificationMessage = """
  {\"id\":\"x2dE2TEiJL:0:0\",\"clientId\":\"NDEzMTY5Mzg0MA==:OTc5Nzc4NDYz\",\"timestamp\":1584647533288,\"encoding\":\"json\",\"channel\":\"control_pri\",\"data\":\"{\\\"metrics\\\": {\\\"publishers\\\":1}}\"}
 """
@@ -136,6 +169,48 @@ class NotificationParserTest: XCTestCase {
         XCTAssertEqual("segment_remove", mySegmentUpdate.segmentName)
     }
 
+    func testProcessMyLargeSegmentUpdateUnbounded() throws {
+        let incoming = notificationParser.parseIncoming(jsonString: myLargeSegmentsUpdateNotificationUnboundedMessage);
+        let mySegmentUpdate = try notificationParser.parseMyLargeSegmentUpdate(jsonString: incoming!.jsonData!);
+
+        XCTAssertEqual(NotificationType.myLargeSegmentsUpdate, incoming?.type);
+        XCTAssertEqual(.unboundedFetchRequest, mySegmentUpdate.updateStrategy);
+        XCTAssertEqual(1702507130121, mySegmentUpdate.changeNumber)
+        XCTAssertNil(mySegmentUpdate.data)
+        XCTAssertNil(mySegmentUpdate.largeSegments)
+        XCTAssertNil(mySegmentUpdate.hash)
+        XCTAssertNil(mySegmentUpdate.seed)
+        XCTAssertEqual(mySegmentUpdate.timeMillis, 100)
+
+    }
+
+    func testProcessMyLargeSegmentUpdateRemoval() throws {
+        let incoming = notificationParser.parseIncoming(jsonString: myLargeSegmentsUpdateNotificationSegmentRemovalMessage);
+        let mySegmentUpdate = try notificationParser.parseMyLargeSegmentUpdate(jsonString: incoming!.jsonData!);
+
+        XCTAssertEqual(NotificationType.myLargeSegmentsUpdate, incoming?.type);
+        XCTAssertEqual(.segmentRemoval, mySegmentUpdate.updateStrategy);
+        XCTAssertEqual(1702507130121, mySegmentUpdate.changeNumber)
+        XCTAssertEqual(["android_test", "ios_test"], mySegmentUpdate.largeSegments?.sorted())
+        XCTAssertNil(mySegmentUpdate.data)
+        XCTAssertNil(mySegmentUpdate.hash)
+        XCTAssertNil(mySegmentUpdate.seed)
+        XCTAssertNil(mySegmentUpdate.timeMillis)
+    }
+
+    func testProcessMyLargeSegmentUpdateAllFields() throws {
+        let incoming = notificationParser.parseIncoming(jsonString: myLargeSegmentsUpdateNotificationAllFieldsMessage);
+        let mySegmentUpdate = try notificationParser.parseMyLargeSegmentUpdate(jsonString: incoming!.jsonData!);
+
+        XCTAssertEqual(NotificationType.myLargeSegmentsUpdate, incoming?.type);
+        XCTAssertEqual(.unboundedFetchRequest, mySegmentUpdate.updateStrategy);
+        XCTAssertEqual(1702507130121, mySegmentUpdate.changeNumber)
+        XCTAssertEqual(["test"], mySegmentUpdate.largeSegments)
+        XCTAssertEqual("eJwEwLsRwzAMA9BdWKsg+IFBraJTkRXS5rK7388+tg+KdC8+jq4eBBQLFcUnO8FAAC36gndOSEyFqJFP32Vf2+f+3wAAAP//hUQQ9A==", mySegmentUpdate.data)
+        XCTAssertEqual(100, mySegmentUpdate.hash)
+        XCTAssertEqual(200, mySegmentUpdate.seed)
+        XCTAssertEqual(300, mySegmentUpdate.timeMillis)
+    }
 
     func testProcessOccupancy() throws {
         let incoming = notificationParser.parseIncoming(jsonString: occupancyNotificationMessage);

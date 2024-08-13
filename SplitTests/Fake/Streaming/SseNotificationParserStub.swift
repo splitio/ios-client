@@ -16,6 +16,7 @@ class SseNotificationParserStub: SseNotificationParser {
     var splitKillNotification: SplitKillNotification?
     var mySegmentsUpdateNotification: MySegmentsUpdateNotification?
     var mySegmentsUpdateV2Notification: MySegmentsUpdateV2Notification?
+    var myLargeSegmentsUpdateNotification: MyLargeSegmentsUpdateNotification?
     var occupancyNotification: OccupancyNotification?
     var controlNotification: ControlNotification?
     var sseErrorNotification: StreamingError?
@@ -39,6 +40,10 @@ class SseNotificationParserStub: SseNotificationParser {
 
     func parseMySegmentUpdateV2(jsonString: String) throws -> MySegmentsUpdateV2Notification {
         return mySegmentsUpdateV2Notification!
+    }
+
+    func parseMyLargeSegmentUpdate(jsonString: String) throws -> MyLargeSegmentsUpdateNotification {
+        return myLargeSegmentsUpdateNotification!
     }
 
     func parseOccupancy(jsonString: String, timestamp: Int64, channel: String) throws -> OccupancyNotification {
