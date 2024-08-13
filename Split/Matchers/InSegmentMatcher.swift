@@ -7,7 +7,7 @@
 
 import Foundation
 
-class InSegmentMatcher: BaseMatcher, MatcherProtocol {
+class BaseInSegmentMatcher: BaseMatcher, MatcherProtocol {
 
     var data: UserDefinedSegmentMatcherData?
 
@@ -19,12 +19,29 @@ class InSegmentMatcher: BaseMatcher, MatcherProtocol {
     }
 
     func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
-
+        let storage = storageFromContext(context)
         // Match value is not used because it is matching key. My segments cache only has segments for that key cause
         // Split client is instantiated  based on it
         if values.matchValue as? String != nil, let dataElements = data, let segmentName = dataElements.segmentName {
-            return context?.mySegmentsStorage?.getAll(forKey: values.matchingKey).contains(segmentName) ?? false
+            return storage?.getAll(forKey: values.matchingKey).contains(segmentName) ?? false
         }
         return false
     }
+
+    func storageFromContext(_ context: EvalContext?) -> MySegmentsStorage? {
+        fatalError("function not implemented")
+    }
 }
+
+class InSegmentMatcher: BaseInSegmentMatcher {
+    override func storageFromContext(_ context: EvalContext?) -> MySegmentsStorage? {
+        return context?.mySegmentsStorage
+    }
+}
+
+class InLargeSegmentMatcher: BaseInSegmentMatcher {
+    override func storageFromContext(_ context: EvalContext?) -> MySegmentsStorage? {
+        return context?.myLargeSegmentsStorage
+    }
+}
+

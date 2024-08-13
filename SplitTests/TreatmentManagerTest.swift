@@ -416,9 +416,12 @@ class TreatmentManagerTest: XCTestCase {
 
     func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil, evaluator: Evaluator? = nil) -> TreatmentManager {
         let key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
-        client = InternalSplitClientStub(splitsStorage: storageContainer.splitsStorage, mySegmentsStorage: storageContainer.mySegmentsStorage)
+        client = InternalSplitClientStub(splitsStorage: storageContainer.splitsStorage, 
+                                         mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                         myLargeSegmentsStorage: storageContainer.mySegmentsStorage)
         let defaultEvaluator = evaluator ?? DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
-                                                             mySegmentsStorage: storageContainer.mySegmentsStorage)
+                                                             mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                                             myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage)
 
         let eventsManager = SplitEventsManagerMock()
         eventsManager.isSegmentsReadyFired = true

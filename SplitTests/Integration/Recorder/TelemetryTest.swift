@@ -210,14 +210,17 @@ class TelemetryTest: XCTestCase {
         let mySegmentsStorage = storageContainer.mySegmentsStorage
 
         _ = InternalSplitClientStub(splitsStorage: splitsStorage,
-                                             mySegmentsStorage: mySegmentsStorage)
+                                    mySegmentsStorage: mySegmentsStorage,
+                                    myLargeSegmentsStorage: mySegmentsStorage)
         let eventsManager = SplitEventsManagerMock()
         eventsManager.isSegmentsReadyFired = false
         eventsManager.isSplitsReadyFired = true
         eventsManager.isSegmentsReadyFromCacheFired = false
         eventsManager.isSplitsReadyFromCacheFired = true
 
-        return DefaultTreatmentManager(evaluator: DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage),
+        return DefaultTreatmentManager(evaluator: DefaultEvaluator(splitsStorage: splitsStorage, 
+                                                                   mySegmentsStorage: mySegmentsStorage,
+                                                                  myLargeSegmentsStorage: EmptyMySegmentsStorage()),
                                        key: userKey,
                                        splitConfig: SplitClientConfig(),
                                        eventsManager: eventsManager,
