@@ -24,6 +24,7 @@ enum NotificationType: Decodable {
     case splitUpdate
     case mySegmentsUpdate
     case mySegmentsUpdateV2
+    case myLargeSegmentsUpdate
     case splitKill
     case occupancy
     case sseError
@@ -43,6 +44,8 @@ enum NotificationType: Decodable {
             return NotificationType.mySegmentsUpdate
         case "my_segments_update_v2":
             return NotificationType.mySegmentsUpdateV2
+        case "my_large_segments_update":
+            return NotificationType.myLargeSegmentsUpdate
         case "split_kill":
             return NotificationType.splitKill
         case "control":
@@ -208,6 +211,31 @@ struct MySegmentsUpdateV2Notification: NotificationTypeField {
         case compressionType = "c"
         case updateStrategy = "u"
         case data = "d"
+    }
+}
+
+struct MyLargeSegmentsUpdateNotification: NotificationTypeField {
+    var type: NotificationType {
+        return .myLargeSegmentsUpdate
+    }
+    let changeNumber: Int64?
+    let compressionType: CompressionType
+    let updateStrategy: MySegmentUpdateStrategy
+    let largeSegments: [String]?
+    let data: String?
+    let hash: Int?
+    let seed: Int?
+    let timeMillis: Int64?
+
+    enum CodingKeys: String, CodingKey {
+        case changeNumber
+        case largeSegments
+        case compressionType = "c"
+        case updateStrategy = "u"
+        case data = "d"
+        case hash = "h"
+        case seed = "s"
+        case timeMillis = "i"
     }
 }
 

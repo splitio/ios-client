@@ -20,6 +20,8 @@ protocol SseNotificationParser {
 
     func parseMySegmentUpdateV2(jsonString: String) throws -> MySegmentsUpdateV2Notification
 
+    func parseMyLargeSegmentUpdate(jsonString: String) throws -> MyLargeSegmentsUpdateNotification
+
     func parseOccupancy(jsonString: String, timestamp: Int64, channel: String) throws -> OccupancyNotification
 
     func parseControl(jsonString: String) throws -> ControlNotification
@@ -33,7 +35,6 @@ protocol SseNotificationParser {
 }
 
 class DefaultSseNotificationParser: SseNotificationParser {
-
     private static let kErrorNotificationName = "error"
 
     func parseIncoming(jsonString: String) -> IncomingNotification? {
@@ -71,6 +72,10 @@ class DefaultSseNotificationParser: SseNotificationParser {
 
     func parseMySegmentUpdateV2(jsonString: String) throws -> MySegmentsUpdateV2Notification {
         return try Json.decodeFrom(json: jsonString, to: MySegmentsUpdateV2Notification.self)
+    }
+
+    func parseMyLargeSegmentUpdate(jsonString: String) throws -> MyLargeSegmentsUpdateNotification {
+        return try Json.decodeFrom(json: jsonString, to: MyLargeSegmentsUpdateNotification.self)
     }
 
     func parseOccupancy(jsonString: String, timestamp: Int64, channel: String) throws -> OccupancyNotification {
