@@ -194,7 +194,7 @@ struct KeyList: Decodable {
     }
 }
 
-/// Indicates change in MySegments (Optimized version)
+// Indicates change in MySegments (Optimized version)
 struct MySegmentsUpdateV2Notification: NotificationTypeField {
     var type: NotificationType {
         return .mySegmentsUpdateV2
