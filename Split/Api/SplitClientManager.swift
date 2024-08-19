@@ -180,40 +180,16 @@ class DefaultClientManager: SplitClientManager {
         DefaultMySegmentsSynchronizer(userKey: matchingKey,
                                       splitConfig: config,
                                       mySegmentsStorage: buildMySegmentsStorage(forKey: matchingKey),
+                                      myLargeSegmentsStorage: buildMyLargeSegmentsStorage(forKey: matchingKey),
                                       syncWorkerFactory: mySegmentsSyncWorkerFactory,
-                                      eventsWrapper: MySegmentsEventsManagerWrapper(eventsManager))
-
-        var myLargeSegmentsSynchronizer: MySegmentsSynchronizer?
-        if config.largeSegmentsEnabled {
-            myLargeSegmentsSynchronizer =
-            buildMyLargeSegmentsSynchronizer(forKey: matchingKey,
-                                             eventsManager: eventsManager,
-                                             myLargeSegmentsSyncWorkerFactory: myLargeSegmentsSyncWorkerFactory)
-        }
+                                      eventsManager: eventsManager)
 
         let byKeyGroup = ByKeyComponentGroup(splitClient: client,
                                              eventsManager: eventsManager,
                                              mySegmentsSynchronizer: mySegmentsSynchronizer,
-                                             myLargeSegmentsSynchronizer: myLargeSegmentsSynchronizer,
                                              attributesStorage: attributesStorage(forKey: matchingKey))
 
         byKeyRegistry.append(byKeyGroup, forKey: key)
-    }
-
-    private func buildMyLargeSegmentsSynchronizer(forKey key: String,
-                                                  eventsManager: SplitEventsManager,
-                                                  myLargeSegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory?) -> MySegmentsSynchronizer? {
-        guard let storage = buildMyLargeSegmentsStorage(forKey: key) else {
-            return nil
-        }
-        guard let syncFactory = myLargeSegmentsSyncWorkerFactory else {
-            return nil
-        }
-        return DefaultMySegmentsSynchronizer(userKey: key,
-                                             splitConfig: config,
-                                             mySegmentsStorage: storage,
-                                             syncWorkerFactory: syncFactory,
-                                             eventsWrapper: MyLargeSegmentsEventsManagerWrapper(eventsManager))
     }
 
     private func buildMySegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage {
@@ -222,13 +198,9 @@ class DefaultClientManager: SplitClientManager {
             userKey: key)
     }
 
-    private func buildMyLargeSegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage? {
-        guard let storage = storageContainer.myLargeSegmentsStorage else {
-            Logger.e("My large segments is not available for by key synchronizer")
-            return nil
-        }
+    private func buildMyLargeSegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage {
         return DefaultByKeyMySegmentsStorage(
-            mySegmentsStorage: storage,
+            mySegmentsStorage: storageContainer.mySegmentsStorage,
             userKey: key)
     }
 

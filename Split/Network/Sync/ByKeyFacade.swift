@@ -17,7 +17,6 @@ protocol ByKeyRegistry {
 }
 protocol ByKeySynchronizer {
     func loadMySegmentsFromCache(forKey: String)
-    func loadMyLargeSegmentsFromCache(forKey: String)
     func loadAttributesFromCache(forKey: String)
     func notifyMySegmentsUpdated(forKey: String)
     func notifyMyLargeSegmentsUpdated(forKey: String)
@@ -25,10 +24,8 @@ protocol ByKeySynchronizer {
     func startPeriodicSync()
     func stopPeriodicSync()
     func syncMySegments(forKey: String)
-    func syncMyLargeSegments(forKey: String)
     func syncAll()
     func forceMySegmentsSync(forKey: String)
-    func forceMyLargeSegmentsSync(forKey: String)
     func pause()
     func resume()
     func stop()
@@ -41,7 +38,6 @@ struct ByKeyComponentGroup {
     let splitClient: SplitClient
     let eventsManager: SplitEventsManager
     let mySegmentsSynchronizer: MySegmentsSynchronizer
-    let myLargeSegmentsSynchronizer: MySegmentsSynchronizer?
     let attributesStorage: ByKeyAttributesStorage
 }
 
@@ -77,12 +73,6 @@ class DefaultByKeyFacade: ByKeyFacade {
         }
     }
 
-    func loadMyLargeSegmentsFromCache(forKey key: String) {
-        byKeyComponents.values(forMatchingKey: key).forEach { group in
-            group.myLargeSegmentsSynchronizer?.loadMySegmentsFromCache()
-        }
-    }
-
     func loadAttributesFromCache(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
             group.attributesStorage.loadLocal()
@@ -95,7 +85,6 @@ class DefaultByKeyFacade: ByKeyFacade {
         isPollingEnabled.set(true)
         doInAll { group in
             group.mySegmentsSynchronizer.startPeriodicFetching()
-            group.myLargeSegmentsSynchronizer?.startPeriodicFetching()
         }
     }
 
@@ -103,7 +92,6 @@ class DefaultByKeyFacade: ByKeyFacade {
         loadMySegmentsFromCache(forKey: key.matchingKey)
         loadAttributesFromCache(forKey: key.matchingKey)
         syncMySegments(forKey: key)
-        syncMyLargeSegments(forKey: key)
         if isPollingEnabled.value {
             byKeyComponents.value(forKey: key)?.mySegmentsSynchronizer.startPeriodicFetching()
         }
@@ -115,16 +103,9 @@ class DefaultByKeyFacade: ByKeyFacade {
         }
     }
 
-    func syncMyLargeSegments(forKey key: String) {
-        doInAll(forMatchingKey: key) { group in
-            group.myLargeSegmentsSynchronizer?.synchronizeMySegments()
-        }
-    }
-
     func syncAll() {
         doInAll { group in
             group.mySegmentsSynchronizer.synchronizeMySegments()
-            group.myLargeSegmentsSynchronizer?.synchronizeMySegments()
         }
     }
 
@@ -144,16 +125,6 @@ class DefaultByKeyFacade: ByKeyFacade {
         }
     }
 
-    func forceMyLargeSegmentsSync(forKey key: String) {
-        doInAll(forMatchingKey: key) { group in
-            group.myLargeSegmentsSynchronizer?.forceMySegmentsSync()
-        }
-    }
-
-    func syncMyLargeSegments(forKey key: Key) {
-        byKeyComponents.value(forKey: key)?.myLargeSegmentsSynchronizer?.synchronizeMySegments()
-    }
-
     func notifyMyLargeSegmentsUpdated(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
             group.eventsManager.notifyInternalEvent(.myLargeSegmentsUpdated)
@@ -163,14 +134,12 @@ class DefaultByKeyFacade: ByKeyFacade {
     func pause() {
         doInAll { group in
             group.mySegmentsSynchronizer.pause()
-            group.myLargeSegmentsSynchronizer?.pause()
         }
     }
 
     func resume() {
         doInAll { group in
             group.mySegmentsSynchronizer.resume()
-            group.myLargeSegmentsSynchronizer?.resume()
         }
     }
 
@@ -178,7 +147,6 @@ class DefaultByKeyFacade: ByKeyFacade {
         isPollingEnabled.set(false)
         doInAll { group in
             group.mySegmentsSynchronizer.stopPeriodicFetching()
-            group.myLargeSegmentsSynchronizer?.stopPeriodicFetching()
         }
     }
 
@@ -187,8 +155,6 @@ class DefaultByKeyFacade: ByKeyFacade {
             group.attributesStorage.destroy()
             group.mySegmentsSynchronizer.stopPeriodicFetching()
             group.mySegmentsSynchronizer.destroy()
-            group.myLargeSegmentsSynchronizer?.stopPeriodicFetching()
-            group.myLargeSegmentsSynchronizer?.destroy()
             group.eventsManager.stop()
         }
         byKeyComponents.removeAll()
@@ -197,7 +163,6 @@ class DefaultByKeyFacade: ByKeyFacade {
     func stopSync() {
         doInAll {
             $0.mySegmentsSynchronizer.destroy()
-            $0.myLargeSegmentsSynchronizer?.destroy()
         }
     }
 
