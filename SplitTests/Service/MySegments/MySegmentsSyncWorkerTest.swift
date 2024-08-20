@@ -16,7 +16,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
-    var eventsWrapper: SplitEventsManagerWrapper!
+    var eventsManager: SplitEventsManager!
     var backoffCounter: ReconnectBackoffCounterStub!
     var mySegmentsSyncWorker: RetryableMySegmentsSyncWorker!
 
@@ -24,7 +24,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsFetcher = HttpMySegmentsFetcherStub()
         mySegmentsStorage = ByKeyMySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
-        eventsWrapper = MySegmentsEventsManagerWrapper(eventsManager)
+        eventsManager = MySegmentsEventsManagerWrapper(eventsManager)
         backoffCounter = ReconnectBackoffCounterStub()
 
         eventsManager.isSegmentsReadyFired = false
@@ -33,7 +33,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
             userKey: "CUSTOMER_ID",
             mySegmentsFetcher: mySegmentsFetcher,
             mySegmentsStorage: mySegmentsStorage, telemetryProducer: TelemetryStorageStub(),
-            eventsWrapper: eventsWrapper,
+            eventsManager: eventsManager,
             reconnectBackoffCounter: backoffCounter,
             avoidCache: false)
     }
@@ -100,7 +100,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
             userKey: "CUSTOMER_ID",
             mySegmentsFetcher: mySegmentsFetcher,
             mySegmentsStorage: mySegmentsStorage, telemetryProducer: TelemetryStorageStub(),
-            eventsWrapper: eventsWrapper,
+            eventsManager: eventsManager,
             reconnectBackoffCounter: backoffCounter,
             avoidCache: true)
 

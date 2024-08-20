@@ -16,7 +16,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
     var mySegmentsStorage: MySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
-    var eventsWrapper: SplitEventsManagerWrapper!
+    var eventsManager: SplitEventsManager!
     var backoffCounter: ReconnectBackoffCounterStub!
     var mySegmentsSyncWorker: PeriodicMySegmentsSyncWorker!
     let userKey = "CUSTOMER_ID"
@@ -25,7 +25,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsFetcher = HttpMySegmentsFetcherStub()
         mySegmentsStorage = MySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
-        eventsWrapper = SplitsEventsManagerWrapper(eventsManager)
+        eventsManager = SplitsEventsManagerWrapper(eventsManager)
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
     }
@@ -40,7 +40,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
                                                             mySegmentsStorage: byKeyMySegmentsStorage,
                                                             telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
-                                                            eventsWrapper: eventsWrapper)
+                                                            eventsManager: eventsManager)
         mySegmentsSyncWorker.start()
 
         for _ in 0..<5 {
@@ -61,7 +61,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
                                                             mySegmentsStorage: byKeyMySegmentsStorage,
                                                             telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
-                                                            eventsWrapper: eventsWrapper)
+                                                            eventsManager: eventsManager)
 
         mySegmentsSyncWorker.start()
 
