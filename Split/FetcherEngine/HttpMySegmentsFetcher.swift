@@ -45,7 +45,7 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
     func fetch(userKey: String, headers: [String: String]?) -> DataResult<AllSegmentsChange>? {
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<AllSegmentsChange>?
-        restClient.getSegments(user: userKey, headers: headers) { result in
+        restClient.getMySegments(user: userKey, headers: headers) { result in
             requestResult = result
             semaphore.signal()
         }

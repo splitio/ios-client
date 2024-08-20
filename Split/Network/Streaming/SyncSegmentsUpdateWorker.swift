@@ -255,23 +255,6 @@ class MySegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
     }
 }
 
-class MyLargeSegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
-    private let synchronizer: Synchronizer
-
-    init(synchronizer: Synchronizer) {
-        self.synchronizer = synchronizer
-    }
-
-    func fetch(byKey key: String, delay: Int64) {
-        // TODO: Add delay parameter to synchronizer
-        synchronizer.forceMyLargeSegmentsSync(forKey: key)
-    }
-    
-    func notifyUpdate(forKey key: String) {
-        synchronizer.notifyLargeSegmentsUpdated(forKey: key)
-    }
-}
-
 struct SegmentsProcessInfo {
     let changeNumber: Int64
     let compressionType: CompressionType

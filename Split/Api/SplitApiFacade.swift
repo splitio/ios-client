@@ -111,7 +111,6 @@ class SplitApiFacadeBuilder {
         }
 
         return SplitApiFacade(splitsFetcher: splitsFetcher, mySegmentsFetcher: mySegmentsFetcher,
-                              myLargeSegmentsFetcher: myLargeSegmentsFetcher,
                               impressionsRecorder: getImpressionsRecorder(restClient: restClient),
                               impressionsCountRecorder: getImpressionsCountRecorder(restClient: restClient),
                               eventsRecorder: eventsRecorder, streamingHttpClient: self.streamingHttpClient,
