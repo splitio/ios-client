@@ -16,8 +16,11 @@ class SyncUpdateWorkerTest: XCTestCase {
     var splitsUpdateWorker: SplitsUpdateWorker!
     var mySegmentsUpdateWorker: MySegmentsUpdateWorker!
     var mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker!
+    var myLargeSegmentsUpdateWorker: MyLargeSegmentsUpdateWorker!
     var splitKillWorker: SplitKillWorker!
 
+    var segmentsUpdateWorkerHelper: SegmentsUpdateWorkerHelperMock!
+    var largeSegmentsUpdateWorkerHelper: SegmentsUpdateWorkerHelperMock!
     var synchronizer: SynchronizerStub!
     var splitsStorage: SplitsStorageStub!
     var mySegmentsStorage: MySegmentsStorageStub!
@@ -53,11 +56,12 @@ class SyncUpdateWorkerTest: XCTestCase {
                                                          mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
         mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
 
-        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
-                                                             synchronizer: synchronizer,
-                                                             mySegmentsStorage: mySegmentsStorage,
-                                                             payloadDecoder: mySegmentsPayloadDecoder,
-                                                             telemetryProducer: telemetryProducer)
+        segmentsUpdateWorkerHelper =  SegmentsUpdateWorkerHelperMock()
+        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(helper: segmentsUpdateWorkerHelper)
+        
+        largeSegmentsUpdateWorkerHelper =  SegmentsUpdateWorkerHelperMock()
+        myLargeSegmentsUpdateWorker =  MyLargeSegmentsUpdateWorker(helper: largeSegmentsUpdateWorkerHelper)
+
         splitKillWorker = SplitKillWorker(synchronizer: synchronizer, splitsStorage: splitsStorage)
     }
 
@@ -216,17 +220,9 @@ class SyncUpdateWorkerTest: XCTestCase {
                                                           updateStrategy: .unboundedFetchRequest,
                                                           segmentName: nil, data: nil)
 
-        let exp = XCTestExpectation(description: "exp")
-        synchronizer.forceMySegmentsSyncExp[userKey] = exp
-
         try mySegmentsUpdateV2Worker.process(notification: notification)
 
-        wait(for: [exp], timeout: 3)
-
-        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(synchronizer.forceMySegmentsSyncForKeyCalled[userKey] ?? false)
-        XCTAssertFalse(telemetryProducer.recordUpdatesFromSseCalled)
+        XCTAssertTrue(segmentsUpdateWorkerHelper.processCalled)
     }
 
     func testMySegmentsUpdateV2WorkerRemoval() throws {
@@ -236,16 +232,9 @@ class SyncUpdateWorkerTest: XCTestCase {
                                                           updateStrategy: .segmentRemoval,
                                                           segmentName: "s3", data: nil)
 
-        let exp = XCTestExpectation(description: "exp")
-        synchronizer.notifyMySegmentsUpdatedExp[userKey] = exp
-
         try mySegmentsUpdateV2Worker.process(notification: notification)
-        wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.segments[userKey]?.sorted())
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(telemetryProducer.recordUpdatesFromSseCalled)
+        XCTAssertTrue(segmentsUpdateWorkerHelper.processCalled)
     }
 
     func testMySegmentsUpdateV2WorkerNonRemoval() throws {
@@ -255,12 +244,8 @@ class SyncUpdateWorkerTest: XCTestCase {
                                                           segmentName: "not_in_segments", data: nil)
 
         try mySegmentsUpdateV2Worker.process(notification: notification)
-        ThreadUtils.delay(seconds: 2)
 
-        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertFalse(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
-        XCTAssertFalse(telemetryProducer.recordUpdatesFromSseCalled)
+        XCTAssertTrue(segmentsUpdateWorkerHelper.processCalled)
     }
 
     func testMySegmentsUpdateV2KeyListRemove() throws {
@@ -270,28 +255,9 @@ class SyncUpdateWorkerTest: XCTestCase {
                                                           updateStrategy: .keyList,
                                                           segmentName: "s3", data: "some data")
 
-        let bytes = Array(userKey.utf8)
-        let keyHash = Murmur64x128.hash(data: bytes, offset: 0, length: UInt32(bytes.count), seed: 0)[0]
-        mySegmentsPayloadDecoder.hashedKey = keyHash
-        mySegmentsPayloadDecoder.parsedKeyList = KeyList(added: [4, 5], removed: [keyHash, 3])
-
-        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
-                                                             synchronizer: synchronizer,
-                                                             mySegmentsStorage: mySegmentsStorage,
-                                                             payloadDecoder: mySegmentsPayloadDecoder,
-                                                             telemetryProducer: telemetryProducer)
-
-        let exp = XCTestExpectation(description: "exp")
-        synchronizer.notifyMySegmentsUpdatedExp[userKey] = exp
-
         try mySegmentsUpdateV2Worker.process(notification: notification)
-        wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.segments[userKey]?.sorted())
-        XCTAssertEqual(2, mySegmentsStorage.segments[userKey]?.count ?? -1)
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(telemetryProducer.recordUpdatesFromSseCalled)
+        XCTAssertTrue(segmentsUpdateWorkerHelper.processCalled)
     }
 
     func testMySegmentsUpdateV2KeyLisAdd() throws {
@@ -301,27 +267,11 @@ class SyncUpdateWorkerTest: XCTestCase {
                                                           updateStrategy: .keyList,
                                                           segmentName: "s5", data: "some data")
 
-        let bytes = Array(userKey.utf8)
-        let keyHash = Murmur64x128.hash(data: bytes, offset: 0, length: UInt32(bytes.count), seed: 0)[0]
-        mySegmentsPayloadDecoder.hashedKey = keyHash
-        mySegmentsPayloadDecoder.parsedKeyList = KeyList(added: [keyHash, 5], removed: [1, 3])
-
-        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
-                                                             synchronizer: synchronizer,
-                                                             mySegmentsStorage: mySegmentsStorage,
-                                                             payloadDecoder: mySegmentsPayloadDecoder,
-                                                             telemetryProducer: telemetryProducer)
-
-        let exp = XCTestExpectation(description: "exp")
-        synchronizer.notifyMySegmentsUpdatedExp[userKey] = exp
+                mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(helper: segmentsUpdateWorkerHelper)
 
         try mySegmentsUpdateV2Worker.process(notification: notification)
-        wait(for: [exp], timeout: 3)
 
-        XCTAssertEqual(["s1", "s2", "s3", "s5"], mySegmentsStorage.segments[userKey]?.sorted())
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(telemetryProducer.recordUpdatesFromSseCalled)
+        XCTAssertTrue(segmentsUpdateWorkerHelper.processCalled)
     }
 
     func testMySegmentsUpdateV2KeyListNoAction() throws {
@@ -330,21 +280,8 @@ class SyncUpdateWorkerTest: XCTestCase {
                                                           updateStrategy: .keyList,
                                                           segmentName: "s5", data: "some data")
 
-        let bytes = Array(userKey.utf8)
-        let keyHash = Murmur64x128.hash(data: bytes, offset: 0, length: UInt32(bytes.count), seed: 0)[0]
-        mySegmentsPayloadDecoder.hashedKey = keyHash
-        mySegmentsPayloadDecoder.parsedKeyList = KeyList(added: [6, 5], removed: [1, 3])
-
         try mySegmentsUpdateV2Worker.process(notification: notification)
 
-        ThreadUtils.delay(seconds: 1)
-
-        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
-        XCTAssertFalse(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
-        XCTAssertFalse(telemetryProducer.recordUpdatesFromSseCalled)
-    }
-
-    override func tearDown() {
-
+        XCTAssertTrue(segmentsUpdateWorkerHelper.processCalled)
     }
 }
