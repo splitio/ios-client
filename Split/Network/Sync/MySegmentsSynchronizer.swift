@@ -22,37 +22,40 @@ protocol MySegmentsSynchronizer {
 class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
 
     private let mySegmentsStorage: ByKeyMySegmentsStorage
+    private let myLargeSegmentsStorage: ByKeyMySegmentsStorage
     private let syncWorkerFactory: MySegmentsSyncWorkerFactory
     private let splitConfig: SplitClientConfig
     private var periodicMySegmentsSyncWorker: PeriodicSyncWorker?
     private let mySegmentsSyncWorker: RetryableSyncWorker
     private var mySegmentsForcedSyncWorker: RetryableSyncWorker?
-    private let eventsWrapper: SplitEventsManagerWrapper
+    private let eventsManager: SplitEventsManager
     private var isDestroyed = Atomic(false)
 
     init(userKey: String,
          splitConfig: SplitClientConfig,
          mySegmentsStorage: ByKeyMySegmentsStorage,
+         myLargeSegmentsStorage: ByKeyMySegmentsStorage,
          syncWorkerFactory: MySegmentsSyncWorkerFactory,
-         eventsWrapper: SplitEventsManagerWrapper) {
+         eventsManager: SplitEventsManager) {
 
         self.splitConfig = splitConfig
         self.mySegmentsStorage = mySegmentsStorage
+        self.myLargeSegmentsStorage = mySegmentsStorage
         self.syncWorkerFactory = syncWorkerFactory
-        self.eventsWrapper = eventsWrapper
+        self.eventsManager = eventsManager
         self.mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
             forKey: userKey,
             avoidCache: false,
-            eventsWrapper: eventsWrapper)
+            eventsManager: eventsManager)
         // If no single sync mode is enabled, create periodic and forced worker (polling and streaming)
         if splitConfig.syncEnabled {
             self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker(
                 forKey: userKey,
-                eventsWrapper: eventsWrapper)
+                eventsManager: eventsManager)
             self.mySegmentsForcedSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
                 forKey: userKey,
                 avoidCache: true,
-                eventsWrapper: eventsWrapper)
+                eventsManager: eventsManager)
         }
     }
 
@@ -62,8 +65,10 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         }
         DispatchQueue.general.async {
             self.mySegmentsStorage.loadLocal()
-            self.eventsWrapper.notifyLoadedFromCache()
-            TimeChecker.logInterval("Time until my segments loaded from cache")
+            self.eventsManager.notifyInternalEvent(.mySegmentsUpdated)
+            self.myLargeSegmentsStorage.loadLocal()
+            self.eventsManager.notifyInternalEvent(.myLargeSegmentsUpdated)
+           TimeChecker.logInterval("Time until my segments loaded from cache")
         }
     }
 
@@ -96,7 +101,8 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func notifiySegmentsUpdated() {
-        eventsWrapper.notifyUpdate()
+        // TODO: Update logic for ms y mls
+//        eventsManager.notifyUpdate()
     }
 
     func pause() {

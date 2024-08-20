@@ -42,6 +42,17 @@ class MySegmentsUpdateV2WorkerMock: MySegmentsUpdateV2Worker {
     }
 }
 
+class MyLargeSegmentsUpdateWorkerMock: MyLargeSegmentsUpdateWorker {
+    var processCalled = false
+    var throwException = false
+    override func process(notification: MyLargeSegmentsUpdateNotification) throws {
+        if throwException {
+            throw GenericError.unknown(message: "")
+        }
+        processCalled = true
+    }
+}
+
 class SplitKillWorkerMock: SplitKillWorker {
     var processCalled = false
     var throwException = false
@@ -49,6 +60,13 @@ class SplitKillWorkerMock: SplitKillWorker {
         if throwException {
             throw GenericError.unknown(message: "")
         }
+        processCalled = true
+    }
+}
+
+class SegmentsUpdateWorkerHelperMock: SegmentsUpdateWorkerHelper {
+    var processCalled = false
+    func process(_ info: SegmentsProcessInfo) {
         processCalled = true
     }
 }

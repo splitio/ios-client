@@ -17,7 +17,7 @@ struct SplitStorageContainer {
     let persistentEventsStorage: PersistentEventsStorage
     let telemetryStorage: TelemetryStorage?
     let mySegmentsStorage: MySegmentsStorage
-    let myLargeSegmentsStorage: MySegmentsStorage?
+    let myLargeSegmentsStorage: MySegmentsStorage
     let attributesStorage: AttributesStorage
     let uniqueKeyStorage: PersistentUniqueKeysStorage?
     let flagSetsCache: FlagSetsCache

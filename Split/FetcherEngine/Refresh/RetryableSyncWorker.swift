@@ -28,14 +28,14 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     var completion: SyncCompletion?
     var errorHandler: ErrorHandler?
     private var reconnectBackoffCounter: ReconnectBackoffCounter
-    private let eventsWrapper: SplitEventsManagerWrapper
+    private let eventsManager: SplitEventsManager
     private var isRunning: Atomic<Bool> = Atomic(false)
     private let syncQueue = DispatchQueue.general
 
-    init(eventsWrapper: SplitEventsManagerWrapper,
+    init(eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter) {
 
-        self.eventsWrapper = eventsWrapper
+        self.eventsManager = eventsManager
         self.reconnectBackoffCounter = reconnectBackoffCounter
     }
 
@@ -79,12 +79,14 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
         }
     }
 
-    func notifyUpdate() {
-        eventsWrapper.notifyUpdate()
+    func notifyUpdate(_ events: [SplitInternalEvent]) {
+        events.forEach {
+            eventsManager.notifyInternalEvent($0)
+        }
     }
 
     func isSdkReadyTriggered() -> Bool {
-        return eventsWrapper.isSdkReady
+        return eventsManager.eventAlreadyTriggered(event: .sdkReady)
     }
 
     func resetBackoffCounter() {
@@ -114,7 +116,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
     init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
          mySegmentsStorage: ByKeyMySegmentsStorage,
          telemetryProducer: TelemetryRuntimeProducer?,
-         eventsWrapper: SplitEventsManagerWrapper,
+         eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter,
          avoidCache: Bool) {
 
@@ -125,7 +127,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
         self.changeChecker = DefaultMySegmentsChangesChecker()
         self.avoidCache = avoidCache
 
-        super.init(eventsWrapper: eventsWrapper,
+        super.init(eventsManager: eventsManager,
                    reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
@@ -138,8 +140,9 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                 if !isSdkReadyTriggered() ||
                     changeChecker.mySegmentsHaveChanged(old: oldChange,
                                                         new: change) {
+                    // TODO: Logic to update my segments or large ms
                     mySegmentsStorage.set(change)
-                    notifyUpdate()
+//                    notifyUpdate()
                 }
                 resetBackoffCounter()
                 return true
@@ -186,7 +189,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            splitConfig: splitConfig)
-        super.init(eventsWrapper: SplitsEventsManagerWrapper(eventsManager),
+        super.init(eventsManager: eventsManager,
                    reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
@@ -260,7 +263,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            splitConfig: splitConfig)
-        super.init(eventsWrapper: SplitsEventsManagerWrapper(eventsManager),
+        super.init(eventsManager: eventsManager,
                    reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
@@ -277,7 +280,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
                 if result.featureFlagsUpdated {
-                    notifyUpdate()
+                    notifyUpdate([.splitsUpdated])
                 }
                 resetBackoffCounter()
                 return true

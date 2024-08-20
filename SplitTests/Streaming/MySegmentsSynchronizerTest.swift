@@ -36,7 +36,7 @@ class MySegmentsSynchronizerTest: XCTestCase {
         mySegmentsSync = DefaultMySegmentsSynchronizer(userKey: userKey, splitConfig: SplitClientConfig(),
                                                        mySegmentsStorage: mySegmentsStorage,
                                                        syncWorkerFactory: syncWorkerFactory,
-                                                       eventsWrapper: MySegmentsEventsManagerWrapper(eventsManager))
+                                                       eventsManager: MySegmentsEventsManagerWrapper(eventsManager))
     }
 
     func testLoadMySegmentsFromCache() {
