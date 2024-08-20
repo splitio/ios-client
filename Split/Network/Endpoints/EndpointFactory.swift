@@ -22,7 +22,8 @@ class EndpointFactory {
         static let sseAuth = "auth"
         static let splitChanges = "splitChanges"
         static let mySegments = "mySegments"
-        static let myLargeSegments = "myLargeSegments"
+        // TODO: Set the real endpoint
+        static let allMySegments = "myAllSegments"
         static let impressions = "testImpressions/bulk"
         static let impressionsCount = "testImpressions/count"
         static let events = "events/bulk"
@@ -98,13 +99,13 @@ class EndpointFactory {
             .add(headers: commonHeaders).add(headers: typeHeader).build()
     }
 
-    func myLargeSegmentsEndpoint(userKey: String) -> Endpoint {
+    func allMySegmentsEndpoint(userKey: String) -> Endpoint {
         let commonHeaders = Self.basicHeaders(apiKey: self.apiKey)
         let typeHeader = Self.typeHeader()
         let encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? userKey
         return Endpoint
             .builder(baseUrl: serviceEndpoints.sdkEndpoint,
-                     encodedPath: "\(EndpointsPath.myLargeSegments)/\(encodedUserKey)")
+                     encodedPath: "\(EndpointsPath.allMySegments)/\(encodedUserKey)")
             .add(headers: commonHeaders).add(headers: typeHeader).build()
     }
 

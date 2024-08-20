@@ -90,7 +90,6 @@ class DefaultSynchronizer: Synchronizer {
         self.telemetryProducer = splitStorageContainer.telemetryStorage
         self.telemetrySynchronizer = telemetrySynchronizer
         self.byKeySynchronizer = byKeyFacade
-
     }
 
     func loadSplitsFromCache() {
@@ -192,7 +191,6 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func pushImpression(impression: KeyImpression) {
-
         flushQueue.async { [weak self] in
             guard let self = self else { return }
 

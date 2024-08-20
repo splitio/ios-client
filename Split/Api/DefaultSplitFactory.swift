@@ -92,7 +92,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let syncManager = try components.buildSyncManager(notificationHelper: params.notificationHelper)
         let byKeyFacade = components.getByKeyFacade()
         let mySegmentsSyncWorkerFactory = try components.buildMySegmentsSyncWorkerFactory()
-        let myLargeSegmentsSyncWorkerFactory = try components.buildMyLargeSegmentsSyncWorkerFactory()
 
         let eventsTracker = try components.buildEventsTracker()
 
@@ -114,7 +113,6 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                              eventsTracker: eventsTracker,
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
-                                             myLargeSegmentsSyncWorkerFactory: myLargeSegmentsSyncWorkerFactory,
                                              telemetryStopwatch: params.initStopwatch,
                                              factory: self)
 
