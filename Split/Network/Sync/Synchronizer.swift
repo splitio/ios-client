@@ -12,21 +12,16 @@ protocol Synchronizer: ImpressionLogger {
     func start(forKey key: Key)
     func loadSplitsFromCache()
     func loadMySegmentsFromCache()
-    func loadMyLargeSegmentsFromCache()
     func loadAttributesFromCache()
     func synchronizeSplits()
     func synchronizeMySegments()
-    func synchronizeMyLargeSegments()
     func loadMySegmentsFromCache(forKey key: String)
-    func loadMyLargeSegmentsFromCache(forKey key: String)
     func loadAttributesFromCache(forKey key: String)
     func syncAll()
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments(forKey key: String)
-    func synchronizeMyLargeSegments(forKey key: String)
     func synchronizeTelemetryConfig()
     func forceMySegmentsSync(forKey key: String)
-    func forceMyLargeSegmentsSync(forKey key: String)
     func startPeriodicFetching()
     func stopPeriodicFetching()
     func startRecordingUserData()
@@ -95,7 +90,6 @@ class DefaultSynchronizer: Synchronizer {
         self.telemetryProducer = splitStorageContainer.telemetryStorage
         self.telemetrySynchronizer = telemetrySynchronizer
         self.byKeySynchronizer = byKeyFacade
-
     }
 
     func loadSplitsFromCache() {
@@ -106,20 +100,12 @@ class DefaultSynchronizer: Synchronizer {
         loadMySegmentsFromCache(forKey: defaultUserKey)
     }
 
-    func loadMyLargeSegmentsFromCache() {
-        loadMyLargeSegmentsFromCache(forKey: defaultUserKey)
-    }
-
     func loadAttributesFromCache() {
         loadAttributesFromCache(forKey: defaultUserKey)
     }
 
     func loadMySegmentsFromCache(forKey key: String) {
         byKeySynchronizer.loadMySegmentsFromCache(forKey: key)
-    }
-
-    func loadMyLargeSegmentsFromCache(forKey key: String) {
-        byKeySynchronizer.loadMyLargeSegmentsFromCache(forKey: key)
     }
 
     func loadAttributesFromCache(forKey key: String) {
@@ -152,20 +138,6 @@ class DefaultSynchronizer: Synchronizer {
     func forceMySegmentsSync(forKey key: String) {
         runIfSyncEnabled {
             self.byKeySynchronizer.forceMySegmentsSync(forKey: key)
-        }
-    }
-
-    func synchronizeMyLargeSegments() {
-        self.synchronizeMyLargeSegments(forKey: defaultUserKey)
-    }
-
-    func synchronizeMyLargeSegments(forKey key: String) {
-        byKeySynchronizer.syncMyLargeSegments(forKey: key)
-    }
-
-    func forceMyLargeSegmentsSync(forKey key: String) {
-        runIfSyncEnabled {
-            self.byKeySynchronizer.forceMyLargeSegmentsSync(forKey: key)
         }
     }
 
@@ -219,7 +191,6 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func pushImpression(impression: KeyImpression) {
-
         flushQueue.async { [weak self] in
             guard let self = self else { return }
 

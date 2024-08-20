@@ -18,9 +18,7 @@ protocol RestClient {
 protocol SplitApiRestClient: RestClientSplitChanges, RestClientImpressions,
                              RestClientTrackEvents, RestClientSseAuthenticator, RestClientTelemetryStats,
                              RestClientImpressionsCount, RestClientTelemetryConfig, RestClientUniqueKeys,
-                             RestClientSegments {}
-
-protocol RestClientSegments: RestClientMySegments, RestClientMyLargeSegments {}
+                             RestClientAllMySegments {}
 
 protocol HostReachabilityChecker {
     func isReachable(path url: String) -> Bool

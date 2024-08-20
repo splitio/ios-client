@@ -15,7 +15,6 @@ struct SplitApiFacade {
 
     let splitsFetcher: HttpSplitFetcher
     let mySegmentsFetcher: HttpMySegmentsFetcher
-    let myLargeSegmentsFetcher: HttpMySegmentsFetcher?
     let impressionsRecorder: HttpImpressionsRecorder?
     let impressionsCountRecorder: HttpImpressionsCountRecorder?
     let eventsRecorder: HttpEventsRecorder
@@ -89,10 +88,6 @@ class SplitApiFacadeBuilder {
 
         let mySegmentsFetcher: HttpMySegmentsFetcher
             = DefaultHttpMySegmentsFetcher(restClient: restClient,
-                                           syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
-        
-        let myLargeSegmentsFetcher: HttpMySegmentsFetcher
-            = HttpMyLargeSegmentsFetcher(restClient: restClient,
                                            syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
         let eventsRecorder
