@@ -21,9 +21,10 @@ class EndpointFactory {
     private struct EndpointsPath {
         static let sseAuth = "auth"
         static let splitChanges = "splitChanges"
+        // TODO: Remove on next PR
         static let mySegments = "mySegments"
-        // TODO: Set the real endpoint
-        static let allMySegments = "myAllSegments"
+        // TODO: Rename
+        static let allMySegments = "/memberships"
         static let impressions = "testImpressions/bulk"
         static let impressionsCount = "testImpressions/count"
         static let events = "events/bulk"
