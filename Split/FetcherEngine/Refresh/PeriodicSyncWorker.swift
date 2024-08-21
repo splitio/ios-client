@@ -185,6 +185,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
 
     private let mySegmentsFetcher: HttpMySegmentsFetcher
     private let mySegmentsStorage: ByKeyMySegmentsStorage
+    private let myLargeSegmentsStorage: ByKeyMySegmentsStorage
     private let userKey: String
     private let telemetryProducer: TelemetryRuntimeProducer?
     var changeChecker: MySegmentsChangesChecker
@@ -192,6 +193,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
     init(userKey: String,
          mySegmentsFetcher: HttpMySegmentsFetcher,
          mySegmentsStorage: ByKeyMySegmentsStorage,
+         myLargeSegmentsStorage: ByKeyMySegmentsStorage,
          telemetryProducer: TelemetryRuntimeProducer?,
          timer: PeriodicTimer,
          eventsManager: SplitEventsManager) {
@@ -199,6 +201,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         self.userKey = userKey
         self.mySegmentsFetcher = mySegmentsFetcher
         self.mySegmentsStorage = mySegmentsStorage
+        self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.telemetryProducer = telemetryProducer
         changeChecker = DefaultMySegmentsChangesChecker()
         super.init(timer: timer,
@@ -213,13 +216,31 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         do {
             let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(),
                                           changeNumber: -1)
-            if let change = try mySegmentsFetcher.execute(userKey: userKey, headers: nil) {
-                if changeChecker.mySegmentsHaveChanged(old: oldChange, new: change) {
-                    mySegmentsStorage.set(change)
-                    // TODO: Update logic when fetching segments and large segments
-                    notifyUpdate()
-                    Logger.i("My Segments have been updated")
-                    Logger.v(change.segments.joined(separator: ","))
+            let oldLargeChange = SegmentChange(segments: myLargeSegmentsStorage.getAll().asArray(),
+                                               changeNumber: myLargeSegmentsStorage.changeNumber)
+           if let change = try mySegmentsFetcher.execute(userKey: userKey, headers: nil) {
+               let newMsChange = change.mySegmentsChange
+               let newMlsChange = change.myLargeSegmentsChange
+               let msChanged = changeChecker.mySegmentsHaveChanged(old: oldChange, new: oldChange)
+               let mlsChanged = changeChecker.mySegmentsHaveChanged(old: oldChange, new: oldLargeChange)
+
+               if msChanged {
+                   mySegmentsStorage.set(newMsChange)
+                   Logger.i("My Segments have been updated")
+                   Logger.v(newMsChange.segments.joined(separator: ","))
+              }
+
+               if mlsChanged {
+                   myLargeSegmentsStorage.set(newMlsChange)
+                   Logger.i("My Large Segments have been updated")
+                   Logger.v(newMlsChange.segments.joined(separator: ","))
+               }
+
+               if msChanged || mlsChanged {
+                   notifyUpdate([.mySegmentsUpdated])
+                   Logger.i("My Segments have been updated")
+                   Logger.v(newMsChange.segments.joined(separator: ","))
+                   Logger.v(newMlsChange.segments.joined(separator: ","))
                 }
             }
         } catch let error {

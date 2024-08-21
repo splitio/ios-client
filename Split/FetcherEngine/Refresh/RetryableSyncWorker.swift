@@ -109,12 +109,14 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
     private let mySegmentsFetcher: HttpMySegmentsFetcher
     private let userKey: String
     private let mySegmentsStorage: ByKeyMySegmentsStorage
+    private let myLargeSegmentsStorage: ByKeyMySegmentsStorage
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let avoidCache: Bool
     var changeChecker: MySegmentsChangesChecker
 
     init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
          mySegmentsStorage: ByKeyMySegmentsStorage,
+         myLargeSegmentsStorage: ByKeyMySegmentsStorage,
          telemetryProducer: TelemetryRuntimeProducer?,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter,
@@ -122,6 +124,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
 
         self.userKey = userKey
         self.mySegmentsStorage = mySegmentsStorage
+        self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.mySegmentsFetcher = mySegmentsFetcher
         self.telemetryProducer = telemetryProducer
         self.changeChecker = DefaultMySegmentsChangesChecker()
@@ -136,13 +139,23 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             // TODO: Update change number logic line will be updated
             let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(),
                                           changeNumber: mySegmentsStorage.changeNumber)
+            let oldLargeChange = SegmentChange(segments: myLargeSegmentsStorage.getAll().asArray(),
+                                          changeNumber: myLargeSegmentsStorage.changeNumber)
+
             if let change = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: getHeaders()) {
-                if !isSdkReadyTriggered() ||
-                    changeChecker.mySegmentsHaveChanged(old: oldChange,
-                                                        new: change) {
-                    // TODO: Logic to update my segments or large ms
-                    mySegmentsStorage.set(change)
-//                    notifyUpdate()
+                let mySegmentsChange = change.mySegmentsChange
+                let myLargeSegmentsChange = change.myLargeSegmentsChange
+                let msChanged =  changeChecker.mySegmentsHaveChanged(old: oldChange,
+                                                        new: mySegmentsChange)
+
+                let mlsChanged = changeChecker.mySegmentsHaveChanged(old: oldLargeChange,
+                                                        new: myLargeSegmentsChange)
+                checkAndUpdate(isChanged: msChanged, change: mySegmentsChange, storage: mySegmentsStorage)
+                checkAndUpdate(isChanged: mlsChanged, change: myLargeSegmentsChange, storage: myLargeSegmentsStorage)
+
+                if !isSdkReadyTriggered() || msChanged || mlsChanged {
+                    // For now is not necessary specify which entity was updated
+                    notifyUpdate([.mySegmentsUpdated])
                 }
                 resetBackoffCounter()
                 return true
@@ -152,6 +165,12 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             errorHandler?(error)
         }
         return false
+    }
+
+    private func checkAndUpdate(isChanged: Bool, change: SegmentChange, storage: ByKeyMySegmentsStorage) {
+        if isChanged {
+            storage.set(change)
+        }
     }
 
     private func getHeaders() -> [String: String]? {
@@ -223,7 +242,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             if result.success {
                 if !isSdkReadyTriggered() ||
                     result.featureFlagsUpdated {
-                    notifyUpdate()
+                    notifyUpdate([.splitsUpdated])
                 }
                 resetBackoffCounter()
                 return true

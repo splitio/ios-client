@@ -328,6 +328,7 @@ extension SplitComponentFactory {
         let storageContainer = try getSplitStorageContainer()
         let component = DefaultMySegmentsSyncWorkerFactory(splitConfig: splitClientConfig,
                                                            mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                                           myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage,
                                                            mySegmentsFetcher: try getSplitApiFacade().mySegmentsFetcher,
                                                            telemetryProducer: storageContainer.telemetryStorage)
         catalog.add(component: component)

@@ -260,15 +260,18 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
 class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
     let splitConfig: SplitClientConfig
     let mySegmentsStorage: MySegmentsStorage
+    let myLargeSegmentsStorage: MySegmentsStorage
     let mySegmentsFetcher: HttpMySegmentsFetcher
     let telemetryProducer: TelemetryProducer?
 
     init(splitConfig: SplitClientConfig,
          mySegmentsStorage: MySegmentsStorage,
+         myLargeSegmentsStorage: MySegmentsStorage,
          mySegmentsFetcher: HttpMySegmentsFetcher,
          telemetryProducer: TelemetryProducer?) {
         self.splitConfig = splitConfig
         self.mySegmentsStorage = mySegmentsStorage
+        self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.mySegmentsFetcher = mySegmentsFetcher
         self.telemetryProducer = telemetryProducer
     }
@@ -279,10 +282,12 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
 
         let backoffBase =  splitConfig.generalRetryBackoffBase
         let mySegmentsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
-        let byKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
+        let msByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
+        let mlsByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
         return RetryableMySegmentsSyncWorker(userKey: key,
                                              mySegmentsFetcher: mySegmentsFetcher,
-                                             mySegmentsStorage: byKeyStorage,
+                                             mySegmentsStorage: msByKeyStorage,
+                                             myLargeSegmentsStorage: mlsByKeyStorage,
                                              telemetryProducer: telemetryProducer,
                                              eventsManager: eventsManager,
                                              reconnectBackoffCounter: mySegmentsBackoffCounter,
@@ -292,10 +297,12 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
     func createPeriodicMySegmentsSyncWorker(forKey key: String,
                                             eventsManager: SplitEventsManager) -> PeriodicSyncWorker {
         let byKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
+        let byKeyLargeStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: myLargeSegmentsStorage, userKey: key)
 
         return PeriodicMySegmentsSyncWorker(
             userKey: key, mySegmentsFetcher: mySegmentsFetcher,
             mySegmentsStorage: byKeyStorage,
+            myLargeSegmentsStorage: byKeyLargeStorage,
             telemetryProducer: telemetryProducer,
             timer: DefaultPeriodicTimer(interval: splitConfig.segmentsRefreshRate),
             eventsManager: eventsManager)

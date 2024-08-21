@@ -7,22 +7,23 @@
 //
 
 import Foundation
-struct MySegmentsChange: Codable {
-    var changeNumber: Int64
-    var segments: [String]
-}
 
 struct AllSegmentsChange: Codable {
-    var mySegmentsChange: MySegmentsChange
-    var myLargeSegmentsChange: MySegmentsChange
+    var mySegmentsChange: SegmentChange
+    var myLargeSegmentsChange: SegmentChange
 
-    func mySegmentChange() -> SegmentChange {
-        return SegmentChange(segments: mySegmentsChange.segments,
-                             changeNumber: -1)
+    enum CodingKeys: String, CodingKey {
+        case mySegmentsChange = "ms"
+        case myLargeSegmentsChange = "ls"
     }
-
-    func myLargeSegmentChange() -> SegmentChange {
-        return SegmentChange(segments: myLargeSegmentsChange.segments,
-                             changeNumber: myLargeSegmentsChange.changeNumber)
-    }
+    //    {
+//      ms: {
+//        cn?: integer, // ATM not available for mySegments, but it might be available in the future
+//        k: [{ n: 'segment_name_1' }, { n: 'segment_name_2' }, ...] // make sure we can expand the object for each segment safely
+//      },
+//      ls: {
+//        cn?: integer, // Available for myLargeSegments
+//        k: [{ n: 'large_segment_name_1' }, { n: 'large_segment_name_2' }, ...] // make sure we can expand the object for each segment safely
+//      },
+//    }
 }
