@@ -34,7 +34,6 @@ class PushNotificationManagerTest: XCTestCase {
         let byKeyGroup = ByKeyComponentGroup(splitClient: SplitClientStub(),
                                              eventsManager: SplitEventsManagerStub(),
                                              mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
-                                             myLargeSegmentsSynchronizer: MySegmentsSynchronizerStub(),
                                              attributesStorage: ByKeyAttributesStorageStub(userKey: userKey,
                                                                                            attributesStorage: AttributesStorageStub()))
         byKeyFacade.append(byKeyGroup, forKey: key)

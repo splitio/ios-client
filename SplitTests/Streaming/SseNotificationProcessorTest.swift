@@ -244,7 +244,7 @@ class SseNotificationProcessorTest: XCTestCase {
                                                                                                     hash: nil,
                                                                                                     seed: 0,
                                                                                                     timeMillis: 100)
-        let notification = IncomingNotification(type: .mySegmentsUpdateV2,
+        let notification = IncomingNotification(type: .myLargeSegmentsUpdate,
                                                 channel: nil,
                                                 jsonData: "",
                                                 timestamp: 1000)
@@ -263,12 +263,12 @@ class SseNotificationProcessorTest: XCTestCase {
                                                                                                     seed: 0,
                                                                                                     timeMillis: 100)
 
-        let notification = IncomingNotification(type: .mySegmentsUpdateV2,
+        let notification = IncomingNotification(type: .myLargeSegmentsUpdate,
                                                 channel: nil,
                                                 jsonData: "",
                                                 timestamp: 1000)
         notificationProcessor.process(notification)
 
-        XCTAssertTrue(mySegmentsUpdateV2Worker.processCalled)
+        XCTAssertTrue(myLargeSegmentsUpdateWorker.processCalled)
     }
 }

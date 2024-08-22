@@ -12,11 +12,11 @@ import Foundation
 class HttpMySegmentsFetcherStub: HttpMySegmentsFetcher {
     var fetchMySegmentsCount = 0
     private var segmentsIndex = -1
-    var allSegments: [SegmentChange?]?
+    var segments: [AllSegmentsChange?]?
     var httpError: HttpError?
     var headerList = [[String: String]]()
 
-    func execute(userKey: String, headers: [String: String]?) throws -> SegmentChange? {
+    func execute(userKey: String, headers: [String: String]?) throws -> AllSegmentsChange? {
 
         if let error = httpError {
             throw error
@@ -25,13 +25,17 @@ class HttpMySegmentsFetcherStub: HttpMySegmentsFetcher {
         if let headers = headers {
             self.headerList.append(headers)
         }
-        var segments: SegmentChange? = nil
-        if let allSegments = self.allSegments {
-            if  segmentsIndex < allSegments.count - 1 {
+        var change: AllSegmentsChange? = nil
+        if let segments = self.segments {
+            if  segmentsIndex < segments.count - 1 {
                 segmentsIndex+=1
             }
-            segments = allSegments[segmentsIndex]
+            change = segments[segmentsIndex]
         }
-        return segments
+       return change
+    }
+
+    func emptyChange() -> SegmentChange {
+        return SegmentChange(segments: [])
     }
 }

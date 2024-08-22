@@ -15,16 +15,16 @@ class MySegmentsSyncWorkerTest: XCTestCase {
 
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
+    var myLargeSegmentsStorage: ByKeyMySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
-    var eventsManager: SplitEventsManager!
     var backoffCounter: ReconnectBackoffCounterStub!
     var mySegmentsSyncWorker: RetryableMySegmentsSyncWorker!
 
     override func setUp() {
         mySegmentsFetcher = HttpMySegmentsFetcherStub()
         mySegmentsStorage = ByKeyMySegmentsStorageStub()
+        myLargeSegmentsStorage = ByKeyMySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
-        eventsManager = MySegmentsEventsManagerWrapper(eventsManager)
         backoffCounter = ReconnectBackoffCounterStub()
 
         eventsManager.isSegmentsReadyFired = false
@@ -32,15 +32,20 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsSyncWorker = RetryableMySegmentsSyncWorker(
             userKey: "CUSTOMER_ID",
             mySegmentsFetcher: mySegmentsFetcher,
-            mySegmentsStorage: mySegmentsStorage, telemetryProducer: TelemetryStorageStub(),
+            mySegmentsStorage: mySegmentsStorage, 
+            myLargeSegmentsStorage: myLargeSegmentsStorage,
+            telemetryProducer: TelemetryStorageStub(),
             eventsManager: eventsManager,
             reconnectBackoffCounter: backoffCounter,
             avoidCache: false)
     }
 
     func testOneTimeFetchSuccess() {
-
-        mySegmentsFetcher.allSegments = [SegmentChange(segments: ["s1", "s2"])]
+        let msChange = SegmentChange(segments: ["s1", "s2"])
+        let mlsChange = SegmentChange(segments: ["s10", "s20"])
+        let change = AllSegmentsChange(mySegmentsChange: msChange,
+                                       myLargeSegmentsChange: mlsChange)
+        mySegmentsFetcher.segments = [change]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in
@@ -58,8 +63,11 @@ class MySegmentsSyncWorkerTest: XCTestCase {
     }
 
     func testRetryAndSuccess() {
-
-        mySegmentsFetcher.allSegments = [nil, nil, SegmentChange(segments: ["s1", "s2"])]
+        let msChange = SegmentChange(segments: ["s1", "s2"])
+        let mlsChange = SegmentChange(segments: ["s1", "s2"])
+        let change = AllSegmentsChange(mySegmentsChange: msChange,
+                                       myLargeSegmentsChange: mlsChange)
+        mySegmentsFetcher.segments = [nil, nil, change]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in
@@ -77,7 +85,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
 
     func testStopNoSuccess() {
 
-        mySegmentsFetcher.allSegments = [nil]
+        mySegmentsFetcher.segments = [nil]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in
@@ -99,12 +107,19 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsSyncWorker = RetryableMySegmentsSyncWorker(
             userKey: "CUSTOMER_ID",
             mySegmentsFetcher: mySegmentsFetcher,
-            mySegmentsStorage: mySegmentsStorage, telemetryProducer: TelemetryStorageStub(),
+            mySegmentsStorage: mySegmentsStorage, 
+            myLargeSegmentsStorage: myLargeSegmentsStorage,
+            telemetryProducer: TelemetryStorageStub(),
             eventsManager: eventsManager,
             reconnectBackoffCounter: backoffCounter,
             avoidCache: true)
 
-        mySegmentsFetcher.allSegments = [SegmentChange(segments: ["s1", "s2"])]
+        let msChange = SegmentChange(segments: ["s1", "s2"])
+        let mlsChange = SegmentChange(segments: ["s10", "s20"])
+        let change = AllSegmentsChange(mySegmentsChange: msChange,
+                                       myLargeSegmentsChange: mlsChange)
+
+        mySegmentsFetcher.segments = [change]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in

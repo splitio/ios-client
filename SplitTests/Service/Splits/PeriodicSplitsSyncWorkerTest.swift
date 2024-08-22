@@ -16,7 +16,6 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
     var splitFetcher: HttpSplitFetcherStub!
     var splitsStorage: SplitsStorageStub!
     var eventsManager: SplitEventsManagerMock!
-    var eventsManager: SplitEventsManager!
     var backoffCounter: ReconnectBackoffCounterStub!
     var splitsSyncWorker: PeriodicSplitsSyncWorker!
     var splitChangeProcessor: SplitChangeProcessorStub!
@@ -26,7 +25,6 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         splitsStorage = SplitsStorageStub()
         splitChangeProcessor = SplitChangeProcessorStub()
         eventsManager = SplitEventsManagerMock()
-        eventsManager = SplitsEventsManagerWrapper(eventsManager)
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
     }

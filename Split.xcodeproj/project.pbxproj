@@ -420,7 +420,6 @@
 		9519A93827DE2AE600278AEC /* ByKeyFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A93727DE2AE600278AEC /* ByKeyFacade.swift */; };
 		9519A93A27DE318000278AEC /* ByKeyFacadeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A93927DE318000278AEC /* ByKeyFacadeTest.swift */; };
 		9523B8CF28622B6500AEE178 /* CdnByPassTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9523B8CE28622B6500AEE178 /* CdnByPassTest.swift */; };
-		9524EFF82C63BDD800ECBF7B /* HttpMyLargeSegmentsFetcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524EFF72C63BDD800ECBF7B /* HttpMyLargeSegmentsFetcherTest.swift */; };
 		9524EFFC2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524EFFB2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift */; };
 		9524EFFE2C666C5700ECBF7B /* AllSegmentsChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524EFFD2C666C5700ECBF7B /* AllSegmentsChange.swift */; };
 		9524F0022C6A4CC100ECBF7B /* in_large_segment_whitelist_split.json in Resources */ = {isa = PBXBuildFile; fileRef = 9524F0012C6A4CC100ECBF7B /* in_large_segment_whitelist_split.json */; };
@@ -587,8 +586,8 @@
 		95825BAB271F00CB00A0CDAD /* split_cache.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */; platformFilter = ios; };
 		95825BD8271F4E3700A0CDAD /* Bundle+Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95825BD7271F4E3700A0CDAD /* Bundle+Name.swift */; };
 		95825C022721F0F800A0CDAD /* UserKeyEncondingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95825C012721F0F800A0CDAD /* UserKeyEncondingTest.swift */; };
-		9582A1832C73D4F5001F25E2 /* RestClient+MySegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582A1822C73D4F5001F25E2 /* RestClient+MySegments.swift */; };
 		9582A1812C6E70A5001F25E2 /* SegmentsUpdateWorkerHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582A1802C6E70A5001F25E2 /* SegmentsUpdateWorkerHelperTests.swift */; };
+		9582A1832C73D4F5001F25E2 /* RestClient+MySegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582A1822C73D4F5001F25E2 /* RestClient+MySegments.swift */; };
 		9583554028464FD300014F0C /* SingleSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9583553F28464FD300014F0C /* SingleSyncTest.swift */; };
 		95880CFA2AEFF159000498A0 /* FlagSetsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572BA822AC5F66700C10FC1 /* FlagSetsCache.swift */; };
 		95880CFB2AEFF177000498A0 /* FlagSetsValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953DAA5E2ABDC10C004056CE /* FlagSetsValidator.swift */; };
@@ -1543,7 +1542,6 @@
 		9519A93727DE2AE600278AEC /* ByKeyFacade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByKeyFacade.swift; sourceTree = "<group>"; };
 		9519A93927DE318000278AEC /* ByKeyFacadeTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByKeyFacadeTest.swift; sourceTree = "<group>"; };
 		9523B8CE28622B6500AEE178 /* CdnByPassTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CdnByPassTest.swift; sourceTree = "<group>"; };
-		9524EFF72C63BDD800ECBF7B /* HttpMyLargeSegmentsFetcherTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpMyLargeSegmentsFetcherTest.swift; sourceTree = "<group>"; };
 		9524EFFB2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsManagerWrapper.swift; sourceTree = "<group>"; };
 		9524EFFD2C666C5700ECBF7B /* AllSegmentsChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllSegmentsChange.swift; sourceTree = "<group>"; };
 		9524F0012C6A4CC100ECBF7B /* in_large_segment_whitelist_split.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = in_large_segment_whitelist_split.json; sourceTree = "<group>"; };
@@ -1699,8 +1697,8 @@
 		95825BD7271F4E3700A0CDAD /* Bundle+Name.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Name.swift"; sourceTree = "<group>"; };
 		95825BDC271F4E8700A0CDAD /* Bundle+Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Name.swift"; sourceTree = "<group>"; };
 		95825C012721F0F800A0CDAD /* UserKeyEncondingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserKeyEncondingTest.swift; sourceTree = "<group>"; };
-		9582A1822C73D4F5001F25E2 /* RestClient+MySegments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+MySegments.swift"; sourceTree = "<group>"; };
 		9582A1802C6E70A5001F25E2 /* SegmentsUpdateWorkerHelperTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentsUpdateWorkerHelperTests.swift; sourceTree = "<group>"; };
+		9582A1822C73D4F5001F25E2 /* RestClient+MySegments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+MySegments.swift"; sourceTree = "<group>"; };
 		9583553F28464FD300014F0C /* SingleSyncTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleSyncTest.swift; sourceTree = "<group>"; };
 		95880D082AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSStreaming_1.xctestplan; sourceTree = "<group>"; };
 		958F98712B1124EC001F35B3 /* SplitBgSynchronizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitBgSynchronizerTests.swift; sourceTree = "<group>"; };
@@ -3272,7 +3270,6 @@
 				95649FBD260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift */,
 				59F4AAC32513EFF700A1C69A /* PeriodicMySegmentsSyncWorkerTest.swift */,
 				954F9C5B25780FDD00140B81 /* HttpMySegmentsFetcherTest.swift */,
-				9524EFF72C63BDD800ECBF7B /* HttpMyLargeSegmentsFetcherTest.swift */,
 				956D17D6260D28320037F575 /* MySegmentsChangeChecker.swift */,
 			);
 			path = MySegments;
@@ -4245,7 +4242,6 @@
 				95CC53C62695F68500A07A04 /* ImpressionsDedupTest.swift in Sources */,
 				59AD7ACA2465C32D00F5B0B4 /* EventDTOJsonTest.swift in Sources */,
 				5905D4F5255C596C006DA3B1 /* PersistentSplitsStorageStub.swift in Sources */,
-				9524EFF82C63BDD800ECBF7B /* HttpMyLargeSegmentsFetcherTest.swift in Sources */,
 				95B4369A26F147F100E1EB9C /* MySegmentsV2PayloaDecoderTest.swift in Sources */,
 				953DAA612ABDE8AF004056CE /* FlagSetValidatorTests.swift in Sources */,
 				9551666B276A46E000FE9D55 /* TelemetrySynchronizerTest.swift in Sources */,
