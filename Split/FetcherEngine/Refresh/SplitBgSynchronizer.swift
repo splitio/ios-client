@@ -222,6 +222,9 @@ struct BackgroundSyncExecutor {
 
         let mySegmentsStorage =
             SplitDatabaseHelper.openPersistentMySegmentsStorage(database: self.splitDatabase)
+        let myLargeSegmentsStorage =
+            SplitDatabaseHelper.openPersistentMyLargeSegmentsStorage(database: self.splitDatabase)
+
         operationQueue.addOperation {
             for (userKey, timestamp) in self.userKeys {
                 if self.isExpired(timestamp: timestamp) {
@@ -231,7 +234,8 @@ struct BackgroundSyncExecutor {
 
                 let mySegmentsSyncWorker = BackgroundMySegmentsSyncWorker(
                     userKey: userKey, mySegmentsFetcher: self.mySegmentsFetcher,
-                    mySegmentsStorage: mySegmentsStorage)
+                    mySegmentsStorage: mySegmentsStorage,
+                    myLargeSegmentsStorage: myLargeSegmentsStorage)
                 mySegmentsSyncWorker.execute()
             }
         }

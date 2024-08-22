@@ -9,12 +9,17 @@
 import Foundation
 
 struct SegmentChange: Codable {
-    var segments: [String]
-    var changeNumber: Int64
+    var segments: [Segment]
+    var changeNumber: Int64?
 
-    init(segments: [String], changeNumber: Int64 = -1) {
-        self.segments = segments
+    init(segments: [String], changeNumber: Int64? = nil) {
+        self.segments = segments.compactMap { Segment(name: $0) }
         self.changeNumber = changeNumber
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case changeNumber = "cn"
+        case segments = "k"
     }
 
     static func empty() -> SegmentChange {
