@@ -11,14 +11,14 @@ import Foundation
 class MyLargeSegmentsStorage: MySegmentsStorage {
 
     private var inMemorySegments: SynchronizedDictionary<String, SegmentChange> = SynchronizedDictionary()
-    private let persistentStorage: PersistentMyLargeSegmentsStorage
+    private let persistentStorage: PersistentMySegmentsStorage
     private let defaultChangeNumber = ServiceConstants.defaultMlsChangeNumber
 
     var keys: Set<String> {
         return inMemorySegments.keys
     }
 
-    init(persistentStorage: PersistentMyLargeSegmentsStorage) {
+    init(persistentStorage: PersistentMySegmentsStorage) {
         self.persistentStorage = persistentStorage
     }
 
@@ -31,8 +31,11 @@ class MyLargeSegmentsStorage: MySegmentsStorage {
         return inMemorySegments.value(forKey: key)?.changeNumber ?? defaultChangeNumber
     }
 
+    func lowerChangeNumber() -> Int64 {
+        return inMemorySegments.all.values.compactMap { $0.changeNumber }.min() ?? -1
+    }
     func getAll(forKey key: String) -> Set<String> {
-        return inMemorySegments.value(forKey: key)?.segments.asSet() ?? Set<String>()
+        return inMemorySegments.value(forKey: key)?.segments.compactMap { $0.name }.asSet() ?? Set<String>()
     }
 
     func set(_ change: SegmentChange, forKey key: String) {

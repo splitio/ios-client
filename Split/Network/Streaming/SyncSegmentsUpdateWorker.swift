@@ -37,8 +37,13 @@ class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
         }
         if notification.includesPayload {
             if let segmentList = notification.segmentList {
-                // TODO: Check change number logic when implementing my large storage
+                let newChange = SegmentChange(segments: segmentList,
+                                              changeNumber: notification.changeNumber)
+
                 let oldSegments = mySegmentsStorage.getAll(forKey: userKey).asArray()
+                let oldChange = SegmentChange(segments: oldSegments,
+                                              changeNumber: mySegmentsStorage.changeNumber(forKey: userKey))
+
                 if changesChecker.mySegmentsHaveChanged(oldSegments: oldSegments,
                                                         newSegments: segmentList) {
                     mySegmentsStorage.set(SegmentChange(segments: segmentList),
@@ -90,7 +95,7 @@ class MyLargeSegmentsUpdateWorker: UpdateWorker<MyLargeSegmentsUpdateNotificatio
 
     init(helper: SegmentsUpdateWorkerHelper) {
         self.helper = helper
-        super.init(queueName: "MyLargeSegmentsUpdateWorker")
+        super.init(queueName: "split - MyLargeSegmentsUpdateWorker")
     }
 
     override func process(notification: MyLargeSegmentsUpdateNotification) throws {
@@ -230,6 +235,10 @@ class DefaultSegmentsUpdateWorkerHelper: SegmentsUpdateWorkerHelper {
         for userKey in userKeys {
             action(userKey)
         }
+    }
+
+    private func shouldProcessChangeNumber(_ changeNumber: Int64) -> Bool {
+        return changeNumber > mySegmentsStorage.lowerChangeNumber()
     }
 }
 

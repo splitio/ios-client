@@ -17,22 +17,22 @@ class BackgroundMySegmentsSyncWorker: BackgroundSyncWorker {
     private let mySegmentsFetcher: HttpMySegmentsFetcher
     private let userKey: String
     private let mySegmentsStorage: PersistentMySegmentsStorage
-    private let myLargeSegmentsStorage: PersistentMyLargeSegmentsStorage
+    private let myLargeSegmentsStorage: PersistentMySegmentsStorage
 
     init(userKey: String, mySegmentsFetcher: HttpMySegmentsFetcher,
          mySegmentsStorage: PersistentMySegmentsStorage,
-         myLargeSegmentsStorage: PersistentMyLargeSegmentsStorage) {
+         myLargeSegmentsStorage: PersistentMySegmentsStorage) {
 
         self.userKey = userKey
         self.mySegmentsStorage = mySegmentsStorage
-        self.myLargeSegmentsStorage = myLargeSegmentsStorage
+        self.myLargeSegmentsStorage = mySegmentsStorage
         self.mySegmentsFetcher = mySegmentsFetcher
     }
 
     func execute() {
         do {
             if let change = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: nil) {
-                mySegmentsStorage.set(change.mySegmentsChange.segments, forKey: userKey)
+                mySegmentsStorage.set(change.mySegmentsChange, forKey: userKey)
                 myLargeSegmentsStorage.set(change.myLargeSegmentsChange, forKey: userKey)
             }
         } catch let error {

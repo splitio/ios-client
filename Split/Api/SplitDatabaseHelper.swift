@@ -171,8 +171,8 @@ struct SplitDatabaseHelper {
         return DefaultPersistentMySegmentsStorage(database: database)
     }
 
-    static func openPersistentMyLargeSegmentsStorage(database: SplitDatabase) -> PersistentMyLargeSegmentsStorage {
-        return DefaultPersistentMyLargeSegmentsStorage(database: database)
+    static func openPersistentMyLargeSegmentsStorage(database: SplitDatabase) -> PersistentMySegmentsStorage {
+        return DefaultPersistentMySegmentsStorage(database: database)
     }
 
     static func openMySegmentsStorage(database: SplitDatabase) -> MySegmentsStorage {

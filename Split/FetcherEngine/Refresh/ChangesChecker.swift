@@ -12,24 +12,35 @@ protocol SplitsChangesChecker {
     func splitsHaveChanged(oldChangeNumber: Int64, newChangeNumber: Int64) -> Bool
 }
 
-protocol MySegmentsChangesChecker {
-    func mySegmentsHaveChanged(old: SegmentChange, new: SegmentChange) -> Bool
-    func mySegmentsHaveChanged(oldSegments: [String], newSegments: [String]) -> Bool
-}
-
 struct DefaultSplitsChangesChecker: SplitsChangesChecker {
     func splitsHaveChanged(oldChangeNumber: Int64, newChangeNumber: Int64) -> Bool {
         return oldChangeNumber < newChangeNumber
     }
 }
 
+protocol MySegmentsChangesChecker {
+    func mySegmentsHaveChanged(old: SegmentChange, new: SegmentChange) -> Bool
+    func mySegmentsHaveChanged(oldSegments: [Segment], newSegments: [Segment]) -> Bool
+    func mySegmentsHaveChanged(oldSegments: [String], newSegments: [String]) -> Bool
+}
+
 struct DefaultMySegmentsChangesChecker: MySegmentsChangesChecker {
     func mySegmentsHaveChanged(old: SegmentChange, new: SegmentChange) -> Bool {
+        if old.changeNumber ?? -1 > new.changeNumber ?? -1 {
+            return false
+        }
         return mySegmentsHaveChanged(oldSegments: old.segments, newSegments: new.segments)
+    }
+
+    func mySegmentsHaveChanged(oldSegments: [Segment], newSegments: [Segment]) -> Bool {
+        let old = oldSegments.map { $0.name }
+        let new = newSegments.map { $0.name }
+        return mySegmentsHaveChanged(oldSegments: old, newSegments: new)
     }
 
     func mySegmentsHaveChanged(oldSegments: [String], newSegments: [String]) -> Bool {
         return !(oldSegments.count == newSegments.count &&
                  oldSegments.sorted() == newSegments.sorted())
     }
+
 }
