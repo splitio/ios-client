@@ -9,23 +9,35 @@
 import Foundation
 
 protocol PersistentMySegmentsStorage {
-    func set(_ segments: [String], forKey key: String)
-    func getSnapshot(forKey key: String) -> [String]
+    func set(_ change: SegmentChange, forKey key: String)
+    func getSnapshot(forKey key: String) -> SegmentChange?
 }
 
-class DefaultPersistentMySegmentsStorage: PersistentMySegmentsStorage {
+class PersistentSegmentsStorage: PersistentMySegmentsStorage {
 
-    private let mySegmentsDao: MySegmentsDao
+    private let dao: MySegmentsDao
 
+    init(dao: MySegmentsDao) {
+        self.dao = dao
+    }
+
+    func set(_ change: SegmentChange, forKey key: String) {
+        dao.update(userKey: key, change: change)
+    }
+
+    func getSnapshot(forKey key: String) -> SegmentChange? {
+        return dao.getBy(userKey: key)
+    }
+}
+
+class DefaultPersistentMySegmentsStorage: PersistentSegmentsStorage {
     init(database: SplitDatabase) {
-        self.mySegmentsDao = database.mySegmentsDao
+        super.init(dao: database.mySegmentsDao)
     }
+}
 
-    func set(_ segments: [String], forKey key: String) {
-        mySegmentsDao.update(userKey: key, segmentList: segments)
-    }
-
-    func getSnapshot(forKey key: String) -> [String] {
-        return mySegmentsDao.getBy(userKey: key)
+class DefaultPersistentMyLargeSegmentsStorage: PersistentSegmentsStorage {
+    init(database: SplitDatabase) {
+        super.init(dao: database.myLargeSegmentsDao)
     }
 }

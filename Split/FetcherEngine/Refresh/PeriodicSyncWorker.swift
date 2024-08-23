@@ -227,20 +227,20 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                if msChanged {
                    mySegmentsStorage.set(newMsChange)
                    Logger.i("My Segments have been updated")
-                   Logger.v(newMsChange.segments.joined(separator: ","))
+                   Logger.v(newMsChange.segments.compactMap { $0.name }.joined(separator: ","))
               }
 
                if mlsChanged {
                    myLargeSegmentsStorage.set(newMlsChange)
                    Logger.i("My Large Segments have been updated")
-                   Logger.v(newMlsChange.segments.joined(separator: ","))
+                   Logger.v(newMlsChange.segments.compactMap { $0.name }.joined(separator: ","))
                }
 
                if msChanged || mlsChanged {
                    notifyUpdate([.mySegmentsUpdated])
                    Logger.i("My Segments have been updated")
-                   Logger.v(newMsChange.segments.joined(separator: ","))
-                   Logger.v(newMlsChange.segments.joined(separator: ","))
+                   Logger.v(newMsChange.segments.compactMap { $0.name }.joined(separator: ","))
+                   Logger.v(newMlsChange.segments.compactMap { $0.name }.joined(separator: ","))
                 }
             }
         } catch let error {

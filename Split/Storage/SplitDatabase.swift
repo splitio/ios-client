@@ -50,7 +50,7 @@ protocol TestSplitDatabase {
 protocol SplitDatabase {
     var splitDao: SplitDao { get }
     var mySegmentsDao: MySegmentsDao { get }
-    var myLargeSegmentsDao: MyLargeSegmentsDao { get }
+    var myLargeSegmentsDao: MySegmentsDao { get }
     var eventDao: EventDao { get }
     var impressionDao: ImpressionDao { get }
     var impressionsCountDao: ImpressionsCountDao { get }
@@ -63,7 +63,7 @@ protocol SplitDatabase {
 class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao
-    var myLargeSegmentsDao: MyLargeSegmentsDao
+    var myLargeSegmentsDao: MySegmentsDao
     var eventDao: EventDao
     var impressionDao: ImpressionDao
     var impressionsCountDao: ImpressionsCountDao
@@ -83,8 +83,10 @@ class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
         self.impressionsCountDao = CoreDataImpressionsCountDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
         self.mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper,
+                                                   entity: .mySegment,
                                                    cipher: cipher)
-        self.myLargeSegmentsDao = CoreDataMyLargeSegmentsDao(coreDataHelper: coreDataHelper,
+        self.myLargeSegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper,
+                                                        entity: .myLargeSegment,
                                                         cipher: cipher)
         self.attributesDao = CoreDataAttributesDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: coreDataHelper, cipher: cipher)

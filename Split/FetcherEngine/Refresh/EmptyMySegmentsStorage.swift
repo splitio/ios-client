@@ -15,6 +15,10 @@ class EmptyMySegmentsStorage: MySegmentsStorage {
     
     var changeNumber: Int64 = -1
 
+    func lowerChangeNumber() -> Int64 {
+        return -1
+    }
+
     func set(_ change: SegmentChange, forKey key: String) {
     }
     
