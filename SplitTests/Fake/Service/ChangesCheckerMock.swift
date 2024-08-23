@@ -16,6 +16,10 @@ struct MySegmentsChangesCheckerMock: MySegmentsChangesChecker {
         return haveChanged
     }
 
+    func mySegmentsHaveChanged(oldSegments old: [Segment], newSegments new: [Segment]) -> Bool {
+        return haveChanged
+    }
+
     func mySegmentsHaveChanged(oldSegments old: [String], newSegments new: [String]) -> Bool {
         return haveChanged
     }

@@ -84,7 +84,7 @@ class MySegmentUpdateV2Test: XCTestCase {
         pushMessage(TestingData.kSegmentRemovalNotification)
         wait(for: [sdkUpdExp], timeout: 5)
 
-        let segmentEntity = db.mySegmentsDao.getBy(userKey: testFactory.userKey)
+        let segmentEntity = db.mySegmentsDao.getBy(userKey: testFactory.userKey)?.segments.map { $0.name } ?? []
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual(1, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)

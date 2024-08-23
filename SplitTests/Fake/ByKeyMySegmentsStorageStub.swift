@@ -31,7 +31,7 @@ class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage {
     }
 
     func set(_ change: SegmentChange) {
-        updatedSegments = change.segments
+        updatedSegments = change.segments.map { $0.name }
         self.segments = Set(segments)
         if let exp = updateExpectation {
             exp.fulfill()

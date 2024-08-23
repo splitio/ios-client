@@ -13,13 +13,13 @@ import XCTest
 
 class MyLargeSegmentsStorageTests: XCTestCase {
 
-    var persistentStorage: PersistentMyLargeSegmentsStorageMock!
+    var persistentStorage: PersistentMySegmentsStorageMock!
     var mySegmentsStorage: MySegmentsStorage!
     var userKey = "dummyKey"
     var dummyChange = SegmentChange(segments: ["s1", "s2", "s3"], changeNumber: 100)
 
     override func setUp() {
-        persistentStorage = PersistentMyLargeSegmentsStorageMock()
+        persistentStorage = PersistentMySegmentsStorageMock()
         mySegmentsStorage = MyLargeSegmentsStorage(persistentStorage: persistentStorage)
     }
 
@@ -68,8 +68,8 @@ class MyLargeSegmentsStorageTests: XCTestCase {
         XCTAssertTrue(segments.contains("s3"))
 
         XCTAssertEqual(2, persistedSegments?.segments.count)
-        XCTAssertTrue(persistedSegments?.segments.contains("n1") ?? false)
-        XCTAssertTrue(persistedSegments?.segments.contains("n2") ?? false)
+        XCTAssertTrue(persistedSegments?.segments.compactMap { $0.name } .contains("n1") ?? false)
+        XCTAssertTrue(persistedSegments?.segments.compactMap { $0.name } .contains("n2") ?? false)
 
         XCTAssertEqual(2, newSegments.count)
         XCTAssertTrue(newSegments.contains("n1"))
@@ -134,7 +134,7 @@ class MyLargeSegmentsStorageTests: XCTestCase {
         XCTAssertTrue(otherSegments.contains("s1"))
 
         XCTAssertEqual(1, otherPersistedSegments?.segments.count)
-        XCTAssertTrue(otherPersistedSegments?.segments.contains("s1") ?? false)
+        XCTAssertTrue(otherPersistedSegments?.segments.compactMap { $0.name } .contains("s1") ?? false)
     }
 
     func testChangeNumber() {

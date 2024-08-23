@@ -30,6 +30,10 @@ class MySegmentsStorageStub: MySegmentsStorage {
         return changeNumber
     }
 
+    func lowerChangeNumber() -> Int64 {
+        return changeNumber
+    }
+
     var loadLocalForKeyCalled = [String: Bool]()
     func loadLocal(forKey key: String) {
         loadLocalForKeyCalled[key] = true
@@ -41,8 +45,8 @@ class MySegmentsStorageStub: MySegmentsStorage {
     }
 
     func set(_ change: SegmentChange, forKey key: String) {
-        self.segments[key] = change.segments.asSet()
-        self.changeNumber = change.changeNumber
+        self.segments[key] = change.segments.map { $0.name }.asSet()
+        self.changeNumber = change.changeNumber ?? -1
         if let exp = updateExpectation[key] {
             exp.fulfill()
         }

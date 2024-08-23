@@ -12,7 +12,7 @@ import Foundation
 protocol DaoProvider {
     var splitDao: SplitDao { get }
     var mySegmentsDao: MySegmentsDao { get }
-    var myLargeSegmentsDao: MyLargeSegmentsDao { get }
+    var myLargeSegmentsDao: MySegmentsDao { get }
     var eventDao: EventDao { get }
     var impressionDao: ImpressionDao { get }
     var impressionsCountDao: ImpressionsCountDao { get }
@@ -25,7 +25,7 @@ protocol DaoProvider {
 struct CoreDataDaoProviderMock: DaoProvider {
     var splitDao: SplitDao = SplitDaoStub()
     var mySegmentsDao: MySegmentsDao = MySegmentsDaoStub()
-    var myLargeSegmentsDao: MyLargeSegmentsDao = MyLargeSegmentsDaoMock()
+    var myLargeSegmentsDao: MySegmentsDao = MySegmentsDaoStub()
     var eventDao: EventDao = EventDaoStub()
     var impressionDao: ImpressionDao = ImpressionDaoStub()
     var impressionsCountDao: ImpressionsCountDao = ImpressionsCountDaoStub()
@@ -39,7 +39,7 @@ class SplitDatabaseStub: SplitDatabase {
 
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao
-    var myLargeSegmentsDao: MyLargeSegmentsDao
+    var myLargeSegmentsDao: MySegmentsDao
     var eventDao: EventDao
     var impressionDao: ImpressionDao
     var impressionsCountDao: ImpressionsCountDao

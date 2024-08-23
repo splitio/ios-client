@@ -33,7 +33,7 @@ class EndpointFactoryTest: XCTestCase {
     }
 
     func testMySegmentsEndpoint() {
-        let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/mySegments/\(CommonValues.userKey)"
+        let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/membership/\(CommonValues.userKey)"
         let endpoint = factory.mySegmentsEndpoint(userKey: CommonValues.userKey)
 
         XCTAssertEqual(HttpMethod.get, endpoint.method)
@@ -47,34 +47,8 @@ class EndpointFactoryTest: XCTestCase {
     func testMySegmentsEndpointSlashKeyEncoding() {
         let userKey = "fake/key"
         let encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
-        let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/mySegments/\(encodedUserKey)"
+        let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/membership/\(encodedUserKey)"
         let endpoint = factory.mySegmentsEndpoint(userKey: userKey)
-
-        XCTAssertEqual(HttpMethod.get, endpoint.method)
-        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
-        XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
-        XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
-        XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
-    }
-
-    func testAllMySegmentsEndpoint() {
-        let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/myLargeSegments/\(CommonValues.userKey)"
-        let endpoint = factory.allMySegmentsEndpoint(userKey: CommonValues.userKey)
-
-        XCTAssertEqual(HttpMethod.get, endpoint.method)
-        XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
-        XCTAssertEqual(kAuthorizationBearer, endpoint.headers[kAuthorizationHeader])
-        XCTAssertEqual(kContentTypeJson, endpoint.headers[kContentTypeHeader])
-        XCTAssertEqual(Version.sdk, endpoint.headers[kSplitVersionHeader])
-        XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
-    }
-
-    func testAllMySegmentsEndpointSlashKeyEncoding() {
-        let userKey = "fake/key"
-        let encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
-        let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/allMySegments/\(encodedUserKey)"
-        let endpoint = factory.allMySegmentsEndpoint(userKey: userKey)
 
         XCTAssertEqual(HttpMethod.get, endpoint.method)
         XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
