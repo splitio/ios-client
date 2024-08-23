@@ -15,22 +15,25 @@ class MySegmentsBgSyncWorkerTest: XCTestCase {
 
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
     var mySegmentsStorage: PersistentMySegmentsStorageStub!
+    var myLargeSegmentsStorage: PersistentMyLargeSegmentsStorageMock!
     var mySegmentsSyncWorker: BackgroundSyncWorker!
     let userKey = "CUSTOMER_ID"
 
     override func setUp() {
         mySegmentsFetcher = HttpMySegmentsFetcherStub()
         mySegmentsStorage = PersistentMySegmentsStorageStub()
+        myLargeSegmentsStorage = PersistentMyLargeSegmentsStorageMock()
 
         mySegmentsSyncWorker = BackgroundMySegmentsSyncWorker(
             userKey: userKey,
             mySegmentsFetcher: mySegmentsFetcher,
-            mySegmentsStorage: mySegmentsStorage)
+            mySegmentsStorage: mySegmentsStorage,
+            myLargeSegmentsStorage: myLargeSegmentsStorage)
     }
 
     func testOneTimeFetchSuccess() {
 
-        mySegmentsFetcher.allSegments = segments()
+        mySegmentsFetcher.segments = segments()
         mySegmentsSyncWorker.execute()
 
         XCTAssertNotNil(mySegmentsStorage.persistedSegments[userKey])
@@ -40,13 +43,16 @@ class MySegmentsBgSyncWorkerTest: XCTestCase {
     func testNoSuccess() {
 
         mySegmentsFetcher.httpError = HttpError.clientRelated(code: -1, internalCode: -1)
-        mySegmentsFetcher.allSegments = segments()
+        mySegmentsFetcher.segments = segments()
         mySegmentsSyncWorker.execute()
 
         XCTAssertNil(mySegmentsStorage.persistedSegments[userKey])
     }
 
-    func segments() -> [SegmentChange] {
-        return [SegmentChange(segments: ["s1", "s2"])]
+    func segments() -> [AllSegmentsChange] {
+        let msChange = SegmentChange(segments: ["s1", "s2"])
+        let mlsChange = SegmentChange(segments: ["s1", "s2"])
+        return [AllSegmentsChange(mySegmentsChange: msChange,
+                                  myLargeSegmentsChange: mlsChange)]
     }
 }

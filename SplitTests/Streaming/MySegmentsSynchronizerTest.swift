@@ -14,6 +14,7 @@ class MySegmentsSynchronizerTest: XCTestCase {
 
     var mySegmentsSync: MySegmentsSynchronizer!
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
+    var myLargeSegmentsStorage: ByKeyMySegmentsStorageStub!
     var syncWorkerFactory: MySegmentsSyncWorkerFactoryStub!
     var eventsManager: SplitEventsManagerStub!
     let userKey = "CUSTOMER_ID"
@@ -27,6 +28,7 @@ class MySegmentsSynchronizerTest: XCTestCase {
         periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
 
         mySegmentsStorage = ByKeyMySegmentsStorageStub()
+        myLargeSegmentsStorage = ByKeyMySegmentsStorageStub()
         syncWorkerFactory = MySegmentsSyncWorkerFactoryStub()
         eventsManager = SplitEventsManagerStub()
         syncWorkerFactory.addMySegmentWorker(mySegmentsSyncWorker, forKey: userKey, avoidCache: false)
@@ -35,8 +37,9 @@ class MySegmentsSynchronizerTest: XCTestCase {
 
         mySegmentsSync = DefaultMySegmentsSynchronizer(userKey: userKey, splitConfig: SplitClientConfig(),
                                                        mySegmentsStorage: mySegmentsStorage,
+                                                       myLargeSegmentsStorage: mySegmentsStorage,
                                                        syncWorkerFactory: syncWorkerFactory,
-                                                       eventsManager: MySegmentsEventsManagerWrapper(eventsManager))
+                                                       eventsManager: eventsManager)
     }
 
     func testLoadMySegmentsFromCache() {

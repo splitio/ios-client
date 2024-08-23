@@ -38,12 +38,20 @@ class HttpMySegmentsFetcherTest: XCTestCase {
     
     func testSuccessFulFetch() throws {
         restClient.isServerAvailable = true
-        restClient.update(segments: [SegmentChange(segments: ["s1", "s2", "s3"], changeNumber: 100)])
+        let change = SegmentChange(segments: ["s1", "s2", "s3"], changeNumber: 100)
+        let largeChange = SegmentChange(segments: ["s2", "s4"], changeNumber: 200)
+        let allChange = AllSegmentsChange(mySegmentsChange: change,
+                                          myLargeSegmentsChange: CommonValues.emptySegmentChange)
+        restClient.update(segments: [])
 
         let c = try fetcher.execute(userKey: "user", headers: nil)
-        
-        XCTAssertEqual(3, c?.segments.count)
-        XCTAssertEqual(100, c?.changeNumber)
+        let sc = c?.mySegmentsChange
+        let lc = c?.myLargeSegmentsChange
+
+        XCTAssertEqual(3, sc?.segments.count)
+        XCTAssertEqual(100, sc?.changeNumber)
+        XCTAssertEqual(2, lc?.segments.count)
+        XCTAssertEqual(100, sc?.changeNumber)
         XCTAssertEqual(1, telemetryProducer.recordHttpLastSyncCallCount)
         XCTAssertEqual(1, telemetryProducer.recordHttpLatencyCallCount)
         XCTAssertEqual(0, telemetryProducer.recordHttpErrorCallCount)

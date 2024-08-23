@@ -113,7 +113,6 @@ class SplitClientManagerTest: XCTestCase {
                                              eventsTracker: EventsTrackerStub(),
                                              eventsManagerCoordinator: splitEventsCoordinator,
                                              mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactoryStub(),
-                                             myLargeSegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactoryStub(),
                                              telemetryStopwatch: stopwatch, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
     }
 

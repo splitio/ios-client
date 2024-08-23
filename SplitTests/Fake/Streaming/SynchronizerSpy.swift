@@ -88,11 +88,6 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.loadMySegmentsFromCache()
     }
     
-    func loadMyLargeSegmentsFromCache() {
-        loadMyLargeSegmentsFromCacheCalled = true
-        splitSynchronizer.loadMyLargeSegmentsFromCache()
-    }
-
     func loadAttributesFromCache() {
         loadAttributesFromCacheCalled = true
         splitSynchronizer.loadAttributesFromCache()
@@ -172,10 +167,6 @@ class SynchronizerSpy: Synchronizer {
         synchronizeMySegments(forKey: defaultUserKey)
     }
 
-    func synchronizeMyLargeSegments() {
-        synchronizeMyLargeSegments(forKey: defaultUserKey)
-    }
-
     func synchronizeSplits(changeNumber: Int64) {
         synchronizeSplitsChangeNumberCalled = true
         splitSynchronizer.synchronizeSplits(changeNumber: changeNumber)
@@ -220,10 +211,6 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.loadMySegmentsFromCache(forKey: key)
     }
 
-    func loadMyLargeSegmentsFromCache(forKey key: String) {
-        splitSynchronizer.loadMyLargeSegmentsFromCache(forKey: key)
-    }
-
     func loadAttributesFromCache(forKey key: String) {
         splitSynchronizer.loadAttributesFromCache(forKey: key)
     }
@@ -237,17 +224,6 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.forceMySegmentsSync(forKey: key)
         forceMySegmentsSyncCalled[key] = true
         forceMySegmentsSyncCount[key]=(forceMySegmentsSyncCount[key] ?? 0) + 1
-    }
-
-    func synchronizeMyLargeSegments(forKey key: String) {
-        synchronizeMyLargeSegmentsCalled = true
-        splitSynchronizer.synchronizeMyLargeSegments(forKey: key)
-    }
-
-    func forceMyLargeSegmentsSync(forKey key: String) {
-        splitSynchronizer.forceMyLargeSegmentsSync(forKey: key)
-        forceMyLargeSegmentsSyncCalled[key] = true
-        forceMyLargeSegmentsSyncCount[key]=(forceMyLargeSegmentsSyncCount[key] ?? 0) + 1
     }
 
     func disableSdk() {

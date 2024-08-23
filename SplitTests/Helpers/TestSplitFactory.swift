@@ -177,13 +177,8 @@ class TestSplitFactory: SplitFactory {
         let mySegmentsSyncWorkerFactory = DefaultMySegmentsSyncWorkerFactory(
             splitConfig: splitConfig,
             mySegmentsStorage: storageContainer.mySegmentsStorage,
+            myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage,
             mySegmentsFetcher: apiFacade.mySegmentsFetcher,
-            telemetryProducer: storageContainer.telemetryStorage)
-
-        let myLargeSegmentsSyncWorkerFactory = DefaultMySegmentsSyncWorkerFactory(
-            splitConfig: splitConfig,
-            mySegmentsStorage: storageContainer.myLargeSegmentsStorage!,
-            mySegmentsFetcher: apiFacade.myLargeSegmentsFetcher!,
             telemetryProducer: storageContainer.telemetryStorage)
 
         let eventsTracker = DefaultEventsTracker(config: splitConfig,
@@ -210,7 +205,6 @@ class TestSplitFactory: SplitFactory {
                                              eventsTracker: eventsTracker,
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
-                                             myLargeSegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: nil,
                                              factory: self)
     }

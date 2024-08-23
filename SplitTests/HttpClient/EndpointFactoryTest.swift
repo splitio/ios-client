@@ -58,9 +58,9 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
-    func testMyLargeSegmentsEndpoint() {
+    func testAllMySegmentsEndpoint() {
         let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/myLargeSegments/\(CommonValues.userKey)"
-        let endpoint = factory.myLargeSegmentsEndpoint(userKey: CommonValues.userKey)
+        let endpoint = factory.allMySegmentsEndpoint(userKey: CommonValues.userKey)
 
         XCTAssertEqual(HttpMethod.get, endpoint.method)
         XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
@@ -70,11 +70,11 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
-    func testMyLargeSegmentsEndpointSlashKeyEncoding() {
+    func testAllMySegmentsEndpointSlashKeyEncoding() {
         let userKey = "fake/key"
         let encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
-        let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/myLargeSegments/\(encodedUserKey)"
-        let endpoint = factory.myLargeSegmentsEndpoint(userKey: userKey)
+        let endpointUrl = "\(serviceEndpoints.sdkEndpoint.absoluteString)/allMySegments/\(encodedUserKey)"
+        let endpoint = factory.allMySegmentsEndpoint(userKey: userKey)
 
         XCTAssertEqual(HttpMethod.get, endpoint.method)
         XCTAssertEqual(commonHeadersCount, endpoint.headers.count)
