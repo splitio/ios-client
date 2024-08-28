@@ -146,14 +146,18 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                 let mySegmentsChange = change.mySegmentsChange
                 let myLargeSegmentsChange = change.myLargeSegmentsChange
                 let msChanged =  changeChecker.mySegmentsHaveChanged(old: oldChange,
-                                                        new: mySegmentsChange)
+                                                                     new: mySegmentsChange)
 
                 let mlsChanged = changeChecker.mySegmentsHaveChanged(old: oldLargeChange,
-                                                        new: myLargeSegmentsChange)
+                                                                     new: myLargeSegmentsChange)
                 checkAndUpdate(isChanged: msChanged, change: mySegmentsChange, storage: mySegmentsStorage)
                 checkAndUpdate(isChanged: mlsChanged, change: myLargeSegmentsChange, storage: myLargeSegmentsStorage)
 
-                if !isSdkReadyTriggered() || msChanged || mlsChanged {
+                if !isSdkReadyTriggered() {
+                    // Notifying both to trigger SDK Ready
+                    notifyUpdate([.mySegmentsUpdated])
+                    notifyUpdate([.myLargeSegmentsUpdated])
+                } else if  msChanged || mlsChanged {
                     // For now is not necessary specify which entity was updated
                     notifyUpdate([.mySegmentsUpdated])
                 }

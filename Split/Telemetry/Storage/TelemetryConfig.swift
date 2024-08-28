@@ -46,8 +46,6 @@ struct TelemetryConfig: Codable {
     let operationMode = 0 // 0: Standalone, 1: Consumer
     let storage: String = "memory"
     var streamingEnabled: Bool
-    var largeSegmentsEnabled: Bool
-    var waitForLargeSegments: Bool
     var rates: TelemetryRates?
     var urlOverrides: TelemetryUrlOverrides?
     var impressionsQueueSize: Int
@@ -68,8 +66,6 @@ struct TelemetryConfig: Codable {
 
     enum CodingKeys: String, CodingKey {
         case operationMode = "oM"
-        case largeSegmentsEnabled = "lsE"
-        case waitForLargeSegments = "wls"
         case streamingEnabled = "sE"
         case storage = "st"
         case rates = "rR"

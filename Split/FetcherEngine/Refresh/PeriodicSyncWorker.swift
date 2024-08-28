@@ -218,29 +218,29 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                                           changeNumber: -1)
             let oldLargeChange = SegmentChange(segments: myLargeSegmentsStorage.getAll().asArray(),
                                                changeNumber: myLargeSegmentsStorage.changeNumber)
-           if let change = try mySegmentsFetcher.execute(userKey: userKey, headers: nil) {
-               let newMsChange = change.mySegmentsChange
-               let newMlsChange = change.myLargeSegmentsChange
-               let msChanged = changeChecker.mySegmentsHaveChanged(old: oldChange, new: oldChange)
-               let mlsChanged = changeChecker.mySegmentsHaveChanged(old: oldChange, new: oldLargeChange)
+            if let change = try mySegmentsFetcher.execute(userKey: userKey, headers: nil) {
+                let newMsChange = change.mySegmentsChange
+                let newMlsChange = change.myLargeSegmentsChange
+                let msChanged = changeChecker.mySegmentsHaveChanged(old: oldChange, new: newMsChange)
+                let mlsChanged = changeChecker.mySegmentsHaveChanged(old: oldChange, new: newMlsChange)
 
-               if msChanged {
-                   mySegmentsStorage.set(newMsChange)
-                   Logger.i("My Segments have been updated")
-                   Logger.v(newMsChange.segments.compactMap { $0.name }.joined(separator: ","))
-              }
+                if msChanged {
+                    mySegmentsStorage.set(newMsChange)
+                    Logger.i("My Segments have been updated")
+                    Logger.v(newMsChange.segments.compactMap { $0.name }.joined(separator: ","))
+                }
 
-               if mlsChanged {
-                   myLargeSegmentsStorage.set(newMlsChange)
-                   Logger.i("My Large Segments have been updated")
-                   Logger.v(newMlsChange.segments.compactMap { $0.name }.joined(separator: ","))
-               }
+                if mlsChanged {
+                    myLargeSegmentsStorage.set(newMlsChange)
+                    Logger.i("My Large Segments have been updated")
+                    Logger.v(newMlsChange.segments.compactMap { $0.name }.joined(separator: ","))
+                }
 
-               if msChanged || mlsChanged {
-                   notifyUpdate([.mySegmentsUpdated])
-                   Logger.i("My Segments have been updated")
-                   Logger.v(newMsChange.segments.compactMap { $0.name }.joined(separator: ","))
-                   Logger.v(newMlsChange.segments.compactMap { $0.name }.joined(separator: ","))
+                if msChanged || mlsChanged {
+                    notifyUpdate([.mySegmentsUpdated])
+                    Logger.i("My Segments have been updated")
+                    Logger.v(newMsChange.segments.compactMap { $0.name }.joined(separator: ","))
+                    Logger.v(newMlsChange.segments.compactMap { $0.name }.joined(separator: ","))
                 }
             }
         } catch let error {

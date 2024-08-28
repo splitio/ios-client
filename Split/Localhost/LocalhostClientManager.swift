@@ -93,6 +93,7 @@ class LocalhostClientManager: SplitClientManager {
         clients.setValue(newGroup, forKey: key.matchingKey)
         eventsManagerCoordinator.add(newEventsManager, forKey: key)
         newEventsManager.notifyInternalEvent(.mySegmentsUpdated)
+        newEventsManager.notifyInternalEvent(.myLargeSegmentsUpdated)
 
         return newClient
     }

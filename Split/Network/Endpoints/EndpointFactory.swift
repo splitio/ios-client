@@ -21,8 +21,7 @@ class EndpointFactory {
     private struct EndpointsPath {
         static let sseAuth = "auth"
         static let splitChanges = "splitChanges"
-        // TODO: Rename
-        static let mySegments = "/memberships"
+        static let mySegments = "memberships"
         static let impressions = "testImpressions/bulk"
         static let impressionsCount = "testImpressions/count"
         static let events = "events/bulk"

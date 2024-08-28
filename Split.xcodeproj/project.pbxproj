@@ -416,7 +416,6 @@
 		9519A93827DE2AE600278AEC /* ByKeyFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A93727DE2AE600278AEC /* ByKeyFacade.swift */; };
 		9519A93A27DE318000278AEC /* ByKeyFacadeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9519A93927DE318000278AEC /* ByKeyFacadeTest.swift */; };
 		9523B8CF28622B6500AEE178 /* CdnByPassTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9523B8CE28622B6500AEE178 /* CdnByPassTest.swift */; };
-		9524EFFC2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524EFFB2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift */; };
 		9524EFFE2C666C5700ECBF7B /* AllSegmentsChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524EFFD2C666C5700ECBF7B /* AllSegmentsChange.swift */; };
 		9524F0022C6A4CC100ECBF7B /* in_large_segment_whitelist_split.json in Resources */ = {isa = PBXBuildFile; fileRef = 9524F0012C6A4CC100ECBF7B /* in_large_segment_whitelist_split.json */; };
 		9524F0042C6BFCCE00ECBF7B /* SyncSegmentsUpdateWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F0032C6BFCCE00ECBF7B /* SyncSegmentsUpdateWorker.swift */; };
@@ -1529,7 +1528,6 @@
 		9519A93727DE2AE600278AEC /* ByKeyFacade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByKeyFacade.swift; sourceTree = "<group>"; };
 		9519A93927DE318000278AEC /* ByKeyFacadeTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByKeyFacadeTest.swift; sourceTree = "<group>"; };
 		9523B8CE28622B6500AEE178 /* CdnByPassTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CdnByPassTest.swift; sourceTree = "<group>"; };
-		9524EFFB2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsManagerWrapper.swift; sourceTree = "<group>"; };
 		9524EFFD2C666C5700ECBF7B /* AllSegmentsChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllSegmentsChange.swift; sourceTree = "<group>"; };
 		9524F0012C6A4CC100ECBF7B /* in_large_segment_whitelist_split.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = in_large_segment_whitelist_split.json; sourceTree = "<group>"; };
 		9524F0032C6BFCCE00ECBF7B /* SyncSegmentsUpdateWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncSegmentsUpdateWorker.swift; sourceTree = "<group>"; };
@@ -2254,7 +2252,6 @@
 				3B6DEEC420EA6AE20067435E /* SplitEvent.swift */,
 				3B6DEEC520EA6AE20067435E /* SplitEventsManager.swift */,
 				9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */,
-				9524EFFB2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift */,
 				3B6DEEC620EA6AE20067435E /* SplitEventTask.swift */,
 				3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */,
 				3B6DEEC720EA6AE20067435E /* SplitInternalEvent.swift */,
@@ -4054,7 +4051,6 @@
 				956A7E252979F2290080D53C /* SplitsEncoder.swift in Sources */,
 				955A5A52258D04DF00CAEE9F /* RecorderWorker.swift in Sources */,
 				593225FF24A4D8FD00496D8B /* HttpResponse.swift in Sources */,
-				9524EFFC2C63F19300ECBF7B /* SplitEventsManagerWrapper.swift in Sources */,
 				952E266B2833E35A0015D633 /* PersistentUniqueKeysStorage.swift in Sources */,
 				59F65EFE2562C215005FE8C9 /* CoreDataHelper.swift in Sources */,
 				9516D0202A2910C80092A9DC /* SyncGuardian.swift in Sources */,

@@ -283,7 +283,7 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
         let backoffBase =  splitConfig.generalRetryBackoffBase
         let mySegmentsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
         let msByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
-        let mlsByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
+        let mlsByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: myLargeSegmentsStorage, userKey: key)
         return RetryableMySegmentsSyncWorker(userKey: key,
                                              mySegmentsFetcher: mySegmentsFetcher,
                                              mySegmentsStorage: msByKeyStorage,

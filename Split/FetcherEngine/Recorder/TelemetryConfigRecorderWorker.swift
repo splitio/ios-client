@@ -57,8 +57,7 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
                                                  stream: endpoints.isCustomStreamingEndpoint,
                                                  telemetry: endpoints.isCustomTelemetryEndpoint)
 
-        return TelemetryConfig(streamingEnabled: splitConfig.streamingEnabled, largeSegmentsEnabled: splitConfig.largeSegmentsEnabled,
-                               waitForLargeSegments: splitConfig.waitForLargeSegments,
+        return TelemetryConfig(streamingEnabled: splitConfig.streamingEnabled,
                                rates: rates, urlOverrides: urlOverrides,
                                impressionsQueueSize: splitConfig.impressionsQueueSize,
                                eventsQueueSize: splitConfig.eventsQueueSize,
