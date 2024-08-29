@@ -13,13 +13,13 @@ import XCTest
 
 class PersistentMyLargeSegmentsStorageTests: XCTestCase {
 
-    var myLargeSegmentsStorage: PersistentMyLargeSegmentsStorage!
-    var myLargeSegmentsDao: MyLargeSegmentsDaoMock!
+    var myLargeSegmentsStorage: PersistentMySegmentsStorage!
+    var myLargeSegmentsDao: MySegmentsDaoStub!
     let dummyKey = "dummyKey"
     let otherKey = "otherKey"
     
     override func setUp() {
-        myLargeSegmentsDao = MyLargeSegmentsDaoMock()
+        myLargeSegmentsDao = MySegmentsDaoStub()
         var daoProvider = CoreDataDaoProviderMock()
         daoProvider.myLargeSegmentsDao = myLargeSegmentsDao
         myLargeSegmentsStorage =
@@ -32,12 +32,12 @@ class PersistentMyLargeSegmentsStorageTests: XCTestCase {
 
         let loadedChange = myLargeSegmentsDao.getBy(userKey: dummyKey)
 
-        let segments = loadedChange?.segments ?? []
+        let segments = loadedChange?.segments.map { $0.name }
         XCTAssertEqual(100, loadedChange?.changeNumber)
-        XCTAssertEqual(3, segments.count)
-        XCTAssertEqual(1, segments.filter { $0 == "se1" }.count)
-        XCTAssertEqual(1, segments.filter { $0 == "se2" }.count)
-        XCTAssertEqual(1, segments.filter { $0 == "se3" }.count)
+        XCTAssertEqual(3, segments?.count)
+        XCTAssertEqual(1, segments?.filter { $0 == "se1" }.count)
+        XCTAssertEqual(1, segments?.filter { $0 == "se2" }.count)
+        XCTAssertEqual(1, segments?.filter { $0 == "se3" }.count)
     }
 
     func  testClear() {
@@ -59,8 +59,8 @@ class PersistentMyLargeSegmentsStorageTests: XCTestCase {
 
         XCTAssertEqual(300, newChange?.changeNumber)
         XCTAssertEqual(2, segments.count)
-        XCTAssertEqual(1, segments.filter { $0 == "s1" }.count)
-        XCTAssertEqual(1, segments.filter { $0 == "s2" }.count)
+        XCTAssertEqual(1, segments.filter { $0.name == "s1" }.count)
+        XCTAssertEqual(1, segments.filter { $0.name == "s2" }.count)
     }
 
     func testSetMultiKey() {

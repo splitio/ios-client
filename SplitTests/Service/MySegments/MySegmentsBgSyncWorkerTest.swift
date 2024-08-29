@@ -14,15 +14,15 @@ import XCTest
 class MySegmentsBgSyncWorkerTest: XCTestCase {
 
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
-    var mySegmentsStorage: PersistentMySegmentsStorageStub!
-    var myLargeSegmentsStorage: PersistentMyLargeSegmentsStorageMock!
+    var mySegmentsStorage: PersistentMySegmentsStorageMock!
+    var myLargeSegmentsStorage: PersistentMySegmentsStorageMock!
     var mySegmentsSyncWorker: BackgroundSyncWorker!
     let userKey = "CUSTOMER_ID"
 
     override func setUp() {
         mySegmentsFetcher = HttpMySegmentsFetcherStub()
-        mySegmentsStorage = PersistentMySegmentsStorageStub()
-        myLargeSegmentsStorage = PersistentMyLargeSegmentsStorageMock()
+        mySegmentsStorage = PersistentMySegmentsStorageMock()
+        myLargeSegmentsStorage = PersistentMySegmentsStorageMock()
 
         mySegmentsSyncWorker = BackgroundMySegmentsSyncWorker(
             userKey: userKey,

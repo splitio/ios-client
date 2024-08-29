@@ -270,7 +270,7 @@ class SdkUpdateStreamingTest: XCTestCase {
                 if hit > 2 {
                     var mySegments = [Segment]()
                     for i in 1...hit {
-                        mySegments.append(Segment(id: "\(i)", name: "segment\(i)"))
+                        mySegments.append(Segment(name: "segment\(i)"))
                     }
 
 
