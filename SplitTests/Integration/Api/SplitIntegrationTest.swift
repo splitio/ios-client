@@ -295,8 +295,6 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.impressionRefreshRate = 2
         splitConfig.sdkReadyTimeOut = 2000
         splitConfig.trafficType = trafficType
-        splitConfig.largeSegmentsEnabled = true
-        splitConfig.waitForLargeSegments = waitMls
 
         let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()

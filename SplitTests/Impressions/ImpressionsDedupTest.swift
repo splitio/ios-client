@@ -157,19 +157,23 @@ class ImpressionsDedupTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 if self.firstSplitHit {
                     self.firstSplitHit = false
                     return TestDispatcherResponse(code: 200, data: Data(self.loadSplitsChangeFile().utf8))
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
-            case let(urlString) where urlString.contains("mySegments"):
+            }
+            if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-            case let(urlString) where urlString.contains("auth"):
+            }
+
+            if request.isAuthEndpoint() {
                 self.isSseAuthHit = true
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
+            }
+            
+            if request.isImpressionsEndpoint() {
                 self.queue.sync {
                     if let exp = self.impExp {
                         exp.fulfill()
@@ -188,7 +192,9 @@ class ImpressionsDedupTest: XCTestCase {
                     }
                 }
                 return TestDispatcherResponse(code: 200)
-            case let(urlString) where urlString.contains("testImpressions/count"):
+            }
+
+            if request.isImpressionsCountEndpoint() {
                 self.queue.sync {
                     if let exp = self.countExp {
                         exp.fulfill()
@@ -202,9 +208,8 @@ class ImpressionsDedupTest: XCTestCase {
                     }
                 }
                 return TestDispatcherResponse(code: 200)
-            default:
-                return TestDispatcherResponse(code: 200)
             }
+            return TestDispatcherResponse(code: 200)
         }
     }
 

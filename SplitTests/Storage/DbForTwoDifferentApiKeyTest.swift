@@ -142,8 +142,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
 
     private func buildBasicDispatcher(factoryNumber: Int) -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 let hitNumber = self.splitHitCounters[factoryNumber - 1]
                 self.splitHitCounters[factoryNumber - 1]+=1
                 let respChangeNumber = Self.changeNumberBase + Int64(factoryNumber)
@@ -158,13 +157,14 @@ class DbForDifferentApiKeysTest: XCTestCase {
                     exp.fulfill()
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: Int(respChangeNumber), till: Int(respChangeNumber)).utf8))
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 200)
             }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 200)
         }
     }
 

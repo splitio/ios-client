@@ -177,44 +177,48 @@ class SingleSyncTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             print("URL: \(request.url.absoluteString)")
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 let json = self.loadSplitsChangeFile()
                 self.splitsHitCount+=1
                 return TestDispatcherResponse(code: 200, data: Data(json.utf8))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
+            if request.isMySegmentsEndpoint() {
                 self.mySegmentsHitCount+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
+            if request.isAuthEndpoint() {
                 self.sseAuthHitCount+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
 
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
+            if request.isImpressionsEndpoint() {
                 self.impressionsHitCount+=1
                 self.impExp?.fulfill()
                 return TestDispatcherResponse(code: 200)
+            }
 
-            case let(urlString) where urlString.contains("events/bulk"):
+            if request.isEventsEndpoint() {
                 self.eventsHitCount+=1
                 self.eveExp?.fulfill()
                 return TestDispatcherResponse(code: 200)
+            }
 
-            case let(urlString) where urlString.contains("testImpressions/count"):
+            if request.isImpressionsCountEndpoint() {
                 self.impressionsCountHitCount+=1
                 if self.impressionsCountHitCount == 1 {
                     self.impCountExp?.fulfill()
                 }
                 return TestDispatcherResponse(code: 200)
+            }
 
-            case let(urlString) where urlString.contains("keys/cs"):
+            if request.isUniqueKeysEndpoint() {
                 self.uniqueKeysHitCount+=1
                 self.uKeyExp?.fulfill()
                 return TestDispatcherResponse(code: 200)
-            default:
-                return TestDispatcherResponse(code: 200)
             }
+            return TestDispatcherResponse(code: 200)
         }
     }
 

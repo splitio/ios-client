@@ -38,8 +38,7 @@ class MySegmentServerErrorTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
 
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 if self.isFirstChangesReq {
                     self.isFirstChangesReq = false
                     let change = self.responseSlitChanges()[0]
@@ -49,20 +48,19 @@ class MySegmentServerErrorTest: XCTestCase {
                 }
                 let since = self.lastChangeNumber
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
-
-            case let(urlString) where urlString.contains("mySegments"):
-
+            }
+            if request.isMySegmentsEndpoint() {
                 var data: String
                 let index = self.reqSegmentsIndex
                 var code = 200
                 switch index {
                 case 0:
-                    data = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}]}"
+                    data = IntegrationHelper.buildSegments(regular: ["segment1"])
                 case 1, 2:
                     data = ""
                     code = 500
                 default:
-                    data = "{\"mySegments\":[{ \"id\":\"id2\", \"name\":\"segment2\"}]}"
+                    data = IntegrationHelper.buildSegments(regular: ["segment2"])
                 }
 
                 if index > 0 && index <= self.sgExp.count {
@@ -70,19 +68,19 @@ class MySegmentServerErrorTest: XCTestCase {
                 }
                 self.reqSegmentsIndex += 1
                 return TestDispatcherResponse(code: code, data: Data(data.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
-                return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("events/bulk"):
-                return TestDispatcherResponse(code: 200)
-
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+
+            if request.isImpressionsEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+
+            if request.isEventsEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

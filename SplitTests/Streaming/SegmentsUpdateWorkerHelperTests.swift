@@ -46,7 +46,7 @@ class SegmentsUpdateWorkerHelperTests: XCTestCase {
                                                              updateStrategy: .unboundedFetchRequest,
                                                              largeSegments: nil, data: nil,
                                                              hash: nil, seed: nil, timeMillis: 500)
-        unboundedTest(info: SegmentsProcessInfo(notification), resource: .myLargeSegments)
+        unboundedTest(info: SegmentsProcessInfo(notification), resource: .mySegments)
     }
 
     func unboundedTest(info: SegmentsProcessInfo, resource: TelemetryUpdatesFromSseType, delay: Int64 = 0) {

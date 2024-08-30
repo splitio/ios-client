@@ -32,7 +32,16 @@ class IntegrationHelper {
     }
 
     static var emptyMySegments: String {
-        return "{\"mySegments\":[]}"
+        return """
+          {
+          \"ms\": {
+                      \"k\": []
+          },
+                    \"ls\": {
+                      \"k\": []
+          },
+          }
+          """
     }
 
     static var emptySplitChanges: String {
@@ -41,6 +50,32 @@ class IntegrationHelper {
 
     static func emptySplitChanges(since: Int, till: Int) -> String {
         return "{\"splits\":[], \"since\": \(since), \"till\": \(till) }"
+    }
+
+
+    static func buildSegments(regular: [String] = [], large: [String] = [], cn: Int64 = -1) -> String {
+        let reg = toSegments(regular)
+        let lar = toSegments(large)
+        let res =  """
+          {
+          \"ms\": {
+                      \"k\": [\(reg)]
+          },
+                    \"ls\": {
+                      \"k\": [\(lar)]
+          }
+          }
+          """
+        print(res)
+        return res
+    }
+
+    static func toSegments(_ segments: [String]) -> String {
+        var res = [String]()
+        for seg in segments {
+            res.append("{\"n\": \"\(seg)\"}")
+        }
+        return res.joined(separator: ",")
     }
 
     static func dummyImpressions() -> String {

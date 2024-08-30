@@ -71,7 +71,7 @@ class PersistentMySegmentsStorageTests: XCTestCase {
 
         let segments = mySegmentsStorage.getSnapshot(forKey: otherKey)
 
-        XCTAssertEqual(0, segments?.segments.count)
+        XCTAssertNil(segments?.segments.count)
     }
 }
 

@@ -369,7 +369,7 @@ class AttributesEvaluationTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 3000
         splitConfig.eventsPushRate = 999999
-        //splitConfig.isDebugModeEnabled = true
+        splitConfig.logLevel = .verbose
         return splitConfig
     }
 }
