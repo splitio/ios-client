@@ -14,7 +14,7 @@ protocol HttpMySegmentsFetcher {
 
 class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
     private let syncHelper: SyncHelper
-    private var resource: Resource = .allMySegments
+    private var resource: Resource = .mySegments
     private let restClient: RestClientMySegments
 
     init(restClient: RestClientMySegments,

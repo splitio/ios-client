@@ -65,10 +65,10 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         }
         DispatchQueue.general.async {
             self.mySegmentsStorage.loadLocal()
-            self.eventsManager.notifyInternalEvent(.mySegmentsUpdated)
+            self.eventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
             self.myLargeSegmentsStorage.loadLocal()
-            self.eventsManager.notifyInternalEvent(.myLargeSegmentsUpdated)
-           TimeChecker.logInterval("Time until my segments loaded from cache")
+            self.eventsManager.notifyInternalEvent(.myLargeSegmentsLoadedFromCache)
+            TimeChecker.logInterval("Time until my segments loaded from cache")
         }
     }
 

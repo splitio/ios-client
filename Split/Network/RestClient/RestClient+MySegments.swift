@@ -1,5 +1,5 @@
 //
-//  RestClient+AllMySegments.swift
+//  RestClient+MySegments.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 31/07/24.
@@ -9,14 +9,14 @@
 import Foundation
 protocol RestClientMySegments: RestClient {
     func getMySegments(user: String,
-                     headers: [String: String]?,
-                     completion: @escaping (DataResult<AllSegmentsChange>) -> Void)
+                       headers: [String: String]?,
+                       completion: @escaping (DataResult<AllSegmentsChange>) -> Void)
 }
 
 extension DefaultRestClient: RestClientMySegments {
     func getMySegments(user: String,
-                     headers: [String: String]? = nil,
-                     completion: @escaping (DataResult<AllSegmentsChange>) -> Void) {
+                       headers: [String: String]? = nil,
+                       completion: @escaping (DataResult<AllSegmentsChange>) -> Void) {
 
         let completionHandler: ((DataResult<AllSegmentsChange>) -> Void) = { result in
             do {
