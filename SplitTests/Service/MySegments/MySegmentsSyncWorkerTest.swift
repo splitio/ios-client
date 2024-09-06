@@ -13,39 +13,36 @@ import XCTest
 
 class MySegmentsSyncWorkerTest: XCTestCase {
 
-    var mySegmentsFetcher: HttpMySegmentsFetcherStub!
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
     var myLargeSegmentsStorage: ByKeyMySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
     var mySegmentsSyncWorker: RetryableMySegmentsSyncWorker!
+    var changeNumbers: SegmentsChangeNumber!
+    var syncHelper: SegmentsSyncHelperMock!
 
     override func setUp() {
-        mySegmentsFetcher = HttpMySegmentsFetcherStub()
         mySegmentsStorage = ByKeyMySegmentsStorageStub()
         myLargeSegmentsStorage = ByKeyMySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
 
         eventsManager.isSegmentsReadyFired = false
+        changeNumbers = SegmentsChangeNumber(msChangeNumber: -1, mlsChangeNumber: 100)
+        syncHelper = SegmentsSyncHelperMock()
 
         mySegmentsSyncWorker = RetryableMySegmentsSyncWorker(
-            userKey: "CUSTOMER_ID",
-            mySegmentsFetcher: mySegmentsFetcher,
-            mySegmentsStorage: mySegmentsStorage, 
-            myLargeSegmentsStorage: myLargeSegmentsStorage,
-            telemetryProducer: TelemetryStorageStub(),
-            eventsManager: eventsManager,
-            reconnectBackoffCounter: backoffCounter,
-            avoidCache: false)
+                                                             telemetryProducer: TelemetryStorageStub(),
+                                                             eventsManager: eventsManager,
+                                                             reconnectBackoffCounter: backoffCounter,
+                                                             avoidCache: false,
+                                                             changeNumbers: changeNumbers,
+                                                             syncHelper: syncHelper)
     }
 
     func testOneTimeFetchSuccess() {
-        let msChange = SegmentChange(segments: ["s1", "s2"])
-        let mlsChange = SegmentChange(segments: ["s10", "s20"])
-        let change = AllSegmentsChange(mySegmentsChange: msChange,
-                                       myLargeSegmentsChange: mlsChange)
-        mySegmentsFetcher.segments = [change]
+        syncHelper.results = [TestingHelper.segmentsSyncResult()]
+
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in
@@ -59,15 +56,15 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         XCTAssertTrue(resultIsSuccess)
         XCTAssertEqual(0, backoffCounter.retryCallCount)
         XCTAssertTrue(eventsManager.isSegmentsReadyFired)
-        XCTAssertEqual(0, mySegmentsFetcher.headerList.count)
+        XCTAssertEqual(0, syncHelper.lastHeadersParam?.count ?? 0)
     }
 
     func testRetryAndSuccess() {
-        let msChange = SegmentChange(segments: ["s1", "s2"])
-        let mlsChange = SegmentChange(segments: ["s1", "s2"])
-        let change = AllSegmentsChange(mySegmentsChange: msChange,
-                                       myLargeSegmentsChange: mlsChange)
-        mySegmentsFetcher.segments = [nil, nil, change]
+        syncHelper.results = [TestingHelper.segmentsSyncResult(false),
+                              TestingHelper.segmentsSyncResult(false),
+                              TestingHelper.segmentsSyncResult(false),
+                              TestingHelper.segmentsSyncResult(true)]
+
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in
@@ -85,8 +82,8 @@ class MySegmentsSyncWorkerTest: XCTestCase {
 
     func testStopNoSuccess() {
 
-        mySegmentsFetcher.segments = [nil]
         var resultIsSuccess = false
+        syncHelper.results = [TestingHelper.segmentsSyncResult(false)]
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in
             resultIsSuccess = success
@@ -105,21 +102,15 @@ class MySegmentsSyncWorkerTest: XCTestCase {
 
     func testNoCacheHeader() {
         mySegmentsSyncWorker = RetryableMySegmentsSyncWorker(
-            userKey: "CUSTOMER_ID",
-            mySegmentsFetcher: mySegmentsFetcher,
-            mySegmentsStorage: mySegmentsStorage, 
-            myLargeSegmentsStorage: myLargeSegmentsStorage,
             telemetryProducer: TelemetryStorageStub(),
             eventsManager: eventsManager,
             reconnectBackoffCounter: backoffCounter,
-            avoidCache: true)
+            avoidCache: true,
+            changeNumbers: changeNumbers(mlsChangeNumber: 100),
+            syncHelper: syncHelper)
 
-        let msChange = SegmentChange(segments: ["s1", "s2"])
-        let mlsChange = SegmentChange(segments: ["s10", "s20"])
-        let change = AllSegmentsChange(mySegmentsChange: msChange,
-                                       myLargeSegmentsChange: mlsChange)
+        syncHelper.results = [TestingHelper.segmentsSyncResult()]
 
-        mySegmentsFetcher.segments = [change]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         mySegmentsSyncWorker.completion = { success in
@@ -130,14 +121,13 @@ class MySegmentsSyncWorkerTest: XCTestCase {
 
         wait(for: [exp], timeout: 3)
 
-        var headers: [String: String]? = nil
-
-        if mySegmentsFetcher.headerList.count > 0 {
-            headers = mySegmentsFetcher.headerList[0]
-        }
         XCTAssertTrue(resultIsSuccess)
         XCTAssertEqual(0, backoffCounter.retryCallCount)
         XCTAssertTrue(eventsManager.isSegmentsReadyFired)
-        XCTAssertEqual(ServiceConstants.cacheControlNoCache, headers?[ServiceConstants.cacheControlHeader])
+        XCTAssertEqual(ServiceConstants.cacheControlNoCache, syncHelper.lastHeadersParam?[ServiceConstants.cacheControlHeader])
+    }
+
+    func changeNumbers(_ msChangeNumber: Int64 = -1, mlsChangeNumber: Int64) -> SegmentsChangeNumber {
+        return SegmentsChangeNumber(msChangeNumber: msChangeNumber, mlsChangeNumber: mlsChangeNumber)
     }
 }

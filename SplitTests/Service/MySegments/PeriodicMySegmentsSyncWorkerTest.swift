@@ -13,64 +13,79 @@ import XCTest
 
 class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
 
-    var mySegmentsFetcher: HttpMySegmentsFetcherStub!
     var mySegmentsStorage: MySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
     var mySegmentsSyncWorker: PeriodicMySegmentsSyncWorker!
     let userKey = "CUSTOMER_ID"
+    var config: SplitClientConfig!
+    var syncHelper: SegmentsSyncHelperMock!
 
     override func setUp() {
-        mySegmentsFetcher = HttpMySegmentsFetcherStub()
         mySegmentsStorage = MySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
+        config = SplitClientConfig()
+        syncHelper = SegmentsSyncHelperMock()
     }
 
-    func testNormalFetch() {
+    func testNormalFetchSdkIsReady() {
         eventsManager.isSplitsReadyFired = true
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
-        let byKeyMySegmentsStorage = ByKeyMySegmentsStorageStub()
-        let byKeyMyLargeSegmentsStorage = ByKeyMySegmentsStorageStub()
-        mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(userKey: userKey,
-                                                            mySegmentsFetcher: mySegmentsFetcher,
-                                                            mySegmentsStorage: byKeyMySegmentsStorage,
-                                                            myLargeSegmentsStorage: byKeyMyLargeSegmentsStorage,
+        let msStorage = ByKeyMySegmentsStorageStub()
+        let mlsStorage = ByKeyMySegmentsStorageStub()
+        syncHelper.results = [TestingHelper.segmentsSyncResult()]
+        syncHelper.exp = XCTestExpectation()
+        syncHelper.expSyncLimit = 3
+
+        mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(
+                                                            mySegmentsStorage: msStorage,
+                                                            myLargeSegmentsStorage: mlsStorage,
                                                             telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
-                                                            eventsManager: eventsManager)
+                                                            eventsManager: eventsManager,
+                                                            syncHelper: syncHelper
+        )
         mySegmentsSyncWorker.start()
 
-        for _ in 0..<5 {
+        for i in 0..<3 {
+            msStorage.changeNumber = 100 + i.asInt64()
+            mlsStorage.changeNumber = 200 + i.asInt64()
             timer.timerHandler?()
         }
-        sleep(1)
+        wait(for: [syncHelper.exp!], timeout: 5.0)
 
-        XCTAssertEqual(5, mySegmentsFetcher.fetchMySegmentsCount)
+        XCTAssertEqual(3, syncHelper.syncCallCount)
+        XCTAssertEqual(102, syncHelper.lastMsTillParam)
+        XCTAssertEqual(202, syncHelper.lastMlsTillParam)
+        XCTAssertTrue(eventsManager.isSegmentsReadyFired)
     }
 
-    func testNoSdkReadyFetch() {
+    func testFetchWhenNoSegmentsReadyYet() {
+        eventsManager.isSegmentsReadyFired = false
         eventsManager.isSplitsReadyFired = false
-        eventsManager.isSegmentsReadyFired = true
+        eventsManager.isSdkReadyChecked = false
         let timer = PeriodicTimerStub()
-        let byKeyMySegmentsStorage = ByKeyMySegmentsStorageStub()
-        let byKeyMyLargeSegmentsStorage = ByKeyMySegmentsStorageStub()
-        mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(userKey: userKey,
-                                                            mySegmentsFetcher: mySegmentsFetcher,
-                                                            mySegmentsStorage: byKeyMySegmentsStorage,
-                                                            myLargeSegmentsStorage: byKeyMyLargeSegmentsStorage,
+        let msStorage = ByKeyMySegmentsStorageStub()
+        let mlsStorage = ByKeyMySegmentsStorageStub()
+        syncHelper.results = [TestingHelper.segmentsSyncResult()]
+
+        mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(
+                                                            mySegmentsStorage: msStorage,
+                                                            myLargeSegmentsStorage: mlsStorage,
                                                             telemetryProducer: TelemetryStorageStub(),
                                                             timer: timer,
-                                                            eventsManager: eventsManager)
+                                                            eventsManager: eventsManager,
+                                                            syncHelper: syncHelper)
 
         mySegmentsSyncWorker.start()
+        timer.timerHandler?()
+        sleep(1)
 
-        for _ in 0..<5 {
-            timer.timerHandler?()
-        }
-
-        XCTAssertEqual(0, mySegmentsFetcher.fetchMySegmentsCount)
+        XCTAssertEqual(0, syncHelper.syncCallCount)
+        XCTAssertFalse(eventsManager.isSegmentsReadyFired)
+        XCTAssertTrue(eventsManager.isSdkReadyChecked)
     }
 }

@@ -206,4 +206,60 @@ struct TestingHelper {
             .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
             .build()
     }
+
+    static func buildSegmentsChange(count: Int64 = 5,
+                                    msAscOrder: Bool = true,
+                                    mlsAscOrder: Bool = true,
+                                    segmentsChanged: Bool = false) -> [AllSegmentsChange] {
+        // Eventualy cn will be greater than the first
+        let baseCn: Int64 = 100
+        let lastMsCn = baseCn * count + 1
+        let lastMlsCn = baseCn * count + 1
+
+        var msC: Int64 = (msAscOrder ? 0 : lastMsCn - 1)
+        var mlsC: Int64 = (mlsAscOrder ? 0: lastMlsCn - 1)
+        let msSum: Int64 = (msAscOrder ? 1: -1) * baseCn
+        let mlsSum: Int64 = (mlsAscOrder ? 1: -1) * baseCn
+        var msSeg = ["s1", "s2"]
+        var mlsSeg = ["ls1", "ls2"]
+        var res = [AllSegmentsChange]()
+        for _ in 0..<count-1 {
+            msC+=msSum
+            mlsC+=mlsSum
+            res.append(newAllSegmentsChange(ms: msSeg, msCn: msC,
+                                            mls: mlsSeg, mlsCn: mlsC))
+        }
+        if segmentsChanged {
+            msSeg.append("s3")
+            mlsSeg.append("sl3")
+        }
+        res.append(newAllSegmentsChange(ms: msSeg, msCn: lastMsCn,
+                                        mls: mlsSeg, mlsCn: lastMlsCn))
+
+        return res
+    }
+
+    static func newSegmentChange(_ segments: [String] = ["s1", "s2"], cn changeNumber: Int64 = -1) -> SegmentChange {
+        return SegmentChange(segments: segments, changeNumber: changeNumber)
+    }
+
+    static func newAllSegmentsChange(msChange: SegmentChange, mlsChange: SegmentChange) -> AllSegmentsChange {
+        return AllSegmentsChange(mySegmentsChange: msChange,
+                                 myLargeSegmentsChange: mlsChange)
+    }
+
+    static func newAllSegmentsChange(ms: [String] = ["s1", "s1"], msCn: Int64 = -1,
+                                     mls: [String] = ["ls1", "ls2"], mlsCn: Int64 = -1) -> AllSegmentsChange {
+        let msChange = newSegmentChange(ms, cn: msCn)
+        let mlsChange = newSegmentChange(mls, cn: mlsCn)
+        return newAllSegmentsChange(msChange: msChange, mlsChange: mlsChange)
+    }
+
+    static func segmentsSyncResult(_ result: Bool = true,
+                                   msCn: Int64 = 300, mlsCn: Int64 = 400,
+                                   msUpd: Bool = true, mlsUpd: Bool = true) -> SegmentsSyncResult {
+        return SegmentsSyncResult(success: result,
+                                  msChangeNumber: msCn, mlsChangeNumber: mlsCn,
+                                  msUpdated: msUpd, mlsUpdated: mlsUpd)
+    }
 }
