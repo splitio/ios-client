@@ -12,7 +12,7 @@ class MyLargeSegmentsStorage: MySegmentsStorage {
 
     private var inMemorySegments: SynchronizedDictionary<String, SegmentChange> = SynchronizedDictionary()
     private let persistentStorage: PersistentMySegmentsStorage
-    private let defaultChangeNumber = ServiceConstants.defaultMlsChangeNumber
+    private let defaultChangeNumber = ServiceConstants.defaultSegmentsChangeNumber
 
     var keys: Set<String> {
         return inMemorySegments.keys

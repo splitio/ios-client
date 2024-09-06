@@ -307,7 +307,7 @@ struct SegmentsProcessInfo {
     }
 
     init(_ notification: MyLargeSegmentsUpdateNotification) {
-        self.changeNumber = notification.changeNumber ?? ServiceConstants.defaultMlsChangeNumber
+        self.changeNumber = notification.changeNumber ?? ServiceConstants.defaultSegmentsChangeNumber
         self.compressionType = notification.compressionType
         self.updateStrategy = notification.updateStrategy
         self.segments = notification.largeSegments ?? []

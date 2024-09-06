@@ -46,7 +46,8 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         self.mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
             forKey: userKey,
             avoidCache: false,
-            eventsManager: eventsManager)
+            eventsManager: eventsManager,
+            changeNumbers: nil)
         // If no single sync mode is enabled, create periodic and forced worker (polling and streaming)
         if splitConfig.syncEnabled {
             self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker(
@@ -55,7 +56,8 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
             self.mySegmentsForcedSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
                 forKey: userKey,
                 avoidCache: true,
-                eventsManager: eventsManager)
+                eventsManager: eventsManager,
+                changeNumbers: nil)
         }
     }
 

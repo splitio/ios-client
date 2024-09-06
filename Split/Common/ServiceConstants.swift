@@ -43,8 +43,7 @@ struct ServiceConstants {
         return values?.maxSyncPeriodInMillis ?? (defaultSseConnectionDelayInSecs * 1000)
     }
     
-    // Mls stands for My Large Segments
-    static let defaultMlsChangeNumber: Int64 = -1
+    static let defaultSegmentsChangeNumber: Int64 = -1
     // Created for testing purposes only
     struct Values {
         var maxSyncPeriodInMillis: Int64

@@ -31,7 +31,8 @@ class BackgroundMySegmentsSyncWorker: BackgroundSyncWorker {
 
     func execute() {
         do {
-            if let change = try self.mySegmentsFetcher.execute(userKey: self.userKey, headers: nil) {
+            if let change = try self.mySegmentsFetcher.execute(userKey: self.userKey,
+                                                               till: nil, headers: nil) {
                 mySegmentsStorage.set(change.mySegmentsChange, forKey: userKey)
                 myLargeSegmentsStorage.set(change.myLargeSegmentsChange, forKey: userKey)
             }

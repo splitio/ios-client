@@ -9,12 +9,14 @@
 import Foundation
 protocol RestClientMySegments: RestClient {
     func getMySegments(user: String,
+                       till: Int64?,
                        headers: [String: String]?,
                        completion: @escaping (DataResult<AllSegmentsChange>) -> Void)
 }
 
 extension DefaultRestClient: RestClientMySegments {
     func getMySegments(user: String,
+                       till: Int64?,
                        headers: [String: String]? = nil,
                        completion: @escaping (DataResult<AllSegmentsChange>) -> Void) {
 
@@ -34,7 +36,15 @@ extension DefaultRestClient: RestClientMySegments {
             }
         }
         self.execute(endpoint: endpointFactory.mySegmentsEndpoint(userKey: user),
+                     parameters: buildParams(till),
                      headers: headers,
                      completion: completionHandler)
+    }
+
+    private func buildParams(_ till: Int64?) -> HttpParameters? {
+        guard let till = till else {
+            return nil
+        }
+        return HttpParameters([HttpParameter(key: "till", value: till)])
     }
 }

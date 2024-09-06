@@ -11,6 +11,9 @@ import Foundation
 struct SegmentChange: Codable {
     var segments: [Segment]
     var changeNumber: Int64?
+    var unwrappedChangeNumber: Int64 {
+        return changeNumber ?? ServiceConstants.defaultSegmentsChangeNumber
+    }
 
     init(segments: [String], changeNumber: Int64? = nil) {
         self.segments = segments.compactMap { Segment(name: $0) }
