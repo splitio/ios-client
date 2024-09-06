@@ -60,7 +60,7 @@ class MySegmentsDaoTest: XCTestCase {
         
         let mySegments = dao.getBy(userKey: userKey)
         
-        XCTAssertEqual(0, mySegments?.segments.count)
+        XCTAssertNil(mySegments?.segments.count)
     }
 
     func testDataIsEncryptedInDb() {

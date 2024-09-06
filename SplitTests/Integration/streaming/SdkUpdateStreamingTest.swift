@@ -240,68 +240,60 @@ class SdkUpdateStreamingTest: XCTestCase {
     
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 let hitNumber = self.getAndUpdateHit()
                 return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
-
-            case let(urlString) where urlString.contains("mySegments"):
+            }
+            if request.isMySegmentsEndpoint() {
                 self.mySegmentsHits+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
     private func buildTestDispatcherNoSplitChanges() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: self.numbers[0], till: self.numbers[0]).utf8))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
+            if request.isMySegmentsEndpoint() {
                 self.mySegmentsHits+=1
                 let hit = self.mySegmentsHits
                 var json = IntegrationHelper.emptyMySegments
                 if hit > 2 {
-                    var mySegments = [Segment]()
+                    var mySegments = [String]()
                     for i in 1...hit {
-                        mySegments.append(Segment(name: "segment\(i)"))
+                        mySegments.append("segment\(i)")
                     }
-
-
-                    if let segments = try? Json.encodeToJson(mySegments) {
-                        json = "{\"mySegments\": \(segments)}"
-                    }
+                    json = IntegrationHelper.buildSegments(regular: mySegments)
                 }
                 return TestDispatcherResponse(code: 200, data: Data(json.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
     private func buildTestDispatcherNoChanges() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
-
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

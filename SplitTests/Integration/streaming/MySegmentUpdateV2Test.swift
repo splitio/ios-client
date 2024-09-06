@@ -180,23 +180,24 @@ class MySegmentUpdateV2Test: XCTestCase {
     var mySegmentsHitCount = 0
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
+            if request.isMySegmentsEndpoint() {
                 self.mySegmentsHitCount+=1
                 if self.mySegmentsHitCount == 2 {
                     self.mySegExp.fulfill()
                 }
                 return self.createResponse(code: 200, json: self.updatedSegments(index: self.mySegmentsHitCount))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
+            if request.isAuthEndpoint() {
                 self.isSseAuthHit = true
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

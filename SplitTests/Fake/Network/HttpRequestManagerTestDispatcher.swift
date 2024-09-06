@@ -19,6 +19,7 @@ struct TestDispatcherResponse {
         self.error = error
     }
 }
+
 typealias HttpClientTestDispatcher = (HttpDataRequest) -> TestDispatcherResponse
 
 class TestStreamResponseBinding {
@@ -102,5 +103,43 @@ class HttpRequestManagerTestDispatcher: HttpRequestManager {
     }
 
     func destroy() {
+    }
+}
+
+extension HttpDataRequest {
+    func isSplitEndpoint() -> Bool {
+        return self.url.absoluteString.contains("splitChanges")
+    }
+
+    func isMySegmentsEndpoint() -> Bool {
+        return self.url.absoluteString.contains("memberships")
+    }
+
+    func isAuthEndpoint() -> Bool {
+        return self.url.absoluteString.contains("auth")
+    }
+
+    func isImpressionsEndpoint() -> Bool {
+        return self.url.absoluteString.contains("testImpressions/bulk")
+    }
+    
+    func isImpressionsCountEndpoint() -> Bool {
+        return self.url.absoluteString.contains("testImpressions/count")
+    }
+    
+    func isUniqueKeysEndpoint() -> Bool {
+        return self.url.absoluteString.contains("keys/cs")
+    }
+
+    func isEventsEndpoint() -> Bool {
+        return self.url.absoluteString.contains("events/bulk")
+    }
+
+    func isTelemetryConfigEndpoint() -> Bool {
+        return self.url.absoluteString.contains("metrics/config")
+    }
+
+    func isTelemetryUsageEndpoint() -> Bool {
+        return self.url.absoluteString.contains("metrics/usage")
     }
 }

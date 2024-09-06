@@ -409,7 +409,6 @@ class ReadyFromCacheTest: XCTestCase {
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
         splitConfig.persistentAttributesEnabled = enabled
-        splitConfig.largeSegmentsEnabled = largeSegmentsEnabled
 
         let readyExp = XCTestExpectation()
         let cacheReadyExp = XCTestExpectation()
@@ -467,23 +466,22 @@ class ReadyFromCacheTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         self.changeHitIndex.set(1)
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 if self.globalCacheReadyFired.value {
                     let changesIndex = self.changeHitIndex.getAndAdd(1)
                     self.receivedChangeNumber[changesIndex] = request.parameters?["since"] as? Int64 ?? 0
                     return TestDispatcherResponse(code: 200, data: self.getChanges(for: changesIndex))
                 }
                 return TestDispatcherResponse(code: 500, data: self.getChanges(for: 99999))
-
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
@@ -620,7 +618,7 @@ class ReadyFromCacheTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 3000
         splitConfig.eventsPushRate = 999999
-        //splitConfig.isDebugModeEnabled = true
+        splitConfig.logLevel = .verbose
         return splitConfig
     }
     

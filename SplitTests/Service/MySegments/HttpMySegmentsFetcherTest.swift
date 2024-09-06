@@ -41,8 +41,8 @@ class HttpMySegmentsFetcherTest: XCTestCase {
         let change = SegmentChange(segments: ["s1", "s2", "s3"], changeNumber: 100)
         let largeChange = SegmentChange(segments: ["s2", "s4"], changeNumber: 200)
         let allChange = AllSegmentsChange(mySegmentsChange: change,
-                                          myLargeSegmentsChange: CommonValues.emptySegmentChange)
-        restClient.update(segments: [])
+                                          myLargeSegmentsChange: largeChange)
+        restClient.update(segments: [allChange])
 
         let c = try fetcher.execute(userKey: "user", headers: nil)
         let sc = c?.mySegmentsChange
