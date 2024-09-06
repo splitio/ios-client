@@ -27,7 +27,7 @@ class HttpMySegmentsFetcherTest: XCTestCase {
         restClient.isServerAvailable = false
         var isError = false
         do {
-            let _ = try fetcher.execute(userKey: "user", headers: nil)
+            let _ = try fetcher.execute(userKey: "user", till: nil, headers: nil)
         } catch {
             isError = true
         }
@@ -44,7 +44,7 @@ class HttpMySegmentsFetcherTest: XCTestCase {
                                           myLargeSegmentsChange: largeChange)
         restClient.update(segments: [allChange])
 
-        let c = try fetcher.execute(userKey: "user", headers: nil)
+        let c = try fetcher.execute(userKey: "user", till: nil, headers: nil)
         let sc = c?.mySegmentsChange
         let lc = c?.myLargeSegmentsChange
 

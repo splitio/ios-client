@@ -71,7 +71,7 @@ extension RestClientStub: RestClientSplitChanges {
 }
 
 extension RestClientStub: RestClientMySegments {
-    func getMySegments(user: String, headers: [String: String]?, completion: @escaping (DataResult<AllSegmentsChange>) -> Void) {
+    func getMySegments(user: String, till: Int64?, headers: [String: String]?, completion: @escaping (DataResult<AllSegmentsChange>) -> Void) {
         if segments?.count == 0 {
             completion(DataResult.success(value: nil))
             return
