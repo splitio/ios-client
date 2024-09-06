@@ -137,15 +137,12 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 }
 
-
-
 class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let syncHelper: SplitsSyncHelper
-    var changeChecker: SplitsChangesChecker
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
@@ -157,7 +154,6 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.splitChangeProcessor = splitChangeProcessor
-        self.changeChecker = DefaultSplitsChangesChecker()
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
@@ -183,27 +179,23 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
 class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
 
-    private let mySegmentsFetcher: HttpMySegmentsFetcher
     private let mySegmentsStorage: ByKeyMySegmentsStorage
     private let myLargeSegmentsStorage: ByKeyMySegmentsStorage
-    private let userKey: String
     private let telemetryProducer: TelemetryRuntimeProducer?
-    var changeChecker: MySegmentsChangesChecker
+    private let syncHelper: SegmentsSyncHelper
 
-    init(userKey: String,
-         mySegmentsFetcher: HttpMySegmentsFetcher,
-         mySegmentsStorage: ByKeyMySegmentsStorage,
+    init(mySegmentsStorage: ByKeyMySegmentsStorage,
          myLargeSegmentsStorage: ByKeyMySegmentsStorage,
          telemetryProducer: TelemetryRuntimeProducer?,
          timer: PeriodicTimer,
-         eventsManager: SplitEventsManager) {
+         eventsManager: SplitEventsManager,
+         syncHelper: SegmentsSyncHelper) {
 
-        self.userKey = userKey
-        self.mySegmentsFetcher = mySegmentsFetcher
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.telemetryProducer = telemetryProducer
-        changeChecker = DefaultMySegmentsChangesChecker()
+        self.syncHelper = syncHelper
+
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }
@@ -213,37 +205,18 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         if !isSdkReadyFired() {
             return
         }
+
         do {
-            let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(),
-                                          changeNumber: -1)
-            let oldLargeChange = SegmentChange(segments: myLargeSegmentsStorage.getAll().asArray(),
-                                               changeNumber: myLargeSegmentsStorage.changeNumber)
-            if let change = try mySegmentsFetcher.execute(userKey: userKey, headers: nil) {
-                let newMsChange = change.mySegmentsChange
-                let newMlsChange = change.myLargeSegmentsChange
-                let msChanged = changeChecker.mySegmentsHaveChanged(old: oldChange, new: newMsChange)
-                let mlsChanged = changeChecker.mySegmentsHaveChanged(old: oldChange, new: newMlsChange)
-
-                if msChanged {
-                    mySegmentsStorage.set(newMsChange)
-                    Logger.i("My Segments have been updated")
-                    Logger.v(newMsChange.segments.compactMap { $0.name }.joined(separator: ","))
-                }
-
-                if mlsChanged {
-                    myLargeSegmentsStorage.set(newMlsChange)
-                    Logger.i("My Large Segments have been updated")
-                    Logger.v(newMlsChange.segments.compactMap { $0.name }.joined(separator: ","))
-                }
-
-                if msChanged || mlsChanged {
+            let result = try syncHelper.sync(msTill: mySegmentsStorage.changeNumber,
+                                             mlsTill: myLargeSegmentsStorage.changeNumber,
+                                             headers: nil)
+            if result.success {
+                if  result.msUpdated || result.mlsUpdated {
+                    // For now is not necessary specify which entity was updated
                     notifyUpdate([.mySegmentsUpdated])
-                    Logger.i("My Segments have been updated")
-                    Logger.v(newMsChange.segments.compactMap { $0.name }.joined(separator: ","))
-                    Logger.v(newMlsChange.segments.compactMap { $0.name }.joined(separator: ","))
                 }
             }
-        } catch let error {
+        } catch {
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
         }
     }

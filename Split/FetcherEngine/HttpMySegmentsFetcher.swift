@@ -9,7 +9,7 @@
 import Foundation
 
 protocol HttpMySegmentsFetcher {
-    func execute(userKey: String, headers: [String: String]?) throws -> AllSegmentsChange?
+    func execute(userKey: String, till: Int64?, headers: [String: String]?) throws -> AllSegmentsChange?
 }
 
 class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
@@ -24,12 +24,13 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
         self.syncHelper = syncHelper
     }
 
-    func execute(userKey: String, headers: [String: String]? = nil) throws -> AllSegmentsChange? {
+    func execute(userKey: String, till: Int64?,
+                 headers: [String: String]? = nil) throws -> AllSegmentsChange? {
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
         Logger.d("Fetching segments from \(resource)")
 
         let startTime = syncHelper.time()
-        let requestResult = fetch(userKey: userKey, headers: headers)
+        let requestResult = fetch(userKey: userKey, till: till, headers: headers)
         syncHelper.recordTelemetry(resource: resource, startTime: startTime)
 
         do {
@@ -42,10 +43,10 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
         return nil
     }
 
-    func fetch(userKey: String, headers: [String: String]?) -> DataResult<AllSegmentsChange>? {
+    func fetch(userKey: String, till: Int64?, headers: [String: String]?) -> DataResult<AllSegmentsChange>? {
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<AllSegmentsChange>?
-        restClient.getMySegments(user: userKey, headers: headers) { result in
+        restClient.getMySegments(user: userKey, till: till, headers: headers) { result in
             requestResult = result
             semaphore.signal()
         }

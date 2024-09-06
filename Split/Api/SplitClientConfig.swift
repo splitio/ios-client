@@ -390,10 +390,8 @@ public class SplitClientConfig: NSObject {
     // Is not a constant for testing purposes
     var uniqueKeysRefreshRate: Int = 900
 
-    // Max attempts before add cdn by pass
-    let cdnByPassMaxAttempts: Int = 10
-
     // CDN backoff time base - Not a constant for testing purposes
+    var cdnByPassMaxAttempts: Int = 10
     var cdnBackoffTimeBaseInSecs: Int = 10
     var cdnBackoffTimeMaxInSecs: Int = 60
 
