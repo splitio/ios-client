@@ -182,13 +182,14 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
     private func fetchUntil(till: Int64?,
                             headers: HttpHeaders? = nil) throws -> FetchResult {
 
-        var prevChange: AllSegmentsChange?
         let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(),
                                       changeNumber: mySegmentsStorage.changeNumber)
 
         let oldLargeChange = SegmentChange(segments: myLargeSegmentsStorage.getAll().asArray(),
                                            changeNumber: myLargeSegmentsStorage.changeNumber)
 
+        var prevChange = AllSegmentsChange(mySegmentsChange: oldChange,
+                                           myLargeSegmentsChange: oldLargeChange)
         while true {
             guard let change = try segmentsFetcher.execute(userKey: userKey,
                                                            till: till,
