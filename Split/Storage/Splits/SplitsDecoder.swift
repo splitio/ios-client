@@ -100,7 +100,7 @@ struct SplitsSerialDecoder: SplitsDecoder {
         if let name = name, let trafficType = trafficType, let status = status,
            let statusValue = Status.enumFromString(string: status),
            let killed = killed {
-            return Split(name: name, trafficType: trafficType, status: statusValue, 
+            return Split(name: name, trafficType: trafficType, status: statusValue,
                          sets: sets, json: json, killed: killed)
         }
 

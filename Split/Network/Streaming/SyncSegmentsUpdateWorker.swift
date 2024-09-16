@@ -8,112 +8,11 @@
 
 import Foundation
 
-class MySegmentsUpdateWorker: UpdateWorker<MySegmentsUpdateNotification> {
-
-    private let synchronizer: Synchronizer
-    private let mySegmentsStorage: MySegmentsStorage
-    private let decoder: MySegmentsPayloadDecoder
-    var changesChecker: MySegmentsChangesChecker
-    init(synchronizer: Synchronizer,
-         mySegmentsStorage: MySegmentsStorage,
-         mySegmentsPayloadDecoder: MySegmentsPayloadDecoder) {
-        self.synchronizer = synchronizer
-        self.mySegmentsStorage = mySegmentsStorage
-        self.decoder = mySegmentsPayloadDecoder
-        self.changesChecker = DefaultMySegmentsChangesChecker()
-        super.init(queueName: "MySegmentsUpdateWorker")
-    }
-
-    override func process(notification: MySegmentsUpdateNotification) throws {
-        processQueue.async {
-            self.process(notification)
-        }
-    }
-
-    private func process(_ notification: MySegmentsUpdateNotification) {
-        guard let userKey = getUserKeyFromHash(notification.userKeyHash) else {
-            Logger.d("Avoiding process my segments update notification because userKey is null")
-            return
-        }
-        if notification.includesPayload {
-            if let segmentList = notification.segmentList {
-                let newChange = SegmentChange(segments: segmentList,
-                                              changeNumber: notification.changeNumber)
-
-                let oldSegments = mySegmentsStorage.getAll(forKey: userKey).asArray()
-                let oldChange = SegmentChange(segments: oldSegments,
-                                              changeNumber: mySegmentsStorage.changeNumber(forKey: userKey))
-
-                if changesChecker.mySegmentsHaveChanged(oldSegments: oldSegments,
-                                                        newSegments: segmentList) {
-                    mySegmentsStorage.set(SegmentChange(segments: segmentList),
-                                          forKey: userKey)
-                    synchronizer.notifySegmentsUpdated(forKey: userKey)
-                }
-            } else {
-                mySegmentsStorage.clear(forKey: userKey)
-            }
-        } else {
-            synchronizer.forceMySegmentsSync(forKey: userKey)
-        }
-    }
-
-    private func getUserKeyFromHash(_ hash: String) -> String? {
-        let userKeys = mySegmentsStorage.keys
-        for userKey in userKeys {
-            if hash == decoder.hash(userKey: userKey) {
-                return userKey
-            }
-        }
-        return nil
-    }
-}
-
-class MySegmentsUpdateV2Worker: UpdateWorker<MySegmentsUpdateV2Notification> {
-
-    private let helper: SegmentsUpdateWorkerHelper
-    // Visible for testing
-    var decomProvider: CompressionProvider = DefaultDecompressionProvider()
-
-    init(helper: SegmentsUpdateWorkerHelper) {
-        self.helper = helper
-        super.init(queueName: "MySegmentsUpdateV2Worker")
-    }
-
-    override func process(notification: MySegmentsUpdateV2Notification) throws {
-        processQueue.async {
-            self.helper.process(SegmentsProcessInfo(notification))
-        }
-    }
-}
-
-class MyLargeSegmentsUpdateWorker: UpdateWorker<MyLargeSegmentsUpdateNotification> {
-
-    private let helper: SegmentsUpdateWorkerHelper
-    // Visible for testing
-    var decomProvider: CompressionProvider = DefaultDecompressionProvider()
-
-    init(helper: SegmentsUpdateWorkerHelper) {
-        self.helper = helper
-        super.init(queueName: "split - MyLargeSegmentsUpdateWorker")
-    }
-
-    override func process(notification: MyLargeSegmentsUpdateNotification) throws {
-        processQueue.async {
-            self.helper.process(SegmentsProcessInfo(notification))
-        }
-    }
-}
-
-protocol SegmentsUpdateWorkerHelper {
-    func process(_ info: SegmentsProcessInfo)
-}
-
-class DefaultSegmentsUpdateWorkerHelper: SegmentsUpdateWorkerHelper {
+class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
 
     private let synchronizer: SegmentsSynchronizerWrapper
     private let mySegmentsStorage: MySegmentsStorage
-    private let payloadDecoder: MySegmentsV2PayloadDecoder
+    private let payloadDecoder: SegmentsPayloadDecoder
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let resource: TelemetryUpdatesFromSseType
     // Visible for testing
@@ -121,7 +20,7 @@ class DefaultSegmentsUpdateWorkerHelper: SegmentsUpdateWorkerHelper {
 
     init(synchronizer: SegmentsSynchronizerWrapper,
          mySegmentsStorage: MySegmentsStorage,
-         payloadDecoder: MySegmentsV2PayloadDecoder,
+         payloadDecoder: SegmentsPayloadDecoder,
          telemetryProducer: TelemetryRuntimeProducer?,
          resource: TelemetryUpdatesFromSseType) {
 
@@ -130,29 +29,36 @@ class DefaultSegmentsUpdateWorkerHelper: SegmentsUpdateWorkerHelper {
         self.payloadDecoder = payloadDecoder
         self.telemetryProducer = telemetryProducer
         self.resource = resource
+        super.init(queueName: "split-segments-fetcher")
     }
 
-    func process(_ info: SegmentsProcessInfo) {
+    override func process(notification: MembershipsUpdateNotification) throws {
+        processQueue.async {
+            self.process(notification)
+        }
+    }
+
+    func process(_ info: MembershipsUpdateNotification) {
 
         do {
             switch info.updateStrategy {
             case .unboundedFetchRequest:
-                fetchMySegments(delay: info.timeMillis)
+                fetchMySegments(delay: info.timeMillis ?? 0)
             case .boundedFetchRequest:
                 if let json = info.data {
                     try handleBounded(encodedKeyMap: json,
                                       compressionUtil: decomProvider.decompressor(for: info.compressionType),
-                                      fetchDelay: info.timeMillis)
+                                      fetchDelay: info.timeMillis ?? 0)
                 }
             case .keyList:
-                if let json = info.data, info.segments.count > 0 {
+                if let json = info.data, info.nnvSegments.count > 0 {
                     try updateSegments(encodedkeyList: json,
-                                       segments: info.segments,
+                                       segments: info.nnvSegments,
                                        compressionUtil: decomProvider.decompressor(for: info.compressionType))
                 }
             case .segmentRemoval:
-                if info.segments.count > 0 {
-                    remove(segments: info.segments)
+                if info.nnvSegments.count > 0 {
+                    remove(segments: info.nnvSegments)
                 }
             case .unknown:
                 // should never reach here
@@ -162,7 +68,7 @@ class DefaultSegmentsUpdateWorkerHelper: SegmentsUpdateWorkerHelper {
         } catch {
             Logger.e("Error processing \(resource) notification v2. \(error.localizedDescription)")
             Logger.i("Fall back - unbounded fetch")
-            fetchMySegments(delay: info.timeMillis)
+            fetchMySegments(delay: info.nnvTimeMillis)
         }
     }
 
@@ -281,39 +187,29 @@ class MyLargeSegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
     }
 }
 
-struct SegmentsProcessInfo {
-    let changeNumber: Int64
-    let compressionType: CompressionType
-    let updateStrategy: MySegmentUpdateStrategy
-    let segments: [String]
-    let data: String?
-    let hash: Int
-    let seed: Int
-    let timeMillis: Int64
+enum FetchDelayAlgo: Int {
+    // 0: NONE
+    case none = 0
 
-    init(_ notification: MySegmentsUpdateV2Notification) {
-        self.changeNumber = notification.changeNumber ?? -1
-        self.compressionType = notification.compressionType
-        self.updateStrategy = notification.updateStrategy
-        if let segmentName = notification.segmentName {
-            self.segments = [segmentName]
-        } else {
-            self.segments = []
+    // 1: MURMUR3-32
+    case murmur332 = 1
+
+    // 2: MURMUR3-64k
+    case murmur364 = 2
+
+}
+
+struct FetcherThrottle {
+    static func computeDelay(algo: FetchDelayAlgo, userKey: String, seed: Int, timeMillis: Int64) -> Int64 {
+        switch algo {
+        case .none:
+            return 0
+
+        case .murmur332:
+            return Int64(Murmur3Hash.hashString(userKey, UInt32(truncatingIfNeeded: seed))) % timeMillis
+
+        case .murmur364:
+            return Int64(Murmur64x128.hashKey(userKey, seed: Int32(seed)))
         }
-        self.data = notification.data
-        self.hash = ServiceConstants.defaultMlsHash
-        self.seed = ServiceConstants.defaultMlsSeed
-        self.timeMillis = 0
-    }
-
-    init(_ notification: MyLargeSegmentsUpdateNotification) {
-        self.changeNumber = notification.changeNumber ?? ServiceConstants.defaultSegmentsChangeNumber
-        self.compressionType = notification.compressionType
-        self.updateStrategy = notification.updateStrategy
-        self.segments = notification.largeSegments ?? []
-        self.data = notification.data
-        self.hash = notification.hash ?? ServiceConstants.defaultMlsHash
-        self.seed = notification.seed ?? ServiceConstants.defaultMlsSeed
-        self.timeMillis = notification.timeMillis ?? ServiceConstants.defaultMlsTimeMillis
     }
 }

@@ -66,6 +66,10 @@ class Murmur64x128 {
         return final(h1: &h1, h2: &h2, length: length)
     }
 
+    static func hashKey(_ key: String, seed: Int32 = 0) -> UInt64 {
+        return Murmur64x128.hash(data: Array(key.utf8), offset: 0, length: UInt32(key.count), seed: 0)[0]
+    }
+
     private static func body(h1: inout UInt64, h2: inout UInt64, data: [UInt8], offset: Int32,
                              length: UInt32, seed: UInt64, nblocks: Int32) {
 

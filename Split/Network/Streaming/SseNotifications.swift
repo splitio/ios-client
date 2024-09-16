@@ -23,7 +23,6 @@ struct RawNotification: Decodable {
 enum NotificationType: Decodable {
     case splitUpdate
     case mySegmentsUpdate
-    case mySegmentsUpdateV2
     case myLargeSegmentsUpdate
     case splitKill
     case occupancy
@@ -40,11 +39,9 @@ enum NotificationType: Decodable {
         switch string.lowercased() {
         case "split_update":
             return NotificationType.splitUpdate
-        case "my_segments_update":
+        case "memberships_ms_update":
             return NotificationType.mySegmentsUpdate
-        case "my_segments_update_v2":
-            return NotificationType.mySegmentsUpdateV2
-        case "my_large_segments_update":
+        case "memberships_ls_update":
             return NotificationType.myLargeSegmentsUpdate
         case "split_kill":
             return NotificationType.splitKill
@@ -194,48 +191,65 @@ struct KeyList: Decodable {
     }
 }
 
-// Indicates change in MySegments (Optimized version)
-struct MySegmentsUpdateV2Notification: NotificationTypeField {
+struct MembershipsUpdateNotification: NotificationTypeField {
+    var segmentType: NotificationType?
     var type: NotificationType {
-        return .mySegmentsUpdateV2
+        guard let notificationType = segmentType else {
+            return .unknown
+        }
+        return notificationType
     }
     let changeNumber: Int64?
     let compressionType: CompressionType
     let updateStrategy: MySegmentUpdateStrategy
-    let segmentName: String?
-    let data: String?
-
-    enum CodingKeys: String, CodingKey {
-        case changeNumber
-        case segmentName
-        case compressionType = "c"
-        case updateStrategy = "u"
-        case data = "d"
-    }
-}
-
-struct MyLargeSegmentsUpdateNotification: NotificationTypeField {
-    var type: NotificationType {
-        return .myLargeSegmentsUpdate
-    }
-    let changeNumber: Int64?
-    let compressionType: CompressionType
-    let updateStrategy: MySegmentUpdateStrategy
-    let largeSegments: [String]?
+    let segments: [String]?
     let data: String?
     let hash: Int?
     let seed: Int?
     let timeMillis: Int64?
 
     enum CodingKeys: String, CodingKey {
-        case changeNumber
-        case largeSegments
+        case changeNumber = "cn"
+        case segments = "n"
         case compressionType = "c"
         case updateStrategy = "u"
         case data = "d"
         case hash = "h"
         case seed = "s"
         case timeMillis = "i"
+    }
+
+    // nnv = not null value => unwrapped value for optional properties
+    /// A computed property that returns a non-null value (nnv) for the `segments` array.
+    ///
+    /// This property ensures that the `segments` array is always non-optional.
+    /// If `segments` is `nil`, it returns an empty array instead of `nil`.
+    /// This is useful for safely accessing the array without needing to unwrap the optional value.
+    ///
+    /// - Returns: A non-optional array of `String`. Returns an empty array if `segments` is `nil`.
+    ///
+    /// - Example:
+    /// ```swift
+    /// let example = nnvSegments  // If `segments` is nil, it returns [].
+    /// ```
+    var nnvSegments: [String] {
+        return segments ?? []
+    }
+
+    /// A computed property that returns a non-null value (nnv) for the `timeMillis` value.
+    ///
+    /// This property ensures that the `timeMillis` array is always non-optional.
+    /// If `timeMillis` is `nil`, it returns an empty array instead of `nil`.
+    /// This is useful for safely accessing the array without needing to unwrap the optional value.
+    ///
+    /// - Returns: A non-optional `Int64`. Returns an empty array if `timeMillis` is `nil`.
+    ///
+    /// - Example:
+    /// ```swift
+    /// let example = nnvTimeMillis  // If `timeMillis` is nil, it returns 0.
+    /// ```
+    var nnvTimeMillis: Int64 {
+        return timeMillis ?? 0
     }
 }
 
