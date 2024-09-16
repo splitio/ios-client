@@ -73,17 +73,18 @@ class UserKeyEncondingTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
-            case let(urlString) where urlString.contains("mySegments"):
+            }
+            if request.isMySegmentsEndpoint() {
+                let urlString = request.url.absoluteString
                 self.correctUserKeyMySegments = urlString.contains(self.encodedUserKey)
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
