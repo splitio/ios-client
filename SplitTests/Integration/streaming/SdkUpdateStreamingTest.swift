@@ -216,8 +216,10 @@ class SdkUpdateStreamingTest: XCTestCase {
         wait(for: [sdkReadyExpectation, sseExp], timeout: 5)
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: 99999))
+//        streamingBinding?.push(message:
+//            StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: 99999))
+        let msg = TestingData.fullMembershipsNotificationUnboundedMessage(type: .mySegmentsUpdate)
+        streamingBinding?.push(message: msg)
 
         wait(for: [sdkUpdateExpectation], timeout: expTimeout)
 

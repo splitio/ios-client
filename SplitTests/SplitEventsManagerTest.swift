@@ -26,6 +26,7 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.start()
         
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
+        eventManager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
         ThreadUtils.delay(seconds: 0.2)
@@ -56,10 +57,12 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.start()
 
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsLoadedFromCache)
+        eventManager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsLoadedFromCache)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsLoadedFromCache)
         eventManager.notifyInternalEvent(SplitInternalEvent.attributesLoadedFromCache)
 
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
+        eventManager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
         var shouldStop = false
         let expectation = XCTestExpectation(description: "SDK Readky from cache triggered")
@@ -94,6 +97,7 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.register(event: .sdkReadyTimedOut, task: TestTask(exp: timeoutExp))
 
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsLoadedFromCache)
+        eventManager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsLoadedFromCache)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsLoadedFromCache)
         eventManager.notifyInternalEvent(SplitInternalEvent.attributesLoadedFromCache)
         eventManager.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
@@ -143,6 +147,7 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.register(event: .sdkReady, task: TestTask(exp: readyExp))
 
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
+        eventManager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
 
         wait(for: [readyExp], timeout: expectationTimeOut)
@@ -166,6 +171,7 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.register(event: .sdkUpdated, task: updatedTask)
 
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
+        eventManager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
         ThreadUtils.delay(seconds: 0.5)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
@@ -193,6 +199,7 @@ class SplitEventsManagerTest: XCTestCase {
 
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
+        eventManager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsUpdated)
         ThreadUtils.delay(seconds: 0.5)
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
 
@@ -217,6 +224,7 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.register(event: .sdkUpdated, task: updatedTask)
 
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
+        eventManager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
         ThreadUtils.delay(seconds: 0.5)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitKilledNotification)

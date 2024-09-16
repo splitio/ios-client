@@ -48,21 +48,22 @@ class TrackTest: XCTestCase {
         }
 
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 9999999, till: 9999999).utf8))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
-
+            if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
+            if request.isAuthEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
+            }
+            if request.isImpressionsEndpoint() {
                 return TestDispatcherResponse(code: 200)
+            }
 
-            case let(urlString) where urlString.contains("events/bulk"):
+            if request.isEventsEndpoint() {
                 var code: Int = 0
                 self.queue.sync {
                     let index = self.getAndIncrement()
@@ -81,10 +82,8 @@ class TrackTest: XCTestCase {
 
                 }
                 return TestDispatcherResponse(code: code)
-
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

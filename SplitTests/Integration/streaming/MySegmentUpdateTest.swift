@@ -1,5 +1,5 @@
 //
-//  MySegmentUpdateV2Test.swift
+//  MySegmentUpdateTest.swift
 //  SplitTests
 //
 //  Created by Javier L. Avrudsky on 18/10/2020.
@@ -9,7 +9,7 @@
 import XCTest
 @testable import Split
 
-class MySegmentUpdateV2Test: XCTestCase {
+class MySegmentUpdateTest: XCTestCase {
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = IntegrationHelper.dummyUserKey
@@ -208,9 +208,12 @@ class MySegmentUpdateV2Test: XCTestCase {
     private func updatedSegments(index: Int) -> String {
         var resp = [String]()
         for i in (1..<index) {
-            resp.append("{ \"id\":\"id\(i)\", \"name\":\"segment\(i)\"}")
+            resp.append("{ \"n\":\"segment\(i)\"}")
         }
-        return "{\"mySegments\":[\(resp.joined(separator: ","))]}"
+        let json = "{\"ms\":{\"k\": [\(resp.joined(separator: ","))]}, \"ls\": {\"k\": []}}"
+        print("-----")
+        print(json)
+        return json
     }
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {

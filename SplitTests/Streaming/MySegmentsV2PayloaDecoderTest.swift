@@ -13,7 +13,7 @@ import XCTest
 
 class MySegmentsV2PayloaDecoderTest: XCTestCase {
 
-    let decoder = DefaultMySegmentsV2PayloadDecoder()
+    let decoder = DefaultSegmentsPayloadDecoder()
     let gzip = Gzip()
     let zlib = Zlib()
 
