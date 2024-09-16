@@ -257,38 +257,37 @@ class UserConsentModeDebugTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
 
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 if self.changeHit == 0 {
                     self.changeHit+=1
                     return TestDispatcherResponse(code: 200, data: Data(self.splitChange!.utf8))
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 999999999, till: 999999999).utf8))
-
-            case let(urlString) where urlString.contains("mySegments"):
+            }
+            if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
+            if request.isAuthEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
 
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
+            if request.isImpressionsEndpoint() {
                 self.impPosted = true
                 if let exp = self.impExp {
                     exp.fulfill()
                 }
                 return TestDispatcherResponse(code: 200)
+            }
 
-            case let(urlString) where urlString.contains("events/bulk"):
+            if request.isEventsEndpoint() {
                 self.evePosted = true
                 if let exp = self.eveExp {
                     exp.fulfill()
                 }
                 return TestDispatcherResponse(code: 200)
-
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 }
-

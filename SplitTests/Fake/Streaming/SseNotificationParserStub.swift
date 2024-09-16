@@ -11,12 +11,11 @@ import Foundation
 
 class SseNotificationParserStub: SseNotificationParser {
 
+
     var incomingNotification: IncomingNotification?
     var splitsUpdateNotification: SplitsUpdateNotification?
     var splitKillNotification: SplitKillNotification?
-    var mySegmentsUpdateNotification: MySegmentsUpdateNotification?
-    var mySegmentsUpdateV2Notification: MySegmentsUpdateV2Notification?
-    var myLargeSegmentsUpdateNotification: MyLargeSegmentsUpdateNotification?
+    var membershipsUpdateNotification: MembershipsUpdateNotification?
     var occupancyNotification: OccupancyNotification?
     var controlNotification: ControlNotification?
     var sseErrorNotification: StreamingError?
@@ -34,16 +33,8 @@ class SseNotificationParserStub: SseNotificationParser {
         return splitKillNotification!
     }
 
-    func parseMySegmentUpdate(jsonString: String, channel: String) throws -> MySegmentsUpdateNotification {
-        return mySegmentsUpdateNotification!
-    }
-
-    func parseMySegmentUpdateV2(jsonString: String) throws -> MySegmentsUpdateV2Notification {
-        return mySegmentsUpdateV2Notification!
-    }
-
-    func parseMyLargeSegmentUpdate(jsonString: String) throws -> MyLargeSegmentsUpdateNotification {
-        return myLargeSegmentsUpdateNotification!
+    func parseMembershipsUpdate(jsonString: String, type: NotificationType) throws -> MembershipsUpdateNotification {
+        return membershipsUpdateNotification!
     }
 
     func parseOccupancy(jsonString: String, timestamp: Int64, channel: String) throws -> OccupancyNotification {

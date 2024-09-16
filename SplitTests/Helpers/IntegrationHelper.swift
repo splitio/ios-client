@@ -173,20 +173,9 @@ class IntegrationHelper {
     }
 
     static func mySegments(names: [String]) -> String {
-        var segments = ""
-        for (index, name) in names.enumerated() {
-            if index % 2 == 0 {
-                segments.append("{\"id\":\"id\(name)\", \"name\":\"\(name)\"}")
-            } else {
-                segments.append("{\"name\":\"\(name)\"}")
-            }
-            if index < names.count - 1 {
-                segments.append(",")
-            }
-        }
-        return "{\"mySegments\":[\(segments)]}"
+        return TestingHelper.newAllSegmentsChangeJson(ms: names)
     }
-    
+
     static func tlog(_ message: String) {
         print("TRVLOG -> \(message)")
     }

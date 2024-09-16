@@ -12,7 +12,7 @@ import Foundation
 struct TestingHelper {
 
     static var testLogLevel: SplitLogLevel {
-        return .none
+        return .verbose
     }
 
     static func basicStreamingConfig() -> SplitClientConfig {
@@ -24,6 +24,7 @@ struct TestingHelper {
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
         splitConfig.eventsPushRate = 3
+        splitConfig.logLevel = .verbose
         return splitConfig
     }
 
@@ -262,4 +263,14 @@ struct TestingHelper {
                                   msChangeNumber: msCn, mlsChangeNumber: mlsCn,
                                   msUpdated: msUpd, mlsUpdated: mlsUpd)
     }
+
+    static func newAllSegmentsChangeJson(ms: [String] = ["s1", "s1"], msCn: Int64? = nil,
+                                         mls: [String] = ["ls1", "ls2"], mlsCn: Int64? = nil) -> String {
+        let msChange = SegmentChange(segments: ms, changeNumber: msCn)
+        let mlsChange = SegmentChange(segments: mls, changeNumber: mlsCn)
+        return try! Json.encodeToJson(newAllSegmentsChange(msChange: msChange, mlsChange: mlsChange))
+
+
+    }
+
 }

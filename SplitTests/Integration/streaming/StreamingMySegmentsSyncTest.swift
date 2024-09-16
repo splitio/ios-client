@@ -90,21 +90,23 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[0]))
+        var msg = TestingData.membershipsNotificationUnboundedMessage(type: .mySegmentsUpdate, cn: numbers[0].asInt64())
+        streamingBinding?.push(message: msg)
         wait(for: [exp2], timeout: expTimeout)
         waitForUpdate(secs: 1)
         
         let treatmentFirst = client.getTreatment(splitName)
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[1]))
+
+        msg = TestingData.membershipsNotificationUnboundedMessage(type: .mySegmentsUpdate, cn: numbers[1].asInt64())
+        streamingBinding?.push(message: msg)
         wait(for: [exp3], timeout: expTimeout)
         waitForUpdate(secs: 1)
 
         let treatmentSec = client.getTreatment(splitName)
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[2]))
+
+        msg = TestingData.membershipsNotificationUnboundedMessage(type: .mySegmentsUpdate, cn: numbers[2].asInt64())
+        streamingBinding?.push(message: msg)
         waitForUpdate(secs: 2)
         let treatmentOld = client.getTreatment(splitName)
 
@@ -122,8 +124,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 let hitNumber = self.splitsChangesHits
                 self.splitsChangesHits+=1
                 var change: String!
@@ -133,12 +134,11 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                     change = IntegrationHelper.emptySplitChanges(since: 100, till: 100)
                 }
                 return TestDispatcherResponse(code: 200, data: Data(change.utf8))
-
-            case let(urlString) where urlString.contains("mySegments"):
-                
+            }
+            if request.isMySegmentsEndpoint() {
                 let hitNumber = self.mySegmentsHits
                 self.mySegmentsHits+=1
-                
+
                 let respData = self.mySegments[hitNumber]
                 switch hitNumber {
                 case 1:
@@ -154,13 +154,12 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                     IntegrationHelper.tlog("Exp no fired \(hitNumber)")
                 }
                 return TestDispatcherResponse(code: 200, data: Data(respData.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
+            }
+            if request.isAuthEndpoint() {
                 self.sseAuthHits+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

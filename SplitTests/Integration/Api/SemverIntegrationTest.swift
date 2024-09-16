@@ -19,7 +19,7 @@ class SemverIntegrationTest: XCTestCase {
     var httpClient: HttpClient!
     var factory: SplitFactory!
     var splitChangesHit = 0
-    let mySegmentsJson = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}"
+    let mySegmentsJson = TestingHelper.newAllSegmentsChangeJson(ms: ["segment1", "segment2"])
     var streamingHelper: StreamingTestingHelper!
     var impressionsOnListener: [Impression] = []
 
@@ -154,29 +154,30 @@ class SemverIntegrationTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 if self.splitChangesHit == 0 {
                     return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile()))
                 }
                 self.splitChangesHit+=1
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))
-
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(self.mySegmentsJson.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
-                return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("events/bulk"):
-                return TestDispatcherResponse(code: 200)
-
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(self.mySegmentsJson.utf8))
+            }
+
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+
+            if request.isImpressionsEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+
+            if request.isEventsEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+
+            return TestDispatcherResponse(code: 500)
         }
     }
 

@@ -62,6 +62,7 @@ class SyncPostBgTest: XCTestCase {
         _ = factory.client(matchingKey: "key1").getTreatment("TEST")
 
         wait(for: [mySegmentsExp!], timeout: 5)
+        mySegmentsExp = nil
 
         // Put counters in 0
         _ = takeChangesHitCount()
@@ -150,24 +151,23 @@ class SyncPostBgTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             print("URL: \(request.url.absoluteString)")
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 let json = self.loadSplitsChangeFile()
                 _ = self.increaseChangesHitCount()
                 self.changesExp?.fulfill()
                 self.changesExp = nil
                 return TestDispatcherResponse(code: 200, data: Data(json.utf8))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
+            if request.isMySegmentsEndpoint() {
                 let hit = self.increaseMySegmentsHitCount()
                 if hit == 2 {
                     self.mySegmentsExp?.fulfill()
-                    self.mySegmentsExp = nil
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
-
+            if request.isAuthEndpoint() {
                 let delay = self.delays[self.authHit]
                 self.delaySum+=delay
                 print("auth delay \(delay) for hit \(self.authHit) ==> delay sum \(self.delaySum)")
@@ -177,21 +177,21 @@ class SyncPostBgTest: XCTestCase {
                     self.authExp?.fulfill()
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse(delay: delay).utf8))
-
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
-                return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("events/bulk"):
-                return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("testImpressions/count"):
-                return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("keys/cs"):
-                return TestDispatcherResponse(code: 200)
-            default:
+            }
+            if request.isImpressionsEndpoint() {
                 return TestDispatcherResponse(code: 200)
             }
+            if request.isEventsEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+            if request.isImpressionsCountEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+
+            if request.isUniqueKeysEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+            return TestDispatcherResponse(code: 200)
         }
     }
 

@@ -22,8 +22,12 @@ class SplitIntegrationTests: XCTestCase {
     var largeSegmentsError = false
     var impHit = [[ImpressionsTest]]()
 
-    let mySegmentsJson = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}"
-    let myLargeSegmentsJson = "{\"myLargeSegments\":[\"segment1\", \"segment2\"], \"changeNumber\": 100}"
+    let segmentsJson = """
+{
+\"ls\": { \"cn\": 100, \"k\": [{ \"n\":\"segment1\"}, { \"n\":\"segment2\"}]}, 
+\"ms\": { \"k\": [{\"n\": \"segment1\"}, {\"n\": \"segment2\"}]}
+}
+"""
 
     var trExp = [XCTestExpectation]()
 
@@ -49,38 +53,35 @@ class SplitIntegrationTests: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(self.mySegmentsJson.utf8))
-
-            case let(urlString) where urlString.contains("myLargeSegments"):
+            if request.isMySegmentsEndpoint() {
                 if self.largeSegmentsError {
                     return TestDispatcherResponse(code: 500)
                 }
-                return TestDispatcherResponse(code: 200, data: Data(self.myLargeSegmentsJson.utf8))
+                return TestDispatcherResponse(code: 200, data: Data(self.segmentsJson.utf8))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
+            if request.isAuthEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
 
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
-
+            if request.isImpressionsEndpoint() {
                 self.impHit.append(try! TestUtils.impressionsFromHit(request: request))
                 return TestDispatcherResponse(code: 200)
+            }
 
-            case let(urlString) where urlString.contains("events/bulk"):
+            if request.isEventsEndpoint() {
                 let index = self.getAndUpdateReqIndex()
                 self.trackRequestsData.append(request.body!.stringRepresentation)
                 if index < self.trExp.count {
                     self.trExp[index].fulfill()
                 }
                 return TestDispatcherResponse(code: 200)
-
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

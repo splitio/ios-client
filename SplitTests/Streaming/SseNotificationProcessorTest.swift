@@ -14,19 +14,18 @@ class SseNotificationProcessorTest: XCTestCase {
 
     var sseNotificationParser: SseNotificationParserStub!
     var splitsUpdateWorker: SplitsUpdateWorkerMock!
-    var mySegmentsUpdateWorker: MySegmentsUpdateWorkerMock!
-    var mySegmentsUpdateV2Worker: MySegmentsUpdateV2WorkerMock!
-    var myLargeSegmentsUpdateWorker: MyLargeSegmentsUpdateWorkerMock!
+    var mySegmentsUpdateWorker: SegmentsUpdateWorkerMock!
+    var myLargeSegmentsUpdateWorker: SegmentsUpdateWorkerMock!
     var splitKillWorker: SplitKillWorkerMock!
     let userKey = IntegrationHelper.dummyUserKey
-    var payloadDecoderMock: MySegmentsV2PayloadDecoder!
+    var payloadDecoderMock: SegmentsPayloadDecoder!
 
     var notificationProcessor: SseNotificationProcessor!
 
     override func setUp() {
         let synchronizer = SynchronizerStub()
         let splitsStorage = SplitsStorageStub()
-        payloadDecoderMock = MySegmentsV2PayloadDecoderMock()
+        payloadDecoderMock = SegmentsPayloadDecoderMock()
         _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [],
                                                                    archivedSplits: [],
                                                                    changeNumber: 100,
@@ -39,18 +38,25 @@ class SseNotificationProcessorTest: XCTestCase {
                                                     splitChangeProcessor: SplitChangeProcessorStub(),
                                                     featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoderMock(),
                                                     telemetryProducer: TelemetryStorageStub())
-        mySegmentsUpdateWorker =  MySegmentsUpdateWorkerMock(synchronizer: synchronizer,
-                                                             mySegmentsStorage: mySegmentsStorage,
-                                                             mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
-        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2WorkerMock(helper: SegmentsUpdateWorkerHelperMock())
-        myLargeSegmentsUpdateWorker =  MyLargeSegmentsUpdateWorkerMock(helper: SegmentsUpdateWorkerHelperMock())
+
+        mySegmentsUpdateWorker =  SegmentsUpdateWorkerMock(synchronizer: MySegmentsSynchronizerWrapper(synchronizer: synchronizer),
+                                                           mySegmentsStorage: mySegmentsStorage,
+                                                           payloadDecoder: payloadDecoderMock,
+                                                           telemetryProducer: nil,
+                                                           resource: .mySegments)
+
+        myLargeSegmentsUpdateWorker =  SegmentsUpdateWorkerMock(synchronizer: MyLargeSegmentsSynchronizerWrapper(synchronizer: synchronizer),
+                                                           mySegmentsStorage: mySegmentsStorage,
+                                                           payloadDecoder: payloadDecoderMock,
+                                                           telemetryProducer: nil,
+                                                           resource: .mySegments)
+
         splitKillWorker = SplitKillWorkerMock(synchronizer: synchronizer, splitsStorage: splitsStorage)
 
         notificationProcessor = DefaultSseNotificationProcessor(notificationParser: sseNotificationParser,
                                                                 splitsUpdateWorker: splitsUpdateWorker,
                                                                 splitKillWorker: splitKillWorker,
                                                                 mySegmentsUpdateWorker: mySegmentsUpdateWorker,
-                                                                mySegmentsUpdateV2Worker: mySegmentsUpdateV2Worker,
                                                                 myLargeSegmentsUpdateWorker: myLargeSegmentsUpdateWorker)
     }
 
@@ -128,11 +134,12 @@ class SseNotificationProcessorTest: XCTestCase {
         XCTAssertFalse(splitKillWorker.processCalled)
     }
 
-    func testProcessMySegmentsUpdate() {
-        sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
-                                                                                          includesPayload: false,
-                                                                                          segmentList: [String](),
-                                                                                          userKeyHash: "")
+    func testProcessMySegmentsUpdateUnboundedFetchRequest() {
+        sseNotificationParser.membershipsUpdateNotification = createMsUpdateNotification(changeNumber: -1,
+                                                                                      compressionType: .none,
+                                                                                      updateStrategy: .unboundedFetchRequest,
+                                                                                      segmentName: "",
+                                                                                      data: nil)
         let notification = IncomingNotification(type: .mySegmentsUpdate,
                                                 channel: nil,
                                                 jsonData: "",
@@ -142,90 +149,45 @@ class SseNotificationProcessorTest: XCTestCase {
         XCTAssertTrue(mySegmentsUpdateWorker.processCalled)
     }
 
-    func testProcessMySegmentsUpdateNullJson() {
-        sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
-                                                                                          includesPayload: false,
-                                                                                          segmentList: [String](),
-                                                                                          userKeyHash: "")
+    func testProcessMySegmentsUpdateKeyListRequest() {
+        sseNotificationParser.membershipsUpdateNotification = createMsUpdateNotification(changeNumber: -1,
+                                                                                      compressionType: .gzip,
+                                                                                      updateStrategy: .keyList,
+                                                                                      segmentName: "pepe",
+                                                                                      data: nil)
         let notification = IncomingNotification(type: .mySegmentsUpdate,
                                                 channel: nil,
-                                                jsonData: nil,
+                                                jsonData: "",
                                                 timestamp: 1000)
         notificationProcessor.process(notification)
 
-        XCTAssertFalse(mySegmentsUpdateWorker.processCalled)
+        XCTAssertTrue(mySegmentsUpdateWorker.processCalled)
     }
 
-    func testProcessMySegmentsUpdateException() {
-
-        mySegmentsUpdateWorker.throwException = true
-        sseNotificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
-                                                                                          includesPayload: false,
-                                                                                          segmentList: [String](),
-                                                                                          userKeyHash: "")
+    func testProcessMySegmentsUpdateBoundedRequest() {
+        sseNotificationParser.membershipsUpdateNotification = createMsUpdateNotification(changeNumber: -1,
+                                                                                      compressionType: .gzip,
+                                                                                      updateStrategy: .boundedFetchRequest,
+                                                                                      segmentName: "",
+                                                                                      data: nil)
         let notification = IncomingNotification(type: .mySegmentsUpdate,
                                                 channel: nil,
-                                                jsonData: nil,
-                                                timestamp: 1000)
-        notificationProcessor.process(notification)
-
-        XCTAssertFalse(mySegmentsUpdateWorker.processCalled)
-    }
-
-    func testProcessMySegmentsUpdateV2UnboundedFetchRequest() {
-        sseNotificationParser.mySegmentsUpdateV2Notification = MySegmentsUpdateV2Notification(changeNumber: -1,
-                                                                                              compressionType: .none,
-                                                                                              updateStrategy: .unboundedFetchRequest,
-                                                                                              segmentName: nil,
-                                                                                              data: nil)
-        let notification = IncomingNotification(type: .mySegmentsUpdateV2,
-                                                channel: nil,
                                                 jsonData: "",
                                                 timestamp: 1000)
         notificationProcessor.process(notification)
 
-        XCTAssertTrue(mySegmentsUpdateV2Worker.processCalled)
-    }
-
-    func testProcessMySegmentsUpdateV2KeyListRequest() {
-        sseNotificationParser.mySegmentsUpdateV2Notification = MySegmentsUpdateV2Notification(changeNumber: -1,
-                                                                                              compressionType: .gzip,
-                                                                                              updateStrategy: .keyList,
-                                                                                              segmentName: "pepe",
-                                                                                              data: nil)
-        let notification = IncomingNotification(type: .mySegmentsUpdateV2,
-                                                channel: nil,
-                                                jsonData: "",
-                                                timestamp: 1000)
-        notificationProcessor.process(notification)
-
-        XCTAssertTrue(mySegmentsUpdateV2Worker.processCalled)
-    }
-
-    func testProcessMySegmentsUpdateV2BoundedRequest() {
-        sseNotificationParser.mySegmentsUpdateV2Notification = MySegmentsUpdateV2Notification(changeNumber: -1,
-                                                                                              compressionType: .gzip,
-                                                                                              updateStrategy: .boundedFetchRequest,
-                                                                                              segmentName: nil,
-                                                                                              data: nil)
-        let notification = IncomingNotification(type: .mySegmentsUpdateV2,
-                                                channel: nil,
-                                                jsonData: "",
-                                                timestamp: 1000)
-        notificationProcessor.process(notification)
-
-        XCTAssertTrue(mySegmentsUpdateV2Worker.processCalled)
+        XCTAssertTrue(mySegmentsUpdateWorker.processCalled)
     }
 
     func testProcessMyLargeSegmentsUpdateUnboundedFetchRequest() {
-        sseNotificationParser.myLargeSegmentsUpdateNotification = MyLargeSegmentsUpdateNotification(changeNumber: -1,
-                                                                                                    compressionType: .none,
-                                                                                                    updateStrategy: .unboundedFetchRequest,
-                                                                                                    largeSegments: nil,
-                                                                                                    data: nil,
-                                                                                                    hash: nil,
-                                                                                                    seed: 0,
-                                                                                                    timeMillis: 100)
+        sseNotificationParser.membershipsUpdateNotification = createMlsUpdateNotification(changeNumber: -1,
+                                                                                        compressionType: .none,
+                                                                                        updateStrategy: .unboundedFetchRequest,
+                                                                                        largeSegments: nil,
+                                                                                        data: nil,
+                                                                                        hash: nil,
+                                                                                        seed: 0,
+                                                                                        timeMillis: 100)
         let notification = IncomingNotification(type: .myLargeSegmentsUpdate,
                                                 channel: nil,
                                                 jsonData: "",
@@ -236,14 +198,14 @@ class SseNotificationProcessorTest: XCTestCase {
     }
 
     func testProcessMyLargeSegmentsUpdateKeyListRequest() {
-        sseNotificationParser.myLargeSegmentsUpdateNotification = MyLargeSegmentsUpdateNotification(changeNumber: -1,
-                                                                                                    compressionType: .gzip,
-                                                                                                    updateStrategy: .keyList,
-                                                                                                    largeSegments: ["pepe"],
-                                                                                                    data: nil,
-                                                                                                    hash: nil,
-                                                                                                    seed: 0,
-                                                                                                    timeMillis: 100)
+        sseNotificationParser.membershipsUpdateNotification = createMlsUpdateNotification(changeNumber: -1,
+                                                                                        compressionType: .gzip,
+                                                                                        updateStrategy: .keyList,
+                                                                                        largeSegments: ["pepe"],
+                                                                                        data: nil,
+                                                                                        hash: nil,
+                                                                                        seed: 0,
+                                                                                        timeMillis: 100)
         let notification = IncomingNotification(type: .myLargeSegmentsUpdate,
                                                 channel: nil,
                                                 jsonData: "",
@@ -254,14 +216,14 @@ class SseNotificationProcessorTest: XCTestCase {
     }
 
     func testProcessMyLargeSegmentsUpdateBoundedRequest() {
-        sseNotificationParser.myLargeSegmentsUpdateNotification = MyLargeSegmentsUpdateNotification(changeNumber: -1,
-                                                                                                    compressionType: .gzip,
-                                                                                                    updateStrategy: .boundedFetchRequest,
-                                                                                                    largeSegments: nil,
-                                                                                                    data: nil,
-                                                                                                    hash: nil,
-                                                                                                    seed: 0,
-                                                                                                    timeMillis: 100)
+        sseNotificationParser.membershipsUpdateNotification = createMlsUpdateNotification(changeNumber: -1,
+                                                                                        compressionType: .gzip,
+                                                                                        updateStrategy: .boundedFetchRequest,
+                                                                                        largeSegments: nil,
+                                                                                        data: nil,
+                                                                                        hash: nil,
+                                                                                        seed: 0,
+                                                                                        timeMillis: 100)
 
         let notification = IncomingNotification(type: .myLargeSegmentsUpdate,
                                                 channel: nil,
@@ -270,5 +232,43 @@ class SseNotificationProcessorTest: XCTestCase {
         notificationProcessor.process(notification)
 
         XCTAssertTrue(myLargeSegmentsUpdateWorker.processCalled)
+    }
+
+    func createMsUpdateNotification(changeNumber: Int64?,
+                                    compressionType: CompressionType = .gzip,
+                                    updateStrategy: MySegmentUpdateStrategy,
+                                    segmentName: String,
+                                    data: String?) -> MembershipsUpdateNotification {
+
+        var notification = MembershipsUpdateNotification(changeNumber: changeNumber,
+                                                         compressionType: compressionType,
+                                                         updateStrategy: updateStrategy,
+                                                         segments: [segmentName],
+                                                         data: data, hash: nil, seed: nil,
+                                                         timeMillis: nil)
+        notification.segmentType = .myLargeSegmentsUpdate
+        return notification
+
+
+
+    }
+
+    func createMlsUpdateNotification(changeNumber: Int64?,
+                                     compressionType: CompressionType = .gzip,
+                                     updateStrategy: MySegmentUpdateStrategy,
+                                     largeSegments: [String]?,
+                                     data: String? = nil,
+                                     hash: Int? = nil,
+                                     seed: Int? = 0,
+                                     timeMillis: Int64? = nil) -> MembershipsUpdateNotification {
+
+        var notification = MembershipsUpdateNotification(changeNumber: changeNumber,
+                                                         compressionType: compressionType,
+                                                         updateStrategy: updateStrategy,
+                                                         segments: largeSegments,
+                                                         data: data, hash: hash, seed: seed,
+                                                         timeMillis: timeMillis)
+        notification.segmentType = .myLargeSegmentsUpdate
+        return notification
     }
 }
