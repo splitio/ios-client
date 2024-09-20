@@ -61,7 +61,7 @@ protocol CancellableTask {
 
 class DefaultTask: CancellableTask {
 
-    private (set) var taskId: Int64
+    private(set) var taskId: Int64
     private(set) var isCancelled = false
     private(set) var delay: Double
     private(set) var work: Work

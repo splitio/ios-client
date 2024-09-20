@@ -179,7 +179,8 @@ class DefaultClientManager: SplitClientManager {
                                       mySegmentsStorage: buildMySegmentsStorage(forKey: matchingKey),
                                       myLargeSegmentsStorage: buildMyLargeSegmentsStorage(forKey: matchingKey),
                                       syncWorkerFactory: mySegmentsSyncWorkerFactory,
-                                      eventsManager: eventsManager)
+                                      eventsManager: eventsManager,
+                                      timerManager: config.syncEnabled ? DefaultTimersManager() : nil)
 
         let byKeyGroup = ByKeyComponentGroup(splitClient: client,
                                              eventsManager: eventsManager,

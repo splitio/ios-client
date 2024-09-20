@@ -69,6 +69,17 @@ class ConcurrentDictionary<K: Hashable, T> {
         }
     }
 
+    func addWithoutReplacing(_ value: T, forKey key: K) -> Bool {
+        return queue.sync(flags: .barrier) { [weak self] in
+            guard let self = self else { return false }
+            if self.items[key] == nil {
+                self.items[key] = value
+                return true
+            }
+            return false
+        }
+    }
+
     func setValue(_ value: T, forKey key: K) {
         queue.async(flags: .barrier) { [weak self] in
             guard let self = self else { return }

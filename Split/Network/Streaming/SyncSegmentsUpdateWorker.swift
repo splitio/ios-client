@@ -43,22 +43,24 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
         do {
             switch info.updateStrategy {
             case .unboundedFetchRequest:
-                fetchMySegments(delay: info.timeMillis ?? 0)
+                if shouldProcessChangeNumber(info.uwChangeNumber) {
+                    fetchMySegments(info: info)
+                }
             case .boundedFetchRequest:
                 if let json = info.data {
                     try handleBounded(encodedKeyMap: json,
                                       compressionUtil: decomProvider.decompressor(for: info.compressionType),
-                                      fetchDelay: info.timeMillis ?? 0)
+                                      info: info)
                 }
             case .keyList:
-                if let json = info.data, info.nnvSegments.count > 0 {
+                if let json = info.data, info.uwSegments.count > 0 {
                     try updateSegments(encodedkeyList: json,
-                                       segments: info.nnvSegments,
+                                       segments: info.uwSegments,
                                        compressionUtil: decomProvider.decompressor(for: info.compressionType))
                 }
             case .segmentRemoval:
-                if info.nnvSegments.count > 0 {
-                    remove(segments: info.nnvSegments)
+                if info.uwSegments.count > 0 {
+                    remove(segments: info.uwSegments)
                 }
             case .unknown:
                 // should never reach here
@@ -66,20 +68,34 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
             }
 
         } catch {
-            Logger.e("Error processing \(resource) notification v2. \(error.localizedDescription)")
+            Logger.e("Error processing \(resource) notification. \(error.localizedDescription)")
             Logger.i("Fall back - unbounded fetch")
-            fetchMySegments(delay: info.nnvTimeMillis)
+            fetchMySegments(info: info)
         }
     }
 
-    private func fetchMySegments(delay: Int64) {
+    private func fetchMySegments(info: MembershipsUpdateNotification) {
         doForAllUserKeys { userKey in
-            fetchMySegments(forKey: userKey, delay: delay)
+            if info.uwChangeNumber == ServiceConstants.defaultSegmentsChangeNumber ||
+                info.uwChangeNumber > mySegmentsStorage.changeNumber(forKey: userKey) ?? -1 {
+                fetchMySegments(forKey: userKey, info: info)
+            }
         }
     }
 
-    private func fetchMySegments(forKey key: String, delay: Int64) {
-        synchronizer.fetch(byKey: key, delay: delay)
+    private func fetchMySegments(forKey key: String, info: MembershipsUpdateNotification) {
+        let delay = FetcherThrottle.computeDelay(algo: info.uwHash,
+                                                 userKey: key,
+                                                 seed: info.uwSeed,
+                                                 timeMillis: info.uwTimeMillis)
+
+        let changeNumber = SegmentsChangeNumber(
+            msChangeNumber: info.type == .mySegmentsUpdate ? info.uwChangeNumber : ServiceConstants.defaultSegmentsChangeNumber,
+            mlsChangeNumber: info.type == .myLargeSegmentsUpdate ? info.uwChangeNumber : ServiceConstants.defaultSegmentsChangeNumber
+        )
+        synchronizer.fetch(byKey: key,
+                           changeNumbers: changeNumber,
+                           delay: delay)
     }
 
     private func remove(segments: [String]) {
@@ -124,14 +140,16 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
         }
     }
 
-    private func handleBounded(encodedKeyMap: String, compressionUtil: CompressionUtil, fetchDelay: Int64) throws {
+    private func handleBounded(encodedKeyMap: String,
+                               compressionUtil: CompressionUtil,
+                               info: MembershipsUpdateNotification) throws {
         let keyMap = try payloadDecoder.decodeAsBytes(payload: encodedKeyMap, compressionUtil: compressionUtil)
 
         doForAllUserKeys { userKey in
             let keyHash = payloadDecoder.hashKey(userKey)
             if payloadDecoder.isKeyInBitmap(keyMap: keyMap, hashedKey: keyHash) {
                 Logger.d("Executing Unbounded my segment fetch request")
-                fetchMySegments(forKey: userKey, delay: fetchDelay)
+                fetchMySegments(forKey: userKey, info: info)
             }
         }
     }
@@ -144,12 +162,15 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
     }
 
     private func shouldProcessChangeNumber(_ changeNumber: Int64) -> Bool {
+        if changeNumber == -1 {
+            return true
+        }
         return changeNumber > mySegmentsStorage.lowerChangeNumber()
     }
 }
 
 protocol SegmentsSynchronizerWrapper {
-    func fetch(byKey: String, delay: Int64)
+    func fetch(byKey: String, changeNumbers: SegmentsChangeNumber, delay: Int64)
     func notifyUpdate(forKey: String)
 }
 
@@ -160,11 +181,10 @@ class MySegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
         self.synchronizer = synchronizer
     }
 
-    func fetch(byKey key: String, delay: Int64) {
-        // TODO: Add delay parameter to synchronizer
-        synchronizer.forceMySegmentsSync(forKey: key)
+    func fetch(byKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64) {
+        synchronizer.forceMySegmentsSync(forKey: key, changeNumbers: changeNumbers, delay: delay)
     }
-    
+
     func notifyUpdate(forKey key: String) {
         synchronizer.notifySegmentsUpdated(forKey: key)
     }
@@ -177,9 +197,8 @@ class MyLargeSegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
         self.synchronizer = synchronizer
     }
 
-    func fetch(byKey key: String, delay: Int64) {
-        // TODO: Add delay parameter to synchronizer
-        synchronizer.forceMySegmentsSync(forKey: key)
+    func fetch(byKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64) {
+        synchronizer.forceMySegmentsSync(forKey: key, changeNumbers: changeNumbers, delay: delay)
     }
 
     func notifyUpdate(forKey key: String) {
@@ -187,16 +206,33 @@ class MyLargeSegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
     }
 }
 
-enum FetchDelayAlgo: Int {
+enum FetchDelayAlgo: Decodable {
     // 0: NONE
-    case none = 0
+    case none
 
     // 1: MURMUR3-32
-    case murmur332 = 1
+    case murmur332
 
     // 2: MURMUR3-64k
-    case murmur364 = 2
+    case murmur364
 
+        init(from decoder: Decoder) throws {
+            let intValue = try? decoder.singleValueContainer().decode(Int.self)
+            self = FetchDelayAlgo.enumFromInt(intValue ?? 0)
+        }
+
+    static func enumFromInt(_ intValue: Int) -> FetchDelayAlgo {
+            switch intValue {
+            case 0:
+                return FetchDelayAlgo.none
+            case 1:
+                return FetchDelayAlgo.murmur332
+            case 2:
+                return FetchDelayAlgo.murmur364
+            default:
+                return FetchDelayAlgo.none
+            }
+    }
 }
 
 struct FetcherThrottle {

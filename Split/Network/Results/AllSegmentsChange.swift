@@ -31,4 +31,8 @@ struct SegmentsChangeNumber {
     func max() -> Int64 {
         return Int64([msChangeNumber, mlsChangeNumber].max() ?? -1)
     }
+
+    func asString() -> String {
+        return "\(msChangeNumber)_\(mlsChangeNumber)"
+    }
 }

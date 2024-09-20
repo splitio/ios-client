@@ -21,7 +21,7 @@ protocol Synchronizer: ImpressionLogger {
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments(forKey key: String)
     func synchronizeTelemetryConfig()
-    func forceMySegmentsSync(forKey key: String)
+    func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64)
     func startPeriodicFetching()
     func stopPeriodicFetching()
     func startRecordingUserData()
@@ -135,9 +135,11 @@ class DefaultSynchronizer: Synchronizer {
         byKeySynchronizer.syncMySegments(forKey: key)
     }
 
-    func forceMySegmentsSync(forKey key: String) {
+    func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64) {
         runIfSyncEnabled {
-            self.byKeySynchronizer.forceMySegmentsSync(forKey: key)
+            self.byKeySynchronizer.forceMySegmentsSync(forKey: key,
+                                                       changeNumbers: changeNumbers,
+                                                       delay: delay)
         }
     }
 
