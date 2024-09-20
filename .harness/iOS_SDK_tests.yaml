@@ -18,7 +18,7 @@ pipeline:
         spec:
           cloneCodebase: true
           platform:
-            os: MacOS
+            os: Linux
             arch: Arm64
           runtime:
             type: Cloud
