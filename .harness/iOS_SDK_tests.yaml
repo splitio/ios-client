@@ -1,0 +1,34 @@
+pipeline:
+  name: iOS SDK tests
+  identifier: iOS_SDK_tests
+  projectIdentifier: default_project
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: GH_iosclient
+        build: <+input>
+  stages:
+    - stage:
+        name: Test
+        identifier: Test
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: MacOS
+            arch: Arm64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: test
+                  identifier: test
+                  spec:
+                    shell: Sh
+                    command: xcodebuild test
