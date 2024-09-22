@@ -63,7 +63,7 @@ class SseHandlerTest: XCTestCase {
                                                                                          updateStrategy: .boundedFetchRequest,
                                                                                          segments: nil,
                                                                                          data: nil,
-                                                                                         hash: 0,
+                                                                                         hash: .none,
                                                                                          seed: 0,
                                                                                          timeMillis: 60)
 
@@ -80,7 +80,7 @@ class SseHandlerTest: XCTestCase {
                                                                                          updateStrategy: .boundedFetchRequest,
                                                                                          segments: nil,
                                                                                          data: nil,
-                                                                                         hash: 0,
+                                                                                         hash: .none,
                                                                                          seed: 0,
                                                                                          timeMillis: 60)
         notificationManagerKeeper.isStreamingActive = false

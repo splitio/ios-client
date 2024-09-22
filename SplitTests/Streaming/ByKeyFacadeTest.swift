@@ -112,15 +112,23 @@ class ByKeyFacadeTest: XCTestCase {
     }
 
     func testForceSync() {
-        setupTest { key in
-            byKeyFacade.forceMySegmentsSync(forKey: key.matchingKey)
+        setupTest { key, i in
+            let cn = i * 100
+            let cns = SegmentsChangeNumber(msChangeNumber: cn.asInt64(), mlsChangeNumber: cn.asInt64() + 100)
+            let delay = i * 10
+            byKeyFacade.forceMySegmentsSync(forKey: key.matchingKey, changeNumbers: cns, delay: delay.asInt64())
         }
 
         assertThis { keyNum, group in
+            let sync = stub(group.mySegmentsSynchronizer)
+            let params: ForceMySegmentsParams? = sync.forceMySegmentsSyncParams
             if keyNum < 5 {
-                XCTAssertTrue(stub(group.mySegmentsSynchronizer).forceMySegmentsSyncCalled)
+                XCTAssertEqual(params?.segmentsCn.msChangeNumber, (keyNum * 100).asInt64())
+                XCTAssertEqual(params?.segmentsCn.mlsChangeNumber, (keyNum * 100 + 100).asInt64())
+                XCTAssertEqual(params?.delay, (keyNum * 10).asInt64())
+                XCTAssertTrue(sync.forceMySegmentsSyncCalled)
             } else {
-                XCTAssertFalse(stub(group.mySegmentsSynchronizer).forceMySegmentsSyncCalled)
+                XCTAssertFalse(sync.forceMySegmentsSyncCalled)
             }
         }
     }
@@ -210,6 +218,13 @@ class ByKeyFacadeTest: XCTestCase {
         }
     }
 
+    private func setupTest(_ test: (Key, Int) -> Void) {
+        for i in 0..<5 {
+            test(buildKey(i), i)
+        }
+    }
+
+
     private func buildKey(_ num: Int) -> Key {
         return Key(matchingKey: "key_\(num)")
     }
@@ -231,9 +246,6 @@ class ByKeyFacadeTest: XCTestCase {
 
     func stub(_ attributesStorage: ByKeyAttributesStorage) -> ByKeyAttributesStorageStub {
         return attributesStorage as! ByKeyAttributesStorageStub
-    }
-
-    override func tearDown() {
     }
 
     private func buildMapKey(key: Key, function: String) -> String {
