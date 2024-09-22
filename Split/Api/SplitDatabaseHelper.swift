@@ -172,7 +172,7 @@ struct SplitDatabaseHelper {
     }
 
     static func openPersistentMyLargeSegmentsStorage(database: SplitDatabase) -> PersistentMySegmentsStorage {
-        return DefaultPersistentMySegmentsStorage(database: database)
+        return DefaultPersistentMyLargeSegmentsStorage(database: database)
     }
 
     static func openMySegmentsStorage(database: SplitDatabase) -> MySegmentsStorage {
@@ -181,8 +181,8 @@ struct SplitDatabaseHelper {
     }
 
     static func openMyLargeSegmentsStorage(database: SplitDatabase) -> MySegmentsStorage {
-        let persistentMyLargeSegmentsStorage = openPersistentMySegmentsStorage(database: database)
-        return DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMyLargeSegmentsStorage)
+        let persistentMyLargeSegmentsStorage = openPersistentMyLargeSegmentsStorage(database: database)
+        return MyLargeSegmentsStorage(persistentStorage: persistentMyLargeSegmentsStorage)
     }
 
     static func openPersistentAttributesStorage(database: SplitDatabase) -> PersistentAttributesStorage {
@@ -236,11 +236,6 @@ struct SplitDatabaseHelper {
         }
         let range = NSRange(location: 0, length: string.count)
         return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
-    }
-
-    static func createByKeyMySegmentsStorage(mySegmentsStorage: MySegmentsStorage,
-                                             userKey: String) -> ByKeyMySegmentsStorage {
-        return DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: userKey)
     }
 
     static func createCipher(level: SplitEncryptionLevel, cipherKey: Data?) -> Cipher? {

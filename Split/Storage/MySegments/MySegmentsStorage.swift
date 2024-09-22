@@ -38,7 +38,7 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
         let segments = persistenStorage.getSnapshot(forKey: key)?.segments.compactMap { $0.name } ?? []
         inMemoryMySegments.set(segments.asSet(), forKey: key)
     }
-    
+
     func changeNumber(forKey key: String) -> Int64? {
         return -1
     }
