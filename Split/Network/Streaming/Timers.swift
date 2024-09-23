@@ -12,11 +12,23 @@ enum TimerName {
     case refreshAuthToken
     case appHostBgDisconnect
     case streamingDelay
+    case syncSegments
 }
 
 protocol TimersManager {
+    /// Adds a task. If a task of the same name exists
+    /// it is replaced
     func add(timer: TimerName, task: CancellableTask)
+
+    /// Adds the task when not task having the same name is
+    /// scheduled
+    /// Returns true if the task was scheduled.
+    func addNoReplace(timer: TimerName, task: CancellableTask) -> Bool
+
+    /// Cancels the task
     func cancel(timer: TimerName)
+
+    /// Destroy the manager
     func destroy()
 }
 
@@ -27,6 +39,14 @@ class DefaultTimersManager: TimersManager {
     func add(timer: TimerName, task: CancellableTask) {
         timers.setValue(task, forKey: timer)
         taskExecutor.run(task)
+    }
+
+    func addNoReplace(timer: TimerName, task: CancellableTask) -> Bool {
+        if timers.addWithoutReplacing(task, forKey: timer) {
+            taskExecutor.run(task)
+            return true
+        }
+        return false
     }
 
     func cancel(timer: TimerName) {

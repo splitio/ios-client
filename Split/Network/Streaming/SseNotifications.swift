@@ -113,45 +113,6 @@ struct ControlNotification: NotificationTypeField {
     }
     let controlType: ControlType
 }
-/// MySegmentsUpdateNotificationJson: Indicates change in MySegments parsed from de incoming JSON
-/// For my segments update notification, two notifications are used
-/// to avoid adding an read-write variable for channel
-struct MySegmentsUpdateNotificationJson: NotificationTypeField {
-    var type: NotificationType {
-        return .mySegmentsUpdate
-    }
-    let changeNumber: Int64
-    let includesPayload: Bool
-    let segmentList: [String]?
-}
-
-/// MySegmentsUpdateNotification: Indicates change in MySegments. This struct has also the userKey (readonly)
-struct MySegmentsUpdateNotification: NotificationTypeField {
-    var type: NotificationType {
-        return .mySegmentsUpdate
-    }
-    let changeNumber: Int64
-    let includesPayload: Bool
-    let segmentList: [String]?
-    let userKeyHash: String
-
-    init(json: MySegmentsUpdateNotificationJson, userKeyHash: String) {
-        self.changeNumber = json.changeNumber
-        self.includesPayload = json.includesPayload
-        self.segmentList = json.segmentList
-        self.userKeyHash = userKeyHash
-    }
-
-    init(changeNumber: Int64,
-         includesPayload: Bool,
-         segmentList: [String]?,
-         userKeyHash: String) {
-        self.changeNumber = changeNumber
-        self.includesPayload = includesPayload
-        self.segmentList = segmentList
-        self.userKeyHash = userKeyHash
-    }
-}
 
 enum MySegmentUpdateStrategy: Decodable {
     case unboundedFetchRequest
@@ -204,7 +165,7 @@ struct MembershipsUpdateNotification: NotificationTypeField {
     let updateStrategy: MySegmentUpdateStrategy
     let segments: [String]?
     let data: String?
-    let hash: Int?
+    let hash: FetchDelayAlgo?
     let seed: Int?
     let timeMillis: Int64?
 
@@ -219,7 +180,7 @@ struct MembershipsUpdateNotification: NotificationTypeField {
         case timeMillis = "i"
     }
 
-    // nnv = not null value => unwrapped value for optional properties
+    //  uw = unwrappedd value => unwrapped value for optional properties
     /// A computed property that returns a non-null value (nnv) for the `segments` array.
     ///
     /// This property ensures that the `segments` array is always non-optional.
@@ -230,9 +191,9 @@ struct MembershipsUpdateNotification: NotificationTypeField {
     ///
     /// - Example:
     /// ```swift
-    /// let example = nnvSegments  // If `segments` is nil, it returns [].
+    /// let example = uwSegments  // If `segments` is nil, it returns [].
     /// ```
-    var nnvSegments: [String] {
+    var uwSegments: [String] {
         return segments ?? []
     }
 
@@ -246,10 +207,22 @@ struct MembershipsUpdateNotification: NotificationTypeField {
     ///
     /// - Example:
     /// ```swift
-    /// let example = nnvTimeMillis  // If `timeMillis` is nil, it returns 0.
+    /// let example = uwTimeMillis  // If `timeMillis` is nil, it returns 0.
     /// ```
-    var nnvTimeMillis: Int64 {
+    var uwTimeMillis: Int64 {
         return timeMillis ?? 0
+    }
+
+    var uwChangeNumber: Int64 {
+        return changeNumber ?? -1
+    }
+
+    var uwHash: FetchDelayAlgo {
+        return hash ?? .murmur332
+    }
+
+    var uwSeed: Int {
+        return seed ?? 0
     }
 }
 

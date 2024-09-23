@@ -11,7 +11,7 @@ import Foundation
 protocol MySegmentsSynchronizer {
     func loadMySegmentsFromCache()
     func synchronizeMySegments()
-    func forceMySegmentsSync()
+    func forceMySegmentsSync(changeNumbers: SegmentsChangeNumber, delay: Int64)
     func startPeriodicFetching()
     func stopPeriodicFetching()
     func pause()
@@ -28,16 +28,23 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     private var periodicMySegmentsSyncWorker: PeriodicSyncWorker?
     private let mySegmentsSyncWorker: RetryableSyncWorker
     private var mySegmentsForcedSyncWorker: RetryableSyncWorker?
+    private var syncTaskByCnCatalog: ConcurrentDictionary<String, RetryableSyncWorker>?
+
     private let eventsManager: SplitEventsManager
     private var isDestroyed = Atomic(false)
+    private let userKey: String
+    private var timerManager: TimersManager?
+    private var syncChangeNumbers: Atomic<SegmentsChangeNumber>?
 
     init(userKey: String,
          splitConfig: SplitClientConfig,
          mySegmentsStorage: ByKeyMySegmentsStorage,
          myLargeSegmentsStorage: ByKeyMySegmentsStorage,
          syncWorkerFactory: MySegmentsSyncWorkerFactory,
-         eventsManager: SplitEventsManager) {
+         eventsManager: SplitEventsManager,
+         timerManager: TimersManager?) {
 
+        self.userKey = userKey
         self.splitConfig = splitConfig
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = mySegmentsStorage
@@ -48,6 +55,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
             avoidCache: false,
             eventsManager: eventsManager,
             changeNumbers: nil)
+
         // If no single sync mode is enabled, create periodic and forced worker (polling and streaming)
         if splitConfig.syncEnabled {
             self.periodicMySegmentsSyncWorker = syncWorkerFactory.createPeriodicMySegmentsSyncWorker(
@@ -58,6 +66,13 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
                 avoidCache: true,
                 eventsManager: eventsManager,
                 changeNumbers: nil)
+            self.syncTaskByCnCatalog = ConcurrentDictionary<String, RetryableSyncWorker>()
+            self.timerManager = timerManager
+
+            let msChangeNumber = mySegmentsStorage.changeNumber
+            let mlsChangeNumber = myLargeSegmentsStorage.changeNumber
+            self.syncChangeNumbers = Atomic(SegmentsChangeNumber(msChangeNumber: msChangeNumber,
+                                                            mlsChangeNumber: mlsChangeNumber))
         }
     }
 
@@ -81,11 +96,11 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         mySegmentsSyncWorker.start()
     }
 
-    func forceMySegmentsSync() {
+    func forceMySegmentsSync(changeNumbers: SegmentsChangeNumber, delay: Int64) {
         if isDestroyed.value {
             return
         }
-        mySegmentsForcedSyncWorker?.start()
+        delayedSync(changeNumbers: changeNumbers, delay: delay)
     }
 
     func startPeriodicFetching() {
@@ -100,11 +115,6 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
             return
         }
         periodicMySegmentsSyncWorker?.stop()
-    }
-
-    func notifiySegmentsUpdated() {
-        // TODO: Update logic for ms y mls
-//        eventsManager.notifyUpdate()
     }
 
     func pause() {
@@ -123,5 +133,59 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         mySegmentsSyncWorker.stop()
         periodicMySegmentsSyncWorker?.stop()
         mySegmentsForcedSyncWorker?.stop()
+    }
+
+    private func delayedSync(changeNumbers: SegmentsChangeNumber, delay: Int64) {
+        if isDestroyed.value || !splitConfig.syncEnabled {
+            return
+        }
+
+        if changeNumbers.msChangeNumber != ServiceConstants.defaultSegmentsChangeNumber,
+           changeNumbers.mlsChangeNumber != ServiceConstants.defaultSegmentsChangeNumber,
+           changeNumbers.msChangeNumber <= mySegmentsStorage.changeNumber,
+           changeNumbers.mlsChangeNumber <= myLargeSegmentsStorage.changeNumber {
+            return
+        }
+
+        syncChangeNumbers?.mutate {
+            if $0.msChangeNumber <= changeNumbers.msChangeNumber,
+               changeNumbers.mlsChangeNumber <= changeNumbers.mlsChangeNumber {
+            }
+        }
+        if delay == 0 {
+            executeSync()
+        } else {
+            _ = timerManager?.addNoReplace(timer: .syncSegments, task: createSyncTask(time: delay))
+        }
+    }
+
+    private func createSyncTask(time: Int64) -> CancellableTask {
+        return DefaultTask(delay: time) { [weak self] in
+            guard let self = self else { return }
+            self.executeSync()
+        }
+    }
+
+    private func executeSync() {
+        guard let taskCatalog = self.syncTaskByCnCatalog else {
+            return
+        }
+        guard let changeNumbers = self.syncChangeNumbers?.value else {
+            return
+        }
+        let cnKey = changeNumbers.asString()
+        if taskCatalog.value(forKey: cnKey) == nil {
+            var worker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(forKey: userKey,
+                                                                               avoidCache: true,
+                                                                               eventsManager: eventsManager,
+                                                                               changeNumbers: changeNumbers)
+            taskCatalog.setValue(worker, forKey: cnKey)
+            worker.start()
+            worker.completion = { success in
+                if success {
+                    taskCatalog.removeValue(forKey: cnKey)
+                }
+            }
+        }
     }
 }
