@@ -8,6 +8,13 @@
 
 import Foundation
 
-@objc class UserDefinedSegmentMatcherData: NSObject, Codable {
+class UserDefinedBaseSegmentMatcherData: Codable {
     var segmentName: String?
+    var largeSegmentName: String?
+}
+
+class UserDefinedSegmentMatcherData: UserDefinedBaseSegmentMatcherData {
+}
+
+class UserDefinedLargeSegmentMatcherData: UserDefinedBaseSegmentMatcherData {
 }

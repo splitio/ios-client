@@ -6,8 +6,7 @@
 //
 //
 // Generated using Sourcery 0.11.0 — https://github.com/krzysztofzablocki/Sourcery
-// DO NOT EDIT
-
+//
 // swiftlint:disable inclusive_language
 extension BetweenMatcherData {
   override public var debugDescription: String {
@@ -283,13 +282,26 @@ extension UnaryNumericMatcherData {
   }
 }
 
-extension UserDefinedSegmentMatcherData {
-  override public var debugDescription: String {
+extension UserDefinedSegmentMatcherData: CustomDebugStringConvertible {
+  var debugDescription: String {
     var output: String = "UserDefinedSegmentMatcherData {\n"
     if let segmentName = segmentName {
       output+="segmentName = \(segmentName) \n"
     } else {
       output+="segmentName = nil\n"
+    }
+    output+="}"
+    return output
+  }
+}
+
+extension UserDefinedLargeSegmentMatcherData: CustomDebugStringConvertible {
+  var debugDescription: String {
+    var output: String = "UserDefinedLargeSegmentMatcherData {\n"
+    if let segmentName = largeSegmentName {
+      output+="largeSegmentName = \(segmentName) \n"
+    } else {
+      output+="largeSegmentName = nil\n"
     }
     output+="}"
     return output

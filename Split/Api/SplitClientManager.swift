@@ -198,7 +198,7 @@ class DefaultClientManager: SplitClientManager {
 
     private func buildMyLargeSegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage {
         return DefaultByKeyMySegmentsStorage(
-            mySegmentsStorage: storageContainer.mySegmentsStorage,
+            mySegmentsStorage: storageContainer.myLargeSegmentsStorage,
             userKey: key)
     }
 

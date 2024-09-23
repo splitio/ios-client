@@ -47,7 +47,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         self.userKey = userKey
         self.splitConfig = splitConfig
         self.mySegmentsStorage = mySegmentsStorage
-        self.myLargeSegmentsStorage = mySegmentsStorage
+        self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.syncWorkerFactory = syncWorkerFactory
         self.eventsManager = eventsManager
         self.mySegmentsSyncWorker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
@@ -68,11 +68,8 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
                 changeNumbers: nil)
             self.syncTaskByCnCatalog = ConcurrentDictionary<String, RetryableSyncWorker>()
             self.timerManager = timerManager
-
-            let msChangeNumber = mySegmentsStorage.changeNumber
-            let mlsChangeNumber = myLargeSegmentsStorage.changeNumber
-            self.syncChangeNumbers = Atomic(SegmentsChangeNumber(msChangeNumber: msChangeNumber,
-                                                            mlsChangeNumber: mlsChangeNumber))
+            self.syncChangeNumbers = Atomic(SegmentsChangeNumber(msChangeNumber: ServiceConstants.defaultSegmentsChangeNumber,
+                                                                 mlsChangeNumber: ServiceConstants.defaultSegmentsChangeNumber))
         }
     }
 
@@ -80,12 +77,17 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         if isDestroyed.value {
             return
         }
-        DispatchQueue.general.async {
+        DispatchQueue.general.async { [weak self] in
+            guard let self = self else { return }
             self.mySegmentsStorage.loadLocal()
             self.eventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
             self.myLargeSegmentsStorage.loadLocal()
             self.eventsManager.notifyInternalEvent(.myLargeSegmentsLoadedFromCache)
             TimeChecker.logInterval("Time until my segments loaded from cache")
+            let msChangeNumber = self.mySegmentsStorage.changeNumber
+            let mlsChangeNumber = self.myLargeSegmentsStorage.changeNumber
+            self.syncChangeNumbers?.set(SegmentsChangeNumber(msChangeNumber: msChangeNumber,
+                                                            mlsChangeNumber: mlsChangeNumber))
         }
     }
 
