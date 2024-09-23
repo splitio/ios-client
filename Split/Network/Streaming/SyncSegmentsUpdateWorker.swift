@@ -237,6 +237,10 @@ enum FetchDelayAlgo: Decodable {
 
 struct FetcherThrottle {
     static func computeDelay(algo: FetchDelayAlgo, userKey: String, seed: Int, timeMillis: Int64) -> Int64 {
+        if timeMillis == 0 {
+            return 0
+        }
+
         switch algo {
         case .none:
             return 0
@@ -245,7 +249,7 @@ struct FetcherThrottle {
             return Int64(Murmur3Hash.hashString(userKey, UInt32(truncatingIfNeeded: seed))) % timeMillis
 
         case .murmur364:
-            return Int64(Murmur64x128.hashKey(userKey, seed: Int32(seed)))
+            return Int64(Murmur64x128.hashKey(userKey, seed: Int32(seed))) % timeMillis
         }
     }
 }
