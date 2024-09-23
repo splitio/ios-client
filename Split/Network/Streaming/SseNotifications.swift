@@ -218,7 +218,7 @@ struct MembershipsUpdateNotification: NotificationTypeField {
     }
 
     var uwHash: FetchDelayAlgo {
-        return hash ?? .none
+        return hash ?? .murmur332
     }
 
     var uwSeed: Int {
