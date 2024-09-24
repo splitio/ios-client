@@ -10,6 +10,11 @@ import Foundation
 import XCTest
 @testable import Split
 
+struct ForceMySegmentsParams {
+    let segmentsCn: SegmentsChangeNumber
+    let delay: Int64
+}
+
 class SynchronizerStub: Synchronizer {
     var disableSdkCalled = false
     var disableEventsCalled = false
@@ -25,7 +30,6 @@ class SynchronizerStub: Synchronizer {
     var synchronizeMySegmentsCalled = false
     var synchronizeMyLargeSegmentsCalled = false
     var forceMySegmentsSyncCalled = false
-    var forceMyLargeSegmentsSyncCalled = false
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
     var startRecordingTelemetryCalled = false
@@ -47,7 +51,6 @@ class SynchronizerStub: Synchronizer {
     var forceMySegmentsSyncExp = [String: XCTestExpectation]()
     var notifyMySegmentsUpdatedExp = [String: XCTestExpectation]()
 
-    var forceMyLargeSegmentsSyncExp = [String: XCTestExpectation]()
     var notifyMyLargeSegmentsUpdatedExp = [String: XCTestExpectation]()
 
     var startPeriodicFetchingExp: XCTestExpectation?
@@ -99,25 +102,16 @@ class SynchronizerStub: Synchronizer {
         synchronizeMySegmentsForKeyCalled[key] = true
     }
     
-    var synchronizeMyLargeSegmentsForKeyCalled = [String: Bool]()
-    func synchronizeMyLargeSegments(forKey key: String) {
-        synchronizeMyLargeSegmentsForKeyCalled[key] = true
-    }
-
     var forceMySegmentsSyncForKeyCalled = [String: Bool]()
-    func forceMySegmentsSync(forKey key: String) {
+    var forceMySegmentsCalledParams = [String: ForceMySegmentsParams]()
+    func forceMySegmentsSync(forKey key: String,
+                             changeNumbers: SegmentsChangeNumber,
+                             delay: Int64) {
         forceMySegmentsSyncForKeyCalled[key] = true
+        forceMySegmentsCalledParams[key] = ForceMySegmentsParams(segmentsCn:changeNumbers,
+                                                                 delay: delay)
 
         if let exp = forceMySegmentsSyncExp[key] {
-            exp.fulfill()
-        }
-    }
-
-    var forceMyLargeSegmentsSyncForKeyCalled = [String: Bool]()
-    func forceMyLargeSegmentsSync(forKey key: String) {
-        forceMyLargeSegmentsSyncForKeyCalled[key] = true
-
-        if let exp = forceMyLargeSegmentsSyncExp[key] {
             exp.fulfill()
         }
     }

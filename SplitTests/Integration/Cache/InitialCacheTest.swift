@@ -444,7 +444,7 @@ class InitialCacheTest: XCTestCase {
         change?.since = Int64(since)
         change?.till = Int64(till)
         let split = change?.splits[0]
-        if let partitions = split?.conditions?[1].partitions {
+        if let partitions = split?.conditions?[2].partitions {
             for (i, partition) in partitions.enumerated() {
                 partition.treatment = "on\(i)"
                 if index == i {
@@ -456,8 +456,6 @@ class InitialCacheTest: XCTestCase {
         }
         return change!
     }
-
-    
 
     private func loadChangesExpired() {
         cachedSplit = TestingHelper.buildSplit(name: splitName, treatment: "boom")

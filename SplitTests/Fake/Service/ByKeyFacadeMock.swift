@@ -22,7 +22,6 @@ class ByKeyFacadeMock: ByKeyFacade {
     var syncMyLargeSegmentsKeyCalled = [Key: Bool]()
     var syncAllCalled = false
     var forceMySegmentsSyncCalled = [String: Bool]()
-    var forceMyLargeSegmentsSyncCalled = [String: Bool]()
     var pauseCalled = false
     var resumeCalled = false
     var stopPeriodicSyncCalled = false
@@ -73,8 +72,17 @@ class ByKeyFacadeMock: ByKeyFacade {
         syncMySegmentsKeyCalled[key] = true
     }
 
-    func forceMySegmentsSync(forKey key: String) {
+    var forceMySegmentsCalledParams = [String: ForceMySegmentsParams]()
+    func forceMySegmentsSync(forKey key: String,
+                             changeNumbers: SegmentsChangeNumber,
+                             delay: Int64) {
         forceMySegmentsSyncCalled[key] = true
+        forceMySegmentsCalledParams[key] = ForceMySegmentsParams(segmentsCn:changeNumbers,
+                                                                 delay: delay)
+
+//        if let exp = forceMySegmentsSyncExp[key] {
+//            exp.fulfill()
+//        }
     }
 
     func startPeriodicSync() {
@@ -90,20 +98,8 @@ class ByKeyFacadeMock: ByKeyFacade {
         startSyncForKeyCalled[key] = true
     }
 
-    func forceSync(forKey key: String) {
-        forceMySegmentsSyncCalled[key] = true
-    }
-    
     func syncMyLargeSegments(forKey key: String) {
         syncMyLargeSegmentsCalled[key] = true
-    }
-
-    func syncMyLargeSegments(forKey key: Key) {
-        syncMyLargeSegmentsKeyCalled[key] = true
-    }
-
-    func forceMyLargeSegmentsSync(forKey key: String) {
-        forceMyLargeSegmentsSyncCalled[key] = true
     }
 
     func pause() {

@@ -47,9 +47,11 @@ class SynchronizerSpy: Synchronizer {
     var forceMySegmentsSyncCount = [String: Int]()
     var forceMyLargeSegmentsSyncCalled = [String: Bool]()
     var forceMyLargeSegmentsSyncCount = [String: Int]()
-   var disableTelemetryCalled = true
+    var disableTelemetryCalled = true
     var disableEventsCalled = true
     var disableSdkCalled = true
+
+    var forceMySegmentsCalledParams = [String: ForceMySegmentsParams]()
 
     init(splitConfig: SplitClientConfig,
          defaultUserKey: String,
@@ -87,7 +89,7 @@ class SynchronizerSpy: Synchronizer {
         loadMySegmentsFromCacheCalled = true
         splitSynchronizer.loadMySegmentsFromCache()
     }
-    
+
     func loadAttributesFromCache() {
         loadAttributesFromCacheCalled = true
         splitSynchronizer.loadAttributesFromCache()
@@ -220,10 +222,12 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.synchronizeMySegments(forKey: key)
     }
 
-    func forceMySegmentsSync(forKey key: String) {
-        splitSynchronizer.forceMySegmentsSync(forKey: key)
+    func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64) {
+        Logger.v("Sync Spy: \(key) - ChangeNumbers(ms: \(changeNumbers.msChangeNumber), mls: \(changeNumbers.mlsChangeNumber), delay: \(delay)")
+        splitSynchronizer.forceMySegmentsSync(forKey: key, changeNumbers: changeNumbers, delay: delay)
         forceMySegmentsSyncCalled[key] = true
         forceMySegmentsSyncCount[key]=(forceMySegmentsSyncCount[key] ?? 0) + 1
+        forceMySegmentsCalledParams[key] = ForceMySegmentsParams(segmentsCn: changeNumbers, delay: delay)
     }
 
     func disableSdk() {

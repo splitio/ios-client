@@ -21,12 +21,12 @@ class MySegmentsSynchronizerTest: XCTestCase {
     var mySegmentsSyncWorker: RetryableMySegmentsSyncWorkerStub!
     var mySegmentsForceWorker: RetryableMySegmentsSyncWorkerStub!
     var periodicMySegmentsSyncWorker: PeriodicSyncWorkerStub!
+    var timerManager: TimersManagerMock!
 
     override func setUp() {
         mySegmentsSyncWorker = RetryableMySegmentsSyncWorkerStub(userKey: userKey, avoidCache: false)
         mySegmentsForceWorker = RetryableMySegmentsSyncWorkerStub(userKey: userKey, avoidCache: true)
         periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
-
         mySegmentsStorage = ByKeyMySegmentsStorageStub()
         myLargeSegmentsStorage = ByKeyMySegmentsStorageStub()
         syncWorkerFactory = MySegmentsSyncWorkerFactoryStub()
@@ -34,12 +34,14 @@ class MySegmentsSynchronizerTest: XCTestCase {
         syncWorkerFactory.addMySegmentWorker(mySegmentsSyncWorker, forKey: userKey, avoidCache: false)
         syncWorkerFactory.addMySegmentWorker(mySegmentsForceWorker, forKey: userKey, avoidCache: true)
         syncWorkerFactory.periodicMySegmentsSyncWorker = periodicMySegmentsSyncWorker
+        timerManager = TimersManagerMock()
 
         mySegmentsSync = DefaultMySegmentsSynchronizer(userKey: userKey, splitConfig: SplitClientConfig(),
                                                        mySegmentsStorage: mySegmentsStorage,
-                                                       myLargeSegmentsStorage: mySegmentsStorage,
+                                                       myLargeSegmentsStorage: myLargeSegmentsStorage,
                                                        syncWorkerFactory: syncWorkerFactory,
-                                                       eventsManager: eventsManager)
+                                                       eventsManager: eventsManager,
+                                                       timerManager: timerManager)
     }
 
     func testLoadMySegmentsFromCache() {
@@ -61,10 +63,27 @@ class MySegmentsSynchronizerTest: XCTestCase {
     }
 
     func testForceSync() {
-        mySegmentsSync.forceMySegmentsSync()
+        let changeNumbers = SegmentsChangeNumber(msChangeNumber: 10, mlsChangeNumber: 100)
+        let delay: Int64 = 1
 
+        mySegmentsSync.forceMySegmentsSync(changeNumbers: changeNumbers,
+                                           delay: delay)
+        XCTAssertTrue(timerManager.timerIsAdded(timer: .syncSegments))
+    }
+
+    func testForceSyncNoDelay() {
+        let changeNumbers = SegmentsChangeNumber(msChangeNumber: 10, mlsChangeNumber: 100)
+        let delay: Int64 = 0
+        let exp = XCTestExpectation()
+
+        mySegmentsForceWorker.startExp = exp
+
+        mySegmentsSync.forceMySegmentsSync(changeNumbers: changeNumbers,
+                                           delay: delay)
+
+        wait(for: [exp], timeout: 5.0)
+        XCTAssertFalse(timerManager.timerIsAdded(timer: .syncSegments))
         XCTAssertTrue(mySegmentsForceWorker.startCalled)
-        XCTAssertFalse(mySegmentsSyncWorker.startCalled)
     }
 
     func testNoPeriodicSync() {
@@ -100,9 +119,6 @@ class MySegmentsSynchronizerTest: XCTestCase {
 
         XCTAssertTrue(periodicMySegmentsSyncWorker.startCalled)
         XCTAssertTrue(periodicMySegmentsSyncWorker.stopCalled)
-    }
-
-    override func tearDown() {
     }
 }
 

@@ -250,8 +250,9 @@ struct TestingData {
 """
         return message
     }
+
     static func fullMembershipsNotificationUnboundedMessage(type: NotificationType, cn: Int64? = nil) -> String {
-        let data = membershipsNotificationUnboundedMessage(type: .mySegmentsUpdate)
+        let data = membershipsNotificationUnboundedMessage(type: type)
         let msg = """
         id:cf74eb42-f687-48e4-ad18-af2125110aac
         event:message
@@ -313,7 +314,7 @@ struct TestingData {
         var data = "\"{\\\"type\\\":\\\"\(strType)\\\",\\\"c\\\":2,\\\"u\\\":0,\\\"n\\\": [\\\"test\\\"], \\\"d\\\":\\\"eJwEwLsRwzAMA9BdWKsg+IFBraJTkRXS5rK7388+tg+KdC8+jq4eBBQLFcUnO8FAAC36gndOSEyFqJFP32Vf2+f+3wAAAP//hUQQ9A==\\\"}\""
 
         if type == .myLargeSegmentsUpdate {
-            data = "\"{\\\"type\\\":\\\"\(strType)\\\",\\\"cn\\\":1702507130121,\\\"c\\\":2,\\\"s\\\":200,\\\"u\\\":0,\\\"h\\\":100,\\\"i\\\": 300,\\\"n\\\": [\\\"test\\\"], \\\"d\\\":\\\"eJwEwLsRwzAMA9BdWKsg+IFBraJTkRXS5rK7388+tg+KdC8+jq4eBBQLFcUnO8FAAC36gndOSEyFqJFP32Vf2+f+3wAAAP//hUQQ9A==\\\"}\""
+            data = "\"{\\\"type\\\":\\\"\(strType)\\\",\\\"cn\\\":1702507130121,\\\"c\\\":2,\\\"s\\\":200,\\\"u\\\":0,\\\"h\\\":0,\\\"i\\\": 300,\\\"n\\\": [\\\"test\\\"], \\\"d\\\":\\\"eJwEwLsRwzAMA9BdWKsg+IFBraJTkRXS5rK7388+tg+KdC8+jq4eBBQLFcUnO8FAAC36gndOSEyFqJFP32Vf2+f+3wAAAP//hUQQ9A==\\\"}\""
         }
 
         let message = """

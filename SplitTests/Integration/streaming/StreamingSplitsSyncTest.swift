@@ -181,7 +181,7 @@ class StreamingSplitsSyncTest: XCTestCase {
         change?.since = Int64(since)
         change?.till = Int64(till)
         let split = change?.splits[0]
-        if let partitions = split?.conditions?[1].partitions {
+        if let partitions = split?.conditions?[2].partitions {
             let partition = partitions.filter { $0.treatment == withTreatment }
             partition[0].size = 100
 

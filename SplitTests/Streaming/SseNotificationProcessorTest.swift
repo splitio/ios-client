@@ -258,7 +258,7 @@ class SseNotificationProcessorTest: XCTestCase {
                                      updateStrategy: MySegmentUpdateStrategy,
                                      largeSegments: [String]?,
                                      data: String? = nil,
-                                     hash: Int? = nil,
+                                     hash: FetchDelayAlgo? = nil,
                                      seed: Int? = 0,
                                      timeMillis: Int64? = nil) -> MembershipsUpdateNotification {
 

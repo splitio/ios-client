@@ -14,6 +14,7 @@ class MySegmentsSynchronizerStub: MySegmentsSynchronizer {
     var loadMySegmentsFromCacheCalled = false
     var synchronizeMySegmentsCalled = false
     var forceMySegmentsSyncCalled = false
+    var forceMySegmentsSyncParams: ForceMySegmentsParams?
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
     var pauseCalled = false
@@ -28,8 +29,9 @@ class MySegmentsSynchronizerStub: MySegmentsSynchronizer {
         synchronizeMySegmentsCalled = true
     }
 
-    func forceMySegmentsSync() {
+    func forceMySegmentsSync(changeNumbers: SegmentsChangeNumber, delay: Int64) {
         forceMySegmentsSyncCalled = true
+        forceMySegmentsSyncParams = ForceMySegmentsParams(segmentsCn: changeNumbers, delay: delay)
     }
 
     func startPeriodicFetching() {

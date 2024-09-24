@@ -37,8 +37,8 @@ class SegmentsUpdateWorkerTests: XCTestCase {
     }
 
     func testUnboundedLarge() throws {
-        let notification = newNotification(type: .mySegmentsUpdate, strategy: .unboundedFetchRequest)
-        unboundedTest(info: notification, resource: .mySegments)
+        let notification = newNotification(type: .myLargeSegmentsUpdate, cn: 100, strategy: .unboundedFetchRequest)
+        unboundedTest(info: notification, resource: .myLargeSegments)
     }
 
     func unboundedTest(info: MembershipsUpdateNotification, resource: TelemetryUpdatesFromSseType, delay: Int64 = 0) {
@@ -49,7 +49,7 @@ class SegmentsUpdateWorkerTests: XCTestCase {
 
         XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
         XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(forceSyncCalled(resource, forKey: userKey))
+        XCTAssertTrue(synchronizer.forceMySegmentsSyncForKeyCalled[userKey] ?? false)
         XCTAssertFalse(telemetryProducer.recordUpdatesFromSseCalled)
     }
 
@@ -247,11 +247,7 @@ class SegmentsUpdateWorkerTests: XCTestCase {
 
     private func expFetchResource(_ resource: TelemetryUpdatesFromSseType) -> XCTestExpectation {
         let exp = XCTestExpectation(description: "exp")
-        if resource == .mySegments {
-            synchronizer.forceMySegmentsSyncExp[userKey] = exp
-        } else {
-            synchronizer.forceMyLargeSegmentsSyncExp[userKey] = exp
-        }
+        synchronizer.forceMySegmentsSyncExp[userKey] = exp
         return exp
     }
 
@@ -262,20 +258,13 @@ class SegmentsUpdateWorkerTests: XCTestCase {
         return synchronizer.notifyLargeSegmentsUpdatedForKeyCalled[userKey] ?? false
     }
 
-    private func forceSyncCalled(_ resource: TelemetryUpdatesFromSseType, forKey userKey: String) -> Bool {
-        if resource == .mySegments {
-            return synchronizer.forceMySegmentsSyncForKeyCalled[userKey] ?? false
-        }
-        return synchronizer.forceMyLargeSegmentsSyncForKeyCalled[userKey] ?? false
-    }
-
     private func newNotification(type: NotificationType,
                                  cn: Int64? = nil,
                                  compressionType: CompressionType = .gzip,
                                  strategy: MySegmentUpdateStrategy,
                                  segments: [String] = [],
                                  data: String? = nil,
-                                 hash: Int? = nil,
+                                 hash: FetchDelayAlgo? = nil,
                                  seed: Int? = nil,
                                  timeMillis: Int64? = nil)-> MembershipsUpdateNotification {
 

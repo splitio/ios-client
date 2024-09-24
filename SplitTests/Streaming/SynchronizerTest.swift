@@ -123,8 +123,12 @@ class SynchronizerTest: XCTestCase {
 
     func testForceSynchronizeMySegments() {
 
-        synchronizer.forceMySegmentsSync(forKey: userKey)
+        let cn = SegmentsChangeNumber(msChangeNumber: 100, mlsChangeNumber: 200)
+        synchronizer.forceMySegmentsSync(forKey: userKey, changeNumbers: cn, delay: 5)
 
+        XCTAssertEqual(byKeyApiFacade.forceMySegmentsCalledParams[userKey]?.segmentsCn.msChangeNumber, 100)
+        XCTAssertEqual(byKeyApiFacade.forceMySegmentsCalledParams[userKey]?.segmentsCn.mlsChangeNumber, 200)
+        XCTAssertEqual(byKeyApiFacade.forceMySegmentsCalledParams[userKey]?.delay, 5)
         XCTAssertTrue(byKeyApiFacade.forceMySegmentsSyncCalled[userKey] ?? false)
     }
 
@@ -162,10 +166,11 @@ class SynchronizerTest: XCTestCase {
 
     func testForceMySegmentsSyncSingleModeEnabled() {
         let syncKey = IntegrationHelper.dummyUserKey
+        let cn = SegmentsChangeNumber(msChangeNumber: 100, mlsChangeNumber: 200)
         synchronizer = buildSynchronizer(syncEnabled: false)
-        synchronizer.forceMySegmentsSync(forKey: syncKey)
+        synchronizer.forceMySegmentsSync(forKey: syncKey, changeNumbers: cn, delay: 10)
 
-        XCTAssertFalse(byKeyApiFacade.forceMySegmentsSyncCalled[syncKey] ?? false)
+        XCTAssertNil(byKeyApiFacade.forceMySegmentsSyncCalled[syncKey])
     }
 
     func testStopPeriodicFetching() {

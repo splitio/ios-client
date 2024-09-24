@@ -128,7 +128,7 @@ struct TestingHelper {
         change?.till = Int64(1)
         let split = change!.splits[0]
         split.name = name
-        if let partitions = split.conditions?[1].partitions {
+        if let partitions = split.conditions?[2].partitions {
             for (i, partition) in partitions.enumerated() {
                 if 1 == i {
                     partition.treatment = treatment

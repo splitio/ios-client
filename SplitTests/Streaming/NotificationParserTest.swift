@@ -153,7 +153,7 @@ class NotificationParserTest: XCTestCase {
         XCTAssertEqual(1702507130121, mySegmentUpdate.changeNumber)
         XCTAssertEqual(["test"], mySegmentUpdate.segments)
         XCTAssertEqual("eJwEwLsRwzAMA9BdWKsg+IFBraJTkRXS5rK7388+tg+KdC8+jq4eBBQLFcUnO8FAAC36gndOSEyFqJFP32Vf2+f+3wAAAP//hUQQ9A==", mySegmentUpdate.data)
-        XCTAssertEqual(100, mySegmentUpdate.hash)
+        XCTAssertEqual(FetchDelayAlgo.none, mySegmentUpdate.hash)
         XCTAssertEqual(200, mySegmentUpdate.seed)
         XCTAssertEqual(300, mySegmentUpdate.timeMillis)
     }
