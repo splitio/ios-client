@@ -45,7 +45,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         wait(for: [dbExp], timeout: 10.0)
 
@@ -106,7 +106,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         wait(for: [dbExp], timeout: 10.0)
         
@@ -175,7 +175,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: Date().unixTimestamp())
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         wait(for: [dbExp], timeout: 10.0)
 
@@ -244,7 +244,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: Date().unixTimestamp())
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .splitsFilterQueryString, stringValue: "")
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         wait(for: [dbExp], timeout: 10.0)
 
@@ -326,7 +326,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.2")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
 
         wait(for: [dbExp], timeout: 10.0)
 

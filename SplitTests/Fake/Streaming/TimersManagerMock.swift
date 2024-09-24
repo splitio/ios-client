@@ -61,6 +61,9 @@ class TimersManagerMock: TimersManager {
         return result
     }
 
+    func isScheduled(timer: TimerName) -> Bool {
+        return timerIsAdded(timer: timer)
+    }
     func addExpectationFor(timer: TimerName, expectation: XCTestExpectation) {
         expectations[timer] = expectation
     }

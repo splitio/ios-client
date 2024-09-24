@@ -154,15 +154,28 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
                changeNumbers.mlsChangeNumber <= changeNumbers.mlsChangeNumber {
             }
         }
+
+        print("TIMER: \(timerManager?.isScheduled(timer: .syncSegments) ?? false )")
+        if timerManager?.isScheduled(timer: .syncSegments) ?? false {
+            return
+        }
+
+        print("CAT: \(syncTaskByCnCatalog?.value(forKey: changeNumbers.asString()))")
+        if syncTaskByCnCatalog?.count ?? 0 > 0 {
+            return
+        }
+
         if delay == 0 {
             executeSync()
+            print("EXECUTE NO TIME")
         } else {
+            print("ADDING TIME")
             _ = timerManager?.addNoReplace(timer: .syncSegments, task: createSyncTask(time: delay))
         }
     }
 
     private func createSyncTask(time: Int64) -> CancellableTask {
-        return DefaultTask(delay: time) { [weak self] in
+        return DefaultTask(delay: time / 1000) { [weak self] in
             guard let self = self else { return }
             self.executeSync()
         }
@@ -182,6 +195,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
                                                                                eventsManager: eventsManager,
                                                                                changeNumbers: changeNumbers)
             taskCatalog.setValue(worker, forKey: cnKey)
+            print("RUNNING FETCH")
             worker.start()
             worker.completion = { success in
                 if success {

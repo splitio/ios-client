@@ -60,64 +60,116 @@ struct TestingData {
             }
     """
 
-    static let kUnboundedNotification = """
+    static func delayedUnboundedNotification(type: NotificationType, cn: Int = -1, delay: Int = 500) -> String {
+        let notificationType = str(type)
+        let kUnboundedNotification = """
     {
-                \\\"type\\\": \\\"MEMBERSHIPS_MS_UPDATE\\\",
+                \\\"type\\\": \\\"\(notificationType)\\\",
+                \\\"u\\\": 0,
+                \\\"c\\\": 0,
+                \\\"h\\\": 1,
+                \\\"s\\\": 1,
+                \\\"i\\\": \(delay),
+                \\\"d\\\": \\\"\\\",
+                \\\"n\\\": [\\\"pepe\\\"],
+                \\\"cn\\\": \(cn)
+                }
+    """
+        return kUnboundedNotification
+    }
+
+    static func unboundedNotification(type: NotificationType, cn: Int = -1) -> String {
+        let notificationType = str(type)
+        let kUnboundedNotification = """
+    {
+                \\\"type\\\": \\\"\(notificationType)\\\",
                 \\\"u\\\": 0,
                 \\\"c\\\": 0,
                 \\\"d\\\": \\\"\\\",
                 \\\"n\\\": [\\\"pepe\\\"],
-                \\\"cn\\\": 28
+                \\\"cn\\\": \(cn)
                 }
     """
+        return kUnboundedNotification
+    }
 
-    static let kSegmentRemovalNotification = """
+    static func segmentRemovalNotification(type: NotificationType, cn: Int = -1) -> String {
+        let notificationType = str(type)
+        let kSegmentRemovalNotification = """
     {
-                \\\"type\\\": \\\"MEMBERSHIPS_MS_UPDATE\\\",
+                \\\"type\\\": \\\"\(notificationType)\\\",
                 \\\"u\\\": 3,
                 \\\"c\\\": 0,
                 \\\"d\\\": \\\"\\\",
                 \\\"n\\\": [\\\"segment1\\\"],
-                \\\"cn\\\": 28
+                \\\"cn\\\": \(cn)
                 }
     """
+        return kSegmentRemovalNotification
+    }
 
-    static let kEscapedKeyListNotificationGzip = """
+    static func escapedKeyListNotificationGzip(type: NotificationType, cn: Int = -1) -> String {
+
+        let notificationType = str(type)
+        let kEscapedKeyListNotificationGzip = """
     {
-                \\\"type\\\": \\\"MEMBERSHIPS_MS_UPDATE\\\",
+                \\\"type\\\": \\\"\(notificationType)\\\",
                 \\\"n\\\": [\\\"new_segment_added\\\"],
                 \\\"u\\\": 2,
                 \\\"c\\\": 1,
+                \\\"cn\\\": \(cn),
                 \\\"d\\\": \\\"H4sIAAAAAAAA/wTAsRHDUAgD0F2ofwEIkPAqPhdZIW0uu/v97GPXHU004ULuMGrYR6XUbIjlXULPPse+dt1yhJibBODjrTmj3GJ4emduuDDP/w0AAP//18WLsl0AAAA=\\\"
                 }
     """
+        return kEscapedKeyListNotificationGzip
+    }
 
-    static let kEscapedBoundedNotificationGzip  = """
+    static func escapedBoundedNotificationGzip(type: NotificationType, cn: Int = -1) -> String {
+        let notificationType = str(type)
+        let kEscapedBoundedNotificationGzip  = """
     {
-                \\\"type\\\": \\\"MEMBERSHIPS_MS_UPDATE\\\",
+                \\\"type\\\": \\\"\(notificationType)\\\",
                 \\\"u\\\": 1,
                 \\\"c\\\": 1,
+                \\\"cn\\\": \(cn),
                 \\\"d\\\": \\\"H4sIAAAAAAAA/2IYBfgAx0A7YBTgB4wD7YABAAID7QC6g5EYy8MEMA20A+gMFAbaAYMZDPXqlGWgHTAKRsEoGAWjgCzQQFjJkKqiiPAPAQAIAAD//5L7VQwAEAAA\\\"
                 }
     """
+        return kEscapedBoundedNotificationGzip
+    }
 
-    static let kEscapedBoundedNotificationZlib = """
+    static func escapedBoundedNotificationZlib(type: NotificationType, cn: Int = -1) -> String {
+        let notificationType = str(type)
+        let kEscapedBoundedNotificationZlib = """
     {
-                \\\"type\\\": \\\"MEMBERSHIPS_MS_UPDATE\\\",
+                \\\"type\\\": \\\"\(notificationType)\\\",
                 \\\"u\\\": 1,
                 \\\"c\\\": 2,
+                \\\"cn\\\": \(cn),
                 \\\"d\\\": \\\"eJxiGAX4AMdAO2AU4AeMA+2AAQACA+0AuoORGMvDBDANtAPoDBQG2gGDGQz16pRloB0wCkbBKBgFo4As0EBYyZCqoojwDwEACAAA//+W/QFR\\\"
                 }
     """
+        return kEscapedBoundedNotificationZlib
+    }
 
-    static let kEscapedBoundedNotificationMalformed = """
+    static func escapedBoundedNotificationMalformed(type: NotificationType, cn: Int = -1) -> String {
+        let notificationType = str(type)
+
+        let kEscapedBoundedNotificationMalformed = """
     {
-                \\\"type\\\": \\\"MEMBERSHIPS_MS_UPDATE\\\",
+                \\\"type\\\": \\\"\(notificationType)\\\",
                 \\\"u\\\": 1,
                 \\\"c\\\": 1,
+                \\\"cn\\\": \(cn),
                 \\\"d\\\": \\\"aaaH4sIAAAAAAAAg5EYy8MEMA20A+//5L7VQwAEAAA\\\"
                 }
     """
+        return kEscapedBoundedNotificationMalformed
+    }
+
+    static func str(_ type: NotificationType) -> String {
+        return (type == .mySegmentsUpdate ? "MEMBERSHIPS_MS_UPDATE" : "MEMBERSHIPS_LS_UPDATE")
+    }
 
     static let kUpdateSplitsNotificationZlib = """
 {\"type\":\"SPLIT_UPDATE\",\"changeNumber\":1684265694505,\"pcn\":0,\"c\":2,\"d\":\"eJzMk99u2kwQxV8lOtdryQZj8N6hD5QPlThSTVNVEUKDPYZt1jZar1OlyO9emf8lVFWv2ss5zJyd82O8hTWUZSqZvW04opwhUVdsIKBSSKR+10vS1HWW7pIdz2NyBjRwHS8IXEopTLgbQqDYT+ZUm3LxlV4J4mg81LpMyKqygPRc94YeM6eQTtjphp4fegLVXvD6Qdjt9wPXF6gs2bqCxPC/2eRpDIEXpXXblpGuWCDljGptZ4bJ5lxYSJRZBoFkTcWKozpfsoH0goHfCXpB6PfcngDpVQnZEUjKIlOr2uwWqiC3zU5L1aF+3p7LFhUkPv8/mY2nk3gGgZxssmZzb8p6A9n25ktVtA9iGI3ODXunQ3HDp+AVWT6F+rZWlrWq7MN+YkSWWvuTDvkMSnNV7J6oTdl6qKTEvGnmjcCGjL2IYC/ovPYgUKnvvPtbmrmApiVryLM7p2jE++AfH6fTx09/HvuF32LWnNjStM0Xh3c8ukZcsZlEi3h8/zCObsBpJ0acqYLTmFdtqitK1V6NzrfpdPBbLmVx4uK26e27izpDu/r5yf/16AXun2Cr4u6w591xw7+LfDidLj6Mv8TXwP8xbofv/c7UmtHMmx8BAAD//0fclvU=\"}
@@ -234,7 +286,7 @@ struct TestingData {
         let strType = (NotificationType.mySegmentsUpdate == type ? "memberships_ms_update" : "memberships_ls_update")
         var data = "\"{\\\"type\\\":\\\"\(strType)\\\",\\\"c\\\":2,\\\"u\\\":0}\""
         if type == .myLargeSegmentsUpdate {
-            data = "\"{\\\"type\\\":\\\"\(strType)\\\",\\\"cn\\\":\(changeNumber),\\\"c\\\":2,\\\"u\\\":0, \\\"i\\\": 100}\""
+            data = "\"{\\\"type\\\":\\\"\(strType)\\\",\\\"cn\\\":\(changeNumber),\\\"c\\\":2,\\\"u\\\":0, \\\"i\\\": 0}\""
 
         }
 

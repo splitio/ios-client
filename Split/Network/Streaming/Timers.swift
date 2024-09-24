@@ -28,6 +28,9 @@ protocol TimersManager {
     /// Cancels the task
     func cancel(timer: TimerName)
 
+    /// If a timer by name is scheduled
+    func isScheduled(timer: TimerName) -> Bool
+
     /// Destroy the manager
     func destroy()
 }
@@ -53,6 +56,10 @@ class DefaultTimersManager: TimersManager {
         if let task = timers.takeValue(forKey: timer) {
             task.cancel()
         }
+    }
+
+    func isScheduled(timer: TimerName) -> Bool {
+        return timers.value(forKey: timer) != nil
     }
 
     func destroy() {
