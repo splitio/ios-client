@@ -32,7 +32,7 @@ struct FileUtil {
         return fileContent
     }
 
-    static func loadFileData(name: String, type fileType: String, bundle: Bundle)-> Data? {
+    static func loadFileData(name: String, type fileType: String, bundle: Bundle) -> Data? {
 
         guard let filepath = bundle.path(forResource: name, ofType: fileType) else {
             return nil

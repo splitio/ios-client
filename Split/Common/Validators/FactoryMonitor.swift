@@ -10,10 +10,6 @@ import Foundation
 
 struct WeakFactory {
     private(set) weak var factory: SplitFactory?
-
-    init(factory: SplitFactory?) {
-        self.factory = factory
-    }
 }
 
 class FactoryRegistry {

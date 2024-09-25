@@ -8,7 +8,7 @@
 import Foundation
 
 class LessThanOrEqualToSemverMatcher: BaseMatcher, MatcherProtocol {
-    
+
     var target: Semver?
 
     init(data: String?,

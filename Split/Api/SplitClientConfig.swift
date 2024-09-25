@@ -341,7 +341,6 @@ public class SplitClientConfig: NSObject {
     /// This is useful when using two factories with the same SDK Key to avoid having issues with the shared data
     @objc public var prefix: String?
 
-
     /// The `CertificatePinningConfig` class is used to configure certificate pinning for a given set of hosts.
     /// It holds an array of credentials, each of which represents a pin for a specific host,
     /// either in the form of a certificate name or a base64-encoded key hash.

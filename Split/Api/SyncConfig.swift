@@ -9,7 +9,7 @@
 import Foundation
 
 @objc public class SyncConfig: NSObject {
-    private (set) var filters: [SplitFilter]
+    private(set) var filters: [SplitFilter]
 
     init(filters: [SplitFilter]) {
         self.filters = filters
