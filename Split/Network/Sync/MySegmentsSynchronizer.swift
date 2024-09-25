@@ -154,6 +154,15 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
                changeNumbers.mlsChangeNumber <= changeNumbers.mlsChangeNumber {
             }
         }
+
+        if timerManager?.isScheduled(timer: .syncSegments) ?? false {
+            return
+        }
+
+        if syncTaskByCnCatalog?.count ?? 0 > 0 {
+            return
+        }
+
         if delay == 0 {
             executeSync()
         } else {
@@ -162,7 +171,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     private func createSyncTask(time: Int64) -> CancellableTask {
-        return DefaultTask(delay: time) { [weak self] in
+        return DefaultTask(delay: time / 1000) { [weak self] in
             guard let self = self else { return }
             self.executeSync()
         }

@@ -20,21 +20,29 @@ class MySegmentUpdateTest: XCTestCase {
     let sseMExp = XCTestExpectation(description: "Sse conn M")
     var notificationTemplate: String!
     let kDataField = "[NOTIFICATION_DATA]"
-
-    var mySegHitCount = 0
+    var msHit = 0
 
     let kRefreshRate = 1
 
     var mySegExp: XCTestExpectation!
 
     var testFactory: TestSplitFactory!
+    var queue = DispatchQueue(label: "pepe")
 
     override func setUp() {
-
+        hitCountByKey = [String: Int]()
         loadNotificationTemplate()
     }
 
+    func testMyLargeSegmentsUpdate() throws {
+        try mySegmentsUpdateTest(type: .myLargeSegmentsUpdate)
+    }
+
     func testMySegmentsUpdate() throws {
+        try mySegmentsUpdateTest(type: .mySegmentsUpdate)
+    }
+
+    func mySegmentsUpdateTest(type: NotificationType) throws {
         let userKey = "key1"
         testFactory = TestSplitFactory(userKey: userKey)
         testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
@@ -67,24 +75,29 @@ class MySegmentUpdateTest: XCTestCase {
         // Set count to 0 to start counting hits
         syncSpy.forceMySegmentsCalledCount = 0
         sdkUpdExp = XCTestExpectation()
-        pushMessage(TestingData.kUnboundedNotification)
+        pushMessage(TestingData.unboundedNotification(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp], timeout: 5)
 
         // Should not trigger any fetch to my segments because
         // this payload doesn't have "key1" enabled
 
-        pushMessage(TestingData.kEscapedBoundedNotificationZlib)
+        pushMessage(TestingData.escapedBoundedNotificationZlib(type: type, cn: mySegmentsCns[cnIndex()]))
 
         // Pushed key list message. Key 1 should add a segment
         sdkUpdExp = XCTestExpectation()
-        pushMessage(TestingData.kEscapedKeyListNotificationGzip)
+        pushMessage(TestingData.escapedKeyListNotificationGzip(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp], timeout: 5)
 
         sdkUpdExp = XCTestExpectation()
-        pushMessage(TestingData.kSegmentRemovalNotification)
+        pushMessage(TestingData.segmentRemovalNotification(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp], timeout: 5)
 
-        let segmentEntity = db.mySegmentsDao.getBy(userKey: testFactory.userKey)?.segments.map { $0.name } ?? []
+        var segmentEntity: [String]!
+        if type == .mySegmentsUpdate {
+            segmentEntity = db.mySegmentsDao.getBy(userKey: testFactory.userKey)?.segments.map { $0.name } ?? []
+        } else {
+            segmentEntity = db.myLargeSegmentsDao.getBy(userKey: testFactory.userKey)?.segments.map { $0.name } ?? []
+        }
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual(1, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
@@ -99,6 +112,14 @@ class MySegmentUpdateTest: XCTestCase {
     }
 
     func testMySegmentsUpdateBounded() throws {
+        try mySegmentsUpdateBoundedTest(type: .mySegmentsUpdate)
+    }
+
+    func testMySegmentsLargeUpdateBounded() throws {
+        try mySegmentsUpdateBoundedTest(type: .myLargeSegmentsUpdate)
+    }
+
+    func mySegmentsUpdateBoundedTest(type: NotificationType) throws {
         mySegExp = XCTestExpectation()
         let userKey = "603516ce-1243-400b-b919-0dce5d8aecfd"
         testFactory = TestSplitFactory(userKey: userKey)
@@ -145,26 +166,28 @@ class MySegmentUpdateTest: XCTestCase {
         syncSpy.forceMySegmentsCalledCount = 0
         sdkUpdExp = XCTestExpectation()
         sdkUpdMExp = XCTestExpectation()
-        pushMessage(TestingData.kUnboundedNotification)
+        pushMessage(TestingData.unboundedNotification(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 5)
 
 
         // Pushed key list message. Key 1 should add a segment
         sdkUpdExp = XCTestExpectation()
         sdkUpdMExp = XCTestExpectation()
-        pushMessage(TestingData.kEscapedBoundedNotificationGzip)
+        pushMessage(TestingData.escapedBoundedNotificationGzip(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 15)
 
         sdkUpdExp = XCTestExpectation()
         sdkUpdMExp = XCTestExpectation()
-        pushMessage(TestingData.kEscapedBoundedNotificationZlib)
+        pushMessage(TestingData.escapedBoundedNotificationZlib(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 15)
 
         // Should trigger unbounded
         sdkUpdExp = XCTestExpectation()
         sdkUpdMExp = XCTestExpectation()
-        pushMessage(TestingData.kEscapedBoundedNotificationMalformed)
+        pushMessage(TestingData.escapedBoundedNotificationMalformed(type: type, cn: mySegmentsCns[cnIndex()]))
+
         wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 15)
+
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual(4, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
@@ -177,7 +200,79 @@ class MySegmentUpdateTest: XCTestCase {
         semaphore.wait()
     }
 
-    var mySegmentsHitCount = 0
+    var segUboundFetchExp: XCTestExpectation?
+    func testSeveralNotificationAndOneFetch() throws {
+        mySegExp = XCTestExpectation()
+        let userKey = IntegrationHelper.dummyUserKey
+        testFactory = TestSplitFactory(userKey: userKey)
+        testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
+        try testFactory.buildSdk()
+        let syncSpy = testFactory.synchronizerSpy
+        let client = testFactory.client
+
+        let sdkReadyExp = XCTestExpectation(description: "SDK READY Expectation")
+        var sdkUpdExp = XCTestExpectation(description: "SDK UPDATE Expectation")
+
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyExp.fulfill()
+        }
+
+        client.on(event: SplitEvent.sdkUpdated) {
+            sdkUpdExp.fulfill()
+        }
+
+        // Wait for hitting my segments two times (sdk ready and full sync after streaming connection)
+        wait(for: [sdkReadyExp, sseExp, sseMExp], timeout: 15)
+
+        streamingBinding?.push(message: ":keepalive")
+
+        wait(for: [mySegExp], timeout: 5)
+
+        // Unbounded fetch notification should trigger my segments
+        // refresh on synchronizer
+        // Set count to 0 to start counting hits
+        syncSpy.forceMySegmentsSyncCount[userKey] = 0
+        sdkUpdExp = XCTestExpectation()
+
+        let cn = mySegmentsCns[cnIndex()]
+        let count = 10
+        let msHitBefore = msHit
+        segUboundFetchExp = XCTestExpectation()
+        pushMessage(TestingData.delayedUnboundedNotification(type: .myLargeSegmentsUpdate, cn: cn, delay: 2900))
+        for i in 1..<count {
+            pushMessage(TestingData.delayedUnboundedNotification(type: .myLargeSegmentsUpdate, cn: cn + i, delay: 500))
+        }
+
+        wait(for: [sdkUpdExp, segUboundFetchExp!], timeout: 15)
+
+        // Hits are not asserted because tests will fail if expectations are not fulfilled
+        XCTAssertEqual(count, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
+        XCTAssertEqual(msHitBefore + 1, msHit)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+    }
+
+    var mySegmentsCns = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400]
+    var hitCountByKey: [String: Int]!
+
+    func cnIndex() -> Int {
+        let mySegmentsHitCount = (hitCountByKey.values.max() ?? 1) + 1
+        return min(mySegmentsHitCount, mySegmentsCns.count - 1)
+    }
+
+    func nextHitCount(key: String) -> Int {
+        queue.sync {
+            hitCountByKey[key] = (hitCountByKey[key] ?? 0) + 1
+            let hit = hitCountByKey[key] ?? 0
+            print("SEGMENT HIT: \(hit)")
+            return hit
+        }
+    }
+
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             
@@ -186,11 +281,13 @@ class MySegmentUpdateTest: XCTestCase {
             }
 
             if request.isMySegmentsEndpoint() {
-                self.mySegmentsHitCount+=1
-                if self.mySegmentsHitCount == 2 {
+                let hit = self.nextHitCount(key: request.url.lastPathComponent)
+                self.msHit = self.msHit + 1
+                if self.msHit == 2 {
                     self.mySegExp.fulfill()
                 }
-                return self.createResponse(code: 200, json: self.updatedSegments(index: self.mySegmentsHitCount))
+                self.segUboundFetchExp?.fulfill()
+                return self.createResponse(code: 200, json: self.updatedSegments(index: hit))
             }
 
             if request.isAuthEndpoint() {
@@ -207,10 +304,13 @@ class MySegmentUpdateTest: XCTestCase {
 
     private func updatedSegments(index: Int) -> String {
         var resp = [String]()
+        let cn = mySegmentsCns[min(index, mySegmentsCns.count - 1)]
         for i in (1..<index) {
-            resp.append("{ \"n\":\"segment\(i)\"}")
+            let seg = "{ \"n\":\"segment\(i)\"}"
+            resp.append(seg)
         }
-        let json = "{\"ms\":{\"k\": [\(resp.joined(separator: ","))]}, \"ls\": {\"k\": []}}"
+        let segs = resp.joined(separator: ",")
+        let json = "{\"ms\":{\"k\": [\(segs)]}, \"ls\": {\"cn\": \(cn), \"k\": [\(segs)]}}"
         print("-----")
         print(json)
         return json

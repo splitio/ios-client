@@ -11,7 +11,6 @@ import Foundation
 import XCTest
 @testable import Split
 
-
 class ReadyFromCacheTest: XCTestCase {
     var globalCacheReadyFired: Atomic<Bool>!
     var globalReadyFired : Atomic<Bool>!
@@ -39,7 +38,7 @@ class ReadyFromCacheTest: XCTestCase {
         // When feature flags and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -98,7 +97,7 @@ class ReadyFromCacheTest: XCTestCase {
         // When feature flags and connection not available, ready from cache should be fired and Ready should NOT be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -216,7 +215,7 @@ class ReadyFromCacheTest: XCTestCase {
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -294,7 +293,7 @@ class ReadyFromCacheTest: XCTestCase {
         jsonChanges = [String]()
         loadChanges1()
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let split =  changes[0].splits[0]
         let split1Name = "split1"
@@ -401,7 +400,7 @@ class ReadyFromCacheTest: XCTestCase {
         let split1 =  changes[5].splits[1]
         splitDatabase.attributesDao.syncUpdate(userKey: userKey, attributes: ["isEnabled": true])
         splitDatabase.splitDao.syncInsertOrUpdate(split: split1)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
