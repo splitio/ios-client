@@ -1,3 +1,6 @@
+2.27.0: (Sep 30, 2024)
+- Added support for large segments 
+
 2.26.1: (Jul 30, 2024)
 - Added wildcard host filtering for certificate pinning.
 
