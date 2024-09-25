@@ -63,8 +63,8 @@ struct DefaultCipher: Cipher {
 
         let status = cryptData.withUnsafeMutableBytes { (cryptBytes: UnsafeMutableRawBufferPointer) -> Int in
             var result: Int32 = -1
-            data.withUnsafeBytes { (dataBytes: UnsafeRawBufferPointer) -> Void in
-                key.withUnsafeBytes { (keyBytes: UnsafeRawBufferPointer) -> Void in
+            data.withUnsafeBytes { (dataBytes: UnsafeRawBufferPointer) in
+                key.withUnsafeBytes { (keyBytes: UnsafeRawBufferPointer) in
                     result = CCCrypt(CCOperation(kCCEncrypt), CCAlgorithm(kCCAlgorithmAES), options,
                                      keyBytes.baseAddress, key.count, nil, dataBytes.baseAddress,
                                      data.count, cryptBytes.baseAddress, cryptLength, &numBytesEncrypted)
@@ -92,8 +92,8 @@ struct DefaultCipher: Cipher {
 
         let status = cryptData.withUnsafeMutableBytes { (cryptBytes: UnsafeMutableRawBufferPointer) -> Int in
             var result: Int32 = -1
-            data.withUnsafeBytes { (dataBytes: UnsafeRawBufferPointer) -> Void in
-                key.withUnsafeBytes { (keyBytes: UnsafeRawBufferPointer) -> Void  in
+            data.withUnsafeBytes { (dataBytes: UnsafeRawBufferPointer) in
+                key.withUnsafeBytes { (keyBytes: UnsafeRawBufferPointer) in
                     result = CCCrypt(CCOperation(kCCDecrypt),
                                      CCAlgorithm(kCCAlgorithmAES),
                                      options, keyBytes.baseAddress, key.count, nil,

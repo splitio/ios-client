@@ -41,10 +41,10 @@ class DefaultSplitsStorage: SplitsStorage {
     private var trafficTypes: ConcurrentDictionary<String, Int>
     private let flagSetsCache: FlagSetsCache
 
-    private (set) var changeNumber: Int64 = -1
-    private (set) var updateTimestamp: Int64 = -1
-    private (set) var splitsFilterQueryString: String = ""
-    private (set) var flagsSpec: String = ""
+    private(set) var changeNumber: Int64 = -1
+    private(set) var updateTimestamp: Int64 = -1
+    private(set) var splitsFilterQueryString: String = ""
+    private(set) var flagsSpec: String = ""
 
     init(persistentSplitsStorage: PersistentSplitsStorage,
          flagSetsCache: FlagSetsCache) {

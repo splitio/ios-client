@@ -82,7 +82,7 @@ struct IncomingNotification {
 
 /// Used to control streaming status
 struct ControlNotification: NotificationTypeField {
-    private (set) var type: NotificationType
+    private(set) var type: NotificationType
 
     enum ControlType: Decodable {
         case streamingResumed

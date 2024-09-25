@@ -137,7 +137,7 @@ struct BackgroundSyncExecutor {
     private let userKeys: [String: Int64]
     private let mySegmentsFetcher: HttpMySegmentsFetcher
 
-    init(prefix: String?, 
+    init(prefix: String?,
          apiKey: String,
          userKeys: [String: Int64],
          serviceEndpoints: ServiceEndpoints? = nil,

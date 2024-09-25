@@ -18,7 +18,7 @@ protocol HttpDataRequest: HttpRequest, HttpDataReceivingRequest {
 // MARK: HttpDataRequest
 class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
 
-    private (set) var data: Data?
+    private(set) var data: Data?
 
     override func notifyIncomingData(_ data: Data) {
         if self.data == nil {

@@ -44,7 +44,7 @@ class FilterBuilder {
         }
 
         if (filterCounts[.bySet] ?? 0) > 0,
-            ((filterCounts[.byName] ?? 0) > 0 || (filterCounts[.byPrefix] ?? 0) > 0) {
+            (filterCounts[.byName] ?? 0) > 0 || (filterCounts[.byPrefix] ?? 0) > 0 {
             let message = "SDK Config: names or prefix and sets filter cannot be used at the same time."
             Logger.e(message)
         }

@@ -248,7 +248,7 @@ extension DefaultTreatmentManager {
                            + "Make sure to wait for SDK readiness before using this method"
     }
 
-    private func evaluateIfReady(splitName: String, 
+    private func evaluateIfReady(splitName: String,
                                  attributes: [String: Any]?,
                                  validationTag: String) throws -> EvaluationResult {
         if !isSdkReady() {

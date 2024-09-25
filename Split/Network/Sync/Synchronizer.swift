@@ -58,7 +58,7 @@ class DefaultSynchronizer: Synchronizer {
     private let telemetrySynchronizer: TelemetrySynchronizer?
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let featureFlagsSynchronizer: FeatureFlagsSynchronizer
-    
+
     // These three variables indicates what
     // endpoints are not available because
     // pinned credential validation has failed
