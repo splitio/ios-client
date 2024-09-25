@@ -50,8 +50,8 @@ import Foundation
         }
     }
 
-    private (set) var values: [String]
-    private (set) var type: FilterType
+    private(set) var values: [String]
+    private(set) var type: FilterType
 
     // This constructor is not private (but intern) to allow Split Sync Config builder be agnostic when creating filters
     // Also is not public to force SDK users to use static functions "byName" and "byPrefix"

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias CertificatePinningFailureHandler = (String)->Void
+public typealias CertificatePinningFailureHandler = (String) -> Void
 
 /// Custom error type for certificate pinning errors, conforming to LocalizedError.
 @objc

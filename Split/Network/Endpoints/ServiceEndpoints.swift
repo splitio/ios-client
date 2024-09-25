@@ -16,11 +16,11 @@ import Foundation
     static let kStreamingEndpoint = "https://streaming.split.io/sse"
     static let kTelemetryEndpoint = "https://telemetry.split.io/api/v1"
 
-    private (set) public var sdkEndpoint: URL
-    private (set) public var eventsEndpoint: URL
-    private (set) public var authServiceEndpoint: URL
-    private (set) public var streamingServiceEndpoint: URL
-    private (set) public var telemetryServiceEndpoint: URL
+    private(set) public var sdkEndpoint: URL
+    private(set) public var eventsEndpoint: URL
+    private(set) public var authServiceEndpoint: URL
+    private(set) public var streamingServiceEndpoint: URL
+    private(set) public var telemetryServiceEndpoint: URL
 
     private var invalidEndpoints: [String]
 
