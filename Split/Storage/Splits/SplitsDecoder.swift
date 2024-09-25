@@ -106,7 +106,5 @@ struct SplitsSerialDecoder: SplitsDecoder {
 
         Logger.e("Error decoding split")
         throw GenericError.unknown(message: "Error decoding split")
-//        print("SPLIT NAME: \(name)")
-
     }
 }

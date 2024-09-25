@@ -104,8 +104,7 @@ class MultiClientEvaluationTest: XCTestCase {
         let db = TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
         db.splitDao.syncInsertOrUpdate(split: changes.splits[0])
         db.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
-
-        
+ 
         setupFactory(database: db)
 
         wait(for: [dbExp], timeout: 10.0)
