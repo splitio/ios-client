@@ -137,14 +137,6 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     override func fetchFromRemote() throws -> Bool {
         var changeNumber = splitsStorage.changeNumber
         var clearCache = false
-        if changeNumber != -1 {
-            if syncHelper.cacheHasExpired(storedChangeNumber: changeNumber,
-                                          updateTimestamp: splitsStorage.updateTimestamp,
-                                          cacheExpirationInSeconds: Int64(cacheExpiration)) {
-                changeNumber = -1
-                clearCache = true
-            }
-        }
 
         let queryStringHasChanged = defaultQueryString != splitsStorage.splitsFilterQueryString
         let flagsSpecHasChanged = flagsSpec != splitsStorage.flagsSpec

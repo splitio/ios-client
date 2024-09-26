@@ -174,14 +174,21 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
         let filterHasChanged = currentSplitsQueryString != splitsStorage.getFilterQueryString()
         let flagsSpecHasChanged = flagsSpec != splitsStorage.getFlagsSpec()
-
+        let cacheHasExpired = cacheHasExpired(storedChangeNumber: splitsStorage.getChangeNumber(),
+                                              updateTimestamp: splitsStorage.getUpdateTimestamp(),
+                                              cacheExpirationInSeconds: Int64(splitConfig.cacheExpirationInSeconds))
         // if neither the filter nor the flags spec have changed, we don't need to do anything
-        if filterHasChanged || flagsSpecHasChanged {
+        if filterHasChanged || flagsSpecHasChanged || cacheHasExpired {
             let splitsInCache = splitsStorage.getAll()
             var toDelete = [String]()
 
-            if flagsSpecHasChanged {
+            if flagsSpecHasChanged || cacheHasExpired {
                 // when flagsSpec has changed, we delete everything
+                if flagsSpecHasChanged {
+                    Logger.d("Clearing flags in cache due to spec change")
+                } else if cacheHasExpired {
+                    Logger.d("Clearing flags in cache due to expiration policy")
+                }
                 toDelete = splitsInCache.compactMap { $0.name }
             } else if filterHasChanged {
                 // if the filter has changed, we need to delete according to it
@@ -219,5 +226,12 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             return String(splitName.prefix(upTo: range.lowerBound))
         }
         return nil
+    }
+
+    private func cacheHasExpired(storedChangeNumber: Int64, updateTimestamp: Int64, cacheExpirationInSeconds: Int64) -> Bool {
+        let elapsed = Date().unixTimestamp() - updateTimestamp
+        return storedChangeNumber > -1
+        && updateTimestamp > 0
+        && (elapsed > cacheExpirationInSeconds)
     }
 }
