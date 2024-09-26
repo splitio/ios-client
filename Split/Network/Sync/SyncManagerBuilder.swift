@@ -123,7 +123,7 @@ class SyncManagerBuilder {
 
         let largeSegmentsUpdateWorker = SegmentsUpdateWorker(
             synchronizer: MySegmentsSynchronizerWrapper(synchronizer: synchronizer),
-            mySegmentsStorage: storageContainer.myLargeSegmentsStorage ?? EmptyMySegmentsStorage(), // TODO: Check this when segments endpoint unification.
+            mySegmentsStorage: storageContainer.myLargeSegmentsStorage,
             payloadDecoder: DefaultSegmentsPayloadDecoder(),
             telemetryProducer: storageContainer.telemetryStorage,
             resource: .myLargeSegments)

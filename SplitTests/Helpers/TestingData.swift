@@ -281,12 +281,12 @@ struct TestingData {
         return try! Json.decodeFrom(json: kUpdateSplitsNotificationGzip, to: SplitsUpdateNotification.self)
     }
 
-    static func membershipsNotificationUnboundedMessage(type: NotificationType, cn: Int64? = nil) -> String {
+    static func membershipsNotificationUnboundedMessage(type: NotificationType, cn: Int64? = nil, delay: Int = 100) -> String {
         let changeNumber = cn ?? 1702507130121
         let strType = (NotificationType.mySegmentsUpdate == type ? "memberships_ms_update" : "memberships_ls_update")
         var data = "\"{\\\"type\\\":\\\"\(strType)\\\",\\\"c\\\":2,\\\"u\\\":0}\""
         if type == .myLargeSegmentsUpdate {
-            data = "\"{\\\"type\\\":\\\"\(strType)\\\",\\\"cn\\\":\(changeNumber),\\\"c\\\":2,\\\"u\\\":0, \\\"i\\\": 0}\""
+            data = "\"{\\\"type\\\":\\\"\(strType)\\\",\\\"cn\\\":\(changeNumber),\\\"c\\\":2,\\\"u\\\":0, \\\"i\\\": \(delay)}\""
 
         }
 
@@ -303,8 +303,8 @@ struct TestingData {
         return message
     }
 
-    static func fullMembershipsNotificationUnboundedMessage(type: NotificationType, cn: Int64? = nil) -> String {
-        let data = membershipsNotificationUnboundedMessage(type: type)
+    static func fullMembershipsNotificationUnboundedMessage(type: NotificationType, cn: Int64? = nil, delay: Int = 100) -> String {
+        let data = membershipsNotificationUnboundedMessage(type: type, delay: delay)
         let msg = """
         id:cf74eb42-f687-48e4-ad18-af2125110aac
         event:message

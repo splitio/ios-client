@@ -104,14 +104,14 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
 
-        var msg: String = TestingData.fullMembershipsNotificationUnboundedMessage(type: type, cn: numbers[0].asInt64())
+        var msg: String = TestingData.fullMembershipsNotificationUnboundedMessage(type: type, cn: numbers[0].asInt64(), delay: 0)
         streamingBinding?.push(message: msg)
         wait(for: [exp2], timeout: expTimeout)
         waitForUpdate(secs: 1)
         
         let treatmentFirst = client.getTreatment(splitName)
 
-        msg = TestingData.fullMembershipsNotificationUnboundedMessage(type: type, cn: numbers[1].asInt64())
+        msg = TestingData.fullMembershipsNotificationUnboundedMessage(type: type, cn: numbers[1].asInt64(), delay: 0)
         streamingBinding?.push(message: msg)
         wait(for: [exp3], timeout: expTimeout)
         waitForUpdate(secs: 1)
