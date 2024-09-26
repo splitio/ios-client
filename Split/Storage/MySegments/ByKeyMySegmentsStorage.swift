@@ -9,9 +9,10 @@
 import Foundation
 
 protocol ByKeyMySegmentsStorage {
+    var changeNumber: Int64 { get }
     func loadLocal()
     func getAll() -> Set<String>
-    func set(_ segments: [String])
+    func set(_ change: SegmentChange)
     func getCount() -> Int
 }
 
@@ -19,6 +20,10 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
 
     private let mySegmentsStorage: MySegmentsStorage
     private let userKey: String
+
+    var changeNumber: Int64 {
+        return mySegmentsStorage.changeNumber(forKey: userKey) ?? -1
+    }
 
     init(mySegmentsStorage: MySegmentsStorage,
          userKey: String) {
@@ -36,8 +41,8 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
         return mySegmentsStorage.getAll(forKey: userKey)
     }
 
-    func set(_ segments: [String]) {
-        mySegmentsStorage.set(segments, forKey: userKey)
+    func set(_ change: SegmentChange) {
+        mySegmentsStorage.set(change, forKey: userKey)
     }
 
     func getCount() -> Int {

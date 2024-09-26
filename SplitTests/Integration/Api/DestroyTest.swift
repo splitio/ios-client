@@ -39,26 +39,28 @@ class DestroyTests: XCTestCase {
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
-    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+        private func buildTestDispatcher() -> HttpClientTestDispatcher {
 
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 self.splitChangesHitCount+=1
                 let since = self.lastChangeNumber
                 return TestDispatcherResponse(code: 200,
-                                      data: self.splitChangesHitCount == 1 ?
+                                              data: self.splitChangesHitCount == 1 ?
                                               Data(try! Json.encodeToJson(self.splitChange).utf8)
                                               : Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
+            if request.isMySegmentsEndpoint() {
                 self.mySegmentsHitCount+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
+            if request.isAuthEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
 
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
+            if request.isImpressionsEndpoint() {
                 self.impressionsHitCount+=1
                 if let data = request.body {
                     if let tests = try? IntegrationHelper.buildImpressionsFromJson(content: data.stringRepresentation) {
@@ -68,8 +70,9 @@ class DestroyTests: XCTestCase {
                     }
                 }
                 return TestDispatcherResponse(code: 200)
+            }
 
-            case let(urlString) where urlString.contains("events/bulk"):
+            if request.isEventsEndpoint() {
                 self.trackHitCounter+=1
                 if let data = request.body {
                     if let e = try? IntegrationHelper.buildEventsFromJson(content: data.stringRepresentation) {
@@ -77,12 +80,55 @@ class DestroyTests: XCTestCase {
                     }
                 }
                 return TestDispatcherResponse(code: 200)
-
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
+
+//    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+//
+//        return { request in
+//            switch request.url.absoluteString {
+//            case let(urlString) where urlString.contains("splitChanges"):
+//                self.splitChangesHitCount+=1
+//                let since = self.lastChangeNumber
+//                return TestDispatcherResponse(code: 200,
+//                                      data: self.splitChangesHitCount == 1 ?
+//                                              Data(try! Json.encodeToJson(self.splitChange).utf8)
+//                                              : Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
+//
+//            case let(urlString) where urlString.contains("mySegments"):
+//                self.mySegmentsHitCount+=1
+//                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+//
+//            case let(urlString) where urlString.contains("auth"):
+//                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+//
+//            case let(urlString) where urlString.contains("testImpressions/bulk"):
+//                self.impressionsHitCount+=1
+//                if let data = request.body {
+//                    if let tests = try? IntegrationHelper.buildImpressionsFromJson(content: data.stringRepresentation) {
+//                        for test in tests {
+//                            self.impressions.append(contentsOf: test.keyImpressions)
+//                        }
+//                    }
+//                }
+//                return TestDispatcherResponse(code: 200)
+//
+//            case let(urlString) where urlString.contains("events/bulk"):
+//                self.trackHitCounter+=1
+//                if let data = request.body {
+//                    if let e = try? IntegrationHelper.buildEventsFromJson(content: data.stringRepresentation) {
+//                        self.events.append(contentsOf: e)
+//                    }
+//                }
+//                return TestDispatcherResponse(code: 200)
+//
+//            default:
+//                return TestDispatcherResponse(code: 500)
+//            }
+//        }
+//    }
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
@@ -108,6 +154,7 @@ class DestroyTests: XCTestCase {
         splitConfig.eventsPerPush = 100
         splitConfig.eventsQueueSize = 1000
         splitConfig.impressionsMode = "DEBUG"
+        splitConfig.logLevel = .verbose
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
             .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         

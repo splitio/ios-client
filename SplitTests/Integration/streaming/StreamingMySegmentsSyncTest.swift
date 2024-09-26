@@ -41,12 +41,25 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
-        loadChanges()
-        loadMySegments()
     }
 
-    func testInit() {
-        
+    func testInitMySegments() {
+        initTest(type: .mySegmentsUpdate)
+    }
+
+    func testInitMyLargeSegments() {
+        initTest(type: .myLargeSegmentsUpdate)
+    }
+
+    func initTest(type: NotificationType) {
+
+        loadMySegments(type: type)
+        loadChanges(type: type)
+        var inResult = "free"
+        if type == .myLargeSegmentsUpdate {
+            inResult = "large_free"
+        }
+
         exp1 = XCTestExpectation(description: "Exp1")
         exp2 = XCTestExpectation(description: "Exp2")
         exp3 = XCTestExpectation(description: "Exp3")
@@ -57,6 +70,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
+        splitConfig.logLevel = .verbose
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -90,26 +104,27 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[0]))
+        var msg: String = TestingData.fullMembershipsNotificationUnboundedMessage(type: type, cn: numbers[0].asInt64(), delay: 0)
+        streamingBinding?.push(message: msg)
         wait(for: [exp2], timeout: expTimeout)
         waitForUpdate(secs: 1)
         
         let treatmentFirst = client.getTreatment(splitName)
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[1]))
+
+        msg = TestingData.fullMembershipsNotificationUnboundedMessage(type: type, cn: numbers[1].asInt64(), delay: 0)
+        streamingBinding?.push(message: msg)
         wait(for: [exp3], timeout: expTimeout)
         waitForUpdate(secs: 1)
 
         let treatmentSec = client.getTreatment(splitName)
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: numbers[2]))
+        msg = TestingData.fullMembershipsNotificationUnboundedMessage(type: type, cn: numbers[2].asInt64())
+        streamingBinding?.push(message: msg)
         waitForUpdate(secs: 2)
         let treatmentOld = client.getTreatment(splitName)
 
         XCTAssertEqual("on", treatmentReady)
-        XCTAssertEqual("free", treatmentFirst)
+        XCTAssertEqual(inResult, treatmentFirst)
         XCTAssertEqual("on", treatmentSec)
         XCTAssertEqual("on", treatmentOld)
 
@@ -122,23 +137,21 @@ class StreamingMySegmentsSyncTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 let hitNumber = self.splitsChangesHits
                 self.splitsChangesHits+=1
                 var change: String!
                 if hitNumber == 0 {
                     change = self.changes
                 } else {
-                    change = IntegrationHelper.emptySplitChanges(since: 100, till: 100)
+                    change = IntegrationHelper.emptySplitChanges(since: 1000, till: 1000)
                 }
                 return TestDispatcherResponse(code: 200, data: Data(change.utf8))
-
-            case let(urlString) where urlString.contains("mySegments"):
-                
+            }
+            if request.isMySegmentsEndpoint() {
                 let hitNumber = self.mySegmentsHits
                 self.mySegmentsHits+=1
-                
+
                 let respData = self.mySegments[hitNumber]
                 switch hitNumber {
                 case 1:
@@ -154,13 +167,12 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                     IntegrationHelper.tlog("Exp no fired \(hitNumber)")
                 }
                 return TestDispatcherResponse(code: 200, data: Data(respData.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
+            }
+            if request.isAuthEndpoint() {
                 self.sseAuthHits+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
@@ -175,18 +187,28 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         }
     }
 
-    private func loadChanges() {
+    private func loadChanges(type: NotificationType) {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.since = 500
         change?.till = 500
         changes = (try? Json.encodeToJson(change)) ?? IntegrationHelper.emptySplitChanges
     }
 
-    private func loadMySegments() {
-        for _ in 1..<10 {
-            mySegments.append(IntegrationHelper.emptyMySegments)
+    private func loadMySegments(type: NotificationType) {
+        if type == .mySegmentsUpdate {
+            for _ in 1..<10 {
+                mySegments.append(IntegrationHelper.emptyMySegments)
+            }
+            mySegments.insert(IntegrationHelper.mySegments(names: ["new_segment"]), at: 2)
+        } else {
+            for _ in 1..<3 {
+                mySegments.append(IntegrationHelper.emptyMySegments)
+            }
+            mySegments.append(TestingHelper.newAllSegmentsChangeJson(mls: ["new_large_segment"], mlsCn: 100))
+            for _ in 1..<7 {
+                mySegments.append(TestingHelper.newAllSegmentsChangeJson(mls: [], mlsCn: 200))
+            }
         }
-        mySegments.insert(IntegrationHelper.mySegments(names: ["new_segment"]), at: 2)
     }
 
     private func waitForUpdate(secs: UInt32 = 2) {

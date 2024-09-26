@@ -32,7 +32,7 @@ class StreamingControlTest: XCTestCase {
     var checkMySegmentsHit = false
 
     var testFactory: TestSplitFactory!
-
+    let segments = TestingHelper.newAllSegmentsChangeJson(ms: ["new_segment"])
     override func setUp() {
         testFactory = TestSplitFactory(userKey: "user_key")
         testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
@@ -72,8 +72,8 @@ class StreamingControlTest: XCTestCase {
         wait(for: [syncSpy.startPeriodicFetchingExp!], timeout: 5)
 
         timestamp+=1000
-        streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
-                                                                                               segment: "new_segment"))
+        var msg = TestingData.membershipsNotificationSegmentRemovalMessage(type: .mySegmentsUpdate, segment: "new_segment", timestamp: timestamp)
+        streamingBinding?.push(message: msg)
         // allow to my segments be updated
         startHitsCheck()
         wait(for: [mySegExp,  splitsChangesExp], timeout: 5)
@@ -87,8 +87,9 @@ class StreamingControlTest: XCTestCase {
 
         wait(for: [syncSpy.stopPeriodicFetchingExp!], timeout: 5) // Polling stopped once streaming enabled
         timestamp+=1000
-        streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
-                                                                                               segment: "new_segment"))
+
+        msg = TestingData.membershipsNotificationSegmentRemovalMessage(type: .mySegmentsUpdate, segment: "new_segment", timestamp: timestamp)
+        streamingBinding?.push(message: msg)
         wait() // allow to my segments be updated
         let treatmentEnabled = client.getTreatment(splitName)
 
@@ -100,8 +101,9 @@ class StreamingControlTest: XCTestCase {
 
         wait(for: [syncSpy.startPeriodicFetchingExp!], timeout: 5)
         timestamp+=1000
-        streamingBinding?.push(message: StreamingIntegrationHelper.mySegmentWithPayloadMessage(timestamp: timestamp,
-                                                                                               segment: "new_segment"))
+
+        msg = TestingData.membershipsNotificationSegmentRemovalMessage(type: .mySegmentsUpdate, segment: "new_segment", timestamp: timestamp)
+        streamingBinding?.push(message: msg)
         startHitsCheck()
         wait(for: [mySegExp,  splitsChangesExp], timeout: 5)
 
@@ -110,10 +112,10 @@ class StreamingControlTest: XCTestCase {
         wait()
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
-        XCTAssertEqual("on", treatmentReady)
-        XCTAssertEqual("on", treatmentPaused)
-        XCTAssertEqual("free", treatmentEnabled)
-        XCTAssertEqual("on", treatmentDisabled)
+        XCTAssertEqual("free", treatmentReady)
+        XCTAssertEqual("free", treatmentPaused)
+        XCTAssertEqual("on", treatmentEnabled)
+        XCTAssertEqual("free", treatmentDisabled)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -124,8 +126,7 @@ class StreamingControlTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 let hit = self.splitsHitCount
                 self.splitsHitCount+=1
                 if hit == 0 {
@@ -135,17 +136,18 @@ class StreamingControlTest: XCTestCase {
                     self.splitsChangesExp.fulfill()
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
-            case let(urlString) where urlString.contains("mySegments"):
+            }
+            if request.isMySegmentsEndpoint() {
                 if self.checkMySegmentsHit {
                     self.mySegExp.fulfill()
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-            case let(urlString) where urlString.contains("auth"):
+                return TestDispatcherResponse(code: 200, data: Data(self.segments.utf8))
+            }
+            if request.isAuthEndpoint() {
                 self.isSseAuthHit = true
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

@@ -6,15 +6,16 @@
 //
 //
 
- import Foundation
+import Foundation
 
 // swiftlint:disable cyclomatic_complexity function_body_length inclusive_language
- class Matcher: NSObject, Codable {
+class Matcher: NSObject, Codable {
 
     var keySelector: KeySelector?
     var matcherType: MatcherType?
     var negate: Bool?
     var userDefinedSegmentMatcherData: UserDefinedSegmentMatcherData?
+    var userDefinedLargeSegmentMatcherData: UserDefinedLargeSegmentMatcherData?
     var whitelistMatcherData: WhitelistMatcherData?
     var unaryNumericMatcherData: UnaryNumericMatcherData?
     var betweenMatcherData: BetweenMatcherData?
@@ -28,6 +29,7 @@
         case matcherType
         case negate
         case userDefinedSegmentMatcherData
+        case userDefinedLargeSegmentMatcherData
         case whitelistMatcherData
         case unaryNumericMatcherData
         case betweenMatcherData
@@ -48,6 +50,8 @@
             negate = (try? values.decode(Bool.self, forKey: .negate)) ?? false
             userDefinedSegmentMatcherData = try? values.decode(UserDefinedSegmentMatcherData.self,
                                                                forKey: .userDefinedSegmentMatcherData)
+            userDefinedLargeSegmentMatcherData = try? values.decode(UserDefinedLargeSegmentMatcherData.self,
+                                                               forKey: .userDefinedLargeSegmentMatcherData)
             whitelistMatcherData = try? values.decode(WhitelistMatcherData.self, forKey: .whitelistMatcherData)
             unaryNumericMatcherData = try? values.decode(UnaryNumericMatcherData.self, forKey: .unaryNumericMatcherData)
             betweenMatcherData = try? values.decode(BetweenMatcherData.self, forKey: .betweenMatcherData)
@@ -98,6 +102,10 @@
 
         case .inSegment: return InSegmentMatcher(
             data: self.userDefinedSegmentMatcherData, negate: self.negate,
+            attribute: self.keySelector?.attribute, type: self.matcherType)
+
+        case .inLargeSegment: return InLargeSegmentMatcher(
+            data: self.userDefinedLargeSegmentMatcherData, negate: self.negate,
             attribute: self.keySelector?.attribute, type: self.matcherType)
 
         case .matchesString: return MatchesStringMatcher(
@@ -151,4 +159,4 @@
             type: self.matcherType)
         }
     }
- }
+}

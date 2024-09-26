@@ -15,7 +15,8 @@ class MySegmentsSyncWorkerFactoryStub: MySegmentsSyncWorkerFactory {
     var periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
 
     func createRetryableMySegmentsSyncWorker(forKey key: String, avoidCache: Bool,
-                                             eventsManager: SplitEventsManager) -> RetryableSyncWorker {
+                                             eventsManager: SplitEventsManager,
+                                             changeNumbers: SegmentsChangeNumber?) -> RetryableSyncWorker {
         return mySegmentsSyncWorkers["\(key)_\(avoidCache)"] ?? RetryableMySegmentsSyncWorkerStub()
     }
 

@@ -185,7 +185,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         if !isPersistenceEnabled {
             return
         }
-        if (isOptimizedImpressionsMode() || isNoneImpressionsMode()),
+        if isOptimizedImpressionsMode() || isNoneImpressionsMode(),
            let counts = impressionsCounter?.popAll() {
             storageContainer.impressionsCountStorage.pushMany(counts: counts)
         }

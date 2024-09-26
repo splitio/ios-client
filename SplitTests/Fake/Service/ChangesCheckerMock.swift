@@ -10,9 +10,17 @@ import Foundation
 
 @testable import Split
 
-struct MySegmentsChangesCheckerMock: MySegmentsChangesChecker {
+class MySegmentsChangesCheckerMock: MySegmentsChangesChecker {
     var haveChanged = false
-    func mySegmentsHaveChanged(old: [String], new: [String]) -> Bool {
+    func mySegmentsHaveChanged(old: SegmentChange, new: SegmentChange) -> Bool {
+        return haveChanged
+    }
+
+    func mySegmentsHaveChanged(oldSegments old: [Segment], newSegments new: [Segment]) -> Bool {
+        return haveChanged
+    }
+
+    func mySegmentsHaveChanged(oldSegments old: [String], newSegments new: [String]) -> Bool {
         return haveChanged
     }
 }

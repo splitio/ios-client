@@ -63,7 +63,8 @@ class DefaultClientManager: SplitClientManager {
         self.storageContainer = storageContainer
         self.telemetryProducer = storageContainer.telemetryStorage
         self.evaluator = DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
-                                          mySegmentsStorage: storageContainer.mySegmentsStorage)
+                                          mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                          myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage)
 
         self.telemetryStopwatch = telemetryStopwatch
 
@@ -176,8 +177,10 @@ class DefaultClientManager: SplitClientManager {
         DefaultMySegmentsSynchronizer(userKey: matchingKey,
                                       splitConfig: config,
                                       mySegmentsStorage: buildMySegmentsStorage(forKey: matchingKey),
+                                      myLargeSegmentsStorage: buildMyLargeSegmentsStorage(forKey: matchingKey),
                                       syncWorkerFactory: mySegmentsSyncWorkerFactory,
-                                      splitEventsManager: eventsManager)
+                                      eventsManager: eventsManager,
+                                      timerManager: config.syncEnabled ? DefaultTimersManager() : nil)
 
         let byKeyGroup = ByKeyComponentGroup(splitClient: client,
                                              eventsManager: eventsManager,
@@ -190,6 +193,12 @@ class DefaultClientManager: SplitClientManager {
     private func buildMySegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage {
         return DefaultByKeyMySegmentsStorage(
             mySegmentsStorage: storageContainer.mySegmentsStorage,
+            userKey: key)
+    }
+
+    private func buildMyLargeSegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage {
+        return DefaultByKeyMySegmentsStorage(
+            mySegmentsStorage: storageContainer.myLargeSegmentsStorage,
             userKey: key)
     }
 

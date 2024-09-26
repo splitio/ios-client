@@ -11,6 +11,7 @@ import XCTest
 @testable import Split
 
 class MySegmentsStorageStub: MySegmentsStorage {
+
     var segments: [String: Set<String>] = [String: Set<String>]()
     var persistedSegments = [String: Set<String>]()
 
@@ -18,9 +19,19 @@ class MySegmentsStorageStub: MySegmentsStorage {
     var clearExpectation = [String: XCTestExpectation]()
     var getCountByKeyCalledCount = 0
     var getCountCalledCount = 0
+    var changeNumber: Int64 = -1
 
     var keys: Set<String> {
         return Set(segments.keys.map { $0 })
+    }
+    
+
+    func changeNumber(forKey key: String) -> Int64? {
+        return changeNumber
+    }
+
+    func lowerChangeNumber() -> Int64 {
+        return changeNumber
     }
 
     var loadLocalForKeyCalled = [String: Bool]()
@@ -33,8 +44,9 @@ class MySegmentsStorageStub: MySegmentsStorage {
         return segments[key] ?? Set()
     }
 
-    func set(_ segments: [String], forKey key: String) {
-        self.segments[key] = Set(segments)
+    func set(_ change: SegmentChange, forKey key: String) {
+        self.segments[key] = change.segments.map { $0.name }.asSet()
+        self.changeNumber = change.changeNumber ?? -1
         if let exp = updateExpectation[key] {
             exp.fulfill()
         }

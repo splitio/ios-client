@@ -139,8 +139,7 @@ class StreamingSplitsSyncTest: XCTestCase {
     
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 let hitNumber = self.getAndUpdateHit()
                 switch hitNumber {
                 case 1:
@@ -152,18 +151,17 @@ class StreamingSplitsSyncTest: XCTestCase {
                 default:
                     IntegrationHelper.tlog("Exp no fired \(hitNumber)")
                 }
-                
-                return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
 
-            case let(urlString) where urlString.contains("mySegments"):
+                return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
+            }
+            if request.isMySegmentsEndpoint() {
                 self.mySegmentsHits+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
@@ -183,7 +181,7 @@ class StreamingSplitsSyncTest: XCTestCase {
         change?.since = Int64(since)
         change?.till = Int64(till)
         let split = change?.splits[0]
-        if let partitions = split?.conditions?[1].partitions {
+        if let partitions = split?.conditions?[2].partitions {
             let partition = partitions.filter { $0.treatment == withTreatment }
             partition[0].size = 100
 

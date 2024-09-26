@@ -19,9 +19,15 @@ class SplitIntegrationTests: XCTestCase {
     var splitChange: SplitChange?
     var serverUrl = "localhost"
     var trackReqIndex = 0
+    var largeSegmentsError = false
     var impHit = [[ImpressionsTest]]()
 
-    let mySegmentsJson = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}"
+    let segmentsJson = """
+{
+\"ls\": { \"cn\": 100, \"k\": [{ \"n\":\"segment1\"}, { \"n\":\"segment2\"}]}, 
+\"ms\": { \"k\": [{\"n\": \"segment1\"}, {\"n\": \"segment2\"}]}
+}
+"""
 
     var trExp = [XCTestExpectation]()
 
@@ -47,32 +53,35 @@ class SplitIntegrationTests: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(self.mySegmentsJson.utf8))
+            if request.isMySegmentsEndpoint() {
+                if self.largeSegmentsError {
+                    return TestDispatcherResponse(code: 500)
+                }
+                return TestDispatcherResponse(code: 200, data: Data(self.segmentsJson.utf8))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
+            if request.isAuthEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
 
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
-
+            if request.isImpressionsEndpoint() {
                 self.impHit.append(try! TestUtils.impressionsFromHit(request: request))
                 return TestDispatcherResponse(code: 200)
+            }
 
-            case let(urlString) where urlString.contains("events/bulk"):
+            if request.isEventsEndpoint() {
                 let index = self.getAndUpdateReqIndex()
                 self.trackRequestsData.append(request.body!.stringRepresentation)
                 if index < self.trExp.count {
                     self.trExp[index].fulfill()
                 }
                 return TestDispatcherResponse(code: 200)
-
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
@@ -266,6 +275,57 @@ class SplitIntegrationTests: XCTestCase {
 
         XCTAssertTrue(readyFired)
     }
+
+    func testReadyMyLargeSegmentsEnabledWaitMls() throws {
+        readyMySegmentsEnabledTest(waitMls: true)
+    }
+
+    func testReadyMyLargeSegmentsEnabledError() throws {
+        readyMySegmentsEnabledTest(endpointError: true)
+    }
+
+    func testReadyMyLargeSegmentsEnabledNoWaitMls() throws {
+        readyMySegmentsEnabledTest(waitMls: false)
+    }
+
+    func readyMySegmentsEnabledTest(endpointError: Bool = false, waitMls: Bool = true) {
+
+        largeSegmentsError = endpointError
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+
+        splitConfig.impressionRefreshRate = 2
+        splitConfig.sdkReadyTimeOut = 2000
+        splitConfig.trafficType = trafficType
+
+        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "IntegrationTest"))
+        _ = builder.setHttpClient(httpClient)
+        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+
+        let client = factory?.client
+
+        var readyFired = false
+        var timeOutFired = false
+
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+
+        client?.on(event: SplitEvent.sdkReady) {
+            readyFired = true
+            sdkReadyExpectation.fulfill()
+        }
+
+        client?.on(event: SplitEvent.sdkReadyTimedOut) {
+            timeOutFired = true
+            sdkReadyExpectation.fulfill()
+        }
+
+        wait(for: [sdkReadyExpectation], timeout: 10)
+
+        XCTAssertTrue(readyFired == !endpointError)
+        XCTAssertTrue(timeOutFired == endpointError)
+    }
+
 
     private func loadSplitsChangeFile() -> SplitChange? {
         let change = loadSplitChangeFile(name: "splitchanges_1")

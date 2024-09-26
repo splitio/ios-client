@@ -20,6 +20,8 @@ class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage {
     var clearExpectation: XCTestExpectation?
     var getCountCalledCount = 0
 
+    var changeNumber: Int64 = -1
+
     func loadLocal() {
         loadLocalCalled = true
     }
@@ -28,8 +30,8 @@ class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage {
         return segments
     }
 
-    func set(_ segments: [String]) {
-        updatedSegments = segments
+    func set(_ change: SegmentChange) {
+        updatedSegments = change.segments.map { $0.name }
         self.segments = Set(segments)
         if let exp = updateExpectation {
             exp.fulfill()

@@ -31,7 +31,8 @@ class LocalhostSplitClientTests: XCTestCase {
                                       clientManager: ClientManagerMock(),
                                       eventsManager: eventsManager,
                                       evaluator: DefaultEvaluator(splitsStorage: splitsStorage,
-                                                                  mySegmentsStorage: EmptyMySegmentsStorage()))
+                                                                  mySegmentsStorage: EmptyMySegmentsStorage(),
+                                                                  myLargeSegmentsStorage: EmptyMySegmentsStorage()))
     }
     
     override func tearDown() {

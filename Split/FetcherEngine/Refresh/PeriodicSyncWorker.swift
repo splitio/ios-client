@@ -74,7 +74,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
 
     private var fetchTimer: PeriodicTimer
     private let fetchQueue = DispatchQueue.general
-    private weak var eventsManager: SplitEventsManager?
+    private let eventsManager: SplitEventsManager
     private var isPaused: Atomic<Bool> = Atomic(false)
 
     init(timer: PeriodicTimer,
@@ -123,19 +123,17 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 
     func isSdkReadyFired() -> Bool {
-        return eventsManager?.eventAlreadyTriggered(event: .sdkReady) ?? false
+        return eventsManager.eventAlreadyTriggered(event: .sdkReady)
     }
 
     func fetchFromRemote() {
         Logger.i("Fetch from remote not implemented")
     }
 
-    func notifyMySegmentsUpdated() {
-        eventsManager?.notifyInternalEvent(.mySegmentsUpdated)
-    }
-
-    func notifySplitsUpdated() {
-        eventsManager?.notifyInternalEvent(.splitsUpdated)
+    func notifyUpdate(_ events: [SplitInternalEvent]) {
+        events.forEach {
+            eventsManager.notifyInternalEvent($0)
+        }
     }
 }
 
@@ -145,7 +143,6 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
     private let splitsStorage: SplitsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let syncHelper: SplitsSyncHelper
-    var changeChecker: SplitsChangesChecker
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
@@ -157,7 +154,6 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.splitChangeProcessor = splitChangeProcessor
-        self.changeChecker = DefaultSplitsChangesChecker()
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
@@ -176,31 +172,30 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         if result.success, result.featureFlagsUpdated {
-            notifySplitsUpdated()
+            notifyUpdate([.splitsUpdated])
         }
     }
 }
 
 class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
 
-    private let mySegmentsFetcher: HttpMySegmentsFetcher
     private let mySegmentsStorage: ByKeyMySegmentsStorage
-    private let userKey: String
+    private let myLargeSegmentsStorage: ByKeyMySegmentsStorage
     private let telemetryProducer: TelemetryRuntimeProducer?
-    var changeChecker: MySegmentsChangesChecker
+    private let syncHelper: SegmentsSyncHelper
 
-    init(userKey: String,
-         mySegmentsFetcher: HttpMySegmentsFetcher,
-         mySegmentsStorage: ByKeyMySegmentsStorage,
+    init(mySegmentsStorage: ByKeyMySegmentsStorage,
+         myLargeSegmentsStorage: ByKeyMySegmentsStorage,
          telemetryProducer: TelemetryRuntimeProducer?,
          timer: PeriodicTimer,
-         eventsManager: SplitEventsManager) {
+         eventsManager: SplitEventsManager,
+         syncHelper: SegmentsSyncHelper) {
 
-        self.userKey = userKey
-        self.mySegmentsFetcher = mySegmentsFetcher
         self.mySegmentsStorage = mySegmentsStorage
+        self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.telemetryProducer = telemetryProducer
-        changeChecker = DefaultMySegmentsChangesChecker()
+        self.syncHelper = syncHelper
+
         super.init(timer: timer,
                    eventsManager: eventsManager)
     }
@@ -210,17 +205,18 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         if !isSdkReadyFired() {
             return
         }
+
         do {
-            let oldSegments = mySegmentsStorage.getAll()
-            if let segments = try mySegmentsFetcher.execute(userKey: userKey, headers: nil) {
-                if changeChecker.mySegmentsHaveChanged(old: Array(oldSegments), new: segments) {
-                    mySegmentsStorage.set(segments)
-                    notifyMySegmentsUpdated()
-                    Logger.i("My Segments have been updated")
-                    Logger.v(segments.joined(separator: ","))
+            let result = try syncHelper.sync(msTill: mySegmentsStorage.changeNumber,
+                                             mlsTill: myLargeSegmentsStorage.changeNumber,
+                                             headers: nil)
+            if result.success {
+                if  result.msUpdated || result.mlsUpdated {
+                    // For now is not necessary specify which entity was updated
+                    notifyUpdate([.mySegmentsUpdated])
                 }
             }
-        } catch let error {
+        } catch {
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
         }
     }

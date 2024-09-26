@@ -11,8 +11,10 @@ import Foundation
 protocol MySegmentsStorage {
     var keys: Set<String> { get }
     func loadLocal(forKey key: String)
+    func changeNumber(forKey key: String) -> Int64?
+    func lowerChangeNumber() -> Int64
     func getAll(forKey key: String) -> Set<String>
-    func set(_ segments: [String], forKey key: String)
+    func set(_ change: SegmentChange, forKey key: String)
     func clear(forKey key: String)
     func destroy()
     func getCount(forKey key: String) -> Int
@@ -33,21 +35,31 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
     }
 
     func loadLocal(forKey key: String) {
-        inMemoryMySegments.set(Set(persistenStorage.getSnapshot(forKey: key)), forKey: key)
+        let segments = persistenStorage.getSnapshot(forKey: key)?.segments.compactMap { $0.name } ?? []
+        inMemoryMySegments.set(segments.asSet(), forKey: key)
+    }
+
+    func changeNumber(forKey key: String) -> Int64? {
+        return -1
+    }
+
+    func lowerChangeNumber() -> Int64 {
+        return -1
     }
 
     func getAll(forKey key: String) -> Set<String> {
         return inMemoryMySegments.values(forKey: key) ?? Set<String>()
     }
 
-    func set(_ segments: [String], forKey key: String) {
-        inMemoryMySegments.set(Set(segments), forKey: key)
-        persistenStorage.set(segments, forKey: key)
+    func set(_ change: SegmentChange, forKey key: String) {
+        let names = change.segments.compactMap { $0.name }
+        inMemoryMySegments.set(names.asSet(), forKey: key)
+        persistenStorage.set(change, forKey: key)
     }
 
     func clear(forKey key: String) {
         inMemoryMySegments.removeValues(forKey: key)
-        persistenStorage.set([String](), forKey: key)
+        persistenStorage.set(SegmentChange.empty(), forKey: key)
     }
 
     func destroy() {

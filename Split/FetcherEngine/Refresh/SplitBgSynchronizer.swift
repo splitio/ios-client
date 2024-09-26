@@ -75,7 +75,8 @@ import BackgroundTasks
                     return
                 }
                 for item in syncList.values {
-                    let pins = self.globalStorage.get(item: .pinsConfig(item.apiKey), type: [CredentialPin].self)
+                    let pins = self.globalStorage.get(item: .pinsConfig(item.apiKey), 
+                                                      type: [CredentialPin].self)
                     do {
                         // TODO: Create BGSyncExecutor using a factory to allow testing
                         let executor = try BackgroundSyncExecutor(prefix: item.prefix,
@@ -137,7 +138,7 @@ struct BackgroundSyncExecutor {
     private let userKeys: [String: Int64]
     private let mySegmentsFetcher: HttpMySegmentsFetcher
 
-    init(prefix: String?, 
+    init(prefix: String?,
          apiKey: String,
          userKeys: [String: Int64],
          serviceEndpoints: ServiceEndpoints? = nil,
@@ -181,7 +182,7 @@ struct BackgroundSyncExecutor {
         let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
                                                     syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
-        self.mySegmentsFetcher = DefaultHttpMySegmentsFetcher(restClient: restClient,
+        self.mySegmentsFetcher = DefaultHttpMySegmentsFetcher(restClient: restClient, 
                                                               syncHelper: DefaultSyncHelper(telemetryProducer: nil))
 
         let bySetsFilter = splitsStorage.getBySetsFilter()
@@ -221,6 +222,9 @@ struct BackgroundSyncExecutor {
 
         let mySegmentsStorage =
             SplitDatabaseHelper.openPersistentMySegmentsStorage(database: self.splitDatabase)
+        let myLargeSegmentsStorage =
+            SplitDatabaseHelper.openPersistentMyLargeSegmentsStorage(database: self.splitDatabase)
+
         operationQueue.addOperation {
             for (userKey, timestamp) in self.userKeys {
                 if self.isExpired(timestamp: timestamp) {
@@ -230,7 +234,8 @@ struct BackgroundSyncExecutor {
 
                 let mySegmentsSyncWorker = BackgroundMySegmentsSyncWorker(
                     userKey: userKey, mySegmentsFetcher: self.mySegmentsFetcher,
-                    mySegmentsStorage: mySegmentsStorage)
+                    mySegmentsStorage: mySegmentsStorage,
+                    myLargeSegmentsStorage: myLargeSegmentsStorage)
                 mySegmentsSyncWorker.execute()
             }
         }

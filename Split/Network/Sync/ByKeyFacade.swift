@@ -15,17 +15,18 @@ protocol ByKeyRegistry {
     func group(forKey: Key) -> ByKeyComponentGroup?
     func isEmpty() -> Bool
 }
+
 protocol ByKeySynchronizer {
     func loadMySegmentsFromCache(forKey: String)
     func loadAttributesFromCache(forKey: String)
     func notifyMySegmentsUpdated(forKey: String)
+    func notifyMyLargeSegmentsUpdated(forKey: String)
     func startSync(forKey key: Key)
     func startPeriodicSync()
     func stopPeriodicSync()
     func syncMySegments(forKey: String)
     func syncAll()
-    func forceMySegmentsSync(forKey: String)
-    func syncMySegments(forKey: Key)
+    func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64)
     func pause()
     func resume()
     func stop()
@@ -109,9 +110,9 @@ class DefaultByKeyFacade: ByKeyFacade {
         }
     }
 
-    func forceMySegmentsSync(forKey key: String) {
+    func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64) {
         doInAll(forMatchingKey: key) { group in
-            group.mySegmentsSynchronizer.forceMySegmentsSync()
+            group.mySegmentsSynchronizer.forceMySegmentsSync(changeNumbers: changeNumbers, delay: delay)
         }
     }
 
@@ -122,6 +123,12 @@ class DefaultByKeyFacade: ByKeyFacade {
     func notifyMySegmentsUpdated(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
             group.eventsManager.notifyInternalEvent(.mySegmentsUpdated)
+        }
+    }
+
+    func notifyMyLargeSegmentsUpdated(forKey key: String) {
+        doInAll(forMatchingKey: key) { group in
+            group.eventsManager.notifyInternalEvent(.myLargeSegmentsUpdated)
         }
     }
 

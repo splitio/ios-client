@@ -20,7 +20,8 @@ class ByKeyMySegmentsStorageTests: XCTestCase {
     
     override func setUp() {
         mySegmentsStorage = MySegmentsStorageStub()
-        byKeyMySegmentsStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage,                                                          userKey: userKey)
+        byKeyMySegmentsStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage,
+                                                               userKey: userKey)
     }
 
     func testNoLoaded() {
@@ -42,7 +43,7 @@ class ByKeyMySegmentsStorageTests: XCTestCase {
         mySegmentsStorage.persistedSegments = [userKey : dummySegments]
         byKeyMySegmentsStorage.loadLocal()
         let segments = byKeyMySegmentsStorage.getAll()
-        byKeyMySegmentsStorage.set(["n1", "n2"])
+        byKeyMySegmentsStorage.set(change(["n1", "n2"]))
         let newSegments = byKeyMySegmentsStorage.getAll()
         let savedSegments = mySegmentsStorage.getAll(forKey: userKey)
 
@@ -63,7 +64,7 @@ class ByKeyMySegmentsStorageTests: XCTestCase {
         mySegmentsStorage.persistedSegments = [userKey : dummySegments]
         byKeyMySegmentsStorage.loadLocal()
         let segments = byKeyMySegmentsStorage.getAll()
-        byKeyMySegmentsStorage.set([String]())
+        byKeyMySegmentsStorage.set(change([]))
         let newSegments = byKeyMySegmentsStorage.getAll()
         let persistedSegments = mySegmentsStorage.getAll(forKey: userKey)
 
@@ -75,6 +76,7 @@ class ByKeyMySegmentsStorageTests: XCTestCase {
         XCTAssertEqual(0, persistedSegments.count)
     }
 
-    override func tearDown() {
+    func change(_ segments: [String], _ cn: Int64 = -1) -> SegmentChange {
+        return SegmentChange(segments: segments, changeNumber: cn)
     }
 }

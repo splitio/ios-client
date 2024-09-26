@@ -51,13 +51,13 @@ class TelemetryConfigRecorderWorkerTests: XCTestCase {
 
     func createTelemetryConfig() -> TelemetryConfig {
 
-        let rates = TelemetryRates(splits: 1, mySegments: 2, impressions: 3,
+        let rates = TelemetryRates(splits: 1, mySegments: 2, myLargeSegments: 6, impressions: 3,
                                    events: 4, telemetry: 5)
         let urls = TelemetryUrlOverrides(sdk: true, events: true,
                                          auth: true, stream: true, telemetry: true)
 
-        return TelemetryConfig(streamingEnabled: true, rates: rates, urlOverrides: urls,
-                                     impressionsQueueSize: 100, eventsQueueSize: 200, impressionsMode: 0,
+        return TelemetryConfig(streamingEnabled: true,
+                               rates: rates, urlOverrides: urls, impressionsQueueSize: 100, eventsQueueSize: 200, impressionsMode: 0,
                                      impressionsListenerEnabled: false, httpProxyDetected: false,
                                      activeFactories: 10, redundantFactories: 2, timeUntilReady: 10, timeUntilReadyFromCache: 5,
                                      nonReadyUsages: 2, integrations: ["i1"], tags: ["tag1"])

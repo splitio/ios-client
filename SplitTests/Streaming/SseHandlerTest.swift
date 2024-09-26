@@ -58,15 +58,38 @@ class SseHandlerTest: XCTestCase {
 
     func testIncomingMySegmentsUpdate() {
         notificationParser.incomingNotification = IncomingNotification(type: .mySegmentsUpdate, jsonData: "dummy")
-        notificationParser.mySegmentsUpdateNotification = MySegmentsUpdateNotification(changeNumber: -1,
-                                                                                       includesPayload: true,
-                                                                                       segmentList: [],
-                                                                                       userKeyHash: "")
+        notificationParser.membershipsUpdateNotification = MembershipsUpdateNotification(changeNumber: -1,
+                                                                                         compressionType: .gzip,
+                                                                                         updateStrategy: .boundedFetchRequest,
+                                                                                         segments: nil,
+                                                                                         data: nil,
+                                                                                         hash: .none,
+                                                                                         seed: 0,
+                                                                                         timeMillis: 60)
+
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertTrue(notificationProcessor.processCalled)
     }
+
+    func testNoProcessIncomingWhenStreamingInactive() {
+        notificationParser.incomingNotification = IncomingNotification(type: .mySegmentsUpdate, jsonData: "dummy")
+        notificationParser.membershipsUpdateNotification = MembershipsUpdateNotification(changeNumber: -1,
+                                                                                         compressionType: .gzip,
+                                                                                         updateStrategy: .boundedFetchRequest,
+                                                                                         segments: nil,
+                                                                                         data: nil,
+                                                                                         hash: .none,
+                                                                                         seed: 0,
+                                                                                         timeMillis: 60)
+        notificationManagerKeeper.isStreamingActive = false
+
+        sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
+
+        XCTAssertFalse(notificationProcessor.processCalled)
+    }
+
 
     func testIncomingOccupancy() {
         notificationParser.incomingNotification = IncomingNotification(type: .occupancy, jsonData: "dummy")
@@ -143,8 +166,5 @@ class SseHandlerTest: XCTestCase {
         XCTAssertNil(broadcasterChannel.lastPushedEvent)
 
         XCTAssertNotNil(streamEvents[.ablyError])
-    }
-
-    override func tearDown() {
     }
 }

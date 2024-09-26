@@ -245,7 +245,7 @@ extension DefaultSplitClient {
         return treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes)
     }
 
-    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, 
+    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String,
                                                  attributes: [String: Any]?) -> [String: SplitResult] {
         return treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes)
     }

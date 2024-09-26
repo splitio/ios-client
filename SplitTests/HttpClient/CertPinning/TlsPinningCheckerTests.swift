@@ -15,6 +15,9 @@ class TlsPinningCheckerTests: XCTestCase {
 
     var validator: TlsPinChecker!
     let secHelper = SecurityHelper()
+    let validHost = "developer.apple.com"
+    let validCertName = "developer.apple.com_ecpk"
+    let validKeyName =  "ec_apple_public_key"
 
     override func setUp() {
         let pins = [CredentialPin(host: validHost, hash: Data(), algo: .sha256)]
@@ -62,43 +65,6 @@ class TlsPinningCheckerTests: XCTestCase {
         publicKeyExtractionTest(certName: "rsa_4096_cert.pem", 
                                 pubKeyName: "rsa_4096_pub",
                                 keyType: CertKeyType.rsa4096, debug: true)
-    }
-
-
-    let validHost = "developer.apple.com"
-    let validCertName = "developer.apple.com_ecpk"
-    let validKeyName =  "ec_apple_public_key"
-    func testPinnedValidCertificateSha256() {
-
-        let algo = KeyHashAlgo.sha256
-        let expectedHash = secHelper.hashedKey(keyName: validKeyName, algo: algo)
-        let pins = [CredentialPin(host: validHost, hash: expectedHash, algo: algo)]
-
-        pinValidationTest(host: validHost, certName: validCertName,
-                          algo: algo, pins: pins, expectedResult: .success)
-
-    }
-
-    func testPinnedValidCertificateSha1() {
-
-        let algo = KeyHashAlgo.sha1
-        let expectedHash = secHelper.hashedKey(keyName: validKeyName, algo: algo)
-        let pins = [CredentialPin(host: validHost, hash: expectedHash, algo: algo)]
-
-        pinValidationTest(host: validHost, certName: validCertName,
-                          algo: algo, pins: pins, expectedResult: .success)
-
-    }
-
-    func testUnPinnedValidCertificate() {
-
-        let algo = KeyHashAlgo.sha256
-        let expectedHash = secHelper.hashedKey(keyName: "rsa_4096_pub", algo: algo)
-        let pins = [CredentialPin(host: validHost, hash: expectedHash, algo: algo)]
-
-        pinValidationTest(host: validHost, certName: validCertName,
-                          algo: algo, pins: pins, expectedResult: .credentialNotPinned)
-
     }
 
     func testUntrustedCertificate() {

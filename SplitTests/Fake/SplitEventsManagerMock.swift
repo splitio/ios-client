@@ -30,6 +30,8 @@ class SplitEventsManagerMock: SplitEventsManager {
     var isSplitUpdatedTriggered = false
     var isSdkUpdatedFired = false
 
+    var isSdkReadyChecked = false
+
     func notifyInternalEvent(_ event:SplitInternalEvent) {
         switch event {
         case .mySegmentsUpdated:
@@ -64,6 +66,7 @@ class SplitEventsManagerMock: SplitEventsManager {
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
         switch event {
         case.sdkReady:
+            isSdkReadyChecked = true
             return isSdkReadyFired
         case.sdkReadyFromCache:
             return isSdkReadyFromCacheFired

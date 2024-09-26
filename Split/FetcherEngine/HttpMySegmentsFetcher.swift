@@ -9,41 +9,48 @@
 import Foundation
 
 protocol HttpMySegmentsFetcher {
-    func execute(userKey: String, headers: [String: String]?) throws -> [String]?
+    func execute(userKey: String, till: Int64?, headers: [String: String]?) throws -> AllSegmentsChange?
 }
 
 class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
-
-    private let restClient: RestClientMySegments
     private let syncHelper: SyncHelper
-    private let resource = Resource.mySegments
+    private var resource: Resource = .mySegments
+    private let restClient: RestClientMySegments
 
     init(restClient: RestClientMySegments,
          syncHelper: SyncHelper) {
+
         self.restClient = restClient
         self.syncHelper = syncHelper
     }
 
-    func execute(userKey: String, headers: [String: String]? = nil) throws -> [String]? {
+    func execute(userKey: String, till: Int64?,
+                 headers: [String: String]? = nil) throws -> AllSegmentsChange? {
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
-        Logger.d("Fetching segments")
-        let semaphore = DispatchSemaphore(value: 0)
-        var requestResult: DataResult<[String]>?
+        Logger.d("Fetching segments from \(resource)")
+
         let startTime = syncHelper.time()
-        restClient.getMySegments(user: userKey, headers: headers) { result in
-            requestResult = result
-            semaphore.signal()
-        }
-        semaphore.wait()
+        let requestResult = fetch(userKey: userKey, till: till, headers: headers)
         syncHelper.recordTelemetry(resource: resource, startTime: startTime)
 
         do {
-            if let segments = try requestResult?.unwrap() {
-                return segments
+            if let change = try requestResult?.unwrap() {
+                return change
             }
         } catch {
             try syncHelper.throwIfError(syncHelper.handleError(error, resource: resource, startTime: startTime))
         }
         return nil
     }
+
+    func fetch(userKey: String, till: Int64?, headers: [String: String]?) -> DataResult<AllSegmentsChange>? {
+        let semaphore = DispatchSemaphore(value: 0)
+        var requestResult: DataResult<AllSegmentsChange>?
+        restClient.getMySegments(user: userKey, till: till, headers: headers) { result in
+            requestResult = result
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return requestResult
+   }
 }

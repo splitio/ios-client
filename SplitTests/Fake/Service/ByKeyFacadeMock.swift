@@ -9,14 +9,17 @@
 import Foundation
 @testable import Split
 
-class ByKeyFacadeStub: ByKeyFacade {
+class ByKeyFacadeMock: ByKeyFacade {
 
     var stopSyncCalled = false
     var components = [Key: ByKeyComponentGroup]()
     var loadMySegmentsFromCacheCalled = [String: Bool]()
+    var loadMyLargeSegmentsFromCacheCalled = [String: Bool]()
     var startPeriodicSyncCalled = false
     var syncMySegmentsCalled = [String: Bool]()
     var syncMySegmentsKeyCalled = [Key: Bool]()
+    var syncMyLargeSegmentsCalled = [String: Bool]()
+    var syncMyLargeSegmentsKeyCalled = [Key: Bool]()
     var syncAllCalled = false
     var forceMySegmentsSyncCalled = [String: Bool]()
     var pauseCalled = false
@@ -53,6 +56,10 @@ class ByKeyFacadeStub: ByKeyFacade {
         loadMySegmentsFromCacheCalled[key] = true
     }
 
+    func loadMyLargeSegmentsFromCache(forKey key: String) {
+        loadMyLargeSegmentsFromCacheCalled[key] = true
+    }
+
     func loadAttributesFromCache(forKey key: String) {
         loadAttributesFromCacheCalled[key] = true
     }
@@ -65,8 +72,17 @@ class ByKeyFacadeStub: ByKeyFacade {
         syncMySegmentsKeyCalled[key] = true
     }
 
-    func forceMySegmentsSync(forKey key: String) {
+    var forceMySegmentsCalledParams = [String: ForceMySegmentsParams]()
+    func forceMySegmentsSync(forKey key: String,
+                             changeNumbers: SegmentsChangeNumber,
+                             delay: Int64) {
         forceMySegmentsSyncCalled[key] = true
+        forceMySegmentsCalledParams[key] = ForceMySegmentsParams(segmentsCn:changeNumbers,
+                                                                 delay: delay)
+
+//        if let exp = forceMySegmentsSyncExp[key] {
+//            exp.fulfill()
+//        }
     }
 
     func startPeriodicSync() {
@@ -82,8 +98,8 @@ class ByKeyFacadeStub: ByKeyFacade {
         startSyncForKeyCalled[key] = true
     }
 
-    func forceSync(forKey key: String) {
-        forceMySegmentsSyncCalled[key] = true
+    func syncMyLargeSegments(forKey key: String) {
+        syncMyLargeSegmentsCalled[key] = true
     }
 
     func pause() {
@@ -111,6 +127,11 @@ class ByKeyFacadeStub: ByKeyFacade {
         notifyMySegmentsUpdatedCalled = true
     }
 
+    var notifyMyLargeSegmentsUpdatedCalled = false
+    func notifyMyLargeSegmentsUpdated(forKey key: String) {
+        notifyMyLargeSegmentsUpdatedCalled = true
+    }
+   
     func stopSync() {
         stopSyncCalled = true
     }

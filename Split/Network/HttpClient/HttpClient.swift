@@ -12,7 +12,7 @@ import Foundation
 /// This file also includes some complementary HTTP client components
 ///
 struct HttpQueue {
-    public static let `default`:String = "split-rest-queue"
+    public static let `default`: String = "split-rest-queue"
 }
 
 // MARK: HTTP codes

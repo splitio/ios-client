@@ -15,10 +15,11 @@ class EvaluatorTests: XCTestCase {
     let matchingKey = "test_key"
     var client: InternalSplitClient!
     var mySegmentsStorage: MySegmentsStorageStub!
-    
+    var myLargeSegmentsStorage: MySegmentsStorageStub!
+
     override func setUp() {
         if evaluator == nil {
-            let mySegments = ["s1", "s2", "test_copy"]
+            let change = SegmentChange(segments: ["s1", "s2", "test_copy"])
 
             let splits = loadSplitsFile()
             let splitsStorage = SplitsStorageStub()
@@ -27,13 +28,15 @@ class EvaluatorTests: XCTestCase {
                                                                        changeNumber: 100,
                                                                        updateTimestamp: 100))
             mySegmentsStorage = MySegmentsStorageStub()
-            mySegmentsStorage.set(mySegments, forKey: matchingKey)
-            client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
-            evaluator = DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
+            mySegmentsStorage.set(change, forKey: matchingKey)
+            myLargeSegmentsStorage = MySegmentsStorageStub()
+            client = InternalSplitClientStub(splitsStorage:splitsStorage,
+                                             mySegmentsStorage: mySegmentsStorage,
+                                             myLargeSegmentsStorage: myLargeSegmentsStorage)
+            evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
+                                         mySegmentsStorage: mySegmentsStorage,
+                                         myLargeSegmentsStorage: EmptyMySegmentsStorage())
         }
-    }
-    
-    override func tearDown() {
     }
     
     func testWhitelisted() {
@@ -359,7 +362,28 @@ class EvaluatorTests: XCTestCase {
         treatment = result!.treatment
         XCTAssertEqual(treatment, "on", "Result should be 'on'")
     }
-    
+
+    func testInLargeSegmentWhitelist() {
+        inLargeSegmentWhiteListTest(key: matchingKey)
+    }
+
+    func testNotInLargeSegmentWhitelist() {
+        inLargeSegmentWhiteListTest(key: "the_bad_key", treatment: "off")
+    }
+
+    func inLargeSegmentWhiteListTest(key: String, treatment: String = "on") {
+
+        var treatment = ""
+        var result: EvaluationResult!
+        let evaluator = customEvaluator(splitFile: "in_large_segment_whitelist_split", largeSegments: ["segment1"]) as! DefaultEvaluator
+        evaluator.splitter = SplitterAllocationFake()
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: "ls_split", attributes: nil)
+
+        treatment = result!.treatment
+        XCTAssertEqual(treatment, treatment, "Result should be 'on'")
+    }
+
     func loadSplitsFile() -> [Split] {
         return loadSplitFile(name: "splitchanges_1")
     }
@@ -372,7 +396,7 @@ class EvaluatorTests: XCTestCase {
         return [Split]()
     }
     
-    func customEvaluator(splitFile fileName: String) -> Evaluator {
+    func customEvaluator(splitFile fileName: String, largeSegments: [String]? = nil) -> Evaluator {
         let mySegments: [String] = []
         let split = loadSplit(splitName: fileName)!
         let splitsStorage = SplitsStorageStub()
@@ -381,29 +405,46 @@ class EvaluatorTests: XCTestCase {
                                                                changeNumber: 100, 
                                                                updateTimestamp: 100))
         let mySegmentsStorage = MySegmentsStorageStub()
-        mySegmentsStorage.set(mySegments, forKey: matchingKey)
-        client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
-        evaluator = DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
+        mySegmentsStorage.set(SegmentChange(segments: mySegments), forKey: matchingKey)
+
+        let myLargeSegmentsStorage = MySegmentsStorageStub()
+        myLargeSegmentsStorage.set(SegmentChange(segments: largeSegments ?? []), forKey: matchingKey)
+
+        client = InternalSplitClientStub(splitsStorage:splitsStorage, 
+                                         mySegmentsStorage: mySegmentsStorage,
+                                         myLargeSegmentsStorage: myLargeSegmentsStorage)
+        evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
+                                     mySegmentsStorage: mySegmentsStorage,
+                                     myLargeSegmentsStorage: myLargeSegmentsStorage)
         return evaluator
     }
     
-    func customEvaluator(split: Split) -> Evaluator {
+    func customEvaluator(split: Split, largeSegments: [String]? = nil) -> Evaluator {
         let splitsStorage = SplitsStorageStub()
         _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split], 
                                                                archivedSplits: [],
                                                                changeNumber: 100,
                                                                updateTimestamp: 100))
         let mySegmentsStorage = MySegmentsStorageStub()
-        mySegmentsStorage.set([], forKey: matchingKey)
-        client = InternalSplitClientStub(splitsStorage:splitsStorage, mySegmentsStorage: mySegmentsStorage)
-        evaluator = DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage)
+        mySegmentsStorage.set(SegmentChange(segments:[]), forKey: matchingKey)
+
+        let myLargeSegmentsStorage = MySegmentsStorageStub()
+        myLargeSegmentsStorage.set(SegmentChange(segments:largeSegments ?? []), forKey: matchingKey)
+
+        client = InternalSplitClientStub(splitsStorage:splitsStorage,
+                                         mySegmentsStorage: mySegmentsStorage,
+                                         myLargeSegmentsStorage: myLargeSegmentsStorage)
+        evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
+                                     mySegmentsStorage: mySegmentsStorage,
+                                     myLargeSegmentsStorage: myLargeSegmentsStorage)
         return evaluator
     }
     
     func loadSplit(splitName: String) -> Split? {
         if let splitContent = FileHelper.readDataFromFile(sourceClass: self, name: splitName, type: "json") {
             do {
-                return try JSON(splitContent.data(using: .utf8)).decode(Split.self)
+                let split = try JSON(splitContent.data(using: .utf8)).decode(Split.self)
+                return split
             } catch {
                 print("Decoding split for algo null test failed")
             }

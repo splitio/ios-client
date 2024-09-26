@@ -39,13 +39,16 @@ struct ServiceConstants {
     static let hashedImpressionsExpirationMs: Int64 = 60 * 60 * 1000 * 4 // 4 hs
 
     static let defaultLocalhostRefreshRate = 10
-
     static var maxSyncPeriodInMillis: Int64 {
         return values?.maxSyncPeriodInMillis ?? (defaultSseConnectionDelayInSecs * 1000)
     }
-
+  
+    static let defaultSegmentsChangeNumber: Int64 = -1
     // Created for testing purposes only
     struct Values {
         var maxSyncPeriodInMillis: Int64
     }
+    static let defaultMlsTimeMillis: Int64 = 60000
+    static let defaultMlsHash = 1
+    static let defaultMlsSeed = 0
 }

@@ -17,16 +17,9 @@ class PersistentImpressionsCountStorageTests: XCTestCase {
 
     override func setUp() {
         countDao = ImpressionsCountDaoStub()
-        countsStorage = DefaultImpressionsCountStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
-                                                                                   impressionDao: ImpressionDaoStub(),
-                                                                                   impressionsCountDao: countDao,
-                                                                                   generalInfoDao: GeneralInfoDaoStub(),
-                                                                                   splitDao: SplitDaoStub(),
-                                                                                   mySegmentsDao: MySegmentsDaoStub(),
-                                                                                   attributesDao: AttributesDaoStub(),
-                                                                                   uniqueKeyDao: UniqueKeyDaoStub(), 
-                                                                                   hashedImpressionDao: HashedImpressionDaoMock()),
-                                                       expirationPeriod: 100)
+        var daoProvider = CoreDataDaoProviderMock()
+        daoProvider.impressionsCountDao = countDao
+        countsStorage = DefaultImpressionsCountStorage(database: SplitDatabaseStub(daoProvider: daoProvider), expirationPeriod: 100)
 
     }
 

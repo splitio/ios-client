@@ -33,7 +33,7 @@ class TelemetryTest: XCTestCase {
         splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
         // To allow firing ready from cache
         splitDatabase.splitDao.insertOrUpdate(split: TestingHelper.buildSplit(name: splitName, treatment: "t1"))
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         session = HttpSessionMock()
         reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -210,14 +210,17 @@ class TelemetryTest: XCTestCase {
         let mySegmentsStorage = storageContainer.mySegmentsStorage
 
         _ = InternalSplitClientStub(splitsStorage: splitsStorage,
-                                             mySegmentsStorage: mySegmentsStorage)
+                                    mySegmentsStorage: mySegmentsStorage,
+                                    myLargeSegmentsStorage: mySegmentsStorage)
         let eventsManager = SplitEventsManagerMock()
         eventsManager.isSegmentsReadyFired = false
         eventsManager.isSplitsReadyFired = true
         eventsManager.isSegmentsReadyFromCacheFired = false
         eventsManager.isSplitsReadyFromCacheFired = true
 
-        return DefaultTreatmentManager(evaluator: DefaultEvaluator(splitsStorage: splitsStorage, mySegmentsStorage: mySegmentsStorage),
+        return DefaultTreatmentManager(evaluator: DefaultEvaluator(splitsStorage: splitsStorage, 
+                                                                   mySegmentsStorage: mySegmentsStorage,
+                                                                  myLargeSegmentsStorage: EmptyMySegmentsStorage()),
                                        key: userKey,
                                        splitConfig: SplitClientConfig(),
                                        eventsManager: eventsManager,
@@ -232,16 +235,16 @@ class TelemetryTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

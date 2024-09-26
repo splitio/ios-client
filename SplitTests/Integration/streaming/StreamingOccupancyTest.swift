@@ -124,23 +124,23 @@ class StreamingOccupancyTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 if self.checkSplitChangesHit {
                     self.splitsChangesExp.fulfill()
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
-            case let(urlString) where urlString.contains("mySegments"):
+            }
+            if request.isMySegmentsEndpoint() {
                 if self.checkMySegmentsHit {
                     self.mySegExp.fulfill()
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-            case let(urlString) where urlString.contains("auth"):
+            }
+            if request.isAuthEndpoint() {
                 self.isSseAuthHit = true
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

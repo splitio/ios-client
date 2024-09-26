@@ -11,7 +11,6 @@ import Foundation
 import XCTest
 @testable import Split
 
-
 class ReadyFromCacheTest: XCTestCase {
     var globalCacheReadyFired: Atomic<Bool>!
     var globalReadyFired : Atomic<Bool>!
@@ -39,7 +38,7 @@ class ReadyFromCacheTest: XCTestCase {
         // When feature flags and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -98,7 +97,7 @@ class ReadyFromCacheTest: XCTestCase {
         // When feature flags and connection not available, ready from cache should be fired and Ready should NOT be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -216,7 +215,7 @@ class ReadyFromCacheTest: XCTestCase {
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -294,7 +293,7 @@ class ReadyFromCacheTest: XCTestCase {
         jsonChanges = [String]()
         loadChanges1()
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let split =  changes[0].splits[0]
         let split1Name = "split1"
@@ -389,7 +388,11 @@ class ReadyFromCacheTest: XCTestCase {
         persistentAttributes(enabled: false, treatment: "on")
     }
 
-    func persistentAttributes(enabled: Bool, treatment: String) {
+    func testLargeSegmentsEnabled() {
+        persistentAttributes(enabled: true, treatment: "ta1", largeSegmentsEnabled: true)
+    }
+
+    func persistentAttributes(enabled: Bool, treatment: String, largeSegmentsEnabled: Bool = false) {
         loadChangesAttr()
         let userKey = "otherKey"
         // When splits and connection available, ready from cache and Ready should be fired
@@ -397,7 +400,7 @@ class ReadyFromCacheTest: XCTestCase {
         let split1 =  changes[5].splits[1]
         splitDatabase.attributesDao.syncUpdate(userKey: userKey, attributes: ["isEnabled": true])
         splitDatabase.splitDao.syncInsertOrUpdate(split: split1)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -462,23 +465,22 @@ class ReadyFromCacheTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         self.changeHitIndex.set(1)
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 if self.globalCacheReadyFired.value {
                     let changesIndex = self.changeHitIndex.getAndAdd(1)
                     self.receivedChangeNumber[changesIndex] = request.parameters?["since"] as? Int64 ?? 0
                     return TestDispatcherResponse(code: 200, data: self.getChanges(for: changesIndex))
                 }
                 return TestDispatcherResponse(code: 500, data: self.getChanges(for: 99999))
-
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
@@ -496,7 +498,7 @@ class ReadyFromCacheTest: XCTestCase {
         change?.since = Int64(since)
         change?.till = Int64(till)
         let split = change?.splits[0]
-        if let partitions = split?.conditions?[1].partitions {
+        if let partitions = split?.conditions?[2].partitions {
             for (i, partition) in partitions.enumerated() {
                 partition.treatment = "on\(i)"
                 if index == i {
@@ -516,7 +518,7 @@ class ReadyFromCacheTest: XCTestCase {
         change?.till = Int64(1)
         let split = change!.splits[0]
         split.name = name
-        if let partitions = split.conditions?[1].partitions {
+        if let partitions = split.conditions?[2].partitions {
             for (i, partition) in partitions.enumerated() {
                 if 1 == i {
                     partition.treatment = treatment
@@ -537,7 +539,7 @@ class ReadyFromCacheTest: XCTestCase {
         let split = change!.splits[0]
         split.name = name
 
-        let condition = split.conditions![1]
+        let condition = split.conditions![2]
 
         condition.conditionType = .rollout
         let matcher = Matcher()
@@ -615,7 +617,7 @@ class ReadyFromCacheTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 3000
         splitConfig.eventsPushRate = 999999
-        //splitConfig.isDebugModeEnabled = true
+        splitConfig.logLevel = .verbose
         return splitConfig
     }
     

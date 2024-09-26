@@ -42,6 +42,27 @@ public class SplitClientConfig: NSObject {
     @objc public var segmentsRefreshRate: Int = 1800
 
     ///
+    /// The SDK polls Split servers for changes to large segment definitions. This parameter controls this polling period in seconds.
+    /// This only applies when `largeSegmentsEnabled` is set to true and streaming is disabled.
+    /// Default: 60
+    ///
+    private static let kDefaultLargeSegmentsRefreshRate = 60
+    private var validLargeSegmentsRefreshRate = kDefaultLargeSegmentsRefreshRate
+    @objc public var largeSegmentsRefreshRate: Int {
+        get {
+            return validLargeSegmentsRefreshRate
+        }
+
+        set {
+            if newValue < Self.kDefaultLargeSegmentsRefreshRate {
+                Logger.w("Refresh rate value \(largeSegmentsRefreshRate) for large segments is invalid, using default")
+            } else {
+                validLargeSegmentsRefreshRate = newValue
+            }
+        }
+    }
+
+    ///
     /// Default queue size for impressions. Default: 30K
     ///
     @objc public var impressionsQueueSize: Int = ServiceConstants.impressionsQueueSize
@@ -320,7 +341,6 @@ public class SplitClientConfig: NSObject {
     /// This is useful when using two factories with the same SDK Key to avoid having issues with the shared data
     @objc public var prefix: String?
 
-
     /// The `CertificatePinningConfig` class is used to configure certificate pinning for a given set of hosts.
     /// It holds an array of credentials, each of which represents a pin for a specific host,
     /// either in the form of a certificate name or a base64-encoded key hash.
@@ -369,10 +389,8 @@ public class SplitClientConfig: NSObject {
     // Is not a constant for testing purposes
     var uniqueKeysRefreshRate: Int = 900
 
-    // Max attempts before add cdn by pass
-    let cdnByPassMaxAttempts: Int = 10
-
     // CDN backoff time base - Not a constant for testing purposes
+    var cdnByPassMaxAttempts: Int = 10
     var cdnBackoffTimeBaseInSecs: Int = 10
     var cdnBackoffTimeMaxInSecs: Int = 60
 

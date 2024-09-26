@@ -17,15 +17,9 @@ class PersistentHashedImpressionsStorageTests: XCTestCase {
 
     override func setUp() {
         hashDao = HashedImpressionDaoMock()
-        hashedStorage = DefaultPersistentHashedImpressionsStorage(database: SplitDatabaseStub(eventDao: EventDaoStub(),
-                                                                                   impressionDao: ImpressionDaoStub(),
-                                                                                   impressionsCountDao: ImpressionsCountDaoStub(),
-                                                                                   generalInfoDao: GeneralInfoDaoStub(),
-                                                                                   splitDao: SplitDaoStub(),
-                                                                                   mySegmentsDao: MySegmentsDaoStub(),
-                                                                                   attributesDao: AttributesDaoStub(),
-                                                                                   uniqueKeyDao: UniqueKeyDaoStub(), 
-                                                                                   hashedImpressionDao: hashDao))
+        var daoProvider = CoreDataDaoProviderMock()
+        daoProvider.hashedImpressionDao = hashDao
+        hashedStorage = DefaultPersistentHashedImpressionsStorage(database: SplitDatabaseStub(daoProvider: daoProvider))
     }
 
     func testUpdate() {

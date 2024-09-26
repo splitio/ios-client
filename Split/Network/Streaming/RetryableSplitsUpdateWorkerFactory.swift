@@ -12,7 +12,8 @@ import Foundation
 protocol MySegmentsSyncWorkerFactory {
     func createRetryableMySegmentsSyncWorker(forKey key: String,
                                              avoidCache: Bool,
-                                             eventsManager: SplitEventsManager) -> RetryableSyncWorker
+                                             eventsManager: SplitEventsManager,
+                                             changeNumbers: SegmentsChangeNumber?) -> RetryableSyncWorker
 
     func createPeriodicMySegmentsSyncWorker(forKey key: String,
                                             eventsManager: SplitEventsManager) -> PeriodicSyncWorker
@@ -107,11 +108,12 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     }
 
     func createPeriodicSplitsSyncWorker() -> PeriodicSyncWorker {
+        
         return  PeriodicSplitsSyncWorker(
             splitFetcher: apiFacade.splitsFetcher, splitsStorage: storageContainer.splitsStorage,
             splitChangeProcessor: splitChangeProcessor,
-            timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate), eventsManager: eventsManager,
-            splitConfig: splitConfig)
+            timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate),
+            eventsManager: eventsManager, splitConfig: splitConfig)
     }
 
     func createPeriodicImpressionsRecorderWorker(
@@ -259,44 +261,66 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
 class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
     let splitConfig: SplitClientConfig
     let mySegmentsStorage: MySegmentsStorage
+    let myLargeSegmentsStorage: MySegmentsStorage
     let mySegmentsFetcher: HttpMySegmentsFetcher
     let telemetryProducer: TelemetryProducer?
 
     init(splitConfig: SplitClientConfig,
          mySegmentsStorage: MySegmentsStorage,
+         myLargeSegmentsStorage: MySegmentsStorage,
          mySegmentsFetcher: HttpMySegmentsFetcher,
          telemetryProducer: TelemetryProducer?) {
         self.splitConfig = splitConfig
         self.mySegmentsStorage = mySegmentsStorage
+        self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.mySegmentsFetcher = mySegmentsFetcher
         self.telemetryProducer = telemetryProducer
     }
 
     func createRetryableMySegmentsSyncWorker(forKey key: String,
                                              avoidCache: Bool,
-                                             eventsManager: SplitEventsManager) -> RetryableSyncWorker {
+                                             eventsManager: SplitEventsManager,
+                                             changeNumbers: SegmentsChangeNumber?) -> RetryableSyncWorker {
+
 
         let backoffBase =  splitConfig.generalRetryBackoffBase
         let mySegmentsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
-        let byKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
-        return RetryableMySegmentsSyncWorker(userKey: key,
-                                             mySegmentsFetcher: mySegmentsFetcher,
-                                             mySegmentsStorage: byKeyStorage,
-                                             telemetryProducer: telemetryProducer,
+        let msByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
+        let mlsByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: myLargeSegmentsStorage, userKey: key)
+        let changeNumbers = changeNumbers ?? SegmentsChangeNumber(msChangeNumber: msByKeyStorage.changeNumber,
+                                                                  mlsChangeNumber: mlsByKeyStorage.changeNumber)
+        let syncHelper = DefaultSegmentsSyncHelper(userKey: key,
+                                                   segmentsFetcher: mySegmentsFetcher,
+                                                   mySegmentsStorage: msByKeyStorage,
+                                                   myLargeSegmentsStorage: mlsByKeyStorage,
+                                                   changeChecker: DefaultMySegmentsChangesChecker(),
+                                                   splitConfig: splitConfig)
+
+        return RetryableMySegmentsSyncWorker(telemetryProducer: telemetryProducer,
                                              eventsManager: eventsManager,
                                              reconnectBackoffCounter: mySegmentsBackoffCounter,
-                                             avoidCache: avoidCache)
+                                             avoidCache: avoidCache,
+                                             changeNumbers: changeNumbers,
+                                             syncHelper: syncHelper)
     }
 
     func createPeriodicMySegmentsSyncWorker(forKey key: String,
                                             eventsManager: SplitEventsManager) -> PeriodicSyncWorker {
         let byKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
+        let byKeyLargeStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: myLargeSegmentsStorage, userKey: key)
+        let syncHelper = DefaultSegmentsSyncHelper(userKey: key,
+                                                   segmentsFetcher: mySegmentsFetcher,
+                                                   mySegmentsStorage: byKeyStorage,
+                                                   myLargeSegmentsStorage: byKeyLargeStorage,
+                                                   changeChecker: DefaultMySegmentsChangesChecker(),
+                                                   splitConfig: splitConfig)
 
         return PeriodicMySegmentsSyncWorker(
-            userKey: key, mySegmentsFetcher: mySegmentsFetcher,
             mySegmentsStorage: byKeyStorage,
+            myLargeSegmentsStorage: byKeyLargeStorage,
             telemetryProducer: telemetryProducer,
             timer: DefaultPeriodicTimer(interval: splitConfig.segmentsRefreshRate),
-            eventsManager: eventsManager)
+            eventsManager: eventsManager,
+            syncHelper: syncHelper)
     }
 }

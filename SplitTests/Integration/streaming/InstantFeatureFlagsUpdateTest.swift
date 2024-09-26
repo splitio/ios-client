@@ -181,25 +181,22 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
     var mySegmentsHitCount = 0
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
-
+            if request.isSplitEndpoint() {
                 self.ffExp?.fulfill()
                 if self.changesLoaded {
                     self.changesLoaded = false
                     return TestDispatcherResponse(code: 200, data: Data(self.changes.utf8))
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
-
-            case let(urlString) where urlString.contains("mySegments"):
+            }
+            if request.isMySegmentsEndpoint() {
                 self.mySegExp?.fulfill()
                 return self.createResponse(code: 200, json: IntegrationHelper.emptyMySegments)
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

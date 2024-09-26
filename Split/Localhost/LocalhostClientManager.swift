@@ -47,7 +47,8 @@ class LocalhostClientManager: SplitClientManager {
         self.splitFactory = factory
 
         self.evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
-                                          mySegmentsStorage: EmptyMySegmentsStorage())
+                                          mySegmentsStorage: EmptyMySegmentsStorage(),
+                                          myLargeSegmentsStorage: EmptyMySegmentsStorage())
 
         defaultClient = client(forKey: key)
 
@@ -92,6 +93,7 @@ class LocalhostClientManager: SplitClientManager {
         clients.setValue(newGroup, forKey: key.matchingKey)
         eventsManagerCoordinator.add(newEventsManager, forKey: key)
         newEventsManager.notifyInternalEvent(.mySegmentsUpdated)
+        newEventsManager.notifyInternalEvent(.myLargeSegmentsUpdated)
 
         return newClient
     }
