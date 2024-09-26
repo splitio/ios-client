@@ -62,7 +62,7 @@ class TlsPinningCheckerTests: XCTestCase {
     }
 
     func testRsa4096Spki() {
-        publicKeyExtractionTest(certName: "rsa_4096_cert.pem", 
+        publicKeyExtractionTest(certName: "rsa_4096_cert.pem",
                                 pubKeyName: "rsa_4096_pub",
                                 keyType: CertKeyType.rsa4096, debug: true)
     }
@@ -155,4 +155,3 @@ class TlsPinningCheckerTests: XCTestCase {
         XCTAssertEqual(keyData, extractedKey?.data)
     }
 }
-

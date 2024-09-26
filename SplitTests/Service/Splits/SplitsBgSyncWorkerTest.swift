@@ -59,24 +59,6 @@ class SplitsBgSyncWorkerTest: XCTestCase {
         XCTAssertNil(splitStorage.processedSplitChange)
     }
 
-    func testClearExpiredCache() {
-
-        let expiration = 1000
-        splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                      persistentSplitsStorage: splitStorage,
-                                                      splitChangeProcessor: splitChangeProcessor,
-                                                      cacheExpiration: 100,
-                                                      splitConfig: SplitClientConfig())
-
-        let change = SplitChange(splits: [], since: 200, till: 200)
-        splitStorage.updateTimestamp = Int64(Date().timeIntervalSince1970) - Int64(expiration * 2) // Expired cache
-        splitFetcher.splitChanges = [change]
-
-        splitsSyncWorker.execute()
-
-        XCTAssertTrue(splitStorage.clearCalled)
-    }
-
     func testNoClearNonExpiredCache() {
 
         let expiration = 1000

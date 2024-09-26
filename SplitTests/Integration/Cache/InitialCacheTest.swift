@@ -70,11 +70,9 @@ class InitialCacheTest: XCTestCase {
 
         let client = factory.client
 
-        var treatmentCache = ""
         var treatmentReady = ""
 
         client.on(event: SplitEvent.sdkReadyFromCache) {
-            treatmentCache = client.getTreatment(self.splitName)
             cacheReadyExp.fulfill()
         }
 
@@ -87,12 +85,14 @@ class InitialCacheTest: XCTestCase {
             readyExp.fulfill()
         }
 
-        wait(for: [cacheReadyExp, readyExp], timeout: 10)
+        // when cache expired, only ready will be emitted
+        wait(for: [readyExp], timeout: 10)
+        let cacheReadyExpResult = XCTWaiter().wait(for: [cacheReadyExp], timeout: 5)
 
         client.destroy()
 
+        XCTAssertEqual(cacheReadyExpResult, .timedOut, "SDK ready from cache was triggered")
         XCTAssertEqual(-1, receivedChangeNumber[0])
-        XCTAssertEqual("boom", treatmentCache)
         XCTAssertEqual("on0", treatmentReady)
     }
 
@@ -131,13 +131,11 @@ class InitialCacheTest: XCTestCase {
 
         let client = factory.client
 
-        var treatmentCache = ""
         var treatmentReady = ""
 
         client.on(event: SplitEvent.sdkReadyFromCache) { [weak self] in
             guard let self = self else { return }
 
-            treatmentCache = client.getTreatment(self.splitName)
             cacheReadyExp.fulfill()
         }
 
@@ -152,10 +150,12 @@ class InitialCacheTest: XCTestCase {
             readyExp.fulfill()
         }
 
-        wait(for: [cacheReadyExp, readyExp], timeout: 10)
+        // when cache expired, only ready will be emitted
+        wait(for: [readyExp], timeout: 10)
+        let cacheReadyExpResult = XCTWaiter().wait(for: [cacheReadyExp], timeout: 5)
 
+        XCTAssertEqual(cacheReadyExpResult, .timedOut, "SDK ready from cache was triggered")
         XCTAssertEqual(-1, receivedChangeNumber[0])
-        XCTAssertEqual("boom", treatmentCache)
         XCTAssertEqual("control", treatmentReady)
 
         let semaphore = DispatchSemaphore(value: 0)
@@ -376,8 +376,6 @@ class InitialCacheTest: XCTestCase {
         XCTAssertEqual("on0", treatmentReady)
         XCTAssertFalse(readyCacheNotFired)
     }
-
-
 
     private func getChanges(for hitNumber: Int) -> Data {
         if hitNumber < jsonChanges.count {
