@@ -198,6 +198,7 @@ struct TelemetryStats: Codable {
     var impressionsDropped: Int?
     var splitCount: Int?
     var segmentCount: Int?
+    var largeSegmentCount: Int?
     var segmentKeyCount: Int?
     var sessionLengthMs: Int64?
     var eventsQueued: Int?
@@ -219,6 +220,7 @@ struct TelemetryStats: Codable {
         case impressionsDropped = "iDr"
         case splitCount = "spC"
         case segmentCount = "seC"
+        case largeSegmentCount = "lsC"
         case segmentKeyCount = "skC"
         case sessionLengthMs = "sL"
         case eventsQueued = "eQ"
