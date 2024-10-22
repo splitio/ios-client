@@ -51,7 +51,7 @@ class TelemetryConfigRecorderWorkerTests: XCTestCase {
 
     func createTelemetryConfig() -> TelemetryConfig {
 
-        let rates = TelemetryRates(splits: 1, mySegments: 2, myLargeSegments: 6, impressions: 3,
+        let rates = TelemetryRates(splits: 1, mySegments: 2, impressions: 3,
                                    events: 4, telemetry: 5)
         let urls = TelemetryUrlOverrides(sdk: true, events: true,
                                          auth: true, stream: true, telemetry: true)

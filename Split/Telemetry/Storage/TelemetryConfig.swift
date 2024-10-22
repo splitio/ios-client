@@ -11,7 +11,6 @@ import Foundation
 struct TelemetryRates: Codable {
     var splits: Int
     var mySegments: Int
-    var myLargeSegments: Int
     var impressions: Int
     var events: Int
     var telemetry: Int
@@ -19,7 +18,6 @@ struct TelemetryRates: Codable {
     enum CodingKeys: String, CodingKey {
         case splits = "sp"
         case mySegments = "ms"
-        case myLargeSegments = "mls"
         case impressions = "im"
         case events = "ev"
         case telemetry = "te"
