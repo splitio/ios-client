@@ -76,24 +76,21 @@ class MySegmentUpdateTest: XCTestCase {
         syncSpy.forceMySegmentsCalledCount = 0
         sdkUpdExp = XCTestExpectation()
         pushMessage(TestingData.unboundedNotification(type: type, cn: mySegmentsCns[cnIndex()]))
-        wait(for: [sdkUpdExp], timeout: 50)
-        Thread.sleep(forTimeInterval: 1.0)
+        wait(for: [sdkUpdExp], timeout: 5.0)
 
         // Should not trigger any fetch to my segments because
         // this payload doesn't have "key1" enabled
 
         pushMessage(TestingData.escapedBoundedNotificationZlib(type: type, cn: mySegmentsCns[cnIndex()]))
 
-        Thread.sleep(forTimeInterval: 1.0)
         // Pushed key list message. Key 1 should add a segment
         sdkUpdExp = XCTestExpectation()
         pushMessage(TestingData.escapedKeyListNotificationGzip(type: type, cn: mySegmentsCns[cnIndex()]))
-        wait(for: [sdkUpdExp], timeout: 50)
-        Thread.sleep(forTimeInterval: 1.0)
+        wait(for: [sdkUpdExp], timeout: 5.0)
 
         sdkUpdExp = XCTestExpectation()
         pushMessage(TestingData.segmentRemovalNotification(type: type, cn: mySegmentsCns[cnIndex()]))
-        wait(for: [sdkUpdExp], timeout: 50)
+        wait(for: [sdkUpdExp], timeout: 5.0)
 
         var segmentEntity: [String]!
         if type == .mySegmentsUpdate {
