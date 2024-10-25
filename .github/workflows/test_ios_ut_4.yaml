@@ -8,6 +8,7 @@ on:
     branches:
       - master
       - development
+      - "*_baseline"
 
 jobs:
   build:
@@ -17,15 +18,15 @@ jobs:
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: 15.1.0
+          xcode-version: 16.0.0
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Build iOS and Test 4
-        uses: sersoft-gmbh/xcodebuild-action@v1
+        uses: sersoft-gmbh/xcodebuild-action@v3
         with:
           action: build test
           build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=YES
