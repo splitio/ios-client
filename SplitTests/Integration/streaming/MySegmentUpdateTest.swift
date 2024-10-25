@@ -68,7 +68,7 @@ class MySegmentUpdateTest: XCTestCase {
 
         streamingBinding?.push(message: ":keepalive")
 
-        wait(for: [mySegExp], timeout: 50)
+        wait(for: [mySegExp], timeout: 5)
 
         // Unbounded fetch notification should trigger my segments
         // refresh on synchronizer
@@ -76,7 +76,7 @@ class MySegmentUpdateTest: XCTestCase {
         syncSpy.forceMySegmentsCalledCount = 0
         sdkUpdExp = XCTestExpectation()
         pushMessage(TestingData.unboundedNotification(type: type, cn: mySegmentsCns[cnIndex()]))
-        wait(for: [sdkUpdExp], timeout: 5.0)
+        wait(for: [sdkUpdExp], timeout: 5)
 
         // Should not trigger any fetch to my segments because
         // this payload doesn't have "key1" enabled
@@ -86,11 +86,11 @@ class MySegmentUpdateTest: XCTestCase {
         // Pushed key list message. Key 1 should add a segment
         sdkUpdExp = XCTestExpectation()
         pushMessage(TestingData.escapedKeyListNotificationGzip(type: type, cn: mySegmentsCns[cnIndex()]))
-        wait(for: [sdkUpdExp], timeout: 5.0)
+        wait(for: [sdkUpdExp], timeout: 5)
 
         sdkUpdExp = XCTestExpectation()
         pushMessage(TestingData.segmentRemovalNotification(type: type, cn: mySegmentsCns[cnIndex()]))
-        wait(for: [sdkUpdExp], timeout: 5.0)
+        wait(for: [sdkUpdExp], timeout: 5)
 
         var segmentEntity: [String]!
         if type == .mySegmentsUpdate {
