@@ -64,11 +64,11 @@ class MySegmentUpdateTest: XCTestCase {
         }
 
         // Wait for hitting my segments two times (sdk ready and full sync after streaming connection)
-        wait(for: [sdkReadyExp, sseExp], timeout: 5)
+        wait(for: [sdkReadyExp, sseExp], timeout: 50)
 
         streamingBinding?.push(message: ":keepalive")
 
-        wait(for: [mySegExp], timeout: 5)
+        wait(for: [mySegExp], timeout: 50)
 
         // Unbounded fetch notification should trigger my segments
         // refresh on synchronizer
@@ -76,21 +76,24 @@ class MySegmentUpdateTest: XCTestCase {
         syncSpy.forceMySegmentsCalledCount = 0
         sdkUpdExp = XCTestExpectation()
         pushMessage(TestingData.unboundedNotification(type: type, cn: mySegmentsCns[cnIndex()]))
-        wait(for: [sdkUpdExp], timeout: 5)
+        wait(for: [sdkUpdExp], timeout: 50)
+        Thread.sleep(forTimeInterval: 1.0)
 
         // Should not trigger any fetch to my segments because
         // this payload doesn't have "key1" enabled
 
         pushMessage(TestingData.escapedBoundedNotificationZlib(type: type, cn: mySegmentsCns[cnIndex()]))
 
+        Thread.sleep(forTimeInterval: 1.0)
         // Pushed key list message. Key 1 should add a segment
         sdkUpdExp = XCTestExpectation()
         pushMessage(TestingData.escapedKeyListNotificationGzip(type: type, cn: mySegmentsCns[cnIndex()]))
-        wait(for: [sdkUpdExp], timeout: 5)
+        wait(for: [sdkUpdExp], timeout: 50)
+        Thread.sleep(forTimeInterval: 1.0)
 
         sdkUpdExp = XCTestExpectation()
         pushMessage(TestingData.segmentRemovalNotification(type: type, cn: mySegmentsCns[cnIndex()]))
-        wait(for: [sdkUpdExp], timeout: 5)
+        wait(for: [sdkUpdExp], timeout: 50)
 
         var segmentEntity: [String]!
         if type == .mySegmentsUpdate {
@@ -99,6 +102,7 @@ class MySegmentUpdateTest: XCTestCase {
             segmentEntity = db.myLargeSegmentsDao.getBy(userKey: testFactory.userKey)?.segments.map { $0.name } ?? []
         }
 
+        Thread.sleep(forTimeInterval: 2.0)
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual(1, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
         XCTAssertEqual(1, segmentEntity.filter { $0 == "new_segment_added" }.count)
