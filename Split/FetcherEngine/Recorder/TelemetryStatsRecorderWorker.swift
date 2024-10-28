@@ -14,16 +14,19 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
     private let statsRecorder: HttpTelemetryStatsRecorder
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage: MySegmentsStorage
+    private let myLargeSegmentsStorage: MySegmentsStorage
 
     init(telemetryStatsRecorder: HttpTelemetryStatsRecorder,
          telemetryConsumer: TelemetryConsumer,
          splitsStorage: SplitsStorage,
-         mySegmentsStorage: MySegmentsStorage) {
+         mySegmentsStorage: MySegmentsStorage,
+         myLargeSegmentsStorage: MySegmentsStorage) {
 
         self.telemetryConsumer = telemetryConsumer
         self.statsRecorder = telemetryStatsRecorder
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
+        self.myLargeSegmentsStorage = myLargeSegmentsStorage
     }
 
     func flush() {
@@ -65,6 +68,7 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
                               impressionsDropped: storage.getImpressionStats(type: .dropped),
                               splitCount: splitsStorage.getCount(),
                               segmentCount: mySegmentsStorage.getCount(),
+                              largeSegmentCount: myLargeSegmentsStorage.getCount(),
                               segmentKeyCount: nil,
                               sessionLengthMs: storage.getSessionLength(),
                               eventsQueued: storage.getEventStats(type: .queued),

@@ -214,7 +214,8 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         return TelemetryStatsRecorderWorker(telemetryStatsRecorder: telemetryStatsRecorder,
                                             telemetryConsumer: telemetryStorage,
                                             splitsStorage: storageContainer.splitsStorage,
-                                            mySegmentsStorage: storageContainer.mySegmentsStorage)
+                                            mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                            myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage)
     }
 
     func createPeriodicTelemetryStatsRecorderWorker() -> PeriodicRecorderWorker? {
@@ -230,7 +231,8 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         let telemetryStatsWorker = TelemetryStatsRecorderWorker(telemetryStatsRecorder: telemetryStatsRecorder,
                                                                 telemetryConsumer: telemetryStorage,
                                                                 splitsStorage: storageContainer.splitsStorage,
-                                                                mySegmentsStorage: storageContainer.mySegmentsStorage)
+                                                                mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                                                myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage)
 
         let timer = DefaultPeriodicTimer(deadline: splitConfig.internalTelemetryRefreshRate,
                                          interval: splitConfig.internalTelemetryRefreshRate)

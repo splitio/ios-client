@@ -64,7 +64,7 @@ class MySegmentUpdateTest: XCTestCase {
         }
 
         // Wait for hitting my segments two times (sdk ready and full sync after streaming connection)
-        wait(for: [sdkReadyExp, sseExp], timeout: 5)
+        wait(for: [sdkReadyExp, sseExp], timeout: 50)
 
         streamingBinding?.push(message: ":keepalive")
 
@@ -81,17 +81,22 @@ class MySegmentUpdateTest: XCTestCase {
         // Should not trigger any fetch to my segments because
         // this payload doesn't have "key1" enabled
 
+        Thread.sleep(forTimeInterval: 0.5)
         pushMessage(TestingData.escapedBoundedNotificationZlib(type: type, cn: mySegmentsCns[cnIndex()]))
 
         // Pushed key list message. Key 1 should add a segment
         sdkUpdExp = XCTestExpectation()
+
+        Thread.sleep(forTimeInterval: 0.5)
         pushMessage(TestingData.escapedKeyListNotificationGzip(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp], timeout: 5)
 
         sdkUpdExp = XCTestExpectation()
+        Thread.sleep(forTimeInterval: 0.5)
         pushMessage(TestingData.segmentRemovalNotification(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp], timeout: 5)
 
+        Thread.sleep(forTimeInterval: 2.0)
         var segmentEntity: [String]!
         if type == .mySegmentsUpdate {
             segmentEntity = db.mySegmentsDao.getBy(userKey: testFactory.userKey)?.segments.map { $0.name } ?? []

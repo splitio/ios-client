@@ -45,7 +45,6 @@ class TelemetryConfigRecorderWorker: RecorderWorker {
 
         let rates = TelemetryRates(splits: splitConfig.featuresRefreshRate,
                                    mySegments: splitConfig.segmentsRefreshRate,
-                                   myLargeSegments: splitConfig.largeSegmentsRefreshRate,
                                    impressions: splitConfig.impressionRefreshRate,
                                    events: splitConfig.eventsPushRate,
                                    telemetry: splitConfig.internalTelemetryRefreshRate)

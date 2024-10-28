@@ -55,7 +55,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                 return true
             }
         } catch {
-            Logger.e("Error while fetching splits in method: \(error.localizedDescription)")
+            Logger.e("Error while fetching segments in method: \(error.localizedDescription)")
             errorHandler?(error)
         }
         return false

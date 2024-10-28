@@ -86,7 +86,7 @@ struct SplitsSerialDecoder: SplitsDecoder {
     func getSplit(_ json: String) throws -> Split {
 
         guard let data  = json.data(using: .utf8) else {
-            throw GenericError.unknown(message: "parsing pepe")
+            throw GenericError.unknown(message: "parsing error")
         }
 
         let jsonObj = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
