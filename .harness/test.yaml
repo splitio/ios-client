@@ -1,0 +1,58 @@
+pipeline:
+  name: SDK_ios-client_Test
+  identifier: SDK_iosclient_Test
+  projectIdentifier: Harness_Split
+  orgIdentifier: PROD
+  description: iOS SDK Unit & Integration tests
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: githubdevops
+        repoName: ios-client
+        build: <+input>
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: MacOS
+            arch: Arm64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - stage:
+                  spec:
+                    caching:
+                      enabled: true
+                      paths:
+                        - /Users/anka/Library/Developer/Xcode/DerivedData
+                    sharedPaths:
+                      - /Users/anka/Library/Developer/Xcode/DerivedData
+              - step:
+                  type: Run
+                  name: Install xcpretty
+                  identifier: test
+                  spec:
+                    shell: Sh
+                    command: brew install xcpretty
+              - step:
+                  type: Run
+                  name: Test
+                  identifier: test
+                  spec:
+                    shell: Sh
+                    command: |-
+                      xcodebuild
+                      xcodebuild test -scheme Split | xcpretty -r junit
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - build/reports/junit.xml
