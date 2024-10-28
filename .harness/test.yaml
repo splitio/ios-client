@@ -27,21 +27,6 @@ pipeline:
             spec: {}
           execution:
             steps:
-              - stage:
-                  spec:
-                    caching:
-                      enabled: true
-                      paths:
-                        - /Users/anka/Library/Developer/Xcode/DerivedData
-                    sharedPaths:
-                      - /Users/anka/Library/Developer/Xcode/DerivedData
-              - step:
-                  type: Run
-                  name: Install xcpretty
-                  identifier: test
-                  spec:
-                    shell: Sh
-                    command: brew install xcpretty
               - step:
                   type: Run
                   name: Test
@@ -49,6 +34,7 @@ pipeline:
                   spec:
                     shell: Sh
                     command: |-
+                      brew install xcpretty
                       xcodebuild
                       xcodebuild test -scheme Split | xcpretty -r junit
                     reports:
