@@ -49,14 +49,14 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
             case .boundedFetchRequest:
                 if let json = info.data {
                     try handleBounded(encodedKeyMap: json,
-                                      compressionUtil: decomProvider.decompressor(for: info.compressionType),
+                                      compressionUtil: decomProvider.decompressor(for: info.compressionType ?? CompressionType.none),
                                       info: info)
                 }
             case .keyList:
                 if let json = info.data, info.uwSegments.count > 0 {
                     try updateSegments(encodedkeyList: json,
                                        segments: info.uwSegments,
-                                       compressionUtil: decomProvider.decompressor(for: info.compressionType))
+                                       compressionUtil: decomProvider.decompressor(for: info.compressionType ?? CompressionType.none))
                 }
             case .segmentRemoval:
                 if info.uwSegments.count > 0 {
