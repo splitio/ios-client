@@ -42,7 +42,8 @@ struct DbCipher {
         }
         dbHelper.performAndWait {
             updateSplits()
-            updateSegments()
+            updateSegments(type: .mySegment)
+            updateSegments(type: .myLargeSegment)
             updateImpressions()
             updateUniqueKeys()
             updateAttributes()
@@ -63,14 +64,14 @@ struct DbCipher {
         }
     }
 
-    private func updateSegments() {
-        let items = dbHelper.fetch(entity: .mySegment).compactMap { return $0 as? MySegmentEntity }
+    private func updateSegments(type entity: CoreDataEntity) {
+        let items = dbHelper.fetch(entity: entity).compactMap { return $0 as? MySegmentEntity }
         for item in items {
             let userKey = fromCipher?.decrypt(item.userKey) ?? item.userKey
             item.userKey = toCipher?.encrypt(userKey) ?? userKey
 
-            let segmentList = fromCipher?.decrypt(item.segmentList) ?? item.segmentList
-            item.segmentList = toCipher?.encrypt(segmentList) ?? segmentList
+            let body = fromCipher?.decrypt(item.segmentList) ?? item.segmentList
+            item.segmentList = toCipher?.encrypt(body) ?? body
         }
     }
 

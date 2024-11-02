@@ -177,6 +177,7 @@ class TestSplitFactory: SplitFactory {
         let mySegmentsSyncWorkerFactory = DefaultMySegmentsSyncWorkerFactory(
             splitConfig: splitConfig,
             mySegmentsStorage: storageContainer.mySegmentsStorage,
+            myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage,
             mySegmentsFetcher: apiFacade.mySegmentsFetcher,
             telemetryProducer: storageContainer.telemetryStorage)
 

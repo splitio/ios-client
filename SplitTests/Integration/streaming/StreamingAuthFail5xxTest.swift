@@ -86,12 +86,13 @@ class StreamingAuthFail5xxTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
-            case let(urlString) where urlString.contains("mySegments"):
+            }
+            if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-            case let(urlString) where urlString.contains("auth"):
+            }
+            if request.isAuthEndpoint() {
                 self.sseAuthHits+=1
                 if self.sseAuthHits < self.kMaxSseAuthRetries {
                     return TestDispatcherResponse(code: 500)
@@ -99,9 +100,8 @@ class StreamingAuthFail5xxTest: XCTestCase {
                 let resp = TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
                 self.isSseAuth = true
                 return resp
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

@@ -10,7 +10,7 @@ import XCTest
 @testable import Split
 
 protocol RestClientTest {
-    func update(segments: [String]?)
+    func update(segments: [AllSegmentsChange]?)
     func update(change: SplitChange?)
     func update(changes: [SplitChange])
     func update(response: SseAuthenticationResponse?)
@@ -19,7 +19,8 @@ protocol RestClientTest {
 
 class RestClientStub: SplitApiRestClient {
     private var sseAuthResult: DataResult<SseAuthenticationResponse>?
-    private var segments: [String]?
+    private var segments: [AllSegmentsChange]?
+    private var largeSegments: [SegmentChange]?
     private var splitChanges: [SplitChange] = []
     private var sendTrackEventsCount = 0
     private var sendImpressionsCount = 0
@@ -30,7 +31,9 @@ class RestClientStub: SplitApiRestClient {
     var sendUniqueKeysCount = 0
     var isServerAvailable = true
     private var splitChangeHitIndex = 0
-    
+    private var segmentsChangeHitIndex = 0
+    private var largeSegmentsChangeHitIndex = 0
+
     func getSendTrackEventsCount() -> Int {
         return sendTrackEventsCount;
     }
@@ -68,8 +71,19 @@ extension RestClientStub: RestClientSplitChanges {
 }
 
 extension RestClientStub: RestClientMySegments {
-    func getMySegments(user: String, headers: [String: String]?, completion: @escaping (DataResult<[String]>) -> Void) {
-        completion(DataResult.success(value: segments))
+    func getMySegments(user: String, till: Int64?, headers: [String: String]?, completion: @escaping (DataResult<AllSegmentsChange>) -> Void) {
+        if segments?.count == 0 {
+            completion(DataResult.success(value: nil))
+            return
+        }
+        let hit = segmentsChangeHitIndex
+        segmentsChangeHitIndex += 1
+        if hit <= segments?.count ?? 0 - 1 {
+            completion(DataResult.success(value: segments?[hit]))
+            return
+        }
+
+        completion(DataResult.success(value: segments?[segmentsChangeHitIndex]))
     }
 }
 
@@ -126,9 +140,13 @@ extension RestClientStub: RestClientTest {
         self.splitChanges = changes
     }
     
-    func update(segments: [String]?) {
+    func update(segments: [AllSegmentsChange]?) {
         self.segments = segments
     }
+
+    func update(largeSegments: [SegmentChange]?) {
+        self.largeSegments = largeSegments
+    }   
 
     func update(change: SplitChange?) {
         if let change = change {

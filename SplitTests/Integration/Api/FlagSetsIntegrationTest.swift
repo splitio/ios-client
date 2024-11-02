@@ -26,7 +26,7 @@ class FlagSetsIntegrationTests: XCTestCase {
     var querystring = ""
     var splitChangesHit = 0
 
-    let mySegmentsJson = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}, { \"id\":\"id1\", \"name\":\"segment2\"}]}"
+    var mySegmentsJson: String!
 
     var streamingBinding: TestStreamResponseBinding?
 
@@ -51,12 +51,14 @@ class FlagSetsIntegrationTests: XCTestCase {
     var factory: SplitFactory!
 
     override func setUp() {
+        let segments = ["segment1", "segment2"]
+        mySegmentsJson = IntegrationHelper.buildSegments(regular: segments)
         Spec.flagsSpec = ""
         testDb = TestingHelper.createTestDatabase(name: "GralIntegrationTest")
         if splitChange == nil {
             splitChange = loadSplitsChangeFile()
         }
-
+        testDb.mySegmentsDao.update(userKey: matchingKey, change: SegmentChange(segments: segments))
         let session = HttpSessionMock()
         streamingHelper = StreamingTestingHelper()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -66,8 +68,8 @@ class FlagSetsIntegrationTests: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
+                let urlString = request.url.absoluteString
                 if self.splitChangesHit == 0 {
                     if let ind = urlString.firstIndex(of: "?") {
                         let qstr = urlString.suffix(from: urlString.index(after: ind)).asString()
@@ -76,20 +78,25 @@ class FlagSetsIntegrationTests: XCTestCase {
                 }
                 self.splitChangesHit+=1
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
+            if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(self.mySegmentsJson.utf8))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
+            if request.isAuthEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
 
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
+            if request.isImpressionsEndpoint() {
                 return TestDispatcherResponse(code: 200)
+            }
 
-            case let(urlString) where urlString.contains("events/bulk"):
+            if request.isEventsEndpoint() {
                 return TestDispatcherResponse(code: 200)
+            }
 
-            case let(urlString) where urlString.contains("metrics/config"):
+            if request.isTelemetryConfigEndpoint() {
                 if !self.firstConfig {
                     return TestDispatcherResponse(code: 200)
                 }
@@ -99,10 +106,9 @@ class FlagSetsIntegrationTests: XCTestCase {
                 }
                 self.telemetryConfigExp?.fulfill()
                 return TestDispatcherResponse(code: 200)
+            }
 
-            case let(urlString) where urlString.contains("metrics/usage"):
-
-                print("json: = \(request.body?.stringRepresentation ?? "wak")")
+            if request.isTelemetryUsageEndpoint() {
 
                 if !self.firstStats {
                     return TestDispatcherResponse(code: 200)
@@ -113,18 +119,14 @@ class FlagSetsIntegrationTests: XCTestCase {
                 }
                 self.telemetryStatsExp?.fulfill()
                 return TestDispatcherResponse(code: 200)
-
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
     private func buildPollingTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
-                print("Changes hit: \(self.splitChangesHit)")
+            if request.isSplitEndpoint() {
                 if self.splitChangesHit < 3 {
                     let change = self.pollingFlagSetsHits[self.splitChangesHit]
                     if self.splitChangesHit > 0 {
@@ -135,16 +137,16 @@ class FlagSetsIntegrationTests: XCTestCase {
                 }
                 self.splitChangesHit+=1
                 return TestDispatcherResponse(code: 200, data: IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).dataBytes)
-
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(self.mySegmentsJson.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-
-            default:
-                return TestDispatcherResponse(code: 200)
             }
+
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(self.mySegmentsJson.utf8))
+            }
+
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 200)
         }
     }
 
@@ -684,7 +686,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         // Wait for db update
         wait(for: [pollingExps![0]], timeout: 3)
         ThreadUtils.delay(seconds: 2)
-        let updateCountBeforeNot=sdkUpdateFiredCount
+        let updateCountBeforeNot = sdkUpdateFiredCount
         // Update sets again (set_1, set_2)
         streamingHelper.pushSplitsMessage(TestingData.kFlagSetsNotification2)
 
@@ -773,6 +775,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.sdkReadyTimeOut = 6000
         splitConfig.logLevel = TestingHelper.testLogLevel
+        splitConfig.logLevel = .verbose
         splitConfig.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: telemetryEnabled)
         splitConfig.internalTelemetryRefreshRate = 10000
 

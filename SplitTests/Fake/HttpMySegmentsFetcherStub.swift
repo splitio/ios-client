@@ -6,17 +6,26 @@
 //  Copyright © 2021 Split. All rights reserved.
 //
 
+import XCTest
 import Foundation
 @testable import Split
 
 class HttpMySegmentsFetcherStub: HttpMySegmentsFetcher {
     var fetchMySegmentsCount = 0
-    private var segmentsIndex = -1
-    var allSegments: [[String]?]?
+    private var segmentsIndex = AtomicInt(-1)
+    var segments: [AllSegmentsChange?]?
     var httpError: HttpError?
     var headerList = [[String: String]]()
+    var countExp: XCTestExpectation?
+    var lastUserKey: String?
+    var lastTill: Int64?
+    var limitCountExp: Int = 0
 
-    func execute(userKey: String, headers: [String: String]?) throws -> [String]? {
+    func execute(userKey: String, till: Int64?,
+                 headers: [String: String]?) throws -> AllSegmentsChange? {
+        print("Executing segments fetch stub")
+        lastUserKey = userKey
+        lastTill = till
 
         if let error = httpError {
             throw error
@@ -25,13 +34,22 @@ class HttpMySegmentsFetcherStub: HttpMySegmentsFetcher {
         if let headers = headers {
             self.headerList.append(headers)
         }
-        var segments: [String]? = nil
-        if let allSegments = self.allSegments {
-            if  segmentsIndex < allSegments.count - 1 {
-                segmentsIndex+=1
+        var change: AllSegmentsChange? = nil
+        if let segments = self.segments {
+            segmentsIndex.mutate {
+                if $0 < segments.count - 1 {
+                    $0+=1
+                }
             }
-            segments = allSegments[segmentsIndex]
+            change = segments[segmentsIndex.value]
         }
-        return segments
+        if fetchMySegmentsCount >= limitCountExp {
+            countExp?.fulfill()
+        }
+        return change
+    }
+
+    func emptyChange() -> SegmentChange {
+        return SegmentChange(segments: [])
     }
 }

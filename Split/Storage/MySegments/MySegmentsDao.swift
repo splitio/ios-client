@@ -10,33 +10,40 @@ import Foundation
 import CoreData
 
 protocol MySegmentsDao {
-    func getBy(userKey: String) -> [String]
-    func update(userKey: String, segmentList: [String])
+    func getBy(userKey: String) -> SegmentChange?
+    func update(userKey: String, change: SegmentChange)
 }
 
+/// Added a new parameter to specify the entity to work with.
+/// Since Segments and LargeSegments are handled the same way,
+/// it is not necessary to create a new DAO class for them.
 class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
 
+    private let coreDataEntity: CoreDataEntity
     private let cipher: Cipher?
-    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
+    init(coreDataHelper: CoreDataHelper,
+         entity: CoreDataEntity,
+         cipher: Cipher? = nil) {
         self.cipher = cipher
+        self.coreDataEntity = entity
         super.init(coreDataHelper: coreDataHelper)
     }
 
-    func getBy(userKey: String) -> [String] {
-        var mySegments = [String]()
+    func getBy(userKey: String) -> SegmentChange? {
+        var change: SegmentChange?
         execute { [weak self] in
             guard let self = self else {
                 return
             }
 
             if let entity = self.getByUserKey(userKey) {
-                mySegments.append(contentsOf: self.mapEntityToModel(entity))
+                change = self.mapEntityToModel(entity)
             }
         }
-        return mySegments
+        return change
     }
 
-    func update(userKey: String, segmentList: [String]) {
+    func update(userKey: String, change: SegmentChange) {
 
         executeAsync { [weak self] in
             guard let self = self else {
@@ -45,18 +52,22 @@ class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
 
             let searchKey = self.cipher?.encrypt(userKey) ?? userKey
             if let entity = self.getByUserKey(userKey) ??
-                self.coreDataHelper.create(entity: .mySegment) as? MySegmentEntity {
-                let segmentListString = segmentList.joined(separator: ",")
-                entity.userKey = searchKey
-                entity.segmentList = self.cipher?.encrypt(segmentListString) ?? segmentListString
-                self.coreDataHelper.save()
+                self.coreDataHelper.create(entity: coreDataEntity) as? MySegmentEntity {
+                do {
+                    let body = try Json.encodeToJson(change)
+                    entity.userKey = searchKey
+                    entity.segmentList = self.cipher?.encrypt(body) ?? body
+                    self.coreDataHelper.save()
+                } catch {
+                    Logger.e("Error encoding large segment: \(error)")
+                }
             }
         }
     }
 
     private func getByUserKey(_ userKey: String) -> MySegmentEntity? {
         let predicate = NSPredicate(format: "userKey == %@", cipher?.encrypt(userKey) ?? userKey)
-        let entities = self.coreDataHelper.fetch(entity: .mySegment,
+        let entities = self.coreDataHelper.fetch(entity: coreDataEntity,
                                                  where: predicate).compactMap { return $0 as? MySegmentEntity }
         if entities.count > 0 {
             return entities[0]
@@ -64,11 +75,23 @@ class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
         return nil
     }
 
-    private func mapEntityToModel(_ entity: MySegmentEntity) -> [String] {
-        let segmentListString = cipher?.decrypt(entity.segmentList) ?? entity.segmentList
-        if let parsedSegmentList = segmentListString?.split(separator: ",") {
-            return parsedSegmentList.map { String($0) }
+    private func mapEntityToModel(_ entity: MySegmentEntity) -> SegmentChange? {
+        // Here is necessary to handle old Segment List format
+        let changeJson = cipher?.decrypt(entity.segmentList) ?? entity.segmentList
+        if let changeJson = changeJson {
+            do {
+                // First try to parse a Json
+                return try Json.decodeFrom(json: changeJson, to: SegmentChange.self)
+            } catch {
+                // If error, check if segment list
+                return changeFromSegmentList(changeJson)
+            }
         }
-        return []
+        return nil
+    }
+
+    private func changeFromSegmentList(_ segmentList: String) -> SegmentChange? {
+        let segments = segmentList.split(separator: ",").map { String($0) }
+        return SegmentChange(segments: segments)
     }
 }

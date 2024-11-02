@@ -30,22 +30,22 @@ class StreamingIntegrationHelper {
             .replacingOccurrences(of: "$DEFAULT_TREATMENT$", with: "\(defaultTreatment)")
     }
 
-    static func mySegmentNoPayloadMessage(timestamp: Int) -> String {
-        return """
-        id:cf74eb42-f687-48e4-ad18-af2125110aac
-        event:message
-        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MjAwNjI0Nzg3NQ==_mySegments","data":"{\\"type\\":\\"MY_SEGMENTS_UPDATE\\",\\"changeNumber\\":2000, \\"includesPayload\\":false}"}
-        """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
-    }
-
-    static func mySegmentWithPayloadMessage(timestamp: Int, segment: String) -> String {
-        return """
-        id:cf74eb42-f687-48e4-ad18-af2125110aac
-        event:message
-        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MjAwNjI0Nzg3NQ==_mySegments","data":"{\\"type\\":\\"MY_SEGMENTS_UPDATE\\",\\"changeNumber\\":2000, \\"includesPayload\\":true, \\"segmentList\\":[\\"$SEGMENT$\\"]}"}
-        """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
-        .replacingOccurrences(of: "$SEGMENT$", with: "\(segment)")
-    }
+//    static func mySegmentNoPayloadMessage(timestamp: Int) -> String {
+//        return """
+//        id:cf74eb42-f687-48e4-ad18-af2125110aac
+//        event:message
+//        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MjAwNjI0Nzg3NQ==_mySegments","data":"{\\"type\\":\\"MY_SEGMENTS_UPDATE\\",\\"changeNumber\\":2000, \\"includesPayload\\":false}"}
+//        """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
+//    }
+//
+//    static func mySegmentWithPayloadMessage(timestamp: Int, segment: String) -> String {
+//        return """
+//        id:cf74eb42-f687-48e4-ad18-af2125110aac
+//        event:message
+//        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MzM5Njc0ODcyNg==_MTExMzgwNjgx_MjAwNjI0Nzg3NQ==_mySegments","data":"{\\"type\\":\\"MY_SEGMENTS_UPDATE\\",\\"changeNumber\\":2000, \\"includesPayload\\":true, \\"segmentList\\":[\\"$SEGMENT$\\"]}"}
+//        """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
+//        .replacingOccurrences(of: "$SEGMENT$", with: "\(segment)")
+//    }
 
     static func occupancyMessage(timestamp: Int, publishers: Int, channel: String) -> String {
         return """

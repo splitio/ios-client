@@ -12,6 +12,4 @@ typealias AuthCompletion = (URLSession.AuthChallengeDisposition, URLCredential?)
 
 class SplitCertPinningAuthenticator {
 
-
-
 }

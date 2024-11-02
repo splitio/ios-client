@@ -73,6 +73,7 @@ struct TelemetryHttpErrors: Codable {
 
     var splits: [Int: Int]?
     var mySegments: [Int: Int]?
+    var myLargeSegments: [Int: Int]?
     var impressions: [Int: Int]?
     var impressionsCount: [Int: Int]?
     var events: [Int: Int]?
@@ -82,6 +83,7 @@ struct TelemetryHttpErrors: Codable {
     enum CodingKeys: String, CodingKey {
         case splits = "sp"
         case mySegments = "ms"
+        case myLargeSegments = "ls"
         case impressions = "im"
         case impressionsCount = "ic"
         case events = "ev"
@@ -165,10 +167,12 @@ struct TelemetryMethodLatencies: Codable {
 struct TelemetryUpdatesFromSse: Codable {
     var splits: Int = 0
     var mySegments: Int = 0
+    var myLargeSegments: Int = 0
 
     enum CodingKeys: String, CodingKey {
         case splits = "sp"
         case mySegments = "ms"
+        case myLargeSegments = "mls"
     }
 }
 
@@ -176,6 +180,7 @@ struct TelemetryUpdatesFromSse: Codable {
 enum TelemetryUpdatesFromSseType {
     case splits
     case mySegments
+    case myLargeSegments
 }
 
 // Codable to allow testing
@@ -193,6 +198,7 @@ struct TelemetryStats: Codable {
     var impressionsDropped: Int?
     var splitCount: Int?
     var segmentCount: Int?
+    var largeSegmentCount: Int?
     var segmentKeyCount: Int?
     var sessionLengthMs: Int64?
     var eventsQueued: Int?
@@ -214,6 +220,7 @@ struct TelemetryStats: Codable {
         case impressionsDropped = "iDr"
         case splitCount = "spC"
         case segmentCount = "seC"
+        case largeSegmentCount = "lsC"
         case segmentKeyCount = "skC"
         case sessionLengthMs = "sL"
         case eventsQueued = "eQ"

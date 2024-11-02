@@ -45,7 +45,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         wait(for: [dbExp], timeout: 10.0)
 
@@ -106,7 +106,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         wait(for: [dbExp], timeout: 10.0)
         
@@ -175,7 +175,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: Date().unixTimestamp())
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         wait(for: [dbExp], timeout: 10.0)
 
@@ -244,7 +244,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: Date().unixTimestamp())
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .splitsFilterQueryString, stringValue: "")
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         wait(for: [dbExp], timeout: 10.0)
 
@@ -326,7 +326,7 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.2")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
 
         wait(for: [dbExp], timeout: 10.0)
 
@@ -388,46 +388,45 @@ class InitialCacheTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 ThreadUtils.delay(seconds: 0.3) // Simulate network
                 let changesIndex = self.changeHitIndex.getAndAdd(1)
                 if changesIndex < self.numbers.count {
                     self.receivedChangeNumber[changesIndex] = request.parameters?["since"] as? Int64 ?? 0
-                    self.splitsQueryString = urlString
+                    self.splitsQueryString = request.url.absoluteString
                     return TestDispatcherResponse(code: 200, data: self.getChanges(for: changesIndex))
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 10000, till: 10000).utf8))
-
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+
+            return TestDispatcherResponse(code: 500)
         }
     }
 
     private func buildNoChangesTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
 
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 ThreadUtils.delay(seconds: 0.3) // Simulate network
                 self.receivedChangeNumber[self.changeHitIndex.getAndAdd(1)] = request.parameters?["since"] as? Int64 ?? 0
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 10000, till: 10000).utf8))
-
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
@@ -445,7 +444,7 @@ class InitialCacheTest: XCTestCase {
         change?.since = Int64(since)
         change?.till = Int64(till)
         let split = change?.splits[0]
-        if let partitions = split?.conditions?[1].partitions {
+        if let partitions = split?.conditions?[2].partitions {
             for (i, partition) in partitions.enumerated() {
                 partition.treatment = "on\(i)"
                 if index == i {
@@ -457,8 +456,6 @@ class InitialCacheTest: XCTestCase {
         }
         return change!
     }
-
-    
 
     private func loadChangesExpired() {
         cachedSplit = TestingHelper.buildSplit(name: splitName, treatment: "boom")
@@ -493,7 +490,7 @@ class InitialCacheTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 3000
         splitConfig.eventsPushRate = 999999
-        //splitConfig.isDebugModeEnabled = true
+        splitConfig.logLevel = .verbose
         return splitConfig
     }
     

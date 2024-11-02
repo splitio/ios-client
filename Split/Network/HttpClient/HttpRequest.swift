@@ -35,21 +35,21 @@ protocol HttpDataReceivingRequest {
 // MARK: BaseHttpRequest
 class BaseHttpRequest: HttpRequest {
 
-    private (set) var responseCode: Int = 1
-    private (set) var url: URL
-    private (set) var body: Data?
-    private (set) var method: HttpMethod
-    private (set) var parameters: HttpParameters?
-    private (set) var headers: HttpHeaders
-    private (set) weak var session: HttpSession?
-    private (set) var task: HttpTask?
-    private (set) var error: Error?
-    private (set) var pinnedCredentialFail: Bool = false
+    private(set) var responseCode: Int = 1
+    private(set) var url: URL
+    private(set) var body: Data?
+    private(set) var method: HttpMethod
+    private(set) var parameters: HttpParameters?
+    private(set) var headers: HttpHeaders
+    private(set) weak var session: HttpSession?
+    private(set) var task: HttpTask?
+    private(set) var error: Error?
+    private(set) var pinnedCredentialFail: Bool = false
 
     var requestQueue = DispatchQueue(label: "split-http-base-request", attributes: .concurrent)
     var completionHandler: RequestCompletionHandler?
     var errorHandler: RequestErrorHandler?
-    private (set) var urlRequest: URLRequest?
+    private(set) var urlRequest: URLRequest?
 
     var identifier: Int {
         return task?.identifier ?? -1

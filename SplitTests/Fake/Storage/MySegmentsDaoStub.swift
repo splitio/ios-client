@@ -10,12 +10,12 @@ import Foundation
 @testable import Split
 
 class MySegmentsDaoStub: MySegmentsDao {
-    var segments =  [String: [String]]()
-    func getBy(userKey: String) -> [String] {
-        return segments[userKey] ?? []
+    var segments =  [String: SegmentChange]()
+    func getBy(userKey: String) -> SegmentChange? {
+        return segments[userKey]
     }
     
-    func update(userKey: String, segmentList: [String]) {
-        segments[userKey] = segmentList
+    func update(userKey: String, change: SegmentChange) {
+        segments[userKey] = change
     }
 }

@@ -14,15 +14,12 @@ import XCTest
 class SyncUpdateWorkerTest: XCTestCase {
 
     var splitsUpdateWorker: SplitsUpdateWorker!
-    var mySegmentsUpdateWorker: MySegmentsUpdateWorker!
-    var mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker!
+    var mySegmentsUpdateWorker: SegmentsUpdateWorker!
+    var myLargeSegmentsUpdateWorker: SegmentsUpdateWorker!
     var splitKillWorker: SplitKillWorker!
 
     var synchronizer: SynchronizerStub!
     var splitsStorage: SplitsStorageStub!
-    var mySegmentsStorage: MySegmentsStorageStub!
-    var mySegmentsChangesChecker: MySegmentsChangesCheckerMock!
-    var mySegmentsPayloadDecoder: MySegmentsV2PayloadDecoderMock!
     let userKey = IntegrationHelper.dummyUserKey
     var userKeyHash: String = ""
     var telemetryProducer: TelemetryStorageStub!
@@ -32,15 +29,11 @@ class SyncUpdateWorkerTest: XCTestCase {
         userKeyHash = DefaultMySegmentsPayloadDecoder().hash(userKey: userKey)
         synchronizer = SynchronizerStub()
         splitsStorage = SplitsStorageStub()
-        mySegmentsChangesChecker = MySegmentsChangesCheckerMock()
-        mySegmentsPayloadDecoder = MySegmentsV2PayloadDecoderMock()
         telemetryProducer = TelemetryStorageStub()
         _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "split1")],
                                                                archivedSplits: [],
                                                                changeNumber: 100,
                                                                updateTimestamp: 100))
-        mySegmentsStorage = MySegmentsStorageStub()
-        mySegmentsStorage.segments[userKey] = []
         splitChangeProcessor = SplitChangeProcessorStub()
         splitsUpdateWorker = SplitsUpdateWorker(synchronizer: synchronizer,
                                                 splitsStorage: splitsStorage,
@@ -48,16 +41,6 @@ class SyncUpdateWorkerTest: XCTestCase {
                                                 featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoderMock(),
                                                 telemetryProducer: telemetryProducer)
 
-        mySegmentsUpdateWorker =  MySegmentsUpdateWorker(synchronizer: synchronizer,
-                                                         mySegmentsStorage: mySegmentsStorage,
-                                                         mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
-        mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
-
-        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
-                                                             synchronizer: synchronizer,
-                                                             mySegmentsStorage: mySegmentsStorage,
-                                                             payloadDecoder: mySegmentsPayloadDecoder,
-                                                             telemetryProducer: telemetryProducer)
         splitKillWorker = SplitKillWorker(synchronizer: synchronizer, splitsStorage: splitsStorage)
     }
 
@@ -131,220 +114,5 @@ class SyncUpdateWorkerTest: XCTestCase {
         XCTAssertEqual("off", splitsStorage.updatedWithoutChecksSplit?.defaultTreatment)
         XCTAssertEqual(100, splitsStorage.updatedWithoutChecksSplit?.changeNumber)
         XCTAssertTrue(synchronizer.synchronizeSplitsChangeNumberCalled)
-    }
-
-    func testMySegmentsUpdateWorkerWithPayloadChanged() throws {
-
-
-        let notification = MySegmentsUpdateNotification(changeNumber: 100,
-                                                        includesPayload: true,
-                                                        segmentList: ["s1", "s2"],
-                                                        userKeyHash: userKeyHash)
-
-        let exp = XCTestExpectation(description: "exp")
-        mySegmentsStorage.updateExpectation[userKey] = exp
-        mySegmentsChangesChecker.haveChanged = true
-        mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
-        try mySegmentsUpdateWorker.process(notification: notification)
-
-        wait(for: [exp], timeout: 3)
-
-        XCTAssertEqual(2, mySegmentsStorage.segments[userKey]?.count)
-        XCTAssertEqual(1, mySegmentsStorage.segments[userKey]?.filter { $0 == "s1" }.count)
-        XCTAssertEqual(1, mySegmentsStorage.segments[userKey]?.filter { $0 == "s2" }.count)
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
-        XCTAssertFalse(synchronizer.synchronizeMySegmentsForKeyCalled[userKey] ?? false)
-    }
-
-    func testMySegmentsUpdateWorkerWithPayloadWithoutChanges() throws {
-
-
-        let notification = MySegmentsUpdateNotification(changeNumber: 100,
-                                                        includesPayload: true,
-                                                        segmentList: ["s1", "s2"],
-                                                        userKeyHash: userKeyHash)
-
-        mySegmentsChangesChecker.haveChanged = false
-        mySegmentsUpdateWorker.changesChecker = mySegmentsChangesChecker
-        try mySegmentsUpdateWorker.process(notification: notification)
-
-        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
-        XCTAssertFalse(synchronizer.notifyMySegmentsUpdatedCalled)
-        XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
-    }
-
-    func testMySegmentsUpdateWorkerWithPayloadNil() throws {
-        let notification = MySegmentsUpdateNotification(changeNumber: 100,
-                                                        includesPayload: true,
-                                                        segmentList: nil,
-                                                        userKeyHash: userKeyHash)
-
-        let exp = XCTestExpectation(description: "exp")
-        mySegmentsStorage.clearExpectation[userKey] = exp
-
-        try mySegmentsUpdateWorker.process(notification: notification)
-
-        wait(for: [exp], timeout: 3)
-
-        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
-        XCTAssertTrue(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertFalse(synchronizer.synchronizeMySegmentsCalled)
-    }
-
-    func testMySegmentsUpdateWorkerNoPayload() throws {
-        let notification = MySegmentsUpdateNotification(changeNumber: 100,
-                                                        includesPayload: false,
-                                                        segmentList: nil,
-                                                        userKeyHash: userKeyHash)
-
-        let exp = XCTestExpectation(description: "exp")
-        synchronizer.forceMySegmentsSyncExp[userKey] = exp
-
-        try mySegmentsUpdateWorker.process(notification: notification)
-
-        wait(for: [exp], timeout: 3)
-
-        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(synchronizer.forceMySegmentsSyncForKeyCalled[userKey] ?? false)
-    }
-
-    func testMySegmentsUpdateV2WorkerUnbounded() throws {
-        let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
-                                                          compressionType: .none,
-                                                          updateStrategy: .unboundedFetchRequest,
-                                                          segmentName: nil, data: nil)
-
-        let exp = XCTestExpectation(description: "exp")
-        synchronizer.forceMySegmentsSyncExp[userKey] = exp
-
-        try mySegmentsUpdateV2Worker.process(notification: notification)
-
-        wait(for: [exp], timeout: 3)
-
-        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(synchronizer.forceMySegmentsSyncForKeyCalled[userKey] ?? false)
-        XCTAssertFalse(telemetryProducer.recordUpdatesFromSseCalled)
-    }
-
-    func testMySegmentsUpdateV2WorkerRemoval() throws {
-        mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
-        let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
-                                                          compressionType: .none,
-                                                          updateStrategy: .segmentRemoval,
-                                                          segmentName: "s3", data: nil)
-
-        let exp = XCTestExpectation(description: "exp")
-        synchronizer.notifyMySegmentsUpdatedExp[userKey] = exp
-
-        try mySegmentsUpdateV2Worker.process(notification: notification)
-        wait(for: [exp], timeout: 3)
-
-        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.segments[userKey]?.sorted())
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(telemetryProducer.recordUpdatesFromSseCalled)
-    }
-
-    func testMySegmentsUpdateV2WorkerNonRemoval() throws {
-        let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
-                                                          compressionType: .none,
-                                                          updateStrategy: .segmentRemoval,
-                                                          segmentName: "not_in_segments", data: nil)
-
-        try mySegmentsUpdateV2Worker.process(notification: notification)
-        ThreadUtils.delay(seconds: 2)
-
-        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertFalse(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
-        XCTAssertFalse(telemetryProducer.recordUpdatesFromSseCalled)
-    }
-
-    func testMySegmentsUpdateV2KeyListRemove() throws {
-        mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
-        let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
-                                                          compressionType: .gzip,
-                                                          updateStrategy: .keyList,
-                                                          segmentName: "s3", data: "some data")
-
-        let bytes = Array(userKey.utf8)
-        let keyHash = Murmur64x128.hash(data: bytes, offset: 0, length: UInt32(bytes.count), seed: 0)[0]
-        mySegmentsPayloadDecoder.hashedKey = keyHash
-        mySegmentsPayloadDecoder.parsedKeyList = KeyList(added: [4, 5], removed: [keyHash, 3])
-
-        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
-                                                             synchronizer: synchronizer,
-                                                             mySegmentsStorage: mySegmentsStorage,
-                                                             payloadDecoder: mySegmentsPayloadDecoder,
-                                                             telemetryProducer: telemetryProducer)
-
-        let exp = XCTestExpectation(description: "exp")
-        synchronizer.notifyMySegmentsUpdatedExp[userKey] = exp
-
-        try mySegmentsUpdateV2Worker.process(notification: notification)
-        wait(for: [exp], timeout: 3)
-
-        XCTAssertEqual(["s1", "s2"], mySegmentsStorage.segments[userKey]?.sorted())
-        XCTAssertEqual(2, mySegmentsStorage.segments[userKey]?.count ?? -1)
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(telemetryProducer.recordUpdatesFromSseCalled)
-    }
-
-    func testMySegmentsUpdateV2KeyLisAdd() throws {
-        mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
-        let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
-                                                          compressionType: .gzip,
-                                                          updateStrategy: .keyList,
-                                                          segmentName: "s5", data: "some data")
-
-        let bytes = Array(userKey.utf8)
-        let keyHash = Murmur64x128.hash(data: bytes, offset: 0, length: UInt32(bytes.count), seed: 0)[0]
-        mySegmentsPayloadDecoder.hashedKey = keyHash
-        mySegmentsPayloadDecoder.parsedKeyList = KeyList(added: [keyHash, 5], removed: [1, 3])
-
-        mySegmentsUpdateV2Worker =  MySegmentsUpdateV2Worker(userKey: userKey,
-                                                             synchronizer: synchronizer,
-                                                             mySegmentsStorage: mySegmentsStorage,
-                                                             payloadDecoder: mySegmentsPayloadDecoder,
-                                                             telemetryProducer: telemetryProducer)
-
-        let exp = XCTestExpectation(description: "exp")
-        synchronizer.notifyMySegmentsUpdatedExp[userKey] = exp
-
-        try mySegmentsUpdateV2Worker.process(notification: notification)
-        wait(for: [exp], timeout: 3)
-
-        XCTAssertEqual(["s1", "s2", "s3", "s5"], mySegmentsStorage.segments[userKey]?.sorted())
-        XCTAssertFalse(mySegmentsStorage.clearForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
-        XCTAssertTrue(telemetryProducer.recordUpdatesFromSseCalled)
-    }
-
-    func testMySegmentsUpdateV2KeyListNoAction() throws {
-        let notification = MySegmentsUpdateV2Notification(changeNumber: nil,
-                                                          compressionType: .gzip,
-                                                          updateStrategy: .keyList,
-                                                          segmentName: "s5", data: "some data")
-
-        let bytes = Array(userKey.utf8)
-        let keyHash = Murmur64x128.hash(data: bytes, offset: 0, length: UInt32(bytes.count), seed: 0)[0]
-        mySegmentsPayloadDecoder.hashedKey = keyHash
-        mySegmentsPayloadDecoder.parsedKeyList = KeyList(added: [6, 5], removed: [1, 3])
-
-        try mySegmentsUpdateV2Worker.process(notification: notification)
-
-        ThreadUtils.delay(seconds: 1)
-
-        XCTAssertEqual(0, mySegmentsStorage.segments[userKey]?.count ?? -1)
-        XCTAssertFalse(synchronizer.notifySegmentsUpdatedForKeyCalled[userKey] ?? false)
-        XCTAssertFalse(telemetryProducer.recordUpdatesFromSseCalled)
-    }
-
-    override func tearDown() {
-
     }
 }

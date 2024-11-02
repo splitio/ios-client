@@ -17,16 +17,9 @@ class PersistentEventsStorageTests: XCTestCase {
 
     override func setUp() {
         eventDao = EventDaoStub()
-        eventsStorage = DefaultEventsStorage(database: SplitDatabaseStub(eventDao: eventDao,
-                                                                         impressionDao: ImpressionDaoStub(),
-                                                                         impressionsCountDao: ImpressionsCountDaoStub(),
-                                                                         generalInfoDao: GeneralInfoDaoStub(),
-                                                                         splitDao: SplitDaoStub(),
-                                                                         mySegmentsDao: MySegmentsDaoStub(),
-                                                                         attributesDao: AttributesDaoStub(),
-                                                                         uniqueKeyDao: UniqueKeyDaoStub(), 
-                                                                         hashedImpressionDao: HashedImpressionDaoMock()), expirationPeriod: 100)
-
+        var daoProvider = CoreDataDaoProviderMock()
+        daoProvider.eventDao = eventDao
+        eventsStorage = DefaultEventsStorage(database: SplitDatabaseStub(daoProvider: daoProvider), expirationPeriod: 100)
     }
 
     func testPush() {

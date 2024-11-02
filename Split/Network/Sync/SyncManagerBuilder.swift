@@ -114,10 +114,19 @@ class SyncManagerBuilder {
                                             storageContainer: SplitStorageContainer,
                                             synchronizer: Synchronizer) -> SseNotificationProcessor {
 
-        let mySegmentsUpdateWorker
-        = MySegmentsUpdateWorker(synchronizer: synchronizer,
-                                 mySegmentsStorage: storageContainer.mySegmentsStorage,
-                                 mySegmentsPayloadDecoder: DefaultMySegmentsPayloadDecoder())
+        let segmentsUpdateWorker = SegmentsUpdateWorker(
+            synchronizer: MySegmentsSynchronizerWrapper(synchronizer: synchronizer),
+            mySegmentsStorage: storageContainer.mySegmentsStorage,
+            payloadDecoder: DefaultSegmentsPayloadDecoder(),
+            telemetryProducer: storageContainer.telemetryStorage,
+            resource: .mySegments)
+
+        let largeSegmentsUpdateWorker = SegmentsUpdateWorker(
+            synchronizer: MySegmentsSynchronizerWrapper(synchronizer: synchronizer),
+            mySegmentsStorage: storageContainer.myLargeSegmentsStorage,
+            payloadDecoder: DefaultSegmentsPayloadDecoder(),
+            telemetryProducer: storageContainer.telemetryStorage,
+            resource: .myLargeSegments)
 
         return  DefaultSseNotificationProcessor(
             notificationParser: DefaultSseNotificationParser(),
@@ -129,12 +138,8 @@ class SyncManagerBuilder {
                 telemetryProducer: storageContainer.telemetryStorage),
             splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
                                              splitsStorage: storageContainer.splitsStorage),
-            mySegmentsUpdateWorker: mySegmentsUpdateWorker,
-            mySegmentsUpdateV2Worker: MySegmentsUpdateV2Worker(
-                userKey: userKey, synchronizer: synchronizer,
-                mySegmentsStorage: storageContainer.mySegmentsStorage,
-                payloadDecoder: DefaultMySegmentsV2PayloadDecoder(),
-                telemetryProducer: storageContainer.telemetryStorage))
+            mySegmentsUpdateWorker: segmentsUpdateWorker,
+            myLargeSegmentsUpdateWorker: largeSegmentsUpdateWorker)
     }
 
     private func buildPushManager(broadcasterChannel: SyncEventBroadcaster)

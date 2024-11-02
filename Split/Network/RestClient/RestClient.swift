@@ -15,10 +15,10 @@ protocol RestClient {
     func isSdkServerAvailable() -> Bool
 }
 
-protocol SplitApiRestClient: RestClientSplitChanges, RestClientMySegments, RestClientImpressions,
+protocol SplitApiRestClient: RestClientSplitChanges, RestClientImpressions,
                              RestClientTrackEvents, RestClientSseAuthenticator, RestClientTelemetryStats,
-                             RestClientImpressionsCount, RestClientTelemetryConfig, RestClientUniqueKeys {
-}
+                             RestClientImpressionsCount, RestClientTelemetryConfig, RestClientUniqueKeys,
+                             RestClientMySegments {}
 
 protocol HostReachabilityChecker {
     func isReachable(path url: String) -> Bool

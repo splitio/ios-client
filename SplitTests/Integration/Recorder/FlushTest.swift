@@ -35,9 +35,6 @@ class FlushTests: XCTestCase {
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
     
-    override func tearDown() {
-    }
-    
     func test() throws {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_g"
         let matchingKey = "CUSTOMER_ID"
@@ -176,29 +173,30 @@ class FlushTests: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            print("request url: \(request.url)")
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(self.splitChange).utf8))
-            case let(urlString) where urlString.contains("mySegments"):
+            }
+            if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-            case let(urlString) where urlString.contains("auth"):
+            }
+            if request.isAuthEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse(delay: 1).utf8))
-            case let(urlString) where urlString.contains("/events/bulk"):
+            }
+            if request.isEventsEndpoint() {
                 self.trackRequestData.append(request.body?.stringRepresentation ?? "{}")
                 if self.nextTrackHit() >= 10 {
                     self.trackExp?.fulfill()
                 }
                 return TestDispatcherResponse(code: 200)
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
+            }
+            if request.isImpressionsEndpoint() {
                 if self.nextImpressionHit() >= 1 {
                     self.impExp?.fulfill()
                 }
                 self.impressionsRequestData.append(request.body?.stringRepresentation ?? "{}")
                 return TestDispatcherResponse(code: 200)
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

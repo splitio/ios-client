@@ -11,16 +11,17 @@ import XCTest
 @testable import Split
 
 class SynchronizerSpy: Synchronizer {
-
     var splitSynchronizer: Synchronizer
 
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
+    var loadMyLargeSegmentsFromCacheCalled = false
     var loadAttributesFromCacheCalled = false
     var syncAllCalled = false
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
     var synchronizeMySegmentsCalled = false
+    var synchronizeMyLargeSegmentsCalled = false
     var forceMySegmentsCalledCount = 0
     var startPeriodicFetchingCalled = false
     var stopPeriodicFetchingCalled = false
@@ -30,6 +31,7 @@ class SynchronizerSpy: Synchronizer {
     var destroyCalled = false
 
     var notifyMySegmentsUpdatedCalled = false
+    var notifyMyLargeSegmentsUpdatedCalled = false
     var notifySplitKilledCalled = false
 
     var syncSplitsExp: XCTestExpectation?
@@ -43,9 +45,13 @@ class SynchronizerSpy: Synchronizer {
 
     var forceMySegmentsSyncCalled = [String: Bool]()
     var forceMySegmentsSyncCount = [String: Int]()
+    var forceMyLargeSegmentsSyncCalled = [String: Bool]()
+    var forceMyLargeSegmentsSyncCount = [String: Int]()
     var disableTelemetryCalled = true
     var disableEventsCalled = true
     var disableSdkCalled = true
+
+    var forceMySegmentsCalledParams = [String: ForceMySegmentsParams]()
 
     init(splitConfig: SplitClientConfig,
          defaultUserKey: String,
@@ -184,6 +190,11 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.notifySegmentsUpdated(forKey: key)
     }
 
+    func notifyLargeSegmentsUpdated(forKey key: String) {
+        notifyMyLargeSegmentsUpdatedCalled = true
+        splitSynchronizer.notifyLargeSegmentsUpdated(forKey: key)
+    }
+
     var notifyFeatureFlagsUpdatedCalled = false
     func notifyFeatureFlagsUpdated() {
         notifyFeatureFlagsUpdatedCalled = true
@@ -211,10 +222,12 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.synchronizeMySegments(forKey: key)
     }
 
-    func forceMySegmentsSync(forKey key: String) {
-        splitSynchronizer.forceMySegmentsSync(forKey: key)
+    func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64) {
+        Logger.v("Sync Spy: \(key) - ChangeNumbers(ms: \(changeNumbers.msChangeNumber), mls: \(changeNumbers.mlsChangeNumber), delay: \(delay)")
+        splitSynchronizer.forceMySegmentsSync(forKey: key, changeNumbers: changeNumbers, delay: delay)
         forceMySegmentsSyncCalled[key] = true
         forceMySegmentsSyncCount[key]=(forceMySegmentsSyncCount[key] ?? 0) + 1
+        forceMySegmentsCalledParams[key] = ForceMySegmentsParams(segmentsCn: changeNumbers, delay: delay)
     }
 
     func disableSdk() {

@@ -94,6 +94,12 @@
          <TestPlanReference
             reference = "container:SplitiOSIntegration_1.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitiOSHalf_1.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:SplitiOSHalf_2.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference

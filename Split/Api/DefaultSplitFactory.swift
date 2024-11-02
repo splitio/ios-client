@@ -101,6 +101,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                     userKey: params.key.matchingKey,
                     storageContainer: storageContainer)
 
+        // TODO: Avoid somehow this big constructor
         clientManager = DefaultClientManager(config: params.config,
                                              key: params.key,
                                              splitManager: manager,

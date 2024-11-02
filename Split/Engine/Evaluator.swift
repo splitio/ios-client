@@ -39,6 +39,7 @@ struct EvalValues {
 struct EvalContext {
     let evaluator: Evaluator?
     let mySegmentsStorage: MySegmentsStorage?
+    let myLargeSegmentsStorage: MySegmentsStorage?
 }
 
 protocol Evaluator {
@@ -51,10 +52,14 @@ class DefaultEvaluator: Evaluator {
     var splitter: SplitterProtocol = Splitter.shared
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage: MySegmentsStorage
+    private let myLargeSegmentsStorage: MySegmentsStorage?
 
-    init(splitsStorage: SplitsStorage, mySegmentsStorage: MySegmentsStorage) {
+    init(splitsStorage: SplitsStorage, 
+         mySegmentsStorage: MySegmentsStorage,
+         myLargeSegmentsStorage: MySegmentsStorage?) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
+        self.myLargeSegmentsStorage = myLargeSegmentsStorage
     }
 
     func evalTreatment(matchingKey: String, bucketingKey: String?,
@@ -132,7 +137,9 @@ class DefaultEvaluator: Evaluator {
     }
 
     private func getContext() -> EvalContext {
-        return EvalContext(evaluator: self, mySegmentsStorage: mySegmentsStorage)
+        return EvalContext(evaluator: self, 
+                           mySegmentsStorage: mySegmentsStorage,
+                           myLargeSegmentsStorage: myLargeSegmentsStorage)
     }
 
     private func selectBucketKey(matchingKey: String, bucketingKey: String?) -> String {

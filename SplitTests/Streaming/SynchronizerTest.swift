@@ -21,7 +21,7 @@ class SynchronizerTest: XCTestCase {
 
     var eventsManager: SplitEventsManagerStub!
     var telemetryProducer: TelemetryStorageStub!
-    var byKeyApiFacade: ByKeyFacadeStub!
+    var byKeyApiFacade: ByKeyFacadeMock!
     var impressionsTracker: ImpressionsTrackerStub!
     var eventsSynchronizer: EventsSynchronizerStub!
     var telemetrySynchronizer: TelemetrySynchronizerStub!
@@ -61,6 +61,7 @@ class SynchronizerTest: XCTestCase {
                                                      persistentEventsStorage: PersistentEventsStorageStub(),
                                                      telemetryStorage: telemetryProducer,
                                                      mySegmentsStorage: MySegmentsStorageStub(),
+                                                     myLargeSegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub(),
                                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
                                                      flagSetsCache: flagSetsCache,
@@ -71,7 +72,7 @@ class SynchronizerTest: XCTestCase {
         splitConfig.syncEnabled = syncEnabled
         splitConfig.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
 
-        byKeyApiFacade = ByKeyFacadeStub()
+        byKeyApiFacade = ByKeyFacadeMock()
 
         telemetrySynchronizer = TelemetrySynchronizerStub()
 
@@ -122,8 +123,12 @@ class SynchronizerTest: XCTestCase {
 
     func testForceSynchronizeMySegments() {
 
-        synchronizer.forceMySegmentsSync(forKey: userKey)
+        let cn = SegmentsChangeNumber(msChangeNumber: 100, mlsChangeNumber: 200)
+        synchronizer.forceMySegmentsSync(forKey: userKey, changeNumbers: cn, delay: 5)
 
+        XCTAssertEqual(byKeyApiFacade.forceMySegmentsCalledParams[userKey]?.segmentsCn.msChangeNumber, 100)
+        XCTAssertEqual(byKeyApiFacade.forceMySegmentsCalledParams[userKey]?.segmentsCn.mlsChangeNumber, 200)
+        XCTAssertEqual(byKeyApiFacade.forceMySegmentsCalledParams[userKey]?.delay, 5)
         XCTAssertTrue(byKeyApiFacade.forceMySegmentsSyncCalled[userKey] ?? false)
     }
 
@@ -161,10 +166,11 @@ class SynchronizerTest: XCTestCase {
 
     func testForceMySegmentsSyncSingleModeEnabled() {
         let syncKey = IntegrationHelper.dummyUserKey
+        let cn = SegmentsChangeNumber(msChangeNumber: 100, mlsChangeNumber: 200)
         synchronizer = buildSynchronizer(syncEnabled: false)
-        synchronizer.forceMySegmentsSync(forKey: syncKey)
+        synchronizer.forceMySegmentsSync(forKey: syncKey, changeNumbers: cn, delay: 10)
 
-        XCTAssertFalse(byKeyApiFacade.forceMySegmentsSyncCalled[syncKey] ?? false)
+        XCTAssertNil(byKeyApiFacade.forceMySegmentsSyncCalled[syncKey])
     }
 
     func testStopPeriodicFetching() {

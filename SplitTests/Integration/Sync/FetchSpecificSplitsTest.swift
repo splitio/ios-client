@@ -39,21 +39,21 @@ class FetchSpecificSplitsTest: XCTestCase {
         .addSplitFilter(SplitFilter.byName(["s1", "s2", "s3"]))
         .addSplitFilter(SplitFilter.byPrefix(["s1", "s2", "s3"]))
         .build()
-        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=1.1&since=-1&names=s1,s2,s3&prefixes=s1,s2,s3")
+        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&names=s1,s2,s3&prefixes=s1,s2,s3")
     }
 
     func testByNamesFilter() {
         let syncConfig = SyncConfig.builder()
         .addSplitFilter(SplitFilter.byName(["s1", "s2", "s3"]))
         .build()
-        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=1.1&since=-1&names=s1,s2,s3")
+        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&names=s1,s2,s3")
     }
 
     func testByPrefixFilter() {
         let syncConfig = SyncConfig.builder()
         .addSplitFilter(SplitFilter.byPrefix(["s1", "s2", "s3"]))
         .build()
-        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=1.1&since=-1&prefixes=s1,s2,s3")
+        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&prefixes=s1,s2,s3")
     }
 
 
@@ -118,28 +118,29 @@ class FetchSpecificSplitsTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
-
+            if request.isSplitEndpoint() {
                 //self.splitsRequestUrl = String(request.url.absoluteString.suffix(request.url.absoluteString.count - 17))
                 self.splitsRequestUrl = String(request.url.absoluteString)
                 let since = self.lastChangeNumber
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
-
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
-                return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("events/bulk"):
-                return TestDispatcherResponse(code: 200)
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+
+            if request.isImpressionsEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+
+            if request.isEventsEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

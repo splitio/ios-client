@@ -57,6 +57,53 @@
           ],
           "label": "in segment new_segment"
         },
+
+        {
+          "conditionType": "ROLLOUT",
+          "matcherGroup": {
+            "combiner": "AND",
+            "matchers": [
+              {
+                "keySelector": {
+                  "trafficType": "client",
+                  "attribute": null
+                },
+                "matcherType": "IN_LARGE_SEGMENT",
+                "negate": false,
+                "userDefinedLargeSegmentMatcherData": {
+                  "largeSegmentName": "new_large_segment"
+                },
+                "whitelistMatcherData": null,
+                "unaryNumericMatcherData": null,
+                "betweenMatcherData": null,
+                "booleanMatcherData": null,
+                "dependencyMatcherData": null,
+                "stringMatcherData": null
+              }
+            ]
+          },
+          "partitions": [
+            {
+              "treatment": "on",
+              "size": 0
+            },
+            {
+              "treatment": "off",
+              "size": 0
+            },
+            {
+              "treatment": "large_free",
+              "size": 100
+            },
+            {
+              "treatment": "conta",
+              "size": 0
+            }
+          ],
+          "label": "in segment new_large_segment"
+        },
+
+
         {
           "conditionType": "ROLLOUT",
           "matcherGroup": {

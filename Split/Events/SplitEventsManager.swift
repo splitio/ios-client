@@ -52,6 +52,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         processQueue.async { [weak self] in
             if let self = self {
+                Logger.v("Event \(event) notified")
                 self.eventsQueue.add(event)
             }
         }
@@ -145,16 +146,19 @@ class DefaultSplitEventsManager: SplitEventsManager {
             }
             self.triggered.append(event)
             switch event {
-            case .splitsUpdated, .mySegmentsUpdated:
+            case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
                 if isTriggered(external: .sdkReady) {
                     trigger(event: .sdkUpdated)
                     continue
                 }
                 self.triggerSdkReadyIfNeeded()
 
-            case .mySegmentsLoadedFromCache, .splitsLoadedFromCache, .attributesLoadedFromCache:
+            case .mySegmentsLoadedFromCache, .myLargeSegmentsLoadedFromCache,
+                    .splitsLoadedFromCache, .attributesLoadedFromCache:
+                Logger.v("Event \(event) triggered")
                 if isTriggered(internal: .splitsLoadedFromCache),
                    isTriggered(internal: .mySegmentsLoadedFromCache),
+                   isTriggered(internal: .myLargeSegmentsLoadedFromCache),
                    isTriggered(internal: .attributesLoadedFromCache) {
                     trigger(event: SplitEvent.sdkReadyFromCache)
                 }
@@ -187,6 +191,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private func triggerSdkReadyIfNeeded() {
         if isTriggered(internal: .mySegmentsUpdated),
            isTriggered(internal: .splitsUpdated),
+           isTriggered(internal: .myLargeSegmentsUpdated),
            !isTriggered(external: .sdkReady) {
             self.trigger(event: SplitEvent.sdkReady)
         }
@@ -194,6 +199,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     private func trigger(event: SplitEvent) {
         let eventName = event.toString()
+
         // If executionTimes is zero, maximum executions has been reached
         if executionTimes(for: eventName) == 0 {
             return
@@ -204,6 +210,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             updateExecutionTimes(for: eventName, count: times - 1)
         }
 
+        Logger.d("Triggering SDK event \(eventName)")
         // If executionTimes is lower than zero, execute it without limitation
         if let subscriptions = getSubscriptions(for: event) {
             for task in subscriptions {

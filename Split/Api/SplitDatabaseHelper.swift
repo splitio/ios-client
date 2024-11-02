@@ -113,6 +113,7 @@ struct SplitDatabaseHelper {
         let eventsStorage = openEventsStorage(persistentStorage: persistentEventsStorage)
 
         let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase)
+        let myLargeSegmentsStorage = openMyLargeSegmentsStorage(database: splitDatabase)
         let attributesStorage = openAttributesStorage(database: splitDatabase,
                                                       splitClientConfig: splitClientConfig)
 
@@ -138,6 +139,7 @@ struct SplitDatabaseHelper {
                                      persistentEventsStorage: persistentEventsStorage,
                                      telemetryStorage: telemetryStorage,
                                      mySegmentsStorage: mySegmentsStorage,
+                                     myLargeSegmentsStorage: myLargeSegmentsStorage,
                                      attributesStorage: attributesStorage,
                                      uniqueKeyStorage: uniqueKeyStorage,
                                      flagSetsCache: flagSetsCache,
@@ -169,9 +171,18 @@ struct SplitDatabaseHelper {
         return DefaultPersistentMySegmentsStorage(database: database)
     }
 
+    static func openPersistentMyLargeSegmentsStorage(database: SplitDatabase) -> PersistentMySegmentsStorage {
+        return DefaultPersistentMyLargeSegmentsStorage(database: database)
+    }
+
     static func openMySegmentsStorage(database: SplitDatabase) -> MySegmentsStorage {
         let persistentMySegmentsStorage = openPersistentMySegmentsStorage(database: database)
         return DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
+    }
+
+    static func openMyLargeSegmentsStorage(database: SplitDatabase) -> MySegmentsStorage {
+        let persistentMyLargeSegmentsStorage = openPersistentMyLargeSegmentsStorage(database: database)
+        return MyLargeSegmentsStorage(persistentStorage: persistentMyLargeSegmentsStorage)
     }
 
     static func openPersistentAttributesStorage(database: SplitDatabase) -> PersistentAttributesStorage {
@@ -225,11 +236,6 @@ struct SplitDatabaseHelper {
         }
         let range = NSRange(location: 0, length: string.count)
         return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
-    }
-
-    static func createByKeyMySegmentsStorage(mySegmentsStorage: MySegmentsStorage,
-                                             userKey: String) -> ByKeyMySegmentsStorage {
-        return DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: userKey)
     }
 
     static func createCipher(level: SplitEncryptionLevel, cipherKey: Data?) -> Cipher? {

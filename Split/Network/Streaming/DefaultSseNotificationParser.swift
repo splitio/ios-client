@@ -16,9 +16,7 @@ protocol SseNotificationParser {
 
     func parseSplitKill(jsonString: String) throws -> SplitKillNotification
 
-    func parseMySegmentUpdate(jsonString: String, channel: String) throws -> MySegmentsUpdateNotification
-
-    func parseMySegmentUpdateV2(jsonString: String) throws -> MySegmentsUpdateV2Notification
+    func parseMembershipsUpdate(jsonString: String, type: NotificationType) throws -> MembershipsUpdateNotification
 
     func parseOccupancy(jsonString: String, timestamp: Int64, channel: String) throws -> OccupancyNotification
 
@@ -29,7 +27,6 @@ protocol SseNotificationParser {
     func isError(event: [String: String]) -> Bool
 
     func extractUserKeyHashFromChannel(channel: String) -> String?
-
 }
 
 class DefaultSseNotificationParser: SseNotificationParser {
@@ -63,14 +60,10 @@ class DefaultSseNotificationParser: SseNotificationParser {
         return try Json.decodeFrom(json: jsonString, to: SplitKillNotification.self)
     }
 
-    func parseMySegmentUpdate(jsonString: String, channel: String) throws -> MySegmentsUpdateNotification {
-        let jsonNotification = try Json.decodeFrom(json: jsonString, to: MySegmentsUpdateNotificationJson.self)
-        return MySegmentsUpdateNotification(json: jsonNotification,
-                                            userKeyHash: extractUserKeyHashFromChannel(channel: channel) ?? "unknown")
-    }
-
-    func parseMySegmentUpdateV2(jsonString: String) throws -> MySegmentsUpdateV2Notification {
-        return try Json.decodeFrom(json: jsonString, to: MySegmentsUpdateV2Notification.self)
+    func parseMembershipsUpdate(jsonString: String, type: NotificationType) throws -> MembershipsUpdateNotification {
+        var notification = try Json.decodeFrom(json: jsonString, to: MembershipsUpdateNotification.self)
+        notification.segmentType = type
+        return notification
     }
 
     func parseOccupancy(jsonString: String, timestamp: Int64, channel: String) throws -> OccupancyNotification {

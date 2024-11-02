@@ -17,7 +17,7 @@ struct TelemetryRates: Codable {
 
     enum CodingKeys: String, CodingKey {
         case splits = "sp"
-        case mySegments = "se"
+        case mySegments = "ms"
         case impressions = "im"
         case events = "ev"
         case telemetry = "te"

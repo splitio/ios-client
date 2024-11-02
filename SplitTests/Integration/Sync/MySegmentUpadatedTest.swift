@@ -47,9 +47,7 @@ class MySegmentUpdatedTest: XCTestCase {
         }
 
         return { request in
-            print("URL: \(request.url.absoluteString)")
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 var since: Int = 0
                 if self.isFirstChangesReq {
                     self.isFirstChangesReq = false
@@ -60,43 +58,42 @@ class MySegmentUpdatedTest: XCTestCase {
                 }
 
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
-
+            if request.isMySegmentsEndpoint() {
                 var data: String
                 let index = self.getAndIncrement()
-                print("MY SEGMENTS \(index)")
                 switch index {
                 case 1:
-                    data = "{\"mySegments\":[{ \"id\":\"id1\", \"name\":\"segment1\"}]}"
+                    data = IntegrationHelper.buildSegments(regular: ["segment1"])
                 case 2:
-                    data = "{\"mySegments\":[{ \"id\":\"id2\", \"name\":\"segment2\"}]}"
+                    data = IntegrationHelper.buildSegments(regular: ["segment2"])
                 default:
-                    data = "{\"mySegments\":[]}"
+                    data = IntegrationHelper.emptyMySegments
                 }
 
                 if index > 0 && index <= self.sgExp.count {
-                    print("MY SEGMENTS EXP FUL")
                     self.sgExp[index - 1].fulfill()
                 }
                 return TestDispatcherResponse(code: 200, data: Data(data.utf8))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
+            if request.isAuthEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
 
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
+            if request.isImpressionsEndpoint() {
                 self.impHit = try? IntegrationHelper.buildImpressionsFromJson(content: request.body!.stringRepresentation)
                 if self.addImpressions(tests: self.impHit) {
                     self.impExp.fulfill()
                 }
                 return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("events/bulk"):
-                return TestDispatcherResponse(code: 200)
-
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+
+            if request.isEventsEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
@@ -126,6 +123,7 @@ class MySegmentUpdatedTest: XCTestCase {
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
         splitConfig.impressionsMode = "DEBUG"
+        splitConfig.logLevel = .verbose
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
         .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
         

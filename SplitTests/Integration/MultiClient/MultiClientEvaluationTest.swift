@@ -103,9 +103,8 @@ class MultiClientEvaluationTest: XCTestCase {
         let changes = try! Json.decodeFrom(json: getChanges().stringRepresentation, to: SplitChange.self)
         let db = TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
         db.splitDao.syncInsertOrUpdate(split: changes.splits[0])
-        db.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
-
-        
+        db.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+ 
         setupFactory(database: db)
 
         wait(for: [dbExp], timeout: 10.0)
@@ -273,17 +272,18 @@ class MultiClientEvaluationTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
 
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: self.getChanges())
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
+            if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
+            if request.isAuthEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-
-            case let(urlString) where urlString.contains("events/bulk"):
+            }
+            if request.isEventsEndpoint() {
                 if let events = self.event(from: request.body) {
                     for event in events {
                         self.eventsSent[event.key ?? "unknown"] = event
@@ -291,8 +291,8 @@ class MultiClientEvaluationTest: XCTestCase {
                 }
                 self.eventsExp.fulfill()
                 return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("testImpressions"):
+            }
+            if request.isImpressionsEndpoint() {
                 if let impressions = self.impressions(from: request.body) {
                     for impression in impressions {
                         self.impressionsSent[impression.keyName] = impression
@@ -300,10 +300,8 @@ class MultiClientEvaluationTest: XCTestCase {
                 }
                 self.impressionsExp.fulfill()
                 return TestDispatcherResponse(code: 200)
-
-            default:
-                return TestDispatcherResponse(code: 200)
             }
+            return TestDispatcherResponse(code: 200)
         }
     }
 

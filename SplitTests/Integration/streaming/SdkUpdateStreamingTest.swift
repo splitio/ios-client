@@ -180,6 +180,7 @@ class SdkUpdateStreamingTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
+        splitConfig.logLevel = .verbose
         //splitConfig.isDebugModeEnabled = true
         sseExp = XCTestExpectation()
         let key: Key = Key(matchingKey: "user_key")
@@ -216,8 +217,10 @@ class SdkUpdateStreamingTest: XCTestCase {
         wait(for: [sdkReadyExpectation, sseExp], timeout: 5)
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: 99999))
+//        streamingBinding?.push(message:
+//            StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: 99999))
+        let msg = TestingData.fullMembershipsNotificationUnboundedMessage(type: .mySegmentsUpdate)
+        streamingBinding?.push(message: msg)
 
         wait(for: [sdkUpdateExpectation], timeout: expTimeout)
 
@@ -240,68 +243,60 @@ class SdkUpdateStreamingTest: XCTestCase {
     
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 let hitNumber = self.getAndUpdateHit()
                 return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
-
-            case let(urlString) where urlString.contains("mySegments"):
+            }
+            if request.isMySegmentsEndpoint() {
                 self.mySegmentsHits+=1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
     private func buildTestDispatcherNoSplitChanges() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: self.numbers[0], till: self.numbers[0]).utf8))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
+            if request.isMySegmentsEndpoint() {
                 self.mySegmentsHits+=1
                 let hit = self.mySegmentsHits
                 var json = IntegrationHelper.emptyMySegments
                 if hit > 2 {
-                    var mySegments = [Segment]()
+                    var mySegments = [String]()
                     for i in 1...hit {
-                        mySegments.append(Segment(id: "\(i)", name: "segment\(i)"))
+                        mySegments.append("segment\(i)")
                     }
-
-
-                    if let segments = try? Json.encodeToJson(mySegments) {
-                        json = "{\"mySegments\": \(segments)}"
-                    }
+                    json = IntegrationHelper.buildSegments(regular: mySegments)
                 }
                 return TestDispatcherResponse(code: 200, data: Data(json.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
     private func buildTestDispatcherNoChanges() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
-
-            case let(urlString) where urlString.contains("mySegments"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
@@ -321,7 +316,7 @@ class SdkUpdateStreamingTest: XCTestCase {
         change?.since = Int64(since)
         change?.till = Int64(till)
         let split = change?.splits[0]
-        if let partitions = split?.conditions?[1].partitions {
+        if let partitions = split?.conditions?[2].partitions {
             let partition = partitions.filter { $0.treatment == withTreatment }
             partition[0].size = 100
 

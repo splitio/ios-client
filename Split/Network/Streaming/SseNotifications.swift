@@ -23,7 +23,7 @@ struct RawNotification: Decodable {
 enum NotificationType: Decodable {
     case splitUpdate
     case mySegmentsUpdate
-    case mySegmentsUpdateV2
+    case myLargeSegmentsUpdate
     case splitKill
     case occupancy
     case sseError
@@ -39,10 +39,10 @@ enum NotificationType: Decodable {
         switch string.lowercased() {
         case "split_update":
             return NotificationType.splitUpdate
-        case "my_segments_update":
+        case "memberships_ms_update":
             return NotificationType.mySegmentsUpdate
-        case "my_segments_update_v2":
-            return NotificationType.mySegmentsUpdateV2
+        case "memberships_ls_update":
+            return NotificationType.myLargeSegmentsUpdate
         case "split_kill":
             return NotificationType.splitKill
         case "control":
@@ -82,7 +82,7 @@ struct IncomingNotification {
 
 /// Used to control streaming status
 struct ControlNotification: NotificationTypeField {
-    private (set) var type: NotificationType
+    private(set) var type: NotificationType
 
     enum ControlType: Decodable {
         case streamingResumed
@@ -112,45 +112,6 @@ struct ControlNotification: NotificationTypeField {
         }
     }
     let controlType: ControlType
-}
-/// MySegmentsUpdateNotificationJson: Indicates change in MySegments parsed from de incoming JSON
-/// For my segments update notification, two notifications are used
-/// to avoid adding an read-write variable for channel
-struct MySegmentsUpdateNotificationJson: NotificationTypeField {
-    var type: NotificationType {
-        return .mySegmentsUpdate
-    }
-    let changeNumber: Int64
-    let includesPayload: Bool
-    let segmentList: [String]?
-}
-
-/// MySegmentsUpdateNotification: Indicates change in MySegments. This struct has also the userKey (readonly)
-struct MySegmentsUpdateNotification: NotificationTypeField {
-    var type: NotificationType {
-        return .mySegmentsUpdate
-    }
-    let changeNumber: Int64
-    let includesPayload: Bool
-    let segmentList: [String]?
-    let userKeyHash: String
-
-    init(json: MySegmentsUpdateNotificationJson, userKeyHash: String) {
-        self.changeNumber = json.changeNumber
-        self.includesPayload = json.includesPayload
-        self.segmentList = json.segmentList
-        self.userKeyHash = userKeyHash
-    }
-
-    init(changeNumber: Int64,
-         includesPayload: Bool,
-         segmentList: [String]?,
-         userKeyHash: String) {
-        self.changeNumber = changeNumber
-        self.includesPayload = includesPayload
-        self.segmentList = segmentList
-        self.userKeyHash = userKeyHash
-    }
 }
 
 enum MySegmentUpdateStrategy: Decodable {
@@ -191,23 +152,77 @@ struct KeyList: Decodable {
     }
 }
 
-/// Indicates change in MySegments (Optimized version)
-struct MySegmentsUpdateV2Notification: NotificationTypeField {
+struct MembershipsUpdateNotification: NotificationTypeField {
+    var segmentType: NotificationType?
     var type: NotificationType {
-        return .mySegmentsUpdateV2
+        guard let notificationType = segmentType else {
+            return .unknown
+        }
+        return notificationType
     }
     let changeNumber: Int64?
-    let compressionType: CompressionType
+    let compressionType: CompressionType?
     let updateStrategy: MySegmentUpdateStrategy
-    let segmentName: String?
+    let segments: [String]?
     let data: String?
+    let hash: FetchDelayAlgo?
+    let seed: Int?
+    let timeMillis: Int64?
 
     enum CodingKeys: String, CodingKey {
-        case changeNumber
-        case segmentName
+        case changeNumber = "cn"
+        case segments = "n"
         case compressionType = "c"
         case updateStrategy = "u"
         case data = "d"
+        case hash = "h"
+        case seed = "s"
+        case timeMillis = "i"
+    }
+
+    //  uw = unwrappedd value => unwrapped value for optional properties
+    /// A computed property that returns a non-null value (nnv) for the `segments` array.
+    ///
+    /// This property ensures that the `segments` array is always non-optional.
+    /// If `segments` is `nil`, it returns an empty array instead of `nil`.
+    /// This is useful for safely accessing the array without needing to unwrap the optional value.
+    ///
+    /// - Returns: A non-optional array of `String`. Returns an empty array if `segments` is `nil`.
+    ///
+    /// - Example:
+    /// ```swift
+    /// let example = uwSegments  // If `segments` is nil, it returns [].
+    /// ```
+    var uwSegments: [String] {
+        return segments ?? []
+    }
+
+    /// A computed property that returns a non-null value (nnv) for the `timeMillis` value.
+    ///
+    /// This property ensures that the `timeMillis` array is always non-optional.
+    /// If `timeMillis` is `nil`, it returns an empty array instead of `nil`.
+    /// This is useful for safely accessing the array without needing to unwrap the optional value.
+    ///
+    /// - Returns: A non-optional `Int64`. Returns an empty array if `timeMillis` is `nil`.
+    ///
+    /// - Example:
+    /// ```swift
+    /// let example = uwTimeMillis  // If `timeMillis` is nil, it returns 0.
+    /// ```
+    var uwTimeMillis: Int64 {
+        return timeMillis ?? 0
+    }
+
+    var uwChangeNumber: Int64 {
+        return changeNumber ?? -1
+    }
+
+    var uwHash: FetchDelayAlgo {
+        return hash ?? .murmur332
+    }
+
+    var uwSeed: Int {
+        return seed ?? 0
     }
 }
 

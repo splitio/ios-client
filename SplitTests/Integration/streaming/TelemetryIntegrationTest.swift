@@ -409,18 +409,20 @@ class TelemetryIntegrationTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 let changes = self.splitChanges()
                 return TestDispatcherResponse(code: 200, data: Data(changes.utf8))
+            }
 
-            case let(urlString) where urlString.contains("mySegments"):
+            if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
 
-            case let(urlString) where urlString.contains("auth"):
+            if request.isAuthEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
 
-            case let(urlString) where urlString.contains("metrics/config"):
+            if request.isTelemetryConfigEndpoint() {
                 if let body = request.body?.stringRepresentation.utf8 {
                     if let config = try? Json.decodeFrom(json: String(body), to: TelemetryConfig.self) {
                         self.configs.append(config)
@@ -429,8 +431,8 @@ class TelemetryIntegrationTest: XCTestCase {
 
                 self.expConfig?.fulfill()
                 return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("metrics/usage"):
+            }
+            if request.isTelemetryUsageEndpoint() {
                 if let body = request.body?.stringRepresentation.utf8 {
                     if let config = try? Json.decodeFrom(json: String(body), to: TelemetryStats.self) {
                         self.stats.append(config)
@@ -439,18 +441,17 @@ class TelemetryIntegrationTest: XCTestCase {
 
                 self.expStats?.fulfill()
                 return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("events/bulk"):
+            }
+            if request.isEventsEndpoint() {
                 self.expEve?.fulfill()
                 return TestDispatcherResponse(code: 200)
 
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
+            }
+            if request.isImpressionsEndpoint() {
                 self.expImp?.fulfill()
                 return TestDispatcherResponse(code: 200)
-
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 
@@ -463,8 +464,7 @@ class TelemetryIntegrationTest: XCTestCase {
         return { request in
             let errorResp = TestDispatcherResponse(code: 500)
 
-            switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            if request.isSplitEndpoint() {
                 if self.splitsError {
                     self.splitsError = false
                     return errorResp
@@ -472,22 +472,23 @@ class TelemetryIntegrationTest: XCTestCase {
 
                 let changes = self.splitChanges()
                 return TestDispatcherResponse(code: 200, data: Data(changes.utf8))
-
-            case let(urlString) where urlString.contains("mySegments"):
+            }
+            if request.isMySegmentsEndpoint() {
                 if self.mySegmentsError {
                     self.mySegmentsError = false
                     return errorResp
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-
-            case let(urlString) where urlString.contains("auth"):
+            }
+            if request.isAuthEndpoint() {
                 if self.authError {
                     self.authError = false
                     return errorResp
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
 
-            case let(urlString) where urlString.contains("metrics/config"):
+            if request.isTelemetryConfigEndpoint() {
                 if let body = request.body?.stringRepresentation.utf8 {
                     if let config = try? Json.decodeFrom(json: String(body), to: TelemetryConfig.self) {
                         self.configs.append(config)
@@ -496,8 +497,8 @@ class TelemetryIntegrationTest: XCTestCase {
 
                 self.expConfig?.fulfill()
                 return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("metrics/usage"):
+            }
+            if request.isTelemetryUsageEndpoint() {
                 if let body = request.body?.stringRepresentation.utf8 {
                     if let config = try? Json.decodeFrom(json: String(body), to: TelemetryStats.self) {
                         self.stats.append(config)
@@ -506,8 +507,8 @@ class TelemetryIntegrationTest: XCTestCase {
 
                 self.expStats?.fulfill()
                 return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("events/bulk"):
+            }
+            if request.isEventsEndpoint() {
                 print("Eve hit ")
                 if self.eventsError {
                     self.eventsError = false
@@ -516,8 +517,8 @@ class TelemetryIntegrationTest: XCTestCase {
                 print("Eve hit fulfill")
                 self.expEve?.fulfill()
                 return TestDispatcherResponse(code: 200)
-
-            case let(urlString) where urlString.contains("testImpressions/bulk"):
+            }
+            if request.isImpressionsEndpoint() {
                 print("Imp hit")
                 if self.impressionsError {
                     self.impressionsError = false
@@ -526,10 +527,8 @@ class TelemetryIntegrationTest: XCTestCase {
                 print("Imp hit fulfill")
                 self.expImp?.fulfill()
                 return TestDispatcherResponse(code: 200)
-
-            default:
-                return TestDispatcherResponse(code: 500)
             }
+            return TestDispatcherResponse(code: 500)
         }
     }
 

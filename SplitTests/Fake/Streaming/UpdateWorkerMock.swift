@@ -20,21 +20,10 @@ class SplitsUpdateWorkerMock: SplitsUpdateWorker {
     }
 }
 
-class MySegmentsUpdateWorkerMock: MySegmentsUpdateWorker {
+class SegmentsUpdateWorkerMock: SegmentsUpdateWorker {
     var processCalled = false
     var throwException = false
-    override func process(notification: MySegmentsUpdateNotification) throws {
-        if throwException {
-            throw GenericError.unknown(message: "")
-        }
-        processCalled = true
-    }
-}
-
-class MySegmentsUpdateV2WorkerMock: MySegmentsUpdateV2Worker {
-    var processCalled = false
-    var throwException = false
-    override func process(notification: MySegmentsUpdateV2Notification) throws {
+    override func process(notification: MembershipsUpdateNotification) throws {
         if throwException {
             throw GenericError.unknown(message: "")
         }

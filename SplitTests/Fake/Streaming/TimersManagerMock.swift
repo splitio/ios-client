@@ -25,6 +25,20 @@ class TimersManagerMock: TimersManager {
         }
     }
 
+    func addNoReplace(timer: TimerName, task: CancellableTask) -> Bool {
+        var result = false
+        DispatchQueue.test.sync {
+            if !self.timersAdded.contains(timer) {
+                self.timersAdded.insert(timer)
+                result = true
+            }
+        }
+        if let exp = expectations[timer] {
+            exp.fulfill()
+        }
+        return result
+    }
+
     func cancel(timer: TimerName) {
         _ = DispatchQueue.test.sync {
             self.timersCancelled.insert(timer)
@@ -47,6 +61,9 @@ class TimersManagerMock: TimersManager {
         return result
     }
 
+    func isScheduled(timer: TimerName) -> Bool {
+        return timerIsAdded(timer: timer)
+    }
     func addExpectationFor(timer: TimerName, expectation: XCTestExpectation) {
         expectations[timer] = expectation
     }

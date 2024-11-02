@@ -10,9 +10,9 @@ import Foundation
 
 class Endpoint {
 
-    private (set) var url: URL
-    private (set) var method: HttpMethod
-    private (set) var headers = [String: String]()
+    private(set) var url: URL
+    private(set) var method: HttpMethod
+    private(set) var headers = [String: String]()
 
     private init(baseUrl: URL, path: String?, isPathEncoded: Bool = false, defaultQueryString: String? = nil) {
 

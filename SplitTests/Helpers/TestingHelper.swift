@@ -12,7 +12,7 @@ import Foundation
 struct TestingHelper {
 
     static var testLogLevel: SplitLogLevel {
-        return .none
+        return .verbose
     }
 
     static func basicStreamingConfig() -> SplitClientConfig {
@@ -24,6 +24,7 @@ struct TestingHelper {
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 100
         splitConfig.eventsPushRate = 3
+        splitConfig.logLevel = .verbose
         return splitConfig
     }
 
@@ -127,7 +128,7 @@ struct TestingHelper {
         change?.till = Int64(1)
         let split = change!.splits[0]
         split.name = name
-        if let partitions = split.conditions?[1].partitions {
+        if let partitions = split.conditions?[2].partitions {
             for (i, partition) in partitions.enumerated() {
                 if 1 == i {
                     partition.treatment = treatment
@@ -152,7 +153,8 @@ struct TestingHelper {
     }
 
     static func createTelemetryConfig() -> TelemetryConfig {
-        return TelemetryConfig(streamingEnabled: true, rates: nil, urlOverrides: nil, impressionsQueueSize: 9,
+        return TelemetryConfig(streamingEnabled: true,
+                               rates: nil, urlOverrides: nil, impressionsQueueSize: 9,
                                eventsQueueSize: 9, impressionsMode: 9, impressionsListenerEnabled: true,
                                httpProxyDetected: true, activeFactories: 1, redundantFactories: 12,
                                timeUntilReady: 9, timeUntilReadyFromCache: 5, nonReadyUsages: 2,
@@ -188,6 +190,7 @@ struct TestingHelper {
                                      persistentEventsStorage: PersistentEventsStorageStub(),
                                      telemetryStorage: TelemetryStorageStub(),
                                      mySegmentsStorage: MySegmentsStorageStub(),
+                                     myLargeSegmentsStorage: MySegmentsStorageStub(),
                                      attributesStorage: AttributesStorageStub(),
                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
                                      flagSetsCache: FlagSetsCacheMock(),
@@ -204,4 +207,70 @@ struct TestingHelper {
             .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
             .build()
     }
+
+    static func buildSegmentsChange(count: Int64 = 5,
+                                    msAscOrder: Bool = true,
+                                    mlsAscOrder: Bool = true,
+                                    segmentsChanged: Bool = false) -> [AllSegmentsChange] {
+        // Eventualy cn will be greater than the first
+        let baseCn: Int64 = 100
+        let lastMsCn = baseCn * count + 1
+        let lastMlsCn = baseCn * count + 1
+
+        var msC: Int64 = (msAscOrder ? 0 : lastMsCn - 1)
+        var mlsC: Int64 = (mlsAscOrder ? 0: lastMlsCn - 1)
+        let msSum: Int64 = (msAscOrder ? 1: -1) * baseCn
+        let mlsSum: Int64 = (mlsAscOrder ? 1: -1) * baseCn
+        var msSeg = ["s1", "s2"]
+        var mlsSeg = ["ls1", "ls2"]
+        var res = [AllSegmentsChange]()
+        for _ in 0..<count-1 {
+            msC+=msSum
+            mlsC+=mlsSum
+            res.append(newAllSegmentsChange(ms: msSeg, msCn: msC,
+                                            mls: mlsSeg, mlsCn: mlsC))
+        }
+        if segmentsChanged {
+            msSeg.append("s3")
+            mlsSeg.append("sl3")
+        }
+        res.append(newAllSegmentsChange(ms: msSeg, msCn: lastMsCn,
+                                        mls: mlsSeg, mlsCn: lastMlsCn))
+
+        return res
+    }
+
+    static func newSegmentChange(_ segments: [String] = ["s1", "s2"], cn changeNumber: Int64 = -1) -> SegmentChange {
+        return SegmentChange(segments: segments, changeNumber: changeNumber)
+    }
+
+    static func newAllSegmentsChange(msChange: SegmentChange, mlsChange: SegmentChange) -> AllSegmentsChange {
+        return AllSegmentsChange(mySegmentsChange: msChange,
+                                 myLargeSegmentsChange: mlsChange)
+    }
+
+    static func newAllSegmentsChange(ms: [String] = ["s1", "s1"], msCn: Int64 = -1,
+                                     mls: [String] = ["ls1", "ls2"], mlsCn: Int64 = -1) -> AllSegmentsChange {
+        let msChange = newSegmentChange(ms, cn: msCn)
+        let mlsChange = newSegmentChange(mls, cn: mlsCn)
+        return newAllSegmentsChange(msChange: msChange, mlsChange: mlsChange)
+    }
+
+    static func segmentsSyncResult(_ result: Bool = true,
+                                   msCn: Int64 = 300, mlsCn: Int64 = 400,
+                                   msUpd: Bool = true, mlsUpd: Bool = true) -> SegmentsSyncResult {
+        return SegmentsSyncResult(success: result,
+                                  msChangeNumber: msCn, mlsChangeNumber: mlsCn,
+                                  msUpdated: msUpd, mlsUpdated: mlsUpd)
+    }
+
+    static func newAllSegmentsChangeJson(ms: [String] = ["s1", "s1"], msCn: Int64? = nil,
+                                         mls: [String] = ["ls1", "ls2"], mlsCn: Int64? = nil) -> String {
+        let msChange = SegmentChange(segments: ms, changeNumber: msCn)
+        let mlsChange = SegmentChange(segments: mls, changeNumber: mlsCn)
+        return try! Json.encodeToJson(newAllSegmentsChange(msChange: msChange, mlsChange: mlsChange))
+
+
+    }
+
 }

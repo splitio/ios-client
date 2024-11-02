@@ -13,7 +13,7 @@ enum NotificationPayloadParsingException: Error {
     case unknown
 }
 
-protocol MySegmentsV2PayloadDecoder {
+protocol SegmentsPayloadDecoder {
 
     func decodeAsString(payload: String, compressionUtil: CompressionUtil) throws -> String
 
@@ -29,7 +29,7 @@ protocol MySegmentsV2PayloadDecoder {
 
 }
 
-struct DefaultMySegmentsV2PayloadDecoder: MySegmentsV2PayloadDecoder {
+struct DefaultSegmentsPayloadDecoder: SegmentsPayloadDecoder {
 
     private let kFieldSize = 8
 
@@ -50,7 +50,7 @@ struct DefaultMySegmentsV2PayloadDecoder: MySegmentsV2PayloadDecoder {
     }
 
     func hashKey(_ key: String) -> UInt64 {
-        return Murmur64x128.hash(data: Array(key.utf8), offset: 0, length: UInt32(key.count), seed: 0)[0]
+        return Murmur64x128.hashKey(key)
     }
 
     func isKeyInBitmap(keyMap: Data, hashedKey: UInt64) -> Bool {

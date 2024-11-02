@@ -21,7 +21,7 @@ protocol Synchronizer: ImpressionLogger {
     func synchronizeSplits(changeNumber: Int64)
     func synchronizeMySegments(forKey key: String)
     func synchronizeTelemetryConfig()
-    func forceMySegmentsSync(forKey key: String)
+    func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64)
     func startPeriodicFetching()
     func stopPeriodicFetching()
     func startRecordingUserData()
@@ -31,6 +31,7 @@ protocol Synchronizer: ImpressionLogger {
     func pushEvent(event: EventDTO)
     func notifyFeatureFlagsUpdated()
     func notifySegmentsUpdated(forKey key: String)
+    func notifyLargeSegmentsUpdated(forKey key: String)
     func notifySplitKilled()
     func pause()
     func resume()
@@ -58,7 +59,7 @@ class DefaultSynchronizer: Synchronizer {
     private let telemetrySynchronizer: TelemetrySynchronizer?
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let featureFlagsSynchronizer: FeatureFlagsSynchronizer
-    
+
     // These three variables indicates what
     // endpoints are not available because
     // pinned credential validation has failed
@@ -89,7 +90,6 @@ class DefaultSynchronizer: Synchronizer {
         self.telemetryProducer = splitStorageContainer.telemetryStorage
         self.telemetrySynchronizer = telemetrySynchronizer
         self.byKeySynchronizer = byKeyFacade
-
     }
 
     func loadSplitsFromCache() {
@@ -135,9 +135,11 @@ class DefaultSynchronizer: Synchronizer {
         byKeySynchronizer.syncMySegments(forKey: key)
     }
 
-    func forceMySegmentsSync(forKey key: String) {
+    func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64) {
         runIfSyncEnabled {
-            self.byKeySynchronizer.forceMySegmentsSync(forKey: key)
+            self.byKeySynchronizer.forceMySegmentsSync(forKey: key,
+                                                       changeNumbers: changeNumbers,
+                                                       delay: delay)
         }
     }
 
@@ -191,7 +193,6 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func pushImpression(impression: KeyImpression) {
-
         flushQueue.async { [weak self] in
             guard let self = self else { return }
 
@@ -205,6 +206,10 @@ class DefaultSynchronizer: Synchronizer {
 
     func notifySegmentsUpdated(forKey key: String) {
         byKeySynchronizer.notifyMySegmentsUpdated(forKey: key)
+    }
+
+    func notifyLargeSegmentsUpdated(forKey key: String) {
+        byKeySynchronizer.notifyMyLargeSegmentsUpdated(forKey: key)
     }
 
     func notifySplitKilled() {

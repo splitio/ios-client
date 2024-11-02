@@ -9,10 +9,37 @@
 import Foundation
 @testable import Split
 
+protocol DaoProvider {
+    var splitDao: SplitDao { get }
+    var mySegmentsDao: MySegmentsDao { get }
+    var myLargeSegmentsDao: MySegmentsDao { get }
+    var eventDao: EventDao { get }
+    var impressionDao: ImpressionDao { get }
+    var impressionsCountDao: ImpressionsCountDao { get }
+    var hashedImpressionDao: HashedImpressionDao { get }
+    var generalInfoDao: GeneralInfoDao { get }
+    var attributesDao: AttributesDao { get }
+    var uniqueKeyDao: UniqueKeyDao { get }
+}
+
+struct CoreDataDaoProviderMock: DaoProvider {
+    var splitDao: SplitDao = SplitDaoStub()
+    var mySegmentsDao: MySegmentsDao = MySegmentsDaoStub()
+    var myLargeSegmentsDao: MySegmentsDao = MySegmentsDaoStub()
+    var eventDao: EventDao = EventDaoStub()
+    var impressionDao: ImpressionDao = ImpressionDaoStub()
+    var impressionsCountDao: ImpressionsCountDao = ImpressionsCountDaoStub()
+    var hashedImpressionDao: HashedImpressionDao = HashedImpressionDaoMock()
+    var generalInfoDao: GeneralInfoDao = GeneralInfoDaoStub()
+    var attributesDao: AttributesDao = AttributesDaoStub()
+    var uniqueKeyDao: UniqueKeyDao = UniqueKeyDaoStub()
+}
+
 class SplitDatabaseStub: SplitDatabase {
 
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao
+    var myLargeSegmentsDao: MySegmentsDao
     var eventDao: EventDao
     var impressionDao: ImpressionDao
     var impressionsCountDao: ImpressionsCountDao
@@ -21,24 +48,16 @@ class SplitDatabaseStub: SplitDatabase {
     var attributesDao: AttributesDao
     var uniqueKeyDao: UniqueKeyDao
     
-    init(eventDao: EventDao,
-         impressionDao: ImpressionDao,
-         impressionsCountDao: ImpressionsCountDao,
-         generalInfoDao: GeneralInfoDao,
-         splitDao: SplitDao,
-         mySegmentsDao: MySegmentsDao,
-         attributesDao: AttributesDao,
-         uniqueKeyDao: UniqueKeyDao,
-         hashedImpressionDao: HashedImpressionDao
-    ) {
-        self.eventDao = eventDao
-        self.impressionDao = impressionDao
-        self.impressionsCountDao = impressionsCountDao
-        self.splitDao = splitDao
-        self.generalInfoDao = generalInfoDao
-        self.mySegmentsDao = mySegmentsDao
-        self.attributesDao = attributesDao
-        self.uniqueKeyDao = uniqueKeyDao
-        self.hashedImpressionDao = hashedImpressionDao
+    init(daoProvider: DaoProvider) {
+        self.eventDao = daoProvider.eventDao
+        self.impressionDao = daoProvider.impressionDao
+        self.impressionsCountDao = daoProvider.impressionsCountDao
+        self.splitDao = daoProvider.splitDao
+        self.generalInfoDao = daoProvider.generalInfoDao
+        self.mySegmentsDao = daoProvider.mySegmentsDao
+        self.myLargeSegmentsDao = daoProvider.myLargeSegmentsDao
+        self.attributesDao = daoProvider.attributesDao
+        self.uniqueKeyDao = daoProvider.uniqueKeyDao
+        self.hashedImpressionDao = daoProvider.hashedImpressionDao
     }
 }

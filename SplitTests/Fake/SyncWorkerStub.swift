@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import XCTest
 
 @testable import Split
 
@@ -75,9 +76,11 @@ class RetryableMySegmentsSyncWorkerStub: RetryableSyncWorker {
     var completion: SyncCompletion?
     var startCalled = false
     var stopCalled = false
+    var startExp: XCTestExpectation?
 
     func start() {
         startCalled = true
+        startExp?.fulfill()
     }
 
     func stop() {
