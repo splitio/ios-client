@@ -10,13 +10,7 @@ on:
       - development
 
 jobs:
-  build:
-    uses: ./.github/workflows/base_build.yaml
-    with:
-      destination: 'platform=iOS Simulator,OS=17.2,name=iPhone 15'
-      scheme: Split
   test:
-    needs: build
     strategy:
       matrix:
         plan: [
