@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      destination:
+        description: Destination
+        required: true
+        type: string
+      scheme:
+        description: Scheme to use
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: [macos-14]
+
+    steps:
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 15.4.0
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        uses: sersoft-gmbh/xcodebuild-action@v3
+        with:
+          action: build
+          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
+          configuration: Debug
+          derived-data-path: "${{ github.workspace }}/SplitApp"
+          destination: ${{ inputs.destination }}
+          project: Split.xcodeproj
+          scheme: ${{ inputs.scheme }}

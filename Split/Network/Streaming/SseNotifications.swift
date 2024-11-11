@@ -161,7 +161,7 @@ struct MembershipsUpdateNotification: NotificationTypeField {
         return notificationType
     }
     let changeNumber: Int64?
-    let compressionType: CompressionType
+    let compressionType: CompressionType?
     let updateStrategy: MySegmentUpdateStrategy
     let segments: [String]?
     let data: String?

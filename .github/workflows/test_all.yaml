@@ -1,0 +1,35 @@
+name: Build and Test iOS
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+      - development
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        plan: [
+          SplitiOSIntegration,
+          SplitiOSIntegration_1,
+          SplitiOSStreaming,
+          SplitiOSStreaming_1,
+          SplitiOSStreaming_2,
+          SplitiOSUnit,
+          SplitiOSUnit_1,
+          SplitiOSUnit_2,
+          SplitiOSUnit_3,
+          SplitiOSUnit_4,
+          SemVer,
+          SplitPushManagerUT,
+          SplitStreamingUT
+        ]
+      fail-fast: false
+    uses: ./.github/workflows/base_ut.yaml
+    with:
+      test-plan: ${{ matrix.plan }}
+      destination: 'platform=iOS Simulator,OS=17.2,name=iPhone 15'
