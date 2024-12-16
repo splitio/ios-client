@@ -10,6 +10,10 @@ import Foundation
 
 public class SplitView: NSObject, Codable {
 
+    init(trackImpressions: Bool?) {
+        self.trackImpressions = trackImpressions ?? true
+    }
+
     @objc public var name: String?
     @objc public var trafficType: String?
     @objc public var defaultTreatment: String?
@@ -26,4 +30,8 @@ public class SplitView: NSObject, Codable {
     }
     @objc public var configs: [String: String]?
 
+    public let trackImpressions: Bool
+    @objc public var trackImp: Bool {
+        return trackImpressions ?? true
+    }
 }

@@ -10,6 +10,7 @@
   "changeNumber": 1,
   "algo": 2,
   "sets": ["set1", "set2"],
+  "trackImpressions": false,
   "configurations": {
       "t1": "{\"f1\": \"v1\"}",
       "t2": "{\"f2\": \"v2\"}"

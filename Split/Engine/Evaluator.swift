@@ -12,12 +12,14 @@ struct EvaluationResult {
     var label: String
     var changeNumber: Int64?
     var configuration: String?
+    var trackImpressions: Bool
 
-    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil) {
+    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil, trackImpressions: Bool = true) {
         self.treatment = treatment
         self.label = label
         self.changeNumber = changeNumber
         self.configuration = configuration
+        self.trackImpressions = trackImpressions
     }
 }
 
@@ -77,7 +79,8 @@ class DefaultEvaluator: Evaluator {
             return EvaluationResult(treatment: defaultTreatment,
                                     label: ImpressionsConstants.killed,
                                     changeNumber: changeNumber,
-                                    configuration: split.configurations?[defaultTreatment])
+                                    configuration: split.configurations?[defaultTreatment],
+                                    trackImpressions: split.trackImpressions ?? true)
         }
 
         var inRollOut: Bool = false
@@ -106,7 +109,8 @@ class DefaultEvaluator: Evaluator {
                             return EvaluationResult(treatment: defaultTreatment,
                                                     label: ImpressionsConstants.notInSplit,
                                                     changeNumber: changeNumber,
-                                                    configuration: split.configurations?[defaultTreatment])
+                                                    configuration: split.configurations?[defaultTreatment],
+                                                    trackImpressions: split.trackImpressions ?? true)
                         }
                         inRollOut = true
                     }
@@ -121,23 +125,25 @@ class DefaultEvaluator: Evaluator {
                                                           partions: condition.partitions, algo: splitAlgo)
                     return EvaluationResult(treatment: treatment, label: condition.label!,
                                             changeNumber: changeNumber,
-                                            configuration: split.configurations?[treatment])
+                                            configuration: split.configurations?[treatment],
+                                            trackImpressions: split.trackImpressions ?? true)
                 }
             }
             let result = EvaluationResult(treatment: defaultTreatment,
                                           label: ImpressionsConstants.noConditionMatched,
                                           changeNumber: changeNumber,
-                                          configuration: split.configurations?[defaultTreatment])
+                                          configuration: split.configurations?[defaultTreatment],
+                                          trackImpressions: split.trackImpressions ?? true)
             return result
         } catch EvaluatorError.matcherNotFound {
             Logger.e("The matcher has not been found")
             return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.matcherNotFound,
-                                    changeNumber: changeNumber)
+                                    changeNumber: changeNumber, trackImpressions: split.trackImpressions ?? true)
         }
     }
 
     private func getContext() -> EvalContext {
-        return EvalContext(evaluator: self, 
+        return EvalContext(evaluator: self,
                            mySegmentsStorage: mySegmentsStorage,
                            myLargeSegmentsStorage: myLargeSegmentsStorage)
     }
