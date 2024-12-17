@@ -35,7 +35,7 @@ import Foundation
 
         return splits.filter { $0.status == .active }
             .map { split in
-                let splitView = SplitView(trackImpressions: split.trackImpressions)
+                let splitView = SplitView()
                 splitView.name = split.name
                 splitView.changeNumber = split.changeNumber
                 splitView.trafficType = split.trafficTypeName
