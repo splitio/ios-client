@@ -35,7 +35,7 @@ import Foundation
 
         return splits.filter { $0.status == .active }
             .map { split in
-                let splitView = SplitView(trackImpressions: split.trackImpressions)
+                let splitView = SplitView()
                 splitView.name = split.name
                 splitView.changeNumber = split.changeNumber
                 splitView.trafficType = split.trafficTypeName
@@ -43,6 +43,7 @@ import Foundation
                 splitView.killed = split.killed
                 splitView.sets = Array(split.sets ?? [])
                 splitView.configs = split.configurations ?? [String: String]()
+                splitView.trackImpressions = split.trackImpressions ?? true
 
                 if let conditions = split.conditions {
                     var treatments = Set<String>()
