@@ -46,7 +46,7 @@ class ImpressionsTrackerStub: ImpressionsTracker {
     }
 
     var pushCalled = false
-    func push(_ impression: KeyImpression) {
+    func push(_ impression: DecoratedImpression) {
         pushCalled = true
     }
 

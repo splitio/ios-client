@@ -26,5 +26,5 @@ struct SplitStorageContainer {
 }
 
 protocol ImpressionLogger {
-    func pushImpression(impression: KeyImpression)
+    func pushImpression(impression: DecoratedImpression)
 }
