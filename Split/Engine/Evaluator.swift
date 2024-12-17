@@ -80,7 +80,7 @@ class DefaultEvaluator: Evaluator {
                                     label: ImpressionsConstants.killed,
                                     changeNumber: changeNumber,
                                     configuration: split.configurations?[defaultTreatment],
-                                    trackImpressions: split.trackImpressions ?? true)
+                                    trackImpressions: split.shouldTrackImpression())
         }
 
         var inRollOut: Bool = false
@@ -110,7 +110,7 @@ class DefaultEvaluator: Evaluator {
                                                     label: ImpressionsConstants.notInSplit,
                                                     changeNumber: changeNumber,
                                                     configuration: split.configurations?[defaultTreatment],
-                                                    trackImpressions: split.trackImpressions ?? true)
+                                                    trackImpressions: split.shouldTrackImpression())
                         }
                         inRollOut = true
                     }
@@ -126,19 +126,19 @@ class DefaultEvaluator: Evaluator {
                     return EvaluationResult(treatment: treatment, label: condition.label!,
                                             changeNumber: changeNumber,
                                             configuration: split.configurations?[treatment],
-                                            trackImpressions: split.trackImpressions ?? true)
+                                            trackImpressions: split.shouldTrackImpression())
                 }
             }
             let result = EvaluationResult(treatment: defaultTreatment,
                                           label: ImpressionsConstants.noConditionMatched,
                                           changeNumber: changeNumber,
                                           configuration: split.configurations?[defaultTreatment],
-                                          trackImpressions: split.trackImpressions ?? true)
+                                          trackImpressions: split.shouldTrackImpression())
             return result
         } catch EvaluatorError.matcherNotFound {
             Logger.e("The matcher has not been found")
             return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.matcherNotFound,
-                                    changeNumber: changeNumber, trackImpressions: split.trackImpressions ?? true)
+                                    changeNumber: changeNumber, trackImpressions: split.shouldTrackImpression())
         }
     }
 
@@ -153,5 +153,11 @@ class DefaultEvaluator: Evaluator {
             return key
         }
         return matchingKey
+    }
+}
+
+private extension Split {
+    func shouldTrackImpression() -> Bool {
+        return self.trackImpressions ?? true
     }
 }
