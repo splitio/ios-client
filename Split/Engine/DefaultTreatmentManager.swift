@@ -264,7 +264,8 @@ extension DefaultTreatmentManager {
     }
 
     private func logImpression(label: String, changeNumber: Int64? = nil,
-                               treatment: String, splitName: String, attributes: [String: Any]? = nil, trackImpressions: Bool) {
+                               treatment: String, splitName: String, attributes: [String: Any]? = nil,
+                               trackImpressions: Bool) {
 
         let keyImpression = KeyImpression(featureName: splitName,
                                           keyName: key.matchingKey,
@@ -273,7 +274,8 @@ extension DefaultTreatmentManager {
                                           label: (splitConfig.isLabelsEnabled ? label : nil),
                                           time: Date().unixTimestampInMiliseconds(),
                                           changeNumber: changeNumber)
-        impressionLogger.pushImpression(impression: keyImpression)
+        impressionLogger.pushImpression(
+            impression: DecoratedImpression(impression: keyImpression, trackImpressions: trackImpressions))
 
         if let externalImpressionHandler = splitConfig.impressionListener {
             let impression = keyImpression.toImpression()
