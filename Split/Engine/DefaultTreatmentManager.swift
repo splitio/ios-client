@@ -234,11 +234,12 @@ extension DefaultTreatmentManager {
                                              attributes: mergedAttributes,
                                              validationTag: validationTag)
             logImpression(label: result.label, changeNumber: result.changeNumber,
-                          treatment: result.treatment, splitName: trimmedSplitName, attributes: mergedAttributes)
+                          treatment: result.treatment, splitName: trimmedSplitName, attributes: mergedAttributes,
+                          trackImpressions: result.trackImpressions)
             return SplitResult(treatment: result.treatment, config: result.configuration)
         } catch {
             logImpression(label: ImpressionsConstants.exception, treatment: SplitConstants.control,
-                          splitName: trimmedSplitName, attributes: mergedAttributes)
+                          splitName: trimmedSplitName, attributes: mergedAttributes, trackImpressions: true)
             return SplitResult(treatment: SplitConstants.control)
         }
     }
@@ -263,7 +264,7 @@ extension DefaultTreatmentManager {
     }
 
     private func logImpression(label: String, changeNumber: Int64? = nil,
-                               treatment: String, splitName: String, attributes: [String: Any]? = nil) {
+                               treatment: String, splitName: String, attributes: [String: Any]? = nil, trackImpressions: Bool) {
 
         let keyImpression = KeyImpression(featureName: splitName,
                                           keyName: key.matchingKey,

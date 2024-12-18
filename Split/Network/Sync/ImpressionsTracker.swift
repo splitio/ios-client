@@ -192,7 +192,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     private func saveUniqueKeys() {
-        // Just doble checking
+        // Just double checking
         if !isPersistenceEnabled {
             return
         }

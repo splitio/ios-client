@@ -371,6 +371,37 @@ class EvaluatorTests: XCTestCase {
         inLargeSegmentWhiteListTest(key: "the_bad_key", treatment: "off")
     }
 
+    func testTrackImpressionsNil() {
+        withTrackImpressions(nil)
+    }
+
+    func testTrackImpressionsTrue() {
+        withTrackImpressions(true)
+    }
+
+    func testTrackImpressionsFalse() {
+        withTrackImpressions(false)
+    }
+
+    private func withTrackImpressions(_ track: Bool?) {
+        var result: EvaluationResult!
+        var evaluator: Evaluator!
+        guard let split = loadSplit(splitName: "split_sample_feature6") else {
+            XCTAssertTrue(false)
+            return
+        }
+        split.algo = 2
+        if (track != nil) {
+            split.trackImpressions = track
+        }
+        evaluator = customEvaluator(split: split)
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
+
+        XCTAssertNotNil(result)
+        XCTAssertEqual("t4_6", result?.treatment)
+        XCTAssertEqual(track ?? true, result!.trackImpressions)
+    }
+
     func inLargeSegmentWhiteListTest(key: String, treatment: String = "on") {
 
         var treatment = ""

@@ -16,7 +16,7 @@ class SplitManagerTest: XCTestCase {
     var loadedSplits: [Split]!
     var manager: SplitManager!
     var splitsStorage: SplitsStorageStub!
-    
+
     override func setUp() {
         let bundle = Bundle(for: type(of: self))
         let path = bundle.path(forResource: "splits", ofType: "json")!
@@ -27,10 +27,10 @@ class SplitManagerTest: XCTestCase {
                                                                changeNumber: 1, updateTimestamp: 100))
         manager = DefaultSplitManager(splitsStorage: splitsStorage)
     }
-    
+
     override func tearDown() {
     }
-    
+
     func testInitialSplitLoaded() {
         
         let splits = manager.splitNames
@@ -68,6 +68,7 @@ class SplitManagerTest: XCTestCase {
         XCTAssertEqual(split0?.trafficType, "custom", "Split0 traffic type")
         XCTAssertEqual(split0?.sets?.sorted(), ["set1", "set2"])
         XCTAssertNotNil(split0?.configs)
+        XCTAssertFalse(split0?.trackImpressions ?? true, "Split0 track impressions")
         
         XCTAssertEqual(treatments0?.count, 6, "Split0 treatment count")
         XCTAssertEqual(treatments0?.sorted().joined(separator: ",").lowercased(), "t1_0,t2_0,t3_0,t4_0,t5_0,t6_0", "Split0 treatment names")
@@ -86,8 +87,9 @@ class SplitManagerTest: XCTestCase {
         XCTAssertEqual(treatments1?.sorted().joined(separator: ",").lowercased(), "t1_1,t2_1,t3_1,t4_1,t5_1,t6_1", "Split1 treatment names")
 
         XCTAssertEqual([], splitWithoutSets!.sets!)
+        XCTAssertTrue(splitWithoutSets!.trackImpressions, "Split1 track impressions")
     }
-    
+
     func testAddOneSplit() {
         let bundle = Bundle(for: type(of: self))
         let path = bundle.path(forResource: "split_sample_feature6", ofType: "json")!
@@ -99,7 +101,7 @@ class SplitManagerTest: XCTestCase {
         XCTAssertEqual(splits.count, 7, "Added one feature flag count")
         XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), "sample_feature0,sample_feature1,sample_feature2,sample_feature3,sample_feature4,sample_feature5,sample_feature6", "Added one feature flag name check")
     }
-    
+
     func testEmptyName(){
         let split = manager.split(featureName: "  ")
         XCTAssertNil(split)

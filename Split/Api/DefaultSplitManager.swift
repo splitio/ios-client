@@ -43,6 +43,7 @@ import Foundation
                 splitView.killed = split.killed
                 splitView.sets = Array(split.sets ?? [])
                 splitView.configs = split.configurations ?? [String: String]()
+                splitView.trackImpressions = split.trackImpressions ?? true
 
                 if let conditions = split.conditions {
                     var treatments = Set<String>()

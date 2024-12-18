@@ -26,4 +26,5 @@ public class SplitView: NSObject, Codable {
     }
     @objc public var configs: [String: String]?
 
+    @objc public var trackImpressions: Bool = true
 }
