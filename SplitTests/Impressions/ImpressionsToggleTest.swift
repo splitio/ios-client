@@ -27,8 +27,9 @@ class ImpressionsToggleTest: XCTestCase {
     var uniqueKeys: [UniqueKeys]!
     var counts: [String: Int]!
     var impressionsHitCount = 0
-    var impressionBody: String?
+    var impressions: [ImpressionsTest]!
     let queue = DispatchQueue(label: "queue", target: .test)
+    var notificationHelper: NotificationHelperStub?
 
     override func setUp() {
         let session = HttpSessionMock()
@@ -37,18 +38,101 @@ class ImpressionsToggleTest: XCTestCase {
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         uniqueKeys = [UniqueKeys]()
         counts = [String: Int]()
+        impressions = [ImpressionsTest]()
         sseExp = XCTestExpectation(description: "Sse conn")
         impExp = XCTestExpectation(description: "Imp exp")
         uniqueExp = XCTestExpectation(description: "Unique exp")
         countExp = XCTestExpectation(description: "Count exp")
         impressionsHitCount = 0
+        notificationHelper = NotificationHelperStub()
     }
 
-    func testPeriodicRecording() {
+    func testManagerContainsProperty() {
+        let factory = getReadyFactory(impressionsMode: "optimized")
+        let manager = factory.manager
 
-        let notificationHelper = NotificationHelperStub()
+        let splits = manager.splits
+
+        XCTAssertTrue(splits.filter { $0.trackImpressions && $0.name == "tracked" }.count == 1)
+        XCTAssertTrue(splits.filter { !$0.trackImpressions && $0.name == "not_tracked" }.count == 1)
+    }
+
+    func testDebugMode() {
+        let client = getTreatments(impressionsMode: "debug")
+
+        XCTAssertEqual(uniqueKeys.count, 1)
+        XCTAssertEqual(counts["not_tracked"], 1)
+        XCTAssertNil(counts["tracked"])
+        XCTAssertEqual(impressions.count, 1)
+        XCTAssertTrue(impressions[0].testName == "tracked")
+        XCTAssertTrue(impressions[0].keyImpressions.count == 1)
+
+        destroy(client)
+    }
+
+    func testOptimizedMode() {
+        let client = getTreatments(impressionsMode: "optimized")
+
+        XCTAssertEqual(uniqueKeys.count, 1)
+        XCTAssertEqual(counts["not_tracked"], 1)
+        XCTAssertNil(counts["tracked"])
+        XCTAssertEqual(impressions.count, 1)
+        XCTAssertTrue(impressions[0].testName == "tracked")
+        XCTAssertTrue(impressions[0].keyImpressions.count == 1)
+
+        destroy(client)
+    }
+
+    func testNoneMode() {
+        let client = getTreatments(impressionsMode: "none")
+
+        XCTAssertEqual(uniqueKeys.count, 1)
+        XCTAssertEqual(counts["not_tracked"], 1)
+        XCTAssertEqual(counts["tracked"], 1)
+        XCTAssertTrue(impressions.isEmpty)
+
+        destroy(client)
+    }
+
+    private func getTreatments(impressionsMode: String) -> SplitClient {
+        let factory = getReadyFactory(impressionsMode: impressionsMode)
+        let client = factory.client
+
+        _ = client.getTreatment("tracked")
+        _ = client.getTreatment("not_tracked")
+
+        sleep(1)
+
+        // Unique keys and impressions count are saved on app bg
+        // Here that situation is simulated
+        notificationHelper!.simulateApplicationDidEnterBackground()
+        // Make app active again
+        notificationHelper!.simulateApplicationDidBecomeActive()
+
+        client.flush()
+        // Unique key should arrive if periodic recording works
+        var exps = [XCTestExpectation]()
+        exps.append(uniqueExp!)
+        exps.append(countExp!)
+        if impressionsMode != "none" {
+            exps.append(impExp!)
+        }
+        wait(for: exps, timeout: 5)
+
+        return client
+    }
+
+    private func destroy(_ client: SplitClient) {
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+    }
+
+    private func getReadyFactory(impressionsMode: String) -> SplitFactory {
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.impressionsMode = "debug"
+        splitConfig.impressionsMode = impressionsMode
         splitConfig.uniqueKeysRefreshRate = 1
         splitConfig.impressionRefreshRate = 1
         splitConfig.impressionsCountsRefreshRate = 1
@@ -59,7 +143,7 @@ class ImpressionsToggleTest: XCTestCase {
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
-        _ = builder.setNotificationHelper(notificationHelper)
+        _ = builder.setNotificationHelper(notificationHelper!)
         let factory = builder.setApiKey(apiKey).setKey(key)
             .setConfig(splitConfig).build()!
 
@@ -67,7 +151,6 @@ class ImpressionsToggleTest: XCTestCase {
         let client = factory.client
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-
 
         exps.append(sdkReadyExpectation)
 
@@ -82,31 +165,7 @@ class ImpressionsToggleTest: XCTestCase {
         exps.append(sseExp)
         wait(for: exps, timeout: 5)
 
-        _ = client.getTreatment("tracked")
-        _ = client.getTreatment("not_tracked")
-
-        sleep(1)
-
-        // Unique keys and impressions count are saved on app bg
-        // Here that situation is simulated
-        notificationHelper.simulateApplicationDidEnterBackground()
-        // Make app active again
-        notificationHelper.simulateApplicationDidBecomeActive()
-
-        sleep(1)
-        client.flush()
-        // Unique key should arrive if periodic recording works
-        wait(for: [impExp!, uniqueExp!, countExp!], timeout: 5)
-
-        XCTAssertEqual(uniqueKeys.count, 1)
-        XCTAssertEqual(counts["not_tracked"], 1)
-        XCTAssertNil(counts["tracked"])
-
-        let semaphore = DispatchSemaphore(value: 0)
-        client.destroy(completion: {
-            _ = semaphore.signal()
-        })
-        semaphore.wait()
+        return factory
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
@@ -134,9 +193,10 @@ class ImpressionsToggleTest: XCTestCase {
                     if let exp = self.impExp {
                         exp.fulfill()
                     }
-                    if let body = request.body?.stringRepresentation {
-                        self.impressionBody = body
-                        print("imp body: \(self.impressionBody ?? "default value")")
+                    if let body = request.body?.stringRepresentation.utf8 {
+                        if let impressions = try? Json.decodeFrom(json: String(body), to: [ImpressionsTest].self) {
+                            self.impressions = impressions
+                        }
                     }
                 }
                 return TestDispatcherResponse(code: 200)
