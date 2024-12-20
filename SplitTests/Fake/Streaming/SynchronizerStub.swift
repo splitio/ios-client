@@ -175,7 +175,7 @@ class SynchronizerStub: Synchronizer {
         pushEventCalled = true
     }
 
-    func pushImpression(impression: KeyImpression) {
+    func pushImpression(impression: DecoratedImpression) {
         pushImpressionCalled = true
     }
 

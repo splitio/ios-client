@@ -12,13 +12,12 @@ import Foundation
 class ImpressionsLoggerStub: ImpressionLogger {
     var impressions = [String: KeyImpression]()
     var impressionsPushedCount = 0
-    func pushImpression(impression: KeyImpression) {
+    func pushImpression(impression: DecoratedImpression) {
+        let impression = impression.impression
         guard let splitName = impression.featureName else {
             return
         }
         impressions[splitName] = impression
         impressionsPushedCount+=1
     }
-
-    
 }

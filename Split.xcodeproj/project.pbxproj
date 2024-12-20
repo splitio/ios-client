@@ -1107,6 +1107,8 @@
 		C5977C642BF7D5FC003E293A /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
+		C5BD1E4C2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
+		C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1919,6 +1921,7 @@
 		C5977C582BF53F43003E293A /* splitchanges_unsupported.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_unsupported.json; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
+		C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecoratedImpression.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2145,6 +2148,7 @@
 		3B6DEE8720EA6AE00067435E /* Impressions */ = {
 			isa = PBXGroup;
 			children = (
+				C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */,
 				955E12322BFBF22800AE6D10 /* UniqueKey.swift */,
 				952E2679283410620015D633 /* HashedImpression.swift */,
 				95D9446A283BEE4D00D7FFED /* UniqueKeys.swift */,
@@ -4081,6 +4085,7 @@
 				5905D4CC2555F99D006DA3B1 /* ImpressionEntity.swift in Sources */,
 				59B8B8B0220C6E3F003E0D5A /* ValidationErrorInfo.swift in Sources */,
 				956A7E252979F2290080D53C /* SplitsEncoder.swift in Sources */,
+				C5BD1E4C2D11A993008EF198 /* DecoratedImpression.swift in Sources */,
 				955A5A52258D04DF00CAEE9F /* RecorderWorker.swift in Sources */,
 				593225FF24A4D8FD00496D8B /* HttpResponse.swift in Sources */,
 				952E266B2833E35A0015D633 /* PersistentUniqueKeysStorage.swift in Sources */,
@@ -4596,6 +4601,7 @@
 				95B02CD828D0BDC20030EC8B /* String+Utils.swift in Sources */,
 				95B02CD928D0BDC20030EC8B /* Array+DynamicCodable.swift in Sources */,
 				95B02CDA28D0BDC20030EC8B /* Dictionary+DynamicCodable.swift in Sources */,
+				C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */,
 				95B02CDB28D0BDC20030EC8B /* Bundle+Finder.swift in Sources */,
 				95B02CDC28D0BDC20030EC8B /* Bundle+Name.swift in Sources */,
 				95B02CDD28D0BDC20030EC8B /* UInt64+bits.swift in Sources */,
