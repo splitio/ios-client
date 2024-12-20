@@ -117,12 +117,9 @@ struct SplitDatabaseHelper {
         let attributesStorage = openAttributesStorage(database: splitDatabase,
                                                       splitClientConfig: splitClientConfig)
 
-        var uniqueKeyStorage: PersistentUniqueKeysStorage?
-        if splitClientConfig.$impressionsMode == .none {
-            uniqueKeyStorage =
+        let uniqueKeyStorage: PersistentUniqueKeysStorage =
             DefaultPersistentUniqueKeysStorage(database: splitDatabase,
                                                expirationPeriod: kExpirationPeriod)
-        }
 
         let persistentHashedImpressionsStorage = DefaultPersistentHashedImpressionsStorage(database: splitDatabase)
         let hashedImpressionsStorage = DefaultHashedImpressionsStorage(
