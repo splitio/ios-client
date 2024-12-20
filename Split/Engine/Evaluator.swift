@@ -56,7 +56,7 @@ class DefaultEvaluator: Evaluator {
     private let mySegmentsStorage: MySegmentsStorage
     private let myLargeSegmentsStorage: MySegmentsStorage?
 
-    init(splitsStorage: SplitsStorage, 
+    init(splitsStorage: SplitsStorage,
          mySegmentsStorage: MySegmentsStorage,
          myLargeSegmentsStorage: MySegmentsStorage?) {
         self.splitsStorage = splitsStorage

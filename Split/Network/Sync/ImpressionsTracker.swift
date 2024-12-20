@@ -207,18 +207,11 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
     private func setupImpressionsMode() {
 
-        switch splitConfig.$impressionsMode {
-        case .optimized:
+        createUniqueKeysRecorder()
+        createImpressionsCountRecorder()
+
+        if splitConfig.$impressionsMode == .debug || splitConfig.$impressionsMode == .optimized {
             createImpressionsRecorder()
-            createUniqueKeysRecorder()
-            createImpressionsCountRecorder()
-        case .debug:
-            createImpressionsRecorder()
-            createUniqueKeysRecorder()
-            createImpressionsCountRecorder()
-        case .none:
-            createUniqueKeysRecorder()
-            createImpressionsCountRecorder()
         }
     }
 
