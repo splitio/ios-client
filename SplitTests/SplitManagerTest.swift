@@ -68,7 +68,7 @@ class SplitManagerTest: XCTestCase {
         XCTAssertEqual(split0?.trafficType, "custom", "Split0 traffic type")
         XCTAssertEqual(split0?.sets?.sorted(), ["set1", "set2"])
         XCTAssertNotNil(split0?.configs)
-        XCTAssertFalse(split0?.trackImpressions ?? true, "Split0 track impressions")
+        XCTAssertTrue(split0?.impressionsDisabled ?? false, "Split0 track impressions")
         
         XCTAssertEqual(treatments0?.count, 6, "Split0 treatment count")
         XCTAssertEqual(treatments0?.sorted().joined(separator: ",").lowercased(), "t1_0,t2_0,t3_0,t4_0,t5_0,t6_0", "Split0 treatment names")
@@ -87,7 +87,7 @@ class SplitManagerTest: XCTestCase {
         XCTAssertEqual(treatments1?.sorted().joined(separator: ",").lowercased(), "t1_1,t2_1,t3_1,t4_1,t5_1,t6_1", "Split1 treatment names")
 
         XCTAssertEqual([], splitWithoutSets!.sets!)
-        XCTAssertTrue(splitWithoutSets!.trackImpressions, "Split1 track impressions")
+        XCTAssertFalse(splitWithoutSets!.impressionsDisabled, "Split1 track impressions")
     }
 
     func testAddOneSplit() {

@@ -110,7 +110,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
             return
         }
 
-        if isNoneImpressionsMode() || !decoratedImpression.trackImpressions {
+        if isNoneImpressionsMode() || decoratedImpression.impressionsDisabled {
             uniqueKeyTracker?.track(userKey: impression.keyName, featureName: featureName)
             impressionsCounter?.inc(featureName: featureName, timeframe: impression.time, amount: 1)
             if uniqueKeyFlushChecker?
