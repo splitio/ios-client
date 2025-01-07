@@ -53,8 +53,8 @@ class ImpressionsToggleTest: XCTestCase {
 
         let splits = manager.splits
 
-        XCTAssertTrue(splits.filter { $0.trackImpressions && $0.name == "tracked" }.count == 1)
-        XCTAssertTrue(splits.filter { !$0.trackImpressions && $0.name == "not_tracked" }.count == 1)
+        XCTAssertTrue(splits.filter { !$0.impressionsDisabled && $0.name == "tracked" }.count == 1)
+        XCTAssertTrue(splits.filter { $0.impressionsDisabled && $0.name == "not_tracked" }.count == 1)
     }
 
     func testDebugMode() {

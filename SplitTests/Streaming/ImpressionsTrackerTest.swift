@@ -35,7 +35,7 @@ class ImpressionsTrackerTest: XCTestCase {
         let impression = createImpression()
 
         for i in 0..<5 {
-            impressionsTracker.push(decorate(impression, track: i % 2 == 0))
+            impressionsTracker.push(decorate(impression, impressionsDisabled: i % 2 != 0))
         }
 
         // Before save an clear
@@ -59,7 +59,7 @@ class ImpressionsTrackerTest: XCTestCase {
 
         for i in 0..<5 {
             impression.storageId = UUID().uuidString
-            impressionsTracker.push(decorate(impression, track: i % 2 == 0))
+            impressionsTracker.push(decorate(impression, impressionsDisabled: i % 2 != 0))
         }
 
         // Before save an clear
@@ -308,8 +308,8 @@ class ImpressionsTrackerTest: XCTestCase {
                              changeNumber: 1, storageId: randomId ? UUID().uuidString : "idFeature")
     }
 
-    private func decorate(_ impression: KeyImpression, track: Bool = true) -> DecoratedImpression {
-        return DecoratedImpression(impression: impression, trackImpressions: track)
+    private func decorate(_ impression: KeyImpression, impressionsDisabled: Bool = false) -> DecoratedImpression {
+        return DecoratedImpression(impression: impression, impressionsDisabled: impressionsDisabled)
     }
 
     private func createImpressionsTracker(impressionsMode: ImpressionsMode, 

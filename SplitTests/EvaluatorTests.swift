@@ -371,19 +371,19 @@ class EvaluatorTests: XCTestCase {
         inLargeSegmentWhiteListTest(key: "the_bad_key", treatment: "off")
     }
 
-    func testTrackImpressionsNil() {
-        withTrackImpressions(nil)
+    func testimpressionsDisabledNil() {
+        withImpressionsDisabled(nil)
     }
 
-    func testTrackImpressionsTrue() {
-        withTrackImpressions(true)
+    func testImpressionsDisabledTrue() {
+        withImpressionsDisabled(true)
     }
 
-    func testTrackImpressionsFalse() {
-        withTrackImpressions(false)
+    func testImpressionsDisabledFalse() {
+        withImpressionsDisabled(false)
     }
 
-    private func withTrackImpressions(_ track: Bool?) {
+    private func withImpressionsDisabled(_ disabled: Bool?) {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
@@ -391,15 +391,15 @@ class EvaluatorTests: XCTestCase {
             return
         }
         split.algo = 2
-        if (track != nil) {
-            split.trackImpressions = track
+        if (disabled != nil) {
+            split.impressionsDisabled = disabled
         }
         evaluator = customEvaluator(split: split)
         result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
 
         XCTAssertNotNil(result)
         XCTAssertEqual("t4_6", result?.treatment)
-        XCTAssertEqual(track ?? true, result!.trackImpressions)
+        XCTAssertEqual(disabled ?? false, result!.impressionsDisabled)
     }
 
     func inLargeSegmentWhiteListTest(key: String, treatment: String = "on") {

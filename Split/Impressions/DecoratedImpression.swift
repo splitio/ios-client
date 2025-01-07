@@ -7,10 +7,10 @@
 
 struct DecoratedImpression {
     let impression: KeyImpression
-    let trackImpressions: Bool
+    let impressionsDisabled: Bool
 
-    init(impression: KeyImpression, trackImpressions: Bool) {
+    init(impression: KeyImpression, impressionsDisabled: Bool) {
         self.impression = impression
-        self.trackImpressions = trackImpressions
+        self.impressionsDisabled = impressionsDisabled
     }
 }
