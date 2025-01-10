@@ -36,6 +36,7 @@ jobs:
           destination: ${{ inputs.destination }}
           project: Split.xcodeproj
           scheme: Split
+          output-formatter: 'xcbeautify'
           sdk: 'iphonesimulator'
           test-plan: ${{ inputs.test-plan }}
 

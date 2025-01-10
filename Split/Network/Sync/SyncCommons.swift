@@ -19,12 +19,12 @@ struct SplitStorageContainer {
     let mySegmentsStorage: MySegmentsStorage
     let myLargeSegmentsStorage: MySegmentsStorage
     let attributesStorage: AttributesStorage
-    let uniqueKeyStorage: PersistentUniqueKeysStorage?
+    let uniqueKeyStorage: PersistentUniqueKeysStorage
     let flagSetsCache: FlagSetsCache
     let persistentHashedImpressionsStorage: PersistentHashedImpressionsStorage
     let hashedImpressionsStorage: HashedImpressionsStorage
 }
 
 protocol ImpressionLogger {
-    func pushImpression(impression: KeyImpression)
+    func pushImpression(impression: DecoratedImpression)
 }

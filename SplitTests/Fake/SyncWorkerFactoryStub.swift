@@ -65,11 +65,11 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
         return impressionsRecorderWorker
     }
 
-    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker? {
+    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker {
         return periodicImpressionsCountRecorderWorker
     }
 
-    func createImpressionsCountRecorderWorker() -> RecorderWorker? {
+    func createImpressionsCountRecorderWorker() -> RecorderWorker {
         return impressionsCountRecorderWorker
     }
 
@@ -93,11 +93,11 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
         return periodicTelemetryStatsRecorderWorker
     }
 
-    func createUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> RecorderWorker? {
+    func createUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> RecorderWorker {
         return uniqueKeysRecorderWorker
     }
 
-    func createPeriodicUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> PeriodicRecorderWorker? {
+    func createPeriodicUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> PeriodicRecorderWorker {
         return periodicUniqueKeysRecorderWorker
     }
 }

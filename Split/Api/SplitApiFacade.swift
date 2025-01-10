@@ -16,13 +16,13 @@ struct SplitApiFacade {
     let splitsFetcher: HttpSplitFetcher
     let mySegmentsFetcher: HttpMySegmentsFetcher
     let impressionsRecorder: HttpImpressionsRecorder?
-    let impressionsCountRecorder: HttpImpressionsCountRecorder?
+    let impressionsCountRecorder: HttpImpressionsCountRecorder
     let eventsRecorder: HttpEventsRecorder
     let streamingHttpClient: HttpClient?
     let sseAuthenticator: SseAuthenticator
     let telemetryConfigRecorder: HttpTelemetryConfigRecorder?
     let telemetryStatsRecorder: HttpTelemetryStatsRecorder?
-    let uniqueKeysRecorder: HttpUniqueKeysRecorder?
+    let uniqueKeysRecorder: HttpUniqueKeysRecorder
 }
 
 class SplitApiFacadeBuilder {
@@ -129,22 +129,15 @@ class SplitApiFacadeBuilder {
         return nil
     }
 
-    private func getImpressionsCountRecorder(restClient: RestClientImpressionsCount) -> HttpImpressionsCountRecorder? {
-        if impressionsMode() == .optimized ||
-            impressionsMode() == .none {
-            let syncHelper = DefaultSyncHelper(telemetryProducer: telemetryStorage)
-            return  DefaultHttpImpressionsCountRecorder(restClient: restClient,
-                                                      syncHelper: syncHelper)
-        }
-        return nil
+    private func getImpressionsCountRecorder(restClient: RestClientImpressionsCount) -> HttpImpressionsCountRecorder {
+        let syncHelper = DefaultSyncHelper(telemetryProducer: telemetryStorage)
+        return  DefaultHttpImpressionsCountRecorder(restClient: restClient,
+                                                  syncHelper: syncHelper)
     }
 
-    private func getUniqueKeysRecorder(restClient: RestClientUniqueKeys) -> HttpUniqueKeysRecorder? {
-        if impressionsMode() == .none {
-            return DefaultHttpUniqueKeysRecorder(restClient: restClient,
+    private func getUniqueKeysRecorder(restClient: RestClientUniqueKeys) -> HttpUniqueKeysRecorder {
+        return DefaultHttpUniqueKeysRecorder(restClient: restClient,
                                                  syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
-        }
-        return nil
     }
 
     private func impressionsMode() -> ImpressionsMode {

@@ -192,7 +192,7 @@ class DefaultSynchronizer: Synchronizer {
         }
     }
 
-    func pushImpression(impression: KeyImpression) {
+    func pushImpression(impression: DecoratedImpression) {
         flushQueue.async { [weak self] in
             guard let self = self else { return }
 
