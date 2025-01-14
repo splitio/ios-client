@@ -1,3 +1,11 @@
+//
+//  GeneralInfoDaoStub.swift
+//  SplitTests
+//
+//  Created by Javier L. Avrudsky on 18/11/2020.
+//  Copyright © 2020 Split. All rights reserved.
+//
+
 @testable import Split
 import Foundation
 
