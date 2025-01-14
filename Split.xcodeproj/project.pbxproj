@@ -1111,6 +1111,9 @@
 		C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */; };
 		C5BD1E522D130FB6008EF198 /* splitchanges_toggle.json in Resources */ = {isa = PBXBuildFile; fileRef = C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */; };
+		C5E967432D36CB2200112DAC /* GeneralInfoStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */; };
+		C5E9674C2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
+		C5E9674D2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1926,6 +1929,8 @@
 		C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecoratedImpression.swift; sourceTree = "<group>"; };
 		C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsToggleTest.swift; sourceTree = "<group>"; };
 		C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_toggle.json; sourceTree = "<group>"; };
+		C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorageTest.swift; sourceTree = "<group>"; };
+		C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2546,6 +2551,7 @@
 				9557C1C92614F67700CD9B5C /* DbForTwoDifferentApiKeyTest.swift */,
 				9572BA842AC7611400C10FC1 /* FlagSetsCacheTests.swift */,
 				958F98712B1124EC001F35B3 /* SplitBgSynchronizerTests.swift */,
+				C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -3144,6 +3150,7 @@
 			children = (
 				5905D4C02555F99D006DA3B1 /* GeneralInfoEntity.swift */,
 				954F9AF8256EE55B00140B81 /* GeneralInfoDao.swift */,
+				C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */,
 			);
 			path = GeneralInfo;
 			sourceTree = "<group>";
@@ -3941,6 +3948,7 @@
 				3B6DEF2620EA6AE50067435E /* SplitClientConfig.swift in Sources */,
 				95825BD8271F4E3700A0CDAD /* Bundle+Name.swift in Sources */,
 				C5977C0B2BF2751B003E293A /* BetweenStringMatcherData.swift in Sources */,
+				C5E9674C2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */,
 				956A7E20297590DF0080D53C /* Array+Chunked.swift in Sources */,
 				3B6DEF3220EA6AE50067435E /* Murmur3Hash.swift in Sources */,
 				599EA5812266719C006CBA89 /* YamlLocalhostSplitsParser.swift in Sources */,
@@ -4297,6 +4305,7 @@
 				9519A91727D6B9EE00278AEC /* AttributesStorageStub.swift in Sources */,
 				95ABF513293ABEC7006ED016 /* EventsStorageStub.swift in Sources */,
 				952FA1262A2E255600264AB5 /* FeatureFlagsSynchronizerStub.swift in Sources */,
+				C5E967432D36CB2200112DAC /* GeneralInfoStorageTest.swift in Sources */,
 				5932260724A5325A00496D8B /* HttpTaskMock.swift in Sources */,
 				595AD26124E5D48500A7B750 /* ReconnectBackoffCounterTest.swift in Sources */,
 				95F3F020258E3E2F00084AF8 /* HttpImpressionsRecorderTests.swift in Sources */,
@@ -4652,6 +4661,7 @@
 				95B02CFD28D0BDC20030EC8B /* SplitError.swift in Sources */,
 				95B02CFE28D0BDC20030EC8B /* DefaultSplitFactory.swift in Sources */,
 				95B02CFF28D0BDC20030EC8B /* SplitClientManager.swift in Sources */,
+				C5E9674D2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */,
 				95B02D0028D0BDC20030EC8B /* SplitComponentFactory.swift in Sources */,
 				95B02D0128D0BDC20030EC8B /* SplitApiFacade.swift in Sources */,
 				95B02D0228D0BDC20030EC8B /* SplitFactory.swift in Sources */,
