@@ -1,5 +1,6 @@
 import Foundation
 
+/// Configuration class for rollout cache.
 @objc public class RolloutCacheConfiguration: NSObject {
     private(set) var expirationDays: Int
     private(set) var clearOninit: Bool
@@ -9,6 +10,7 @@ import Foundation
         self.clearOninit = clearOnInit
     }
 
+    /// Provides abuilder for RolloutCacheConfiguration.
     @objc(builder)
     public static func builder() -> Builder {
         return Builder()
