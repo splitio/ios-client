@@ -78,5 +78,9 @@ class MySegmentsStorageStub: MySegmentsStorage {
         return count
     }
 
-
+    var clearCalled = false
+    func clear() {
+        clearCalled = true
+        segments.removeAll()
+    }
 }
