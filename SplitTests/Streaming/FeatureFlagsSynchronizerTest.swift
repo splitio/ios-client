@@ -63,7 +63,8 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
                                                      flagSetsCache: FlagSetsCacheMock(),
                                                      persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
-                                                     hashedImpressionsStorage: HashedImpressionsStorageMock())
+                                                     hashedImpressionsStorage: HashedImpressionsStorageMock(),
+                                                     generalInfoStorage: GeneralInfoStorageMock())
 
         splitConfig =  SplitClientConfig()
         splitConfig.syncEnabled = syncEnabled
