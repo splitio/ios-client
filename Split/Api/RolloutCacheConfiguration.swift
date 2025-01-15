@@ -34,7 +34,7 @@ import Foundation
         @discardableResult
         @objc(setExpirationDays:)
         public func set(expirationDays: Int) -> Builder {
-            if expiration < kMinExpirationDays {
+            if expirationDays < kMinExpirationDays {
                 Logger.w("Cache expiration must be at least 1 day. Using default value.")
                 expiration = ServiceConstants.defaultRolloutCacheExpiration
             } else {
