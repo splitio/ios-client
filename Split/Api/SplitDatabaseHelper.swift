@@ -125,6 +125,7 @@ struct SplitDatabaseHelper {
         let hashedImpressionsStorage = DefaultHashedImpressionsStorage(
             cache: LRUCache(capacity: ServiceConstants.lastSeenImpressionCachSize),
             persistentStorage: persistentHashedImpressionsStorage)
+        let generalInfoStorage = openGeneralInfoStorage(database: splitDatabase)
 
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      splitsStorage: splitsStorage,
@@ -141,7 +142,8 @@ struct SplitDatabaseHelper {
                                      uniqueKeyStorage: uniqueKeyStorage,
                                      flagSetsCache: flagSetsCache,
                                      persistentHashedImpressionsStorage: persistentHashedImpressionsStorage,
-                                     hashedImpressionsStorage: hashedImpressionsStorage)
+                                     hashedImpressionsStorage: hashedImpressionsStorage,
+                                     generalInfoStorage: generalInfoStorage)
     }
 
     static func openDatabase(dataFolderName: String,
@@ -215,6 +217,10 @@ struct SplitDatabaseHelper {
 
     static func openEventsStorage(persistentStorage: PersistentEventsStorage) -> EventsStorage {
         return MainEventsStorage(persistentStorage: persistentStorage)
+    }
+
+    static func openGeneralInfoStorage(database: SplitDatabase) -> GeneralInfoStorage {
+        return DefaultGeneralInfoStorage(database: database)
     }
 
     static func databaseName(prefix: String?, apiKey: String) -> String? {
