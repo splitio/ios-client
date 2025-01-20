@@ -1114,6 +1114,12 @@
 		C5E967432D36CB2200112DAC /* GeneralInfoStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */; };
 		C5E9674C2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
 		C5E9674D2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
+		C5E9674F2D37098000112DAC /* RolloutCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674E2D37098000112DAC /* RolloutCacheManager.swift */; };
+		C5E967502D37098000112DAC /* RolloutCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674E2D37098000112DAC /* RolloutCacheManager.swift */; };
+		C5E967522D37FA2000112DAC /* RolloutCacheConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967512D37FA2000112DAC /* RolloutCacheConfiguration.swift */; };
+		C5E967532D37FA2000112DAC /* RolloutCacheConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967512D37FA2000112DAC /* RolloutCacheConfiguration.swift */; };
+		C5E967552D37FDD500112DAC /* RolloutCacheConfigurationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967542D37FDD500112DAC /* RolloutCacheConfigurationTest.swift */; };
+		C5E967572D38013000112DAC /* GeneralInfoStorageMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967562D38013000112DAC /* GeneralInfoStorageMock.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1931,6 +1937,10 @@
 		C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_toggle.json; sourceTree = "<group>"; };
 		C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorageTest.swift; sourceTree = "<group>"; };
 		C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorage.swift; sourceTree = "<group>"; };
+		C5E9674E2D37098000112DAC /* RolloutCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheManager.swift; sourceTree = "<group>"; };
+		C5E967512D37FA2000112DAC /* RolloutCacheConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheConfiguration.swift; sourceTree = "<group>"; };
+		C5E967542D37FDD500112DAC /* RolloutCacheConfigurationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheConfigurationTest.swift; sourceTree = "<group>"; };
+		C5E967562D38013000112DAC /* GeneralInfoStorageMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorageMock.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2150,6 +2160,7 @@
 				95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */,
 				95DAF21A29DDFAF4001C7BBE /* SplitHttpsAuthenticator.swift */,
 				95F7BC222C3876C800C5F2E4 /* SplitCertPinningAuthenticator.swift */,
+				C5E967512D37FA2000112DAC /* RolloutCacheConfiguration.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -2590,6 +2601,7 @@
 				954F9C6F25795CD300140B81 /* SplitsStorageStub.swift */,
 				95B17FF4275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift */,
 				95715A9629DB16A000A1B2F9 /* SecureStorageStub.swift */,
+				C5E967562D38013000112DAC /* GeneralInfoStorageMock.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -3077,6 +3089,7 @@
 			children = (
 				95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */,
 				952FA12A2A2E593900264AB5 /* SplitComponentCatalog.swift */,
+				C5E9674E2D37098000112DAC /* RolloutCacheManager.swift */,
 			);
 			path = Initialization;
 			sourceTree = "<group>";
@@ -3367,6 +3380,7 @@
 				95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */,
 				95ABF4B9293003C1006ED016 /* ConfigTest.swift */,
 				95B0A99F2BC6B72200C31A9E /* SplitClientTests.swift */,
+				C5E967542D37FDD500112DAC /* RolloutCacheConfigurationTest.swift */,
 			);
 			path = Init;
 			sourceTree = "<group>";
@@ -3929,6 +3943,7 @@
 				95CED0362B459A10005E3C34 /* LocalhostSynchronizer.swift in Sources */,
 				9505682426836B20001D7B10 /* ImpressionsCountRecorder.swift in Sources */,
 				3B6DEF3020EA6AE50067435E /* Evaluator.swift in Sources */,
+				C5E967502D37098000112DAC /* RolloutCacheManager.swift in Sources */,
 				598EDE78224BB3E9005D4762 /* InternalSplitClient.swift in Sources */,
 				95D9446D283BF76A00D7FFED /* UniqueKeysRecorderWorker.swift in Sources */,
 				952FA1242A2A5D4D00264AB5 /* FeatureFlagsSynchronizer.swift in Sources */,
@@ -3944,6 +3959,7 @@
 				955E123F2BFE1E7A00AE6D10 /* HashedImpressionStorage.swift in Sources */,
 				3B6DEF3A20EA6AE50067435E /* Dictionary+Extensions.swift in Sources */,
 				95125625276B72B60091895B /* Stopwatch.swift in Sources */,
+				C5E967522D37FA2000112DAC /* RolloutCacheConfiguration.swift in Sources */,
 				957E67B025F6B3E1006F5B19 /* BackgroundSyncWorker.swift in Sources */,
 				3B6DEF2620EA6AE50067435E /* SplitClientConfig.swift in Sources */,
 				95825BD8271F4E3700A0CDAD /* Bundle+Name.swift in Sources */,
@@ -4223,6 +4239,7 @@
 				59B2043924F5667A0092F2E9 /* SseNotificationProcessorTest.swift in Sources */,
 				592C6AC6211B718E002D120C /* SplitEventsManagerTest.swift in Sources */,
 				95C7569D2696457500696148 /* NotificationHelperStub.swift in Sources */,
+				C5E967572D38013000112DAC /* GeneralInfoStorageMock.swift in Sources */,
 				952FA12F2A2F6E4D00264AB5 /* SyncGuardianStub.swift in Sources */,
 				95F3EFFE258D3C8600084AF8 /* EventsRecorderWorkerTests.swift in Sources */,
 				955B5960280DF75E00D105CD /* MySegmentsPayloadDecoderTest.swift in Sources */,
@@ -4277,6 +4294,7 @@
 				59F4AAA82508120500A1C69A /* SyncManagerTest.swift in Sources */,
 				5919017B24A27629005BD12A /* EndpointTest.swift in Sources */,
 				5959C479227B89980064F968 /* FactoryRegistryTest.swift in Sources */,
+				C5E967552D37FDD500112DAC /* RolloutCacheConfigurationTest.swift in Sources */,
 				595AD21524E1CD4700A7B750 /* JwtTokenParserTest.swift in Sources */,
 				9573FB37273D762200086DDE /* AnyValueValidatorTests.swift in Sources */,
 				95ED4A9826497EEA00FD3569 /* TestSplitFactory.swift in Sources */,
@@ -4642,6 +4660,7 @@
 				95B02CED28D0BDC20030EC8B /* MatcherGroup.swift in Sources */,
 				95CED0502B4DCDB1005E3C34 /* LocalhostClientManager.swift in Sources */,
 				95B02CEE28D0BDC20030EC8B /* MatcherProtocol.swift in Sources */,
+				C5E9674F2D37098000112DAC /* RolloutCacheManager.swift in Sources */,
 				95B02CEF28D0BDC20030EC8B /* MatcherType.swift in Sources */,
 				95B02CF028D0BDC20030EC8B /* Segment.swift in Sources */,
 				95B02CF128D0BDC20030EC8B /* Status.swift in Sources */,
@@ -4663,6 +4682,7 @@
 				95B02CFF28D0BDC20030EC8B /* SplitClientManager.swift in Sources */,
 				C5E9674D2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */,
 				95B02D0028D0BDC20030EC8B /* SplitComponentFactory.swift in Sources */,
+				C5E967532D37FA2000112DAC /* RolloutCacheConfiguration.swift in Sources */,
 				95B02D0128D0BDC20030EC8B /* SplitApiFacade.swift in Sources */,
 				95B02D0228D0BDC20030EC8B /* SplitFactory.swift in Sources */,
 				952FA1392A33778500264AB5 /* SyncGuardian.swift in Sources */,
