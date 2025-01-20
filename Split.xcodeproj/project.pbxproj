@@ -1120,6 +1120,8 @@
 		C5E967532D37FA2000112DAC /* RolloutCacheConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967512D37FA2000112DAC /* RolloutCacheConfiguration.swift */; };
 		C5E967552D37FDD500112DAC /* RolloutCacheConfigurationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967542D37FDD500112DAC /* RolloutCacheConfigurationTest.swift */; };
 		C5E967572D38013000112DAC /* GeneralInfoStorageMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967562D38013000112DAC /* GeneralInfoStorageMock.swift */; };
+		C5E9675F2D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */; };
+		C5E967602D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1941,6 +1943,7 @@
 		C5E967512D37FA2000112DAC /* RolloutCacheConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheConfiguration.swift; sourceTree = "<group>"; };
 		C5E967542D37FDD500112DAC /* RolloutCacheConfigurationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheConfigurationTest.swift; sourceTree = "<group>"; };
 		C5E967562D38013000112DAC /* GeneralInfoStorageMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorageMock.swift; sourceTree = "<group>"; };
+		C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutDefinitionsCache.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2511,6 +2514,7 @@
 				955892AA25C187EA00F67FBA /* CoreDataContextBuilder.swift */,
 				59F65EFD2562C215005FE8C9 /* CoreDataHelper.swift */,
 				950B743C2694D768005FD649 /* LegacyStorageCleaner.swift */,
+				C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -4014,6 +4018,7 @@
 				3B6DEF8920EA6AE50067435E /* ConcurrentArrayQueue.swift in Sources */,
 				3B6DEF3520EA6AE50067435E /* SecureDataStore.swift in Sources */,
 				95715A8129D22C1B00A1B2F9 /* SplitEncryptionLevel.swift in Sources */,
+				C5E967602D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */,
 				3B6DEF2720EA6AE50067435E /* Logger.swift in Sources */,
 				3B6DEF5920EA6AE50067435E /* SplitEventsManager.swift in Sources */,
 				3B6DEF4020EA6AE50067435E /* DataType.swift in Sources */,
@@ -4595,6 +4600,7 @@
 				95F7BBC42C077DD200C5F2E4 /* ImpressionsCountDao.swift in Sources */,
 				95B02CB228D0BDC10030EC8B /* ApiKeyValidator.swift in Sources */,
 				95880CFA2AEFF159000498A0 /* FlagSetsCache.swift in Sources */,
+				C5E9675F2D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */,
 				95B02CB328D0BDC10030EC8B /* EventValidator.swift in Sources */,
 				95B02CB428D0BDC10030EC8B /* SplitValidator.swift in Sources */,
 				95B02CB528D0BDC10030EC8B /* ValidationConfig.swift in Sources */,

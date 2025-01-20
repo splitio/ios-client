@@ -8,9 +8,8 @@
 
 import Foundation
 
-protocol SyncSplitsStorage {
+protocol SyncSplitsStorage: RolloutDefinitionsCache {
     func update(splitChange: ProcessedSplitChange) -> Bool
-    func clear()
 }
 
 protocol SplitsStorage: SyncSplitsStorage {
@@ -30,7 +29,6 @@ protocol SplitsStorage: SyncSplitsStorage {
     func updateWithoutChecks(split: Split)
     func isValidTrafficType(name: String) -> Bool
     func getCount() -> Int
-    func clear()
     func destroy()
 }
 

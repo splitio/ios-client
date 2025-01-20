@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol MySegmentsStorage {
+protocol MySegmentsStorage: RolloutDefinitionsCache {
     var keys: Set<String> { get }
     func loadLocal(forKey key: String)
     func changeNumber(forKey key: String) -> Int64?
@@ -77,5 +77,10 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
             count+=(inMemoryMySegments.values(forKey: key)?.count ?? 0)
         }
         return count
+    }
+
+    func clear() {
+        inMemoryMySegments.removeAll()
+        persistenStorage.deleteAll()
     }
 }

@@ -44,4 +44,7 @@ class EmptyMySegmentsStorage: MySegmentsStorage {
     func getCount() -> Int {
         return 0
     }
+
+    func clear() {
+    }
 }
