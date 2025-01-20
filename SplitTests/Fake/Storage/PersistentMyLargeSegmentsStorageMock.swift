@@ -22,4 +22,8 @@ class PersistentMySegmentsStorageMock: PersistentMySegmentsStorage {
 
     func close() {
     }
+
+    func deleteAll() {
+        persistedSegments.removeAll()
+    }
 }
