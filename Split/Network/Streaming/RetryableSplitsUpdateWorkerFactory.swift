@@ -33,17 +33,17 @@ protocol SyncWorkerFactory {
 
     func createImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> RecorderWorker?
 
-    func createImpressionsCountRecorderWorker() -> RecorderWorker?
+    func createImpressionsCountRecorderWorker() -> RecorderWorker
 
-    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker?
+    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker
 
     func createPeriodicEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> PeriodicRecorderWorker
 
     func createEventsRecorderWorker(syncHelper: EventsRecorderSyncHelper?) -> RecorderWorker
 
-    func createUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> RecorderWorker?
+    func createUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> RecorderWorker
 
-    func createPeriodicUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> PeriodicRecorderWorker?
+    func createPeriodicUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> PeriodicRecorderWorker
 
     func createTelemetryConfigRecorderWorker() -> RecorderWorker?
 
@@ -145,24 +145,14 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                          impressionsSyncHelper: syncHelper)
     }
 
-    func createImpressionsCountRecorderWorker() -> RecorderWorker? {
-
-        guard let impressionsCountRecorder = apiFacade.impressionsCountRecorder else {
-            return nil
-        }
-
+    func createImpressionsCountRecorderWorker() -> RecorderWorker {
         return ImpressionsCountRecorderWorker(countsStorage: storageContainer.impressionsCountStorage,
-                                              countsRecorder: impressionsCountRecorder)
+                                              countsRecorder: apiFacade.impressionsCountRecorder)
     }
 
-    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker? {
-
-        guard let impressionsCountRecorder = apiFacade.impressionsCountRecorder else {
-            return nil
-        }
-
+    func createPeriodicImpressionsCountRecorderWorker() -> PeriodicRecorderWorker {
         let recorderWorker = ImpressionsCountRecorderWorker(countsStorage: storageContainer.impressionsCountStorage,
-                                                            countsRecorder: impressionsCountRecorder)
+                                                            countsRecorder: apiFacade.impressionsCountRecorder)
         let timer = DefaultPeriodicTimer(deadline: 0, interval: splitConfig.impressionsCountsRefreshRate)
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: recorderWorker)
     }
@@ -240,23 +230,16 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         return DefaultPeriodicRecorderWorker(timer: timer, recorderWorker: telemetryStatsWorker)
     }
 
-    func createUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> RecorderWorker? {
-        if let recorder = apiFacade.uniqueKeysRecorder, let storage = storageContainer.uniqueKeyStorage {
-            return UniqueKeysRecorderWorker(uniqueKeyStorage: storage,
-                                            uniqueKeysRecorder: recorder,
+    func createUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> RecorderWorker {
+        return UniqueKeysRecorderWorker(uniqueKeyStorage: storageContainer.uniqueKeyStorage,
+                                            uniqueKeysRecorder: apiFacade.uniqueKeysRecorder,
                                             flushChecker: flusherChecker)
-        }
-        return nil
     }
 
-    func createPeriodicUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> PeriodicRecorderWorker? {
-        if let worker = createUniqueKeyRecorderWorker(flusherChecker: flusherChecker) {
-            let timer = DefaultPeriodicTimer(deadline: splitConfig.uniqueKeysRefreshRate,
-                                             interval: splitConfig.uniqueKeysRefreshRate)
-            return DefaultPeriodicRecorderWorker(timer: timer,
-                                                 recorderWorker: worker)
-        }
-        return nil
+    func createPeriodicUniqueKeyRecorderWorker(flusherChecker: RecorderFlushChecker?) -> PeriodicRecorderWorker {
+        return DefaultPeriodicRecorderWorker(timer: DefaultPeriodicTimer(deadline: splitConfig.uniqueKeysRefreshRate,
+                                                                         interval: splitConfig.uniqueKeysRefreshRate),
+                                             recorderWorker: createUniqueKeyRecorderWorker(flusherChecker: flusherChecker))
     }
 }
 

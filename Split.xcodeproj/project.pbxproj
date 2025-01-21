@@ -1107,6 +1107,10 @@
 		C5977C642BF7D5FC003E293A /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
+		C5BD1E4C2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
+		C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
+		C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */; };
+		C5BD1E522D130FB6008EF198 /* splitchanges_toggle.json in Resources */ = {isa = PBXBuildFile; fileRef = C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1919,6 +1923,9 @@
 		C5977C582BF53F43003E293A /* splitchanges_unsupported.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_unsupported.json; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
+		C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecoratedImpression.swift; sourceTree = "<group>"; };
+		C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsToggleTest.swift; sourceTree = "<group>"; };
+		C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_toggle.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2145,6 +2152,7 @@
 		3B6DEE8720EA6AE00067435E /* Impressions */ = {
 			isa = PBXGroup;
 			children = (
+				C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */,
 				955E12322BFBF22800AE6D10 /* UniqueKey.swift */,
 				952E2679283410620015D633 /* HashedImpression.swift */,
 				95D9446A283BEE4D00D7FFED /* UniqueKeys.swift */,
@@ -2828,6 +2836,7 @@
 				C5977C312BF4031A003E293A /* split_changes_semver.json */,
 				C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */,
 				C5977C582BF53F43003E293A /* splitchanges_unsupported.json */,
+				C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3120,6 +3129,7 @@
 		953911AB267A648F0040433A /* Impressions */ = {
 			isa = PBXGroup;
 			children = (
+				C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */,
 				955AAB912840182800ADFB07 /* ImpressionsNoneTest.swift */,
 				95CC53C52695F68500A07A04 /* ImpressionsDedupTest.swift */,
 				953911AC267A64FE0040433A /* ImpresionsObserverTest.swift */,
@@ -3780,6 +3790,7 @@
 				5912D14D2199FD4D00BC698C /* legacy_1.csv in Resources */,
 				95737E142ADEC71A007FD15C /* push_msg-splits_updV2.txt in Resources */,
 				95F7BBDE2C1A27C200C5F2E4 /* rsa_3072_public_01.pem in Resources */,
+				C5BD1E522D130FB6008EF198 /* splitchanges_toggle.json in Resources */,
 				95F7BBDA2C1A27C200C5F2E4 /* rsa_2048_public_01.pem in Resources */,
 				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
 				950F72FF292E8D6C008A0040 /* SplitiOSFull.xctestplan in Resources */,
@@ -4081,6 +4092,7 @@
 				5905D4CC2555F99D006DA3B1 /* ImpressionEntity.swift in Sources */,
 				59B8B8B0220C6E3F003E0D5A /* ValidationErrorInfo.swift in Sources */,
 				956A7E252979F2290080D53C /* SplitsEncoder.swift in Sources */,
+				C5BD1E4C2D11A993008EF198 /* DecoratedImpression.swift in Sources */,
 				955A5A52258D04DF00CAEE9F /* RecorderWorker.swift in Sources */,
 				593225FF24A4D8FD00496D8B /* HttpResponse.swift in Sources */,
 				952E266B2833E35A0015D633 /* PersistentUniqueKeysStorage.swift in Sources */,
@@ -4346,6 +4358,7 @@
 				59F4AAA124FFC94100A1C69A /* NotificationManagerKeeperTest.swift in Sources */,
 				955E12372BFCDEAC00AE6D10 /* HashedImpressionDaoMock.swift in Sources */,
 				95ABF4FC29369B73006ED016 /* TelemetrySynchronizerStub.swift in Sources */,
+				C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */,
 				95715A8529D353C100A1B2F9 /* DbCipherTest.swift in Sources */,
 				59D84BDC2215CD52003DA248 /* LocalhostSplitLoaderTests.swift in Sources */,
 				956D17D1260D266E0037F575 /* SplitsChangesCheckerTest.swift in Sources */,
@@ -4596,6 +4609,7 @@
 				95B02CD828D0BDC20030EC8B /* String+Utils.swift in Sources */,
 				95B02CD928D0BDC20030EC8B /* Array+DynamicCodable.swift in Sources */,
 				95B02CDA28D0BDC20030EC8B /* Dictionary+DynamicCodable.swift in Sources */,
+				C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */,
 				95B02CDB28D0BDC20030EC8B /* Bundle+Finder.swift in Sources */,
 				95B02CDC28D0BDC20030EC8B /* Bundle+Name.swift in Sources */,
 				95B02CDD28D0BDC20030EC8B /* UInt64+bits.swift in Sources */,

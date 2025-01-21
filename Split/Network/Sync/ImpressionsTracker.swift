@@ -20,7 +20,7 @@ protocol ImpressionsTracker: AnyObject {
     func resume()
     func stop(_ service: RecordingService)
     func flush()
-    func push(_ impression: KeyImpression)
+    func push(_ decoratedImpression: DecoratedImpression)
     func destroy()
     func enableTracking(_ enable: Bool)
     func enablePersistence(_ enable: Bool)
@@ -96,19 +96,21 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         }
     }
 
-    func push(_ impression: KeyImpression) {
+    func push(_ decoratedImpression: DecoratedImpression) {
 
         if !isTrackingEnabled {
             Logger.v("Impression not tracked because tracking is disabled")
             return
         }
 
+        let impression = decoratedImpression.impression
+
         // This should not happen
         guard let featureName = impression.featureName else {
             return
         }
 
-        if isNoneImpressionsMode() {
+        if isNoneImpressionsMode() || decoratedImpression.impressionsDisabled {
             uniqueKeyTracker?.track(userKey: impression.keyName, featureName: featureName)
             impressionsCounter?.inc(featureName: featureName, timeframe: impression.time, amount: 1)
             if uniqueKeyFlushChecker?
@@ -185,20 +187,18 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         if !isPersistenceEnabled {
             return
         }
-        if isOptimizedImpressionsMode() || isNoneImpressionsMode(),
-           let counts = impressionsCounter?.popAll() {
+        if let counts = impressionsCounter?.popAll() {
             storageContainer.impressionsCountStorage.pushMany(counts: counts)
         }
     }
 
     private func saveUniqueKeys() {
-        // Just doble checking
+        // Just double checking
         if !isPersistenceEnabled {
             return
         }
-        if isNoneImpressionsMode() {
-            uniqueKeyTracker?.saveAndClear()
-        }
+
+        uniqueKeyTracker?.saveAndClear()
     }
 
     private func saveHashedImpressions() {
@@ -207,15 +207,11 @@ class DefaultImpressionsTracker: ImpressionsTracker {
 
     private func setupImpressionsMode() {
 
-        switch splitConfig.$impressionsMode {
-        case .optimized:
+        createUniqueKeysRecorder()
+        createImpressionsCountRecorder()
+
+        if splitConfig.$impressionsMode == .debug || splitConfig.$impressionsMode == .optimized {
             createImpressionsRecorder()
-            createImpressionsCountRecorder()
-        case .debug:
-            createImpressionsRecorder()
-        case .none:
-            createUniqueKeysRecorder()
-            createImpressionsCountRecorder()
         }
     }
 

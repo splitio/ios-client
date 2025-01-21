@@ -24,12 +24,13 @@ class SplitDTO: NSObject, SplitBase, Codable {
     var algo: Int?
     var configurations: [String: String]?
     var sets: Set<String>?
+    var impressionsDisabled: Bool?
 
     var json: String = ""
 
     var isParsed = true
 
-    init(name: String, trafficType: String, status: Status, sets: Set<String>?, json: String, killed: Bool = false) {
+    init(name: String, trafficType: String, status: Status, sets: Set<String>?, json: String, killed: Bool = false, impressionsDisabled: Bool = false) {
         self.name = name
         self.trafficTypeName = trafficType
         self.status = status
@@ -37,6 +38,7 @@ class SplitDTO: NSObject, SplitBase, Codable {
         self.json = json
         self.killed = killed
         self.isParsed = false
+        self.impressionsDisabled = impressionsDisabled
     }
 
     enum CodingKeys: String, CodingKey {
@@ -53,5 +55,6 @@ class SplitDTO: NSObject, SplitBase, Codable {
         case algo
         case configurations
         case sets
+        case impressionsDisabled
     }
 }

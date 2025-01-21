@@ -12,12 +12,15 @@ struct EvaluationResult {
     var label: String
     var changeNumber: Int64?
     var configuration: String?
+    var impressionsDisabled: Bool
 
-    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil) {
+    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil,
+         impressionsDisabled: Bool = false) {
         self.treatment = treatment
         self.label = label
         self.changeNumber = changeNumber
         self.configuration = configuration
+        self.impressionsDisabled = impressionsDisabled
     }
 }
 
@@ -54,7 +57,7 @@ class DefaultEvaluator: Evaluator {
     private let mySegmentsStorage: MySegmentsStorage
     private let myLargeSegmentsStorage: MySegmentsStorage?
 
-    init(splitsStorage: SplitsStorage, 
+    init(splitsStorage: SplitsStorage,
          mySegmentsStorage: MySegmentsStorage,
          myLargeSegmentsStorage: MySegmentsStorage?) {
         self.splitsStorage = splitsStorage
@@ -77,7 +80,8 @@ class DefaultEvaluator: Evaluator {
             return EvaluationResult(treatment: defaultTreatment,
                                     label: ImpressionsConstants.killed,
                                     changeNumber: changeNumber,
-                                    configuration: split.configurations?[defaultTreatment])
+                                    configuration: split.configurations?[defaultTreatment],
+                                    impressionsDisabled: split.isImpressionsDisabled())
         }
 
         var inRollOut: Bool = false
@@ -106,7 +110,8 @@ class DefaultEvaluator: Evaluator {
                             return EvaluationResult(treatment: defaultTreatment,
                                                     label: ImpressionsConstants.notInSplit,
                                                     changeNumber: changeNumber,
-                                                    configuration: split.configurations?[defaultTreatment])
+                                                    configuration: split.configurations?[defaultTreatment],
+                                                    impressionsDisabled: split.isImpressionsDisabled())
                         }
                         inRollOut = true
                     }
@@ -121,23 +126,25 @@ class DefaultEvaluator: Evaluator {
                                                           partions: condition.partitions, algo: splitAlgo)
                     return EvaluationResult(treatment: treatment, label: condition.label!,
                                             changeNumber: changeNumber,
-                                            configuration: split.configurations?[treatment])
+                                            configuration: split.configurations?[treatment],
+                                            impressionsDisabled: split.isImpressionsDisabled())
                 }
             }
             let result = EvaluationResult(treatment: defaultTreatment,
                                           label: ImpressionsConstants.noConditionMatched,
                                           changeNumber: changeNumber,
-                                          configuration: split.configurations?[defaultTreatment])
+                                          configuration: split.configurations?[defaultTreatment],
+                                          impressionsDisabled: split.isImpressionsDisabled())
             return result
         } catch EvaluatorError.matcherNotFound {
             Logger.e("The matcher has not been found")
             return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.matcherNotFound,
-                                    changeNumber: changeNumber)
+                                    changeNumber: changeNumber, impressionsDisabled: split.isImpressionsDisabled())
         }
     }
 
     private func getContext() -> EvalContext {
-        return EvalContext(evaluator: self, 
+        return EvalContext(evaluator: self,
                            mySegmentsStorage: mySegmentsStorage,
                            myLargeSegmentsStorage: myLargeSegmentsStorage)
     }
@@ -147,5 +154,11 @@ class DefaultEvaluator: Evaluator {
             return key
         }
         return matchingKey
+    }
+}
+
+private extension Split {
+    func isImpressionsDisabled() -> Bool {
+        return self.impressionsDisabled ?? false
     }
 }

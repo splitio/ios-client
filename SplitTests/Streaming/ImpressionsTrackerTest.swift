@@ -34,47 +34,63 @@ class ImpressionsTrackerTest: XCTestCase {
         createImpressionsTracker(impressionsMode: .optimized, realObserver: true)
         let impression = createImpression()
 
-        for _ in 0..<5 {
-            impressionsTracker.push(impression)
+        for i in 0..<5 {
+            impressionsTracker.push(decorate(impression, impressionsDisabled: i % 2 != 0))
         }
 
+        // Before save an clear
+        let trackedKeys = uniqueKeyTracker.trackedKeys
+
+        // Calling pause to save items on storage
+        impressionsTracker.pause()
+
         ThreadUtils.delay(seconds: 1)
-        XCTAssertEqual(1, telemetryProducer.impressions[.queued])
-        XCTAssertEqual(4, telemetryProducer.impressions[.deduped])
-        XCTAssertEqual(0, uniqueKeyTracker.trackedKeys.count)
+        XCTAssertEqual(1, telemetryProducer.impressions[.queued] ?? 0)
+        XCTAssertEqual(2, telemetryProducer.impressions[.deduped] ?? 0)
+        XCTAssertEqual(1, trackedKeys.count)
         XCTAssertEqual(1, impressionsStorage.impressions.count)
+        // 4 counts; 2 not tracked & 2 deduped
+        XCTAssertEqual(4, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "feature" }[0].count)
     }
 
     func testImpressionPushDebug() {
         createImpressionsTracker(impressionsMode: .debug)
         var impression = createImpression()
 
-        for _ in 0..<5 {
+        for i in 0..<5 {
             impression.storageId = UUID().uuidString
-            impressionsTracker.push(impression)
+            impressionsTracker.push(decorate(impression, impressionsDisabled: i % 2 != 0))
         }
 
+        // Before save an clear
+        let trackedKeys = uniqueKeyTracker.trackedKeys
+        
+        // Calling pause to save items on storage
+        impressionsTracker.pause()
+
         ThreadUtils.delay(seconds: 1)
-        XCTAssertEqual(5, telemetryProducer.impressions[.queued] ?? 0)
+        XCTAssertEqual(3, telemetryProducer.impressions[.queued] ?? 0)
         XCTAssertEqual(0, telemetryProducer.impressions[.deduped] ?? 0)
-        XCTAssertEqual(0, uniqueKeyTracker.trackedKeys.count)
-        XCTAssertEqual(5, impressionsStorage.impressions.count)
+        XCTAssertEqual(1, trackedKeys.count)
+        XCTAssertEqual(3, impressionsStorage.impressions.count)
+        // 2 not tracked
+        XCTAssertEqual(2, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "feature" }[0].count)
     }
 
     func testImpressionPushNone() {
         createImpressionsTracker(impressionsMode: .none)
 
-        impressionsTracker.push(createImpression(keyName: "k1", featureName: "f1"))
-        impressionsTracker.push(createImpression(keyName: "k1", featureName: "f2"))
-        impressionsTracker.push(createImpression(keyName: "k1", featureName: "f3"))
-        impressionsTracker.push(createImpression(keyName: "k1", featureName: "f3"))
-        impressionsTracker.push(createImpression(keyName: "k2", featureName: "f2"))
-        impressionsTracker.push(createImpression(keyName: "k3", featureName: "f3"))
+        impressionsTracker.push(decorate(createImpression(keyName: "k1", featureName: "f1")))
+        impressionsTracker.push(decorate(createImpression(keyName: "k1", featureName: "f2")))
+        impressionsTracker.push(decorate(createImpression(keyName: "k1", featureName: "f3")))
+        impressionsTracker.push(decorate(createImpression(keyName: "k1", featureName: "f3")))
+        impressionsTracker.push(decorate(createImpression(keyName: "k2", featureName: "f2")))
+        impressionsTracker.push(decorate(createImpression(keyName: "k3", featureName: "f3")))
 
         // Before save an clear
         let trackedKeys = uniqueKeyTracker.trackedKeys
 
-        // Callling pause to save items on storage
+        // Calling pause to save items on storage
         impressionsTracker.pause()
 
         ThreadUtils.delay(seconds: 1)
@@ -96,7 +112,7 @@ class ImpressionsTrackerTest: XCTestCase {
 
         XCTAssertTrue(periodicImpressionsRecorderWorker.startCalled)
         XCTAssertTrue(periodicImpressionsCountRecorderWorker.startCalled)
-        XCTAssertFalse(periodicUniqueKeysRecorderWorker.startCalled)
+        XCTAssertTrue(periodicUniqueKeysRecorderWorker.startCalled)
     }
 
     func testStartDebug() {
@@ -104,8 +120,8 @@ class ImpressionsTrackerTest: XCTestCase {
         impressionsTracker.start()
 
         XCTAssertTrue(periodicImpressionsRecorderWorker.startCalled)
-        XCTAssertFalse(periodicImpressionsCountRecorderWorker.startCalled)
-        XCTAssertFalse(periodicUniqueKeysRecorderWorker.startCalled)
+        XCTAssertTrue(periodicImpressionsCountRecorderWorker.startCalled)
+        XCTAssertTrue(periodicUniqueKeysRecorderWorker.startCalled)
     }
 
     func testStartNone() {
@@ -129,7 +145,7 @@ class ImpressionsTrackerTest: XCTestCase {
         pauseTest(mode: .none)
     }
 
-    func pauseTest(mode: ImpressionsMode) {
+    private func pauseTest(mode: ImpressionsMode) {
         createImpressionsTracker(impressionsMode: mode)
 
         let observer = impressionsObserver as! ImpressionsObserverMock
@@ -141,16 +157,12 @@ class ImpressionsTrackerTest: XCTestCase {
             XCTAssertTrue(periodicImpressionsRecorderWorker.pauseCalled)
         }
 
-        if mode != .debug {
-            XCTAssertTrue(periodicImpressionsCountRecorderWorker.pauseCalled)
-            XCTAssertTrue(impressionsCountStorage.pushManyCalled)
-        }
+        XCTAssertTrue(periodicImpressionsCountRecorderWorker.pauseCalled)
+        XCTAssertTrue(impressionsCountStorage.pushManyCalled)
 
-        if mode == .none {
-            XCTAssertTrue(periodicUniqueKeysRecorderWorker.pauseCalled)
-            XCTAssertTrue(uniqueKeyTracker.saveAndClearCalled)
-        }
-
+        XCTAssertTrue(periodicUniqueKeysRecorderWorker.pauseCalled)
+        XCTAssertTrue(uniqueKeyTracker.saveAndClearCalled)
+    
         XCTAssertTrue(observer.saveCalled)
     }
 
@@ -162,7 +174,7 @@ class ImpressionsTrackerTest: XCTestCase {
 
         XCTAssertTrue(periodicImpressionsRecorderWorker.resumeCalled)
         XCTAssertTrue(periodicImpressionsCountRecorderWorker.resumeCalled)
-        XCTAssertFalse(periodicUniqueKeysRecorderWorker.resumeCalled)
+        XCTAssertTrue(periodicUniqueKeysRecorderWorker.resumeCalled)
     }
 
     func testStopOptimized() {
@@ -172,17 +184,17 @@ class ImpressionsTrackerTest: XCTestCase {
 
         XCTAssertTrue(periodicImpressionsRecorderWorker.stopCalled)
         XCTAssertTrue(periodicImpressionsCountRecorderWorker.stopCalled)
-        XCTAssertFalse(periodicUniqueKeysRecorderWorker.startCalled)
+        XCTAssertTrue(periodicUniqueKeysRecorderWorker.startCalled)
     }
 
     func testStopDebug() {
-        createImpressionsTracker(impressionsMode: .optimized)
+        createImpressionsTracker(impressionsMode: .debug)
         impressionsTracker.start()
         impressionsTracker.stop(.all)
 
         XCTAssertTrue(periodicImpressionsRecorderWorker.stopCalled)
         XCTAssertTrue(periodicImpressionsCountRecorderWorker.stopCalled)
-        XCTAssertFalse(periodicUniqueKeysRecorderWorker.startCalled)
+        XCTAssertTrue(periodicUniqueKeysRecorderWorker.startCalled)
     }
 
     func testStopNone() {
@@ -202,7 +214,7 @@ class ImpressionsTrackerTest: XCTestCase {
 
         XCTAssertTrue(impressionsRecorderWorker.flushCalled)
         XCTAssertTrue(impressionsCountRecorderWorker.flushCalled)
-        XCTAssertFalse(uniqueKeysRecorderWorker.flushCalled)
+        XCTAssertTrue(uniqueKeysRecorderWorker.flushCalled)
     }
 
     func testFlushDebug() {
@@ -211,8 +223,8 @@ class ImpressionsTrackerTest: XCTestCase {
         impressionsTracker.flush()
 
         XCTAssertTrue(impressionsRecorderWorker.flushCalled)
-        XCTAssertFalse(impressionsCountRecorderWorker.flushCalled)
-        XCTAssertFalse(uniqueKeysRecorderWorker.flushCalled)
+        XCTAssertTrue(impressionsCountRecorderWorker.flushCalled)
+        XCTAssertTrue(uniqueKeysRecorderWorker.flushCalled)
     }
 
     func testFlushNone() {
@@ -232,17 +244,19 @@ class ImpressionsTrackerTest: XCTestCase {
         impressionsTracker.destroy()
         XCTAssertTrue(periodicImpressionsRecorderWorker.destroyCalled)
         XCTAssertTrue(periodicImpressionsCountRecorderWorker.destroyCalled)
-        XCTAssertFalse(periodicUniqueKeysRecorderWorker.destroyCalled)
+        XCTAssertTrue(periodicUniqueKeysRecorderWorker.destroyCalled)
         XCTAssertTrue(observer.saveCalled)
     }
 
     func testDestroyDebug() {
         createImpressionsTracker(impressionsMode: .debug)
+        let observer = impressionsObserver as! ImpressionsObserverMock
         impressionsTracker.start()
         impressionsTracker.destroy()
         XCTAssertTrue(periodicImpressionsRecorderWorker.destroyCalled)
-        XCTAssertFalse(periodicImpressionsCountRecorderWorker.destroyCalled)
-        XCTAssertFalse(periodicUniqueKeysRecorderWorker.destroyCalled)
+        XCTAssertTrue(periodicImpressionsCountRecorderWorker.destroyCalled)
+        XCTAssertTrue(periodicUniqueKeysRecorderWorker.destroyCalled)
+        XCTAssertTrue(observer.saveCalled)
     }
 
     func testDestroyNone() {
@@ -272,7 +286,7 @@ class ImpressionsTrackerTest: XCTestCase {
         let impression = createImpression(randomId: true)
 
         for _ in 0..<5 {
-            impressionsTracker.push(impression)
+            impressionsTracker.push(decorate(impression))
         }
 
         // Before save an clear
@@ -292,7 +306,10 @@ class ImpressionsTrackerTest: XCTestCase {
         return KeyImpression(featureName: featureName, keyName: keyName,
                              treatment: "t1", label: "the label", time: Date().unixTimestampInMiliseconds(),
                              changeNumber: 1, storageId: randomId ? UUID().uuidString : "idFeature")
+    }
 
+    private func decorate(_ impression: KeyImpression, impressionsDisabled: Bool = false) -> DecoratedImpression {
+        return DecoratedImpression(impression: impression, impressionsDisabled: impressionsDisabled)
     }
 
     private func createImpressionsTracker(impressionsMode: ImpressionsMode, 

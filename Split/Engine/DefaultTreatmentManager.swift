@@ -234,11 +234,12 @@ extension DefaultTreatmentManager {
                                              attributes: mergedAttributes,
                                              validationTag: validationTag)
             logImpression(label: result.label, changeNumber: result.changeNumber,
-                          treatment: result.treatment, splitName: trimmedSplitName, attributes: mergedAttributes)
+                          treatment: result.treatment, splitName: trimmedSplitName, attributes: mergedAttributes,
+                          impressionsDisabled: result.impressionsDisabled)
             return SplitResult(treatment: result.treatment, config: result.configuration)
         } catch {
             logImpression(label: ImpressionsConstants.exception, treatment: SplitConstants.control,
-                          splitName: trimmedSplitName, attributes: mergedAttributes)
+                          splitName: trimmedSplitName, attributes: mergedAttributes, impressionsDisabled: false)
             return SplitResult(treatment: SplitConstants.control)
         }
     }
@@ -263,7 +264,8 @@ extension DefaultTreatmentManager {
     }
 
     private func logImpression(label: String, changeNumber: Int64? = nil,
-                               treatment: String, splitName: String, attributes: [String: Any]? = nil) {
+                               treatment: String, splitName: String, attributes: [String: Any]? = nil,
+                               impressionsDisabled: Bool) {
 
         let keyImpression = KeyImpression(featureName: splitName,
                                           keyName: key.matchingKey,
@@ -272,7 +274,8 @@ extension DefaultTreatmentManager {
                                           label: (splitConfig.isLabelsEnabled ? label : nil),
                                           time: Date().unixTimestampInMiliseconds(),
                                           changeNumber: changeNumber)
-        impressionLogger.pushImpression(impression: keyImpression)
+        impressionLogger.pushImpression(
+            impression: DecoratedImpression(impression: keyImpression, impressionsDisabled: impressionsDisabled))
 
         if let externalImpressionHandler = splitConfig.impressionListener {
             let impression = keyImpression.toImpression()
