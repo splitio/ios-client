@@ -46,6 +46,8 @@ class DefaultRolloutCacheManager: RolloutCacheManager {
             if daysSinceCacheClear >= kMinCacheClearDays {
                 Logger.v("Forcing rollout definitions cache clear")
                 return true
+            } else {
+                Logger.v("Rollout definitions cache was cleared recently. Skipping")
             }
         }
 

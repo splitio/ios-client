@@ -43,6 +43,7 @@ class DefaultClientManager: SplitClientManager {
          apiFacade: SplitApiFacade,
          byKeyFacade: ByKeyFacade,
          storageContainer: SplitStorageContainer,
+         rolloutCacheManager: RolloutCacheManager,
          syncManager: SyncManager,
          synchronizer: Synchronizer,
          eventsTracker: EventsTracker,
@@ -95,7 +96,14 @@ class DefaultClientManager: SplitClientManager {
             }
         }
 
-        syncManager.start()
+        rolloutCacheManager.validateCache { [weak self] in
+            guard let self = self else {
+                syncManager.start()
+                return
+            }
+            Logger.v("Cache validated; starting sync manager")
+            syncManager.start()
+        }
     }
 
     func get(forKey key: Key) -> SplitClient {
