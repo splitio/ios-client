@@ -36,9 +36,6 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
-                                                     cacheExpiration: 100,
-                                                     defaultQueryString: "",
-                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -65,9 +62,6 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
-                                                     cacheExpiration: 100,
-                                                     defaultQueryString: "",
-                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -93,9 +87,6 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
-                                                     cacheExpiration: 100,
-                                                     defaultQueryString: "",
-                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -124,9 +115,6 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
-                                                     cacheExpiration: 100,
-                                                     defaultQueryString: "",
-                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -156,9 +144,6 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
-                                                     cacheExpiration: 2000,
-                                                     defaultQueryString: "",
-                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -186,9 +171,6 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
-                                                     cacheExpiration: 100,
-                                                     defaultQueryString: "&q=1",
-                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -219,9 +201,6 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
-                                                     cacheExpiration: 100,
-                                                     defaultQueryString: "&q=1",
-                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -251,9 +230,6 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
-                                                     cacheExpiration: 100,
-                                                     defaultQueryString: "&q=1",
-                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -286,9 +262,6 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
-                                                     cacheExpiration: 100,
-                                                     defaultQueryString: "&q=1",
-                                                     flagsSpec: "",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -324,9 +297,6 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
-                                                     cacheExpiration: 100,
-                                                     defaultQueryString: "&q=1",
-                                                     flagsSpec: "1.1",
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())

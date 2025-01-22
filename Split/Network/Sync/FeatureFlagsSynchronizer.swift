@@ -175,10 +175,11 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
     private func filterSplitsInCache() {
         let splitsStorage = storageContainer.persistentSplitsStorage
+        let generalInfoStorage = storageContainer.generalInfoStorage
         let currentSplitsQueryString = splitsFilterQueryString
 
-        let filterHasChanged = currentSplitsQueryString != splitsStorage.getFilterQueryString()
-        let flagsSpecHasChanged = flagsSpec != splitsStorage.getFlagsSpec()
+        let filterHasChanged = currentSplitsQueryString != generalInfoStorage.getSplitsFilterQueryString()
+        let flagsSpecHasChanged = flagsSpec != generalInfoStorage.getFlagSpec()
 
         // if neither the filter nor the flags spec have changed, we don't need to do anything
         if filterHasChanged || flagsSpecHasChanged {
