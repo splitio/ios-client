@@ -98,6 +98,7 @@ class DefaultClientManager: SplitClientManager {
 
         rolloutCacheManager.validateCache { [weak self] in
             guard let self = self else {
+                Logger.v("self is nil; starting sync manager")
                 syncManager.start()
                 return
             }

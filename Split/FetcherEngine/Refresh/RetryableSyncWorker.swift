@@ -105,17 +105,11 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
     private let splitChangeProcessor: SplitChangeProcessor
-    private let cacheExpiration: Int
-    private let defaultQueryString: String
-    private let flagsSpec: String
     private let syncHelper: SplitsSyncHelper
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
          splitChangeProcessor: SplitChangeProcessor,
-         cacheExpiration: Int,
-         defaultQueryString: String,
-         flagsSpec: String,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter,
          splitConfig: SplitClientConfig) {
@@ -123,9 +117,6 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.splitChangeProcessor = splitChangeProcessor
-        self.cacheExpiration = cacheExpiration
-        self.defaultQueryString = defaultQueryString
-        self.flagsSpec = flagsSpec
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
@@ -135,24 +126,8 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     }
 
     override func fetchFromRemote() throws -> Bool {
-        var changeNumber = splitsStorage.changeNumber
-        var clearCache = false
-
-        let queryStringHasChanged = defaultQueryString != splitsStorage.splitsFilterQueryString
-        let flagsSpecHasChanged = flagsSpec != splitsStorage.flagsSpec
-        if queryStringHasChanged || flagsSpecHasChanged {
-            if queryStringHasChanged {
-                splitsStorage.update(filterQueryString: defaultQueryString)
-            }
-            if flagsSpecHasChanged {
-                splitsStorage.update(flagsSpec: flagsSpec)
-            }
-            changeNumber = -1
-            clearCache = true
-        }
-
         do {
-            let result = try syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache)
+            let result = try syncHelper.sync(since: splitsStorage.changeNumber, clearBeforeUpdate: false)
             if result.success {
                 if !isSdkReadyTriggered() ||
                     result.featureFlagsUpdated {

@@ -82,9 +82,14 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         DispatchQueue.general.async {
             let start = Date.nowMillis()
             self.filterSplitsInCache()
+            Logger.v("SDK_READY_FROM_CACHE: Loading splits from cache")
             splitsStorage.loadLocal()
-            if splitsStorage.getAll().count > 0 {
+            let allOfThem = splitsStorage.getAll()
+            if allOfThem.count > 0 {
+                Logger.v("SDK_READY_FROM_CACHE: Loaded splits from cache; more than zero \(allOfThem.compactMap { $0.key }.joined(separator: ", "))")
                 self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
+            } else {
+                Logger.v("SDK_READY_FROM_CACHE: Loaded splits from cache; none")
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
             Logger.v("Notifying Splits loaded from cache")
@@ -178,13 +183,17 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         // if neither the filter nor the flags spec have changed, we don't need to do anything
         if filterHasChanged || flagsSpecHasChanged {
             let splitsInCache = splitsStorage.getAll()
-            var toDelete = [String]()
 
             if flagsSpecHasChanged {
                 // when flagsSpec has changed, we delete everything
-                toDelete = splitsInCache.compactMap { $0.name }
+                Logger.v("SDK_READY_FROM_CACHE: flagsSpec has changed")
+                splitsStorage.clear()
+                storageContainer.generalInfoStorage.setFlagSpec(flagsSpec: flagsSpec)
             } else if filterHasChanged {
+
+                Logger.v("SDK_READY_FROM_CACHE: filter has changed")
                 // if the filter has changed, we need to delete according to it
+                var toDelete = [String]()
                 let filters = splitConfig.sync.filters
                 let namesToKeep = Set(filters.filter { $0.type == .byName }.flatMap { $0.values })
                 let prefixesToKeep = Set(filters.filter { $0.type == .byPrefix }.flatMap { $0.values })
@@ -203,11 +212,13 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                         toDelete.append(splitName)
                     }
                 }
-            }
 
-            if toDelete.count > 0 {
-                splitsStorage.delete(splitNames: toDelete)
-                storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
+                if toDelete.count > 0 {
+                    Logger.v("SDK_READY_FROM_CACHE: Deleting splits not matching filter \(toDelete.count)")
+                    splitsStorage.delete(splitNames: toDelete)
+                    storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
+                }
+                storageContainer.generalInfoStorage.setSplitsFilterQueryString(filterQueryString: currentSplitsQueryString)
             }
         }
     }

@@ -89,9 +89,6 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         return RetryableSplitsSyncWorker(splitFetcher: apiFacade.splitsFetcher,
                                          splitsStorage: storageContainer.splitsStorage,
                                          splitChangeProcessor: splitChangeProcessor,
-                                         cacheExpiration: splitConfig.cacheExpirationInSeconds,
-                                         defaultQueryString: splitsFilterQueryString,
-                                         flagsSpec: flagsSpec,
                                          eventsManager: eventsManager,
                                          reconnectBackoffCounter: backoffCounter,
                                          splitConfig: splitConfig)

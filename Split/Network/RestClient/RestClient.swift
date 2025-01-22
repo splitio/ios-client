@@ -72,6 +72,8 @@ class DefaultRestClient: SplitApiRestClient {
                     return
                 }
 
+                Logger.v("SDK_READY_FROM_CACHE: Response for \(endpoint.url) with params: \(parameters?.values.toJSONString()): \(json)")
+                
                 do {
                     let parsedObject = try json.decode(T.self)
                     completion(DataResult { return parsedObject })

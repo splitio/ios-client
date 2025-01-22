@@ -15,7 +15,9 @@ protocol SyncSplitsStorage: RolloutDefinitionsCache {
 protocol SplitsStorage: SyncSplitsStorage {
     var changeNumber: Int64 { get }
     var updateTimestamp: Int64 { get }
+    @available(*, deprecated, message: "Should access this property through GeneralInfoStorage")
     var splitsFilterQueryString: String { get }
+    @available(*, deprecated, message: "Should access this property through GeneralInfoStorage")
     var flagsSpec: String { get }
 
     func loadLocal()
