@@ -89,7 +89,26 @@ class MySegmentsDaoTest: XCTestCase {
 
         XCTAssertNotEqual(userKey, segment.userKey)
         XCTAssertFalse(segment.segmentList?.contains("s1") ?? true)
-}
+    }
+
+    func testDeleteAll() {
+        let helper = IntegrationCoreDataHelper.get(databaseName: "test",
+                                               dispatchQueue: DispatchQueue(label: "impression dao test"))
+        mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: helper,
+                                              entity: .mySegment)
+        let userKey = "ukey"
+        let change = SegmentChange(segments: ["s1", "s2"])
+        mySegmentsDao.update(userKey: userKey, change: change)
+
+        let initialResultFromDB = mySegmentsDao.getBy(userKey: userKey)
+
+        mySegmentsDao.deleteAll()
+
+        let finalResultFromDB = mySegmentsDao.getBy(userKey: userKey)
+
+        XCTAssertEqual(2, initialResultFromDB?.segments.count)
+        XCTAssertNil(finalResultFromDB)
+    }
 
     func getBy(userKey: String, coreDataHelper: CoreDataHelper) -> (userKey: String?, segmentList: String?) {
         var loadedUserKey: String? = nil
