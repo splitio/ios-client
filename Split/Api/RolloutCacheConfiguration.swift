@@ -19,7 +19,7 @@ import Foundation
     @objc(RolloutCacheConfigurationBuilder)
     public class Builder: NSObject {
         private let kMinExpirationDays = 1
-        
+
         private var expiration = ServiceConstants.defaultRolloutCacheExpiration
         private var clearOnInit = false
         
@@ -27,7 +27,7 @@ import Foundation
         public func build() -> RolloutCacheConfiguration {
             return RolloutCacheConfiguration(expirationDays: expiration, clearOnInit: clearOnInit)
         }
-        
+
         /// Set the expiration time for the rollout definitions cache, in days. Default is 10 days.
         /// - Parameter expirationDays: The expiration time in days.
         /// - Returns: This builder.

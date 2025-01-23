@@ -345,6 +345,7 @@ public class SplitClientConfig: NSObject {
     /// - Note: The certificate files must be in DER format and included in the app bundle.
     @objc public var certificatePinningConfig: CertificatePinningConfig?
 
+    /// Configuration for rollout definitions cache.
     @objc public var rolloutCacheConfiguration: RolloutCacheConfiguration?
 
     ///
