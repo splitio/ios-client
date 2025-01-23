@@ -92,7 +92,7 @@ class InitialCacheTest: XCTestCase {
         client.destroy()
 
         XCTAssertEqual(-1, receivedChangeNumber[0])
-        XCTAssertEqual("boom", treatmentCache)
+        XCTAssertEqual("on0", treatmentCache)
         XCTAssertEqual("on0", treatmentReady)
     }
 
@@ -155,7 +155,7 @@ class InitialCacheTest: XCTestCase {
         wait(for: [cacheReadyExp, readyExp], timeout: 10)
 
         XCTAssertEqual(-1, receivedChangeNumber[0])
-        XCTAssertEqual("boom", treatmentCache)
+        XCTAssertEqual("control", treatmentCache)
         XCTAssertEqual("control", treatmentReady)
 
         let semaphore = DispatchSemaphore(value: 0)
@@ -372,7 +372,7 @@ class InitialCacheTest: XCTestCase {
 
         client.destroy()
 
-        XCTAssertEqual("", treatmentCache)
+        XCTAssertEqual("on0", treatmentCache)
         XCTAssertEqual("on0", treatmentReady)
         XCTAssertFalse(readyCacheNotFired)
     }

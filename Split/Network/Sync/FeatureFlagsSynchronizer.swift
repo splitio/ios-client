@@ -82,14 +82,9 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         DispatchQueue.general.async {
             let start = Date.nowMillis()
             self.filterSplitsInCache()
-            Logger.v("SDK_READY_FROM_CACHE: Loading splits from cache")
             splitsStorage.loadLocal()
-            let allOfThem = splitsStorage.getAll()
-            if allOfThem.count > 0 {
-                Logger.v("SDK_READY_FROM_CACHE: Loaded splits from cache; more than zero \(allOfThem.compactMap { $0.key }.joined(separator: ", "))")
+            if splitsStorage.getAll().count > 0 {
                 self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
-            } else {
-                Logger.v("SDK_READY_FROM_CACHE: Loaded splits from cache; none")
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
             Logger.v("Notifying Splits loaded from cache")
@@ -187,12 +182,10 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
             if flagsSpecHasChanged {
                 // when flagsSpec has changed, we delete everything
-                Logger.v("SDK_READY_FROM_CACHE: flagsSpec has changed")
                 splitsStorage.clear()
                 storageContainer.generalInfoStorage.setFlagSpec(flagsSpec: flagsSpec)
             } else if filterHasChanged {
 
-                Logger.v("SDK_READY_FROM_CACHE: filter has changed")
                 // if the filter has changed, we need to delete according to it
                 var toDelete = [String]()
                 let filters = splitConfig.sync.filters
@@ -215,11 +208,10 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                 }
 
                 if toDelete.count > 0 {
-                    Logger.v("SDK_READY_FROM_CACHE: Deleting splits not matching filter \(toDelete.count)")
                     splitsStorage.delete(splitNames: toDelete)
                     storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
                 }
-                storageContainer.generalInfoStorage.setSplitsFilterQueryString(filterQueryString: currentSplitsQueryString)
+                generalInfoStorage.setSplitsFilterQueryString(filterQueryString: currentSplitsQueryString)
             }
         }
     }

@@ -228,12 +228,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
         ThreadUtils.delay(seconds: 0.5)
 
-        let deleted = Set(persistentSplitsStorage.deletedSplits)
-        XCTAssertTrue(deleted.contains("test1"))
-        XCTAssertTrue(deleted.contains("test2"))
-        XCTAssertTrue(deleted.contains("test3"))
-        XCTAssertTrue(deleted.contains("test4"))
-        XCTAssertEqual(4, deleted.count)
+        XCTAssertTrue(persistentSplitsStorage.clearCalled)
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 
@@ -251,12 +246,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
         ThreadUtils.delay(seconds: 0.5)
 
-        let deleted = Set(persistentSplitsStorage.deletedSplits)
-        XCTAssertTrue(deleted.contains("test1"))
-        XCTAssertTrue(deleted.contains("test2"))
-        XCTAssertTrue(deleted.contains("test3"))
-        XCTAssertTrue(deleted.contains("test4"))
-        XCTAssertEqual(4, deleted.count)
+        XCTAssertTrue(persistentSplitsStorage.clearCalled)
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 
