@@ -136,11 +136,4 @@ class SplitsSyncHelper {
             nextSince = newTill
         }
     }
-
-    func cacheHasExpired(storedChangeNumber: Int64, updateTimestamp: Int64, cacheExpirationInSeconds: Int64) -> Bool {
-        let elepased = Date().unixTimestamp() - updateTimestamp
-        return storedChangeNumber > -1
-        && updateTimestamp > 0
-        && (elepased > cacheExpirationInSeconds)
-    }
 }

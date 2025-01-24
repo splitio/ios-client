@@ -28,6 +28,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
     var synchronizer: FeatureFlagsSynchronizer!
     var broadcasterChannel: SyncEventBroadcasterStub!
+    var generalInfoStorage: GeneralInfoStorageMock!
 
     override func setUp() {
         synchronizer = buildSynchronizer()
@@ -45,6 +46,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
         splitsStorage = SplitsStorageStub()
         broadcasterChannel = SyncEventBroadcasterStub()
+        generalInfoStorage = GeneralInfoStorageMock()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
 
@@ -64,7 +66,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                      flagSetsCache: FlagSetsCacheMock(),
                                                      persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
                                                      hashedImpressionsStorage: HashedImpressionsStorageMock(),
-                                                     generalInfoStorage: GeneralInfoStorageMock())
+                                                     generalInfoStorage: generalInfoStorage)
 
         splitConfig =  SplitClientConfig()
         splitConfig.syncEnabled = syncEnabled
@@ -107,7 +109,8 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
     func testLoadSplitsClearedOnLoadBecauseNotInFilter() {
         // Existent splits does not belong to split filter on config so they gonna be deleted because filter has changed
         persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "pepe"))
-        persistentSplitsStorage.update(filterQueryString: "?p=1")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "?p=1")
+        
         persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "SPLIT_TO_DELETE"))
         synchronizer.load()
 
@@ -125,7 +128,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         // loaded splits > 0, ready from cache should be fired
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "new_pepe")],
                                                   archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
-        persistentSplitsStorage.update(filterQueryString: "")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "")
         synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
@@ -149,7 +152,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
             persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name))
         }
 
-        persistentSplitsStorage.update(filterQueryString: "?names=pepe")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "?names=pepe")
 
         synchronizer.load()
 
@@ -191,7 +194,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
             persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name, sets: sets))
         }
 
-        persistentSplitsStorage.update(filterQueryString: "?names=pepe")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "?names=pepe")
 
         synchronizer.load()
 
@@ -218,19 +221,14 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
             persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name))
         }
 
-        persistentSplitsStorage.update(filterQueryString: "")
-        persistentSplitsStorage.update(flagsSpec: "1.1")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "")
+        generalInfoStorage.setFlagSpec(flagsSpec: "1.1")
 
         synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
-        let deleted = Set(persistentSplitsStorage.deletedSplits)
-        XCTAssertTrue(deleted.contains("test1"))
-        XCTAssertTrue(deleted.contains("test2"))
-        XCTAssertTrue(deleted.contains("test3"))
-        XCTAssertTrue(deleted.contains("test4"))
-        XCTAssertEqual(4, deleted.count)
+        XCTAssertTrue(persistentSplitsStorage.clearCalled)
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 
@@ -241,19 +239,14 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
             persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name))
         }
 
-        persistentSplitsStorage.update(filterQueryString: "?names=pepe")
-        persistentSplitsStorage.update(flagsSpec: "1.1")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "?names=pepe")
+        generalInfoStorage.setFlagSpec(flagsSpec: "1.1")
 
         synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
-        let deleted = Set(persistentSplitsStorage.deletedSplits)
-        XCTAssertTrue(deleted.contains("test1"))
-        XCTAssertTrue(deleted.contains("test2"))
-        XCTAssertTrue(deleted.contains("test3"))
-        XCTAssertTrue(deleted.contains("test4"))
-        XCTAssertEqual(4, deleted.count)
+        XCTAssertTrue(persistentSplitsStorage.clearCalled)
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 

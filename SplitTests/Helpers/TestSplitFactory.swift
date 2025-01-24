@@ -193,6 +193,9 @@ class TestSplitFactory: SplitFactory {
                                                        syncManager: syncManager,
                                                        eventsTracker: eventsTracker,
                                                        impressionsTracker: impressionsTracker)
+        let rolloutCacheManager = DefaultRolloutCacheManager(generalInfoStorage: storageContainer.generalInfoStorage,
+                                                             rolloutCacheConfiguration: splitConfig.rolloutCacheConfiguration ?? RolloutCacheConfiguration.builder().build(),
+                                                             storages: storageContainer.splitsStorage, storageContainer.mySegmentsStorage, storageContainer.myLargeSegmentsStorage)
 
         clientManager = DefaultClientManager(config: splitConfig,
                                              key: key,
@@ -200,6 +203,7 @@ class TestSplitFactory: SplitFactory {
                                              apiFacade: apiFacade,
                                              byKeyFacade: byKeyFacade,
                                              storageContainer: storageContainer,
+                                             rolloutCacheManager: rolloutCacheManager,
                                              syncManager: syncManager,
                                              synchronizer: synchronizer,
                                              eventsTracker: eventsTracker,

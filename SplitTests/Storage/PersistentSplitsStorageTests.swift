@@ -47,14 +47,6 @@ class PersistentSplitsStorageTest: XCTestCase {
         XCTAssertEqual(1, splitDao.insertedSplits.count)
         XCTAssertEqual("s1", splitDao.insertedSplits[0].name)
     }
-    
-    func testGetSplitsQueryString() {
-        generalInfoDao.update(info: .splitsFilterQueryString, stringValue: "qs")
-        
-        let qs = splitsStorage.getFilterQueryString()
-        
-        XCTAssertEqual("qs", qs)
-    }
 
     func testUpdateBySetFilter() {
         splitsStorage.update(bySetsFilter: SplitFilter(type: .bySet, values: ["set1", "set2"]))
@@ -88,22 +80,6 @@ class PersistentSplitsStorageTest: XCTestCase {
         splitsStorage.clear()
 
         XCTAssertTrue(splitDao.deleteAllCalled)
-    }
-
-    func testGetFlagsSpec() {
-        generalInfoDao.update(info: .flagsSpec, stringValue: "3.3")
-
-        let flagsSpec = splitsStorage.getFlagsSpec()
-
-        XCTAssertEqual("3.3", flagsSpec)
-    }
-
-    func testUpdateFlagsSpec() {
-        splitsStorage.update(flagsSpec: "4.4")
-
-        let flagsSpec = splitsStorage.getFlagsSpec()
-
-        XCTAssertEqual("4.4", flagsSpec)
     }
     
     private func createSplits() -> [Split] {
