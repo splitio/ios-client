@@ -70,13 +70,6 @@ class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
 
     func execute() {
         var changeNumber = persistenSplitsStorage.getChangeNumber()
-        var clearCache = false
-        if syncHelper.cacheHasExpired(storedChangeNumber: changeNumber,
-                                      updateTimestamp: persistenSplitsStorage.getUpdateTimestamp(),
-                                      cacheExpirationInSeconds: cacheExpiration) {
-                changeNumber = -1
-                clearCache = true
-        }
-        _ = try? syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache)
+        _ = try? syncHelper.sync(since: changeNumber, clearBeforeUpdate: false)
     }
 }

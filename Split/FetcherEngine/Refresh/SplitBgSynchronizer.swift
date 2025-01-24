@@ -164,10 +164,11 @@ struct BackgroundSyncExecutor {
             throw GenericError.couldNotCreateCache
         }
         let splitsStorage = SplitDatabaseHelper.openPersistentSplitsStorage(database: splitDatabase)
+        let generalInfoStorage = SplitDatabaseHelper.openGeneralInfoStorage(database: splitDatabase)
         let endpoints = serviceEndpoints ?? ServiceEndpoints.builder().build()
-        let  endpointFactory = EndpointFactory(serviceEndpoints: endpoints,
+        let endpointFactory = EndpointFactory(serviceEndpoints: endpoints,
                                                apiKey: apiKey,
-                                               splitsQueryString: splitsStorage.getFilterQueryString())
+                                              splitsQueryString: generalInfoStorage.getSplitsFilterQueryString())
 
         var httpClient: HttpClient?
         if let pins = pinnedCredentials {
