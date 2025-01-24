@@ -29,6 +29,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
     var synchronizer: FeatureFlagsSynchronizer!
     var broadcasterChannel: SyncEventBroadcasterStub!
     var generalInfoStorage: GeneralInfoStorageMock!
+    var telemetryStorageStub: TelemetryStorageStub!
 
     override func setUp() {
         synchronizer = buildSynchronizer()
@@ -47,6 +48,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         splitsStorage = SplitsStorageStub()
         broadcasterChannel = SyncEventBroadcasterStub()
         generalInfoStorage = GeneralInfoStorageMock()
+        telemetryStorageStub = TelemetryStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
 
@@ -58,7 +60,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                      impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: EventsStorageStub(),
                                                      persistentEventsStorage: PersistentEventsStorageStub(),
-                                                     telemetryStorage: TelemetryStorageStub(),
+                                                     telemetryStorage: telemetryStorageStub,
                                                      mySegmentsStorage: MySegmentsStorageStub(),
                                                      myLargeSegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub(),
@@ -71,7 +73,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         splitConfig =  SplitClientConfig()
         splitConfig.syncEnabled = syncEnabled
         if let splitFilters = splitFilters {
-            var builder = SyncConfig.builder()
+            let builder = SyncConfig.builder()
             for splitFilter in splitFilters {
                 builder.addSplitFilter(splitFilter)
             }
@@ -80,12 +82,14 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
             splitConfig.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
         }
 
+        let filterBuilder = FilterBuilder(flagSetsValidator: DefaultFlagSetsValidator(telemetryProducer: telemetryStorageStub))
+        let queryString = try? filterBuilder.add(filters: splitFilters ?? []).build()
         synchronizer = DefaultFeatureFlagsSynchronizer(splitConfig: splitConfig,
                                                        storageContainer: storageContainer,
                                                        syncWorkerFactory: syncWorkerFactory,
                                                        broadcasterChannel: broadcasterChannel,
                                                        syncTaskByChangeNumberCatalog: updateWorkerCatalog,
-                                                       splitsFilterQueryString: "",
+                                                       splitsFilterQueryString: queryString ?? "",
                                                        flagsSpec: "",
                                                        splitEventsManager: eventsManager)
         return synchronizer
@@ -211,10 +215,11 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         XCTAssertTrue(deleted.contains("tset2"))
         XCTAssertTrue(deleted.contains("apre_tset3"))
         XCTAssertEqual(9, deleted.count)
+        XCTAssertEqual("&sets=set3,set4", generalInfoStorage.getSplitsFilterQueryString())
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 
-    func testLoadSplitsWhenFlagsSetsHasChangedClearsAllFeatureFlags() {
+    func testLoadSplitsWhenFlagsSetsHasChangedClearsAllFeatureFlagsAndUpdatesFlagsSpec() {
         let names = ["test1", "test2", "test3", "test4"]
 
         for name in names {
@@ -229,6 +234,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         ThreadUtils.delay(seconds: 0.5)
 
         XCTAssertTrue(persistentSplitsStorage.clearCalled)
+        XCTAssertEqual("1.2", generalInfoStorage.getFlagSpec())
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 
