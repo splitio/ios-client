@@ -51,6 +51,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         telemetryStorageStub = TelemetryStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
+        generalInfoStorage.setFlagSpec(flagsSpec: "1.2")
 
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      splitsStorage: splitsStorage,
@@ -90,7 +91,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                        broadcasterChannel: broadcasterChannel,
                                                        syncTaskByChangeNumberCatalog: updateWorkerCatalog,
                                                        splitsFilterQueryString: queryString ?? "",
-                                                       flagsSpec: "",
+                                                       flagsSpec: "1.2",
                                                        splitEventsManager: eventsManager)
         return synchronizer
     }
