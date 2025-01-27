@@ -147,7 +147,7 @@ class SplitComponentFactory {
 
     func buildImpressionsTracker(notificationHelper: NotificationHelper?) throws -> ImpressionsTracker {
         let storageContainer = try getSplitStorageContainer()
-        var uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: storageContainer.uniqueKeyStorage)
+        let uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: storageContainer.uniqueKeyStorage)
 
         let  component: ImpressionsTracker
         =  DefaultImpressionsTracker(
