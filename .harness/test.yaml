@@ -33,10 +33,7 @@ pipeline:
                   identifier: test
                   spec:
                     shell: Sh
-                    command: |-
-                      brew install xcpretty
-                      xcodebuild
-                      xcodebuild test -scheme Split
+                    command: xcodebuild test -scheme Split
                     reports:
                       type: JUnit
                       spec:
