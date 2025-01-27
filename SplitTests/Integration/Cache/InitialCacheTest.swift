@@ -353,10 +353,10 @@ class InitialCacheTest: XCTestCase {
         var treatmentCache = ""
         var treatmentReady = ""
 
-        var readyCacheNotFired = false
+        var readyCacheNotFired = true
         client.on(event: SplitEvent.sdkReadyFromCache) {
             treatmentCache = client.getTreatment(self.splitName)
-            readyCacheNotFired = true
+            readyCacheNotFired = false
         }
 
         client.on(event: SplitEvent.sdkReady) {
@@ -376,8 +376,6 @@ class InitialCacheTest: XCTestCase {
         XCTAssertEqual("on0", treatmentReady)
         XCTAssertFalse(readyCacheNotFired)
     }
-
-
 
     private func getChanges(for hitNumber: Int) -> Data {
         if hitNumber < jsonChanges.count {
