@@ -36,7 +36,7 @@ pipeline:
                     command: |-
                       brew install xcpretty
                       xcodebuild
-                      xcodebuild test -scheme Split | xcpretty -r junit
+                      xcodebuild test -scheme Split
                     reports:
                       type: JUnit
                       spec:
