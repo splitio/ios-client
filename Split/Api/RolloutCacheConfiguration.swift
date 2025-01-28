@@ -3,11 +3,11 @@ import Foundation
 /// Configuration class for rollout cache.
 @objc public class RolloutCacheConfiguration: NSObject {
     private(set) var expirationDays: Int
-    private(set) var clearOninit: Bool
+    private(set) var clearOnInit: Bool
 
     init(expirationDays: Int, clearOnInit: Bool) {
         self.expirationDays = expirationDays
-        self.clearOninit = clearOnInit
+        self.clearOnInit = clearOnInit
     }
 
     /// Provides abuilder for RolloutCacheConfiguration.

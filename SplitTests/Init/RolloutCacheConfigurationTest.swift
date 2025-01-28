@@ -6,7 +6,7 @@ final class RolloutCacheConfigurationTest: XCTestCase {
     func testDefaultValues() throws {
         let config = RolloutCacheConfiguration.builder().build()
         XCTAssertEqual(config.expirationDays, 10)
-        XCTAssertFalse(config.clearOninit)
+        XCTAssertFalse(config.clearOnInit)
     }
 
     func testExpirationIsCorrectlySet() throws {
@@ -16,7 +16,7 @@ final class RolloutCacheConfigurationTest: XCTestCase {
 
     func testClearOnInitIsCorrectlySet() throws {
         let config = RolloutCacheConfiguration.builder().set(clearOnInit: true).build()
-        XCTAssertTrue(config.clearOninit)
+        XCTAssertTrue(config.clearOnInit)
     }
 
     func testNegativeExpirationIsSetToDefault() throws {

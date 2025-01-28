@@ -35,7 +35,7 @@ class DefaultRolloutCacheManager: RolloutCacheManager {
         if lastUpdateTimestamp > 0 && daysSinceLastUpdate >= rolloutCacheConfiguration.expirationDays {
             Logger.v("Clearing rollout definitions cache due to expiration")
             return true
-        } else if rolloutCacheConfiguration.clearOninit {
+        } else if rolloutCacheConfiguration.clearOnInit {
             let lastCacheClearTimestamp = generalInfoStorage.getRolloutCacheLastClearTimestamp()
             if lastCacheClearTimestamp < 1 { // 0 is default value for rollout cache timestamp
                 return true
