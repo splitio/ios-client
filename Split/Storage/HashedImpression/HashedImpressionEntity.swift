@@ -12,7 +12,7 @@ import CoreData
 
 @objc(HashedImpressionEntity)
 class HashedImpressionEntity: NSManagedObject {
-    @NSManaged public var impressionHash: UInt32
+    @NSManaged public var impressionHash: Int64
     @NSManaged public var time: Int64
     @NSManaged public var createdAt: Int64
 }

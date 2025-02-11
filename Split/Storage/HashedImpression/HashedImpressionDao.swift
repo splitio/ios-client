@@ -61,7 +61,7 @@ class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
                 return
             }
             self.coreDataHelper.delete(entity: .hashedImpression,
-                                       by: "impressionHash", values: hashes.map { Int($0.impressionHash) })
+                                       by: "impressionHash", values: hashes.map { Int64($0.impressionHash) })
             self.coreDataHelper.save()
         }
     }
@@ -78,7 +78,7 @@ class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
                 .compactMap { return $0 as? HashedImpressionEntity }
 
             self.coreDataHelper.delete(entity: .hashedImpression, by: "impressionHash",
-                                       values: hashes.map { Int($0.impressionHash) })
+                                       values: hashes.map { Int64($0.impressionHash) })
             self.coreDataHelper.save()
         }
     }
@@ -86,7 +86,7 @@ class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
     private func insertOrUpdate(_ hashed: HashedImpression) {
         if let obj = self.getBy(hash: hashed.impressionHash) ??
             self.coreDataHelper.create(entity: .hashedImpression) as? HashedImpressionEntity {
-            obj.impressionHash = hashed.impressionHash
+            obj.impressionHash = Int64(hashed.impressionHash)
             obj.time = hashed.time
             obj.createdAt = obj.createdAt == 0 ? Date.nowMillis() : obj.createdAt
             self.coreDataHelper.save()
@@ -101,7 +101,16 @@ class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
     }
 
     private func mapEntityToModel(_ entity: HashedImpressionEntity) -> HashedImpression {
-        return HashedImpression(impressionHash: entity.impressionHash,
+        let hash: UInt32 = if entity.impressionHash <= UInt32.max {
+            if entity.impressionHash < 0 {
+                UInt32(entity.impressionHash * -1)
+            } else {
+                UInt32(entity.impressionHash)
+            }
+        } else {
+            0
+        }
+        return HashedImpression(impressionHash: hash,
                                 time: entity.time,
                                 createdAt: entity.createdAt)
     }
