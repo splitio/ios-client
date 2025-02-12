@@ -45,7 +45,9 @@ class CoreDataHelper {
         delete(entity: entity, predicate: NSPredicate(format: "\(field) IN %@", values))
     }
 
-    func delete(entity: CoreDataEntity, by field: String, values: [Int]) {
+    // Explicitly using Int64 to ensure a 64-bit integer on all platforms.
+    // Using Int without specifying a size defaults to Int32 on 32-bit platforms and Int64 on 64-bit platforms.
+    func delete(entity: CoreDataEntity, by field: String, values: [Int64]) {
         delete(entity: entity, predicate: NSPredicate(format: "\(field) IN %@", values))
     }
 
