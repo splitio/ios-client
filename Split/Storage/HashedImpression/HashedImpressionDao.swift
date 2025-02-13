@@ -61,7 +61,7 @@ class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
                 return
             }
             self.coreDataHelper.delete(entity: .hashedImpression,
-                                       by: "impressionHash", values: hashes.map { Int($0.impressionHash) })
+                                       by: "impressionHash", values: hashes.map { Int64($0.impressionHash) })
             self.coreDataHelper.save()
         }
     }
@@ -78,7 +78,7 @@ class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
                 .compactMap { return $0 as? HashedImpressionEntity }
 
             self.coreDataHelper.delete(entity: .hashedImpression, by: "impressionHash",
-                                       values: hashes.map { Int($0.impressionHash) })
+                                       values: hashes.map { Int64($0.impressionHash) })
             self.coreDataHelper.save()
         }
     }
