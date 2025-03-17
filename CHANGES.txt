@@ -1,3 +1,6 @@
+3.1.1: (Feb 14, 2025)
+- Fixed issue when converting UInt32 to Int in 32 bit platforms.
+
 3.1.0: (Jan 20, 2025)
 - Added support for the new impressions tracking toggle available on feature flags, both respecting the setting and including the new field being returned on SplitView type objects. Read more in our docs.
 
