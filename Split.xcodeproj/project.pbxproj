@@ -1118,8 +1118,6 @@
 		C5A501D42D88A15600206F82 /* RuleBasedSegmentDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C22D88A15600206F82 /* RuleBasedSegmentDao.swift */; };
 		C5A501D52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */; };
 		C5A501DA2D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */; };
-		C5A501DB2D88A7E900206F82 /* PersistentRuleBasedSegmentsStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501D72D88A7E900206F82 /* PersistentRuleBasedSegmentsStorageStub.swift */; };
-		C5A501DC2D88A7E900206F82 /* RuleBasedSegmentsStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501D92D88A7E900206F82 /* RuleBasedSegmentsStorageStub.swift */; };
 		C5BD1E4C2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */; };
@@ -1954,9 +1952,7 @@
 		C5A501C32D88A15600206F82 /* RuleBasedSegmentEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentEntity.swift; sourceTree = "<group>"; };
 		C5A501C42D88A15600206F82 /* RuleBasedSegmentsDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsDecoder.swift; sourceTree = "<group>"; };
 		C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsEncoder.swift; sourceTree = "<group>"; };
-		C5A501D72D88A7E900206F82 /* PersistentRuleBasedSegmentsStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentRuleBasedSegmentsStorageStub.swift; sourceTree = "<group>"; };
 		C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentDaoStub.swift; sourceTree = "<group>"; };
-		C5A501D92D88A7E900206F82 /* RuleBasedSegmentsStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsStorageStub.swift; sourceTree = "<group>"; };
 		C5A501DD2D88AD1B00206F82 /* split_cache_v6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v6.xcdatamodel; sourceTree = "<group>"; };
 		C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecoratedImpression.swift; sourceTree = "<group>"; };
 		C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsToggleTest.swift; sourceTree = "<group>"; };
@@ -2601,9 +2597,7 @@
 		5905D4E6255B23C8006DA3B1 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
-				C5A501D72D88A7E900206F82 /* PersistentRuleBasedSegmentsStorageStub.swift */,
 				C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */,
-				C5A501D92D88A7E900206F82 /* RuleBasedSegmentsStorageStub.swift */,
 				9560354E27D16D5700E35BC8 /* MySegmentsStorageStub.swift */,
 				95ABF510293ABDDC006ED016 /* ImpressionsStorageStub.swift */,
 				95ABF512293ABEC7006ED016 /* EventsStorageStub.swift */,
@@ -4469,8 +4463,6 @@
 				59B8B8AC220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift in Sources */,
 				595AD20C24DDCB0E00A7B750 /* SseAuthenticatorTest.swift in Sources */,
 				C5A501DA2D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift in Sources */,
-				C5A501DB2D88A7E900206F82 /* PersistentRuleBasedSegmentsStorageStub.swift in Sources */,
-				C5A501DC2D88A7E900206F82 /* RuleBasedSegmentsStorageStub.swift in Sources */,
 				5946783A22E1147600F94E58 /* SplitIntegrationTest.swift in Sources */,
 				955AAB8B283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift in Sources */,
 				C5DF6F7A2D3FF114007C7737 /* RolloutCacheManagerIntegrationTest.swift in Sources */,
