@@ -27,7 +27,8 @@ jobs:
           SplitiOSUnit_4,
           SemVer,
           SplitPushManagerUT,
-          SplitStreamingUT
+          SplitStreamingUT,
+          WatchOS
         ]
       fail-fast: false
     uses: ./.github/workflows/base_ut.yaml
