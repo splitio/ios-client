@@ -23,7 +23,12 @@ class SplitsStorageStub: SplitsStorage {
     var flagsSpec: String = ""
 
     var loadLocalCalled = false
-    var clearCalled = false
+    var clearCalledTimes = 0
+    var clearCalled: Bool {
+        get {
+            return clearCalledTimes > 0
+        }
+    }
 
     var updatedWithoutChecksSplit: Split?
     var updatedWithoutChecksExp: XCTestExpectation?
@@ -92,7 +97,7 @@ class SplitsStorageStub: SplitsStorage {
     }
     
     func clear() {
-        clearCalled = true
+        clearCalledTimes+=1
         inMemorySplits.removeAll()
     }
 

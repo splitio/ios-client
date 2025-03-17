@@ -28,6 +28,8 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
     var synchronizer: FeatureFlagsSynchronizer!
     var broadcasterChannel: SyncEventBroadcasterStub!
+    var generalInfoStorage: GeneralInfoStorageMock!
+    var telemetryStorageStub: TelemetryStorageStub!
 
     override func setUp() {
         synchronizer = buildSynchronizer()
@@ -45,8 +47,11 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
         splitsStorage = SplitsStorageStub()
         broadcasterChannel = SyncEventBroadcasterStub()
+        generalInfoStorage = GeneralInfoStorageMock()
+        telemetryStorageStub = TelemetryStorageStub()
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
+        generalInfoStorage.setFlagSpec(flagsSpec: "1.2")
 
         let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
                                                      splitsStorage: splitsStorage,
@@ -56,19 +61,20 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                      impressionsCountStorage: PersistentImpressionsCountStorageStub(),
                                                      eventsStorage: EventsStorageStub(),
                                                      persistentEventsStorage: PersistentEventsStorageStub(),
-                                                     telemetryStorage: TelemetryStorageStub(),
+                                                     telemetryStorage: telemetryStorageStub,
                                                      mySegmentsStorage: MySegmentsStorageStub(),
                                                      myLargeSegmentsStorage: MySegmentsStorageStub(),
                                                      attributesStorage: AttributesStorageStub(),
                                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
                                                      flagSetsCache: FlagSetsCacheMock(),
                                                      persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
-                                                     hashedImpressionsStorage: HashedImpressionsStorageMock())
+                                                     hashedImpressionsStorage: HashedImpressionsStorageMock(),
+                                                     generalInfoStorage: generalInfoStorage)
 
         splitConfig =  SplitClientConfig()
         splitConfig.syncEnabled = syncEnabled
         if let splitFilters = splitFilters {
-            var builder = SyncConfig.builder()
+            let builder = SyncConfig.builder()
             for splitFilter in splitFilters {
                 builder.addSplitFilter(splitFilter)
             }
@@ -77,13 +83,15 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
             splitConfig.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
         }
 
+        let filterBuilder = FilterBuilder(flagSetsValidator: DefaultFlagSetsValidator(telemetryProducer: telemetryStorageStub))
+        let queryString = try? filterBuilder.add(filters: splitFilters ?? []).build()
         synchronizer = DefaultFeatureFlagsSynchronizer(splitConfig: splitConfig,
                                                        storageContainer: storageContainer,
                                                        syncWorkerFactory: syncWorkerFactory,
                                                        broadcasterChannel: broadcasterChannel,
                                                        syncTaskByChangeNumberCatalog: updateWorkerCatalog,
-                                                       splitsFilterQueryString: "",
-                                                       flagsSpec: "",
+                                                       splitsFilterQueryString: queryString ?? "",
+                                                       flagsSpec: "1.2",
                                                        splitEventsManager: eventsManager)
         return synchronizer
     }
@@ -106,7 +114,8 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
     func testLoadSplitsClearedOnLoadBecauseNotInFilter() {
         // Existent splits does not belong to split filter on config so they gonna be deleted because filter has changed
         persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "pepe"))
-        persistentSplitsStorage.update(filterQueryString: "?p=1")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "?p=1")
+        
         persistentSplitsStorage.update(split: TestingHelper.createSplit(name: "SPLIT_TO_DELETE"))
         synchronizer.load()
 
@@ -124,7 +133,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         // loaded splits > 0, ready from cache should be fired
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "new_pepe")],
                                                   archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
-        persistentSplitsStorage.update(filterQueryString: "")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "")
         synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
@@ -148,7 +157,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
             persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name))
         }
 
-        persistentSplitsStorage.update(filterQueryString: "?names=pepe")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "?names=pepe")
 
         synchronizer.load()
 
@@ -190,7 +199,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
             persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name, sets: sets))
         }
 
-        persistentSplitsStorage.update(filterQueryString: "?names=pepe")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "?names=pepe")
 
         synchronizer.load()
 
@@ -207,29 +216,26 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         XCTAssertTrue(deleted.contains("tset2"))
         XCTAssertTrue(deleted.contains("apre_tset3"))
         XCTAssertEqual(9, deleted.count)
+        XCTAssertEqual("&sets=set3,set4", generalInfoStorage.getSplitsFilterQueryString())
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 
-    func testLoadSplitsWhenFlagsSetsHasChangedClearsAllFeatureFlags() {
+    func testLoadSplitsWhenFlagsSetsHasChangedClearsAllFeatureFlagsAndUpdatesFlagsSpec() {
         let names = ["test1", "test2", "test3", "test4"]
 
         for name in names {
             persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name))
         }
 
-        persistentSplitsStorage.update(filterQueryString: "")
-        persistentSplitsStorage.update(flagsSpec: "1.1")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "")
+        generalInfoStorage.setFlagSpec(flagsSpec: "1.1")
 
         synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
-        let deleted = Set(persistentSplitsStorage.deletedSplits)
-        XCTAssertTrue(deleted.contains("test1"))
-        XCTAssertTrue(deleted.contains("test2"))
-        XCTAssertTrue(deleted.contains("test3"))
-        XCTAssertTrue(deleted.contains("test4"))
-        XCTAssertEqual(4, deleted.count)
+        XCTAssertTrue(persistentSplitsStorage.clearCalled)
+        XCTAssertEqual("1.2", generalInfoStorage.getFlagSpec())
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 
@@ -240,19 +246,14 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
             persistentSplitsStorage.update(split: TestingHelper.createSplit(name: name))
         }
 
-        persistentSplitsStorage.update(filterQueryString: "?names=pepe")
-        persistentSplitsStorage.update(flagsSpec: "1.1")
+        generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "?names=pepe")
+        generalInfoStorage.setFlagSpec(flagsSpec: "1.1")
 
         synchronizer.load()
 
         ThreadUtils.delay(seconds: 0.5)
 
-        let deleted = Set(persistentSplitsStorage.deletedSplits)
-        XCTAssertTrue(deleted.contains("test1"))
-        XCTAssertTrue(deleted.contains("test2"))
-        XCTAssertTrue(deleted.contains("test3"))
-        XCTAssertTrue(deleted.contains("test4"))
-        XCTAssertEqual(4, deleted.count)
+        XCTAssertTrue(persistentSplitsStorage.clearCalled)
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 

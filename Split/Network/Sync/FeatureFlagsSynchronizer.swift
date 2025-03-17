@@ -170,21 +170,24 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
     private func filterSplitsInCache() {
         let splitsStorage = storageContainer.persistentSplitsStorage
+        let generalInfoStorage = storageContainer.generalInfoStorage
         let currentSplitsQueryString = splitsFilterQueryString
 
-        let filterHasChanged = currentSplitsQueryString != splitsStorage.getFilterQueryString()
-        let flagsSpecHasChanged = flagsSpec != splitsStorage.getFlagsSpec()
+        let filterHasChanged = currentSplitsQueryString != generalInfoStorage.getSplitsFilterQueryString()
+        let flagsSpecHasChanged = flagsSpec != generalInfoStorage.getFlagSpec()
 
         // if neither the filter nor the flags spec have changed, we don't need to do anything
         if filterHasChanged || flagsSpecHasChanged {
             let splitsInCache = splitsStorage.getAll()
-            var toDelete = [String]()
 
             if flagsSpecHasChanged {
                 // when flagsSpec has changed, we delete everything
-                toDelete = splitsInCache.compactMap { $0.name }
+                splitsStorage.clear()
+                storageContainer.generalInfoStorage.setFlagSpec(flagsSpec: flagsSpec)
             } else if filterHasChanged {
+
                 // if the filter has changed, we need to delete according to it
+                var toDelete = [String]()
                 let filters = splitConfig.sync.filters
                 let namesToKeep = Set(filters.filter { $0.type == .byName }.flatMap { $0.values })
                 let prefixesToKeep = Set(filters.filter { $0.type == .byPrefix }.flatMap { $0.values })
@@ -203,11 +206,12 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                         toDelete.append(splitName)
                     }
                 }
-            }
 
-            if toDelete.count > 0 {
-                splitsStorage.delete(splitNames: toDelete)
-                storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
+                if toDelete.count > 0 {
+                    splitsStorage.delete(splitNames: toDelete)
+                    storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
+                }
+                generalInfoStorage.setSplitsFilterQueryString(filterQueryString: currentSplitsQueryString)
             }
         }
     }

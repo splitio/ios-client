@@ -154,7 +154,7 @@ class ReadyFromCacheTest: XCTestCase {
     }
 
     func testNotExistingSplitsAndConnectionOk() {
-        // When NO feature flags and connection available, ready from cache should NOT be fired and Ready should be fired
+        // When NO feature flags and connection available, ready from cache should be fired alongside Ready
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -201,7 +201,7 @@ class ReadyFromCacheTest: XCTestCase {
         wait(for: [readyExp], timeout: 3)
         let treatmentReady = client.getTreatment(splitName)
 
-        XCTAssertFalse(cacheReadyFired)
+        XCTAssertTrue(cacheReadyFired)
         XCTAssertTrue(readyFired)
         XCTAssertFalse(timeoutFired)
         XCTAssertEqual("control", treatmentCache)

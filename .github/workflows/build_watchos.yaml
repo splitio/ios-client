@@ -8,6 +8,7 @@ on:
     branches:
       - master
       - development
+      - "*_baseline"
 
 jobs:
   build:

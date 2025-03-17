@@ -15,6 +15,7 @@ enum GeneralInfo: String {
     case databaseMigrationStatus = "databaseMigrationStatus"
     case bySetsFilter = "bySetsFilter"
     case flagsSpec = "flagsSpec"
+    case rolloutCacheLastClearTimestamp = "rolloutCacheLastClearTimestamp"
 }
 
 protocol GeneralInfoDao {

@@ -92,7 +92,7 @@ class InitialCacheTest: XCTestCase {
         client.destroy()
 
         XCTAssertEqual(-1, receivedChangeNumber[0])
-        XCTAssertEqual("boom", treatmentCache)
+        XCTAssertEqual("on0", treatmentCache)
         XCTAssertEqual("on0", treatmentReady)
     }
 
@@ -155,7 +155,7 @@ class InitialCacheTest: XCTestCase {
         wait(for: [cacheReadyExp, readyExp], timeout: 10)
 
         XCTAssertEqual(-1, receivedChangeNumber[0])
-        XCTAssertEqual("boom", treatmentCache)
+        XCTAssertEqual("control", treatmentCache)
         XCTAssertEqual("control", treatmentReady)
 
         let semaphore = DispatchSemaphore(value: 0)
@@ -353,10 +353,10 @@ class InitialCacheTest: XCTestCase {
         var treatmentCache = ""
         var treatmentReady = ""
 
-        var readyCacheNotFired = false
+        var readyCacheNotFired = true
         client.on(event: SplitEvent.sdkReadyFromCache) {
             treatmentCache = client.getTreatment(self.splitName)
-            readyCacheNotFired = true
+            readyCacheNotFired = false
         }
 
         client.on(event: SplitEvent.sdkReady) {
@@ -372,12 +372,10 @@ class InitialCacheTest: XCTestCase {
 
         client.destroy()
 
-        XCTAssertEqual("", treatmentCache)
+        XCTAssertEqual("on0", treatmentCache)
         XCTAssertEqual("on0", treatmentReady)
         XCTAssertFalse(readyCacheNotFired)
     }
-
-
 
     private func getChanges(for hitNumber: Int) -> Data {
         if hitNumber < jsonChanges.count {

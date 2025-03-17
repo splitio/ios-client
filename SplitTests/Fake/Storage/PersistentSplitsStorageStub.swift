@@ -15,7 +15,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var updateTimestamp: Int64 = 0
 
     var snapshot: SplitsSnapshot = SplitsSnapshot(changeNumber: -1, splits: [Split](),
-                                                  updateTimestamp: -1, splitsFilterQueryString: "", flagsSpec: "")
+                                                  updateTimestamp: -1)
 
     var processedSplitChange: ProcessedSplitChange?
 
@@ -33,14 +33,6 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var splits = [String: Split]()
     var lastBySetSplitFilter: SplitFilter?
 
-    func getFilterQueryString() -> String {
-        return snapshot.splitsFilterQueryString
-    }
-
-    func getFlagsSpec() -> String {
-        return snapshot.flagsSpec
-    }
-
     func update(splitChange: ProcessedSplitChange) {
         processedSplitChange = splitChange
         updateCalled = true
@@ -50,21 +42,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
         updateSplitCalled  = true
         splits[split.name ?? ""] = split
         snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: splits.values.compactMap { $0 },
-                                  updateTimestamp: snapshot.updateTimestamp, splitsFilterQueryString: filterQueryString,
-                                  flagsSpec: flagsSpec)
-    }
-    
-    func update(filterQueryString: String) {
-        self.filterQueryString = filterQueryString
-        snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: snapshot.splits,
-                                  updateTimestamp: snapshot.updateTimestamp, splitsFilterQueryString: filterQueryString,
-                                  flagsSpec: flagsSpec)
-    }
-
-    func update(flagsSpec: String) {
-        self.flagsSpec = flagsSpec
-        snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: snapshot.splits, updateTimestamp: snapshot.updateTimestamp, splitsFilterQueryString: filterQueryString, flagsSpec: flagsSpec)
-        self.updateFlagsSpecCalled = true
+                                  updateTimestamp: snapshot.updateTimestamp)
     }
 
     func getSplitsSnapshot() -> SplitsSnapshot {
