@@ -1,7 +1,8 @@
 import Foundation
 
-/// Configuration class for rollout cache.
-@objc public class RolloutCacheConfiguration: NSObject {
+/// Configuration class for rollout cache. Internal use only.
+// @objc public class RolloutCacheConfiguration: NSObject {
+internal class RolloutCacheConfiguration: NSObject {
     private(set) var expirationDays: Int
     private(set) var clearOnInit: Bool
 
@@ -10,21 +11,24 @@ import Foundation
         self.clearOnInit = clearOnInit
     }
 
-    /// Provides abuilder for RolloutCacheConfiguration.
-    @objc(builder)
-    public static func builder() -> Builder {
+    /// Provides a builder for RolloutCacheConfiguration.
+    // @objc(builder)
+    // public static func builder() -> Builder {
+    static func builder() -> Builder {
         return Builder()
     }
 
-    @objc(RolloutCacheConfigurationBuilder)
-    public class Builder: NSObject {
+    // @objc(RolloutCacheConfigurationBuilder)
+    // public class Builder: NSObject {
+    class Builder: NSObject {
         private let kMinExpirationDays = 1
 
         private var expiration = ServiceConstants.defaultRolloutCacheExpiration
         private var clearOnInit = false
         
-        @objc
-        public func build() -> RolloutCacheConfiguration {
+        // @objc
+        // public func build() -> RolloutCacheConfiguration {
+        func build() -> RolloutCacheConfiguration {
             return RolloutCacheConfiguration(expirationDays: expiration, clearOnInit: clearOnInit)
         }
 
@@ -32,8 +36,9 @@ import Foundation
         /// - Parameter expirationDays: The expiration time in days.
         /// - Returns: This builder.
         @discardableResult
-        @objc(setExpirationDays:)
-        public func set(expirationDays: Int) -> Builder {
+        // @objc(setExpirationDays:)
+        // public func set(expirationDays: Int) -> Builder {
+        func set(expirationDays: Int) -> Builder {
             if expirationDays < kMinExpirationDays {
                 Logger.w("Cache expiration must be at least 1 day. Using default value.")
                 expiration = ServiceConstants.defaultRolloutCacheExpiration
@@ -48,8 +53,9 @@ import Foundation
         /// - Parameter clearOnInit: If the cache should be cleared on initialization.
         /// - Returns: This builder.
         @discardableResult
-        @objc(setClearOnInit:)
-        public func set(clearOnInit: Bool) -> Builder {
+        // @objc(setClearOnInit:)
+        // public func set(clearOnInit: Bool) -> Builder {
+        func set(clearOnInit: Bool) -> Builder {
             self.clearOnInit = clearOnInit
             return self
         }
