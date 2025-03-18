@@ -35,14 +35,14 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
 
         // Process segments to add
         for segment in toAdd {
-            if let segmentName = segment.name ?? "" {
+            if let segmentName = segment.name {
                 segments[segmentName] = segment
             }
         }
 
         // Process segments to remove
         for segment in toRemove {
-            if let segmentName = segment.name ?? "" {
+            if let segmentName = segment.name {
                 segments.removeValue(forKey: segmentName)
             }
         }
@@ -60,6 +60,10 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
 
     func getChangeNumber() -> Int64 {
         return changeNumber
+    }
+
+    func getSnapshot() -> RuleBasedSegmentsSnapshot {
+        return snapshot
     }
 
     func clear() {
