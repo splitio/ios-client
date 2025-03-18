@@ -10,29 +10,30 @@ import Foundation
 @testable import Split
 
 class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
-    
+
     var segments = [String: RuleBasedSegment]()
     var changeNumber: Int64 = -1
-    
+
     var getCalled = false
     var containsCalled = false
     var updateCalled = false
     var clearCalled = false
-    
+    var loadLocalCalled = false
+
     var lastRequestedSegmentName: String?
     var lastRequestedMatchingKey: String?
     var lastRequestedSegmentNames: Set<String>?
     var lastAddedSegments: Set<RuleBasedSegment>?
     var lastRemovedSegments: Set<RuleBasedSegment>?
     var lastChangeNumber: Int64?
-    
+
     func get(segmentName: String, matchingKey: String) -> RuleBasedSegment? {
         getCalled = true
         lastRequestedSegmentName = segmentName
         lastRequestedMatchingKey = matchingKey
         return segments[segmentName.lowercased()]
     }
-    
+
     func contains(segmentNames: Set<String>) -> Bool {
         containsCalled = true
         lastRequestedSegmentNames = segmentNames
@@ -40,27 +41,27 @@ class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
         let segmentKeys = Set(segments.keys)
         return !lowercasedNames.filter { segmentKeys.contains($0) }.isEmpty
     }
-    
+
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool {
         updateCalled = true
         lastAddedSegments = toAdd
         lastRemovedSegments = toRemove
         lastChangeNumber = changeNumber
-        
+
         // Process segments to add
         for segment in toAdd {
             if let segmentName = segment.name?.lowercased() {
                 segments[segmentName] = segment
             }
         }
-        
+
         // Process segments to remove
         for segment in toRemove {
             if let segmentName = segment.name?.lowercased() {
                 segments.removeValue(forKey: segmentName)
             }
         }
-        
+
         self.changeNumber = changeNumber
         return true
     }
@@ -69,5 +70,9 @@ class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
         clearCalled = true
         segments.removeAll()
         changeNumber = -1
+    }
+
+    func loadLocal() {
+        loadLocalCalled = true
     }
 }
