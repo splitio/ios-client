@@ -11,68 +11,46 @@ import Foundation
 
 class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage {
 
-    var changeNumber: Int64 = -1
-
-    var snapshot: RuleBasedSegmentsSnapshot = RuleBasedSegmentsSnapshot(
-        changeNumber: -1,
-        segments: [RuleBasedSegment]()
-    )
-
     var updateCalled = false
     var clearCalled = false
-    
+
     var lastAddedSegments: Set<RuleBasedSegment>?
     var lastRemovedSegments: Set<RuleBasedSegment>?
     var lastChangeNumber: Int64?
 
-    var segments = [String: RuleBasedSegment]()
+    private let delegate: PersistentRuleBasedSegmentsStorage
+
+    init(delegate: PersistentRuleBasedSegmentsStorage) {
+        self.delegate = delegate
+    }
+
+    convenience init(database: SplitDatabase) {
+        self.init(delegate: DefaultPersistentRuleBasedSegmentsStorage(database: database))
+    }
+
+    convenience init(database: SplitDatabase, generalInfoStorage: GeneralInfoStorage) {
+        self.init(delegate: DefaultPersistentRuleBasedSegmentsStorage(
+            database: database,
+            generalInfoStorage: generalInfoStorage
+        ))
+    }
 
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) {
         updateCalled = true
         lastAddedSegments = toAdd
         lastRemovedSegments = toRemove
         lastChangeNumber = changeNumber
-
-        // Process segments to add
-        for segment in toAdd {
-            if let segmentName = segment.name {
-                segments[segmentName] = segment
-            }
-        }
-
-        // Process segments to remove
-        for segment in toRemove {
-            if let segmentName = segment.name {
-                segments.removeValue(forKey: segmentName)
-            }
-        }
-
-        self.changeNumber = changeNumber
-        snapshot = RuleBasedSegmentsSnapshot(
-            changeNumber: changeNumber,
-            segments: segments.values.compactMap { $0 }
-        )
-    }
-
-    func getSegmentsSnapshot() -> RuleBasedSegmentsSnapshot {
-        return snapshot
-    }
-
-    func getChangeNumber() -> Int64 {
-        return changeNumber
+        
+        delegate.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
     }
 
     func getSnapshot() -> RuleBasedSegmentsSnapshot {
-        return snapshot
+        return delegate.getSnapshot()
     }
 
     func clear() {
         clearCalled = true
-        segments.removeAll()
-        changeNumber = -1
-        snapshot = RuleBasedSegmentsSnapshot(
-            changeNumber: -1,
-            segments: []
-        )
+        
+        delegate.clear()
     }
 }
