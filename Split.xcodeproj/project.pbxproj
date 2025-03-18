@@ -1083,6 +1083,7 @@
 		C539CAC52D88C7570050C732 /* RuleBasedSegmentsStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAC32D88C7570050C732 /* RuleBasedSegmentsStorageStub.swift */; };
 		C539CAC72D89DA7B0050C732 /* RuleBasedSegmentDaoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAC62D89DA7B0050C732 /* RuleBasedSegmentDaoTest.swift */; };
 		C539CAC92D89DF1D0050C732 /* RuleBasedSegmentStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAC82D89DF1D0050C732 /* RuleBasedSegmentStorageTest.swift */; };
+		C539CACC2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CACB2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift */; };
 		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
 		C5977BFF2BF27375003E293A /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977BFE2BF27375003E293A /* Semver.swift */; };
 		C5977C012BF27390003E293A /* SemverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C002BF27390003E293A /* SemverTest.swift */; };
@@ -1938,6 +1939,7 @@
 		C539CAC32D88C7570050C732 /* RuleBasedSegmentsStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsStorageStub.swift; sourceTree = "<group>"; };
 		C539CAC62D89DA7B0050C732 /* RuleBasedSegmentDaoTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentDaoTest.swift; sourceTree = "<group>"; };
 		C539CAC82D89DF1D0050C732 /* RuleBasedSegmentStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentStorageTest.swift; sourceTree = "<group>"; };
+		C539CACB2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentRuleBasedSegmentStorageTest.swift; sourceTree = "<group>"; };
 		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
 		C5977BFE2BF27375003E293A /* Semver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
 		C5977C002BF27390003E293A /* SemverTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemverTest.swift; sourceTree = "<group>"; };
@@ -2606,6 +2608,7 @@
 				C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */,
 				C539CAC62D89DA7B0050C732 /* RuleBasedSegmentDaoTest.swift */,
 				C539CAC82D89DF1D0050C732 /* RuleBasedSegmentStorageTest.swift */,
+				C539CACB2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -4531,6 +4534,7 @@
 				95825C022721F0F800A0CDAD /* UserKeyEncondingTest.swift in Sources */,
 				95ABF4C42934EFF2006ED016 /* EventsStorageTest.swift in Sources */,
 				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
+				C539CACC2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift in Sources */,
 				9595C1A2274573DA0092123F /* AttributesEvaluationTest.swift in Sources */,
 				594F5F5E253F641000A945B4 /* BackoffCounterTimerStub.swift in Sources */,
 				599407E022403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift in Sources */,

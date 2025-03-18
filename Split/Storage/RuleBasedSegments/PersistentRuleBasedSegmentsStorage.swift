@@ -24,10 +24,6 @@ class DefaultPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStor
         self.generalInfoStorage = generalInfoStorage
     }
 
-    convenience init(database: SplitDatabase) {
-        self.init(database: database, generalInfoStorage: DefaultGeneralInfoStorage(database: database))
-    }
-
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) {
         if !toAdd.isEmpty {
             ruleBasedSegmentDao.insertOrUpdate(segments: Array(toAdd))
