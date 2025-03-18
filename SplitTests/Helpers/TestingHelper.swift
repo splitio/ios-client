@@ -196,7 +196,9 @@ struct TestingHelper {
                                      flagSetsCache: FlagSetsCacheMock(),
                                      persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
                                      hashedImpressionsStorage: HashedImpressionsStorageMock(),
-                                     generalInfoStorage: GeneralInfoStorageMock())
+                                     generalInfoStorage: GeneralInfoStorageMock(),
+                                     ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
+                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
     }
 
     static func createApiFacade() -> SplitApiFacade {

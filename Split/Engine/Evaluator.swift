@@ -43,6 +43,7 @@ struct EvalContext {
     let evaluator: Evaluator?
     let mySegmentsStorage: MySegmentsStorage?
     let myLargeSegmentsStorage: MySegmentsStorage?
+    let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
 }
 
 protocol Evaluator {
@@ -56,13 +57,16 @@ class DefaultEvaluator: Evaluator {
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage: MySegmentsStorage
     private let myLargeSegmentsStorage: MySegmentsStorage?
+    private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
 
     init(splitsStorage: SplitsStorage,
          mySegmentsStorage: MySegmentsStorage,
-         myLargeSegmentsStorage: MySegmentsStorage?) {
+         myLargeSegmentsStorage: MySegmentsStorage? = nil,
+         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
+        self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
     }
 
     func evalTreatment(matchingKey: String, bucketingKey: String?,
@@ -146,7 +150,8 @@ class DefaultEvaluator: Evaluator {
     private func getContext() -> EvalContext {
         return EvalContext(evaluator: self,
                            mySegmentsStorage: mySegmentsStorage,
-                           myLargeSegmentsStorage: myLargeSegmentsStorage)
+                           myLargeSegmentsStorage: myLargeSegmentsStorage,
+                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage)
     }
 
     private func selectBucketKey(matchingKey: String, bucketingKey: String?) -> String {

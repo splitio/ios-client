@@ -27,10 +27,9 @@ class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
     var lastRemovedSegments: Set<RuleBasedSegment>?
     var lastChangeNumber: Int64?
 
-    func get(segmentName: String, matchingKey: String) -> RuleBasedSegment? {
+    func get(segmentName: String) -> RuleBasedSegment? {
         getCalled = true
         lastRequestedSegmentName = segmentName
-        lastRequestedMatchingKey = matchingKey
         return segments[segmentName.lowercased()]
     }
 

@@ -11,7 +11,7 @@ import Foundation
 protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
     var changeNumber: Int64 { get }
 
-    func get(segmentName: String, matchingKey: String) -> RuleBasedSegment?
+    func get(segmentName: String) -> RuleBasedSegment?
     func contains(segmentNames: Set<String>) -> Bool
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool
     func loadLocal()
@@ -24,8 +24,8 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
     private(set) var changeNumber: Int64 = -1
 
-    init(persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage) {
-        self.persistentStorage = persistentRuleBasedSegmentsStorage
+    init(persistentStorage: PersistentRuleBasedSegmentsStorage) {
+        self.persistentStorage = persistentStorage
         self.inMemorySegments = ConcurrentDictionary()
     }
 
@@ -51,7 +51,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         changeNumber = snapshot.changeNumber
     }
 
-    func get(segmentName: String, matchingKey: String) -> RuleBasedSegment? {
+    func get(segmentName: String) -> RuleBasedSegment? {
         guard let segment = inMemorySegments.value(forKey: segmentName.lowercased()) else {
             return nil
         }
