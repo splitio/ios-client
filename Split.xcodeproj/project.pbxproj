@@ -1073,6 +1073,8 @@
 		95F7BC292C46A4C800C5F2E4 /* SecurityHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC282C46A4C800C5F2E4 /* SecurityHelper.swift */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
 		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
+		C539CAB62D88C1F10050C732 /* RuleBasedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */; };
+		C539CAB72D88C1F10050C732 /* RuleBasedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */; };
 		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
 		C5977BFF2BF27375003E293A /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977BFE2BF27375003E293A /* Semver.swift */; };
 		C5977C012BF27390003E293A /* SemverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C002BF27390003E293A /* SemverTest.swift */; };
@@ -1107,6 +1109,15 @@
 		C5977C642BF7D5FC003E293A /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
+		C5A501C82D88A15600206F82 /* RuleBasedSegmentEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C32D88A15600206F82 /* RuleBasedSegmentEntity.swift */; };
+		C5A501C92D88A15600206F82 /* RuleBasedSegmentsDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C42D88A15600206F82 /* RuleBasedSegmentsDecoder.swift */; };
+		C5A501CD2D88A15600206F82 /* RuleBasedSegmentDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C22D88A15600206F82 /* RuleBasedSegmentDao.swift */; };
+		C5A501CE2D88A15600206F82 /* RuleBasedSegmentsEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */; };
+		C5A501CF2D88A15600206F82 /* RuleBasedSegmentEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C32D88A15600206F82 /* RuleBasedSegmentEntity.swift */; };
+		C5A501D02D88A15600206F82 /* RuleBasedSegmentsDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C42D88A15600206F82 /* RuleBasedSegmentsDecoder.swift */; };
+		C5A501D42D88A15600206F82 /* RuleBasedSegmentDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C22D88A15600206F82 /* RuleBasedSegmentDao.swift */; };
+		C5A501D52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */; };
+		C5A501DA2D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */; };
 		C5BD1E4C2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */; };
@@ -1912,6 +1923,7 @@
 		95F7BC282C46A4C800C5F2E4 /* SecurityHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityHelper.swift; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
+		C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegment.swift; sourceTree = "<group>"; };
 		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
 		C5977BFE2BF27375003E293A /* Semver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
 		C5977C002BF27390003E293A /* SemverTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemverTest.swift; sourceTree = "<group>"; };
@@ -1936,6 +1948,12 @@
 		C5977C582BF53F43003E293A /* splitchanges_unsupported.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_unsupported.json; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
+		C5A501C22D88A15600206F82 /* RuleBasedSegmentDao.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentDao.swift; sourceTree = "<group>"; };
+		C5A501C32D88A15600206F82 /* RuleBasedSegmentEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentEntity.swift; sourceTree = "<group>"; };
+		C5A501C42D88A15600206F82 /* RuleBasedSegmentsDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsDecoder.swift; sourceTree = "<group>"; };
+		C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsEncoder.swift; sourceTree = "<group>"; };
+		C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentDaoStub.swift; sourceTree = "<group>"; };
+		C5A501DD2D88AD1B00206F82 /* split_cache_v6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v6.xcdatamodel; sourceTree = "<group>"; };
 		C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecoratedImpression.swift; sourceTree = "<group>"; };
 		C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsToggleTest.swift; sourceTree = "<group>"; };
 		C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_toggle.json; sourceTree = "<group>"; };
@@ -2502,6 +2520,7 @@
 		3B6DEF0720EA6AE40067435E /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				C5A501C72D88A15600206F82 /* RuleBasedSegments */,
 				955E122F2BFBC90700AE6D10 /* HashedImpression */,
 				952E266E2833E4210015D633 /* UniqueKeys */,
 				95DE29252736AE1E00DB3EAD /* Attributes */,
@@ -2578,6 +2597,7 @@
 		5905D4E6255B23C8006DA3B1 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */,
 				9560354E27D16D5700E35BC8 /* MySegmentsStorageStub.swift */,
 				95ABF510293ABDDC006ED016 /* ImpressionsStorageStub.swift */,
 				95ABF512293ABEC7006ED016 /* EventsStorageStub.swift */,
@@ -3593,6 +3613,18 @@
 			path = Semver;
 			sourceTree = "<group>";
 		};
+		C5A501C72D88A15600206F82 /* RuleBasedSegments */ = {
+			isa = PBXGroup;
+			children = (
+				C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */,
+				C5A501C22D88A15600206F82 /* RuleBasedSegmentDao.swift */,
+				C5A501C32D88A15600206F82 /* RuleBasedSegmentEntity.swift */,
+				C5A501C42D88A15600206F82 /* RuleBasedSegmentsDecoder.swift */,
+				C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */,
+			);
+			path = RuleBasedSegments;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -3968,6 +4000,10 @@
 				952E267A283410620015D633 /* HashedImpression.swift in Sources */,
 				955E123F2BFE1E7A00AE6D10 /* HashedImpressionStorage.swift in Sources */,
 				3B6DEF3A20EA6AE50067435E /* Dictionary+Extensions.swift in Sources */,
+				C5A501C82D88A15600206F82 /* RuleBasedSegmentEntity.swift in Sources */,
+				C5A501C92D88A15600206F82 /* RuleBasedSegmentsDecoder.swift in Sources */,
+				C5A501CD2D88A15600206F82 /* RuleBasedSegmentDao.swift in Sources */,
+				C5A501CE2D88A15600206F82 /* RuleBasedSegmentsEncoder.swift in Sources */,
 				95125625276B72B60091895B /* Stopwatch.swift in Sources */,
 				C5E967522D37FA2000112DAC /* RolloutCacheConfiguration.swift in Sources */,
 				957E67B025F6B3E1006F5B19 /* BackgroundSyncWorker.swift in Sources */,
@@ -4200,6 +4236,7 @@
 				955892AB25C187EA00F67FBA /* CoreDataContextBuilder.swift in Sources */,
 				95122A0E275822F600D93F90 /* TelemetryStats.swift in Sources */,
 				3B6DEF2D20EA6AE50067435E /* SplitConstants.swift in Sources */,
+				C539CAB62D88C1F10050C732 /* RuleBasedSegment.swift in Sources */,
 				3B6DEF5320EA6AE50067435E /* WhitelistMatcherData.swift in Sources */,
 				3B6DEF5D20EA6AE50067435E /* SplitFactory.swift in Sources */,
 				3B6DEF2020EA6AE50067435E /* DefaultSplitClient.swift in Sources */,
@@ -4425,6 +4462,7 @@
 				5959C482228074800064F968 /* ValidationMessageLoggerStub.swift in Sources */,
 				59B8B8AC220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift in Sources */,
 				595AD20C24DDCB0E00A7B750 /* SseAuthenticatorTest.swift in Sources */,
+				C5A501DA2D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift in Sources */,
 				5946783A22E1147600F94E58 /* SplitIntegrationTest.swift in Sources */,
 				955AAB8B283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift in Sources */,
 				C5DF6F7A2D3FF114007C7737 /* RolloutCacheManagerIntegrationTest.swift in Sources */,
@@ -4648,6 +4686,10 @@
 				95B02CD628D0BDC20030EC8B /* Dictionary+JSON.swift in Sources */,
 				95B02CD728D0BDC20030EC8B /* SplitView+StringConvertible.swift in Sources */,
 				95B02CD828D0BDC20030EC8B /* String+Utils.swift in Sources */,
+				C5A501CF2D88A15600206F82 /* RuleBasedSegmentEntity.swift in Sources */,
+				C5A501D02D88A15600206F82 /* RuleBasedSegmentsDecoder.swift in Sources */,
+				C5A501D42D88A15600206F82 /* RuleBasedSegmentDao.swift in Sources */,
+				C5A501D52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift in Sources */,
 				95B02CD928D0BDC20030EC8B /* Array+DynamicCodable.swift in Sources */,
 				95B02CDA28D0BDC20030EC8B /* Dictionary+DynamicCodable.swift in Sources */,
 				C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */,
@@ -4673,6 +4715,7 @@
 				956A7E21297590DF0080D53C /* Array+Chunked.swift in Sources */,
 				95B02CED28D0BDC20030EC8B /* MatcherGroup.swift in Sources */,
 				95CED0502B4DCDB1005E3C34 /* LocalhostClientManager.swift in Sources */,
+				C539CAB72D88C1F10050C732 /* RuleBasedSegment.swift in Sources */,
 				95B02CEE28D0BDC20030EC8B /* MatcherProtocol.swift in Sources */,
 				C5E9674F2D37098000112DAC /* RolloutCacheManager.swift in Sources */,
 				95B02CEF28D0BDC20030EC8B /* MatcherType.swift in Sources */,
@@ -5410,13 +5453,14 @@
 		59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				C5A501DD2D88AD1B00206F82 /* split_cache_v6.xcdatamodel */,
 				9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */,
 				952E26712833EBC90015D633 /* split_cache_v4.xcdatamodel */,
 				95623D8E275100770006A8F1 /* split_cache_v3.xcdatamodel */,
 				950B74302693761A005FD649 /* split_cache_v2.xcdatamodel */,
 				59E6A38925557C8D005DE642 /* split_cache.xcdatamodel */,
 			);
-			currentVersion = 9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */;
+			currentVersion = C5A501DD2D88AD1B00206F82 /* split_cache_v6.xcdatamodel */;
 			path = split_cache.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
