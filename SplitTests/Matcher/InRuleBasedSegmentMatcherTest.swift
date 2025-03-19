@@ -36,44 +36,6 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
         super.tearDown()
     }
 
-    private func createSegment(name: String, status: Status = .active) -> RuleBasedSegment {
-        return RuleBasedSegment(name: name, status: status)
-    }
-    
-    private func createAllKeysMatcher(negate: Bool = false) -> Matcher {
-        let matcher = Matcher()
-        matcher.matcherType = .allKeys
-        matcher.negate = negate
-        return matcher
-    }
-    
-    private func createWhitelistMatcher(whitelist: [String], negate: Bool = false) -> Matcher {
-        let matcher = Matcher()
-        matcher.matcherType = .whitelist
-        matcher.negate = negate
-        matcher.whitelistMatcherData = WhitelistMatcherData()
-        matcher.whitelistMatcherData?.whitelist = whitelist
-        return matcher
-    }
-    
-    private func createMatcherGroup(matchers: [Matcher], combiner: MatcherCombiner = .and) -> MatcherGroup {
-        let matcherGroup = MatcherGroup()
-        matcherGroup.matcherCombiner = combiner
-        matcherGroup.matchers = matchers
-        return matcherGroup
-    }
-    
-    private func createCondition(matcherGroup: MatcherGroup, conditionType: ConditionType = .rollout) -> Condition {
-        let condition = Condition()
-        condition.conditionType = conditionType
-        condition.matcherGroup = matcherGroup
-        return condition
-    }
-    
-    private func createMatcher(data: UserDefinedBaseSegmentMatcherData?) -> InRuleBasedSegmentMatcher {
-        return InRuleBasedSegmentMatcher(data: data)
-    }
-
     func testEvaluateWithNilSegmentName() {
         let matcher = createMatcher(data: nil)
         XCTAssertFalse(matcher.evaluate(values: EvalValues(matchValue: "key1", matchingKey: "key1"), context: evalContext))
@@ -204,5 +166,43 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
         let matcher = createMatcher(data: data)
 
         XCTAssertTrue(matcher.evaluate(values: EvalValues(matchValue: "key1", matchingKey: "key1"), context: evalContext))
+    }
+
+    private func createSegment(name: String, status: Status = .active) -> RuleBasedSegment {
+        return RuleBasedSegment(name: name, status: status)
+    }
+    
+    private func createAllKeysMatcher(negate: Bool = false) -> Matcher {
+        let matcher = Matcher()
+        matcher.matcherType = .allKeys
+        matcher.negate = negate
+        return matcher
+    }
+    
+    private func createWhitelistMatcher(whitelist: [String], negate: Bool = false) -> Matcher {
+        let matcher = Matcher()
+        matcher.matcherType = .whitelist
+        matcher.negate = negate
+        matcher.whitelistMatcherData = WhitelistMatcherData()
+        matcher.whitelistMatcherData?.whitelist = whitelist
+        return matcher
+    }
+    
+    private func createMatcherGroup(matchers: [Matcher], combiner: MatcherCombiner = .and) -> MatcherGroup {
+        let matcherGroup = MatcherGroup()
+        matcherGroup.matcherCombiner = combiner
+        matcherGroup.matchers = matchers
+        return matcherGroup
+    }
+    
+    private func createCondition(matcherGroup: MatcherGroup, conditionType: ConditionType = .rollout) -> Condition {
+        let condition = Condition()
+        condition.conditionType = conditionType
+        condition.matcherGroup = matcherGroup
+        return condition
+    }
+    
+    private func createMatcher(data: UserDefinedBaseSegmentMatcherData?) -> InRuleBasedSegmentMatcher {
+        return InRuleBasedSegmentMatcher(data: data)
     }
 }
