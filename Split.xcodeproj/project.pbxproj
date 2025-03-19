@@ -1086,6 +1086,7 @@
 		C539CACC2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CACB2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift */; };
 		C539CACE2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CACD2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift */; };
 		C539CACF2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CACD2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift */; };
+		C539CAD12D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD02D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift */; };
 		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
 		C5977BFF2BF27375003E293A /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977BFE2BF27375003E293A /* Semver.swift */; };
 		C5977C012BF27390003E293A /* SemverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C002BF27390003E293A /* SemverTest.swift */; };
@@ -1943,6 +1944,7 @@
 		C539CAC82D89DF1D0050C732 /* RuleBasedSegmentStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentStorageTest.swift; sourceTree = "<group>"; };
 		C539CACB2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentRuleBasedSegmentStorageTest.swift; sourceTree = "<group>"; };
 		C539CACD2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InRuleBasedSegmentMatcher.swift; sourceTree = "<group>"; };
+		C539CAD02D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InRuleBasedSegmentMatcherTest.swift; sourceTree = "<group>"; };
 		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
 		C5977BFE2BF27375003E293A /* Semver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
 		C5977C002BF27390003E293A /* SemverTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemverTest.swift; sourceTree = "<group>"; };
@@ -3615,6 +3617,7 @@
 		C5977C0E2BF2832A003E293A /* Matcher */ = {
 			isa = PBXGroup;
 			children = (
+				C539CAD02D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift */,
 				C5977C002BF27390003E293A /* SemverTest.swift */,
 				C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */,
 				C5977C1F2BF29F5B003E293A /* EqualToSemverMatcherTest.swift */,
@@ -4376,6 +4379,7 @@
 				595AD21524E1CD4700A7B750 /* JwtTokenParserTest.swift in Sources */,
 				9573FB37273D762200086DDE /* AnyValueValidatorTests.swift in Sources */,
 				95ED4A9826497EEA00FD3569 /* TestSplitFactory.swift in Sources */,
+				C539CAD12D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift in Sources */,
 				9572BA852AC7611400C10FC1 /* FlagSetsCacheTests.swift in Sources */,
 				599A6E3422FC681600D3D68C /* FlushTest.swift in Sources */,
 				95118EEB281AC83B00782F33 /* BucketSplitTest.swift in Sources */,
