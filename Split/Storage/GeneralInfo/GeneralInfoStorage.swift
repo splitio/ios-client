@@ -9,6 +9,10 @@ protocol GeneralInfoStorage {
     func setSplitsFilterQueryString(filterQueryString: String)
     func getFlagSpec() -> String
     func setFlagSpec(flagsSpec: String)
+    
+    // Rule based segments methods
+    func getRuleBasedSegmentsChangeNumber() -> Int64
+    func setRuleBasedSegmentsChangeNumber(changeNumber: Int64)
 }
 
 class DefaultGeneralInfoStorage: GeneralInfoStorage {
@@ -53,5 +57,13 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage {
 
     func setFlagSpec(flagsSpec: String) {
         generalInfoDao.update(info: .flagsSpec, stringValue: flagsSpec)
+    }
+
+    func getRuleBasedSegmentsChangeNumber() -> Int64 {
+        return generalInfoDao.longValue(info: .ruleBasedSegmentsChangeNumber) ?? -1
+    }
+
+    func setRuleBasedSegmentsChangeNumber(changeNumber: Int64) {
+        generalInfoDao.update(info: .ruleBasedSegmentsChangeNumber, longValue: changeNumber)
     }
 }

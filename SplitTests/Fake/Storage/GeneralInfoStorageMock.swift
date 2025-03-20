@@ -7,6 +7,7 @@ class GeneralInfoStorageMock: GeneralInfoStorage {
     var rolloutCacheLastClearTimestamp: Int64 = 0
     var splitsFilterQueryString: String = ""
     var flagsSpec = ""
+    var ruleBasedSegmentsChangeNumber: Int64 = -1
 
     func getUpdateTimestamp() -> Int64 {
         return updateTimestamp
@@ -38,5 +39,13 @@ class GeneralInfoStorageMock: GeneralInfoStorage {
     
     func setFlagSpec(flagsSpec: String) {
         self.flagsSpec = flagsSpec
+    }
+
+    func getRuleBasedSegmentsChangeNumber() -> Int64 {
+        return ruleBasedSegmentsChangeNumber
+    }
+
+    func setRuleBasedSegmentsChangeNumber(changeNumber: Int64) {
+        ruleBasedSegmentsChangeNumber = changeNumber
     }
 }
