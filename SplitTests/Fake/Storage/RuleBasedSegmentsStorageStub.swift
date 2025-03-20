@@ -47,7 +47,6 @@ class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
         lastAddedSegments = toAdd
         lastRemovedSegments = toRemove
         lastChangeNumber = changeNumber
-
         // Process segments to add
         for segment in toAdd {
             if let segmentName = segment.name?.lowercased() {
@@ -61,7 +60,6 @@ class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
                 segments.removeValue(forKey: segmentName)
             }
         }
-
         self.changeNumber = changeNumber
         return true
     }
