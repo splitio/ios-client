@@ -8,6 +8,7 @@ import Foundation
 
 protocol HttpSplitFetcher {
     func execute(since: Int64, till: Int64?, headers: HttpHeaders?) throws -> SplitChange
+    func executeForTargetingRules(since: Int64, till: Int64?, headers: HttpHeaders?) throws -> TargetingRulesChange
 }
 
 class DefaultHttpSplitFetcher: HttpSplitFetcher {
@@ -22,29 +23,34 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
     }
 
     func execute(since: Int64, till: Int64?, headers: HttpHeaders? = nil) throws -> SplitChange {
-        Logger.d("Fetching feature flags definitions")
+        let targetingRulesChange = try executeForTargetingRules(since: since, till: till, headers: headers)
+        return targetingRulesChange.featureFlags
+    }
+
+    func executeForTargetingRules(since: Int64, till: Int64?, headers: HttpHeaders? = nil) throws -> TargetingRulesChange {
+        Logger.d("Fetching targeting rules definitions")
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)
-        var requestResult: DataResult<SplitChange>?
+        var requestResult: DataResult<TargetingRulesChange>?
         let startTime = Date.nowMillis()
         restClient.getSplitChanges(since: since, till: till, headers: headers) { result in
-            TimeChecker.logInterval("Time to fetch feature flags", startTime: startTime)
+            TimeChecker.logInterval("Time to fetch targeting rules", startTime: startTime)
             requestResult = result
             semaphore.signal()
         }
         semaphore.wait()
 
         do {
-            if let change: SplitChange = try requestResult?.unwrap() {
+            if let targetingRulesChange: TargetingRulesChange = try requestResult?.unwrap() {
                 syncHelper.recordTelemetry(resource: resource, startTime: startTime)
-                return change
+                return targetingRulesChange
             }
 
         } catch {
             try syncHelper.throwIfError(syncHelper.handleError(error, resource: resource, startTime: startTime))
         }
 
-        throw GenericError.unknown(message: "Incorrect feature flags changes retrieved")
+        throw GenericError.unknown(message: "Incorrect targeting rules changes retrieved")
     }
 }

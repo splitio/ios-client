@@ -1,5 +1,5 @@
-{
-  "splits": [
+{"ff":{
+  "d": [
     {
       "name": "bucket_test",
       "changeNumber": 1651094278322,
@@ -434,6 +434,6 @@
       "killed": false
     }
   ],
-  "since": <FIELD_SINCE>,
-  "till": <FIELD_TILL>
-}
+  "s": <FIELD_SINCE>,
+  "t": <FIELD_TILL>
+}, "rbs": {"s": -1, "t": -1, "d": []}}

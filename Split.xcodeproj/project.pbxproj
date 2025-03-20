@@ -1087,6 +1087,12 @@
 		C539CACE2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CACD2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift */; };
 		C539CACF2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CACD2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift */; };
 		C539CAD12D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD02D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift */; };
+		C539CAD42D8B5AD00050C732 /* RuleBasedSegmentChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD22D8B5AD00050C732 /* RuleBasedSegmentChange.swift */; };
+		C539CAD52D8B5AD00050C732 /* TargetingRulesChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD32D8B5AD00050C732 /* TargetingRulesChange.swift */; };
+		C539CAD62D8B5AD00050C732 /* RuleBasedSegmentChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD22D8B5AD00050C732 /* RuleBasedSegmentChange.swift */; };
+		C539CAD72D8B5AD00050C732 /* TargetingRulesChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD32D8B5AD00050C732 /* TargetingRulesChange.swift */; };
+		C539CAD92D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD82D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift */; };
+		C539CADA2D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD82D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift */; };
 		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
 		C5977BFF2BF27375003E293A /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977BFE2BF27375003E293A /* Semver.swift */; };
 		C5977C012BF27390003E293A /* SemverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C002BF27390003E293A /* SemverTest.swift */; };
@@ -1945,6 +1951,9 @@
 		C539CACB2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentRuleBasedSegmentStorageTest.swift; sourceTree = "<group>"; };
 		C539CACD2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InRuleBasedSegmentMatcher.swift; sourceTree = "<group>"; };
 		C539CAD02D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InRuleBasedSegmentMatcherTest.swift; sourceTree = "<group>"; };
+		C539CAD22D8B5AD00050C732 /* RuleBasedSegmentChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentChange.swift; sourceTree = "<group>"; };
+		C539CAD32D8B5AD00050C732 /* TargetingRulesChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetingRulesChange.swift; sourceTree = "<group>"; };
+		C539CAD82D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessedRuleBasedSegmentChange.swift; sourceTree = "<group>"; };
 		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
 		C5977BFE2BF27375003E293A /* Semver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
 		C5977C002BF27390003E293A /* SemverTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemverTest.swift; sourceTree = "<group>"; };
@@ -2334,6 +2343,8 @@
 		3B6DEEB420EA6AE20067435E /* SplitModel */ = {
 			isa = PBXGroup;
 			children = (
+				C539CAD22D8B5AD00050C732 /* RuleBasedSegmentChange.swift */,
+				C539CAD32D8B5AD00050C732 /* TargetingRulesChange.swift */,
 				3B6DEEB520EA6AE20067435E /* Split.swift */,
 				3B6DEEB620EA6AE20067435E /* SplitBase.swift */,
 				3B6DEEB720EA6AE20067435E /* SplitChange.swift */,
@@ -3644,6 +3655,7 @@
 		C5A501C72D88A15600206F82 /* RuleBasedSegments */ = {
 			isa = PBXGroup;
 			children = (
+				C539CAD82D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift */,
 				C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */,
 				C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */,
 				C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */,
@@ -4005,6 +4017,7 @@
 				C539CAC02D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift in Sources */,
 				C539CAC12D88C7410050C732 /* RuleBasedSegmentsStorage.swift in Sources */,
 				3B6DEF6120EA6AE50067435E /* ContainsAllOfSetMatcher.swift in Sources */,
+				C539CADA2D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift in Sources */,
 				3B6DEF7320EA6AE50067435E /* Json.swift in Sources */,
 				5905D4EF255B3E7D006DA3B1 /* SplitsSnapshot.swift in Sources */,
 				599EA57A22666B84006CBA89 /* YAMLRegex.swift in Sources */,
@@ -4092,6 +4105,8 @@
 				3B6DEF8920EA6AE50067435E /* ConcurrentArrayQueue.swift in Sources */,
 				3B6DEF3520EA6AE50067435E /* SecureDataStore.swift in Sources */,
 				95715A8129D22C1B00A1B2F9 /* SplitEncryptionLevel.swift in Sources */,
+				C539CAD42D8B5AD00050C732 /* RuleBasedSegmentChange.swift in Sources */,
+				C539CAD52D8B5AD00050C732 /* TargetingRulesChange.swift in Sources */,
 				C5E967602D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */,
 				3B6DEF2720EA6AE50067435E /* Logger.swift in Sources */,
 				3B6DEF5920EA6AE50067435E /* SplitEventsManager.swift in Sources */,
@@ -4729,6 +4744,8 @@
 				C5A501D02D88A15600206F82 /* RuleBasedSegmentsDecoder.swift in Sources */,
 				C5A501D42D88A15600206F82 /* RuleBasedSegmentDao.swift in Sources */,
 				C5A501D52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift in Sources */,
+				C539CAD62D8B5AD00050C732 /* RuleBasedSegmentChange.swift in Sources */,
+				C539CAD72D8B5AD00050C732 /* TargetingRulesChange.swift in Sources */,
 				95B02CD928D0BDC20030EC8B /* Array+DynamicCodable.swift in Sources */,
 				95B02CDA28D0BDC20030EC8B /* Dictionary+DynamicCodable.swift in Sources */,
 				C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */,
@@ -4739,6 +4756,7 @@
 				95B02CDF28D0BDC20030EC8B /* ServiceConstants.swift in Sources */,
 				95B02CE028D0BDC20030EC8B /* Split.swift in Sources */,
 				95B02CE128D0BDC20030EC8B /* SplitBase.swift in Sources */,
+				C539CAD92D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift in Sources */,
 				95B02CE228D0BDC20030EC8B /* SplitChange.swift in Sources */,
 				95B02CE328D0BDC20030EC8B /* SplitModels+StringConvertible.swift in Sources */,
 				95B02CE428D0BDC20030EC8B /* BetweenMatcherData.swift in Sources */,
