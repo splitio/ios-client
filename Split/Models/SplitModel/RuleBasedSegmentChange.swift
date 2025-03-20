@@ -12,13 +12,13 @@ import Foundation
     var segments: [RuleBasedSegment]
     var since: Int64
     var till: Int64
-    
+
     enum CodingKeys: String, CodingKey {
         case segments = "d"
         case since = "s"
         case till = "t"
     }
-    
+
     init(segments: [RuleBasedSegment], since: Int64, till: Int64) {
         self.segments = segments
         self.since = since

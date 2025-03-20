@@ -165,11 +165,11 @@ class IntegrationHelper {
     }
 
     static func getChanges(fileName: String) -> SplitChange? {
-        var change: SplitChange?
+        var change: TargetingRulesChange?
         if let content = FileHelper.readDataFromFile(sourceClass: IntegrationHelper(), name: fileName, type: "json") {
-            change = try? Json.decodeFrom(json: content, to: SplitChange.self)
+            change = try? Json.decodeFrom(json: content, to: TargetingRulesChange.self)
         }
-        return change
+        return change?.featureFlags
     }
 
     static func mySegments(names: [String]) -> String {
