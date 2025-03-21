@@ -20,7 +20,7 @@ class FlagSetsIntegrationTests: XCTestCase {
     let matchingKey = IntegrationHelper.dummyUserKey
     let trafficType = "account"
     let kNeverRefreshRate = 9999999
-    var splitChange: SplitChange?
+    var splitChange: TargetingRulesChange?
     var testDb: SplitDatabase!
 
     var querystring = ""
@@ -825,10 +825,11 @@ class FlagSetsIntegrationTests: XCTestCase {
         semaphore.wait()
     }
 
-    private func loadSplitsChangeFile() -> SplitChange? {
-        let change = loadSplitChangeFile(name: "splitchanges_1")
+    private func loadSplitsChangeFile() -> TargetingRulesChange? {
+        let targetingRulesChange = loadSplitChangeFile(name: "splitchanges_1")
+        let change = targetingRulesChange?.featureFlags
         change?.since = change?.till ?? -1
-        return change
+        return TargetingRulesChange(featureFlags: change!, ruleBasedSegments: targetingRulesChange!.ruleBasedSegments)
     }
 
     private func getChangeFlagSetsJson(since: Int64,
@@ -886,9 +887,9 @@ class FlagSetsIntegrationTests: XCTestCase {
         }
     }
 
-    private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
+    private func loadSplitChangeFile(name fileName: String) -> TargetingRulesChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
+           let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
             return change
         }
         return nil
