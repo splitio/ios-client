@@ -464,7 +464,7 @@ class InitialCacheTest: XCTestCase {
 
             changes.append(change)
 
-            let json =  (try? Json.encodeToJson(change)) ?? ""
+            let json =  (try? Json.encodeToJson(TargetingRulesChange(featureFlags: change, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1)))) ?? ""
             jsonChanges.insert(json, at: i)
         }
     }
