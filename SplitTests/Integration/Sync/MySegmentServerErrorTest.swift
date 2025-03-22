@@ -43,7 +43,7 @@ class MySegmentServerErrorTest: XCTestCase {
                     self.isFirstChangesReq = false
                     let change = self.responseSlitChanges()[0]
                     self.lastChangeNumber = Int(change.till)
-                    let jsonChanges = try? Json.encodeToJson(change)
+                    let jsonChanges = try? Json.encodeToJson(TargetingRulesChange(featureFlags: change, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1)))
                     return TestDispatcherResponse(code: 200, data: Data(jsonChanges!.utf8))
                 }
                 let since = self.lastChangeNumber
