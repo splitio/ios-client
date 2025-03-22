@@ -181,7 +181,8 @@ class StreamingSplitKillTest: XCTestCase {
             split?.killed = true
             split?.defaultTreatment = "conta"
         }
-        return (try? Json.encodeToJson(change)) ?? ""
+        let targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        return (try? Json.encodeToJson(targetingRulesChange)) ?? ""
     }
 
     private func loadChanges() {

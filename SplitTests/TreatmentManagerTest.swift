@@ -452,8 +452,8 @@ class TreatmentManagerTest: XCTestCase {
 
     func loadSplitFile(name fileName: String) -> [Split] {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-           let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
-            return change.splits
+           let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            return change.featureFlags.splits
         }
         return [Split]()
     }
