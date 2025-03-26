@@ -1073,6 +1073,8 @@
 		95F7BC292C46A4C800C5F2E4 /* SecurityHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC282C46A4C800C5F2E4 /* SecurityHelper.swift */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
 		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
+		C539CADC2D93229D0050C732 /* EvaluationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CADB2D93229D0050C732 /* EvaluationOptions.swift */; };
+		C539CADD2D93229D0050C732 /* EvaluationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CADB2D93229D0050C732 /* EvaluationOptions.swift */; };
 		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
 		C5977BFF2BF27375003E293A /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977BFE2BF27375003E293A /* Semver.swift */; };
 		C5977C012BF27390003E293A /* SemverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C002BF27390003E293A /* SemverTest.swift */; };
@@ -1899,6 +1901,7 @@
 		95F7BC282C46A4C800C5F2E4 /* SecurityHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityHelper.swift; sourceTree = "<group>"; };
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
+		C539CADB2D93229D0050C732 /* EvaluationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluationOptions.swift; sourceTree = "<group>"; };
 		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
 		C5977BFE2BF27375003E293A /* Semver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
 		C5977C002BF27390003E293A /* SemverTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemverTest.swift; sourceTree = "<group>"; };
@@ -2112,6 +2115,7 @@
 		3B6DEE8020EA6ADF0067435E /* Api */ = {
 			isa = PBXGroup;
 			children = (
+				C539CADB2D93229D0050C732 /* EvaluationOptions.swift */,
 				3B6DEE7E20EA6ADF0067435E /* DefaultSplitClient.swift */,
 				9595AD7227F4D9F7006E3A54 /* EventsTracker.swift */,
 				3B6DEE8520EA6AE00067435E /* SplitClientConfig.swift */,
@@ -3925,6 +3929,7 @@
 				598EDE78224BB3E9005D4762 /* InternalSplitClient.swift in Sources */,
 				95D9446D283BF76A00D7FFED /* UniqueKeysRecorderWorker.swift in Sources */,
 				952FA1242A2A5D4D00264AB5 /* FeatureFlagsSynchronizer.swift in Sources */,
+				C539CADD2D93229D0050C732 /* EvaluationOptions.swift in Sources */,
 				95B1801A2762B2C4002DC9DF /* TelemetryStatsRecorderWorker.swift in Sources */,
 				955B595628076BB900D105CD /* MySegmentsPayloadDecoder.swift in Sources */,
 				3B6DEF6020EA6AE50067435E /* BetweenMatcher.swift in Sources */,
@@ -4592,6 +4597,7 @@
 				95B02CC828D0BDC10030EC8B /* ConcurrentArrayQueue.swift in Sources */,
 				95B02CC928D0BDC10030EC8B /* SynchronizedList.swift in Sources */,
 				95B02CCA28D0BDC10030EC8B /* ConcurrentSet.swift in Sources */,
+				C539CADC2D93229D0050C732 /* EvaluationOptions.swift in Sources */,
 				95B02CCB28D0BDC10030EC8B /* ConcurrentDictionaryList.swift in Sources */,
 				95B02CCC28D0BDC10030EC8B /* SynchronizedDictionarySet.swift in Sources */,
 				95B02CCD28D0BDC10030EC8B /* SynchronizedDictionaryComposed.swift in Sources */,

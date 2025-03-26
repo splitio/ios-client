@@ -23,6 +23,10 @@ struct DefaultImpressionsObserver: ImpressionsObserver {
     }
 
     func testAndSet(impression: KeyImpression) -> Int64? {
+        if impression.properties != nil {
+            return nil
+        }
+
         let hash = ImpressionHasher.process(impression: impression)
         let previous = storage.get(for: hash)
         storage.set(impression.time, for: hash)
