@@ -73,12 +73,10 @@ class PropertyValidatorTest: XCTestCase {
     }
 
     func testValidatePropertiesTooLarge() {
-        // Mock the size calculation to exceed the maximum allowed size
         let maxBytes = ValidationConfig.default.maximumEventPropertyBytes
         let initialSize = 100
-        let propertySize = maxBytes - initialSize + 1 // Just over the limit
+        let propertySize = maxBytes - initialSize + 1
 
-        // Create a large string to simulate a large property
         let largeValue = String(repeating: "a", count: propertySize)
         let testProperties = ["largeKey": largeValue]
 
