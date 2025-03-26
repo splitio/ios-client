@@ -23,6 +23,7 @@ struct DefaultImpressionsObserver: ImpressionsObserver {
     }
 
     func testAndSet(impression: KeyImpression) -> Int64? {
+        // impression with properties are considered unique
         if impression.properties != nil {
             return nil
         }
