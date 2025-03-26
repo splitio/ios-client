@@ -18,18 +18,14 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
     var lastRemovedSegments: Set<RuleBasedSegment>?
     var lastChangeNumber: Int64?
 
-    private let delegate: PersistentRuleBasedSegmentsStorage
+    private let delegate: PersistentRuleBasedSegmentsStorage?
 
-    init(delegate: PersistentRuleBasedSegmentsStorage) {
+    init(delegate: PersistentRuleBasedSegmentsStorage?) {
         self.delegate = delegate
     }
 
-    convenience init(database: SplitDatabase) {
-        let generalInfoStorage = DefaultGeneralInfoStorage(generalInfoDao: database.generalInfoDao)
-        self.init(delegate: DefaultPersistentRuleBasedSegmentsStorage(
-            database: database,
-            generalInfoStorage: generalInfoStorage
-        ))
+    convenience init() {
+        self.init(delegate: nil)
     }
 
     convenience init(database: SplitDatabase, generalInfoStorage: GeneralInfoStorage) {
@@ -45,15 +41,16 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
         lastRemovedSegments = toRemove
         lastChangeNumber = changeNumber
         
-        delegate.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
+        delegate?.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
     }
 
     func getSnapshot() -> RuleBasedSegmentsSnapshot {
-        return delegate.getSnapshot()
+        return delegate?.getSnapshot() ?? RuleBasedSegmentsSnapshot(changeNumber: -1, segments: [])
     }
 
     func clear() {
         clearCalled = true
-        delegate.clear()
+
+        delegate?.clear()
     }
 }

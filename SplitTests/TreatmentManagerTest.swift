@@ -69,7 +69,9 @@ class TreatmentManagerTest: XCTestCase {
                                                      flagSetsCache: flagSetsCache,
                                                      persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
                                                      hashedImpressionsStorage: HashedImpressionsStorageMock(),
-                                                     generalInfoStorage: GeneralInfoStorageMock())
+                                                     generalInfoStorage: GeneralInfoStorageMock(),
+                                                     ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
+                                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
         }
     }
 

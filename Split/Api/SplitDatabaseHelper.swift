@@ -127,6 +127,13 @@ struct SplitDatabaseHelper {
             persistentStorage: persistentHashedImpressionsStorage)
         let generalInfoStorage = openGeneralInfoStorage(database: splitDatabase)
 
+        let persistentRuleBasedSegmentsStorage = DefaultPersistentRuleBasedSegmentsStorage(
+            database: splitDatabase,
+            generalInfoStorage: generalInfoStorage)
+
+        let ruleBasedSegmentsStorage = DefaultRuleBasedSegmentsStorage(
+            persistentStorage: persistentRuleBasedSegmentsStorage)
+
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      splitsStorage: splitsStorage,
                                      persistentSplitsStorage: persistentSplitsStorage,
@@ -143,7 +150,9 @@ struct SplitDatabaseHelper {
                                      flagSetsCache: flagSetsCache,
                                      persistentHashedImpressionsStorage: persistentHashedImpressionsStorage,
                                      hashedImpressionsStorage: hashedImpressionsStorage,
-                                     generalInfoStorage: generalInfoStorage)
+                                     generalInfoStorage: generalInfoStorage,
+                                     ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
+                                     persistentRuleBasedSegmentsStorage: persistentRuleBasedSegmentsStorage)
     }
 
     static func openDatabase(dataFolderName: String,

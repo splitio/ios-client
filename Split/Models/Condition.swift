@@ -35,7 +35,7 @@ class Condition: NSObject, Codable {
         }
     }
 
-    func match(values: EvalValues, context: EvalContext) throws -> Bool {
+    func match(values: EvalValues, context: EvalContext?) throws -> Bool {
 
         if let matcherG = self.matcherGroup, let matchers = matcherG.matchers {
             var results: [Bool] = []

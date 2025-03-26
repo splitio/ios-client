@@ -17,7 +17,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
     override func setUp() {
         ruleBasedSegmentsStorage = DefaultRuleBasedSegmentsStorage(
-            persistentRuleBasedSegmentsStorage: createPersistentStorageStub()
+            persistentStorage: createPersistentStorageStub()
         )
         ruleBasedSegmentsStorage.loadLocal()
     }
@@ -30,7 +30,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
     func testInitialization() {
         XCTAssertEqual(ruleBasedSegmentsStorage.changeNumber, 123)
 
-        let segment = ruleBasedSegmentsStorage.get(segmentName: "segment_1", matchingKey: "key1")
+        let segment = ruleBasedSegmentsStorage.get(segmentName: "segment_1")
         XCTAssertNotNil(segment)
         XCTAssertEqual(segment?.name, "segment_1")
     }
@@ -39,12 +39,12 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         ruleBasedSegmentsStorage.clear()
 
         XCTAssertEqual(ruleBasedSegmentsStorage.changeNumber, -1)
-        XCTAssertNil(ruleBasedSegmentsStorage.get(segmentName: "segment_1", matchingKey: "key1"))
+        XCTAssertNil(ruleBasedSegmentsStorage.get(segmentName: "segment_1"))
 
         ruleBasedSegmentsStorage.loadLocal()
 
         XCTAssertEqual(ruleBasedSegmentsStorage.changeNumber, 123)
-        let segment = ruleBasedSegmentsStorage.get(segmentName: "segment_1", matchingKey: "key1")
+        let segment = ruleBasedSegmentsStorage.get(segmentName: "segment_1")
         XCTAssertNotNil(segment)
         XCTAssertEqual(segment?.name, "segment_1")
     }
@@ -53,14 +53,14 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         let customMock = MockPersistentRuleBasedSegmentsStorage()
         let persistentStorageStub = PersistentRuleBasedSegmentsStorageStub(delegate: customMock)
         let storage = DefaultRuleBasedSegmentsStorage(
-            persistentRuleBasedSegmentsStorage: persistentStorageStub
+            persistentStorage: persistentStorageStub
         )
         storage.loadLocal()
 
         // Initial state - verify segment_1 exists
         XCTAssertEqual(storage.changeNumber, 123)
-        XCTAssertNotNil(storage.get(segmentName: "segment_1", matchingKey: "key1"))
-        XCTAssertNil(storage.get(segmentName: "new_segment", matchingKey: "key1"))
+        XCTAssertNotNil(storage.get(segmentName: "segment_1"))
+        XCTAssertNil(storage.get(segmentName: "new_segment"))
 
         // Update the mock's data
         customMock.updateSnapshotData(
@@ -76,9 +76,9 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
         // Verify the storage was updated with the new data
         XCTAssertEqual(storage.changeNumber, 456)
-        XCTAssertNil(storage.get(segmentName: "segment_1", matchingKey: "key1"))
-        XCTAssertNotNil(storage.get(segmentName: "new_segment", matchingKey: "key1"))
-        XCTAssertNotNil(storage.get(segmentName: "segment_2", matchingKey: "key1"))
+        XCTAssertNil(storage.get(segmentName: "segment_1"))
+        XCTAssertNotNil(storage.get(segmentName: "new_segment"))
+        XCTAssertNotNil(storage.get(segmentName: "segment_2"))
     }
 
     func testLoadLocalWithArchivedSegments() {
@@ -93,18 +93,18 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
         persistentStorageStub = PersistentRuleBasedSegmentsStorageStub(delegate: customMock)
         let storage = DefaultRuleBasedSegmentsStorage(
-            persistentRuleBasedSegmentsStorage: persistentStorageStub
+            persistentStorage: persistentStorageStub
         )
         storage.loadLocal()
 
         // Verify only active segments are loaded
         XCTAssertEqual(storage.changeNumber, 789)
-        XCTAssertNotNil(storage.get(segmentName: "active_segment", matchingKey: "key1"))
-        XCTAssertNil(storage.get(segmentName: "archived_segment", matchingKey: "key1"))
+        XCTAssertNotNil(storage.get(segmentName: "active_segment"))
+        XCTAssertNil(storage.get(segmentName: "archived_segment"))
     }
     
     func testGetExistingSegment() {
-        let segment = ruleBasedSegmentsStorage.get(segmentName: "segment_1", matchingKey: "key1")
+        let segment = ruleBasedSegmentsStorage.get(segmentName: "segment_1")
 
         XCTAssertNotNil(segment)
         XCTAssertEqual(segment?.name, "segment_1")
@@ -112,13 +112,13 @@ class RuleBasedSegmentStorageTest: XCTestCase {
     }
 
     func testGetNonExistingSegment() {
-        let segment = ruleBasedSegmentsStorage.get(segmentName: "non_existing", matchingKey: "key1")
+        let segment = ruleBasedSegmentsStorage.get(segmentName: "non_existing")
 
         XCTAssertNil(segment)
     }
 
     func testGetWithCaseInsensitiveSegmentName() {
-        let segment = ruleBasedSegmentsStorage.get(segmentName: "SeGmEnT_1", matchingKey: "key1")
+        let segment = ruleBasedSegmentsStorage.get(segmentName: "SeGmEnT_1")
 
         XCTAssertNotNil(segment)
         XCTAssertEqual(segment?.name, "segment_1")
@@ -144,7 +144,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
             changeNumber: 456
         )
 
-        let segment = ruleBasedSegmentsStorage.get(segmentName: "unparsed_segment", matchingKey: "key1")
+        let segment = ruleBasedSegmentsStorage.get(segmentName: "unparsed_segment")
 
         XCTAssertNotNil(segment)
         XCTAssertEqual(segment?.name, "unparsed_segment")
@@ -190,8 +190,8 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         XCTAssertTrue(updated)
         XCTAssertEqual(ruleBasedSegmentsStorage.changeNumber, 456)
 
-        let segment1 = ruleBasedSegmentsStorage.get(segmentName: "new_segment_1", matchingKey: "key1")
-        let segment2 = ruleBasedSegmentsStorage.get(segmentName: "new_segment_2", matchingKey: "key1")
+        let segment1 = ruleBasedSegmentsStorage.get(segmentName: "new_segment_1")
+        let segment2 = ruleBasedSegmentsStorage.get(segmentName: "new_segment_2")
         XCTAssertNotNil(segment1)
         XCTAssertNotNil(segment2)
 
@@ -212,8 +212,8 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         XCTAssertTrue(updated)
         XCTAssertEqual(ruleBasedSegmentsStorage.changeNumber, 456)
 
-        let segment1 = ruleBasedSegmentsStorage.get(segmentName: "segment_1", matchingKey: "key1")
-        let segment2 = ruleBasedSegmentsStorage.get(segmentName: "segment_2", matchingKey: "key1")
+        let segment1 = ruleBasedSegmentsStorage.get(segmentName: "segment_1")
+        let segment2 = ruleBasedSegmentsStorage.get(segmentName: "segment_2")
         XCTAssertNil(segment1)
         XCTAssertNil(segment2)
 
@@ -236,8 +236,8 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         XCTAssertTrue(updated)
         XCTAssertEqual(ruleBasedSegmentsStorage.changeNumber, 456)
 
-        let addedSegment = ruleBasedSegmentsStorage.get(segmentName: "new_segment", matchingKey: "key1")
-        let removedSegment = ruleBasedSegmentsStorage.get(segmentName: "segment_1", matchingKey: "key1")
+        let addedSegment = ruleBasedSegmentsStorage.get(segmentName: "new_segment")
+        let removedSegment = ruleBasedSegmentsStorage.get(segmentName: "segment_1")
         XCTAssertNotNil(addedSegment)
         XCTAssertNil(removedSegment)
 
@@ -270,8 +270,8 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         ruleBasedSegmentsStorage.clear()
 
         XCTAssertEqual(ruleBasedSegmentsStorage.changeNumber, -1)
-        XCTAssertNil(ruleBasedSegmentsStorage.get(segmentName: "segment_1", matchingKey: "key1"))
-        XCTAssertNil(ruleBasedSegmentsStorage.get(segmentName: "segment_2", matchingKey: "key1"))
+        XCTAssertNil(ruleBasedSegmentsStorage.get(segmentName: "segment_1"))
+        XCTAssertNil(ruleBasedSegmentsStorage.get(segmentName: "segment_2"))
 
         XCTAssertTrue(persistentStorageStub.clearCalled)
     }
