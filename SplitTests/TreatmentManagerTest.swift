@@ -414,7 +414,7 @@ class TreatmentManagerTest: XCTestCase {
         }
     }
 
-    func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil, evaluator: Evaluator? = nil) -> TreatmentManager {
+    func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil, evaluator: Evaluator? = nil) -> DefaultTreatmentManager {
         let key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
         client = InternalSplitClientStub(splitsStorage: storageContainer.splitsStorage, 
                                          mySegmentsStorage: storageContainer.mySegmentsStorage,
