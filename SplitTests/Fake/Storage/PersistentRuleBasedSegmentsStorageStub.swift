@@ -25,7 +25,11 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
     }
 
     convenience init(database: SplitDatabase) {
-        self.init(delegate: DefaultPersistentRuleBasedSegmentsStorage(database: database))
+        let generalInfoStorage = DefaultGeneralInfoStorage(generalInfoDao: database.generalInfoDao)
+        self.init(delegate: DefaultPersistentRuleBasedSegmentsStorage(
+            database: database,
+            generalInfoStorage: generalInfoStorage
+        ))
     }
 
     convenience init(database: SplitDatabase, generalInfoStorage: GeneralInfoStorage) {
@@ -50,7 +54,6 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
 
     func clear() {
         clearCalled = true
-        
         delegate.clear()
     }
 }

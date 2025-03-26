@@ -8,13 +8,13 @@
 
 import Foundation
 
-protocol RuleBasedSegmentsStorage {
+protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
     var changeNumber: Int64 { get }
 
     func get(segmentName: String, matchingKey: String) -> RuleBasedSegment?
     func contains(segmentNames: Set<String>) -> Bool
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool
-    func clear()
+    func loadLocal()
 }
 
 class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
@@ -27,10 +27,9 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     init(persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage) {
         self.persistentStorage = persistentRuleBasedSegmentsStorage
         self.inMemorySegments = ConcurrentDictionary()
-        loadLocal()
     }
 
-    private func loadLocal() {
+    func loadLocal() {
         let snapshot = persistentStorage.getSnapshot()
         let active = snapshot.segments.filter { $0.status == .active }
         let archived = snapshot.segments.filter { $0.status == .archived }

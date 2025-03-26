@@ -68,4 +68,21 @@ final class GeneralInfoStorageTest: XCTestCase {
 
         XCTAssertEqual(generalInfoStorage.getFlagSpec(), "2.1")
     }
+
+    func testSetRuleBasedSegmentsChangeNumberSetsValueOnDao() throws {
+        let changeNumber: Int64 = 987654
+        generalInfoStorage.setRuleBasedSegmentsChangeNumber(changeNumber: changeNumber)
+
+        XCTAssertEqual(generalInfoDao.updatedLong, ["ruleBasedSegmentsChangeNumber": changeNumber])
+    }
+
+    func testGetRuleBasedSegmentsChangeNumberGetsValueFromDao() throws {
+        generalInfoDao.update(info: .ruleBasedSegmentsChangeNumber, longValue: 987654)
+
+        XCTAssertEqual(generalInfoStorage.getRuleBasedSegmentsChangeNumber(), 987654)
+    }
+
+    func testGetRuleBasedSegmentsChangeNumberReturnsMinusOneIfEntityIsNil() throws {
+        XCTAssertEqual(generalInfoStorage.getRuleBasedSegmentsChangeNumber(), -1)
+    }
 }
