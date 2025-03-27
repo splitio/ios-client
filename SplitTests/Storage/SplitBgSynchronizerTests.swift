@@ -3,13 +3,12 @@
 //  SplitTests
 //
 //  Created by Javier Avrudsky on 24/11/2023.
-//  Copyright 2023 Split. All rights reserved.
+//  Copyright © 2023 Split. All rights reserved.
 //
 
 import XCTest
 @testable import Split
 
-#if os(iOS) || os(tvOS)
 private typealias SyncItem = SplitBgSynchronizer.SyncItem
 private typealias BgSyncSchedule = SplitBgSynchronizer.BgSyncSchedule
 
@@ -88,4 +87,3 @@ class SplitBgSynchronizerTest: XCTestCase {
         return storage.get(item: .backgroundSyncSchedule, type: BgSyncSchedule.self) ?? [String: SyncItem]()
     }
 }
-#endif

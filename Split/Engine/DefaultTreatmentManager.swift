@@ -323,6 +323,10 @@ extension DefaultTreatmentManager {
             return nil
         }
 
+        if validationResult.validatedProperties == nil || validationResult.validatedProperties?.isEmpty == true {
+            return nil
+        }
+
         do {
             let data = try JSONSerialization.data(withJSONObject: validationResult.validatedProperties ?? [:], options: [])
             return String(data: data, encoding: .utf8)
