@@ -11,35 +11,35 @@ import Foundation
 
 class TreatmentManagerMock: TreatmentManager {
     let fSplits = ["split1", "split2"]
-    func getTreatment(_ splitName: String, attributes: [String : Any]?) -> String {
+    func getTreatment(_ splitName: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> String {
         return SplitConstants.control
     }
     
-    func getTreatmentWithConfig(_ splitName: String, attributes: [String : Any]?) -> SplitResult {
+    func getTreatmentWithConfig(_ splitName: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> SplitResult {
         return SplitResult(treatment: SplitConstants.control)
     }
     
-    func getTreatments(splits: [String], attributes: [String : Any]?) -> [String: String] {
+    func getTreatments(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: String] {
         return dicTreatment(splits: splits)
     }
     
-    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String: SplitResult] {
+    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: SplitResult] {
         return dicResult(splits: splits)
     }
     
-    func getTreatmentsByFlagSet(flagSet: String, attributes: [String : Any]?) -> [String: String] {
+    func getTreatmentsByFlagSet(flagSet: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: String] {
         return dicTreatment(splits: fSplits)
     }
     
-    func getTreatmentsByFlagSets(flagSets: [String], attributes: [String : Any]?) -> [String: String] {
+    func getTreatmentsByFlagSets(flagSets: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: String] {
         return dicTreatment(splits: fSplits)
     }
     
-    func getTreatmentsWithConfigByFlagSet(flagSet: String, attributes: [String : Any]?) -> [String: SplitResult] {
+    func getTreatmentsWithConfigByFlagSet(flagSet: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: SplitResult] {
         return dicResult(splits: fSplits)
     }
     
-    func getTreatmentsWithConfigByFlagSets(flagSets: [String], attributes: [String : Any]?) -> [String: SplitResult] {
+    func getTreatmentsWithConfigByFlagSets(flagSets: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: SplitResult] {
         return dicResult(splits: fSplits)
     }
     
@@ -62,4 +62,3 @@ class TreatmentManagerMock: TreatmentManager {
         return result
     }
 }
-

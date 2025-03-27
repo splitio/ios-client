@@ -197,7 +197,7 @@ class TelemetryTest: XCTestCase {
         return values.reduce(0)  { return $0 + $1 }
     }
 
-    func createTreatmentManager(userKey: Key) -> TreatmentManager {
+    func createTreatmentManager(userKey: Key) -> DefaultTreatmentManager {
 
         let storageContainer = TestingHelper.createStorageContainer()
         let splitHelper = SplitHelper()

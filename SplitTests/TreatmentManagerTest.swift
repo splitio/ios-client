@@ -399,6 +399,61 @@ class TreatmentManagerTest: XCTestCase {
         XCTAssertEqual(1, telemetryProducer.methodLatencies[.treatmentsWithConfig])
     }
 
+    func testEvaluationWithProperties() {
+        let matchingKey = "the_key"
+        let splitName = "FACUNDO_TEST"
+        let properties = ["key1": "value1", "key2": 123, "key3": true] as [String: Any]
+        let evaluationOptions = EvaluationOptions(properties: properties)
+
+        let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
+        _ = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil, evaluationOptions: evaluationOptions)
+        let impression = impressionsLogger.impressions[splitName]
+
+        XCTAssertNotNil(impression)
+        XCTAssertNotNil(impression?.properties)
+
+        if let propertiesJson = impression?.properties, let data = propertiesJson.data(using: .utf8) {
+            do {
+                let deserializedProperties = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                XCTAssertNotNil(deserializedProperties)
+                XCTAssertEqual(deserializedProperties?["key1"] as? String, "value1")
+                XCTAssertEqual(deserializedProperties?["key2"] as? Int, 123)
+                XCTAssertEqual(deserializedProperties?["key3"] as? Bool, true)
+            } catch {
+                XCTFail("Failed to deserialize properties JSON: \(error)")
+            }
+        } else {
+            XCTFail("Properties JSON is nil or invalid")
+        }
+    }
+
+    func testEvaluationWithEmptyProperties() {
+        let matchingKey = "the_key"
+        let splitName = "FACUNDO_TEST"
+        let emptyProperties = [String: Any]()
+        let evaluationOptions = EvaluationOptions(properties: emptyProperties)
+
+        let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
+        _ = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil, evaluationOptions: evaluationOptions)
+        let impression = impressionsLogger.impressions[splitName]
+
+        XCTAssertNotNil(impression)
+        XCTAssertNil(impression?.properties, "Empty properties should result in nil properties in the impression")
+    }
+
+    func testEvaluationWithNilProperties() {
+        let matchingKey = "the_key"
+        let splitName = "FACUNDO_TEST"
+        let evaluationOptions = EvaluationOptions(properties: nil)
+
+        let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
+        _ = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil, evaluationOptions: evaluationOptions)
+        let impression = impressionsLogger.impressions[splitName]
+
+        XCTAssertNotNil(impression)
+        XCTAssertNil(impression?.properties, "Nil properties should result in nil properties in the impression")
+    }
+
     func assertControl(splitList: [String], treatment: String, treatmentList: [String:String], splitResult: SplitResult?, splitResultList: [String:SplitResult]) {
         XCTAssertEqual(SplitConstants.control, treatment)
 
@@ -414,7 +469,7 @@ class TreatmentManagerTest: XCTestCase {
         }
     }
 
-    func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil, evaluator: Evaluator? = nil) -> TreatmentManager {
+    func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil, evaluator: Evaluator? = nil) -> DefaultTreatmentManager {
         let key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
         client = InternalSplitClientStub(splitsStorage: storageContainer.splitsStorage, 
                                          mySegmentsStorage: storageContainer.mySegmentsStorage,
