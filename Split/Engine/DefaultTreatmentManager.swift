@@ -246,12 +246,13 @@ extension DefaultTreatmentManager {
                                              validationTag: validationTag)
             logImpression(label: result.label, changeNumber: result.changeNumber,
                           treatment: result.treatment, splitName: trimmedSplitName, attributes: mergedAttributes,
-                          impressionsDisabled: result.impressionsDisabled, evaluationOptions: evaluationOptions)
+                          impressionsDisabled: result.impressionsDisabled, validationTag: validationTag,
+                          evaluationOptions: evaluationOptions)
             return SplitResult(treatment: result.treatment, config: result.configuration)
         } catch {
             logImpression(label: ImpressionsConstants.exception, treatment: SplitConstants.control,
                           splitName: trimmedSplitName, attributes: mergedAttributes, impressionsDisabled: false,
-                          evaluationOptions: evaluationOptions)
+                          validationTag: validationTag, evaluationOptions: evaluationOptions)
             return SplitResult(treatment: SplitConstants.control)
         }
     }
@@ -278,12 +279,11 @@ extension DefaultTreatmentManager {
     private func logImpression(label: String, changeNumber: Int64? = nil,
                                treatment: String, splitName: String, attributes: [String: Any]? = nil,
                                impressionsDisabled: Bool,
+                               validationTag: String,
                                evaluationOptions: EvaluationOptions? = nil) {
 
-        var propertiesJson: String? = nil
-        if let properties = evaluationOptions?.properties {
-            propertiesJson = properties.toJSONString()
-        }
+        let propertiesJson = serializeProperties(evaluationOptions?.properties, validationTag: validationTag)
+
         let keyImpression = KeyImpression(featureName: splitName,
                                           keyName: key.matchingKey,
                                           bucketingKey: key.bucketingKey,
@@ -299,6 +299,21 @@ extension DefaultTreatmentManager {
             let impression = keyImpression.toImpression()
             impression.attributes = attributes
             externalImpressionHandler(impression)
+        }
+    }
+
+    private func serializeProperties(_ properties: [String: Any]?, validationTag: String) -> String? {
+        // nil or empty properties are skipped
+        guard let properties = properties, !properties.isEmpty else {
+            return nil
+        }
+
+        do {
+            let data = try JSONSerialization.data(withJSONObject: properties, options: [])
+            return String(data: data, encoding: .utf8)
+        } catch {
+            validationLogger.e(message: "Failed to serialize properties to JSON", tag: validationTag)
+            return nil
         }
     }
 
