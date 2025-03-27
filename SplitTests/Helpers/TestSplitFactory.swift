@@ -181,11 +181,12 @@ class TestSplitFactory: SplitFactory {
             mySegmentsFetcher: apiFacade.mySegmentsFetcher,
             telemetryProducer: storageContainer.telemetryStorage)
 
+        let logger = DefaultValidationMessageLogger()
         let eventsTracker = DefaultEventsTracker(config: splitConfig,
                                                  synchronizer: synchronizer,
                                                  eventValidator: DefaultEventValidator(splitsStorage: storageContainer.splitsStorage),
-                                                 anyValueValidator: DefaultAnyValueValidator(),
-                                                 validationLogger: DefaultValidationMessageLogger(),
+                                                 propertyValidator: DefaultPropertyValidator(anyValueValidator: DefaultAnyValueValidator(), validationLogger: logger),
+                                                 validationLogger: logger,
                                                  telemetryProducer: storageContainer.telemetryStorage)
 
         userConsentManager = DefaultUserConsentManager(splitConfig: splitConfig,

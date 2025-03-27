@@ -353,10 +353,11 @@ extension SplitComponentFactory {
         let anyValueValidator = DefaultAnyValueValidator()
         let validationLogger = DefaultValidationMessageLogger()
         let eventsValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
+        let propertyValidator = getPropertyValidator(validationLogger: validationLogger)
         let component: EventsTracker = DefaultEventsTracker(config: splitClientConfig,
                                                             synchronizer: try getSynchronizer(),
                                                             eventValidator: eventsValidator,
-                                                            anyValueValidator: anyValueValidator,
+                                                            propertyValidator: propertyValidator,
                                                             validationLogger: validationLogger,
                                                             telemetryProducer: storageContainer.telemetryStorage)
         catalog.add(component: component)
@@ -367,7 +368,24 @@ extension SplitComponentFactory {
         if let obj = catalog.get(for: EventsTracker.self) as? EventsTracker {
             return obj
         }
-        throw ComponentError.notFound(name: "Events Tracker")
+        return try buildEventsTracker()
+    }
+
+    func buildPropertyValidator(validationLogger: ValidationMessageLogger) -> PropertyValidator {
+        let anyValueValidator = DefaultAnyValueValidator()
+        let component: PropertyValidator = DefaultPropertyValidator(
+            anyValueValidator: anyValueValidator,
+            validationLogger: validationLogger
+        )
+        catalog.add(component: component)
+        return component
+    }
+
+    func getPropertyValidator(validationLogger: ValidationMessageLogger) -> PropertyValidator {
+        if let obj = catalog.get(for: PropertyValidator.self) as? PropertyValidator {
+            return obj
+        }
+        return buildPropertyValidator(validationLogger: validationLogger)
     }
 
     func getImpressionsTracker() throws -> ImpressionsTracker {
