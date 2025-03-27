@@ -3,7 +3,7 @@
 //  Split
 //
 //  Created by Javier Avrudsky on 30-Mar-2022.
-//  Copyright © 2022 Split. All rights reserved.
+//  Copyright 2022 Split. All rights reserved.
 //
 
 import Foundation

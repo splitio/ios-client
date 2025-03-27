@@ -35,6 +35,7 @@ class DefaultClientManager: SplitClientManager {
     private let splitManager: SplitManager
     private let byKeyRegistry: ByKeyRegistry
     private let mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory
+    private let propertyValidator: PropertyValidator
     weak var splitFactory: SplitFactory?
 
     init(config: SplitClientConfig,
@@ -49,6 +50,7 @@ class DefaultClientManager: SplitClientManager {
          eventsManagerCoordinator: SplitEventsManagerCoordinator,
          mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory,
          telemetryStopwatch: Stopwatch?,
+         propertyValidator: PropertyValidator,
          factory: SplitFactory) {
 
         self.defaultKey = key
@@ -69,6 +71,7 @@ class DefaultClientManager: SplitClientManager {
         self.telemetryStopwatch = telemetryStopwatch
 
         self.eventsTracker = eventsTracker
+        self.propertyValidator = propertyValidator
         self.splitFactory = factory
 
         defaultClient = createClient(forKey: key)
@@ -155,17 +158,21 @@ class DefaultClientManager: SplitClientManager {
 
     private func buildTreatmentManager(key: Key,
                                        eventsManager: SplitEventsManager) -> TreatmentManager {
+        let validationLogger = DefaultValidationMessageLogger()
+
         return DefaultTreatmentManager(
             evaluator: evaluator,
             key: key,
             splitConfig: config,
             eventsManager: eventsManager,
-            impressionLogger: synchronizer, telemetryProducer: storageContainer.telemetryStorage,
+            impressionLogger: synchronizer,
+            telemetryProducer: storageContainer.telemetryStorage,
             storageContainer: storageContainer,
             flagSetsValidator: DefaultFlagSetsValidator(telemetryProducer: storageContainer.telemetryStorage),
             keyValidator: DefaultKeyValidator(),
             splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
-            validationLogger: DefaultValidationMessageLogger())
+            validationLogger: validationLogger,
+            propertyValidator: propertyValidator)
     }
 
     private func addToByKeyRegistry(key: Key,

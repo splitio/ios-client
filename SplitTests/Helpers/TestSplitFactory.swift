@@ -182,10 +182,11 @@ class TestSplitFactory: SplitFactory {
             telemetryProducer: storageContainer.telemetryStorage)
 
         let logger = DefaultValidationMessageLogger()
+        let propertyValidator = DefaultPropertyValidator(anyValueValidator: DefaultAnyValueValidator(), validationLogger: logger)
         let eventsTracker = DefaultEventsTracker(config: splitConfig,
                                                  synchronizer: synchronizer,
                                                  eventValidator: DefaultEventValidator(splitsStorage: storageContainer.splitsStorage),
-                                                 propertyValidator: DefaultPropertyValidator(anyValueValidator: DefaultAnyValueValidator(), validationLogger: logger),
+                                                 propertyValidator: propertyValidator,
                                                  validationLogger: logger,
                                                  telemetryProducer: storageContainer.telemetryStorage)
 
@@ -207,6 +208,7 @@ class TestSplitFactory: SplitFactory {
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: nil,
+                                             propertyValidator: propertyValidator,
                                              factory: self)
     }
 

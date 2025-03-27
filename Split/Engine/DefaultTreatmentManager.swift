@@ -22,6 +22,7 @@ class DefaultTreatmentManager: TreatmentManager {
     private let attributesStorage: AttributesStorage
     private let flagSetsCache: FlagSetsCache
     private let flagSetsValidator: FlagSetsValidator
+    private let propertyValidator: PropertyValidator
 
     private var isDestroyed = false
 
@@ -35,7 +36,8 @@ class DefaultTreatmentManager: TreatmentManager {
          flagSetsValidator: FlagSetsValidator,
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
-         validationLogger: ValidationMessageLogger) {
+         validationLogger: ValidationMessageLogger,
+         propertyValidator: PropertyValidator) {
 
         self.key = key
         self.splitConfig = splitConfig
@@ -49,6 +51,7 @@ class DefaultTreatmentManager: TreatmentManager {
         self.keyValidator = keyValidator
         self.splitValidator = splitValidator
         self.validationLogger = validationLogger
+        self.propertyValidator = propertyValidator
     }
 
     func getTreatmentWithConfig(_ splitName: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions? = nil) -> SplitResult {
@@ -308,8 +311,20 @@ extension DefaultTreatmentManager {
             return nil
         }
 
+        // Validate properties using PropertyValidator
+        let validationResult = propertyValidator.validate(
+            properties: properties,
+            initialSizeInBytes: 0,
+            validationTag: validationTag
+        )
+
+        if !validationResult.isValid {
+            validationLogger.e(message: "Properties validation failed: \(validationResult.errorMessage ?? "Unknown error")", tag: validationTag)
+            return nil
+        }
+
         do {
-            let data = try JSONSerialization.data(withJSONObject: properties, options: [])
+            let data = try JSONSerialization.data(withJSONObject: validationResult.validatedProperties ?? [:], options: [])
             return String(data: data, encoding: .utf8)
         } catch {
             validationLogger.e(message: "Failed to serialize properties to JSON", tag: validationTag)

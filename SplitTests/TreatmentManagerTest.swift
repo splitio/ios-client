@@ -495,7 +495,8 @@ class TreatmentManagerTest: XCTestCase {
                                        flagSetsValidator: flagSetsValidator,
                                        keyValidator: DefaultKeyValidator(),
                                        splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
-                                       validationLogger: validationLogger)
+                                       validationLogger: validationLogger,
+                                       propertyValidator: DefaultPropertyValidator(anyValueValidator: DefaultAnyValueValidator(), validationLogger: validationLogger))
     }
 
     func loadSplitsFile() -> [Split] {
