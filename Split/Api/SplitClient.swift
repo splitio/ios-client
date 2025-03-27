@@ -23,6 +23,15 @@ public typealias SplitAction = () -> Void
 
     @objc(getTreatmentsWithConfigForSplits:attributes:)
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult]
+    
+    // MARK: Evaluation with Properties
+    func getTreatment(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> String
+    @objc(getTreatmentsForSplits:attributes:evaluationOptions:) func getTreatments(splits: [String],
+                                                                 attributes: [String: Any]?,
+                                                                 evaluationOptions: EvaluationOptions?) -> [String: String]
+    func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult
+    @objc(getTreatmentsWithConfigForSplits:attributes:evaluationOptions:)
+    func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
 
     func on(event: SplitEvent, execute action: @escaping SplitAction)
     func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction)
@@ -80,4 +89,10 @@ public typealias SplitAction = () -> Void
     func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String]
     func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult]
     func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult]
+    
+    // MARK: Evaluation with flagsets and properties
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String]
+    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String]
+    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
+    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
 }

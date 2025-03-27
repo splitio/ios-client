@@ -19,7 +19,15 @@ class SplitClientStub: SplitClient {
         return SplitConstants.control
     }
     
+    func getTreatment(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> String {
+        return SplitConstants.control
+    }
+    
     func getTreatments(splits: [String], attributes: [String : Any]?) -> [String : String] {
+        return ["feature": SplitConstants.control]
+    }
+    
+    func getTreatments(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
         return ["feature": SplitConstants.control]
     }
     
@@ -31,7 +39,15 @@ class SplitClientStub: SplitClient {
         return SplitResult(treatment: SplitConstants.control)
     }
     
+    func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult {
+        return SplitResult(treatment: SplitConstants.control)
+    }
+    
     func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+        return ["feature": SplitResult(treatment: SplitConstants.control)]
+    }
+    
+    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
         return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
     
@@ -103,20 +119,36 @@ class SplitClientStub: SplitClient {
         return true
     }
 
-    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : String] {
-        return [:]
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
+        return ["feature": SplitConstants.control]
     }
-
-    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : String] {
-        return [:]
+    
+    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String] {
+        return ["feature": SplitConstants.control]
     }
-
-    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : SplitResult] {
-        return [:]
+    
+    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
+        return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
-
-    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : SplitResult] {
-        return [:]
+    
+    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult] {
+        return ["feature": SplitResult(treatment: SplitConstants.control)]
+    }
+    
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return ["feature": SplitConstants.control]
+    }
+    
+    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return ["feature": SplitConstants.control]
+    }
+    
+    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+        return ["feature": SplitResult(treatment: SplitConstants.control)]
+    }
+    
+    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+        return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
 
     func flush() {

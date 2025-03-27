@@ -71,9 +71,17 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     public func getTreatment(_ split: String) -> String {
         return getTreatment(split, attributes: nil)
     }
+    
+    public func getTreatment(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> String {
+        return getTreatmentWithConfig(split, attributes: attributes, evaluationOptions: evaluationOptions).treatment
+    }
 
     public func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String] {
         return getTreatmentsWithConfig(splits: splits, attributes: nil).mapValues({ $0.treatment })
+    }
+    
+    public func getTreatments(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return getTreatmentsWithConfig(splits: splits, attributes: attributes, evaluationOptions: evaluationOptions).mapValues({ $0.treatment })
     }
 
     public func getTreatmentWithConfig(_ split: String) -> SplitResult {
@@ -92,11 +100,23 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         }
         return SplitResult(treatment: result!.treatment, config: result!.configuration)
     }
+    
+    public func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult {
+        return getTreatmentWithConfig(split, attributes: attributes)
+    }
 
     public func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult] {
         var results = [String: SplitResult]()
         for split in splits {
-            results[split] = getTreatmentWithConfig(split)
+            results[split] = getTreatmentWithConfig(split, attributes: attributes)
+        }
+        return results
+    }
+    
+    public func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+        var results = [String: SplitResult]()
+        for split in splits {
+            results[split] = getTreatmentWithConfig(split, attributes: attributes, evaluationOptions: evaluationOptions)
         }
         return results
     }
@@ -213,13 +233,29 @@ extension LocalhostSplitClient {
         return [String: String]()
     }
 
+    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
+        return [String: SplitResult]()
+    }
+
+    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult] {
+        return [String: SplitResult]()
+    }
+
+    public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return [String: String]()
+    }
+
+    public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return [String: String]()
+    }
+
     public func getTreatmentsWithConfigByFlagSet(_ flagSet: String,
-                                                 attributes: [String: Any]?) -> [String: SplitResult] {
+                                                 attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 
     public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
-                                                  attributes: [String: Any]?) -> [String: SplitResult] {
+                                                  attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 }

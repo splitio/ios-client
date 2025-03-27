@@ -3,7 +3,7 @@
 //  SplitTests
 //
 //  Created by Javier L. Avrudsky on 27/03/2019.
-//  Copyright © 2019 Split. All rights reserved.
+//  Copyright 2019 Split. All rights reserved.
 //
 
 import Foundation
@@ -31,7 +31,15 @@ class InternalSplitClientStub: InternalSplitClient {
         return ""
     }
     
+    func getTreatment(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> String {
+        return ""
+    }
+    
     func getTreatments(splits: [String], attributes: [String : Any]?) -> [String : String] {
+        return ["":""]
+    }
+    
+    func getTreatments(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
         return ["":""]
     }
     
@@ -43,7 +51,15 @@ class InternalSplitClientStub: InternalSplitClient {
         return getTreatmentWithConfig(split)
     }
     
+    func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult {
+        return getTreatmentWithConfig(split)
+    }
+    
     func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+        return ["": SplitResult(treatment: SplitConstants.control)]
+    }
+    
+    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
         return ["": SplitResult(treatment: SplitConstants.control)]
     }
     
@@ -121,6 +137,22 @@ class InternalSplitClientStub: InternalSplitClient {
     }
 
     func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+        return [:]
+    }
+
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
+        return [:]
+    }
+
+    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
+        return [:]
+    }
+
+    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
+        return [:]
+    }
+
+    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
         return [:]
     }
 
