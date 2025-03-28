@@ -43,18 +43,6 @@ class InternalSplitClientStub: InternalSplitClient {
         return ["":""]
     }
 
-    func getTreatment(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> String {
-        return ""
-    }
-
-    func getTreatments(splits: [String], attributes: [String : Any]?) -> [String : String] {
-        return ["":""]
-    }
-
-    func getTreatments(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
-        return ["":""]
-    }
-
     func getTreatmentWithConfig(_ split: String) -> SplitResult {
         return SplitResult(treatment: SplitConstants.control)
     }
@@ -71,18 +59,6 @@ class InternalSplitClientStub: InternalSplitClient {
         return ["": SplitResult(treatment: SplitConstants.control)]
     }
     
-    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
-        return ["": SplitResult(treatment: SplitConstants.control)]
-    }
-
-    func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult {
-        return getTreatmentWithConfig(split)
-    }
-
-    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
-        return ["": SplitResult(treatment: SplitConstants.control)]
-    }
-
     func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
         return ["": SplitResult(treatment: SplitConstants.control)]
     }

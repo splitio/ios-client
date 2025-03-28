@@ -22,6 +22,7 @@ class TreatmentManagerTest: XCTestCase {
     var impressionsLogger: ImpressionsLoggerStub!
     var telemetryProducer: TelemetryStorageStub!
     var flagSetsCache: FlagSetsCacheMock!
+    var propertyValidator: PropertyValidatorStub!
 
     var validationLoggerStub: ValidationMessageLoggerStub {
         return validationLogger as! ValidationMessageLoggerStub
@@ -34,6 +35,7 @@ class TreatmentManagerTest: XCTestCase {
         attributesStorage = DefaultAttributesStorage()
         telemetryProducer = TelemetryStorageStub()
         flagSetsCache = FlagSetsCacheMock()
+        propertyValidator = PropertyValidatorStub()
 
         flagSetsCache.flagSets = ["set1": ["TEST_SETS_1"],
                                   "set2": ["TEST_SETS_1", "TEST_SETS_2"],
@@ -454,6 +456,39 @@ class TreatmentManagerTest: XCTestCase {
         XCTAssertNil(impression?.properties, "Nil properties should result in nil properties in the impression")
     }
 
+    func testPropertiesAreSentToValidator() {
+        let matchingKey = "the_key"
+        let splitName = "Test_Save_1"
+        
+        let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
+        
+        let properties: [String: Any] = [
+            "string": "test",
+            "number": 123,
+            "boolean": true
+        ]
+        
+        let evaluationOptions = EvaluationOptions(properties: properties)
+        
+        propertyValidator.validateCalled = false
+        propertyValidator.lastPropertiesValidated = nil
+        
+        _ = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil, evaluationOptions: evaluationOptions)
+        
+        XCTAssertTrue(propertyValidator.validateCalled, "PropertyValidator.validate() should be called")
+        XCTAssertNotNil(propertyValidator.lastPropertiesValidated, "Properties should be passed to the validator")
+        
+        if let validatedProps = propertyValidator.lastPropertiesValidated {
+            XCTAssertEqual(validatedProps["string"] as? String, "test")
+            XCTAssertEqual(validatedProps["number"] as? Int, 123)
+            XCTAssertEqual(validatedProps["boolean"] as? Bool, true)
+        }
+        
+        let impression = impressionsLogger.impressions[splitName]
+        XCTAssertNotNil(impression, "Impression should be logged")
+        XCTAssertNotNil(impression?.properties, "Properties should be included in the impression")
+    }
+
     func assertControl(splitList: [String], treatment: String, treatmentList: [String:String], splitResult: SplitResult?, splitResultList: [String:SplitResult]) {
         XCTAssertEqual(SplitConstants.control, treatment)
 
@@ -496,7 +531,7 @@ class TreatmentManagerTest: XCTestCase {
                                        keyValidator: DefaultKeyValidator(),
                                        splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
                                        validationLogger: validationLogger,
-                                       propertyValidator: DefaultPropertyValidator(anyValueValidator: DefaultAnyValueValidator(), validationLogger: validationLogger))
+                                       propertyValidator: propertyValidator)
     }
 
     func loadSplitsFile() -> [Split] {
