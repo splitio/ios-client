@@ -3,7 +3,7 @@
 //  SplitTests
 //
 //  Created by Javier L. Avrudsky on 27/03/2019.
-//  Copyright 2019 Split. All rights reserved.
+//  Copyright © 2019 Split. All rights reserved.
 //
 
 import Foundation

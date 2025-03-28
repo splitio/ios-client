@@ -245,7 +245,6 @@ class SplitClientTests: XCTestCase {
         }
     }
 
-    // Helper method to create test properties
     private func createTestProperties() -> [String: Any] {
         return [
             "string": "test",
@@ -254,7 +253,6 @@ class SplitClientTests: XCTestCase {
         ]
     }
 
-    // Generic test method to verify evaluationOptions are passed correctly
     private func testEvaluationOptionsPassedCorrectly(
         resetMock: (TreatmentManagerMock) -> Void,
         callMethod: (EvaluationOptions) -> Void,
