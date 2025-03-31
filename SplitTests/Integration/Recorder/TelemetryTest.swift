@@ -230,7 +230,8 @@ class TelemetryTest: XCTestCase {
                                        flagSetsValidator: FlagSetsValidatorMock(),
                                        keyValidator: DefaultKeyValidator(),
                                        splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
-                                       validationLogger: ValidationMessageLoggerStub())
+                                       validationLogger: ValidationMessageLoggerStub(),
+                                       propertyValidator: PropertyValidatorStub())
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {

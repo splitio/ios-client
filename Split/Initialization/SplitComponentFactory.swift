@@ -23,6 +23,7 @@ class SplitComponentFactory {
     private var splitsFilterQueryString = ""
     private var flagsSpec = Spec.flagsSpec
     private var catalog = SplitComponentCatalog()
+    private let validationLogger = DefaultValidationMessageLogger()
 
     init(splitClientConfig: SplitClientConfig, apiKey: String, userKey: String) {
         self.splitClientConfig = splitClientConfig
@@ -351,9 +352,8 @@ extension SplitComponentFactory {
     func buildEventsTracker() throws -> EventsTracker {
         let storageContainer = try getSplitStorageContainer()
         let anyValueValidator = DefaultAnyValueValidator()
-        let validationLogger = DefaultValidationMessageLogger()
         let eventsValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
-        let propertyValidator = getPropertyValidator(validationLogger: validationLogger)
+        let propertyValidator = getPropertyValidator()
         let component: EventsTracker = DefaultEventsTracker(config: splitClientConfig,
                                                             synchronizer: try getSynchronizer(),
                                                             eventValidator: eventsValidator,
@@ -381,7 +381,7 @@ extension SplitComponentFactory {
         return component
     }
 
-    func getPropertyValidator(validationLogger: ValidationMessageLogger) -> PropertyValidator {
+    func getPropertyValidator() -> PropertyValidator {
         if let obj = catalog.get(for: PropertyValidator.self) as? PropertyValidator {
             return obj
         }
