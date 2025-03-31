@@ -30,7 +30,7 @@ class InternalSplitClientStub: InternalSplitClient {
     func getTreatment(_ split: String) -> String {
         return SplitConstants.control
     }
-    
+
     func getTreatment(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> String {
         return SplitConstants.control
     }
