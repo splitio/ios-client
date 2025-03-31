@@ -40,57 +40,17 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         requestBodies = []
     }
 
-    // MARK: - OPTIMIZED Mode Tests
-
-    func testOptimizedModeWithProperties() {
-        // Test that impressions with properties are not deduped in OPTIMIZED mode
+    func testImpressionsWithPropertiesAreNotDedupedInOptimizedMode() {
         runTest(mode: "OPTIMIZED", withProperties: true, expectDeduplication: false)
     }
 
-    func testOptimizedModeWithoutProperties() {
+    func testImpressionsWithoutPropertiesAreDedupedInOptimizedMode() {
         // Test that impressions without properties are deduped in OPTIMIZED mode
         runTest(mode: "OPTIMIZED", withProperties: false, expectDeduplication: true)
     }
 
-    func testOptimizedModePropertiesInRequestBody() {
-        // Test that properties are properly included in the JSON request body
-        let notificationHelper = NotificationHelperStub()
-        db = TestingHelper.createTestDatabase(name: "test")
-
-        let splitConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 30
-        splitConfig.segmentsRefreshRate = 30
-        splitConfig.sdkReadyTimeOut = 60000
-        splitConfig.eventsPerPush = 999999
-        splitConfig.eventsQueueSize = 99999
-        splitConfig.eventsPushRate = 99999
-        splitConfig.logLevel = .verbose
-        splitConfig.impressionsQueueSize = 1
-        splitConfig.impressionsChunkSize = 1
-        splitConfig.impressionsMode = "OPTIMIZED"
-
-        let key: Key = Key(matchingKey: userKey)
-        let builder = DefaultSplitFactoryBuilder()
-        _ = builder.setHttpClient(httpClient)
-        _ = builder.setReachabilityChecker(ReachabilityMock())
-        _ = builder.setTestDatabase(db)
-        _ = builder.setNotificationHelper(notificationHelper)
-        let factory = builder.setApiKey(apiKey).setKey(key)
-            .setConfig(splitConfig).build()!
-
-        let client = factory.client
-
-        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-
-        client.on(event: SplitEvent.sdkReady) {
-            sdkReadyExpectation.fulfill()
-        }
-
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
-            sdkReadyExpectation.fulfill()
-        }
-
-        wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
+    func testPropertiesAreIncludedInRequestBody() {
+        let client = setupClient(mode: "OPTIMIZED")
 
         // Create test properties
         let properties: [String: Any] = ["test": "value", "number": 123]
@@ -120,53 +80,12 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         }
         XCTAssertTrue(containsPropertiesValue, "Request body should contain the correct property values")
         
-        let semaphore = DispatchSemaphore(value: 0)
-        client.destroy(completion: {
-            _ = semaphore.signal()
-        })
-        semaphore.wait()
+        cleanupClient(client)
     }
 
-    // MARK: - NONE Mode Test
-
-    func testNoneModeNoImpressionTracking() {
+    func testNoImpressionsAreTrackedInNoneMode() {
         // Test that no impressions are tracked in NONE mode
-        let notificationHelper = NotificationHelperStub()
-        db = TestingHelper.createTestDatabase(name: "test")
-
-        let splitConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 30
-        splitConfig.segmentsRefreshRate = 30
-        splitConfig.sdkReadyTimeOut = 60000
-        splitConfig.eventsPerPush = 999999
-        splitConfig.eventsQueueSize = 99999
-        splitConfig.eventsPushRate = 99999
-        splitConfig.impressionsQueueSize = 1
-        splitConfig.impressionsChunkSize = 1
-        splitConfig.impressionsMode = "NONE"
-
-        let key: Key = Key(matchingKey: userKey)
-        let builder = DefaultSplitFactoryBuilder()
-        _ = builder.setHttpClient(httpClient)
-        _ = builder.setReachabilityChecker(ReachabilityMock())
-        _ = builder.setTestDatabase(db)
-        _ = builder.setNotificationHelper(notificationHelper)
-        let factory = builder.setApiKey(apiKey).setKey(key)
-            .setConfig(splitConfig).build()!
-
-        let client = factory.client
-
-        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-
-        client.on(event: SplitEvent.sdkReady) {
-            sdkReadyExpectation.fulfill()
-        }
-
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
-            sdkReadyExpectation.fulfill()
-        }
-
-        wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
+        let client = setupClient(mode: "NONE")
 
         // Create test properties
         let properties: [String: Any] = ["test": "value", "number": 123]
@@ -191,30 +110,57 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         // Verify no impressions were tracked
         XCTAssertEqual(0, requestBodies.count, "No impression requests should be made in NONE mode")
         
-        let semaphore = DispatchSemaphore(value: 0)
-        client.destroy(completion: {
-            _ = semaphore.signal()
-        })
-        semaphore.wait()
+        cleanupClient(client)
     }
 
     // MARK: - Helper Methods
 
     private func runTest(mode: String, withProperties: Bool, expectDeduplication: Bool) {
+        let client = setupClient(mode: mode)
+        
+        let featureName = "FACUNDO_TEST"
+        let evalOptions = withProperties ?
+            EvaluationOptions(properties: ["test": "value"]) : nil
+
+        let treatmentTimes = 5
+        for _ in 0..<treatmentTimes {
+            _ = client.getTreatment(featureName, attributes: nil, evaluationOptions: evalOptions)
+        }
+
+        impExp = XCTestExpectation()
+        
+        if expectDeduplication {
+            countExp = XCTestExpectation()
+        }
+        
+        client.flush()
+        
+        wait(for: [impExp!], timeout: 10)
+        if expectDeduplication {
+            wait(for: [countExp!], timeout: 10)
+            sleep(1)
+        }
+
+        // Check the number of impressions recorded
+        let expectedCount = 1
+        XCTAssertEqual(expectedCount, impressions[featureName]?.count ?? 0,
+                       "Expected \(expectedCount) impressions for feature \(featureName)")
+        
+        if expectDeduplication {
+            XCTAssertEqual(treatmentTimes - 1, counts[featureName] ?? 0,
+                            "Expected \(treatmentTimes - 1) impression count for feature \(featureName)")
+        }
+
+        cleanupClient(client)
+    }
+    
+    private func setupClient(mode: String) -> SplitClient {
         let notificationHelper = NotificationHelperStub()
         db = TestingHelper.createTestDatabase(name: "test")
 
-        let splitConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 30
-        splitConfig.segmentsRefreshRate = 30
-        splitConfig.sdkReadyTimeOut = 60000
-        splitConfig.eventsPerPush = 999999
-        splitConfig.eventsQueueSize = 99999
-        splitConfig.eventsPushRate = 99999
-        splitConfig.impressionsQueueSize = 1
-        splitConfig.impressionsChunkSize = 1
+        let splitConfig = createSplitConfig()
         splitConfig.impressionsMode = mode
-
+        
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
@@ -237,38 +183,25 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         }
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
-
-        let featureName = "FACUNDO_TEST"
-        let evalOptions = withProperties ?
-            EvaluationOptions(properties: ["test": "value"]) : nil
-
-        let treatmentTimes = 5
-        for _ in 0..<treatmentTimes {
-            _ = client.getTreatment(featureName, attributes: nil, evaluationOptions: evalOptions)
-        }
-
-        impExp = XCTestExpectation()
-        if expectDeduplication {
-            countExp = XCTestExpectation()
-        }
-        client.flush()
         
-        wait(for: [impExp!], timeout: 10)
-        if expectDeduplication {
-            wait(for: [countExp!], timeout: 10)
-            sleep(1)
-        }
-
-        // Check the number of impressions recorded
-        let expectedCount = 1
-        XCTAssertEqual(expectedCount, impressions[featureName]?.count ?? 0,
-                      "Expected \(expectedCount) impressions for feature \(featureName)")
-        
-        if expectDeduplication {
-            XCTAssertEqual(treatmentTimes - 1, counts[featureName] ?? 0,
-                            "Expected \(treatmentTimes - 1) impression count for feature \(featureName)")
-        }
-
+        return client
+    }
+    
+    private func createSplitConfig() -> SplitClientConfig {
+        let splitConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 30
+        splitConfig.segmentsRefreshRate = 30
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.eventsPerPush = 999999
+        splitConfig.eventsQueueSize = 99999
+        splitConfig.eventsPushRate = 99999
+        splitConfig.logLevel = .verbose
+        splitConfig.impressionsQueueSize = 1
+        splitConfig.impressionsChunkSize = 1
+        return splitConfig
+    }
+    
+    private func cleanupClient(_ client: SplitClient) {
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
             _ = semaphore.signal()
