@@ -24,23 +24,23 @@ class InternalSplitClientStub: InternalSplitClient {
     }
 
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
-        return ""
+        return SplitConstants.control
     }
 
     func getTreatment(_ split: String) -> String {
-        return ""
+        return SplitConstants.control
     }
-    
+
     func getTreatment(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> String {
-        return ""
+        return SplitConstants.control
     }
     
     func getTreatments(splits: [String], attributes: [String : Any]?) -> [String : String] {
-        return ["":""]
+        return createControlTreatmentsDictionary(splits: splits)
     }
     
     func getTreatments(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
-        return ["":""]
+        return createControlTreatmentsDictionary(splits: splits)
     }
 
     func getTreatmentWithConfig(_ split: String) -> SplitResult {
@@ -56,27 +56,27 @@ class InternalSplitClientStub: InternalSplitClient {
     }
     
     func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
-        return ["": SplitResult(treatment: SplitConstants.control)]
+        return createControlTreatmentsDictionary(splits: splits)
     }
     
     func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
-        return ["": SplitResult(treatment: SplitConstants.control)]
+        return createControlTreatmentsDictionary(splits: splits)
     }
 
     func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : String] {
-        return ["":""]
+        return ["": SplitConstants.control]
     }
 
     func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
-        return ["":""]
+        return ["": SplitConstants.control]
     }
 
     func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : String] {
-        return ["":""]
+        return ["": SplitConstants.control]
     }
 
     func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
-        return ["":""]
+        return ["": SplitConstants.control]
     }
 
     func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : SplitResult] {
@@ -171,5 +171,17 @@ class InternalSplitClientStub: InternalSplitClient {
 
     func on(event: SplitEvent, executeTask: SplitEventTask) {
 
+    }
+
+    private func createControlTreatmentsDictionary<T>(splits: [String]) -> [String: T] where T: Any {
+        var result = [String: T]()
+        for split in splits {
+            if let controlResult = SplitConstants.control as? T {
+                result[split] = controlResult
+            } else if let splitResult = SplitResult(treatment: SplitConstants.control) as? T {
+                result[split] = splitResult
+            }
+        }
+        return result
     }
 }
