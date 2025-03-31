@@ -61,25 +61,25 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
         impExp = XCTestExpectation()
         client.flush()
-        
+
         wait(for: [impExp!], timeout: 10)
 
         // Verify properties in request body
         XCTAssertFalse(requestBodies.isEmpty, "Request bodies should not be empty")
-        
+
         // Check if properties are included in the request body as a stringified JSON
         let containsProperties = requestBodies.contains { body in
             return body.contains("\"properties\":")
         }
         XCTAssertTrue(containsProperties, "Request body should contain properties field")
-        
+
         // Check if the properties are properly stringified
         let containsPropertiesValue = requestBodies.contains { body in
             print(body)
             return body.contains("\\\"test\\\":\\\"value\\\"") && body.contains("\\\"number\\\":123")
         }
         XCTAssertTrue(containsPropertiesValue, "Request body should contain the correct property values")
-        
+
         cleanupClient(client)
     }
 
@@ -93,27 +93,76 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
         // Get treatment with properties
         _ = client.getTreatment("FACUNDO_TEST", attributes: nil, evaluationOptions: evalOptions)
-        
+
         // Get treatment without properties
         _ = client.getTreatment("test_string_without_attr")
 
         // Set up expectation to detect if impressions are sent
         impExp = XCTestExpectation()
         impExp?.isInverted = true // We expect this not to be fulfilled
-        
+
         // Flush to trigger any potential impression sending
         client.flush()
-        
+
         // Wait a short time to see if any impressions are sent
         wait(for: [impExp!], timeout: 1)
-        
+
         // Verify no impressions were tracked
         XCTAssertEqual(0, requestBodies.count, "No impression requests should be made in NONE mode")
-        
+
         cleanupClient(client)
     }
 
-    // MARK: - Helper Methods
+    func testPropertiesArePresentInImpressionListener() {
+        // Create expectations for the impression listener
+        let withPropertiesExpectation = XCTestExpectation(description: "Impression with properties")
+        let withoutPropertiesExpectation = XCTestExpectation(description: "Impression without properties")
+
+        // Track which feature flags we've seen in the listener
+        var seenFeatureFlags = Set<String>()
+
+        // Setup a client with an impression listener
+        let client = setupClientWithImpressionListener { impression in
+            // Determine which feature flag this is for
+            guard let feature = impression.feature else {
+                XCTFail("Feature name should not be nil")
+                return
+            }
+
+            seenFeatureFlags.insert(feature)
+
+            if feature == "FACUNDO_TEST" {
+                withPropertiesExpectation.fulfill()
+
+                XCTAssertNotNil(impression.properties, "Properties should not be nil for evaluation with properties")
+
+                if let propertiesString = impression.properties {
+                    XCTAssertTrue(propertiesString.contains("test"), "Properties should contain 'test' key")
+                    XCTAssertTrue(propertiesString.contains("value"), "Properties should contain 'value'")
+                    XCTAssertTrue(propertiesString.contains("number"), "Properties should contain 'number' key")
+                    XCTAssertTrue(propertiesString.contains("123"), "Properties should contain '123'")
+                }
+            } else if feature == "test_string_without_attr" {
+                withoutPropertiesExpectation.fulfill()
+
+                XCTAssertNil(impression.properties, "Properties should be nil for evaluation without properties")
+            }
+        }
+
+        let properties: [String: Any] = ["test": "value", "number": 123]
+        let evalOptions = EvaluationOptions(properties: properties)
+
+        _ = client.getTreatment("FACUNDO_TEST", attributes: nil, evaluationOptions: evalOptions)
+
+        _ = client.getTreatment("test_string_without_attr")
+
+        wait(for: [withPropertiesExpectation, withoutPropertiesExpectation], timeout: 5)
+
+        XCTAssertTrue(seenFeatureFlags.contains("FACUNDO_TEST"), "Should have seen impression for FACUNDO_TEST")
+        XCTAssertTrue(seenFeatureFlags.contains("test_string_without_attr"), "Should have seen impression for test_string_without_attr")
+
+        cleanupClient(client)
+    }
 
     private func runTest(mode: String, withProperties: Bool, expectDeduplication: Bool) {
         let client = setupClient(mode: mode)
@@ -187,6 +236,40 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         return client
     }
     
+    private func setupClientWithImpressionListener(_ listener: @escaping SplitImpressionListener) -> SplitClient {
+        let notificationHelper = NotificationHelperStub()
+        db = TestingHelper.createTestDatabase(name: "test")
+
+        let splitConfig = createSplitConfig()
+        splitConfig.impressionsMode = "OPTIMIZED"
+        splitConfig.impressionListener = listener
+
+        let key: Key = Key(matchingKey: userKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(db)
+        _ = builder.setNotificationHelper(notificationHelper)
+        let factory = builder.setApiKey(apiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+
+        let client = factory.client
+
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        client.on(event: SplitEvent.sdkReadyTimedOut) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
+
+        return client
+    }
+
     private func createSplitConfig() -> SplitClientConfig {
         let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 30
@@ -200,7 +283,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         splitConfig.impressionsChunkSize = 1
         return splitConfig
     }
-    
+
     private func cleanupClient(_ client: SplitClient) {
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -226,7 +309,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
                 self.isSseAuthHit = true
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             }
-            
+
             if request.isImpressionsEndpoint() {
                 self.queue.sync {
                     if let exp = self.impExp {
@@ -235,7 +318,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
                     if let body = request.body?.stringRepresentation.utf8 {
                         let bodyString = String(body)
                         self.requestBodies.append(bodyString)
-                        
+
                         if let tests = try? Json.decodeFrom(json: bodyString, to: [ImpressionsTest].self) {
                             for test in tests {
                                 var imps = [KeyImpression]()
