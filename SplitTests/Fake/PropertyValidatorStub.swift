@@ -10,15 +10,16 @@ import Foundation
 @testable import Split
 
 class PropertyValidatorStub: PropertyValidator {
-    var validateResult: PropertyValidationResult = PropertyValidationResult.valid(properties: nil, sizeInBytes: 0)
+    var validateResult: PropertyValidationResult? = nil
     var validateCalled = false
     var lastPropertiesValidated: [String: Any]?
     var lastInitialSizeInBytes: Int = 0
+    let delegate = DefaultPropertyValidator(anyValueValidator: AnyValueValidatorStub(), validationLogger: ValidationMessageLoggerStub())
     
     func validate(properties: [String: Any]?, initialSizeInBytes: Int, validationTag: String) -> PropertyValidationResult {
         validateCalled = true
         lastPropertiesValidated = properties
         lastInitialSizeInBytes = initialSizeInBytes
-        return validateResult
+        return validateResult ?? delegate.validate(properties: properties, initialSizeInBytes: initialSizeInBytes, validationTag: validationTag)
     }
 }
