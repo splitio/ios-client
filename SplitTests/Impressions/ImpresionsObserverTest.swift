@@ -32,7 +32,6 @@ class ImpressionsObserverTest: XCTestCase {
         let observer = DefaultImpressionsObserver(storage: storage)
         let impressions = SynchronizedList<KeyImpression>()
 
-
         let operationQueue = OperationQueue()
         for _ in 0..<5 {
             operationQueue.addOperation {
@@ -54,7 +53,63 @@ class ImpressionsObserverTest: XCTestCase {
         XCTAssertTrue(storage.saveCalled)
     }
 
-    func caller(observer: DefaultImpressionsObserver, count: Int, impressions: SynchronizedList<KeyImpression> ) {
+    func testDuplicateImpressionTestAndSet() {
+        let observer = DefaultImpressionsObserver(storage: storage)
+
+        // Create a test impression
+        let impression = KeyImpression(
+            featureName: "testFeature",
+            keyName: "testKey",
+            treatment: "on",
+            label: "test_label",
+            time: Date().unixTimestamp(),
+            changeNumber: 12345
+        )
+
+        // First call should return nil (no previous impression)
+        let firstResult = observer.testAndSet(impression: impression)
+        XCTAssertNil(firstResult, "First testAndSet call should return nil")
+
+        // Second call with same impression should return the impression's time
+        let secondResult = observer.testAndSet(impression: impression)
+        XCTAssertEqual(secondResult, impression.time, "Second testAndSet call should return the impression's time")
+    }
+
+    func testImpressionsWithDifferentPropertiesAreUnique() {
+        let observer = DefaultImpressionsObserver(storage: storage)
+
+        let impressionTime = Date().unixTimestamp()
+
+        let impression1 = KeyImpression(
+            featureName: "testFeature",
+            keyName: "testKey",
+            treatment: "on",
+            label: "test_label",
+            time: impressionTime,
+            changeNumber: 12345,
+            properties: "{\"test\":\"value1\"}"
+        )
+
+        let impression2 = KeyImpression(
+            featureName: "testFeature",
+            keyName: "testKey",
+            treatment: "on",
+            label: "test_label",
+            time: impressionTime,
+            changeNumber: 12345,
+            properties: "{\"test\":\"value2\"}"
+        )
+
+        // First call should return nil (no previous impression)
+        let firstResult = observer.testAndSet(impression: impression1)
+        XCTAssertNil(firstResult)
+
+        // Second call with different properties should also return nil
+        let secondResult = observer.testAndSet(impression: impression2)
+        XCTAssertNil(secondResult)
+    }
+
+    private func caller(observer: DefaultImpressionsObserver, count: Int, impressions: SynchronizedList<KeyImpression> ) {
 
         for _ in 0..<count {
             var impression = KeyImpression(featureName: "feature_\(Int.random(in: 1..<10))",
@@ -69,7 +124,7 @@ class ImpressionsObserverTest: XCTestCase {
         }
     }
 
-    func generateImpressions(count: Int) -> [KeyImpression] {
+    private func generateImpressions(count: Int) -> [KeyImpression] {
         var impressions = [KeyImpression]()
         for i in 0..<count {
             let impression = KeyImpression(featureName: "feature_\(i)",
@@ -83,4 +138,3 @@ class ImpressionsObserverTest: XCTestCase {
         return impressions
     }
 }
-
