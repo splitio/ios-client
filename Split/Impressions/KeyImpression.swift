@@ -19,6 +19,7 @@ struct KeyImpression: Codable {
     var time: Int64
     var changeNumber: Int64?
     var previousTime: Int64?
+    var properties: String?
 
     init( featureName: String?,
           keyName: String,
@@ -28,7 +29,8 @@ struct KeyImpression: Codable {
           time: Int64,
           changeNumber: Int64?,
           previousTime: Int64? = nil,
-          storageId: String? = nil) {
+          storageId: String? = nil,
+          properties: String? = nil) {
 
         self.storageId = storageId
         self.featureName = featureName
@@ -39,6 +41,7 @@ struct KeyImpression: Codable {
         self.time = time
         self.changeNumber = changeNumber
         self.previousTime = previousTime
+        self.properties = properties
     }
 
     enum CodingKeys: String, CodingKey {
@@ -49,6 +52,7 @@ struct KeyImpression: Codable {
         case label = "r"
         case bucketingKey = "b"
         case previousTime = "pt"
+        case properties = "properties"
     }
 
     func withPreviousTime(_ time: Int64?) -> KeyImpression {
@@ -60,7 +64,8 @@ struct KeyImpression: Codable {
                                  time: self.time,
                                  changeNumber: self.changeNumber,
                                  previousTime: time,
-                                 storageId: self.storageId)
+                                 storageId: self.storageId,
+                                 properties: self.properties)
     }
 
     func toImpression() -> Impression {
@@ -72,6 +77,7 @@ struct KeyImpression: Codable {
         impression.changeNumber = self.changeNumber
         impression.treatment = self.treatment
         impression.time = self.time
+        impression.properties = self.properties
         return impression
     }
 }

@@ -102,29 +102,65 @@ extension DefaultSplitClient {
 
 // MARK: Treatment / Evaluation
 extension DefaultSplitClient {
-
     public func getTreatmentWithConfig(_ split: String) -> SplitResult {
-        return treatmentManager.getTreatmentWithConfig(split, attributes: nil)
+        return treatmentManager.getTreatmentWithConfig(split, attributes: nil, evaluationOptions: nil)
     }
 
     public func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?) -> SplitResult {
-        return treatmentManager.getTreatmentWithConfig(split, attributes: attributes)
+        return treatmentManager.getTreatmentWithConfig(split, attributes: attributes, evaluationOptions: nil)
     }
 
     public func getTreatment(_ split: String) -> String {
-        return treatmentManager.getTreatment(split, attributes: nil)
+        return treatmentManager.getTreatment(split, attributes: nil, evaluationOptions: nil)
     }
 
     public func getTreatment(_ split: String, attributes: [String: Any]?) -> String {
-        return treatmentManager.getTreatment(split, attributes: attributes)
+        return treatmentManager.getTreatment(split, attributes: attributes, evaluationOptions: nil)
     }
 
     public func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String] {
-        return treatmentManager.getTreatments(splits: splits, attributes: attributes)
+        return treatmentManager.getTreatments(splits: splits, attributes: attributes, evaluationOptions: nil)
     }
 
     public func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult] {
-        return treatmentManager.getTreatmentsWithConfig(splits: splits, attributes: attributes)
+        return treatmentManager.getTreatmentsWithConfig(splits: splits, attributes: attributes, evaluationOptions: nil)
+    }
+}
+
+// MARK: Treatment / Evaluation with Properties
+extension DefaultSplitClient {
+    public func getTreatment(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> String {
+        return treatmentManager.getTreatment(split, attributes: attributes, evaluationOptions: evaluationOptions)
+    }
+
+    public func getTreatments(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return treatmentManager.getTreatments(splits: splits, attributes: attributes, evaluationOptions: evaluationOptions)
+    }
+
+    public func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult {
+        return treatmentManager.getTreatmentWithConfig(split, attributes: attributes, evaluationOptions: evaluationOptions)
+    }
+
+    public func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+        return treatmentManager.getTreatmentsWithConfig(splits: splits, attributes: attributes, evaluationOptions: evaluationOptions)
+    }
+
+    public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return treatmentManager.getTreatmentsByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: evaluationOptions)
+    }
+
+    public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: evaluationOptions)
+    }
+
+    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String,
+                                                 attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+        return treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: evaluationOptions)
+    }
+
+    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
+                                                  attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+        return treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: evaluationOptions)
     }
 }
 
@@ -236,23 +272,21 @@ extension DefaultSplitClient {
 
 // MARK: By Sets evaluation
 extension DefaultSplitClient {
-
     public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
-        return treatmentManager.getTreatmentsByFlagSet(flagSet: flagSet, attributes: attributes)
+        return treatmentManager.getTreatmentsByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: nil)
     }
 
     public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String] {
-        return treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes)
+        return treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: nil)
     }
 
-    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String,
-                                                 attributes: [String: Any]?) -> [String: SplitResult] {
-        return treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes)
+    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
+        return treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: nil)
     }
 
     public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
                                                   attributes: [String: Any]?) -> [String: SplitResult] {
-        return treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: flagSets, attributes: attributes)
+        return treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: nil)
     }
 }
 

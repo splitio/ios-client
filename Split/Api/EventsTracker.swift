@@ -23,7 +23,7 @@ class DefaultEventsTracker: EventsTracker {
     private let config: SplitClientConfig
     private let eventValidator: EventValidator
     private let validationLogger: ValidationMessageLogger
-    private let anyValueValidator: AnyValueValidator
+    private let propertyValidator: PropertyValidator
     private let telemetryProducer: TelemetryEvaluationProducer?
     private let synchronizer: Synchronizer
     var isTrackingEnabled: Bool = true
@@ -31,14 +31,14 @@ class DefaultEventsTracker: EventsTracker {
     init(config: SplitClientConfig,
          synchronizer: Synchronizer,
          eventValidator: EventValidator,
-         anyValueValidator: AnyValueValidator,
+         propertyValidator: PropertyValidator,
          validationLogger: ValidationMessageLogger,
          telemetryProducer: TelemetryEvaluationProducer?) {
 
         self.config = config
         self.synchronizer = synchronizer
         self.eventValidator = eventValidator
-        self.anyValueValidator = anyValueValidator
+        self.propertyValidator = propertyValidator
         self.validationLogger = validationLogger
         self.telemetryProducer = telemetryProducer
     }
@@ -67,46 +67,29 @@ class DefaultEventsTracker: EventsTracker {
             }
         }
 
-        var validatedProps = properties
-        var totalSizeInBytes = config.initialEventSizeInBytes
-        if let props = validatedProps {
-            let maxBytes = ValidationConfig.default.maximumEventPropertyBytes
-            if props.count > ValidationConfig.default.maxEventPropertiesCount {
-                validationLogger.w(message: "Event has more than 300 properties. " +
-                    "Some of them will be trimmed when processed",
-                                   tag: validationTag)
-            }
+        // Validate properties
+        let propertyValidationResult = propertyValidator.validate(
+            properties: properties,
+            initialSizeInBytes: config.initialEventSizeInBytes,
+            validationTag: validationTag
+        )
 
-            for (prop, value) in props {
-                if !anyValueValidator.isPrimitiveValue(value: value) {
-                    validatedProps![prop] = NSNull()
-                }
-
-                totalSizeInBytes += estimateSize(for: prop) + estimateSize(for: (value as? String))
-                if totalSizeInBytes > maxBytes {
-                    validationLogger.e(message: "The maximum size allowed for the properties is 32kb." +
-                                                " Current is \(prop). Event not queued", tag: validationTag)
-                    return false
-                }
+        if !propertyValidationResult.isValid {
+            if let errorMessage = propertyValidationResult.errorMessage {
+                validationLogger.e(message: errorMessage, tag: validationTag)
             }
+            return false
         }
 
         let event = EventDTO(trafficType: trafficType, eventType: eventType)
         event.key = matchingKey
         event.value = value
         event.timestamp = Date().unixTimestampInMiliseconds()
-        event.properties = validatedProps
-        event.sizeInBytes = totalSizeInBytes
+        event.properties = propertyValidationResult.validatedProperties
+        event.sizeInBytes = propertyValidationResult.sizeInBytes
         synchronizer.pushEvent(event: event)
         telemetryProducer?.recordLatency(method: .track, latency: Stopwatch.interval(from: timeStart))
 
         return true
-    }
-
-    private func estimateSize(for value: String?) -> Int {
-        if let value = value {
-            return MemoryLayout.size(ofValue: value) * value.count
-        }
-        return 0
     }
 }

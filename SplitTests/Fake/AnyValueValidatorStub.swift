@@ -10,11 +10,17 @@ import Foundation
 @testable import Split
 
 class AnyValueValidatorStub: AnyValueValidator {
+    var isListResult = true
+    var isPrimitiveValueResult = true
+    var lastValueChecked: Any?
+
     func isList(value: Any) -> Bool {
-        return true
+        lastValueChecked = value
+        return isListResult
     }
 
     func isPrimitiveValue(value: Any) -> Bool {
-        return true
+        lastValueChecked = value
+        return isPrimitiveValueResult
     }
 }
