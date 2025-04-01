@@ -351,7 +351,6 @@ extension SplitComponentFactory {
 extension SplitComponentFactory {
     func buildEventsTracker() throws -> EventsTracker {
         let storageContainer = try getSplitStorageContainer()
-        let anyValueValidator = DefaultAnyValueValidator()
         let eventsValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
         let propertyValidator = getPropertyValidator()
         let component: EventsTracker = DefaultEventsTracker(config: splitClientConfig,
