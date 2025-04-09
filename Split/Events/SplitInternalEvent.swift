@@ -22,4 +22,4 @@ enum SplitInternalEvent {
 struct InternalEvent {
     let type: SplitInternalEvent
     let metadata: [String: String]?
-}gi
+}
