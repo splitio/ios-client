@@ -40,7 +40,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
          syncWorkerFactory: SyncWorkerFactory,
          broadcasterChannel: SyncEventBroadcaster,
          syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
-        = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
+= ConcurrentDictionary<Int64, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
          flagsSpec: String,
          splitEventsManager: SplitEventsManager) {

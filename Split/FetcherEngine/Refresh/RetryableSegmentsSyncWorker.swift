@@ -46,11 +46,11 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             if result.success {
                 if !isSdkReadyTriggered() {
                     // Notifying both to trigger SDK Ready
-                    notifyUpdate([.mySegmentsUpdated])
-                    notifyUpdate([.myLargeSegmentsUpdated])
+                    notifyUpdate([SplitInternalEventWithMetadata(type: .mySegmentsUpdated, metadata: [:])])
+                    notifyUpdate([SplitInternalEventWithMetadata(type: .myLargeSegmentsUpdated, metadata: [:])])
                 } else if  result.msUpdated || result.mlsUpdated {
                     // For now is not necessary specify which entity was updated
-                    notifyUpdate([.mySegmentsUpdated])
+                    notifyUpdate([SplitInternalEventWithMetadata(type: .mySegmentsUpdated, metadata: [:])])
                 }
                 return true
             }

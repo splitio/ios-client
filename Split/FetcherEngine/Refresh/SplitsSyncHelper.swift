@@ -124,7 +124,8 @@ class SplitsSyncHelper {
                 splitsStorage.clear()
             }
             firstFetch = false
-            if splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange)) {
+            let processedSplits = splitChangeProcessor.process(splitChange)
+            if splitsStorage.update(splitChange: processedSplits) {
                 featureFlagsUpdated = true
             }
             Logger.i("Feature flag definitions have been updated")

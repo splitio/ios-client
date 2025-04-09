@@ -79,9 +79,9 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
         }
     }
 
-    func notifyUpdate(_ events: [SplitInternalEvent]) {
+    func notifyUpdate(_ events: [SplitInternalEventWithMetadata]) {
         events.forEach {
-            eventsManager.notifyInternalEvent($0)
+            eventsManager.notifyInternalEvent($0.type, $0.metadata)
         }
     }
 
@@ -164,7 +164,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             if result.success {
                 if !isSdkReadyTriggered() ||
                     result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                    notifyUpdate([SplitInternalEventWithMetadata(type: .splitsUpdated, metadata: ["Flags": flagsSpec])])
                 }
                 resetBackoffCounter()
                 return true
@@ -221,7 +221,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
                 if result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                    notifyUpdate([SplitInternalEventWithMetadata(type: .splitsUpdated, metadata: [:]) ])
                 }
                 resetBackoffCounter()
                 return true

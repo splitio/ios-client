@@ -19,7 +19,16 @@ enum SplitInternalEvent {
     case splitKilledNotification
 }
 
-struct InternalEvent {
+struct SplitInternalEventWithMetadata: Equatable {
     let type: SplitInternalEvent
     let metadata: [String: String]?
+    
+    init(type: SplitInternalEvent, metadata: [String : String]? = nil) {
+        self.type = type
+        self.metadata = metadata
+    }
+    
+    static func == (lhs: SplitInternalEventWithMetadata, rhs: SplitInternalEventWithMetadata) -> Bool {
+        return lhs.type == rhs.type && lhs.metadata == rhs.metadata
+    }
 }

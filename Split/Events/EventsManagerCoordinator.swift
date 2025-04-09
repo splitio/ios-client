@@ -14,6 +14,7 @@ protocol SplitEventsManagerCoordinator: SplitEventsManager {
 }
 
 class MainSplitEventsManager: SplitEventsManagerCoordinator {
+    
     private var defaultManager: SplitEventsManager?
     private var managers = [Key: SplitEventsManager]()
     private var triggered = Set<SplitInternalEvent>()
@@ -24,7 +25,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         .splitKilledNotification]
     )
 
-    func notifyInternalEvent(_ event: SplitInternalEvent) {
+    func notifyInternalEvent(_ event: SplitInternalEvent, _ metadata: [String : String]? = nil) {
         if !eventsToHandle.contains(event) {
             return
         }
@@ -33,7 +34,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
 
             self.triggered.insert(event)
             self.managers.forEach { _, manager in
-                manager.notifyInternalEvent(event)
+                manager.notifyInternalEvent(event, metadata)
             }
         }
     }
