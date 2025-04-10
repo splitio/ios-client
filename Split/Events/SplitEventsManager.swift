@@ -162,7 +162,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
             switch event.type {
                 case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
                     if isTriggered(external: .sdkReady) {
-                        Logger.i("SDK Updated with \(event.metadata?.description)")
                         trigger(event: .sdkUpdated)
                         continue
                     }

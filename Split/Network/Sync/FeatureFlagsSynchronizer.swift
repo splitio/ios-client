@@ -15,7 +15,7 @@ protocol FeatureFlagsSynchronizer {
     func startPeriodicSync()
     func stopPeriodicSync()
     func notifyKilled()
-    func notifyUpdated()
+    func notifyUpdated(flagList: [String])
     func pause()
     func resume()
     func destroy()
@@ -142,8 +142,8 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         splitEventsManager.notifyInternalEvent(.splitKilledNotification)
     }
 
-    func notifyUpdated() {
-        splitEventsManager.notifyInternalEvent(.splitsUpdated)
+    func notifyUpdated(flagList: [String]) {
+        splitEventsManager.notifyInternalEventWithMetadata(SplitInternalEventWithMetadata(type: .splitsUpdated, metadata: ["Updated flags:":flagList] ))
     }
 
     func pause() {

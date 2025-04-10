@@ -66,8 +66,14 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
                                                  since: previousChangeNumber,
                                                  till: notification.changeNumber)
                         Logger.v("Split update received: \(change)")
-                        if self.splitsStorage.update(splitChange: self.splitChangeProcessor.process(change)) {
-                            self.synchronizer.notifyFeatureFlagsUpdated()
+                        
+                        let processedFlags = self.splitChangeProcessor.process(change)
+                        
+                        if self.splitsStorage.update(splitChange: processedFlags) {
+                            var updatedFlags: [String] = processedFlags.activeSplits.compactMap(\.name)
+                            updatedFlags += processedFlags.archivedSplits.compactMap(\.name)
+                            self.synchronizer.notifyFeatureFlagsUpdated(flagList: updatedFlags)
+                            
                         }
                         self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
                         return
