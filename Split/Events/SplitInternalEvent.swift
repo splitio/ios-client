@@ -21,14 +21,14 @@ enum SplitInternalEvent {
 
 struct SplitInternalEventWithMetadata: Equatable {
     let type: SplitInternalEvent
-    let metadata: [String: String]?
+    let metadata: [String: Any]?
     
-    init(type: SplitInternalEvent, metadata: [String : String]? = nil) {
+    init(type: SplitInternalEvent, metadata: [String : Any]? = nil) {
         self.type = type
         self.metadata = metadata
     }
     
     static func == (lhs: SplitInternalEventWithMetadata, rhs: SplitInternalEventWithMetadata) -> Bool {
-        return lhs.type == rhs.type && lhs.metadata == rhs.metadata
+        return lhs.type == rhs.type
     }
 }

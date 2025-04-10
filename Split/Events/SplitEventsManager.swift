@@ -10,8 +10,8 @@ import Foundation
 
 protocol SplitEventsManager: AnyObject {
     func register(event: SplitEvent, task: SplitEventTask)
-    func notifyInternalEvent(_ event: SplitInternalEvent, _ metadata: [String: String]?)
-    func notifyInternalEventWithMetadata()
+    func notifyInternalEvent(_ event: SplitInternalEvent, _ metadata: [String: Any]?)
+    func notifyInternalEventWithMetadata(_ event: SplitInternalEventWithMetadata)
     func start()
     func stop()
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
@@ -59,7 +59,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
     
-    func notifyInternalEvent(_ event: SplitInternalEvent, _ metadata: [String: String]? = nil) {
+    func notifyInternalEvent(_ event: SplitInternalEvent, _ metadata: [String: Any]? = nil) {
         notifyInternalEventWithMetadata(SplitInternalEventWithMetadata(type: event, metadata: metadata))
     }
     

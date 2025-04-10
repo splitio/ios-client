@@ -132,8 +132,8 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
 
     func notifyUpdate(_ events: [SplitInternalEventWithMetadata]) {
         events.forEach {
-            eventsManager.notifyInternalEvent($0.type)
-            Logger.i("Discarding metadata \($0.metadata?.description)")
+            eventsManager.notifyInternalEventWithMetadata($0)
+            Logger.i("Passing metadata \(String(describing: $0.metadata?.description))")
         }
     }
 }
@@ -172,8 +172,14 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         guard let result = try? syncHelper.sync(since: splitsStorage.changeNumber) else {
             return
         }
-        if result.success, result.splitNames.count > 0 {
-            notifyUpdate([SplitInternalEventWithMetadata(type: .splitsUpdated, metadata: result.splitNames)])
+        if result.success, result.featureFlagsUpdated.count > 0 {
+            
+            var updatedFlags = result.featureFlagsUpdated
+            for flag in updatedFlags {
+                updatedFlags.append(flag)
+            }
+            
+            notifyUpdate([SplitInternalEventWithMetadata(type: .splitsUpdated, metadata: ["Updated Flags": updatedFlags])])
             
         }
     }
