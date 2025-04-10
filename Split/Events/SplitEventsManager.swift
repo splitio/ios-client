@@ -11,6 +11,7 @@ import Foundation
 protocol SplitEventsManager: AnyObject {
     func register(event: SplitEvent, task: SplitEventTask)
     func notifyInternalEvent(_ event: SplitInternalEvent, _ metadata: [String: String]?)
+    func notifyInternalEventWithMetadata()
     func start()
     func stop()
     func eventAlreadyTriggered(event: SplitEvent) -> Bool

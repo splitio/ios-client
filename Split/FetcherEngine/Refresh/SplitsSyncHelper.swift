@@ -18,7 +18,7 @@ class SplitsSyncHelper {
 
     struct FetchResult {
         let till: Int64
-        let featureFlagsUpdated: Bool
+        let splitNames: [String]
     }
 
     private let splitFetcher: HttpSplitFetcher
@@ -113,6 +113,7 @@ class SplitsSyncHelper {
         var firstFetch = true
         var nextSince = since
         var featureFlagsUpdated = false
+        var splitNames = [String]
         while true {
             clearCache = clearCache && firstFetch
             let splitChange = try self.splitFetcher.execute(since: nextSince,
@@ -126,13 +127,14 @@ class SplitsSyncHelper {
             firstFetch = false
             let processedSplits = splitChangeProcessor.process(splitChange)
             if splitsStorage.update(splitChange: processedSplits) {
-                featureFlagsUpdated = true
+                splitNames => processedSplits.archivedSplits.compactMap(\.name)
+                splitNames => processedSplits.activeSplits.compactMap(\.name)
             }
             Logger.i("Feature flag definitions have been updated")
             // Line below commented temporary for debug purposes
             // Logger.v(splitChange.description)
             if newSince == newTill, newTill >= since {
-                return FetchResult(till: newTill, featureFlagsUpdated: featureFlagsUpdated)
+                return FetchResult(till: newTill, splitNames: splitNames)
             }
             nextSince = newTill
         }

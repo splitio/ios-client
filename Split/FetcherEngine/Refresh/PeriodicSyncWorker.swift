@@ -172,8 +172,9 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         guard let result = try? syncHelper.sync(since: splitsStorage.changeNumber) else {
             return
         }
-        if result.success, result.featureFlagsUpdated {
-            notifyUpdate([SplitInternalEventWithMetadata(type: .splitsUpdated)])
+        if result.success, result.splitNames.count > 0 {
+            notifyUpdate([SplitInternalEventWithMetadata(type: .splitsUpdated, metadata: result.splitNames)])
+            
         }
     }
 }
