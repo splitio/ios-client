@@ -26,3 +26,24 @@ import Foundation
         }
     }
 }
+
+@objcMembers
+public class SplitEventWithMetadata: NSObject {
+    let type: SplitEvent
+    let metadata: [String: Any]?
+    
+    @objc public init(type: SplitEvent, metadata: [String : Any]? = nil) {
+        self.type = type
+        self.metadata = metadata
+    }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? SplitEventWithMetadata else { return false }
+        return self.type == other.type
+    }
+    
+    public override var hash: Int {
+        return type.hashValue
+    }
+}
+

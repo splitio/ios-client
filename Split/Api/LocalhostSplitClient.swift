@@ -51,10 +51,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     private let key: Key
     weak var clientManger: SplitClientManager?
 
-    init(key: Key, splitsStorage: SplitsStorage,
-         clientManager: SplitClientManager?,
-         eventsManager: SplitEventsManager? = nil,
-         evaluator: Evaluator) {
+    init(key: Key, splitsStorage: SplitsStorage, clientManager: SplitClientManager?, eventsManager: SplitEventsManager? = nil, evaluator: Evaluator) {
         self.eventsManager = eventsManager
         self.key = key
         self.splitsStorage = splitsStorage
@@ -121,20 +118,24 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return results
     }
 
-    public func on(event: SplitEvent, runInBackground: Bool,
+    public func on(event: SplitEventWithMetadata, runInBackground: Bool,
                    execute action: @escaping SplitAction) {
         on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
     }
 
-    public func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
+    public func on(event: SplitEventWithMetadata, queue: DispatchQueue, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: true, queue: queue, execute: action)
     }
 
-    public func on(event: SplitEvent, execute action: @escaping SplitAction) {
+    public func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: false, queue: nil, execute: action)
     }
 
-    private func on(event: SplitEvent, runInBackground: Bool,
+    private func on(event: SplitEventWithMetadata, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
+        on(eventWithMetadata: event, runInBackground: runInBackground, queue: queue, execute: action)
+    }
+    
+    private func on(eventWithMetadata event: SplitEventWithMetadata, runInBackground: Bool,
                     queue: DispatchQueue?, execute action: @escaping SplitAction) {
 
         guard let factory = clientManger?.splitFactory else { return }

@@ -9,7 +9,7 @@
 import Foundation
 
 protocol SplitEventsManager: AnyObject {
-    func register(event: SplitEvent, task: SplitEventTask)
+    func register(event: SplitEventWithMetadata, task: SplitEventActionTask)
     func notifyInternalEvent(_ event: SplitInternalEvent, _ metadata: [String: Any]?)
     func notifyInternalEventWithMetadata(_ event: SplitInternalEventWithMetadata)
     func start()
@@ -72,16 +72,16 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
 
-    func register(event: SplitEvent, task: SplitEventTask) {
-        let eventName = event.toString()
+    func register (event: SplitEventWithMetadata, task: SplitEventActionTask) {
+        let eventName = event.type.toString()
         processQueue.async { [weak self] in
             guard let self = self else { return }
             // If event is already triggered, execute the task
             if let times = self.executionTimes(for: eventName), times == 0 {
-                self.executeTask(event: event, task: task)
+                self.executeTask(eventWithMetadata: event, task: task)
                 return
             }
-            self.subscribe(task: task, to: event)
+            self.subscribe(task: task, to: event.type)
         }
     }
 
@@ -162,7 +162,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             switch event.type {
                 case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
                     if isTriggered(external: .sdkReady) {
-                        trigger(event: .sdkUpdated)
+                        trigger(event: SplitEventWithMetadata(type: .sdkUpdated, metadata: event.metadata))
                         continue
                     }
                     self.triggerSdkReadyIfNeeded()
@@ -206,12 +206,17 @@ class DefaultSplitEventsManager: SplitEventsManager {
            isTriggered(internal: .splitsUpdated),
            isTriggered(internal: .myLargeSegmentsUpdated),
            !isTriggered(external: .sdkReady) {
-            self.trigger(event: SplitEvent.sdkReady)
+            self.trigger(event: .sdkReady)
         }
     }
-
+    
     private func trigger(event: SplitEvent) {
-        let eventName = event.toString()
+        trigger(event: SplitEventWithMetadata(type: event, metadata: nil))
+    }
+
+    private func trigger(event: SplitEventWithMetadata) {
+        let eventName = event.type.toString()
+        let eventMetadata = event.metadata?.debugDescription
 
         // If executionTimes is zero, maximum executions has been reached
         if executionTimes(for: eventName) == 0 {
@@ -225,16 +230,16 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
         Logger.d("Triggering SDK event \(eventName)")
         // If executionTimes is lower than zero, execute it without limitation
-        if let subscriptions = getSubscriptions(for: event) {
+        if let subscriptions = getSubscriptions(for: event.type) {
             for task in subscriptions {
-                executeTask(event: event, task: task)
+                executeTask(eventWithMetadata: event, task: task)
             }
         }
     }
 
-    private func executeTask(event: SplitEvent, task: SplitEventTask) {
+    private func executeTask(eventWithMetadata event: SplitEventWithMetadata, task: SplitEventTask) -> Any? {
 
-        let eventName = task.event.toString()
+        let eventName = task.event.type.toString()
 
         if task.runInBackground {
             TimeChecker.logInterval("Previous to run \(eventName) in Background")
@@ -242,15 +247,19 @@ class DefaultSplitEventsManager: SplitEventsManager {
             let queue = task.takeQueue() ?? DispatchQueue.general
             queue.async {
                 TimeChecker.logInterval("Running \(eventName) in Background queue \(queue)")
-                task.run()
+                let taskResult = task.run()
+                print(taskResult.debugDescription)
+                //return taskResult
             }
-            return
+            return nil
         }
 
         DispatchQueue.main.async {
             TimeChecker.logInterval("Running event on main: \(eventName)")
             // UI Updates
-            task.run()
+            let taskResult = task.run()
+            print(taskResult.debugDescription)
+            return taskResult
         }
     }
 

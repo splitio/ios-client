@@ -11,15 +11,11 @@ class SplitEventActionTask: SplitEventTask {
 
     private var eventHandler: SplitAction?
     private var queue: DispatchQueue?
-    var event: SplitEvent
+    var event: SplitEventWithMetadata
     var runInBackground: Bool = false
     var factory: SplitFactory
 
-    init(action: @escaping SplitAction,
-         event: SplitEvent,
-         runInBackground: Bool = false,
-         factory: SplitFactory,
-         queue: DispatchQueue? = nil) {
+    init(action: @escaping SplitAction, event: SplitEventWithMetadata, runInBackground: Bool = false, factory: SplitFactory, queue: DispatchQueue? = nil) {
 
         self.eventHandler = action
         self.event = event
@@ -33,7 +29,7 @@ class SplitEventActionTask: SplitEventTask {
         return queue
     }
 
-    func run() {
-        eventHandler?()
+    func run() -> Any? {
+        eventHandler?(event.metadata)
     }
 }

@@ -58,25 +58,19 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
 // MARK: Events
 extension DefaultSplitClient {
 
-    public func on(event: SplitEvent, execute action: @escaping SplitAction) {
+    public func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: false, queue: nil, execute: action)
     }
 
-    public func on(event: SplitEvent, runInBackground: Bool,
-                   execute action: @escaping SplitAction) {
+    public func on(event: SplitEventWithMetadata, runInBackground: Bool, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
     }
 
-    public func on(event: SplitEvent,
-                   queue: DispatchQueue, execute action: @escaping SplitAction) {
+    public func on(event: SplitEventWithMetadata, queue: DispatchQueue, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: true, queue: queue, execute: action)
     }
-
-    private func on(event: SplitEvent,
-                    runInBackground: Bool,
-                    queue: DispatchQueue?,
-                    execute action: @escaping SplitAction) {
-
+    
+    private func on(event: SplitEventWithMetadata, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
         guard let factory = clientManager?.splitFactory else {
             return
         }
@@ -89,10 +83,10 @@ extension DefaultSplitClient {
         on(event: event, executeTask: task)
     }
 
-    private func on(event: SplitEvent, executeTask task: SplitEventTask) {
-        if  event != .sdkReadyFromCache,
-            eventsManager.eventAlreadyTriggered(event: event) {
-            Logger.w("A handler was added for \(event.toString()) on the SDK, " +
+    private func on(event: SplitEventWithMetadata, executeTask task: SplitEventActionTask) {
+        if  event.type != .sdkReadyFromCache,
+            eventsManager.eventAlreadyTriggered(event: event.type) {
+            Logger.w("A handler was added for \(event.type.toString()) on the SDK, " +
                      "which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
         }

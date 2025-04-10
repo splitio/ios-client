@@ -54,14 +54,14 @@ class FailedClient: SplitClient {
         return [:]
     }
 
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {
+    func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction) {
     }
 
-    func on(event: SplitEvent, runInBackground: Bool,
+    func on(event: SplitEventWithMetadata, runInBackground: Bool,
             execute action: @escaping SplitAction) {
     }
 
-    func on(event: SplitEvent,
+    func on(event: SplitEventWithMetadata,
             queue: DispatchQueue, execute action: @escaping SplitAction) {
     }
 
