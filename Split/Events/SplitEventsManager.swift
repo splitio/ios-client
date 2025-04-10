@@ -237,7 +237,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
 
-    private func executeTask(eventWithMetadata event: SplitEventWithMetadata, task: SplitEventTask) -> Any? {
+    private func executeTask(eventWithMetadata event: SplitEventWithMetadata, task: SplitEventTask) {
 
         let eventName = task.event.type.toString()
 
@@ -247,19 +247,14 @@ class DefaultSplitEventsManager: SplitEventsManager {
             let queue = task.takeQueue() ?? DispatchQueue.general
             queue.async {
                 TimeChecker.logInterval("Running \(eventName) in Background queue \(queue)")
-                let taskResult = task.run()
-                print(taskResult.debugDescription)
-                //return taskResult
+                let taskResult = task.run(event.metadata)
             }
-            return nil
         }
 
         DispatchQueue.main.async {
             TimeChecker.logInterval("Running event on main: \(eventName)")
             // UI Updates
-            let taskResult = task.run()
-            print(taskResult.debugDescription)
-            return taskResult
+            let taskResult = task.run(event.metadata)
         }
     }
 

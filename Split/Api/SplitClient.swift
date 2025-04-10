@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias SplitAction = () -> Void
+public typealias SplitAction = (_ data: Any?) -> Void
 
 @objc public protocol SplitClient {
 

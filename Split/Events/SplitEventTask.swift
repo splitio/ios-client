@@ -11,5 +11,5 @@ protocol SplitEventTask {
     var event: SplitEventWithMetadata { get }
     var runInBackground: Bool { get }
     func takeQueue() -> DispatchQueue?
-    func run() -> Any?
+    func run(_ data: Any?) -> Any? 
 }

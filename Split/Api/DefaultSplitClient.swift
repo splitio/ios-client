@@ -57,7 +57,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
 
 // MARK: Events
 extension DefaultSplitClient {
-
+    
     public func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: false, queue: nil, execute: action)
     }
