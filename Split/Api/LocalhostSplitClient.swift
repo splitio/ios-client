@@ -117,6 +117,11 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         }
         return results
     }
+    
+    public func on(event: SplitEvent, perform: SplitAction?) {
+        guard let perform = perform else { return }
+        on(event: SplitEventWithMetadata(type: event, metadata: nil), execute: perform)
+    }
 
     public func on(event: SplitEventWithMetadata, runInBackground: Bool,
                    execute action: @escaping SplitAction) {

@@ -46,11 +46,10 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             if result.success {
                 if !isSdkReadyTriggered() {
                     // Notifying both to trigger SDK Ready
-                    notifyUpdate([SplitInternalEventWithMetadata(type: .mySegmentsUpdated, metadata: [:])])
-                    notifyUpdate([SplitInternalEventWithMetadata(type: .myLargeSegmentsUpdated, metadata: [:])])
-                } else if  result.msUpdated || result.mlsUpdated {
-                    // For now is not necessary specify which entity was updated
-                    notifyUpdate([SplitInternalEventWithMetadata(type: .mySegmentsUpdated, metadata: [:])])
+                    notifyUpdate([SplitInternalEvent(type: .mySegmentsUpdated, metadata: ["Segments updated" : result.msUpdated ])])
+                    notifyUpdate([SplitInternalEvent(type: .myLargeSegmentsUpdated, metadata: ["Large segments updated" : result.mlsUpdated ])])
+                } else if !result.msUpdated.isEmpty || !result.mlsUpdated.isEmpty {
+                    notifyUpdate([SplitInternalEvent(type: .mySegmentsUpdated, metadata: ["Segments updated" : result.msUpdated + result.mlsUpdated ])])
                 }
                 return true
             }
@@ -71,8 +70,8 @@ struct SegmentsSyncResult {
     let success: Bool
     let msChangeNumber: Int64
     let mlsChangeNumber: Int64
-    let msUpdated: Bool
-    let mlsUpdated: Bool
+    let msUpdated: [String]
+    let mlsUpdated: [String]
 }
 
 protocol SegmentsSyncHelper {
@@ -86,8 +85,8 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
     struct FetchResult {
         let msTill: Int64
         let mlsTill: Int64
-        let msUpdated: Bool
-        let mlsUdated: Bool
+        let msUpdated: [String]
+        let mlsUpdated: [String]
     }
 
     private let segmentsFetcher: HttpMySegmentsFetcher
@@ -165,7 +164,7 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
                                           msChangeNumber: result.msTill,
                                           mlsChangeNumber: result.mlsTill,
                                           msUpdated: result.msUpdated,
-                                          mlsUpdated: result.mlsUdated)
+                                          mlsUpdated: result.mlsUpdated)
             }
             attemptCount+=1
             if attemptCount < maxAttempts {
@@ -175,25 +174,20 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
         return SegmentsSyncResult(success: false,
                                   msChangeNumber: -1,
                                   mlsChangeNumber: -1,
-                                  msUpdated: false,
-                                  mlsUpdated: false)
+                                  msUpdated: [],
+                                  mlsUpdated: [])
     }
 
-    private func fetchUntil(till: Int64?,
-                            headers: HttpHeaders? = nil) throws -> FetchResult {
+    private func fetchUntil(till: Int64?, headers: HttpHeaders? = nil) throws -> FetchResult {
 
-        let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(),
-                                      changeNumber: mySegmentsStorage.changeNumber)
+        let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(), changeNumber: mySegmentsStorage.changeNumber)
 
-        let oldLargeChange = SegmentChange(segments: myLargeSegmentsStorage.getAll().asArray(),
-                                           changeNumber: myLargeSegmentsStorage.changeNumber)
+        let oldLargeChange = SegmentChange(segments: myLargeSegmentsStorage.getAll().asArray(), changeNumber: myLargeSegmentsStorage.changeNumber)
 
-        var prevChange = AllSegmentsChange(mySegmentsChange: oldChange,
-                                           myLargeSegmentsChange: oldLargeChange)
+        var prevChange = AllSegmentsChange(mySegmentsChange: oldChange, myLargeSegmentsChange: oldLargeChange)
+        
         while true {
-            guard let change = try segmentsFetcher.execute(userKey: userKey,
-                                                           till: till,
-                                                           headers: headers) else {
+            guard let change = try segmentsFetcher.execute(userKey: userKey, till: till, headers: headers) else {
                 throw HttpError.unknown(code: -1, message: "Segment result is null")
             }
 
@@ -201,10 +195,8 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
             let myLargeSegmentsChange = change.myLargeSegmentsChange
 
             if !isOutdated(change, prevChange) {
-                let msChanged =  changeChecker.mySegmentsHaveChanged(old: oldChange,
-                                                                     new: mySegmentsChange)
-                let mlsChanged = changeChecker.mySegmentsHaveChanged(old: oldLargeChange,
-                                                                     new: myLargeSegmentsChange)
+                let msChanged =  changeChecker.mySegmentsHaveChanged(old: oldChange, new: mySegmentsChange)
+                let mlsChanged = changeChecker.mySegmentsHaveChanged(old: oldLargeChange, new: myLargeSegmentsChange)
                 Logger.d("Checking my segments update")
                 checkAndUpdate(isChanged: msChanged, change: mySegmentsChange, storage: mySegmentsStorage)
                 Logger.d("Checking my large segments update")
@@ -212,8 +204,8 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
 
                 return FetchResult(msTill: mySegmentsChange.unwrappedChangeNumber,
                                    mlsTill: myLargeSegmentsChange.unwrappedChangeNumber,
-                                   msUpdated: msChanged,
-                                   mlsUdated: mlsChanged)
+                                   msUpdated: mySegmentsChange.segments.compactMap {$0.name},
+                                   mlsUpdated: myLargeSegmentsChange.segments.compactMap {$0.name})
             }
             prevChange = change
         }

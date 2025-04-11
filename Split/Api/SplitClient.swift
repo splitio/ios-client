@@ -33,10 +33,11 @@ public typealias SplitAction = (_ data: Any?) -> Void
     @objc(getTreatmentsWithConfigForSplits:attributes:evaluationOptions:)
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
 
+    func on(event: SplitEvent, perform: SplitAction?) -> Void
     func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction)
     func on(event: SplitEventWithMetadata, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEventWithMetadata, queue: DispatchQueue, execute action: @escaping SplitAction)
-
+    
     // MARK: Track feature
     func track(trafficType: String, eventType: String) -> Bool
     func track(trafficType: String, eventType: String, value: Double) -> Bool

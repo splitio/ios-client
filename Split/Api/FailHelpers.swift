@@ -53,6 +53,12 @@ class FailedClient: SplitClient {
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         return [:]
     }
+    
+    public func on(event: SplitEvent, perform: SplitAction?) {
+    }
+    
+    func on(event: SplitEvent, perform: @escaping ([String : Any]?) -> Void) {
+    }
 
     func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction) {
     }

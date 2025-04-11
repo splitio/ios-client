@@ -12,7 +12,7 @@ import Foundation
 typealias DestroyHandler = () -> Void
 
 public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClient {
-
+    
     private var storageContainer: SplitStorageContainer
     private var key: Key
     private let config: SplitClientConfig
@@ -57,6 +57,11 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
 
 // MARK: Events
 extension DefaultSplitClient {
+    
+    public func on(event: SplitEvent, perform: SplitAction?) {
+        guard let perform = perform else { return }
+        on(event: SplitEventWithMetadata(type: event, metadata: nil), execute: perform)
+    }
     
     public func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: false, queue: nil, execute: action)
