@@ -59,12 +59,17 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
 extension DefaultSplitClient {
     
     public func on(event: SplitEvent, perform: SplitAction?) {
-        guard let perform = perform else { return }
-        on(event: SplitEventWithMetadata(type: event, metadata: nil), execute: perform)
+        on(eventWithMetadata: SplitEventWithMetadata(type: event, metadata: nil), execute: perform)
     }
     
-    public func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction) {
+    public func on(event: SplitEventWithMetadata, perform action: SplitActionWithArguments?) {
+        guard let action = action else { return }
         on(event: event, runInBackground: false, queue: nil, execute: action)
+    }
+    
+    public func on(eventWithMetadata: SplitEventWithMetadata, execute action: SplitAction?) {
+        guard let action = action else { return }
+        on(event: eventWithMetadata, runInBackground: false, queue: nil, execute: action)
     }
 
     public func on(event: SplitEventWithMetadata, runInBackground: Bool, execute action: @escaping SplitAction) {

@@ -8,7 +8,8 @@
 
 import Foundation
 
-public typealias SplitAction = (_ data: Any?) -> Void
+public typealias SplitAction = () -> Void
+public typealias SplitActionWithArguments = (_ data: Any?) -> Void
 
 @objc public protocol SplitClient {
 
@@ -33,11 +34,19 @@ public typealias SplitAction = (_ data: Any?) -> Void
     @objc(getTreatmentsWithConfigForSplits:attributes:evaluationOptions:)
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
 
+    // MARK: Action without metadata
     func on(event: SplitEvent, perform: SplitAction?) -> Void
-    func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction)
-    func on(event: SplitEventWithMetadata, runInBackground: Bool, execute action: @escaping SplitAction)
-    func on(event: SplitEventWithMetadata, queue: DispatchQueue, execute action: @escaping SplitAction)
+    func on(event: SplitEvent, execute action: @escaping SplitAction)
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction)
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction)
     
+    // MARK: Action with metadata
+    func on(eventWithMetadata: SplitEventWithMetadata, execute action: SplitActionWithArguments?)
+    func on(eventWithMetadata: SplitEventWithMetadata, performWith: SplitActionWithArguments?) -> Void
+    func on(eventWithMetadata: SplitEventWithMetadata, executeWith action: @escaping SplitActionWithArguments)
+    func on(eventWithMetadata: SplitEventWithMetadata, runInBackground: Bool, executeWith action: @escaping SplitActionWithArguments)
+    func on(eventWithMetadata: SplitEventWithMetadata, queue: DispatchQueue, executeWith action: @escaping SplitActionWithArguments)
+
     // MARK: Track feature
     func track(trafficType: String, eventType: String) -> Bool
     func track(trafficType: String, eventType: String, value: Double) -> Bool
