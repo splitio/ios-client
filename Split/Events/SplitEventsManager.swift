@@ -246,14 +246,14 @@ class DefaultSplitEventsManager: SplitEventsManager {
             let queue = task.takeQueue() ?? DispatchQueue.general
             queue.async {
                 TimeChecker.logInterval("Running \(eventName) in Background queue \(queue)")
-                let taskResult = task.run(event.metadata)
+                task.run(event.metadata)
             }
         }
 
         DispatchQueue.main.async {
             TimeChecker.logInterval("Running event on main: \(eventName)")
             // UI Updates
-            let taskResult = task.run(event.metadata)
+            task.run(event.metadata)
         }
     }
 

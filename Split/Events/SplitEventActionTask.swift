@@ -29,7 +29,7 @@ class SplitEventActionTask: SplitEventTask {
         return queue
     }
 
-    func run(_ data: Any? = nil) -> Any? {
+    func run(_ data: Any? = nil) {
         eventHandler?(data)
     }
 }
