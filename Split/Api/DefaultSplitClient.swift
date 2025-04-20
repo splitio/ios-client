@@ -87,6 +87,25 @@ extension DefaultSplitClient {
         task.event = event
         on(event: event, executeTask: task)
     }
+    
+    public func on(event: SplitEvent, performWithMetadata action: SplitActionWithMetadata?) {
+        guard let action = action else { return }
+        onWithMetadata(event:SplitEventWithMetadata(type: event, metadata: nil), runInBackground: true, queue: nil, execute: action)
+    }
+    
+    private func onWithMetadata(event: SplitEventWithMetadata, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitActionWithMetadata) {
+        guard let factory = clientManager?.splitFactory else {
+            return
+        }
+
+        let task = SplitEventActionTask(action: action, event: event,
+                                        runInBackground: runInBackground,
+                                        factory: factory,
+                                        queue: queue)
+        task.event = event
+        on(event: event, executeTask: task)
+    }
+    
 
     private func on(event: SplitEventWithMetadata, executeTask task: SplitEventActionTask) {
         if  event.type != .sdkReadyFromCache,
@@ -97,6 +116,9 @@ extension DefaultSplitClient {
         }
         eventsManager.register(event: event, task: task)
     }
+    
+    
+    
 }
 
 // MARK: Treatment / Evaluation

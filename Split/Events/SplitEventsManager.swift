@@ -27,6 +27,7 @@ extension SplitEventsManager {
 }
 
 class DefaultSplitEventsManager: SplitEventsManager {
+    
     private let readingRefreshTime: Int
 
     private var sdkReadyTimeStart: Int64
@@ -38,6 +39,8 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private let dataAccessQueue: DispatchQueue
     private var isStarted: Bool
     private var eventsQueue: InternalEventBlockingQueue
+    
+    private let lock = NSLock()
 
     init(config: SplitClientConfig) {
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process", attributes: .concurrent)
@@ -86,16 +89,14 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     func start() {
-        dataAccessQueue.sync {
-            if self.isStarted {
-                return
+        lock.lock()
+            if !isStarted {
+                isStarted = true
             }
-            self.isStarted = true
-        }
+        lock.unlock()
+            
         processQueue.async { [weak self] in
-            if let self = self {
-                self.processEvents()
-            }
+            self?.processEvents()
         }
     }
 
@@ -248,12 +249,12 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 TimeChecker.logInterval("Running \(eventName) in Background queue \(queue)")
                 task.run(event.metadata)
             }
-        }
-
-        DispatchQueue.main.async {
-            TimeChecker.logInterval("Running event on main: \(eventName)")
-            // UI Updates
-            task.run(event.metadata)
+        } else {
+            DispatchQueue.main.async {
+                TimeChecker.logInterval("Running event on main: \(eventName)")
+                // UI Updates
+                task.run(event.metadata)
+            }
         }
     }
 

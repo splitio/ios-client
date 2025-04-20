@@ -8,15 +8,23 @@
 import Foundation
 
 class SplitEventActionTask: SplitEventTask {
-
+    
     private var eventHandler: SplitAction?
+    private var eventHandlerWithMetadata: SplitActionWithMetadata?
     private var queue: DispatchQueue?
     var event: SplitEventWithMetadata
     var runInBackground: Bool = false
     var factory: SplitFactory
 
+    init(action: @escaping SplitActionWithMetadata, event: SplitEventWithMetadata, runInBackground: Bool = false, factory: SplitFactory, queue: DispatchQueue? = nil) {
+        self.eventHandlerWithMetadata = action
+        self.event = event
+        self.runInBackground = runInBackground
+        self.queue = queue
+        self.factory = factory
+    }
+    
     init(action: @escaping SplitAction, event: SplitEventWithMetadata, runInBackground: Bool = false, factory: SplitFactory, queue: DispatchQueue? = nil) {
-
         self.eventHandler = action
         self.event = event
         self.runInBackground = runInBackground
@@ -29,7 +37,8 @@ class SplitEventActionTask: SplitEventTask {
         return queue
     }
 
-    func run(_ data: Any? = nil) {
-        eventHandler?(data)
+    func run(_ data: Any?) {
+        eventHandler?()
+        eventHandlerWithMetadata?(data)
     }
 }

@@ -77,7 +77,7 @@ class DefaultByKeyFacade: ByKeyFacade {
     func loadAttributesFromCache(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
             group.attributesStorage.loadLocal()
-            group.eventsManager.notifyInternalEvent(.attributesLoadedFromCache)
+            group.eventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(type: .attributesLoadedFromCache, metadata: ["Metadata":"Attributes from cache ready"]))
         }
         TimeChecker.logInterval("Time until attributes loaded from cache")
     }
@@ -122,13 +122,13 @@ class DefaultByKeyFacade: ByKeyFacade {
 
     func notifyMySegmentsUpdated(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
-            group.eventsManager.notifyInternalEvent(.mySegmentsUpdated)
+            group.eventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(type: .mySegmentsUpdated, metadata: ["Metadata":"Segments updated for key \(key)"]))
         }
     }
 
     func notifyMyLargeSegmentsUpdated(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
-            group.eventsManager.notifyInternalEvent(.myLargeSegmentsUpdated)
+            group.eventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(type: .myLargeSegmentsUpdated, metadata: ["Metadata":"Large segments updated  for key \(key)"]))
         }
     }
 

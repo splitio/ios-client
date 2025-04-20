@@ -13,6 +13,9 @@ import Foundation
 ///
 
 class FailedClient: SplitClient {
+    func on(event: SplitEvent, performWithMetadata: SplitActionWithMetadata?) {
+        
+    }
 
     func getTreatment(_ split: String) -> String {
         return SplitConstants.control

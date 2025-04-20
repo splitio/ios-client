@@ -85,6 +85,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             splitsStorage.loadLocal()
             if splitsStorage.getAll().count > 0 {
                 self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
+                self.splitEventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(type: .attributesLoadedFromCache, metadata: ["Metadata":"Splits from cache ready"]))
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
             Logger.v("Notifying Splits loaded from cache")

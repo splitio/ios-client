@@ -220,7 +220,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
                 if result.featureFlagsUpdated.count > 0 {
-                    notifyUpdate([SplitInternalEvent(type: .splitsUpdated, metadata: [:]) ])
+                    notifyUpdate([SplitInternalEvent(type: .splitsUpdated, metadata: ["Metadata" : result.featureFlagsUpdated.description]) ])
                 }
                 resetBackoffCounter()
                 return true
