@@ -189,7 +189,8 @@ class DbForDifferentApiKeysTest: XCTestCase {
             change?.since = Self.changeNumberBase + Int64(factoryNumber)
         }
         change?.till = Self.changeNumberBase + Int64(factoryNumber)
-        return (try? Json.encodeToJson(change)) ?? IntegrationHelper.emptySplitChanges
+        let targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        return (try? Json.encodeToJson(targetingRulesChange)) ?? IntegrationHelper.emptySplitChanges
     }
 
     private func nextTimestamp() -> Int {

@@ -146,8 +146,8 @@ class SemverIntegrationTest: XCTestCase {
 
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
-            return change
+           let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            return change.featureFlags
         }
         return nil
     }
@@ -156,10 +156,12 @@ class SemverIntegrationTest: XCTestCase {
         return { request in
             if request.isSplitEndpoint() {
                 if self.splitChangesHit == 0 {
-                    return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile()))
+                    let targetingRulesChange = TargetingRulesChange(featureFlags: self.loadSplitsChangeFile()!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+                    return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(targetingRulesChange))
                 }
                 self.splitChangesHit+=1
-                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))
+                let targetingRulesChange = TargetingRulesChange(featureFlags: self.splitChange!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(targetingRulesChange))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(self.mySegmentsJson.utf8))

@@ -12,14 +12,14 @@ protocol RestClientSplitChanges: RestClient {
     func getSplitChanges(since: Int64,
                          till: Int64?,
                          headers: HttpHeaders?,
-                         completion: @escaping (DataResult<SplitChange>) -> Void)
+                         completion: @escaping (DataResult<TargetingRulesChange>) -> Void)
 }
 
 extension DefaultRestClient: RestClientSplitChanges {
     func getSplitChanges(since: Int64,
                          till: Int64?,
                          headers: HttpHeaders?,
-                         completion: @escaping (DataResult<SplitChange>) -> Void) {
+                         completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
         self.execute(
             endpoint: endpointFactory.splitChangesEndpoint,
             parameters: buildParameters(since: since, till: till),
