@@ -57,14 +57,17 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
 
             if let previousChangeNumber = notification.previousChangeNumber,
                 previousChangeNumber == storedChangeNumber {
-                if let payload = notification.definition, let compressionType = notification.compressionType {
+                if let payload = notification.definition,
+                   let compressionType = notification.compressionType,
+                   let rbsPreviousChangeNumber = notification.rbsPreviousChangeNumber {
                     do {
                         let split = try self.payloadDecoder.decode(
                             payload: payload,
                             compressionUtil: self.decomProvider.decompressor(for: compressionType))
                         let change = SplitChange(splits: [split],
                                                  since: previousChangeNumber,
-                                                 till: notification.changeNumber)
+                                                 rbSince: rbsPreviousChangeNumber,
+                                                 till: notification.changeNumber,)
                         Logger.v("Split update received: \(change)")
                         if self.splitsStorage.update(splitChange: self.splitChangeProcessor.process(change)) {
                             self.synchronizer.notifyFeatureFlagsUpdated()

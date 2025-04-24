@@ -27,4 +27,4 @@ extension SplitChange {
         let splits = String(describing: self.splits)
         return "{\nsince: \(since),\ntill: \(String(describing: till)),\nsplits: \(String(describing: splits))\n}"
     }
-}
+}   

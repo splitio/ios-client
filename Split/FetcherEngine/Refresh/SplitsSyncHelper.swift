@@ -75,6 +75,7 @@ class SplitsSyncHelper {
     }
 
     func tryToSync(since: Int64,
+                   rbSince: Int64? = nil,
                    till: Int64? = nil,
                    clearBeforeUpdate: Bool = false,
                    headers: HttpHeaders? = nil,
@@ -87,9 +88,10 @@ class SplitsSyncHelper {
         let goalTill = till ?? -10
         while attemptCount < maxAttempts {
             let result = try fetchUntil(since: nextSince,
-                                       till: useTillParam ? till : nil,
-                                       clearBeforeUpdate: clearBeforeUpdate,
-                                       headers: headers)
+                                        rbSince: rbSince,
+                                        till: useTillParam ? till : nil,
+                                        clearBeforeUpdate: clearBeforeUpdate,
+                                        headers: headers)
             nextSince = result.till
 
             if nextSince >= goalTill {
@@ -105,6 +107,7 @@ class SplitsSyncHelper {
     }
 
     func fetchUntil(since: Int64,
+                    rbSince: Int64? = nil,
                     till: Int64? = nil,
                     clearBeforeUpdate: Bool = false,
                     headers: HttpHeaders? = nil) throws -> FetchResult {
@@ -112,10 +115,12 @@ class SplitsSyncHelper {
         var clearCache = clearBeforeUpdate
         var firstFetch = true
         var nextSince = since
+        // var nextRbSince = rbSince ?? nil //TODO: validate later
         var featureFlagsUpdated = false
         while true {
             clearCache = clearCache && firstFetch
             let splitChange = try self.splitFetcher.execute(since: nextSince,
+                                                            rbSince: rbSince,
                                                             till: till,
                                                             headers: headers)
             let newSince = splitChange.since

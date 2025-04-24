@@ -7,7 +7,7 @@
 import Foundation
 
 protocol HttpSplitFetcher {
-    func execute(since: Int64, till: Int64?, headers: HttpHeaders?) throws -> SplitChange
+    func execute(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders?) throws -> SplitChange
 }
 
 class DefaultHttpSplitFetcher: HttpSplitFetcher {
@@ -21,14 +21,14 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
         self.syncHelper = syncHelper
     }
 
-    func execute(since: Int64, till: Int64?, headers: HttpHeaders? = nil) throws -> SplitChange {
+    func execute(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders? = nil) throws -> SplitChange {
         Logger.d("Fetching feature flags definitions")
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<SplitChange>?
         let startTime = Date.nowMillis()
-        restClient.getSplitChanges(since: since, till: till, headers: headers) { result in
+        restClient.getSplitChanges(since: since, rbSince: rbSince, till: till, headers: headers) { result in
             TimeChecker.logInterval("Time to fetch feature flags", startTime: startTime)
             requestResult = result
             semaphore.signal()

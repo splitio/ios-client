@@ -240,6 +240,7 @@ extension SplitChange {
         var output: String = "SplitChange {\n"
         output+="splits = \(splits) \n"
         output+="since = \(since) \n"
+        output+="rbSince = \(rbSince) \n"
         output+="till = \(till) \n"
         output+="}"
         return output

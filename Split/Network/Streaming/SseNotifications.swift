@@ -24,6 +24,7 @@ enum NotificationType: Decodable {
     case splitUpdate
     case mySegmentsUpdate
     case myLargeSegmentsUpdate
+    case ruleBasedSegmentsUpdated
     case splitKill
     case occupancy
     case sseError
@@ -43,6 +44,8 @@ enum NotificationType: Decodable {
             return NotificationType.mySegmentsUpdate
         case "memberships_ls_update":
             return NotificationType.myLargeSegmentsUpdate
+        case "rule_based_segments_updated":
+            return NotificationType.ruleBasedSegmentsUpdated
         case "split_kill":
             return NotificationType.splitKill
         case "control":
@@ -243,15 +246,18 @@ struct SplitsUpdateNotification: NotificationTypeField {
     }
     let changeNumber: Int64
     let previousChangeNumber: Int64?
+    let rbsPreviousChangeNumber: Int64?
     let definition: String?
     let compressionType: CompressionType?
 
     init(changeNumber: Int64,
          previousChangeNumber: Int64? = nil,
          definition: String? = nil,
+         rbsPreviousChangeNumber: Int64? = nil,
          compressionType: CompressionType? = nil) {
         self.changeNumber = changeNumber
         self.previousChangeNumber = previousChangeNumber
+        self.rbsPreviousChangeNumber = rbsPreviousChangeNumber
         self.definition = definition
         self.compressionType = compressionType
     }
@@ -259,6 +265,7 @@ struct SplitsUpdateNotification: NotificationTypeField {
     enum CodingKeys: String, CodingKey {
         case changeNumber
         case previousChangeNumber = "pcn"
+        case rbsPreviousChangeNumber = "rbsPcn"
         case definition = "d"
         case compressionType = "c"
     }
