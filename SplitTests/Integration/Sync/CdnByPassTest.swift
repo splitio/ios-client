@@ -156,7 +156,9 @@ class CdnByPassTest: XCTestCase {
         change?.since = Int64(since)
         change?.till = Int64(till)
 //        let split = change?.splits[0]
-        return (try? Json.encodeToJson(change)) ?? ""
+        var targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+
+        return (try? Json.encodeToJson(targetingRulesChange)) ?? ""
     }
 
     private func loadChanges() {

@@ -54,7 +54,9 @@ class SplitIntegrationTests: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(
+                    TargetingRulesChange(featureFlags: self.splitChange!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1
+                ))))
             }
 
             if request.isMySegmentsEndpoint() {
@@ -335,8 +337,8 @@ class SplitIntegrationTests: XCTestCase {
 
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
-            return change
+           let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            return change.featureFlags
         }
         return nil
     }

@@ -253,7 +253,7 @@ class InitialCacheTest: XCTestCase {
         let split = TestingHelper.buildSplit(name: splitInFilter, treatment: "t2")
         let change = SplitChange(splits: [split], since: 9000, till: 9000)
         jsonChanges.removeAll()
-        jsonChanges.append(try Json.encodeToJson(change))
+        jsonChanges.append(try Json.encodeToJson(TargetingRulesChange(featureFlags: change, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))))
 
 
         let session = HttpSessionMock()
@@ -464,7 +464,7 @@ class InitialCacheTest: XCTestCase {
 
             changes.append(change)
 
-            let json =  (try? Json.encodeToJson(change)) ?? ""
+            let json =  (try? Json.encodeToJson(TargetingRulesChange(featureFlags: change, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1)))) ?? ""
             jsonChanges.insert(json, at: i)
         }
     }

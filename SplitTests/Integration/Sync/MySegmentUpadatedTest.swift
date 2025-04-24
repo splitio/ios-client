@@ -40,7 +40,7 @@ class MySegmentUpdatedTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
 
-        let respData = responseSlitChanges()
+        let respData = responseSplitChanges()
         var responses = [TestDispatcherResponse]()
         for data in respData {
             responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(data).utf8)))
@@ -51,9 +51,9 @@ class MySegmentUpdatedTest: XCTestCase {
                 var since: Int = 0
                 if self.isFirstChangesReq {
                     self.isFirstChangesReq = false
-                    let change = self.responseSlitChanges()[0]
+                    let change = self.responseSplitChanges()[0]
                     since = Int(change.till)
-                    let jsonChanges = try? Json.encodeToJson(change)
+                    let jsonChanges = try? Json.encodeToJson(TargetingRulesChange(featureFlags: change, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1)))
                     return TestDispatcherResponse(code: 200, data: Data(jsonChanges!.utf8))
                 }
 
@@ -177,7 +177,7 @@ class MySegmentUpdatedTest: XCTestCase {
 
     }
 
-    private func  responseSlitChanges() -> [SplitChange] {
+    private func  responseSplitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
         
         let c = loadSplitsChangeFile()!

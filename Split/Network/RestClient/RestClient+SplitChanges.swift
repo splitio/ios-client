@@ -13,7 +13,7 @@ protocol RestClientSplitChanges: RestClient {
                          rbSince: Int64?,
                          till: Int64?,
                          headers: HttpHeaders?,
-                         completion: @escaping (DataResult<SplitChange>) -> Void)
+                         completion: @escaping (DataResult<TargetingRulesChange>) -> Void)
 }
 
 extension DefaultRestClient: RestClientSplitChanges {
@@ -21,7 +21,7 @@ extension DefaultRestClient: RestClientSplitChanges {
                          rbSince: Int64?,
                          till: Int64?,
                          headers: HttpHeaders?,
-                         completion: @escaping (DataResult<SplitChange>) -> Void) {
+                         completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
         self.execute(
             endpoint: endpointFactory.splitChangesEndpoint,
             parameters: buildParameters(since: since, rbSince: rbSince, till: till),

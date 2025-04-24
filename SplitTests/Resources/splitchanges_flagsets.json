@@ -1,5 +1,5 @@
-{
-    "splits":[
+{"ff":{
+    "d":[
               {
               "trafficTypeName":"account",
               "name":"{{SPLIT_NAME_1}}",
@@ -352,6 +352,6 @@
                             ]
               },
               ],
-    "since": {{SINCE}},
-    "till":{{TILL}}
-}
+    "s": {{SINCE}},
+    "t":{{TILL}}
+}, "rbs": {"s":-1,"t":-1,"d":[]}}

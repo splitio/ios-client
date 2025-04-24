@@ -1,9 +1,10 @@
 {
-    "splits":[
-        {
-            "trafficTypeName":"client",
-            "name":"test_feature",
-            "trafficAllocation":100,
+    "ff":{
+        "d":[
+            {
+                "trafficTypeName":"client",
+                "name":"test_feature",
+                "trafficAllocation":100,
             "trafficAllocationSeed":-2049557248,
             "seed":1188118899,
             "status":"ACTIVE",
@@ -52,6 +53,6 @@
             ]
         }
     ],
-    "since":1567455995317,
-    "till":1567456937865
-}
+    "s":1567455995317,
+    "t":1567456937865
+}, "rbs": {"s":-1,"t":-1,"d":[]}}
