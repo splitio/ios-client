@@ -49,6 +49,7 @@ class SplitsSyncHelper {
         self.splitConfig = splitConfig
     }
 
+    // This function is KEY, since it's called from all update contexts
     func sync(since: Int64,
               till: Int64? = nil,
               clearBeforeUpdate: Bool = false,

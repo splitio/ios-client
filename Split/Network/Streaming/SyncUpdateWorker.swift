@@ -25,65 +25,85 @@ class UpdateWorker<T: NotificationTypeField> {
 }
 
 class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
-
+    
     private let synchronizer: Synchronizer
     private let splitsStorage: SplitsStorage
+    private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let payloadDecoder: FeatureFlagsPayloadDecoder
     private let telemetryProducer: TelemetryRuntimeProducer?
     var decomProvider: CompressionProvider = DefaultDecompressionProvider()
-
-    init(synchronizer: Synchronizer,
-         splitsStorage: SplitsStorage,
-         splitChangeProcessor: SplitChangeProcessor,
-         featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoder,
-         telemetryProducer: TelemetryRuntimeProducer?) {
+    
+    init(synchronizer: Synchronizer, splitsStorage: SplitsStorage, ruleBasedSegmentsStorage: RuleBasedSegmentsStorage, splitChangeProcessor: SplitChangeProcessor, featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoder, telemetryProducer: TelemetryRuntimeProducer?) {
+        
         self.synchronizer = synchronizer
         self.splitsStorage = splitsStorage
+        self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.payloadDecoder = featureFlagsPayloadDecoder
         self.telemetryProducer = telemetryProducer
         super.init(queueName: "SplitsUpdateWorker")
     }
-
-    override func process(notification: SplitsUpdateNotification) throws {
+    
+    override func process(notification: SplitsUpdateNotification) throws { //TODO: Redefine the notification
         processQueue.async { [weak self] in
-
+            
             guard let self = self else { return }
+            
             let storedChangeNumber = self.splitsStorage.changeNumber
-            if storedChangeNumber >= notification.changeNumber {
+            
+            // Valid change?
+            if storedChangeNumber >= notification.changeNumber { //TODO: This should also check for rbChangeNumber
                 return
             }
-
-            if let previousChangeNumber = notification.previousChangeNumber,
-                previousChangeNumber == storedChangeNumber {
-                if let payload = notification.definition,
-                   let compressionType = notification.compressionType,
-                   let rbsPreviousChangeNumber = notification.rbsPreviousChangeNumber {
-                    do {
-                        let split = try self.payloadDecoder.decode(
-                            payload: payload,
-                            compressionUtil: self.decomProvider.decompressor(for: compressionType))
-                        let change = SplitChange(splits: [split],
-                                                 since: previousChangeNumber,
-                                                 rbSince: rbsPreviousChangeNumber,
-                                                 till: notification.changeNumber,)
-                        Logger.v("Split update received: \(change)")
-                        if self.splitsStorage.update(splitChange: self.splitChangeProcessor.process(change)) {
-                            self.synchronizer.notifyFeatureFlagsUpdated()
-                        }
-                        self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
-                        return
-
-                    } catch {
-                        Logger.e("Error decoding feature flags payload from notification: \(error)")
+            
+            // Process
+            if  let previousChangeNumber = notification.featureFlags.previousChangeNumber, previousChangeNumber == storedChangeNumber,
+                let rbsPreviousChangeNumber = notification.rbsPreviousChangeNumber,
+                let payload = notification.definition,
+                let compressionType = notification.compressionType {
+                
+                
+                /*------------------------------------------- Process Splits Changes ------------------------------------------------*/
+                do {
+                    //let split = try self.payloadDecoder.decode(payload: payload.SplitChange, compressionUtil: self.decomProvider.decompressor(for: compressionType))
+                    let split = try self.payloadDecoder.decode(payload: payload.featureFlags, compressionUtil: self.decomProvider.decompressor(for: compressionType))
+                
+                    
+                    let change = SplitChange(splits: [split], since: previousChangeNumber, till: notification.changeNumber)
+                    
+                    Logger.v("Split update received: \(change)")
+                    if self.splitsStorage.update(splitChange: self.splitChangeProcessor.process(change)) {
+                        self.synchronizer.notifyFeatureFlagsUpdated()
                     }
-                }
+                    self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
+                    return
+                    
+                } catch { Logger.e("Error decoding feature flags payload from notification: \(error)") }
+                
+                
+                /*------------------------------------ Process Rule Based Segments Changes ------------------------------------------*/
+                do {
+                    // TODO: Add new payloadDecoder for RBS
+                    let segments = try self.payloadDecoder.decode(payload: payload.ruleBasedSegment, compressionUtil: self.decomProvider.decompressor(for: compressionType))
+                    
+                    let change = RuleBasedSegmentChange(segments: [segments], since: rbsPreviousChangeNumber, till: notification.ruleBasedSegment.changeNumber)
+                    
+                    Logger.v("Rule based segments update received: \(change)")
+                    if self.ruleBasedSegmentsStorage.update(splitChange: self.splitChangeProcessor.process(change)) {
+                        self.synchronizer.notifyFeatureFlagsUpdated() // TODO: This should support new notification
+                    }
+                    self.telemetryProducer?.recordUpdatesFromSse(type: .splits) // TODO: This too
+                    return
+                    
+                } catch { Logger.e("Error decoding rule based segments payload from notification: \(error)") }
             }
-            self.synchronizer.synchronizeSplits(changeNumber: notification.changeNumber)
+            
+            self.synchronizer.synchronizeSplits(changeNumber: notification.changeNumber) //TODO: Sync here RBS too
         }
     }
 }
+
 
 class SplitKillWorker: UpdateWorker<SplitKillNotification> {
 

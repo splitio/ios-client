@@ -26,6 +26,7 @@ class DefaultSplitChangeProcessor: SplitChangeProcessor {
         filterSet = filterBySet?.values.asSet()
     }
 
+    // Sorts Splits between active and archived
     func process(_ splitChange: SplitChange) -> ProcessedSplitChange {
 
         var active = [Split]()
