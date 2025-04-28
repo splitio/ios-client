@@ -10,8 +10,10 @@ import Foundation
 @testable import Split
 
 class FeatureFlagsPayloadDecoderMock: FeatureFlagsPayloadDecoder {
+    
     let helper = SplitHelper()
     func decode(payload: String, compressionUtil: CompressionUtil) throws -> Split {
         return helper.createDefaultSplit(named: "dummy_split")
     }
+    
 }

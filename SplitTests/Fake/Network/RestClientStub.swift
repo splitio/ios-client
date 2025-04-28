@@ -55,7 +55,7 @@ extension RestClientStub: RestClient {
 }
 
 extension RestClientStub: RestClientSplitChanges {
-    func getSplitChanges(since: Int64, till: Int64?, headers: HttpHeaders?, completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
+    func getSplitChanges(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders?, completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
         if splitChanges.count == 0 {
             completion(DataResult.success(value: nil))
             return

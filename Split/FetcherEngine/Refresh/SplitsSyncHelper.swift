@@ -51,11 +51,13 @@ class SplitsSyncHelper {
 
     // This function is KEY, since it's called from all update contexts
     func sync(since: Int64,
+              rbSince: Int64? = nil,
               till: Int64? = nil,
               clearBeforeUpdate: Bool = false,
               headers: HttpHeaders? = nil) throws -> SyncResult {
         do {
             let res = try tryToSync(since: since,
+                                    rbSince: rbSince,
                                     till: till,
                                     clearBeforeUpdate: clearBeforeUpdate,
                                     headers: headers)
@@ -65,6 +67,7 @@ class SplitsSyncHelper {
             }
 
             return try tryToSync(since: res.changeNumber,
+                                 rbSince: res.changeNumber,
                                    till: res.changeNumber,
                                    clearBeforeUpdate: clearBeforeUpdate && res.changeNumber == since,
                                    headers: headers,
