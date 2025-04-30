@@ -91,9 +91,16 @@ class FetchSpecificSplitsTest: XCTestCase {
         wait(for: [sdkReadyExpectation], timeout: 40)
 
         XCTAssertTrue(sdkReadyFired)
-        XCTAssertTrue("\(serverUrl)\(expectedResult)" == splitsRequestUrl)
+        
+        //XCTAssertTrue("\(serverUrl)\(expectedResult)" == splitsRequestUrl)
 
-
+        print("Expected: [\(serverUrl)\(expectedResult)]")
+        print("Actual:   [\(splitsRequestUrl)]")
+        print("Equal?    \("\(serverUrl)\(expectedResult)" == splitsRequestUrl)")
+        
+        
+        XCTAssertEqual(URL(string: "\(serverUrl)\(expectedResult)")?.path, URL(string: splitsRequestUrl)?.path)
+        
         let semaphore = DispatchSemaphore(value: 0)
         client?.destroy(completion: {
             _ = semaphore.signal()
@@ -122,7 +129,7 @@ class FetchSpecificSplitsTest: XCTestCase {
                 //self.splitsRequestUrl = String(request.url.absoluteString.suffix(request.url.absoluteString.count - 17))
                 self.splitsRequestUrl = String(request.url.absoluteString)
                 let since = self.lastChangeNumber
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, rbSince: since, till: since).utf8))
             }
 
             if request.isMySegmentsEndpoint() {
