@@ -353,6 +353,7 @@
 		59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */; };
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
+		5BF3C2E82DC12E3C00AD2186 /* SplitsSyncHelperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3C2E72DC12E3200AD2186 /* SplitsSyncHelperTest.swift */; };
 		9500D9922C56F9BA00383593 /* HostDomainFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */; };
 		9500D9A92C59297400383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
 		9500D9AA2C59382000383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
@@ -1529,6 +1530,7 @@
 		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		5BF3C2E72DC12E3200AD2186 /* SplitsSyncHelperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsSyncHelperTest.swift; sourceTree = "<group>"; };
 		9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilterTests.swift; sourceTree = "<group>"; };
 		9500D9A82C59297400383593 /* HostDomainFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilter.swift; sourceTree = "<group>"; };
 		9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v5.xcdatamodel; sourceTree = "<group>"; };
@@ -2747,7 +2749,7 @@
 			path = Fake;
 			sourceTree = "<group>";
 		};
-		5912D150219A005400BC698C /* Helpers */ = {
+		5912D150219A005400BC698C /* TestsHelpers */ = {
 			isa = PBXGroup;
 			children = (
 				95ED4AA2264999BD00FD3569 /* IntegrationHelper.swift */,
@@ -2766,7 +2768,7 @@
 				952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */,
 				95F7BC282C46A4C800C5F2E4 /* SecurityHelper.swift */,
 			);
-			path = Helpers;
+			path = TestsHelpers;
 			sourceTree = "<group>";
 		};
 		59163B11216396EF00C7AA57 /* Common */ = {
@@ -2838,7 +2840,7 @@
 				5919017924A273C4005BD12A /* HttpClient */,
 				595AD1F624D9CDE400A7B750 /* SplitFilter */,
 				599A6E3222FC67BF00D3D68C /* Integration */,
-				5912D150219A005400BC698C /* Helpers */,
+				5912D150219A005400BC698C /* TestsHelpers */,
 				590DF9CD213EB92D0082B94F /* Fake */,
 				592C6AF1211CBD63002D120C /* Supporting Files */,
 				592C6ADB211CBB86002D120C /* Resources */,
@@ -3348,6 +3350,7 @@
 		956A7E26297EC8130080D53C /* Splits */ = {
 			isa = PBXGroup;
 			children = (
+				5BF3C2E72DC12E3200AD2186 /* SplitsSyncHelperTest.swift */,
 				59F4AABC2513A2E800A1C69A /* SplitsUpdateWorkerTest.swift */,
 				956D17D0260D266E0037F575 /* SplitsChangesCheckerTest.swift */,
 				59F4AABE2513A97B00A1C69A /* PeriodicSplitsSyncWorkerTest.swift */,
@@ -4664,6 +4667,7 @@
 				C5977C572BF53D60003E293A /* UnsupportedMatcherIntegrationTest.swift in Sources */,
 				95B1800527626C70002DC9DF /* TelemetryConfigRecorderWorkerTests.swift in Sources */,
 				95ABF4C6293522D6006ED016 /* EventsTrackerTest.swift in Sources */,
+				5BF3C2E82DC12E3C00AD2186 /* SplitsSyncHelperTest.swift in Sources */,
 				95ABF4C829352425006ED016 /* EventValidatorStub.swift in Sources */,
 				59F4AAC42513EFF800A1C69A /* PeriodicMySegmentsSyncWorkerTest.swift in Sources */,
 				31AA21DE01A000A7C30630F2 /* SseClientTest.swift in Sources */,

@@ -29,27 +29,20 @@ extension DefaultRestClient: RestClientSplitChanges {
             completion: completion)
     }
 
-    private func buildParameters(since: Int64,
-                                 rbSince: Int64?,
-                                 till: Int64?) -> HttpParameters {
+    private func buildParameters(since: Int64, rbSince: Int64?, till: Int64?) -> HttpParameters {
+        
         var parameters: [HttpParameter] = []
         if !Spec.flagsSpec.isEmpty() {
             parameters.append(HttpParameter(key: "s", value: Spec.flagsSpec))
         }
 
+        // Parameters order is IMPORTANT (if the order is wrong, the CDN cache won't properly work)
         parameters.append(HttpParameter(key: "since", value: since))
-        parameters.append(HttpParameter(key: "rbSince", value: rbSince))
+        if rbSince != nil { parameters.append(HttpParameter(key: "rbSince", value: rbSince)) }
         parameters.append(HttpParameter(key: "sets"))
         parameters.append(HttpParameter(key: "names"))
         parameters.append(HttpParameter(key: "prefixes"))
-                                     
-        if let rbSince = rbSince {
-            parameters.append(HttpParameter(key: "rbSince", value: rbSince))
-        }
-
-        if let till = till {
-            parameters.append(HttpParameter(key: "till", value: till))
-        }
+        if till != nil { parameters.append(HttpParameter(key: "till", value: till)) }
              
         return HttpParameters(parameters)
     }
