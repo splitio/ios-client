@@ -88,6 +88,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
         return RetryableSplitsSyncWorker(splitFetcher: apiFacade.splitsFetcher,
                                          splitsStorage: storageContainer.splitsStorage,
+                                         ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
                                          splitChangeProcessor: splitChangeProcessor,
                                          eventsManager: eventsManager,
                                          reconnectBackoffCounter: backoffCounter,
@@ -98,6 +99,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                            reconnectBackoffCounter: ReconnectBackoffCounter) -> RetryableSyncWorker {
         return RetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
                                            splitsStorage: storageContainer.splitsStorage,
+                                           ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            changeNumber: changeNumber, eventsManager: eventsManager,
                                            reconnectBackoffCounter: reconnectBackoffCounter,
@@ -107,7 +109,9 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     func createPeriodicSplitsSyncWorker() -> PeriodicSyncWorker {
         
         return  PeriodicSplitsSyncWorker(
-            splitFetcher: apiFacade.splitsFetcher, splitsStorage: storageContainer.splitsStorage,
+            splitFetcher: apiFacade.splitsFetcher,
+            splitsStorage: storageContainer.splitsStorage,
+            ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
             splitChangeProcessor: splitChangeProcessor,
             timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate),
             eventsManager: eventsManager, splitConfig: splitConfig)

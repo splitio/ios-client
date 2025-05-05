@@ -163,8 +163,11 @@ struct BackgroundSyncExecutor {
                                                                         dbHelper: dbHelper) else {
             throw GenericError.couldNotCreateCache
         }
+        
         let splitsStorage = SplitDatabaseHelper.openPersistentSplitsStorage(database: splitDatabase)
         let generalInfoStorage = SplitDatabaseHelper.openGeneralInfoStorage(database: splitDatabase)
+        
+        let ruleBasedSegmentsStorage = SplitDatabaseHelper.openPersistentRuleBasedSegmentsStorage(database: splitDatabase, storage: generalInfoStorage)
         let endpoints = serviceEndpoints ?? ServiceEndpoints.builder().build()
         let endpointFactory = EndpointFactory(serviceEndpoints: endpoints,
                                                apiKey: apiKey,
@@ -191,6 +194,7 @@ struct BackgroundSyncExecutor {
         let changeProcessor = DefaultSplitChangeProcessor(filterBySet: bySetsFilter)
         self.splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitsFetcher,
                                                            persistentSplitsStorage: splitsStorage,
+                                                           ruleBasedSementsStorage: ruleBasedSegmentsStorage,
                                                            splitChangeProcessor: changeProcessor,
                                                            cacheExpiration: cacheExpiration,
                                                            splitConfig: SplitClientConfig())

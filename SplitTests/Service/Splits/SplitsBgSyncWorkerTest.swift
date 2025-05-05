@@ -15,12 +15,14 @@ class SplitsBgSyncWorkerTest: XCTestCase {
 
     var splitFetcher: HttpSplitFetcherStub!
     var splitStorage: PersistentSplitsStorageStub!
+    var ruleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub!
     var splitChangeProcessor: SplitChangeProcessorStub!
     var splitsSyncWorker: BackgroundSyncWorker!
 
     override func setUp() {
         splitFetcher = HttpSplitFetcherStub()
         splitStorage = PersistentSplitsStorageStub()
+        ruleBasedSegmentsStorage = PersistentRuleBasedSegmentsStorageStub()
         splitStorage.changeNumber = 100
         let _ = SplitChange(splits: [], since: splitStorage.changeNumber, till: splitStorage.changeNumber)
         splitChangeProcessor = SplitChangeProcessorStub()
@@ -30,6 +32,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
         // Cache expiration timestamp set to 0 (no clearing cache)
         splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
                                                       persistentSplitsStorage: splitStorage,
+                                                      ruleBasedSementsStorage: ruleBasedSegmentsStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
                                                       cacheExpiration: 100,
                                                       splitConfig: SplitClientConfig())
@@ -47,6 +50,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
         // Cache expiration timestamp set to 0 (no clearing cache)
         splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
                                                       persistentSplitsStorage: splitStorage,
+                                                      ruleBasedSementsStorage: ruleBasedSegmentsStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
                                                       cacheExpiration: 100,
                                                       splitConfig: SplitClientConfig())
@@ -64,6 +68,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
         let expiration = 1000
         splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitFetcher,
                                                       persistentSplitsStorage: splitStorage,
+                                                      ruleBasedSementsStorage: ruleBasedSegmentsStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
                                                       cacheExpiration: 2000,
                                                       splitConfig: SplitClientConfig())

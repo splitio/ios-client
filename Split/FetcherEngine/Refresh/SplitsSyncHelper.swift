@@ -23,6 +23,7 @@ class SplitsSyncHelper {
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SyncSplitsStorage
+    private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let splitConfig: SplitClientConfig
 
@@ -40,11 +41,13 @@ class SplitsSyncHelper {
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SyncSplitsStorage,
+         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          splitConfig: SplitClientConfig) {
 
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
+        self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.splitConfig = splitConfig
     }

@@ -15,6 +15,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
 
     var splitFetcher: HttpSplitFetcherStub!
     var splitsStorage: SplitsStorageStub!
+    var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
     var splitsUpdateWorker: RetryableSplitsUpdateWorker!
@@ -23,6 +24,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
         splitFetcher = HttpSplitFetcherStub()
         splitFetcher.splitChanges = [SplitChange(splits: [], since: 102, till: 102)]
         splitsStorage = SplitsStorageStub()
+        ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
         _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [Split](),
                                                                    archivedSplits: [],
                                                                    changeNumber: 100,
@@ -36,6 +38,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
         // Cache expiration timestamp set to 0 (no clearing cache)
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
                                                          splitsStorage: splitsStorage,
+                                                         ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
                                                          changeNumber: 101,
                                                          eventsManager: eventsManager,
@@ -60,6 +63,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
     func testRetryAndSuccess() {
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
                                                          splitsStorage: splitsStorage,
+                                                         ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
                                                          changeNumber: 200,
                                                          eventsManager: eventsManager,
@@ -86,6 +90,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
     func testStopNoSuccess() {
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
                                                          splitsStorage: splitsStorage,
+                                                         ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
                                                          changeNumber: 200,
                                                          eventsManager: eventsManager,
@@ -114,6 +119,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
 
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
                                                          splitsStorage: splitsStorage,
+                                                         ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
                                                          changeNumber: 99,
                                                          eventsManager: eventsManager,

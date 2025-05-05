@@ -14,14 +14,28 @@ class HttpSplitFetcherStub: HttpSplitFetcher {
     var httpError: HttpError?
     var hitIndex = 0
     var fetchCallCount: Int = 0
+    var targetingRulesFetched = false
     
-    func execute(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders?) throws -> SplitChange {
-        fetchCallCount+=1
-        if let e = httpError {
-            throw e
+    func execute(since: Int64, rbSince: Int64? = nil, till: Int64?, headers: HttpHeaders?) throws -> SplitChange {
+        
+        
+        
+        // Throw error
+        if let err = httpError { throw err }
+        
+        
+        
+        // Process Rule Based Segmetns
+        if rbSince != nil {
+            return try executeForTargetingRules(since: since, rbSince: rbSince, till: till, headers: headers).featureFlags
+        } else {
+            fetchCallCount+=1
         }
+        
+        // Process flags
         let hit = hitIndex
         hitIndex+=1
+        
         if splitChanges.count == 0 {
             throw GenericError.unknown(message: "null feature flag changes")
         }
@@ -42,8 +56,10 @@ class HttpSplitFetcherStub: HttpSplitFetcher {
     }
     
     func executeForTargetingRules(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders?) throws -> TargetingRulesChange {
+        targetingRulesFetched = true
+        
         // Reuse the existing execute method to get the SplitChange
-        let splitChange = try execute(since: since, rbSince: rbSince, till: till, headers: headers)
+        let splitChange = try execute(since: since, till: till, headers: headers)
         
         // Create a TargetingRulesChange with the SplitChange as feature flags and empty rule-based segments
         return TargetingRulesChange(

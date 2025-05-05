@@ -11,41 +11,34 @@ import XCTest
 
 class SplitsSyncHelpersTest: XCTestCase {
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
+    override func setUp() {}
 
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
+    override func tearDown() {}
+
     
-    func testSync() throws {
+    func testFetchUntilReturnsExpectedResult() throws {
         
         // Storage
         let persistentStorage = PersistentSplitsStorageStub()
         let flagSetsCache     = FlagSetsCacheMock()
         let splitsStorage     = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage, flagSetsCache: flagSetsCache)
-        //var storage = new Mock<SplitStorage>();
-        // Client
-        let httpClient       = DefaultHttpClient(session: DefaultHttpSession(urlSession: URLSession()))
-        let serviceEndpoints = ServiceEndpoints.Builder().build()
-        let restClient       = DefaultRestClient(httpClient: httpClient,
-                                                 endpointFactory: EndpointFactory(serviceEndpoints: serviceEndpoints,
-                                                                                  apiKey: CommonValues.apiKey,
-                                                                                  splitsQueryString: ""))
         
-        let splitFetcher = DefaultHttpSplitFetcher(restClient: restClient, syncHelper: DefaultSyncHelper(telemetryProducer: TelemetryStorageStub()))
-
-        let sut = SplitsSyncHelper(
-            splitFetcher: splitFetcher,
+        let fetcher = HttpSplitFetcherStub()
+        
+        let helper = SplitsSyncHelper(
+            splitFetcher: fetcher,
             splitsStorage: splitsStorage,
+            ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
             splitChangeProcessor: SplitChangeProcessorStub(),
-            splitConfig: TestingHelper.basicStreamingConfig()
+            splitConfig: SplitClientConfig()
         )
         
-        let result = try sut.sync(since: 1200, rbSince: 1400, till: 2000, clearBeforeUpdate: false)
+        do {
+            let _ = try helper.fetchUntil(since: 123, rbSince: 100, clearBeforeUpdate: true)
+        } catch {
+            
+        }
 
-        // Add asserts here if needed
+        XCTAssertTrue(fetcher.targetingRulesFetched)
     }
-    
 }

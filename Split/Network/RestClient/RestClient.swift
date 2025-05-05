@@ -42,7 +42,7 @@ class DefaultRestClient: SplitApiRestClient {
     private let httpClient: HttpClient
     let endpointFactory: EndpointFactory
     private let reachabilityChecker: HostReachabilityChecker
-
+    
     // MARK: - Designated Initializer
     init(httpClient: HttpClient = RestClientConfiguration.httpClient,
          endpointFactory: EndpointFactory,
@@ -51,44 +51,44 @@ class DefaultRestClient: SplitApiRestClient {
         self.endpointFactory = endpointFactory
         self.reachabilityChecker = reachabilityChecker
     }
-
+    
     func execute<T>(endpoint: Endpoint,
                     parameters: HttpParameters? = nil,
                     body: Data? = nil,
                     headers: HttpHeaders? = nil,
                     completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
-
+        
         do {
-        _ = try httpClient.sendRequest(
-                        endpoint: endpoint,
-                        parameters: parameters,
-                        headers: headers,
-                        body: body)
+            _ = try httpClient.sendRequest(
+                endpoint: endpoint,
+                parameters: parameters,
+                headers: headers,
+                body: body)
             .getResponse(completionHandler: { response in
-            switch response.result {
-            case .success(let json):
-                if json.isNull() {
-                    completion(DataResult { return nil })
-                    return
+                switch response.result {
+                    case .success(let json):
+                        if json.isNull() {
+                            completion(DataResult { return nil })
+                            return
+                        }
+                        
+                        do {
+                            let parsedObject = try json.decode(T.self)
+                            completion(DataResult { return parsedObject })
+                        } catch {
+                            completion(DataResult { throw error })
+                        }
+                    case .failure:
+                        completion(DataResult {
+                            if response.code == HttpCode.uriTooLong {
+                                throw HttpError.uriTooLong
+                            }
+                            if response.code >= HttpCode.badRequest, response.code < HttpCode.internalServerError {
+                                throw HttpError.clientRelated(code: response.code, internalCode: InternalHttpErrorCode.noCode)
+                            }
+                            throw HttpError.unknown(code: response.code, message: "unknown")
+                        })
                 }
-
-                do {
-                    let parsedObject = try json.decode(T.self)
-                    completion(DataResult { return parsedObject })
-                } catch {
-                    completion(DataResult { throw error })
-                }
-            case .failure:
-                completion(DataResult {
-                    if response.code == HttpCode.uriTooLong {
-                        throw HttpError.uriTooLong
-                    }
-                    if response.code >= HttpCode.badRequest, response.code < HttpCode.internalServerError {
-                        throw HttpError.clientRelated(code: response.code, internalCode: InternalHttpErrorCode.noCode)
-                    }
-                    throw HttpError.unknown(code: response.code, message: "unknown")
-                })
-            }
             }, errorHandler: { error in
                 completion(DataResult { throw error })
             })

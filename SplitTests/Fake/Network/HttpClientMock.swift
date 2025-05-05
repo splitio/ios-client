@@ -18,9 +18,11 @@ class HttpClientMock: HttpClient {
     var httpSession: HttpSession
     var streamReqExp: XCTestExpectation?
     var datasReqExp: XCTestExpectation?
-
+    var performedRequests: [HttpDataRequest]
+    
     init(session: HttpSession, dataRequest: HttpDataRequest? = nil, streamRequest: HttpStreamRequest? = nil) {
         self.httpSession = session
+        self.performedRequests = []
 
         if let r = dataRequest {
             self.httpDataRequest = r
@@ -35,25 +37,27 @@ class HttpClientMock: HttpClient {
         }
     }
 
-    func sendRequest(endpoint: Endpoint, parameters: HttpParameters?,
-                     headers: [String: String]?, body: Data?) throws -> HttpDataRequest {
+    func sendRequest(endpoint: Endpoint, parameters: HttpParameters?, headers: [String: String]?, body: Data?) throws -> HttpDataRequest {
 
-        if throwOnSend {
-            throw HttpError.unknown(code: -1, message: "throw on send mock exception")
-        }
+        if throwOnSend { throw HttpError.unknown(code: -1, message: "throw on send mock exception") }
+        
+        //httpDataRequest = try DefaultHttpDataRequest(session: httpSession, url: dummyUrl(), method: .post, parameters: parameters, headers: headers)
+        
+        httpDataRequest = try DefaultHttpDataRequest(session: httpSession, url: endpoint.url, method: .get, parameters: parameters, headers: headers)
+        
         return httpDataRequest
     }
 
-    func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?,
-                           headers: [String: String]?) throws -> HttpStreamRequest {
+    func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?, headers: [String: String]?) throws -> HttpStreamRequest {
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             if let exp = self.streamReqExp {
                 exp.fulfill()
             }
         }
-        if throwOnSend {
-            throw HttpError.unknown(code: -1, message: "throw on send mock exception")
-        }
+        
+        if throwOnSend { throw HttpError.unknown(code: -1, message: "throw on send mock exception") }
+        
         return httpStreamRequest
     }
 

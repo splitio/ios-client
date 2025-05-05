@@ -15,6 +15,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
 
     var splitFetcher: HttpSplitFetcherStub!
     var splitsStorage: SplitsStorageStub!
+    var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
     var splitsSyncWorker: PeriodicSplitsSyncWorker!
@@ -23,6 +24,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
     override func setUp() {
         splitFetcher = HttpSplitFetcherStub()
         splitsStorage = SplitsStorageStub()
+        ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
         splitChangeProcessor = SplitChangeProcessorStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
@@ -35,6 +37,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         let timer = PeriodicTimerStub()
         splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
                                                     splitsStorage: splitsStorage,
+                                                    ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                     splitChangeProcessor: splitChangeProcessor,
                                                     timer: timer,
                                                     eventsManager: eventsManager,
@@ -56,6 +59,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         let timer = PeriodicTimerStub()
         splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
                                                     splitsStorage: splitsStorage,
+                                                    ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                     splitChangeProcessor: splitChangeProcessor,
                                                     timer: timer,
                                                     eventsManager: eventsManager,

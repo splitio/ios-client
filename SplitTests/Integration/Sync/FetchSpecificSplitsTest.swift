@@ -37,25 +37,26 @@ class FetchSpecificSplitsTest: XCTestCase {
     func testBothFilters() {
         let syncConfig = SyncConfig.builder()
         .addSplitFilter(SplitFilter.byName(["s1", "s2", "s3"]))
-        .addSplitFilter(SplitFilter.byPrefix(["s1", "s2", "s3"]))
-        .build()
+        .addSplitFilter(SplitFilter.byPrefix(["s1", "s2", "s3"])).build()
         urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&rbSince=-1&names=s1,s2,s3&prefixes=s1,s2,s3")
     }
 
     func testByNamesFilter() {
         let syncConfig = SyncConfig.builder()
-        .addSplitFilter(SplitFilter.byName(["s1", "s2", "s3"]))
-        .build()
+        .addSplitFilter(SplitFilter.byName(["s1", "s2", "s3"])).build()
         urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&rbSince=-1&names=s1,s2,s3")
     }
 
     func testByPrefixFilter() {
         let syncConfig = SyncConfig.builder()
-        .addSplitFilter(SplitFilter.byPrefix(["s1", "s2", "s3"]))
-        .build()
+        .addSplitFilter(SplitFilter.byPrefix(["s1", "s2", "s3"])).build()
         urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&rbSince=-1&prefixes=s1,s2,s3")
     }
-
+    
+    func testRuleBasedSegmentsURL() {
+        let syncConfig = SyncConfig.builder().build()
+        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&rbSince=-1")
+    }
 
     func urlQueryStringTest(syncConfig: SyncConfig, expectedResult: String) {
         
@@ -92,14 +93,7 @@ class FetchSpecificSplitsTest: XCTestCase {
 
         XCTAssertTrue(sdkReadyFired)
         
-        //XCTAssertTrue("\(serverUrl)\(expectedResult)" == splitsRequestUrl)
-
-        print("Expected: [\(serverUrl)\(expectedResult)]")
-        print("Actual:   [\(splitsRequestUrl)]")
-        print("Equal?    \("\(serverUrl)\(expectedResult)" == splitsRequestUrl)")
-        
-        
-        XCTAssertEqual(URL(string: "\(serverUrl)\(expectedResult)")?.path, URL(string: splitsRequestUrl)?.path)
+        XCTAssertTrue("\(serverUrl)\(expectedResult)" == splitsRequestUrl)
         
         let semaphore = DispatchSemaphore(value: 0)
         client?.destroy(completion: {
@@ -126,7 +120,6 @@ class FetchSpecificSplitsTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                //self.splitsRequestUrl = String(request.url.absoluteString.suffix(request.url.absoluteString.count - 17))
                 self.splitsRequestUrl = String(request.url.absoluteString)
                 let since = self.lastChangeNumber
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, rbSince: since, till: since).utf8))

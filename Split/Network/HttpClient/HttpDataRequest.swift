@@ -27,8 +27,7 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
         self.data?.append(data)
     }
 
-    func getResponse(completionHandler: @escaping RequestCompletionHandler,
-                     errorHandler: @escaping RequestErrorHandler) -> Self {
+    func getResponse(completionHandler: @escaping RequestCompletionHandler, errorHandler: @escaping RequestErrorHandler) -> Self {
         requestQueue.sync {
             self.completionHandler = completionHandler
             self.errorHandler = errorHandler

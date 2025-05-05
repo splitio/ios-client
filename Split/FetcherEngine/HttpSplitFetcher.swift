@@ -22,7 +22,7 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
         self.syncHelper = syncHelper
     }
 
-    func execute(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders? = nil) throws -> SplitChange {
+    func execute(since: Int64, rbSince: Int64? = nil, till: Int64?, headers: HttpHeaders? = nil) throws -> SplitChange {
         let targetingRulesChange = try executeForTargetingRules(since: since, rbSince: rbSince, till: till, headers: headers)
         return targetingRulesChange.featureFlags
     }

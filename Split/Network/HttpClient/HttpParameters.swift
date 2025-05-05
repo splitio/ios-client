@@ -7,7 +7,7 @@
 
 import Foundation
 
-class HttpParameters: ExpressibleByDictionaryLiteral {
+class HttpParameters: ExpressibleByDictionaryLiteral {    
     let order: [String]?
     let values: [String: Any]
 

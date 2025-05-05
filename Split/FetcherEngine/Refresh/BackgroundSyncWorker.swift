@@ -47,23 +47,31 @@ class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: BackgroundSyncSplitsStorage
     private let persistenSplitsStorage: PersistentSplitsStorage
+    
+    private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
+    private let persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage
+    
     private let splitChangeProcessor: SplitChangeProcessor
     private let cacheExpiration: Int64
     private let syncHelper: SplitsSyncHelper
 
     init(splitFetcher: HttpSplitFetcher,
          persistentSplitsStorage: PersistentSplitsStorage,
+         ruleBasedSementsStorage: PersistentRuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          cacheExpiration: Int64,
          splitConfig: SplitClientConfig) {
 
         self.persistenSplitsStorage = persistentSplitsStorage
+        self.persistentRuleBasedSegmentsStorage = ruleBasedSementsStorage
         self.splitFetcher = splitFetcher
         self.splitsStorage = BackgroundSyncSplitsStorage(persistentSplitsStorage: persistentSplitsStorage)
+        self.ruleBasedSegmentsStorage = DefaultRuleBasedSegmentsStorage(persistentStorage: persistentRuleBasedSegmentsStorage)
         self.splitChangeProcessor = splitChangeProcessor
         self.cacheExpiration = cacheExpiration
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
+                                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            splitConfig: splitConfig)
     }

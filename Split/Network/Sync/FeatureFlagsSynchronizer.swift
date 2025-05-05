@@ -8,6 +8,7 @@
 
 import Foundation
 
+// TODO: Change name because it will
 protocol FeatureFlagsSynchronizer {
     func load()
     func synchronize()
@@ -100,7 +101,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         splitsSyncWorker.start()
     }
 
-    func synchronize(changeNumber: Int64) {
+    func synchronize(changeNumber: Int64) { //TODO: use a new struct with the 2 changeNumbers
         if isDestroyed.value || !splitConfig.syncEnabled {
             return
         }

@@ -17,24 +17,20 @@ protocol RestClientSplitChanges: RestClient {
 }
 
 extension DefaultRestClient: RestClientSplitChanges {
-    func getSplitChanges(since: Int64,
-                         rbSince: Int64?,
-                         till: Int64?,
-                         headers: HttpHeaders?,
-                         completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
-        self.execute(
-            endpoint: endpointFactory.splitChangesEndpoint,
-            parameters: buildParameters(since: since, rbSince: rbSince, till: till),
-            headers: headers,
-            completion: completion)
+    
+    func getSplitChanges(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders?, completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
+        
+        execute(endpoint: endpointFactory.splitChangesEndpoint,
+                parameters: buildParameters(since: since, rbSince: rbSince, till: till),
+                headers: headers,
+                completion: completion)
     }
 
     private func buildParameters(since: Int64, rbSince: Int64?, till: Int64?) -> HttpParameters {
         
         var parameters: [HttpParameter] = []
-        if !Spec.flagsSpec.isEmpty() {
-            parameters.append(HttpParameter(key: "s", value: Spec.flagsSpec))
-        }
+        
+        if !Spec.flagsSpec.isEmpty() { parameters.append(HttpParameter(key: "s", value: Spec.flagsSpec)) }
 
         // Parameters order is IMPORTANT (if the order is wrong, the CDN cache won't properly work)
         parameters.append(HttpParameter(key: "since", value: since))
