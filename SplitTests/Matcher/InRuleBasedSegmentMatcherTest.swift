@@ -76,7 +76,7 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
     func testEvaluateWithKeyInExcludedSegments() {
         let segment = createSegment(name: "segment1")
         segment.excluded = Excluded()
-        segment.excluded?.segments = ["excluded_segment"]
+        segment.excluded?.segments = [ExcludedSegment(name: "excluded_segment", type: .standard)]
         ruleBasedSegmentsStorage.segments["segment1"] = segment
 
         mySegmentsStorage.segments["key1"] = Set(["excluded_segment"])

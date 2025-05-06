@@ -27,7 +27,7 @@ class InRuleBasedSegmentMatcher: BaseMatcher, MatcherProtocol {
         }
 
         if isExcluded(segment: segment, matchingKey: values.matchingKey,
-                      mySegmentsStorage: context?.mySegmentsStorage) {
+                      values: values, context: context) {
             return false
         }
 
@@ -36,7 +36,7 @@ class InRuleBasedSegmentMatcher: BaseMatcher, MatcherProtocol {
 
     /// returns true if the matchingKey or any of the segments is excluded
     private func isExcluded(segment: RuleBasedSegment, matchingKey: String,
-                            mySegmentsStorage: MySegmentsStorage?) -> Bool {
+                            values: EvalValues, context: EvalContext?) -> Bool {
         // no excluded property
         guard let excluded = segment.excluded else {
             return false
@@ -50,8 +50,28 @@ class InRuleBasedSegmentMatcher: BaseMatcher, MatcherProtocol {
         // check excluded segments
         if let excludedSegments = excluded.segments {
             for segment in excludedSegments {
-                if mySegmentsStorage?.getAll(forKey: matchingKey).contains(segment) ?? false {
-                    return true
+                guard let name = segment.name else {
+                    continue
+                }
+
+                if segment.isStandard() {
+                    if context?.mySegmentsStorage?.getAll(forKey: matchingKey).contains(name) ?? false {
+                        return true
+                    }
+                }
+
+                if segment.isRuleBased() {
+                    let matcherData = UserDefinedSegmentMatcherData()
+                    matcherData.segmentName = name
+                    if InRuleBasedSegmentMatcher(data: matcherData).evaluate(values: values, context: context) {
+                        return true
+                    }
+                }
+
+                if segment.isLarge() {
+                    if context?.myLargeSegmentsStorage?.getAll(forKey: matchingKey).contains(name) ?? false {
+                        return true
+                    }
                 }
             }
         }
