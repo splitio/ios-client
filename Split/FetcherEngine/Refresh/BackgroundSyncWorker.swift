@@ -70,6 +70,7 @@ class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
 
     func execute() {
         var changeNumber = persistenSplitsStorage.getChangeNumber()
-        _ = try? syncHelper.sync(since: changeNumber, clearBeforeUpdate: false)
+        var rbChangeNumber: Int64 = -1 // TODO get from storage
+        _ = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
     }
 }

@@ -38,7 +38,7 @@ extension DefaultRestClient: RestClientSplitChanges {
         }
 
         parameters.append(HttpParameter(key: "since", value: since))
-        if let till = till {
+        if let rbSince = rbSince {
             parameters.append(HttpParameter(key: "rbSince", value: rbSince))
         }
         parameters.append(HttpParameter(key: "sets"))

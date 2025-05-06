@@ -127,7 +127,9 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
 
     override func fetchFromRemote() throws -> Bool {
         do {
-            let result = try syncHelper.sync(since: splitsStorage.changeNumber, clearBeforeUpdate: false)
+            let changeNumber = splitsStorage.changeNumber
+            let rbChangeNumber: Int64 = -1 // TODO get from storage
+            let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
             if result.success {
                 if !isSdkReadyTriggered() ||
                     result.featureFlagsUpdated {
@@ -181,8 +183,11 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
             return true
         }
 
+        let storedRbChangeNumber: Int64 = -1// TODO: get from storage
+
         do {
             let result = try syncHelper.sync(since: storedChangeNumber,
+                                             rbSince: storedRbChangeNumber,
                                              till: changeNumber,
                                              clearBeforeUpdate: false,
                                              headers: ServiceConstants.controlNoCacheHeader)
