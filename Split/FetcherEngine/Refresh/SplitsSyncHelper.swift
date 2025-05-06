@@ -141,11 +141,13 @@ class SplitsSyncHelper {
                                                             rbSince: nextRbSince,
                                                             till: till,
                                                             headers: headers)
-            let newSince = targetingRulesChange.featureFlags.since
-            let newTill = targetingRulesChange.featureFlags.till
+            let flagsChange = targetingRulesChange.featureFlags
+            let newSince = flagsChange.since
+            let newTill = flagsChange.till
 
-            let newRbSince = targetingRulesChange.ruleBasedSegments.since
-            let newRbTill = targetingRulesChange.ruleBasedSegments.till
+            let rbsChange = targetingRulesChange.ruleBasedSegments
+            let newRbSince = rbsChange.since
+            let newRbTill = rbsChange.till
             if clearCache {
                 splitsStorage.clear()
             }
