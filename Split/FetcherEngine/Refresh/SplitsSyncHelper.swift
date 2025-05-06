@@ -105,6 +105,7 @@ class SplitsSyncHelper {
     }
 
     func fetchUntil(since: Int64,
+                    rbSince: Int64? = nil,
                     till: Int64? = nil,
                     clearBeforeUpdate: Bool = false,
                     headers: HttpHeaders? = nil) throws -> FetchResult {
@@ -112,28 +113,35 @@ class SplitsSyncHelper {
         var clearCache = clearBeforeUpdate
         var firstFetch = true
         var nextSince = since
+        var nextRbSince = rbSince
         var featureFlagsUpdated = false
         while true {
             clearCache = clearCache && firstFetch
-            let splitChange = try self.splitFetcher.execute(since: nextSince,
+            let targetingRulesChange = try self.splitFetcher.execute(since: nextSince,
+                                                            rbSince: nextRbSince,
                                                             till: till,
                                                             headers: headers)
-            let newSince = splitChange.since
-            let newTill = splitChange.till
+            let newSince = targetingRulesChange.featureFlags.since
+            let newTill = targetingRulesChange.featureFlags.till
+
+            let newRbSince = targetingRulesChange.ruleBasedSegments.since
+            let newRbTill = targetingRulesChange.ruleBasedSegments.till
             if clearCache {
                 splitsStorage.clear()
             }
             firstFetch = false
-            if splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange)) {
+            if splitsStorage.update(splitChange: splitChangeProcessor.process(targetingRulesChange.featureFlags)) {
                 featureFlagsUpdated = true
             }
             Logger.i("Feature flag definitions have been updated")
             // Line below commented temporary for debug purposes
             // Logger.v(splitChange.description)
-            if newSince == newTill, newTill >= since {
+            let rbSince = rbSince ?? -1
+            if newSince == newTill, newTill >= since, newRbSince == newRbTill, newRbTill >= rbSince {
                 return FetchResult(till: newTill, featureFlagsUpdated: featureFlagsUpdated)
             }
             nextSince = newTill
+            nextRbSince = newRbTill
         }
     }
 }

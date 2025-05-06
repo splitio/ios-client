@@ -7,8 +7,7 @@
 import Foundation
 
 protocol HttpSplitFetcher {
-    func execute(since: Int64, till: Int64?, headers: HttpHeaders?) throws -> SplitChange
-    func executeForTargetingRules(since: Int64, till: Int64?, headers: HttpHeaders?) throws -> TargetingRulesChange
+    func execute(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders?) throws -> TargetingRulesChange
 }
 
 class DefaultHttpSplitFetcher: HttpSplitFetcher {
@@ -22,19 +21,14 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
         self.syncHelper = syncHelper
     }
 
-    func execute(since: Int64, till: Int64?, headers: HttpHeaders? = nil) throws -> SplitChange {
-        let targetingRulesChange = try executeForTargetingRules(since: since, till: till, headers: headers)
-        return targetingRulesChange.featureFlags
-    }
-
-    func executeForTargetingRules(since: Int64, till: Int64?, headers: HttpHeaders? = nil) throws -> TargetingRulesChange {
+    func execute(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders? = nil) throws -> TargetingRulesChange {
         Logger.d("Fetching targeting rules definitions")
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<TargetingRulesChange>?
         let startTime = Date.nowMillis()
-        restClient.getSplitChanges(since: since, till: till, headers: headers) { result in
+        restClient.getSplitChanges(since: since, rbSince: rbSince, till: till, headers: headers) { result in
             TimeChecker.logInterval("Time to fetch targeting rules", startTime: startTime)
             requestResult = result
             semaphore.signal()

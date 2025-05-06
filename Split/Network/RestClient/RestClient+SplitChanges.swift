@@ -10,6 +10,7 @@ import Foundation
 
 protocol RestClientSplitChanges: RestClient {
     func getSplitChanges(since: Int64,
+                         rbSince: Int64?,
                          till: Int64?,
                          headers: HttpHeaders?,
                          completion: @escaping (DataResult<TargetingRulesChange>) -> Void)
@@ -17,17 +18,19 @@ protocol RestClientSplitChanges: RestClient {
 
 extension DefaultRestClient: RestClientSplitChanges {
     func getSplitChanges(since: Int64,
+                         rbSince: Int64?,
                          till: Int64?,
                          headers: HttpHeaders?,
                          completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
         self.execute(
             endpoint: endpointFactory.splitChangesEndpoint,
-            parameters: buildParameters(since: since, till: till),
+            parameters: buildParameters(since: since, rbSince: rbSince, till: till),
             headers: headers,
             completion: completion)
     }
 
     private func buildParameters(since: Int64,
+                                 rbSince: Int64?,
                                  till: Int64?) -> HttpParameters {
         var parameters: [HttpParameter] = []
         if !Spec.flagsSpec.isEmpty() {
@@ -35,6 +38,9 @@ extension DefaultRestClient: RestClientSplitChanges {
         }
 
         parameters.append(HttpParameter(key: "since", value: since))
+        if let till = till {
+            parameters.append(HttpParameter(key: "rbSince", value: rbSince))
+        }
         parameters.append(HttpParameter(key: "sets"))
         parameters.append(HttpParameter(key: "names"))
         parameters.append(HttpParameter(key: "prefixes"))
