@@ -104,11 +104,13 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
+    private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let syncHelper: SplitsSyncHelper
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
+         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter,
@@ -116,9 +118,11 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
 
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
+        self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
+                                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            splitConfig: splitConfig)
         super.init(eventsManager: eventsManager,
@@ -128,7 +132,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     override func fetchFromRemote() throws -> Bool {
         do {
             let changeNumber = splitsStorage.changeNumber
-            let rbChangeNumber: Int64 = -1 // TODO get from storage
+            let rbChangeNumber = ruleBasedSegmentsStorage.changeNumber
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
             if result.success {
                 if !isSdkReadyTriggered() ||
@@ -157,6 +161,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
 
     init(splitsFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
+         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          changeNumber: Int64,
          eventsManager: SplitEventsManager,
@@ -171,6 +176,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
 
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitsFetcher,
                                            splitsStorage: splitsStorage,
+                                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            splitConfig: splitConfig)
         super.init(eventsManager: eventsManager,

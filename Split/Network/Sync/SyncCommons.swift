@@ -24,8 +24,8 @@ struct SplitStorageContainer {
     let persistentHashedImpressionsStorage: PersistentHashedImpressionsStorage
     let hashedImpressionsStorage: HashedImpressionsStorage
     let generalInfoStorage: GeneralInfoStorage
-    let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
-    let persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage?
+    let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
+    let persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage
 }
 
 protocol ImpressionLogger {

@@ -24,6 +24,10 @@ import Foundation
         self.since = since
         self.till = till
     }
+
+    static func empty() -> RuleBasedSegmentChange {
+        return RuleBasedSegmentChange(segments: [], since: -1, till: -1)
+    }
 }
 
 extension RuleBasedSegmentChange {

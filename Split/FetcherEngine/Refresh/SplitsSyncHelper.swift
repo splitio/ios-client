@@ -1,5 +1,5 @@
 //
-//  RetryableSyncWorker.swift
+//  SplitsSyncHelper.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 15-Sep-2020
@@ -27,6 +27,7 @@ class SplitsSyncHelper {
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SyncSplitsStorage
+    private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let splitConfig: SplitClientConfig
 
@@ -44,11 +45,13 @@ class SplitsSyncHelper {
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SyncSplitsStorage,
+         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          splitConfig: SplitClientConfig) {
 
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
+        self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.splitConfig = splitConfig
     }
@@ -150,10 +153,24 @@ class SplitsSyncHelper {
             let newRbTill = rbsChange.till
             if clearCache {
                 splitsStorage.clear()
+                ruleBasedSegmentsStorage.clear()
             }
             firstFetch = false
             if splitsStorage.update(splitChange: splitChangeProcessor.process(targetingRulesChange.featureFlags)) {
                 featureFlagsUpdated = true
+            }
+            
+            var toAdd = Set<RuleBasedSegment>()
+            var toRemove = Set<RuleBasedSegment>()
+            for ruleBasedSegment in targetingRulesChange.ruleBasedSegments.segments {
+                if ruleBasedSegment.status == .active {
+                    toAdd.insert(ruleBasedSegment)
+                } else {
+                    toRemove.insert(ruleBasedSegment)
+                }
+            }
+            if ruleBasedSegmentsStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: targetingRulesChange.ruleBasedSegments.till) {
+                rbsUpdated = true
             }
 
             Logger.i("Feature flag definitions have been updated")

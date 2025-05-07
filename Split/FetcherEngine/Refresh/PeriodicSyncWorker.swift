@@ -141,11 +141,13 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
+    private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let syncHelper: SplitsSyncHelper
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
+         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          timer: PeriodicTimer,
          eventsManager: SplitEventsManager,
@@ -153,9 +155,11 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
+        self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
+                                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            splitConfig: splitConfig)
         super.init(timer: timer,
@@ -169,7 +173,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         }
 
         let changeNumber = splitsStorage.changeNumber
-        let rbChangeNumber: Int64 = -1 // TODO: get from storage
+        let rbChangeNumber: Int64 = ruleBasedSegmentsStorage.changeNumber
         guard let result = try? syncHelper.sync(since: splitsStorage.changeNumber, rbSince: rbChangeNumber) else {
             return
         }

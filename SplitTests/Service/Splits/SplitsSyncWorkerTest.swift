@@ -15,6 +15,7 @@ class SplitsSyncWorkerTest: XCTestCase {
 
     var splitFetcher: HttpSplitFetcherStub!
     var splitStorage: SplitsStorageStub!
+    var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
     var splitChangeProcessor: SplitChangeProcessorStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
@@ -23,6 +24,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     override func setUp() {
         splitFetcher = HttpSplitFetcherStub()
         splitStorage = SplitsStorageStub()
+        ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
         splitStorage.changeNumber = 100
         let _ = SplitChange(splits: [], since: splitStorage.changeNumber, till: splitStorage.changeNumber)
         splitChangeProcessor = SplitChangeProcessorStub()
@@ -35,6 +37,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         // Cache expiration timestamp set to 0 (no clearing cache)
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
+                                                     ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
@@ -42,7 +45,7 @@ class SplitsSyncWorkerTest: XCTestCase {
 
         var resultIsSuccess = false
         let change = SplitChange(splits: [], since: 200, till: 200)
-        splitFetcher.splitChanges = [change]
+        splitFetcher.splitChanges = [TargetingRulesChange(featureFlags: change)]
         let exp = XCTestExpectation(description: "exp")
         splitsSyncWorker.completion = { success in
             resultIsSuccess = success
@@ -61,13 +64,14 @@ class SplitsSyncWorkerTest: XCTestCase {
     func testRetryAndSuccess() {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
+                                                     ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
-        splitFetcher.splitChanges = [nil, nil, change]
+        splitFetcher.splitChanges = [nil, nil, TargetingRulesChange(featureFlags: change)]
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
         splitsSyncWorker.completion = { success in
@@ -86,6 +90,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     func testStopNoSuccess() {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
+                                                     ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
@@ -115,6 +120,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitFetcher.httpError = .uriTooLong
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
+                                                     ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
@@ -122,7 +128,7 @@ class SplitsSyncWorkerTest: XCTestCase {
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Int(Date().timeIntervalSince1970) - expiration / 2) // Non Expired cache
-        splitFetcher.splitChanges = [change]
+        splitFetcher.splitChanges = [TargetingRulesChange(featureFlags: change)]
         splitStorage.splitsFilterQueryString = "&q=1"
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
