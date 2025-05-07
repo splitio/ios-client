@@ -17,6 +17,7 @@ enum SplitEventCase {
     case attributesLoadedFromCache
     case sdkReadyTimeoutReached
     case splitKilledNotification
+    case splitError
 }
 
 struct SplitInternalEvent: Equatable {

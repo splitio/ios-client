@@ -39,6 +39,7 @@ public typealias SplitActionWithMetadata = (_ data: Any?) -> Void
     func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction)
     func on(event: SplitEventWithMetadata, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEventWithMetadata, queue: DispatchQueue, execute action: @escaping SplitAction)
+    func on(error: SplitError, perform: SplitAction?) -> Void
     
     // MARK: Track feature
     func track(trafficType: String, eventType: String) -> Bool

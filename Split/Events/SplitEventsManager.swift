@@ -12,6 +12,7 @@ protocol SplitEventsManager: AnyObject {
     func register(event: SplitEventWithMetadata, task: SplitEventActionTask)
     func notifyInternalEvent(_ event: SplitEventCase, _ metadata: [String: Any]?)
     func notifyInternalEventWithMetadata(_ event: SplitInternalEvent)
+    func notifyInternalError(_ error: SplitError)
     func start()
     func stop()
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
@@ -71,6 +72,15 @@ class DefaultSplitEventsManager: SplitEventsManager {
             if let self = self {
                 Logger.v("Event \(event.type) notified - Metadata: \(event.metadata ?? [:])")
                 self.eventsQueue.add(event)
+            }
+        }
+    }
+    
+    func notifyInternalError(_ error: SplitError) {
+        processQueue.async { [weak self] in
+            if let self = self {
+                Logger.v("Error \(error.code) notified - Metadata: \(error.metadata ?? [:])")
+                self.eventsQueue.add(error)
             }
         }
     }
