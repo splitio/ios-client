@@ -63,6 +63,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
     
+    // This event
     func notifyInternalEvent(_ event: SplitEventCase, _ metadata: [String: Any]? = nil) {
         notifyInternalEventWithMetadata(SplitInternalEvent(type: event, metadata: metadata))
     }
@@ -76,20 +77,21 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
     
-    func notifyInternalError(_ error: SplitError) {
-        processQueue.async { [weak self] in
-            if let self = self {
-                Logger.v("Error \(error.code) notified - Metadata: \(error.metadata ?? [:])")
-                self.eventsQueue.add(error)
-            }
-        }
-    }
+//    func notifyInternalError(_ error: SplitError) {
+//        processQueue.async { [weak self] in
+//            if let self = self {
+//                Logger.v("Error \(error.type) notified - Metadata: \(error.metadata ?? [:])")
+//                self.eventsQueue.add(error)
+//            }
+//        }
+//    }
 
     func register (event: SplitEventWithMetadata, task: SplitEventActionTask) {
         let eventName = event.type.toString()
         processQueue.async { [weak self] in
             guard let self = self else { return }
-            // If event is already triggered, execute the task
+            
+            // Event already triggered? -> execute the task
             if let times = self.executionTimes(for: eventName), times == 0 {
                 self.executeTask(eventWithMetadata: event, task: task)
                 return
@@ -99,11 +101,11 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     func start() {
-        lock.lock()
-            if !isStarted {
-                isStarted = true
+        dataAccessQueue.async {
+            if !self.isStarted {
+                self.isStarted = true
             }
-        lock.unlock()
+        }
             
         processQueue.async { [weak self] in
             self?.processEvents()
