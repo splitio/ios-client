@@ -113,8 +113,15 @@ extension DefaultSplitClient {
         eventsManager.register(event: event, task: task)
     }
     
-    public func on(error: SplitErrorType, perform: SplitActionWithError?) {
-        
+    public func on(error: SplitErrorType, perform: SplitActionWithError) {
+//        guard let factory = clientManager?.splitFactory else { return }
+//
+//        let task = SplitEventActionTask(action: action, event: event,
+//                                        runInBackground: runInBackground,
+//                                        factory: factory,
+//                                        queue: queue)
+//        task.event = event
+//        on(event: event, executeTask: task)
     }
 }
 

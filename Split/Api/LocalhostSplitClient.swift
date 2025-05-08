@@ -171,7 +171,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         }
     }
     
-    public func on(error: SplitErrorType, perform: SplitActionWithError?) {}
+    public func on(error: SplitErrorType, perform: SplitActionWithError) {}
 
     public func track(trafficType: String, eventType: String) -> Bool {
         return true
