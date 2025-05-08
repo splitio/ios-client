@@ -69,15 +69,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
             }
         }
     }
-    
-//    func notifyInternalError(_ error: SplitError) {
-//        processQueue.async { [weak self] in
-//            if let self = self {
-//                Logger.v("Error \(error.type) notified - Metadata: \(error.metadata ?? [:])")
-//                self.eventsQueue.add(error)
-//            }
-//        }
-//    }
 
     func register (event: SplitEventWithMetadata, task: SplitEventActionTask) {
         let eventName = event.type.toString()

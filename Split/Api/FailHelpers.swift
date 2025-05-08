@@ -68,7 +68,7 @@ class FailedClient: SplitClient {
             queue: DispatchQueue, execute action: @escaping SplitAction) {
     }
     
-    func on(error: SplitError, perform: SplitAction?) {}
+    func on(error: SplitErrorType, perform: SplitActionWithError?) {}
     
     func on(event: SplitEvent, performWithMetadata: SplitActionWithMetadata?) {}
 

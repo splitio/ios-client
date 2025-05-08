@@ -42,7 +42,7 @@ import Foundation
 ///
 
 public final class LocalhostSplitClient: NSObject, SplitClient {
-
+    
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage = EmptyMySegmentsStorage()
 
@@ -171,9 +171,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         }
     }
     
-    public func on(error: SplitError, perform: SplitAction?) {
-        
-    }
+    public func on(error: SplitErrorType, perform: SplitActionWithError?) {}
 
     public func track(trafficType: String, eventType: String) -> Bool {
         return true
@@ -207,11 +205,9 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return true
     }
 
-    public func setUserConsent(enabled: Bool) {
-    }
+    public func setUserConsent(enabled: Bool) {}
 
-    public func flush() {
-    }
+    public func flush() {}
 
     public func destroy() {
         splitsStorage.destroy()

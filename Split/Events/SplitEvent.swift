@@ -44,9 +44,5 @@ public class SplitEventWithMetadata: NSObject {
         guard let other = object as? SplitEventWithMetadata else { return false }
         return self.type == other.type
     }
-    
-    public override var hash: Int {
-        return type.hashValue
-    }
 }
 

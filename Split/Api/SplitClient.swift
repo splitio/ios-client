@@ -10,6 +10,7 @@ import Foundation
 
 public typealias SplitAction = () -> Void
 public typealias SplitActionWithMetadata = (_ data: Any?) -> Void
+public typealias SplitActionWithError = (_ error: SplitError?) -> Void
 
 @objc public protocol SplitClient {
     
@@ -19,7 +20,7 @@ public typealias SplitActionWithMetadata = (_ data: Any?) -> Void
     func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction)
     func on(event: SplitEventWithMetadata, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEventWithMetadata, queue: DispatchQueue, execute action: @escaping SplitAction)
-    func on(error: SplitError, perform: SplitAction?) -> Void
+    func on(error: SplitErrorType, perform: SplitActionWithError?) -> Void
     
 
     // MARK: Treatments

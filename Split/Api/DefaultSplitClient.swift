@@ -94,9 +94,7 @@ extension DefaultSplitClient {
     }
     
     private func onWithMetadata(event: SplitEventWithMetadata, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitActionWithMetadata) {
-        guard let factory = clientManager?.splitFactory else {
-            return
-        }
+        guard let factory = clientManager?.splitFactory else { return }
 
         let task = SplitEventActionTask(action: action, event: event,
                                         runInBackground: runInBackground,
@@ -115,7 +113,9 @@ extension DefaultSplitClient {
         eventsManager.register(event: event, task: task)
     }
     
-    public func on(error: SplitError, perform: SplitAction?) {}
+    public func on(error: SplitErrorType, perform: SplitActionWithError?) {
+        
+    }
 }
 
 // MARK: Treatments
@@ -215,8 +215,7 @@ extension DefaultSplitClient {
         return track(eventType: eventType, trafficType: nil, value: value, properties: properties)
     }
 
-    func track(eventType: String, trafficType: String? = nil,
-               value: Double? = nil, properties: [String: Any]?) -> Bool {
+    func track(eventType: String, trafficType: String? = nil, value: Double? = nil, properties: [String: Any]?) -> Bool {
         if isClientDestroyed {
             validationLogger.e(message: "Client has already been destroyed - no calls possible", tag: "track")
             return false
@@ -258,7 +257,7 @@ extension DefaultSplitClient {
     }
 
     public func getAttributes() -> [String: Any]? {
-        attributesStorage().getAll(forKey: key.matchingKey)
+        return attributesStorage().getAll(forKey: key.matchingKey)
     }
 
     public func removeAttribute(name: String) -> Bool {
