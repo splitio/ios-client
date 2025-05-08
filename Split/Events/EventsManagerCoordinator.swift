@@ -25,7 +25,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         .splitKilledNotification]
     )
 
-    func notifyInternalEvent(_ event: SplitEventCase, _ metadata: [String : Any]? = nil) {
+    func notifyEvent(_ event: SplitEventCase, _ metadata: [String : Any]? = nil) {
         if !eventsToHandle.contains(event) {
             return
         }
@@ -34,7 +34,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
 
             self.triggered.insert(event)
             self.managers.forEach { _, manager in
-                manager.notifyInternalEvent(event, metadata)
+                manager.notifyEvent(event, metadata)
             }
         }
     }

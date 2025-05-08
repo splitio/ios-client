@@ -81,7 +81,8 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
 
     func notifyUpdate(_ events: [SplitInternalEvent]) {
         events.forEach {
-            eventsManager.notifyInternalEvent($0.type, $0.metadata)
+            eventsManager.notifyEvent($0.type, $0.metadata)
+            eventsManager.notifyEvent(.splitError, ["Error":"Code: 404, Message: Split not found"])
         }
     }
 

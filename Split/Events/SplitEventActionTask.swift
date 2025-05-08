@@ -37,8 +37,8 @@ class SplitEventActionTask: SplitEventTask {
         return queue
     }
 
-    func run(_ data: Any?) {
+    func run(_ event: Any?) {
         eventHandler?()
-        eventHandlerWithMetadata?(data)
+        eventHandlerWithMetadata?((event as? SplitEventWithMetadata)?.metadata)
     }
 }

@@ -10,9 +10,7 @@ import Foundation
 
 protocol SplitEventsManager: AnyObject {
     func register(event: SplitEventWithMetadata, task: SplitEventActionTask)
-    func notifyInternalEvent(_ event: SplitEventCase, _ metadata: [String: Any]?)
-    //func notifyInternalEventWithMetadata(_ event: SplitInternalEvent)
-    //func notifyInternalError(_ error: SplitError)
+    func notifyEvent(_ event: SplitEventCase, _ metadata: [String: Any]?)
     func start()
     func stop()
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
@@ -23,7 +21,7 @@ protocol SplitEventsManager: AnyObject {
    Do not remove unless all customers have migrated to the new signature. */
 extension SplitEventsManager {
     func notifyInternalEvent(_ event: SplitEventCase) {
-        notifyInternalEvent(event, nil)
+        notifyEvent(event, nil)
     }
 }
 
@@ -58,13 +56,12 @@ class DefaultSplitEventsManager: SplitEventsManager {
             let readyTimedoutQueue = DispatchQueue(label: "split-event-timedout")
             readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.sdkReadyTimeOut)) {  [weak self] in
                 guard let self = self else { return }
-                self.notifyInternalEvent(SplitEventCase.sdkReadyTimeoutReached)
+                self.notifyEvent(SplitEventCase.sdkReadyTimeoutReached)
             }
         }
     }
     
-    // This event
-    func notifyInternalEvent(_ event: SplitEventCase, _ metadata: [String: Any]? = nil) {
+    func notifyEvent(_ event: SplitEventCase, _ metadata: [String: Any]? = nil) {
         processQueue.async { [weak self] in
             if let self = self {
                 Logger.v("Event \(event) notified - Metadata: \(metadata ?? [:])")
@@ -227,23 +224,24 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private func trigger(event: SplitEventWithMetadata) {
         let eventName = event.type.toString()
 
-        // If executionTimes is zero, maximum executions has been reached
+        // 1. If executionTimes = 0, maximum executions has been reached
         if executionTimes(for: eventName) == 0 {
             return
         }
-
-        // If executionTimes is grater than zero, maximum executions decrease 1
+        
+        // 2. If > 0, decrease by 1
         if let times = executionTimes(for: eventName), times > 0 {
             updateExecutionTimes(for: eventName, count: times - 1)
         }
-
-        Logger.d("Triggering SDK event \(eventName)")
-        // If executionTimes is lower than zero, execute it without limitation
+        
+        // 3. If < 0, execute without limitation
         if let subscriptions = getSubscriptions(for: event.type) {
             for task in subscriptions {
                 executeTask(eventWithMetadata: event, task: task)
             }
         }
+        
+        Logger.d("Triggering SDK event \(eventName)")
     }
 
     private func executeTask(eventWithMetadata event: SplitEventWithMetadata, task: SplitEventTask) {
@@ -256,13 +254,13 @@ class DefaultSplitEventsManager: SplitEventsManager {
             let queue = task.takeQueue() ?? DispatchQueue.general
             queue.async {
                 TimeChecker.logInterval("Running \(eventName) in Background queue \(queue)")
-                task.run(event.metadata)
+                task.run(event)
             }
         } else {
             DispatchQueue.main.async {
                 TimeChecker.logInterval("Running event on main: \(eventName)")
                 // UI Updates
-                task.run(event.metadata)
+                task.run(event)
             }
         }
     }

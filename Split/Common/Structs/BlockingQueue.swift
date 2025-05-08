@@ -37,9 +37,11 @@ class GenericBlockingQueue<Item> {
 
     func take() throws -> Item {
         var item: Item?
+        
         // Checks if stopped before waiting
         try checkIfStopped()
         self.semaphore.wait()
+        
         try dispatchQueue.sync(flags: .barrier) {
             // Checks if thread was awaked by stop or interruption
             try checkIfStopped()
@@ -65,7 +67,7 @@ class GenericBlockingQueue<Item> {
 
     // Use this function within the queue
     private func checkIfStopped() throws {
-        if self.isStopped {
+        if isStopped {
             throw BlockingQueueError.hasBeenStopped
         }
     }
