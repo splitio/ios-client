@@ -22,6 +22,7 @@ struct RawNotification: Decodable {
 /// Notification types of any type
 enum NotificationType: Decodable {
     case splitUpdate
+    case ruleBasedSegmentUpdate
     case mySegmentsUpdate
     case myLargeSegmentsUpdate
     case splitKill
@@ -39,6 +40,8 @@ enum NotificationType: Decodable {
         switch string.lowercased() {
         case "split_update":
             return NotificationType.splitUpdate
+        case "rule_based_segment_update":
+            return NotificationType.ruleBasedSegmentUpdate
         case "memberships_ms_update":
             return NotificationType.mySegmentsUpdate
         case "memberships_ls_update":
@@ -237,9 +240,13 @@ struct SplitKillNotification: NotificationTypeField {
 }
 
 /// indicates feature flag changes
-struct SplitsUpdateNotification: NotificationTypeField {
+struct TargetingRuleUpdateNotification: NotificationTypeField {
+    var entityType: NotificationType?
     var type: NotificationType {
-        return .splitUpdate
+        guard let notificationType = entityType else {
+            return .unknown
+        }
+        return notificationType
     }
     let changeNumber: Int64
     let previousChangeNumber: Int64?

@@ -20,12 +20,14 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
     var backoffCounter: ReconnectBackoffCounterStub!
     var splitsSyncWorker: PeriodicSplitsSyncWorker!
     var splitChangeProcessor: SplitChangeProcessorStub!
+    var ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessorStub!
 
     override func setUp() {
         splitFetcher = HttpSplitFetcherStub()
         splitsStorage = SplitsStorageStub()
         ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
         splitChangeProcessor = SplitChangeProcessorStub()
+        ruleBasedSegmentChangeProcessor = RuleBasedSegmentChangeProcessorStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
@@ -39,6 +41,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
                                                     splitsStorage: splitsStorage,
                                                     ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                     splitChangeProcessor: splitChangeProcessor,
+                                                    ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                     timer: timer,
                                                     eventsManager: eventsManager,
                                                     splitConfig: SplitClientConfig())
@@ -61,6 +64,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
                                                     splitsStorage: splitsStorage,
                                                     ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                     splitChangeProcessor: splitChangeProcessor,
+                                                    ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                     timer: timer,
                                                     eventsManager: eventsManager,
                                                     splitConfig: SplitClientConfig())

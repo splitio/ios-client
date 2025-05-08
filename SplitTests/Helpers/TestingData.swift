@@ -273,12 +273,12 @@ struct TestingData {
         return ""
     }
 
-    static func updateSplitsNotificationZlib() -> SplitsUpdateNotification {
-        return try! Json.decodeFrom(json: kUpdateSplitsNotificationZlib, to: SplitsUpdateNotification.self)
+    static func updateSplitsNotificationZlib() -> TargetingRuleUpdateNotification {
+        return try! Json.decodeFrom(json: kUpdateSplitsNotificationZlib, to: TargetingRuleUpdateNotification.self)
     }
 
-    static func updateSplitsNotificationGzip() -> SplitsUpdateNotification {
-        return try! Json.decodeFrom(json: kUpdateSplitsNotificationGzip, to: SplitsUpdateNotification.self)
+    static func updateSplitsNotificationGzip() -> TargetingRuleUpdateNotification {
+        return try! Json.decodeFrom(json: kUpdateSplitsNotificationGzip, to: TargetingRuleUpdateNotification.self)
     }
 
     static func membershipsNotificationUnboundedMessage(type: NotificationType, cn: Int64? = nil, delay: Int = 100) -> String {

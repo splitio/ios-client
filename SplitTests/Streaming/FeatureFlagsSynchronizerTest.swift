@@ -21,7 +21,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
 
     var splitsStorage: SplitsStorageStub!
 
-    var updateWorkerCatalog = ConcurrentDictionary<Int64, RetryableSyncWorker>()
+    var updateWorkerCatalog = ConcurrentDictionary<SplitsUpdateChangeNumber, RetryableSyncWorker>()
     var syncWorkerFactory: SyncWorkerFactoryStub!
     var eventsManager: SplitEventsManagerStub!
     var splitConfig: SplitClientConfig!
@@ -49,7 +49,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         broadcasterChannel = SyncEventBroadcasterStub()
         generalInfoStorage = GeneralInfoStorageMock()
         telemetryStorageStub = TelemetryStorageStub()
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
         generalInfoStorage.setFlagSpec(flagsSpec: "1.2")
 
@@ -133,7 +133,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
     func testLoadSplitsNoClearedOnLoad() {
         // Splits filter doesn't vary so splits don't gonna be removed
         // loaded splits > 0, ready from cache should be fired
-        splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "new_pepe")],
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "new_pepe")],
                                                   archivedSplits: [], changeNumber: 100, updateTimestamp: 100))
         generalInfoStorage.setSplitsFilterQueryString(filterQueryString: "")
         synchronizer.load()
@@ -265,8 +265,8 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         let sw2 = RetryableSyncWorkerStub()
 
         syncWorkerFactory.retryableSplitsUpdateWorkers = [sw1, sw2]
-        synchronizer.synchronize(changeNumber: 101)
-        synchronizer.synchronize(changeNumber: 102)
+        synchronizer.synchronize(changeNumber: 101, rbsChangeNumber: nil)
+        synchronizer.synchronize(changeNumber: 102, rbsChangeNumber: nil)
 
         let initialSyncCount = updateWorkerCatalog.count
         sw1.completion?(true)
@@ -299,7 +299,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
     func testUpdateSplitsSingleModeEnabled() {
 
         synchronizer = buildSynchronizer(syncEnabled: false)
-        synchronizer.synchronize(changeNumber: -1)
+        synchronizer.synchronize(changeNumber: -1, rbsChangeNumber: nil)
         let syncExecCount = broadcasterChannel.pushedEvents.filter { $0 == .syncExecuted }.count
 
         XCTAssertFalse(splitsSyncWorker.startCalled)
@@ -319,8 +319,8 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         let sw2 = RetryableSyncWorkerStub()
 
         syncWorkerFactory.retryableSplitsUpdateWorkers = [sw1, sw2]
-        synchronizer.synchronize(changeNumber: 101)
-        synchronizer.synchronize(changeNumber: 102)
+        synchronizer.synchronize(changeNumber: 101, rbsChangeNumber: nil)
+        synchronizer.synchronize(changeNumber: 102, rbsChangeNumber: nil)
 
         synchronizer.destroy()
 
