@@ -101,12 +101,11 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     func start() {
-        dataAccessQueue.async {
+        dataAccessQueue.sync {
             if !self.isStarted {
                 self.isStarted = true
             }
         }
-            
         processQueue.async { [weak self] in
             self?.processEvents()
         }
