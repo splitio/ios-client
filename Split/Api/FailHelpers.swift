@@ -13,9 +13,6 @@ import Foundation
 ///
 
 class FailedClient: SplitClient {
-    func on(event: SplitEvent, performWithMetadata: SplitActionWithMetadata?) {
-        
-    }
 
     func getTreatment(_ split: String) -> String {
         return SplitConstants.control
@@ -57,14 +54,11 @@ class FailedClient: SplitClient {
         return [:]
     }
     
-    public func on(event: SplitEvent, perform: SplitAction?) {
-    }
+    public func on(event: SplitEvent, perform: SplitAction?) {}
     
-    func on(event: SplitEvent, perform: @escaping ([String : Any]?) -> Void) {
-    }
+    func on(event: SplitEvent, perform: @escaping ([String : Any]?) -> Void) {}
 
-    func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction) {}
 
     func on(event: SplitEventWithMetadata, runInBackground: Bool,
             execute action: @escaping SplitAction) {
@@ -73,6 +67,10 @@ class FailedClient: SplitClient {
     func on(event: SplitEventWithMetadata,
             queue: DispatchQueue, execute action: @escaping SplitAction) {
     }
+    
+    func on(error: SplitError, perform: SplitAction?) {}
+    
+    func on(event: SplitEvent, performWithMetadata: SplitActionWithMetadata?) {}
 
     func track(trafficType: String, eventType: String) -> Bool {
         return false
@@ -146,14 +144,11 @@ class FailedClient: SplitClient {
         return [:]
     }
 
-    func setUserConsent(enabled: Bool) {
-    }
+    func setUserConsent(enabled: Bool) {}
 
-    func flush() {
-    }
+    func flush() {}
 
-    func destroy() {
-    }
+    func destroy() {}
 
     func destroy(completion: (() -> Void)?) {
         completion?()

@@ -38,10 +38,6 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
             }
         }
     }
-    
-    func notifyInternalEventWithMetadata(_ event: SplitInternalEvent) {
-        notifyInternalEvent(event.type, event.metadata)
-    }
 
     func start() {}
 

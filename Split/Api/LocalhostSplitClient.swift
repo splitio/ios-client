@@ -170,6 +170,10 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
             eventsManager.register(event: event, task: task)
         }
     }
+    
+    public func on(error: SplitError, perform: SplitAction?) {
+        
+    }
 
     public func track(trafficType: String, eventType: String) -> Bool {
         return true

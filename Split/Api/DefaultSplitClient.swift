@@ -55,7 +55,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
     }
 }
 
-// MARK: Events
+// MARK: Listeners for the customer
 extension DefaultSplitClient {
     
     public func on(event: SplitEvent, perform: SplitAction?) {
@@ -106,10 +106,8 @@ extension DefaultSplitClient {
         on(event: event, executeTask: task)
     }
     
-
     private func on(event: SplitEventWithMetadata, executeTask task: SplitEventActionTask) {
-        if  event.type != .sdkReadyFromCache,
-            eventsManager.eventAlreadyTriggered(event: event.type) {
+        if  event.type != .sdkReadyFromCache, eventsManager.eventAlreadyTriggered(event: event.type) {
             Logger.w("A handler was added for \(event.type.toString()) on the SDK, " +
                      "which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
@@ -117,11 +115,10 @@ extension DefaultSplitClient {
         eventsManager.register(event: event, task: task)
     }
     
-    
-    
+    public func on(error: SplitError, perform: SplitAction?) {}
 }
 
-// MARK: Treatment / Evaluation
+// MARK: Treatments
 extension DefaultSplitClient {
     public func getTreatmentWithConfig(_ split: String) -> SplitResult {
         return treatmentManager.getTreatmentWithConfig(split, attributes: nil, evaluationOptions: nil)
@@ -148,7 +145,7 @@ extension DefaultSplitClient {
     }
 }
 
-// MARK: Treatment / Evaluation with Properties
+// MARK: With Config
 extension DefaultSplitClient {
     public func getTreatment(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> String {
         return treatmentManager.getTreatment(split, attributes: attributes, evaluationOptions: evaluationOptions)
@@ -174,18 +171,16 @@ extension DefaultSplitClient {
         return treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: evaluationOptions)
     }
 
-    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String,
-                                                 attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         return treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: evaluationOptions)
     }
 
-    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
-                                                  attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         return treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: evaluationOptions)
     }
 }
 
-// MARK: Track Events
+// MARK: Tracking
 extension DefaultSplitClient {
 
     public func track(trafficType: String, eventType: String) -> Bool {
@@ -235,7 +230,7 @@ extension DefaultSplitClient {
     }
 }
 
-// MARK: Persistent attributes feature
+// MARK: Persistence
 extension DefaultSplitClient {
 
     public func setAttribute(name: String, value: Any) -> Bool {
@@ -291,7 +286,7 @@ extension DefaultSplitClient {
     }
 }
 
-// MARK: By Sets evaluation
+// MARK: By Flagsets
 extension DefaultSplitClient {
     public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
         return treatmentManager.getTreatmentsByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: nil)
@@ -311,7 +306,7 @@ extension DefaultSplitClient {
     }
 }
 
-// MARK: Flush / Destroy
+// MARK: Lyfecycle
 extension DefaultSplitClient {
 
     private func syncFlush() {

@@ -11,16 +11,16 @@ import Foundation
 protocol SplitEventsManager: AnyObject {
     func register(event: SplitEventWithMetadata, task: SplitEventActionTask)
     func notifyInternalEvent(_ event: SplitEventCase, _ metadata: [String: Any]?)
-    func notifyInternalEventWithMetadata(_ event: SplitInternalEvent)
-    func notifyInternalError(_ error: SplitError)
+    //func notifyInternalEventWithMetadata(_ event: SplitInternalEvent)
+    //func notifyInternalError(_ error: SplitError)
     func start()
     func stop()
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
 }
 
-/* This overload is intentionally kept for backwards compatibility.
+/* Bridge for backward compatibility.
    It allows calling `notifyInternalEvent(.event)` without needing to pass `nil` as metadata.
-   Do not remove unless all usages have migrated to the new signature. */
+   Do not remove unless all customers have migrated to the new signature. */
 extension SplitEventsManager {
     func notifyInternalEvent(_ event: SplitEventCase) {
         notifyInternalEvent(event, nil)
@@ -65,14 +65,10 @@ class DefaultSplitEventsManager: SplitEventsManager {
     
     // This event
     func notifyInternalEvent(_ event: SplitEventCase, _ metadata: [String: Any]? = nil) {
-        notifyInternalEventWithMetadata(SplitInternalEvent(type: event, metadata: metadata))
-    }
-    
-    func notifyInternalEventWithMetadata(_ event: SplitInternalEvent) {
         processQueue.async { [weak self] in
             if let self = self {
-                Logger.v("Event \(event.type) notified - Metadata: \(event.metadata ?? [:])")
-                self.eventsQueue.add(event)
+                Logger.v("Event \(event) notified - Metadata: \(metadata ?? [:])")
+                self.eventsQueue.add(SplitInternalEvent(type: event, metadata: metadata))
             }
         }
     }
@@ -194,13 +190,15 @@ class DefaultSplitEventsManager: SplitEventsManager {
                     }
                 case .sdkReadyTimeoutReached:
                     if !isTriggered(external: .sdkReady) {
-                        trigger(event: SplitEvent.sdkReadyTimedOut)
+                        trigger(event: .sdkReadyTimedOut)
                     }
-                }
+                case .splitError:
+                    trigger(event: SplitEventWithMetadata(type: .sdkError, metadata: event.metadata))
+            }
         }
     }
 
-    // MARK: Helper functions.
+    // MARK: Helper methods
     func isTriggered(external event: SplitEvent) -> Bool {
         var triggered = false
         dataAccessQueue.sync {
@@ -277,7 +275,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         return isTriggered(internal: SplitInternalEvent(type: event, metadata: nil))
     }
 
-    // MARK: Safe Data Access
+    // MARK: Safe Data Accesses
     func executionTimes(for eventName: String) -> Int? {
         var times: Int?
         dataAccessQueue.sync {
