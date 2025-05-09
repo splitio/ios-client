@@ -9,9 +9,22 @@
 import Foundation
 @testable import Split
 
-class FeatureFlagsPayloadDecoderMock: FeatureFlagsPayloadDecoder {
+class FeatureFlagsPayloadDecoderMock: DefaultTargetingRulePayloadDecoder<Split> {
     let helper = SplitHelper()
-    func decode(payload: String, compressionUtil: CompressionUtil) throws -> Split {
+    override func decode(payload: String, compressionUtil: CompressionUtil) throws -> Split {
         return helper.createDefaultSplit(named: "dummy_split")
+    }
+}
+
+class RuleBasedSegmentsPayloadDecoderMock: DefaultTargetingRulePayloadDecoder<RuleBasedSegment> {
+    let helper = SplitHelper()
+    override func decode(payload: String, compressionUtil: CompressionUtil) throws -> RuleBasedSegment {
+        let rbs = RuleBasedSegment()
+        rbs.name = "dummy_rbs"
+        rbs.isParsed = true
+        rbs.trafficTypeName = "custom"
+        rbs.status = .active
+        rbs.json = ""
+        return rbs
     }
 }

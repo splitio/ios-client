@@ -12,7 +12,7 @@ protocol SseNotificationParser {
 
     func parseIncoming(jsonString: String) -> IncomingNotification?
 
-    func parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification
+    func parseTargetingRuleNotification(jsonString: String, type: NotificationType) throws -> TargetingRuleUpdateNotification
 
     func parseSplitKill(jsonString: String) throws -> SplitKillNotification
 
@@ -52,8 +52,10 @@ class DefaultSseNotificationParser: SseNotificationParser {
         return nil
     }
 
-    func parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification {
-        return try Json.decodeFrom(json: jsonString, to: SplitsUpdateNotification.self)
+    func parseTargetingRuleNotification(jsonString: String, type: NotificationType) throws -> TargetingRuleUpdateNotification {
+        var notification = try Json.decodeFrom(json: jsonString, to: TargetingRuleUpdateNotification.self)
+        notification.entityType = type
+        return notification
     }
 
     func parseSplitKill(jsonString: String) throws -> SplitKillNotification {
