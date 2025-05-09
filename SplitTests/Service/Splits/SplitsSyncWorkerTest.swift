@@ -17,6 +17,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     var splitStorage: SplitsStorageStub!
     var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
     var splitChangeProcessor: SplitChangeProcessorStub!
+    var ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessorStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
     var splitsSyncWorker: RetryableSplitsSyncWorker!
@@ -28,6 +29,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitStorage.changeNumber = 100
         let _ = SplitChange(splits: [], since: splitStorage.changeNumber, till: splitStorage.changeNumber)
         splitChangeProcessor = SplitChangeProcessorStub()
+        ruleBasedSegmentChangeProcessor = RuleBasedSegmentChangeProcessorStub()
         eventsManager = SplitEventsManagerMock()
         backoffCounter = ReconnectBackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
@@ -39,6 +41,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitsStorage: splitStorage,
                                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
+                                                     ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -66,6 +69,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitsStorage: splitStorage,
                                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
+                                                     ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -92,6 +96,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitsStorage: splitStorage,
                                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
+                                                     ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
@@ -122,6 +127,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitsStorage: splitStorage,
                                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
+                                                     ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                      eventsManager: eventsManager,
                                                      reconnectBackoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())

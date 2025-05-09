@@ -191,10 +191,12 @@ struct BackgroundSyncExecutor {
         let bySetsFilter = splitsStorage.getBySetsFilter()
         let cacheExpiration = Int64(ServiceConstants.cacheExpirationInSeconds)
         let changeProcessor = DefaultSplitChangeProcessor(filterBySet: bySetsFilter)
+        let ruleBasedSegmentChangeProcessor = DefaultRuleBasedSegmentChangeProcessor()
         self.splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitsFetcher,
                                                            persistentSplitsStorage: splitsStorage,
                                                            persistentRuleBasedSegmentsStorage: persistentRuleBasedSegmentsStorage,
                                                            splitChangeProcessor: changeProcessor,
+                                                           ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                            cacheExpiration: cacheExpiration,
                                                            splitConfig: SplitClientConfig())
 

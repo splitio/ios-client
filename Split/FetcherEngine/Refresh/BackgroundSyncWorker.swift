@@ -55,6 +55,7 @@ class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
          persistentSplitsStorage: PersistentSplitsStorage,
          persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
+         ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
          cacheExpiration: Int64,
          splitConfig: SplitClientConfig) {
 
@@ -67,12 +68,13 @@ class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
                                            splitsStorage: BackgroundSyncSplitsStorage(persistentSplitsStorage: persistentSplitsStorage),
                                            ruleBasedSegmentsStorage: DefaultRuleBasedSegmentsStorage(persistentStorage: persistentRuleBasedSegmentsStorage),
                                            splitChangeProcessor: splitChangeProcessor,
+                                           ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor,
                                            splitConfig: splitConfig)
     }
 
     func execute() {
-        var changeNumber = persistenSplitsStorage.getChangeNumber()
-        var rbChangeNumber = persistentRuleBasedSegmentsStorage.getChangeNumber()
+        let changeNumber = persistenSplitsStorage.getChangeNumber()
+        let rbChangeNumber = persistentRuleBasedSegmentsStorage.getChangeNumber()
         _ = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
     }
 }

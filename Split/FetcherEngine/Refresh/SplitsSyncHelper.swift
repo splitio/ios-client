@@ -29,6 +29,7 @@ class SplitsSyncHelper {
     private let splitsStorage: SyncSplitsStorage
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
+    private let ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor
     private let splitConfig: SplitClientConfig
 
     private var maxAttempts: Int {
@@ -47,12 +48,14 @@ class SplitsSyncHelper {
          splitsStorage: SyncSplitsStorage,
          ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
+         ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
          splitConfig: SplitClientConfig) {
 
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
+        self.ruleBasedSegmentsChangeProcessor = ruleBasedSegmentsChangeProcessor
         self.splitConfig = splitConfig
     }
 
@@ -106,9 +109,9 @@ class SplitsSyncHelper {
                                        clearBeforeUpdate: clearBeforeUpdate,
                                        headers: headers)
             nextSince = result.till
-            let nextRbSince = result.rbTill ?? -1
+            nextRbSince = result.rbTill ?? -1
 
-            if nextSince >= goalTill, nextRbSince >= goalRbTill {
+            if nextSince >= goalTill, nextRbSince ?? -1 >= goalRbTill {
                 return SyncResult(success: true,
                                   changeNumber: nextSince,
                                   rbChangeNumber: nextRbSince,
@@ -160,16 +163,8 @@ class SplitsSyncHelper {
                 featureFlagsUpdated = true
             }
             
-            var toAdd = Set<RuleBasedSegment>()
-            var toRemove = Set<RuleBasedSegment>()
-            for ruleBasedSegment in targetingRulesChange.ruleBasedSegments.segments {
-                if ruleBasedSegment.status == .active {
-                    toAdd.insert(ruleBasedSegment)
-                } else {
-                    toRemove.insert(ruleBasedSegment)
-                }
-            }
-            if ruleBasedSegmentsStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: targetingRulesChange.ruleBasedSegments.till) {
+            let processedChange = ruleBasedSegmentsChangeProcessor.process(targetingRulesChange.ruleBasedSegments)
+            if ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd, toRemove: processedChange.toRemove, changeNumber: processedChange.changeNumber) {
                 rbsUpdated = true
             }
 
