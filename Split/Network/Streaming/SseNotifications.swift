@@ -271,6 +271,8 @@ struct TargetingRuleUpdateNotification: NotificationTypeField {
     }
 }
 
+typealias SplitsUpdateNotification = TargetingRuleUpdateNotification // TODO: Temporary alias to be removed in follow-up PR
+
 /// Indicates a notification related to occupancy
 struct OccupancyNotification: NotificationTypeField {
     private let kControlPriToken = "control_pri"
