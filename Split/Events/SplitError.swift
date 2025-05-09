@@ -7,17 +7,17 @@ import Foundation
 /// When there is an error, the SDK will trigger a new event (.sdkError) and will add it to the events queue.
 /// Then, it will be passed to the customer through the listener.
 
-@objc public class SplitError: NSObject, Error {
-    let type: SplitErrorType
-    let underlyingError: Error?
-    let metadata: [String: Any]?
-    
-    init(type: SplitErrorType, underlyingError: Error? = nil, metadata: [String : Any]? = nil) {
-        self.type = type
-        self.underlyingError = underlyingError
-        self.metadata = metadata
-    }
-}
+//@objc public class SplitError: NSObject, Error {
+//    let type: SplitErrorType
+//    let underlyingError: Error?
+//    let metadata: [String: Any]?
+//    
+//    init(type: SplitErrorType, underlyingError: Error? = nil, metadata: [String : Any]? = nil) {
+//        self.type = type
+//        self.underlyingError = underlyingError
+//        self.metadata = metadata
+//    }
+//}
 
 //MARK: Errors list
 @objc public enum SplitErrorType: Int {

@@ -178,7 +178,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
                 updatedFlags.append(flag)
             }
             
-            notifyUpdate([SplitInternalEvent(type: .splitsUpdated, metadata: ["Updated Flags": updatedFlags])])
+            notifyUpdate([SplitInternalEvent(type: .splitsUpdated, metadata: SplitMetadata(value: "Updated Flags: \(updatedFlags)"))])
             
         }
     }
@@ -219,7 +219,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                                              headers: nil)
             if result.success {
                 if  !result.msUpdated.isEmpty || !result.mlsUpdated.isEmpty {
-                    notifyUpdate([SplitInternalEvent(type: .mySegmentsUpdated, metadata: ["Updated segments": result.msUpdated + result.mlsUpdated ])])
+                    notifyUpdate([SplitInternalEvent(type: .mySegmentsUpdated, metadata: SplitMetadata(value: "Updated segments: \(result.msUpdated + result.mlsUpdated)"))])
                 }
             }
         } catch {

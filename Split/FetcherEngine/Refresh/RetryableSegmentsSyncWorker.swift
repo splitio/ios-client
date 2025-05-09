@@ -46,10 +46,10 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             if result.success {
                 if !isSdkReadyTriggered() {
                     // Notifying both to trigger SDK Ready
-                    notifyUpdate([SplitInternalEvent(type: .mySegmentsUpdated, metadata: ["Segments updated" : result.msUpdated ])])
-                    notifyUpdate([SplitInternalEvent(type: .myLargeSegmentsUpdated, metadata: ["Large segments updated" : result.mlsUpdated ])])
+                    notifyUpdate([SplitInternalEvent(type: .mySegmentsUpdated, metadata: SplitMetadata(value: "Segments updated : \(result.msUpdated)"))])
+                    notifyUpdate([SplitInternalEvent(type: .myLargeSegmentsUpdated, metadata:  SplitMetadata(value: "Large segments updated : \(result.mlsUpdated)"))])
                 } else if !result.msUpdated.isEmpty || !result.mlsUpdated.isEmpty {
-                    notifyUpdate([SplitInternalEvent(type: .mySegmentsUpdated, metadata: ["Segments updated" : result.msUpdated + result.mlsUpdated ])])
+                    notifyUpdate([SplitInternalEvent(type: .mySegmentsUpdated, metadata:  SplitMetadata(value: "Segments updated : \(result.msUpdated + result.mlsUpdated)"))])
                 }
                 return true
             }

@@ -9,18 +9,38 @@
 import Foundation
 
 public typealias SplitAction = () -> Void
-public typealias SplitActionWithMetadata = (_ data: Any?) -> Void
-public typealias SplitActionWithError = (_ error: SplitError) -> Void
+public typealias SplitActionWithMetadata = (_ metadata: SplitKeyValue) -> Void
+public typealias SplitActionWithError = (_ error: SplitKeyValue) -> Void
+
+@objc public class SplitKeyValue: NSObject {
+    var key: String
+    var value: String
+    
+    @objc init(key: String = "Message", value: String) {
+        self.key = key
+        self.value = value
+    }
+}
+
+@objc public class SplitMetadata: SplitKeyValue {
+    public var type: String { return key }
+    public var data: String { return value }
+}
+
+@objc public class SplitError: SplitKeyValue {
+    public var code: Int {
+        return Int(value) ?? 0
+    }
+}
 
 @objc public protocol SplitClient {
     
     // MARK: Listeners for customer
     func on(event: SplitEvent, perform: SplitAction?) -> Void
-    func on(event: SplitEvent, performWithMetadata: SplitActionWithMetadata?) -> Void
+    func on(event: SplitEvent, performWithMetadata: @escaping SplitActionWithMetadata) -> Void
     func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction)
     func on(event: SplitEventWithMetadata, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEventWithMetadata, queue: DispatchQueue, execute action: @escaping SplitAction)
-    func on(error: SplitErrorType, perform: SplitActionWithError) -> Void
     
 
     // MARK: Treatments

@@ -39,6 +39,8 @@ class SplitEventActionTask: SplitEventTask {
 
     func run(_ event: Any?) {
         eventHandler?()
-        eventHandlerWithMetadata?((event as? SplitEventWithMetadata)?.metadata)
+        if let metadata = (event as? SplitEventWithMetadata)?.metadata {
+            eventHandlerWithMetadata?(metadata)
+        }
     }
 }

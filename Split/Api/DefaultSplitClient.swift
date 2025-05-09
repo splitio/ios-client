@@ -57,7 +57,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
 
 // MARK: Listeners for the customer
 extension DefaultSplitClient {
-    
+
     public func on(event: SplitEvent, perform: SplitAction?) {
         guard let perform = perform else { return }
         on(event: SplitEventWithMetadata(type: event, metadata: nil), execute: perform)
@@ -88,8 +88,7 @@ extension DefaultSplitClient {
         on(event: event, executeTask: task)
     }
     
-    public func on(event: SplitEvent, performWithMetadata action: SplitActionWithMetadata?) {
-        guard let action = action else { return }
+    public func on(event: SplitEvent, performWithMetadata action: @escaping SplitActionWithMetadata) {
         onWithMetadata(event:SplitEventWithMetadata(type: event, metadata: nil), runInBackground: true, queue: nil, execute: action)
     }
     
@@ -111,17 +110,6 @@ extension DefaultSplitClient {
             return
         }
         eventsManager.register(event: event, task: task)
-    }
-    
-    public func on(error: SplitErrorType, perform: SplitActionWithError) {
-//        guard let factory = clientManager?.splitFactory else { return }
-//
-//        let task = SplitEventActionTask(action: action, event: event,
-//                                        runInBackground: runInBackground,
-//                                        factory: factory,
-//                                        queue: queue)
-//        task.event = event
-//        on(event: event, executeTask: task)
     }
 }
 

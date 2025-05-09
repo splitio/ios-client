@@ -10,7 +10,7 @@ import Foundation
 
 protocol SplitEventsManager: AnyObject {
     func register(event: SplitEventWithMetadata, task: SplitEventActionTask)
-    func notifyEvent(_ event: SplitEventCase, _ metadata: [String: Any]?)
+    func notifyEvent(_ event: SplitEventCase, _ metadata: SplitMetadata?)
     func start()
     func stop()
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
@@ -61,10 +61,10 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
     
-    func notifyEvent(_ event: SplitEventCase, _ metadata: [String: Any]? = nil) {
+    func notifyEvent(_ event: SplitEventCase, _ metadata: SplitMetadata? = nil) {
         processQueue.async { [weak self] in
             if let self = self {
-                Logger.v("Event \(event) notified - Metadata: \(metadata ?? [:])")
+                Logger.v("Event \(event) notified - Metadata: \(metadata)")
                 self.eventsQueue.add(SplitInternalEvent(type: event, metadata: metadata))
             }
         }
@@ -181,7 +181,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
                         trigger(event: .sdkReadyTimedOut)
                     }
                 case .splitError:
-                    trigger(event: SplitEventWithMetadata(type: .sdkError, metadata: event.metadata))
+                trigger(event: SplitEventWithMetadata(type: .sdkError, metadata: event.metadata))
             }
         }
     }

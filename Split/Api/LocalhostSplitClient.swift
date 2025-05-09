@@ -123,8 +123,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         on(event: SplitEventWithMetadata(type: event, metadata: nil), execute: perform)
     }
     
-    public func on(event: SplitEvent, performWithMetadata: SplitActionWithMetadata?) {
-        guard let performWithMetadata = performWithMetadata else { return }
+    public func on(event: SplitEvent, performWithMetadata: @escaping SplitActionWithMetadata) {
         on(eventWithMetadata: SplitEventWithMetadata(type: event, metadata: nil), runInBackground: false, queue: nil, execute: performWithMetadata)
     }
 
@@ -170,8 +169,6 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
             eventsManager.register(event: event, task: task)
         }
     }
-    
-    public func on(error: SplitErrorType, perform: SplitActionWithError) {}
 
     public func track(trafficType: String, eventType: String) -> Bool {
         return true

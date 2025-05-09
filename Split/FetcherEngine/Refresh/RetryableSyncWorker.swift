@@ -82,7 +82,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     func notifyUpdate(_ events: [SplitInternalEvent]) {
         events.forEach {
             eventsManager.notifyEvent($0.type, $0.metadata)
-            eventsManager.notifyEvent(.splitError, ["Error": ["Code": SplitErrorType(rawValue: 401)?.rawValue, "Message": "Split not found"]])
+            eventsManager.notifyEvent(.splitError, SplitMetadata(key: "Code", value: "\(SplitErrorType.invalidEvent.rawValue)"))
         }
     }
 
@@ -164,7 +164,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             let result = try syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache)
             if result.success {
                 if !isSdkReadyTriggered() || result.featureFlagsUpdated.count > 0 {
-                    notifyUpdate([SplitInternalEvent(type: .splitsUpdated, metadata: ["Flags": result.featureFlagsUpdated ])])
+                    notifyUpdate([SplitInternalEvent(type: .splitsUpdated, metadata: SplitMetadata(value: "Flags: \(result.featureFlagsUpdated)"))])
                 }
                 resetBackoffCounter()
                 return true
@@ -221,7 +221,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
                 if result.featureFlagsUpdated.count > 0 {
-                    notifyUpdate([SplitInternalEvent(type: .splitsUpdated, metadata: ["Metadata" : result.featureFlagsUpdated.description]) ])
+                    notifyUpdate([SplitInternalEvent(type: .splitsUpdated, metadata: SplitMetadata(value: "Metadata : \(result.featureFlagsUpdated.description)"))])
                 }
                 resetBackoffCounter()
                 return true
