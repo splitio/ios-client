@@ -13,7 +13,7 @@ import XCTest
 
 class FeatureFlagsPayloadDecoderTest: XCTestCase {
 
-    let decoder: FeatureFlagsPayloadDecoder = DefaultFeatureFlagsPayloadDecoder()
+    let decoder: DefaultFeatureFlagsPayloadDecoder = DefaultFeatureFlagsPayloadDecoder(type: Split.self)
 
 
     func testDecodeZlib() throws {

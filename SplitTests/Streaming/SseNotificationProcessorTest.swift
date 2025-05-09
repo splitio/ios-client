@@ -25,6 +25,7 @@ class SseNotificationProcessorTest: XCTestCase {
     override func setUp() {
         let synchronizer = SynchronizerStub()
         let splitsStorage = SplitsStorageStub()
+        let ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
         payloadDecoderMock = SegmentsPayloadDecoderMock()
         _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [],
                                                                    archivedSplits: [],
@@ -35,8 +36,11 @@ class SseNotificationProcessorTest: XCTestCase {
         sseNotificationParser = SseNotificationParserStub()
         splitsUpdateWorker = SplitsUpdateWorkerMock(synchronizer: synchronizer,
                                                     splitsStorage: splitsStorage,
+                                                    ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                     splitChangeProcessor: SplitChangeProcessorStub(),
-                                                    featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoderMock(),
+                                                    ruleBasedSegmentsChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
+                                                    featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoderMock(type: Split.self),
+                                                    ruleBasedSegmentsPayloadDecoder: RuleBasedSegmentsPayloadDecoderMock(type: RuleBasedSegment.self),
                                                     telemetryProducer: TelemetryStorageStub())
 
         mySegmentsUpdateWorker =  SegmentsUpdateWorkerMock(synchronizer: MySegmentsSynchronizerWrapper(synchronizer: synchronizer),
@@ -61,7 +65,7 @@ class SseNotificationProcessorTest: XCTestCase {
     }
 
     func testProcessSplitUpdate() {
-        sseNotificationParser.splitsUpdateNotification = SplitsUpdateNotification(changeNumber: -1)
+        sseNotificationParser.splitsUpdateNotification = TargetingRuleUpdateNotification(changeNumber: -1)
         let notification = IncomingNotification(type: .splitUpdate,
                                                 channel: nil,
                                                 jsonData: "",
@@ -72,7 +76,7 @@ class SseNotificationProcessorTest: XCTestCase {
     }
 
     func testProcessSplitUpdateNullJson() {
-        sseNotificationParser.splitsUpdateNotification = SplitsUpdateNotification(changeNumber: -1)
+        sseNotificationParser.splitsUpdateNotification = TargetingRuleUpdateNotification(changeNumber: -1)
         let notification = IncomingNotification(type: .splitUpdate,
                                                 channel: nil,
                                                 jsonData: nil,
@@ -84,7 +88,7 @@ class SseNotificationProcessorTest: XCTestCase {
 
     func testProcessSplitUpdateException() {
         splitsUpdateWorker.throwException = true
-        sseNotificationParser.splitsUpdateNotification = SplitsUpdateNotification(changeNumber: -1)
+        sseNotificationParser.splitsUpdateNotification = TargetingRuleUpdateNotification(changeNumber: -1)
         let notification = IncomingNotification(type: .splitUpdate,
                                                 channel: nil,
                                                 jsonData: nil,
