@@ -133,6 +133,10 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
                 payload: payload,
                 compressionUtil: self.decomProvider.decompressor(for: compressionType))
 
+            if !allRuleBasedSegmentsExist(in: split) {
+                return false
+            }
+
             let change = SplitChange(splits: [split],
                                      since: previousChangeNumber,
                                      till: changeNumber)
@@ -180,6 +184,23 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
         } catch {
             Logger.e("Error decoding rule based segments payload from notification: \(error)")
             return false
+        }
+    }
+
+    /// Checks if the split contains a rule-based segment matcher whose segment does not exist in storage
+    private func allRuleBasedSegmentsExist(in split: Split) -> Bool {
+        guard let conditions = split.conditions else { return true }
+        let segmentNames = conditions
+            .compactMap { $0.matcherGroup?.matchers }
+            .flatMap { $0 }
+            .filter { $0.matcherType == .inRuleBasedSegment }
+            .compactMap { $0.userDefinedSegmentMatcherData?.segmentName }
+
+        guard !segmentNames.isEmpty else {
+            return true
+        }
+        return segmentNames.allSatisfy {
+            self.ruleBasedSegmentsStorage.get(segmentName: $0) != nil
         }
     }
 }
