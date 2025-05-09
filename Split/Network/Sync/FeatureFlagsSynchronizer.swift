@@ -117,7 +117,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
         if syncTaskByChangeNumberCatalog.value(forKey: changeNumberConfig) == nil {
             let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
-            var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(changeNumber: changeNumberConfig.flags ?? -1, // TODO: to be changed in follow-up PR
+            var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(changeNumber: changeNumberConfig,
                                                                              reconnectBackoffCounter: reconnectBackoff)
             syncTaskByChangeNumberCatalog.setValue(worker, forKey: changeNumberConfig)
             worker.start()
