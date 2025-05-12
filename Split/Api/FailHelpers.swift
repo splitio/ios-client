@@ -13,7 +13,7 @@ import Foundation
 ///
 
 class FailedClient: SplitClient {
-    func on(event: SplitEvent, performWithMetadata: SplitActionWithMetadata?) {
+    func on(event: SplitEventCase, performWithMetadata: SplitActionWithMetadata?) {
         
     }
 
@@ -57,20 +57,20 @@ class FailedClient: SplitClient {
         return [:]
     }
     
-    public func on(event: SplitEvent, perform: SplitAction?) {
+    public func on(event: SplitEventCase, perform: SplitAction?) {
     }
     
-    func on(event: SplitEvent, perform: @escaping ([String : Any]?) -> Void) {
+    func on(event: SplitEventCase, perform: @escaping ([String : Any]?) -> Void) {
     }
 
-    func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction) {
+    func on(event: SplitEventCase, execute action: @escaping SplitAction) {
     }
 
-    func on(event: SplitEventWithMetadata, runInBackground: Bool,
+    func on(event: SplitEventCase, runInBackground: Bool,
             execute action: @escaping SplitAction) {
     }
 
-    func on(event: SplitEventWithMetadata,
+    func on(event: SplitEventCase,
             queue: DispatchQueue, execute action: @escaping SplitAction) {
     }
 

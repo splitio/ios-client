@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SplitEventCase {
+enum SplitInternalEventCase {
     case mySegmentsUpdated
     case myLargeSegmentsUpdated
     case splitsUpdated
@@ -20,15 +20,15 @@ enum SplitEventCase {
 }
 
 struct SplitInternalEvent: Equatable {
-    let type: SplitEventCase
-    let metadata: [String: Any]?
+    let type: SplitInternalEventCase
+    let metadata: NSDictionary?
     
-    init(type: SplitEventCase, metadata: [String : Any]? = nil) {
+    init(type: SplitInternalEventCase, metadata: NSDictionary? = nil) {
         self.type = type
         self.metadata = metadata
     }
     
     static func == (lhs: SplitInternalEvent, rhs: SplitInternalEvent) -> Bool {
-        return lhs.type == rhs.type
+        return lhs.type == rhs.type 
     }
 }

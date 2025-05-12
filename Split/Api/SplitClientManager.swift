@@ -80,7 +80,7 @@ class DefaultClientManager: SplitClientManager {
         eventsManagerCoordinator.start()
 
         if let producer = telemetryProducer {
-            defaultClient?.on(event: SplitEventWithMetadata(type: .sdkReadyFromCache, metadata: nil)) {
+            defaultClient?.on(event: .sdkReadyFromCache) {
                 DispatchQueue.general.async { [weak self] in
                     if let self = self {
                         producer.recordTimeUntilReadyFromCache(self.telemetryStopwatch?.interval() ?? 0)
@@ -88,7 +88,7 @@ class DefaultClientManager: SplitClientManager {
                 }
             }
 
-            defaultClient?.on(event: SplitEventWithMetadata(type: .sdkReadyFromCache, metadata: nil)) {
+            defaultClient?.on(event: .sdkReadyFromCache) {
                 DispatchQueue.general.async { [weak self] in
                     if let self = self {
                         producer.recordTimeUntilReady(self.telemetryStopwatch?.interval() ?? 0)

@@ -34,7 +34,7 @@ let factory = factoryBuilder.build()
 let client = factory?.client
 
 // Subscribe to SDK READY event and evaluate your feature flag
-client?.on(event: SplitEvent.sdkReady) {
+client?.on(event: SplitEventCase.sdkReady) {
     if let client = client {
         let treatment = client.getTreatment("my_first_feature_flag")
         if treatment == "on" {

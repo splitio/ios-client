@@ -337,8 +337,8 @@ extension DefaultTreatmentManager {
     }
 
     private func isSdkReady() -> Bool {
-        return eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache) ||
-            eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady)
+        return eventsManager.eventAlreadyTriggered(event: SplitEventCase.sdkReadyFromCache) ||
+        eventsManager.eventAlreadyTriggered(event: .sdkReady)
     }
 
     private func checkAndLogIfDestroyed(logTag: String) -> Bool {

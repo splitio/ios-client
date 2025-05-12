@@ -306,7 +306,7 @@
  - Added client dependency to event background task
 
 0.2.0: (Apr 25, 2018)
- - Added events listener. Available events: SplitEvent.sdkReady and SplitEvent.sdkReadyTimedOut
+ - Added events listener. Available events: SplitEventCase.sdkReady and SplitEventCase.sdkReadyTimedOut
 
 0.1.5: (Mar 19, 2018)
  - Added first load from cache

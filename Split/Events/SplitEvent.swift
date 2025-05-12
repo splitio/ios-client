@@ -1,5 +1,5 @@
 //
-//  SplitEvent.swift
+//  SplitEventCase.swift
 //  Split
 //
 //  Created by Sebastian Arrubia on 4/17/18.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-@objc public enum SplitEvent: Int {
+@objc public enum SplitEventCase: Int {
     case sdkReady
     case sdkReadyTimedOut
     case sdkReadyFromCache
@@ -27,23 +27,18 @@ import Foundation
     }
 }
 
-@objcMembers
-public class SplitEventWithMetadata: NSObject {
-    let type: SplitEvent
-    let metadata: [String: Any]?
+@objcMembers public class SplitEvent: NSObject {
+    let type: SplitEventCase
+    let metadata: NSDictionary?
     
-    @objc public init(type: SplitEvent, metadata: [String : Any]? = nil) {
+    @objc public init(type: SplitEventCase, metadata: NSDictionary? = nil) {
         self.type = type
         self.metadata = metadata
     }
     
     public override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? SplitEventWithMetadata else { return false }
+        guard let other = object as? SplitEvent else { return false }
         return self.type == other.type
-    }
-    
-    public override var hash: Int {
-        return type.hashValue
     }
 }
 

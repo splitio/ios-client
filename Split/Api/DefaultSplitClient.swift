@@ -12,7 +12,7 @@ import Foundation
 typealias DestroyHandler = () -> Void
 
 public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClient {
-    
+        
     private var storageContainer: SplitStorageContainer
     private var key: Key
     private let config: SplitClientConfig
@@ -58,64 +58,59 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
 // MARK: Events
 extension DefaultSplitClient {
     
-    public func on(event: SplitEvent, perform: SplitAction?) {
-        guard let perform = perform else { return }
-        on(event: SplitEventWithMetadata(type: event, metadata: nil), execute: perform)
-    }
-    
-    public func on(event: SplitEventWithMetadata, execute action: @escaping SplitAction) {
-        on(event: event, runInBackground: false, queue: nil, execute: action)
-    }
-
-    public func on(event: SplitEventWithMetadata, runInBackground: Bool, execute action: @escaping SplitAction) {
-        on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
-    }
-
-    public func on(event: SplitEventWithMetadata, queue: DispatchQueue, execute action: @escaping SplitAction) {
-        on(event: event, runInBackground: true, queue: queue, execute: action)
-    }
-    
-    private func on(event: SplitEventWithMetadata, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
+    private func onWithMetadata(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute actionWithMetadata: @escaping SplitActionWithMetadata) {
         guard let factory = clientManager?.splitFactory else {
             return
         }
 
-        let task = SplitEventActionTask(action: action, event: event,
+        let task = SplitEventActionTask(action: actionWithMetadata, event: event.type,
                                         runInBackground: runInBackground,
                                         factory: factory,
                                         queue: queue)
-        task.event = event
-        on(event: event, executeTask: task)
+        task.event = event.type
+        on(event: event.type, executeTask: task)
     }
     
-    public func on(event: SplitEvent, performWithMetadata action: SplitActionWithMetadata?) {
-        guard let action = action else { return }
-        onWithMetadata(event:SplitEventWithMetadata(type: event, metadata: nil), runInBackground: true, queue: nil, execute: action)
-    }
-    
-    private func onWithMetadata(event: SplitEventWithMetadata, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitActionWithMetadata) {
-        guard let factory = clientManager?.splitFactory else {
-            return
-        }
-
-        let task = SplitEventActionTask(action: action, event: event,
-                                        runInBackground: runInBackground,
-                                        factory: factory,
-                                        queue: queue)
-        task.event = event
-        on(event: event, executeTask: task)
-    }
+                public func on(event: SplitEventCase, performWithMetadata action: SplitActionWithMetadata?) {
+                    guard let action = action else { return }
+                    onWithMetadata(event: SplitEvent(type: event, metadata: nil), runInBackground: true, queue: nil, execute: action)
+                }
     
 
-    private func on(event: SplitEventWithMetadata, executeTask task: SplitEventActionTask) {
-        if  event.type != .sdkReadyFromCache,
-            eventsManager.eventAlreadyTriggered(event: event.type) {
-            Logger.w("A handler was added for \(event.type.toString()) on the SDK, " +
+    private func on(event: SplitEventCase, executeTask task: SplitEventActionTask) {
+        if  event != .sdkReadyFromCache,
+            eventsManager.eventAlreadyTriggered(event: event) {
+            Logger.w("A handler was added for \(event.toString()) on the SDK, " +
                      "which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
         }
-        eventsManager.register(event: event, task: task)
+        eventsManager.register(event: SplitEvent(type: event, metadata: nil), task: task)
     }
+    
+                private func on(event: SplitEventCase, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
+                    guard let factory = clientManager?.splitFactory else {
+                        return
+                    }
+
+                    let task = SplitEventActionTask(action: action, event: event,
+                                                    runInBackground: runInBackground,
+                                                    factory: factory,
+                                                    queue: queue)
+                    
+                    on(event: event, executeTask: task)
+                }
+
+                            public func on(event: SplitEventCase, execute action: @escaping SplitAction) {
+                                on(event: event, runInBackground: false, queue: nil, execute: action)
+                            }
+                
+                            public func on(event: SplitEventCase, runInBackground: Bool, execute action: @escaping SplitAction) {
+                                on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
+                            }
+                
+                            public func on(event: SplitEventCase, queue: DispatchQueue, execute action: @escaping SplitAction) {
+                                on(event: event, runInBackground: true, queue: queue, execute: action)
+                            }
     
     
     
