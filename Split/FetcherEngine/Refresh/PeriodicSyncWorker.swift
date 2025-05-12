@@ -168,7 +168,9 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
 
-        guard let result = try? syncHelper.sync(since: splitsStorage.changeNumber) else {
+        let changeNumber = splitsStorage.changeNumber
+        let rbChangeNumber: Int64 = -1 // TODO: get from storage
+        guard let result = try? syncHelper.sync(since: splitsStorage.changeNumber, rbSince: rbChangeNumber) else {
             return
         }
         if result.success, result.featureFlagsUpdated {

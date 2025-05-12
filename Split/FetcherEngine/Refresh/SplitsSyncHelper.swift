@@ -11,14 +11,18 @@ import Foundation
 struct SyncResult {
     let success: Bool
     let changeNumber: Int64
+    let rbChangeNumber: Int64?
     let featureFlagsUpdated: Bool
+    let rbsUpdated: Bool
 }
 
 class SplitsSyncHelper {
 
     struct FetchResult {
         let till: Int64
+        let rbTill: Int64?
         let featureFlagsUpdated: Bool
+        let rbsUpdated: Bool
     }
 
     private let splitFetcher: HttpSplitFetcher
@@ -50,11 +54,13 @@ class SplitsSyncHelper {
     }
 
     func sync(since: Int64,
+              rbSince: Int64,
               till: Int64? = nil,
               clearBeforeUpdate: Bool = false,
               headers: HttpHeaders? = nil) throws -> SyncResult {
         do {
             let res = try tryToSync(since: since,
+                                    rbSince: rbSince,
                                     till: till,
                                     clearBeforeUpdate: clearBeforeUpdate,
                                     headers: headers)
@@ -64,6 +70,7 @@ class SplitsSyncHelper {
             }
 
             return try tryToSync(since: res.changeNumber,
+                                   rbSince: res.rbChangeNumber,
                                    till: res.changeNumber,
                                    clearBeforeUpdate: clearBeforeUpdate && res.changeNumber == since,
                                    headers: headers,
@@ -75,7 +82,9 @@ class SplitsSyncHelper {
     }
 
     func tryToSync(since: Int64,
+                   rbSince: Int64? = nil,
                    till: Int64? = nil,
+                   rbTill: Int64? = nil,
                    clearBeforeUpdate: Bool = false,
                    headers: HttpHeaders? = nil,
                    useTillParam: Bool = false) throws -> SyncResult {
@@ -83,28 +92,39 @@ class SplitsSyncHelper {
         let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffTimeBaseInSecs,
                                                             maxTimeLimit: backoffTimeMaxInSecs)
         var nextSince = since
+        var nextRbSince: Int64? = rbSince
         var attemptCount = 0
         let goalTill = till ?? -10
+        let goalRbTill = rbTill ?? -10
         while attemptCount < maxAttempts {
             let result = try fetchUntil(since: nextSince,
+                                        rbSince: nextRbSince,
                                        till: useTillParam ? till : nil,
                                        clearBeforeUpdate: clearBeforeUpdate,
                                        headers: headers)
             nextSince = result.till
+            let nextRbSince = result.rbTill ?? -1
 
-            if nextSince >= goalTill {
+            if nextSince >= goalTill, nextRbSince >= goalRbTill {
                 return SyncResult(success: true,
                                   changeNumber: nextSince,
-                                  featureFlagsUpdated: result.featureFlagsUpdated)
+                                  rbChangeNumber: nextRbSince,
+                                  featureFlagsUpdated: result.featureFlagsUpdated,
+                                  rbsUpdated: result.rbsUpdated)
             }
 
             Thread.sleep(forTimeInterval: backoffCounter.getNextRetryTime())
             attemptCount+=1
         }
-        return SyncResult(success: false, changeNumber: nextSince, featureFlagsUpdated: false)
+        return SyncResult(success: false,
+                          changeNumber: nextSince,
+                          rbChangeNumber: nextRbSince,
+                          featureFlagsUpdated: false,
+                          rbsUpdated: false)
     }
 
     func fetchUntil(since: Int64,
+                    rbSince: Int64?,
                     till: Int64? = nil,
                     clearBeforeUpdate: Bool = false,
                     headers: HttpHeaders? = nil) throws -> FetchResult {
@@ -112,28 +132,39 @@ class SplitsSyncHelper {
         var clearCache = clearBeforeUpdate
         var firstFetch = true
         var nextSince = since
+        var nextRbSince = rbSince
         var featureFlagsUpdated = false
+        var rbsUpdated = false
         while true {
             clearCache = clearCache && firstFetch
-            let splitChange = try self.splitFetcher.execute(since: nextSince,
+            let targetingRulesChange = try self.splitFetcher.execute(since: nextSince,
+                                                            rbSince: nextRbSince,
                                                             till: till,
                                                             headers: headers)
-            let newSince = splitChange.since
-            let newTill = splitChange.till
+            let flagsChange = targetingRulesChange.featureFlags
+            let newSince = flagsChange.since
+            let newTill = flagsChange.till
+
+            let rbsChange = targetingRulesChange.ruleBasedSegments
+            let newRbSince = rbsChange.since
+            let newRbTill = rbsChange.till
             if clearCache {
                 splitsStorage.clear()
             }
             firstFetch = false
-            if splitsStorage.update(splitChange: splitChangeProcessor.process(splitChange)) {
+            if splitsStorage.update(splitChange: splitChangeProcessor.process(targetingRulesChange.featureFlags)) {
                 featureFlagsUpdated = true
             }
+
             Logger.i("Feature flag definitions have been updated")
             // Line below commented temporary for debug purposes
             // Logger.v(splitChange.description)
-            if newSince == newTill, newTill >= since {
-                return FetchResult(till: newTill, featureFlagsUpdated: featureFlagsUpdated)
+            let rbSince = rbSince ?? -1
+            if newSince == newTill, newTill >= since, newRbSince == newRbTill, newRbTill >= rbSince {
+                return FetchResult(till: newTill, rbTill: newRbTill, featureFlagsUpdated: featureFlagsUpdated, rbsUpdated: rbsUpdated)
             }
             nextSince = newTill
+            nextRbSince = newRbTill
         }
     }
 }

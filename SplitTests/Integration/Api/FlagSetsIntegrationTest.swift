@@ -166,7 +166,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         try bodyTest(syncConfig: syncConfig)
 
-        XCTAssertEqual("since=-1&sets=set_2,set_3,set_ww,set_x", querystring)
+        XCTAssertEqual("since=-1&rbSince=-1&sets=set_2,set_3,set_ww,set_x", querystring)
     }
 
     func testInitialQuerystringWithSpec() throws {
@@ -178,7 +178,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         try bodyTest(syncConfig: syncConfig)
 
-        XCTAssertEqual("s=1.1&since=-1&sets=set_2,set_3,set_ww,set_x", querystring)
+        XCTAssertEqual("s=1.1&since=-1&rbSince=-1&sets=set_2,set_3,set_ww,set_x", querystring)
     }
 
     func testTotalAndInvalidFlagSetsTelemetry() throws {
@@ -193,7 +193,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         wait(for: [telemetryConfigExp!], timeout: 3)
 
-        XCTAssertEqual("since=-1&sets=a,c,d", querystring)
+        XCTAssertEqual("since=-1&rbSince=-1&sets=a,c,d", querystring)
         XCTAssertEqual(7, telemetryConfigSent?.flagSetsTotal ?? -1)
         XCTAssertEqual(4, telemetryConfigSent?.flagSetsInvalid ?? -1)
     }
@@ -223,7 +223,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         destroyTest(client: client)
 
-        XCTAssertEqual("since=-1&sets=c,nset1,nset2,set1,set10,set2,set20", querystring)
+        XCTAssertEqual("since=-1&rbSince=-1&sets=c,nset1,nset2,set1,set10,set2,set20", querystring)
         XCTAssertEqual(expLatencies, telemetryStatsSent?.methodLatencies?.treatmentsByFlagSet ?? [])
         XCTAssertEqual(expLatencies, telemetryStatsSent?.methodLatencies?.treatmentsByFlagSets ?? [])
         XCTAssertEqual(expLatencies, telemetryStatsSent?.methodLatencies?.treatmentsWithConfigByFlagSet ?? [])
