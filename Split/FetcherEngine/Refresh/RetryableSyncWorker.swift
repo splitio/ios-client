@@ -206,8 +206,6 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
             return true
         }
 
-        let storedRbChangeNumber: Int64 = -1// TODO: get from storage
-
         do {
             let result = try syncHelper.sync(since: storedChangeNumber,
                                              rbSince: storedRbChangeNumber,
