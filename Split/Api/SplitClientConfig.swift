@@ -346,8 +346,7 @@ public class SplitClientConfig: NSObject {
     @objc public var certificatePinningConfig: CertificatePinningConfig?
 
     /// Configuration for rollout definitions cache. Internal use only.
-    /* @objc public var rolloutCacheConfiguration: RolloutCacheConfiguration? */
-    internal var rolloutCacheConfiguration: RolloutCacheConfiguration?
+    @objc public var rolloutCacheConfiguration: RolloutCacheConfiguration?
 
     ///
     ///  Update this variable to enable / disable telemetry for testing
