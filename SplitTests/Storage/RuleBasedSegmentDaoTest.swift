@@ -220,7 +220,9 @@ class RuleBasedSegmentDaoTest: XCTestCase {
 
         let excluded = Excluded()
         excluded.keys = Set(["key1", "key2"])
-        excluded.segments = Set(["segment1", "segment2"])
+        excluded.segments = Set([
+            ExcludedSegment(name: "segment1", type: .standard),
+            ExcludedSegment(name: "segment2", type: .standard)])
         segment.excluded = excluded
 
         return segment

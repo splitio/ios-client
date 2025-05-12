@@ -8,9 +8,94 @@
 
 import Foundation
 
+// MARK: - SegmentType Enum
+@objc enum SegmentType: Int, Codable {
+    case standard
+    case ruleBased
+    case large
+    case unknown
+
+    static func enumFromString(string: String) -> SegmentType? {
+        switch string.lowercased() {
+        case "standard":
+            return .standard
+        case "rule-based":
+            return .ruleBased
+        case "large":
+            return .large
+        default:
+            return nil
+        }
+    }
+
+    public init(from decoder: Decoder) throws {
+        let stringValue = try? decoder.singleValueContainer().decode(String.self)
+        self = SegmentType.enumFromString(string: stringValue ?? "") ?? .unknown
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .standard:
+            try container.encode("standard")
+        case .ruleBased:
+            try container.encode("rule-based")
+        case .large:
+            try container.encode("large")
+        case .unknown:
+            try container.encodeNil()
+        }
+    }
+}
+
+class ExcludedSegment: NSObject, Codable {
+    var name: String?
+    var type: SegmentType?
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case type
+    }
+
+    override init() {
+        super.init()
+    }
+
+    init(name: String? = nil, type: SegmentType? = nil) {
+        self.name = name
+        self.type = type
+        super.init()
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decodeIfPresent(SegmentType.self, forKey: .type)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        super.init()
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(type, forKey: .type)
+        try container.encodeIfPresent(name, forKey: .name)
+    }
+
+    func isStandard() -> Bool {
+        return type == .standard
+    }
+
+    func isRuleBased() -> Bool {
+        return type == .ruleBased
+    }
+
+    func isLarge() -> Bool {
+        return type == .large
+    }
+}
+
 class Excluded: NSObject, Codable {
     var keys: Set<String>?
-    var segments: Set<String>?
+    var segments: Set<ExcludedSegment>?
 
     enum CodingKeys: String, CodingKey {
         case keys
@@ -21,7 +106,7 @@ class Excluded: NSObject, Codable {
         super.init()
     }
 
-    init(keys: Set<String>? = nil, segments: Set<String>? = nil) {
+    init(keys: Set<String>? = nil, segments: Set<ExcludedSegment>? = nil) {
         self.keys = keys
         self.segments = segments
         super.init()
@@ -30,7 +115,7 @@ class Excluded: NSObject, Codable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         keys = try container.decodeIfPresent(Set<String>.self, forKey: .keys)
-        segments = try container.decodeIfPresent(Set<String>.self, forKey: .segments)
+        segments = try container.decodeIfPresent(Set<ExcludedSegment>.self, forKey: .segments)
         super.init()
     }
 
