@@ -37,10 +37,20 @@ class SplitEventActionTask: SplitEventTask {
         return queue
     }
 
-    func run(_ event: Any?) {
+    func run(_ data: Any?) {
+        print("EJECUTANDO: \(event.type.toString())")
         eventHandler?()
+        
         if let metadata = (event as? SplitEventWithMetadata)?.metadata {
             eventHandlerWithMetadata?(metadata)
+        }
+
+        if let event = event as? SplitEventWithMetadata {
+            if let metadata = event.metadata as? SplitMetadata {
+                eventHandlerWithMetadata?(metadata)
+            } else if let error = event.metadata as? SplitError {
+                eventHandlerWithMetadata?(error)
+            }
         }
     }
 }

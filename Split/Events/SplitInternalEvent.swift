@@ -22,9 +22,9 @@ enum SplitEventCase {
 
 struct SplitInternalEvent: Equatable {
     let type: SplitEventCase
-    let metadata: SplitMetadata?
+    let metadata: SplitKeyValue?
     
-    init(type: SplitEventCase, metadata: SplitMetadata? = nil) {
+    init(type: SplitEventCase, metadata: SplitKeyValue? = nil) {
         self.type = type
         self.metadata = metadata
     }

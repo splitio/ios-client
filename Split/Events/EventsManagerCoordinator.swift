@@ -25,7 +25,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         .splitKilledNotification]
     )
 
-    func notifyEvent(_ event: SplitEventCase, _ metadata: SplitMetadata? = nil) {
+    func notifyEvent(_ event: SplitEventCase, _ metadata: SplitKeyValue? = nil) {
         if !eventsToHandle.contains(event) {
             return
         }

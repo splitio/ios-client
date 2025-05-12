@@ -33,7 +33,7 @@ import Foundation
 @objcMembers
 public class SplitEventWithMetadata: NSObject {
     let type: SplitEvent
-    let metadata: SplitMetadata?
+    let metadata: SplitKeyValue?
     
     @objc public init(type: SplitEvent, metadata: SplitMetadata? = nil) {
         self.type = type
