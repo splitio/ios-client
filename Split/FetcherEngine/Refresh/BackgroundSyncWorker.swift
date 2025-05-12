@@ -45,32 +45,34 @@ class BackgroundMySegmentsSyncWorker: BackgroundSyncWorker {
 class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
 
     private let splitFetcher: HttpSplitFetcher
-    private let splitsStorage: BackgroundSyncSplitsStorage
     private let persistenSplitsStorage: PersistentSplitsStorage
+    private let persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let cacheExpiration: Int64
     private let syncHelper: SplitsSyncHelper
 
     init(splitFetcher: HttpSplitFetcher,
          persistentSplitsStorage: PersistentSplitsStorage,
+         persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          cacheExpiration: Int64,
          splitConfig: SplitClientConfig) {
 
         self.persistenSplitsStorage = persistentSplitsStorage
+        self.persistentRuleBasedSegmentsStorage = persistentRuleBasedSegmentsStorage
         self.splitFetcher = splitFetcher
-        self.splitsStorage = BackgroundSyncSplitsStorage(persistentSplitsStorage: persistentSplitsStorage)
         self.splitChangeProcessor = splitChangeProcessor
         self.cacheExpiration = cacheExpiration
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
-                                           splitsStorage: splitsStorage,
+                                           splitsStorage: BackgroundSyncSplitsStorage(persistentSplitsStorage: persistentSplitsStorage),
+                                           ruleBasedSegmentsStorage: DefaultRuleBasedSegmentsStorage(persistentStorage: persistentRuleBasedSegmentsStorage),
                                            splitChangeProcessor: splitChangeProcessor,
                                            splitConfig: splitConfig)
     }
 
     func execute() {
         var changeNumber = persistenSplitsStorage.getChangeNumber()
-        var rbChangeNumber: Int64 = -1 // TODO get from storage
+        var rbChangeNumber = persistentRuleBasedSegmentsStorage.getChangeNumber()
         _ = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
     }
 }

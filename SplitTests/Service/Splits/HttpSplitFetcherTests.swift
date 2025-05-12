@@ -12,7 +12,7 @@ import XCTest
 @testable import Split
 
 class HttpSplitFetcherTests: XCTestCase {
-    
+
     var restClient: RestClientStub!
     var fetcher: HttpSplitFetcher!
     var telemetryProducer: TelemetryStorageStub!
@@ -23,7 +23,7 @@ class HttpSplitFetcherTests: XCTestCase {
         fetcher = DefaultHttpSplitFetcher(restClient: restClient,
                                           syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
     }
-    
+
     func testServerNoReachable() {
         restClient.isServerAvailable = false
         var isError = false
@@ -34,7 +34,7 @@ class HttpSplitFetcherTests: XCTestCase {
         }
         XCTAssertTrue(isError)
     }
-    
+
     func testSuccessFullFetch() throws {
         restClient.isServerAvailable = true
         restClient.update(changes: [newChange(since: 1, till: 2), newChange(since: 2, till: 2)])
@@ -45,9 +45,9 @@ class HttpSplitFetcherTests: XCTestCase {
         XCTAssertEqual(2, c.till)
         XCTAssertEqual(0, c.splits.count)
     }
-    
-    func newChange(since: Int64, till: Int64, splits: [Split] = []) -> SplitChange {
-        return SplitChange(splits: [], since: since, till: till)
+
+    func newChange(since: Int64, till: Int64, splits: [Split] = []) -> TargetingRulesChange {
+        return TargetingRulesChange(featureFlags: SplitChange(splits: [], since: since, till: till), ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
     }
 
     override func tearDown() {

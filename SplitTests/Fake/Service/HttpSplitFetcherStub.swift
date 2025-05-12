@@ -10,12 +10,16 @@ import Foundation
 @testable import Split
 
 class HttpSplitFetcherStub: HttpSplitFetcher {
-    var splitChanges = [SplitChange?]()
+    var splitChanges = [TargetingRulesChange?]()
     var httpError: HttpError?
     var hitIndex = 0
     var fetchCallCount: Int = 0
+    var params: [String: Int64?] = [:]
     
     func execute(since: Int64, rbSince: Int64? = nil, till: Int64?, headers: HttpHeaders?) throws -> TargetingRulesChange {
+        params = ["since": since,
+                  "rbSince": rbSince,
+                  "till": till]
         fetchCallCount+=1
         if let e = httpError {
             throw e

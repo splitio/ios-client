@@ -165,6 +165,8 @@ struct BackgroundSyncExecutor {
         }
         let splitsStorage = SplitDatabaseHelper.openPersistentSplitsStorage(database: splitDatabase)
         let generalInfoStorage = SplitDatabaseHelper.openGeneralInfoStorage(database: splitDatabase)
+        let persistentRuleBasedSegmentsStorage = SplitDatabaseHelper.openPersistentRuleBasedSegmentsStorage(database: splitDatabase,
+                                                                                                           generalInfoStorage: generalInfoStorage)
         let endpoints = serviceEndpoints ?? ServiceEndpoints.builder().build()
         let endpointFactory = EndpointFactory(serviceEndpoints: endpoints,
                                                apiKey: apiKey,
@@ -191,6 +193,7 @@ struct BackgroundSyncExecutor {
         let changeProcessor = DefaultSplitChangeProcessor(filterBySet: bySetsFilter)
         self.splitsSyncWorker = BackgroundSplitsSyncWorker(splitFetcher: splitsFetcher,
                                                            persistentSplitsStorage: splitsStorage,
+                                                           persistentRuleBasedSegmentsStorage: persistentRuleBasedSegmentsStorage,
                                                            splitChangeProcessor: changeProcessor,
                                                            cacheExpiration: cacheExpiration,
                                                            splitConfig: SplitClientConfig())

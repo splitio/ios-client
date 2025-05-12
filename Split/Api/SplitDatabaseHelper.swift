@@ -169,6 +169,10 @@ struct SplitDatabaseHelper {
         return DefaultPersistentSplitsStorage(database: database)
     }
 
+    static func openPersistentRuleBasedSegmentsStorage(database: SplitDatabase, generalInfoStorage: GeneralInfoStorage) -> PersistentRuleBasedSegmentsStorage {
+        return DefaultPersistentRuleBasedSegmentsStorage(database: database, generalInfoStorage: generalInfoStorage)
+    }
+
     static func openSplitsStorage(database: SplitDatabase,
                                   flagSetsCache: FlagSetsCache) -> SplitsStorage {
         return DefaultSplitsStorage(persistentSplitsStorage: openPersistentSplitsStorage(database: database),

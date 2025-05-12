@@ -22,6 +22,10 @@ import Foundation
         self.ruleBasedSegments = ruleBasedSegments
         super.init()
     }
+
+    convenience init(featureFlags: SplitChange) {
+        self.init(featureFlags: featureFlags, ruleBasedSegments: RuleBasedSegmentChange.empty())
+    }
 }
 
 extension TargetingRulesChange {

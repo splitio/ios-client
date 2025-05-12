@@ -138,7 +138,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         unparsedSegment.isParsed = false
 
         // Update storage with the unparsed segment
-        ruleBasedSegmentsStorage.update(
+        _ = ruleBasedSegmentsStorage.update(
             toAdd: Set([unparsedSegment]),
             toRemove: Set(),
             changeNumber: 456
@@ -311,6 +311,10 @@ private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegment
 
     func clear() {
         // No-op for the mock
+    }
+
+    func getChangeNumber() -> Int64 {
+        return snapshotChangeNumber
     }
 
     func updateSnapshotData(segments: [RuleBasedSegment], changeNumber: Int64) {

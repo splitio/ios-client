@@ -13,6 +13,7 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
 
     var updateCalled = false
     var clearCalled = false
+    var changeNumberCalled = false
 
     var lastAddedSegments: Set<RuleBasedSegment>?
     var lastRemovedSegments: Set<RuleBasedSegment>?
@@ -52,5 +53,10 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
         clearCalled = true
 
         delegate?.clear()
+    }
+
+    func getChangeNumber() -> Int64 {
+        changeNumberCalled = true
+        return delegate?.getChangeNumber() ?? -1
     }
 }
