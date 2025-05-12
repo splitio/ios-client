@@ -17,14 +17,17 @@ class SplitsBgSyncWorkerTest: XCTestCase {
     var splitStorage: PersistentSplitsStorageStub!
     var persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub!
     var splitChangeProcessor: SplitChangeProcessorStub!
+    var ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessorStub!
     var splitsSyncWorker: BackgroundSyncWorker!
 
     override func setUp() {
         splitFetcher = HttpSplitFetcherStub()
         splitStorage = PersistentSplitsStorageStub()
+        persistentRuleBasedSegmentsStorage = PersistentRuleBasedSegmentsStorageStub()
         splitStorage.changeNumber = 100
         let _ = SplitChange(splits: [], since: splitStorage.changeNumber, till: splitStorage.changeNumber)
         splitChangeProcessor = SplitChangeProcessorStub()
+        ruleBasedSegmentChangeProcessor = RuleBasedSegmentChangeProcessorStub()
     }
 
     func testFetchSuccess() {
@@ -33,6 +36,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
                                                       persistentSplitsStorage: splitStorage,
                                                       persistentRuleBasedSegmentsStorage: persistentRuleBasedSegmentsStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
+                                                      ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                       cacheExpiration: 100,
                                                       splitConfig: SplitClientConfig())
 
@@ -51,6 +55,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
                                                       persistentSplitsStorage: splitStorage,
                                                       persistentRuleBasedSegmentsStorage: persistentRuleBasedSegmentsStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
+                                                      ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                       cacheExpiration: 100,
                                                       splitConfig: SplitClientConfig())
 
@@ -69,6 +74,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
                                                       persistentSplitsStorage: splitStorage,
                                                       persistentRuleBasedSegmentsStorage: persistentRuleBasedSegmentsStorage,
                                                       splitChangeProcessor: splitChangeProcessor,
+                                                      ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                       cacheExpiration: 2000,
                                                       splitConfig: SplitClientConfig())
 

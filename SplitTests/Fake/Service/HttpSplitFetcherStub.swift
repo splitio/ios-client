@@ -30,23 +30,17 @@ class HttpSplitFetcherStub: HttpSplitFetcher {
             throw GenericError.unknown(message: "null feature flag changes")
         }
 
-        let rbSince = rbSince ?? -1
+        _ = rbSince ?? -1
         if splitChanges.count > hit {
             if let change = splitChanges[hit] {
-                return TargetingRulesChange(
-                    featureFlags: change,
-                    ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: rbSince, till: rbSince)
-                )
+                return change
             } else {
                 throw GenericError.unknown(message: "null feature flag changes")
             }
         }
 
         if let change = splitChanges[splitChanges.count - 1] {
-            return TargetingRulesChange(
-                featureFlags: change,
-                ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: rbSince, till: rbSince)
-            )
+            return change
         } else {
             throw GenericError.unknown(message: "null split changes")
         }

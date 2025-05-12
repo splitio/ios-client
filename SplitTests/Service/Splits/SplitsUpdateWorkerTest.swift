@@ -42,7 +42,8 @@ class SplitsUpdateWorkerTest: XCTestCase {
                                                          splitsStorage: splitsStorage,
                                                          ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
-                                                         changeNumber: 101,
+                                                         ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
+                                                         changeNumber: SplitsUpdateChangeNumber(flags: 101, rbs: nil),
                                                          eventsManager: eventsManager,
                                                          reconnectBackoffCounter: backoffCounter,
                                                          splitConfig: SplitClientConfig())
@@ -67,7 +68,8 @@ class SplitsUpdateWorkerTest: XCTestCase {
                                                          splitsStorage: splitsStorage,
                                                          ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
-                                                         changeNumber: 200,
+                                                         ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
+                                                         changeNumber: SplitsUpdateChangeNumber(flags: 200, rbs: nil),
                                                          eventsManager: eventsManager,
                                                          reconnectBackoffCounter: backoffCounter,
                                                          splitConfig: SplitClientConfig())
@@ -94,7 +96,8 @@ class SplitsUpdateWorkerTest: XCTestCase {
                                                          splitsStorage: splitsStorage,
                                                          ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
-                                                         changeNumber: 200,
+                                                         ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
+                                                         changeNumber: SplitsUpdateChangeNumber(flags: 200, rbs: nil),
                                                          eventsManager: eventsManager,
                                                          reconnectBackoffCounter: backoffCounter,
                                                          splitConfig: SplitClientConfig())
@@ -123,7 +126,8 @@ class SplitsUpdateWorkerTest: XCTestCase {
                                                          splitsStorage: splitsStorage,
                                                          ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
-                                                         changeNumber: 99,
+                                                         ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
+                                                         changeNumber: SplitsUpdateChangeNumber(flags: 99, rbs: nil),
                                                          eventsManager: eventsManager,
                                                          reconnectBackoffCounter: backoffCounter,
                                                          splitConfig: SplitClientConfig())

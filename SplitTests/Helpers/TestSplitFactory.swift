@@ -122,6 +122,7 @@ class TestSplitFactory: SplitFactory {
                                                          apiFacade: apiFacade,
                                                          storageContainer: storageContainer,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
+                                                         ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
                                                          eventsManager: eventsManager)
 
         let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitConfig,

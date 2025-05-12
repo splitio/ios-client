@@ -106,12 +106,14 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     private let splitsStorage: SplitsStorage
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
+    private let ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor
     private let syncHelper: SplitsSyncHelper
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
          ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
+         ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter,
          splitConfig: SplitClientConfig) {
@@ -120,10 +122,12 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
         self.splitsStorage = splitsStorage
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
+        self.ruleBasedSegmentChangeProcessor = ruleBasedSegmentChangeProcessor
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
                                            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
+                                           ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                            splitConfig: splitConfig)
         super.init(eventsManager: eventsManager,
                    reconnectBackoffCounter: reconnectBackoffCounter)
@@ -154,8 +158,10 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
 
     private let splitsFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
+    private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
-    private let changeNumber: Int64
+    private let ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor
+    private let changeNumber: SplitsUpdateChangeNumber
     private let syncHelper: SplitsSyncHelper
     var changeChecker: SplitsChangesChecker
 
@@ -163,14 +169,17 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
          splitsStorage: SplitsStorage,
          ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
-         changeNumber: Int64,
+         ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor,
+         changeNumber: SplitsUpdateChangeNumber,
          eventsManager: SplitEventsManager,
          reconnectBackoffCounter: ReconnectBackoffCounter,
          splitConfig: SplitClientConfig) {
 
         self.splitsFetcher = splitsFetcher
         self.splitsStorage = splitsStorage
+        self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
+        self.ruleBasedSegmentChangeProcessor = ruleBasedSegmentChangeProcessor
         self.changeNumber = changeNumber
         self.changeChecker = DefaultSplitsChangesChecker()
 
@@ -178,6 +187,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                            splitsStorage: splitsStorage,
                                            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
+                                           ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                            splitConfig: splitConfig)
         super.init(eventsManager: eventsManager,
                    reconnectBackoffCounter: reconnectBackoffCounter)
@@ -185,16 +195,21 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
 
     override func fetchFromRemote() throws -> Bool {
         let storedChangeNumber = splitsStorage.changeNumber
-        if changeNumber <= storedChangeNumber {
+        let flagsChangeNumber = changeNumber.flags
+        if let flagsChangeNumber, flagsChangeNumber <= storedChangeNumber {
             return true
         }
 
-        let storedRbChangeNumber: Int64 = -1// TODO: get from storage
+        let storedRbChangeNumber: Int64 = ruleBasedSegmentsStorage.changeNumber
+        let rbsChangeNumber = changeNumber.rbs
+        if let rbsChangeNumber, rbsChangeNumber <= storedRbChangeNumber {
+            return true
+        }
 
         do {
             let result = try syncHelper.sync(since: storedChangeNumber,
                                              rbSince: storedRbChangeNumber,
-                                             till: changeNumber,
+                                             till: flagsChangeNumber ?? rbsChangeNumber,
                                              clearBeforeUpdate: false,
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
