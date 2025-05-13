@@ -22,13 +22,17 @@ class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
         managers[key] = nil
     }
 
-    func register(event: SplitEvent, task: SplitEventTask) {
-
-    }
+    func register(event: SplitEvent, task: SplitEventActionTask) {}
+    
+    func notifyInternalEvent(_ event: SplitInternalEventCase, metadata: SplitMetadata) {}
 
     var notifiedEvents = Set<String>()
-    func notifyInternalEvent(_ event: SplitInternalEvent) {
+    func notifyInternalEvent(_ event: SplitInternalEventCase) {
         notifiedEvents.insert(IntegrationHelper.describeEvent(event))
+    }
+    
+    func notifyInternalEvent(_ event: SplitInternalEvent) {
+        notifiedEvents.insert(IntegrationHelper.describeEvent(event.type))
     }
 
     var startCalled = false
@@ -41,7 +45,7 @@ class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
         stopCalled = true
     }
 
-    func eventAlreadyTriggered(event: SplitEvent) -> Bool {
+    func eventAlreadyTriggered(event: SplitEventCase) -> Bool {
         return false
     }
 }

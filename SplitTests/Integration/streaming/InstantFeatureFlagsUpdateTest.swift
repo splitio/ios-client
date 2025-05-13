@@ -47,11 +47,11 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         let sdkReadyExp = XCTestExpectation(description: "SDK READY Expectation")
         var sdkUpdExp = XCTestExpectation(description: "SDK UPDATE Expectation")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdExp.fulfill()
         }
 
@@ -94,11 +94,11 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         let sdkReadyExp = XCTestExpectation(description: "SDK READY Expectation")
         var sdkUpdExp = XCTestExpectation(description: "SDK UPDATE Expectation")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdExp.fulfill()
         }
 
@@ -141,11 +141,11 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         let sdkReadyExp = XCTestExpectation(description: "SDK READY Expectation")
         var sdkUpdExp = XCTestExpectation(description: "SDK UPDATE Expectation")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdExp.fulfill()
         }
 

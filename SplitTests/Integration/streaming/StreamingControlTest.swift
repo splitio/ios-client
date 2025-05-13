@@ -50,7 +50,7 @@ class StreamingControlTest: XCTestCase {
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExpectation.fulfill()
         }
 

@@ -258,7 +258,7 @@ struct TestingHelper {
 
     static func segmentsSyncResult(_ result: Bool = true,
                                    msCn: Int64 = 300, mlsCn: Int64 = 400,
-                                   msUpd: Bool = true, mlsUpd: Bool = true) -> SegmentsSyncResult {
+                                   msUpd: [String] = ["Segment1","Segment2"], mlsUpd: [String] = ["LargeSegment1","LargeSegment2"]) -> SegmentsSyncResult {
         return SegmentsSyncResult(success: result,
                                   msChangeNumber: msCn, mlsChangeNumber: mlsCn,
                                   msUpdated: msUpd, mlsUpdated: mlsUpd)

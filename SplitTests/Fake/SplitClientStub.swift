@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 
 class SplitClientStub: SplitClient {
-
+    
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
         return SplitConstants.control
     }
@@ -83,13 +83,13 @@ class SplitClientStub: SplitClient {
         return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
-
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {}
-
-    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {}
-
-    func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {}
+    func on(event: SplitEventCase, queue: DispatchQueue, execute action: @escaping SplitAction) {}
+    
+    func on(event: SplitEventCase, execute action: @escaping SplitAction) {}
+    
+    func on(event: SplitEventCase, runInBackground: Bool, execute action: @escaping SplitAction) {}
+    
+    func on(event: SplitEventCase, executeWithMetadata: @escaping SplitActionWithMetadata) {}    
 
     func track(trafficType: String, eventType: String) -> Bool {
         return true

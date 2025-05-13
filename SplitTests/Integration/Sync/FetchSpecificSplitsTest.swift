@@ -83,7 +83,7 @@ class FetchSpecificSplitsTest: XCTestCase {
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         var sdkReadyFired = false
         
-        client?.on(event: SplitEvent.sdkReady) {
+        client?.on(event: .sdkReady) {
             sdkReadyFired = true
             sdkReadyExpectation.fulfill()
         }

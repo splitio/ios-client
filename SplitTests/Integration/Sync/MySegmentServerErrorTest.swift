@@ -121,7 +121,7 @@ class MySegmentServerErrorTest: XCTestCase {
 
         var sdkReadyFired = false
         
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyFired = true
             sdkReady.fulfill()
         }

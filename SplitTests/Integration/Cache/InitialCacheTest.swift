@@ -73,17 +73,17 @@ class InitialCacheTest: XCTestCase {
         var treatmentCache = ""
         var treatmentReady = ""
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        client.on(event: .sdkReadyFromCache) {
             treatmentCache = client.getTreatment(self.splitName)
             cacheReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             treatmentReady = client.getTreatment(self.splitName)
             readyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             readyExp.fulfill()
         }
 
@@ -134,21 +134,21 @@ class InitialCacheTest: XCTestCase {
         var treatmentCache = ""
         var treatmentReady = ""
 
-        client.on(event: SplitEvent.sdkReadyFromCache) { [weak self] in
+        client.on(event: .sdkReadyFromCache) { [weak self] in
             guard let self = self else { return }
 
             treatmentCache = client.getTreatment(self.splitName)
             cacheReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReady) { [weak self] in
+        client.on(event: .sdkReady) { [weak self] in
             guard let self = self else { return }
 
             treatmentReady = client.getTreatment(self.splitName)
             readyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             readyExp.fulfill()
         }
 
@@ -203,17 +203,17 @@ class InitialCacheTest: XCTestCase {
         var treatmentCache = ""
         var treatmentReady = ""
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        client.on(event: .sdkReadyFromCache) {
             treatmentCache = client.getTreatment(self.splitName)
             cacheReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             treatmentReady = client.getTreatment(self.splitName)
             readyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             readyExp.fulfill()
         }
 
@@ -284,19 +284,19 @@ class InitialCacheTest: XCTestCase {
         var treatmentReady1 = ""
         var treatmentReady2 = ""
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        client.on(event: .sdkReadyFromCache) {
             treatmentCache1 = client.getTreatment(self.splitName)
             treatmentCache2 = client.getTreatment(splitInFilter)
             cacheReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             treatmentReady1 = client.getTreatment(self.splitName)
             treatmentReady2 = client.getTreatment(splitInFilter)
             readyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             readyExp.fulfill()
         }
 
@@ -354,17 +354,17 @@ class InitialCacheTest: XCTestCase {
         var treatmentReady = ""
 
         var readyCacheNotFired = false
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        client.on(event: .sdkReadyFromCache) {
             treatmentCache = client.getTreatment(self.splitName)
             readyCacheNotFired = true
         }
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             treatmentReady = client.getTreatment(self.splitName)
             readyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             readyExp.fulfill()
         }
 

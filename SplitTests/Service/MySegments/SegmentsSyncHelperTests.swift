@@ -69,8 +69,19 @@ class SegmentsSyncHelperTests: XCTestCase {
         XCTAssertEqual(userKey, mySegmentsFetcher.lastUserKey)
         XCTAssertNil(mySegmentsFetcher.lastTill)
         XCTAssertTrue(res.success)
-        XCTAssertEqual(res.msUpdated, segmentsChanged)
-        XCTAssertEqual(res.mlsUpdated, segmentsChanged)
+        
+        var msUpdated = false
+        if !res.msUpdated.isEmpty {
+            msUpdated = true
+        }
+        
+        var mlsUpdated = false
+        if !res.mlsUpdated.isEmpty {
+            mlsUpdated = true
+        }
+        
+        XCTAssertEqual(msUpdated, segmentsChanged)
+        XCTAssertEqual(mlsUpdated, segmentsChanged)
         XCTAssertEqual(301, res.msChangeNumber)
         XCTAssertEqual(301, res.mlsChangeNumber)
     }

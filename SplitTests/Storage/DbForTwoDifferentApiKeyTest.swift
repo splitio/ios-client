@@ -70,11 +70,11 @@ class DbForDifferentApiKeysTest: XCTestCase {
 
         let sdkReadyExpectation1 = XCTestExpectation(description: "SDK READY Expectation")
 
-        client1.on(event: SplitEvent.sdkReady) {
+        client1.on(event: .sdkReady) {
             sdkReadyExpectation1.fulfill()
         }
 
-        client1.on(event: SplitEvent.sdkReadyTimedOut) {
+        client1.on(event: .sdkReadyTimedOut) {
             sdkReadyExpectation1.fulfill()
         }
 
@@ -103,11 +103,11 @@ class DbForDifferentApiKeysTest: XCTestCase {
 
         let sdkReadyExpectation2 = XCTestExpectation(description: "SDK READY Expectation")
 
-        client2.on(event: SplitEvent.sdkReady) {
+        client2.on(event: .sdkReady) {
             sdkReadyExpectation2.fulfill()
         }
 
-        client2.on(event: SplitEvent.sdkReadyTimedOut) {
+        client2.on(event: .sdkReadyTimedOut) {
             sdkReadyExpectation2.fulfill()
         }
 

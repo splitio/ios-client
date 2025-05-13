@@ -62,17 +62,17 @@ class ReadyFromCacheTest: XCTestCase {
 
         let client = factory.client
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        client.on(event: .sdkReadyFromCache) {
             cacheReadyExp.fulfill()
             cacheReadyFired = true
         }
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             readyExp.fulfill()
             readyFired = true
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             readyExp.fulfill()
         }
 
@@ -122,17 +122,17 @@ class ReadyFromCacheTest: XCTestCase {
 
         let client = factory.client
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        client.on(event: .sdkReadyFromCache) {
             cacheReadyExp.fulfill()
             cacheReadyFired = true
         }
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             readyExp.fulfill()
             readyFired = true
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             readyExp.fulfill()
             timeoutFired = true
         }
@@ -178,16 +178,16 @@ class ReadyFromCacheTest: XCTestCase {
 
         let client = factory.client
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        client.on(event: .sdkReadyFromCache) {
             cacheReadyFired = true
         }
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             readyExp.fulfill()
             readyFired = true
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             readyExp.fulfill()
             timeoutFired = true
         }
@@ -251,15 +251,15 @@ class ReadyFromCacheTest: XCTestCase {
 
             let client = factory.client
 
-            client.on(event: SplitEvent.sdkReadyFromCache) {
+            client.on(event: .sdkReadyFromCache) {
                 cacheReadyExp.fulfill()
             }
 
-            client.on(event: SplitEvent.sdkReady) {
+            client.on(event: .sdkReady) {
                 readyExp.fulfill()
             }
 
-            client.on(event: SplitEvent.sdkReadyTimedOut) {
+            client.on(event: .sdkReadyTimedOut) {
                 readyExp.fulfill()
             }
 
@@ -337,15 +337,15 @@ class ReadyFromCacheTest: XCTestCase {
 
             let client = factory.client
 
-            client.on(event: SplitEvent.sdkReadyFromCache) {
+            client.on(event: .sdkReadyFromCache) {
                 cacheReadyExp.fulfill()
             }
 
-            client.on(event: SplitEvent.sdkReady) {
+            client.on(event: .sdkReady) {
                 readyExp.fulfill()
             }
 
-            client.on(event: SplitEvent.sdkReadyTimedOut) {
+            client.on(event: .sdkReadyTimedOut) {
                 readyExp.fulfill()
             }
 
@@ -426,17 +426,17 @@ class ReadyFromCacheTest: XCTestCase {
 
         let client = factory.client
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        client.on(event: .sdkReadyFromCache) {
             cacheReadyExp.fulfill()
             cacheReadyFired = true
         }
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             readyExp.fulfill()
             readyFired = true
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             readyExp.fulfill()
         }
 

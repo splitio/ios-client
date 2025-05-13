@@ -154,11 +154,11 @@ class ImpressionsToggleTest: XCTestCase {
 
         exps.append(sdkReadyExpectation)
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             sdkReadyExpectation.fulfill()
         }
 

@@ -53,11 +53,11 @@ class SingleSyncTest: XCTestCase {
         let client = factory.client
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             sdkReadyExpectation.fulfill()
         }
 
@@ -97,11 +97,11 @@ class SingleSyncTest: XCTestCase {
         let client = factory.client
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             sdkReadyExpectation.fulfill()
         }
 
@@ -137,11 +137,11 @@ class SingleSyncTest: XCTestCase {
         let client = factory.client
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             sdkReadyExpectation.fulfill()
         }
 

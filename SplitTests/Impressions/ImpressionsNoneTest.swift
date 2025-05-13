@@ -105,11 +105,11 @@ class ImpressionsNoneTest: XCTestCase {
             clients.append(client)
             exps.append(sdkReadyExpectation)
 
-            client.on(event: SplitEvent.sdkReady) {
+            client.on(event: .sdkReady) {
                 sdkReadyExpectation.fulfill()
             }
 
-            client.on(event: SplitEvent.sdkReadyTimedOut) {
+            client.on(event: .sdkReadyTimedOut) {
                 sdkReadyExpectation.fulfill()
             }
         }
@@ -252,11 +252,11 @@ class ImpressionsNoneTest: XCTestCase {
 
         exps.append(sdkReadyExpectation)
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             sdkReadyExpectation.fulfill()
         }
 

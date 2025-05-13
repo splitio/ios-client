@@ -77,16 +77,16 @@ class SdkUpdateStreamingTest: XCTestCase {
         var sdkReadyTriggered = false
         var sdkUpdatedTriggered = false
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyTriggered = true
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdatedTriggered = true
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             sdkReadyExpectation.fulfill()
         }
 
@@ -137,17 +137,17 @@ class SdkUpdateStreamingTest: XCTestCase {
         var sdkReadyTriggered = false
         var sdkUpdatedTriggered = false
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyTriggered = true
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdatedTriggered = true
             sdkUpdateExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             sdkReadyExpectation.fulfill()
         }
 
@@ -200,17 +200,17 @@ class SdkUpdateStreamingTest: XCTestCase {
         var sdkReadyTriggered = false
         var sdkUpdatedTriggered = false
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyTriggered = true
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdatedTriggered = true
             sdkUpdateExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             sdkReadyExpectation.fulfill()
         }
 

@@ -16,6 +16,7 @@ struct ForceMySegmentsParams {
 }
 
 class SynchronizerStub: Synchronizer {
+    
     var disableSdkCalled = false
     var disableEventsCalled = false
     var disableTelemetryCalled = false
@@ -228,7 +229,7 @@ class SynchronizerStub: Synchronizer {
     }
 
     var notifyFeatureFlagsUpdatedCalled = true
-    func notifyFeatureFlagsUpdated() {
+    func notifyFeatureFlagsUpdated(flagList: [String]) {
         notifyFeatureFlagsUpdatedCalled = true
     }
 
