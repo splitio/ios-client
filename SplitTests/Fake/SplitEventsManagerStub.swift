@@ -19,7 +19,7 @@ class SplitEventsManagerStub: SplitEventsManager {
     var startCalled = false
     var stopCalled = false
 
-    func notifyInternalEvent(_ event: SplitInternalEvent) {
+    func notifyInternalEvent(_ event: SplitInternalEventCase) {
         switch event {
         case .mySegmentsLoadedFromCache:
             mySegmentsLoadedEventFiredCount+=1
@@ -40,7 +40,7 @@ class SplitEventsManagerStub: SplitEventsManager {
     }
 
     var registeredEvents = [SplitEvent: SplitEventTask]()
-    func register(event: SplitEvent, task: SplitEventTask) {
+    func register(event: SplitEventCase, task: SplitEventTask) {
         registeredEvents[event] = task
     }
 
@@ -52,7 +52,7 @@ class SplitEventsManagerStub: SplitEventsManager {
         stopCalled = true
     }
 
-    func eventAlreadyTriggered(event: SplitEvent) -> Bool {
+    func eventAlreadyTriggered(event: SplitEventCase) -> Bool {
         return false
     }
 }

@@ -149,7 +149,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
     func notifyUpdated(flagList: [String]) {
         let metadata = SplitMetadata(type: "Updated Flags", value: flagList.description)
-        splitEventsManager.notifyInternalEvent(SplitInternalEvent(.splitsUpdated, metadata: metadata))
+        splitEventsManager.notifyInternalEvent(.splitsUpdated, metadata: metadata)
     }
 
     func pause() {

@@ -196,7 +196,7 @@ class SynchronizerSpy: Synchronizer {
     }
 
     var notifyFeatureFlagsUpdatedCalled = false
-    func notifyFeatureFlagsUpdated() {
+    func notifyFeatureFlagsUpdated(flagList: [String]) {
         notifyFeatureFlagsUpdatedCalled = true
     }
 
