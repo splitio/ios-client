@@ -55,68 +55,48 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
     }
 }
 
-// MARK: Events
+// MARK: Events Listeners
 extension DefaultSplitClient {
     
     private func onWithMetadata(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute actionWithMetadata: @escaping SplitActionWithMetadata) {
-        guard let factory = clientManager?.splitFactory else {
-            return
-        }
-
-        let task = SplitEventActionTask(action: actionWithMetadata, event: event.type,
-                                        runInBackground: runInBackground,
-                                        factory: factory,
-                                        queue: queue)
-        task.event = event.type
+        guard let factory = clientManager?.splitFactory else { return }
+        let task = SplitEventActionTask(action: actionWithMetadata, event: event.type, runInBackground: runInBackground, factory: factory, queue: queue)
         on(event: event.type, executeTask: task)
     }
     
-                public func on(event: SplitEventCase, executeWithMetadata action: SplitActionWithMetadata?) {
-                    guard let action = action else { return }
-                    onWithMetadata(event: SplitEvent(type: event, metadata: nil), runInBackground: true, queue: nil, execute: action)
-                }
+    public func on(event: SplitEventCase, executeWithMetadata action: SplitActionWithMetadata?) {
+        guard let action = action else { return }
+        onWithMetadata(event: SplitEvent(type: event, metadata: nil), runInBackground: true, queue: nil, execute: action)
+    }
     
-
     private func on(event: SplitEventCase, executeTask task: SplitEventActionTask) {
-        if  event != .sdkReadyFromCache,
-            eventsManager.eventAlreadyTriggered(event: event) {
-            Logger.w("A handler was added for \(event.toString()) on the SDK, " +
-                     "which has already fired and won’t be emitted again. The callback won’t be executed.")
+        if  event != .sdkReadyFromCache, eventsManager.eventAlreadyTriggered(event: event) {
+            Logger.w("A handler was added for \(event.toString()) on the SDK, which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
         }
         eventsManager.register(event: SplitEvent(type: event, metadata: nil), task: task)
     }
     
-                private func on(event: SplitEventCase, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
-                    guard let factory = clientManager?.splitFactory else {
-                        return
-                    }
+    private func on(event: SplitEventCase, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
+        guard let factory = clientManager?.splitFactory else { return }
+        let task = SplitEventActionTask(action: action, event: event, runInBackground: runInBackground, factory: factory, queue: queue)
+        on(event: event, executeTask: task)
+    }
 
-                    let task = SplitEventActionTask(action: action, event: event,
-                                                    runInBackground: runInBackground,
-                                                    factory: factory,
-                                                    queue: queue)
-                    
-                    on(event: event, executeTask: task)
-                }
+    public func on(event: SplitEventCase, execute action: @escaping SplitAction) {
+        on(event: event, runInBackground: false, queue: nil, execute: action)
+    }
 
-                            public func on(event: SplitEventCase, execute action: @escaping SplitAction) {
-                                on(event: event, runInBackground: false, queue: nil, execute: action)
-                            }
-                
-                            public func on(event: SplitEventCase, runInBackground: Bool, execute action: @escaping SplitAction) {
-                                on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
-                            }
-                
-                            public func on(event: SplitEventCase, queue: DispatchQueue, execute action: @escaping SplitAction) {
-                                on(event: event, runInBackground: true, queue: queue, execute: action)
-                            }
-    
-    
-    
+    public func on(event: SplitEventCase, runInBackground: Bool, execute action: @escaping SplitAction) {
+        on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
+    }
+
+    public func on(event: SplitEventCase, queue: DispatchQueue, execute action: @escaping SplitAction) {
+        on(event: event, runInBackground: true, queue: queue, execute: action)
+    }
 }
 
-// MARK: Treatment / Evaluation
+// MARK: Treatments
 extension DefaultSplitClient {
     public func getTreatmentWithConfig(_ split: String) -> SplitResult {
         return treatmentManager.getTreatmentWithConfig(split, attributes: nil, evaluationOptions: nil)
@@ -143,7 +123,7 @@ extension DefaultSplitClient {
     }
 }
 
-// MARK: Treatment / Evaluation with Properties
+// MARK: With Properties
 extension DefaultSplitClient {
     public func getTreatment(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> String {
         return treatmentManager.getTreatment(split, attributes: attributes, evaluationOptions: evaluationOptions)
@@ -180,7 +160,7 @@ extension DefaultSplitClient {
     }
 }
 
-// MARK: Track Events
+// MARK: Tracking
 extension DefaultSplitClient {
 
     public func track(trafficType: String, eventType: String) -> Bool {
@@ -230,7 +210,7 @@ extension DefaultSplitClient {
     }
 }
 
-// MARK: Persistent attributes feature
+// MARK: Persistence
 extension DefaultSplitClient {
 
     public func setAttribute(name: String, value: Any) -> Bool {
@@ -286,7 +266,7 @@ extension DefaultSplitClient {
     }
 }
 
-// MARK: By Sets evaluation
+// MARK: By FlagSets
 extension DefaultSplitClient {
     public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
         return treatmentManager.getTreatmentsByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: nil)
@@ -306,7 +286,7 @@ extension DefaultSplitClient {
     }
 }
 
-// MARK: Flush / Destroy
+// MARK: Lifecycle
 extension DefaultSplitClient {
 
     private func syncFlush() {
