@@ -34,19 +34,19 @@ class BlockingQueueTest: XCTestCase {
             }
         }
         globalQ.asyncAfter(deadline: .now() + 1) {
-            queue.add(SplitInternalEvent.mySegmentsLoadedFromCache)
+            queue.add(SplitInternalEvent(.mySegmentsLoadedFromCache))
             globalQ.asyncAfter(deadline: .now() + 1) {
-                queue.add(SplitInternalEvent.splitsLoadedFromCache)
+                queue.add(SplitInternalEvent(.splitsLoadedFromCache))
             }
         }
 
-        queue.add(SplitInternalEvent.splitsUpdated)
-        queue.add(SplitInternalEvent.mySegmentsUpdated)
+        queue.add(SplitInternalEvent(.splitsUpdated))
+        queue.add(SplitInternalEvent(.mySegmentsUpdated))
         wait(for: [endExp], timeout: 10)
-        XCTAssertEqual(SplitInternalEvent.splitsUpdated, local[0])
-        XCTAssertEqual(SplitInternalEvent.mySegmentsUpdated, local[1])
-        XCTAssertEqual(SplitInternalEvent.mySegmentsLoadedFromCache, local[2])
-        XCTAssertEqual(SplitInternalEvent.splitsLoadedFromCache, local[3])
+        XCTAssertEqual(SplitInternalEvent(.splitsUpdated), local[0])
+        XCTAssertEqual(SplitInternalEvent(.mySegmentsUpdated), local[1])
+        XCTAssertEqual(SplitInternalEvent(.mySegmentsLoadedFromCache), local[2])
+        XCTAssertEqual(SplitInternalEvent(.splitsLoadedFromCache), local[3])
     }
 
     func testInterrupt() {
@@ -68,19 +68,19 @@ class BlockingQueueTest: XCTestCase {
             }
         }
         globalQ.asyncAfter(deadline: .now() + 1) {
-            queue.add(SplitInternalEvent.mySegmentsLoadedFromCache)
+            queue.add(SplitInternalEvent(.mySegmentsLoadedFromCache))
             globalQ.asyncAfter(deadline: .now() + 1) {
                 queue.stop()
             }
         }
 
-        queue.add(SplitInternalEvent.splitsUpdated)
-        queue.add(SplitInternalEvent.mySegmentsUpdated)
+        queue.add(SplitInternalEvent(.splitsUpdated))
+        queue.add(SplitInternalEvent(.mySegmentsUpdated))
 
         wait(for: [endExp], timeout: 10)
-        XCTAssertEqual(SplitInternalEvent.splitsUpdated, local[0])
-        XCTAssertEqual(SplitInternalEvent.mySegmentsUpdated, local[1])
-        XCTAssertEqual(SplitInternalEvent.mySegmentsLoadedFromCache, local[2])
+        XCTAssertEqual(SplitInternalEvent(.splitsUpdated), local[0])
+        XCTAssertEqual(SplitInternalEvent(.mySegmentsUpdated), local[1])
+        XCTAssertEqual(SplitInternalEvent(.mySegmentsLoadedFromCache), local[2])
         XCTAssertTrue(interrupted)
     }
 
@@ -151,7 +151,7 @@ class BlockingQueueTest: XCTestCase {
 
         qu1.async {
             for _ in 1..<100000 {
-                queue.add(SplitInternalEvent.splitsUpdated)
+                queue.add(SplitInternalEvent(.splitsUpdated))
                 print("qu1 add")
                 Thread.sleep(forTimeInterval: 0.2)
             }
@@ -160,7 +160,7 @@ class BlockingQueueTest: XCTestCase {
         qu2.async {
             for _ in 1..<10000 {
                 print("qu2 add")
-                queue.add(SplitInternalEvent.sdkReadyTimeoutReached)
+                queue.add(SplitInternalEvent(.sdkReadyTimeoutReached))
                 Thread.sleep(forTimeInterval: 0.5)
             }
         }
@@ -168,7 +168,7 @@ class BlockingQueueTest: XCTestCase {
         qu3.async {
             for _ in 1..<10000 {
                 print("qu3 add")
-                queue.add(SplitInternalEvent.splitsUpdated)
+                queue.add(SplitInternalEvent(.splitsUpdated))
                 Thread.sleep(forTimeInterval: 0.8)
             }
         }
@@ -176,7 +176,7 @@ class BlockingQueueTest: XCTestCase {
         qu4.async {
             for _ in 1..<10000 {
                 print("qu4 add")
-                queue.add(SplitInternalEvent.mySegmentsUpdated)
+                queue.add(SplitInternalEvent(.mySegmentsUpdated))
                 sleep(1)
             }
         }

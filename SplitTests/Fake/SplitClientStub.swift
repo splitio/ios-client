@@ -83,17 +83,13 @@ class SplitClientStub: SplitClient {
         return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {}
 
     func track(trafficType: String, eventType: String) -> Bool {
         return true
@@ -151,12 +147,9 @@ class SplitClientStub: SplitClient {
         return true
     }
 
-    func flush() {
-    }
+    func flush() {}
 
-    func destroy() {
-    }
+    func destroy() {}
 
-    func destroy(completion: (() -> Void)?) {
-    }
+    func destroy(completion: (() -> Void)?) {}
 }

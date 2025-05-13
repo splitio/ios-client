@@ -6,7 +6,7 @@
 
 import Foundation
 
-struct SplitInternalEvent {
+struct SplitInternalEvent: Equatable {
     let type: SplitInternalEventCase
     let metadata: SplitMetadata?
     

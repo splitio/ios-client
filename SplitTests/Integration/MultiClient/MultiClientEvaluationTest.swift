@@ -69,7 +69,7 @@ class MultiClientEvaluationTest: XCTestCase {
             readyExps[key] = XCTestExpectation(description: "Ready \(key)")
 
             print("Handler for: \(key)")
-            clients[key]?.on(event: SplitEvent.sdkReady) {
+            clients[key]?.on(event: .sdkReady) {
                 self.readyExps[key]?.fulfill()
             }
         }
@@ -117,7 +117,7 @@ class MultiClientEvaluationTest: XCTestCase {
 
         doInAllClients { key, client in
             readyExps[key] = XCTestExpectation(description: "Ready \(key)")
-            clients[key]?.on(event: SplitEvent.sdkReadyFromCache) {
+            clients[key]?.on(event: .sdkReadyFromCache) {
                 self.readyExps[key]?.fulfill()
                 cache[key] = true
             }
@@ -152,7 +152,7 @@ class MultiClientEvaluationTest: XCTestCase {
             let key = "key_\(i)"
             readyExps[key] = XCTestExpectation(description: "Ready \(key)")
             let client = factory.client(key: Key(matchingKey: key))
-            client.on(event: SplitEvent.sdkReady) {
+            client.on(event: .sdkReady) {
                 self.readyExps[key]?.fulfill()
             }
             clients[key] = client
@@ -196,7 +196,7 @@ class MultiClientEvaluationTest: XCTestCase {
         doInAllClients { key, client in
             readyExps[key] = XCTestExpectation(description: "Ready \(key)")
 
-            clients[key]?.on(event: SplitEvent.sdkReady) {
+            clients[key]?.on(event: .sdkReady) {
                 self.readyExps[key]?.fulfill()
             }
         }
@@ -236,7 +236,7 @@ class MultiClientEvaluationTest: XCTestCase {
         doInAllClients { key, client in
             readyExps[key] = XCTestExpectation(description: "Ready \(key)")
 
-            clients[key]?.on(event: SplitEvent.sdkReady) {
+            clients[key]?.on(event: .sdkReady) {
                 self.readyExps[key]?.fulfill()
             }
         }
