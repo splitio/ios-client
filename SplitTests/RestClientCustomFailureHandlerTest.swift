@@ -77,6 +77,7 @@ class RestClientCustomFailureHandlerTest: XCTestCase {
         XCTAssertNotNil(error)
         XCTAssertTrue(customErrorHandled)
         
+        // Verify we got our custom error
         if let nsError = error as? NSError {
             XCTAssertEqual(nsError.domain, "CustomErrorDomain")
             XCTAssertEqual(nsError.code, 999)
