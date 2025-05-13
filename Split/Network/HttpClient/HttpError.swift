@@ -20,6 +20,7 @@ enum HttpError: Error, Equatable {
     case clientRelated(code: Int, internalCode: Int)
     case couldNotCreateRequest(message: String)
     case unknown(code: Int, message: String)
+    case outdatedProxyError(code: Int, spec: String)
 }
 
 // MARK: Get message
@@ -49,6 +50,8 @@ extension HttpError {
             return "Request Time Out"
         case .uriTooLong:
             return "Uri too long"
+        case .outdatedProxyError(let code, let spec):
+            return "Outdated proxy error with spec version \(spec) (HTTP \(code))"
         }
     }
 

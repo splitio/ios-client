@@ -126,11 +126,6 @@ class RestClientCustomDecoderTest: XCTestCase {
     }
 }
 
-private struct TestModel: Decodable {
-    let id: Int
-    let name: String
-}
-
 private struct CustomTestModel: Decodable {
     let custom_id: Int
     let custom_name: String
