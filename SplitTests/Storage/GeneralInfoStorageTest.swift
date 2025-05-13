@@ -85,4 +85,21 @@ final class GeneralInfoStorageTest: XCTestCase {
     func testGetRuleBasedSegmentsChangeNumberReturnsMinusOneIfEntityIsNil() throws {
         XCTAssertEqual(generalInfoStorage.getRuleBasedSegmentsChangeNumber(), -1)
     }
+
+    func testSetLastProxyUpdateTimestampSetsValueOnDao() throws {
+        let timestamp = Int(Date().timeIntervalSince1970).asInt64()
+        generalInfoStorage.setLastProxyUpdateTimestamp(timestamp)
+
+        XCTAssertEqual(generalInfoDao.updatedLong, ["lastProxyCheckTimestamp": timestamp])
+    }
+
+    func testGetLastProxyUpdateTimestampGetsValueFromDao() throws {
+        generalInfoDao.update(info: .lastProxyUpdateTimestamp, longValue: 1234567)
+
+        XCTAssertEqual(generalInfoStorage.getLastProxyUpdateTimestamp(), 1234567)
+    }
+
+    func testGetLastProxyUpdateTimestampReturnsZeroIfEntityIsNil() throws {
+        XCTAssertEqual(generalInfoStorage.getLastProxyUpdateTimestamp(), 0)
+    }
 }

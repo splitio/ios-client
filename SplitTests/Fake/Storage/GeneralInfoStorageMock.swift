@@ -8,6 +8,7 @@ class GeneralInfoStorageMock: GeneralInfoStorage {
     var splitsFilterQueryString: String = ""
     var flagsSpec = ""
     var ruleBasedSegmentsChangeNumber: Int64 = -1
+    var lastProxyUpdateTimestamp: Int64 = 0
 
     func getUpdateTimestamp() -> Int64 {
         return updateTimestamp
@@ -47,5 +48,13 @@ class GeneralInfoStorageMock: GeneralInfoStorage {
 
     func setRuleBasedSegmentsChangeNumber(changeNumber: Int64) {
         ruleBasedSegmentsChangeNumber = changeNumber
+    }
+
+    func getLastProxyUpdateTimestamp() -> Int64 {
+        return lastProxyUpdateTimestamp
+    }
+
+    func setLastProxyUpdateTimestamp(_ timestamp: Int64) {
+        lastProxyUpdateTimestamp = timestamp
     }
 }
