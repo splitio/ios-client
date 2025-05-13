@@ -101,7 +101,7 @@ class DefaultClientManager: SplitClientManager {
                 return
             }
             Logger.v("Cache validated; starting sync manager")
-            syncManager.start()
+            self.syncManager.start()
         }
     }
 
