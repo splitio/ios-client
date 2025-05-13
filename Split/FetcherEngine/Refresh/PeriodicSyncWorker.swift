@@ -132,7 +132,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
 
     func notifyUpdate(_ events: [SplitInternalEvent]) {
         events.forEach {
-            eventsManager.notifyInternalEventWithMetadata($0)
+            eventsManager.notifyInternalEvent($0)
         }
     }
 }

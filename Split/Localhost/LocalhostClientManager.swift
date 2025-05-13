@@ -92,8 +92,8 @@ class LocalhostClientManager: SplitClientManager {
         let newGroup = LocalhostComponentsGroup(client: newClient, eventsManager: newEventsManager)
         clients.setValue(newGroup, forKey: key.matchingKey)
         eventsManagerCoordinator.add(newEventsManager, forKey: key)
-        newEventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(.mySegmentsUpdated, metadata: SplitMetadata(type: "Metadata forKey segments", value: "")))
-        newEventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(.myLargeSegmentsUpdated, metadata: SplitMetadata(type: "Metadata forKey largeSegments", value: "")))
+        newEventsManager.notifyInternalEvent(.mySegmentsUpdated, metadata: SplitMetadata(type: "Metadata forKey segments", value: ""))
+        newEventsManager.notifyInternalEvent(.myLargeSegmentsUpdated, metadata: SplitMetadata(type: "Metadata forKey largeSegments", value: ""))
 
         return newClient
     }

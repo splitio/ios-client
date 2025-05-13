@@ -10,20 +10,12 @@ import Foundation
 
 protocol SplitEventsManager: AnyObject {
     func register(event: SplitEvent, task: SplitEventActionTask)
-    func notifyInternalEvent(_ event: SplitInternalEventCase, _ metadata: SplitMetadata?)
-    func notifyInternalEventWithMetadata(_ event: SplitInternalEvent)
+    func notifyInternalEvent(_ event: SplitInternalEventCase)
+    func notifyInternalEvent(_ event: SplitInternalEventCase, metadata: SplitMetadata)
+    func notifyInternalEvent(_ event: SplitInternalEvent)
     func start()
     func stop()
     func eventAlreadyTriggered(event: SplitEventCase) -> Bool
-}
-
-/* This overload is intentionally kept for backwards compatibility.
-   It allows calling `notifyInternalEvent(.event)` without needing to pass `nil` as metadata.
-   Do not remove unless all usages have migrated to the new signature. */
-extension SplitEventsManager {
-    func notifyInternalEvent(_ event: SplitInternalEventCase) {
-        notifyInternalEvent(event, nil)
-    }
 }
 
 class DefaultSplitEventsManager: SplitEventsManager {
@@ -62,23 +54,27 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
     
-    func notifyInternalEvent(_ event: SplitInternalEventCase, _ metadata: SplitMetadata? = nil) {
-        notifyInternalEventWithMetadata(SplitInternalEvent(event, metadata: metadata))
+    // MARK: Notifications
+    /* Overload kept for backwards compatibility.
+       It allows calling `notifyInternalEvent(.event)` without needing to pass `nil` as metadata.
+       Do not remove unless all usages have migrated to the new signature. */
+    func notifyInternalEvent(_ event: SplitInternalEventCase) {
+        notifyInternalEvent(SplitInternalEvent(event, metadata: nil))
     }
     
     func notifyInternalEvent(_ event: SplitInternalEventCase, metadata: SplitMetadata) {
-        notifyInternalEventWithMetadata(SplitInternalEvent(event, metadata: metadata))
+        notifyInternalEvent(SplitInternalEvent(event, metadata: metadata))
     }
     
-    func notifyInternalEventWithMetadata(_ event: SplitInternalEvent) {
+    func notifyInternalEvent(_ event: SplitInternalEvent) {
         processQueue.async { [weak self] in
             if let self = self {
-                Logger.v("Event \(event.type) notified - Metadata: \(event.metadata ?? nil)")
                 self.eventsQueue.add(event)
             }
         }
     }
 
+    // MARK: Register
     func register (event: SplitEvent, task: SplitEventActionTask) {
         let eventName = event.type.toString()
         processQueue.async { [weak self] in

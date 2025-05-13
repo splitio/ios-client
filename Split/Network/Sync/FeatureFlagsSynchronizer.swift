@@ -89,7 +89,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                 // Trigger event
                 let metadata = SplitMetadata(type: "Metadata", value: "Splits from cache ready")
                 let event = SplitInternalEvent(.attributesLoadedFromCache, metadata: metadata)
-                self.splitEventsManager.notifyInternalEventWithMetadata(event)
+                self.splitEventsManager.notifyInternalEvent(event)
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
             Logger.v("Notifying Splits loaded from cache")
@@ -149,7 +149,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
     func notifyUpdated(flagList: [String]) {
         let metadata = SplitMetadata(type: "Updated Flags", value: flagList.description)
-        splitEventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(.splitsUpdated, metadata: metadata))
+        splitEventsManager.notifyInternalEvent(SplitInternalEvent(.splitsUpdated, metadata: metadata))
     }
 
     func pause() {

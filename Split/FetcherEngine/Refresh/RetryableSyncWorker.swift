@@ -81,7 +81,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
 
     func notifyUpdate(_ events: [SplitInternalEvent]) {
         events.forEach {
-            eventsManager.notifyInternalEvent($0.type, $0.metadata)
+            eventsManager.notifyInternalEvent($0.type, metadata: $0.metadata ?? SplitMetadata(type: "", value: ""))
         }
     }
 

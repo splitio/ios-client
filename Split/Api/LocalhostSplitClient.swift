@@ -61,6 +61,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         super.init()
     }
 
+    // MARK: Treatments
     public func getTreatment(_ split: String, attributes: [String: Any]?) -> String {
         return getTreatmentWithConfig(split).treatment
     }
@@ -118,6 +119,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return results
     }
     
+    // MARK: Events Listeners
     public func on(event: SplitEventCase, perform: SplitAction?) {
         guard let perform = perform else { return }
         on(event: event, execute: perform)
@@ -170,6 +172,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         }
     }
 
+    // MARK: Tracking
     public func track(trafficType: String, eventType: String) -> Bool {
         return true
     }
@@ -202,11 +205,10 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return true
     }
 
-    public func setUserConsent(enabled: Bool) {
-    }
+    public func setUserConsent(enabled: Bool) {}
 
-    public func flush() {
-    }
+    // MARK: Lifecycle
+    public func flush() {}
 
     public func destroy() {
         splitsStorage.destroy()
@@ -218,7 +220,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
 }
 
-// MARK: Persistent attributes feature
+// MARK: Persistence
 extension LocalhostSplitClient {
 
     public func setAttribute(name: String, value: Any) -> Bool {
@@ -246,7 +248,7 @@ extension LocalhostSplitClient {
     }
 }
 
-// MARK: TreatmentBySets Feature
+// MARK: By Flagset
 extension LocalhostSplitClient {
     public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
         return [String: String]()
