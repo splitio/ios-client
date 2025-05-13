@@ -57,6 +57,7 @@ class DefaultRestClient: SplitApiRestClient {
                     body: Data? = nil,
                     headers: HttpHeaders? = nil,
                     customDecoder: ((Data) throws -> T)? = nil,
+                    customFailureHandler: ((Int) throws -> Error?)? = nil,
                     completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
 
         do {
@@ -91,6 +92,16 @@ class DefaultRestClient: SplitApiRestClient {
                 }
             case .failure:
                 completion(DataResult {
+                    // Use custom failure handler if provided
+                    if let customFailureHandler = customFailureHandler {
+                        // Use the custom handler if it returns a non-nil error
+                        if let customError = try customFailureHandler(response.code) {
+                            throw customError
+                        }
+                        // Otherwise, continue with default error handling
+                    }
+
+                    // Default error handling
                     if response.code == HttpCode.uriTooLong {
                         throw HttpError.uriTooLong
                     }
