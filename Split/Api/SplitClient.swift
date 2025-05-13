@@ -11,10 +11,10 @@ import Foundation
 @objc public protocol SplitClient {
     
     // MARK: Listeners for customer
-    func on(event: SplitEventCase, execute action: @escaping SplitAction)
-    func on(event: SplitEventCase, executeWithMetadata: @escaping SplitActionWithMetadata) -> Void
-    func on(event: SplitEventCase, runInBackground: Bool, execute action: @escaping SplitAction)
-    func on(event: SplitEventCase, queue: DispatchQueue, execute action: @escaping SplitAction)
+    func on(event: SplitEvent, execute action: @escaping SplitAction)
+    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) -> Void
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction)
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction)
     
 
     // MARK: Treatments

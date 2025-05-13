@@ -12,7 +12,7 @@ import Foundation
 /// on Failed init
 
 class FailedClient: SplitClient {
-    func on(event: SplitEventCase, executeWithMetadata: SplitActionWithMetadata) {}
+    func on(event: SplitEvent, executeWithMetadata: SplitActionWithMetadata) {}
 
     func getTreatment(_ split: String) -> String {
         return SplitConstants.control
@@ -54,17 +54,17 @@ class FailedClient: SplitClient {
         return [:]
     }
     
-    public func on(event: SplitEventCase, perform: SplitAction?) {}
+    public func on(event: SplitEvent, perform: SplitAction?) {}
     
-    func on(event: SplitEventCase, perform: @escaping ([String : Any]?) -> Void) {}
+    func on(event: SplitEvent, perform: @escaping ([String : Any]?) -> Void) {}
 
-    func on(event: SplitEventCase, execute action: @escaping SplitAction) {}
+    func on(event: SplitEvent, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEventCase, runInBackground: Bool,
+    func on(event: SplitEvent, runInBackground: Bool,
             execute action: @escaping SplitAction) {
     }
 
-    func on(event: SplitEventCase,
+    func on(event: SplitEvent,
             queue: DispatchQueue, execute action: @escaping SplitAction) {
     }
 

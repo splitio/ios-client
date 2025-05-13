@@ -7,22 +7,22 @@
 
 import Foundation
 
-@objcMembers public class SplitEvent: NSObject {
-    let type: SplitEventCase
+@objcMembers public class SplitEventWithMetadata: NSObject {
+    let type: SplitEvent
     let metadata: SplitMetadata?
     
-    @objc public init(type: SplitEventCase, metadata: SplitMetadata? = nil) {
+    @objc public init(type: SplitEvent, metadata: SplitMetadata? = nil) {
         self.type = type
         self.metadata = metadata
     }
     
     public override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? SplitEvent else { return false }
+        guard let other = object as? SplitEventWithMetadata else { return false }
         return self.type == other.type
     }
 }
 
-@objc public enum SplitEventCase: Int {
+@objc public enum SplitEvent: Int {
     case sdkReady
     case sdkReadyTimedOut
     case sdkReadyFromCache

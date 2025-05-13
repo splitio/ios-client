@@ -68,7 +68,7 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
             _ = self.featureFlagsStorage.update(splitChange: change)
 
             let metadata = SplitMetadata(type: "Splits Updated", value: featureFlags.values.description)
-            self.eventsManager.notifyInternalEvent(SplitInternalEvent(.splitsUpdated, metadata: metadata))
+            self.eventsManager.notifyInternalEvent(SplitInternalEventWithMetadata(.splitsUpdated, metadata: metadata))
         }
     }
 }

@@ -88,7 +88,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                 
                 // Trigger event
                 let metadata = SplitMetadata(type: "Metadata", value: "Splits from cache ready")
-                let event = SplitInternalEvent(.attributesLoadedFromCache, metadata: metadata)
+                let event = SplitInternalEventWithMetadata(.attributesLoadedFromCache, metadata: metadata)
                 self.splitEventsManager.notifyInternalEvent(event)
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)

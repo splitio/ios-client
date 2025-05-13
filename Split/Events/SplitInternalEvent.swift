@@ -6,21 +6,21 @@
 
 import Foundation
 
-struct SplitInternalEvent {
-    let type: SplitInternalEventCase
+struct SplitInternalEventWithMetadata {
+    let type: SplitInternalEvent
     let metadata: SplitMetadata?
     
-    init(_ type: SplitInternalEventCase, metadata: SplitMetadata? = nil) {
+    init(_ type: SplitInternalEvent, metadata: SplitMetadata? = nil) {
         self.type = type
         self.metadata = metadata
     }
     
-    static func == (lhs: SplitInternalEvent, rhs: SplitInternalEvent) -> Bool {
+    static func == (lhs: SplitInternalEventWithMetadata, rhs: SplitInternalEventWithMetadata) -> Bool {
         return lhs.type == rhs.type 
     }
 }
 
-enum SplitInternalEventCase {
+enum SplitInternalEvent {
     case mySegmentsUpdated
     case myLargeSegmentsUpdated
     case splitsUpdated

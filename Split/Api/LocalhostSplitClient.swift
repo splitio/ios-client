@@ -120,33 +120,33 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
     
     // MARK: Events Listeners
-    public func on(event: SplitEventCase, perform: SplitAction?) {
+    public func on(event: SplitEvent, perform: SplitAction?) {
         guard let perform = perform else { return }
         on(event: event, execute: perform)
     }
     
-    public func on(event: SplitEventCase, executeWithMetadata: @escaping SplitActionWithMetadata) {
-        on(eventWithMetadata: SplitEvent(type: event, metadata: nil), runInBackground: false, queue: nil, execute: executeWithMetadata)
+    public func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {
+        on(eventWithMetadata: SplitEventWithMetadata(type: event, metadata: nil), runInBackground: false, queue: nil, execute: executeWithMetadata)
     }
 
-    public func on(event: SplitEventCase, runInBackground: Bool,
+    public func on(event: SplitEvent, runInBackground: Bool,
                    execute action: @escaping SplitAction) {
         on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
     }
 
-    public func on(event: SplitEventCase, queue: DispatchQueue, execute action: @escaping SplitAction) {
+    public func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: true, queue: queue, execute: action)
     }
 
-    public func on(event: SplitEventCase, execute action: @escaping SplitAction) {
+    public func on(event: SplitEvent, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: false, queue: nil, execute: action)
     }
 
-    private func on(event: SplitEventCase, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
-        on(eventWithMetadata: SplitEvent(type: event, metadata: nil), runInBackground: runInBackground, queue: queue, execute: action)
+    private func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
+        on(eventWithMetadata: SplitEventWithMetadata(type: event, metadata: nil), runInBackground: runInBackground, queue: queue, execute: action)
     }
     
-    private func on(eventWithMetadata event: SplitEvent, runInBackground: Bool,
+    private func on(eventWithMetadata event: SplitEventWithMetadata, runInBackground: Bool,
                     queue: DispatchQueue?, execute action: @escaping SplitAction) {
 
         guard let factory = clientManger?.splitFactory else { return }
@@ -159,7 +159,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         }
     }
     
-    private func on(eventWithMetadata event: SplitEvent, runInBackground: Bool,
+    private func on(eventWithMetadata event: SplitEventWithMetadata, runInBackground: Bool,
                     queue: DispatchQueue?, execute action: @escaping SplitActionWithMetadata) {
 
         guard let factory = clientManger?.splitFactory else { return }

@@ -17,24 +17,24 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         
     private var defaultManager: SplitEventsManager?
     private var managers = [Key: SplitEventsManager]()
-    private var triggered = Set<SplitInternalEventCase>()
+    private var triggered = Set<SplitInternalEvent>()
     private let queue = DispatchQueue(label: "split-event-manager-coordinator")
-    private let eventsToHandle: Set<SplitInternalEventCase> = Set(
+    private let eventsToHandle: Set<SplitInternalEvent> = Set(
         [.splitsLoadedFromCache,
         .splitsUpdated,
         .splitKilledNotification]
     )
     
     // MARK: Notifications
-    func notifyInternalEvent(_ event: SplitInternalEventCase) {
+    func notifyInternalEvent(_ event: SplitInternalEvent) {
         notifyInternalEvent(event, metadata: SplitMetadata(type: "", value: ""))
     }
     
-    func notifyInternalEvent(_ event: SplitInternalEvent) {
+    func notifyInternalEvent(_ event: SplitInternalEventWithMetadata) {
         notifyInternalEvent(event.type, metadata: event.metadata ?? SplitMetadata(type: "", value: ""))
     }
 
-    func notifyInternalEvent(_ event: SplitInternalEventCase, metadata: SplitMetadata) {
+    func notifyInternalEvent(_ event: SplitInternalEvent, metadata: SplitMetadata) {
         if !eventsToHandle.contains(event) {
             return
         }
@@ -60,7 +60,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         }
     }
 
-    func eventAlreadyTriggered(event: SplitEventCase) -> Bool {
+    func eventAlreadyTriggered(event: SplitEvent) -> Bool {
         return defaultManager?.eventAlreadyTriggered(event: event) ?? false
     }
 
@@ -86,5 +86,5 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         }
     }
 
-    func register(event: SplitEvent, task: SplitEventActionTask) {}
+    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {}
 }

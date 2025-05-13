@@ -8,7 +8,7 @@
 import Foundation
 
 protocol SplitEventTask {
-    var event: SplitEventCase { get }
+    var event: SplitEvent { get }
     var runInBackground: Bool { get }
     func takeQueue() -> DispatchQueue?
     func run(_ metadata: SplitMetadata?)
