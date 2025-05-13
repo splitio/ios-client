@@ -32,51 +32,55 @@ class SplitEventsManagerMock: SplitEventsManager {
 
     var isSdkReadyChecked = false
 
-    func notifyInternalEvent(_ event:SplitInternalEvent) {
+    func notifyInternalEvent(_ event: SplitInternalEventCase) {
         switch event {
-        case .mySegmentsUpdated:
-            isSegmentsReadyFired = true
-        case .splitsUpdated:
-            isSplitsReadyFired = true
-            isSplitUpdatedTriggered = true
-            if let exp = readyExp {
-                exp.fulfill()
-            }
-        case .sdkReadyTimeoutReached:
-            isSdkTimeoutFired = true
-            if let exp = timeoutExp {
-                exp.fulfill()
-            }
-        default:
-            print("\(event)")
+            case .mySegmentsUpdated:
+                isSegmentsReadyFired = true
+            case .splitsUpdated:
+                isSplitsReadyFired = true
+                isSplitUpdatedTriggered = true
+                if let exp = readyExp {
+                    exp.fulfill()
+                }
+            case .sdkReadyTimeoutReached:
+                isSdkTimeoutFired = true
+                if let exp = timeoutExp {
+                    exp.fulfill()
+                }
+            default:
+                print("\(event)")
         }
     }
+    
+    func notifyInternalEvent(_ event: SplitInternalEventCase, metadata: SplitMetadata) {}
+    
+    func register(event: SplitEvent, task: SplitEventActionTask) {}
+    
+    func notifyInternalEvent(_ event: SplitInternalEvent) {}
 
-    var registeredEvents = [SplitEvent: SplitEventTask]()
-    func register(event: SplitEvent, task: SplitEventTask) {
+    var registeredEvents = [SplitEventCase: SplitEventTask]()
+    func register(event: SplitEventCase, task: SplitEventTask) {
         registeredEvents[event] = task
     }
     
-    func start() {
-    }
+    func start() {}
 
-    func stop() {
-    }
+    func stop() {}
     
-    func eventAlreadyTriggered(event: SplitEvent) -> Bool {
+    func eventAlreadyTriggered(event: SplitEventCase) -> Bool {
         switch event {
-        case.sdkReady:
-            isSdkReadyChecked = true
-            return isSdkReadyFired
-        case.sdkReadyFromCache:
-            return isSdkReadyFromCacheFired
-        case .sdkReadyTimedOut:
-            return isSdkTimeoutFired
-        case .sdkUpdated:
-            return isSdkUpdatedFired
+            case.sdkReady:
+                isSdkReadyChecked = true
+                return isSdkReadyFired
+            case.sdkReadyFromCache:
+                return isSdkReadyFromCacheFired
+            case .sdkReadyTimedOut:
+                return isSdkTimeoutFired
+            case .sdkUpdated:
+                return isSdkUpdatedFired
 
-        default:
-            return true
+            default:
+                return true
         }
     }
 }

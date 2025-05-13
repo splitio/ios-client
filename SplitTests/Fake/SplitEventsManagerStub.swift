@@ -39,7 +39,7 @@ class SplitEventsManagerStub: SplitEventsManager {
         }
     }
 
-    var registeredEvents = [SplitEvent: SplitEventTask]()
+    var registeredEvents = [SplitEventCase: SplitEventTask]()
     func register(event: SplitEventCase, task: SplitEventTask) {
         registeredEvents[event] = task
     }
@@ -55,4 +55,10 @@ class SplitEventsManagerStub: SplitEventsManager {
     func eventAlreadyTriggered(event: SplitEventCase) -> Bool {
         return false
     }
+    
+    func register(event: SplitEvent, task: SplitEventActionTask) {}
+    
+    func notifyInternalEvent(_ event: SplitInternalEventCase, metadata: SplitMetadata) {}
+    
+    func notifyInternalEvent(_ event: SplitInternalEvent) {}
 }

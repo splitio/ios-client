@@ -20,7 +20,7 @@ class SplitClientTests: XCTestCase {
     var eventsManager: SplitEventsManagerMock!
     var eventsTracker: EventsTrackerStub!
     var clientManager: ClientManagerMock!
-    let events: [SplitEvent] = [.sdkReadyFromCache, .sdkReady, .sdkUpdated, .sdkReadyTimedOut]
+    let events: [SplitEventCase] = [.sdkReadyFromCache, .sdkReady, .sdkUpdated, .sdkReadyTimedOut]
 
     override func setUp() {
         storageContainer = TestingHelper.createStorageContainer()

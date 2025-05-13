@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 
 class InternalSplitClientStub: InternalSplitClient {
-
+    
     var splitsStorage: SplitsStorage?
     var mySegmentsStorage: MySegmentsStorage?
     var myLargeSegmentsStorage: MySegmentsStorage?
@@ -95,14 +95,19 @@ class InternalSplitClientStub: InternalSplitClient {
         return ["": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, execute action: @escaping SplitAction) {}
+    
+    func on(event: SplitEventCase, queue: DispatchQueue, execute action: @escaping SplitAction) {}
+    
+    func on(event: SplitEventCase, runInBackground: Bool, execute action: @escaping SplitAction) {}
+    
+    func on(event: SplitEventCase, execute action: @escaping SplitAction) {}
+    
+    func on(event: SplitEventCase, executeWithMetadata: @escaping SplitActionWithMetadata) {}
 
     func track(trafficType: String, eventType: String) -> Bool {
         return true
@@ -160,18 +165,13 @@ class InternalSplitClientStub: InternalSplitClient {
         return true
     }
     
-    func flush() {
-    }
+    func flush() {}
 
-    func destroy() {
-    }
+    func destroy() {}
 
-    func destroy(completion: (() -> Void)?) {
-    }
+    func destroy(completion: (() -> Void)?) {}
 
-    func on(event: SplitEvent, executeTask: SplitEventTask) {
-
-    }
+    func on(event: SplitEvent, executeTask: SplitEventTask) {}
 
     private func createControlTreatmentsDictionary<T>(splits: [String]) -> [String: T] where T: Any {
         var result = [String: T]()
