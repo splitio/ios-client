@@ -10,7 +10,7 @@ import Foundation
 
 protocol SplitEventsManager: AnyObject {
     func register(event: SplitEvent, task: SplitEventActionTask)
-    func notifyInternalEvent(_ event: SplitInternalEventCase, _ metadata: NSDictionary?)
+    func notifyInternalEvent(_ event: SplitInternalEventCase, _ metadata: SplitMetadata?)
     func notifyInternalEventWithMetadata(_ event: SplitInternalEvent)
     func start()
     func stop()
@@ -62,14 +62,18 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
     
-    func notifyInternalEvent(_ event: SplitInternalEventCase, _ metadata: NSDictionary? = nil) {
-        notifyInternalEventWithMetadata(SplitInternalEvent(type: event, metadata: metadata))
+    func notifyInternalEvent(_ event: SplitInternalEventCase, _ metadata: SplitMetadata? = nil) {
+        notifyInternalEventWithMetadata(SplitInternalEvent(event, metadata: metadata))
+    }
+    
+    func notifyInternalEvent(_ event: SplitInternalEventCase, metadata: SplitMetadata) {
+        notifyInternalEventWithMetadata(SplitInternalEvent(event, metadata: metadata))
     }
     
     func notifyInternalEventWithMetadata(_ event: SplitInternalEvent) {
         processQueue.async { [weak self] in
             if let self = self {
-                Logger.v("Event \(event.type) notified - Metadata: \(event.metadata ?? [:])")
+                Logger.v("Event \(event.type) notified - Metadata: \(event.metadata ?? nil)")
                 self.eventsQueue.add(event)
             }
         }
@@ -263,7 +267,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
     
     private func isTriggered(internal event: SplitInternalEventCase) -> Bool {
-        return isTriggered(internal: SplitInternalEvent(type: event, metadata: nil))
+        return isTriggered(internal: SplitInternalEvent(event, metadata: nil))
     }
 
     // MARK: Safe Data Access

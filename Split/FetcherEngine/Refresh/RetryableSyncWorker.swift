@@ -163,7 +163,8 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             let result = try syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache)
             if result.success {
                 if !isSdkReadyTriggered() || result.featureFlagsUpdated.count > 0 {
-                    notifyUpdate([SplitInternalEvent(type: .splitsUpdated, metadata: ["Flags": result.featureFlagsUpdated ])])
+                    let metadata = SplitMetadata(type: "Flags", value: result.featureFlagsUpdated.description)
+                    notifyUpdate([SplitInternalEvent(.splitsUpdated, metadata: metadata)])
                 }
                 resetBackoffCounter()
                 return true
@@ -220,7 +221,8 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
                 if result.featureFlagsUpdated.count > 0 {
-                    notifyUpdate([SplitInternalEvent(type: .splitsUpdated, metadata: ["Metadata" : result.featureFlagsUpdated.description]) ])
+                    let metadata = SplitMetadata(type: "Data", value: result.featureFlagsUpdated.description)
+                    notifyUpdate([SplitInternalEvent(.splitsUpdated, metadata: metadata)])
                 }
                 resetBackoffCounter()
                 return true

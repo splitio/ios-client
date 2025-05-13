@@ -24,8 +24,12 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         .splitsUpdated,
         .splitKilledNotification]
     )
+    
+    func notifyInternalEvent(_ event: SplitInternalEventCase, _ metadata: SplitMetadata? = nil) {
+        notifyInternalEvent(event, metadata: metadata)
+    }
 
-    func notifyInternalEvent(_ event: SplitInternalEventCase, _ metadata: NSDictionary? = nil) {
+    func notifyInternalEvent(_ event: SplitInternalEventCase, metadata: SplitMetadata? = nil) {
         if !eventsToHandle.contains(event) {
             return
         }

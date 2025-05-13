@@ -77,7 +77,8 @@ class DefaultByKeyFacade: ByKeyFacade {
     func loadAttributesFromCache(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
             group.attributesStorage.loadLocal()
-            group.eventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(type: .attributesLoadedFromCache, metadata: ["Metadata":"Attributes from cache ready"]))
+            let metadata = SplitMetadata(type: "Metadata", value: "Attributes from cache ready")
+            group.eventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(.attributesLoadedFromCache, metadata: metadata))
         }
         TimeChecker.logInterval("Time until attributes loaded from cache")
     }
@@ -122,13 +123,15 @@ class DefaultByKeyFacade: ByKeyFacade {
 
     func notifyMySegmentsUpdated(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
-            group.eventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(type: .mySegmentsUpdated, metadata: ["Metadata":"Segments updated for key \(key)"]))
+            let metadata = SplitMetadata(type: "Metadata", value: "Segments updated  for key \(key)")
+            group.eventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(.mySegmentsUpdated, metadata: metadata))
         }
     }
 
     func notifyMyLargeSegmentsUpdated(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
-            group.eventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(type: .myLargeSegmentsUpdated, metadata: ["Metadata":"Large segments updated  for key \(key)"]))
+            let metadata = SplitMetadata(type: "Metadata", value: "Large segments updated  for key \(key)")
+            group.eventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(.myLargeSegmentsUpdated, metadata: metadata))
         }
     }
 

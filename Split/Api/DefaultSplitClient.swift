@@ -71,7 +71,7 @@ extension DefaultSplitClient {
         on(event: event.type, executeTask: task)
     }
     
-                public func on(event: SplitEventCase, performWithMetadata action: SplitActionWithMetadata?) {
+                public func on(event: SplitEventCase, executeWithMetadata action: SplitActionWithMetadata?) {
                     guard let action = action else { return }
                     onWithMetadata(event: SplitEvent(type: event, metadata: nil), runInBackground: true, queue: nil, execute: action)
                 }

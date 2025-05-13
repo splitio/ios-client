@@ -9,13 +9,13 @@
 import Foundation
 
 public typealias SplitAction = () -> Void
-public typealias SplitActionWithMetadata = (_ data: NSDictionary?) -> Void
+public typealias SplitActionWithMetadata = (_ data: SplitMetadata?) -> Void
 
 @objc public protocol SplitClient {
     
     // MARK: Listeners for customer
-    func on(event: SplitEventCase, performWithMetadata: SplitActionWithMetadata?) -> Void
     func on(event: SplitEventCase, execute action: @escaping SplitAction)
+    func on(event: SplitEventCase, executeWithMetadata: @escaping SplitActionWithMetadata) -> Void
     func on(event: SplitEventCase, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEventCase, queue: DispatchQueue, execute action: @escaping SplitAction)
     

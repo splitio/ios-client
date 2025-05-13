@@ -74,7 +74,8 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
             // Update will remove all records before insert new ones
             _ = self.featureFlagsStorage.update(splitChange: change)
 
-            self.eventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(type: .splitsUpdated, metadata: ["Splits updated":"\(featureFlags.values.description)"]))
+            let metadata = SplitMetadata(type: "Splits Updated", value: featureFlags.values.description)
+            self.eventsManager.notifyInternalEventWithMetadata(SplitInternalEvent(.splitsUpdated, metadata: metadata))
         }
     }
 }

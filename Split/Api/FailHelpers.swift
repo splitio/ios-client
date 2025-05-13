@@ -10,12 +10,9 @@ import Foundation
 
 /// To avoid crashing host app this dummy components will be returned
 /// on Failed init
-///
 
 class FailedClient: SplitClient {
-    func on(event: SplitEventCase, performWithMetadata: SplitActionWithMetadata?) {
-        
-    }
+    func on(event: SplitEventCase, executeWithMetadata: SplitActionWithMetadata) {}
 
     func getTreatment(_ split: String) -> String {
         return SplitConstants.control
@@ -57,14 +54,11 @@ class FailedClient: SplitClient {
         return [:]
     }
     
-    public func on(event: SplitEventCase, perform: SplitAction?) {
-    }
+    public func on(event: SplitEventCase, perform: SplitAction?) {}
     
-    func on(event: SplitEventCase, perform: @escaping ([String : Any]?) -> Void) {
-    }
+    func on(event: SplitEventCase, perform: @escaping ([String : Any]?) -> Void) {}
 
-    func on(event: SplitEventCase, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEventCase, execute action: @escaping SplitAction) {}
 
     func on(event: SplitEventCase, runInBackground: Bool,
             execute action: @escaping SplitAction) {
@@ -146,14 +140,11 @@ class FailedClient: SplitClient {
         return [:]
     }
 
-    func setUserConsent(enabled: Bool) {
-    }
+    func setUserConsent(enabled: Bool) {}
 
-    func flush() {
-    }
+    func flush() {}
 
-    func destroy() {
-    }
+    func destroy() {}
 
     func destroy(completion: (() -> Void)?) {
         completion?()

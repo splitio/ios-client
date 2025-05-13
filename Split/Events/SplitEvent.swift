@@ -27,11 +27,21 @@ import Foundation
     }
 }
 
+@objc public class SplitMetadata: NSObject {
+    var type: String = ""
+    var value: String = ""
+    
+    init(type: String, value: String) {
+        self.type = type
+        self.value = value
+    }
+}
+
 @objcMembers public class SplitEvent: NSObject {
     let type: SplitEventCase
-    let metadata: NSDictionary?
+    let metadata: SplitMetadata?
     
-    @objc public init(type: SplitEventCase, metadata: NSDictionary? = nil) {
+    @objc public init(type: SplitEventCase, metadata: SplitMetadata? = nil) {
         self.type = type
         self.metadata = metadata
     }
