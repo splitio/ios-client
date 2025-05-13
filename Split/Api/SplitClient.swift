@@ -8,9 +8,6 @@
 
 import Foundation
 
-public typealias SplitAction = () -> Void
-public typealias SplitActionWithMetadata = (_ metadata: SplitMetadata?) -> Void
-
 @objc public protocol SplitClient {
     
     // MARK: Listeners for customer

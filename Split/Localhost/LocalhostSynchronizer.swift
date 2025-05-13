@@ -24,34 +24,27 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
         setup()
     }
 
-    func load() {
-    }
+    func load() {}
 
     func synchronize() {
         featureFlagsDataSource.start()
     }
 
-    func synchronize(changeNumber: Int64) {
-    }
+    func synchronize(changeNumber: Int64) {}
 
     func startPeriodicSync() {
         featureFlagsDataSource.start()
     }
 
-    func stopPeriodicSync() {
-    }
+    func stopPeriodicSync() {}
 
-    func notifyKilled() {
-    }
+    func notifyKilled() {}
 
-    func notifyUpdated(flagList: [String]) {
-    }
+    func notifyUpdated(flagList: [String]) {}
 
-    func pause() {
-    }
+    func pause() {}
 
-    func resume() {
-    }
+    func resume() {}
 
     func destroy() {
         featureFlagsDataSource.stop()

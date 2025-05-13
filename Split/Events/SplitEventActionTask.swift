@@ -7,6 +7,9 @@
 
 import Foundation
 
+public typealias SplitAction = () -> Void
+public typealias SplitActionWithMetadata = (_ metadata: SplitMetadata?) -> Void
+
 class SplitEventActionTask: SplitEventTask {
     
     private var eventHandler: SplitAction?
