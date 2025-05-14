@@ -61,7 +61,7 @@ class SplitsSyncHelper {
         self.splitConfig = splitConfig
 
         // Only create a proxy handler if generalInfoStorage is provided.
-        // For backgroudn sync we don't want the handler, and since generalInfoStorage
+        // For background sync we don't want the handler, and since generalInfoStorage
         // is only being used for the handler, we use it to know when we don't need it.
         if let storage = generalInfoStorage {
             self.outdatedSplitProxyHandler = OutdatedSplitProxyHandler(
