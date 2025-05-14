@@ -111,6 +111,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
+         generalInfoStorage: GeneralInfoStorage,
          ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor,
@@ -128,6 +129,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                                            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
+                                           generalInfoStorage: generalInfoStorage,
                                            splitConfig: splitConfig)
         super.init(eventsManager: eventsManager,
                    reconnectBackoffCounter: reconnectBackoffCounter)
@@ -168,6 +170,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
     init(splitsFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
          ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
+         generalInfoStorage: GeneralInfoStorage,
          splitChangeProcessor: SplitChangeProcessor,
          ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor,
          changeNumber: SplitsUpdateChangeNumber,
@@ -188,6 +191,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
+                                           generalInfoStorage: generalInfoStorage,
                                            splitConfig: splitConfig)
         super.init(eventsManager: eventsManager,
                    reconnectBackoffCounter: reconnectBackoffCounter)

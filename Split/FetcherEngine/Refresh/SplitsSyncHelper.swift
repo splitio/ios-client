@@ -31,6 +31,7 @@ class SplitsSyncHelper {
     private let splitChangeProcessor: SplitChangeProcessor
     private let ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor
     private let splitConfig: SplitClientConfig
+    private let outdatedSplitProxyHandler: OutdatedSplitProxyHandler?
 
     private var maxAttempts: Int {
         return splitConfig.cdnByPassMaxAttempts
@@ -49,6 +50,7 @@ class SplitsSyncHelper {
          ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
+         generalInfoStorage: GeneralInfoStorage?,
          splitConfig: SplitClientConfig) {
 
         self.splitFetcher = splitFetcher
@@ -57,6 +59,20 @@ class SplitsSyncHelper {
         self.splitChangeProcessor = splitChangeProcessor
         self.ruleBasedSegmentsChangeProcessor = ruleBasedSegmentsChangeProcessor
         self.splitConfig = splitConfig
+
+        // Only create a proxy handler if generalInfoStorage is provided.
+        // For backgroudn sync we don't want the handler, and since generalInfoStorage
+        // is only being used for the handler, we use it to know when we don't need it.
+        if let storage = generalInfoStorage {
+            self.outdatedSplitProxyHandler = OutdatedSplitProxyHandler(
+                flagSpec: Spec.flagsSpec,
+                generalInfoStorage: storage,
+                proxyCheckIntervalMillis: ServiceConstants.proxyCheckIntervalMillis
+            )
+        } else {
+            // No proxy handling for background sync
+            self.outdatedSplitProxyHandler = nil
+        }
     }
 
     func sync(since: Int64,
@@ -65,24 +81,46 @@ class SplitsSyncHelper {
               clearBeforeUpdate: Bool = false,
               headers: HttpHeaders? = nil) throws -> SyncResult {
         do {
+            // Perform proxy check before syncing if handler exists
+            var shouldClearBeforeUpdate = clearBeforeUpdate
+            if let proxyHandler = outdatedSplitProxyHandler {
+                proxyHandler.performProxyCheck()
+
+                // If we're in recovery mode, we should clear the cache and reset change numbers
+                if proxyHandler.isRecoveryMode() {
+                    shouldClearBeforeUpdate = true
+                }
+            }
+
             let res = try tryToSync(since: since,
                                     rbSince: rbSince,
                                     till: till,
-                                    clearBeforeUpdate: clearBeforeUpdate,
+                                    clearBeforeUpdate: shouldClearBeforeUpdate,
                                     headers: headers)
 
             if res.success {
+                // If we were in recovery mode and sync was successful, reset the proxy check timestamp
+                if let proxyHandler = outdatedSplitProxyHandler, proxyHandler.isRecoveryMode() {
+                    Logger.i("Resetting proxy check timestamp due to successful recovery")
+                    proxyHandler.resetProxyCheckTimestamp()
+                }
                 return res
             }
 
             return try tryToSync(since: res.changeNumber,
                                    rbSince: res.rbChangeNumber,
                                    till: res.changeNumber,
-                                   clearBeforeUpdate: clearBeforeUpdate && res.changeNumber == since,
+                                   clearBeforeUpdate: shouldClearBeforeUpdate && res.changeNumber == since,
                                    headers: headers,
                                    useTillParam: true)
         } catch let error {
             Logger.e("Problem fetching feature flags: %@", error.localizedDescription)
+
+            // Check if this is a proxy error and track it if necessary
+            if let httpError = error as? HttpError, httpError.isProxyOutdatedError(), let proxyHandler = outdatedSplitProxyHandler {
+                proxyHandler.trackProxyError()
+            }
+
             throw error
         }
     }
@@ -143,10 +181,15 @@ class SplitsSyncHelper {
         var rbsUpdated = false
         while true {
             clearCache = clearCache && firstFetch
+            // Determine which spec version to use and whether to include rbSince
+            let spec = outdatedSplitProxyHandler?.getCurrentSpec() ?? Spec.flagsSpec
+            let effectiveRbSince = outdatedSplitProxyHandler?.isFallbackMode() == true ? nil : nextRbSince
+
             let targetingRulesChange = try self.splitFetcher.execute(since: nextSince,
-                                                            rbSince: nextRbSince,
+                                                            rbSince: effectiveRbSince,
                                                             till: till,
-                                                            headers: headers)
+                                                            headers: headers,
+                                                            spec: spec)
             let flagsChange = targetingRulesChange.featureFlags
             let newSince = flagsChange.since
             let newTill = flagsChange.till

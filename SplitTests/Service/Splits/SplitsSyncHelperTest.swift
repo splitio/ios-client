@@ -20,6 +20,7 @@ final class SplitsSyncHelperTest: XCTestCase {
                                       ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
                                       splitChangeProcessor: SplitChangeProcessorStub(),
                                       ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessorStub(),
+                                      generalInfoStorage: GeneralInfoStorageMock(),
                                       splitConfig: SplitClientConfig())
     }
 

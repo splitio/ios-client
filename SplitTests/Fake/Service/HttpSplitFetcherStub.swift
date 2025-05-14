@@ -16,7 +16,7 @@ class HttpSplitFetcherStub: HttpSplitFetcher {
     var fetchCallCount: Int = 0
     var params: [String: Int64?] = [:]
     
-    func execute(since: Int64, rbSince: Int64? = nil, till: Int64?, headers: HttpHeaders?) throws -> TargetingRulesChange {
+    func execute(since: Int64, rbSince: Int64? = nil, till: Int64?, headers: HttpHeaders?, spec: String? = Spec.flagsSpec) throws -> TargetingRulesChange {
         params = ["since": since,
                   "rbSince": rbSince,
                   "till": till]
@@ -30,7 +30,7 @@ class HttpSplitFetcherStub: HttpSplitFetcher {
             throw GenericError.unknown(message: "null feature flag changes")
         }
 
-        let rbSince = rbSince ?? -1
+        _ = rbSince ?? -1
         if splitChanges.count > hit {
             if let change = splitChanges[hit] {
                 return change

@@ -31,8 +31,21 @@ extension HttpError {
             return code
         case .unknown(let code, _):
             return code
+        case .outdatedProxyError(let code, _):
+            return code
         default:
             return -1
+        }
+    }
+
+    /// Determines if this error is related to an outdated proxy
+    /// - Returns: true if this is an outdated proxy error, false otherwise
+    func isProxyOutdatedError() -> Bool {
+        switch self {
+        case .outdatedProxyError(_, _):
+            return true
+        default:
+            return false
         }
     }
 

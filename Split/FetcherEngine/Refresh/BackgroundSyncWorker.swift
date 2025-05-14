@@ -69,6 +69,7 @@ class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
                                            ruleBasedSegmentsStorage: DefaultRuleBasedSegmentsStorage(persistentStorage: persistentRuleBasedSegmentsStorage),
                                            splitChangeProcessor: splitChangeProcessor,
                                            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor,
+                                           generalInfoStorage: nil, // Pass nil to disable proxy handling for background sync
                                            splitConfig: splitConfig)
     }
 

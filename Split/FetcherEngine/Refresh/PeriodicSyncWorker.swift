@@ -148,6 +148,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
+         generalInfoStorage: GeneralInfoStorage,
          ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
@@ -165,6 +166,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
                                            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor,
+                                           generalInfoStorage: generalInfoStorage,
                                            splitConfig: splitConfig)
         super.init(timer: timer,
                    eventsManager: eventsManager)

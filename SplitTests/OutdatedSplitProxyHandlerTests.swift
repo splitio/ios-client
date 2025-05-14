@@ -24,7 +24,6 @@ class OutdatedSplitProxyHandlerTests: XCTestCase {
         handler = OutdatedSplitProxyHandler(
             flagSpec: latestSpec,
             previousSpec: previousSpec,
-            forBackgroundSync: false,
             generalInfoStorage: mockStorage,
             proxyCheckIntervalMillis: proxyCheckInterval
         )
@@ -95,23 +94,7 @@ class OutdatedSplitProxyHandlerTests: XCTestCase {
         XCTAssertFalse(handler.isFallbackMode())
         XCTAssertFalse(handler.isRecoveryMode())
     }
-    
-    func testSettingUpForBackgroundSyncIsAlwaysInNoneMode() {
-        let bgHandler = OutdatedSplitProxyHandler(
-            flagSpec: latestSpec,
-            previousSpec: previousSpec,
-            forBackgroundSync: true,
-            generalInfoStorage: mockStorage,
-            proxyCheckIntervalMillis: proxyCheckInterval
-        )
-        
-        bgHandler.trackProxyError()
-        
-        XCTAssertEqual(bgHandler.getCurrentSpec(), latestSpec)
-        XCTAssertFalse(bgHandler.isFallbackMode())
-        XCTAssertFalse(bgHandler.isRecoveryMode())
-    }
-    
+
     func testRecoveryToFallbackTransition() {
         let currentTime = Date.nowMillis()
         mockStorage.lastProxyUpdateTimestamp = currentTime - proxyCheckInterval - 1000
