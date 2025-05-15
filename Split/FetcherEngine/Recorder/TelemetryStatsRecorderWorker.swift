@@ -30,7 +30,6 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
     }
 
     func flush() {
-        sleep(1)
         if !statsRecorder.isEndpointAvailable() {
             Logger.d("Endpoint not reachable. Telemetry stats post will be delayed")
             return
