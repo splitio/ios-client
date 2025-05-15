@@ -27,7 +27,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
     
     // MARK: Notifications
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        notifyInternalEvent(event, metadata: SplitMetadata(type: "", value: ""))
+        notifyInternalEvent(event, metadata: SplitMetadata(type: .NETWORK_ERROR.toStrin(), value: ""))
     }
     
     func notifyInternalEvent(_ event: SplitInternalEventWithMetadata) {

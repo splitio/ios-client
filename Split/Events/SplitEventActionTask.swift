@@ -41,7 +41,10 @@ class SplitEventActionTask: SplitEventTask {
     }
 
     func run(_ metadata: SplitMetadata?) {
+        // filter
+        
         eventHandler?()
+        
         eventHandlerWithMetadata?(metadata)
     }
 }

@@ -45,11 +45,17 @@ import Foundation
 // Just a key-value wrapper for extensibility.
 // (Also used by SplitInternalEvent)
 @objc public class SplitMetadata: NSObject {
-    var type: String = ""
-    var value: String = ""
+    var type: String 
+    var data: String = ""
     
-    init(type: String, value: String) {
+    init(type: String, data: String) {
         self.type = type
-        self.value = value
+        self.data = data
     }
+}
+
+enum SplitError: Int {
+    case NETWORK_ERROR
+    case STORAGE_ERROR
+    case SPLIT_UPDATE
 }
