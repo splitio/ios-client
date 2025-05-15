@@ -167,6 +167,7 @@ class TelemetryTest: XCTestCase {
         XCTAssertEqual(0, sum(latenciesAfter.treatmentsWithConfig))
         XCTAssertEqual(0, sum(latenciesAfter.track))
 
+        
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
             _ = semaphore.signal()
