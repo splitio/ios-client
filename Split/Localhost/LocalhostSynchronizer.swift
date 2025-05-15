@@ -31,7 +31,7 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
         featureFlagsDataSource.start()
     }
 
-    func synchronize(changeNumber: Int64) {
+    func synchronize(changeNumber: Int64?, rbsChangeNumber: Int64?) {
     }
 
     func startPeriodicSync() {
