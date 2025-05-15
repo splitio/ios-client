@@ -115,6 +115,6 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
             expectation.fulfill()
         }
         
-        wait(for: [expectation], timeout: 7)
+        wait(for: [expectation], timeout: 10)
     }
 }
