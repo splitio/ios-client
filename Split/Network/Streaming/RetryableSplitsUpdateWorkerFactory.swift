@@ -118,6 +118,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                            ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                            changeNumber: changeNumber,
                                            eventsManager: eventsManager,
+                                           changeNumber: SplitsUpdateChangeNumber(flags: changeNumber, rbs: nil), eventsManager: eventsManager,
                                            reconnectBackoffCounter: reconnectBackoffCounter,
                                            splitConfig: splitConfig)
     }
