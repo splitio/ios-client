@@ -128,13 +128,13 @@ class SyncManagerBuilder {
             telemetryProducer: storageContainer.telemetryStorage,
             resource: .myLargeSegments)
 
-        return  DefaultSseNotificationProcessor(
+        return DefaultSseNotificationProcessor(
             notificationParser: DefaultSseNotificationParser(),
             splitsUpdateWorker: SplitsUpdateWorker(
                 synchronizer: synchronizer,
                 splitsStorage: storageContainer.splitsStorage,
                 splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: splitConfig?.bySetsFilter()),
-                featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder(),
+                featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder(type: Split.self),
                 telemetryProducer: storageContainer.telemetryStorage),
             splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
                                              splitsStorage: storageContainer.splitsStorage),

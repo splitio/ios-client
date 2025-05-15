@@ -25,7 +25,7 @@ protocol SyncWorkerFactory {
 
     func createPeriodicSplitsSyncWorker() -> PeriodicSyncWorker
 
-    func createRetryableSplitsUpdateWorker(changeNumber: Int64,
+    func createRetryableSplitsUpdateWorker(changeNumber: SplitsUpdateChangeNumber,
                                            reconnectBackoffCounter: ReconnectBackoffCounter
     ) -> RetryableSyncWorker
 
@@ -109,13 +109,15 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                          splitConfig: splitConfig)
     }
 
-    func createRetryableSplitsUpdateWorker(changeNumber: Int64,
+    func createRetryableSplitsUpdateWorker(changeNumber: SplitsUpdateChangeNumber,
                                            reconnectBackoffCounter: ReconnectBackoffCounter) -> RetryableSyncWorker {
         return RetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
                                            splitsStorage: storageContainer.splitsStorage,
                                            ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
+                                           changeNumber: changeNumber,
+                                           eventsManager: eventsManager,
                                            changeNumber: SplitsUpdateChangeNumber(flags: changeNumber, rbs: nil), eventsManager: eventsManager,
                                            reconnectBackoffCounter: reconnectBackoffCounter,
                                            splitConfig: splitConfig)

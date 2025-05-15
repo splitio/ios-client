@@ -29,14 +29,14 @@ class SplitsUpdateWorker: UpdateWorker<SplitsUpdateNotification> {
     private let synchronizer: Synchronizer
     private let splitsStorage: SplitsStorage
     private let splitChangeProcessor: SplitChangeProcessor
-    private let payloadDecoder: FeatureFlagsPayloadDecoder
+    private let payloadDecoder: DefaultFeatureFlagsPayloadDecoder
     private let telemetryProducer: TelemetryRuntimeProducer?
     var decomProvider: CompressionProvider = DefaultDecompressionProvider()
 
     init(synchronizer: Synchronizer,
          splitsStorage: SplitsStorage,
          splitChangeProcessor: SplitChangeProcessor,
-         featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoder,
+         featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder,
          telemetryProducer: TelemetryRuntimeProducer?) {
         self.synchronizer = synchronizer
         self.splitsStorage = splitsStorage
