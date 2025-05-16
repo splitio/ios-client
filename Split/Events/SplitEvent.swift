@@ -7,6 +7,9 @@
 
 import Foundation
 
+// All events (internal & external) supports metadata.
+// Internal errors will be propagated as events "(.sdkError)" to the customer handler. The error info will travel as the event metadata.
+
 @objcMembers public class SplitEventWithMetadata: NSObject {
     let type: SplitEvent
     let metadata: SplitMetadata?
@@ -45,8 +48,6 @@ import Foundation
     }
 }
 
-// Just a key-value wrapper for extensibility.
-// (Also used by SplitInternalEvent)
 @objc public class SplitMetadata: NSObject {
     var type: SplitMetadataType
     var data: String = ""
@@ -58,15 +59,17 @@ import Foundation
 }
 
 enum SplitMetadataType: Int {
-    case FEATURE_FLAG_SYNC_ERROR
+    case FEATURE_FLAGS_SYNC_ERROR
     case SEGMENTS_SYNC_ERROR
     
     public func toString() -> String {
         switch self {
-            case .FEATURE_FLAG_SYNC_ERROR:
-                return "FEATURE_FLAG_SYNC_ERROR"
+            case .FEATURE_FLAGS_SYNC_ERROR:
+                return "FEATURE_FLAGS_SYNC_ERROR"
             case .SEGMENTS_SYNC_ERROR:
                 return "SEGMENTS_SYNC_ERROR"
+            
         }
     }
 }
+
