@@ -7,8 +7,8 @@
 
 import Foundation
 
-// All events (internal & external) supports metadata.
-// Internal errors will be propagated as events "(.sdkError)" to the customer handler. The error info will travel as the event metadata.
+// All events (internal & external) support metadata.
+// Internal errors are propagated to the customer as events "(.sdkError)". The error info will travel as the event metadata.
 
 @objcMembers public class SplitEventWithMetadata: NSObject {
     let type: SplitEvent
