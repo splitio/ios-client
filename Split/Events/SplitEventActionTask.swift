@@ -21,13 +21,16 @@ class SplitEventActionTask: SplitEventTask {
     var event: SplitEvent
     var runInBackground: Bool = false
     var factory: SplitFactory
+    
+    init(action: @escaping SplitActionWithMetadata, event: SplitEvent, runInBackground: Bool = false, factory: SplitFactory, queue: DispatchQueue? = nil) {
+        self.eventHandlerWithMetadata = action
+        self.event = event
+        self.runInBackground = runInBackground
+        self.queue = queue
+        self.factory = factory
+    }
 
-    init(action: @escaping SplitAction,
-         event: SplitEvent,
-         runInBackground: Bool = false,
-         factory: SplitFactory,
-         queue: DispatchQueue? = nil) {
-
+    init(action: @escaping SplitAction, event: SplitEvent, runInBackground: Bool = false, factory: SplitFactory, queue: DispatchQueue? = nil) {
         self.eventHandler = action
         self.event = event
         self.runInBackground = runInBackground
@@ -40,7 +43,11 @@ class SplitEventActionTask: SplitEventTask {
         return queue
     }
 
-    func run() {
+    func run(_ metadata: SplitMetadata?) {
         eventHandler?()
+        
+        if let metadata = metadata {
+            eventHandlerWithMetadata?(metadata)
+        }
     }
 }

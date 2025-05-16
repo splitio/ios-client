@@ -64,6 +64,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         super.init()
     }
 
+    // MARK: Treatments
     public func getTreatment(_ split: String, attributes: [String: Any]?) -> String {
         return getTreatmentWithConfig(split).treatment
     }
@@ -121,25 +122,44 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return results
     }
 
-    public func on(event: SplitEvent, runInBackground: Bool,
-                   execute action: @escaping SplitAction) {
+    // MARK: Events Listeners
+    public func on(event: SplitEvent, execute action: @escaping SplitAction) {
+        on(event: event, runInBackground: false, queue: nil, execute: action)
+    }
+    
+    public func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {
+        on(eventWithMetadata: SplitEventWithMetadata(type: event, metadata: nil), runInBackground: false, queue: nil, execute: executeWithMetadata)
+    }
+    
+    public func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
     }
 
     public func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: true, queue: queue, execute: action)
     }
-
-    public func on(event: SplitEvent, execute action: @escaping SplitAction) {
-        on(event: event, runInBackground: false, queue: nil, execute: action)
+    
+    private func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
+        on(eventWithMetadata: SplitEventWithMetadata(type: event, metadata: nil), runInBackground: runInBackground, queue: queue, execute: action)
     }
 
-    private func on(event: SplitEvent, runInBackground: Bool,
-                    queue: DispatchQueue?, execute action: @escaping SplitAction) {
+    private func on(eventWithMetadata event: SplitEventWithMetadata, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
 
         guard let factory = clientManger?.splitFactory else { return }
         if let eventsManager = self.eventsManager {
-            let task = SplitEventActionTask(action: action, event: event,
+            let task = SplitEventActionTask(action: action, event: event.type,
+                                            runInBackground: runInBackground,
+                                            factory: factory,
+                                            queue: queue)
+            eventsManager.register(event: event, task: task)
+        }
+    }
+    
+    private func on(eventWithMetadata event: SplitEventWithMetadata, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitActionWithMetadata) {
+
+        guard let factory = clientManger?.splitFactory else { return }
+        if let eventsManager = self.eventsManager {
+            let task = SplitEventActionTask(action: action, event: event.type,
                                             runInBackground: runInBackground,
                                             factory: factory,
                                             queue: queue)
@@ -147,6 +167,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         }
     }
 
+    // MARK: Tracking
     public func track(trafficType: String, eventType: String) -> Bool {
         return true
     }
@@ -179,11 +200,10 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return true
     }
 
-    public func setUserConsent(enabled: Bool) {
-    }
+    public func setUserConsent(enabled: Bool) {}
 
-    public func flush() {
-    }
+    // MARK: Lifecycle
+    public func flush() {}
 
     public func destroy() {
         splitsStorage.destroy()
@@ -195,7 +215,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
 }
 
-// MARK: Persistent attributes feature
+// MARK: Persistence
 extension LocalhostSplitClient {
 
     public func setAttribute(name: String, value: Any) -> Bool {
@@ -223,7 +243,7 @@ extension LocalhostSplitClient {
     }
 }
 
-// MARK: TreatmentBySets Feature
+// MARK: By FlagSet
 extension LocalhostSplitClient {
     public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
         return [String: String]()
@@ -249,13 +269,11 @@ extension LocalhostSplitClient {
         return [String: String]()
     }
 
-    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String,
-                                                 attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 
-    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
-                                                  attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 }

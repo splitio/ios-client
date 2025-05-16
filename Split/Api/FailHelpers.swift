@@ -10,10 +10,10 @@ import Foundation
 
 /// To avoid crashing host app this dummy components will be returned
 /// on Failed init
-///
 
 class FailedClient: SplitClient {
 
+    // MARK: Treatments
     func getTreatment(_ split: String) -> String {
         return SplitConstants.control
     }
@@ -54,17 +54,16 @@ class FailedClient: SplitClient {
         return [:]
     }
 
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {
-    }
+    // MARK: Events Listeners
+    func on(event: SplitEvent, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, runInBackground: Bool,
-            execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent,
-            queue: DispatchQueue, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
+    
+    func on(event: SplitEvent, executeWithMetadata: SplitActionWithMetadata) {}
 
+    // MARK: Tracking
     func track(trafficType: String, eventType: String) -> Bool {
         return false
     }
@@ -105,6 +104,7 @@ class FailedClient: SplitClient {
         return false
     }
     
+    // MARK: By FlagSets
     func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
         return [:]
     }
@@ -137,19 +137,18 @@ class FailedClient: SplitClient {
         return [:]
     }
 
-    func setUserConsent(enabled: Bool) {
-    }
+    func setUserConsent(enabled: Bool) {}
 
-    func flush() {
-    }
+    // MARK: Lifeycle
+    func flush() {}
 
-    func destroy() {
-    }
+    func destroy() {}
 
     func destroy(completion: (() -> Void)?) {
         completion?()
     }
 
+    // MARK: Tracking
     func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool {
         return false
     }
