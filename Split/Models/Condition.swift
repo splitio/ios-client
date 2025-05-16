@@ -43,7 +43,8 @@ class Condition: NSObject, Codable {
                 let matcherEvaluator = try matcher.getMatcher()
                 var result: Bool = false
 
-                if matcherEvaluator.getMatcherType() != MatcherType.dependency {
+                if matcherEvaluator.getMatcherType() != MatcherType.dependency &&
+                    matcherEvaluator.getMatcherType() != MatcherType.inRuleBasedSegment {
                     // scenario 1: no attr in matcher
                     // e.g. if user is in segment all then split 100:on
                     if !matcherEvaluator.matcherHasAttribute() {
@@ -68,7 +69,8 @@ class Condition: NSObject, Codable {
                             result = matcherEvaluator.evaluate(values: newValues, context: context)
                         }
                     }
-                } else if matcherEvaluator.getMatcherType() == MatcherType.dependency {
+                } else if matcherEvaluator.getMatcherType() == MatcherType.dependency ||
+                            matcherEvaluator.getMatcherType() == MatcherType.inRuleBasedSegment {
                         result = matcherEvaluator.evaluate(values: values, context: context)
                 }
 
