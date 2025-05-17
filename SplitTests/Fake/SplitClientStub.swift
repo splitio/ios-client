@@ -10,7 +10,8 @@ import Foundation
 @testable import Split
 
 class SplitClientStub: SplitClient {
-
+    
+    // MARK: Treatments
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
         return SplitConstants.control
     }
@@ -31,6 +32,7 @@ class SplitClientStub: SplitClient {
         return ["feature": SplitConstants.control]
     }
 
+    // With Config
     func getTreatmentWithConfig(_ split: String) -> SplitResult {
         return SplitResult(treatment: SplitConstants.control)
     }
@@ -51,6 +53,7 @@ class SplitClientStub: SplitClient {
         return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
 
+    // By FlagSets
     func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : String] {
         return ["feature": SplitConstants.control]
     }
@@ -83,18 +86,14 @@ class SplitClientStub: SplitClient {
         return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
-    }
+    // MARK: Events Listeners
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
+    func on(event: SplitEvent, execute action: @escaping SplitAction) {}
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {}
+    func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {}
+    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {}
 
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {
-    }
-
-    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
-    }
-
-    func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
-    }
-
+    // MARK: Tracking
     func track(trafficType: String, eventType: String) -> Bool {
         return true
     }
@@ -127,6 +126,7 @@ class SplitClientStub: SplitClient {
         return true
     }
 
+    // MARK: Attributes
     func setAttribute(name: String, value: Any) -> Bool {
         return true
     }
@@ -151,12 +151,8 @@ class SplitClientStub: SplitClient {
         return true
     }
 
-    func flush() {
-    }
-
-    func destroy() {
-    }
-
-    func destroy(completion: (() -> Void)?) {
-    }
+    // MARK: Lifecycle
+    func flush() {}
+    func destroy() {}
+    func destroy(completion: (() -> Void)?) {}
 }

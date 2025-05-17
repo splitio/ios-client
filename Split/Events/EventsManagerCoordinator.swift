@@ -44,6 +44,10 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
             }
         }
     }
+    
+    // MARK: Registers
+    func register(event: SplitEvent, task: SplitEventActionTask) {}
+    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {}
 
     func start() {}
 
@@ -82,6 +86,4 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
             }
         }
     }
-
-    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {}
 }

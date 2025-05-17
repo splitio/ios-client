@@ -7,6 +7,7 @@
 
 import Foundation
 
+// This protocol exists just for a dummy SplitEventTask por testing
 protocol SplitEventTask {
     var event: SplitEvent { get }
     var runInBackground: Bool { get }

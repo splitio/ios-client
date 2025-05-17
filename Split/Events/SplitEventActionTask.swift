@@ -11,7 +11,7 @@ public typealias SplitAction = () -> Void
 public typealias SplitActionWithMetadata = (_ metadata: SplitMetadata?) -> Void
 
 class SplitEventActionTask: SplitEventTask {
-
+ 
     // Private
     private var eventHandler: SplitAction?
     private var eventHandlerWithMetadata: SplitActionWithMetadata?

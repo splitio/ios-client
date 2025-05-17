@@ -9,6 +9,7 @@
 import Foundation
 
 protocol SplitEventsManager: AnyObject {
+    func register(event: SplitEvent, task: SplitEventActionTask)
     func register(event: SplitEventWithMetadata, task: SplitEventActionTask)
     func notifyInternalEvent(_ event: SplitInternalEvent)
     func notifyInternalEvent(_ event: SplitInternalEvent, metadata: SplitMetadata?)
@@ -18,6 +19,7 @@ protocol SplitEventsManager: AnyObject {
 }
 
 class DefaultSplitEventsManager: SplitEventsManager {
+
     private let readingRefreshTime: Int
 
     private var sdkReadyTimeStart: Int64
@@ -49,6 +51,24 @@ class DefaultSplitEventsManager: SplitEventsManager {
             }
         }
     }
+    
+    // MARK: Register
+    func register(event: SplitEvent, task: SplitEventActionTask) {
+        register(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
+    }
+    
+    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {
+        let eventName = event.type.toString()
+        processQueue.async { [weak self] in
+            guard let self = self else { return }
+            // If event is already triggered, execute the task
+            if let times = self.executionTimes(for: eventName), times == 0 {
+                self.executeTask(event: event, task: task)
+                return
+            }
+            self.subscribe(task: task, to: event.type)
+        }
+    }
 
     // MARK: Notifiers
     // This method is kept for backwards compatibility.
@@ -64,20 +84,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
             if let self = self {
                 self.eventsQueue.add(event)
             }
-        }
-    }
-    
-    // MARK: Register
-    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {
-        let eventName = event.type.toString()
-        processQueue.async { [weak self] in
-            guard let self = self else { return }
-            // If event is already triggered, execute the task
-            if let times = self.executionTimes(for: eventName), times == 0 {
-                self.executeTask(event: event, task: task)
-                return
-            }
-            self.subscribe(task: task, to: event.type)
         }
     }
 

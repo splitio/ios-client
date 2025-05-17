@@ -353,6 +353,8 @@
 		59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */; };
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
+		5B91B8362DD84276000510F0 /* SplitMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B91B8352DD84272000510F0 /* SplitMetadata.swift */; };
+		5B91B8372DD84276000510F0 /* SplitMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B91B8352DD84272000510F0 /* SplitMetadata.swift */; };
 		9500D9922C56F9BA00383593 /* HostDomainFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */; };
 		9500D9A92C59297400383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
 		9500D9AA2C59382000383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
@@ -1494,6 +1496,7 @@
 		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		5B91B8352DD84272000510F0 /* SplitMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitMetadata.swift; sourceTree = "<group>"; };
 		9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilterTests.swift; sourceTree = "<group>"; };
 		9500D9A82C59297400383593 /* HostDomainFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilter.swift; sourceTree = "<group>"; };
 		9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v5.xcdatamodel; sourceTree = "<group>"; };
@@ -2296,6 +2299,7 @@
 			isa = PBXGroup;
 			children = (
 				3B6DEEC420EA6AE20067435E /* SplitEvent.swift */,
+				5B91B8352DD84272000510F0 /* SplitMetadata.swift */,
 				3B6DEEC520EA6AE20067435E /* SplitEventsManager.swift */,
 				9530FD7927F24306005027AA /* EventsManagerCoordinator.swift */,
 				3B6DEEC620EA6AE20067435E /* SplitEventTask.swift */,
@@ -3954,6 +3958,7 @@
 				957E674C25E48753006F5B19 /* Bundle+Finder.swift in Sources */,
 				95F3F09525AE1F3800084AF8 /* ServiceConstants.swift in Sources */,
 				95CED0362B459A10005E3C34 /* LocalhostSynchronizer.swift in Sources */,
+				5B91B8372DD84276000510F0 /* SplitMetadata.swift in Sources */,
 				9505682426836B20001D7B10 /* ImpressionsCountRecorder.swift in Sources */,
 				3B6DEF3020EA6AE50067435E /* Evaluator.swift in Sources */,
 				598EDE78224BB3E9005D4762 /* InternalSplitClient.swift in Sources */,
@@ -4875,6 +4880,7 @@
 				95B02D9828D0BDC30030EC8B /* RestClient+UniqueKeys.swift in Sources */,
 				95B02D9928D0BDC30030EC8B /* RestClient+ImpressionsCount.swift in Sources */,
 				95B02D9A28D0BDC30030EC8B /* RestClient+SplitChanges.swift in Sources */,
+				5B91B8362DD84276000510F0 /* SplitMetadata.swift in Sources */,
 				95B02D9B28D0BDC30030EC8B /* DataResult.swift in Sources */,
 				958AD2132CA457C100E3DD43 /* RetryableSegmentsSyncWorker.swift in Sources */,
 				9566744729F03662001B4FA5 /* DbCipher.swift in Sources */,

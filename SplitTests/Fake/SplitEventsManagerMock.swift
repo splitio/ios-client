@@ -21,47 +21,58 @@ class SplitEventsManagerMock: SplitEventsManager {
     var isSdkReadyFromCacheFired: Bool {
         return isSegmentsReadyFromCacheFired && isSplitsReadyFromCacheFired
     }
+    
     var isSegmentsReadyFired = false
     var isSplitsReadyFired = false
     var isSegmentsReadyFromCacheFired = false
     var isSplitsReadyFromCacheFired = false
     var isSdkTimeoutFired = false
-
+    var isSdkErrorFired = false
     var isSplitUpdatedTriggered = false
     var isSdkUpdatedFired = false
-
     var isSdkReadyChecked = false
+    
+    var metadata: SplitMetadata?
 
-    func notifyInternalEvent(_ event:SplitInternalEvent) {
+    // MARK: Notifiers
+    func notifyInternalEvent(_ event: SplitInternalEvent) {
         switch event {
-        case .mySegmentsUpdated:
-            isSegmentsReadyFired = true
-        case .splitsUpdated:
-            isSplitsReadyFired = true
-            isSplitUpdatedTriggered = true
-            if let exp = readyExp {
-                exp.fulfill()
+            case .mySegmentsUpdated:
+                isSegmentsReadyFired = true
+            case .splitsUpdated:
+                isSplitsReadyFired = true
+                isSplitUpdatedTriggered = true
+                if let exp = readyExp {
+                    exp.fulfill()
+                }
+            case .sdkReadyTimeoutReached:
+                isSdkTimeoutFired = true
+                if let exp = timeoutExp {
+                    exp.fulfill()
+                }
+            default:
+                print("\(event)")
             }
-        case .sdkReadyTimeoutReached:
-            isSdkTimeoutFired = true
-            if let exp = timeoutExp {
-                exp.fulfill()
-            }
-        default:
-            print("\(event)")
-        }
-    }
-
-    var registeredEvents = [SplitEvent: SplitEventTask]()
-    func register(event: SplitEvent, task: SplitEventTask) {
-        registeredEvents[event] = task
     }
     
-    func start() {
+    func notifyInternalEvent(_ event: SplitInternalEvent, metadata: SplitMetadata?) {
+        self.metadata = metadata
+        notifyInternalEvent(event)
     }
+    
+    // MARK: Registers
+    var registeredEvents = [SplitEvent: SplitEventActionTask]()
+    func register(event: SplitEvent, task: SplitEventActionTask) {
+        register(event: SplitEventWithMetadata(type: event), task: task)
+    }
+    
+    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {
+        registeredEvents[event.type] = task
+    }
+    
+    func start() {}
 
-    func stop() {
-    }
+    func stop() {}
     
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
         switch event {
@@ -74,6 +85,8 @@ class SplitEventsManagerMock: SplitEventsManager {
             return isSdkTimeoutFired
         case .sdkUpdated:
             return isSdkUpdatedFired
+        case .sdkError:
+            return isSdkErrorFired
 
         default:
             return true

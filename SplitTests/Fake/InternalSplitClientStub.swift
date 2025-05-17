@@ -23,6 +23,7 @@ class InternalSplitClientStub: InternalSplitClient {
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
     }
 
+    // MARK: Treatments
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
         return SplitConstants.control
     }
@@ -43,6 +44,7 @@ class InternalSplitClientStub: InternalSplitClient {
         return createControlTreatmentsDictionary(splits: splits)
     }
 
+    // With config
     func getTreatmentWithConfig(_ split: String) -> SplitResult {
         return SplitResult(treatment: SplitConstants.control)
     }
@@ -63,6 +65,7 @@ class InternalSplitClientStub: InternalSplitClient {
         return createControlTreatmentsDictionary(splits: splits)
     }
 
+    // By FlagSets
     func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : String] {
         return ["": SplitConstants.control]
     }
@@ -95,15 +98,14 @@ class InternalSplitClientStub: InternalSplitClient {
         return ["": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
-    }
+    // MARK: Events Listeners
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {}
+    func on(event: SplitEvent, execute action: @escaping SplitAction) {}
+    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {}
+    func on(event: SplitEvent, executeTask: SplitEventTask) {}
 
-    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
-    }
-
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {
-    }
-
+    // MARK: Tracking
     func track(trafficType: String, eventType: String) -> Bool {
         return true
     }
@@ -160,18 +162,10 @@ class InternalSplitClientStub: InternalSplitClient {
         return true
     }
     
-    func flush() {
-    }
-
-    func destroy() {
-    }
-
-    func destroy(completion: (() -> Void)?) {
-    }
-
-    func on(event: SplitEvent, executeTask: SplitEventTask) {
-
-    }
+    // MARK: Lifecycle
+    func flush() {}
+    func destroy() {}
+    func destroy(completion: (() -> Void)?) {}
 
     private func createControlTreatmentsDictionary<T>(splits: [String]) -> [String: T] where T: Any {
         var result = [String: T]()

@@ -15,32 +15,49 @@ class SplitEventsManagerStub: SplitEventsManager {
     var splitsKilledEventFiredCount = 0
     var splitsUpdatedEventFiredCount = 0
     var mySegmentsLoadedEventFiredCount = 0
+    
+    var metadata: SplitMetadata?
+    
     var mySegmentsLoadedEventExp: XCTestExpectation?
     var startCalled = false
     var stopCalled = false
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {
+        notifyInternalEvent(event, metadata: nil)
+    }
+    
+    func notifyInternalEvent(_ event: SplitInternalEvent, metadata: SplitMetadata? = nil) {
+        
+        self.metadata = metadata
+        
         switch event {
-        case .mySegmentsLoadedFromCache:
-            mySegmentsLoadedEventFiredCount+=1
-            if let exp = mySegmentsLoadedEventExp {
-                exp.fulfill()
-            }
-        case .splitsLoadedFromCache:
-            splitsLoadedEventFiredCount+=1
+            case .mySegmentsLoadedFromCache:
+                mySegmentsLoadedEventFiredCount += 1
+                if let exp = mySegmentsLoadedEventExp {
+                    exp.fulfill()
+                }
+            case .splitsLoadedFromCache:
+                splitsLoadedEventFiredCount += 1
 
-        case .splitKilledNotification:
-            splitsKilledEventFiredCount+=1
+            case .splitKilledNotification:
+                splitsKilledEventFiredCount += 1
 
-        case .splitsUpdated:
-            splitsUpdatedEventFiredCount+=1
-        default:
-            print("internal event fired: \(event)")
+            case .splitsUpdated:
+                splitsUpdatedEventFiredCount += 1
+            
+            case .sdkReadyTimeoutReached:
+                splitsUpdatedEventFiredCount += 1
+            default:
+                print("internal event fired: \(event)")
         }
     }
 
-    var registeredEvents = [SplitEvent: SplitEventTask]()
-    func register(event: SplitEvent, task: SplitEventTask) {
+    var registeredEvents = [SplitEventWithMetadata: SplitEventActionTask]()
+    func register(event: SplitEvent, task: SplitEventActionTask) {
+        register(event: SplitEventWithMetadata(type: event), task: task)
+    }
+    
+    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {
         registeredEvents[event] = task
     }
 

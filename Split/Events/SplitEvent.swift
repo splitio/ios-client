@@ -1,9 +1,4 @@
-//
-//  SplitEvent.swift
-//  Split
-//
 //  Created by Sebastian Arrubia on 4/17/18.
-//
 
 import Foundation
 
@@ -47,29 +42,3 @@ import Foundation
         }
     }
 }
-
-@objc public class SplitMetadata: NSObject {
-    var type: SplitMetadataType
-    var data: String = ""
-    
-    init(type: SplitMetadataType, data: String) {
-        self.type = type
-        self.data = data
-    }
-}
-
-enum SplitMetadataType: Int {
-    case FEATURE_FLAGS_SYNC_ERROR
-    case SEGMENTS_SYNC_ERROR
-    
-    public func toString() -> String {
-        switch self {
-            case .FEATURE_FLAGS_SYNC_ERROR:
-                return "FEATURE_FLAGS_SYNC_ERROR"
-            case .SEGMENTS_SYNC_ERROR:
-                return "SEGMENTS_SYNC_ERROR"
-            
-        }
-    }
-}
-
