@@ -52,11 +52,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
     
-    // MARK: Register
-    func register(event: SplitEvent, task: SplitEventActionTask) {
-        register(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
-    }
-    
+    // MARK: Registers
     func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {
         let eventName = event.type.toString()
         processQueue.async { [weak self] in
@@ -69,13 +65,13 @@ class DefaultSplitEventsManager: SplitEventsManager {
             self.subscribe(task: task, to: event.type)
         }
     }
+    
+    // Method kept for backwards compatibility. Allows registering an event without metadata.
+    func register(event: SplitEvent, task: SplitEventActionTask) {
+        register(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
+    }
 
     // MARK: Notifiers
-    // This method is kept for backwards compatibility.
-    // It allows calling `notifyInternalEvent(.event)` without needing to pass `nil` as metadata.
-    func notifyInternalEvent(_ event: SplitInternalEvent) {
-        notifyInternalEvent(event, metadata: nil)
-    }
     
     func notifyInternalEvent(_ event: SplitInternalEvent, metadata: SplitMetadata? = nil) {
         let event = SplitInternalEventWithMetadata(event, metadata: metadata)
@@ -86,7 +82,13 @@ class DefaultSplitEventsManager: SplitEventsManager {
             }
         }
     }
+    
+    // Method kept for backwards compatibility. Allows notifying an event without metadata.
+    func notifyInternalEvent(_ event: SplitInternalEvent) {
+        notifyInternalEvent(event, metadata: nil)
+    }
 
+    // MARK: Cycle
     func start() {
         dataAccessQueue.sync {
             if self.isStarted {
@@ -191,7 +193,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
 
-    // MARK: Helper functions.
+    // MARK: Helper functions
     func isTriggered(external event: SplitEvent) -> Bool {
         var triggered = false
         dataAccessQueue.sync {
