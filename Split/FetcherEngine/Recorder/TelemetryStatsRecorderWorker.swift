@@ -16,11 +16,7 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
     private let mySegmentsStorage: MySegmentsStorage
     private let myLargeSegmentsStorage: MySegmentsStorage
 
-    init(telemetryStatsRecorder: HttpTelemetryStatsRecorder,
-         telemetryConsumer: TelemetryConsumer,
-         splitsStorage: SplitsStorage,
-         mySegmentsStorage: MySegmentsStorage,
-         myLargeSegmentsStorage: MySegmentsStorage) {
+    init(telemetryStatsRecorder: HttpTelemetryStatsRecorder, telemetryConsumer: TelemetryConsumer, splitsStorage: SplitsStorage, mySegmentsStorage: MySegmentsStorage, myLargeSegmentsStorage: MySegmentsStorage) {
 
         self.telemetryConsumer = telemetryConsumer
         self.statsRecorder = telemetryStatsRecorder
@@ -30,7 +26,7 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
     }
 
     func flush() {
-        if !statsRecorder.isEndpointAvailable() {
+        guard statsRecorder.isEndpointAvailable() else {
             Logger.d("Endpoint not reachable. Telemetry stats post will be delayed")
             return
         }
