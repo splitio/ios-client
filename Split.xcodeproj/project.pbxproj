@@ -1149,6 +1149,8 @@
 		C5A501D42D88A15600206F82 /* RuleBasedSegmentDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C22D88A15600206F82 /* RuleBasedSegmentDao.swift */; };
 		C5A501D52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */; };
 		C5A501DA2D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */; };
+		C5A7D5532DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A7D5522DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift */; };
+		C5A7D5552DD7988E0081D190 /* RuleBasedSegmentHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A7D5542DD7988E0081D190 /* RuleBasedSegmentHelper.swift */; };
 		C5BD1E4C2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */; };
@@ -2008,6 +2010,8 @@
 		C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsEncoder.swift; sourceTree = "<group>"; };
 		C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentDaoStub.swift; sourceTree = "<group>"; };
 		C5A501DD2D88AD1B00206F82 /* split_cache_v6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v6.xcdatamodel; sourceTree = "<group>"; };
+		C5A7D5522DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsIntegrationTest.swift; sourceTree = "<group>"; };
+		C5A7D5542DD7988E0081D190 /* RuleBasedSegmentHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentHelper.swift; sourceTree = "<group>"; };
 		C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecoratedImpression.swift; sourceTree = "<group>"; };
 		C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsToggleTest.swift; sourceTree = "<group>"; };
 		C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_toggle.json; sourceTree = "<group>"; };
@@ -3232,6 +3236,8 @@
 		952FA1382A320B5900264AB5 /* Api */ = {
 			isa = PBXGroup;
 			children = (
+				C5A7D5542DD7988E0081D190 /* RuleBasedSegmentHelper.swift */,
+				C5A7D5522DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift */,
 				95825C012721F0F800A0CDAD /* UserKeyEncondingTest.swift */,
 				95E81941287894DA00D99093 /* LoggerTest.swift */,
 				9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */,
@@ -4585,6 +4591,7 @@
 				95C717E2268CE705002ADB83 /* PersistentImpressionsCountStorageTest.swift in Sources */,
 				9583C2CF2C91C74D001298C8 /* FetcherThrottleTests.swift in Sources */,
 				955AAB8D283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift in Sources */,
+				C5A7D5552DD7988E0081D190 /* RuleBasedSegmentHelper.swift in Sources */,
 				952BF5FC278DF66700FF6181 /* TelemetryConfigHelperStub.swift in Sources */,
 				956A7E2E297ED7600080D53C /* SplitsEncoderTest.swift in Sources */,
 				59ED408824EABD4700EF7B09 /* SseClientMock.swift in Sources */,
@@ -4671,6 +4678,7 @@
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				95B180272763DA0E002DC9DF /* HttpTelemetryConfigRecorderTest.swift in Sources */,
 				C5977C202BF29F5B003E293A /* EqualToSemverMatcherTest.swift in Sources */,
+				C5A7D5532DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift in Sources */,
 				59ED408424EAB8C900EF7B09 /* PushNotificationManagerTest.swift in Sources */,
 				95F7BC292C46A4C800C5F2E4 /* SecurityHelper.swift in Sources */,
 				9523B8CF28622B6500AEE178 /* CdnByPassTest.swift in Sources */,
