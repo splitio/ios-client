@@ -68,7 +68,7 @@ class AttributesEvaluationTest: XCTestCase {
 
         splitClient = factory.client
 
-        splitClient.on(event: SplitEvent.sdkReadyFromCache) {
+        splitClient.on(event: .sdkReadyFromCache) {
             cacheReadyExp.fulfill()
             print("Ready from cache")
         }
@@ -137,7 +137,7 @@ class AttributesEvaluationTest: XCTestCase {
 
         splitClient = factory.client
 
-        splitClient.on(event: SplitEvent.sdkReadyFromCache) {
+        splitClient.on(event: .sdkReadyFromCache) {
             cacheReadyExp.fulfill()
             print("Ready from cache")
         }
@@ -224,7 +224,7 @@ class AttributesEvaluationTest: XCTestCase {
 
         splitClient = factory.client
 
-        splitClient.on(event: SplitEvent.sdkReadyFromCache) {
+        splitClient.on(event: .sdkReadyFromCache) {
             cacheReadyExp.fulfill()
             print("Ready from cache")
         }
@@ -297,7 +297,7 @@ class AttributesEvaluationTest: XCTestCase {
 
         splitClient = factory.client
 
-        splitClient.on(event: SplitEvent.sdkReadyFromCache) {
+        splitClient.on(event: .sdkReadyFromCache) {
             cacheReadyExp.fulfill()
             print("Ready from cache")
         }

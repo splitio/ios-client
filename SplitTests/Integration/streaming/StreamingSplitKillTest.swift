@@ -63,11 +63,11 @@ class StreamingSplitKillTest: XCTestCase {
         exp3 = XCTestExpectation(description: "Exp3")
         exp4 = XCTestExpectation(description: "Exp4")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             IntegrationHelper.tlog("TIMEOUT")
         }
 

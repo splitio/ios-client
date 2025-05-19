@@ -75,7 +75,7 @@ class MultiClientStreamingResetTest: XCTestCase {
         let defaultClient = factory.client
         clients[Key(matchingKey: defaultKey)] = defaultClient
 
-        defaultClient.on(event: SplitEvent.sdkReady) {
+        defaultClient.on(event: .sdkReady) {
             expReady.fulfill()
             results[self.defaultKey] = defaultClient.getTreatment(self.splitName)
         }
@@ -99,7 +99,7 @@ class MultiClientStreamingResetTest: XCTestCase {
                 exps.append(expSse!)
             }
 
-            client.on(event: SplitEvent.sdkReady) {
+            client.on(event: .sdkReady) {
                 expReady.fulfill()
                 results[key.matchingKey] = client.getTreatment(self.splitName)
             }

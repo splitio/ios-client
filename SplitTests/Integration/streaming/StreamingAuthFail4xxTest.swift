@@ -53,12 +53,12 @@ class StreamingAuthFail4xxTest: XCTestCase {
         var timeOutFired = false
         var sdkReadyFired = false
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyFired = true
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             timeOutFired = true
             sdkReadyExpectation.fulfill()
         }

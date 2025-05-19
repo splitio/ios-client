@@ -207,7 +207,7 @@ class SplitEventsManagerTest: XCTestCase {
 
         XCTAssertTrue(eventManager.eventAlreadyTriggered(event: .sdkReady), "SDK Ready should be triggered");
         XCTAssertTrue(updatedTask.taskTriggered, "SDK Update should be triggered");
-        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: .sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
 
         eventManager.stop()
     }

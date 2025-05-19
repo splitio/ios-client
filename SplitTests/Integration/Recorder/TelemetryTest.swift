@@ -60,11 +60,11 @@ class TelemetryTest: XCTestCase {
         let sdkReadyExp = XCTestExpectation()
         let sdkReadyFromCacheExp = XCTestExpectation()
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        client.on(event: .sdkReadyFromCache) {
             sdkReadyFromCacheExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExp.fulfill()
         }
 
@@ -97,11 +97,11 @@ class TelemetryTest: XCTestCase {
         let sdkReadyExp = XCTestExpectation()
         var readyFromCacheFired = false
 
-        client.on(event: SplitEvent.sdkReadyFromCache) {
+        client.on(event: .sdkReadyFromCache) {
             readyFromCacheFired = true
         }
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExp.fulfill()
         }
 
@@ -132,7 +132,7 @@ class TelemetryTest: XCTestCase {
 
         let sdkReadyExp = XCTestExpectation()
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExp.fulfill()
         }
 

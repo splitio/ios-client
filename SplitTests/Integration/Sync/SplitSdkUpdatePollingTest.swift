@@ -131,12 +131,12 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         var sdkReadyFired = false
         var sdkUpdatedFired = false
         
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyFired = true
             sdkReady.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdatedFired = true
         }
         
@@ -184,12 +184,12 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         var sdkReadyFired = false
         var sdkUpdatedFired = false
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyFired = true
             sdkReady.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdatedFired = true
             sdkUpdate.fulfill()
         }
@@ -236,12 +236,12 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         var sdkReadyFired = false
         var sdkUpdatedFired = false
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyFired = true
             sdkReady.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdatedFired = true
             sdkUpdate.fulfill()
         }

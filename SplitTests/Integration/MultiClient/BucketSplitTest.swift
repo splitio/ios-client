@@ -47,7 +47,7 @@ class BucketSplitTest: XCTestCase {
             let key = Key(matchingKey: userKey, bucketingKey: bkey)
             readyExps[key] = XCTestExpectation(description: "key: \(bkey)")
             clients[key] = factory.client(key: key)
-            clients[key]?.on(event: SplitEvent.sdkReady) {
+            clients[key]?.on(event: .sdkReady) {
                 print("READY FOR: \(key.bucketingKey!)")
                 self.readyExps[key]?.fulfill()
             }

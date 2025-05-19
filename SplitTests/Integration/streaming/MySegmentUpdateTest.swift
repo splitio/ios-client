@@ -55,11 +55,11 @@ class MySegmentUpdateTest: XCTestCase {
         let sdkReadyExp = XCTestExpectation(description: "SDK READY Expectation")
         var sdkUpdExp = XCTestExpectation(description: "SDK UPDATE Expectation")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdExp.fulfill()
         }
 
@@ -136,11 +136,11 @@ class MySegmentUpdateTest: XCTestCase {
         let sdkReadyExp = XCTestExpectation(description: "SDK READY Expectation")
         var sdkUpdExp = XCTestExpectation(description: "SDK UPDATE Expectation")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdExp.fulfill()
         }
 
@@ -150,11 +150,11 @@ class MySegmentUpdateTest: XCTestCase {
         let userKeyM = "09025e90-d396-433a-9292-acef23cf0ad1"
         let mClient = testFactory!.client(matchingKey: userKeyM)
 
-        mClient.on(event: SplitEvent.sdkReady) {
+        mClient.on(event: .sdkReady) {
             sdkReadyMExp.fulfill()
         }
 
-        mClient.on(event: SplitEvent.sdkUpdated) {
+        mClient.on(event: .sdkUpdated) {
             sdkUpdMExp.fulfill()
         }
 
@@ -218,11 +218,11 @@ class MySegmentUpdateTest: XCTestCase {
         let sdkReadyExp = XCTestExpectation(description: "SDK READY Expectation")
         var sdkUpdExp = XCTestExpectation(description: "SDK UPDATE Expectation")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExp.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdExp.fulfill()
         }
 
