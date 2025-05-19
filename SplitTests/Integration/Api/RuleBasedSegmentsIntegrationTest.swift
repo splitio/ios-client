@@ -39,11 +39,11 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
+        targetingRulesChange = nil
         authRequestUrl = ""
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         testDatabase = TestingHelper.createTestDatabase(name: "rbs_test_db")
     }
-    
 
     func testInstantUpdateNotificationGZip() {
         let client = getReadyClient()
@@ -51,7 +51,7 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
 
         processUpdate(client: client!, change: rbsChangegzip, expectedContents: "rbs_test")
     }
-    
+
     func testInstantUpdateNotification() {
         let client = getReadyClient()
         XCTAssertNotNil(client)
@@ -65,7 +65,52 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
 
         processUpdate(client: client!, change: rbsChangeZLib, expectedContents: "rbs_test")
     }
+
+    func testReferencedRuleBasedSegmentNotPresentTriggersFetch() {
+        let data = "eyJuYW1lIjoicmJzX3Rlc3QiLCJzdGF0dXMiOiJBQ1RJVkUiLCJ0cmFmZmljVHlwZU5hbWUiOiJ1c2VyIiwiZXhjbHVkZWQiOnsia2V5cyI6W10sInNlZ21lbnRzIjpbXX0sImNvbmRpdGlvbnMiOlt7ImNvbmRpdGlvblR5cGUiOiJST0xMT1VUIiwibWF0Y2hlckdyb3VwIjp7ImNvbWJpbmVyIjoiQU5EIiwibWF0Y2hlcnMiOlt7ImtleVNlbGVjdG9yIjp7InRyYWZmaWNUeXBlIjoidXNlciJ9LCJtYXRjaGVyVHlwZSI6IklOX1JVTEVfQkFTRURfU0VHTUVOVCIsIm5lZ2F0ZSI6ZmFsc2UsInVzZXJEZWZpbmVkU2VnbWVudE1hdGNoZXJEYXRhIjp7InNlZ21lbnROYW1lIjoibmV3X3Jic190ZXN0In19XX19XX0="
+        targetingRulesChange = RuleBasedSegmentsIntegrationTest.splitChangeWithReferencedRbs(flagSince: 3, rbsSince: 3)
+        referencedRbsTest(change: RuleBasedSegmentsIntegrationTest.rbsChangeInternal(changeNumber: "4", previousChangeNumber: "4", compressionType: "0", compressedPayload: data))
+    }
     
+    func testEvaluation() {
+        // Prepare: inject a custom split changes response (inline or load from file)
+        let splitChangesJson = IntegrationHelper.loadSplitChangeFileJson(name: "split_changes_rbs", sourceClass: IntegrationHelper())
+        targetingRulesChange = splitChangesJson
+
+        let client = getReadyClient()
+        XCTAssertNotNil(client, "Client not ready")
+
+        // Simulate streaming connection if needed
+        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002")
+
+        // Evaluate treatment
+        let attributes = ["email": "test@split.io"]
+        let treatment = client!.getTreatment("rbs_split", attributes: attributes)
+        XCTAssertEqual("on", treatment)
+    }
+
+    private func referencedRbsTest(change: String) {
+        let client = getReadyClient()!
+        sleep(1)
+        let sdkUpdateExpectation = XCTestExpectation(description: "SDK_UPDATE received")
+        var sdkUpdatedTriggered = false
+
+        client.on(event: SplitEvent.sdkUpdated) {
+            sdkUpdatedTriggered = true
+            sdkUpdateExpectation.fulfill()
+        }
+        
+        targetingRulesChange = RuleBasedSegmentsIntegrationTest.splitChangeWithReferencedRbs(flagSince: 5, rbsSince: 5)
+        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
+        streamingBinding?.push(message: change)
+        wait(for: [sdkUpdateExpectation], timeout: 10)
+
+        XCTAssertTrue(sdkUpdatedTriggered)
+        let allElements = testDatabase!.ruleBasedSegmentDao.getAll()
+        
+        XCTAssertEqual(2, allElements.count)
+    }
+
     private func getReadyClient() -> SplitClient? {
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
@@ -202,5 +247,13 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
 
         XCTAssertTrue(sdkUpdatedTriggered)
         XCTAssertTrue(containsExpectedContents)
+    }
+
+    static func loadSplitChangeFile(sourceClass: Any, fileName: String) -> SplitChange? {
+        if let file = FileHelper.readDataFromFile(sourceClass: sourceClass, name: fileName, type: "json"),
+           let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            return change.featureFlags
+        }
+        return nil
     }
 }

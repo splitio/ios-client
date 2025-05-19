@@ -1151,6 +1151,7 @@
 		C5A501DA2D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */; };
 		C5A7D5532DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A7D5522DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift */; };
 		C5A7D5552DD7988E0081D190 /* RuleBasedSegmentHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A7D5542DD7988E0081D190 /* RuleBasedSegmentHelper.swift */; };
+		C5A7D5572DDBD4380081D190 /* split_changes_rbs.json in Resources */ = {isa = PBXBuildFile; fileRef = C5A7D5562DDBD4280081D190 /* split_changes_rbs.json */; };
 		C5BD1E4C2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */; };
@@ -2012,6 +2013,7 @@
 		C5A501DD2D88AD1B00206F82 /* split_cache_v6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v6.xcdatamodel; sourceTree = "<group>"; };
 		C5A7D5522DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsIntegrationTest.swift; sourceTree = "<group>"; };
 		C5A7D5542DD7988E0081D190 /* RuleBasedSegmentHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentHelper.swift; sourceTree = "<group>"; };
+		C5A7D5562DDBD4280081D190 /* split_changes_rbs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_changes_rbs.json; sourceTree = "<group>"; };
 		C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecoratedImpression.swift; sourceTree = "<group>"; };
 		C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsToggleTest.swift; sourceTree = "<group>"; };
 		C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_toggle.json; sourceTree = "<group>"; };
@@ -2910,6 +2912,7 @@
 		592C6ADB211CBB86002D120C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C5A7D5562DDBD4280081D190 /* split_changes_rbs.json */,
 				95F7BBD32C1A273900C5F2E4 /* Cert */,
 				C5977C052BF273A3003E293A /* between_semver.csv */,
 				C5977C042BF273A3003E293A /* equal_to_semver.csv */,
@@ -3948,6 +3951,7 @@
 				5919C64221C7C8A600EC35B8 /* split_traffic_allocation_1.json in Resources */,
 				C5977C082BF273A3003E293A /* equal_to_semver.csv in Resources */,
 				C5977C092BF273A3003E293A /* between_semver.csv in Resources */,
+				C5A7D5572DDBD4380081D190 /* split_changes_rbs.json in Resources */,
 				95F7BBF72C1C953000C5F2E4 /* ec_secp384r1_pub.der in Resources */,
 				595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */,
 				59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */,
