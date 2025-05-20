@@ -36,8 +36,11 @@ class SseNotificationProcessorTest: XCTestCase {
         sseNotificationParser = SseNotificationParserStub()
         splitsUpdateWorker = SplitsUpdateWorkerMock(synchronizer: synchronizer,
                                                     splitsStorage: splitsStorage,
+                                                    ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                     splitChangeProcessor: SplitChangeProcessorStub(),
+                                                    ruleBasedSegmentsChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
                                                     featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoderMock(type: Split.self),
+                                                    ruleBasedSegmentsPayloadDecoder: RuleBasedSegmentsPayloadDecoderMock(type: RuleBasedSegment.self),
                                                     telemetryProducer: TelemetryStorageStub())
 
         mySegmentsUpdateWorker =  SegmentsUpdateWorkerMock(synchronizer: MySegmentsSynchronizerWrapper(synchronizer: synchronizer),

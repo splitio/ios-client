@@ -133,8 +133,11 @@ class SyncManagerBuilder {
             splitsUpdateWorker: SplitsUpdateWorker(
                 synchronizer: synchronizer,
                 splitsStorage: storageContainer.splitsStorage,
+                ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
                 splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: splitConfig?.bySetsFilter()),
+                ruleBasedSegmentsChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
                 featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder(type: Split.self),
+                ruleBasedSegmentsPayloadDecoder: DefaultRuleBasedSegmentsPayloadDecoder(type: RuleBasedSegment.self),
                 telemetryProducer: storageContainer.telemetryStorage),
             splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
                                              splitsStorage: storageContainer.splitsStorage),

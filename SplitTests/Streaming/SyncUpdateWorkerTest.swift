@@ -41,8 +41,11 @@ class SyncUpdateWorkerTest: XCTestCase {
         splitChangeProcessor = SplitChangeProcessorStub()
         splitsUpdateWorker = SplitsUpdateWorker(synchronizer: synchronizer,
                                                 splitsStorage: splitsStorage,
+                                                ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                 splitChangeProcessor: splitChangeProcessor,
+                                                ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                 featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoderMock(type: Split.self),
+                                                ruleBasedSegmentsPayloadDecoder: RuleBasedSegmentsPayloadDecoderMock(type: RuleBasedSegment.self),
                                                 telemetryProducer: telemetryProducer)
 
         splitKillWorker = SplitKillWorker(synchronizer: synchronizer, splitsStorage: splitsStorage)
