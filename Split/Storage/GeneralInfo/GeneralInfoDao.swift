@@ -17,6 +17,7 @@ enum GeneralInfo: String {
     case flagsSpec = "flagsSpec"
     case rolloutCacheLastClearTimestamp = "rolloutCacheLastClearTimestamp"
     case ruleBasedSegmentsChangeNumber = "ruleBasedSegmentsChangeNumber"
+    case lastProxyUpdateTimestamp = "lastProxyCheckTimestamp"
 }
 
 protocol GeneralInfoDao {

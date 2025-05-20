@@ -13,6 +13,10 @@ protocol GeneralInfoStorage {
     // Rule based segments methods
     func getRuleBasedSegmentsChangeNumber() -> Int64
     func setRuleBasedSegmentsChangeNumber(changeNumber: Int64)
+
+    // Proxy handling methods
+    func getLastProxyUpdateTimestamp() -> Int64
+    func setLastProxyUpdateTimestamp(_ timestamp: Int64)
 }
 
 class DefaultGeneralInfoStorage: GeneralInfoStorage {
@@ -65,5 +69,13 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage {
 
     func setRuleBasedSegmentsChangeNumber(changeNumber: Int64) {
         generalInfoDao.update(info: .ruleBasedSegmentsChangeNumber, longValue: changeNumber)
+    }
+
+    func getLastProxyUpdateTimestamp() -> Int64 {
+        return generalInfoDao.longValue(info: .lastProxyUpdateTimestamp) ?? 0
+    }
+
+    func setLastProxyUpdateTimestamp(_ timestamp: Int64) {
+        generalInfoDao.update(info: .lastProxyUpdateTimestamp, longValue: timestamp)
     }
 }
