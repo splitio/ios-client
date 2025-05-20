@@ -26,6 +26,7 @@ extension DefaultRestClient: RestClientSplitChanges {
             endpoint: endpointFactory.splitChangesEndpoint,
             parameters: buildParameters(since: since, rbSince: rbSince, till: till),
             headers: headers,
+            customDecoder: TargetingRulesChangeDecoder.decode,
             completion: completion)
     }
 
