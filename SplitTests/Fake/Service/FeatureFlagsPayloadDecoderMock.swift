@@ -19,12 +19,6 @@ class FeatureFlagsPayloadDecoderMock: DefaultTargetingRulePayloadDecoder<Split> 
 class RuleBasedSegmentsPayloadDecoderMock: DefaultTargetingRulePayloadDecoder<RuleBasedSegment> {
     let helper = SplitHelper()
     override func decode(payload: String, compressionUtil: CompressionUtil) throws -> RuleBasedSegment {
-        let rbs = RuleBasedSegment()
-        rbs.name = "dummy_rbs"
-        rbs.isParsed = true
-        rbs.trafficTypeName = "custom"
-        rbs.status = .active
-        rbs.json = ""
-        return rbs
+        return TestingHelper.createRuleBasedSegment(name: "dummy_rbs")
     }
 }
