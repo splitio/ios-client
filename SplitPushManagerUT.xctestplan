@@ -29,6 +29,8 @@
   "testTargets": [
     {
       "skippedTests": [
+        "OutdatedProxyIntegrationTest",
+        "RuleBasedSegmentsIntegrationTest",
         "AnyValueValidatorTests",
         "AnyValueValidatorTests/testInvalidListValues()",
         "AnyValueValidatorTests/testInvalidPrimitiveValues()",

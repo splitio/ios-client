@@ -18,24 +18,14 @@ class StreamingIntegrationHelper {
             .replacingOccurrences(of: "$CHANGE_NUMBER$", with: "\(changeNumber)")
             .replacingOccurrences(of: "$SEGMENT_DATA$", with: segmentData)
     }
-    
+
     static func splitUpdateMessage(timestamp: Int = 1000, changeNumber: Int = 1000) -> String {
         return """
         id:cf74eb42-f687-48e4-ad18-af2125110aac
         event:message
-        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MzM5Njc0ODcyNg==_MTExMzgwNjgx_splits","data":"{\"type\":\"SPLIT_UPDATE\",\"changeNumber\":$CHANGE_NUMBER$}"}
+        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MzM5Njc0ODcyNg==_MTExMzgwNjgx_splits","data":"{\\"type\\":\\"SPLIT_UPDATE\\",\\"changeNumber\\":$CHANGE_NUMBER$}"}
         """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
             .replacingOccurrences(of: "$CHANGE_NUMBER$", with: "\(changeNumber)")
-    }
-    
-    static func splitUpdateWithDataMessage(timestamp: Int = 1000, changeNumber: Int = 1000, splitData: String) -> String {
-        return """
-        id:cf74eb42-f687-48e4-ad18-af2125110aac
-        event:message
-        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MzM5Njc0ODcyNg==_MTExMzgwNjgx_splits","data":"{\"type\":\"SPLIT_UPDATE\",\"changeNumber\":$CHANGE_NUMBER$,\"data\":$SPLIT_DATA$}"}
-        """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
-            .replacingOccurrences(of: "$CHANGE_NUMBER$", with: "\(changeNumber)")
-            .replacingOccurrences(of: "$SPLIT_DATA$", with: splitData)
     }
 
     static func splitKillMessagge(splitName: String, defaultTreatment: String,

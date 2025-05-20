@@ -29,6 +29,7 @@
   "testTargets": [
     {
       "skippedTests": [
+        "RuleBasedSegmentsIntegrationTest",
         "AnyValueValidatorTests/testInvalidListValues()",
         "AnyValueValidatorTests/testInvalidPrimitiveValues()",
         "AnyValueValidatorTests/testValidListValues()",
