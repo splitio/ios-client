@@ -56,6 +56,7 @@ class DefaultRestClient: SplitApiRestClient {
                     parameters: HttpParameters? = nil,
                     body: Data? = nil,
                     headers: HttpHeaders? = nil,
+                    customDecoder: ((Data) throws -> T)? = nil,
                     completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
 
         do {
@@ -73,8 +74,18 @@ class DefaultRestClient: SplitApiRestClient {
                 }
 
                 do {
-                    let parsedObject = try json.decode(T.self)
-                    completion(DataResult { return parsedObject })
+                    if let customDecoder = customDecoder {
+                        // Use the custom decoder if provided
+                        if let parsedObject = try json.decodeWith(customDecoder) {
+                            completion(DataResult { return parsedObject })
+                        } else {
+                            completion(DataResult { return nil })
+                        }
+                    } else {
+                        // Use the default decoder
+                        let parsedObject = try json.decode(T.self)
+                        completion(DataResult { return parsedObject })
+                    }
                 } catch {
                     completion(DataResult { throw error })
                 }

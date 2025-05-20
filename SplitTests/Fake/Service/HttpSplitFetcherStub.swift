@@ -30,7 +30,7 @@ class HttpSplitFetcherStub: HttpSplitFetcher {
             throw GenericError.unknown(message: "null feature flag changes")
         }
 
-        _ = rbSince ?? -1
+        let rbSince = rbSince ?? -1
         if splitChanges.count > hit {
             if let change = splitChanges[hit] {
                 return change

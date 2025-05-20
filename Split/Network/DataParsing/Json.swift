@@ -38,6 +38,18 @@ struct Json {
         return try Self.decodeFrom(json: data, to: type)
     }
 
+    /// Decode using a custom decoder function
+    /// - Parameters:
+    ///   - decoder: A function that takes Data and returns a decoded object of type T
+    /// - Returns: The decoded object
+    /// - Throws: Decoding errors if the JSON cannot be parsed
+    func decodeWith<T>(_ decoder: (Data) throws -> T) throws -> T? {
+        guard let data = data else {
+            return nil
+        }
+        return try decoder(data)
+    }
+
     func dynamicDecode<T>(_ type: T.Type) throws -> T? where T: DynamicDecodable {
         var obj: T?
         if let data = self.data {
