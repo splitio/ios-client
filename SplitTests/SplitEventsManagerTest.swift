@@ -263,6 +263,26 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.stop()
     }
     
+    func testSplitEventActionTaskMetadata() {
+        
+        // Dummy event with metadata
+        let metadataTypeToCheck: SplitMetadataType = .FEATURE_FLAGS_SYNC_ERROR
+        let metadataDataToCheck: String            = "Error syncing"
+        let dummyMetadata = SplitMetadata(type: metadataTypeToCheck, data: metadataDataToCheck)
+        
+        // This will be the task's "run()"
+        let action: SplitActionWithMetadata = { metadata in
+            XCTAssertEqual(metadataTypeToCheck, metadata!.type)
+            XCTAssertEqual(metadataDataToCheck,metadata!.data)
+        }
+        
+        // SUT
+        let SUT = TestTask(exp: nil, action: action, metadata: dummyMetadata)
+        
+        SUT.run(dummyMetadata)
+        XCTAssertTrue(SUT.taskTriggered)
+    }
+    
     // MARK: Helpers
     func currentTimestamp() -> Int {
         return Int(Date().unixTimestamp())
@@ -276,21 +296,20 @@ class SplitEventsManagerTest: XCTestCase {
 class TestTask: SplitEventActionTask {
     
     var taskTriggered = false
-    var metadata: SplitMetadata?
     
     let label: String
     var exp: XCTestExpectation?
-    init(exp: XCTestExpectation?, label: String = "") {
+    init(exp: XCTestExpectation?, label: String = "", action: SplitActionWithMetadata? = nil, metadata: SplitMetadata? = nil) {
         self.exp = exp
         self.label = label
-        super.init(action: {}, event: .sdkReady, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
+        super.init(action: action ?? { _ in }, event: .sdkReady, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
     }
 
     override func run(_ metadata: SplitMetadata?) {
         print("run: \(self.label)")
         taskTriggered = true
         
-        self.metadata = metadata
+        super.run(metadata)
         
         if let exp = self.exp {
             exp.fulfill()
