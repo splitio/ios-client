@@ -28,7 +28,7 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: DataResult<TargetingRulesChange>?
         let startTime = Date.nowMillis()
-        restClient.getSplitChanges(since: since, rbSince: rbSince, till: till, headers: headers) { result in
+        restClient.getSplitChanges(since: since, rbSince: rbSince, till: till, headers: headers, spec: Spec.flagsSpec) { result in
             TimeChecker.logInterval("Time to fetch targeting rules", startTime: startTime)
             requestResult = result
             semaphore.signal()
