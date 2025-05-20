@@ -16,6 +16,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
     var splitFetcher: HttpSplitFetcherStub!
     var splitsStorage: SplitsStorageStub!
     var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
+    var generalInfoStorage: GeneralInfoStorageMock!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
     var splitsSyncWorker: PeriodicSplitsSyncWorker!
@@ -26,6 +27,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         splitFetcher = HttpSplitFetcherStub()
         splitsStorage = SplitsStorageStub()
         ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
+        generalInfoStorage = GeneralInfoStorageMock()
         splitChangeProcessor = SplitChangeProcessorStub()
         ruleBasedSegmentChangeProcessor = RuleBasedSegmentChangeProcessorStub()
         eventsManager = SplitEventsManagerMock()
@@ -39,6 +41,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         let timer = PeriodicTimerStub()
         splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
                                                     splitsStorage: splitsStorage,
+                                                    generalInfoStorage: generalInfoStorage,
                                                     ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                     splitChangeProcessor: splitChangeProcessor,
                                                     ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
@@ -62,6 +65,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         let timer = PeriodicTimerStub()
         splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
                                                     splitsStorage: splitsStorage,
+                                                    generalInfoStorage: generalInfoStorage,
                                                     ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                     splitChangeProcessor: splitChangeProcessor,
                                                     ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,

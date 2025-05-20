@@ -15,6 +15,7 @@ class SplitsSyncWorkerTest: XCTestCase {
 
     var splitFetcher: HttpSplitFetcherStub!
     var splitStorage: SplitsStorageStub!
+    var generalInfoStorage: GeneralInfoStorageMock!
     var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
     var splitChangeProcessor: SplitChangeProcessorStub!
     var ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessorStub!
@@ -25,6 +26,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     override func setUp() {
         splitFetcher = HttpSplitFetcherStub()
         splitStorage = SplitsStorageStub()
+        generalInfoStorage = GeneralInfoStorageMock()
         ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
         splitStorage.changeNumber = 100
         let _ = SplitChange(splits: [], since: splitStorage.changeNumber, till: splitStorage.changeNumber)
@@ -39,6 +41,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         // Cache expiration timestamp set to 0 (no clearing cache)
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
+                                                     generalInfoStorage: generalInfoStorage,
                                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
@@ -67,6 +70,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     func testRetryAndSuccess() {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
+                                                     generalInfoStorage: generalInfoStorage,
                                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
@@ -94,6 +98,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     func testStopNoSuccess() {
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
+                                                     generalInfoStorage: generalInfoStorage,
                                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
@@ -125,6 +130,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitFetcher.httpError = .uriTooLong
         splitsSyncWorker = RetryableSplitsSyncWorker(splitFetcher: splitFetcher,
                                                      splitsStorage: splitStorage,
+                                                     generalInfoStorage: generalInfoStorage,
                                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,

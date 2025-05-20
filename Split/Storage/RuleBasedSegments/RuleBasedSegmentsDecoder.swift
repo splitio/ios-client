@@ -30,7 +30,7 @@ class RuleBasedSegmentsSerialDecoder: RuleBasedSegmentsDecoder {
                 segments.append(segment)
             } catch {
                 Logger.e("Error while decoding rule based segment: \(error.localizedDescription)")
-                var segment = RuleBasedSegment(name: "unknown")
+                let segment = RuleBasedSegment(name: "unknown")
                 segment.isParsed = false
                 segment.json = jsonSegment
                 segments.append(segment)

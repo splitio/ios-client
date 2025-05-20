@@ -15,6 +15,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
 
     var splitFetcher: HttpSplitFetcherStub!
     var splitsStorage: SplitsStorageStub!
+    var generalInfoStorage: GeneralInfoStorageMock!
     var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
@@ -26,6 +27,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
             TargetingRulesChange(featureFlags: SplitChange(splits: [], since: 102, till: 102))
         ]
         splitsStorage = SplitsStorageStub()
+        generalInfoStorage = GeneralInfoStorageMock()
         ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
         _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [Split](),
                                                                    archivedSplits: [],
@@ -41,6 +43,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
                                                          splitsStorage: splitsStorage,
                                                          ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
+                                                         generalInfoStorage: generalInfoStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
                                                          ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
                                                          changeNumber: SplitsUpdateChangeNumber(flags: 101, rbs: nil),
@@ -67,6 +70,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
                                                          splitsStorage: splitsStorage,
                                                          ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
+                                                         generalInfoStorage: generalInfoStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
                                                          ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
                                                          changeNumber: SplitsUpdateChangeNumber(flags: 200, rbs: nil),
@@ -95,6 +99,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
                                                          splitsStorage: splitsStorage,
                                                          ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
+                                                         generalInfoStorage: generalInfoStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
                                                          ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
                                                          changeNumber: SplitsUpdateChangeNumber(flags: 200, rbs: nil),
@@ -125,6 +130,7 @@ class SplitsUpdateWorkerTest: XCTestCase {
         splitsUpdateWorker = RetryableSplitsUpdateWorker(splitsFetcher: splitFetcher,
                                                          splitsStorage: splitsStorage,
                                                          ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
+                                                         generalInfoStorage: generalInfoStorage,
                                                          splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
                                                          ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
                                                          changeNumber: SplitsUpdateChangeNumber(flags: 99, rbs: nil),

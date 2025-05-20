@@ -101,6 +101,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
         return RetryableSplitsSyncWorker(splitFetcher: apiFacade.splitsFetcher,
                                          splitsStorage: storageContainer.splitsStorage,
+                                         generalInfoStorage: storageContainer.generalInfoStorage,
                                          ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
                                          splitChangeProcessor: splitChangeProcessor,
                                          ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
@@ -114,6 +115,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         return RetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
                                            splitsStorage: storageContainer.splitsStorage,
                                            ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
+                                           generalInfoStorage: storageContainer.generalInfoStorage,
                                            splitChangeProcessor: splitChangeProcessor,
                                            ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                            changeNumber: changeNumber,
@@ -126,6 +128,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         
         return  PeriodicSplitsSyncWorker(
             splitFetcher: apiFacade.splitsFetcher, splitsStorage: storageContainer.splitsStorage,
+            generalInfoStorage: storageContainer.generalInfoStorage,
             ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
             splitChangeProcessor: splitChangeProcessor,
             ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,

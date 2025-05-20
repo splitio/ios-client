@@ -44,7 +44,6 @@ class OutdatedSplitProxyHandler {
 
     private let latestSpec: String
     private let previousSpec: String
-    private let forBackgroundSync: Bool
     private let proxyCheckIntervalMillis: Int64
     
     private var lastProxyCheckTimestamp: Int64 = 0
@@ -55,11 +54,10 @@ class OutdatedSplitProxyHandler {
     ///
     /// - Parameters:
     ///   - flagSpec: The latest spec version
-    ///   - forBackgroundSync: Whether this instance is for background sync
     ///   - generalInfoStorage: The general info storage
     ///   - proxyCheckIntervalMillis: The custom proxy check interval
-    convenience init(flagSpec: String, forBackgroundSync: Bool, generalInfoStorage: GeneralInfoStorage, proxyCheckIntervalMillis: Int64) {
-        self.init(flagSpec: flagSpec, previousSpec: OutdatedSplitProxyHandler.PREVIOUS_SPEC, forBackgroundSync: forBackgroundSync, generalInfoStorage: generalInfoStorage, proxyCheckIntervalMillis: proxyCheckIntervalMillis)
+    convenience init(flagSpec: String, generalInfoStorage: GeneralInfoStorage, proxyCheckIntervalMillis: Int64) {
+        self.init(flagSpec: flagSpec, previousSpec: OutdatedSplitProxyHandler.PREVIOUS_SPEC, generalInfoStorage: generalInfoStorage, proxyCheckIntervalMillis: proxyCheckIntervalMillis)
     }
 
     /// Initializes a new OutdatedSplitProxyHandler with custom previous spec.
@@ -67,35 +65,23 @@ class OutdatedSplitProxyHandler {
     /// - Parameters:
     ///   - flagSpec: The latest spec version
     ///   - previousSpec: The previous spec version
-    ///   - forBackgroundSync: Whether this instance is for background sync
     ///   - generalInfoStorage: The general info storage
     ///   - proxyCheckIntervalMillis: The custom proxy check interval
-    init(flagSpec: String, previousSpec: String, forBackgroundSync: Bool, generalInfoStorage: GeneralInfoStorage, proxyCheckIntervalMillis: Int64) {
+    init(flagSpec: String, previousSpec: String, generalInfoStorage: GeneralInfoStorage, proxyCheckIntervalMillis: Int64) {
         self.latestSpec = flagSpec
         self.previousSpec = previousSpec
-        self.forBackgroundSync = forBackgroundSync
         self.proxyCheckIntervalMillis = proxyCheckIntervalMillis
         self.generalInfoStorage = generalInfoStorage
     }
 
     /// Tracks a proxy error and updates the state machine accordingly.
     func trackProxyError() {
-        if forBackgroundSync {
-            Logger.i("Background sync fetch; skipping proxy handling")
-            updateHandlingType(.none)
-        } else {
-            updateLastProxyCheckTimestamp(Date.nowMillis())
-            updateHandlingType(.fallback)
-        }
+        updateLastProxyCheckTimestamp(Date.nowMillis())
+        updateHandlingType(.fallback)
     }
 
     /// Performs a periodic proxy check to attempt recovery.
     func performProxyCheck() {
-        if forBackgroundSync {
-            updateHandlingType(.none)
-            return
-        }
-
         let lastTimestamp = getLastProxyCheckTimestamp()
         
         if lastTimestamp == 0 {

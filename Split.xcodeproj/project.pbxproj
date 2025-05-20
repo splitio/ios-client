@@ -1103,6 +1103,7 @@
 		C53EDFC82DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFC72DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift */; };
 		C53EDFC92DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFC72DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift */; };
 		C53EDFCB2DD3E257000DCDBC /* OutdatedSplitProxyHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFCA2DD3E257000DCDBC /* OutdatedSplitProxyHandlerTests.swift */; };
+		C53EDFCD2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */; };
 		C53F3C472DCB956900655753 /* SplitsSyncHelperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F3C462DCB956900655753 /* SplitsSyncHelperTest.swift */; };
 		C53F3C4F2DCD112400655753 /* RuleBasedSegmentChangeProcessorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F3C4E2DCD110700655753 /* RuleBasedSegmentChangeProcessorStub.swift */; };
 		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
@@ -1974,6 +1975,7 @@
 		C53EDFC52DD3C53F000DCDBC /* SplitChangesErrorHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitChangesErrorHandlerTests.swift; sourceTree = "<group>"; };
 		C53EDFC72DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutdatedSplitProxyHandler.swift; sourceTree = "<group>"; };
 		C53EDFCA2DD3E257000DCDBC /* OutdatedSplitProxyHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutdatedSplitProxyHandlerTests.swift; sourceTree = "<group>"; };
+		C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsSyncHelperWithProxyHandlerTests.swift; sourceTree = "<group>"; };
 		C53F3C462DCB956900655753 /* SplitsSyncHelperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsSyncHelperTest.swift; sourceTree = "<group>"; };
 		C53F3C4E2DCD110700655753 /* RuleBasedSegmentChangeProcessorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentChangeProcessorStub.swift; sourceTree = "<group>"; };
 		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
@@ -2853,6 +2855,7 @@
 		592C6AA6211B6C99002D120C /* SplitTests */ = {
 			isa = PBXGroup;
 			children = (
+				C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */,
 				C53EDFCA2DD3E257000DCDBC /* OutdatedSplitProxyHandlerTests.swift */,
 				C53EDFC52DD3C53F000DCDBC /* SplitChangesErrorHandlerTests.swift */,
 				C53EDFC32DD3B73A000DCDBC /* RestClientCustomFailureHandlerTest.swift */,
@@ -4626,6 +4629,7 @@
 				957F8CF327BD3A41001FF7C2 /* StreamingNoReconectWhenPollingTest.swift in Sources */,
 				954F9C7025795CD300140B81 /* SplitsStorageStub.swift in Sources */,
 				594F5F532539E36400A945B4 /* StreamingMySegmentsSyncTest.swift in Sources */,
+				C53EDFCD2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift in Sources */,
 				9519A93427DBD38F00278AEC /* ByKeyMySegmentsStorageStub.swift in Sources */,
 				95B2498026F39C9B00B34507 /* MySegmentUpdateTest.swift in Sources */,
 				59F4AA9F24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift in Sources */,
