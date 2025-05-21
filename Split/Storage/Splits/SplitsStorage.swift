@@ -60,7 +60,7 @@ class DefaultSplitsStorage: SplitsStorage {
         guard let split = inMemorySplits.value(forKey: name.lowercased()) else {
             return nil
         }
-        if !split.isParsed {
+        if !split.isCompletelyParsed {
             if let parsed = try? Json.decodeFrom(json: split.json, to: Split.self) {
                 if isUnsupportedMatcher(split: parsed) {
                     parsed.conditions = [SplitHelper.createDefaultCondition()]

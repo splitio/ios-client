@@ -108,7 +108,7 @@ struct TestingHelper {
                             sets: Set<String>? = nil) -> Split {
 
         let split = Split(name: name, trafficType: trafficType, status: status, sets: sets, json: "")
-        split.isParsed = true
+        split.isCompletelyParsed = true
         return split
     }
 
@@ -116,7 +116,7 @@ struct TestingHelper {
         var splits = [Split]()
         for i in 0..<10 {
             let split = Split(name: "feat_\(i)", trafficType: "tt_\(i)", status: .active, sets: nil, json: "")
-            split.isParsed = true
+            split.isCompletelyParsed = true
             splits.append(split)
         }
         return splits
