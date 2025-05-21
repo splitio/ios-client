@@ -9,6 +9,16 @@
 import Foundation
 
 class StreamingIntegrationHelper {
+    static func ruleBasedSegmentUpdateMessage(timestamp: Int = 1000, changeNumber: Int = 1000, segmentData: String) -> String {
+        return """
+        id:cf74eb42-f687-48e4-ad18-af2125110aac
+        event:message
+        data:{"id":"VSEQrcq9D8:0:0","clientId":"NDEzMTY5Mzg0MA==:MjU4MzkwNDA2NA==","timestamp":$TIMESTAMP$,"encoding":"json","channel":"MzM5Njc0ODcyNg==_MTExMzgwNjgx_ruleBasedSegments","data":"{\"type\":\"RULE_BASED_SEGMENT_UPDATE\",\"changeNumber\":$CHANGE_NUMBER$,\"data\":$SEGMENT_DATA$}"}
+        """.replacingOccurrences(of: "$TIMESTAMP$", with: "\(timestamp)")
+            .replacingOccurrences(of: "$CHANGE_NUMBER$", with: "\(changeNumber)")
+            .replacingOccurrences(of: "$SEGMENT_DATA$", with: segmentData)
+    }
+
     static func splitUpdateMessage(timestamp: Int = 1000, changeNumber: Int = 1000) -> String {
         return """
         id:cf74eb42-f687-48e4-ad18-af2125110aac

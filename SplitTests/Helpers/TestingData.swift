@@ -382,4 +382,12 @@ struct TestingData {
 """
         return message
     }
+
+    static func rbsChange(changeNumber: Int64, previousChangeNumber: Int64, compressionType: Int, compressedPayload: String) -> String {
+        return """
+            id: 123123
+            event: message
+            data: {\"id\":\"1111\",\"clientId\":\"pri:ODc1NjQyNzY1\",\"timestamp\":\(Date.now()),\"encoding\":\"json\",\"channel\":\"xxxx_xxxx_flags\",\"data\":\"{\\\"type\\\":\\\"RB_SEGMENT_UPDATE\\\",\\\"changeNumber\\\":\(changeNumber),\\\"pcn\\\":\(previousChangeNumber),\\\"c\\\": \(compressionType),\\\"d\\\":\\\"\(compressedPayload)\\\"}\"}
+            """;
+    }
 }

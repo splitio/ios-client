@@ -10,7 +10,7 @@ import XCTest
 @testable import Split
 
 class SplitsSyncHelperWithProxyHandlerTests: XCTestCase {
-    
+
     private var splitFetcher: HttpSplitFetcherMock!
     private var splitsStorage: SplitsStorageStub!
     private var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
@@ -103,6 +103,7 @@ class SplitsSyncHelperWithProxyHandlerTests: XCTestCase {
     }
     
     func testBackgroundSyncAlwaysUsesLatestSpec() throws {
+        Spec.flagsSpec = "1.3"
         // Create a background sync helper with no proxy handler
         let bgSyncHelper = SplitsSyncHelper(
             splitFetcher: splitFetcher,
