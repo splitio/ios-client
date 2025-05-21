@@ -1,3 +1,6 @@
+3.2.0: (Apr 1, 2025)
+ - Added a new optional argument to the client `getTreatment` methods to allow passing additional evaluation options, such as a map of properties to append to the generated impressions sent to Split backend. Read more in our docs.
+
 3.1.1: (Feb 14, 2025)
 - Fixed issue when converting UInt32 to Int in 32 bit platforms.
 
