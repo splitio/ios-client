@@ -134,15 +134,9 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
         let allElements = testDatabase!.ruleBasedSegmentDao.getAll()
 
         XCTAssertEqual(2, allElements.count)
-        let names = allElements.map {
-            $0.name
-        }
-        XCTAssertTrue(names.count {
-            $0 == "rbs_test"
-        } == 1)
-        XCTAssertTrue(names.count {
-            $0 == "new_rbs_test"
-        } == 1)
+        let names = allElements.map { $0.name }
+        XCTAssertEqual(1, names.filter { $0 == "rbs_test" }.count)
+        XCTAssertEqual(1, names.filter { $0 == "new_rbs_test" }.count)
     }
 
     private func getReadyClient(key: Key? = nil) -> SplitClient? {
