@@ -134,7 +134,6 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
                 compressionUtil: self.decomProvider.decompressor(for: compressionType))
 
             if !allRuleBasedSegmentsExist(in: split) {
-                Logger.v("Not all referenced RBS exist")
                 return false
             }
 
