@@ -86,7 +86,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                              rolloutCacheConfiguration: rolloutCacheConfig,
                                                              storages: storageContainer.splitsStorage,
                                                                     storageContainer.mySegmentsStorage,
-                                                                    storageContainer.myLargeSegmentsStorage)
+                                                                    storageContainer.myLargeSegmentsStorage,
+                                                                    storageContainer.ruleBasedSegmentsStorage)
 
         defaultManager = try components.getSplitManager()
         _ = try components.buildRestClient(

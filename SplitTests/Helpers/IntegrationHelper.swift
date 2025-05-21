@@ -49,7 +49,7 @@ class IntegrationHelper {
     }
 
     static func emptySplitChanges(since: Int, till: Int) -> String {
-        return "{\"ff\": {\"d\":[], \"s\": \(since), \"t\": \(till) }, \"rbs\": {\"d\":[], \"s\": -1, \"t\": -1 }}"
+        return "{\"ff\": {\"d\":[], \"s\": \(since), \"t\": \(till) }, \"rbs\": {\"d\":[], \"s\": \(since), \"t\": \(till) }}"
     }
 
 
