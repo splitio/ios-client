@@ -25,6 +25,7 @@ class SplitDTO: NSObject, SplitBase, Codable {
     var configurations: [String: String]?
     var sets: Set<String>?
     var impressionsDisabled: Bool?
+    var preTrequisites: [String: [String]]?
 
     var json: String = ""
 
@@ -56,5 +57,6 @@ class SplitDTO: NSObject, SplitBase, Codable {
         case configurations
         case sets
         case impressionsDisabled
+        case preTrequisites
     }
 }

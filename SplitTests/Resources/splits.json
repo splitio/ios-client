@@ -1,6 +1,7 @@
  [{
   "trafficTypeName": "custom",
   "name": "SAMPLE_FEATURE0",
+  "ASDSAL":[],
   "trafficAllocation": 100,
   "trafficAllocationSeed": 1595297106,
   "seed": -1332540447,

@@ -27,6 +27,7 @@ class SplitTestHelper {
               {
               "trafficTypeName":"account",
               "name":"FACUNDO_TEST",
+              "prereKILSITS":0,
               "trafficAllocation":59,
               "trafficAllocationSeed":-2108186082,
               "seed":-1947050785,
