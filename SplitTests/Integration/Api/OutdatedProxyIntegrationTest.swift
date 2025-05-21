@@ -76,7 +76,7 @@ class OutdatedProxyIntegrationTest: XCTestCase {
             return TestStreamResponseBinding.createFor(request: request, code: 200)
         }
     }
-    
+
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
@@ -90,7 +90,7 @@ class OutdatedProxyIntegrationTest: XCTestCase {
                     let since = self.getSinceFromUri(request.url)
                     let body = (since == "-1") ?
                         IntegrationHelper.emptySplitChanges(since: 1506703262916, till: 1506703262916) :
-                        self.emptyTargetingRulesChanges(since: 1506703262916, till: -1)
+                        IntegrationHelper.emptySplitChanges(since: -1, till: 1506703262916)
                     
                     return TestDispatcherResponse(code: 200, data: Data(body.utf8))
                 }
@@ -133,12 +133,6 @@ class OutdatedProxyIntegrationTest: XCTestCase {
             return sinceValue
         }
         return "-1"
-    }
-    
-    private func emptyTargetingRulesChanges(since: Int64, till: Int64) -> String {
-        return """
-        {"ff":{"s":\(since),"t":\(till),"d":[]},"rbs":{"s":-1,"t":-1,"d":[]}}
-        """
     }
     
     private func getReadyClient() -> SplitClient? {

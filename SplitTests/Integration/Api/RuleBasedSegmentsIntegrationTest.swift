@@ -124,7 +124,7 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
     }
 
     private func referencedRbsTest(change: String) {
-        _ = client = getReadyClient()!
+        _ = getReadyClient()!
         sleep(2)
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
         streamingBinding?.push(message: change)
@@ -284,7 +284,7 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
         XCTAssertTrue(sdkUpdatedTriggered)
         XCTAssertTrue(containsExpectedContents)
     }
-    ©
+
     static func loadSplitChangeFile(sourceClass: Any, fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: sourceClass, name: fileName, type: "json"),
            let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
