@@ -56,6 +56,8 @@ class DefaultRestClient: SplitApiRestClient {
                     parameters: HttpParameters? = nil,
                     body: Data? = nil,
                     headers: HttpHeaders? = nil,
+                    customDecoder: ((Data) throws -> T)? = nil,
+                    customFailureHandler: ((Int) throws -> Error?)? = nil,
                     completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
 
         do {
@@ -73,13 +75,33 @@ class DefaultRestClient: SplitApiRestClient {
                 }
 
                 do {
-                    let parsedObject = try json.decode(T.self)
-                    completion(DataResult { return parsedObject })
+                    if let customDecoder = customDecoder {
+                        // Use the custom decoder if provided
+                        if let parsedObject = try json.decodeWith(customDecoder) {
+                            completion(DataResult { return parsedObject })
+                        } else {
+                            completion(DataResult { return nil })
+                        }
+                    } else {
+                        // Use the default decoder
+                        let parsedObject = try json.decode(T.self)
+                        completion(DataResult { return parsedObject })
+                    }
                 } catch {
                     completion(DataResult { throw error })
                 }
             case .failure:
                 completion(DataResult {
+                    // Use custom failure handler if provided
+                    if let customFailureHandler = customFailureHandler {
+                        // Use the custom handler if it returns a non-nil error
+                        if let customError = try customFailureHandler(response.code) {
+                            throw customError
+                        }
+                        // Otherwise, continue with default error handling
+                    }
+
+                    // Default error handling
                     if response.code == HttpCode.uriTooLong {
                         throw HttpError.uriTooLong
                     }

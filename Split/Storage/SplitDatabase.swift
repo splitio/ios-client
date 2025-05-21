@@ -58,6 +58,7 @@ protocol SplitDatabase {
     var generalInfoDao: GeneralInfoDao { get }
     var attributesDao: AttributesDao { get }
     var uniqueKeyDao: UniqueKeyDao { get }
+    var ruleBasedSegmentDao: RuleBasedSegmentDao { get }
 }
 
 class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
@@ -71,6 +72,7 @@ class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
     var generalInfoDao: GeneralInfoDao
     var attributesDao: AttributesDao
     var uniqueKeyDao: UniqueKeyDao
+    var ruleBasedSegmentDao: RuleBasedSegmentDao
 
     let coreDataHelper: CoreDataHelper
 
@@ -91,5 +93,6 @@ class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
         self.attributesDao = CoreDataAttributesDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.hashedImpressionDao = CoreDataHashedImpressionDao(coreDataHelper: coreDataHelper)
+        self.ruleBasedSegmentDao = CoreDataRuleBasedSegmentDao(coreDataHelper: coreDataHelper, cipher: cipher)
     }
 }

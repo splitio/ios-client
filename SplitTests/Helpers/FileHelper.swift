@@ -41,8 +41,8 @@ class FileHelper {
 
     static func loadSplitChangeFile(sourceClass: Any, fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: sourceClass, name: fileName, type: "json"),
-            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
-            return change
+           let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            return change.featureFlags
         }
         return nil
     }

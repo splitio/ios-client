@@ -25,7 +25,7 @@ protocol SyncWorkerFactory {
 
     func createPeriodicSplitsSyncWorker() -> PeriodicSyncWorker
 
-    func createRetryableSplitsUpdateWorker(changeNumber: Int64,
+    func createRetryableSplitsUpdateWorker(changeNumber: SplitsUpdateChangeNumber,
                                            reconnectBackoffCounter: ReconnectBackoffCounter
     ) -> RetryableSyncWorker
 
@@ -52,12 +52,23 @@ protocol SyncWorkerFactory {
     func createPeriodicTelemetryStatsRecorderWorker() -> PeriodicRecorderWorker?
 }
 
+struct SplitsUpdateChangeNumber: Hashable {
+    let flags: Int64?
+    let rbs: Int64?
+
+    init(flags: Int64?, rbs: Int64?) {
+        self.flags = flags
+        self.rbs = rbs
+    }
+}
+
 class DefaultSyncWorkerFactory: SyncWorkerFactory {
 
     private let storageContainer: SplitStorageContainer
     private let apiFacade: SplitApiFacade
     private let splitConfig: SplitClientConfig
     private let splitChangeProcessor: SplitChangeProcessor
+    private let ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor
     private let userKey: String
     private let eventsManager: SplitEventsManager
     private let splitsFilterQueryString: String
@@ -71,6 +82,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
          apiFacade: SplitApiFacade,
          storageContainer: SplitStorageContainer,
          splitChangeProcessor: SplitChangeProcessor,
+         ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor,
          eventsManager: SplitEventsManager) {
 
         self.userKey = userKey
@@ -80,6 +92,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         self.apiFacade = apiFacade
         self.storageContainer = storageContainer
         self.splitChangeProcessor = splitChangeProcessor
+        self.ruleBasedSegmentChangeProcessor = ruleBasedSegmentChangeProcessor
         self.eventsManager = eventsManager
         self.telemetryProducer = storageContainer.telemetryStorage
     }
@@ -88,21 +101,25 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
         return RetryableSplitsSyncWorker(splitFetcher: apiFacade.splitsFetcher,
                                          splitsStorage: storageContainer.splitsStorage,
+                                         generalInfoStorage: storageContainer.generalInfoStorage,
+                                         ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
                                          splitChangeProcessor: splitChangeProcessor,
-                                         cacheExpiration: splitConfig.cacheExpirationInSeconds,
-                                         defaultQueryString: splitsFilterQueryString,
-                                         flagsSpec: flagsSpec,
+                                         ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                          eventsManager: eventsManager,
                                          reconnectBackoffCounter: backoffCounter,
                                          splitConfig: splitConfig)
     }
 
-    func createRetryableSplitsUpdateWorker(changeNumber: Int64,
+    func createRetryableSplitsUpdateWorker(changeNumber: SplitsUpdateChangeNumber,
                                            reconnectBackoffCounter: ReconnectBackoffCounter) -> RetryableSyncWorker {
         return RetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
                                            splitsStorage: storageContainer.splitsStorage,
+                                           ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
+                                           generalInfoStorage: storageContainer.generalInfoStorage,
                                            splitChangeProcessor: splitChangeProcessor,
-                                           changeNumber: changeNumber, eventsManager: eventsManager,
+                                           ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
+                                           changeNumber: changeNumber,
+                                           eventsManager: eventsManager,
                                            reconnectBackoffCounter: reconnectBackoffCounter,
                                            splitConfig: splitConfig)
     }
@@ -111,7 +128,10 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
         
         return  PeriodicSplitsSyncWorker(
             splitFetcher: apiFacade.splitsFetcher, splitsStorage: storageContainer.splitsStorage,
+            generalInfoStorage: storageContainer.generalInfoStorage,
+            ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
             splitChangeProcessor: splitChangeProcessor,
+            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
             timer: DefaultPeriodicTimer(interval: splitConfig.featuresRefreshRate),
             eventsManager: eventsManager, splitConfig: splitConfig)
     }

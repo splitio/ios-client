@@ -11,8 +11,8 @@ import XCTest
 
 protocol RestClientTest {
     func update(segments: [AllSegmentsChange]?)
-    func update(change: SplitChange?)
-    func update(changes: [SplitChange])
+    func update(change: TargetingRulesChange?)
+    func update(changes: [TargetingRulesChange])
     func update(response: SseAuthenticationResponse?)
     func updateFailedSseAuth(error: Error)
 }
@@ -21,7 +21,7 @@ class RestClientStub: SplitApiRestClient {
     private var sseAuthResult: DataResult<SseAuthenticationResponse>?
     private var segments: [AllSegmentsChange]?
     private var largeSegments: [SegmentChange]?
-    private var splitChanges: [SplitChange] = []
+    private var splitChanges: [TargetingRulesChange] = []
     private var sendTrackEventsCount = 0
     private var sendImpressionsCount = 0
     private var sendImpressionsCountCount = 0
@@ -55,18 +55,24 @@ extension RestClientStub: RestClient {
 }
 
 extension RestClientStub: RestClientSplitChanges {
-    func getSplitChanges(since: Int64, till: Int64?, headers: HttpHeaders?, completion: @escaping (DataResult<SplitChange>) -> Void) {
+    func getSplitChanges(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders?, spec: String = Spec.flagsSpec, completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
         if splitChanges.count == 0 {
             completion(DataResult.success(value: nil))
             return
         }
+
+        let rbSince = rbSince ?? -1
         let hit = splitChangeHitIndex
         splitChangeHitIndex += 1
         if hit <= splitChanges.count - 1 {
-            completion(DataResult.success(value: splitChanges[hit]))
+            let splitChange = splitChanges[hit]
+            let targetingRulesChange = splitChange
+            completion(DataResult.success(value: targetingRulesChange))
             return
         }
-        completion(DataResult.success(value: splitChanges[splitChanges.count - 1]))
+
+        let splitChange = splitChanges[splitChanges.count - 1]
+        completion(DataResult.success(value: splitChange))
     }
 }
 
@@ -136,7 +142,7 @@ extension RestClientStub: RestClientUniqueKeys {
 }
 
 extension RestClientStub: RestClientTest {
-    func update(changes: [SplitChange]) {
+    func update(changes: [TargetingRulesChange]) {
         self.splitChanges = changes
     }
     
@@ -148,7 +154,7 @@ extension RestClientStub: RestClientTest {
         self.largeSegments = largeSegments
     }   
 
-    func update(change: SplitChange?) {
+    func update(change: TargetingRulesChange?) {
         if let change = change {
             self.splitChanges.append(change)
             

@@ -45,38 +45,37 @@ class BackgroundMySegmentsSyncWorker: BackgroundSyncWorker {
 class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
 
     private let splitFetcher: HttpSplitFetcher
-    private let splitsStorage: BackgroundSyncSplitsStorage
     private let persistenSplitsStorage: PersistentSplitsStorage
+    private let persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let cacheExpiration: Int64
     private let syncHelper: SplitsSyncHelper
 
     init(splitFetcher: HttpSplitFetcher,
          persistentSplitsStorage: PersistentSplitsStorage,
+         persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
+         ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
          cacheExpiration: Int64,
          splitConfig: SplitClientConfig) {
 
         self.persistenSplitsStorage = persistentSplitsStorage
+        self.persistentRuleBasedSegmentsStorage = persistentRuleBasedSegmentsStorage
         self.splitFetcher = splitFetcher
-        self.splitsStorage = BackgroundSyncSplitsStorage(persistentSplitsStorage: persistentSplitsStorage)
         self.splitChangeProcessor = splitChangeProcessor
         self.cacheExpiration = cacheExpiration
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
-                                           splitsStorage: splitsStorage,
+                                           splitsStorage: BackgroundSyncSplitsStorage(persistentSplitsStorage: persistentSplitsStorage),
+                                           ruleBasedSegmentsStorage: DefaultRuleBasedSegmentsStorage(persistentStorage: persistentRuleBasedSegmentsStorage),
                                            splitChangeProcessor: splitChangeProcessor,
+                                           ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor,
+                                           generalInfoStorage: nil, // Pass nil to disable proxy handling for background sync
                                            splitConfig: splitConfig)
     }
 
     func execute() {
-        var changeNumber = persistenSplitsStorage.getChangeNumber()
-        var clearCache = false
-        if syncHelper.cacheHasExpired(storedChangeNumber: changeNumber,
-                                      updateTimestamp: persistenSplitsStorage.getUpdateTimestamp(),
-                                      cacheExpirationInSeconds: cacheExpiration) {
-                changeNumber = -1
-                clearCache = true
-        }
-        _ = try? syncHelper.sync(since: changeNumber, clearBeforeUpdate: clearCache)
+        let changeNumber = persistenSplitsStorage.getChangeNumber()
+        let rbChangeNumber = persistentRuleBasedSegmentsStorage.getChangeNumber()
+        _ = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
     }
 }

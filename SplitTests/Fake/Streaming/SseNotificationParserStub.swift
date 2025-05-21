@@ -13,7 +13,8 @@ class SseNotificationParserStub: SseNotificationParser {
 
 
     var incomingNotification: IncomingNotification?
-    var splitsUpdateNotification: SplitsUpdateNotification?
+    var splitsUpdateNotification: TargetingRuleUpdateNotification?
+    var ruleBasedSegmentUpdateNotification: TargetingRuleUpdateNotification?
     var splitKillNotification: SplitKillNotification?
     var membershipsUpdateNotification: MembershipsUpdateNotification?
     var occupancyNotification: OccupancyNotification?
@@ -25,8 +26,12 @@ class SseNotificationParserStub: SseNotificationParser {
         return incomingNotification
     }
 
-    func parseSplitUpdate(jsonString: String) throws -> SplitsUpdateNotification {
-        return splitsUpdateNotification!
+    func parseTargetingRuleNotification(jsonString: String, type: NotificationType) throws -> TargetingRuleUpdateNotification {
+        if type == .splitUpdate {
+            return splitsUpdateNotification!
+        } else {
+            return ruleBasedSegmentUpdateNotification!
+        }
     }
 
     func parseSplitKill(jsonString: String) throws -> SplitKillNotification {

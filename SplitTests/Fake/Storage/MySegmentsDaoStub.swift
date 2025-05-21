@@ -11,11 +11,16 @@ import Foundation
 
 class MySegmentsDaoStub: MySegmentsDao {
     var segments =  [String: SegmentChange]()
+    var deleteAllCalled = false
     func getBy(userKey: String) -> SegmentChange? {
         return segments[userKey]
     }
     
     func update(userKey: String, change: SegmentChange) {
         segments[userKey] = change
+    }
+
+    func deleteAll() {
+        deleteAllCalled = true
     }
 }

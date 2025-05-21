@@ -41,12 +41,14 @@ class SplitChangesServerErrorTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
 
-        let respData = responseSlitChanges()
+        let respData = responseSplitChanges()
         var responses = [TestDispatcherResponse]()
-        responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(respData[0]).utf8)))
+        responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(
+            TargetingRulesChange(featureFlags: respData[0], ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))).utf8)))
         responses.append(TestDispatcherResponse(code: 500))
         responses.append(TestDispatcherResponse(code: 500))
-        responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(respData[1]).utf8)))
+        responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(
+            TargetingRulesChange(featureFlags: respData[1], ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))).utf8)))
 
 
         return { request in
@@ -148,7 +150,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         factory = nil
     }
 
-    private func  responseSlitChanges() -> [SplitChange] {
+    private func  responseSplitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
 
         for i in 0..<2 {

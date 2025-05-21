@@ -13,6 +13,7 @@ enum MatcherType: String, Codable {
     case allKeys = "ALL_KEYS"
     case inSegment = "IN_SEGMENT"
     case inLargeSegment = "IN_LARGE_SEGMENT"
+    case inRuleBasedSegment = "IN_RULE_BASED_SEGMENT"
     case whitelist = "WHITELIST"
 
     /* Numeric Matcher */

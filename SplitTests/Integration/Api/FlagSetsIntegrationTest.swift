@@ -20,7 +20,7 @@ class FlagSetsIntegrationTests: XCTestCase {
     let matchingKey = IntegrationHelper.dummyUserKey
     let trafficType = "account"
     let kNeverRefreshRate = 9999999
-    var splitChange: SplitChange?
+    var splitChange: TargetingRulesChange?
     var testDb: SplitDatabase!
 
     var querystring = ""
@@ -166,7 +166,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         try bodyTest(syncConfig: syncConfig)
 
-        XCTAssertEqual("since=-1&sets=set_2,set_3,set_ww,set_x", querystring)
+        XCTAssertEqual("since=-1&rbSince=-1&sets=set_2,set_3,set_ww,set_x", querystring)
     }
 
     func testInitialQuerystringWithSpec() throws {
@@ -178,7 +178,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         try bodyTest(syncConfig: syncConfig)
 
-        XCTAssertEqual("s=1.1&since=-1&sets=set_2,set_3,set_ww,set_x", querystring)
+        XCTAssertEqual("s=1.1&since=-1&rbSince=-1&sets=set_2,set_3,set_ww,set_x", querystring)
     }
 
     func testTotalAndInvalidFlagSetsTelemetry() throws {
@@ -193,7 +193,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         wait(for: [telemetryConfigExp!], timeout: 3)
 
-        XCTAssertEqual("since=-1&sets=a,c,d", querystring)
+        XCTAssertEqual("since=-1&rbSince=-1&sets=a,c,d", querystring)
         XCTAssertEqual(7, telemetryConfigSent?.flagSetsTotal ?? -1)
         XCTAssertEqual(4, telemetryConfigSent?.flagSetsInvalid ?? -1)
     }
@@ -223,7 +223,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         destroyTest(client: client)
 
-        XCTAssertEqual("since=-1&sets=c,nset1,nset2,set1,set10,set2,set20", querystring)
+        XCTAssertEqual("since=-1&rbSince=-1&sets=c,nset1,nset2,set1,set10,set2,set20", querystring)
         XCTAssertEqual(expLatencies, telemetryStatsSent?.methodLatencies?.treatmentsByFlagSet ?? [])
         XCTAssertEqual(expLatencies, telemetryStatsSent?.methodLatencies?.treatmentsByFlagSets ?? [])
         XCTAssertEqual(expLatencies, telemetryStatsSent?.methodLatencies?.treatmentsWithConfigByFlagSet ?? [])
@@ -825,10 +825,11 @@ class FlagSetsIntegrationTests: XCTestCase {
         semaphore.wait()
     }
 
-    private func loadSplitsChangeFile() -> SplitChange? {
-        let change = loadSplitChangeFile(name: "splitchanges_1")
+    private func loadSplitsChangeFile() -> TargetingRulesChange? {
+        let targetingRulesChange = loadSplitChangeFile(name: "splitchanges_1")
+        let change = targetingRulesChange?.featureFlags
         change?.since = change?.till ?? -1
-        return change
+        return TargetingRulesChange(featureFlags: change!, ruleBasedSegments: targetingRulesChange!.ruleBasedSegments)
     }
 
     private func getChangeFlagSetsJson(since: Int64,
@@ -886,9 +887,9 @@ class FlagSetsIntegrationTests: XCTestCase {
         }
     }
 
-    private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
+    private func loadSplitChangeFile(name fileName: String) -> TargetingRulesChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
+           let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
             return change
         }
         return nil

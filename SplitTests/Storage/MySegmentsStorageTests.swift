@@ -119,7 +119,39 @@ class MySegmentsStorageTests: XCTestCase {
 
         XCTAssertEqual(-1, cn1)
         XCTAssertEqual(-1, cn2)
-
     }
 
+    func testClearAll() {
+        let otherKey = "otherKey"
+        persistentStorage.persistedSegments = [userKey : dummySegments,
+                                               otherKey: SegmentChange(segments: ["s1"], changeNumber: 44)
+        ]
+        mySegmentsStorage.loadLocal(forKey: userKey)
+        mySegmentsStorage.loadLocal(forKey: otherKey)
+
+        let changeNum = mySegmentsStorage.changeNumber(forKey: userKey)
+        let segments = mySegmentsStorage.getAll(forKey: userKey)
+        let otherChangeNum = mySegmentsStorage.changeNumber(forKey: otherKey)
+        let otherSegments = mySegmentsStorage.getAll(forKey: otherKey)
+
+        mySegmentsStorage.clear()
+
+        let newChangeNum = mySegmentsStorage.changeNumber(forKey: userKey)
+        let newSegments = mySegmentsStorage.getAll(forKey: userKey)
+        let newOtherChangeNum = mySegmentsStorage.changeNumber(forKey: otherKey)
+        let newOtherSegments = mySegmentsStorage.getAll(forKey: otherKey)
+
+        // for now, CN is always -1 for regular my segments
+        XCTAssertEqual(-1, changeNum)
+        XCTAssertEqual(3, segments.count)
+        XCTAssertTrue(segments.contains("s1"))
+        XCTAssertTrue(segments.contains("s3"))
+        XCTAssertEqual(-1, otherChangeNum)
+        XCTAssertEqual(1, otherSegments.count)
+        XCTAssertTrue(otherSegments.contains("s1"))
+        XCTAssertEqual(newChangeNum, -1)
+        XCTAssertEqual(newSegments.count, 0)
+        XCTAssertEqual(newOtherChangeNum, -1)
+        XCTAssertEqual(newOtherSegments.count, 0)
+    }
 }

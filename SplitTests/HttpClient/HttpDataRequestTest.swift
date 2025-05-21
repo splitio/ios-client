@@ -62,7 +62,7 @@ class HttpDataRequestTest: XCTestCase {
         // so, we test that closure are called on that scenario having
         // the corresponding received data
         var responseIsSuccess = false
-        let textData = "{\"splits\":[], \"since\":1, \"till\":2}"
+        let textData = "{\"d\":[], \"s\":1, \"t\":2}"
         var receivedData: SplitChange? = nil
         let onCloseExpectation = XCTestExpectation(description: "complete request")
         let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
