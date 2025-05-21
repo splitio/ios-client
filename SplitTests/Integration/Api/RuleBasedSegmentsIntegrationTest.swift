@@ -34,11 +34,13 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
     var authRequestUrl: String = ""
     var targetingRulesChange: String!
     var testDatabase: SplitDatabase?
-    
+    var useEmptySegments: Bool = true
+
     override func setUp() {
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
+        useEmptySegments = true
         targetingRulesChange = nil
         authRequestUrl = ""
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
@@ -66,14 +68,7 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
         processUpdate(client: client!, change: rbsChangeZLib, expectedContents: "rbs_test")
     }
 
-    func testReferencedRuleBasedSegmentNotPresentTriggersFetch() {
-        let data = "eyJuYW1lIjoicmJzX3Rlc3QiLCJzdGF0dXMiOiJBQ1RJVkUiLCJ0cmFmZmljVHlwZU5hbWUiOiJ1c2VyIiwiZXhjbHVkZWQiOnsia2V5cyI6W10sInNlZ21lbnRzIjpbXX0sImNvbmRpdGlvbnMiOlt7ImNvbmRpdGlvblR5cGUiOiJST0xMT1VUIiwibWF0Y2hlckdyb3VwIjp7ImNvbWJpbmVyIjoiQU5EIiwibWF0Y2hlcnMiOlt7ImtleVNlbGVjdG9yIjp7InRyYWZmaWNUeXBlIjoidXNlciJ9LCJtYXRjaGVyVHlwZSI6IklOX1JVTEVfQkFTRURfU0VHTUVOVCIsIm5lZ2F0ZSI6ZmFsc2UsInVzZXJEZWZpbmVkU2VnbWVudE1hdGNoZXJEYXRhIjp7InNlZ21lbnROYW1lIjoibmV3X3Jic190ZXN0In19XX19XX0="
-        targetingRulesChange = RuleBasedSegmentsIntegrationTest.splitChangeWithReferencedRbs(flagSince: 3, rbsSince: 3)
-        referencedRbsTest(change: RuleBasedSegmentsIntegrationTest.rbsChangeInternal(changeNumber: "4", previousChangeNumber: "4", compressionType: "0", compressedPayload: data))
-    }
-    
     func testEvaluation() {
-        // Prepare: inject a custom split changes response (inline or load from file)
         let splitChangesJson = IntegrationHelper.loadSplitChangeFileJson(name: "split_changes_rbs", sourceClass: IntegrationHelper())
         targetingRulesChange = splitChangesJson
 
@@ -89,30 +84,69 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
         XCTAssertEqual("on", treatment)
     }
 
-    private func referencedRbsTest(change: String) {
-        let client = getReadyClient()!
-        sleep(1)
-        let sdkUpdateExpectation = XCTestExpectation(description: "SDK_UPDATE received")
-        var sdkUpdatedTriggered = false
-
-        client.on(event: SplitEvent.sdkUpdated) {
-            sdkUpdatedTriggered = true
-            sdkUpdateExpectation.fulfill()
-        }
-        
-        targetingRulesChange = RuleBasedSegmentsIntegrationTest.splitChangeWithReferencedRbs(flagSince: 5, rbsSince: 5)
-        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
-        streamingBinding?.push(message: change)
-        wait(for: [sdkUpdateExpectation], timeout: 10)
-
-        XCTAssertTrue(sdkUpdatedTriggered)
-        let allElements = testDatabase!.ruleBasedSegmentDao.getAll()
-        
-        XCTAssertEqual(2, allElements.count)
+    func testReferencedRuleBasedSegmentNotPresentTriggersFetch() {
+        let data = "eyJuYW1lIjoicmJzX3Rlc3QiLCJzdGF0dXMiOiJBQ1RJVkUiLCJ0cmFmZmljVHlwZU5hbWUiOiJ1c2VyIiwiZXhjbHVkZWQiOnsia2V5cyI6W10sInNlZ21lbnRzIjpbXX0sImNvbmRpdGlvbnMiOlt7ImNvbmRpdGlvblR5cGUiOiJST0xMT1VUIiwibWF0Y2hlckdyb3VwIjp7ImNvbWJpbmVyIjoiQU5EIiwibWF0Y2hlcnMiOlt7ImtleVNlbGVjdG9yIjp7InRyYWZmaWNUeXBlIjoidXNlciJ9LCJtYXRjaGVyVHlwZSI6IklOX1JVTEVfQkFTRURfU0VHTUVOVCIsIm5lZ2F0ZSI6ZmFsc2UsInVzZXJEZWZpbmVkU2VnbWVudE1hdGNoZXJEYXRhIjp7InNlZ21lbnROYW1lIjoibmV3X3Jic190ZXN0In19XX19XX0="
+        targetingRulesChange = RuleBasedSegmentsIntegrationTest.splitChangeWithReferencedRbs(flagSince: 3, rbsSince: 3)
+        referencedRbsTest(change: RuleBasedSegmentsIntegrationTest.rbsChangeInternal(changeNumber: "4", previousChangeNumber: "4", compressionType: "0", compressedPayload: data))
     }
 
-    private func getReadyClient() -> SplitClient? {
-        
+    func testEvaluationWithExcludedSegment() {
+        // Load split changes with rule-based segments
+        let splitChangesJson = IntegrationHelper.loadSplitChangeFileJson(name: "split_changes_rbs", sourceClass: IntegrationHelper())
+        targetingRulesChange = splitChangesJson
+        useEmptySegments = false
+
+        // Get a ready client
+        let client = getReadyClient()
+        XCTAssertNotNil(client, "Client not ready")
+
+        // Test that a user in an excluded segment gets the "off" treatment
+        let attributes: [String: Any] = ["email": "test@split.io"]
+        let treatment = client!.getTreatment("rbs_split", attributes: attributes)
+        XCTAssertEqual("off", treatment)
+    }
+
+    func testEvaluationWithExcludedKey() {
+        let matchingKey = "key22"
+        let excludedKey = Key(matchingKey: matchingKey)
+
+        let splitChangesJson = IntegrationHelper.loadSplitChangeFileJson(name: "split_changes_rbs", sourceClass: IntegrationHelper())
+        targetingRulesChange = splitChangesJson
+
+        // Get a ready client with the excluded key
+        let client = getReadyClient(key: excludedKey)
+        XCTAssertNotNil(client, "Client not ready")
+
+        // Test that the excluded key gets the "off" treatment
+        let attributes: [String: Any] = ["email": "test@split.io"]
+        let treatment = client!.getTreatment("rbs_split", attributes: attributes)
+        XCTAssertEqual("off", treatment)
+    }
+
+    private func referencedRbsTest(change: String) {
+        _ = client = getReadyClient()!
+        sleep(2)
+        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
+        streamingBinding?.push(message: change)
+
+        targetingRulesChange = RuleBasedSegmentsIntegrationTest.splitChangeWithReferencedRbs(flagSince: 5, rbsSince: 5)
+
+        let allElements = testDatabase!.ruleBasedSegmentDao.getAll()
+
+        XCTAssertEqual(2, allElements.count)
+        let names = allElements.map {
+            $0.name
+        }
+        XCTAssertTrue(names.count {
+            $0 == "rbs_test"
+        } == 1)
+        XCTAssertTrue(names.count {
+            $0 == "new_rbs_test"
+        } == 1)
+    }
+
+    private func getReadyClient(key: Key? = nil) -> SplitClient? {
+
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 30
         splitConfig.segmentsRefreshRate = 30
@@ -122,41 +156,40 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
         splitConfig.eventsQueueSize = 100
         splitConfig.eventsPushRate = 5
         splitConfig.logLevel = .verbose
-        
-        let key: Key = Key(matchingKey: userKey)
+
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
         _ = builder.setTestDatabase(testDatabase!)
-        let factory = builder.setApiKey(apiKey).setKey(key)
+        let factory = builder.setApiKey(apiKey).setKey(key ?? Key(matchingKey: userKey))
             .setConfig(splitConfig).build()!
-        
+
         let client = factory.client
-        
+
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         var timeOutFired = false
         var sdkReadyFired = false
-        
+
         client.on(event: SplitEvent.sdkReady) {
             sdkReadyFired = true
             sdkReadyExpectation.fulfill()
         }
-        
+
         client.on(event: SplitEvent.sdkReadyTimedOut) {
             timeOutFired = true
             sdkReadyExpectation.fulfill()
         }
-        
+
         wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
 
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertTrue(isSseAuthHit)
         XCTAssertTrue(isSseHit)
-        
+
         return client
     }
-    
+
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
@@ -166,7 +199,10 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 1, till: 1).utf8))
             }
             if request.isMySegmentsEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+                if self.useEmptySegments {
+                    return TestDispatcherResponse(code:200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+                }
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.mySegments(names: ["segment_test"]).utf8))
             }
             if request.isAuthEndpoint() {
                 let urlString = request.url.absoluteString
@@ -177,7 +213,7 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
             return TestDispatcherResponse(code: 500)
         }
     }
-    
+
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.isSseHit = true
@@ -186,7 +222,7 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
             return self.streamingBinding!
         }
     }
-    
+
     static func rbsChange(changeNumber: String, previousChangeNumber: String, compressionType: String, compressedPayload: String) -> String {
         let timestamp = Int64(Date().timeIntervalSince1970 * 1000)
         return """
@@ -196,7 +232,7 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
         
         """
     }
-    
+
     static func splitChangeWithReferencedRbs(flagSince: Int64, rbsSince: Int64) -> String {
         return """
         {"ff":{"s":\(flagSince),"t":\(flagSince),"d":[]},"rbs":{"s":\(rbsSince),"t":\(rbsSince),"d":[{"name":"new_rbs_test","status":"ACTIVE","trafficTypeName":"user","excluded":{"keys":[],"segments":[]},"conditions":[{"matcherGroup":{"combiner":"AND","matchers":[{"keySelector":{"trafficType":"user"},"matcherType":"WHITELIST","negate":false,"whitelistMatcherData":{"whitelist":["mdp","tandil","bsas"]}},{"keySelector":{"trafficType":"user","attribute":"email"},"matcherType":"ENDS_WITH","negate":false,"whitelistMatcherData":{"whitelist":["@split.io"]}}]}}]},{"name":"rbs_test","status":"ACTIVE","trafficTypeName":"user","excluded":{"keys":[],"segments":[]},"conditions":[{"conditionType":"ROLLOUT","matcherGroup":{"combiner":"AND","matchers":[{"keySelector":{"trafficType":"user"},"matcherType":"IN_RULE_BASED_SEGMENT","negate":false,"userDefinedSegmentMatcherData":{"segmentName":"new_rbs_test"}}]}}]}]}}
@@ -210,11 +246,11 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
     static func rbsChangeGZip(changeNumber: String, previousChangeNumber: String, compressedPayload: String) -> String {
         return rbsChangeInternal(changeNumber: changeNumber, previousChangeNumber: previousChangeNumber, compressionType: "1", compressedPayload: compressedPayload)
     }
-    
+
     static func rbsChangeZlib(changeNumber: String, previousChangeNumber: String, compressedPayload: String) -> String {
         return rbsChangeInternal(changeNumber: changeNumber, previousChangeNumber: previousChangeNumber, compressionType: "2", compressedPayload: compressedPayload)
     }
-    
+
     static func rbsChangeInternal(changeNumber: String, previousChangeNumber: String, compressionType: String, compressedPayload: String) -> String {
         let timestamp = Date.now()
         return """
@@ -223,7 +259,7 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
         data: {\"id\":\"1111\",\"clientId\":\"pri:ODc1NjQyNzY1\",\"timestamp\":\(timestamp),\"encoding\":\"json\",\"channel\":\"xxxx_xxxx_flags\",\"data\":\"{\\\"type\\\":\\\"RB_SEGMENT_UPDATE\\\",\\\"changeNumber\\\":\(changeNumber),\\\"pcn\\\":\(previousChangeNumber),\\\"c\\\":\(compressionType),\\\"d\\\":\\\"\(compressedPayload)\\\"}\"}\n\n"
     """
     }
-    
+
     private func processUpdate(
         client: SplitClient,
         change: String,
@@ -248,7 +284,7 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
         XCTAssertTrue(sdkUpdatedTriggered)
         XCTAssertTrue(containsExpectedContents)
     }
-
+    ©
     static func loadSplitChangeFile(sourceClass: Any, fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: sourceClass, name: fileName, type: "json"),
            let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
