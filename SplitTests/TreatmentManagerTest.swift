@@ -22,6 +22,7 @@ class TreatmentManagerTest: XCTestCase {
     var impressionsLogger: ImpressionsLoggerStub!
     var telemetryProducer: TelemetryStorageStub!
     var flagSetsCache: FlagSetsCacheMock!
+    var propertyValidator: PropertyValidatorStub!
 
     var validationLoggerStub: ValidationMessageLoggerStub {
         return validationLogger as! ValidationMessageLoggerStub
@@ -34,6 +35,7 @@ class TreatmentManagerTest: XCTestCase {
         attributesStorage = DefaultAttributesStorage()
         telemetryProducer = TelemetryStorageStub()
         flagSetsCache = FlagSetsCacheMock()
+        propertyValidator = PropertyValidatorStub()
 
         flagSetsCache.flagSets = ["set1": ["TEST_SETS_1"],
                                   "set2": ["TEST_SETS_1", "TEST_SETS_2"],
@@ -402,6 +404,94 @@ class TreatmentManagerTest: XCTestCase {
         XCTAssertEqual(1, telemetryProducer.methodLatencies[.treatmentsWithConfig])
     }
 
+    func testEvaluationWithProperties() {
+        let matchingKey = "the_key"
+        let splitName = "FACUNDO_TEST"
+        let properties = ["key1": "value1", "key2": 123, "key3": true] as [String: Any]
+        let evaluationOptions = EvaluationOptions(properties: properties)
+
+        let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
+        _ = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil, evaluationOptions: evaluationOptions)
+        let impression = impressionsLogger.impressions[splitName]
+
+        XCTAssertNotNil(impression)
+        XCTAssertNotNil(impression?.properties)
+
+        if let propertiesJson = impression?.properties, let data = propertiesJson.data(using: .utf8) {
+            do {
+                let deserializedProperties = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                XCTAssertNotNil(deserializedProperties)
+                XCTAssertEqual(deserializedProperties?["key1"] as? String, "value1")
+                XCTAssertEqual(deserializedProperties?["key2"] as? Int, 123)
+                XCTAssertEqual(deserializedProperties?["key3"] as? Bool, true)
+            } catch {
+                XCTFail("Failed to deserialize properties JSON: \(error)")
+            }
+        } else {
+            XCTFail("Properties JSON is nil or invalid")
+        }
+    }
+
+    func testEvaluationWithEmptyProperties() {
+        let matchingKey = "the_key"
+        let splitName = "FACUNDO_TEST"
+        let emptyProperties = [String: Any]()
+        let evaluationOptions = EvaluationOptions(properties: emptyProperties)
+
+        let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
+        _ = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil, evaluationOptions: evaluationOptions)
+        let impression = impressionsLogger.impressions[splitName]
+
+        XCTAssertNotNil(impression)
+        XCTAssertNil(impression?.properties, "Empty properties should result in nil properties in the impression")
+    }
+
+    func testEvaluationWithNilProperties() {
+        let matchingKey = "the_key"
+        let splitName = "FACUNDO_TEST"
+        let evaluationOptions = EvaluationOptions(properties: nil)
+
+        let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
+        _ = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil, evaluationOptions: evaluationOptions)
+        let impression = impressionsLogger.impressions[splitName]
+
+        XCTAssertNotNil(impression)
+        XCTAssertNil(impression?.properties, "Nil properties should result in nil properties in the impression")
+    }
+
+    func testPropertiesAreSentToValidator() {
+        let matchingKey = "the_key"
+        let splitName = "Test_Save_1"
+        
+        let treatmentManager = createTreatmentManager(matchingKey: matchingKey)
+        
+        let properties: [String: Any] = [
+            "string": "test",
+            "number": 123,
+            "boolean": true
+        ]
+        
+        let evaluationOptions = EvaluationOptions(properties: properties)
+        
+        propertyValidator.validateCalled = false
+        propertyValidator.lastPropertiesValidated = nil
+        
+        _ = treatmentManager.getTreatmentWithConfig(splitName, attributes: nil, evaluationOptions: evaluationOptions)
+        
+        XCTAssertTrue(propertyValidator.validateCalled, "PropertyValidator.validate() should be called")
+        XCTAssertNotNil(propertyValidator.lastPropertiesValidated, "Properties should be passed to the validator")
+        
+        if let validatedProps = propertyValidator.lastPropertiesValidated {
+            XCTAssertEqual(validatedProps["string"] as? String, "test")
+            XCTAssertEqual(validatedProps["number"] as? Int, 123)
+            XCTAssertEqual(validatedProps["boolean"] as? Bool, true)
+        }
+        
+        let impression = impressionsLogger.impressions[splitName]
+        XCTAssertNotNil(impression, "Impression should be logged")
+        XCTAssertNotNil(impression?.properties, "Properties should be included in the impression")
+    }
+
     func assertControl(splitList: [String], treatment: String, treatmentList: [String:String], splitResult: SplitResult?, splitResultList: [String:SplitResult]) {
         XCTAssertEqual(SplitConstants.control, treatment)
 
@@ -417,7 +507,7 @@ class TreatmentManagerTest: XCTestCase {
         }
     }
 
-    func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil, evaluator: Evaluator? = nil) -> TreatmentManager {
+    func createTreatmentManager(matchingKey: String, bucketingKey: String? = nil, evaluator: Evaluator? = nil) -> DefaultTreatmentManager {
         let key = Key(matchingKey: matchingKey, bucketingKey: bucketingKey)
         client = InternalSplitClientStub(splitsStorage: storageContainer.splitsStorage, 
                                          mySegmentsStorage: storageContainer.mySegmentsStorage,
@@ -443,7 +533,8 @@ class TreatmentManagerTest: XCTestCase {
                                        flagSetsValidator: flagSetsValidator,
                                        keyValidator: DefaultKeyValidator(),
                                        splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
-                                       validationLogger: validationLogger)
+                                       validationLogger: validationLogger,
+                                       propertyValidator: propertyValidator)
     }
 
     func loadSplitsFile() -> [Split] {

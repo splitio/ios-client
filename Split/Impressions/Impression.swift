@@ -25,6 +25,7 @@ public typealias SplitImpression = Impression
     @objc public var label: String?
     @objc public var bucketingKey: String?
     @objc public var attributes: [String: Any]?
+    @objc public var properties: String?
 
     var previousTime: Int64?
 
@@ -35,5 +36,6 @@ public typealias SplitImpression = Impression
         case changeNumber
         case label
         case bucketingKey
+        case properties
     }
 }

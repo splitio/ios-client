@@ -114,10 +114,14 @@ class SplitClientManagerTest: XCTestCase {
                                              eventsTracker: EventsTrackerStub(),
                                              eventsManagerCoordinator: splitEventsCoordinator,
                                              mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactoryStub(),
-                                             telemetryStopwatch: stopwatch, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
+                                             telemetryStopwatch: stopwatch,
+                                             propertyValidator: DefaultPropertyValidator(
+                                                anyValueValidator: DefaultAnyValueValidator(),
+                                                validationLogger: DefaultValidationMessageLogger()
+                                             ),
+                                             factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
     }
 
     override func tearDown() {
     }
 }
-

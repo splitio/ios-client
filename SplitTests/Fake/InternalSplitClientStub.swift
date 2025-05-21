@@ -24,29 +24,77 @@ class InternalSplitClientStub: InternalSplitClient {
     }
 
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
-        return ""
+        return SplitConstants.control
     }
-    
+
     func getTreatment(_ split: String) -> String {
-        return ""
+        return SplitConstants.control
+    }
+
+    func getTreatment(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> String {
+        return SplitConstants.control
     }
     
     func getTreatments(splits: [String], attributes: [String : Any]?) -> [String : String] {
-        return ["":""]
+        return createControlTreatmentsDictionary(splits: splits)
     }
     
+    func getTreatments(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
+        return createControlTreatmentsDictionary(splits: splits)
+    }
+
     func getTreatmentWithConfig(_ split: String) -> SplitResult {
         return SplitResult(treatment: SplitConstants.control)
     }
-    
+
     func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
         return getTreatmentWithConfig(split)
     }
     
-    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
-        return ["": SplitResult(treatment: SplitConstants.control)]
+    func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult {
+        return getTreatmentWithConfig(split)
     }
     
+    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+        return createControlTreatmentsDictionary(splits: splits)
+    }
+    
+    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
+        return createControlTreatmentsDictionary(splits: splits)
+    }
+
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : String] {
+        return ["": SplitConstants.control]
+    }
+
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
+        return ["": SplitConstants.control]
+    }
+
+    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : String] {
+        return ["": SplitConstants.control]
+    }
+
+    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
+        return ["": SplitConstants.control]
+    }
+
+    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : SplitResult] {
+        return ["": SplitResult(treatment: SplitConstants.control)]
+    }
+
+    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
+        return ["": SplitResult(treatment: SplitConstants.control)]
+    }
+
+    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+        return ["": SplitResult(treatment: SplitConstants.control)]
+    }
+
+    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
+        return ["": SplitResult(treatment: SplitConstants.control)]
+    }
+
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
     }
 
@@ -55,35 +103,35 @@ class InternalSplitClientStub: InternalSplitClient {
 
     func on(event: SplitEvent, execute action: @escaping SplitAction) {
     }
-    
+
     func track(trafficType: String, eventType: String) -> Bool {
         return true
     }
-    
+
     func track(trafficType: String, eventType: String, value: Double) -> Bool {
         return true
     }
-    
+
     func track(eventType: String) -> Bool {
         return true
     }
-    
+
     func track(eventType: String, value: Double) -> Bool {
         return true
     }
-    
+
     func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool {
         return true
     }
-    
+
     func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool {
         return true
     }
-    
+
     func track(eventType: String, properties: [String: Any]?) -> Bool {
         return true
     }
-    
+
     func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool {
         return true
     }
@@ -108,22 +156,6 @@ class InternalSplitClientStub: InternalSplitClient {
         return true
     }
 
-    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : String] {
-        return [:]
-    }
-
-    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : String] {
-        return [:]
-    }
-
-    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : SplitResult] {
-        return [:]
-    }
-
-    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : SplitResult] {
-        return [:]
-    }
-
     func clearAttributes() -> Bool {
         return true
     }
@@ -139,5 +171,17 @@ class InternalSplitClientStub: InternalSplitClient {
 
     func on(event: SplitEvent, executeTask: SplitEventTask) {
 
+    }
+
+    private func createControlTreatmentsDictionary<T>(splits: [String]) -> [String: T] where T: Any {
+        var result = [String: T]()
+        for split in splits {
+            if let controlResult = SplitConstants.control as? T {
+                result[split] = controlResult
+            } else if let splitResult = SplitResult(treatment: SplitConstants.control) as? T {
+                result[split] = splitResult
+            }
+        }
+        return result
     }
 }
