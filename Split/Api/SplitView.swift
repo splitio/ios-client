@@ -25,23 +25,7 @@ public class SplitView: NSObject, Codable {
         return changeNumber as NSNumber?
     }
     @objc public var configs: [String: String]?
+    @objc public var prerequisites: [Prerequisite]?
 
     @objc public var impressionsDisabled: Bool = false
 }
-
-
-var name: String?
-var seed: Int?
-var status: Status?
-var killed: Bool?
-var defaultTreatment: String?
-var conditions: [Condition]?
-var trafficTypeName: String?
-var changeNumber: Int64?
-var trafficAllocation: Int?
-var trafficAllocationSeed: Int?
-var algo: Int?
-var configurations: [String: String]?
-var sets: Set<String>?
-var impressionsDisabled: Bool?
-var preTrequisites: [String: [String]]?

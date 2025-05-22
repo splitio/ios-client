@@ -59,7 +59,7 @@ class SplitDTO: NSObject, SplitBase, Codable {
     }
 }
 
-struct Prerequisite: Codable {
+@objc public class Prerequisite: NSObject, Codable {
     var n: String?
     var ts: [String]?
 }
