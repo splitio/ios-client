@@ -66,6 +66,31 @@ class HttpRequestManagerTests: XCTestCase {
         XCTAssertEqual(notifications[0], hostName)
     }
 
+    func testNetworkConnectionLostErrorMapping() {
+        let manager = DefaultHttpRequestManager(pinChecker: nil, notificationHelper: nil)
+        let taskId = 12345
+        let request = ErrorCapturingHttpRequestMock(identifier: taskId)
+
+        // Create an NSError with code -1005 (network connection lost)
+        let networkError = NSError(domain: NSURLErrorDomain, code: -1005, userInfo: nil)
+
+        manager.addRequest(request)
+        manager.urlSession(URLSession.shared, task: URLTaskMock(taskIdentifier: taskId), didCompleteWithError: networkError)
+
+        XCTAssertNotNil(request.completedError)
+        if let error = request.completedError as? HttpError {
+            switch error {
+            case .clientRelated(let code, let internalCode):
+                XCTAssertEqual(code, 400, "Error code should be 400")
+                XCTAssertEqual(internalCode, -1, "Internal code should be -1")
+            default:
+                XCTFail("Expected clientRelated error with code 400 but got \(error)")
+            }
+        } else {
+            XCTFail("Expected HttpError but got \(String(describing: request.completedError))")
+        }
+    }
+
     func createRequestManager() -> URLSessionTaskDelegate {
         pinChecker = PinCheckerMock()
         pinChecker.pinResults = CredentialValidationResult.allCases
@@ -75,6 +100,26 @@ class HttpRequestManagerTests: XCTestCase {
 }
 
 class URLTaskMock: URLSessionDataTask {
+    private var _taskIdentifier: Int
+
+    init(taskIdentifier: Int = 0) {
+        self._taskIdentifier = taskIdentifier
+        super.init()
+    }
+
     override func resume() {
+    }
+
+    override var taskIdentifier: Int {
+        return _taskIdentifier
+    }
+}
+
+class ErrorCapturingHttpRequestMock: HttpRequestMock {
+    var completedError: Error?
+
+    override func complete(error: HttpError?) {
+        completedError = error
+        super.complete(error: error)
     }
 }

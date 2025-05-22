@@ -92,13 +92,9 @@ class DefaultRestClient: SplitApiRestClient {
                 }
             case .failure:
                 completion(DataResult {
-                    // Use custom failure handler if provided
-                    if let customFailureHandler = customFailureHandler {
-                        // Use the custom handler if it returns a non-nil error
-                        if let customError = try customFailureHandler(response.code) {
-                            throw customError
-                        }
-                        // Otherwise, continue with default error handling
+                    // Try custom error handling first, then fall back to default
+                    if let customError = try customFailureHandler?(response.code) {
+                        throw customError
                     }
 
                     // Default error handling
@@ -112,7 +108,13 @@ class DefaultRestClient: SplitApiRestClient {
                 })
             }
             }, errorHandler: { error in
-                completion(DataResult { throw error })
+                completion(DataResult {
+                    // Try custom error handling first, then fall back to the original error
+                    if let customError = try customFailureHandler?(error.code) {
+                        throw customError
+                    }
+                    throw error
+                })
             })
         } catch HttpError.couldNotCreateRequest(let message) {
             Logger.e("An error has ocurred while sending request: \(message)" )
