@@ -74,7 +74,7 @@ import Foundation
     }
 
     public func split(featureName: String) -> SplitView? {
-
+        
         let logTag = "split"
 
         if checkAndLogIfDestroyed(logTag: logTag) {
