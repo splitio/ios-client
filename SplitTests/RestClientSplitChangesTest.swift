@@ -257,4 +257,49 @@ class RestClientSplitChangesTest: XCTestCase {
         XCTAssertNotNil(error)
         XCTAssertEqual(500, (error as? HttpError)?.code)
     }
+
+    func testCustomErrorHandlerForDirectHttpErrors() {
+        let overriddenServiceEndpoints = ServiceEndpoints.builder()
+            .set(sdkEndpoint: "https://custom-proxy.io/api")
+            .build()
+        let overriddenFactory = EndpointFactory(serviceEndpoints: overriddenServiceEndpoints, apiKey: "dummy-api-key", splitsQueryString: "")
+        let clientWithOverriddenEndpoint = DefaultRestClient(httpClient: httpClient, endpointFactory: overriddenFactory)
+
+        let expectation = XCTestExpectation(description: "API call completes with custom-handled error")
+        var result: TargetingRulesChange?
+        var error: Error?
+
+        clientWithOverriddenEndpoint.getSplitChanges(since: 1000, rbSince: 500, till: nil, headers: nil, spec: "1.3") { dataResult in
+            do {
+                result = try dataResult.unwrap()
+                expectation.fulfill()
+            } catch let err {
+                error = err
+                expectation.fulfill()
+            }
+        }
+
+        let clientRelatedError = HttpError.clientRelated(code: 400, internalCode: -1)
+        requestManager.complete(taskIdentifier: 1, error: clientRelatedError)
+
+        wait(for: [expectation], timeout: 1)
+
+        XCTAssertEqual(1, httpSession.dataTaskCallCount)
+        XCTAssertEqual(1, requestManager.addRequestCallCount)
+        XCTAssertNil(result)
+        XCTAssertNotNil(error)
+
+        // Verify the error was processed by the custom error handler and converted to outdatedProxyError
+        if let httpError = error as? HttpError {
+            switch httpError {
+            case .outdatedProxyError(let code, let spec):
+                XCTAssertEqual(400, code)
+                XCTAssertEqual("1.3", spec)
+            default:
+                XCTFail("Expected outdatedProxyError but got \(httpError)")
+            }
+        } else {
+            XCTFail("Expected HttpError but got \(String(describing: error))")
+        }
+    }
 }
