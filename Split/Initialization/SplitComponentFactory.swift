@@ -342,6 +342,7 @@ extension SplitComponentFactory {
             apiFacade: try getSplitApiFacade(),
             storageContainer: try getSplitStorageContainer(),
             splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: splitClientConfig.bySetsFilter()),
+            ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
             eventsManager: getSplitEventsManagerCoordinator())
         catalog.add(component: component)
         return component

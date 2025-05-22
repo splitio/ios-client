@@ -44,7 +44,7 @@ class NotificationParserTest: XCTestCase {
 
     func testProcessSplitUpdate() throws {
         let incoming = notificationParser.parseIncoming(jsonString: splitsChangeNotificationMessage)
-        let splitUpdate = try notificationParser.parseSplitUpdate(jsonString: incoming!.jsonData!)
+        let splitUpdate = try notificationParser.parseTargetingRuleNotification(jsonString: incoming!.jsonData!, type: .splitUpdate)
 
         XCTAssertEqual(NotificationType.splitUpdate, incoming?.type)
         XCTAssertEqual(1584554772108, splitUpdate.changeNumber)
@@ -52,7 +52,7 @@ class NotificationParserTest: XCTestCase {
 
     func testProcessSplitUpdateWithPayload() throws {
         let incoming = notificationParser.parseIncoming(jsonString: splitsChangeNotificationMessageWithPayload)
-        let splitUpdate = try notificationParser.parseSplitUpdate(jsonString: incoming!.jsonData!)
+        let splitUpdate = try notificationParser.parseTargetingRuleNotification(jsonString: incoming!.jsonData!, type: .splitUpdate)
 
         XCTAssertEqual(NotificationType.splitUpdate, incoming?.type)
         XCTAssertEqual(1584554772108, splitUpdate.changeNumber)

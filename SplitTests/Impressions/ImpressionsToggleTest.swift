@@ -158,10 +158,6 @@ class ImpressionsToggleTest: XCTestCase {
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
-            sdkReadyExpectation.fulfill()
-        }
-
         exps.append(sseExp)
         wait(for: exps, timeout: 5)
 
@@ -240,7 +236,6 @@ class ImpressionsToggleTest: XCTestCase {
             return IntegrationHelper.emptySplitChanges(since: 99999, till: 99999)
         }
         return splitJson
-
     }
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {

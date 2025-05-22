@@ -75,6 +75,8 @@ extension DefaultHttpRequestManager: URLSessionTaskDelegate {
             switch error.code {
             case HttpCode.requestTimeOut:
                 httpError = HttpError.requestTimeOut
+            case -1005:
+                httpError = HttpError.clientRelated(code: 400, internalCode: -1)
             default:
                 httpError = HttpError.unknown(code: -1, message: error.localizedDescription)
             }

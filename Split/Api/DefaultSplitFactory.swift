@@ -81,6 +81,14 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                                                     telemetryStorage: params.telemetryStorage,
                                                                     testDatabase: params.testDatabase)
 
+        let rolloutCacheConfig = params.config.rolloutCacheConfiguration ?? RolloutCacheConfiguration.builder().build()
+        let rolloutCacheManager = DefaultRolloutCacheManager(generalInfoStorage: storageContainer.generalInfoStorage,
+                                                             rolloutCacheConfiguration: rolloutCacheConfig,
+                                                             storages: storageContainer.splitsStorage,
+                                                                    storageContainer.mySegmentsStorage,
+                                                                    storageContainer.myLargeSegmentsStorage,
+                                                                    storageContainer.ruleBasedSegmentsStorage)
+
         defaultManager = try components.getSplitManager()
         _ = try components.buildRestClient(
             httpClient: params.httpClient ?? DefaultHttpClient.shared,
@@ -108,6 +116,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                              apiFacade: splitApiFacade,
                                              byKeyFacade: byKeyFacade,
                                              storageContainer: storageContainer,
+                                             rolloutCacheManager: rolloutCacheManager,
                                              syncManager: syncManager,
                                              synchronizer: synchronizer,
                                              eventsTracker: eventsTracker,

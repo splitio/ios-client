@@ -42,6 +42,7 @@ struct DbCipher {
         }
         dbHelper.performAndWait {
             updateSplits()
+            updateRuleBasedSegments()
             updateSegments(type: .mySegment)
             updateSegments(type: .myLargeSegment)
             updateImpressions()
@@ -55,6 +56,17 @@ struct DbCipher {
 
     private func updateSplits() {
         let items = dbHelper.fetch(entity: .split).compactMap { return $0 as? SplitEntity }
+        for item in items {
+            let name = fromCipher?.decrypt(item.name) ?? item.name
+            item.name = toCipher?.encrypt(name) ?? name
+
+            let body = fromCipher?.decrypt(item.body) ?? item.body
+            item.body = toCipher?.encrypt(body) ?? body
+        }
+    }
+
+    private func updateRuleBasedSegments() {
+        let items = dbHelper.fetch(entity: .ruleBasedSegment).compactMap { return $0 as? RuleBasedSegmentEntity }
         for item in items {
             let name = fromCipher?.decrypt(item.name) ?? item.name
             item.name = toCipher?.encrypt(name) ?? name

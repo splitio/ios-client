@@ -17,15 +17,15 @@ class GeneralInfoDaoStub: GeneralInfoDao {
     func update(info: GeneralInfo, stringValue: String) {
         updatedString[info.rawValue] = stringValue
     }
-    
+
     func update(info: GeneralInfo, longValue: Int64) {
         updatedLong[info.rawValue] = longValue
     }
-    
+
     func stringValue(info: GeneralInfo) -> String? {
         return updatedString[info.rawValue]
     }
-    
+
     func longValue(info: GeneralInfo) -> Int64? {
         return updatedLong[info.rawValue]
     }

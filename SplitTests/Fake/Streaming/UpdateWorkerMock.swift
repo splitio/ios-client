@@ -12,7 +12,7 @@ import Foundation
 class SplitsUpdateWorkerMock: SplitsUpdateWorker {
     var processCalled = false
     var throwException = false
-    override func process(notification: SplitsUpdateNotification) throws {
+    override func process(notification: TargetingRuleUpdateNotification) throws {
         if throwException {
             throw GenericError.unknown(message: "")
         }

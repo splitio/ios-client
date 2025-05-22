@@ -27,6 +27,7 @@ class SynchronizerStub: Synchronizer {
     var syncAllCalled = false
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
+    var synchronizeRuleBasedSegmentsCalled = false
     var synchronizeMySegmentsCalled = false
     var synchronizeMyLargeSegmentsCalled = false
     var forceMySegmentsSyncCalled = false
@@ -46,6 +47,7 @@ class SynchronizerStub: Synchronizer {
 
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
+    var syncRuleBasedSegmentsExp: XCTestExpectation?
     var syncMySegmentsExp: XCTestExpectation?
     var syncMyLargeSegmentsExp: XCTestExpectation?
     var forceMySegmentsSyncExp = [String: XCTestExpectation]()
@@ -197,6 +199,13 @@ class SynchronizerStub: Synchronizer {
     func synchronizeSplits(changeNumber: Int64) {
         synchronizeSplitsChangeNumberCalled = true
         if let exp = syncSplitsChangeNumberExp {
+            exp.fulfill()
+        }
+    }
+
+    func synchronizeRuleBasedSegments(changeNumber: Int64) {
+        synchronizeRuleBasedSegmentsCalled = true
+        if let exp = syncRuleBasedSegmentsExp {
             exp.fulfill()
         }
     }

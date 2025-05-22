@@ -79,6 +79,11 @@ class MyLargeSegmentsStorage: MySegmentsStorage {
         }
     }
 
+    func clear() {
+        inMemorySegments.removeAll()
+        persistentStorage.deleteAll()
+    }
+
     // if already being executed in the queue, do not dispatch to it
     private func safeSync<T>(_ block: () -> T) -> T {
         if DispatchQueue.getSpecific(key: syncQueueKey) != nil {

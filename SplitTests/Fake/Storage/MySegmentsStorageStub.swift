@@ -78,5 +78,14 @@ class MySegmentsStorageStub: MySegmentsStorage {
         return count
     }
 
-
+    var clearCalledTimes = 0
+    var clearCalled: Bool {
+        get {
+            return clearCalledTimes > 0
+        }
+    }
+    func clear() {
+        clearCalledTimes+=1
+        segments.removeAll()
+    }
 }

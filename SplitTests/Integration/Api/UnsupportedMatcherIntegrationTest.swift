@@ -92,7 +92,7 @@ class UnsupportedMatcherIntegrationTest: XCTestCase {
     private func startTest() throws -> SplitFactory?  {
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.sdkReadyTimeOut = 6000
-        splitConfig.logLevel = .warning//TestingHelper.testLogLevel
+        splitConfig.logLevel = .warning
         splitConfig.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: false)
         splitConfig.internalTelemetryRefreshRate = 10000
         splitConfig.streamingEnabled = false
@@ -135,8 +135,8 @@ class UnsupportedMatcherIntegrationTest: XCTestCase {
 
     private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
-            return change
+           let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            return change.featureFlags
         }
         return nil
     }
@@ -145,7 +145,9 @@ class UnsupportedMatcherIntegrationTest: XCTestCase {
         return { request in
             if request.isSplitEndpoint() {
                 if self.splitChangesHit == 0 {
-                    return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile()))
+                    return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(
+                        TargetingRulesChange(featureFlags: self.loadSplitsChangeFile()!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1)
+                    )))
                 }
                 self.splitChangesHit+=1
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))

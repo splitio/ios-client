@@ -273,12 +273,12 @@ struct TestingData {
         return ""
     }
 
-    static func updateSplitsNotificationZlib() -> SplitsUpdateNotification {
-        return try! Json.decodeFrom(json: kUpdateSplitsNotificationZlib, to: SplitsUpdateNotification.self)
+    static func updateSplitsNotificationZlib() -> TargetingRuleUpdateNotification {
+        return try! Json.decodeFrom(json: kUpdateSplitsNotificationZlib, to: TargetingRuleUpdateNotification.self)
     }
 
-    static func updateSplitsNotificationGzip() -> SplitsUpdateNotification {
-        return try! Json.decodeFrom(json: kUpdateSplitsNotificationGzip, to: SplitsUpdateNotification.self)
+    static func updateSplitsNotificationGzip() -> TargetingRuleUpdateNotification {
+        return try! Json.decodeFrom(json: kUpdateSplitsNotificationGzip, to: TargetingRuleUpdateNotification.self)
     }
 
     static func membershipsNotificationUnboundedMessage(type: NotificationType, cn: Int64? = nil, delay: Int = 100) -> String {
@@ -381,5 +381,13 @@ struct TestingData {
     }
 """
         return message
+    }
+
+    static func rbsChange(changeNumber: Int64, previousChangeNumber: Int64, compressionType: Int, compressedPayload: String) -> String {
+        return """
+            id: 123123
+            event: message
+            data: {\"id\":\"1111\",\"clientId\":\"pri:ODc1NjQyNzY1\",\"timestamp\":\(Date.now()),\"encoding\":\"json\",\"channel\":\"xxxx_xxxx_flags\",\"data\":\"{\\\"type\\\":\\\"RB_SEGMENT_UPDATE\\\",\\\"changeNumber\\\":\(changeNumber),\\\"pcn\\\":\(previousChangeNumber),\\\"c\\\": \(compressionType),\\\"d\\\":\\\"\(compressedPayload)\\\"}\"}
+            """;
     }
 }
