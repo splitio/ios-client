@@ -54,10 +54,6 @@ class TestDataHelper {
               {
               "trafficTypeName":"account",
               "name":"FACUNDO_TEST",
-              "prereQquisites": [
-                   { "n": "flag1", "ts": ["on","v1"] }, 
-                   { "n": "flag2", "ts": ["off"] }
-              ],
               "trafficAllocation":59,
               "trafficAllocationSeed":-2108186082,
               "seed":-1947050785,
