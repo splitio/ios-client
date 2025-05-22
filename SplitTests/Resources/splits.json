@@ -1,6 +1,10 @@
  [{
   "trafficTypeName": "custom",
   "name": "SAMPLE_FEATURE0",
+  "prerequisites": [
+    { "n": "flag1", "ts": ["on","v1"] },
+    { "n": "flag2", "ts": ["off"] }
+  ],
   "trafficAllocation": 100,
   "trafficAllocationSeed": 1595297106,
   "seed": -1332540447,
