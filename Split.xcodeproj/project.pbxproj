@@ -354,7 +354,8 @@
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
 		5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */; };
-		5BF52DEF2DDF884D00FEDAFE /* RuleBasedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */; };
+		5BF52DF62DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
+		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		9500D9922C56F9BA00383593 /* HostDomainFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */; };
 		9500D9A92C59297400383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
 		9500D9AA2C59382000383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
@@ -1555,6 +1556,7 @@
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
+		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilterTests.swift; sourceTree = "<group>"; };
 		9500D9A82C59297400383593 /* HostDomainFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilter.swift; sourceTree = "<group>"; };
 		9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v5.xcdatamodel; sourceTree = "<group>"; };
@@ -2423,6 +2425,7 @@
 		3B6DEECB20EA6AE30067435E /* Matchers */ = {
 			isa = PBXGroup;
 			children = (
+				5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */,
 				C539CACD2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift */,
 				C5A3F5222BED4EC5009FACD3 /* Semver */,
 				3B6DEECC20EA6AE30067435E /* AllKeysMatcher.swift */,
@@ -4233,6 +4236,7 @@
 				95C1600D27D28CF4008562E3 /* PersistentAttributesStorage.swift in Sources */,
 				95726075262F548500350CCA /* SplitBgSynchronizer.swift in Sources */,
 				95C1600B27D28CB8008562E3 /* OneKeyPersistentAttributesStorage.swift in Sources */,
+				5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */,
 				9519A91127D6935700278AEC /* ByKeyAttributesStorage.swift in Sources */,
 				59D84BD622158A24003DA248 /* LocalhostSplitFactory.swift in Sources */,
 				3B6DEF4C20EA6AE50067435E /* SplitBase.swift in Sources */,
@@ -4824,6 +4828,7 @@
 				95B02CC628D0BDC10030EC8B /* CompressionUtil.swift in Sources */,
 				95B02CC728D0BDC10030EC8B /* Stopwatch.swift in Sources */,
 				95B02CC828D0BDC10030EC8B /* ConcurrentArrayQueue.swift in Sources */,
+				5BF52DF62DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */,
 				95B02CC928D0BDC10030EC8B /* SynchronizedList.swift in Sources */,
 				95B02CCA28D0BDC10030EC8B /* ConcurrentSet.swift in Sources */,
 				C539CADC2D93229D0050C732 /* EvaluationOptions.swift in Sources */,
