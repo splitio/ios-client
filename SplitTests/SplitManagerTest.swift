@@ -4,7 +4,6 @@
 //
 //  Created by Sebastian Arrubia on 4/24/18.
 //  Copyright © 2018 CocoaPods. All rights reserved.
-//
 
 import Foundation
 import XCTest
@@ -26,9 +25,6 @@ class SplitManagerTest: XCTestCase {
         splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: loadedSplits, archivedSplits: [],
                                                                changeNumber: 1, updateTimestamp: 100))
         manager = DefaultSplitManager(splitsStorage: splitsStorage)
-    }
-
-    override func tearDown() {
     }
 
     func testInitialSplitLoaded() {
@@ -55,7 +51,7 @@ class SplitManagerTest: XCTestCase {
         XCTAssertNil(splitNotExistent, "Non existent feature flag should be nil")
     }
     
-    func testSplitInfo(){
+    func testSplitInfo() {
         
         let split0 = manager.split(featureName: "sample_feature0")
         let treatments0 = split0?.treatments
@@ -69,7 +65,8 @@ class SplitManagerTest: XCTestCase {
         XCTAssertEqual(split0?.sets?.sorted(), ["set1", "set2"])
         XCTAssertNotNil(split0?.configs)
         XCTAssertTrue(split0?.impressionsDisabled ?? false, "Split0 track impressions")
-        
+        XCTAssertEqual(split0?.prerequisites?.first?.n, "flag1")
+        XCTAssertEqual(split0?.prerequisites?.first?.ts?.sorted(), ["on", "v1"])
         XCTAssertEqual(treatments0?.count, 6, "Split0 treatment count")
         XCTAssertEqual(treatments0?.sorted().joined(separator: ",").lowercased(), "t1_0,t2_0,t3_0,t4_0,t5_0,t6_0", "Split0 treatment names")
         
@@ -81,6 +78,7 @@ class SplitManagerTest: XCTestCase {
         XCTAssertTrue(split1?.killed ?? false, "Split1 killed")
         XCTAssertEqual(split1?.trafficType, "custom1", "Split1 traffic type")
         XCTAssertEqual(split1?.defaultTreatment, "off", "Split1 traffic type")
+        XCTAssertEqual(split1?.prerequisites, [])
         XCTAssertNotNil(split1?.configs)
         XCTAssertEqual(0, split1?.configs?.count)
         XCTAssertEqual(treatments1?.count, 6, "Split1 treatment count")

@@ -179,7 +179,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
     private func newSplit(name: String, trafficType: String, status: Status = .active) -> Split {
         let split = SplitTestHelper.newSplit(name: name, trafficType: trafficType)
         split.status = status
-        split.isParsed = true
+        split.isCompletelyParsed = true
         return split
     }
 }

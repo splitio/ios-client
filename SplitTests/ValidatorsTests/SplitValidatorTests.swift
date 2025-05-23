@@ -80,7 +80,7 @@ class SplitValidatorTests: XCTestCase {
     
     func createSplit(name: String) -> Split {
         let split = SplitTestHelper.newSplit(name: name, trafficType: "")
-        split.isParsed = true
+        split.isCompletelyParsed = true
         return split
     }
     

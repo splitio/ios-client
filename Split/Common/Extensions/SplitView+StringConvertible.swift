@@ -31,6 +31,17 @@ extension SplitView {
         } else {
             output+="treatments = nil\n"
         }
+        if let prerequisites = prerequisites {
+            output+="prerequisites = [\n"
+            prerequisites.forEach { prerequisite in
+                output+="""
+                        \(prerequisite.n): {\(prerequisite.ts?.joined(separator: ","))}\n
+                        """
+            }
+            output+="]\n"
+        } else {
+            output+="prerequisites = nil\n"
+        }
         if let sets = sets {
             output+="sets = [\(sets.joined(separator: ","))]\n"
         } else {
