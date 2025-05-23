@@ -66,7 +66,7 @@ class SplitManagerTest: XCTestCase {
         XCTAssertNotNil(split0?.configs)
         XCTAssertTrue(split0?.impressionsDisabled ?? false, "Split0 track impressions")
         XCTAssertEqual(split0?.prerequisites?.first?.n, "flag1")
-        XCTAssertEqual(split0?.prerequisites?.first?.ts?[1], "v1")
+        XCTAssertEqual(split0?.prerequisites?.first?.ts?.sorted(), ["on", "v1"])
         XCTAssertEqual(treatments0?.count, 6, "Split0 treatment count")
         XCTAssertEqual(treatments0?.sorted().joined(separator: ",").lowercased(), "t1_0,t2_0,t3_0,t4_0,t5_0,t6_0", "Split0 treatment names")
         
