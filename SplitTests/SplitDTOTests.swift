@@ -6,35 +6,34 @@ import XCTest
 
 class SplitDTOTests: XCTestCase {
     
+    let expectedFlags = ["flag1","flag2"]
+    let expectedTreatments = [["on","v1"],["off"]]
     
     func testPrerequisitesField() {
         
-        let expectedFlags = ["flag1","flag2"]
-        let expectedTreatments = [["on","v1"],["off"]]
-        
         // Happy case
-        var data = json.data(using: .utf8)!
-        var result = try? TargetingRulesChangeDecoder.decode(from: data)
+        var data = correctJson
+        var decoded = try? TargetingRulesChangeDecoder.decode(from: data.data(using: .utf8)!)
         
-        for i in 0..<result!.featureFlags.splits[0].prerequisites!.count {
-            let prerequisite = result!.featureFlags.splits[0].prerequisites![i]
+        for i in 0..<decoded!.featureFlags.splits[0].prerequisites!.count {
+            let prerequisite = decoded!.featureFlags.splits[0].prerequisites![i]
             
-            XCTAssertEqual(prerequisite.n!, expectedFlags[i], "Prerequisites names should be the same")
+            XCTAssertEqual(prerequisite.n!, expectedFlags[i], "Prerequisites flag names should be the same")
             XCTAssertEqual(prerequisite.ts!.joined(separator: ","), expectedTreatments[i].joined(separator: ","), "Prerequisites treatments should be the same")
         }
         
         // Empty prerequisites
-        data = jsonWithEmptyPrerequisites.data(using: .utf8)!
-        result = try? TargetingRulesChangeDecoder.decode(from: data)
-        XCTAssertEqual(result?.featureFlags.splits.first?.prerequisites?.first?.n, nil, "Prerequisites field should be empty")
-        XCTAssertEqual(result?.ruleBasedSegments.segments.first?.name, "test_segment", "Rest of the response should be correct")
+        data = jsonWithEmptyPrerequisites
+        decoded = try? TargetingRulesChangeDecoder.decode(from: data.data(using: .utf8)!)
+        XCTAssertEqual(decoded?.featureFlags.splits.first?.prerequisites?.first?.n, nil, "Prerequisites field should be empty")
+        XCTAssertEqual(decoded?.ruleBasedSegments.segments.first?.name, "test_segment", "Rest of the response should be correct")
         
-        // Errors in JSON
-        data = jsonWithMalformedPrerequisites.data(using: .utf8)!
-        XCTAssertThrowsError(try TargetingRulesChangeDecoder.decode(from: data))
+        // Error in JSON
+        data = jsonWithMalformedPrerequisites
+        XCTAssertThrowsError(try TargetingRulesChangeDecoder.decode(from: data.data(using: .utf8)!), "Wrong JSON should throw decoding error")
     }
     
-    let json = """
+    let correctJson = """
     {
         "ff": {
             "s": 1000,
