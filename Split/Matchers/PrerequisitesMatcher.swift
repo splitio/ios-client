@@ -5,7 +5,8 @@ import Foundation
 
 class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
     
-    
+    private var prerequisites: [Prerequisite]?
+    //private var storage: Storage?
     
     func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
         
