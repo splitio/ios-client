@@ -2533,7 +2533,6 @@
               {
               "trafficTypeName":"account",
               "name":"TEST_SETS_1",
-              "preQER":[],
               "trafficAllocation":59,
               "trafficAllocationSeed":-2108186082,
               "seed":-1947050785,

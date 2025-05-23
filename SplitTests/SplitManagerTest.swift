@@ -80,7 +80,6 @@ class SplitManagerTest: XCTestCase {
         XCTAssertEqual(split1?.changeNumber, 1, "Split1 change number")
         XCTAssertTrue(split1?.killed ?? false, "Split1 killed")
         XCTAssertEqual(split1?.trafficType, "custom1", "Split1 traffic type")
-        // TODO:
         XCTAssertEqual(split1?.defaultTreatment, "off", "Split1 traffic type")
         XCTAssertNotNil(split1?.configs)
         XCTAssertEqual(0, split1?.configs?.count)
