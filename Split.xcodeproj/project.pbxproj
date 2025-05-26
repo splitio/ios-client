@@ -356,6 +356,7 @@
 		5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */; };
 		5BF52DF62DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
+		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
 		9500D9922C56F9BA00383593 /* HostDomainFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */; };
 		9500D9A92C59297400383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
 		9500D9AA2C59382000383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
@@ -1557,6 +1558,7 @@
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
+		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
 		9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilterTests.swift; sourceTree = "<group>"; };
 		9500D9A82C59297400383593 /* HostDomainFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilter.swift; sourceTree = "<group>"; };
 		9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v5.xcdatamodel; sourceTree = "<group>"; };
@@ -3712,6 +3714,7 @@
 		C5977C0E2BF2832A003E293A /* Matcher */ = {
 			isa = PBXGroup;
 			children = (
+				5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */,
 				C539CAD02D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift */,
 				C5977C002BF27390003E293A /* SemverTest.swift */,
 				C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */,
@@ -4581,6 +4584,7 @@
 				59F4AAA124FFC94100A1C69A /* NotificationManagerKeeperTest.swift in Sources */,
 				955E12372BFCDEAC00AE6D10 /* HashedImpressionDaoMock.swift in Sources */,
 				95ABF4FC29369B73006ED016 /* TelemetrySynchronizerStub.swift in Sources */,
+				5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */,
 				C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */,
 				95715A8529D353C100A1B2F9 /* DbCipherTest.swift in Sources */,
 				59D84BDC2215CD52003DA248 /* LocalhostSplitLoaderTests.swift in Sources */,

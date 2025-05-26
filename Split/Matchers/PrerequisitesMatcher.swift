@@ -13,16 +13,19 @@ class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
 
     // This evaluation passes JUST if -all- prerequisite are met
     func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
-        guard let prerequisites = prerequisites, !prerequisites.isEmpty, let evaluator = context?.evaluator else { return true }
+        
+        guard let prerequisites = prerequisites, !prerequisites.isEmpty else { return true }
         
         for prerequisite in prerequisites {
-            guard let splitName = prerequisite.n, let treaments = prerequisite.ts, !treaments.isEmpty else { continue }
+            guard !prerequisite.ts.isEmpty else { return true }
             
             do {
-                let eval = try evaluator.evalTreatment(matchingKey: values.matchingKey, bucketingKey: values.bucketingKey, splitName: splitName, attributes: nil)
+                let evalResult = try context?.evaluator?.evalTreatment(matchingKey: values.matchingKey, bucketingKey: values.bucketingKey, splitName: prerequisite.n, attributes: nil)
                 
-                if treaments.contains(values.matchValue as? String ?? "") {
-                    return false
+                if let treatment = evalResult?.treatment {
+                    if !prerequisite.ts.contains(treatment) {
+                        return false
+                    }
                 }
             } catch {
                 Logger.e("Error evaluating condition in PrerequisitesMatcher: \(error)")

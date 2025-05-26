@@ -37,7 +37,7 @@ class DefaultEvaluator: Evaluator {
         
         // 2. Extract neccesary info
         let changeNumber = split.changeNumber ?? -1
-        let defaultTreatment  = split.defaultTreatment ?? SplitConstants.control
+        let defaultTreatment = split.defaultTreatment ?? SplitConstants.control
         let bucketKey = selectBucketKey(matchingKey: matchingKey, bucketingKey: bucketingKey)
         let values = EvalValues(matchValue: matchingKey, matchingKey: matchingKey, bucketingKey: bucketKey, attributes: attributes)
         

@@ -4,7 +4,7 @@ import Foundation
 
 // The JSON is -partially- parsed at startup to improve SDK ready times (for example "conditions" are left out).
 // After parsing just the strictly necesary stuff, it saves the complete JSON to finish parsing later.
-// Once .sdkReady is fired, it concurrently finishes parsing the rest.
+// Once .sdkReady is fired, it concurrently finishes parsing the rest (on SplitStorage.get())
 
 typealias Split = SplitDTO
 
@@ -60,6 +60,13 @@ class SplitDTO: NSObject, SplitBase, Codable {
 }
 
 @objc public class Prerequisite: NSObject, Codable {
-    var n: String?
-    var ts: [String]?
+    var n: String
+    var ts: [String]
+
+    #if DEBUG
+    init(n: String, ts: [String]) {
+        self.n = n
+        self.ts = ts
+    }
+    #endif
 }
