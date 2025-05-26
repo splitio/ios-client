@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct  SplitConstants {
-    static let control: String = "control"
+struct SplitConstants {
+    static let control = "control"
 }
