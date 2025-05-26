@@ -109,7 +109,7 @@ class DefaultEvaluator: Evaluator {
     }
 
     private func selectBucketKey(matchingKey: String, bucketingKey: String?) -> String {
-        if let bucketingKey = bucketingKey { return bucketingKey }
+        if let bucketingKey = bucketingKey, !bucketingKey.isEmpty { return bucketingKey }
         
         return matchingKey
     }

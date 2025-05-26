@@ -101,9 +101,18 @@ class PrerequisitesMatcherTests: XCTestCase {
 
 }
 
-//MARK: Testing Mocked Data
+//MARK: Testing Data
 extension PrerequisitesMatcherTests {
     override func setUp() {
+        
+        // SPLIT 1
+        let split = SplitDTO(name: "always_on", trafficType: "user", status: .active, sets: [], json: "", killed: false, impressionsDisabled: false)
+        split.trafficAllocation = 100
+        split.trafficAllocationSeed = 1012950810
+        split.seed = -725161385
+        split.defaultTreatment = "off"
+        split.changeNumber = 1494364996459
+        let decoder = JSONDecoder()
         let split1Condition = """
         {
             "conditionType": "ROLLOUT",
@@ -128,28 +137,16 @@ extension PrerequisitesMatcherTests {
             "label": "in segment all"
         }
         """.data(using: .utf8)!
-        
-        let split = SplitDTO(
-            name: "always_on",
-            trafficType: "user",
-            status: .active,
-            sets: [],
-            json: "",
-            killed: false,
-            impressionsDisabled: false
-        )
-
-        split.trafficAllocation = 100
-        split.trafficAllocationSeed = 1012950810
-        split.seed = -725161385
-        split.defaultTreatment = "off"
-        split.changeNumber = 1494364996459
-        let decoder = JSONDecoder()
         var condition = try! decoder.decode(Condition.self, from: split1Condition)
         split.conditions = [condition]
         
-        storage.updateWithoutChecks(split: split)
-        
+        // SPLIT 2
+        let split2 = SplitDTO(name: "always_off", trafficType: "user", status: .active, sets: [], json: "", killed: false, impressionsDisabled: false)
+        split2.trafficAllocation = 100
+        split2.trafficAllocationSeed = -331690370
+        split2.seed = 403891040
+        split2.defaultTreatment = "on"
+        split2.changeNumber = 1494365020316
         let split2Condition = """
         {
           "conditionType": "ROLLOUT",
@@ -177,26 +174,10 @@ extension PrerequisitesMatcherTests {
           "label": "in segment all"
         }
         """.data(using: .utf8)!
-        
-        let split2 = SplitDTO(
-            name: "always_off",
-            trafficType: "user",
-            status: .active,
-            sets: [],
-            json: "",
-            killed: false,
-            impressionsDisabled: false
-        )
-
-        split2.trafficAllocation = 100
-        split2.trafficAllocationSeed = -331690370
-        split2.seed = 403891040
-        split2.defaultTreatment = "on"
-        split2.changeNumber = 1494365020316
-
         condition = try! decoder.decode(Condition.self, from: split2Condition)
         split2.conditions = [condition]
         
+        storage.updateWithoutChecks(split: split)
         storage.updateWithoutChecks(split: split2)
         
         context = EvalContext(evaluator: DefaultEvaluator(splitsStorage: storage, mySegmentsStorage: MySegmentsStorageStub()), mySegmentsStorage: MySegmentsStorageStub(), myLargeSegmentsStorage: nil, ruleBasedSegmentsStorage: nil)
