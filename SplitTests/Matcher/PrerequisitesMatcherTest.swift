@@ -16,7 +16,7 @@ class PrerequisitesMatcherTests: XCTestCase {
 
     func testPrerequisiteMet() {
         let prerequisites = [
-            Prerequisite(n: "always_on", ts: ["not-existing", "on", "other"])
+            Prerequisite(flagName: "always_on", treatments: ["not-existing", "on", "other"])
         ]
 
         let SUT = PrerequisitesMatcher(prerequisites)
@@ -26,7 +26,7 @@ class PrerequisitesMatcherTests: XCTestCase {
 
     func testPrerequisiteMet2() {
         let prerequisites = [
-            Prerequisite(n: "always_off", ts: ["not-existing", "off"])
+            Prerequisite(flagName: "always_off", treatments: ["not-existing", "off"])
         ]
 
         let SUT = PrerequisitesMatcher(prerequisites)
@@ -36,7 +36,7 @@ class PrerequisitesMatcherTests: XCTestCase {
 
     func testPrerequisiteNotMet() {
         let prerequisites = [
-            Prerequisite(n: "always_on", ts: ["off", "v1"])
+            Prerequisite(flagName: "always_on", treatments: ["off", "v1"])
         ]
 
         let SUT = PrerequisitesMatcher(prerequisites)
@@ -46,7 +46,7 @@ class PrerequisitesMatcherTests: XCTestCase {
 
     func testPrerequisiteNotMet2() {
         let prerequisites = [
-            Prerequisite(n: "always_off", ts: ["on", "v1"])
+            Prerequisite(flagName: "always_off", treatments: ["on", "v1"])
         ]
 
         let SUT = PrerequisitesMatcher(prerequisites)
@@ -56,8 +56,8 @@ class PrerequisitesMatcherTests: XCTestCase {
 
     func testMultiplePrerequisites() {
         let prerequisites = [
-            Prerequisite(n: "always_on", ts: ["on"]),
-            Prerequisite(n: "always_off", ts: ["off"])
+            Prerequisite(flagName: "always_on", treatments: ["on"]),
+            Prerequisite(flagName: "always_off", treatments: ["off"])
         ]
 
         let SUT = PrerequisitesMatcher(prerequisites)
@@ -67,8 +67,8 @@ class PrerequisitesMatcherTests: XCTestCase {
 
     func testMultiplePrerequisites2() {
         let prerequisites = [
-            Prerequisite(n: "always_on", ts: ["on"]),
-            Prerequisite(n: "always_off", ts: ["on"])
+            Prerequisite(flagName: "always_on", treatments: ["on"]),
+            Prerequisite(flagName: "always_off", treatments: ["on"])
         ]
 
         let SUT = PrerequisitesMatcher(prerequisites)
@@ -90,7 +90,7 @@ class PrerequisitesMatcherTests: XCTestCase {
     }
 
     func testNonExistentFeatureFlag() {
-        let SUT = PrerequisitesMatcher([Prerequisite(n: "asldjh38", ts: ["on"])])
+        let SUT = PrerequisitesMatcher([Prerequisite(flagName: "asldjh38", treatments: ["on"])])
 
         XCTAssertFalse(SUT.evaluate(values: values, context: context), "If the feature flag is non existent it should return false")
     }
