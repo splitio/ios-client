@@ -1,0 +1,29 @@
+name: Sonar Scan
+
+on:
+  push:
+    branches: [master, ci]
+  pull_request:
+    branches: [master, development, "*_baseline"]
+
+jobs:
+  sonar:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v1
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=splitio_ios-client
+            -Dsonar.projectName=${{ github.event.repository.name }}
+            -Dsonar.c.file.suffixes=-
+            -Dsonar.cpp.file.suffixes=-
+            -Dsonar.objc.file.suffixes=-
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONARQUBE_HOST }}
+

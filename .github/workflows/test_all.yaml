@@ -1,14 +1,10 @@
 name: Build and Test iOS
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-      - development
-      - "*_baseline"
+  workflow_run:
+    workflows: ["Sonar Scan"]
+    types:
+      - completed
 
 jobs:
   test:
