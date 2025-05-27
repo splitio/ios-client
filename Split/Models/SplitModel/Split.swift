@@ -60,7 +60,8 @@ class SplitDTO: NSObject, SplitBase, Codable {
 }
 
 @objc public class Prerequisite: NSObject, Codable {
-    @objc public var flagName: String // @objc if we're using this one for the SplitManager
+    
+    @objc public var flagName: String
     @objc public var treatments: [String]
 
     enum CodingKeys: String, CodingKey {
