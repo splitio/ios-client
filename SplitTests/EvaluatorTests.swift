@@ -43,10 +43,9 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         let matchingKey = "nico_test"
         let splitName = "FACUNDO_TEST"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual("on", result.treatment)
         XCTAssertNil(result.configuration)
@@ -57,10 +56,9 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         let matchingKey = "bla"
         let splitName = "FACUNDO_TEST"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
         XCTAssertNil(result.configuration)
@@ -71,10 +69,9 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         let matchingKey = "anyKey"
         let splitName = "FACUNDO_TEST"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
         XCTAssertNil(result.configuration)
@@ -85,10 +82,9 @@ class EvaluatorTests: XCTestCase {
     func testInSegmentTestKey() {
         var result: EvaluationResult!
         let splitName = "a_new_split_2"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
         XCTAssertNil(result.configuration)
@@ -100,24 +96,49 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         let matchingKey = "anyKey"
         let splitName = "OldTest"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
         XCTAssertNotNil(result.configuration)
         XCTAssertEqual(ImpressionsConstants.killed, result.label)
     }
     
+    func testPassingPrerequisites() {
+        var result: EvaluationResult!
+        let matchingKey = "anyKey"
+        let splitName = "FACUNDO_TEST"
+        
+        (evaluator as! DefaultEvaluator).prerequisitesMatcher = PrerequisitesMatcherMock(shouldPass: true)
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
+        XCTAssertNotNil(result)
+        XCTAssertNotNil(result.configuration)
+        XCTAssertEqual("off", result.treatment)
+    }
+    
+    func testNotPassingPrerequisites() {
+        var result: EvaluationResult!
+        let matchingKey = "anyKey"
+        let splitName = "FACUNDO_TEST"
+        
+        (evaluator as! DefaultEvaluator).prerequisitesMatcher = PrerequisitesMatcherMock(shouldPass: false)
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
+        XCTAssertNotNil(result)
+        XCTAssertEqual(ImpressionsConstants.prerequisitesNotMet, result.label)
+    }
+    
     func testNotInSplit() {
         var result: EvaluationResult!
         let matchingKey = "anyKey"
         let splitName = "split_not_available_to_test_right_now"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual(SplitConstants.control, result.treatment)
         XCTAssertNil(result.configuration)
@@ -128,10 +149,9 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         let matchingKey = "anyKey"
         let splitName = "broken_split"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual(SplitConstants.control, result.treatment)
         XCTAssertNil(result.configuration)

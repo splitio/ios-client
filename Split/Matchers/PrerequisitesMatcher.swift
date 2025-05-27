@@ -3,8 +3,12 @@
 
 import Foundation
 
-class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
+protocol PrerequisitesMatcherProtocol {
+    func evaluate(values: EvalValues, context: EvalContext?) -> Bool
+}
 
+class PrerequisitesMatcher: BaseMatcher, MatcherProtocol, PrerequisitesMatcherProtocol {
+    
     private var prerequisites: [Prerequisite]?
     
     init(prerequisites: [Prerequisite]? = nil) {
