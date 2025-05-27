@@ -13,8 +13,7 @@ class BaseMatcher: NSObject {
     var attribute: String?
     var type: MatcherType?
 
-    init(negate: Bool? = nil,
-         attribute: String? = nil, type: MatcherType? = nil) {
+    init(negate: Bool? = nil, attribute: String? = nil, type: MatcherType? = nil) {
 
         self.negate = negate
         self.attribute = attribute
@@ -22,18 +21,18 @@ class BaseMatcher: NSObject {
     }
 
     func isNegate() -> Bool {
-        return self.negate ?? false
+        self.negate ?? false
     }
 
     func getAttribute() -> String? {
-        return self.attribute
+        self.attribute
     }
 
     func getMatcherType() -> MatcherType {
-        return self.type!
+        self.type!
     }
 
     func matcherHasAttribute() -> Bool {
-        return self.attribute != nil
+        self.attribute != nil
     }
 }
