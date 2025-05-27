@@ -60,6 +60,13 @@ class SplitDTO: NSObject, SplitBase, Codable {
 }
 
 @objc public class Prerequisite: NSObject, Codable {
-    var n: String?
-    var ts: [String]?
+    var n: String
+    var ts: [String]
+    
+    #if DEBUG
+    init(n: String, ts: [String]) {
+        self.n = n
+        self.ts = ts
+    }
+    #endif
 }
