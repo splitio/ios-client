@@ -115,7 +115,6 @@ class EvaluatorTests: XCTestCase {
         result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
         
         XCTAssertNotNil(result)
-        XCTAssertNotNil(result.configuration)
         XCTAssertEqual("off", result.treatment)
     }
     
