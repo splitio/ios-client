@@ -8,25 +8,28 @@ class PrerequisitesMatcherTests: XCTestCase {
     
     private var storage = SplitsStorageStub()
     private var context: EvalContext?
+    private var values: EvalValues!
+    
+    override func setUp() {
+        splitsSetup()
+    }
     
     func testPrerequisiteMet() {
         let prerequisites = [
             Prerequisite(n: "always_on", ts: ["not-existing", "on", "other"])
         ]
         
-        let SUT = PrerequisitesMatcher(prerequisites: prerequisites)
-        let values = EvalValues(matchValue: "", matchingKey: "", bucketingKey: nil)
+        let SUT = PrerequisitesMatcher(prerequisites)
 
         XCTAssertTrue(SUT.evaluate(values: values, context: context), "If a prerequisite is met it should return true")
     }
     
-    func testPrerequisiteMet2() { // To conform to the specs
+    func testPrerequisiteMet2() {
         let prerequisites = [
             Prerequisite(n: "always_off", ts: ["not-existing", "off"])
         ]
         
-        let SUT = PrerequisitesMatcher(prerequisites: prerequisites)
-        let values = EvalValues(matchValue: "", matchingKey: "", bucketingKey: nil)
+        let SUT = PrerequisitesMatcher(prerequisites)
 
         XCTAssertTrue(SUT.evaluate(values: values, context: context), "If a prerequisite is met it should return true")
     }
@@ -36,19 +39,17 @@ class PrerequisitesMatcherTests: XCTestCase {
             Prerequisite(n: "always_on", ts: ["off", "v1"])
         ]
         
-        let SUT = PrerequisitesMatcher(prerequisites: prerequisites)
-        let values = EvalValues(matchValue: "", matchingKey: "", bucketingKey: nil)
+        let SUT = PrerequisitesMatcher(prerequisites)
 
         XCTAssertFalse(SUT.evaluate(values: values, context: context), "If just one prerequisite is not met it should return false")
     }
     
-    func testPrerequisiteNotMet2() { // To conform to the specs
+    func testPrerequisiteNotMet2() {
         let prerequisites = [
             Prerequisite(n: "always_off", ts: ["on", "v1"])
         ]
         
-        let SUT = PrerequisitesMatcher(prerequisites: prerequisites)
-        let values = EvalValues(matchValue: "", matchingKey: "", bucketingKey: nil)
+        let SUT = PrerequisitesMatcher(prerequisites)
 
         XCTAssertFalse(SUT.evaluate(values: values, context: context), "If just one prerequisite is not met it should return false")
     }
@@ -59,8 +60,7 @@ class PrerequisitesMatcherTests: XCTestCase {
             Prerequisite(n: "always_off", ts: ["off"])
         ]
         
-        let SUT = PrerequisitesMatcher(prerequisites: prerequisites)
-        let values = EvalValues(matchValue: "", matchingKey: "", bucketingKey: nil)
+        let SUT = PrerequisitesMatcher(prerequisites)
 
         XCTAssertTrue(SUT.evaluate(values: values, context: context), "If all prerequisites are met it should return true")
     }
@@ -71,30 +71,26 @@ class PrerequisitesMatcherTests: XCTestCase {
             Prerequisite(n: "always_off", ts: ["on"])
         ]
         
-        let SUT = PrerequisitesMatcher(prerequisites: prerequisites)
-        let values = EvalValues(matchValue: "", matchingKey: "", bucketingKey: nil)
+        let SUT = PrerequisitesMatcher(prerequisites)
 
         XCTAssertFalse(SUT.evaluate(values: values, context: context), "If any prerequisite is not met it should return false")
     }
     
     //MARK: Edge cases
     func testNoPrerequisites() {
-        let SUT = PrerequisitesMatcher(prerequisites: nil)
-        let values = EvalValues(matchValue: "on", matchingKey: "key", bucketingKey: nil)
+        let SUT = PrerequisitesMatcher(nil)
 
         XCTAssertTrue(SUT.evaluate(values: values, context: context), "If there is no prerequisites, it should return true")
     }
     
     func testEmptyPrerequisites() {
-        let SUT = PrerequisitesMatcher(prerequisites: [])
-        let values = EvalValues(matchValue: "on", matchingKey: "key", bucketingKey: nil)
+        let SUT = PrerequisitesMatcher([])
 
         XCTAssertTrue(SUT.evaluate(values: values, context: context), "If prerequisites exists but it's just empty, it should return true")
     }
     
     func testNonExistentFeatureFlag() {
-        let SUT = PrerequisitesMatcher(prerequisites: [Prerequisite(n: "asldjh38", ts: ["on"])])
-        let values = EvalValues(matchValue: "on", matchingKey: "key", bucketingKey: nil)
+        let SUT = PrerequisitesMatcher([Prerequisite(n: "asldjh38", ts: ["on"])])
 
         XCTAssertFalse(SUT.evaluate(values: values, context: context), "If the feature flag is non existent it should return false")
     }
@@ -103,7 +99,8 @@ class PrerequisitesMatcherTests: XCTestCase {
 
 //MARK: Testing Data
 extension PrerequisitesMatcherTests {
-    override func setUp() {
+    
+    func splitsSetup() {
         
         // SPLIT 1
         let split = SplitDTO(name: "always_on", trafficType: "user", status: .active, sets: [], json: "", killed: false, impressionsDisabled: false)
@@ -181,5 +178,7 @@ extension PrerequisitesMatcherTests {
         storage.updateWithoutChecks(split: split2)
         
         context = EvalContext(evaluator: DefaultEvaluator(splitsStorage: storage, mySegmentsStorage: MySegmentsStorageStub()), mySegmentsStorage: MySegmentsStorageStub(), myLargeSegmentsStorage: nil, ruleBasedSegmentsStorage: nil)
+        
+        values = EvalValues(matchValue: "", matchingKey: "", bucketingKey: nil)
     }
 }

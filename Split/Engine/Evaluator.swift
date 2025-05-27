@@ -48,14 +48,13 @@ class DefaultEvaluator: Evaluator {
         }
         
         // 4. Evaluate Prerequisites
-        if !PrerequisitesMatcher().evaluate(values: values, context: getContext()) {
+        if !PrerequisitesMatcher(split.prerequisites).evaluate(values: values, context: getContext()) {
             return EvaluationResult(treatment: defaultTreatment,
                                     label: ImpressionsConstants.prerequisitesNotMet,
                                     changeNumber: changeNumber,
                                     configuration: split.configurations?[defaultTreatment],
                                     impressionsDisabled: split.isImpressionsDisabled())
         }
-
         
         // 5. Evaluate core conditions
         guard let conditions = split.conditions, let trafficAllocationSeed = split.trafficAllocationSeed, let seed = split.seed else {

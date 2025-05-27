@@ -7,7 +7,7 @@ class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
 
     private var prerequisites: [Prerequisite]?
     
-    init(prerequisites: [Prerequisite]? = nil) {
+    init(_ prerequisites: [Prerequisite]? = nil) {
         self.prerequisites = prerequisites
     }
 
@@ -20,12 +20,12 @@ class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
             guard !prerequisite.ts.isEmpty else { return true }
             
             do {
-                let evalResult = try context?.evaluator?.evalTreatment(matchingKey: values.matchingKey, bucketingKey: values.bucketingKey, splitName: prerequisite.n, attributes: nil)
+                guard let treatment = try context?.evaluator?.evalTreatment(matchingKey: values.matchingKey, bucketingKey: values.bucketingKey, splitName: prerequisite.n, attributes: nil).treatment else {
+                    continue
+                }
                 
-                if let treatment = evalResult?.treatment {
-                    if !prerequisite.ts.contains(treatment) {
-                        return false
-                    }
+                if !prerequisite.ts.contains(treatment) { // ts = Prerequisite treatments list
+                    return false
                 }
             } catch {
                 Logger.e("Error evaluating condition in PrerequisitesMatcher: \(error)")
