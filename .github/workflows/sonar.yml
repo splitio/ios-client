@@ -64,6 +64,42 @@ jobs:
 
           echo "✅ coverage.lcov generated at: coverage/coverage.lcov"
 
+      - name: Check coverage file
+        run: |
+          echo "📊 Checking coverage file contents..."
+
+          # Check if file exists and has content
+          if [ ! -f coverage/coverage.lcov ]; then
+            echo "❌ Error: coverage.lcov file does not exist"
+            exit 1
+          fi
+
+          # Check file size
+          FILE_SIZE=$(stat -f%z coverage/coverage.lcov)
+          echo "📏 File size: $FILE_SIZE bytes"
+
+          if [ "$FILE_SIZE" -lt 100 ]; then
+            echo "⚠️ Warning: coverage file is suspiciously small ($FILE_SIZE bytes)"
+            cat coverage/coverage.lcov
+          else
+            echo "✅ Coverage file size looks good"
+            # Show first few lines to verify format
+            head -n 10 coverage/coverage.lcov
+          fi
+
+          # Check if file contains expected LCOV format elements
+          if ! grep -q "SF:" coverage/coverage.lcov; then
+            echo "❌ Error: coverage file does not contain source file entries (SF:)"
+            exit 1
+          fi
+
+          if ! grep -q "DA:" coverage/coverage.lcov; then
+            echo "❌ Error: coverage file does not contain line coverage data (DA:)"
+            exit 1
+          fi
+
+          echo "✅ Coverage file format validation passed"
+
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
