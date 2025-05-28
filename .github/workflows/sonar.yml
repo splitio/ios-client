@@ -2,18 +2,53 @@ name: Sonar Scan
 
 on:
   push:
-    branches: [master, ci]
+    branches: [ci]
   pull_request:
     branches: [master, development, "*_baseline"]
 
 jobs:
-  sonar:
-    runs-on: ubuntu-latest
+  build-and-collect-coverage:
+    name: Build & Collect Coverage
+    runs-on: macos-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Run SonarQube Scan
+      - name: Run tests with coverage (ignore failures)
+        continue-on-error: true
+        run: |
+          xcodebuild test \
+            -project Split.xcodeproj \
+            -scheme Split \
+            -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 15' \
+            -enableCodeCoverage YES
+
+      - name: Export coverage to JSON
+        run: |
+          mkdir -p coverage && \
+          LATEST_RESULT=$(find build/Logs/Test -name "*.xcresult" -type d | sort | tail -n 1) && \
+          xcrun xccov view --report --json "$LATEST_RESULT" > coverage/coverage.json
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: coverage/coverage.json
+
+  sonar:
+    name: Run SonarQube Scan
+    runs-on: ubuntu-latest
+    needs: build-and-collect-coverage
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download coverage
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage
+
+      - name: Run SonarQube scan
         uses: sonarsource/sonarqube-scan-action@v1
         with:
           projectBaseDir: .
@@ -23,7 +58,7 @@ jobs:
             -Dsonar.c.file.suffixes=-
             -Dsonar.cpp.file.suffixes=-
             -Dsonar.objc.file.suffixes=-
+            -Dsonar.swift.coverage.reportPaths=coverage/coverage.json
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONARQUBE_HOST }}
-
