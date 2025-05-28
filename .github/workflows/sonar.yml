@@ -23,7 +23,8 @@ jobs:
             -parallel-testing-enabled YES \
             -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 15' \
             -enableCodeCoverage YES \
-            -resultBundlePath build/Logs/Test/TestResults.xcresult
+            -resultBundlePath build/Logs/Test/TestResults.xcresult \
+            -derivedDataPath build
 
       - name: Export coverage to LCOV
         run: |
@@ -31,24 +32,30 @@ jobs:
 
           mkdir -p coverage
 
-          # Find the first *.profdata file under build/
+          # Ensure DerivedData is at ./build (from test step)
+          echo "📁 Listing profdata files under build/"
+          find build -name "*.profdata" || true
+
+          # Get the first .profdata file in the derived data path
           PROFRAW=$(find build -type f -name "*.profdata" | head -n 1 || true)
           if [[ -z "$PROFRAW" ]]; then
             echo "❌ Error: No .profdata file found under build/"
             exit 1
           fi
 
-          # Find your compiled framework binary
-          BINARY=$(find build -type f -path "*/Split.framework/Split" | head -n 1 || true)
+          echo "✅ Found profdata: $PROFRAW"
+
+          # Find Split.framework binary in Debug config
+          BINARY=$(find build -type f -path "*/Build/Products/Debug-iphonesimulator/Split.framework/Split" | head -n 1 || true)
           if [[ -z "$BINARY" ]]; then
-            echo "❌ Error: Split binary not found under build/"
+            echo "❌ Error: Split binary not found under Debug-iphonesimulator/"
+            find build -name "Split"  # Debugging output
             exit 1
           fi
 
-          echo "✅ Using profdata: $PROFRAW"
-          echo "✅ Using binary:   $BINARY"
+          echo "✅ Found binary: $BINARY"
 
-          # Export LCOV
+          # Export coverage to LCOV format
           xcrun llvm-cov export \
             -instr-profile "$PROFRAW" \
             "$BINARY" \
