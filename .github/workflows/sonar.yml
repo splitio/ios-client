@@ -28,85 +28,56 @@ jobs:
             -resultBundlePath build/Logs/Test/TestResults.xcresult \
             -derivedDataPath build
 
-      - name: Export coverage to LCOV
+      - name: Generate SonarQube Coverage XML
         run: |
           set -euo pipefail
 
           mkdir -p coverage
-
-          # Ensure DerivedData is at ./build (from test step)
-          echo "📁 Listing profdata files under build/"
-          find build -name "*.profdata" || true
-
-          # Get the first .profdata file in the derived data path
-          PROFRAW=$(find build -type f -name "*.profdata" | head -n 1 || true)
-          if [[ -z "$PROFRAW" ]]; then
-            echo "❌ Error: No .profdata file found under build/"
+          
+          # Make the script executable (just in case)
+          chmod +x .github/scripts/xccov-to-sonarqube.sh
+          
+          # Verify the xcresult bundle exists
+          echo "📁 Checking for xcresult bundle..."
+          if [ ! -d "build/Logs/Test/TestResults.xcresult" ]; then
+            echo "❌ Error: TestResults.xcresult not found"
+            find build -name "*.xcresult" || echo "No xcresult files found"
             exit 1
           fi
-
-          echo "✅ Found profdata: $PROFRAW"
-
-          # Find Split.framework binary in Debug config
-          BINARY=$(find build -type f -path "*/Build/Products/Debug-iphonesimulator/Split.framework/Split" | head -n 1 || true)
-          if [[ -z "$BINARY" ]]; then
-            echo "❌ Error: Split binary not found under Debug-iphonesimulator/"
-            find build -name "Split"  # Debugging output
+          
+          echo "✅ Found xcresult bundle at build/Logs/Test/TestResults.xcresult"
+          
+          # Generate SonarQube generic coverage XML
+          echo "📊 Generating SonarQube coverage XML..."
+          .github/scripts/xccov-to-sonarqube.sh build/Logs/Test/TestResults.xcresult > sonarqube-generic-coverage.xml
+          
+          # Verify the coverage file was created
+          if [ ! -f "sonarqube-generic-coverage.xml" ]; then
+            echo "❌ Error: Failed to generate sonarqube-generic-coverage.xml"
             exit 1
           fi
-
-          echo "✅ Found binary: $BINARY"
-
-          # Export coverage to LCOV format
-          xcrun llvm-cov export \
-            -instr-profile "$PROFRAW" \
-            -arch x86_64 \
-            "$BINARY" \
-            -format=lcov > coverage/coverage.lcov
-
-          echo "✅ coverage.lcov generated at: coverage/coverage.lcov"
-
-      - name: Check coverage file
-        run: |
-          echo "📊 Checking coverage file contents..."
-
-          # Check if file exists and has content
-          if [ ! -f coverage/coverage.lcov ]; then
-            echo "❌ Error: coverage.lcov file does not exist"
-            exit 1
-          fi
-
-          # Check file size
-          FILE_SIZE=$(stat -f%z coverage/coverage.lcov)
-          echo "📏 File size: $FILE_SIZE bytes"
-
+          
+          # Check file size and content
+          FILE_SIZE=$(stat -f%z sonarqube-generic-coverage.xml)
+          echo "📏 Coverage XML file size: $FILE_SIZE bytes"
+          
           if [ "$FILE_SIZE" -lt 100 ]; then
-            echo "⚠️ Warning: coverage file is suspiciously small ($FILE_SIZE bytes)"
-            cat coverage/coverage.lcov
-          else
-            echo "✅ Coverage file size looks good"
-            # Show first few lines to verify format
-            head -n 10 coverage/coverage.lcov
-          fi
-
-          # Check if file contains expected LCOV format elements
-          if ! grep -q "SF:" coverage/coverage.lcov; then
-            echo "❌ Error: coverage file does not contain source file entries (SF:)"
+            echo "⚠️ Warning: Coverage file is suspiciously small ($FILE_SIZE bytes)"
+            cat sonarqube-generic-coverage.xml
             exit 1
           fi
-
-          if ! grep -q "DA:" coverage/coverage.lcov; then
-            echo "❌ Error: coverage file does not contain line coverage data (DA:)"
-            exit 1
-          fi
-
-          echo "✅ Coverage file format validation passed"
+          
+          # Show sample of the coverage file
+          echo "📄 Sample of coverage XML file:"
+          head -n 20 sonarqube-generic-coverage.xml
+          
+          echo "✅ SonarQube coverage XML generated successfully"
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
-          name: coverage
-          path: coverage/coverage.lcov
+          name: sonarqube-generic-coverage
+          path: sonarqube-generic-coverage.xml
 
   sonar:
     name: Run SonarQube Scan
@@ -121,130 +92,40 @@ jobs:
       - name: Download coverage
         uses: actions/download-artifact@v4
         with:
-          name: coverage
+          name: sonarqube-generic-coverage
           path: .
 
-      - name: Verify coverage file
+      - name: Verify SonarQube Coverage XML
         run: |
-          echo "📊 Verifying coverage file after download..."
+          echo "📊 Verifying SonarQube coverage XML..."
           
-          # Check multiple possible locations
-          if [ -f "coverage.lcov" ]; then
-            echo "✅ Found coverage file at ./coverage.lcov"
-            mkdir -p coverage
-            cp coverage.lcov coverage/coverage.lcov
-            COVERAGE_PATH="coverage/coverage.lcov"
-          elif [ -f "coverage/coverage.lcov" ]; then
-            echo "✅ Found coverage file at ./coverage/coverage.lcov"
-            COVERAGE_PATH="coverage/coverage.lcov"
-          else
-            echo "❌ Coverage file not found in expected locations"
+          # Check if file exists and has content
+          if [ ! -f sonarqube-generic-coverage.xml ]; then
+            echo "❌ Error: sonarqube-generic-coverage.xml file does not exist"
             echo "📂 Current directory contents:"
             ls -la
-            echo "📂 Looking for any .lcov files:"
-            find . -name "*.lcov" || echo "No .lcov files found"
             exit 1
           fi
           
           # Check file size
-          FILE_SIZE=$(stat -c%s "$COVERAGE_PATH")
+          FILE_SIZE=$(stat -c%s sonarqube-generic-coverage.xml)
           echo "📏 File size: $FILE_SIZE bytes"
           
-          if [ "$FILE_SIZE" -lt 100 ]; then
-            echo "⚠️ Warning: coverage file is suspiciously small ($FILE_SIZE bytes)"
-            cat "$COVERAGE_PATH"
-            exit 1
+          # Count coverage entries
+          COVERAGE_ENTRIES=$(grep -c "lineToCover" sonarqube-generic-coverage.xml || echo "0")
+          echo "📊 Number of coverage entries: $COVERAGE_ENTRIES"
+          
+          if [ "$COVERAGE_ENTRIES" -lt 10 ]; then
+            echo "⚠️ Warning: Very few coverage entries found ($COVERAGE_ENTRIES)"
+          else
+            echo "✅ Coverage entries look good"
           fi
           
-          # Verify file format
-          if ! grep -q "SF:" "$COVERAGE_PATH"; then
-            echo "❌ Error: coverage file does not contain source file entries (SF:)"
-            exit 1
-          fi
+          echo "✅ SonarQube coverage XML validation passed"
           
-          if ! grep -q "DA:" "$COVERAGE_PATH"; then
-            echo "❌ Error: coverage file does not contain line coverage data (DA:)"
-            exit 1
-          fi
-          
-          echo "✅ Coverage file format validation passed"
-          
-          # Check path format in coverage file
-          echo "📃 Sample of source file paths in coverage file:"
-          grep -m 5 "SF:" "$COVERAGE_PATH"
-          
-          # Create a modified version with relative paths for SonarQube
-          echo "📝 Creating modified coverage file with relative paths..."
-          REPO_NAME="ios-client"
-          
-          # Create the coverage file directly in the root directory with the exact name SonarQube expects
-          # Use a more robust path transformation that handles different path formats and ensures proper format for Swift
-          sed -E "s|SF:/Users/runner/work/${REPO_NAME}/${REPO_NAME}/|SF:|g; s|SF:/Users/runner/work/${REPO_NAME}/|SF:|g" "$COVERAGE_PATH" > "coverage.lcov.temp"
-          
-          # Process the LCOV file to ensure it has the format SonarQube expects for Swift
-          # This ensures each file entry has proper structure with FNF/FNH (functions found/hit) and LF/LH (lines found/hit)
-          echo "📊 Processing LCOV file to ensure SonarQube compatibility..."
-          
-          awk '
-          BEGIN { print "TN:" }
-          /SF:/ { 
-            if (file) { 
-              if (!fnf) print "FNF:0"; 
-              if (!fnh) print "FNH:0"; 
-              if (!lf) print "LF:0"; 
-              if (!lh) print "LH:0"; 
-              print "end_of_record"; 
-            }
-            file=$0; print file; fnf=0; fnh=0; lf=0; lh=0; 
-          }
-          /FNF:/ { fnf=1; print }
-          /FNH:/ { fnh=1; print }
-          /LF:/ { lf=1; print }
-          /LH:/ { lh=1; print }
-          !/^(SF:|FNF:|FNH:|LF:|LH:|end_of_record|TN:)/ { print }
-          /end_of_record/ { 
-            if (!fnf) print "FNF:0"; 
-            if (!fnh) print "FNH:0"; 
-            if (!lf) print "LF:0"; 
-            if (!lh) print "LH:0"; 
-            print "end_of_record"; 
-            file=""; fnf=0; fnh=0; lf=0; lh=0; 
-          }
-          END { 
-            if (file) { 
-              if (!fnf) print "FNF:0"; 
-              if (!fnh) print "FNH:0"; 
-              if (!lf) print "LF:0"; 
-              if (!lh) print "LH:0"; 
-              print "end_of_record"; 
-            }
-          }
-          ' coverage.lcov.temp > coverage.lcov
-          
-          # Check if we have any source files that don't match the project structure
-          echo "📃 Checking for problematic paths in coverage file..."
-          grep "SF:/" "coverage.lcov" | head -n 10 || echo "No problematic paths found"
-          
-          echo "📃 Sample of modified source file paths:"
-          grep -m 5 "SF:" "coverage.lcov"
-          
-          # Verify the file exists in the root directory
-          echo "📂 Files in current directory:"
-          ls -la *.lcov || echo "No .lcov files found in root directory"
-          
-          # Count entries in coverage file
-          echo "📊 Coverage statistics:"
-          echo "Total lines in coverage file: $(wc -l < coverage.lcov)"
-          echo "Number of source files: $(grep -c "SF:" coverage.lcov)"
-          echo "Number of line coverage entries: $(grep -c "DA:" coverage.lcov)"
-          
-          # Create a debug version with more complete information
-          echo "📝 Creating debug version of coverage file..."
-          cp coverage.lcov coverage.debug.lcov
-          
-          # Show the first complete file coverage entry for debugging
-          echo "📄 Sample complete coverage entry:"
-          awk '/SF:/{p=1;print;next} /end_of_record/{p=0;print;print "---"} p{print}' coverage.lcov | head -n 30
+          # Show sample of the coverage XML
+          echo "📄 Sample of coverage XML:"
+          head -n 20 sonarqube-generic-coverage.xml
 
       - name: Run SonarQube scan
         uses: sonarsource/sonarqube-scan-action@v5
@@ -256,7 +137,7 @@ jobs:
             -Dsonar.c.file.suffixes=-
             -Dsonar.cpp.file.suffixes=-
             -Dsonar.objc.file.suffixes=-
-            -Dsonar.swift.coverage.reportPaths=coverage.lcov
+            -Dsonar.coverageReportPaths=sonarqube-generic-coverage.xml
             -Dsonar.verbose=true
             -Dsonar.sources=Split
             -Dsonar.exclusions=**/Tests/**,**/*.generated.swift
