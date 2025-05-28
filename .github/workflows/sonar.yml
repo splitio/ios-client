@@ -172,16 +172,16 @@ jobs:
           # Create a modified version with relative paths for SonarQube
           echo "📝 Creating modified coverage file with relative paths..."
           REPO_NAME="ios-client"
-          MODIFIED_PATH="${COVERAGE_PATH%.lcov}.modified.lcov"
           
-          # Replace absolute paths with relative paths
-          sed "s|SF:/Users/runner/work/${REPO_NAME}/${REPO_NAME}/|SF:|g" "$COVERAGE_PATH" > "$MODIFIED_PATH"
+          # Create the coverage file directly in the root directory with the exact name SonarQube expects
+          sed "s|SF:/Users/runner/work/${REPO_NAME}/${REPO_NAME}/|SF:|g" "$COVERAGE_PATH" > "coverage.lcov"
           
           echo "📃 Sample of modified source file paths:"
-          grep -m 5 "SF:" "$MODIFIED_PATH"
+          grep -m 5 "SF:" "coverage.lcov"
           
-          # Update the coverage path to use the modified file
-          COVERAGE_PATH="$MODIFIED_PATH"
+          # Verify the file exists in the root directory
+          echo "📂 Files in current directory:"
+          ls -la *.lcov || echo "No .lcov files found in root directory"
 
       - name: Run SonarQube scan
         uses: sonarsource/sonarqube-scan-action@v5
@@ -193,7 +193,7 @@ jobs:
             -Dsonar.c.file.suffixes=-
             -Dsonar.cpp.file.suffixes=-
             -Dsonar.objc.file.suffixes=-
-            -Dsonar.swift.coverage.reportPaths=coverage/coverage.modified.lcov,coverage.modified.lcov
+            -Dsonar.swift.coverage.reportPaths=coverage.lcov
             -Dsonar.verbose=true
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
