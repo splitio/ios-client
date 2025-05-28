@@ -8,5 +8,5 @@
 import Foundation
 
 struct SplitConstants {
-    static let control = "control"
+    static let control: String = "control"
 }
