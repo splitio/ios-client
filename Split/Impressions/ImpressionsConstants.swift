@@ -8,13 +8,13 @@
 import Foundation
 
 struct ImpressionsConstants {
-    static let noConditionMatched = "default rule"
-    static let killed = "killed"
-    static let splitNotFound = "definition not found"
-    static let notInSplit = "not in split"
-    static let matcherNotFound = "matcher not found"
-    static let exception = "exception"
-    static let notReady = "not ready"
-    static let unsupportedMatcherType = "targeting rule type unsupported by sdk"
-    static let prerequisitesNotMet = "prerequisites not met"
+    static let noConditionMatched: String = "default rule"
+    static let killed: String = "killed"
+    static let splitNotFound: String = "definition not found"
+    static let notInSplit: String = "not in split"
+    static let matcherNotFound: String = "matcher not found"
+    static let exception: String = "exception"
+    static let notReady: String = "not ready"
+    static let unsupportedMatcherType: String = "targeting rule type unsupported by sdk"
+    static let prerequisitesNotMet: String = "prerequisites not met"
 }

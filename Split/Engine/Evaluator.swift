@@ -20,7 +20,7 @@ class DefaultEvaluator: Evaluator {
     private let mySegmentsStorage: MySegmentsStorage
     private let myLargeSegmentsStorage: MySegmentsStorage?
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
- 
+
     init(splitsStorage: SplitsStorage, mySegmentsStorage: MySegmentsStorage, myLargeSegmentsStorage: MySegmentsStorage? = nil, ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
@@ -29,7 +29,7 @@ class DefaultEvaluator: Evaluator {
     }
 
     func evalTreatment(matchingKey: String, bucketingKey: String?, splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
-        
+
         // 1. Guarantee Split exists & is active
         guard let split = splitsStorage.get(name: splitName), split.status != .archived else {
             Logger.w("The feature flag definition for '\(splitName)' has not been found")
