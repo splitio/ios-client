@@ -20,14 +20,14 @@ class PrerequisitesMatcher: BaseMatcher, MatcherProtocol, PrerequisitesMatcherPr
         guard let prerequisites = prerequisites, !prerequisites.isEmpty else { return true }
         
         for prerequisite in prerequisites {
-            guard !prerequisite.ts.isEmpty else { return true }
+            guard !prerequisite.treatments.isEmpty else { return true }
             
             do {
-                guard let treatment = try context?.evaluator?.evalTreatment(matchingKey: values.matchingKey, bucketingKey: values.bucketingKey, splitName: prerequisite.n, attributes: nil).treatment else {
+                guard let treatment = try context?.evaluator?.evalTreatment(matchingKey: values.matchingKey, bucketingKey: values.bucketingKey, splitName: prerequisite.flagName, attributes: nil).treatment else {
                     continue
                 }
                 
-                if !prerequisite.ts.contains(treatment) { // ts = Prerequisite treatments list
+                if !prerequisite.treatments.contains(treatment) { // ts = Prerequisite treatments list
                     return false
                 }
             } catch {

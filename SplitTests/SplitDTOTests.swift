@@ -16,8 +16,8 @@ class SplitDTOTests: XCTestCase {
         let decoded = try? TargetingRulesChangeDecoder.decode(from: data.data(using: .utf8)!)
         for i in 0..<decoded!.featureFlags.splits[0].prerequisites!.count {
             let prerequisite = decoded!.featureFlags.splits[0].prerequisites![i]
-            XCTAssertEqual(prerequisite.n, expectedFlags[i], "Prerequisites flag names should be the same")
-            XCTAssertEqual(prerequisite.ts.joined(separator: ","), expectedTreatments[i].joined(separator: ","), "Prerequisites treatments should be the same")
+            XCTAssertEqual(prerequisite.flagName, expectedFlags[i], "Prerequisites flag names should be the same")
+            XCTAssertEqual(prerequisite.treatments.joined(separator: ","), expectedTreatments[i].joined(separator: ","), "Prerequisites treatments should be the same")
         }
     }
     
@@ -25,7 +25,7 @@ class SplitDTOTests: XCTestCase {
         let data = jsonWithEmptyPrerequisites
         
         let decoded = try? TargetingRulesChangeDecoder.decode(from: data.data(using: .utf8)!)
-        XCTAssertEqual(decoded?.featureFlags.splits.first?.prerequisites?.first?.n, nil, "Prerequisites field should be empty")
+        XCTAssertEqual(decoded?.featureFlags.splits.first?.prerequisites?.first?.flagName, nil, "Prerequisites field should be empty")
         XCTAssertEqual(decoded?.ruleBasedSegments.segments.first?.name, "test_segment", "Rest of the response should be correct")
     }
     
