@@ -24,7 +24,7 @@ class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
                     continue
                 }
                 
-                if !prerequisite.treatments.contains(treatment) { // ts = Prerequisite treatments list
+                if !prerequisite.treatments.contains(treatment) {
                     return false
                 }
             } catch {
