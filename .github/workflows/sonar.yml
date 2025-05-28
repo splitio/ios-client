@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run tests with coverage (ignore failures)
         continue-on-error: true
@@ -30,7 +30,7 @@ jobs:
           xcrun xccov view --report --json "$LATEST_RESULT" > coverage/coverage.json
 
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: coverage/coverage.json
