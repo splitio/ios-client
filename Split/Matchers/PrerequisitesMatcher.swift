@@ -11,7 +11,7 @@ class PrerequisitesMatcher: BaseMatcher, MatcherProtocol, PrerequisitesMatcherPr
     
     private var prerequisites: [Prerequisite]?
     
-    init(prerequisites: [Prerequisite]? = nil) {
+    init(_ prerequisites: [Prerequisite]? = nil) {
         self.prerequisites = prerequisites
     }
 
