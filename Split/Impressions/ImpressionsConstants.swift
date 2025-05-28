@@ -16,5 +16,5 @@ struct ImpressionsConstants {
     static let exception: String = "exception"
     static let notReady: String = "not ready"
     static let unsupportedMatcherType: String = "targeting rule type unsupported by sdk"
-    static let prerequisitesNotMet: String = "prerequisites not met"
+    static let prerequisitesNotMet = "prerequisites not met"
 }
