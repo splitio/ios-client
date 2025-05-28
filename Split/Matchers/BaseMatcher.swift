@@ -15,6 +15,7 @@ class BaseMatcher: NSObject {
 
     init(negate: Bool? = nil,
          attribute: String? = nil, type: MatcherType? = nil) {
+        
         self.negate = negate
         self.attribute = attribute
         self.type = type
