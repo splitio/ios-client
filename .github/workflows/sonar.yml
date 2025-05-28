@@ -174,7 +174,12 @@ jobs:
           REPO_NAME="ios-client"
           
           # Create the coverage file directly in the root directory with the exact name SonarQube expects
-          sed "s|SF:/Users/runner/work/${REPO_NAME}/${REPO_NAME}/|SF:|g" "$COVERAGE_PATH" > "coverage.lcov"
+          # Use a more robust path transformation that handles different path formats
+          sed -E "s|SF:/Users/runner/work/${REPO_NAME}/${REPO_NAME}/|SF:|g; s|SF:/Users/runner/work/${REPO_NAME}/|SF:|g" "$COVERAGE_PATH" > "coverage.lcov"
+          
+          # Check if we have any source files that don't match the project structure
+          echo "📃 Checking for problematic paths in coverage file..."
+          grep "SF:/" "coverage.lcov" | head -n 10 || echo "No problematic paths found"
           
           echo "📃 Sample of modified source file paths:"
           grep -m 5 "SF:" "coverage.lcov"
@@ -182,6 +187,20 @@ jobs:
           # Verify the file exists in the root directory
           echo "📂 Files in current directory:"
           ls -la *.lcov || echo "No .lcov files found in root directory"
+          
+          # Count entries in coverage file
+          echo "📊 Coverage statistics:"
+          echo "Total lines in coverage file: $(wc -l < coverage.lcov)"
+          echo "Number of source files: $(grep -c "SF:" coverage.lcov)"
+          echo "Number of line coverage entries: $(grep -c "DA:" coverage.lcov)"
+          
+          # Create a debug version with more complete information
+          echo "📝 Creating debug version of coverage file..."
+          cp coverage.lcov coverage.debug.lcov
+          
+          # Show the first complete file coverage entry for debugging
+          echo "📄 Sample complete coverage entry:"
+          awk '/SF:/{p=1;print;next} /end_of_record/{p=0;print;print "---"} p{print}' coverage.lcov | head -n 30
 
       - name: Run SonarQube scan
         uses: sonarsource/sonarqube-scan-action@v5
@@ -195,6 +214,9 @@ jobs:
             -Dsonar.objc.file.suffixes=-
             -Dsonar.swift.coverage.reportPaths=coverage.lcov
             -Dsonar.verbose=true
+            -Dsonar.sources=Split
+            -Dsonar.exclusions=**/Tests/**,**/*.generated.swift
+            -Dsonar.coverage.exclusions=**/Tests/**,**/*.generated.swift
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONARQUBE_HOST }}
