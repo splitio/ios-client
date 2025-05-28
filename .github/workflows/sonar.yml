@@ -42,15 +42,15 @@ jobs:
     needs: build-and-collect-coverage
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download coverage
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: coverage
 
       - name: Run SonarQube scan
-        uses: sonarsource/sonarqube-scan-action@v1
+        uses: sonarsource/sonarqube-scan-action@v5
         with:
           projectBaseDir: .
           args: >
