@@ -2,11 +2,14 @@
 set -euo pipefail
 
 function convert_xccov_to_xml {
+  # First perform the conversion with absolute paths
   sed -n                                                                                       \
       -e '/:$/s/&/\&amp;/g;s/^\(.*\):$/  <file path="\1">/p'                                   \
       -e 's/^ *\([0-9][0-9]*\): 0.*$/    <lineToCover lineNumber="\1" covered="false"\/>/p'    \
       -e 's/^ *\([0-9][0-9]*\): [1-9].*$/    <lineToCover lineNumber="\1" covered="true"\/>/p' \
-      -e 's/^$/  <\/file>/p'
+      -e 's/^$/  <\/file>/p' |
+  # Then convert absolute paths to relative paths
+  sed -E 's|<file path="/Users/runner/work/ios-client/ios-client/(.+)">|<file path="\1">|g'
 }
 
 function xccov_to_generic {
