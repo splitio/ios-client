@@ -35,7 +35,7 @@ extension SplitView {
             output+="prerequisites = [\n"
             prerequisites.forEach { prerequisite in
                 output+="""
-                        \(prerequisite.n): {\(prerequisite.ts.joined(separator: ","))}\n
+                        \(prerequisite.flagName): {\(prerequisite.treatments.joined(separator: ","))}\n
                         """
             }
             output+="]\n"
