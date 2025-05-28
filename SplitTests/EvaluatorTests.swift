@@ -106,29 +106,26 @@ class EvaluatorTests: XCTestCase {
     }
     
     func testPassingPrerequisites() {
-        var result: EvaluationResult!
-        let matchingKey = "anyKey"
-        let splitName = "FACUNDO_TEST"
         
-        (evaluator as! DefaultEvaluator).prerequisitesMatcher = PrerequisitesMatcherMock(shouldPass: true)
+        // This overrides the matcher-factory of the Evaluator, so we can inject the mock
+        (evaluator as! DefaultEvaluator).overridePrerequisitesMatcher( { _ in PrerequisitesMatcherMock(shouldPass: true) } )
         
-        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        let result = try? evaluator.evalTreatment(matchingKey: "anyKey", bucketingKey: nil, splitName: "FACUNDO_TEST", attributes: nil)
         
         XCTAssertNotNil(result)
-        XCTAssertEqual("off", result.treatment)
+        XCTAssertEqual("off", result!.treatment, "If all prerequisites are satisfied, the flag should keep evaluating and return the default treatment")
     }
     
     func testNotPassingPrerequisites() {
-        var result: EvaluationResult!
-        let matchingKey = "anyKey"
-        let splitName = "FACUNDO_TEST"
         
-        (evaluator as! DefaultEvaluator).prerequisitesMatcher = PrerequisitesMatcherMock(shouldPass: false)
+        // This overrides the matcher-factory of the Evaluator, so we can inject the mock
+        (evaluator as! DefaultEvaluator).overridePrerequisitesMatcher( { _ in PrerequisitesMatcherMock(shouldPass: false) } )
         
-        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        let result = try? evaluator.evalTreatment(matchingKey: "anyKey", bucketingKey: nil, splitName: "FACUNDO_TEST", attributes: nil)
         
         XCTAssertNotNil(result)
-        XCTAssertEqual(ImpressionsConstants.prerequisitesNotMet, result.label)
+        XCTAssertEqual(result?.treatment, "off", "If any prerequisite is not satisfied, the flag should return the default treatment")
+        XCTAssertEqual(ImpressionsConstants.prerequisitesNotMet, result!.label, "If any prerequisite is not satisfied, the label should be 'prerequisitesNotMet'")
     }
     
     func testNotInSplit() {

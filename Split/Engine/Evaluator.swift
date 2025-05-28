@@ -12,15 +12,15 @@ protocol Evaluator {
 
 class DefaultEvaluator: Evaluator {
     
-    // Internal for testing purposes
-    var splitter: SplitterProtocol = Splitter.shared
-    var prerequisitesMatcher: PrerequisitesMatcherProtocol = PrerequisitesMatcher()
+    // For testing purposes
+    internal var splitter: SplitterProtocol = Splitter.shared
+    private var prerequisitesMatcherFactory: ([Prerequisite]) -> MatcherProtocol = { prerequisites in PrerequisitesMatcher(prerequisites) }
     
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage: MySegmentsStorage
     private let myLargeSegmentsStorage: MySegmentsStorage?
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
-
+ 
     init(splitsStorage: SplitsStorage, mySegmentsStorage: MySegmentsStorage, myLargeSegmentsStorage: MySegmentsStorage? = nil, ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
@@ -49,8 +49,8 @@ class DefaultEvaluator: Evaluator {
         let values = EvalValues(matchValue: matchingKey, matchingKey: matchingKey, bucketingKey: bucketKey, attributes: attributes)
         
         // 4. Evaluate Prerequisites
-        split.prerequisites
-        if !prerequisitesMatcher.evaluate(values: values, context: getContext()) {
+        let matcher = prerequisitesMatcherFactory(split.prerequisites ?? [])
+        if !matcher.evaluate(values: values, context: getContext()) {
             return EvaluationResult(treatment: defaultTreatment,
                                     label: ImpressionsConstants.prerequisitesNotMet,
                                     changeNumber: changeNumber,
@@ -114,6 +114,12 @@ class DefaultEvaluator: Evaluator {
         
         return matchingKey
     }
+    
+    #if DEBUG
+    internal func overridePrerequisitesMatcher(_ factory: @escaping ([Prerequisite]) -> MatcherProtocol) {
+        prerequisitesMatcherFactory = factory
+    }
+    #endif
 }
 
 private extension Split {

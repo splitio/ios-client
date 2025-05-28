@@ -3,11 +3,7 @@
 
 import Foundation
 
-protocol PrerequisitesMatcherProtocol {
-    func evaluate(values: EvalValues, context: EvalContext?) -> Bool
-}
-
-class PrerequisitesMatcher: BaseMatcher, MatcherProtocol, PrerequisitesMatcherProtocol {
+class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
     
     private var prerequisites: [Prerequisite]?
     
