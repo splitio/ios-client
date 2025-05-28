@@ -25,16 +25,42 @@ jobs:
             -enableCodeCoverage YES \
             -resultBundlePath build/Logs/Test/TestResults.xcresult
 
-      - name: Export coverage to JSON
+      - name: Export coverage to LCOV
         run: |
+          set -euo pipefail
+
           mkdir -p coverage
-          xcrun xccov view --report --json build/Logs/Test/TestResults.xcresult > coverage/coverage.json
+
+          # Find the first *.profdata file under build/
+          PROFRAW=$(find build -type f -name "*.profdata" | head -n 1 || true)
+          if [[ -z "$PROFRAW" ]]; then
+            echo "❌ Error: No .profdata file found under build/"
+            exit 1
+          fi
+
+          # Find your compiled framework binary
+          BINARY=$(find build -type f -path "*/Split.framework/Split" | head -n 1 || true)
+          if [[ -z "$BINARY" ]]; then
+            echo "❌ Error: Split binary not found under build/"
+            exit 1
+          fi
+
+          echo "✅ Using profdata: $PROFRAW"
+          echo "✅ Using binary:   $BINARY"
+
+          # Export LCOV
+          xcrun llvm-cov export \
+            -instr-profile "$PROFRAW" \
+            "$BINARY" \
+            -format=lcov > coverage/coverage.lcov
+
+          echo "✅ coverage.lcov generated at: coverage/coverage.lcov"
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage
-          path: coverage/coverage.json
+          path: coverage/coverage.lcov
 
   sonar:
     name: Run SonarQube Scan
@@ -59,7 +85,7 @@ jobs:
             -Dsonar.c.file.suffixes=-
             -Dsonar.cpp.file.suffixes=-
             -Dsonar.objc.file.suffixes=-
-            -Dsonar.swift.coverage.reportPaths=coverage/coverage.json
+            -Dsonar.swift.coverage.reportPaths=coverage/coverage.lcov
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONARQUBE_HOST }}
