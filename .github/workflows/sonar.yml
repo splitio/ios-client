@@ -178,8 +178,48 @@ jobs:
           REPO_NAME="ios-client"
           
           # Create the coverage file directly in the root directory with the exact name SonarQube expects
-          # Use a more robust path transformation that handles different path formats
-          sed -E "s|SF:/Users/runner/work/${REPO_NAME}/${REPO_NAME}/|SF:|g; s|SF:/Users/runner/work/${REPO_NAME}/|SF:|g" "$COVERAGE_PATH" > "coverage.lcov"
+          # Use a more robust path transformation that handles different path formats and ensures proper format for Swift
+          sed -E "s|SF:/Users/runner/work/${REPO_NAME}/${REPO_NAME}/|SF:|g; s|SF:/Users/runner/work/${REPO_NAME}/|SF:|g" "$COVERAGE_PATH" > "coverage.lcov.temp"
+          
+          # Process the LCOV file to ensure it has the format SonarQube expects for Swift
+          # This ensures each file entry has proper structure with FNF/FNH (functions found/hit) and LF/LH (lines found/hit)
+          echo "📊 Processing LCOV file to ensure SonarQube compatibility..."
+          
+          awk '
+          BEGIN { print "TN:" }
+          /SF:/ { 
+            if (file) { 
+              if (!fnf) print "FNF:0"; 
+              if (!fnh) print "FNH:0"; 
+              if (!lf) print "LF:0"; 
+              if (!lh) print "LH:0"; 
+              print "end_of_record"; 
+            }
+            file=$0; print file; fnf=0; fnh=0; lf=0; lh=0; 
+          }
+          /FNF:/ { fnf=1; print }
+          /FNH:/ { fnh=1; print }
+          /LF:/ { lf=1; print }
+          /LH:/ { lh=1; print }
+          !/^(SF:|FNF:|FNH:|LF:|LH:|end_of_record|TN:)/ { print }
+          /end_of_record/ { 
+            if (!fnf) print "FNF:0"; 
+            if (!fnh) print "FNH:0"; 
+            if (!lf) print "LF:0"; 
+            if (!lh) print "LH:0"; 
+            print "end_of_record"; 
+            file=""; fnf=0; fnh=0; lf=0; lh=0; 
+          }
+          END { 
+            if (file) { 
+              if (!fnf) print "FNF:0"; 
+              if (!fnh) print "FNH:0"; 
+              if (!lf) print "LF:0"; 
+              if (!lh) print "LH:0"; 
+              print "end_of_record"; 
+            }
+          }
+          ' coverage.lcov.temp > coverage.lcov
           
           # Check if we have any source files that don't match the project structure
           echo "📃 Checking for problematic paths in coverage file..."
