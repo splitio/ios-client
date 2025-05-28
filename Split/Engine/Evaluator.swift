@@ -49,6 +49,7 @@ class DefaultEvaluator: Evaluator {
         let values = EvalValues(matchValue: matchingKey, matchingKey: matchingKey, bucketingKey: bucketKey, attributes: attributes)
         
         // 4. Evaluate Prerequisites
+        split.prerequisites
         if !prerequisitesMatcher.evaluate(values: values, context: getContext()) {
             return EvaluationResult(treatment: defaultTreatment,
                                     label: ImpressionsConstants.prerequisitesNotMet,

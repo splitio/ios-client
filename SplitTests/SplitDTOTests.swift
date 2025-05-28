@@ -16,8 +16,8 @@ class SplitDTOTests: XCTestCase {
         let decoded = try? TargetingRulesChangeDecoder.decode(from: data.data(using: .utf8)!)
         for i in 0..<decoded!.featureFlags.splits[0].prerequisites!.count {
             let prerequisite = decoded!.featureFlags.splits[0].prerequisites![i]
-            XCTAssertEqual(prerequisite.n!, expectedFlags[i], "Prerequisites flag names should be the same")
-            XCTAssertEqual(prerequisite.ts!.joined(separator: ","), expectedTreatments[i].joined(separator: ","), "Prerequisites treatments should be the same")
+            XCTAssertEqual(prerequisite.n, expectedFlags[i], "Prerequisites flag names should be the same")
+            XCTAssertEqual(prerequisite.ts.joined(separator: ","), expectedTreatments[i].joined(separator: ","), "Prerequisites treatments should be the same")
         }
     }
     
