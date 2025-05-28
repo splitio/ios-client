@@ -22,13 +22,13 @@ jobs:
             -scheme Split \
             -parallel-testing-enabled YES \
             -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 15' \
-            -enableCodeCoverage YES
+            -enableCodeCoverage YES \
+            -resultBundlePath build/Logs/Test/TestResults.xcresult
 
       - name: Export coverage to JSON
         run: |
-          mkdir -p coverage && \
-          LATEST_RESULT=$(find build/Logs/Test -name "*.xcresult" -type d | sort | tail -n 1) && \
-          xcrun xccov view --report --json "$LATEST_RESULT" > coverage/coverage.json
+          mkdir -p coverage
+          xcrun xccov view --report --json build/Logs/Test/TestResults.xcresult > coverage/coverage.json
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
