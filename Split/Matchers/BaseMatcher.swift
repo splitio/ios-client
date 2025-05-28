@@ -3,6 +3,7 @@
 //  Split
 //
 //  Created by Natalia  Stele on 11/5/17.
+//
 
 import Foundation
 
@@ -12,25 +13,27 @@ class BaseMatcher: NSObject {
     var attribute: String?
     var type: MatcherType?
 
-    init(negate: Bool? = nil, attribute: String? = nil, type: MatcherType? = nil) {
+    init(negate: Bool? = nil,
+         attribute: String? = nil, type: MatcherType? = nil) {
+
         self.negate = negate
         self.attribute = attribute
         self.type = type
     }
 
     func isNegate() -> Bool {
-        negate ?? false
+        return self.negate ?? false
     }
 
     func getAttribute() -> String? {
-        attribute
+        return self.attribute
     }
 
     func getMatcherType() -> MatcherType {
-        type!
+        return self.type!
     }
 
     func matcherHasAttribute() -> Bool {
-        attribute != nil
+        return self.attribute != nil
     }
 }
