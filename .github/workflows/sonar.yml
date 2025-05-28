@@ -58,6 +58,7 @@ jobs:
           # Export coverage to LCOV format
           xcrun llvm-cov export \
             -instr-profile "$PROFRAW" \
+            -arch x86_64 \
             "$BINARY" \
             -format=lcov > coverage/coverage.lcov
 
