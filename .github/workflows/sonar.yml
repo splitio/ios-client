@@ -118,6 +118,52 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: coverage
+          path: .
+
+      - name: Verify coverage file
+        run: |
+          echo "📊 Verifying coverage file after download..."
+          
+          # Check multiple possible locations
+          if [ -f "coverage.lcov" ]; then
+            echo "✅ Found coverage file at ./coverage.lcov"
+            mkdir -p coverage
+            cp coverage.lcov coverage/coverage.lcov
+            COVERAGE_PATH="coverage/coverage.lcov"
+          elif [ -f "coverage/coverage.lcov" ]; then
+            echo "✅ Found coverage file at ./coverage/coverage.lcov"
+            COVERAGE_PATH="coverage/coverage.lcov"
+          else
+            echo "❌ Coverage file not found in expected locations"
+            echo "📂 Current directory contents:"
+            ls -la
+            echo "📂 Looking for any .lcov files:"
+            find . -name "*.lcov" || echo "No .lcov files found"
+            exit 1
+          fi
+          
+          # Check file size
+          FILE_SIZE=$(stat -c%s "$COVERAGE_PATH")
+          echo "📏 File size: $FILE_SIZE bytes"
+          
+          if [ "$FILE_SIZE" -lt 100 ]; then
+            echo "⚠️ Warning: coverage file is suspiciously small ($FILE_SIZE bytes)"
+            cat "$COVERAGE_PATH"
+            exit 1
+          fi
+          
+          # Verify file format
+          if ! grep -q "SF:" "$COVERAGE_PATH"; then
+            echo "❌ Error: coverage file does not contain source file entries (SF:)"
+            exit 1
+          fi
+          
+          if ! grep -q "DA:" "$COVERAGE_PATH"; then
+            echo "❌ Error: coverage file does not contain line coverage data (DA:)"
+            exit 1
+          fi
+          
+          echo "✅ Coverage file format validation passed"
 
       - name: Run SonarQube scan
         uses: sonarsource/sonarqube-scan-action@v5
@@ -129,7 +175,7 @@ jobs:
             -Dsonar.c.file.suffixes=-
             -Dsonar.cpp.file.suffixes=-
             -Dsonar.objc.file.suffixes=-
-            -Dsonar.swift.coverage.reportPaths=coverage/coverage.lcov
+            -Dsonar.swift.coverage.reportPaths=coverage/coverage.lcov,coverage.lcov
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONARQUBE_HOST }}
