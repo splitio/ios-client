@@ -4,7 +4,7 @@
 import Foundation
 
 class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
-    
+
     private var prerequisites: [Prerequisite]?
     
     init(_ prerequisites: [Prerequisite]? = nil) {
@@ -13,6 +13,7 @@ class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
 
     // This evaluation passes JUST if -all- prerequisite are met
     func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
+        
         guard let prerequisites = prerequisites, !prerequisites.isEmpty else { return true }
         
         for prerequisite in prerequisites {
@@ -31,6 +32,7 @@ class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
                 return false
             }
         }
+        
         return true
     }
 }
