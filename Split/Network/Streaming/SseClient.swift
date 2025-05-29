@@ -129,7 +129,6 @@ class DefaultSseClient: SseClient {
     func incommingDataHandler(completion: @escaping CompletionHandler) -> HttpStreamRequest.IncomingDataHandler {
         isFirstMessage.set(true)
         return { [weak self] data in
-
             guard let self = self else { return }
 
             let values = self.streamParser.parse(streamChunk: data.stringRepresentation)

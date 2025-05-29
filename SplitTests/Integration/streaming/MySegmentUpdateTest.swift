@@ -278,7 +278,6 @@ class MySegmentUpdateTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-
             if request.isSplitEndpoint() {
                 return TestDispatcherResponse(
                     code: 200,

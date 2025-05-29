@@ -67,7 +67,6 @@ import Foundation
             if #available(iOS 13.0, tvOS 13.0, macCatalyst 13.1, *) {
                 let success = BGTaskScheduler.shared.register(
                     forTaskWithIdentifier: taskId, using: nil) { task in
-
                         let operationQueue = OperationQueue()
                         let syncList = self.getSyncTaskMap()
                         if syncList.isEmpty {

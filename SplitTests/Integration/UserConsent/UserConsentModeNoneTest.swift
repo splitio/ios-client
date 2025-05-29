@@ -264,7 +264,6 @@ class UserConsentModeNoneTest: XCTestCase {
     var changeHit = 0
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-
             if request.isSplitEndpoint() {
                 if self.changeHit == 0 {
                     self.changeHit += 1

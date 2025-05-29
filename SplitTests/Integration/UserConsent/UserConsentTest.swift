@@ -237,7 +237,6 @@ class UserConsentModeDebugTest: XCTestCase {
     var changeHit = 0
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-
             switch request.url.absoluteString {
             case let urlString where urlString.contains("splitChanges"):
                 if self.changeHit == 0 {

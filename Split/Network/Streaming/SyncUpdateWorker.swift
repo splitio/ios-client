@@ -57,7 +57,6 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
 
     override func process(notification: TargetingRuleUpdateNotification) throws {
         processQueue.async { [weak self] in
-
             guard let self = self else { return }
             let storedChangeNumber = getChangeNumber(notification.type)
             if storedChangeNumber >= notification.changeNumber {

@@ -422,7 +422,6 @@ class InitialCacheTest: XCTestCase {
 
     private func buildNoChangesTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-
             if request.isSplitEndpoint() {
                 ThreadUtils.delay(seconds: 0.3) // Simulate network
                 self.receivedChangeNumber[self.changeHitIndex.getAndAdd(1)] = request
