@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Path to SwiftFormat binary
+SWIFT_FORMAT=$(which swiftformat)
+
+# Check if SwiftFormat is installed
+if [ -z "$SWIFT_FORMAT" ]; then
+  echo "error: SwiftFormat not installed, download from https://github.com/nicklockwood/SwiftFormat"
+  echo "or install via brew: brew install swiftformat"
+  exit 1
+fi
+
+# Get list of Swift files that are staged for commit
+FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep "\.swift$")
+
+if [ -n "$FILES" ]; then
+  echo "Running SwiftFormat on staged Swift files..."
+  echo "$FILES" | xargs "$SWIFT_FORMAT" --config .swiftformat
+  
+  # Add back the formatted files to staging
+  echo "$FILES" | xargs git add
+fi
+
+exit 0

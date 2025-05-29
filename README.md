@@ -57,6 +57,35 @@ The Split team monitors all issues submitted to this [issue tracker](https://git
 ## Contributing
 Please see [Contributors Guide](CONTRIBUTORS-GUIDE.md) to find all you need to submit a Pull Request (PR).
 
+## Development
+
+### Code Formatting
+
+This project uses [SwiftFormat](https://github.com/nicklockwood/SwiftFormat) to maintain consistent code formatting.
+
+#### Installation
+
+Install SwiftFormat using Homebrew:
+
+```bash
+brew install swiftformat
+```
+
+#### Pre-commit Hook Setup
+
+To automatically format your code before each commit, set up the pre-commit hook:
+
+```bash
+# Navigate to the repository root
+cd /path/to/ios-client
+
+# Make the pre-commit hook executable
+chmod +x scripts/git-hooks/pre-commit
+
+# Create a symbolic link to the pre-commit hook
+git config core.hooksPath scripts/git-hooks
+```
+
 ## License
 Licensed under the Apache License, Version 2.0. See: [Apache License](http://www.apache.org/licenses/).
 

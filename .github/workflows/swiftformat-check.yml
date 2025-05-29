@@ -17,11 +17,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         
+      - name: Install Swift
+        uses: swift-actions/setup-swift@v1
+        with:
+          swift-version: '5.9'
+
       - name: Install SwiftFormat
         run: |
-          wget -O swiftformat.zip https://github.com/nicklockwood/SwiftFormat/archive/0.55.6.zip
-          unzip swiftformat.zip
-          cd SwiftFormat-0.55.6
+          git clone https://github.com/nicklockwood/SwiftFormat
+          cd SwiftFormat
           swift build -c release
           sudo cp .build/release/swiftformat /usr/local/bin/
         
