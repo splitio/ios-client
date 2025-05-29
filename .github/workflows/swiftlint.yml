@@ -2,13 +2,11 @@ name: SwiftLint
 
 on:
   push:
-    paths:
-      - '**/*.swift'
-      - '.swiftlint.yml'
+    branches:
+      - '**'
   pull_request:
-    paths:
-      - '**/*.swift'
-      - '.swiftlint.yml'
+    branches:
+      - '**'
 
 jobs:
   lint:
@@ -19,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
         
       - name: SwiftLint (Serious Violations Only)
-        uses: norio-nomura/action-swiftlint@v3
+        uses: norio-nomura/action-swiftlint@v3.2.1
         with:
           args: --strict
           reporter: github-actions-logging
