@@ -1,12 +1,14 @@
 name: Sonar Scan
 
 on:
-  push:
-    branches:
-      - ci
   pull_request:
     branches:
       - "**"
+
+# Cancel in-progress runs when a new workflow with the same group is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-collect-coverage:
