@@ -55,7 +55,6 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
                 syncHelper.recordTelemetry(resource: resource, startTime: startTime)
                 return targetingRulesChange
             }
-
         } catch {
             try syncHelper.throwIfError(syncHelper.handleError(error, resource: resource, startTime: startTime))
         }
